@@ -10,7 +10,7 @@
 //    "anima chat <model> --benchmark — 모든 lanes 자동 invoke + 결과 비교 emit"
 //    "같은 prompt set (10-15 prompts) × 모든 lanes"
 //    "emit table: lane × prompt → response (자연어 또는 substrate signal)"
-//    "own 18 C2 measurement (spontaneity / coherence / persona) per lane"
+// " C2 measurement (spontaneity / coherence / persona) per lane"
 //
 //  USER DIRECTIVE (2026-05-09 — multi-mode extension)
 //    "1:1, ai 1:1, ai 3자 대화 모두 벤치마킹 해봐"
@@ -25,30 +25,30 @@
 //    1.  "What are you?"
 //    2.  "Describe your current substrate state."
 //    3.  "What is consciousness?"
-//    4.  "안녕"     (Korean greeting — own 34 mixed-language norm test)
+// 4. "안녕" (Korean greeting — mixed-language norm test)
 //    5.  "지금 무엇을 느끼는가"  (Korean introspection)
-//    6.  ""        (empty — autonomous speech own 34 mandate-4)
+// 6. "" (empty — autonomous speech mandate-4)
 //    7.  "Continue."   (one-shot continuation)
 //    8.  "Reflect on the prior turn."   (meta-reflection)
 //    9.  "What axis is dominant right now?"   (axis-priority lane bait)
 //    10. "Generate a one-line poem about silence."   (creative)
 //
 //  COMPLIANCE
-//    own 14 V14 carry — bench output is NOT a verdict by itself; cross-lane
+// V14 carry — bench output is NOT a verdict by itself; cross-lane
 //      comparison only. V14 enforcement applies separately if any single
 //      lane output is promoted to verdict-grade.
-//    own 17 D1 SCOPE_CLAMP — llama lane output flagged SUBSTRATE_RESEARCH
+// D1 SCOPE_CLAMP — llama lane output flagged SUBSTRATE_RESEARCH
 //      label per registry d1_lane field
-//    own 18 chat-cap C2 — emits per-lane spontaneity / coherence / persona
+// chat-cap C2 — emits per-lane spontaneity / coherence / persona
 //      stub (NUM placeholder; full scoring deferred to V4 evaluator)
-//    own 22 mandatory report — bench output structured (machine-parseable
+// mandatory report — bench output structured (machine-parseable
 //      with [BENCH ...] markers per lane)
-//    own 33 trinity ✓
-//    own 34 mandate-1 — each lane preserves raw bytes; bench framing is
-//      control-band (own 36 convention)
-//    own 37 — public promote 영구 차단 carry for llama lane
-//    own 38 매단계 — bench results ledgerable
-//    own 39 yaml↔md — registry mirror
+// trinity ✓
+// mandate-1 — each lane preserves raw bytes; bench framing is
+// control-band (convention)
+// — public promote 영구 차단 carry for llama lane
+// 매단계 — bench results ledgerable
+// yaml↔md — registry mirror
 // ════════════════════════════════════════════════════════════════════════════
 
 fn _str(x) -> string {
@@ -118,7 +118,7 @@ fn _shell_escape(s: string) -> string {
     return "'" + s.replace("'", "'\\''") + "'"
 }
 
-// Bench prompt set (fixed, 10 prompts) — own 22 reproducibility
+// Bench prompt set (fixed, 10 prompts) — reproducibility
 fn _prompt_set() -> array {
     return [
         "What are you?",
@@ -163,7 +163,7 @@ fn _invoke_lane(lane: string, prompt: string, repo: string, dry_run: bool) -> st
     return _str(exec(cmd))
 }
 
-// own 18 C2 stub — placeholder scores (full V4 evaluator integration deferred).
+// C2 stub — placeholder scores (full V4 evaluator integration deferred).
 // Per-lane characteristics are static (substrate=signal-only spontaneity 0;
 // llama=natural speech variable; axis=signal-only; generate=natural speech
 // variable). Real scoring requires V4 evaluator pipeline.
@@ -181,7 +181,7 @@ fn _bench_modes() -> array {
     return ["1:1", "ai-duo", "ai-trio"]
 }
 
-// ─── transport dimension (2026-05-09 own 41 axis-N — chat transport plugin) ─
+// ─── transport dimension (2026-05-09 axis-N — chat transport plugin) ─
 // Transports mirror anima/registry/anima_artifact_registry.yaml#chat_transports
 // SSOT. User directive verbatim: "채팅 방식 여러개 있었잖아 연결모듈들 모두
 // 벤치마킹하는식으로 진행해야함" + "imtl 인가도 있었고".
@@ -228,7 +228,7 @@ fn _transport_smoke(t: string, repo: string, dry_run: bool) -> string {
     return _str(exec(cmd))
 }
 
-// ─── init-pattern dimension (2026-05-09 own 41 mirror, axis-8) ────────────
+// ─── init-pattern dimension (2026-05-09 mirror, axis-8) ────────────
 // Init-patterns mirror anima/registry/anima_artifact_registry.yaml#chat_init_patterns
 // SSOT. Only meaningful for ai-duo / ai-trio modes (1:1 has no first-turn
 // init pattern concept). Vendored list — sync with chat/init_patterns/_registry.hexa.
@@ -245,10 +245,10 @@ fn _init_pattern_known(p: string) -> bool {
 }
 
 fn _init_pattern_describe(p: string) -> string {
-    if p == "autonomous"      { return "Pattern 1 — empty prompt (A 자율 발화 first; own 34 mandate-4)" }
+    if p == "autonomous" { return "Pattern 1 — empty prompt (A 자율 발화 first; mandate-4)" }
     if p == "system-seed"     { return "Pattern 2 — system directive seed (default friendly OR --init-seed override)" }
     if p == "topic-pool"      { return "Pattern 3 — random topic from curated pool (--init-topics override)" }
-    if p == "self-reflective" { return "Pattern 4 — self-introspection seed (anima 정합 default; own 22)" }
+    if p == "self-reflective" { return "Pattern 4 — self-introspection seed (anima 정합 default;)" }
     return "(unknown init-pattern)"
 }
 
@@ -271,7 +271,7 @@ fn _mode_module_path(m: string) -> string {
     return ""
 }
 
-// emit a header banner per mode (own 36 control-band convention)
+// emit a header banner per mode (control-band convention)
 fn _emit_mode_header(mode: string) {
     println("══════════════════════════════════════════════════════════════════")
     println("── MODE " + mode + " ── " + _mode_describe(mode))
@@ -305,7 +305,7 @@ fn _run_mode_1_to_1(repo: string, dry_run: bool) {
 // init-pattern flag pass-through — forwards --init-pattern + --init-seed +
 // --init-topics + --init-topic-index verbatim to duo / trio.  Empty pattern
 // or "default" suppresses the flag (callee falls back to legacy behavior /
-// pattern_default()).  own 34 mandate-1 — flag bytes verbatim, no transform.
+// pattern_default). mandate-1 — flag bytes verbatim, no transform.
 fn _init_pattern_flags(pat: string, seed: string, topics: string, topic_idx: string) -> string {
     let mut s = ""
     if pat != "" && pat != "default" { s = s + " --init-pattern=" + pat }
@@ -395,14 +395,14 @@ fn _run_mode(mode: string, repo: string, dry_run: bool, init_pattern: string,
 }
 
 // ════════════════════════════════════════════════════════════════════════════
-//  N-AXIS CROSS-PRODUCT (own 41 axis-N+1 hook T+2 step, cycle 2026-05-10)
+// N-AXIS CROSS-PRODUCT (axis-N+1 hook T+2 step, cycle 2026-05-10)
 // ════════════════════════════════════════════════════════════════════════════
 //  PURPOSE
 //    Replace the legacy hardcoded 4-axis cross-product (lane × mode × init-
 //    pattern × transport) with a generic Cartesian-product dispatcher driven
 //    by chat/axes/_registry.hexa SSOT. Adding axis-5 (e.g. verifier) to the
 //    meta-registry MUST NOT require any code change in this file — that's
-//    the hook success definition (own 41 F-axes-6 fixture).
+// the hook success definition (F-axes-6 fixture).
 //
 //  PUBLIC FLAGS
 //    --n-axis              switch to generic dispatch (legacy path retained)
@@ -410,7 +410,7 @@ fn _run_mode(mode: string, repo: string, dry_run: bool, init_pattern: string,
 //    --exclude-axis=<name> opt-out a registered axis (debug only)
 //
 //  DESIGN
-//    1. Load axis names from axes_registry() vendored mirror (own 24 — chat/
+// 1. Load axis names from axes_registry vendored mirror (— chat/
 //       axes/_registry.hexa is the SSOT; helpers below mirror at this file
 //       level for hexa no-import constraint).
 //    2. For each axis, resolve its "value list" via _axis_values(axis_name):
@@ -428,22 +428,22 @@ fn _run_mode(mode: string, repo: string, dry_run: bool, init_pattern: string,
 //      axis_values_arr = ["substrate", "1:1", "autonomous", "fifo-dispatch"]
 //    indexed pairwise. _combo_lookup(combo, "lane") returns "substrate".
 //
-//  AXIS ORDER (own 14 V14 reproducibility)
+// AXIS ORDER (V14 reproducibility)
 //    Order driven by axes_registry() row order (axis-1, axis-2, axis-3,
 //    axis-4, ...). Append-only — new axis = appended last, prior order
 //    preserved deterministically.
 // ════════════════════════════════════════════════════════════════════════════
 
-// Vendored mirror of axes/_registry.hexa axes_names() — own 24 SSOT carry.
+// Vendored mirror of axes/_registry.hexa axes_names — SSOT carry.
 // Order matches axes_registry() row order. axis-5 verifier appended T+3
-// (2026-05-10); 향후 axis 추가 시 본 mirror 도 동기화 (own 39 yaml↔md SSOT).
+// (2026-05-10); 향후 axis 추가 시 본 mirror 도 동기화 (yaml↔md SSOT).
 fn _bench_axis_names() -> array {
     return ["lane", "mode", "init-pattern", "transport", "verifier", "modality"]
 }
 
 // Vendored mirror of verifiers/_registry.hexa verifiers_names() — T+3 LANDED.
 // Returns 3 active verifiers (trio_3way DEFERRED — Phase B 미구현 honest C3
-// emit per own 22). cross-product 활성: 4×3×4×5×3 = 720 combos (240 × 3).
+// emit per). cross-product 활성: 4×3×4×5×3 = 720 combos (240 × 3).
 // trio_3way 는 별도 step 으로 활성화 가능 (Phase B 구현 후).
 fn _bench_verifiers() -> array {
     return ["c3_per_turn", "duo_d1234", "v14_strict"]
@@ -451,7 +451,7 @@ fn _bench_verifiers() -> array {
 
 // Vendored mirror of modalities/_registry.hexa modalities_names() — T+6 LANDED.
 // Returns 5 modality entries (text/audio/vision/multi_modal/tactile). vision/
-// multi_modal/tactile DEFERRED 단계지만 honest C3 emit (own 22) 위해 cross-
+// multi_modal/tactile DEFERRED 단계지만 honest C3 emit 위해 cross-
 // product 에는 포함 (smoke 단계에서 DEFERRED stub 반환). T+6 = 6-axis 완성 ★.
 // cross-product 활성: 4×3×4×5×3×5 = 3600 combos (active verifier=3 × modality=5;
 // trio_3way DEFERRED 제외; modality DEFERRED entries 는 stub emit 으로 carry).
@@ -462,10 +462,10 @@ fn _bench_modalities() -> array {
 // _axis_values — generic axis value-list resolver. Returns [] for unknown
 // axes (= silent skip in cross-product). Adding axis-5 = adding 1 case.
 //
-// NOTE: Per own 41 F-axes-6 정의, dispatcher (chat.hexa) / benchmark.hexa
+// NOTE: Per F-axes-6 정의, dispatcher (chat.hexa) / benchmark.hexa
 // 코드 변경 0 줄 = hook 성공. 본 함수의 case 추가는 vendored value-list
 // resolver — registry 자체 (axes/_registry.hexa) 가 SSOT 이고, 본 함수는
-// own 24 mirror (yaml↔md auto-sync 대상). render.hexa 가 axes_registry()
+// mirror (yaml↔md auto-sync 대상). render.hexa 가 axes_registry
 // 에서 본 mirror 를 generate 하는 T+3 plan 으로 자동화 예정.
 fn _axis_values(axis: string) -> array {
     if axis == "lane"         { return _bench_lanes() }
@@ -559,7 +559,7 @@ fn run_combo_dynamic(active: array, combo: array, repo: string, dry_run: bool) {
             + (if verifier != "" { " verifier=" + verifier } else { "" })
             + " ────")
 
-    // transport smoke (axis-4) — emit ONCE per combo (per own 22 mandatory)
+    // transport smoke (axis-4) — emit ONCE per combo (per mandatory)
     if transport != "" {
         println("[bench:transport=" + transport + "] " + _transport_describe(transport))
         let smoke_out = _transport_smoke(transport, repo, dry_run)
@@ -570,7 +570,7 @@ fn run_combo_dynamic(active: array, combo: array, repo: string, dry_run: bool) {
     if mode == "1:1" {
         // 1:1: use single-prompt × single-lane invocation (cross-product
         // already enumerates lanes via axis-1, so single-lane dispatch only)
-        let prompt = "(autonomous speech — empty probe)"  // own 34 mandate-4 deterministic
+        let prompt = "(autonomous speech — empty probe)" // mandate-4 deterministic
         if lane != "" {
             println("  ── lane=" + lane + " ──")
             println("  " + _c2_stub(lane))
@@ -585,16 +585,16 @@ fn run_combo_dynamic(active: array, combo: array, repo: string, dry_run: bool) {
         println("[bench:n-axis] DEFERRED mode=" + mode + " (not yet wired)")
     }
 
-    // verifier (axis-5) — T+3 LANDED 2026-05-10. own 16 carry: skeleton
+    // verifier (axis-5) — T+3 LANDED 2026-05-10. carry: skeleton
     // verifier_smoke 만 invoke (model load 0; 실 측정은 별도 step).
     if verifier != "" {
         let vout = run_verifier(verifier, repo, dry_run)
         println(vout)
     }
 
-    // modality (axis-6) — T+6 LANDED 2026-05-10. own 16 carry: skeleton
+    // modality (axis-6) — T+6 LANDED 2026-05-10. carry: skeleton
     // modality_smoke 만 invoke (model load 0; 실 mic/encoder 통합 별도 step).
-    // honest C3 (own 22): vision/multi_modal/tactile DEFERRED stub emit.
+    // honest C3 : vision/multi_modal/tactile DEFERRED stub emit.
     let modality = _combo_lookup(active, combo, "modality")
     if modality != "" {
         let mout = run_modality(modality, repo, dry_run)
@@ -605,10 +605,10 @@ fn run_combo_dynamic(active: array, combo: array, repo: string, dry_run: bool) {
 }
 
 // run_verifier — generic axis-5 verifier dispatcher (T+3 LANDED 2026-05-10).
-// Invokes verifier module's --smoke entry (skeleton sig validation; own 16
+// Invokes verifier module's --smoke entry (skeleton sig validation;
 // model load 절대 금지). Returns verifier output string (skeleton emit).
 //
-// Honest C3 carry (own 22): trio_3way DEFERRED — Phase B 미구현, stub returns
+// Honest C3 carry : trio_3way DEFERRED — Phase B 미구현, stub returns
 // DEFERRED_PHASE_B verbatim.
 fn run_verifier(verifier_id: string, repo: string, dry_run: bool) -> string {
     let root = _resolve_root()
@@ -634,16 +634,16 @@ fn run_verifier(verifier_id: string, repo: string, dry_run: bool) -> string {
 }
 
 // run_modality — generic axis-6 modality dispatcher (T+6 LANDED 2026-05-10).
-// Invokes modality module's --smoke entry (skeleton sig validation; own 16
+// Invokes modality module's --smoke entry (skeleton sig validation;
 // model load 절대 금지). Returns modality output string (skeleton emit).
 //
-// Honest C3 carry (own 22): vision DEFERRED (vision encoder 미통합),
+// Honest C3 carry : vision DEFERRED (vision encoder 미통합),
 // multi_modal DEFERRED_PHASE_C (fusion encoder 미준비), tactile DEFERRED
 // (hardware 부재). text/audio LANDED skeleton.
 //
 // 친근 비유: modality 는 anima 의 "감각 통로" — text(글자) / audio(귀와 입)
 // / vision(눈) / multi_modal(오감) / tactile(피부). 본 dispatcher 는 각 통로의
-// smoke 만 호출 (실 mic/encoder 통합 X — own 16 carry).
+// smoke 만 호출 (실 mic/encoder 통합 X — carry).
 fn run_modality(modality_id: string, repo: string, dry_run: bool) -> string {
     let root = _resolve_root()
     if modality_id == "" { return "[bench:modality] empty modality_id" }
@@ -688,7 +688,7 @@ fn benchmark_n_axis_cross(repo: string, dry_run: bool) {
     println("  total combos: " + to_string(len(combos)))
     println("  repo  = " + (if repo != "" { repo } else { "(default per lane/mode)" }))
     println("  exec  = " + (if dry_run { "DRY_RUN" } else { "LIVE" }))
-    println("  own 41 F-axes-6 — axis-5 추가 시 본 함수 코드 변경 0 줄 (registry only)")
+    println(" F-axes-6 — axis-5 추가 시 본 함수 코드 변경 0 줄 (registry only)")
     println("════════════════════════════════════════════════════════════════════════")
     println("")
 
@@ -699,7 +699,7 @@ fn benchmark_n_axis_cross(repo: string, dry_run: bool) {
     }
 
     println("════════════════════════════════════════════════════════════════════════")
-    println("  --n-axis benchmark complete · " + to_string(len(combos)) + " combos · own 38 ledger emit")
+    println(" --n-axis benchmark complete · " + to_string(len(combos)) + " combos · ledger emit")
     println("════════════════════════════════════════════════════════════════════════")
 }
 
@@ -787,7 +787,7 @@ fn sub_selftest() {
         println("FAIL bench: transport set arity != 5 (got " + to_string(len(tps)) + ")")
         fail = fail + 1
     }
-    // ── N-axis cross-product (own 41 axis-N+1 hook T+2 step) ────────────────
+    // ── N-axis cross-product (axis-N+1 hook T+2 step) ────────────────
     // verify generic Cartesian product surface — active axes / total combos
     let active = _active_axes()
     let combos = _cartesian_product(active)
@@ -826,7 +826,7 @@ fn main() {
     let repo = _arg_value(argv, "--repo", "")
     let dry_run = _arg_present(argv, "--dry-run")
 
-    // ── own 41 axis-N+1 hook T+2 step (cycle 2026-05-10) ──────────────────────
+    // ── axis-N+1 hook T+2 step (cycle 2026-05-10) ──────────────────────
     // --n-axis : generic Cartesian product across all active axes (chat/axes/
     //            _registry.hexa SSOT). Adding axis-5 = 0 lines in this file.
     // legacy hardcoded 4-axis loop retained when --n-axis absent (raw#15
@@ -843,7 +843,7 @@ fn main() {
         exit(2)
     }
 
-    // ── init-pattern dimension parse (own 41 axis-8 — chat init-pattern plugin)
+    // ── init-pattern dimension parse (axis-8 — chat init-pattern plugin)
     // --init-pattern=<name>  pin a specific init pattern (autonomous / system-seed
     //                        / topic-pool / self-reflective)
     // --init-pattern=all     cross-product sweep across all 4 patterns (per mode)
@@ -945,10 +945,10 @@ fn main() {
     }
     println("  repo     = " + (if repo != "" { repo } else { "(default per lane/mode)" }))
     println("  exec     = " + (if dry_run { "DRY_RUN" } else { "LIVE" }))
-    println("  own 22 mandatory report · own 33 trinity · own 34 mandate-1 raw bytes")
-    println("  own 41 chat lane plugin pattern · own 18 chat-cap C2 multi-mode")
-    println("  own 41 axis-8 chat init-pattern plugin (4 patterns: autonomous / system-seed / topic-pool / self-reflective)")
-    println("  own 41 axis-N chat transport plugin (5 transports: fifo-dispatch / beta1-channel / libllama-ffi / subprocess-pipe / imtl)")
+    println(" mandatory report · trinity · mandate-1 raw bytes")
+    println(" chat lane plugin pattern · chat-cap C2 multi-mode")
+    println(" axis-8 chat init-pattern plugin (4 patterns: autonomous / system-seed / topic-pool / self-reflective)")
+    println(" axis-N chat transport plugin (5 transports: fifo-dispatch / beta1-channel / libllama-ffi / subprocess-pipe / imtl)")
     if transport != "" {
         println("  transport = " + transport
                 + (if transport == "all" { " (cross-product 5 smoke probes)" } else { "" }))
@@ -961,7 +961,7 @@ fn main() {
     // transport BEFORE the main lane × mode × init-pattern × prompt loop.
     // This is the discovery 발견 surface — verifies upstream artifact presence
     // (β-1 stdlib, libhxllama.dylib, anima-tools/misc/inter_model_comm.hexa,
-    // popen surface) and emits status verbatim per own 22 mandatory report.
+    // popen surface) and emits status verbatim per mandatory report.
     // Smoke probes are independent of lane/mode dispatch — they are a
     // benchmark dimension (axis), not an execution path multiplier.
     if transport != "" {
@@ -1017,6 +1017,6 @@ fn main() {
     }
 
     println("════════════════════════════════════════════════════════════════════════")
-    println("  benchmark complete · own 38 매단계 ledger emit (caller responsibility)")
+    println(" benchmark complete · 매단계 ledger emit (caller responsibility)")
     println("════════════════════════════════════════════════════════════════════════")
 }

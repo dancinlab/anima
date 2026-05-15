@@ -29,7 +29,7 @@ Legacy files: `docs/hypotheses/ARCH-{1,2}.md` + `ENGINE-{FULL-RANKINGS,TOP10-TAB
 
 - legacy: ARCH-1/2 + ENGINE-* + TRAIN-PHI + TRAINING-V5 + TRINITY-* + AL-consciousness-emergence
 - sister: H_042 (arch engine train meta), H_038 (V8)
-- own: own 21
+- own:
 
 ## Honest Limits
 

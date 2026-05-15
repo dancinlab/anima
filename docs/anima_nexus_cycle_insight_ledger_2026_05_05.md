@@ -94,7 +94,7 @@ when-applicable rule, exception (if any).
   architectural / FAIL_FALSE measurement-pipeline}.
 - **Exception**: Some candidates are ambient-only (e.g., G tension
   trajectory, H head_g) — they ride atop another candidate's mode and
-  do not need their own 4-mode dispatch.
+  do not need their -mode dispatch.
 
 ### L38 — V1-V6 verification = selftest + probe + log emit + corpus + integration 5-stage
 

@@ -29,7 +29,7 @@ Legacy file: `docs/hypotheses/H-CX-535-symbiogenesis-consciousness.md`. Pointer 
 
 - legacy: `docs/hypotheses/H-CX-535-symbiogenesis-consciousness.md`
 - sister: H_053 (Cambrian), H_012 (autopoiesis), H_049 (hivemind)
-- own: own 21
+- own:
 
 ## Honest Limits
 

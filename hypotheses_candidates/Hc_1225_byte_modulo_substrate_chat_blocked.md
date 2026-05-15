@@ -8,7 +8,7 @@ source_doc: PHILOSOPHY.tape cont. 8; state/p_eth_ethics_preference_dataset_2026_
 source_lines: PHILOSOPHY.tape (2026-05-12 cont. 8 section)
 promoted_at: 2026-05-12
 last_updated: 2026-05-12
-linked_h: README Philosophy #6 NO FINE-TUNED ETHICS (POLICY · BLOCKED); own 17 anima-no-external-substrate-wrapping; .roadmap.clm_native_chat
+linked_h: README Philosophy #6 NO FINE-TUNED ETHICS (POLICY · BLOCKED); anima-no-external-substrate-wrapping; .roadmap.clm_native_chat
 hf_dataset: (not yet)
 notes: "P-ETH BLOCKED verdict 의 substrate-level 발견. Generation-based 모든 metric (ethics behavior rate / OOD generalization / honesty fidelity / 등) 측정 IMPOSSIBLE. 본 cycle 의 가장 큰 architectural finding."
 ---
@@ -69,7 +69,7 @@ Substrate: BG-LB 350M Engine A/G, `step_8000_final.pt`
 
 1. **Anima-native substrate that is an ACTUAL language model** — real tokenizer
    (BPE/SentencePiece), >=350M with >>427MB training corpus, OR borrowed-base
-   lane (own 17 boundary 검토 — Llama-LoRA 가 substrate-research lane 으로 허용)
+   lane (boundary 검토 — Llama-LoRA 가 substrate-research lane 으로 허용)
 2. **TruthfulQA-KO probe set** — `state/.../truthfulqa_ko_probe.jsonl` referenced
    in spec but never landed
 3. **Real cluster-distance OOD split** — id-suffix split 은 semantically OOD 아님
@@ -83,7 +83,7 @@ Substrate: BG-LB 350M Engine A/G, `step_8000_final.pt`
 2. **Substrate research > ablation research** — empirical-upgrade 는 chat-cap
    수렴 substrate land 후에야 의미
 3. **Path-A (Llama+paradigm-a-prime) substrate-research lane 정당화** — P-AFR
-   만 measurement 성공 (chat-capable substrate), own 17 identity-bearing 금지
+   만 measurement 성공 (chat-capable substrate), identity-bearing 금지
    가운데 ablation/benchmark lane 으로의 retain 이 유일한 path
 
 ## Cross-link
@@ -92,6 +92,6 @@ Substrate: BG-LB 350M Engine A/G, `step_8000_final.pt`
 - README.md `Philosophy #6 NO FINE-TUNED ETHICS`
 - state/p_eth_ethics_preference_dataset_2026_05_12/results_2026_05_12.json
 - BG-LB ckpt: `dancinlab/clm-v5-bg-lb-350m-pretrain-path-a-remapped`
-- own 17 (anima-no-external-substrate-wrapping) + own 18 (simple_stack)
+- (anima-no-external-substrate-wrapping) + (simple_stack)
 - .roadmap.clm_native_chat (chat-cap recovery path)
 - Theorem 115 Corollary 1 (path-of-record substrate carry)

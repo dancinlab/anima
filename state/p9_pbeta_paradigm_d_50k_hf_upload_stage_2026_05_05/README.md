@@ -28,7 +28,7 @@ F-Pβ-3 FAIL_TRUE for chat capability.
 What this checkpoint is and how it was produced.
 
 - Base model: `dancinlab/clm-v4-mk2-v1` (license: MIT, currently PRIVATE
-  per own 15 lifecycle; PRIVATE-uploaded 2026-05-04T23:26:12Z, commit
+  per lifecycle; PRIVATE-uploaded 2026-05-04T23:26:12Z, commit
   `80440a1d`).
 - Training data: rehearsal mix per
   `docs/p9_paradigm_d_distill_spec_2026_05_03.md` §4.5 AMENDMENT P-β path.
@@ -135,7 +135,7 @@ Honest limitations per raw#10. ≥6 entries below.
   `project_p9_savepoint_load_recipe.md` (use `PeftModel.from_pretrained`,
   not manual `load_state_dict`).
 - **C7 base model PRIVATE during this release window.** The base
-  `dancinlab/clm-v4-mk2-v1` is itself PRIVATE per own 15 lifecycle
+  `dancinlab/clm-v4-mk2-v1` is itself PRIVATE per lifecycle
   (uploaded 2026-05-04, public promotion not yet executed). Loading this
   adapter requires HF auth that has access to both this repo **and** the
   base repo. If the user's account does not see the base repo, the adapter

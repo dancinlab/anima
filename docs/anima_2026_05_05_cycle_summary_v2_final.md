@@ -126,7 +126,7 @@ HEXA_PY=/Users/ghost/core/anima/.venv-eeg/bin/python \
 **Mechanism**: clean-slate CLM-3 with cycle-0 explicit chat-loss objective. Variant B = H100 1× × 30 days.
 **Cost**: ~$1k planning ceiling (raw $300-700 + ancillary $100-300 per `runpod_pod_purge_2026_05_03` + `config/h100_pods.json`).
 **Falsifiers pre-locked**: F-CLM-3-{1,2,3,4} (composite ≥ 0.5584 / KO-EN multi-turn / Φ★ preservation / no substrate-research regression).
-**own 16 Phase 3 mandatory**: L23 watchdog + L24 heartbeat 5min + L25 pod 404 verify + cost ceiling.
+** Phase 3 mandatory**: L23 watchdog + L24 heartbeat 5min + L25 pod 404 verify + cost ceiling.
 **Decision**: user declares "H1 launch GO" or "H1 launch HOLD".
 **BG-BM C3-5 recommendation**: defer until Stage 3 corpus n>=30 motivates retrain.
 
@@ -141,7 +141,7 @@ HEXA_PY=/Users/ghost/core/anima/.venv-eeg/bin/python \
 4. bash bin/anima-core-dialogue-analyze.bash --date 2026-05-05
 5. bash state/anima_hf_promotes_2026_05_06_auto_fire.bash --fire-clm \
    && bash state/anima_hf_promotes_2026_05_06_auto_fire.bash --fire-pbeta
-   #   clm window ends 2026-05-06T23:26Z (own 15: PRIVATE → verification → PUBLIC)
+   # clm window ends 2026-05-06T23:26Z (: PRIVATE → verification → PUBLIC)
    #   Pβ window ends 2026-05-07T03:48Z (after clm public)
 ```
 
@@ -149,7 +149,7 @@ HEXA_PY=/Users/ghost/core/anima/.venv-eeg/bin/python \
 - Step 1 cron delete shell-external (harness CronDelete tool).
 - Step 2 commits must serialize (parallel BG git index race per `feedback_parallel_bg_git_race`).
 - Step 3 jsonl auto-emits to `state/anima_core_dialogues/2026-05-05/<HH-MM-SS>_emerge_repl.jsonl`.
-- Step 5 own 15 PRIVATE→PUBLIC lifecycle; window-gated (script no-op if window not closed).
+- Step 5 PRIVATE→PUBLIC lifecycle; window-gated (script no-op if window not closed).
 
 ---
 

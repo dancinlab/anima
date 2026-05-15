@@ -15,7 +15,7 @@ H100 SXM 1× × 39 min wall × **$1.71 actual** (envelope $5-20, 11.7× headroom
 
 **Lexical fluency PARTIAL_RECOVERY ★** — post-FT-extended generations now contain **real Korean morphemes** (이러한 / 인지 / 의식 / 가지 / 것이 / 자신 / 관해 / 다양 / 단어 / 의미 / etc.) with kowiki15 bigram-known ratio **0.836 → 0.886** (+6%) and trials-with-real-word **59 → 68/120** (+15%). On non-persona-prefix outputs: real_words_total **117 → 163** (+39%), trials_with_real **48 → 62/120** (+29%).
 
-F-FTEXT-1..4 all **NOT_TRIGGERED**. own 30 satisfied (sha verified mac↔pod, post_ft_ext_ckpt sha=608d38a5...).
+F-FTEXT-1..4 all **NOT_TRIGGERED**. satisfied (sha verified mac↔pod, post_ft_ext_ckpt sha=608d38a5...).
 
 ---
 
@@ -222,7 +222,7 @@ The model now emits Korean that is **kowiki-vocabulary-aware** but **not yet sem
 
 ---
 
-## §9 H100 safety checklist (own 30)
+## §9 H100 safety checklist
 
 | item | status |
 |---|---|
@@ -266,7 +266,7 @@ The model now emits Korean that is **kowiki-vocabulary-aware** but **not yet sem
 | `state/.../ft_log_extended.txt` | training log (20K step + grad_norm + LR) |  |
 | `state/.../ft_summary.json` | training run summary |  |
 | `state/.../post_ft_ext_sampling.json` | 360-trial result + lexical scores + 3-ckpt comparison |  |
-| `state/.../cost_actual.json` | cost + falsifier + own 30 audit |  |
+| `state/.../cost_actual.json` | cost + falsifier + audit | |
 | `state/.../build_corpus.py` | corpus builder (S1+S2 hybrid) |  |
 | `state/.../finetune_extended.py` | FT script (resume from post_ft_ckpt) |  |
 | `state/.../orchestrator.py` | H100 orchestrator (qwen7b pattern, simplified) |  |
@@ -290,11 +290,11 @@ The model now emits Korean that is **kowiki-vocabulary-aware** but **not yet sem
 
 ---
 
-## §14 HF upload (own 31 + own 37)
+## §14 HF upload (+)
 
 target: `dancinlab/clm-v2-byte-18m-convo-5k-ft-recovery-extended` (private) — SEPARATE upload BG
 artifacts: `post_ft_ext_ckpt.pt` + `ft_log_extended.txt` + `ft_summary.json` + `post_ft_ext_sampling.json` + this doc + corpus_extended.txt
-upload BG status: PENDING (cycle continuation; this BG ends at fire+sampling+doc, HF upload separate verbatim per own 37 mandate-9)
+upload BG status: PENDING (cycle continuation; this BG ends at fire+sampling+doc, HF upload separate verbatim per mandate-9)
 
 ---
 

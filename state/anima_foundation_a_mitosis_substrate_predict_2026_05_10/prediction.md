@@ -1,6 +1,6 @@
 # BG-FOUNDATION-A-MITOSIS-SUBSTRATE-PREDICT — prediction (pre-§43-results)
 
-> own 16 — $0 design + analysis only
+> — $0 design + analysis only
 > raw#15 additive — §43 fire NOT modified
 > Hypothesis under test: substrate-dependent V14 polarity
 
@@ -116,7 +116,7 @@ For the §43 verdict reader (post-results comparison):
 
 ## §8 honest C3 (≥7 items)
 
-1. **Prediction is direction-only, magnitude is hand-waved**. The 60–65% confidence figure is calibrated against §37/§38 prior, not from a model of Llama's specific hidden-distribution geometry. No simulation was run (own 16 forbids compute).
+1. **Prediction is direction-only, magnitude is hand-waved**. The 60–65% confidence figure is calibrated against §37/§38 prior, not from a model of Llama's specific hidden-distribution geometry. No simulation was run (forbids compute).
 2. **Random projection 3072→256 is not Llama's learned geometry**. Trained-vs-random differential survives only because the proj matrix is *fixed identical* across labels. If proj were re-seeded per label, trained-random comparison is meaningless.
 3. **`MITOSIS_INITIAL_CELLS=8` (vs §37/§38 16) shifts the dynamics**: dispersion trigger needs N≥4 to fire, so it activates after the first split (around step 30–60 in the 120-step trajectory). This compresses the discriminating window.
 4. **120-step trajectory is below the α super-linear regime** (1000–3000 turns). The polarity signal here is in the *early* dynamics (first 100 splits/non-splits), not the asymptotic Φ scaling. Different regime than §37/§38 long-trajectory tests, so direct polarity transfer is qualitative.

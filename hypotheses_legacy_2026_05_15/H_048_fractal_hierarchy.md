@@ -29,7 +29,7 @@ Legacy file: `docs/hypotheses/H-CX-524-fractal-hierarchy.md`. Pointer only.
 
 - legacy: `docs/hypotheses/H-CX-524-fractal-hierarchy.md`
 - sister: H_044 (fractal resonance), H_010 (holographic)
-- own: own 21
+- own:
 
 ## Honest Limits
 

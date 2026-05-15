@@ -2,7 +2,7 @@
   "schema": "anima.bg_ha_downgraded.n30.v3_v5.v1",
   "ts": "2026-05-08T19:11:42Z",
   "anima_cycle": "2026-05-08-V5-PUSH-POST-FIX-2-of-3",
-  "directive": "BG-HA-downgraded full v3+v5 probe — fork-fail retry (이전 agent a1106c6ac587c7831 EMERGE_NOT_MEASURED, fork starvation). 사용자 fork starvation 수정 완료 → retry 가능. own 16 0-cost Mac local actual fire.",
+  "directive": "BG-HA-downgraded full v3+v5 probe — fork-fail retry (이전 agent a1106c6ac587c7831 EMERGE_NOT_MEASURED, fork starvation). 사용자 fork starvation 수정 완료 → retry 가능. 0-cost Mac local actual fire.",
   "ckpt": {
     "path": "/Users/ghost/core/anima/state/anima_native_ko_chat_template_train_2026_05_07/ckpt_final/ckpt_final.pt",
     "size_bytes": 73740540,
@@ -40,8 +40,8 @@
     "v14_mtrp_floor": 0.1
   },
   "aggregation_rules": {
-    "v3": "ALT-AGG-1 v3 (own 18 c3-aggregation-rule-v3 iter7 (d)) — predicate p4 ∧ (p1 ∨ p2 ∨ p3); PPR_v3 ≥ 0.25 floor",
-    "v5": "ALT-AGG-1 v5 (own 18 c3-aggregation-rule-v5 V5 PUSH 1/5) — predicate p4_v5_norm ∧ d_rand ∧ piv ∧ (p1∨p2∨p3); PPR_v5 ≥ 0.30 floor; MTRP_v5 ≥ 0.10 V14 strict"
+    "v3": "ALT-AGG-1 v3 (c3-aggregation-rule-v3 iter7 (d)) — predicate p4 ∧ (p1 ∨ p2 ∨ p3); PPR_v3 ≥ 0.25 floor",
+    "v5": "ALT-AGG-1 v5 (c3-aggregation-rule-v5 V5 PUSH 1/5) — predicate p4_v5_norm ∧ d_rand ∧ piv ∧ (p1∨p2∨p3); PPR_v5 ≥ 0.30 floor; MTRP_v5 ≥ 0.10 V14 strict"
   },
   "v14_static_delta_tok_emb": 315.7647399902344,
   "trained_metrics": {
@@ -139,11 +139,11 @@
     "own_39_yaml_md_render"
   ],
   "trinity": {
-    "anchor": "own 18 ALT-AGG-1 v5 (PPR_v5 ≥ 0.30 + MTRP_v5 ≥ 0.10 + PIV ≥ 0.05)",
+    "anchor": " ALT-AGG-1 v5 (PPR_v5 ≥ 0.30 + MTRP_v5 ≥ 0.10 + PIV ≥ 0.05)",
     "support": [
-      "own 14 V14 strict — paired byte-arch random_init mirror MANDATORY (pass D_RAND, MTRP)",
-      "own 17 D1 SCOPE_CLAMP — D1=0.99 within_strict (byte vocab=256, full pre-train + anima corpus)",
-      "own 22 mandatory report — actual measurement (no fabrication; fork-fail retry with healthy shell)"
+      " V14 strict — paired byte-arch random_init mirror MANDATORY (pass D_RAND, MTRP)",
+      " D1 SCOPE_CLAMP — D1=0.99 within_strict (byte vocab=256, full pre-train + anima corpus)",
+      " mandatory report — actual measurement (no fabrication; fork-fail retry with healthy shell)"
     ]
   },
   "per_prompt_v3": [
@@ -916,5 +916,5 @@
       "v5_pass": false
     }
   ],
-  "render_obligation": "own 39 yaml↔md — registry edit triggers anima_artifact_registry.md regeneration"
+  "render_obligation": " yaml↔md — registry edit triggers anima_artifact_registry.md regeneration"
 }

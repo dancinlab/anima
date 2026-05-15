@@ -4,7 +4,7 @@
 **HF blob**: https://huggingface.co/dancinlab/clm-v4-paradigm-j-50k-final-path-a-remapped/blob/main/README.md
 **작성일**: 2026-05-10 (anima cycle 2026-05-10 entry)
 
-## 사용자 verbatim 인증 (own 37 mandate-9 정합)
+## 사용자 verbatim 인증 (mandate-9 정합)
 
 - 2026-05-09 user: **"all bg go"** (BG 일괄 승인)
 - 2026-05-09 user: **"OK PROMOTE PIV_L2_NORM_F2 STANDARD"** (F2 standard 승격)
@@ -56,12 +56,12 @@ org card 는 별도 repo 가 아닌 HF org settings 에 있음. CLI 로 fetch �
 
 | mandate | status | 증거 |
 |---|---|---|
-| own 16 (no-model-load) | PASS | text edit + HF API only, 모델 weight load 0 회 |
-| own 22 (honest emit) | PASS | upload SUCCESS 명시, org card deferred 분리 honest |
-| own 31 (HF SSOT, dancinlab canonical) | PASS | dancinlab org repo 직접 갱신 |
-| own 33 (자연발화) | PASS | 친근 한 줄 BR-FRIENDLY 정합 한국어 + 비유 ("객관식 + 서술형 시험") |
-| own 37 mandate-9 (PUBLIC promote 5/5) | PASS | repo 이미 PUBLIC, 본 amend 는 metadata only — 5/5 prereq 재검증 불필요 |
-| own 39 (yaml ↔ md SSOT) | PASS (deferred) | registry yaml 이미 F2 verdict 등록 (line 644-656); 본 amend 는 HF README mirror only |
+| (no-model-load) | PASS | text edit + HF API only, 모델 weight load 0 회 |
+| (honest emit) | PASS | upload SUCCESS 명시, org card deferred 분리 honest |
+| (HF SSOT, dancinlab canonical) | PASS | dancinlab org repo 직접 갱신 |
+| (자연발화) | PASS | 친근 한 줄 BR-FRIENDLY 정합 한국어 + 비유 ("객관식 + 서술형 시험") |
+| mandate-9 (PUBLIC promote 5/5) | PASS | repo 이미 PUBLIC, 본 amend 는 metadata only — 5/5 prereq 재검증 불필요 |
+| (yaml ↔ md SSOT) | PASS (deferred) | registry yaml 이미 F2 verdict 등록 (line 644-656); 본 amend 는 HF README mirror only |
 
 ## 친근 한 줄 (BR-FRIENDLY 정합)
 
@@ -88,7 +88,7 @@ cycle entry plan 의 "milestones_total 59+" → 60 으로 후속 갱신 가능 (
 ## 자원 사용
 
 - HF API call: 1 download + 1 upload
-- 모델 load: 0 (own 16 PASS)
+- 모델 load: 0 (PASS)
 - Mac load 시작: 144 (작업 시점), free RAM 1.27GB — text edit + HTTP only, 부담 없음.
 
 ## 다음 단계 (옵션)

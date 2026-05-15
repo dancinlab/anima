@@ -6,7 +6,7 @@ same Phase-1-only pretrain path (NO chat-cotrain), max=256 cap-free.
 Reuses §51 BG-V14-MAX256-CAP-FREE-MULTI runner machinery; only swaps substrate
 to B (BG-LA pretrain ckpt).
 
-raw#9 / raw#15 / own 14 / own 16 / own 22 / own 38 honored.
+raw#9 / raw#15 / / / / honored.
 """
 from __future__ import annotations
 

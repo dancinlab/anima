@@ -2,7 +2,7 @@
 
 > **session**: anima-cmd-loop autonomous-loop-dynamic 2026-04-28T08:55Z–10:18Z (13 iters)
 > **family completion**: 4-of-4 vast.ai dispatch tools LIVE READY
-> **total dispatch budget if all 4 fire**: ~$77 within own 5 anima-research-completeness-no-cap mandate
+> **total dispatch budget if all 4 fire**: ~$77 within anima-research-completeness-no-cap mandate
 > **infra**: vast.ai LIVE (api_key + ssh_key id=790310 + orchestrator commit f412cb8a)
 
 ---
@@ -16,7 +16,7 @@
 | **CP2 trio Qwen32B** | `c756d911` | #115/#116/#117 | Qwen2.5-32B (sub gemma-2-31B) | ~$33 | 12.5h H100 SXM 1× (3-pod split) |
 | **Mk.XII Qwen72B** | `d3fb3120` | Phase 3b 70B+ class | Qwen2.5-72B (sub Llama-3.1-70B) | ~$35 | 8h H100 SXM 2× Pattern 6c |
 
-**Total: ~$77** (4 dispatches sequentially OR parallel — own 5 mandate authorizes both)
+**Total: ~$77** (4 dispatches sequentially OR parallel — mandate authorizes both)
 
 ---
 
@@ -106,7 +106,7 @@ hexa run /Users/ghost/core/anima/tool/anima_mk_xii_qwen72b_dispatch.hexa --plan
 | `anima-cp2-trio-qwen32b-vast-h100-3pod-split` | CP2 trio | $20/pod cap |
 | `anima-mk-xii-phase-3b-qwen72b-vast-pattern-6c` | Mk.XII | $10 R1 + $25 R2 cap |
 
-Auto-kill: 240 min per pod (own 4 watchdog mandate).
+Auto-kill: 240 min per pod (watchdog mandate).
 
 ---
 
@@ -117,14 +117,14 @@ Auto-kill: 240 min per pod (own 4 watchdog mandate).
 3. **CP2 trio** ($33) — closes CP2 trigger path (#115 G1 + #116 G3 + #117 atom-prep) — most roadmap-aligned
 4. **Mk.XII** ($35) — Phase 3b 70B class measurement (closes roadmap #82 AGI trigger 70B retrain prep)
 
-OR parallel (own 5 mandate): all 4 simultaneously → ~$77 total, ~3.5-12.5h wallclock per slowest.
+OR parallel (mandate): all 4 simultaneously → ~$77 total, ~3.5-12.5h wallclock per slowest.
 
 ---
 
 ## §7. Forward-pending external blockers (NOT dispatch-blocked)
 
 - atlas R36 + R37 (CANON maintainer review — out of dispatch scope)
-- own 3 + own 4 hive raw promotion (genus rename — out of dispatch scope)
+- + hive raw promotion (genus rename — out of dispatch scope)
 - EEG hardware D-1 arrival (CP2 G2 #119 — only D8 affected, D9-D13 OK)
 - anima-physics admin-block 6/9 sub-classes (separate domain)
 

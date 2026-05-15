@@ -29,7 +29,7 @@ Legacy file: `docs/hypotheses/PHIK-consciousness-preservation.md`. Pointer only.
 
 - legacy: `docs/hypotheses/PHIK-consciousness-preservation.md`
 - sister: H_039 (PHI records), XFER-consciousness-transfer.md
-- own: own 21
+- own:
 
 ## Honest Limits
 

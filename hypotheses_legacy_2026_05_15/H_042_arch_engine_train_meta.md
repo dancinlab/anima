@@ -41,7 +41,7 @@ anima의 architecture + engine + training + active-learning hypothesis cluster �
 - sister H: H_034 (decoder series), H_038 (V8 architecture variants), H_037 (acceleration 367)
 - AL emergence cross-link: H_018 (GENESIS), H_019 (SELF-EVO)
 - DOLPHIN-STAR + FACTION-DEBATE cross-link: H_001 (ethics cooperation > defection — game theory + faction)
-- own: own 21
+- own:
 
 ## Honest Limits
 

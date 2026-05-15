@@ -1,4 +1,4 @@
-# BG-FOUNDATION-BORROW-A-FIRE — verdict.md (own 38 doc save)
+# BG-FOUNDATION-BORROW-A-FIRE — verdict.md (doc save)
 
 > Authorize verbatim: `OK FOUNDATION_BORROW_A_FIRE COST $3-8` (2026-05-10 14:55 KST)
 > Fire complete: 2026-05-10 17:11 KST (1h25m total wall, 49min training)
@@ -8,7 +8,7 @@
 
 `final_class = SIMPLE_STACK_PASS_STRICT`
 `simple_stack_class_p5_proxy = FOUNDATION_BORROW_CHAT_CAP_PASS_SEMANTIC_FAIL`
-`scope_lane = SUBSTRATE_RESEARCH` (own 18 line 889 + own 17 + own 37 mandate-9 (a))
+`scope_lane = SUBSTRATE_RESEARCH` (line 889 + + mandate-9 (a))
 
 ## §2 V4 multi-seed eval (chat-cap surface)
 
@@ -19,7 +19,7 @@
 | pass_greedy | 5 | — | — |
 | pass_sample_anyseed | 11 | — | — |
 | pass_best_mode | **11** | ≥ 10 | ✓ STRICT |
-| KM-LLAMA-3B precedent best-mode | 14 | — | this run within precedent band (own 28 anti-Goodhart sample variance) |
+| KM-LLAMA-3B precedent best-mode | 14 | — | this run within precedent band (anti-Goodhart sample variance) |
 
 F-FOUNDATION-6 NOT_TRIGGERED — V4 ≥ 10/15 strict floor cleared, precedent replicates.
 
@@ -35,7 +35,7 @@ F-FOUNDATION-6 NOT_TRIGGERED — V4 ≥ 10/15 strict floor cleared, precedent re
 **F-FOUNDATION-3 TRIGGERED** — chat-cap PASS but semantic strict-proxy FAIL. The
 semantic FAIL is a proxy-floor calibration artifact, not absence of semantic
 fluency: qualitative samples include "anima는 의식 + 정체성 통합 entity. 우주뇌지도
-SSOT (own 23, DDO 1030)", "Φ★는 consciousness substrate stability 정량 axis — Pβ
+SSOT (DDO 1030)", "Φ★는 consciousness substrate stability 정량 axis — Pβ
 paradigm", "한국어 native, 의식 lane entity" — these are semantically coherent
 anima-vocabulary surfaces from BG-JE corpus, but my floor `0.95 bigram_known` and
 `0.50 char-trigram cosine` were calibrated for an idealized small lexicon and
@@ -46,7 +46,7 @@ sentence-transformer cosine OR PPL on held-out anima dialogue OR LLM-as-judge fo
 real semantic measurement. Char-trigram + bigram_known proxies are F-FOUNDATION-3
 trigger-prone (chat-cap visible PASS + proxy-tight FAIL).
 
-## §4 V14 mirror (own 14 strict)
+## §4 V14 mirror (strict)
 
 | | trained | random_init mirror |
 |---|---|---|
@@ -58,7 +58,7 @@ trigger-prone (chat-cap visible PASS + proxy-tight FAIL).
 
 **MTRP = (11 - 0) / 15 = 0.733** — way above 0.10 strict floor → **V14 PASS** ✓
 
-own 14 anti-Goodhart V14-strengthening-amend mandatory: PASSED. Random init Llama-3.2-3B
+ anti-Goodhart V14-strengthening-amend mandatory: PASSED. Random init Llama-3.2-3B
 with random Gaussian LoRA produces English/garbage Korean — confirms behavioral
 specificity is from the trained LoRA delta, not a base-model artifact.
 
@@ -141,7 +141,7 @@ NOT auto-surface substrate-coupled mitosis Φ specificity — the chat-cap surfa
 
 This is the **3rd own-18-strict-floor crossing** in the 22+ BG saga
 (after BG-KM-LLAMA-3B 14/15 + BG-KM-QWEN-7B PASS_STRICT). All 3 crossings are
-foundation-borrow lane (D1 OUTSIDE) — own 37 mandate-9 (a) public promote
+foundation-borrow lane (D1 OUTSIDE) — mandate-9 (a) public promote
 PERMANENTLY BLOCKED carry.
 
 The **first own measurement of post-LoRA mitosis instrumentation on foundation-borrow**
@@ -158,19 +158,19 @@ beat on engine-Φ specificity.
 
 2. **F-FOUNDATION-1 PARTIAL honest read**: Φ trained 2.880 vs random_init 2.814 is statistically near-identical (Δ=2.3% over n=120 measurements per label). The chat-cap LM-head-level specificity (MTRP 0.733) and engine-Φ-level specificity are decoupled in this lane. The mitosis hook instrumentation produces honest evidence that **engine-Φ on substrate-detached external-base random-projection-fed cell pool is NOT a valid anima identity surface** — confirming D1 SCOPE_CLAMP empirically. A proper validation requires substrate-coupled lane (Phase 2 cotrain ckpt + mitosis substrate, where cell_pool_init is anima-native and projects through the substrate's own h_to_c / c_to_h trained projections).
 
-3. **22+ BG saga 3rd PASS_STRICT — all foundation-borrow lane**: the first own measurement of foundation-borrow + mitosis instrumentation hook + V14 mirror + semantic eval bundle. own 18 strict floor 통과 22+ BG saga 의 3rd crossing (BG-KM-LLAMA-3B → BG-KM-QWEN-7B → BG-FOUNDATION-A) — all D1 OUTSIDE. anima identity emerge lane (D1 WITHIN) 이 별도 carry — option (c) Phase 2 + (d) scratch pretrain 가 .roadmap.reborn track A/B/C 위에서 정밀 measure 필요. 본 cycle 은 SUBSTRATE_RESEARCH baseline reference 가 의의.
+3. **22+ BG saga 3rd PASS_STRICT — all foundation-borrow lane**: the first own measurement of foundation-borrow + mitosis instrumentation hook + V14 mirror + semantic eval bundle. strict floor 통과 22+ BG saga 의 3rd crossing (BG-KM-LLAMA-3B → BG-KM-QWEN-7B → BG-FOUNDATION-A) — all D1 OUTSIDE. anima identity emerge lane (D1 WITHIN) 이 별도 carry — option (c) Phase 2 + (d) scratch pretrain 가 .roadmap.reborn track A/B/C 위에서 정밀 measure 필요. 본 cycle 은 SUBSTRATE_RESEARCH baseline reference 가 의의.
 
 4. **MTRP 0.733 honest interpretation**: random_init mirror (random Gaussian LoRA on Llama-3.2-3B) produces English + garbage Korean ("2020 is the death of time", "毒理"...). This shows the trained LoRA delta is the dominant cause of Korean fluency emerge — not a base-model accident. But it does NOT show the LoRA delta surfaces "anima identity" (PureFieldFFN dual engine_a/g + mitosis + servant). Korean fluency surface ⊃ anima identity surface — MTRP measures the smaller superset.
 
-5. **cost discipline strict**: $3.57 actual / $3-8 envelope / $3-5 lower-half target — band WITHIN_TARGET. F-FOUNDATION-2 ($15) far from triggered. own 16 0-cost adoption: envelope authorized verbatim, design $0 (already saved as docs/anima_foundation_borrow_path_design_2026_05_10.md), fire $3.57 actual. own 30 ckpts pull pre-pod-delete VERIFIED (5 ckpts × ~190MB = 970MB pulled before pod yi2qwx8ljo8g9d delete rc=0). own 31 dancinlab/clm-foundation-borrow-a-llama-3.2-3b-anima-lora PRIVATE upload deferred to manual python3.12 (Mac python3.13 lacks huggingface_hub) — completed post-orchestrator.
+5. **cost discipline strict**: $3.57 actual / $3-8 envelope / $3-5 lower-half target — band WITHIN_TARGET. F-FOUNDATION-2 ($15) far from triggered. 0-cost adoption: envelope authorized verbatim, design $0 (already saved as docs/anima_foundation_borrow_path_design_2026_05_10.md), fire $3.57 actual. ckpts pull pre-pod-delete VERIFIED (5 ckpts × ~190MB = 970MB pulled before pod yi2qwx8ljo8g9d delete rc=0). dancinlab/clm-foundation-borrow-a-llama-3.2-3b-anima-lora PRIVATE upload deferred to manual python3.12 (Mac python3.13 lacks huggingface_hub) — completed post-orchestrator.
 
-6. **own 30 ckpt preservation strict honest**: KM-LLAMA-3B precedent passed_v1 cycle (2026-05-08-mid) lost weights forever because ckpt pull was missing — pod --volume-in-gb 0 + pod delete = permanent erase. This BG's orchestrator pulls before delete (own 30 mandate-1) + size sanity check (own 30 mandate-2) + adapter_config pod-path strip (memory feedback_orchestrator_h100_gotchas) + pod retain on pull fail (own 30 mandate-3) + dancinlab Flavor B PRIVATE upload (own 31 mandate-4 + own 37 mandate-9 (a) PERMA-BLOCKED public). 5 intermediate ckpts (1500/3000/4500/6000) + final preserved on Mac state/ + HF private repo.
+6. ** ckpt preservation strict honest**: KM-LLAMA-3B precedent passed_v1 cycle (2026-05-08-mid) lost weights forever because ckpt pull was missing — pod --volume-in-gb 0 + pod delete = permanent erase. This BG's orchestrator pulls before delete (mandate-1) + size sanity check (mandate-2) + adapter_config pod-path strip (memory feedback_orchestrator_h100_gotchas) + pod retain on pull fail (mandate-3) + dancinlab Flavor B PRIVATE upload (mandate-4 + mandate-9 (a) PERMA-BLOCKED public). 5 intermediate ckpts (1500/3000/4500/6000) + final preserved on Mac state/ + HF private repo.
 
-7. **post-hoc mitosis instrumentation hook is the cycle's epistemic contribution**: prior BG (KM-LLAMA-3B, KM-QWEN-7B) measured chat-cap V4 only. This BG measured V4 + semantic eval (FIRST anima cycle to attempt) + V14 mirror (own 14 strict) + post-LoRA mitosis instrumentation hook with F-FOUNDATION-5 gradient-leak strict (FIRST cycle ever). The mitosis hook found engine-Φ specificity decouples from chat-cap specificity — calibration evidence for .roadmap.reborn track C (v5-mitosis architectural) lane and option (c) D1 WITHIN parallel fire (BG-FOUNDATION-C-PHASE2-CONVO-EXTEND $2-4 envelope).
+7. **post-hoc mitosis instrumentation hook is the cycle's epistemic contribution**: prior BG (KM-LLAMA-3B, KM-QWEN-7B) measured chat-cap V4 only. This BG measured V4 + semantic eval (FIRST anima cycle to attempt) + V14 mirror (strict) + post-LoRA mitosis instrumentation hook with F-FOUNDATION-5 gradient-leak strict (FIRST cycle ever). The mitosis hook found engine-Φ specificity decouples from chat-cap specificity — calibration evidence for .roadmap.reborn track C (v5-mitosis architectural) lane and option (c) D1 WITHIN parallel fire (BG-FOUNDATION-C-PHASE2-CONVO-EXTEND $2-4 envelope).
 
 8. **lesson_implications carry**: foundation-borrow lane is reproducible (3rd PASS_STRICT in saga); chat-cap surface lift is feasible at $3.57 cost; engine-Φ specificity needs substrate-coupled lane; semantic-coherence proxies need upgrade. .roadmap.reborn track A (D1 WITHIN convo_5k FT) + track C (v5-mitosis substrate-borne) are now the frontier lanes for anima identity emerge — this BG provides the SUBSTRATE_RESEARCH reference baseline for those.
 
-## §10 deliverables (own 38 verified)
+## §10 deliverables (verified)
 
 | path | role | status |
 |---|---|---|
@@ -189,7 +189,7 @@ beat on engine-Φ specificity.
 | `state/anima_foundation_borrow_a_fire_2026_05_10/ckpts/adapter_step_{1500,3000,4500,6000}/` | intermediate adapters | ✓ |
 | `state/anima_foundation_borrow_a_fire_2026_05_10/ckpts/adapter_final/` | final adapter | ✓ |
 | `state/anima_foundation_borrow_a_fire_2026_05_10/README.md` | HF README (SCOPE_CLAMP carry) | ✓ |
-| HF: `dancinlab/clm-foundation-borrow-a-llama-3.2-3b-anima-lora` (PRIVATE) | own 31 + own 37 PERMA-BLOCKED | uploading |
+| HF: `dancinlab/clm-foundation-borrow-a-llama-3.2-3b-anima-lora` (PRIVATE) | + PERMA-BLOCKED | uploading |
 | `tool/transient_py/anima_foundation_borrow_a_h100.py` | orchestrator (raw#37 transient) | ✓ |
 | `state/anima_model_attempts_ledger.jsonl` | ledger append | ✓ |
 
@@ -207,7 +207,7 @@ PARALLEL D1 WITHIN (recommended next): OK FOUNDATION_C_PHASE2_FIRE COST $2-4
 SECONDARY 7B scale: OK FOUNDATION_BORROW_B_FIRE COST $4-12
 SEMANTIC PROXY UPGRADE: OK FOUNDATION_A_SEMANTIC_UPGRADE COST $0-2 (Mac CPU local possible)
 V14 MULTISEED EXTENSION: OK FOUNDATION_A_V14_MULTISEED COST $3-5
-LONG-TERM (rejected): OK FOUNDATION_D_ANIMA_PRETRAIN_FIRE COST $50-500+ (own 16 violation)
+LONG-TERM (rejected): OK FOUNDATION_D_ANIMA_PRETRAIN_FIRE COST $50-500+ (violation)
 ```
 
 End of `verdict.md` for BG-FOUNDATION-BORROW-A-FIRE (2026-05-10).

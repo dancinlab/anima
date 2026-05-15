@@ -38,7 +38,7 @@ anima V1 representation이 IIT-Φ_mip (minimum information partition) measuremen
 
 - legacy commit: 6ac4cbe9
 - sister H: H_011 (IIT geometry), H_019 (SELF-EVO v4-v5), H_004 (consciousness hard problem)
-- own: own 21
+- own:
 - literature: Tononi (2014) IIT4 — Φ_mip definition
 
 ## Honest Limits

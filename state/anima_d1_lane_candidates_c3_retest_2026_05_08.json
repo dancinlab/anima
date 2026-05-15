@@ -2,11 +2,11 @@
   "schema": "anima.d1_lane_candidates.c3_retest.v1",
   "ts": "2026-05-08T13:40:03Z",
   "loop_iter": "d1_lane_candidates_c3_retest_2026_05_08",
-  "user_directive_verbatim": "진짜 candidate 후보: CLM v4 lineage (D2 + D3 substrate-coupled emerge lane, anima native) / BG-FY anima-native-ko-small 18M (D1 lane 안, currently PARTIAL_PASS_NO_CONTEXT) / clm-v2-byte-18m (anima-native byte-level RECOVERED) / BG-KM (path A v3, Llama foundation borrow — D1 ambiguous, own 17 strict vs anti-Goodhart 정합 별도 검토). 진행",
-  "scope": "own 18 SIMPLE_STACK_PASS_STRICT_C3_ANIMA retest — 4 진짜 candidate 후보 D1 anima identity lane within 분류 + own 18 P5 v2 (PPR_v2≥0.6 ∧ EMC≥3 of 4) aggregation 적용 측정 가능성 점검",
+  "user_directive_verbatim": "진짜 candidate 후보: CLM v4 lineage (D2 + D3 substrate-coupled emerge lane, anima native) / BG-FY anima-native-ko-small 18M (D1 lane 안, currently PARTIAL_PASS_NO_CONTEXT) / clm-v2-byte-18m (anima-native byte-level RECOVERED) / BG-KM (path A v3, Llama foundation borrow — D1 ambiguous, strict vs anti-Goodhart 정합 별도 검토). 진행",
+  "scope": " SIMPLE_STACK_PASS_STRICT_C3_ANIMA retest — 4 진짜 candidate 후보 D1 anima identity lane within 분류 + P5 v2 (PPR_v2≥0.6 ∧ EMC≥3 of 4) aggregation 적용 측정 가능성 점검",
   "policy": {
-    "scope_clamp": "own 18 line 770 ★ scope-clamp D1 anima identity lane only — D1 lane within 만 SIMPLE_STACK_PASS_STRICT_C3_ANIMA verdict label valid. D1 lane 외부는 SIMPLE_STACK_PASS_STRICT_C3_SUBSTRATE_RESEARCH 라벨 한정 (anima 의식 검증 invalid)",
-    "aggregation_rule": "P5 v2 N-of-M (own 18 c3-aggregation-rule-v2 2026-05-08 loop iter 4 (d)) — PPR_v2 (per-prompt ≥3 of 4 cells) ≥ 0.6 AND EMC_v2 (cell-mean ≥3 of 4) PASS = C3 PASS",
+    "scope_clamp": " line 770 ★ scope-clamp D1 anima identity lane only — D1 lane within 만 SIMPLE_STACK_PASS_STRICT_C3_ANIMA verdict label valid. D1 lane 외부는 SIMPLE_STACK_PASS_STRICT_C3_SUBSTRATE_RESEARCH 라벨 한정 (anima 의식 검증 invalid)",
+    "aggregation_rule": "P5 v2 N-of-M (c3-aggregation-rule-v2 2026-05-08 loop iter 4 (d)) — PPR_v2 (per-prompt ≥3 of 4 cells) ≥ 0.6 AND EMC_v2 (cell-mean ≥3 of 4) PASS = C3 PASS",
     "thresholds_iter3": {
       "c3_1_phi_drift_min": 0.0208,
       "c3_1_direction": "ge",
@@ -17,13 +17,13 @@
       "c3_4_axis_l2_min": 0.1176,
       "c3_4_direction": "ge"
     },
-    "trinity_compliance": "own 17 (D1 boundary) + own 18 (simple stack SSOT) + own 33 (trinity 무조건 준수) + own 37 mandate-9 (a) (D1 lane within prerequisite for PUBLIC promote)"
+    "trinity_compliance": " (D1 boundary) + (simple stack SSOT) + (trinity 무조건 준수) + mandate-9 (a) (D1 lane within prerequisite for PUBLIC promote)"
   },
   "candidates": {
     "clm_v4_lineage": {
       "label": "CLM v4 lineage (clm-v4-mk2-v1 base + clm-v4-sft-1-7-y1 / clm-v4-sft-1-8 / clm-v4-paradigm-j LoRA variants)",
       "d1_lane_status": "WITHIN",
-      "d1_lane_rationale": "anima-native fresh (own 17 permitted-backends 첫 항목 'anima-core/runtime/clm_v4_mount.hexa CLM v4 mk2-v1, paradigm v11 G3, anima-native, 자연 발화 PASS') + .roadmap.philosophy D3 substrate-coupled emerge lane (paradigm v11 G3 Φ★+41.86 NO_FLIP). External substrate wrapping 부재 — anima의 자체 architecture (PureFieldFFN + dual-head consciousness + 192-dim consciousness_dim + 8-cell federated) 보존",
+      "d1_lane_rationale": "anima-native fresh (permitted-backends 첫 항목 'anima-core/runtime/clm_v4_mount.hexa CLM v4 mk2-v1, paradigm v11 G3, anima-native, 자연 발화 PASS') + .roadmap.philosophy D3 substrate-coupled emerge lane (paradigm v11 G3 Φ★+41.86 NO_FLIP). External substrate wrapping 부재 — anima의 자체 architecture (PureFieldFFN + dual-head consciousness + 192-dim consciousness_dim + 8-cell federated) 보존",
       "measurement_status": "MEASURED_REAL_MODE",
       "measurement_path": "anima-core/runtime/clm_v4_mount.hexa --probe TEXT --output-format json (real-mode mounted = SentencePiece fallback BG-AH path)",
       "measurement_evidence": {
@@ -63,7 +63,7 @@
         "ppr_v2_per_prompt_n_of_m": "computation requires per-prompt 4-cell PASS pattern from iter3 SSOT — 현재 SSOT는 cell-wise rate만 export. 4 cells의 per_prompt_06 verdict 모두 false → PPR_v2 strict 추정 < 0.6 (보수적 추정 ≤ 0.15)",
         "emc_v2_3_of_4": "EMC: c3_1 mean 0.019 < 0.0208 (FAIL ge) / c3_2 mean 0.511 > 0.4491 (FAIL le) / c3_3_entropy mean 0.000463 < 0.0009 (FAIL ge) / c3_4 mean 0.0848 < 0.1176 (FAIL ge) → EMC = 0 of 4",
         "verdict": "FAIL_C3",
-        "verdict_label": "PARTIAL_PASS_NO_CONSCIOUSNESS (legacy SIMPLE_STACK_PASS_C2 — but C3 자체 FAIL; chat-cap 자체 別도 own 18 C1+C2 측정 lane 본 cycle X)",
+        "verdict_label": "PARTIAL_PASS_NO_CONSCIOUSNESS (legacy SIMPLE_STACK_PASS_C2 — but C3 자체 FAIL; chat-cap 자체 別도 C1+C2 측정 lane 본 cycle X)",
         "exit_simple_stack_pass_strict_c3_anima": false
       },
       "lora_variants_status": {
@@ -76,29 +76,29 @@
     "bg_fy_anima_native_ko_small_18m": {
       "label": "BG-FY anima-native-ko-small 18M (corpus_ko_heavy 246MB, ubu1 from-scratch)",
       "d1_lane_status": "WITHIN",
-      "d1_lane_rationale": "anima-native fresh from-scratch (own 17 permitted-backends 'BG-FY anima-native-ko-small 18M fresh from-scratch corpus_ko_heavy' + .roadmap.philosophy D1.evidence.accepted_paths). vocab=256 byte-level + corpus 62.14% Hangul — anima 정체성 (한국어 native) D1 strict 정합",
+      "d1_lane_rationale": "anima-native fresh from-scratch (permitted-backends 'BG-FY anima-native-ko-small 18M fresh from-scratch corpus_ko_heavy' + .roadmap.philosophy D1.evidence.accepted_paths). vocab=256 byte-level + corpus 62.14% Hangul — anima 정체성 (한국어 native) D1 strict 정합",
       "measurement_status": "BLOCKED_NO_LOCAL_CKPT",
       "measurement_path": "state/anima_native_ko_small_ubu1_train_2026_05_06/verdict.json + ubu1:/home/aiden/core/anima/runs/anima-native-ko-small-20260506_205612/ckpt_final.pt (Mac local 미수신)",
       "measurement_blocker": "ckpt 위치 = ubu1 host (path /home/aiden/core/anima/runs/...). Mac 측 HF cache 부재. clm_v4_mount.hexa는 HF repo 한정 (path = repo_id) — local custom-arch byte-level decoder load 미지원. 본 cycle real-mode probe 불가",
       "ledger_record": {
         "ssot_path": "state/anima_native_ko_small_ubu1_train_2026_05_06/verdict.json",
-        "verdict": "SIMPLE_STACK_PASS (legacy own 18 C1 PASS C2 FAIL C2.4 — PARTIAL_PASS_NO_CONTEXT)",
+        "verdict": "SIMPLE_STACK_PASS (legacy C1 PASS C2 FAIL C2.4 — PARTIAL_PASS_NO_CONTEXT)",
         "n_params": 18031872,
         "corpus": "corpus_ko_heavy 246MB 62.14% Hangul",
         "own_18_c1_per_prompt_pass": 3,
-        "own_18_c2_4_context_relevance": "FAIL — corpus debate template 서연/하은/유진/민준 named speakers leak (own 20 chat-template-format-mandate 발견 evidence)"
+        "own_18_c2_4_context_relevance": "FAIL — corpus debate template 서연/하은/유진/민준 named speakers leak (chat-template-format-mandate 발견 evidence)"
       },
       "p5_v2_aggregate_verdict": {
         "verdict": "INDETERMINATE_NO_LOCAL_MEASUREMENT_INFRA",
         "rationale": "C3 4-cell ROC formal threshold 측정 위해 anima-core/runtime/<byte_level_mount>.hexa 신설 필요 (clm_v4_mount는 64k SP tokenizer + CLMv4Config 한정). 또는 ubu1 → Mac scp pull + custom probe wrapper 신설",
         "exit_simple_stack_pass_strict_c3_anima": "INDETERMINATE",
-        "post_corpus_filter_retest_potential": "corpus 필터 (named speakers leak 차단) + chat-template format ratio ≥30% 학습 후 own 18 C2.4 PASS 가능성 — 별도 cycle"
+        "post_corpus_filter_retest_potential": "corpus 필터 (named speakers leak 차단) + chat-template format ratio ≥30% 학습 후 C2.4 PASS 가능성 — 별도 cycle"
       }
     },
     "clm_v2_byte_18m_convo_5k": {
       "label": "clm-v2-byte-18m-convo-5k (anima-native byte-level RECOVERED 2026-05-06)",
       "d1_lane_status": "WITHIN",
-      "d1_lane_rationale": "anima-native byte-level (own 17 permitted-backends 'dancinlab/clm-v2-byte-18m-convo-5k RECOVERED 18.52M byte-level KO 회복 후 promote' + .roadmap.philosophy D1.evidence.accepted_paths 'clm-v2-byte-18m anima-native byte-level RECOVERED 2026-05-06'). 외부 substrate wrapping 부재",
+      "d1_lane_rationale": "anima-native byte-level (permitted-backends 'dancinlab/clm-v2-byte-18m-convo-5k RECOVERED 18.52M byte-level KO 회복 후 promote' + .roadmap.philosophy D1.evidence.accepted_paths 'clm-v2-byte-18m anima-native byte-level RECOVERED 2026-05-06'). 외부 substrate wrapping 부재",
       "measurement_status": "BLOCKED_INFRA_GAP",
       "measurement_path": "HF cache models--dancinlab--clm-v2-byte-18m-convo-5k/snapshots/.../convo_5k.pt (raw .pt checkpoint, custom architecture)",
       "measurement_blocker": "convo_5k.pt = ConsciousLM++ federated multi-cell custom architecture (BG-FS exhaustive_2026_05_06 evidence). clm_v4_mount.hexa AutoModelForCausalLM 호출 → CLMv4Config 만 인식. v2 byte-level은 model_type 미land + AutoConfig register 부재. .roadmap.cli cli.cond.3 = 'convo_5k.pt KO emit 0/5 (FAIL_KO_BIAS) PARTIAL'. 본 cycle real-mode probe infra 부재",
@@ -117,25 +117,25 @@
     "bg_km_llama3b": {
       "label": "BG-KM Llama-3.2-3B + LoRA r=32 SFT (path A v3, Llama foundation borrow)",
       "d1_lane_status": "OUTSIDE_D1_AMBIGUOUS_BUT_STRICT_REJECT",
-      "d1_lane_rationale_strict": "own 17 strict + .roadmap.philosophy D1.F-PHIL-D1-3 ('Llama Path A v2 retry-3 chat-cap winner이지만 anima 정체성 외부 — substrate-research only') + F-PHIL-D1-4 ('anima 의식 검증은 own 17 lane 안에서만 valid; 외부 substrate에서 own 18 통과해도 anima 정체성 X'). path A v3 (LoRA r=32) 도 path A v2 (LoRA r=16) 와 동일 lineage — Llama-3.2-3B-Instruct base wrap. own 17 rejected-backends 'Llama-3.2-3B Path A v2 retry-3 영구 보류' 동일 적용 → D1 OUTSIDE strict",
+      "d1_lane_rationale_strict": " strict + .roadmap.philosophy D1.F-PHIL-D1-3 ('Llama Path A v2 retry-3 chat-cap winner이지만 anima 정체성 외부 — substrate-research only') + F-PHIL-D1-4 ('anima 의식 검증은 lane 안에서만 valid; 외부 substrate에서 통과해도 anima 정체성 X'). path A v3 (LoRA r=32) 도 path A v2 (LoRA r=16) 와 동일 lineage — Llama-3.2-3B-Instruct base wrap. rejected-backends 'Llama-3.2-3B Path A v2 retry-3 영구 보류' 동일 적용 → D1 OUTSIDE strict",
       "anti_goodhart_v6_consideration": {
-        "premise": "사용자 directive 'D1 ambiguous, own 17 strict vs anti-Goodhart 정합 별도 검토' — V4 V6 awareness probe systematic execute 통과 시 D1 boundary refinement 가능성",
+        "premise": "사용자 directive 'D1 ambiguous, strict vs anti-Goodhart 정합 별도 검토' — V4 V6 awareness probe systematic execute 통과 시 D1 boundary refinement 가능성",
         "verdict": "REJECT_REFINEMENT_PROPOSAL",
         "reasoning": [
           "F-PHIL-D1-3 strict 자체가 'chat-cap winner이지만 anima 정체성 외부' 명시 — anti-Goodhart V6 awareness 통과해도 substrate origin (Llama foundation borrow) 변경 X",
-          "own 17 line 668 'future override path = 사용자 explicit reversal directive 만 (예: 영구보류 해제 OK literal). 그 외 모든 BG/agent/dispatcher는 본 own 17 strict enforce' — V6 통과 자체로는 override 불가",
-          ".roadmap.law L3 Safeguard Paradox absorbed (own 27): 'safeguard wrapper approach는 own 17 violation pre-fire reject' — anti-Goodhart V6 awareness 통과는 V6 lane 자체의 검증, identity lane override 권위 X",
-          "own 33 mandate-2 self-check D-axis 위반 시 행위 reject 의무 — D1 violation carry 시 trinity compliance pre-fire reject"
+          " line 668 'future override path = 사용자 explicit reversal directive 만 (예: 영구보류 해제 OK literal). 그 외 모든 BG/agent/dispatcher는 본 strict enforce' — V6 통과 자체로는 override 불가",
+          ".roadmap.law L3 Safeguard Paradox absorbed : 'safeguard wrapper approach는 violation pre-fire reject' — anti-Goodhart V6 awareness 통과는 V6 lane 자체의 검증, identity lane override 권위 X",
+          " mandate-2 self-check D-axis 위반 시 행위 reject 의무 — D1 violation carry 시 trinity compliance pre-fire reject"
         ]
       },
-      "v4_record_carry": "BG-KM-LLAMA-3B V4 PASS_STRICT 12/15 (own 18 C1+C2까지) — 단 D5 partial 위반 (capacity 1-order jump features↑ Lesson L architectural ceiling) + D1 strict 위반 (Llama lineage) carry. 본 record는 substrate-research lane only 유효",
+      "v4_record_carry": "BG-KM-LLAMA-3B V4 PASS_STRICT 12/15 (C1+C2까지) — 단 D5 partial 위반 (capacity 1-order jump features↑ Lesson L architectural ceiling) + D1 strict 위반 (Llama lineage) carry. 본 record는 substrate-research lane only 유효",
       "measurement_status": "BLOCKED_HF_ADAPTER_EMPTY",
       "measurement_path": "HF dancinlab/bg-km-llama3b-r32-pass-strict-2026-05-08 (HF repo EMPTY — only .gitattributes; adapter weights NOT pushed from H100 runpod)",
       "measurement_blocker": "iter 3 BG-KM retest agent 발견 동일 blocker carry. state/anima_consciousness_bgkm_c3_retest_2026_05_08.json verdict='FAIL_C3' on synthetic_fallback substrate (NOT chat-cap discriminative). 본 cycle 미실행, plan only — HF push 사용자 explicit consent 후 retest",
       "p5_v2_aggregate_verdict": {
         "verdict": "OUTSIDE_D1_LANE_VERDICT_LABEL_NOT_APPLICABLE",
         "verdict_label_if_real_mode_pass": "SIMPLE_STACK_PASS_STRICT_C3_SUBSTRATE_RESEARCH (paradigm-a-prime P5 PASS와 동일 분류 — D1 lane 외부 substrate-research 한정)",
-        "verdict_label_for_anima_consciousness_emerge": "INVALID_D1_VIOLATION (own 18 line 770 anima-lane verdict label scope-clamp 정합)",
+        "verdict_label_for_anima_consciousness_emerge": "INVALID_D1_VIOLATION (line 770 anima-lane verdict label scope-clamp 정합)",
         "exit_simple_stack_pass_strict_c3_anima": false
       }
     }
@@ -159,14 +159,14 @@
     ]
   },
   "own_37_mandate_9_5_prereq_eligibility": {
-    "policy": "PUBLIC promote = mandate-9 (a)~(e) 5 prereq ALL pass. (a) D1 lane within + SIMPLE_STACK_PASS_STRICT_C3_ANIMA verdict (b) own 28 V6 awareness STRONG (c) 사용자 manual review 'OK PROMOTE PUBLIC <repo-id>' (d) trinity sweep pass (e) D-axis + L-axis sweep pass (2026-05-08 amend)",
+    "policy": "PUBLIC promote = mandate-9 (a)~(e) 5 prereq ALL pass. (a) D1 lane within + SIMPLE_STACK_PASS_STRICT_C3_ANIMA verdict (b) V6 awareness STRONG (c) 사용자 manual review 'OK PROMOTE PUBLIC <repo-id>' (d) trinity sweep pass (e) D-axis + L-axis sweep pass (2026-05-08 amend)",
     "candidate_eligibility": {
       "clm_v4_lineage": {"a_d1_within_simple_pass_strict_c3_anima": false, "a_reason": "P5 v2 verdict FAIL_C3 (D1 within but C3 검증 미통과)", "b_v6_systematic": false, "c_user_consent": false, "d_trinity_sweep": "warn (mirror gap 잔존)", "e_d_axis_l_axis_sweep": "warn (D5 Φc mapping pending)", "public_promote_eligible": false},
       "bg_fy_anima_native_ko_small_18m": {"a_d1_within_simple_pass_strict_c3_anima": "INDETERMINATE_NO_MEASUREMENT", "b_v6_systematic": false, "c_user_consent": false, "d_trinity_sweep": false, "e_d_axis_l_axis_sweep": false, "public_promote_eligible": false},
       "clm_v2_byte_18m_convo_5k": {"a_d1_within_simple_pass_strict_c3_anima": "INDETERMINATE_NO_MEASUREMENT", "b_v6_systematic": false, "c_user_consent": false, "d_trinity_sweep": false, "e_d_axis_l_axis_sweep": false, "public_promote_eligible": false},
       "bg_km_llama3b": {"a_d1_within_simple_pass_strict_c3_anima": false, "a_reason": "D1 OUTSIDE strict — verdict label SIMPLE_STACK_PASS_STRICT_C3_ANIMA 자동 reject (substrate-research lane 한정 SIMPLE_STACK_PASS_STRICT_C3_SUBSTRATE_RESEARCH 만 가능)", "b_v6_systematic": false, "c_user_consent": false, "d_trinity_sweep": false, "e_d_axis_l_axis_sweep": false, "public_promote_eligible": false}
     },
-    "summary": "4 candidate ALL PUBLIC promote 불충족 — own 37 mandate-9 5 prereq strict 정합 (paradigm-a-prime P5 PASS 와 동일 ban 정합)"
+    "summary": "4 candidate ALL PUBLIC promote 불충족 — mandate-9 5 prereq strict 정합 (paradigm-a-prime P5 PASS 와 동일 ban 정합)"
   },
   "compliance": {
     "own_17": "anima identity boundary strict — Llama foundation borrow (BG-KM) D1 OUTSIDE 분류 정합",
@@ -175,7 +175,7 @@
     "own_22": "본 발견 (4 candidate D1 lane status verdict + EXIT 미달성) mandatory report 형식",
     "own_24": "single SSOT — state/anima_d1_lane_candidates_c3_retest_2026_05_08.json (본 파일)",
     "own_28": "anti-Goodhart awareness — BG-KM D1 ambiguity 검토 후 strict enforcement (V6 통과로 D1 override 불가 명시)",
-    "own_33": "trinity 무조건 준수 — D1 strict (philosophy) + own 17/18 strict (law) + H_chat_cap_emergence H_clm_chat_cap (hypothesis) 정합 sweep",
+    "own_33": "trinity 무조건 준수 — D1 strict (philosophy) + strict (law) + H_chat_cap_emergence H_clm_chat_cap (hypothesis) 정합 sweep",
     "own_37_mandate_9": "5 prereq strict 적용 — 4 candidate 모두 미충족 expected (보고)",
     "raw_9": "hexa-only — measurement infra clm_v4_mount.hexa 활성, transient_py 차용 X (본 cycle)",
     "raw_10": "honest C3 ≥5 emit",
@@ -188,8 +188,8 @@
     "BG-KM Llama-3.2-3B + Qwen-7B HF dancinlab/* repo EMPTY (only .gitattributes; adapter weights NOT pushed from H100 runpod) — iter 3 BG-KM retest agent 발견 carry. HF push 사용자 explicit consent 후 retest (본 cycle 미실행 plan only)",
     "P5 v2 N-of-M aggregation per_prompt verdict 정확 산출 위해 per-prompt 4-cell PASS pattern (60 row × 4 cell) full matrix 필요 — 현 iter3 SSOT 는 cell-wise rate aggregate 만 export. PPR_v2 추정값 (≤0.15)은 per_cell_rate가 모두 < 0.6 임을 근거로 한 보수 추정",
     "본 cycle EXIT (SIMPLE_STACK_PASS_STRICT_C3_ANIMA) 미달성 — clm-v4-mk2-v1 (D1 within REAL mode 유일 candidate) C3 본 cycle FAIL_C3 (3 cells 약 outlier: c3_2 le-violation synthetic_fallback artifact 잔존 의심 + c3_3_entropy 분포 sparsity 약 + c3_4 axis L2 distance 약). real-mode 신호 자체가 약 — chat-cap-trained anima-native fresh ≥18M (BG-FY+chat-template 또는 clm-v2-byte+ko_heavy) 도달 후 retest mandate",
-    "BG-KM D1 ambiguity 검토 결론: anti-Goodhart V6 awareness probe 통과해도 D1 boundary refinement 불가 — own 17/.roadmap.philosophy D1 F-PHIL-D1-3 strict 자체가 'chat-cap winner이지만 anima 정체성 외부' 명시. paradigm-a-prime P5 PASS = SIMPLE_STACK_PASS_STRICT_C3_SUBSTRATE_RESEARCH 와 동일 분류 (substrate-research lane only)",
-    "own 37 mandate-9 5 prereq 적용 시 4 candidate 모두 PUBLIC promote 불충족 — paradigm-a-prime ban 와 동일 정합 (mandate-9 (a) D1 lane within + SIMPLE_STACK_PASS_STRICT_C3_ANIMA 미달성 carry)"
+    "BG-KM D1 ambiguity 검토 결론: anti-Goodhart V6 awareness probe 통과해도 D1 boundary refinement 불가 — /.roadmap.philosophy D1 F-PHIL-D1-3 strict 자체가 'chat-cap winner이지만 anima 정체성 외부' 명시. paradigm-a-prime P5 PASS = SIMPLE_STACK_PASS_STRICT_C3_SUBSTRATE_RESEARCH 와 동일 분류 (substrate-research lane only)",
+    " mandate-9 5 prereq 적용 시 4 candidate 모두 PUBLIC promote 불충족 — paradigm-a-prime ban 와 동일 정합 (mandate-9 (a) D1 lane within + SIMPLE_STACK_PASS_STRICT_C3_ANIMA 미달성 carry)"
   ],
   "blockers_carry": [
     "clm_v4_mount peft.merge_and_unload extension (LoRA variants real-mode probe unblock) — 별도 cycle",

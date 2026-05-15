@@ -28,8 +28,8 @@ Legacy file: `docs/hypotheses/cx/CLM-V2-OPTIMAL-CONFIG.md` + companion `CLM-V2-F
 ## Cross-Links
 
 - legacy: cx/CLM-V2-{OPTIMAL-CONFIG,FINAL-RESULTS,PSI-FIX,SWEEP}.md
-- sister: H_035 (CLM-V2 series absorb), CLM v4 (own 19/20)
-- own: own 21
+- sister: H_035 (CLM-V2 series absorb), CLM v4
+- own:
 
 ## Honest Limits
 

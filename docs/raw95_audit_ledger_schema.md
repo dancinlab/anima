@@ -131,7 +131,7 @@ Helpers currently registered in `state/audit/anima_canonical_helper_lock.jsonl` 
 
 1. `tool/anima_cmt.hexa`
 2. `tool/anima_runpod_orchestrator.hexa`
-3. `tool/compute_resource_failure_lint.hexa` (own 4 L2)
+3. `tool/compute_resource_failure_lint.hexa` (L2)
 4. `tool/discovery_auto_absorption_lint.hexa`
 5. `tool/kick_result_ai_native_lint.hexa`
 6. `tool/kick_with_trailer_wrapper.hexa`

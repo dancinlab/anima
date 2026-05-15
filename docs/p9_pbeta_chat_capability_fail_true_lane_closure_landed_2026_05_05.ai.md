@@ -65,7 +65,7 @@ These are not isolated worst cases — they are the first three sequential recor
 
 - **C4 — #115 is architectural rather than training-recipe.** Lifting CLM v4 to chat capability would require either CLM v5 redesign for autoregressive instruction-following (not a training change but an architecture change) OR a much larger SFT corpus pass directly on CLM v4 base (pre-Paradigm-D, not via Φ★ distill). Neither is in scope for this BG; both are deferred.
 
-- **C5 — Pβ savepoint retention may need HF Hub migration.** The Pβ adapter at `state/p9_pbeta_paradigm_d_50k_2026_05_04/savepoints/step_50000/` (76 MiB) currently lives in the local working tree (and on ubu1). Per anima `feedback_anima_models_datasets_hf_only.md` (own 14), model weights >5MB should be HF-only not anima-git. This BG does NOT migrate the adapter; preservation is recorded but the actual artifact-residence question is deferred to a follow-up cycle (`BG-PBETA-ADAPTER-HF-MIGRATE` if needed).
+- **C5 — Pβ savepoint retention may need HF Hub migration.** The Pβ adapter at `state/p9_pbeta_paradigm_d_50k_2026_05_04/savepoints/step_50000/` (76 MiB) currently lives in the local working tree (and on ubu1). Per anima `feedback_anima_models_datasets_hf_only.md`, model weights >5MB should be HF-only not anima-git. This BG does NOT migrate the adapter; preservation is recorded but the actual artifact-residence question is deferred to a follow-up cycle (`BG-PBETA-ADAPTER-HF-MIGRATE` if needed).
 
 ---
 

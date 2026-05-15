@@ -37,7 +37,7 @@ LZ76 (Lempel-Ziv 1976) complexity가 EEG consciousness substrate proxy — Schar
 - prereg: `state/clm_eeg_p1_lz_pre_register.json`
 - sister: H_013 (longitudinal), H_015 (gamma/theta P3)
 - roadmap: `.roadmap.eeg` + `.roadmap.anima_clm_eeg`
-- own: own 21
+- own:
 - literature: Schartner et al. (2017) Complexity of multi-dimensional spontaneous EEG
 
 ## Honest Limits

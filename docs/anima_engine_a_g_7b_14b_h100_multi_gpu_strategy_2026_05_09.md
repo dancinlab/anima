@@ -30,7 +30,7 @@
 
 1. Ubuntu 24.04 PEP 668 → `pip install --break-system-packages` 필수
 2. `huggingface_hub` Python API + `HF_TOKEN` scp staging
-3. **ckpts pull MANDATORY before pod delete** (own 30) — multi-GPU 도 동일
+3. **ckpts pull MANDATORY before pod delete** — multi-GPU 도 동일
 4. scp timeout 3600 for 600MB+ (multi-GPU 14B 는 5GB+ → 더 오래 걸림)
 5. pod retain on pull fail
 6. peft adapter `base_model_name_or_path` 오버라이드 (HF promote 깨짐 방지)
@@ -222,7 +222,7 @@ memory `feedback_orchestrator_h100_gotchas.md` + `config/runpod.json` 의 12 abs
 ### 기존 + multi 결합
 - pod 발사 전 `runpodctl pod list` (R16)
 - HF_TOKEN 즉시 staging (R13)
-- **ckpts pull MANDATORY before delete** (own 30) — 8× 일수록 더 큰 ckpts (5-10GB)
+- **ckpts pull MANDATORY before delete** — 8× 일수록 더 큰 ckpts (5-10GB)
 - scp timeout 3600 → **14B 는 7200 권장** (10GB+)
 - pod retain on pull fail
 

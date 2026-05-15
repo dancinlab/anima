@@ -95,9 +95,9 @@ Note on F-COMP-5: `HiddenMeanCapture` (per `_v14_5seed_run.py`) hooks `model.eng
 
 - **raw#9** — `training/*.py` local-only; this script lives under `state/` (gitignored).
 - **raw#15 additive** — A and B ckpts loaded read-only via `torch.load`; all tensor ops are out-of-place (per-condition fresh model build from snapshotted A state_dict); no file mutation.
-- **own 16** — $0 local Mac CPU; wall-clock target ≤60 min.
-- **own 22** — every trial's metrics emit; verdict.md SSOT; **REBORN.md NOT appended** by this run (parent dispatcher §63 handles that).
-- **own 38** — artefacts under `state/anima_component_mlp_embed_v14_2026_05_10/`.
+- **** — $0 local Mac CPU; wall-clock target ≤60 min.
+- **** — every trial's metrics emit; verdict.md SSOT; **REBORN.md NOT appended** by this run (parent dispatcher §63 handles that).
+- **** — artefacts under `state/anima_component_mlp_embed_v14_2026_05_10/`.
 
 ## Time budget
 

@@ -8,7 +8,7 @@ source_doc: PHILOSOPHY.tape cont. 5; state/p_idr_identity_rules_2026_05_12/resul
 source_lines: PHILOSOPHY.tape (2026-05-12 cont. 5 section)
 promoted_at: 2026-05-12
 last_updated: 2026-05-12
-linked_h: README Philosophy #2 NO IDENTITY RULES (POLICY · indeterminate-mixed signal); own 18 simple_stack
+linked_h: README Philosophy #2 NO IDENTITY RULES (POLICY · indeterminate-mixed signal); simple_stack
 hf_dataset: (not yet)
 notes: "INDETERMINATE — DCR Δ +0.041, gray zone 3pp<Δ<5pp. substrate-only DCR 약간 우월 but effect size 미달. 3-step light-FT 한계."
 ---

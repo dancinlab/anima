@@ -34,7 +34,7 @@ anima decoder architecture exploration — 6 variants (ARCHITECTURE / COMPLETE-S
 
 - folder: `docs/hypotheses/cx/DECODER-*.md` (6 files)
 - sister H: H_005 (corpus quality vs capacity — decoder는 capacity axis), H_019 (SELF-EVO v4-v5)
-- own: own 21
+- own:
 - modern anima decoder: ConsciousLM (byte-level vocab=256 dual-head, paradigm v11 G3)
 
 ## Honest Limits

@@ -23,7 +23,7 @@ receives `hidden_mean` during real training.
 
 raw#10  honest C3 inline.
 raw#15  additive — neither engine_a_g_arch.py nor mitosis_v5_port.py modified.
-own 30  ckpt at fixed local path; no pod spin.
+  ckpt at fixed local path; no pod spin.
 """
 from __future__ import annotations
 

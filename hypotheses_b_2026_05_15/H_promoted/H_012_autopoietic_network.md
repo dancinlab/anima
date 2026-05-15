@@ -37,8 +37,8 @@ Maturana/Varela autopoiesis (self-producing organizational closure) → consciou
 - legacy: `docs/hypotheses/H-CX-533-autopoietic-network.md`
 - sister H: H_003 (life), H_008 (dissipative), H_002 (universe — autopoiesis cosmology)
 - literature: Maturana, Varela (1972)
-- anima: `.roadmap.hypothesis` H2 cell metaphor + own 21 hypotheses folder (autopoietic instance)
-- own: own 21
+- anima: `.roadmap.hypothesis` H2 cell metaphor + hypotheses folder (autopoietic instance)
+- own:
 
 ## Honest Limits
 

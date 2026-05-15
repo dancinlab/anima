@@ -279,4 +279,4 @@ migration:
 - v1.0 vision source: 다른 session 2026-05-06 transcript
 - This plan: `docs/anima_cli_mk2_plan_2026_05_06.md`
 
-raw#9/10/15/37 + own 14/15 준수.
+raw#9/10/15/37 + 준수.

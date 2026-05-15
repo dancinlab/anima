@@ -41,9 +41,9 @@ AN11_SEED=1 /opt/homebrew/bin/python3 /tmp/anima_an11_fire_helper.hexa_tmp --fir
 
 각 fire ~40min wallclock × 5 = **3.5 hours sequential**.
 
-### 2.2 Parallel dispatch (own 11 mandate, ~40min wallclock)
+### 2.2 Parallel dispatch (mandate, ~40min wallclock)
 
-own 11 parallel-loop-mandate 적용 시 5 fires 동시 발사:
+ parallel-loop-mandate 적용 시 5 fires 동시 발사:
 
 ```bash
 for SEED in 0 1 2 3 4; do
@@ -57,9 +57,9 @@ wait
 
 ⚠ vast.ai market 동시 5 H100 SXM offer 가용성 확인 필요 — 현재 dry-run에서 1 offer만 매칭 (5 동시 dispatch 시 일부 NO_OFFERS 가능).
 
-### 2.3 Hetzner alternative (own 6 multi-vendor)
+### 2.3 Hetzner alternative (multi-vendor)
 
-own 6 RunPod + vast.ai 승인 + cost cap 회피 — Hetzner CPU 활용 가능?
+ RunPod + vast.ai 승인 + cost cap 회피 — Hetzner CPU 활용 가능?
 - ❌ AN11(c) JSD vllm 부팅은 GPU 필수
 - ✓ AN11(a) + (b) + V1' (LoRA training + SVD) 는 CPU 가능 (Mistral-7B 16GB CPU RAM 필요 + ~6h 학습 시간)
 - Hetzner AX102 CPU 124GB RAM 충분; 6h × 5 fires = 30h wallclock = 시간 부담

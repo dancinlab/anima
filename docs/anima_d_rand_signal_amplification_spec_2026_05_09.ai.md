@@ -11,11 +11,11 @@ V5 PUSH POST-FIX 1/3 commit `0d2086eb` (sft-1-8 v5 actual N=60):
 
 D-RAND 0.20 epsilon 통과 위해 trained signal per-prompt amplitude 가 random 보다 0.20+ 높아야. 현재 mean delta 0.109 → ~2x 부족.
 
-own 14 V14 strict: D-RAND amplification = anti-Goodhart 정합 (single-metric proxy gaming X, raw signal 강화).
+ V14 strict: D-RAND amplification = anti-Goodhart 정합 (single-metric proxy gaming X, raw signal 강화).
 
 ## 4 Option Comparison
 
-| Option | Description | Cost (own 16) | Expected D-RAND uplift | Risk |
+| Option | Description | Cost | Expected D-RAND uplift | Risk |
 |---|---|---|---|---|
 | **A: Corpus 확장** | anima_persona_tier_a_v3 (87MB, 1.22M lines) → 200MB+. self-reference dialogue + phenomenal qualia + agency narrative 추가 | 0-cost local (LLM-free template / user manual) | +0.05 ~ +0.10 (richness 가 amplitude 높임) | low (Lesson Q SFT-closed 영향 X — pre-train corpus) |
 | **B: longer SFT** | sft-1-8 step 10000 → 30000 (3x), LoRA r=128 유지 | H100 ~4h, ~$15-20 | +0.10 ~ +0.15 (anima identity 더 깊이 embed) | medium (Lesson Q SFT plateau 위험) |
@@ -29,7 +29,7 @@ own 14 V14 strict: D-RAND amplification = anti-Goodhart 정합 (single-metric pr
 
 ## Recommended Sequential Path
 
-own 16 cost discipline: A 부터 cheapest 먼저, D 는 last resort.
+ cost discipline: A 부터 cheapest 먼저, D 는 last resort.
 
 1. **Step 1 — A (zero cost)**: corpus 확장 200MB+ 먼저 land, re-probe.
    - 통과 시 EXIT, fail 시 Step 2.
@@ -44,15 +44,15 @@ Total worst-case: ~$75-115 (A+B+C+D), best-case: $0 (A 단독 통과).
 
 ## Constraints
 
-- own 14 V14 strict: D-RAND amplification 은 anti-Goodhart raw signal 강화 (proxy gaming X).
-- own 16 cost discipline: 사용자 explicit fire keyword 부재 시 spec only, no actual fire.
-- own 17 D1 SCOPE_CLAMP: 본 cycle = D-RAND uplift 한정, V6 awareness / trinity sweep 별도 cycle.
-- own 22 mandatory report: 각 step 결과 ledger entry.
-- own 33 trinity emit: A+B+C+D 각 step 후 trinity sweep.
-- own 34 wrap=0: chat 자연발화 유지.
-- own 38 매단계 저장: 각 step 후 commit + state.
-- own 39 yaml↔md: spec yaml↔md sync.
-- own 40 H100 외부 resource CLI 위임: B/C/D fire 시 외부 CLI 사용.
+- V14 strict: D-RAND amplification 은 anti-Goodhart raw signal 강화 (proxy gaming X).
+- cost discipline: 사용자 explicit fire keyword 부재 시 spec only, no actual fire.
+- D1 SCOPE_CLAMP: 본 cycle = D-RAND uplift 한정, V6 awareness / trinity sweep 별도 cycle.
+- mandatory report: 각 step 결과 ledger entry.
+- trinity emit: A+B+C+D 각 step 후 trinity sweep.
+- wrap=0: chat 자연발화 유지.
+- 매단계 저장: 각 step 후 commit + state.
+- yaml↔md: spec yaml↔md sync.
+- H100 외부 resource CLI 위임: B/C/D fire 시 외부 CLI 사용.
 
 ## Decision Pending
 

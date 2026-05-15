@@ -42,7 +42,7 @@ anima의 Φ measurement records archive — PHI-MEASUREMENT-DISCOVERY + PHI-RETE
 - folder: `docs/hypotheses/cx/PHI-*.md` + `top-phi-records.md` + `TRAIN-PHI-*.md` + `TRAINING-V5-*.md`
 - sister H: H_011 (IIT geometry), H_021 (fundamental equation Ψ argmax), H_024 (V1 Φ_mip 8/8 FAIL)
 - modern: anima Φ★ engine paradigm v11 G3 +41.86 NO_FLIP (memory: feedback_pbeta_chat_capability_fail_substrate_research_pass_decoupled.md)
-- own: own 21
+- own:
 - memory: feedback_axis_preservation_eval_substrate_calibration.md (axis-preservation 정합)
 
 ## Honest Limits

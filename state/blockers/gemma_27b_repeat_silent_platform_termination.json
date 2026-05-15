@@ -8,7 +8,7 @@
     {"ts": "2026-04-27T23:52:00Z", "status": "active-h2-confirmed-3rd-reproduction", "trigger": "Mk.XII Phase 3b pod 3csbgbnf2hf3gg (Llama-3.1-70B int4 unsloth) — ChunkedEncodingError IncompleteRead at 5.35GB / 6.94GB shard, ~40GB cumulative pod download. Different fail signature (HTTP connection broken visible at requests layer) but SAME ~40GB cumulative threshold. 3rd independent reproduction across 2 model families (gemma + Llama). H2 cumulative-bytes-per-pod-lifetime CONFIRMED. Implication: per-pod download ceiling ~35-40GB; single-shot 70B fp16 (140GB) impossible without persistent volume / multi-pod relay / HF-direct-mount. evidence: state/v11_mk_xii_phase3b_llama/verdict.json"}
   ],
   "registered_at": "2026-04-27T13:30:00Z",
-  "registered_by": "anima-cmd-loop-2026-04-27 (own 4 + raw 45 mandate)",
+  "registered_by": "anima-cmd-loop-2026-04-27 (+ raw 45 mandate)",
   "axis": "Mk.XII Phase 3a gemma family-internal scale closure (gemma-2-27b cell)",
   "task_id_chain": ["#11", "#13", "#15"],
   "task_pre_register": "state/mk_xii_3a_gemma_familyinternal_pre_register.json",

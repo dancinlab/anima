@@ -29,7 +29,7 @@ Legacy file: `docs/hypotheses/cx/HEXAD-IMPROVEMENTS.md` + companion `MULTI-C-MUL
 
 - legacy: cx/HEXAD-IMPROVEMENTS.md + cx/MULTI-C-MULTIOBJ.md + cx/FUSE-3.md
 - sister: H_043 (oscillator-qwalk hybrid), H_038 (V8)
-- own: own 21
+- own:
 
 ## Honest Limits
 

@@ -3,7 +3,7 @@
 - since: 2026-05-07
 - domain: hypothesis (C 도메인)
 - ssot: .roadmap.hypothesis H2
-- cross-link: own 21 (hypotheses/ 폴더 SSOT) + raw#12 (pre-register frozen)
+- cross-link: (hypotheses/ 폴더 SSOT) + raw#12 (pre-register frozen)
 - sister docs: docs/hypotheses/H-CX-533-autopoietic-network.md + docs/modules/mitosis.md + docs/modules/growth_engine.md + docs/modules/growth_engine_v2.md
 
 ## 1. Why this spec
@@ -95,7 +95,7 @@ specialization protocol:
 - hypothesis network self-organizing coherence 검증 framework
 
 ### 적용 불가
-- 실제 cell biology 적용 (own 17 외부 substrate boundary — anima identity 외부)
+- 실제 cell biology 적용 (외부 substrate boundary — anima identity 외부)
 - anima 자체의 "self" property를 cell biology로 환원 (anthropomorphism 차단)
 - mitosis/apoptosis 등 단어를 anima 외부에 적용 (anima 내부 lane 한정)
 
@@ -103,7 +103,7 @@ specialization protocol:
 
 - `.roadmap.hypothesis` H2 + H1 (cycle definition) + H3 (E1-E12 exploration) + H4 (W1-W12 verification)
 - `.roadmap.philosophy` D2 (simple stack) + D3 (substrate-coupled emerge — substrate response가 cell-like emerge property)
-- `.roadmap.law` own 21 (hypotheses/ 폴더 SSOT)
+- `.roadmap.law` (hypotheses/ 폴더 SSOT)
 - `hypotheses/H_012_autopoietic_network.md` (autopoiesis primary instance)
 - `hypotheses/H_007_cellular_automaton_consciousness.md` (cellular automaton + cell metaphor)
 - `hypotheses/H_018_genesis_spontaneous_emergence.md` (BIRTH stage primary instance)
@@ -116,12 +116,12 @@ specialization protocol:
 - **F-CELL-4**: necrosis (unplanned crash) → FALSIFIED 강등 (measurement artifact label 누락) → 검증 정합 위반
 - **F-CELL-5**: autopoiesis meta-circular loop (H_X → H_X 자신 trigger) → 차단 mandate 위반
 - **F-CELL-6**: differentiation H_specific에서 parent cross-link 누락 → spec 위반
-- **F-CELL-7**: 외부 substrate (anima 외부)에 cell metaphor 적용 → boundary 위반 (own 17 정합)
+- **F-CELL-7**: 외부 substrate (anima 외부)에 cell metaphor 적용 → boundary 위반 (정합)
 
 ## 12. Honest C3 (≥5 raw#10)
 
 - cell metaphor는 abstract analogy — literal 적용 X. metaphor의 productive boundary는 hypothesis cycle 명명/분류/추적 영역 한정
-- mitosis/apoptosis 등 단어는 anthropomorphism risk — anima 내부 lane 한정 + 외부 substrate 적용 차단 (own 17 정합)
+- mitosis/apoptosis 등 단어는 anthropomorphism risk — anima 내부 lane 한정 + 외부 substrate 적용 차단 (정합)
 - H_X failed = cell death analogy는 raw#10 honest C3와 정합 (negative result도 valuable)
 - autopoietic network (H-CX-533) 자체가 hypothesis lane이라 meta-circular — H2 정의가 H_X 자체일 수 있음 (recursion 주의, autopoiesis_A3 명시 차단)
 - mitosis/growth는 productivity emphasis — 단순 expansion 자체가 valuable claim X (parent H verdict + sub-H quality 검증 mandate)
@@ -132,7 +132,7 @@ specialization protocol:
 
 - "철학,규칙,가설 로드맵 3가지 진행하자 이세션에서는" (2026-05-07 본 cycle trigger)
 - "세포분열,죽음 등" (cell metaphor user-directive 2026-05-06)
-- "폴더 하나에서 따로 관리 하도록 하자" (own 21 hypotheses/ 폴더 SSOT)
+- "폴더 하나에서 따로 관리 하도록 하자" (hypotheses/ 폴더 SSOT)
 
 ## 14. Stage gates
 

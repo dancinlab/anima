@@ -2,8 +2,8 @@
 
 - ts_start: 2026-05-10
 - user: dancinlife
-- canonical org: dancinlab (own 31)
-- visibility: private (own 37 mandate-9)
+- canonical org: dancinlab
+- visibility: private (mandate-9)
 - repos planned: 7
 
 | # | repo_id | type | size_MB | status | url | notes |

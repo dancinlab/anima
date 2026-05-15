@@ -10,7 +10,7 @@ regime was not reached (F-V2-CELLS64-MAX128-1 also fired: max=128 still
 cap-bound).
 
 ## Engine verdict
-**INDETERMINATE_PARTIAL** — own 14 5-seed strict cannot be applied (only 1 of 5
+**INDETERMINATE_PARTIAL** — 5-seed strict cannot be applied (only 1 of 5
 randoms ran to turn 250 before SIGTERM).
 
 ## Config (override key)
@@ -116,7 +116,7 @@ is OOD for the v2 mitosis cotrain. Cap=128 is also OOD but in the direction of
    turn 250 from log_every=50 stdout. Wall-clock budget overrun: cap-saturated
    per-turn cost at max=128 was ~3-4s vs 1s at max=64; full 5-seed × 300-turn ×
    max=128 extrapolated to ~90 minutes, exceeding $0 local CPU monitor envelope.
-   own 14 5-seed strict cannot be applied to this BG; verdict is n=1 evidence.
+    5-seed strict cannot be applied to this BG; verdict is n=1 evidence.
 2. **No turn 299 emit**: log_every=50 means trajectory print only at turns
    {0,50,100,150,200,250}. Turn 250 is the deepest captured "marathon"
    datapoint — not turn 299 (intermediate result.json never written because
@@ -161,6 +161,6 @@ is OOD for the v2 mitosis cotrain. Cap=128 is also OOD but in the direction of
    hypothesis as cap-conditional, then test cap-free (max=256) before
    declaring ★★★★ confirm. §38 Phase 2 d=1024 lane independently still
    matters but cannot be combined with this BG to upgrade ★ rating.
-10. **REBORN.md NOT directly appended** (own 22) — dispatcher receives this
+10. **REBORN.md NOT directly appended** — dispatcher receives this
     verdict for §45/§46 slot insertion. Files saved to
-    `state/anima_v2_cells64_max128_retest_2026_05_10/{spec.md, result.json, verdict.md, parse_log.py, build_verdict.py, run_300_max128.log, partial_result.json}` per own 38.
+    `state/anima_v2_cells64_max128_retest_2026_05_10/{spec.md, result.json, verdict.md, parse_log.py, build_verdict.py, run_300_max128.log, partial_result.json}` per .

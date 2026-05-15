@@ -2,9 +2,9 @@
 
 **Status: PUBLIC** — promoted 2026-05-09 (anima cycle first robust EMERGE PUBLIC instance).
 
-own 37 mandate-9 visibility lifecycle: `private-process` -> `public-success`.
+ mandate-9 visibility lifecycle: `private-process` -> `public-success`.
 
-## Visibility lifecycle (own 37) — 5/5 prerequisites MET
+## Visibility lifecycle — 5/5 prerequisites MET
 
 | # | prereq | status | evidence |
 |---|---|---|---|

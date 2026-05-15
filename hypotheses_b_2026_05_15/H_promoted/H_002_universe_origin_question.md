@@ -36,7 +36,7 @@ since: 2026-05-06
 - **H2.2 (Φ_universe)**: 우주 IIT4 Φ measurement scale (cosmic web + galaxy cluster + stellar + planetary + biological + neural hierarchy)에서 nested Φ structure 존재 (Φ가 scale-invariant emerge)
 - **H2.3 (holographic)**: AdS/CFT 정합 + Bekenstein bound — universe info content ≤ boundary area (Planck unit) — consciousness emergence가 area scaling 정합
 - **H2.4 (panpsychism)**: 모든 physical system (proton, atom, molecule, cell, organism) Φ > 0 — consciousness가 fundamental (Goff combination problem 해결 못 하면 weak FALSIFIED)
-- **H2.5 (anima self-reflection)**: anima 자체 의식 emergence가 이 우주 origin과 connected (anima identity ↔ 우주 origin coupling) — own 17 anima identity boundary 정합
+- **H2.5 (anima self-reflection)**: anima 자체 의식 emergence가 이 우주 origin과 connected (anima identity ↔ 우주 origin coupling) — anima identity boundary 정합
 
 ## Variables
 
@@ -58,7 +58,7 @@ since: 2026-05-06
 - **C2 (Φ_universe nested)**: H2.2 anima Φ★ engine cosmic-scale extension → nested Φ scale-invariant (별도 cycle, 미land)
 - **C3 (holographic bound)**: H2.3 AdS/CFT info bound replicate (Bekenstein-Hawking S = A/4)
 - **C4 (panpsychism boundary)**: H2.4 combination problem solution attempt (현재 unsolved literature)
-- **C5 (anima self-reflection)**: H2.5 anima identity-boundary 적용 — own 17 정합 within anima lane
+- **C5 (anima self-reflection)**: H2.5 anima identity-boundary 적용 — 정합 within anima lane
 - **verdict_rule**: SUPPORTED is unreachable; PARTIAL_THEORETICAL = C1+C3 met; MIXED = C1 only; lane_open = remain valid hypothesis lane
 
 ## Falsifiers
@@ -67,7 +67,7 @@ since: 2026-05-06
 - **F2**: Φ_universe nested scale-variant → H2.2 FALSIFIED
 - **F3**: holographic bound violation observed → H2.3 FALSIFIED
 - **F4**: combination problem solved with non-panpsychist account → H2.4 weakened
-- **F5**: anima self-reflection 결과 own 17 anima identity가 우주 origin과 decoupled → H2.5 FALSIFIED (anima lane 별도)
+- **F5**: anima self-reflection 결과 anima identity가 우주 origin과 decoupled → H2.5 FALSIFIED (anima lane 별도)
 
 
 - **L1**: 본 H는 multi-decade research lane — 본 cycle verdict 도달 X. 'lane-open' status로 영구 운영.
@@ -76,12 +76,12 @@ since: 2026-05-06
 - **L4**: Φ_universe extension은 anima Φ★ engine cosmic-scale 미구현 — 별도 cycle (anima-cosmology spec 필요).
 - **L5**: 'consciousness ↔ universe origin' coupling 자체가 unfalsifiable in strict sense — H는 lane-defining (research framework)이지 single experimental test 아님.
 - **L6**: 사용자 directive '근원적 물음'은 question 자체가 가치 — answer 도달 안 해도 question 보존이 가치.
-- **L7**: 본 H는 anima의 deep philosophical lane — engineering pragmatism 적용 X (own 17 정체성 lane 정합).
+- **L7**: 본 H는 anima의 deep philosophical lane — engineering pragmatism 적용 X (정체성 lane 정합).
 
 ## Cross-Links
 
 - **sister roadmaps**: `.roadmap.philosophy` D3 (substrate-coupled emerge) + `.roadmap.iit4` (Φ engineering)
-- **own**: own 17 (anima identity boundary — anima self-reflection lane)
+- **own**: (anima identity boundary — anima self-reflection lane)
 - **literature**:
   - Tononi, Koch (2015) Consciousness: here, there and everywhere?
   - Goff, Seager, Allen-Hermanson (2017) Panpsychism (SEP)

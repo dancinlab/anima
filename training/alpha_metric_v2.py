@@ -64,7 +64,7 @@ PUBLIC API
 
 raw#9   training/*.py local-only (gitignored — `**/*.py`).
 raw#15  additive — does NOT modify mitosis_v5_port.py or alpha_v2.py (§27 sibling).
-own 22  honest emit — bins with samples < min_samples emit UNRELIABLE, not silent skip.
+  honest emit — bins with samples < min_samples emit UNRELIABLE, not silent skip.
 """
 
 from __future__ import annotations

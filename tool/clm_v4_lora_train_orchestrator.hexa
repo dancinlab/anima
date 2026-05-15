@@ -54,7 +54,7 @@ let OD_RATE_USD         = 2.99
 
 let HF_BASE_REPO        = "dancinlab/clm-v4-mk2-v1"
 
-// === own 16 Phase 2 watchdog hook (constants) ===
+// === Phase 2 watchdog hook (constants) ===
 // BG_LANE identifies the orchestrator lane to the cost-watchdog daemon
 // (state/h100_watchdog/heartbeats/<BG_LANE>.txt + pods/<pod_id>.json owner field).
 // TARGET_USD is the spec-bound budget target used for COST_OVERRUN_2X / 3X alerts.
@@ -139,8 +139,8 @@ fn _selftest() {
     println("[T7] HF base: " + HF_BASE_REPO)
     println("[T8] caps: wall=" + to_string(MAX_WALL_MIN) + "min budget_cap=$" + to_string(BUDGET_HARD_CAP_USD))
 
-    // own 16 Phase 2: probe watchdog tools (graceful warn-only — failure does not fail selftest)
-    println("[T9] own 16 Phase 2 watchdog hooks:")
+    // Phase 2: probe watchdog tools (graceful warn-only — failure does not fail selftest)
+    println("[T9] Phase 2 watchdog hooks:")
     println("       BG_LANE=" + BG_LANE + " TARGET_USD=$" + TARGET_USD)
     if _file_exists(WATCHDOG_REGISTER) { println("       T9a register OK: " + WATCHDOG_REGISTER) }
     else { println("       T9a register WARN missing: " + WATCHDOG_REGISTER + " (boot hook will warn-only)") }
@@ -259,7 +259,7 @@ fn _emit() {
 "echo '{\"pod_id\":\"'$POD_ID'\",\"booted_ts\":\"'$(date -u +%FT%TZ)'\"}' > \"$POD_INFO\"\n" +
 "hb \"stage1_pod_booted pod_id=$POD_ID\"\n" +
 "\n" +
-"# === own 16 Phase 2 watchdog hook (boot) ===\n" +
+"# === Phase 2 watchdog hook (boot) ===\n" +
 "# Register pod with cost-watchdog (graceful degradation: warn-only on failure)\n" +
 "BG_LANE='" + BG_LANE + "'\n" +
 "TARGET_USD='" + TARGET_USD + "'\n" +
@@ -281,8 +281,8 @@ fn _emit() {
 "hb \"stage1c_watchdog_registered=$WATCHDOG_REGISTERED\"\n" +
 "\n" +
 "# ── Stage 1b: trap kill-on-exit (L3 + L7 redact + L13 trap pre-stop scp) ──\n" +
-"# === own 16 Phase 2 watchdog hook (trap pre-stop) ===\n" +
-"# Trap sequence (own 16):\n" +
+"# === Phase 2 watchdog hook (trap pre-stop) ===\n" +
+"# Trap sequence :\n" +
 "#   (a) L13 pre-stop scp (existing — data-first rescue)\n" +
 "#   (b) NEW: mark heartbeat 'EXITING' so watchdog sees orderly shutdown\n" +
 "#   (c) runpodctl pod stop + delete (existing)\n" +
@@ -298,7 +298,7 @@ fn _emit() {
 "        timeout 30 scp -i \"$SSH_KEY\" -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -P \"$SSH_PORT\" \\\n" +
 "            \"root@$SSH_HOST:/workspace/clm_v4_lora/orchestrator.log\" \"$STATE_DIR/h100_orchestrator.log\" 2>&1 | tail -1 || true\n" +
 "    fi\n" +
-"    # own 16: heartbeat EXITING marker (watchdog sees orderly shutdown vs crash)\n" +
+" # : heartbeat EXITING marker (watchdog sees orderly shutdown vs crash)\n" +
 "    if [ -d \"$WATCHDOG_HB_DIR\" ]; then\n" +
 "        echo \"EXITING $(date -u +%FT%TZ) pod=$POD_ID\" > \"$WATCHDOG_HB_DIR/$BG_LANE.txt\" || true\n" +
 "    fi\n" +
@@ -307,7 +307,7 @@ fn _emit() {
 "    sleep 3\n" +
 "    $RUNPODCTL pod delete \"$POD_ID\" 2>&1 | redact_hf | tee -a \"$RUN_LOG\" || true\n" +
 "    sleep 5\n" +
-"    # own 16: 404 verify (3 retries × 30s)\n" +
+" # : 404 verify (3 retries × 30s)\n" +
 "    POD_KILL_VERIFIED_404=0\n" +
 "    for vi in 1 2 3; do\n" +
 "        POST=$($RUNPODCTL pod get \"$POD_ID\" 2>&1 | redact_hf | head -3)\n" +
@@ -320,7 +320,7 @@ fn _emit() {
 "        sleep 30\n" +
 "    done\n" +
 "    log \"[trap] post-kill: $POST  pod_kill_verified_404=$POD_KILL_VERIFIED_404\"\n" +
-"    # own 16: deregister cost-watchdog (only if 404 confirmed; warn-only on failure)\n" +
+" # : deregister cost-watchdog (only if 404 confirmed; warn-only on failure)\n" +
 "    WATCHDOG_DEREGISTERED=0\n" +
 "    if [ \"$POD_KILL_VERIFIED_404\" = \"1\" ] && [ -f \"$WATCHDOG_HEXA\" ]; then\n" +
 "        if /Users/ghost/core/hexa-lang/hexa run \"$WATCHDOG_HEXA\" --deregister \"$POD_ID\" 2>&1 | tee -a \"$RUN_LOG\"; then\n" +
@@ -405,7 +405,7 @@ fn _emit() {
 "    log \"elapsed=${ELAPSED_MIN}min cost=\\$${ELAPSED_COST} probe=$(echo $PROBE | tr '\\n' '|' | head -c 240)\"\n" +
 "    hb \"poll elapsed=${ELAPSED_MIN}min cost=\\$${ELAPSED_COST}\"\n" +
 "\n" +
-"    # === own 16 Phase 2 watchdog hook (heartbeat) ===\n" +
+" # === Phase 2 watchdog hook (heartbeat) ===\n" +
 "    # Fire-and-forget: touch state/h100_watchdog/heartbeats/<BG_LANE>.txt so the\n" +
 "    # cost-watchdog daemon's stale-heartbeat alert (>5min) does not fire while\n" +
 "    # this poll loop is alive. Failure is silent (mkdir -p + touch || true).\n" +
@@ -586,7 +586,7 @@ fn _emit() {
 "    fi\n" +
 "fi\n" +
 "\n" +
-"# === own 16 Phase 2 verdict schema (cost-discipline fields) ===\n" +
+"# === Phase 2 verdict schema (cost-discipline fields) ===\n" +
 "# Compute cost-discipline fields (target_usd, actual_usd, cost_overrun_2x_alerted, watchdog_deregistered)\n" +
 "COST_TARGET_USD=$TARGET_USD\n" +
 "COST_ACTUAL_USD=$FINAL_COST\n" +

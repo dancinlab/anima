@@ -29,7 +29,7 @@ Legacy file: `docs/hypotheses/H-CX-522-tqft-consciousness.md`. Pointer only.
 
 - legacy: `docs/hypotheses/H-CX-522-tqft-consciousness.md`
 - sister: H_045 (lambda), H_010 (holographic), H_011 (IIT geometry)
-- own: own 21
+- own:
 
 ## Honest Limits
 

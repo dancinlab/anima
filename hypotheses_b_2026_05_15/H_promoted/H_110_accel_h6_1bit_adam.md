@@ -19,11 +19,11 @@ since: 2026-04-03
 1-bit Adam optimizer reduces VRAM footprint enough to enable larger effective batch — accelerates training via batch-size lift rather than per-step throughput.
 
 ## Migration Status
-Legacy `ready/config/acceleration_hypotheses.json` (id=H6, line 961, verdict=★ VRAM WINNER). Round 4 individual as canonical "VRAM-bound acceleration" entry crossing into H100 cost-discipline (own 16) territory.
+Legacy `ready/config/acceleration_hypotheses.json` (id=H6, line 961, verdict=★ VRAM WINNER). Round 4 individual as canonical "VRAM-bound acceleration" entry crossing into H100 cost-discipline territory.
 
 ## Cross-Links
 - Source: `ready/config/acceleration_hypotheses.json` (H6)
-- Cross: own 16 (H100 cost discipline), H_106 (COMBO_x255)
+- Cross: (H100 cost discipline), H_106 (COMBO_x255)
 
 1. measured on small models — quantization error compounds at 1B-13B scale
 2. "enables larger batch" downstream effect depends on data parallelism config

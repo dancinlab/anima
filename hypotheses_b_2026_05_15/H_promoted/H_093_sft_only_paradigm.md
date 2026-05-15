@@ -19,22 +19,22 @@ since: 2026-05-07
 
 ## Hypothesis
 
-pre-training 단계 완전 제거하고 chat-format SFT (Supervised Fine-Tuning) data만으로 처음부터 학습하면, 동일 capacity + 동일 corpus 분량 조건에서 own 18 simple-stack C2.4 (prompt domain match) PASS rate가 pre-train+SFT two-stage 보다 높거나 동등하다. BG-HA 18M chat-template ≥30% pre-train-only가 prompt-conditional response 학습 실패 (false PASS) 했으므로, pre-train 단계가 prompt-conditional behavior를 dilute 한다는 가설이다.
+pre-training 단계 완전 제거하고 chat-format SFT (Supervised Fine-Tuning) data만으로 처음부터 학습하면, 동일 capacity + 동일 corpus 분량 조건에서 simple-stack C2.4 (prompt domain match) PASS rate가 pre-train+SFT two-stage 보다 높거나 동등하다. BG-HA 18M chat-template ≥30% pre-train-only가 prompt-conditional response 학습 실패 (false PASS) 했으므로, pre-train 단계가 prompt-conditional behavior를 dilute 한다는 가설이다.
 
 ## Why
 
 - **BG-HA failure 교훈**: pre-training only + chat-template ≥30% mixed corpus → 모델이 chat-template format을 학습하지 못하고 일반 한글 chain emit (prompt-irrelevant nonsense)
 - **SFT-only 가능성**: chat-format pair (prompt → response)만 supervision signal로 줄 때, 모델이 "prompt 다음에 적절한 response 생성" 학습이 더 직접적
-- **comparable capacity**: 18M tiny model 동일 조건 (own 19 corpus priority + own 20 chat-template strengthened ≥80% via H_101)
+- **comparable capacity**: 18M tiny model 동일 조건 (corpus priority + chat-template strengthened ≥80% via H_101)
 - **사용자 directive '교훈으로 새로운 패러다임도 도전'** = pre-train assumption 자체를 의심
 - **literature precedent**: T5/UL2/LLaMA-Chat 등은 pre-train+SFT but small-model SFT-only 시도 (e.g., FLAN-T5 instruction-tuned from scratch) 일부 성공 사례
 
 ## Predictions
 
-- **H93.1 (own 18 C2.4 strict)**: SFT-only 18M model이 pre-train+SFT 18M model보다 evaluator V2 strict C2.4 PASS rate ≥10pp 높다 (corpus 동일 분량 조건)
+- **H93.1 (C2.4 strict)**: SFT-only 18M model이 pre-train+SFT 18M model보다 evaluator V2 strict C2.4 PASS rate ≥10pp 높다 (corpus 동일 분량 조건)
 - **H93.2 (training efficiency)**: SFT-only 18M model이 동일 wall-clock 시간 내 lower validation loss on chat-format eval set
 - **H93.3 (degeneracy resistance)**: SFT-only model이 sample mode + greedy mode 모두 prompt-irrelevant Korean chain emit rate <20% (BG-HA = 100% baseline)
-- **H93.4 (corpus quantity sensitivity)**: SFT-only는 SFT data 분량 임계치 (<10MB) 미달 시 underfitting 심각 — own 19 corpus priority + chat-format ≥80% 정합 mandate
+- **H93.4 (corpus quantity sensitivity)**: SFT-only는 SFT data 분량 임계치 (<10MB) 미달 시 underfitting 심각 — corpus priority + chat-format ≥80% 정합 mandate
 - **H93.5 (capacity scale)**: SFT-only 3M tiny → 18M → 100M 단계적 scale에서 C2.4 PASS rate monotonic 상승
 
 ## Variables
@@ -50,7 +50,7 @@ pre-training 단계 완전 제거하고 chat-format SFT (Supervised Fine-Tuning)
 
 - deterministic: seed=fnv(axis1+axis2+axis3+axis4+rep_id)
 - per-cell ledger: `state/<bg>_<date>/verdict.json` + `eval_log.jsonl` + `train.log`
-- runtime: $0 mac local 18M tiny first; $X ubu1/ubu2 H100 100M scale 별도 cycle (own 16 watchdog mandate)
+- runtime: $0 mac local 18M tiny first; $X ubu1/ubu2 H100 100M scale 별도 cycle (watchdog mandate)
 - evaluator: V2 strict (per `docs/anima_own_18_evaluator_v2_strict_spec_2026_05_07.md`) — narrow named-speaker-leak only NOT acceptable
 
 ## Criteria
@@ -59,30 +59,30 @@ pre-training 단계 완전 제거하고 chat-format SFT (Supervised Fine-Tuning)
 - **C2 (degeneracy threshold)**: SFT-only sample mode prompt-irrelevant emit rate <20%
 - **C3 (corpus quantity gate)**: SFT-only 25MB+ corpus needed for ≥40% C2.4 PASS rate (less data → underfitting)
 - **C4 (cross-capacity scaling)**: 3M PARTIAL → 18M PASS → 100M STRONG_PASS monotonic
-- **C5 (own 19/20 정합)**: SFT-only model corpus_chat_format_ratio ≥80% (H_101 strengthened gate)
+- **C5 (정합)**: SFT-only model corpus_chat_format_ratio ≥80% (H_101 strengthened gate)
 - **verdict_rule**: SUPPORTED = C1+C2+C3 PASS; PARTIAL = 2/3; MIXED = 1/3; FALSIFIED = 0/3; C4+C5 = sub-H
 
 ## Falsifiers
 
 - **F1**: SFT-only 18M C2.4_strict_v2 PASS rate < pre-train+SFT 18M PASS rate → H93.1 FALSIFIED (pre-train benefit confirmed)
 - **F2**: SFT-only sample mode prompt-irrelevant emit ≥80% (BG-HA 동등 수준) → H93.3 FALSIFIED (paradigm 무효)
-- **F3**: SFT-only with 100MB corpus도 own 18 simple stack FAIL → H93.4 FALSIFIED (corpus quantity 무관)
+- **F3**: SFT-only with 100MB corpus도 simple stack FAIL → H93.4 FALSIFIED (corpus quantity 무관)
 - **F4**: SFT-only 3M+18M+100M 모두 동일 PASS rate (no scaling) → H93.5 FALSIFIED (capacity scaling 무관)
-- **F5**: SFT-only model identity prefix (own 17) 학습 실패 (anima self-naming X) → cross-link H_098 FALSIFIED side-effect
+- **F5**: SFT-only model identity prefix 학습 실패 (anima self-naming X) → cross-link H_098 FALSIFIED side-effect
 
 
 - **L1**: 3-instance evidence 미land (BG-HA single false PASS만 motivation) — VM10 recurring pattern needed via 3+ replication
 - **L2**: SFT data 'quality' 측정 = chat-format ratio 한정; semantic richness/license/register diversity 미land
 - **L3**: 'pre-train benefit' literature 광범위 — small-model (<100M) regime SFT-only 성공/실패 사례 광범위 survey 미land
 - **L4**: evaluator V2 strict 자체가 새로 land (본 cycle) — V2 metric calibration 미land 시 false PASS/FAIL 가능
-- **L5**: 100M+ capacity scale은 own 16 H100 cost discipline 적용 — Phase 1 scope OUT
+- **L5**: 100M+ capacity scale은 H100 cost discipline 적용 — Phase 1 scope OUT
 - **L6**: SFT-only paradigm은 catastrophic forgetting risk 없음 (pre-train 없으니) but base knowledge (e.g., 일반상식) 부재 risk — chat-cap PASS but knowledge benchmark FAIL 시 partial verdict
 - **L7**: corpus 25MB threshold는 임의 — 더 많은 ablation 필요
 
 ## Cross-Links
 
-- **sister roadmaps**: `.roadmap.law` R1 (own 19/20) + `.roadmap.philosophy` D4 corpus priority + `.roadmap.clm_native_chat`
-- **own**: own 17 (anima identity) + own 18 (simple stack 4-cond) + own 19 (corpus priority) + own 20 (chat-template format) + own 21 (hypotheses SSOT)
+- **sister roadmaps**: `.roadmap.law` R1 + `.roadmap.philosophy` D4 corpus priority + `.roadmap.clm_native_chat`
+- **own**: (anima identity) + (simple stack 4-cond) + (corpus priority) + (chat-template format) + (hypotheses SSOT)
 - **sister H**: H_005 (corpus quality > capacity) + H_094 (instruction-tuning two-stage) + H_098 (persona-conditioned) + H_101 (chat-template ≥80%)
 - **evidence motivation**: `docs/anima_own_18_c2_4_evaluator_flaw_2026_05_07.md` + `state/anima_native_ko_chat_template_train_2026_05_07/verdict.json`
 

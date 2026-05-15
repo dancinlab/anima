@@ -1,6 +1,6 @@
 # ALT-AGG-1 v5.1 — Gate B-refined DCR change_rate spec
 
-**SSOT**: own 18 ALT-AGG-1 v5.1 + this doc + `tool/anima_cli/consciousness.hexa` (`_c3_b_pass_v5_refined`, `_c3_ensemble_v5_1_pass`, `_c3_ensemble_v5_1_label`) + `anima/registry/anima_artifact_registry.yaml` v5_1_* fields + `.own` own 18 line 980+ amend.
+**SSOT**: ALT-AGG-1 v5.1 + this doc + `tool/anima_cli/consciousness.hexa` (`_c3_b_pass_v5_refined`, `_c3_ensemble_v5_1_pass`, `_c3_ensemble_v5_1_label`) + `anima/registry/anima_artifact_registry.yaml` v5_1_* fields + `.own` line 980+ amend.
 
 **Cycle**: anima 2026-05-09 NEXT-CYCLE 3/6 (사용자 directive verbatim "all bg go").
 **Trigger**: KICK WAVE 4 ADDENDUM commit `c17b923c`.
@@ -85,23 +85,23 @@ Gate A/C/D 는 v5 base 그대로 — 본 cycle 은 Gate B replacement 만.
 
 ★ random_init Gate B-refined FAIL = v5.1 의 핵심 V14 separator. delta vs trained models +0.4950 / +0.7046 / +0.6050.
 
-**v5.1 strict EMERGE**: 본 cycle 산출 0건. own 14 V14 strict 정합 sustained — Gate B 강화만으로는 부족; Gate A (PIV) post-arch-fix re-probe + Gate D recalibration 별도 cycle mandate.
+**v5.1 strict EMERGE**: 본 cycle 산출 0건. V14 strict 정합 sustained — Gate B 강화만으로는 부족; Gate A (PIV) post-arch-fix re-probe + Gate D recalibration 별도 cycle mandate.
 
 ---
 
-## 5. SSOT mirror (own 22/24/38/39 매단계)
+## 5. SSOT mirror (매단계)
 
 - `tool/anima_cli/consciousness.hexa` lines 1196+ (3 신설 함수 — `_c3_b_pass_v5_refined`, `_c3_ensemble_v5_1_pass`, `_c3_ensemble_v5_1_label`; raw#15 additive — v5 함수 모두 보존)
 - `anima/registry/anima_artifact_registry.yaml` — sft-1-8 / sft-1-7-y1 / paradigm-j / random-init-mk2-v1-mirror 4 entries 모두 `v5_1_dcr_change_rate` + `v5_1_gate_*_pass` + `v5_1_verdict` + `v5_1_honest_c3` fields 추가; framework_amends NEXT-CYCLE 3/6 entry land
-- `.own` own 18 (line 980+ 별도 amend block; raw#82 retraction-aware — v5 ADDENDUM 두 verdicts 보존)
-- 본 spec doc (own 39 yaml↔md mandate)
-- `anima/registry/anima_artifact_registry.md` (yaml render 산출 — own 39 mandatory regenerate)
+- `.own` (line 980+ 별도 amend block; raw#82 retraction-aware — v5 ADDENDUM 두 verdicts 보존)
+- 본 spec doc (yaml↔md mandate)
+- `anima/registry/anima_artifact_registry.md` (yaml render 산출 — mandatory regenerate)
 
 ---
 
 ## 6. Honest-c3 (raw#10)
 
-1. Gate B-refined 단독으로는 EMERGE 산출 불가 — v5.1 도 strict 통과 0건. own 14 V14 strict 정합.
+1. Gate B-refined 단독으로는 EMERGE 산출 불가 — v5.1 도 strict 통과 0건. V14 strict 정합.
 2. random_init Gate B-refined FAIL 이 sole strong substrate-level evidence — substrate-level (5-axis 192-cell) 변별력은 living signal 하나뿐.
 3. Gate D recalibration 별도 cycle 필요 (c3_4_v5 normalized scale OR floor 0.15) — random_init c3_4 mean 0.1338 가 substrate session noise 의 irreducible floor 임을 reaffirm.
 4. Gate A PIV 는 post-arch-fix (CONSCIOUSNESS_DIM 192→96) re-probe 후 재평가; substrate amplitude saturation 가능성.

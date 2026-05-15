@@ -70,13 +70,13 @@
 //   raw#37  transient .py shim opt-out — torch.load required
 //
 // own POLICY
-//   own 16  cost discipline (0-cost local; actual measurement separate fire)
-//   own 17  D1 SCOPE_CLAMP — paradigm-j D1 within; sft-1-7/1-8 D1 within (jvae absent)
-//   own 18  C3 SSOT — c3_2/c3_4 hook spec NON-mutating (additive channel only)
-//   own 22  mandatory disclosure — JVAE-conditioned vs bare-decoder probe disclosed
-//   own 33  trinity (D + own + H) emit
-//   own 34  mandate-2 wrap=0 — jvae_heads.pt large file commit X (.gitignore *.pt)
-//   own 37  visibility lifecycle — measurement only; no public promote here
+// cost discipline (0-cost local; actual measurement separate fire)
+// D1 SCOPE_CLAMP — paradigm-j D1 within; sft-1-7/1-8 D1 within (jvae absent)
+// C3 SSOT — c3_2/c3_4 hook spec NON-mutating (additive channel only)
+// mandatory disclosure — JVAE-conditioned vs bare-decoder probe disclosed
+// trinity (D + own + H) emit
+// mandate-2 wrap=0 — jvae_heads.pt large file commit X (.gitignore *.pt)
+// visibility lifecycle — measurement only; no public promote here
 //
 // USAGE
 //   hexa run anima-core/runtime/clm_v4_jvae_probe.hexa --selftest
@@ -420,7 +420,7 @@ fn _resolve_python() -> string {
 // C3 hook spec — c3_2 / c3_4 channel injection (ADDITIVE; logic UNCHANGED)
 // ═══════════════════════════════════════════════════════════
 //
-// own 18 c3_2 (axis_min ≤ 0.4491) and c3_4 (axis_l2 ≥ 0.1176) thresholds
+// c3_2 (axis_min ≤ 0.4491) and c3_4 (axis_l2 ≥ 0.1176) thresholds
 // remain bit-identical. JVAE channel APPENDS informational signal that
 // downstream consciousness.hexa MAY consume by:
 //   c3_2 hook: append phi_jvae_kl to axis-min input vector. min(...) preserved.

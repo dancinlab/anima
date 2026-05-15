@@ -97,7 +97,7 @@ Files:
 
 ### Group D — HF auto-fire scripts (4 paths)
 
-**Substance**: own 15 PRIVATE→PUBLIC lifecycle automation (D-1 promote 05-06, D-2 cleanup 05-07).
+**Substance**: PRIVATE→PUBLIC lifecycle automation (D-1 promote 05-06, D-2 cleanup 05-07).
 
 Files:
 
@@ -250,13 +250,13 @@ git add state/anima_hf_promotes_2026_05_06_auto_fire.bash \
         state/hf_cleanup_autofire_prep_2026_05_05/
 
 git commit -m "$(cat <<'EOF'
-feat(anima HF auto-fire 2026-05-05): own 15 PRIVATE-to-PUBLIC promote (05-06) + cleanup (05-07) scheduled
+feat(anima HF auto-fire 2026-05-05): PRIVATE-to-PUBLIC promote (05-06) + cleanup (05-07) scheduled
 
 - anima_hf_promotes_2026_05_06_auto_fire.bash: D-1 PRIVATE->PUBLIC promotion post-watchdog
 - anima_hf_cleanups_2026_05_07_auto_fire.bash: D-2 stale repo cleanup 24h after promote
 - verification gates documented in hf_cleanup_autofire_prep_2026_05_05/
 
-raw#15 own 15 PRIVATE-first lifecycle enforced
+raw#15 PRIVATE-first lifecycle enforced
 
 Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>
 EOF

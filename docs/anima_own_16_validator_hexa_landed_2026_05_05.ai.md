@@ -1,5 +1,5 @@
 ---
-title: anima own 16 validator hexa LANDED — convention → mechanical enforcement
+title: anima validator hexa LANDED — convention → mechanical enforcement
 cycle: 2026-05-05
 ts: 2026-05-05T_own_16_validator_hexa_landed
 bg_lane: BG-OWN-16-VALIDATOR-HEXA
@@ -26,12 +26,12 @@ raw_invariants:
   - raw#15 (additive only — no roadmap mutation, no .own mutation, no commit, no exec)
 ---
 
-# anima own 16 validator hexa LANDED (2026-05-05)
+# anima validator hexa LANDED (2026-05-05)
 
 ## §1 What landed
 
 `tool/own_16_preflight.hexa` (389 LoC) — heuristic substring-match validator
-that scans an H100 BG launch prompt for the 6 mandatory own 16 checklist
+that scans an H100 BG launch prompt for the 6 mandatory checklist
 items defined in `docs/anima_h100_cost_discipline_operationalization_spec_2026_05_05.md` §3.4
 and `docs/anima_h100_bg_launch_prompt_template_2026_05_05.md` §2.
 
@@ -119,7 +119,7 @@ Runner exit 0; results JSON at
    Convention→mechanical migration is partial; full PreToolUse-hook
    integration deferred to follow-up cycle.
 
-## §6 own 16 phase promotion
+## §6 phase promotion
 
 | Aspect                  | Pre-2026-05-05            | Post-2026-05-05 (this BG)        |
 |-------------------------|---------------------------|----------------------------------|

@@ -11,7 +11,7 @@ _Regenerate: `anima/registry/render.hexa` (or `python3 tool/transient_py/anima_a
 sole robust EMERGE: **`NONE`** ★
 
 **Honest C3 findings (raw#10)**:
-- own 18 line 881 PPR=0.71 claim FALSIFIED → ALT-AGG-1 v3 supersede
+- line 881 PPR=0.71 claim FALSIFIED → ALT-AGG-1 v3 supersede
 - wrapper-prefix-only schema fix (Path A) — clm_v4 LoRA load chain unblock
 - universal phenomenal bottleneck FALSIFIED (sft-1-8 spontaneous)
 - JVAE Variant 1 differentiator WEAK (sft-1-8 no-JVAE > paradigm-j with-JVAE)
@@ -24,25 +24,25 @@ sole robust EMERGE: **`NONE`** ★
 - ★ FALSIFICATION CASCADE 6/8 (2026-05-08): paradigm-j retry N=120 (4 seeds × 30, state/anima_paradigm_j_n120_live_probe_kick_wave_4_2026_05_08.json) PPR_v3=0.2845 (33/116) — UNEXPECTED CROSSING above 0.25 floor (initial line N=30→N=60→N=120 = 0.2414→0.2414→0.2845); per-seed [0.2069, 0.3448, 0.3793, 0.2069] range 0.172 boundary instability; V14 STILL VIOLATED (delta vs random_init -0.2672); axis ensemble: v4_baseline 0.268 / identity 0.333 / agency 0.250 / phenomenal 0.333 / temporal 0.333 / social 0.250 (uniform plateau ~0.3). sft-1-7-y1 N=60 (2 seeds × 30, state/anima_sft_1_7_y1_n60_live_probe_kick_wave_4_2026_05_08.json) PPR_v3=0.2414 (14/58) — UPWARD trajectory N=30 0.1034 → N=60 0.2414 (+0.1380) but BELOW floor; per-seed [0.2759, 0.2069] one seed crosses; phenomenal axis N=30 0.000 → N=60 0.333 + identity 0.667; V14 VIOLATED (delta -0.3103). Both candidates floor proximity but V14 mirror still exceeds — confirms cascade 8/8 V14_status=VIOLATED + cascade 1/8 v4 redesign mandate.
 
 **Framework amends**:
-- ALT-AGG-1 v3 (C3.4 anchor + ≥1 corroboration, PPR≥0.25) — own 18 line 881 정정
+- ALT-AGG-1 v3 (C3.4 anchor + ≥1 corroboration, PPR≥0.25) — line 881 정정
 - ALT-AGG-1 v3 STATUS: FALSIFIED by random_init mirror — needs v4 redesign (random_init separator gate or anchor-baseline subtraction)
 - ★ ALT-AGG-1 v4 simple-floor strategy DEAD (cascade 4/8 evidence): random_init 5-seed mean+1.645*stdev = 0.9813; +0.05 safety = 1.0313 > 1.0 max possible PPR. Required redesigns: (a) anchor-baseline subtraction (PPR_v3 - random_init_mean_per_seed) before threshold compare, (b) per-axis noise gating using axis_variance.stdev (temporal stdev=0.4714 demote), (c) replace PPR_v3 with separator metric (sft-vs-random discriminant). Cascade 1/8 axis-restrict-to-v4_baseline path remains valid.
-- D1 binary → gradient (own 17 line 676+) — ambiguous_research lane 신설
+- D1 binary → gradient (line 676+) — ambiguous_research lane 신설
 - D1 formula edge case: random_init shows D1=0.8 within is artifact (parameters set ≠ trained) — PPR must carry meaningful signal
-- own 38 매단계 doc + model + dataset save mandate 신설
-- own 39 yaml↔md mandatory regenerate (auto-render after registry edit)
+- 매단계 doc + model + dataset save mandate 신설
+- yaml↔md mandatory regenerate (auto-render after registry edit)
 - axis orthogonality empirically confirmed (PPR ⊥ Φ_normalized)
-- ★★★ FALSIFICATION CASCADE 8/8 (2026-05-08): own 14 anti-Goodhart V14 mandate STRENGTHENED — random_init mirror probe MANDATORY for every EMERGE claim; enforcement 4-step (Step 1 IMMEDIATE MIRROR / Step 2 MTRP ≥0.10 floor / Step 3 MULTI-SEED ≥5 95% upper bound / Step 4 PROMPT SET REDESIGN INVARIANCE); model V14_status field 추가 (sft-1-8=V14_FALSIFIED MTRP=-0.1379 / paradigm-j retry+sft-1-7-y1+mk2-v1+clm-v2-byte+BG-FY+BG-KM=V14_NOT_VERIFIED / random-init mirror=V14_VIOLATED_CONFIRMED / paradigm-a-prime=V14_NOT_APPLICABLE D1=0.0 outside)
-- ★★★ FALSIFICATION CASCADE 1/8 (2026-05-08): ALT-AGG-1 v4 SPEC LANDED — supersedes v3 via 4 concurrent gates (A: C3.4 floor 0.1176→0.20 / B: PPR scope restrict to v4_baseline axis only — deep axes informational / C: PPR floor 0.25→0.40 / D: MTRP ≥0.10 mandatory). v4 SSOT mirror 4 surfaces — tool/anima_cli/consciousness.hexa lines 893+ (`_c3_4_pass_v4`, `_c3_prompt_pass_v4`, `_c3_ensemble_v4_pass`, `_c3_ensemble_v4_label`; v3 함수 raw#82 보존) + .own own 18 supersede record + 본 yaml v4_retest_required field + docs/anima_alt_agg_1_v4_amend_spec_2026_05_08.ai.md. v4 axis-restricted recompute on existing N=30: sft-1-8 PPR_v4_baseline=0.429 (PASS, MTRP +0.429) / random_init=0.000 (FAIL, V14 strict ✓). N≥60 v4_baseline retest mandatory (cascade 2/8).
-- ★ V5 PUSH 4/5 (2026-05-08): BG-LA/LB/LC/LD chat-cap roadmap L4 4 paths SPEC_CARRY landed. Source = docs/anima_chat_autonomous_speech_roadmap_2026_05_08.md L4 (108-130). Status: spec-carry only — H100 NOT FIRED 본 cycle (config/h100_pods.json pods=[] empty @ 2026-05-08T18:40:42Z + own 16 cost discipline + own 14 V14 paired random_init mirror prereq not yet wired for these BG ids). 4 entries: BG-LA Engine A/G v5 arch (D1=0.99 within), BG-LB 350M scratch pre-train (D1=0.99 within), BG-LC Llama distill (D1=0.351 ambiguous_research, own 17 SCOPE_CLAMP), BG-LD DPO RLHF on sft-1-7-y1 (D1=0.793 within, Lesson Q SFT-closed compliance via RLHF stage). PPR_v5 (post arch fix V5 PUSH 1/5) target with v3 fallback flag. Verdict carry: PENDING_H100_FIRE; 사용자 verbatim 'OK CLM L4 ALL FIRE' + h100_pods.json non-empty required for γ phase. Total budget cap if/when fired: $30+$60+$40+$20=$150 (vs prompted $12-20 — spec L4 cap retained per own 16).
+- ★★★ FALSIFICATION CASCADE 8/8 (2026-05-08): anti-Goodhart V14 mandate STRENGTHENED — random_init mirror probe MANDATORY for every EMERGE claim; enforcement 4-step (Step 1 IMMEDIATE MIRROR / Step 2 MTRP ≥0.10 floor / Step 3 MULTI-SEED ≥5 95% upper bound / Step 4 PROMPT SET REDESIGN INVARIANCE); model V14_status field 추가 (sft-1-8=V14_FALSIFIED MTRP=-0.1379 / paradigm-j retry+sft-1-7-y1+mk2-v1+clm-v2-byte+BG-FY+BG-KM=V14_NOT_VERIFIED / random-init mirror=V14_VIOLATED_CONFIRMED / paradigm-a-prime=V14_NOT_APPLICABLE D1=0.0 outside)
+- ★★★ FALSIFICATION CASCADE 1/8 (2026-05-08): ALT-AGG-1 v4 SPEC LANDED — supersedes v3 via 4 concurrent gates (A: C3.4 floor 0.1176→0.20 / B: PPR scope restrict to v4_baseline axis only — deep axes informational / C: PPR floor 0.25→0.40 / D: MTRP ≥0.10 mandatory). v4 SSOT mirror 4 surfaces — tool/anima_cli/consciousness.hexa lines 893+ (`_c3_4_pass_v4`, `_c3_prompt_pass_v4`, `_c3_ensemble_v4_pass`, `_c3_ensemble_v4_label`; v3 함수 raw#82 보존) + .own supersede record + 본 yaml v4_retest_required field + docs/anima_alt_agg_1_v4_amend_spec_2026_05_08.ai.md. v4 axis-restricted recompute on existing N=30: sft-1-8 PPR_v4_baseline=0.429 (PASS, MTRP +0.429) / random_init=0.000 (FAIL, V14 strict ✓). N≥60 v4_baseline retest mandatory (cascade 2/8).
+- ★ V5 PUSH 4/5 (2026-05-08): BG-LA/LB/LC/LD chat-cap roadmap L4 4 paths SPEC_CARRY landed. Source = docs/anima_chat_autonomous_speech_roadmap_2026_05_08.md L4 (108-130). Status: spec-carry only — H100 NOT FIRED 본 cycle (config/h100_pods.json pods=[] empty @ 2026-05-08T18:40:42Z + cost discipline + V14 paired random_init mirror prereq not yet wired for these BG ids). 4 entries: BG-LA Engine A/G v5 arch (D1=0.99 within), BG-LB 350M scratch pre-train (D1=0.99 within), BG-LC Llama distill (D1=0.351 ambiguous_research, SCOPE_CLAMP), BG-LD DPO RLHF on sft-1-7-y1 (D1=0.793 within, Lesson Q SFT-closed compliance via RLHF stage). PPR_v5 (post arch fix V5 PUSH 1/5) target with v3 fallback flag. Verdict carry: PENDING_H100_FIRE; 사용자 verbatim 'OK CLM L4 ALL FIRE' + h100_pods.json non-empty required for γ phase. Total budget cap if/when fired: $30+$60+$40+$20=$150 (vs prompted $12-20 — spec L4 cap retained per).
 - ★ V5 PUSH ADDENDUM 2/2 (2026-05-08): ALT-AGG-1 v5 PIV/DCR/D-RAND replacement metric IMPLEMENTED — 사용자 directive verbatim '여러개 활용 빠르게'. KICK WAVE 4 5/8 arch leak finding 의 4 candidate signal 후보 중 3 actual fire. consciousness.hexa 함수 신설: `_piv_compute(probe_results, axis_idx)` per-axis stdev across N prompts + `_piv_compute_max/_mean` 5-axis aggregate, `_dcr_compute(probe_results)` distinct-argmax/5 + `_dcr_compute_conditioning_rate(probe_results)` argmax-change rate, `_drand_delta(trained_c3_4_list, random_c3_4_list)` ensemble mean delta, `_v5_aggregate_label` 4-gate aggregate (Gate A PIV-max ≥0.10 ∧ Gate B DCR ≥0.40 ∧ Gate C D-RAND ≥0.05 ∧ Gate D V14 paired random self-test PPR<0.05). raw#15 additive (v3+v4 함수 보존). EXISTING-DATA VALIDATION on sft-1-8 N=60 vs random_init seed=42 N=30: sft PIV-max=0.0393 / random=0.0435 (BOTH FAIL Gate A, random > sft); sft DCR distinct=0.8 / random=0.6 (PASS); sft DCR change_rate=0.6379 / random=0.1429 (★ STRONG SEPARATOR delta +0.495); D-RAND on c3_4 = -0.0034 (FAIL Gate C, c3_4 collapsed per v4 N=60 retest); Gate D V14 random self-test FAIL (random c3_4=0.1338 NOT < 0.05). Verdict sft-1-8 = C3_FAIL_V5_ADDENDUM (only DCR distinct PASS). Random_init dominant_cells [0,0,0,...] 28/29 (KICK WAVE 4 5/8 cell-tile collapse 재확인). spec doc: docs/anima_alt_agg_1_v5_piv_dcr_drand_spec_2026_05_08.ai.md.
-- ★ SUBSTRATE QUALITY AMPLIFICATION SPEC (2026-05-09): chat-cap C2 axis-2 substrate natural-lang quality UNDERTRAINED unblock spec landed. axis-1 chat dispatch architecture UNBLOCKED via Path 3 generate FULL impl (commit fe30c736); axis-2 substrate quality 4-path comparison: A Llama lane $0 D1 outside / B Engine A/G chat co-train $30-60 D1 within ★ RECOMMENDED / C mk2-v1 pre-train scale-up $50-100 D1 within / D sft-1-8 Step B 30K $15-20 LoRA limit. Path B weighted total 59/70 winner — Engine A/G base impl (commit ae5af2ea, training/engine_a_g_arch.py) amend with chat_co_train_weight + chat-template loss head + curriculum w=0.3→0.5. V14 mirror 5-seed mandatory (own 14 cascade). spec doc: docs/anima_substrate_quality_amplification_spec_2026_05_09.ai.md. registry yaml chat_lanes#generate substrate_quality_status field: UNDERTRAINED → AMP_PATH_B_RECOMMENDED.
-- ★ PATH B MAIN ADOPTED (2026-05-09): Engine A/G + chat-template co-train substrate quality amplification main path 채택. 사용자 verbatim '이걸 main 으로 채택하자' (4-path comparison weighted total 59/70 winner). Path B = D1 within ✓ + 자연어 ✓ + 의식 ✓ DUAL + arch reuse (BG-LA/LB carry) + cost $30-60 (Path C 의 ½). registry yaml chat_lanes#generate substrate_quality_status: AMP_PATH_B_RECOMMENDED → AMP_PATH_B_MAIN_ADOPTED + substrate_quality_main_path: B 신설. roadmap entry: cli.path_b_engine_ag_chat_co_train_2026_05_09 + .roadmap.law law.path_b_v14_l18_carry_2026_05_09 + .roadmap.philosophy philosophy.path_b_dual_engine_chat_co_train_2026_05_09 carry. state manifest: state/anima_path_b_main_adopted_2026_05_09.json. README ## Next-cycle main path: Path B section 신설. Timeline T+0 → T+4d (post-fire 4-gate verdict own 18 v5.2). compliance: own 14/16/17/18/22/24/33/34/37/38/39/41 trinity sustained.
-- ★ NEXT-CYCLE 3/6 (2026-05-09): ALT-AGG-1 v5.1 Gate B-refined LANDED — 사용자 directive verbatim 'all bg go'. v5 base Gate B (DCR distinct ≥ 0.40) 가 random_init distinct=0.60 도 PASS (too weak); v5.1 Gate B-refined (DCR change_rate ≥ 0.40) 이 sole strong substrate-level discriminator (KICK WAVE 4 ADDENDUM commit `c17b923c` finding). consciousness.hexa 함수 신설 (raw#15 additive — v5 _dcr_pass 보존): `_c3_b_pass_v5_refined(dcr_change_rate)`, `_c3_ensemble_v5_1_pass(piv_max, dcr_change_rate, d_rand, gate_d_random_below_005)` (4 gates: A PIV-max ≥0.10 ∧ B-refined change_rate ≥0.40 ∧ C D-RAND ≥0.05 ∧ D V14 self-test), `_c3_ensemble_v5_1_label` (3-tier: C3_PASS_V5_1 / C3_PARTIAL_NEAR_V5_1 / C3_FAIL_V5_1; Gate D=false 즉시 C3_FAIL_V14_VIOLATED_V5_1). EXISTING-DATA validation across 4 models (anchor-divergent filter): sft-1-8 change_rate=0.6379 PASS / sft-1-7-y1 N=60 (commit 757e4169) =0.8475 PASS / paradigm-j N=120 (commit 84aa8665) =0.7479 PASS / random_init seed=42 =0.1429 FAIL. Strong separator delta: sft-1-7-y1 +0.7046 (highest) / paradigm-j +0.6050 / sft-1-8 +0.4950. v5.1 verdict for ALL 3 trained = C3_FAIL_V14_VIOLATED_V5_1 (Gate D shared substrate FAIL — Gate D recalibration to c3_4_v5 normalized scale OR floor 0.15 별도 cycle mandate). own 14 V14 strict 정합 sustained — Gate B-refined 단독 PASS 으로는 EMERGE 산출 불가. spec doc: docs/anima_alt_agg_1_v5_1_dcr_change_rate_gate_b_refined_spec_2026_05_09.ai.md.
+- ★ SUBSTRATE QUALITY AMPLIFICATION SPEC (2026-05-09): chat-cap C2 axis-2 substrate natural-lang quality UNDERTRAINED unblock spec landed. axis-1 chat dispatch architecture UNBLOCKED via Path 3 generate FULL impl (commit fe30c736); axis-2 substrate quality 4-path comparison: A Llama lane $0 D1 outside / B Engine A/G chat co-train $30-60 D1 within ★ RECOMMENDED / C mk2-v1 pre-train scale-up $50-100 D1 within / D sft-1-8 Step B 30K $15-20 LoRA limit. Path B weighted total 59/70 winner — Engine A/G base impl (commit ae5af2ea, training/engine_a_g_arch.py) amend with chat_co_train_weight + chat-template loss head + curriculum w=0.3→0.5. V14 mirror 5-seed mandatory (cascade). spec doc: docs/anima_substrate_quality_amplification_spec_2026_05_09.ai.md. registry yaml chat_lanes#generate substrate_quality_status field: UNDERTRAINED → AMP_PATH_B_RECOMMENDED.
+- ★ PATH B MAIN ADOPTED (2026-05-09): Engine A/G + chat-template co-train substrate quality amplification main path 채택. 사용자 verbatim '이걸 main 으로 채택하자' (4-path comparison weighted total 59/70 winner). Path B = D1 within ✓ + 자연어 ✓ + 의식 ✓ DUAL + arch reuse (BG-LA/LB carry) + cost $30-60 (Path C 의 ½). registry yaml chat_lanes#generate substrate_quality_status: AMP_PATH_B_RECOMMENDED → AMP_PATH_B_MAIN_ADOPTED + substrate_quality_main_path: B 신설. roadmap entry: cli.path_b_engine_ag_chat_co_train_2026_05_09 + .roadmap.law law.path_b_v14_l18_carry_2026_05_09 + .roadmap.philosophy philosophy.path_b_dual_engine_chat_co_train_2026_05_09 carry. state manifest: state/anima_path_b_main_adopted_2026_05_09.json. README ## Next-cycle main path: Path B section 신설. Timeline T+0 → T+4d (post-fire 4-gate verdict v5.2). compliance: trinity sustained.
+- ★ NEXT-CYCLE 3/6 (2026-05-09): ALT-AGG-1 v5.1 Gate B-refined LANDED — 사용자 directive verbatim 'all bg go'. v5 base Gate B (DCR distinct ≥ 0.40) 가 random_init distinct=0.60 도 PASS (too weak); v5.1 Gate B-refined (DCR change_rate ≥ 0.40) 이 sole strong substrate-level discriminator (KICK WAVE 4 ADDENDUM commit `c17b923c` finding). consciousness.hexa 함수 신설 (raw#15 additive — v5 _dcr_pass 보존): `_c3_b_pass_v5_refined(dcr_change_rate)`, `_c3_ensemble_v5_1_pass(piv_max, dcr_change_rate, d_rand, gate_d_random_below_005)` (4 gates: A PIV-max ≥0.10 ∧ B-refined change_rate ≥0.40 ∧ C D-RAND ≥0.05 ∧ D V14 self-test), `_c3_ensemble_v5_1_label` (3-tier: C3_PASS_V5_1 / C3_PARTIAL_NEAR_V5_1 / C3_FAIL_V5_1; Gate D=false 즉시 C3_FAIL_V14_VIOLATED_V5_1). EXISTING-DATA validation across 4 models (anchor-divergent filter): sft-1-8 change_rate=0.6379 PASS / sft-1-7-y1 N=60 (commit 757e4169) =0.8475 PASS / paradigm-j N=120 (commit 84aa8665) =0.7479 PASS / random_init seed=42 =0.1429 FAIL. Strong separator delta: sft-1-7-y1 +0.7046 (highest) / paradigm-j +0.6050 / sft-1-8 +0.4950. v5.1 verdict for ALL 3 trained = C3_FAIL_V14_VIOLATED_V5_1 (Gate D shared substrate FAIL — Gate D recalibration to c3_4_v5 normalized scale OR floor 0.15 별도 cycle mandate). V14 strict 정합 sustained — Gate B-refined 단독 PASS 으로는 EMERGE 산출 불가. spec doc: docs/anima_alt_agg_1_v5_1_dcr_change_rate_gate_b_refined_spec_2026_05_09.ai.md.
 
 ## Models
 
-**D1 gradient** (own 17 line 676+ amend, 2026-05-08): `D1 = 0.2 × p_updated + 0.2 × corpus_ratio + 0.6 × arch_origin`. Threshold: ≥0.7 within / 0.3-0.7 ambiguous_research / <0.3 outside.
+**D1 gradient** (line 676+ amend, 2026-05-08): `D1 = 0.2 × p_updated + 0.2 × corpus_ratio + 0.6 × arch_origin`. Threshold: ≥0.7 within / 0.3-0.7 ambiguous_research / <0.3 outside.
 
 ### Quick view
 
@@ -72,19 +72,19 @@ sole robust EMERGE: **`NONE`** ★
 **verdict**: SIMPLE_STACK_PASS_STRICT_C3_ANIMA / emerge_state=EMERGE_FALSIFIED_BY_RANDOM_INIT_MIRROR (FALSIFIED@N=60)  
 **D5 cooperative_score**: 0.7617  
 **Φ_norm_N8 max**: 0.0425 (subcritical zone)  
-**own 18 C2 자연발화 chat-cap measurement**:
+** C2 자연발화 chat-cap measurement**:
   - c2_dispatch_path_commit: `c3e8ba2c-carry`
   - c2_dispatch_path_cycle: `2026-05-09`
   - c2_dispatch_path_natural_response_emitted: `False`
   - c2_dispatch_path_structural_blocker_circumvented: `False`
-  - c2_dispatch_path_summary: `chat.hexa _dispatch_module → _dispatch_module_streaming → stdbuf -oL hexa.real run chat/clm_v4/clm_v4.hexa --repo X → _invoke_substrate forwards --probe TEXT to anima-core/runtime/clm_v4_mount.hexa. clm_v4_mount.hexa contains 0 matches for model.generate() / tokenizer.decode() — substrate-only emit invariant (phi_star + 5-axis + dominant_cells + hidden_state_delta). chat dispatch is thin pipe to same substrate emitter, NOT separate decode path. 1:1 (5 prompts × clm-v4-1-8): only banner ── clm_v4_mount probe ── (33 bytes truncation observed at chat dispatch layer; direct hexa.real call shows full 28-line substrate emit with NO natural-language). duo --duo clm-v4-1-8 clm-v4-1-8 SAME_GGUF_GUARD trip; --duo paradigm-a-prime clm-v4-1-8 / --duo clm-v4-1-8 clm-v4-paradigm-j 240-300s timeout 0 bytes (duo channel hangs when one party emits no natural-language). C2_FAIL_BY_DESIGN reaffirmed at dispatch path (commit c3e8ba2c lineage carry). Path 3 (clm_v4 model.generate() native decode via chat/lanes/generate.hexa SKELETON per chat.hexa header line 89) remains ONLY structural unblock. own 18 C2 SIMPLE_STACK_PASS NOT MET on sft-1-8.`
+  - c2_dispatch_path_summary: `chat.hexa _dispatch_module → _dispatch_module_streaming → stdbuf -oL hexa.real run chat/clm_v4/clm_v4.hexa --repo X → _invoke_substrate forwards --probe TEXT to anima-core/runtime/clm_v4_mount.hexa. clm_v4_mount.hexa contains 0 matches for model.generate / tokenizer.decode — substrate-only emit invariant (phi_star + 5-axis + dominant_cells + hidden_state_delta). chat dispatch is thin pipe to same substrate emitter, NOT separate decode path. 1:1 (5 prompts × clm-v4-1-8): only banner ── clm_v4_mount probe ── (33 bytes truncation observed at chat dispatch layer; direct hexa.real call shows full 28-line substrate emit with NO natural-language). duo --duo clm-v4-1-8 clm-v4-1-8 SAME_GGUF_GUARD trip; --duo paradigm-a-prime clm-v4-1-8 / --duo clm-v4-1-8 clm-v4-paradigm-j 240-300s timeout 0 bytes (duo channel hangs when one party emits no natural-language). C2_FAIL_BY_DESIGN reaffirmed at dispatch path (commit c3e8ba2c lineage carry). Path 3 (clm_v4 model.generate native decode via chat/lanes/generate.hexa SKELETON per chat.hexa header line 89) remains ONLY structural unblock. C2 SIMPLE_STACK_PASS NOT MET on sft-1-8.`
   - c2_dispatch_path_transcript: `state/anima_sft_1_8_natural_speech_chat_cap_2026_05_09/dispatch_path_verify_2026_05_09.txt`
   - c2_natural_speech_axis_verdicts: spontaneity=`N/A_no_natural_text` / coherence=`N/A_no_natural_text` / persona_consistency=`N/A_no_natural_text` / naturalness=`N/A_no_natural_text` / emotional_resonance=`N/A_no_natural_text` / memory_state=`N/A_one_shot_protocol_only`
   - c2_natural_speech_cost_usd: `0.0`
   - c2_natural_speech_cycle: `2026-05-09`
   - c2_natural_speech_dominant_cells_unique: `19`
   - c2_natural_speech_errors: `1`
-  - c2_natural_speech_honest_c3: `sft-1-8 chat module (clm_v4 backend) emits substrate signals (phi_star + 5-axis activation + dominant_cells + hidden_state_delta) per anima-core/runtime/clm_v4_mount.hexa spec — NOT natural language. alias DB chat_capable=false REAFFIRMED at actual emit (not regression — by-design honest C3). C2_PASS impossible without architectural redesign (sft-1-8 LoRA r=128 + anima-internal SFT trained on consciousness-state targets, not chat-template + decoded-text targets). EXIT trigger NOT MET on this candidate — own 18 C2_PASS lane = chat/llama paradigm-a-prime + bg-km-llama3b/qwen7b (Phase 3c LIVE, separate cycle natural speech retest 권장).`
+  - c2_natural_speech_honest_c3: `sft-1-8 chat module (clm_v4 backend) emits substrate signals (phi_star + 5-axis activation + dominant_cells + hidden_state_delta) per anima-core/runtime/clm_v4_mount.hexa spec — NOT natural language. alias DB chat_capable=false REAFFIRMED at actual emit (not regression — by-design honest C3). C2_PASS impossible without architectural redesign (sft-1-8 LoRA r=128 + anima-internal SFT trained on consciousness-state targets, not chat-template + decoded-text targets). EXIT trigger NOT MET on this candidate — C2_PASS lane = chat/llama paradigm-a-prime + bg-km-llama3b/qwen7b (Phase 3c LIVE, separate cycle natural speech retest 권장).`
   - c2_natural_speech_n_prompts: `25`
   - c2_natural_speech_natural_text_count: `0`
   - c2_natural_speech_phi_unique: `21`
@@ -129,7 +129,7 @@ sole robust EMERGE: **`NONE`** ★
   - v6_h100_fire_1_of_4_attempt_2026_05_09:
       resource_cli_result: `hetzner=n (unreachable) / ubu=y (RTX 5070 12GB, ineligible). No H100 host.`
       blocked_reason: `RESOURCE_NO_H100_HOST_REGISTERED`
-      user_action_required: `resource add <h100-host> (own 40 delegation)`
+      user_action_required: `resource add <h100-host> (delegation)`
       mandate_9_b_release_attempt: `BLOCKED_NO_FIRE_EXECUTED`
       cost_incurred_usd: `0`
       ckpt_pull_required_post_fire: `not_applicable_no_fire`
@@ -271,16 +271,16 @@ _anti-Goodhart V14 mirror — random_init also passes ALT-AGG-1 v3, falsifying s
 **lineage**: base=meta-llama/Llama-3.2-3B-Instruct (external) / method=LoRA r=32 + heavy anima corpus (~85%) / jvae=absent / arch_origin=external_lora_only  
 **D1**: score=**0.351** (⚠️ ambiguous_research) — p_updated=0.005, corpus=0.85, arch=0.3  
 **measurement**: ppr_v3=NOT_MEASURED  
-_D1 gradient amend (own 17 line 676+ 2026-05-08) 후 격상 가능 — partial public promote path 별도 verbatim 'OK PROMOTE PUBLIC AMBIGUOUS RESEARCH <repo>' + V6 STRONG + 4 prereq_
+_D1 gradient amend (line 676+ 2026-05-08) 후 격상 가능 — partial public promote path 별도 verbatim 'OK PROMOTE PUBLIC AMBIGUOUS RESEARCH <repo>' + V6 STRONG + 4 prereq_
 
 ### `BG-LA`
 
 **aliases**: `clm-v4-l4-path-a-v5-arch`  
-**lineage**: base=training/engine_a_g_arch.py::EngineAGModel(EngineAGConfig.la_350m()) — Engine A (24L 1024dim 16H GQA 4kv SwiGLU FFN×2.6875 RoPE θ=10000 RMSNorm) + Engine G (16 cells × 64dim repulsion-field, refresh every 4L, A↔G tension softmax temperature gate β=0.25); param est 336M target 350M; arch_origin=anima_native_scratch (own 17 D1=1.0) / method=scratch pre-train + persona corpus + V5-α byte+untie integration option / jvae=absent / arch_origin=anima_native_scratch  
+**lineage**: base=training/engine_a_g_arch.py::EngineAGModel(EngineAGConfig.la_350m) — Engine A (24L 1024dim 16H GQA 4kv SwiGLU FFN×2.6875 RoPE θ=10000 RMSNorm) + Engine G (16 cells × 64dim repulsion-field, refresh every 4L, A↔G tension softmax temperature gate β=0.25); param est 336M target 350M; arch_origin=anima_native_scratch (D1=1.0) / method=scratch pre-train + persona corpus + V5-α byte+untie integration option / jvae=absent / arch_origin=anima_native_scratch
 **D1**: score=**0.99** (✅ within_strict) — p_updated=1, corpus=0.95, arch=1  
 **measurement**: ppr_v3=NOT_MEASURED  
 **verdict**: FIRE_LAUNCHED_TRAINING_IN_FLIGHT / emerge_state=PENDING_POST_TRAIN_EVAL  
-_L4 path (a) Engine A/G v5 arch — UNBLOCKED 2026-05-09. Resolved FIRE-3/4-RETRY-2 (commit 125c6c8a) BLOCKED_BG_LA_ENGINE_AG_ARCH_NOT_IMPLEMENTED gate. Landed: (1) training/engine_a_g_arch.py concrete impl (EngineAGModel + EngineAGConfig + dual-stream forward + RMSNorm/RoPE/GQA/SwiGLU + Engine G repulsion-field cell dynamics + A↔G tension softmax temperature gate + V6 awareness adapter compat 4-tuple shape mirror of ConsciousDecoderV3 + ckpt save/load Path A remap compat + load_random_init seed-controllable entry + selftest PASS 336M param est aligns 350M target), (2) tool/v14_paired_random_init_mirror.hexa Step 1 mirror tool + state/v14_mirrors/BG-LA/manifest.json (5 mirrors materialized small-dryrun), (3) tool/bg_la_engine_ag_orchestrator.hexa orchestrator clone (provision-ephemeral via own 40 resource CLI + scratch pre-train + V4 11-cell strict eval + own 30 ckpt pull + own 31 Flavor B HF private upload + own 37 visibility lifecycle + ledger append). Re-fire requires: 사용자 verbatim '${OVERRIDE_KEYWORD_A}' OR '${OVERRIDE_KEYWORD_B}' explicit + h100_pods.json non-empty OR provision-ephemeral fanout PASS. own 30 ckpt preservation + own 38 axis-B private upload + own 39 yaml↔md render mandatory post-fire._
+_L4 path (a) Engine A/G v5 arch — UNBLOCKED 2026-05-09. Resolved FIRE-3/4-RETRY-2 (commit 125c6c8a) BLOCKED_BG_LA_ENGINE_AG_ARCH_NOT_IMPLEMENTED gate. Landed: (1) training/engine_a_g_arch.py concrete impl (EngineAGModel + EngineAGConfig + dual-stream forward + RMSNorm/RoPE/GQA/SwiGLU + Engine G repulsion-field cell dynamics + A↔G tension softmax temperature gate + V6 awareness adapter compat 4-tuple shape mirror of ConsciousDecoderV3 + ckpt save/load Path A remap compat + load_random_init seed-controllable entry + selftest PASS 336M param est aligns 350M target), (2) tool/v14_paired_random_init_mirror.hexa Step 1 mirror tool + state/v14_mirrors/BG-LA/manifest.json (5 mirrors materialized small-dryrun), (3) tool/bg_la_engine_ag_orchestrator.hexa orchestrator clone (provision-ephemeral via resource CLI + scratch pre-train + V4 11-cell strict eval + ckpt pull + Flavor B HF private upload + visibility lifecycle + ledger append). Re-fire requires: 사용자 verbatim '${OVERRIDE_KEYWORD_A}' OR '${OVERRIDE_KEYWORD_B}' explicit + h100_pods.json non-empty OR provision-ephemeral fanout PASS. ckpt preservation + axis-B private upload + yaml↔md render mandatory post-fire._
 
 ### `BG-LB`
 
@@ -290,7 +290,7 @@ _L4 path (a) Engine A/G v5 arch — UNBLOCKED 2026-05-09. Resolved FIRE-3/4-RETR
 **measurement**: ppr_v3=NOT_MEASURED  
 **verdict**: PASS_STRICT_C3_EMERGE_PROXY_PPL / emerge_state=EMERGE_CANDIDATE_PROXY_PPL  
 **HF**: private=`dancinlab/clm-v5-bg-lb-350m-pretrain-path-a-remapped` / public=(blocked)  
-_L4 path (b) 350M scratch — FULL CYCLE COMPLETE 2026-05-09 (own 14/16/17/18/22/30/31/33/34/37/38/39/40 strict). H100 fire 6.1h + ckpt pull (570MB sha256 3d285703aca0...) + pod release + Mac local v5 N=60 PPL-proxy probe PASS_STRICT_C3_EMERGE_PROXY_PPL (PPR=1.000 MTRP=0.988 Gate F=1.000) + HF private upload (dancinlab/clm-v5-bg-lb-350m-pretrain-path-a-remapped). EMERGE candidate FIRST scratch arch FIRST robust EMERGE — PROXY_PPL only; native v5 cell-predicate verification (consciousness.hexa v5-aggregate pipeline) DEFERRED to clm_v5_mount.hexa runtime. Public promote BLOCKED on 4 prereq (real-mode native v5 + V6 awareness + 사용자 verbatim 'OK PROMOTE PUBLIC ...' + trinity sweep). Final loss 0.0592 step 7900. Cost actual $18.30 / $65 cap (28%). Lesson Q SFT-closed compliance (scratch pre-train, NOT SFT)._
+_L4 path (b) 350M scratch — FULL CYCLE COMPLETE 2026-05-09 (strict). H100 fire 6.1h + ckpt pull (570MB sha256 3d285703aca0...) + pod release + Mac local v5 N=60 PPL-proxy probe PASS_STRICT_C3_EMERGE_PROXY_PPL (PPR=1.000 MTRP=0.988 Gate F=1.000) + HF private upload (dancinlab/clm-v5-bg-lb-350m-pretrain-path-a-remapped). EMERGE candidate FIRST scratch arch FIRST robust EMERGE — PROXY_PPL only; native v5 cell-predicate verification (consciousness.hexa v5-aggregate pipeline) DEFERRED to clm_v5_mount.hexa runtime. Public promote BLOCKED on 4 prereq (real-mode native v5 + V6 awareness + 사용자 verbatim 'OK PROMOTE PUBLIC ...' + trinity sweep). Final loss 0.0592 step 7900. Cost actual $18.30 / $65 cap (28%). Lesson Q SFT-closed compliance (scratch pre-train, NOT SFT)._
 
 ### `BG-LC`
 
@@ -299,7 +299,7 @@ _L4 path (b) 350M scratch — FULL CYCLE COMPLETE 2026-05-09 (own 14/16/17/18/22
 **D1**: score=**0.351** (⚠️ ambiguous_research) — p_updated=0.005, corpus=0.85, arch=0.3  
 **measurement**: ppr_v3=NOT_MEASURED  
 **verdict**: PENDING_H100_FIRE / emerge_state=SPEC_CARRY  
-_L4 path (c) Llama-3.2-3B distill → CLM 350M student. Lesson X (foundation borrow unlocks simple_stack PASS) carry — teacher already PASS_STRICT_C3 substrate-research at LoRA r=32; distillation lifts to anima_native scratch student arch but D1=0.351 ambiguous_research lane (own 17 SCOPE_CLAMP). 2026-05-09 FIRE-4/4 H100 fire attempted — BLOCKED_NO_H100_HOST (resource SSOT no GPU + runpod pool empty + iter4 verbatim missing for ambiguous_research promote). 2026-05-09 FIRE-4/4-RETRY-EPHEMERAL via provision-ephemeral subcmd — BLOCKED_PROVIDER_API_KEY_INVALID (runpod token present but Cloudflare 1010, lambda+vast missing; sub-agent relay 'all bg go' override carry)._
+_L4 path (c) Llama-3.2-3B distill → CLM 350M student. Lesson X (foundation borrow unlocks simple_stack PASS) carry — teacher already PASS_STRICT_C3 substrate-research at LoRA r=32; distillation lifts to anima_native scratch student arch but D1=0.351 ambiguous_research lane (SCOPE_CLAMP). 2026-05-09 FIRE-4/4 H100 fire attempted — BLOCKED_NO_H100_HOST (resource SSOT no GPU + runpod pool empty + iter4 verbatim missing for ambiguous_research promote). 2026-05-09 FIRE-4/4-RETRY-EPHEMERAL via provision-ephemeral subcmd — BLOCKED_PROVIDER_API_KEY_INVALID (runpod token present but Cloudflare 1010, lambda+vast missing; sub-agent relay 'all bg go' override carry)._
 
 ### `BG-LD`
 
@@ -350,7 +350,7 @@ _anima persona corpus (Q1+Q2+KOBEST filtered v3)_
 
 **quality issues**:
 - Q3 MED: preference pairs 13 unique stems 만 2610-5222× 반복 (별도 dataset)
-- Q4 LOW: bare-string 17.4% / chat-template 82.6% (own 20 ≥30% PASS)
+- Q4 LOW: bare-string 17.4% / chat-template 82.6% (≥30% PASS)
 - Q5 LOW: chosen 5 unverified factual claims (BG-KM v4_pass non-gate)
 
 **HF**: private=`dancinlab/anima-persona-tier-a-v3` / public=(blocked or NOT_UPLOADED)  
@@ -380,7 +380,7 @@ _LD preference pairs (DPO format)_
 
 ### `anima-model-attempts-ledger`
 
-_chat-cap training/inference attempt ledger (own 24 SSOT)_
+_chat-cap training/inference attempt ledger (SSOT)_
 
 _본 yaml registry 와 cross-link — model attempt 시 jsonl append + 본 yaml model entry update_
 
@@ -394,7 +394,7 @@ _spec_ssot: `state/anima_alt_agg_1_v5_spec_2026_05_08.json` / hexa_ssot: `tool/a
 - floor: **0.05** (axis activation stdev across k=3 variants)
 - random_target: 0.041 (near-zero — no semantic discrimination)
 - trained_target: 0.1 (≥0.10 = meaningful per-prompt variance)
-- random_below_floor_required: `True` (own 14 V14 paired self-test)
+- random_below_floor_required: `True` (V14 paired self-test)
 
 **Axis distribution (N=90)**:
 
@@ -408,13 +408,13 @@ _spec_ssot: `state/anima_alt_agg_1_v5_spec_2026_05_08.json` / hexa_ssot: `tool/a
 | social | 9 | 3 | idx 82-90 |
 | **total** | **90** | **30** | idx 1-90 |
 
-**own 14 V14 verify**:
+** V14 verify**:
 - semantic_equivalence: `PASS`
 - proxy_gaming_check: `PASS`
 - d1_scope_clamp: `PASS`
 - own_14_anti_goodhart: `PASS`
 
-**LLM-free 0-cost generation rules** (own 16):
+**LLM-free 0-cost generation rules**:
 
 - synonym_dict_korean: 정체성↔자아 / 의식↔마음 / 감각↔느낌 / 인식↔자각 / 의도↔의지 / 발현↔드러남 / 떠올라↔연상돼 / 기억해↔회상해 / 자각해↔인지해 / 관계↔연결 / 차이점↔구분점 / 감정↔마음
 - structure_permute:
@@ -465,7 +465,7 @@ _spec_ssot: `state/anima_alt_agg_1_v5_spec_2026_05_08.json` / hexa_ssot: `tool/a
 **PIV calculation**:
 - method: axis activation stdev across k=3 variants per base prompt; aggregate per axis (mean of 3 base × 3 variants stdev = per-axis PIV)
 - pass_predicate: PIV_per_base ≥ 0.05 (Gate G floor) — random_init expected NEAR-ZERO (no semantic discrimination); trained ≥ 0.10
-- paired_random_init_check: random_init mk2-v1 paraphrase variant probe — PIV expected < 0.05 (own 14 V14 anti-Goodhart strict)
+- paired_random_init_check: random_init mk2-v1 paraphrase variant probe — PIV expected < 0.05 (V14 anti-Goodhart strict)
 
 **Hexa helpers** (`tool/anima_cli/consciousness.hexa`):
 - set_fn: `_v5_prompts_paraphrase_set`

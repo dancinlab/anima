@@ -1,6 +1,6 @@
 # anima/spec/anima_model_attempts_ledger.schema.yaml
-# anima model attempts ledger — JSONL field validation schema (own 24 정합)
-# 2026-05-07 — own 24 inline jsonl_schema → standalone yaml spec land (raw#15 additive)
+# anima model attempts ledger — JSONL field validation schema (정합)
+# 2026-05-07 — inline jsonl_schema → standalone yaml spec land (raw#15 additive)
 # raw#9 hexa orchestration / raw#10 honest C3 / raw#82 retraction protocol
 
 schema_version: anima/spec/v1
@@ -16,17 +16,17 @@ scope:
   domain: anima_self_tracking
   lane: model_attempt_ledger_validation
   ssot_jsonl: state/anima_model_attempts_ledger.jsonl
-  ssot_inline_origin: anima/.own (own 24 line 987-1021 jsonl_schema block)
+  ssot_inline_origin: anima/.own (line 987-1021 jsonl_schema block)
   consumer_of:
-    - anima/.own (own 24 anima-model-attempts-ledger-ssot)
-    - anima/.own (own 18 simple stack — complementary)
-    - anima/.own (own 22 silent-discovery-forbidden)
+    - anima/.own (anima-model-attempts-ledger-ssot)
+    - anima/.own (simple stack — complementary)
+    - anima/.own (silent-discovery-forbidden)
   sister_specs:
     - anima/spec/anima_cli_mk2.spec.yaml
     - anima/spec/emerge_paradigm.spec.yaml
 
 description: |
-  본 schema는 own 24 ledger jsonl format SSOT validation contract. 모든 chat-cap
+  본 schema는 ledger jsonl format SSOT validation contract. 모든 chat-cap
   training/inference attempt entry는 본 schema 통과 mandate. 1-attempt-per-line,
   bg_id+attempt_n+date 3-tuple uniqueness, raw#82 retraction (downgraded_at +
   downgrade_reason 보존), enum value 정합 mandate.
@@ -157,7 +157,7 @@ required_fields:
 
       raw#15 additive 2026-05-07 BG-IW extension — added 6 enum values to legalize
       honest verdict labels emitted by prior BGs without rewriting their entries:
-        SIMPLE_STACK_FAIL                           — own 18 simple stack ≥1 cell fail
+        SIMPLE_STACK_FAIL — simple stack ≥1 cell fail
                                                        (BG-FK precedent)
         SEED_LUCK_FAIL                              — non-reproducibility under seed pin
                                                        (BG-IE 2/10 vs BG-HP 3/10 same paradigm)
@@ -169,7 +169,7 @@ required_fields:
         V3_EVALUATOR_LANDED_8BG_RETROEVAL_VALIDATED — tooling BG (V3 evaluator standalone retry +
                                                        8-BG retroeval); BG-IJ precedent
 
-      out-of-enum verdicts발견 시 own 22 silent-discovery-forbidden 정합으로
+      out-of-enum verdicts발견 시 silent-discovery-forbidden 정합으로
       enum_violations에 명시 mandate.
   lesson_implications:
     type: array
@@ -189,7 +189,7 @@ required_fields:
     items_type: string
   hf_private_status:
     type: enum
-    description: HF Hub upload lifecycle status (own 15 정합)
+    description: HF Hub upload lifecycle status (정합)
     enum:
       - NOT_PROMOTED
       - PRIVATE_UPLOADED
@@ -302,12 +302,12 @@ validation_rules:
     name: 3tuple_uniqueness
     description: bg_id + attempt_n + date 3-tuple은 ledger 전체에서 UNIQUE (no duplicate)
     severity: error
-    rationale: own 24 application-rule "bg_id + attempt_n + date 3-tuple unique mandate"
+    rationale: application-rule "bg_id + attempt_n + date 3-tuple unique mandate"
   - id: VR-5
     name: raw82_retraction_pair_presence
     description: downgraded_at present 시 downgrade_reason ALSO present mandate (vice versa)
     severity: error
-    rationale: own 24 application-rule + raw#82 retraction protocol
+    rationale: application-rule + raw#82 retraction protocol
   - id: VR-6
     name: pattern_check
     description: bg_id pattern (BG-XX), date ISO-8601 pattern, downgraded_at datetime pattern 정합
@@ -321,9 +321,9 @@ validation_rules:
 # Section 5: honest C3 (raw#10, ≥5 mandate)
 # ─────────────────────────────────────────────────────────────────────────────
 honest_c3:
-  - "본 schema는 own 24 inline jsonl_schema field 정합 — own 24 ledger record content는 변경 X (additive spec extraction only, raw#15)"
+  - "본 schema는 inline jsonl_schema field 정합 — ledger record content는 변경 X (additive spec extraction only, raw#15)"
   - "enum_match_mode prefix_or_root는 existing ledger entry preservation 위해 도입 — strict mode (--strict flag) 사용 시 'FAILED (peak-then-collapse)' 같은 suffix entry는 enum violation으로 분류됨"
-  - "enum 외 verdict 발견 시 (e.g., SIMPLE_STACK_FAIL / SEED_LUCK_FAIL / BLOCKED_CKPT_NEVER_PERSISTED) own 22 silent-discovery-forbidden 정합으로 violations list 명시 — silent acceptance 금지"
+  - "enum 외 verdict 발견 시 (e.g., SIMPLE_STACK_FAIL / SEED_LUCK_FAIL / BLOCKED_CKPT_NEVER_PERSISTED) silent-discovery-forbidden 정합으로 violations list 명시 — silent acceptance 금지"
   - "raw#82 retraction pair presence (downgraded_at + downgrade_reason)는 hard error — 한 field만 add 시 silent overwrite 위험으로 entry 보존 의도 훼손"
   - "validator는 raw#9 hexa stdlib json 정합으로 jsonl line-by-line parsing — schema yaml은 PyYAML import (raw#37 transient_py opt-out 정합)"
   - "본 schema의 final_class enum은 task spec verbatim list (10 values) — ledger 실제 사용 verdict 중 enum 외 4종 (SIMPLE_STACK_FAIL / SEED_LUCK_FAIL / BLOCKED_CKPT_NEVER_PERSISTED / canonical-root만 매치되는 suffix variants)은 prefix_or_root mode에서도 root match 안되면 violation"

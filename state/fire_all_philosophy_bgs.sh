@@ -23,9 +23,9 @@ ANIMA_ROOT="${ANIMA_ROOT:-/Users/ghost/core/anima}"
 RUN_TS="$(date +%Y%m%d_%H%M%S)"
 BASE_OUT="${ANIMA_ROOT}/state"
 
-# Default ckpt: public anima paradigm-j (own 37 promote, F2 PASS)
+# Default ckpt: public anima paradigm-j (promote, F2 PASS)
 PUBLIC_CKPT="${PUBLIC_CKPT:-dancinlab/clm-v4-paradigm-j-50k-final-path-a-remapped}"
-# Private BG-LB Engine A/G (substrate-research only, own 17 정합)
+# Private BG-LB Engine A/G (substrate-research only, 정합)
 BG_LB_CKPT="${BG_LB_CKPT:-dancinlab/clm-v5-bg-lb-stage1}"
 
 echo "=========================================="

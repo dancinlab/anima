@@ -29,7 +29,7 @@ Legacy file: `docs/hypotheses/H-CX-526-renormalization-group-consciousness.md`. 
 
 - legacy: `docs/hypotheses/H-CX-526-renormalization-group-consciousness.md`
 - sister: H_008 (dissipative), H_011 (IIT geometry), DD131-132 SOC
-- own: own 21
+- own:
 
 ## Honest Limits
 

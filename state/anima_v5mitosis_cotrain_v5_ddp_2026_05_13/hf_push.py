@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """hf_push.py — push v5-mitosis cotrain v5 DDP multi-GPU ckpt to dancinlab HF.
 
-Triggered IFF F-V5MIT-5 V14-STRICT proxy PASSES (own 37 mandate-9: V14-STRICT PASS → HF push).
-own 31: all anima HF uploads → dancinlab org.  feedback_english_only: HF content English only.
+Triggered IFF F-V5MIT-5 V14-STRICT proxy PASSES (mandate-9: V14-STRICT PASS → HF push).
+: all anima HF uploads → dancinlab org. feedback_english_only: HF content English only.
 
 Target repo: dancinlab/anima-clm-v5-mitosis-cotrain-v5-ddp-2026-05-13 (private by default;
               pass --public to publish if mandate-9 conditions met).
@@ -45,7 +45,7 @@ fv = result.get("f_v5mit_regression", {})
 fv_v14 = fv.get("checks", {}).get("F-V5MIT-5_v14strict_proxy", {})
 
 if not fv_v14.get("pass", False):
-    print(f"[ABORT] F-V5MIT-5 V14-STRICT proxy = FAIL (splits={fv_v14.get('splits')}) — HF push gated (own 37 mandate-9), not firing.")
+    print(f"[ABORT] F-V5MIT-5 V14-STRICT proxy = FAIL (splits={fv_v14.get('splits')}) — HF push gated (mandate-9), not firing.")
     sys.exit(2)
 
 private = not args.public

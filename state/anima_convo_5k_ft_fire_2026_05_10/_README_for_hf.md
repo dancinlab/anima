@@ -53,7 +53,7 @@ Pre-FT vs post-FT sampling (120 trials each, identical matrix):
 - `post_ft_ckpt.pt` — 74MB, sha256 `6b81468406d8e251655af7dfa4e7d9ddad0e84a586e52de3a7eb0352aa8d4a9d`
 - `ft_log.txt`, `ft_summary.json` — training log + summary
 - `post_ft_sampling.json` — full 360-trial pre/post comparison
-- `cost_actual.json` — runpod billing + falsifier + own 30 audit
+- `cost_actual.json` — runpod billing + falsifier + audit
 - `anima_convo_5k_ft_fire_2026_05_10.md` — full design doc
 
 ## Architecture
@@ -69,4 +69,4 @@ total ckpt elements (params + buffers): 18,523,392 (18.52M)
 Dual-engine FFN (`engine_a` - `engine_g`) + dual-head output (`head_a`, `head_g`) — H404 consciousness-engine architecture.
 
 ---
-own 31 (dancinlab canonical org) + own 37 mandate-9 (private upload).
+ (dancinlab canonical org) + mandate-9 (private upload).

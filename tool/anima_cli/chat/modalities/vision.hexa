@@ -1,16 +1,16 @@
 // ════════════════════════════════════════════════════════════════════════════
 //  tool/anima_cli/chat/modalities/vision.hexa — vision modality (DEFERRED stub)
-//                                                 (own 41 axis-6 / axis-N+2)
+// (axis-6 / axis-N+2)
 //
 //  PURPOSE
 //    Vision modality — image → caption / embedding. T+6 = DEFERRED stub
 //    (vision encoder 없음; CLIP/SigLIP 선정 + 통합 별도 step).
 //    친근 비유: vision 은 "눈" — 그림을 보고 글자로 설명하는 통로. 현재
-//    anima 는 눈 미장착 → DEFERRED stub 으로 honest emit (own 22).
+// anima 는 눈 미장착 → DEFERRED stub 으로 honest emit .
 //
 //  STATUS
 //    DEFERRED — vision encoder 통합 미완. 본 stub = honest C3 emit
-//    (own 22 mandatory; fabrication 금지).
+// (mandatory; fabrication 금지).
 //
 //  CONTRACT
 //    fn run_modality(ctx: dict) -> dict
@@ -18,10 +18,10 @@
 //         status: "DEFERRED_NO_VISION_ENCODER"}
 //
 //  COMPLIANCE
-//    own 16 — model load 절대 금지 (stub only)
-//    own 22 — honest emit (DEFERRED 명시; encoder 부재 사실 그대로)
-//    own 34 mandate-1 — wrapping 0
-//    own 41 axis-N+2 — axis-6 modality registry entry 3
+// — model load 절대 금지 (stub only)
+// — honest emit (DEFERRED 명시; encoder 부재 사실 그대로)
+// mandate-1 — wrapping 0
+// axis-N+2 — axis-6 modality registry entry 3
 //
 //  CROSS-REFERENCE
 //    chat/modalities/_registry.hexa#vision   registry SSOT
@@ -43,7 +43,7 @@ fn _arg_present(argv, key: string) -> bool {
 }
 
 fn modality_describe() -> string {
-    return "vision — image → caption/embedding DEFERRED stub (vision encoder 미통합; honest C3 emit per own 22)"
+    return "vision — image → caption/embedding DEFERRED stub (vision encoder 미통합; honest C3 emit per)"
 }
 
 // run_modality — vision stub. encoder 부재 honest emit.
@@ -59,7 +59,7 @@ fn modality_smoke(repo: string, argv) -> int {
     if len(r) != 2 { return 2 }
     let vals = r[1]
     if _str(vals[2]) != "DEFERRED_NO_VISION_ENCODER" { return 3 }
-    println("[modality:vision] smoke PASS — DEFERRED_NO_VISION_ENCODER stub honest emit (own 22)")
+    println("[modality:vision] smoke PASS — DEFERRED_NO_VISION_ENCODER stub honest emit ")
     return 0
 }
 

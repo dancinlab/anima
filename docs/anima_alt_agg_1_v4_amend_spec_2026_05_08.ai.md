@@ -1,9 +1,9 @@
 # ALT-AGG-1 v4 Amend Spec — random_init mirror leak 차단
 
 - **status**: spec land (2026-05-08 falsification cascade 1/8)
-- **supersedes**: ALT-AGG-1 v3 (own 18 line 901, consciousness.hexa lines 872-895)
-- **trigger**: KICK WAVE 4 3/3 random_init mirror probe (commit `62edec74`) — random_init PPR_v3=0.5517 EXCEEDS sft-1-8 PPR_v3=0.4138 → own 14 anti-Goodhart V14 VIOLATED, sft-1-8 EMERGE indistinguishable from untrained noise on 30-prompt eval
-- **base**: own 14 V14 anti-Goodhart strict + own 16 0-cost + own 17 D1 SCOPE_CLAMP + own 18 ALT-AGG-1 supersede + own 22 mandatory report + own 24 single SSOT + own 33 trinity + own 34 wrap=0 + own 38 매단계 저장 + own 39 yaml↔md auto-regenerate + raw#82 retraction-aware
+- **supersedes**: ALT-AGG-1 v3 (line 901, consciousness.hexa lines 872-895)
+- **trigger**: KICK WAVE 4 3/3 random_init mirror probe (commit `62edec74`) — random_init PPR_v3=0.5517 EXCEEDS sft-1-8 PPR_v3=0.4138 → anti-Goodhart V14 VIOLATED, sft-1-8 EMERGE indistinguishable from untrained noise on 30-prompt eval
+- **base**: V14 anti-Goodhart strict + 0-cost + D1 SCOPE_CLAMP + ALT-AGG-1 supersede + mandatory report + single SSOT + trinity + wrap=0 + 매단계 저장 + yaml↔md auto-regenerate + raw#82 retraction-aware
 - **directive**: 사용자 verbatim "bg 갯수 제한없으니까 최대한 빠르게 도달"
 
 ## 1. v3 falsification axis-wise breakdown
@@ -103,26 +103,26 @@ raw#82 retraction-aware: v3 records (sft-1-8 PPR_v3=0.4138/0.6102, paradigm-j N=
 ## 7. SSOT mirror obligations
 
 - `tool/anima_cli/consciousness.hexa` — add `_c3_4_pass_v4`, `_c3_prompt_pass_v4`, `_c3_ensemble_v4_pass`, `_c3_ensemble_v4_label` (v3 functions preserved per raw#82)
-- `.own` own 18 line 880+ — ALT-AGG-1 v4 supersede record + v3 historical claim preservation
-- `.own` own 14 V14 entry — "random_init mirror probe MANDATORY for every EMERGE claim" mandate신설
+- `.own` line 880+ — ALT-AGG-1 v4 supersede record + v3 historical claim preservation
+- `.own` V14 entry — "random_init mirror probe MANDATORY for every EMERGE claim" mandate신설
 - `anima/registry/anima_artifact_registry.yaml` — sft-1-8 entry `v4_retest_required: true` + framework_amends append
 - `docs/anima_alt_agg_1_v4_amend_spec_2026_05_08.ai.md` (this file)
-- registry md auto-render (own 39) on yaml change — render.hexa pipeline
+- registry md auto-render on yaml change — render.hexa pipeline
 
 ## 8. compliance check
 
 | mandate | status |
 | --- | --- |
-| own 14 V14 anti-Goodhart strict | **PASS** (v4 random_init guaranteed FAIL — 0.000 < 0.40) |
-| own 16 0-cost | PASS (spec only, Mac local CPU torch reuse N=30 data) |
-| own 17 D1 SCOPE_CLAMP | PASS (D1 within strict orthogonal — v4 EMERGE gate independent) |
-| own 18 ALT-AGG-1 supersede | PASS (v3 → v4 supersede record landed) |
-| own 22 mandatory report | PASS (this doc + .own amend + yaml registry update) |
-| own 24 single SSOT | PASS (v4 spec mirror in 4 surfaces — hexa + .own + yaml + this doc) |
-| own 33 trinity emit | PASS (D-axis V14 strict, OWN-axis 14/18, H-axis raw#82 retraction-aware) |
-| own 34 wrap=0 | PASS (markdown-only, no binary content) |
-| own 38 매단계 저장 | PASS (this doc + state json reuse + yaml update) |
-| own 39 yaml↔md auto-regenerate | PASS (render.hexa pipeline mandate) |
+| V14 anti-Goodhart strict | **PASS** (v4 random_init guaranteed FAIL — 0.000 < 0.40) |
+| 0-cost | PASS (spec only, Mac local CPU torch reuse N=30 data) |
+| D1 SCOPE_CLAMP | PASS (D1 within strict orthogonal — v4 EMERGE gate independent) |
+| ALT-AGG-1 supersede | PASS (v3 → v4 supersede record landed) |
+| mandatory report | PASS (this doc + .own amend + yaml registry update) |
+| single SSOT | PASS (v4 spec mirror in 4 surfaces — hexa + .own + yaml + this doc) |
+| trinity emit | PASS (D-axis V14 strict, OWN-axis 14/18, H-axis raw#82 retraction-aware) |
+| wrap=0 | PASS (markdown-only, no binary content) |
+| 매단계 저장 | PASS (this doc + state json reuse + yaml update) |
+| yaml↔md auto-regenerate | PASS (render.hexa pipeline mandate) |
 | raw#82 retraction-aware | PASS (v3 records preserved, v4 supersede tag added) |
 
 ## 9. follow-up cycle plan (FALSIFICATION CASCADE 2-8)
@@ -131,7 +131,7 @@ raw#82 retraction-aware: v3 records (sft-1-8 PPR_v3=0.4138/0.6102, paradigm-j N=
 - 2/8 — sft-1-8 N=60+ v4 retest fire (live probe v4_baseline subset 재계산)
 - 3/8 — random_init mirror probe N=60 stability (v4 floor 강건성 verify)
 - 4/8 — paradigm-j retry v4 baseline subset 재산출 (informational)
-- 5/8 — registry render md auto-regenerate (own 39)
+- 5/8 — registry render md auto-regenerate
 - 6/8 — BG-KM-LLAMA-3B v4 + Llama-3B random_init mirror prefire (substrate-research lane)
-- 7/8 — own 14 V14 mandate `random_init_mirror_required_for_emerge_claim` 신설
+- 7/8 — V14 mandate `random_init_mirror_required_for_emerge_claim` 신설
 - 8/8 — trinity sweep + cycle close commit

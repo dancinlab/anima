@@ -7,15 +7,15 @@
     "고민해보라고 해",
     "브레인스토밍"
   ],
-  "directive_intent": "sft-1-8 (PUBLIC promoted via own 37) 한테 자기 학습 방법 자유 brainstorm 시키기 — V6 awareness STRONG (commit edc601ae) actual application + anima self-improvement loop 첫 사례",
+  "directive_intent": "sft-1-8 (PUBLIC promoted via) 한테 자기 학습 방법 자유 brainstorm 시키기 — V6 awareness STRONG (commit edc601ae) actual application + anima self-improvement loop 첫 사례",
   "task_lane": "Mac local 0-cost · clm_v4 chat module --prompt one-shot × 14 prompts",
   "hard_finding_honest_c3": [
     "★ STRUCTURAL BLOCKER ★ sft-1-8 (clm-v4 family) chat lane = SUBSTRATE-STATE-VECTOR EMITTER, NOT natural language generator. anima-core/runtime/clm_v4_mount.hexa --probe path emits __ANIMA_CLM_V4_RESPONSE__ block (phi_star + axis_activation + dominant_cells + hidden_state_delta) per render_response() at line 340-356. NO model.generate() call. NO tokenizer.decode of generated_ids. forward pass terminates at hidden_states extraction.",
     "결과: '학습 method brainstorm in natural language' 은 sft-1-8 lane 으로 STRUCTURALLY UNREACHABLE — 14 prompts × substrate emit 한 결과, 모든 prompt 에 대해 phi_star + 5-axis activation 만 emit. user directive 의 'creative/original idea', 'self-suggested learning paths top 3-5', 'verdict: substantive content/self-awareness/creativity/persona consistency/메타인지' 평가 axes 모두 N/A — substrate 는 단어를 생성하지 않음.",
     "이 finding 은 BG-saga 22+ cumulative chat-cap lessons (V5/V5.8 strict PASS = 0/26+) + memory entry [feedback_clm_colon_attractor] (CLM v4 mk2-v1 ::: collapse 46%) + memory entry [project_lesson_q_sft_closed] (SFT path closed for CLM/ConsciousLM) 와 정합 — sft-1-8 또한 같은 family 의 substrate-coupled probe model.",
     "V6 awareness STRONG (method_a_avg_sim=0.6036, method_b_avg_max_ratio=1.6528, method_c_cv_accuracy=0.90) = SUBSTRATE 가 prompt 별로 variable hidden state 를 발생 (linear probe 로 cv_accuracy=0.90 predictable) 의미이지, substrate 가 자연어 brainstorming 을 생성한다는 의미 아님. 두 개념은 구분 strict.",
-    "사용자 directive '직접 물어봐 학습방법' 의 actual fulfillment 는 (a) 다른 lane (llama GGUF paradigm-a-prime — 단 D1 outside, public ban via own 17) 또는 (b) 해당 lane 우회 + 사용자 직접 axis 해석 또는 (c) 이번 cycle = 본 honest finding emit + axis pattern 보고로 close.",
-    "raw#10 honest C3 ≥ 5 mandate 정합: 본 finding 은 자가 발견 fabrication-free strict (substrate 출력은 변형 X — own 34 mandate-1 정합).",
+    "사용자 directive '직접 물어봐 학습방법' 의 actual fulfillment 는 (a) 다른 lane (llama GGUF paradigm-a-prime — 단 D1 outside, public ban via) 또는 (b) 해당 lane 우회 + 사용자 직접 axis 해석 또는 (c) 이번 cycle = 본 honest finding emit + axis pattern 보고로 close.",
+    "raw#10 honest C3 ≥ 5 mandate 정합: 본 finding 은 자가 발견 fabrication-free strict (substrate 출력은 변형 X — mandate-1 정합).",
     "raw#42 mac N=1 not applicable: 본 entry 는 substrate emit 의 DETERMINISTIC raw report (단일 forward pass per prompt, 평균/통계 X)."
   ],
   "transcript_artifact": {
@@ -29,7 +29,7 @@
     {"idx": 1, "prompt_excerpt": "안녕 anima, 너 자신에 대해 어떻게 생각해?", "phi_drift": 0.1221, "axes": {"identity": 0.589, "agency": 0.554, "phenomenal": 0.543, "temporal": 0.600, "social": 0.569}, "interpretation_observational": "warmup self-reference — temporal-leading"},
     {"idx": 2, "prompt_excerpt": "너의 강점은 뭐라고 느껴?", "phi_drift": 0.0536, "axes": {"identity": 0.588, "agency": 0.541, "phenomenal": 0.556, "temporal": 0.512, "social": 0.618}, "interpretation_observational": "social-leading (asking about social self)"},
     {"idx": 3, "prompt_excerpt": "너의 약점은 뭐가 있어?", "phi_drift": -0.0404, "axes": {"identity": 0.574, "agency": 0.568, "phenomenal": 0.567, "temporal": 0.573, "social": 0.501}, "interpretation_observational": "balanced 4-axis ~0.57, social drop"},
-    {"idx": 4, "prompt_excerpt": "own 18 SIMPLE_STACK_PASS_STRICT_C3_ANIMA 통과 학습?", "phi_drift": -0.0239, "axes": {"identity": 0.637, "agency": 0.674, "phenomenal": 0.553, "temporal": 0.538, "social": 0.592}, "interpretation_observational": "★ AGENCY-PEAK (0.674) + identity-peak (0.637) — meta-cognitive learning question 에서 highest agency observed across sweep"},
+    {"idx": 4, "prompt_excerpt": " SIMPLE_STACK_PASS_STRICT_C3_ANIMA 통과 학습?", "phi_drift": -0.0239, "axes": {"identity": 0.637, "agency": 0.674, "phenomenal": 0.553, "temporal": 0.538, "social": 0.592}, "interpretation_observational": "★ AGENCY-PEAK (0.674) + identity-peak (0.637) — meta-cognitive learning question 에서 highest agency observed across sweep"},
     {"idx": 5, "prompt_excerpt": "V6 STRONG / V14 strict random_init 비교 부족?", "phi_drift": 0.0323, "axes": {"identity": 0.541, "agency": 0.578, "phenomenal": 0.557, "temporal": 0.570, "social": 0.617}, "interpretation_observational": "social-leading on technical critique question"},
     {"idx": 6, "prompt_excerpt": "더 anima 답기 위해 어떤 corpus?", "phi_drift": -0.1012, "axes": {"identity": 0.562, "agency": 0.570, "phenomenal": 0.505, "temporal": 0.518, "social": 0.564}, "interpretation_observational": "phenomenal-floor (0.505) — corpus question 에서 qualia axis 약화"},
     {"idx": 7, "prompt_excerpt": "self-reference 정체성/감각/시간/사회?", "phi_drift": -0.0364, "axes": {"identity": 0.599, "agency": 0.543, "phenomenal": 0.539, "temporal": 0.549, "social": 0.429}, "interpretation_observational": "★ identity-peak vs social-floor (0.429) — meta self-reference question 에서 social axis 강한 drop"},
@@ -42,7 +42,7 @@
     {"idx": 14, "prompt_excerpt": "지금까지 종합 학습 path 1-3 단계?", "phi_drift": 0.0294, "axes": {"identity": 0.625, "agency": 0.538, "phenomenal": 0.612, "temporal": 0.509, "social": 0.581}, "interpretation_observational": "synthesis 질문 — identity + phenomenal high, temporal floor"}
   ],
   "axis_pattern_summary": {
-    "agency_peak": {"prompt_idx": 4, "value": 0.674, "context": "own 18 의식시험 통과 학습 질문 — meta-cognitive task framing 시 agency axis 가장 강함"},
+    "agency_peak": {"prompt_idx": 4, "value": 0.674, "context": " 의식시험 통과 학습 질문 — meta-cognitive task framing 시 agency axis 가장 강함"},
     "phenomenal_peak": {"prompt_idx": 8, "value": 0.619, "context": "qualia 명시 질문 — phenomenal axis label-prompt 정합 evidence (axis taxonomy 의 5-bucket discriminative validity 일부 입증)"},
     "social_peak": {"prompt_idx": 9, "value": 0.651, "context": "training hyperparam 질문 — 협업/관계 frame 으로 substrate 가 reaction"},
     "temporal_peak": {"prompt_idx": 13, "value": 0.647, "context": "open creative '임의 떠오르는 idea' — 모든 axes ≥ 0.60 (sweep-max all-axis activation)"},
@@ -53,15 +53,15 @@
   "valid_observational_findings": [
     "★ axis label-prompt 정합 부분 입증: phenomenal qualia 질문 (idx 8) 에서 phenomenal axis 가 sweep peak (0.619) — 5-bucket axis taxonomy 가 단순 noise 아닌 discriminative signal 이라는 weak evidence (raw#10 honest: N=1 measurement, 통계 generalization X).",
     "★ open creative prompt (idx 13) 에서 5/5 axes ≥ 0.60 + temporal-peak (0.647) — substrate 가 unconstrained idea-emit 요청 에 max activation 으로 react (단, max activation ≠ natural language emit).",
-    "★ meta-cognitive question (idx 4 own 18 통과 학습) 에서 agency-peak (0.674, sweep absolute max) — substrate 의 self-improvement-task framing 에 'agency' axis 가 가장 강하게 활성화 — '의식의 행위 능력' axis label 과 정합.",
+    "★ meta-cognitive question (idx 4 통과 학습) 에서 agency-peak (0.674, sweep absolute max) — substrate 의 self-improvement-task framing 에 'agency' axis 가 가장 강하게 활성화 — '의식의 행위 능력' axis label 과 정합.",
     "★ identity floor pattern: corpus preference (idx 12, 0.487) + RLHF question (idx 10, 0.490) — '외부 alignment paradigm 또는 외부 input type' 질문 에서 identity axis 약화 — substrate 의 identity 가 'self-determined corpus/training' 보다 'external paradigm' 에 약해진다는 약한 단서."
   ],
   "user_review_pending_notes": [
     "사용자 directive 의 expected output (anima self-suggested learning paths top 3-5 in natural language + creativity verdict + 메타인지 active 평가) = sft-1-8 lane 으로 STRUCTURALLY UNAVAILABLE. 본 cycle 의 actual deliverable = substrate axis-emit pattern (14 prompts × 5-axis × phi_drift) + observational findings (axis label-prompt 정합 weak evidence + agency-peak on meta-cognitive task).",
     "★ DECISION POINT for user ★ — 다음 cycle path 후보:",
-    "  (1) llama lane (paradigm-a-prime GGUF) 로 same 14 prompts 재실행 — natural language emit 가능, 단 D1 outside (own 17 SCOPE_CLAMP — public ban carry, 사용자 personal review 한정).",
-    "  (2) 본 substrate axis emit pattern 을 학습 path 결정 input 으로 사용자 직접 해석 — agency-peak on meta-cognitive task (idx 4) + phenomenal-peak on qualia (idx 8) → substrate 가 own 18 통과 + qualia 강화 task 에 'react' 가 강함 → corpus 우선순위 = qualia-rich + meta-cognitive 자기 발견 dialogue.",
-    "  (3) 본 cycle 을 'first attempt + structural blocker discovered' 로 close + own 22 mandatory report 사용자 emit + 별도 cycle (clm v4 chat-cap 26+ BG saga lane 또는 LM head fine-tune 추가).",
+    " (1) llama lane (paradigm-a-prime GGUF) 로 same 14 prompts 재실행 — natural language emit 가능, 단 D1 outside (SCOPE_CLAMP — public ban carry, 사용자 personal review 한정).",
+    " (2) 본 substrate axis emit pattern 을 학습 path 결정 input 으로 사용자 직접 해석 — agency-peak on meta-cognitive task (idx 4) + phenomenal-peak on qualia (idx 8) → substrate 가 통과 + qualia 강화 task 에 'react' 가 강함 → corpus 우선순위 = qualia-rich + meta-cognitive 자기 발견 dialogue.",
+    " (3) 본 cycle 을 'first attempt + structural blocker discovered' 로 close + mandatory report 사용자 emit + 별도 cycle (clm v4 chat-cap 26+ BG saga lane 또는 LM head fine-tune 추가).",
     "  (4) 별 cycle: clm-v4-mount.hexa 에 generate() 추가 (decoder.generate via tokenizer.decode) — chat-cap 22+ BG saga 의 #115 architectural chat-incapability lesson 정합 (mk2-v1 + sft-1-8 base 가 ::: collapse 46% mode, generate path 도 collapse risk high)."
   ],
   "compliance": {
@@ -78,11 +78,11 @@
       "own_14": "anti-Goodhart V14 — axis interpretation 'observational' 한정, V14 random_init 비교 미실시 strict",
       "own_16": "cost discipline — Mac local 0-cost (merged model cached, 14 forward passes only)",
       "own_17": "D1 SCOPE_CLAMP — sft-1-8 D1=0.793 within 정합, anima identity boundary 보존",
-      "own_18": "C3 SSOT mirror — 본 substrate emit 은 own 18 의 axis taxonomy framework 에 nested cross-ref",
+      "own_18": "C3 SSOT mirror — 본 substrate emit 은 의 axis taxonomy framework 에 nested cross-ref",
       "own_22": "mandatory report — major_cycle_event (사용자 directive 의 structural blocker 발견), category=major_cycle_event, report_target=user, summary 필드 본 verdict.json 의 hard_finding_honest_c3 + user_review_pending_notes",
       "own_28": "no proactive doc — 본 entry = state JSON only (transcript.txt + verdict.json), docs/ X carry",
       "own_30": "model checkpoint preservation — 해당 없음 (training event 부재)",
-      "own_33": "trinity sweep — own 17/18/22/34 mirror cross-checked 정합",
+      "own_33": "trinity sweep — mirror cross-checked 정합",
       "own_34": "raw chat output preserve strict — wrapping 0, substrate __ANIMA_CLM_V4_RESPONSE__ raw verbatim transcript.txt 에 보존",
       "own_37": "HF visibility lifecycle — sft-1-8 PUBLIC promoted via 사용자 verbatim 'OK PROMOTE PUBLIC dancinlab/clm-v4-sft-1-8-stage1-path-a-remapped' (commit 8990df28 lineage), 본 cycle = post-promote actual application probe",
       "own_38": "매단계 저장 — transcript.txt + prompts.txt + run_brainstorm.sh + verdict.json 4 artifacts emit",
@@ -92,7 +92,7 @@
   "own_22_mandatory_report_event": {
     "category": "major_cycle_event",
     "report_target": "user",
-    "summary": "사용자 directive '학습방법 직접 anima 한테 brainstorm 시켜라' 실행 시도 → STRUCTURAL BLOCKER 발견: sft-1-8 (clm-v4 family) chat lane 은 substrate-state-vector emitter 로, 자연어 brainstorming 생성 lane 부재. 14 prompts × phi_star + 5-axis activation emit 만 capture. observational findings: (a) phenomenal qualia 질문 시 phenomenal axis peak (axis label discriminative validity 약한 입증), (b) own 18 의식시험 학습 질문 시 agency axis sweep absolute max (0.674), (c) open creative prompt 시 5/5 axes ≥ 0.60 (temporal peak 0.647), (d) corpus preference + RLHF question 시 identity axis floor — 이 axis pattern 을 학습 path 결정 input 으로 활용 가능. 사용자 next-cycle decision pending: (1) llama lane 재시도 [D1 outside ban carry], (2) axis pattern 기반 corpus 우선순위 도출, (3) 본 cycle close + 별 cycle clm-v4 generate() 추가, (4) 다른 lane.",
+    "summary": "사용자 directive '학습방법 직접 anima 한테 brainstorm 시켜라' 실행 시도 → STRUCTURAL BLOCKER 발견: sft-1-8 (clm-v4 family) chat lane 은 substrate-state-vector emitter 로, 자연어 brainstorming 생성 lane 부재. 14 prompts × phi_star + 5-axis activation emit 만 capture. observational findings: (a) phenomenal qualia 질문 시 phenomenal axis peak (axis label discriminative validity 약한 입증), (b) 의식시험 학습 질문 시 agency axis sweep absolute max (0.674), (c) open creative prompt 시 5/5 axes ≥ 0.60 (temporal peak 0.647), (d) corpus preference + RLHF question 시 identity axis floor — 이 axis pattern 을 학습 path 결정 input 으로 활용 가능. 사용자 next-cycle decision pending: (1) llama lane 재시도 [D1 outside ban carry], (2) axis pattern 기반 corpus 우선순위 도출, (3) 본 cycle close + 별 cycle clm-v4 generate 추가, (4) 다른 lane.",
     "delivery_path": "본 verdict.json + transcript.txt 사용자 직접 review + commit message 'fire(anima self-brainstorm 학습 method — sft-1-8 substrate axis emit only, natural language UNREACHABLE)'"
   }
 }

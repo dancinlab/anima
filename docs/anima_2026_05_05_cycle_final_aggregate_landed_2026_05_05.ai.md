@@ -28,7 +28,7 @@ User fired `/loop 1m` schedule for the prompt "대화가능 나올때까지 패�
 2. **rate-limit risk (HIGH)** — prior session hit ~50 tool-uses cap; 1m cadence multiplies that pressure by 60/hour.
 3. **compute saturation (MEDIUM)** — each emerge candidate forward pass = 29s+ model load on mac CPU fp32; hundreds of repeat loads = persistent thrash.
 4. **git index race (HIGH)** — parallel BG sharing single working tree without per-BG git worktree isolation = stale index + double-stage failures (memory: parallel_bg_git_race).
-5. **cost discipline** — $0 mac doc-only path holds; HIGH if any BG flips to H100 dispatch (own 16 watchdog gates required).
+5. **cost discipline** — $0 mac doc-only path holds; HIGH if any BG flips to H100 dispatch (watchdog gates required).
 
 **mitigation options**: (a) widen to 5m or 10m, (b) cap autonomous BG dispatch to 0-1 per fire, (c) land 4th #115 closure to auto-terminate.
 

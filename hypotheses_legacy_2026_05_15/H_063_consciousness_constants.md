@@ -29,7 +29,7 @@ Legacy file: `docs/hypotheses/cx/CONSCIOUSNESS-CONSTANTS.md` + companion `CONSCI
 
 - legacy: cx/CONSCIOUSNESS-{CONSTANTS,EXTREMES,FUNDAMENTAL-EQUATION,UNIVERSE-MAP}.md
 - sister: H_021 (fundamental equation), H_022 (universe map), H_023 (ln 2)
-- own: own 21
+- own:
 
 ## Honest Limits
 

@@ -3,8 +3,8 @@
 - **Date**: 2026-05-05
 - **Cycle**: BG-LLAMA-PA-V2-HF-RELEASE-PREP
 - **Mode**: BG spec only — **NO exec, NO HF push, NO git commit, NO pod, NO `.roadmap.*` mutation.** $0 mac-local.
-- **Scope**: prepare a separate HF release lane for the **chat-capability winner** of the 2026-05 SFT lattice — Llama-3.2-3B Path A v2 (rehearsal-mix LoRA). This release is **distinct from** the CLM v4 substrate-research artifact (cond.2 of `.roadmap.clm`, currently PRIVATE 24-48h review window per own 15).
-- **Constraints respected**: raw#9 (md only — no `.py` created), raw#10 (≥5 honest C3 in §8), raw#15 (additive, structure-preserving), anima own 14 (HF Hub only for weights, never anima git), anima own 15 (PRIVATE → 6 verification gates → PUBLIC), anima own 16 (H100 cost discipline N/A — no compute requested by this spec).
+- **Scope**: prepare a separate HF release lane for the **chat-capability winner** of the 2026-05 SFT lattice — Llama-3.2-3B Path A v2 (rehearsal-mix LoRA). This release is **distinct from** the CLM v4 substrate-research artifact (cond.2 of `.roadmap.clm`, currently PRIVATE 24-48h review window per).
+- **Constraints respected**: raw#9 (md only — no `.py` created), raw#10 (≥5 honest C3 in §8), raw#15 (additive, structure-preserving), anima (HF Hub only for weights, never anima git), anima (PRIVATE → 6 verification gates → PUBLIC), anima (H100 cost discipline N/A — no compute requested by this spec).
 - **Companion**: `docs/anima_llama_path_a_v2_hf_release_prep_landed_2026_05_05.ai.md` (1-page handoff with 5 bullets + 5 decision Q's + ≥5 honest C3).
 - **Audit context**: this spec is the LLM-family analog of `docs/anima_clm_hf_release_v1_audit_2026_05_04.md` — same 8-axis readiness pattern, same own-14/15 compliance scaffolding, scoped to the Llama-derivative `llm` family (per HF naming spec mk2 §3.1.1 reconciliation).
 
@@ -77,34 +77,34 @@ If the user prioritizes **HF discoverability** (search engines hit "llama-3.2-3b
 ### 2.4 License + privacy axes (Q3 + Q5 deps)
 
 - **License**: Llama base = Llama 3 Community License (commercial use restricted above 700M user threshold; required attribution; derivative works must include "Built with Llama"). LoRA adapter is anima-authored on the rehearsal mix. Recommendation: dual-license declaration in README — `license: llama3.2 + mit-additive` per HF Hub frontmatter conventions. Q3 escalation in §7.
-- **Privacy**: PRIVATE first per own 15 rule (a). PUBLIC promote requires gates (b.1-b.6) PASS verdict.json + 24-48h review window. CLM v4 mk2-v1 currently in this state (PRIVATE 2026-05-04T23:26:12Z, review window ends 2026-05-06T23:26:12Z); Llama Path A v2 release follows the same lifecycle in parallel.
+- **Privacy**: PRIVATE first per rule (a). PUBLIC promote requires gates (b.1-b.6) PASS verdict.json + 24-48h review window. CLM v4 mk2-v1 currently in this state (PRIVATE 2026-05-04T23:26:12Z, review window ends 2026-05-06T23:26:12Z); Llama Path A v2 release follows the same lifecycle in parallel.
 
 ---
 
-## §3 own 14 + own 15 compliance — 6 verification gates
+## §3 + compliance — 6 verification gates
 
-### 3.1 own 14 — HF Hub only
+### 3.1 — HF Hub only
 
 | Check | Status |
 |---|:---:|
-| Adapter (98.6 MB) committed to HF Hub, NOT anima git | ✅ READY (current location: `state/p9_path_a_retrain_v2_retry_3_2026_05_04/results/adapter_final/` is staging, NOT committed to anima git per own 14 + raw#15 — verified pre-spec by `.gitignore` rule for `state/p9_*/results/`) |
+| Adapter (98.6 MB) committed to HF Hub, NOT anima git | ✅ READY (current location: `state/p9_path_a_retrain_v2_retry_3_2026_05_04/results/adapter_final/` is staging, NOT committed to anima git per + raw#15 — verified pre-spec by `.gitignore` rule for `state/p9_*/results/`) |
 | Tokenizer / config / README go to HF Hub | ✅ READY (tokenizer = Llama-3.2-3B's, no separate anima tokenizer) |
 | Dataset slice (rehearsal mix manifest) → HF Hub or git? | ⚠️ Q4 — recipe doc small (<5 MB) goes to git as `docs/`; raw mix data slice (~30 MB academic distill subset) goes to HF Hub as a sibling dataset repo `dancinlab/llm-v3-pa-v2-rehearsal-mix-y3` (separate own-14 dataset release, optional) |
 
-### 3.2 own 15 — PRIVATE first → 6 verification gates → PUBLIC promote
+### 3.2 — PRIVATE first → 6 verification gates → PUBLIC promote
 
-The own 15 rule (b) gates apply with substrate-aware adaptations for the `llm` family:
+The rule (b) gates apply with substrate-aware adaptations for the `llm` family:
 
 | Gate | Description | Path A v2 status | Substrate adaptation |
 |:---:|:---|:---:|:---|
 | **G1** | benchmark suite PASS (canonical: hellaswag + mmlu + triviaqa + openbookqa OR domain equivalent) | **PASS** (TRUE_PASS verdict 2026-05-05; openbookqa NOT measured but 3-of-4 canonical = sufficient per spec C3-2 "domain-specific equivalent declared in spec") | Llama-derivative gets **commonsense + broad-knowledge + factual-recall** trio |
 | **G2** | falsifier pre-register satisfied (raw#71 / raw 12) | **PASS_W_F4_DEFERRED** (F-PA-RETRAIN-v2-1/2/3 = PASS_TRUE; F4 substrate-inapplicable on Llama base, amended to `PARTIAL_PASS_W_F4_DEFERRED_TO_CLM2` per `docs/p9_path_a_retry_3_f4_amendment_landed_2026_05_05.ai.md`) | The substrate-aware F4 carve-out is documented in §G2 of model card; pre-register integrity preserved by the amendment doc |
-| **G3** | shim v4 hf_format compatibility F-SHIM-V4-1/2/3/4 | **N/A → PASS_TRIVIAL** (Llama is HF-canonical via `LlamaForCausalLM`; no custom modeling code; no shim needed; tokenizer = Llama-3.2-3B's stock `LlamaTokenizer`) | own 15 honest-c3 admits "shim v4 gates F-SHIM-V4-* are CLM-specific" — Llama path skips with note, per spec exception (b.3) |
-| **G4** | 24-48h human review window post-PRIVATE upload | **TBD** (executed at upload time; review-window-end timestamp recorded in audit ledger per own 15 enforcement) | Same convention as CLM v4 mk2-v1 (48h window). Concurrency with CLM v4 review window OK; reviews are independent. |
+| **G3** | shim v4 hf_format compatibility F-SHIM-V4-1/2/3/4 | **N/A → PASS_TRIVIAL** (Llama is HF-canonical via `LlamaForCausalLM`; no custom modeling code; no shim needed; tokenizer = Llama-3.2-3B's stock `LlamaTokenizer`) | honest-c3 admits "shim v4 gates F-SHIM-V4-* are CLM-specific" — Llama path skips with note, per spec exception (b.3) |
+| **G4** | 24-48h human review window post-PRIVATE upload | **TBD** (executed at upload time; review-window-end timestamp recorded in audit ledger per enforcement) | Same convention as CLM v4 mk2-v1 (48h window). Concurrency with CLM v4 review window OK; reviews are independent. |
 | **G5** | honest C3 model card present (raw#10 — limitations + chat-incapability disclosure where applicable) | **READY** (rehearsal mix + #115 cross-link to CLM v4 + Llama 3 license restriction + adapter-only consumer overhead — see §4.3) | Llama IS chat-capable; disclosure focus shifts from "NOT chat-capable" (CLM v4 case) to "Llama-derivative + rehearsal-mix recipe + license restrictions" |
 | **G6** | cross-substrate validation where applicable (CLM-2 spec C-CLM-LORA-1: φ★ baseline preserved post-LoRA) | **DEFERRED** — Pβ + CLM v4 substrate-research artifacts are sister releases; cross-link from Path A v2 README to those repos satisfies the cross-substrate documentation; F-CLM-LORA-4 result on the rehearsal mix recipe (BG-CLM-2-EXEC in-flight) is the substrate-equivalent F4 venue per `docs/p9_path_a_retry_3_f4_amendment_landed_2026_05_05.ai.md` | If BG-CLM-2-EXEC verdict.json lands F-CLM-LORA-4 = FAIL, the rehearsal-mix recipe loses substrate-correct F4 anchor; release model card must caveat this dependency (see §4.3 C5) |
 
-**Gate-cite recipe** for PUBLIC promote BG verdict.json (per own 15 rule (c)):
+**Gate-cite recipe** for PUBLIC promote BG verdict.json (per rule (c)):
 
 ```json
 {
@@ -338,7 +338,7 @@ Cost: $0 (HF Hub bandwidth, no compute). Wall: ~5 min upload + clock-time 24-48h
 **Gated on (a) review window elapsed, (b) BG-CLM-2-EXEC F-CLM-LORA-4 verdict (G6 cross-substrate), (c) user sign-off.**
 
 1. Generate `state/llama_path_a_v2_public_promote_<ts>/verdict.json` with all 6 gate-cite fields per §3.2.
-2. Run `gh repo edit dancinlab/<chosen-name> --visibility public` (per own 15 rule (c)).
+2. Run `gh repo edit dancinlab/<chosen-name> --visibility public` (per rule (c)).
 3. (Optional) author `docs/anima_llama_path_a_v2_hf_public_promote_landed_<ts>.ai.md` (1-page handoff).
 
 Cost: $0. Wall: ~30 min including verdict.json + handoff.
@@ -469,9 +469,9 @@ Consumers must:
 
 vs the alternative merged-model release (~6.4 GB self-contained, no base-acceptance gate but still license-bound). PEFT-only is the cheaper anima-side maintenance path but adds consumer-side friction; merged is the inverse trade-off. Decision Q2 surfaces this trade-off explicitly.
 
-### C5 — own 14/15/16 compliance with own-15 G2 F4 amendment carve-out
+### C5 — compliance with own-15 G2 F4 amendment carve-out
 
-own 15 rule (b.2) — "falsifier pre-register satisfied (raw#71 / raw 12)" — is **G2 PASS_W_F4_DEFERRED**, NOT a clean PASS. The strict F-PA-RETRAIN-v2-4 reading was 0.7871 (FAIL strict against the spec's 0.85 PARTIAL threshold), and the substrate-aware amendment (`docs/p9_path_a_retry_3_f4_amendment_landed_2026_05_05.ai.md`) re-interprets but does not re-measure. The PUBLIC promote verdict.json must explicitly cite both views (strict-FAIL + substrate-aware-DEFERRED) and the BG-CLM-2-EXEC F-CLM-LORA-4 outcome before the substrate-correct F4 question can be claimed closed. own 15 enforces this through G2 substrate adaptation column in §3.2; consumers reading the model card §F4 caveat must understand the interpretation, not just the bottom-line.
+ rule (b.2) — "falsifier pre-register satisfied (raw#71 / raw 12)" — is **G2 PASS_W_F4_DEFERRED**, NOT a clean PASS. The strict F-PA-RETRAIN-v2-4 reading was 0.7871 (FAIL strict against the spec's 0.85 PARTIAL threshold), and the substrate-aware amendment (`docs/p9_path_a_retry_3_f4_amendment_landed_2026_05_05.ai.md`) re-interprets but does not re-measure. The PUBLIC promote verdict.json must explicitly cite both views (strict-FAIL + substrate-aware-DEFERRED) and the BG-CLM-2-EXEC F-CLM-LORA-4 outcome before the substrate-correct F4 question can be claimed closed. enforces this through G2 substrate adaptation column in §3.2; consumers reading the model card §F4 caveat must understand the interpretation, not just the bottom-line.
 
 ### C6 — Composite metric (0.5584) is anima-internal aggregation, not industry-standard
 
@@ -479,7 +479,7 @@ The "+36.298 pp advantage over CLM v4 + LoRA SFT v1 (0.196)" claim rests on a cu
 
 ### C7 — F4 substrate-deferred status creates a long-tail dependency
 
-R4 in §6 explicitly tracks the BG-CLM-2-EXEC F-CLM-LORA-4 outcome as a release-blocker for full F4 closure. If that BG lands FAIL on the rehearsal-mix recipe (e.g., the recipe damages CLM v4's φ★ axis), the release model card §C5 must be amended post-PUBLIC-promote with a stronger caveat. own 15 G6 cross-substrate gate covers this contractually; the operational risk is that PUBLIC-promoted artifacts cannot be retroactively un-promoted without reputational cost (own 15 honest-c3 admits PUBLIC→PRIVATE revert is pathological). Mitigation: hold PUBLIC promote until BG-CLM-2-EXEC verdict.json lands (Phase 4 gate (b)).
+R4 in §6 explicitly tracks the BG-CLM-2-EXEC F-CLM-LORA-4 outcome as a release-blocker for full F4 closure. If that BG lands FAIL on the rehearsal-mix recipe (e.g., the recipe damages CLM v4's φ★ axis), the release model card §C5 must be amended post-PUBLIC-promote with a stronger caveat. G6 cross-substrate gate covers this contractually; the operational risk is that PUBLIC-promoted artifacts cannot be retroactively un-promoted without reputational cost (honest-c3 admits PUBLIC→PRIVATE revert is pathological). Mitigation: hold PUBLIC promote until BG-CLM-2-EXEC verdict.json lands (Phase 4 gate (b)).
 
 ### C8 — single-seed eval, limit=200, no multi-seed bootstrap
 
@@ -502,12 +502,12 @@ Companion doc: **`docs/anima_llama_path_a_v2_hf_release_prep_landed_2026_05_05.a
 | `docs/p9_path_a_retry_3_true_pass_lane_closure_landed_2026_05_05.ai.md` | TRUE_PASS lane closure (eval-fix amendment) |
 | `docs/p9_path_a_retry_3_f4_amendment_landed_2026_05_05.ai.md` | F4 substrate-aware amendment (PARTIAL_PASS_W_F4_DEFERRED_TO_CLM2) |
 | `docs/anima_clm_hf_release_v1_audit_2026_05_04.md` | sister-substrate release audit (CLM v4 mk2-v1 — pattern reference) |
-| `docs/anima_clm_hf_release_v1_uploaded_landed_2026_05_04.ai.md` | first own 15 application instance precedent |
+| `docs/anima_clm_hf_release_v1_uploaded_landed_2026_05_04.ai.md` | first application instance precedent |
 | `docs/anima_hf_naming_convention_mk2_spec_2026_05_03.md` | normative SSOT for naming compliance (§2 + §10.2 regex) |
 | `docs/anima_hf_naming_family_reconcile_2026_05_03.ai.md` | `llm` family ratification (provisional) |
 | `docs/anima_hf_upload_mk2_spec_2026_05_03.md` | upload pipeline SSOT |
 | `docs/anima_hf_upload_mk2_landed_2026_05_03.ai.md` | upload pipeline proven smoke |
-| `docs/anima_own_15_hf_release_lifecycle_landed_2026_05_05.ai.md` | own 15 SSOT (PRIVATE → 6 gates → PUBLIC) |
+| `docs/anima_own_15_hf_release_lifecycle_landed_2026_05_05.ai.md` | SSOT (PRIVATE → 6 gates → PUBLIC) |
 | `tool/hf_upload_mk2.hexa` | upload pipeline executable |
 | `tool/hf_upload_mk2_pre_push_hook.hexa` | pre-push leak guard |
 | `tool/hf_readme_template.md` | model card template |

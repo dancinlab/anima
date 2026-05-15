@@ -29,7 +29,7 @@ Legacy files: `docs/hypotheses/H-CX-536-hypergraph-consciousness.md` + `H-CX-537
 
 - legacy: H-CX-536 + H-CX-537
 - sister: H_011 (IIT geometry), H_045 (lambda calc), H_046 (TQFT)
-- own: own 21
+- own:
 
 ## Honest Limits
 

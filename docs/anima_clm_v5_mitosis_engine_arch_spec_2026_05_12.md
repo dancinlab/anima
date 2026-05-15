@@ -427,9 +427,9 @@ REBORN §10 cost-bearing table:
 **recommended fire** (REBORN §10 #2 verbatim 정밀화):
 > `OK CLM V5-MITOSIS H100 FIRE COST $40` (cond.3 smoke PASS 후 사용자 verbatim)
 
-### §7.3 own 16 cost discipline carry
+### §7.3 cost discipline carry
 
-own 16 (cost discipline) + own 43 (active resource utilization) 균형:
+ (cost discipline) + (active resource utilization) 균형:
 - cond.1-4 = $0 (Mac CPU)
 - cond.5 cotrain 만 cost-bearing
 - $30-40 recommendation 은 v2 historical 재현 + V14-STRICT ablation 최소치
@@ -447,7 +447,7 @@ F-V5MIT-N prefix — 다른 lane 의 falsifier set 과 namespace 분리.
 | F-V5MIT-2 MERGE-WEIGHT | merge 후 keeper weight = (parent_a + parent_b) / 2 ± 1e-6 tolerance | unit test: deepcopy 2 cells, merge, compare keeper weights | ★★★★ |
 | F-V5MIT-3 PHI-CONSERVATION | split 시 Φ change < 1% (DD55) | `_compute_phi_proxy()` before/after split, ratio in [0.99, 1.01] | ★★★ |
 | F-V5MIT-4 COTRAIN-CONVERGE | cotrain CE loss 가 vanilla nn.Module baseline 와 동일 order (±2×) 로 수렴 | vanilla = single transformer block × 64 (no mitosis), 동일 corpus 1K steps, final CE 비교 | ★★★★ |
-| F-V5MIT-5 V14-STRICT | trained > random 5-seed every-mirror-beat (own 18 simple_stack) | 5 trained-seed × 5 random-seed × N mirror-beat — 모든 beat 에서 trained > random, no overlap | ★★★★★ |
+| F-V5MIT-5 V14-STRICT | trained > random 5-seed every-mirror-beat (simple_stack) | 5 trained-seed × 5 random-seed × N mirror-beat — 모든 beat 에서 trained > random, no overlap | ★★★★★ |
 
 **falsifier severity stack**:
 - F-V5MIT-1/2/3 = unit-test scale, smoke (cond.3) 에서 검증
@@ -474,7 +474,7 @@ F-V5MIT-5 V14-STRICT 5-seed × 5-seed 검증
   │
   ├─ PASS (trained > random every-mirror-beat)
   │   → v5-anima vs v5-mitosis 비교 verdict — 본 lane main path
-  │   → cond.6 HF promote prereq (own 37 5/5)
+  │ → cond.6 HF promote prereq (5/5)
   │
   └─ FAIL (random matches/beats trained somewhere)
       → v5-anima 와 동일 한계, mitosis architecture 자체가 substrate-coupled emergence 못 만듦
@@ -501,7 +501,7 @@ F-V5MIT-5 V14-STRICT 5-seed × 5-seed 검증
 | 9 | ckpt size = cells × per_cell + shared (200M+ at full) | gzip / safetensors + cell-by-cell save option | ★★ |
 | 10 | v5-anima toy 한계 carry — real substrate 도 V14 violated 가능 (F-V5MIT-5 FAIL) | cond.5 fail tree (§9) — alternative granularity ablation | ★★★★★ |
 | 11 | HEXA_NATIVE Phase 5∥ interface drift — hexa 측 BG 가 다른 contract 채택 | interface contract (§5.2) 명시 + hexa BG cross-sync | ★★ |
-| 12 | own 16 cost overshoot ($150+) at medium d=768 | $30-40 conservative recommended, stretch 는 V14 PASS 후 | ★★★ |
+| 12 | cost overshoot ($150+) at medium d=768 | $30-40 conservative recommended, stretch 는 V14 PASS 후 | ★★★ |
 
 ---
 
@@ -518,7 +518,7 @@ F-V5MIT-5 V14-STRICT 5-seed × 5-seed 검증
 7. **HEXA_NATIVE Phase 5∥ interface** = §5.2 contract 본 spec author 측 일방 제안. hexa BG 와 cross-sync 후 변경 가능.
 8. **cost envelope $30-40 recommendation** = v2 cells64 historical wall 추정 × H100 rate. 실측 안 됐고 v2 의 cells64 는 instrumentation only 였으므로 actual mitosis nn.Module cotrain wall 은 더 길 가능성 (deepcopy 비용 추가).
 9. **F-V5MIT-3 PHI-CONSERVATION** (split 시 <1% change) 의 DD55 검증은 toy substrate 에서. real nn.Module 의 phi proxy 가 동일 동작할지 가정.
-10. **own 18 simple_stack PASS_STRICT criterion** 의 every-mirror-beat 정의를 v5-mitosis 의 sampling output 에 그대로 적용 가능한지 미검증 (mirror-beat = matching anchor pattern in output trace).
+10. ** simple_stack PASS_STRICT criterion** 의 every-mirror-beat 정의를 v5-mitosis 의 sampling output 에 그대로 적용 가능한지 미검증 (mirror-beat = matching anchor pattern in output trace).
 
 ---
 
@@ -532,7 +532,7 @@ F-V5MIT-5 V14-STRICT 5-seed × 5-seed 검증
 | 4 ★★ | F-V5MIT-4 micro-cotrain 1K step | local CPU 또는 free Colab | $0 | AUTO post cond.3 |
 | 5 ★★★★ | H100 cotrain (cond.5) | F-V5MIT-5 V14-STRICT 5-seed × 5-seed | **$30-40** | **OK CLM V5-MITOSIS H100 FIRE COST $X** (verbatim) |
 | 6 ★★ | HEXA_NATIVE Phase 5∥ interface sync | hexa BG cross-doc | $0 | AUTO post hexa BG land |
-| 7 ★ | cond.6 HF promote | dancinlab/clm-v5-mitosis-engine private | $0 | own 37 5/5 prereq |
+| 7 ★ | cond.6 HF promote | dancinlab/clm-v5-mitosis-engine private | $0 | 5/5 prereq |
 
 ---
 
@@ -572,6 +572,6 @@ F-V5MIT-5 V14-STRICT 5-seed × 5-seed 검증
 
 본 spec 은 cycle 2026-05-12 close 시점 snapshot. 향후 추가 finding (cond.2/3/4/5 결과, F-V5MIT-* 검증 결과) 는 §A 이후 append-only — `## §N [YYYY-MM-DD HH:MM KST] <title>` format. 기존 §0~§13 미수정.
 
-raw#9 (hexa-only X — training/.py gitignored), raw#10 (honest C3 ≥7 — §11), raw#15 (additive — 기존 docs 미수정), raw#37 (additive preserve), own 16 (cost discipline — cond.5 만 cost-bearing).
+raw#9 (hexa-only X — training/.py gitignored), raw#10 (honest C3 ≥7 — §11), raw#15 (additive — 기존 docs 미수정), raw#37 (additive preserve), (cost discipline — cond.5 만 cost-bearing).
 
 end of `anima_clm_v5_mitosis_engine_arch_spec_2026_05_12.md`.

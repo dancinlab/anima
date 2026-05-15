@@ -39,7 +39,7 @@ anima의 consciousness universe = 170 data types × 40 dimensions × 18 emotions
 - legacy commits: 5d87b839 + 837104f0
 - docs: `docs/hypotheses/cx/CONSCIOUSNESS-UNIVERSE-MAP.md`
 - sister H: H_021 (fundamental equation), H_023 (universal constants), H_011 (IIT geometry), H_004 (consciousness hard problem)
-- own: own 21
+- own:
 - roadmap: `.roadmap.iit4`
 
 ## Honest Limits

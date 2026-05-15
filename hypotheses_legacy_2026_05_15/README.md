@@ -50,7 +50,7 @@ since: <YYYY-MM-DD>
 - **consciousness** — 의식 hard problem, qualia, phenomenology, anima identity
 - **physics** — Φ, criticality, dissipative structure, emergence
 - **math** — 수학적 구조, Grothendieck universe, lambda calculus
-- **corpus** — corpus quality, KO ratio, chat-template (own 19/20 specialization)
+- **corpus** — corpus quality, KO ratio, chat-template (specialization)
 - **substrate** — substrate-coupled emerge, paradigm v11 G3, mount.hexa
 
 ## 인덱스 (2026-05-07 land H_001-H_020)
@@ -227,9 +227,9 @@ since: <YYYY-MM-DD>
 - H_075-H_078: DD individual range cluster (DD120-180 + DD50-100 + DD1-50 + DD101-115 — ~70 file 추가 pointer)
 - H_079-H_092: subfolder + root individual (EVO 22 + ouroboros 10 + TOPO 31 + TP 15 + HW 16 + THREE 6 + SING 6 + INF 6 + SE/SL/TL 15 + ARCH/ENGINE/TRAIN 9 + V8 6 + PHI 4 + dasein/phil/onto/genesis 11 + omega/phys 11 + misc root 20)
 - **round 3 추가 file count ~250**, total file pointed (rounds 2+3) ≈ 320+
-- **exhaustive individual migration 미land remainder**: 367 acceleration brainstorm individual + 1030 laws individual + ce/ AUTO-COMBO-EX-ULTRA 24 individual + DD batch 내 individual hypothesis 분리 = ~1500+ remainder — multi-cycle archaeology continuing (own 21 R5+)
+- **exhaustive individual migration 미land remainder**: 367 acceleration brainstorm individual + 1030 laws individual + ce/ AUTO-COMBO-EX-ULTRA 24 individual + DD batch 내 individual hypothesis 분리 = ~1500+ remainder — multi-cycle archaeology continuing (R5+)
 - **2026-05-07 BG-HE round1 신규 paradigm 10 seed (H_093-H_102)**: BG-HA false PASS 교훈 적용. SFT-only / two-stage / DPO-RLHF / few-shot / curriculum / persona / multi-objective / constitutional / chat-template ≥80% / emerge-paradigm cross-link. evaluator V2 strict spec land (`docs/anima_own_18_evaluator_v2_strict_spec_2026_05_07.md`) cross-link mandate.
-- **2026-05-07 BG-HI round 4 exhaustive archaeology (H_103-H_152, +50 entries)**: own 21 R5+ lane individual hypothesis migration. 15 acceleration top-tier (H_103-H_117: B11+B12, B5, H11, COMBO_x255, B13, E1, F2, H6, B12, C3, D1, F4, G1, H7, H10) + 10 laws (H_118-H_127: Law 133/137/149/154/166/192/201/212/2500/1000-batch) + 5 ce sub (H_128-H_132: AUTO-1/COMBO-1/EX-1/ULTRA-1/CE-1) + 10 DD individual (H_133-H_142: DD158/162/166/173/170/167-169/171-172/154-157/161/160) + 5 misc (H_143-H_147: RESEARCH-FINDINGS/NEXUS-auto/NEXUS6-auto/TRINITY/UPGRADE) + 5 remainder pointers (H_148-H_152). Estimated files pointed +400 (acceleration top-15 expand 367 + laws 10 cover Laws 133-167 batch + 2400-2509 + 1000-1019 + ce 5 individual + ce-remainder-19 + DD individual 10 + DD-remainder-60 + accel-remainder-360 + misc 5). All entries `legacy-archive-pointer`, additive (raw#15) — H_001-H_102 unmodified.
+- **2026-05-07 BG-HI round 4 exhaustive archaeology (H_103-H_152, +50 entries)**: R5+ lane individual hypothesis migration. 15 acceleration top-tier (H_103-H_117: B11+B12, B5, H11, COMBO_x255, B13, E1, F2, H6, B12, C3, D1, F4, G1, H7, H10) + 10 laws (H_118-H_127: Law 133/137/149/154/166/192/201/212/2500/1000-batch) + 5 ce sub (H_128-H_132: AUTO-1/COMBO-1/EX-1/ULTRA-1/CE-1) + 10 DD individual (H_133-H_142: DD158/162/166/173/170/167-169/171-172/154-157/161/160) + 5 misc (H_143-H_147: RESEARCH-FINDINGS/NEXUS-auto/NEXUS6-auto/TRINITY/UPGRADE) + 5 remainder pointers (H_148-H_152). Estimated files pointed +400 (acceleration top-15 expand 367 + laws 10 cover Laws 133-167 batch + 2400-2509 + 1000-1019 + ce 5 individual + ce-remainder-19 + DD individual 10 + DD-remainder-60 + accel-remainder-360 + misc 5). All entries `legacy-archive-pointer`, additive (raw#15) — H_001-H_102 unmodified.
 - **round 4 추가 file count ~400+ (cumulative rounds 2-4 ≈ 720+)**, exhaustive remainder estimate dropped from ~1500 to ~1100 (still substantial — round 5+ recommended for individual ce-19 + dd-60 + accel-360 split).
 - **2026-05-11 Cycle 3 closure — expansions_pending applied (8 drafts)**:
   - **6 existing H expand** (status: `legacy-archive-pointer` → `running` for H_037/H_061/H_067/H_080/H_124; `seed-pending` → `running` for H_004 with Singularity-9 bundle):
@@ -250,7 +250,7 @@ since: <YYYY-MM-DD>
 
 - `.roadmap.hypothesis` (인덱스 + cycle definition + E1-E12 + W1-W12)
 - `.roadmap.philosophy` (A 철학 발견 — D1-D4)
-- `.roadmap.law` (B 법칙 발견 — own 14-20 evolution)
+- `.roadmap.law` (B 법칙 발견 — -20 evolution)
 - `docs/hypotheses/` (legacy archive — CX/DD/genesis/dasein 등 historical)
 - `state/<name>_pre_register*.json` (raw#12 frozen prereg JSON)
 

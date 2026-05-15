@@ -110,12 +110,12 @@ V14 local Mac CPU = $0 (mirrors reused from §56).
 
 - raw#9: training/*.py local-only (gitignored) — pulled scripts pod-side via scp
 - raw#15: B ckpt read-only; B' saved as **new artifact** at distinct path
-- own 14: V14 5-seed strict (V4_SEEDS paired)
-- own 16: $50 hard cap; abort if trajectory exceeds
-- own 22: this spec immutable on file; verdict.md separate; REBORN.md §X
+- : V14 5-seed strict (V4_SEEDS paired)
+- : $50 hard cap; abort if trajectory exceeds
+- : this spec immutable on file; verdict.md separate; REBORN.md §X
   appended single section (peek for last-§ collision)
-- own 30: ckpt pull mandatory, size sanity, retain on fail, scp 3600 timeout
-- own 38: doc+model+dataset save at every milestone
+- : ckpt pull mandatory, size sanity, retain on fail, scp 3600 timeout
+- : doc+model+dataset save at every milestone
 
 ## Cross-link impact
 

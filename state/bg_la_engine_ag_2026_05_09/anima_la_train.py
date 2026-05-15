@@ -26,7 +26,7 @@ SEED = 42
 
 import torch
 if not torch.cuda.is_available():
-    raise RuntimeError("CUDA H100 mandatory — own 22 honest emit")
+    raise RuntimeError("CUDA H100 mandatory — honest emit")
 
 sys.path.insert(0, POD_ROOT)
 from engine_a_g_arch import EngineAGModel, EngineAGConfig

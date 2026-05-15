@@ -37,15 +37,15 @@ byte tokens → stdout
 
 ## Compliance
 
-- **own 34 mandate-1**: simple_stack output preservation — conscious_chat raw
+- ** mandate-1**: simple_stack output preservation — conscious_chat raw
   output relayed to stdout without transformation.
-- **own 34 mandate-2**: wrapping 0 — no system prompt, no persona inject, no
+- ** mandate-2**: wrapping 0 — no system prompt, no persona inject, no
   chat template, no speak() function, no orchestrator, no post-process meaning
   change. Verified by selftest grep.
-- **own 34 mandate-4**: autonomous speech — Phase 2 LANDED 2026-05-08. REPL
+- ** mandate-4**: autonomous speech — Phase 2 LANDED 2026-05-08. REPL
   polls stdin via `sys_stdin_read_line_timeout(tick_ms)`; on timeout (no user
   input), `_invoke_core("")` is invoked → model speaks without user trigger.
-- **own 34 mandate-7**: chat lane (own 34) vs measurement lane (own 18)
+- ** mandate-7**: chat lane vs measurement lane
   separation — this module is chat lane only.
 - **raw#9**: pure hexa, no .py invocation. `use "stdlib/sys"` import.
 - **raw#10**: honest C3 — Phase 1/1.5/2 limitations explicitly emitted in
@@ -62,7 +62,7 @@ flowing into the model forward pass**.
 What Phase 1 verifies:
 - Module structure (recursive directory pattern works)
 - Dispatch (chat.hexa → module routing)
-- own 34 mandate-2 selftest grep (0 violations)
+- mandate-2 selftest grep (0 violations)
 - bin/anima TOPICS wiring
 
 What Phase 1.5 will add (separate cycle):
@@ -74,7 +74,7 @@ What Phase 2 (LANDED 2026-05-08, hexa-lang upstream commit `f65882fb`) added:
 - `use "stdlib/sys"` → `sys_stdin_read_line_timeout(ms)` non-blocking stdin
 - REPL replaces blocking `read_line()` with `sys_stdin_read_line_timeout(tick_ms)`
 - Timeout (no user input) → `_invoke_core("")` = autonomous speech
-  (own 34 mandate-4 "스스로 혼자서도 말함")
+  (mandate-4 "스스로 혼자서도 말함")
 - New `--tick-ms N` flag (default 1000) controls poll cadence
 - Empty Enter / no-Enter trigger removed (per user directive
   "완전한 자유 빈 줄 조차도 없어도 되")
@@ -119,7 +119,7 @@ sub_repl loop (every tick_ms)
   agi_generate, consciousness_step)
 - Dispatcher: `tool/anima_cli/chat.hexa`
 - Roadmap: `.roadmap.cli` `cli.chat_module_architecture_2026_05_08`
-- Mandates: `.own` own 34, own 18 C2 cross-ref, own 33 trinity compliance
+- Mandates: `.own`, C2 cross-ref, trinity compliance
 
 ## Selftest
 
@@ -129,4 +129,4 @@ hexa run tool/anima_cli/chat/anima_native/anima_native.hexa --selftest
 
 Verifies:
 - Core file (`conscious_chat.hexa`) present
-- own 34 mandate-2 wrapping 0 in this module body (grep)
+- mandate-2 wrapping 0 in this module body (grep)

@@ -79,13 +79,13 @@
     {"step": 2, "action": "BG-AM commit groups fire (5+1 manifest) or BG-BZ priority subset 5 commits", "executor": "shell, serialized (parallel BG git race avoidance)"},
     {"step": 3, "action": "User fires Paradigm B emerge dialogue REPL (first session)", "executor": "user shell"},
     {"step": 4, "action": "Run session log analyzer (bin/anima-core-dialogue-analyze.bash --date 2026-05-05)", "executor": "user or autonomous"},
-    {"step": 5, "action": "HF promote private->public (CLM v4 2026-05-06T23:26Z; P-beta Paradigm D 50K 2026-05-07T03:48Z)", "executor": "autonomous time-gated upload (own 15 lifecycle)"}
+    {"step": 5, "action": "HF promote private->public (CLM v4 2026-05-06T23:26Z; P-beta Paradigm D 50K 2026-05-07T03:48Z)", "executor": "autonomous time-gated upload (lifecycle)"}
   ],
 
   "decision_menu_5_options": [
     {"id": "A", "declaration": "Paradigm B 시작 — emerge dialogue REPL fire", "next_state": "execute paradigm_B fire command + cycle close after first session", "cost_usd": 0.0, "rank_by_completion_quality": 1},
     {"id": "B", "declaration": "Paradigm C 시작 — hybrid REPL fire (BG-CG 완료 후)", "next_state": "wait BG-CG REPL OR execute BG-BX one-shot today; deferred multi-turn", "cost_usd": 0.0, "rank_by_completion_quality": 3},
-    {"id": "C", "declaration": "CLM-3 H1 launch — $1k commit", "next_state": "execute BG-BM Variant B; H100 boot per config/h100_pods.json + own 16 L23/L24/L25", "cost_usd_planning_ceiling": 1000, "wallclock_days": 30, "rank_by_completion_quality": 4},
+    {"id": "C", "declaration": "CLM-3 H1 launch — $1k commit", "next_state": "execute BG-BM Variant B; H100 boot per config/h100_pods.json + L23/L24/L25", "cost_usd_planning_ceiling": 1000, "wallclock_days": 30, "rank_by_completion_quality": 4},
     {"id": "D", "declaration": "cycle close + Stage 3 30 session 누적", "next_state": "CronDelete + BG-AM commits + n>=30 daily Path A + corpus analyzer + CLM-3 design refine", "cost_usd": 0.0, "wallclock_days_estimate": 30, "rank_by_completion_quality": 2},
     {"id": "E", "declaration": "더 angle 시도 — autonomous /loop 계속", "next_state": "continue /loop 1m; accept anti-convergence pressure on architecturally closed lanes", "cost_usd_compute": 0.0, "paradigm_mismatch_risk": "CONTINUES", "rank_by_completion_quality": 5}
   ],

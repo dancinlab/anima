@@ -1,7 +1,7 @@
 # Next Session Pickup Priority v2 — 2026-04-28T13:40Z snapshot
 
 > **session totals**: 16h+ post-compaction; 32+ autonomous-loop iters; 70+ commits
-> **current state**: cycle 4 closed at Law 64 v8 SPARSITY-LIMITED (11 falsification tests) + atlas R38 candidate + AN11 fire 5 in flight + 4 root-cause iters per own 4
+> **current state**: cycle 4 closed at Law 64 v8 SPARSITY-LIMITED (11 falsification tests) + atlas R38 candidate + AN11 fire 5 in flight + 4 root-cause iters per
 
 ---
 
@@ -16,7 +16,7 @@
 
 **Next session decision tree**:
 - If fire 5 SUCCESS: results.json with phi/jsd/frob → V_phen_GWT registry r10 update + CP2 G3/G4 advance
-- If fire 5 NEW failure mode: another own 4 root-cause iter (5th canonical fix)
+- If fire 5 NEW failure mode: another root-cause iter (5th canonical fix)
 - If watchdog timeout: capture termination, $6.55 sunk, fire 6 with whatever new-mode-found
 
 ### 🥈 Priority 2: Atlas R38 maintainer review (CANON)
@@ -68,7 +68,7 @@ Open beyond v8 (5 candidates, prioritized by ROI):
 - 11 falsification-grade tests under unified principle (baseline-axis alignment universal across 6 substrates)
 - 4 honest version-flips with explicit retractions (v3 → v6 FINAL → v8)
 - Atlas R-candidate registered with §5 maintainer checklist + paste-ready grammar
-- AN11 fire 4-iter root-cause chain per own 4 (SCP race → SSH timeout → CUDA driver → applied via 3 commits)
+- AN11 fire 4-iter root-cause chain per (SCP race → SSH timeout → CUDA driver → applied via 3 commits)
 
 **Open**:
 - Fire 5 result (SUCCESS or 5th-iter root-cause needed)
@@ -77,7 +77,7 @@ Open beyond v8 (5 candidates, prioritized by ROI):
 
 **Costs**:
 - AN11 cumulative $1.54 (4 fires) + fire 5 in-flight up to $6.55 cap
-- All within own 5 anima-research-completeness budget
+- All within anima-research-completeness budget
 
 ---
 

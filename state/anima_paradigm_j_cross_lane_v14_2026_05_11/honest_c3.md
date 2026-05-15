@@ -8,7 +8,7 @@
 
 3. ★ **Classification verdict is structural, not adversarial**. The §64 rule's `else: return UNKNOWN` branch correctly catches paradigm-j. The rule did NOT misclassify; it correctly emitted UNKNOWN. The "extension" recommendation is therefore additive (add a 3rd row), not corrective (no existing row was wrong).
 
-4. ★ **paradigm-j v5.2 EMERGE PASS (own 14 PUBLIC PROMOTE) and V14_VIOLATED at PPR_v3 coexist non-contradictorily**. v5.2 is anti-Goodhart 4-gate adaptive metric, not mitosis cellpool sign-test. The two verdicts measure different things; both are honest within their respective metric spaces. raw#82 retraction-aware preserves both records.
+4. ★ **paradigm-j v5.2 EMERGE PASS (PUBLIC PROMOTE) and V14_VIOLATED at PPR_v3 coexist non-contradictorily**. v5.2 is anti-Goodhart 4-gate adaptive metric, not mitosis cellpool sign-test. The two verdicts measure different things; both are honest within their respective metric spaces. raw#82 retraction-aware preserves both records.
 
 5. ★ **Cross-lane evidence (substrate-research D1 lane) is corroborative, not primary**. The primary verdict of this BG is "V14 strict NOT_MEASURABLE + classification NEW_arch". The cross-lane v5.2/v5.1/PPR_v3 data points are useful as corroboration that paradigm-j inhabits a separate metric space, but they do NOT substitute for a §55 measurement.
 

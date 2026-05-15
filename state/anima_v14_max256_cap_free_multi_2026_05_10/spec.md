@@ -58,9 +58,9 @@ max=128, not informative for cap-flip pursuit.
 ## raw / own
 - raw#9: training/v5mitosis_d384_v14_mirror.py + state/anima_iit_real_350m_2026_05_10/_v14_5seed_run.py local-only (gitignored)
 - raw#15 additive: 3 ckpts unmodified (sha256 verified pre-run)
-- own 14: V14 5-seed strict per substrate (V4_SEEDS paired)
-- own 16: $0 local CPU
-- own 22: REBORN.md not appended directly — dispatcher injects §51 slot
-- own 38: doc save → state/anima_v14_max256_cap_free_multi_2026_05_10/{spec.md, per_substrate_max256_results.json, verdict.md}
+- : V14 5-seed strict per substrate (V4_SEEDS paired)
+- : $0 local CPU
+- : REBORN.md not appended directly — dispatcher injects §51 slot
+- : doc save → state/anima_v14_max256_cap_free_multi_2026_05_10/{spec.md, per_substrate_max256_results.json, verdict.md}
 - §45 cap-conditional partial: this BG resolves
 - §47 V14_POLARITY_FALSIFIED + cotrain-exercise hypothesis: this BG disambiguates

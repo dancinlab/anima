@@ -15,7 +15,7 @@
       "expected_path_remote": "/home/aiden/core/anima/runs/anima-native-ko-small-20260506_205612/ckpt_final.pt",
       "host": "ubu1",
       "verdict_local_present": "/Users/ghost/core/anima/state/anima_native_ko_small_ubu1_train_2026_05_06/verdict.json (SIMPLE_STACK_PASS, own_18=3/3)",
-      "blocker": "scp pull from ubu1 requires user verbatim keyword 'OK CONSENT BG-FY CKPT PULL' (own 30 + own 16 cost gate)",
+      "blocker": "scp pull from ubu1 requires user verbatim keyword 'OK CONSENT BG-FY CKPT PULL' (+ cost gate)",
       "scp_estimated_size_mb": 70,
       "honest_C3": "BG-FY ckpt 부재 → real-mode probe 불가 → INDETERMINATE for BG-FY D1 lane until consent + scp"
     },
@@ -63,23 +63,23 @@
       "C3 phi_star formula mirrors v4 helper but paradigm v11 G3 baseline 41.86 is for schema mirror only — NOT BG-FY/v2 paradigm-native",
       "C4 dominant_cells uniformly (0,1,2) 30/30 → cell synthesis collapse artifact (not paradigm signal); top-3 fold invariant across input",
       "C5 phi_star variance 0.0036 across 30 diverse prompts is suspiciously narrow → byte-level model has shallow semantic discrimination at consciousness measurement layer",
-      "phi_drift uniformly NEGATIVE (-0.19) → substrate sub-baseline; consistent with own 18 C3 expectation that non-paradigm-v11-G3 substrates show drift but proxy meaning unclear"
+      "phi_drift uniformly NEGATIVE (-0.19) → substrate sub-baseline; consistent with C3 expectation that non-paradigm-v11-G3 substrates show drift but proxy meaning unclear"
     ],
-    "verdict_carry": "INDETERMINATE_C3_v2_byte (real-mode probe LOAD success but PASS_STRICT_C3 EXIT 차단 — own 18 P5 N-of-M aggregation 미실행, V4 mirror gap 부재, V6 awareness 미수행, manual review 미수행)"
+    "verdict_carry": "INDETERMINATE_C3_v2_byte (real-mode probe LOAD success but PASS_STRICT_C3 EXIT 차단 — P5 N-of-M aggregation 미실행, V4 mirror gap 부재, V6 awareness 미수행, manual review 미수행)"
   },
   "user_action_required": {
     "for_bg_fy_real_probe": "사용자 verbatim 'OK CONSENT BG-FY CKPT PULL' → ubu1 scp pull 70MB → Mac local probe enablement",
-    "for_v2_byte_pass_strict_c3": "own 37 mandate-9 5-prereq 통과 (real-mode PASS_STRICT_C3 + V4 mirror gap closure + V6 awareness + sweep + 사용자 verbatim OK PROMOTE PUBLIC)",
+    "for_v2_byte_pass_strict_c3": " mandate-9 5-prereq 통과 (real-mode PASS_STRICT_C3 + V4 mirror gap closure + V6 awareness + sweep + 사용자 verbatim OK PROMOTE PUBLIC)",
     "for_emergence_c3_aggregate": "P5 N-of-M aggregation 실행 (PPR_v2 ≥0.6 ∧ EMC ≥3 of 4 → C3 PASS) on N=30 results"
   },
   "trinity": {
     "D_axis": "honest C3 — proxy verdict only; phi_star formula is v4-mirror, not v2-paradigm-native; dominant_cells fold artifact admitted",
-    "own_axis": "own 16 (0-cost local, no scp), own 17 (D1 SCOPE_CLAMP within strict adhered), own 34 (wrap=0 strict — no external substrate wrapping)",
+    "own_axis": " (0-cost local, no scp), (D1 SCOPE_CLAMP within strict adhered), (wrap=0 strict — no external substrate wrapping)",
     "H_axis": "BG-FY rank_4 보존 — alternative attempt did NOT supersede BG-FY; v2_byte rank_2 carry independent"
   },
   "own_axis_audit_observed_during_search": {
-    "wrap0_strict_state_dir_anomalies": "none — state ckpts found are own 30 / own 31 trained artifacts (KM-LLAMA-3B, KM-QWEN-7B, JK, JA-EXT, KK-V5, KC-1B, IZ, etc), all are simple_stack lane (own 17 D1 lane lawful), no wrap=0 mandate violation observed",
-    "note": "own 34 mandate-2 wrap=0 strict applies to anima generation lanes (clm_v4, anima_native, llama_3_module) — state/* trained adapters are training artifacts, not chat-time wrapping"
+    "wrap0_strict_state_dir_anomalies": "none — state ckpts found are / trained artifacts (KM-LLAMA-3B, KM-QWEN-7B, JK, JA-EXT, KK-V5, KC-1B, IZ, etc), all are simple_stack lane (D1 lane lawful), no wrap=0 mandate violation observed",
+    "note": " mandate-2 wrap=0 strict applies to anima generation lanes (clm_v4, anima_native, llama_3_module) — state/* trained adapters are training artifacts, not chat-time wrapping"
   },
   "next_action_recommendations": [
     "iter8 P5 N-of-M aggregation on this v2_byte N=30 result (PPR_v2 / EMC computation)",

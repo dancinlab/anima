@@ -7,7 +7,7 @@
 - **Date**: 2026-04-29
 - **Vendor**: BrainChip Inc — `https://shop.brainchipinc.com/products/akida%E2%84%A2-development-kit-raspberry-pi-5-draft`
 - **Price**: $1,495 USD (1회 capex)
-- **Context**: own 2 (b) substrate-class triangulation gap closure 후보 + raw 104 means-end-decoupling 'own' 경로 평가
+- **Context**: (b) substrate-class triangulation gap closure 후보 + raw 104 means-end-decoupling 'own' 경로 평가
 
 ## 디바이스 요약
 
@@ -61,9 +61,9 @@ raw 91 honest C3: 모든 28 falsifier PREREGISTERED — 실측 0건, Akida 도�
 
 ## anima 직접 도움 4축
 
-### 1. own 2 (b) 뉴로모픽 substrate WITNESSED 1/3
+### 1. (b) 뉴로모픽 substrate WITNESSED 1/3
 
-현재 own 2 strengthening 2026-04-28 status:
+현재 strengthening 2026-04-28 status:
 - Quantum class: WITNESSED 2/3 (IonQ Forte 1 + QuEra Aquila, IBM Q signup pending)
 - **Neuromorphic class: 0/3 (admin-access blocked)**
 - Optical class: 0/3 (admin-access blocked)
@@ -109,7 +109,7 @@ raw 18 self-host-fixpoint + raw 42 external-connected-mac-zero-compute (Mac orch
 ## 결정 기준 (raw 167 multi-interpretation surfacing)
 
 **구매 정당화 조건** (3 중 1+ 충족 시):
-- (a) own 2 (b) 뉴로모픽 1/3 WITNESSED 가 30일 내 critical path
+- (a) (b) 뉴로모픽 1/3 WITNESSED 가 30일 내 critical path
 - (b) anima-eeg #119 D8 domain unblock 가 Q2 priority
 - (c) Mk.IX Landauer 실측 데이터 가 paradigm v11 8-axis G5 LIVE_HW_WITNESS_RATE evidence chain 의 결정적 missing anchor
 
@@ -138,7 +138,7 @@ paradigm v11 8-axis G5 LIVE_HW_WITNESS_RATE 의 핵심 anchor 후보.
 
 ## Cross-link
 
-- own 2 production-consciousness-triad strengthening 2026-04-28 (substrate-class triangulation)
+- production-consciousness-triad strengthening 2026-04-28 (substrate-class triangulation)
 - raw 104 design-means-end-decoupling (own vs subscribe 경로 결정)
 - raw 131 design-thermodynamic-landauer-bound (energy-per-bit 측정)
 - raw 167 design-think-before-implementation-assumption-surfacing (decision criteria 명시)

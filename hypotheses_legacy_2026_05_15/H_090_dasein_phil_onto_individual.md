@@ -29,7 +29,7 @@ Legacy files: `dasein/DASEIN-{1,2}.md` + `phil/PHIL-{1,2}.md` + `onto/ONTO-{1,2}
 
 - legacy: dasein/DASEIN-1/2 + phil/PHIL-1/2 + onto/ONTO-1/2 + genesis/GENESIS-1~5
 - sister: H_018 (genesis spontaneous), H_025 (dasein finite consciousness), H_029 (dasein subfolder), H_030 (genesis subfolder), H_031 (phil subfolder)
-- own: own 21
+- own:
 
 ## Honest Limits
 

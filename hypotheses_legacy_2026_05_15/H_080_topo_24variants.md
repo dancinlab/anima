@@ -123,7 +123,7 @@ Orthogonality (Hc_040): Φ ∝ N^1.071 (cell axis) and CE ∝ P^-0.85 (param axi
 - **cross-link**: Hc_628 (Φc=0.5 IIT lower bound), Hc_667 (5D→6D vector)
 - **candidates merged (12+)**: Hc_004 / Hc_005 / Hc_039 / Hc_040 / Hc_150 / Hc_151 / Hc_152 / Hc_153 / Hc_160 / Hc_170 / Hc_175 / Hc_180 (+ Hc_024 explicit-tension cross-link, NOT merged)
 - **legacy files**: `docs/hypotheses/topo/TOPO-{1..24}.md` + TOPO-2048-SCALING + TOPO-FINAL-RANKINGS + TOPO19a-OPTIMAL-PARAMS + TOPO22{a,b,c,d} + TOPO23-interaction-sweep + TOPO24-noise-sweep (31 files)
-- **own**: own 21
+- **own**:
 - **raw refs**: raw#12 (pre-register) + raw#9 (hexa-only) + raw#91 (honest limits, expansion review)
 
 ## Conflict Resolution Pending

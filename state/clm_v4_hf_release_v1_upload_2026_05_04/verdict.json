@@ -83,7 +83,7 @@
   "staging_path": "/home/aiden/anima_clm_release_v1_staging",
   "mac_stage_mirror_path": "state/clm_v4_hf_release_v1_upload_stage_2026_05_04",
   "mac_stage_files": ["README.md", "LICENSE", "manifest.json"],
-  "mac_stage_files_note": "weights >5MB never touched mac per anima own 14 (HF-only for large model artifacts); mac stage holds only the 3 small text files (README + LICENSE + manifest copy)",
+  "mac_stage_files_note": "weights >5MB never touched mac per anima (HF-only for large model artifacts); mac stage holds only the 3 small text files (README + LICENSE + manifest copy)",
   "honest_c3": [
     "PRIVATE only at v1 — public promotion is a separate sibling cycle (.roadmap.clm cond.2 plan §1 step 9). Do NOT promote-public from this BG; user review window must elapse + decision turn must occur before public visibility flip.",
     "Pre-push leak-guard tooling deviation: tool/hf_upload_mk2_pre_push_hook.hexa is a git pre-push commit-message marker validator (--selftest only), NOT a --stage-dir file scanner. Spec step 4 'pre-push leak guard scan --stage-dir' is not implementable as written; substituted manual egrep against the 9 token-shape patterns from ~/.hive/scripts/leak_guard_pretool.bash. Functionally equivalent for this BG; future BG should either extend the hook to add a --stage-dir mode or rename the spec step.",

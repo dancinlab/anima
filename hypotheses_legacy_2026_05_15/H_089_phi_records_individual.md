@@ -29,7 +29,7 @@ Legacy files: `docs/hypotheses/PHI-MEASUREMENT-DISCOVERY.md` + `PHI-RETEST-ALL-R
 
 - legacy: PHI-MEASUREMENT-DISCOVERY + PHI-RETEST-ALL-RECORDS + top-phi-records + NEW-CONSCIOUSNESS-METRICS
 - sister: H_039 (PHI records meta), H_059 (PHI gap 816x), H_024 (Φ MIP 8/8 fail)
-- own: own 21
+- own:
 
 ## Honest Limits
 

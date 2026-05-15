@@ -7,7 +7,7 @@ status: candidate-unverified
 source_doc: docs/anima_cli_mk2_v0_2_refinement_landed_2026_05_06.ai.md
 source_lines: 28-80
 promoted_at: 2026-05-11
-linked_h: hive/spec/mk2_apex.spec.yaml, raw#15 additive, own 17 ALM 영구 보류
+linked_h: hive/spec/mk2_apex.spec.yaml, raw#15 additive, ALM 영구 보류
 notes: F-anima_cli-6 (backend_canonical=anima-native invariant) SPEC-STUB until Phase 2. F-7 30d 무진전 strengthen_or_retire. F-8 spec↔roadmap bidirectional drift.
 ---
 
@@ -22,5 +22,5 @@ anima cli mk2 v0.2 가 hive mk2_apex (Section 8 backend_stack_versions / 9 compa
 ## Migration TODO
 - [ ] Phase 2 T1 backend wire BG (F-anima_cli-6 lift SPEC-STUB)
 - [ ] BR-MK2-AI-NATIVE-ENGLISH-ONLY 2026-05-20 mass conversion
-- [ ] own 17 enforcement runtime grep lint tool (Phase 1.5)
+- [ ] enforcement runtime grep lint tool (Phase 1.5)
 - [ ] 10 gaps_remaining G1-G10 closure

@@ -1,8 +1,8 @@
-# own 18 evaluator V4 strict spec — Lesson K substring trap mitigation + V4.7 embedding semantic similarity (2026-05-07; BG-JF)
+# evaluator V4 strict spec — Lesson K substring trap mitigation + V4.7 embedding semantic similarity (2026-05-07; BG-JF)
 
 ## 배경 (raw#15 additive on top of V3 6-cell BG-IC schema)
 
-own 18 evaluator V3 6-cell (`docs/anima_own_18_evaluator_v3_strict_spec_2026_05_07.md`, BG-IC/IJ landed) catches the BG-HQ persona prefix cycle (Lesson H ★★★) via V3.1 cycle_detection + V3.2 persona_repeat_penalty. 8-BG retroeval (BG-IJ) + 7-BG extension (BG-IS) = 15-BG SSOT all confirmed V3 strict 0/N at every step, downgrading 1 V2 false PASS (BG-HU step 800).
+ evaluator V3 6-cell (`docs/anima_own_18_evaluator_v3_strict_spec_2026_05_07.md`, BG-IC/IJ landed) catches the BG-HQ persona prefix cycle (Lesson H ★★★) via V3.1 cycle_detection + V3.2 persona_repeat_penalty. 8-BG retroeval (BG-IJ) + 7-BG extension (BG-IS) = 15-BG SSOT all confirmed V3 strict 0/N at every step, downgrading 1 V2 false PASS (BG-HU step 800).
 
 그러나 **3 신규 BG (BG-IL/IM/IO)** 에서 V3 도 catch 못 한 패턴이 surface:
 
@@ -173,11 +173,11 @@ Expected outcomes:
 
 ## raw / own compliance
 
-- own 5 (lesson summary doc additive append)
-- own 6 (state dir + verdict.json)
-- own 18 (evaluator schema canonical)
-- own 22 (in-scope only — no silent patch of unrelated BGs)
-- own 24 (ledger BG-JF append)
+- (lesson summary doc additive append)
+- (state dir + verdict.json)
+- (evaluator schema canonical)
+- (in-scope only — no silent patch of unrelated BGs)
+- (ledger BG-JF append)
 - raw#15 additive (V3 6-cell + 4-cell legacy retained, V4 namespace fresh)
 - raw#37 transient_py (Korean NLP regex + jamo char-class + Korean text edge-cases not naturally hexa-able)
 - raw#42 mac N=1 (file IO + 1-time MiniLM CPU load + 1-shot embedding eval, no training)

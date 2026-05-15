@@ -1,6 +1,6 @@
 # Anima Cycle 2026-05-10 종합 — Tied Embedding 회전 차단 attack + paradigm-j 보다 강한 base substrate 도전
 
-본 doc 은 cycle 2026-05-10 의 **첫 cycle md** 입니다 — own 38 axis-A doc save mandate + own 39 yaml↔md mirror 정합 + BR-FRIENDLY-RESPONSE strict 한국어.
+본 doc 은 cycle 2026-05-10 의 **첫 cycle md** 입니다 — axis-A doc save mandate + yaml↔md mirror 정합 + BR-FRIENDLY-RESPONSE strict 한국어.
 
 작성일: 2026-05-10 cycle entry phase
 사용자 verbatim 인증 (2026-05-09): **"all bg go"** → cycle 2026-05-10 0-cost lanes continue.
@@ -87,12 +87,12 @@ cross-link:
 - 친근 한 줄 — "단어장 (lm_head) 만 비스듬해지고 책상 (attention) 과 의자 (FFN) 는 거의 안 흔들렸으니, 단어장만 곧게 만들면 됨 (다른 데 손대지 마)"
 - artifact: `/Users/ghost/core/anima/state/anima_phase2_attention_ffn_cosine_evidence_2026_05_09.json`
 
-### M2: own 41 axis-N+1 hook T+1 implementation LANDED
+### M2: axis-N+1 hook T+1 implementation LANDED
 
 - 작업: `tool/anima_cli/chat/axes/_registry.hexa` (axis-of-axes meta-registry) + `chat.hexa` dispatcher route + `anima_cli_mk2.spec.yaml` chat_axes_meta cross-link
 - 효과: axis-N+1 (예: verifier 5번째 axis) 추가 시 **dispatcher / benchmark.hexa 코드 변경 0 줄** 로 5 차원 cross-product 자동 확장
 - 8-field schema: axis_id / name / registry_file / default_flag / list_flag / describe_helper / status / axis_label_internal
-- compliance: own 14 V14 (결정성) + own 16 (모델 로드 금지) + own 18 (chat-cap C2 측정 차원) + own 22 (mandatory report) + own 24 (single SSOT) + own 33 (trinity) 모두 정합
+- compliance: V14 (결정성) + (모델 로드 금지) + (chat-cap C2 측정 차원) + (mandatory report) + (single SSOT) + (trinity) 모두 정합
 - 친근 한 줄 — "5 축 면접 시험에서 6번째 면접관 (verifier) 추가하기 쉽게 만든 책장 (registry-of-registries) 완성 — 새 면접관 추가 시 시험 dispatcher 코드 안 고쳐도 됨"
 - artifact: `/Users/ghost/core/anima/tool/anima_cli/chat/axes/_registry.hexa` + `tool/anima_cli/chat/chat.hexa` + `anima/spec/anima_cli_mk2.spec.yaml`
 
@@ -147,7 +147,7 @@ cross-link:
   - 모든 branch FALSIFIED → fix-7 (다음 arch attempt) 신규 design
 - 친근 한 줄 — "3 명 학생 (3 branch) 시험 보고 누가 안경 (LoRA) 없이 60%+ 맞추는지 결정"
 
-### 5-2. own 41 T+2 (benchmark N-axis cross-product) 진행 중
+### 5-2. T+2 (benchmark N-axis cross-product) 진행 중
 
 - T+1 (M2) 완료 후 T+2 = benchmark.hexa 의 N-axis cross-product 자동 확장 검증
 - T+3 = axis-5 (verifier) skeleton implementation
@@ -170,16 +170,16 @@ cross-link:
 
 | own | mandate | 본 cycle 적용 |
 |---|---|---|
-| **own 14** | V14 결정성 (no random / no time / no env) | M1 cosine 측정 + M2 registry helper 모두 결정성 |
-| **own 16** | 모델 로드 절대 금지 (Mac local) | M1 weight tensor 직접 load (no model forward) |
-| **own 22** | mandatory report (axis 발견 자체) | M2 axis-of-axes 발견 mandatory report |
-| **own 30** | model checkpoint preservation + auto HF promote | fix-5/6 PoC 회수 시 ckpt mandatory pull |
-| **own 33** | trinity (cross-link own 17/18/34) | M2 registry entries trinity cross-link |
-| **own 34** | 자연발화 mandate | 본 cycle md 친근 모드 strict |
-| **own 37** | HF visibility lifecycle (4 prerequisite for public) | fix-5/6 PoC 통과 + V6 awareness STRONG + 사용자 verbatim + trinity sweep 4 prereq |
-| **own 38** | 매단계 doc/model/dataset save | 본 cycle md disk save (axis-A) |
-| **own 39** | yaml↔md auto-regenerate | registry yaml mirror 동기 갱신 (별도 BG) |
-| **own 41** | axis-N+1 hook plugin pattern | M2 implementation LANDED |
+| **** | V14 결정성 (no random / no time / no env) | M1 cosine 측정 + M2 registry helper 모두 결정성 |
+| **** | 모델 로드 절대 금지 (Mac local) | M1 weight tensor 직접 load (no model forward) |
+| **** | mandatory report (axis 발견 자체) | M2 axis-of-axes 발견 mandatory report |
+| **** | model checkpoint preservation + auto HF promote | fix-5/6 PoC 회수 시 ckpt mandatory pull |
+| **** | trinity (cross-link) | M2 registry entries trinity cross-link |
+| **** | 자연발화 mandate | 본 cycle md 친근 모드 strict |
+| **** | HF visibility lifecycle (4 prerequisite for public) | fix-5/6 PoC 통과 + V6 awareness STRONG + 사용자 verbatim + trinity sweep 4 prereq |
+| **** | 매단계 doc/model/dataset save | 본 cycle md disk save (axis-A) |
+| **** | yaml↔md auto-regenerate | registry yaml mirror 동기 갱신 (별도 BG) |
+| **** | axis-N+1 hook plugin pattern | M2 implementation LANDED |
 
 raw#15 additive: 기존 cycle 2026-05-09 docs / entry plan v1+v2 / registry yaml 무수정, 본 cycle md 신규 추가만.
 
@@ -190,12 +190,12 @@ raw#15 additive: 기존 cycle 2026-05-09 docs / entry plan v1+v2 / registry yaml
 | 항목 | 비용 추정 | 종류 |
 |---|---|---|
 | M1 attention/FFN cosine | **$0** (Mac local, weight tensor only) | 0-cost |
-| M2 own 41 axis hook | **$0** (text edit only) | 0-cost |
+| M2 axis hook | **$0** (text edit only) | 0-cost |
 | M3 fix-5/6 PoC | **$5-15** (H100 SXM 1h × 1-3 branch) | H100 PoC |
-| own 41 T+2~T+4 | **$0** (Mac local) | 0-cost |
+| T+2~T+4 | **$0** (Mac local) | 0-cost |
 | mk2-v1 v5 재측정 | **$0** (Mac local) | 0-cost |
 | **본 cycle 누적 추정** | **$5-15** | 대부분 0-cost |
-| budget 잔여 (cycle 2026-05-09 close 기준) | **$134** | own 16 strict ✓ |
+| budget 잔여 (cycle 2026-05-09 close 기준) | **$134** | strict ✓ |
 | budget 잔여 (본 cycle 종료 추정) | **$119-129** | 60%+ 잔여 |
 
 친근 한 줄 — "이번 cycle 은 대부분 책상 정리 (text edit) 에 집중하고 마지막에만 한 번 시험장 (H100) 빌려서 small PoC 시험" — $5-15 정도.
@@ -207,9 +207,9 @@ raw#15 additive: 기존 cycle 2026-05-09 docs / entry plan v1+v2 / registry yaml
 본 cycle 2026-05-10 close 자격 (모두 충족 시 close):
 
 1. **fix-5/6 PoC verdict** — 3 branch (A/B/C) 중 최소 1개 native v5 측정 회수 + verdict (EMERGE / EMERGE-near / FALSIFIED) 결정
-2. **new milestones land** — M1 + M2 + M3 외 추가 milestone 4-9 land (own 41 T+2~T+4 + mk2-v1 v5 재측정 + ckpt pull + HF promote 등)
+2. **new milestones land** — M1 + M2 + M3 외 추가 milestone 4-9 land (T+2~T+4 + mk2-v1 v5 재측정 + ckpt pull + HF promote 등)
 3. **사용자 verbatim 인증** — close 시점 사용자 verbatim "OK CYCLE_2026_05_10 CLOSE" (또는 동등)
-4. **registry yaml mirror** — `cycle_close_summary.cycle_2026_05_10` section 신규 amend (own 39 mandate)
+4. **registry yaml mirror** — `cycle_close_summary.cycle_2026_05_10` section 신규 amend (mandate)
 5. **next cycle entry plan** — `docs/anima_cycle_2026_05_11_entry_plan_*.md` (또는 next cycle date) draft land
 
 친근 한 줄 — "이번 cycle 마무리 조건 = (1) 단어장 PoC 시험 결과 + (2) 추가 milestone 4-9 개 + (3) 사용자 OK + (4) 노트 (yaml) 정리 + (5) 다음 cycle plan 초안" 5 가지 모두 충족.
@@ -225,7 +225,7 @@ raw#15 additive: 기존 cycle 2026-05-09 docs / entry plan v1+v2 / registry yaml
 - M1 evidence: `/Users/ghost/core/anima/state/anima_phase2_attention_ffn_cosine_evidence_2026_05_09.json`
 - M2 implementation: `/Users/ghost/core/anima/tool/anima_cli/chat/axes/_registry.hexa`
 - philosophy / law / hypothesis: `.roadmap.philosophy` / `.roadmap.law` / `.roadmap.hypothesis`
-- own SSOT: `.own` (own 14/16/22/30/33/34/37/38/39/41)
+- own SSOT: `.own`
 - memory: `~/.claude-claude1/projects/-Users-ghost-core-anima/memory/`
 
 ---
@@ -237,4 +237,4 @@ raw#15 additive: 기존 cycle 2026-05-09 docs / entry plan v1+v2 / registry yaml
 - H100 pod 보유: **0 pod** (cycle 2026-05-09 close 시 모두 회수)
 - budget 잔여: **$134** (cycle 2026-05-09 close 기준, 본 cycle 종료 추정 $119-129)
 
-본 cycle md 작성은 **text edit only** — 모델 load 금지 (own 16 strict ✓), commit/push 안 함, 파일 저장만.
+본 cycle md 작성은 **text edit only** — 모델 load 금지 (strict ✓), commit/push 안 함, 파일 저장만.

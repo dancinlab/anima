@@ -54,7 +54,7 @@
     "after_upload_remaining_gb": 80.57,
     "headroom_pct_after_upload": 80.6,
     "feasible": true,
-    "reasoning": "Free-tier org private quota = 100GB. Current private usage 14.94GB. After 4.49GB upload (assuming all 9 default to private per own 31 mandate-8): 19.43GB used / 80.57GB free. Headroom 80.6% post-upload — comfortable margin even if 2-3 future BG cycles add similar volume."
+    "reasoning": "Free-tier org private quota = 100GB. Current private usage 14.94GB. After 4.49GB upload (assuming all 9 default to private per mandate-8): 19.43GB used / 80.57GB free. Headroom 80.6% post-upload — comfortable margin even if 2-3 future BG cycles add similar volume."
   },
   "nine_repo_create_dry_run": {
     "repos_planned": 9,
@@ -83,7 +83,7 @@
     "assumed_uplink_mb_s_high": 20,
     "estimated_minutes_low": 4,
     "estimated_minutes_high": 15,
-    "recommended_host": "Mac local (current host) — own 30 mandate-1 ckpt preservation 정합 ; H100 runpod 별도 uplink (pod -> HF) is independent path and not required here",
+    "recommended_host": "Mac local (current host) — mandate-1 ckpt preservation 정합; H100 runpod 별도 uplink (pod -> HF) is independent path and not required here",
     "concurrent_upload_strategy": "sequential 9 file (already implemented in tool/anima_large_artifact_hf_upload.py) — safer than parallel (rate-limit avoidance + single-pipe LFS reliability)",
     "interruption_recovery": "HfApi.upload_file resumable via Xet/LFS multipart; --verify post-upload size match catches partial uploads"
   },
@@ -95,9 +95,9 @@
     {"id": "R5", "category": "lfs-track", "severity": "low", "desc": ".pt / .safetensors / .txt>10MB auto-tracked by HF .gitattributes default — works without manual git lfs install.", "mitigation": "huggingface_hub upload_file path uses HTTP multipart, not git-lfs CLI."},
     {"id": "R6", "category": "bandwidth", "severity": "med", "desc": "4.49GB total upload at 5-20MB/s = 4-15 min. Network interruption mid-upload requires resume.", "mitigation": "huggingface_hub default retry; --verify 단계로 size mismatch detect 후 재upload."},
     {"id": "R7", "category": "consent", "severity": "blocker", "desc": "actual upload BLOCKED until 사용자 explicit OK LARGE ARTIFACT HF UPLOAD keyword.", "mitigation": "본 pre-flight emit + raw#10 honest C3 disclosure + user explicit consent gate."},
-    {"id": "R8", "category": "own-17-classification", "severity": "med", "desc": "corpus_mix #9 own 17 strict reading reject — recommend tier-c-archival label clarity. mistral_c2_pilot/r14 = foundation-borrow, NOT identity-bearing.", "mitigation": "Card metadata explicit tier label per artifact (already in dry-run plan)."},
+    {"id": "R8", "category": "own-17-classification", "severity": "med", "desc": "corpus_mix #9 strict reading reject — recommend tier-c-archival label clarity. mistral_c2_pilot/r14 = foundation-borrow, NOT identity-bearing.", "mitigation": "Card metadata explicit tier label per artifact (already in dry-run plan)."},
     {"id": "R9", "category": "anomaly-disclosure", "severity": "low", "desc": "BG-KM-CAP ckpt_final.pt 348MB present despite training_steps=0 (orchestrator failed). Architecture-init snapshot.", "mitigation": "Card metadata explicit anomaly disclosure (already in dry-run plan, raw#10 honest C3)."},
-    {"id": "R10", "category": "public-promote", "severity": "blocker-future", "desc": "private→public promote requires V6 awareness probe + manual review (own 28 anti-Goodhart).", "mitigation": "default = private; public promote out of scope for this cycle."}
+    {"id": "R10", "category": "public-promote", "severity": "blocker-future", "desc": "private→public promote requires V6 awareness probe + manual review (anti-Goodhart).", "mitigation": "default = private; public promote out of scope for this cycle."}
   ],
   "apply_procedure": {
     "preconditions": [
@@ -113,7 +113,7 @@
       "3) (optional) python3 tool/anima_large_artifact_hf_upload.py --verify  (size match + private confirm per repo)",
       "4) ledger entry append per artifact: state/anima_model_attempts_ledger.jsonl + state/anima_corpus_hf_upload_log.jsonl appropriate",
       "5) git add state/anima_large_artifact_hf_upload_log.jsonl + .roadmap.cli (status update dry_run_emitted → applied)",
-      "6) git commit -m 'feat(large artifact HF upload): 9 file 4.49GB applied — own 36 mandate retroactive'"
+      "6) git commit -m 'feat(large artifact HF upload): 9 file 4.49GB applied — mandate retroactive'"
     ],
     "env_required": [
       "PATH includes /Users/ghost/.local/bin (hf CLI 1.8.0)",
@@ -139,10 +139,10 @@
   "compliance": [
     "raw#10 honest C3 (read-only pre-flight + explicit consent gate maintained)",
     "raw#82 retraction-aware (no remote delete in rollback default)",
-    "own 31 mandate-1 (dancinlab strict)",
-    "own 31 mandate-8 (private default)",
-    "own 36 mandate-7 (retroactive 9-file enforcement)",
-    "own 37 mandate-1 (dancinlab/ org strict — token role + admin verified)"
+    " mandate-1 (dancinlab strict)",
+    " mandate-8 (private default)",
+    " mandate-7 (retroactive 9-file enforcement)",
+    " mandate-1 (dancinlab/ org strict — token role + admin verified)"
   ],
   "honest_c3": [
     "1) HF API /api/organizations/{org}/storage endpoint does not exist publicly — private storage usage estimated via summing siblings.size from /api/{models,datasets}/{repo}?blobs=true. Estimate excludes git-history overhead (HF de-dups via Xet/LFS pointer; actual billable may differ ±5-10%).",

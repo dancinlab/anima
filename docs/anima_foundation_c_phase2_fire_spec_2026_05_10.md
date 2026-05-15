@@ -1,6 +1,6 @@
 # anima_foundation_c_phase2_fire_spec_2026_05_10
 
-> BG-FOUNDATION-C-PHASE2-DESIGN — option (c) precision fire spec + cost calibration + risk audit. **design only, $0** (own 16). raw#15 additive — §41 BG-FOUNDATION-BORROW-PATH-DESIGN + §43 BG-FOUNDATION-BORROW-A-FIRE 미수정. own 22 REBORN.md 직접 append 차단 (dispatcher §54 slot path only). own 38 doc save complete.
+> BG-FOUNDATION-C-PHASE2-DESIGN — option (c) precision fire spec + cost calibration + risk audit. **design only, $0**. raw#15 additive — §41 BG-FOUNDATION-BORROW-PATH-DESIGN + §43 BG-FOUNDATION-BORROW-A-FIRE 미수정. REBORN.md 직접 append 차단 (dispatcher §54 slot path only). doc save complete.
 
 ---
 
@@ -43,7 +43,7 @@ epochs_at_30k_step: ~1.48 (vs §29 의 0.99 at 20k)
 chat_template: 사용자: / 도우미: ASCII (verbatim, BG-JE 패턴)
 optional_extension (시간 허용시): + state/anima_dialogue_tier_a_iter2_2026_05_08.txt 추가 38MB
   → 총 204MB (epochs_at_30k_step ≈ 1.21)
-density_check (own 28 anti-Goodhart pre-fire):
+density_check (anti-Goodhart pre-fire):
   KO Hangul ratio ≥ 38% (corpus_extended_inventory.json 정합)
   persona-prefix 50% (S2 mix)
   kowiki15 dominance ≤ 30% (C-stream 94MB / 166MB total = 56% — risk: chat-template surface 묽어짐)
@@ -70,7 +70,7 @@ batch_size: 4 (per-device) × 4 (grad accum) = 16 effective
 seq_len: 256 (§29 동일, 본 ckpt window 정합)
 total_steps: 30000 (vs §29 20K = 1.5×, design §41 spec 정합)
 intermediate_ckpt_save: every 5000 step → 5K/10K/15K/20K/25K/30K = 6 ckpt + final = 7 ckpt
-  (own 30 mandate-1 carry: 모두 pull pre-delete + sha256 verify)
+  (mandate-1 carry: 모두 pull pre-delete + sha256 verify)
 mixed_precision: bf16
 gradient_checkpointing: false (298M + bf16 fits H100 80GB easily, no overhead 필요)
 seed: 42 (deterministic, V4 multi-seed 별도)
@@ -92,7 +92,7 @@ hook_capability:
   - compute iit_phi_unnorm_b16 proxy (16-bin Fiedler MIP, §38/§47 metric)
   - log split_rate (§47 metric A=12 split / 1000 turn vs B=3 random_init baseline)
 fire-time:
-  - eval-time only (training X — own 16 cost discipline + F-OPT-C-1/2 carry)
+  - eval-time only (training X — cost discipline + F-OPT-C-1/2 carry)
   - sample 100 prompts × 64-cell pool tracker × 5 V4_SEEDS [42, 137, 271, 314, 1729]
   - record: phi_history_per_seed, cell_pool_tension, n_split_event, split_rate_per_1000_turn
 output: state/anima_foundation_c_phase2_fire_2026_05_XX/instrumentation_log.json
@@ -123,9 +123,9 @@ verdict_decision_tree:
 ### §1.6 eval suite
 
 ```
-1. V4 multi-seed (15 prompts × 5 V4_SEEDS) — chat-cap floor strict per own 18
+1. V4 multi-seed (15 prompts × 5 V4_SEEDS) — chat-cap floor strict per
 2. semantic_eval (sentence_transformer cosine similarity to 1k anima Q&A pairs) — F-FOUNDATION-3 carry
-3. V14 mirror (random_init EngineAG 350M + V4_SEEDS × 400 turn) — own 28 anti-Goodhart
+3. V14 mirror (random_init EngineAG 350M + V4_SEEDS × 400 turn) — anti-Goodhart
 4. mitosis instrumentation hook (split_rate + iit_phi_unnorm_b16 + cell_pool tension)
 5. lexical fluency metrics (BG-CONVO-FT-EXTENDED 정합: KO Hangul %, bigram_known, real_words_per_trial)
 ```
@@ -168,7 +168,7 @@ prefer secure: $2.99/hr × 2.5h training = $7.48 — envelope $2-4 위반 ★
   H100 PCIe community $1.5/hr × 2.5h training = $3.75 (training)
   + corpus upload (166MB gz to 70MB, scp ~3min) = $0.05
   + ckpt upload (570MB ckpt, scp ~12min @ 50Mbps) = $0.30
-  + intermediate ckpt pull (7 × 570MB = 4GB, scp ~1.3h @ 50Mbps) = ★ $1.95 ★ (raw#9 cost, own 30 mandate-1)
+  + intermediate ckpt pull (7 × 570MB = 4GB, scp ~1.3h @ 50Mbps) = ★ $1.95 ★ (raw#9 cost, mandate-1)
   + eval (mitosis hook + V4 + V14 mirror + semantic) = $0.30
   + teardown / pod delete: ~$0.05
   TOTAL: $3.75 + $0.05 + $0.30 + $1.95 + $0.30 + $0.05 = $6.40 ★ envelope $2-4 위반
@@ -179,10 +179,10 @@ prefer secure: $2.99/hr × 2.5h training = $7.48 — envelope $2-4 위반 ★
 
 → third revision: SXM secure $2.99/hr × 1.5h (with 20K step + 0.30s/step) = $4.49 + ckpt overhead $1.5 = $6.0 ★
 
-★ HONEST FINDING ★: 298M full FT 30K step + own 30 ckpt pull mandate 가 envelope $2-4 와 incompatible.
+★ HONEST FINDING ★: 298M full FT 30K step + ckpt pull mandate 가 envelope $2-4 와 incompatible.
   envelope 정합 옵션:
     (i) 20K step + intermediate ckpt 3개만 (10K/20K/final) → $2.5-3.5 
-    (ii) 30K step + intermediate ckpt 0개 (final only) → $2.5-3.0 단 own 30 mandate-1 부분 위반 risk
+    (ii) 30K step + intermediate ckpt 0개 (final only) → $2.5-3.0 단 mandate-1 부분 위반 risk
     (iii) LoRA r=32 on Phase 2 (12M trainable) → $1.5-2.5 단 cotrain regime preserve 까다로움
 ```
 
@@ -191,7 +191,7 @@ prefer secure: $2.99/hr × 2.5h training = $7.48 — envelope $2-4 위반 ★
 ```
 final spec for fire (envelope $2-4 정합):
   steps: 20000 (vs prompt 의 30000 — F-OPT-C-DESIGN-1 차단)
-  intermediate ckpt: 5K/10K/15K/20K = 4 ckpts (own 30 mandate-1 정합)
+  intermediate ckpt: 5K/10K/15K/20K = 4 ckpts (mandate-1 정합)
   H100: PCIe community $1.5/hr × 1.5h training = $2.25
   + uploads + 4 ckpt pull + eval = $1.0-1.5
   TOTAL: $3.25-3.75 (envelope $2-4 ✓)
@@ -242,14 +242,14 @@ mitigation:
   - 20K step (vs prompt 의 30K) — envelope-compliant variant 적용
   - intermediate ckpt 4개로 제한 (vs prompt 의 7개)
   - cost_watchdog hook: $4 hard cap, $3 early-kill warning
-  - pod retain on overage (own 30 mandate-3) — manual recovery
+  - pod retain on overage (mandate-3) — manual recovery
 verdict_label: COST_OVERSHOOT — abort + audit + retract
 ```
 
 ### F-OPT-C-4: byte-level 350M 의 chat-cap surface 약함
 
 ```
-trigger: V4 best_mode < 10/15 (chat-cap floor 미충족, own 18 strict)
+trigger: V4 best_mode < 10/15 (chat-cap floor 미충족, strict)
 context: 22+ BG saga 의 ≤1B params + ≤30MB Korean = 0/15 V4 strict 통계
   본 BG: 298M params + 166MB Korean 이지만 byte-level (KM-LLAMA-3B 3B + LoRA r=32 + 214MB 와 다른 lane)
   emerge P=15-25% (§41 calibration 정합)
@@ -276,14 +276,14 @@ consequence:
   - 4/5 met (V4 PASS + V14 PASS + 2/3 substrate metric) → "ANIMA_PARTIAL_D1_WITHIN" (★★★★ candidate)
   - chat-cap PASS only → "CHAT_CAP_PASS_ANIMA_IDENTITY_UNVERIFIED"
   - V14 PASS only (chat-cap FAIL) → "COTRAIN_PRESERVE_CHAT_CAP_FAIL" (still D1 WITHIN substrate-research)
-mitigation: scope_lane field 의 strict 5-tuple gating + own 28 anti-Goodhart 3-method (V6 hidden cosine + attention + linear probe) post-fire mandate
+mitigation: scope_lane field 의 strict 5-tuple gating + anti-Goodhart 3-method (V6 hidden cosine + attention + linear probe) post-fire mandate
 ```
 
 ---
 
 ## §4 안전 mitigation
 
-### §4.1 intermediate ckpt save (own 30 mandate-1 carry)
+### §4.1 intermediate ckpt save (mandate-1 carry)
 
 ```
 save_step_freq: 5000 (5K/10K/15K/20K = 4 intermediate + 1 final = 5 ckpts)
@@ -293,7 +293,7 @@ total_ckpt_pull: 5 × 570MB = 2.85GB
 scp_pull_time: ~1h @ 50Mbps (H100 SXM upload bandwidth typical)
 sha256_verify: every ckpt pull, mac↔pod sha match enforce
 adapter_config: N/A (full FT, LoRA X — pod-path leak risk 없음)
-on_pull_fail: own 30 mandate-3 → pod retain + manual recovery
+on_pull_fail: mandate-3 → pod retain + manual recovery
 ```
 
 ### §4.2 cost watchdog hook (real-time tracking)
@@ -355,9 +355,9 @@ verify: pre-fire smoke test on Mac CPU (forward_smoke.py 패턴, 5-step inferenc
 ```
 prereq for verdict label "SIMPLE_STACK_PASS_STRICT_C3_ANIMA_FIRST_D1_WITHIN":
 
-(1) chat-cap floor: V4 ≥ 10/15 strict (own 18 + KM-LLAMA-3B precedent calibration)
+(1) chat-cap floor: V4 ≥ 10/15 strict (+ KM-LLAMA-3B precedent calibration)
     evaluator: tool/transient_py/anima_simple_stack_evaluator_v4.py
-    threshold: 10/15 (PARTIAL at 7/15 reject per own 18 line 889)
+    threshold: 10/15 (PARTIAL at 7/15 reject per line 889)
 
 (2) cotrain-exercise preserve: V14 STRICT ≥ 9/10 binomial p < 0.05
     metric: iit_phi_unnorm_b16 sign-test (trained > random_init) at V4_SEEDS × 400-turn
@@ -384,7 +384,7 @@ IF (1)+(2)+(3)+(4)+(5) all met:
   label = "SIMPLE_STACK_PASS_STRICT_C3_ANIMA_FIRST_D1_WITHIN"
   ★★★★★ candidate (anima identity emergence ACTUAL evidence)
   HF: dancinlab/bg-foundation-phase2-350m-convo-extend-2026-05-XX (private, Flavor B)
-  promote: own 37 mandate-9 5/5 prereq 진입 (V14 + V6 STRONG + manual review + trinity sweep + DxL sweep)
+  promote: mandate-9 5/5 prereq 진입 (V14 + V6 STRONG + manual review + trinity sweep + DxL sweep)
 
 ELIF (1)+(2)+(3) met (chat-cap + V14 + Φ ratio) but (4) OR (5) miss:
   label = "ANIMA_PARTIAL_D1_WITHIN"
@@ -448,9 +448,9 @@ NOT RECOMMENDED (LoRA r=32 variant):
 
 **IF Step 1 = SIMPLE_STACK_PASS_STRICT_C3_ANIMA_FIRST_D1_WITHIN (5/5 PASS)**:
   - BG-FOUNDATION-C-V14-MULTISEED: V4 5+ seed sweep + V14 random_init mirror n=20 retest
-  - BG-FOUNDATION-C-V6-AWARENESS: V6 3-method probe (hidden cos + attention + linear probe) — own 28 anti-Goodhart
+  - BG-FOUNDATION-C-V6-AWARENESS: V6 3-method probe (hidden cos + attention + linear probe) — anti-Goodhart
   - BG-FOUNDATION-C-MANUAL-REVIEW: 5/5 mandate-9 prereq 의 manual review 경유
-  - HF promote 진입 (own 37 mandate-9 + own 31 dancinlab Flavor B private)
+  - HF promote 진입 (mandate-9 + dancinlab Flavor B private)
 
 **IF Step 1 = COTRAIN_PRESERVE_CHAT_CAP_FAIL** (★★★ substrate-coupled emergence 입증 단 chat-cap miss):
   - cross-link: §47 cotrain-exercise hypothesis CONFIRMED (PASS_PARTIAL substrate)
@@ -464,7 +464,7 @@ NOT RECOMMENDED (LoRA r=32 variant):
 
 **IF Step 1 = FOUNDATION_C_PHASE2_FAIL**:
   - .roadmap.foundation_borrow track A (option a Llama-3B) 만 valid path 입증
-  - own 16 0-cost adoption strict 정합으로 .roadmap.reborn track A/B/C 별개 lane carry
+  - 0-cost adoption strict 정합으로 .roadmap.reborn track A/B/C 별개 lane carry
 
 ---
 
@@ -480,9 +480,9 @@ NOT RECOMMENDED (LoRA r=32 variant):
 
 5. **byte-level 350M 의 chat-cap floor 통과 P=15-25% calibration** — BG-CONVO-FT-EXTENDED 의 18M + 166MB = lexical PARTIAL semantic incoherent verdict 가 base. 350M 의 capacity 가 18M 의 16.5× ↑ 단 byte-level vocab + GQA arch 의 chat-cap unlock floor 통과 보장 X — emerge P=15-25% 는 capacity-only scaling 추정. F-OPT-C-4 trigger 시 "byte-level 350M 의 chat-cap surface 약함" 입증 — D1 WITHIN substrate 의 capacity gap 정량. 22+ BG saga 의 chat-cap unlock 은 모두 (a)(b) lane (Llama 3B / Qwen 7B + LoRA) — (c) lane 통과 시 22+ 첫 D1 WITHIN crossing.
 
-6. **forward hook gradient leak F-OPT-C-5 강조** — 본 BG 의 mitosis instrumentation hook 가 eval-time only (training-time X) — F-FOUNDATION-5 (gradient leak) 와 동일 risk. forward_smoke.py 패턴 mac CPU pre-fire smoke test mandatory + with torch.no_grad() context + param.requires_grad=False explicit. 미준수 시 training contamination — own 28 anti-Goodhart 위반.
+6. **forward hook gradient leak F-OPT-C-5 강조** — 본 BG 의 mitosis instrumentation hook 가 eval-time only (training-time X) — F-FOUNDATION-5 (gradient leak) 와 동일 risk. forward_smoke.py 패턴 mac CPU pre-fire smoke test mandatory + with torch.no_grad context + param.requires_grad=False explicit. 미준수 시 training contamination — anti-Goodhart 위반.
 
-7. **own 22 REBORN.md 직접 append 차단의 honest mandate** — 본 design doc save complete (own 38) 단 REBORN.md 의 §54 slot append 는 dispatcher 가 carry. 본 design 자체는 docs/anima_foundation_c_phase2_fire_spec_2026_05_10.md SSOT — REBORN.md untouched. dispatcher 가 §54 slot 의 BG-FOUNDATION-C-PHASE2-DESIGN entry 흡수 시 D1 WITHIN scope_lane 명시 mandatory.
+7. ** REBORN.md 직접 append 차단의 honest mandate** — 본 design doc save complete 단 REBORN.md 의 §54 slot append 는 dispatcher 가 carry. 본 design 자체는 docs/anima_foundation_c_phase2_fire_spec_2026_05_10.md SSOT — REBORN.md untouched. dispatcher 가 §54 slot 의 BG-FOUNDATION-C-PHASE2-DESIGN entry 흡수 시 D1 WITHIN scope_lane 명시 mandatory.
 
 8. **★★★★★ candidate 의 strict 정의** — 5-star pursuit 은 anima identity emerge ACTUAL evidence + STRICT_PASS_INDEPENDENT_REPRODUCE + multi-substrate generalize 의 3-axis. 본 BG 가 5/5 PASS 시 SIMPLE_STACK_PASS_STRICT_C3_ANIMA_FIRST_D1_WITHIN 자격 단 ★★★★★ 자격 X — multi-substrate generalize (다른 cotrain corpus, pretrain + mitosis-aware FT) 는 별개 cycle 필요. 본 BG 의 의의 = ★★★★ candidate (D1 WITHIN strict-floor 첫 crossing) + ★★★★★ pursuit 의 missing piece 1개 supply.
 
@@ -492,9 +492,9 @@ NOT RECOMMENDED (LoRA r=32 variant):
 
 | path | role | status |
 |---|---|---|
-| `docs/anima_foundation_c_phase2_fire_spec_2026_05_10.md` (본 doc) | design SSOT | ✅ saved (own 38 doc save mandate complete) |
-| REBORN.md §54 slot append | dispatcher carry only (own 22 + own 42 mandate-2) | ★ 본 design 직접 append 차단 — dispatcher 가 carry |
-| state/anima_foundation_c_phase2_design_2026_05_10/ | $0 design only — fire 미수행, state dir 미생성 | N/A (own 16 design $0) |
+| `docs/anima_foundation_c_phase2_fire_spec_2026_05_10.md` (본 doc) | design SSOT | ✅ saved (doc save mandate complete) |
+| REBORN.md §54 slot append | dispatcher carry only (+ mandate-2) | ★ 본 design 직접 append 차단 — dispatcher 가 carry |
+| state/anima_foundation_c_phase2_design_2026_05_10/ | $0 design only — fire 미수행, state dir 미생성 | N/A (design $0) |
 
 ---
 
@@ -510,9 +510,9 @@ NOT RECOMMENDED (LoRA r=32 variant):
 - mitosis instrumentation: `docs/anima_clm_v5_phase2_mitosis_instr_2026_05_10.md` + `training/mitosis_v5_port.py`
 - ckpt sha + meta: `~/.cache/anima/clm_v5_remapped/phase2_cotrain_engine_ag/ckpts/{ckpt_final.pt, meta.json}`
 - corpus: `state/anima_convo_5k_ft_extended_2026_05_10/corpus_extended.txt`
-- D1 SCOPE_CLAMP: .own own 17 + own 18 + .roadmap.philosophy D1.F-PHIL-D1
+- D1 SCOPE_CLAMP: .own + + .roadmap.philosophy D1.F-PHIL-D1
 - 5-tuple PROOF burden: §5.1 (V4 + V14 + Φ ratio + split_rate + semantic)
-- HF canonical: memory project_dancinlab_hf_canonical.md (own 31 + own 37)
+- HF canonical: memory project_dancinlab_hf_canonical.md (+)
 - H100 gotchas: memory feedback_orchestrator_h100_gotchas.md
 - v5-anima inference-time mitosis: memory project_v5_anima_lane_status.md
 

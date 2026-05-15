@@ -31,7 +31,7 @@
     ],
     "verdict": "NO_OVERRIDE_DETECTED",
     "fire_authority": "DENIED",
-    "rationale": "iter 2 re-poll: all 8 matches remain spec/doc/state self-references. zero user-issued directive in commit messages, cycle logs, or directive docs. own 16 cost discipline upheld. fire authority continues to require user-issued 'OK CLM L4 ALL FIRE'.",
+    "rationale": "iter 2 re-poll: all 8 matches remain spec/doc/state self-references. zero user-issued directive in commit messages, cycle logs, or directive docs. cost discipline upheld. fire authority continues to require user-issued 'OK CLM L4 ALL FIRE'.",
     "single_hardest_blocker_unchanged": "user explicit override MISSING"
   },
   "pre_fire_matrix_iter2": {
@@ -93,7 +93,7 @@
       "readiness_score_pct_iter2": 73,
       "readiness_delta_pct": 3,
       "readiness_breakdown": {"spec": 100, "corpus": 8, "threshold": 65, "trinity": 100, "ckpt": 100, "naming": 100, "h100_budget": 100, "own_20_chat_template_verify": 0},
-      "blockers": ["corpus 8% combined (persona 1GB target, dialogue 500MB target — largest gap)", "C3 threshold N=15 unstable", "own 20 chat-template ≥30% mandate verification missing", "BG-LB cost cap $60 = 6x own 16 default $10 default — even with override, drift risk"]
+      "blockers": ["corpus 8% combined (persona 1GB target, dialogue 500MB target — largest gap)", "C3 threshold N=15 unstable", " chat-template ≥30% mandate verification missing", "BG-LB cost cap $60 = 6x default $10 default — even with override, drift risk"]
     },
     "BG-LC": {
       "spec_file_exists": true,
@@ -187,7 +187,7 @@
     "config_updated_at": "2026-05-08T02:34:07Z",
     "config_source": "tool/h100_pods_sync.bash",
     "pod_creation_required": true,
-    "pod_creation_blocked_by": "user override (own 16 cost discipline — no pre-emptive provisioning)",
+    "pod_creation_blocked_by": "user override (cost discipline — no pre-emptive provisioning)",
     "runpod_balance_trace": "no live trace file (tool/runpod_credit_check.hexa exists but not invoked this cycle)",
     "cost_cap_total_usd": 150.0,
     "wall_clock_simultaneous_4pod_hr": 18,
@@ -222,7 +222,7 @@
     "BG-LD dialogue pairs corpus = 본 iter 2 (e) 시점 0% (V4 evaluator BG-KM-LLAMA-3B verdict.json 활용 별도 cycle 의존)",
     "BG-LC tokenizer mismatch strategy = 여전히 TBD (iter 2 (f) target — iter 2 (e) 본 cycle 미진행)",
     "h100 pod count = 0 (config/h100_pods.json 2026-05-08T02:34:07Z) — fire 시 fresh provision × 4 필요",
-    "BG-LB cost cap $60 = own 16 default $10 의 6x — override 도착 후에도 drift risk 평가 필요",
+    "BG-LB cost cap $60 = default $10 의 6x — override 도착 후에도 drift risk 평가 필요",
     "total readiness 76.5% = data_side weighted estimate (corpus 51% LA/LC + 8% LB + 0% LD partial credit + threshold N=15 65% confidence)",
     "iter 2 target 85% 미도달 (gap 8.5%) — corpus expansion + N=60 retest 후 도달 가능",
     "single hardest blocker (override MISSING) iter 1 → iter 2 unchanged — readiness % 상승은 spec/data 측면이며 fire authority 와 직교"

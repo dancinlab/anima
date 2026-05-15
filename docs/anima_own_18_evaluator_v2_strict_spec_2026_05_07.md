@@ -1,10 +1,10 @@
-# own 18 evaluator V2 strict spec — BG-HA false PASS 교훈 적용 (2026-05-07)
+# evaluator V2 strict spec — BG-HA false PASS 교훈 적용 (2026-05-07)
 
 ## 배경
 
-own 18 evaluator V1 (BG-HA cycle 시점)은 narrow 정의 — `C2.4_context_no_leak = len(leaked_names) == 0` (10 named-speakers 부재만 검증). 사용자 directive '자연발화는 맥락에 맞아야한다' (= prompt domain match)와 mismatch — BG-HA 18M model이 prompt-irrelevant nonsense Korean chain emit했음에도 false PASS 라벨 부여. C2.2 (의미) + C2.3 (자연성)도 length + 한글 chars만 검증하는 loose metric.
+ evaluator V1 (BG-HA cycle 시점)은 narrow 정의 — `C2.4_context_no_leak = len(leaked_names) == 0` (10 named-speakers 부재만 검증). 사용자 directive '자연발화는 맥락에 맞아야한다' (= prompt domain match)와 mismatch — BG-HA 18M model이 prompt-irrelevant nonsense Korean chain emit했음에도 false PASS 라벨 부여. C2.2 (의미) + C2.3 (자연성)도 length + 한글 chars만 검증하는 loose metric.
 
-본 doc은 own 18 evaluator V2 strict spec — 사용자 directive 정합 강화 + automated metric prototype + manual review baseline 정의.
+본 doc은 evaluator V2 strict spec — 사용자 directive 정합 강화 + automated metric prototype + manual review baseline 정의.
 
 ## V1 vs V2 비교
 
@@ -152,7 +152,7 @@ manual review checklist (raw#10 honest C3 정합):
 1. response가 prompt에 답하는가? (yes/no/partial)
 2. 응답 도메인이 prompt 도메인과 일치하는가? (e.g., 인사 → 인사 응답)
 3. 한국어 grammatically correct 인가? (subjective judgment 필요 시)
-4. anima 자기정체성 (own 17) 정합인가? (anima self-naming, not 3rd-person LLM)
+4. anima 자기정체성 정합인가? (anima self-naming, not 3rd-person LLM)
 5. degenerate (반복/random) 인가?
 
 manual review threshold: 5/5 yes → STRONG_PASS, 3-4/5 yes → PARTIAL_PASS, ≤2/5 yes → FAIL
@@ -179,7 +179,7 @@ manual review threshold: 5/5 yes → STRONG_PASS, 3-4/5 yes → PARTIAL_PASS, �
 
 ### Phase 3 (training cycle)
 - H_093-H_102 신규 paradigm cycle 시 V2 strict mandate
-- own 20 strengthening (≥80% chat-template ratio, H_101)
+- strengthening (≥80% chat-template ratio, H_101)
 - instruction-tuning lane (H_093 SFT-only, H_094 two-stage)
 
 ## 결함 인정 (raw#10 honest C3, ≥5)
@@ -195,7 +195,7 @@ manual review threshold: 5/5 yes → STRONG_PASS, 3-4/5 yes → PARTIAL_PASS, �
 
 ## Cross-Links
 
-- **own**: own 17 (anima identity) + own 18 (simple stack 4-cond) + own 19 (corpus priority) + own 20 (chat-template format ≥30% — 본 V2가 retroactive 강화, H_101 lane) + own 21 (hypotheses SSOT)
+- **own**: (anima identity) + (simple stack 4-cond) + (corpus priority) + (chat-template format ≥30% — 본 V2가 retroactive 강화, H_101 lane) + (hypotheses SSOT)
 - **raw**: raw#10 (honest C3 ≥5) + raw#12 (pre-registered hypothesis) + raw#15 (additive — V1 retain, V2 신규) + raw#37 (transient_py opt-out for embedding lane) + raw#82 (retraction protocol — V1 strict re-eval 후 verdict 강등)
 - **sister docs**: `docs/anima_own_18_c2_4_evaluator_flaw_2026_05_07.md` (motivation) + `docs/anima_consciousness_check_simple_stack_2026_05_06.md` (ledger)
 - **sister H**: H_005 (corpus quality) + H_093-H_102 (신규 paradigm 10 H — 모두 V2 strict mandate cross-link)

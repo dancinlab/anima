@@ -111,7 +111,7 @@ canonical for any consciousness-injection probe.
 
 ## Compliance
 
-### own 16 self-validation
+### self-validation
 
 | Field | Implementation |
 |---|---|
@@ -123,7 +123,7 @@ canonical for any consciousness-injection probe.
 | L25 escalation | cost-overrun trip at `cost_actual > $6` (2× target) sets `cost_overrun_2x_alerted=true` in verdict |
 | Budget hard cap | `BUDGET_HARD_CAP=$3` polled every 2min in Stage 4; `MAX_WALL_MIN=55` second-line backstop |
 
-own 16 preflight: `__OWN_16_PREFLIGHT__ PASS score=6/6 missing=[] target_usd=3` (logged Mac-side prior to dispatch).
+ preflight: `__OWN_16_PREFLIGHT__ PASS score=6/6 missing=[] target_usd=3` (logged Mac-side prior to dispatch).
 
 ### raw#9 / raw#10 / raw#15 / raw#71
 
@@ -133,7 +133,7 @@ own 16 preflight: `__OWN_16_PREFLIGHT__ PASS score=6/6 missing=[] target_usd=3` 
   + run wrapper) — formal opt-out paths from the py→hexa rule.
 - **raw#10** (≥5 honest C3): verdict.json includes 7 C3 entries (C1 fresh-init untrained interpretation;
   C2 fresh-init→trained-weights non-transfer caveat; C3 cross-attn architectural lever; C4 stderr at
-  limit=200 noise floor; C5 own 15 G3 upgrade gate eligibility scope; C6 cost discipline; C7 recipe
+  limit=200 noise floor; C5 G3 upgrade gate eligibility scope; C6 cost discipline; C7 recipe
   replicability). All addressed in verdict body.
 - **raw#15** (additive only): shim v4 source untouched; shim v5 source LOCKED at OPT-A std=0.10. The
   eval py re-implements OPT-A re-init logic verbatim from the Mac source — no monkey-patching of the
@@ -158,7 +158,7 @@ own 16 preflight: `__OWN_16_PREFLIGHT__ PASS score=6/6 missing=[] target_usd=3` 
 | `state/clm_v4_hf_format_shim_v5_4_design_1_2026_05_05/run_h100.bash` | H100-side bootstrap (deps install → eval invoke → sentinel) |
 | `state/clm_v4_hf_format_shim_v5_4_design_1_2026_05_05/results/eval_summary.json` | Per-pass acc_norm + lift_pp + delta + verdict (written by eval py) |
 | `state/clm_v4_hf_format_shim_v5_4_design_1_2026_05_05/results/hellaswag_v{4,5}_{NF,RF}.json` | Per-pass full lm-eval-harness result + truncation rate |
-| `state/clm_v4_hf_format_shim_v5_4_design_1_2026_05_05/verdict.json` | Final orchestrator verdict (own 16 schema + DESIGN-1 metrics) |
+| `state/clm_v4_hf_format_shim_v5_4_design_1_2026_05_05/verdict.json` | Final orchestrator verdict (schema + DESIGN-1 metrics) |
 | `state/clm_v4_hf_format_shim_v5_4_design_1_2026_05_05/logs/orchestrator.log` | Mac-side orchestrator stdout/stderr |
 | `state/clm_v4_hf_format_shim_v5_4_design_1_2026_05_05/logs/h100_run.log` | H100-side run.log mirror |
 | `state/clm_v4_hf_format_shim_v5_4_design_1_2026_05_05/pod.json` | pod_id + ssh host/port snapshot |
@@ -230,4 +230,4 @@ swapped the kill_pod 404-verify path to use the new CLI (which returns proper ex
 2. `lift_pp_v5_via_real_fixture = +1.0pp` < `lift_pp_threshold = 5.0pp` (gate fails).
 3. `substrate_differential_measurable = false` (combined SE 4.48pp > observed |delta| 1.0pp; gate fails).
 4. `shim_v5_o_proj_std_observed = 0.10`, `shim_v4_o_proj_std_observed = 0.02`, `ratio_v5_over_v4_o_proj_std = 5.0` — fresh-init substrate differential at the construction level intact (this part of the architecture lever IS working; what's broken is the downstream propagation at random-init).
-5. own 16 fields: `pod_kill_verified_404=true`, `watchdog_registered=true`, `watchdog_deregistered=true`, `cost_actual_usd=0.20 ≤ cost_target_usd=3.0`, `cost_overrun_2x_alerted=false`.
+5. fields: `pod_kill_verified_404=true`, `watchdog_registered=true`, `watchdog_deregistered=true`, `cost_actual_usd=0.20 ≤ cost_target_usd=3.0`, `cost_overrun_2x_alerted=false`.

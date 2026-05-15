@@ -91,6 +91,6 @@ The discriminating signal is **A vs B alignment** (above), not cosine-to-random.
 ## Constraints honored
 - raw#9: audit.py is local-only (state/ subdir, not training/*.py)
 - raw#15 additive: 5 ckpts read-only, in-memory analysis
-- own 22: REBORN.md NOT directly appended (dispatcher handles §52 slot)
-- own 38: artifacts under state/anima_cell_pool_weight_statistics_2026_05_10/
-- own 16: $0 local CPU, ~25s wall
+- : REBORN.md NOT directly appended (dispatcher handles §52 slot)
+- : artifacts under state/anima_cell_pool_weight_statistics_2026_05_10/
+- : $0 local CPU, ~25s wall

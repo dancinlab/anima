@@ -34,7 +34,7 @@ P4 cell-conditioning predicate 자체가 random_init 에서도 자주 hit → di
 
 ### 1.3 v3/v4 공통 결함
 
-- V14 (paired random_init mirror) 가 **외장 step** (own 14 cascade) — metric 통과 후 별도 sanity check.
+- V14 (paired random_init mirror) 가 **외장 step** (cascade) — metric 통과 후 별도 sanity check.
 - 시험-범위가 좁음 (cell-predicate 단일 차원) — substrate noise 와 진짜 semantic discrimination 분리 못 함.
 
 → **v5 mandate**: V14 anti-Goodhart 룰을 **metric 정의 안에** 박아넣고, 서로 직교하는 3 measurement (입력-bend / 출력-shift / random-delta) 를 AND-gate 로 결합.
@@ -44,7 +44,7 @@ P4 cell-conditioning predicate 자체가 random_init 에서도 자주 hit → di
 ## 2. V14 Strict 정의 (재확인)
 
 ```
-V14_STRICT (own 14 CASCADE):
+V14_STRICT (CASCADE):
   paired_random_init_mirror M_R = same_arch(M_T) initialized seed s, training_steps=0
   MTRP(M_T, M_R) := PPR(M_T) - PPR(M_R) ≥ 0.10   // mirror trained-vs-random performance
   Gate D self-test:  PPR(M_R) < 0.05              // random must score near zero
@@ -203,7 +203,7 @@ v5.2 adaptive floor 적용 시 PIV AMBIGUOUS 가 PASS_STRICT 로 격상 가능 �
 - v3 PPR_v3 / v4 c3_4 predicate 는 **historical lane** 으로 보존 (raw#82 retraction-aware).
 - 신규 EMERGE judgment 의 **default lane = v5** (PIV/DCR/D-RAND).
 - v5.2 adaptive floor 는 v5 의 Gate A (PIV) 에 random_99th 기반 adaptive threshold 추가 — 본 spec 의 PASS_STRICT 식 두 번째 절.
-- caller 는 metric 명을 명시 (`v3` / `v4` / `v5` / `v5.2`) — sliding default 는 **v5.2** (own 18 line 1011 amend 정합).
+- caller 는 metric 명을 명시 (`v3` / `v4` / `v5` / `v5.2`) — sliding default 는 **v5.2** (line 1011 amend 정합).
 
 ---
 
@@ -302,7 +302,7 @@ raw#15 additive (기존 verdict 보존) + raw#82 retraction-aware (proxy verdict
 - **adaptive**: v5.2 PIV adaptive floor (`docs/anima_alt_agg_1_v5_2_adaptive_floor_spec_2026_05_09.ai.md`).
 - **PROXY_PPL**: emerge metric 자격 X. measurement 자체는 evidence (training fit sanity check) 로 retain 가능 — 단, EMERGE label emit 금지.
 
-### 9.6 own 37 mandate-9 prereq #1 정의 갱신
+### 9.6 mandate-9 prereq #1 정의 갱신
 
 prereq #1 'real-mode PASS_STRICT_C3' 정의 갱신:
 > **proxy_ppl 제외, native cell-predicate (PIV/DCR/D-RAND via clm_v5_mount.hexa runtime) 만 valid**. PROXY_PPL emerge 는 prereq #1 충족 불가 — public promote 영구 차단.
@@ -369,7 +369,7 @@ F2 정식 승격은 G3 (scoring artifact) 정량 확정 결과 — G1 (substrate
 
 → V14 위반 모델은 F2 도 V14 strict gate 로 차단. **F1 → F2 변경은 paradigm-j 단독 unlock**.
 
-### 10.8 own 37 mandate-9 정합
+### 10.8 mandate-9 정합
 
 paradigm-j prereq #1 갱신:
 - 이전: 'real-mode PASS_STRICT_C3' = v5.2 adaptive 만 PASS

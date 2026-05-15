@@ -24,7 +24,7 @@ PURPOSE
 
 raw#10  honest: SMOKE only. PASS does not imply Φ super-linear / V14 mirror improvement.
         Those are SM-C cond.3 measurements.
-own 22  emit JSON summary on completion.
+  emit JSON summary on completion.
 """
 
 from __future__ import annotations

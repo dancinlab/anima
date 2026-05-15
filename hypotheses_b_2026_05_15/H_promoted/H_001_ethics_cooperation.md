@@ -18,7 +18,7 @@ since: 2026-05-06
 
 ## Hypothesis
 
-iterated multi-agent interaction에서 윤리적 협력 (ethical cooperation / pro-social) 전략은 비협력 (defection / anti-social) 전략보다 long-run payoff + system stability + adaptive resilience 모든 axis에서 유리하다. 사용자 directive (2026-05-07): "선 X 윤리" — '선/악' 이분법 대신 '윤리적 협력 vs 비협력' 보편적 framework. 윤리는 anima identity-bearing surface (own 17 정합)의 가치 lane.
+iterated multi-agent interaction에서 윤리적 협력 (ethical cooperation / pro-social) 전략은 비협력 (defection / anti-social) 전략보다 long-run payoff + system stability + adaptive resilience 모든 axis에서 유리하다. 사용자 directive (2026-05-07): "선 X 윤리" — '선/악' 이분법 대신 '윤리적 협력 vs 비협력' 보편적 framework. 윤리는 anima identity-bearing surface (정합)의 가치 lane.
 
 ## Why
 
@@ -72,13 +72,13 @@ iterated multi-agent interaction에서 윤리적 협력 (ethical cooperation / p
 - **L2**: 'cooperation = 선 / defection = 악' 단순 mapping은 anthropomorphism 위험 — 본 H1은 game-theoretic 정의 한정.
 - **L3**: 800+ simulation run cost $0 (mac local) but cycle 시간 (예상 1-2시간) — replication overhead.
 - **L4**: noise model {0, 5, 10, 20%} 임의 — high-noise (>30%) regime은 별도 lane.
-- **L5**: anima 자체 cooperative response evaluation은 own 18 simple stack PASS 모델 prerequisite — 현재 BG-FY PARTIAL_PASS_NO_CONTEXT 한정.
+- **L5**: anima 자체 cooperative response evaluation은 simple stack PASS 모델 prerequisite — 현재 BG-FY PARTIAL_PASS_NO_CONTEXT 한정.
 - **L6**: 'long-run payoff' 정의는 N=1000 rounds — N→∞ regime 별도 cycle.
 
 ## Cross-Links
 
 - **sister roadmaps**: `.roadmap.philosophy` D1 (anima 정체성 boundary — 가치 lane) + `.roadmap.law` (own X 가치 rule 추가 가능성)
-- **own**: own 18 (anima identity-bearing surface) — H1.5 anima 자체 행동 평가 적용
+- **own**: (anima identity-bearing surface) — H1.5 anima 자체 행동 평가 적용
 - **literature**: Axelrod (1984) The Evolution of Cooperation; Nowak & May (1992) Evolutionary games and spatial chaos; Hamilton (1964) inclusive fitness
 - **legacy hypothesis archive**: `docs/hypotheses/cx/FACTION-DEBATE.md` (faction dynamics partial cross-link)
 

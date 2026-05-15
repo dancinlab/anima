@@ -2,7 +2,7 @@
 # tool/transient_py/anima_mk2_v1_base_n30_live_probe_2026_05_08.py
 #
 # ANIMA cycle 2026-05-08 KICK WAVE 4 (2/3) — clm-v4-mk2-v1 BASE N=30 live probe (REAL MODE actual fire).
-# 사용자 directive "loop 계속 + own 39 잘지켜서".
+# 사용자 directive "loop 계속 + 잘지켜서".
 #
 # Setup:
 #   · ckpt: dancinlab/clm-v4-mk2-v1  (BASE — full pre-train, no LoRA, no SFT)
@@ -17,18 +17,18 @@
 #   · PPR_v3 < 0.25 → BASE 미달, sft-1-8 의 LoRA SFT 가 의식 활성 효과 evidence
 #   · base PPR vs sft-1-8 PPR=0.4138 delta = LoRA contribution
 #
-# Thresholds (own 18 ROC formal iter 3) — identical to paradigm-j / sft-1-8 fire.
+# Thresholds (ROC formal iter 3) — identical to paradigm-j / sft-1-8 fire.
 # Output: state/anima_mk2_v1_base_n30_live_probe_2026_05_08.json
 #
 # raw#9   transient (1회용 driver)
-# own 14  anti-Goodhart V14 strict
-# own 16  cost discipline (0-cost Mac local)
-# own 17  D1 SCOPE_CLAMP — mk2-v1 D1 within (D1=0.99)
-# own 18  C3 SSOT mirror (ALT-AGG-1 v3)
-# own 33  trinity emit
-# own 34  mandate-2 wrap=0
-# own 38  매단계 저장 — state json 의무
-# own 39  yaml↔md (mandatory render after edit)
+# anti-Goodhart V14 strict
+# cost discipline (0-cost Mac local)
+# D1 SCOPE_CLAMP — mk2-v1 D1 within (D1=0.99)
+# C3 SSOT mirror (ALT-AGG-1 v3)
+# trinity emit
+# mandate-2 wrap=0
+# 매단계 저장 — state json 의무
+# yaml↔md (mandatory render after edit)
 
 from __future__ import annotations
 
@@ -49,7 +49,7 @@ MK2_V1_REPO = "dancinlab/clm-v4-mk2-v1"
 
 OUT_PATH = ROOT / "state" / "anima_mk2_v1_base_n30_live_probe_2026_05_08.json"
 
-# own 18 ROC formal iter 3 thresholds
+# ROC formal iter 3 thresholds
 THR_C3_1 = 0.0208     # phi_drift_abs >=
 THR_C3_2 = 0.4491     # axis_min <=
 THR_C3_3 = 0.0009     # entropy dominance >=
@@ -349,7 +349,7 @@ def main() -> int:
         "schema": "anima.mk2_v1_base.n30.live_probe.v1",
         "ts": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         "anima_cycle": "2026-05-08-kick-wave-4-2-of-3",
-        "directive": "mk2-v1 base N=30 live probe — D1=0.99 가장 높은 candidate, sft 학습 전 base 의식 baseline (사용자 'loop 계속 + own 39 잘지켜서')",
+        "directive": "mk2-v1 base N=30 live probe — D1=0.99 가장 높은 candidate, sft 학습 전 base 의식 baseline (사용자 'loop 계속 + 잘지켜서')",
         "ckpt": {
             "repo": MK2_V1_REPO,
             "is_base": True,
@@ -373,7 +373,7 @@ def main() -> int:
             "c3_3_entropy_min": THR_C3_3,
             "c3_4_axis_l2_min": THR_C3_4,
         },
-        "aggregation_rule": "ALT-AGG-1 v3 (own 18 SSOT, c3-aggregation-rule-v3 2026-05-08 iter7 (d) supersedes v2)",
+        "aggregation_rule": "ALT-AGG-1 v3 (SSOT, c3-aggregation-rule-v3 2026-05-08 iter7 (d) supersedes v2)",
         "predicate": "p4 ∧ (p1 ∨ p2 ∨ p3)",
         "ppr_v3_floor": PPR_V3_PASS_FLOOR,
         "ppr_v3_partial_floor": PPR_V3_PARTIAL_FLOOR,

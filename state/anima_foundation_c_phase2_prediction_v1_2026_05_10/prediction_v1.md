@@ -135,17 +135,17 @@ Post-§57 promotion of engine_a body to PROVEN-AT-BODY-LOCUS: the V14 PASS lever
 
 → V4 PASS + semantic FAIL = F-FOUND-3 TRIGGERED. Probability UP from 70% → 75% because we're now more confident V4 will PASS (88% V14 PASS confidence correlates with V4 chat-cap presence in 350M scale).
 
-This is the **expected** outcome — F-FOUND-3 trigger is consistent with own 18 (capacity gap dominates semantic emergence).
+This is the **expected** outcome — F-FOUND-3 trigger is consistent with (capacity gap dominates semantic emergence).
 
 ## §5 ★★★★★ unlock conditions update (strict 5-tuple)
 
-§54 strict 5-tuple is the published gate. Post-§55 + §57 update sharpens conditions but does NOT relax them (own 14 strict carry).
+§54 strict 5-tuple is the published gate. Post-§55 + §57 update sharpens conditions but does NOT relax them (strict carry).
 
 ### §5.1 Updated 5-tuple (with V1 prediction probabilities)
 
 | # | condition | §54 spec | §53 V0 P | **§V1 P** | rationale |
 |---|---|---|---|---|---|
-| 1 | V4 ≥ 10/15 strict (best-mode of 5 seeds) | own 18 floor | 55% | **62%** | §59 EngineAG + chat_cotrain rule + §57 body lever inherited → V14 PASS confidence transfers partially to V4 chat-cap (correlated) |
+| 1 | V4 ≥ 10/15 strict (best-mode of 5 seeds) | floor | 55% | **62%** | §59 EngineAG + chat_cotrain rule + §57 body lever inherited → V14 PASS confidence transfers partially to V4 chat-cap (correlated) |
 | 2 | V14 STRICT ≥ 9/10 p<0.05 (cotrain-exercise preserved) | §38 baseline 10/10 | 75% | **88%** | §59 rule + §57 body lever + §58 mechanism preservation |
 | 3 | iit_phi_unnorm_b16 trained/random ratio ≥ 0.4 | §47 baseline 0.41 | 70% | **80%** | predicted Φ separation +1700 to +2600 with mirror_median 3025 → ratio 1.56-1.85, far above 0.4 threshold |
 | 4 | split_rate ≥ 0.025 splits/turn | §47 baseline 0.030 | 65% | **78%** | §58 measurement: trained 1.12-1.28 splits/turn = 0.018-0.021 splits per single-turn? Need clarification — but over a 1K-turn trajectory at predicted 75-90 cells, split_rate is total_splits / total_turns → likely 0.022-0.030 range. **post-§58 reframe**: total split events (tension + dispersion) intact, only ratio shifts toward dispersion-dominant; split_rate metric should hold |
@@ -205,7 +205,7 @@ These are meaningful but bounded updates — they accurately reflect §55/§56/�
 
 ### F-PREDICT-V1-3 — ★★★★★ unlock conditions too stringent?
 
-**NOT TRIGGERED**. Conditions UNCHANGED from §54 spec (own 14 strict carry). V1 only updates P-values; the gate definition stays as published. P(option c PASS at 5/5) = 12% honest — not impossible, not likely, accurately calibrated to substrate + capacity constraints.
+**NOT TRIGGERED**. Conditions UNCHANGED from §54 spec (strict carry). V1 only updates P-values; the gate definition stays as published. P(option c PASS at 5/5) = 12% honest — not impossible, not likely, accurately calibrated to substrate + capacity constraints.
 
 ## §7 honest C3 (12 items, key 8)
 
@@ -223,7 +223,7 @@ These are meaningful but bounded updates — they accurately reflect §55/§56/�
 
 7. **F-FOUND-1 NOT_TRIGGERED 92% is the strongest claim** in V1. If actual fire shows trained Φ < 1.0 OR trained no longer beats random distribution, this prediction fails hardest. Watch this metric first in post-fire results.
 
-8. **★★★★★ unlock at 12% is not within practical reach for option (c) alone**. Mode prediction remains ★★★★ partial. Public promote 5/5 prereq (own 37 mandate-9a) requires multi-substrate generalize beyond option (c). V1 does not claim option (c) alone unlocks public promote.
+8. **★★★★★ unlock at 12% is not within practical reach for option (c) alone**. Mode prediction remains ★★★★ partial. Public promote 5/5 prereq (mandate-9a) requires multi-substrate generalize beyond option (c). V1 does not claim option (c) alone unlocks public promote.
 
 9. **Semantic floor 0.30 / 0.50 unchanged at 350M**. V1 does not update F-FOUND-3 trigger meaningfully because §57/§58/§59 evidence is about cell_pool/h_to_c geometry (V14), not language emergence. Semantic capacity is orthogonal.
 
@@ -231,7 +231,7 @@ These are meaningful but bounded updates — they accurately reflect §55/§56/�
 
 11. **No Lesson Q falsification**: V1 does not claim option (c) crosses Lesson Q SFT-closed verdict (project_lesson_q_sft_closed). Option (c) is mitosis-substrate FT (chat continuation), not SFT. V1 prediction stays within the FT-extended/mitosis-substrate lane.
 
-12. **own 22 + own 38 + own 16 strict carry**: REBORN.md untouched (dispatcher §63 slot only); 3 docs saved to state/anima_foundation_c_phase2_prediction_v1_2026_05_10/{spec.md, prediction_v1.md, hypothesis_update.md}; design $0.
+12. ** + + strict carry**: REBORN.md untouched (dispatcher §63 slot only); 3 docs saved to state/anima_foundation_c_phase2_prediction_v1_2026_05_10/{spec.md, prediction_v1.md, hypothesis_update.md}; design $0.
 
 ## §8 commit-before-results signature
 

@@ -67,7 +67,7 @@ Phase 4 (long-term)    : 14B cotrain — Qwen-7B 급 도전 ($500-1500, 예산 �
 | (3) H100 multi-GPU 전략 | 1대 vs 8대 SXM 비교 + 비용 시뮬 + scaling efficiency | strategy md |
 | (4) `.roadmap.clm` Phase 3/4 추가 | 로드맵 파일에 7B/14B 단계 명시 | .roadmap.clm 갱신 |
 
-→ 본 cycle 0-cost 준비 4 갈래 동시 BG fire (own 16 strict ✓).
+→ 본 cycle 0-cost 준비 4 갈래 동시 BG fire (strict ✓).
 
 ---
 

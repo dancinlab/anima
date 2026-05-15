@@ -96,7 +96,7 @@ This consolidation aggregates **44+ parallel agents** across two cron-driven /lo
 | **a-V1-prime** | Algorithm impl (anti-lever) | T+7h | ✅ | tool/an11_b_v1_phi_mip_normalized.hexa NEW — k-invariant Φ_mip surrogate (#102 anti-lever fix). | commit `a945dcd0` |
 | **a-Atlas-30d** | Algorithm impl + raw95 schema | T+7h | ✅ | --aggregate-30d flag + docs/raw95_audit_ledger_schema.md — F-ATLAS-1 + raw95-schema. | commit `86640088` |
 | **a-grep-evidence-clm** | Migration (citation drift fix) | T+7h | ✅ | clm_r5 citation drift fix — Agent D §6 honest disclosure. | commit `f7975b4d` |
-| **a-grep-evidence-own** | Cross-repo (own3+own4) | T+7h | ✅ | own 3 + own 4 + R36 + R37 paste-ready grep evidence — Agent D recommendation #1. | commit `6bb61f8e` |
+| **a-grep-evidence-own** | Cross-repo (own3+own4) | T+7h | ✅ | + + R36 + R37 paste-ready grep evidence — Agent D recommendation #1. | commit `6bb61f8e` |
 | **a-44agent-master** | Documentation (this doc) | T+8h | ⚠️→✅ | 44-agent swarm cumulative consolidation (this document). | this file |
 
 **Total inventory**: 44+ dispatched · 26 ✅ COMPLETE (incl. partials promoted) · 18 ⚠️ RUNNING/PARTIAL/PROPOSED at compaction.
@@ -228,11 +228,11 @@ raw 91 C3: bit-level Shannon was conflated with byte-level saving in Phase 10 ma
 
 | own | slug | landed |
 |---|---|---|
-| own 1 | (pre-existing) | LIVE |
-| own 2-6 | (pre-existing) | LIVE |
-| own 7 | anima-heredoc-arg-max-guard | commit `e5a0cabc` |
-| own 8 | anima-content-class-topology | commit `e5a0cabc` |
-| own 9 | anima-try-revert-orthogonality-wrapper | commit `64dbdcfa` |
+| | (pre-existing) | LIVE |
+| -6 | (pre-existing) | LIVE |
+| | anima-heredoc-arg-max-guard | commit `e5a0cabc` |
+| | anima-content-class-topology | commit `e5a0cabc` |
+| | anima-try-revert-orthogonality-wrapper | commit `64dbdcfa` |
 
 **Total anima `.own` count**: 9 LIVE.
 
@@ -240,11 +240,11 @@ raw 91 C3: bit-level Shannon was conflated with byte-level saving in Phase 10 ma
 
 | target repo | own slot | source mirror | status |
 |---|---|---|---|
-| nexus | own 4 (renumbered) | mirror own 8 (content-class topology) | PROPOSE MIRROR |
-| nexus | own 5 (renumbered) | mirror own 9 (try-revert-orthogonality) | PROPOSE MIRROR |
-| CANON | own 24 (extension) | mirror own 7 (heredoc ARG_MAX, bash variant) | PROPOSE MIRROR |
-| CANON | own 25 | mirror own 8 (entropy-bound verdict absorb) | PROPOSE MIRROR |
-| CANON | own 26 (renumbered, own 9 already taken) | mirror own 9 | PROPOSE MIRROR |
+| nexus | (renumbered) | mirror (content-class topology) | PROPOSE MIRROR |
+| nexus | (renumbered) | mirror (try-revert-orthogonality) | PROPOSE MIRROR |
+| CANON | (extension) | mirror (heredoc ARG_MAX, bash variant) | PROPOSE MIRROR |
+| CANON | | mirror (entropy-bound verdict absorb) | PROPOSE MIRROR |
+| CANON | (renumbered, already taken) | mirror | PROPOSE MIRROR |
 | hexa-lang | — | REJECTED on parser-self-host scope | architecturally inappropriate |
 | airgenome | — | BLOCKED on `.own` SSOT bootstrap | infra prerequisite |
 
@@ -402,7 +402,7 @@ raw 142's 4 discoveries (D1-D4) are validated empirically in this 44-agent cycle
 | `2026-04-28_bug4_findcall_verdict.jsonl` | varies | stdlib 2-arg .find pre-existing |
 | `2026-04-28_falsification_ledger.jsonl` | 7 (F1-F7; F8 evidence in 2fb55d01) | F-ID cumulative |
 | `2026-04-28_raw142_cross_repo_validation.jsonl` | 5 | D1-D4 sister-repo validation |
-| `2026-04-28_own789_cross_repo_audit.jsonl` | 4 | own 7/8/9 mirror audit |
+| `2026-04-28_own789_cross_repo_audit.jsonl` | 4 | mirror audit |
 | `2026-04-28_subagent_swarm_status.jsonl` | 20 | swarm dispatch + RUNNING status |
 | `2026-04-28_phase8_remeasure_post_bug_fixes.jsonl` | 11 | A16 chain integration 3/3 above 59% |
 | `2026-04-28_phase10_p0_a16_live_fire.jsonl` | 7 | A16 standalone 0/3 hit 28% target |
@@ -444,8 +444,8 @@ raw 142's 4 discoveries (D1-D4) are validated empirically in this 44-agent cycle
 | `73b8d4e8` | 13-agent swarm status snapshot |
 | `f1727967` | Bug 1 MED-risk 4 anima fixes (ad0ef0d9 partial) |
 | `41abae24` | Bug 4 verdict (ae7c7e125) |
-| `64dbdcfa` | own 9 anima-try-revert-orthogonality-wrapper |
-| `e5a0cabc` | own 7 + own 8 anima registrations |
+| `64dbdcfa` | anima-try-revert-orthogonality-wrapper |
+| `e5a0cabc` | + anima registrations |
 | `bfa959989` | raw 137 strengthening + raw 142 follow-up (abee441b) |
 | `1280895e` | Bug 3 verdict + Phase 10 master roadmap |
 | `b89c8975` | Bug 2 verdict (a38dcbed) |

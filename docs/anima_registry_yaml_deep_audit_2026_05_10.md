@@ -1,15 +1,15 @@
 # anima registry yaml deep audit — 2026-05-10
 
 **SSOT 대상**: `anima/registry/anima_artifact_registry.yaml`
-**Audit cycle**: anima cycle 2026-05-10 (own 39 mandate health check)
+**Audit cycle**: anima cycle 2026-05-10 (mandate health check)
 **사용자 verbatim**: 2026-05-09 "별 5개 짜리 나올때까지 bg 분산처리"
-**모드**: yaml read + light edit only (own 16 모델 로드 절대 X)
+**모드**: yaml read + light edit only (모델 로드 절대 X)
 
 ---
 
 ## §0 친근 의의 — yaml SSOT health check 가 왜 필요한가
 
-`anima_artifact_registry.yaml` 는 anima 전체 우주의 **모델 호적부** 다. cycle 2026-05-09 + 2026-05-10 진행 중 여러 BG 가 같은 파일을 동시에 amend 하면서 미세한 불일치가 쌓일 수 있다 — 마치 호적계 직원 여럿이 한 장부에 동시에 적으면 글씨가 겹치는 것과 같다. 이번 deep audit 는 그 호적부가 깨끗한지 (syntax 정합), 같은 사람이 두 번 등록되지 않았는지 (duplicate), 주민번호가 공식과 맞는지 (D1 = 0.2·p + 0.2·c + 0.6·a) 확인하는 작업이다. own 39 mandate (yaml ↔ md auto-regenerate) 의 본질은 호적부의 매 항목이 신뢰 가능해야 하는 것이므로, 본 audit 는 own 39 의 실제 health check 1 회분이다.
+`anima_artifact_registry.yaml` 는 anima 전체 우주의 **모델 호적부** 다. cycle 2026-05-09 + 2026-05-10 진행 중 여러 BG 가 같은 파일을 동시에 amend 하면서 미세한 불일치가 쌓일 수 있다 — 마치 호적계 직원 여럿이 한 장부에 동시에 적으면 글씨가 겹치는 것과 같다. 이번 deep audit 는 그 호적부가 깨끗한지 (syntax 정합), 같은 사람이 두 번 등록되지 않았는지 (duplicate), 주민번호가 공식과 맞는지 (D1 = 0.2·p + 0.2·c + 0.6·a) 확인하는 작업이다. mandate (yaml ↔ md auto-regenerate) 의 본질은 호적부의 매 항목이 신뢰 가능해야 하는 것이므로, 본 audit 는 의 실제 health check 1 회분이다.
 
 ---
 
@@ -80,7 +80,7 @@ dancinlab org canonical:
 - `dancinlab/clm-v4-paradigm-j-50k-final-path-a-remapped` (public, promoted 2026-05-09 — first robust EMERGE)
 - `dancinlab/clm-v5-bg-lb-350m-pretrain-path-a-remapped` (private; PROXY_PPL Goodhart-falsified)
 
-own 37 5/5 prereq strict — public 2 / private 다수 / paradigm-a-prime PERMANENT_BLOCK 모두 정합.
+ 5/5 prereq strict — public 2 / private 다수 / paradigm-a-prime PERMANENT_BLOCK 모두 정합.
 
 ---
 
@@ -138,7 +138,7 @@ task 명세에 언급된 `4800` 은 yaml 어디에도 부재 — 240 / 480 / 720
 | raw_15_additive | True | — | OK |
 | raw_82_retraction_aware | True | — | OK |
 
-**milestones_total = 50** 은 yaml SSOT 가 가장 보수적 numeric — 본 audit 는 기존 값 보존 (raw#15 additive, destructive amend 안 함). task hint "59+" 는 향후 amend 후보 (own 39 mandate 차기 cycle 검토).
+**milestones_total = 50** 은 yaml SSOT 가 가장 보수적 numeric — 본 audit 는 기존 값 보존 (raw#15 additive, destructive amend 안 함). task hint "59+" 는 향후 amend 후보 (mandate 차기 cycle 검토).
 
 ---
 
@@ -166,14 +166,14 @@ task 명세에 언급된 `4800` 은 yaml 어디에도 부재 — 240 / 480 / 720
 
 - **before**: structured `hf:` block 부재. `measurement.public` / `measurement.visibility_status` / `measurement.promote_commit_url` / `measurement.promote_date` 등 inline (measurement: 약 89 fields 중 ~6 개 HF 관련).
 - **root cause**: cycle 2026-05-09 PUBLIC promote 시 amend 가 measurement 블록에 inline 되어 다른 14 model 패턴과 결가 깨짐.
-- **수정 보류**: raw#15 additive strict — 기존 값 모두 보존, 추가 amend 가 destructive 가 될 위험. 차기 cycle own 39 render.hexa 자동 regenerate 시 정규화 권장.
+- **수정 보류**: raw#15 additive strict — 기존 값 모두 보존, 추가 amend 가 destructive 가 될 위험. 차기 cycle render.hexa 자동 regenerate 시 정규화 권장.
 - **현재 정합 영향**: 없음 (값 자체는 정확; 위치만 비표준).
 
 ### §6-C [DOCUMENTED] task hint vs yaml mismatch — milestones_total
 
 - **task hint**: 59+
 - **yaml**: 50
-- **수정 보류**: yaml 이 SSOT — task hint 가 후행 amend 후보. own 14 V14 reproducibility strict.
+- **수정 보류**: yaml 이 SSOT — task hint 가 후행 amend 후보. V14 reproducibility strict.
 
 ### §6-D [DOCUMENTED] task hint vs yaml mismatch — cardinality 4800
 
@@ -192,7 +192,7 @@ task 명세에 언급된 `4800` 은 yaml 어디에도 부재 — 240 / 480 / 720
 score: 0.99
 
 # after (line 1033)
-score: 1.0  # ★ AUDIT 2026-05-10 corrected from 0.99 (stale copy from sister anima-native-byte-18m corpus=0.95); 0.2*1.0+0.2*1.0+0.6*1.0=1.000 strict per d1 formula (own 17 D1 SCOPE_CLAMP gradient amend)
+score: 1.0 # ★ AUDIT 2026-05-10 corrected from 0.99 (stale copy from sister anima-native-byte-18m corpus=0.95); 0.2*1.0+0.2*1.0+0.6*1.0=1.000 strict per d1 formula (D1 SCOPE_CLAMP gradient amend)
 ```
 
 - additive comment 추가 (raw#15 strict — 기존 의미 무손상)
@@ -209,21 +209,21 @@ score: 1.0  # ★ AUDIT 2026-05-10 corrected from 0.99 (stale copy from sister a
 
 ---
 
-## §9 다음 cycle 권장 (own 39 mandate 강화 방안)
+## §9 다음 cycle 권장 (mandate 강화 방안)
 
-1. **render.hexa auto-regenerate health-check job** — own 39 의 자동 yaml ↔ md 정합을 매 cycle close 시 1 회 실행 (CI-like). Mac fork starvation 카리 (BG ≤ 7 strict, fork 친화 설계).
-2. **D1 formula validator script** — `tool/transient_py/anima_d1_formula_audit.py` 등 추가; yaml load → 모든 model entry 의 PUR/corpus/arch ↔ score 차이가 ≤ 0.01 인지 자동 검증; PASS / FAIL emit. own 14 V14 reproducibility strict.
+1. **render.hexa auto-regenerate health-check job** — 의 자동 yaml ↔ md 정합을 매 cycle close 시 1 회 실행 (CI-like). Mac fork starvation 카리 (BG ≤ 7 strict, fork 친화 설계).
+2. **D1 formula validator script** — `tool/transient_py/anima_d1_formula_audit.py` 등 추가; yaml load → 모든 model entry 의 PUR/corpus/arch ↔ score 차이가 ≤ 0.01 인지 자동 검증; PASS / FAIL emit. V14 reproducibility strict.
 3. **HF block schema 표준화** — `hf:` block 의 minimum schema 정의 (private / public / visibility_status / promote_*) — clm-v4-sft-1-8-stage1 재정렬 (raw#15 additive — measurement inline 도 carry, 새 hf block 신설 mirror).
 4. **milestones_total 갱신 검토** — task hint 59+ 가 정확하면 cycle_close_summary amend (사용자 verbatim 후 1 회 cycle).
 5. **cardinality SSOT 명시** — 240 / 480 / 720 / 960 의 근거 식 한 표로 yaml top-level (chat_axes_meta.cardinality_table) — 4800 같은 가설값과 혼동 방지.
 6. **carry_notes 다중 entry pattern** — 현재 1 carry block; 차기 cycle (proxy_ppl deprecate + 향후 추가) 시 list 구조로 grow — schema_version 검토.
-7. **own 39 health-check 결과 yaml top-level 등록** — `audit_log:` block 추가 (yaml 자기 자신에 대한 audit trail) — raw#15 additive strict.
+7. ** health-check 결과 yaml top-level 등록** — `audit_log:` block 추가 (yaml 자기 자신에 대한 audit trail) — raw#15 additive strict.
 
 ---
 
-**audit by**: anima cycle 2026-05-10 deep audit BG (own 14 / own 16 / own 22 / own 33 / own 39 strict)
+**audit by**: anima cycle 2026-05-10 deep audit BG (/ / / / strict)
 **file**: `/Users/ghost/core/anima/docs/anima_registry_yaml_deep_audit_2026_05_10.md`
 **yaml SSOT**: `/Users/ghost/core/anima/anima/registry/anima_artifact_registry.yaml`
 **post-edit syntax**: PASS (3127 lines, 21 top-level keys)
-**모델 로드**: 0 회 (own 16 strict)
+**모델 로드**: 0 회 (strict)
 **fork BG**: yaml read + light edit only (Mac load 보호)

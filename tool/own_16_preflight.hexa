@@ -1,7 +1,7 @@
-// tool/own_16_preflight.hexa — own 16 BG launch prompt mechanical validator
+// tool/own_16_preflight.hexa — BG launch prompt mechanical validator
 //
 // Role: heuristic substring-match validator that scans an H100 BG launch
-//       prompt for the 6 mandatory own 16 checklist items (boot register,
+// prompt for the 6 mandatory checklist items (boot register,
 //       heartbeat hook, trap pre-stop deregister, verdict.json schema,
 //       L23 fail-fast, L25 escalation awareness) and emits a PASS/WARN/FAIL
 //       verdict bound to a target_usd deviation policy.
@@ -305,10 +305,10 @@ fn _scenario_partial_fail() -> string {
 }
 
 fn _scenario_zero_cost_optional() -> string {
-    let mut s = "# Mac-substrate $0 BG — own 16 not applicable\n"
+    let mut s = "# Mac-substrate $0 BG — not applicable\n"
     s = s + "target_usd: 0\n"
     s = s + "This BG runs purely on mac, no GPU pod.\n"
-    s = s + "No watchdog registration required (own 16 optional band).\n"
+    s = s + "No watchdog registration required (optional band).\n"
     return s
 }
 

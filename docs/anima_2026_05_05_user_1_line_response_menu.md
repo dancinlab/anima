@@ -44,7 +44,7 @@
 ### `close`
 - CronDelete d1682837 (active /loop cron 제거).
 - BG-BZ priority 5 commits guidance emit (commit 금지 rule 준수, 사용자 trigger).
-- HF promote는 time-gated wait (private→public lifecycle, own 15 준수).
+- HF promote는 time-gated wait (private→public lifecycle, 준수).
 - 모든 active BG SIGTERM_ONLY cleanup verb (cleanup BG guards 준수).
 
 ### `continue`
@@ -75,7 +75,7 @@
 - raw#37 transient_py opt-out도 사용자 explicit 승인 필요.
 
 ### C3-3: close 5-step의 HF time-gated wait
-- HF promote private→public 즉시 X. own 15 verification gates 통과 후.
+- HF promote private→public 즉시 X. verification gates 통과 후.
 - BG-EF는 close keyword 시 wait orchestration emit하나 promote 직접 X.
 
 ### C3-4: BG-EE pending 시 B+ unavailable

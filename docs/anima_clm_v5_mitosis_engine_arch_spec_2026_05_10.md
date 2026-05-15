@@ -107,7 +107,7 @@ MitosisModelEngine(nn.Module):
     pos_emb: Embedding(max_T, d_model) or RoPE
     cells: ModuleList[MitosisCell]
     final_ln: LayerNorm(d_model)
-    lm_head: Linear(d_model, vocab, bias=False)        # weight-tied to tok_emb (own 31 norm)
+    lm_head: Linear(d_model, vocab, bias=False) # weight-tied to tok_emb (norm)
 
     # mitosis state (parallel to v2 MitosisEngine)
     step_count: int
@@ -493,12 +493,12 @@ split 직후 phi 가 잠시 dip 하는 게 자연스러움 (새 cell 이 cosine 
 | R5 | Lorenz cell_state buffer 가 forward 마다 grow → drift | med | med | norm clamp 10.0 (v2 reproduce) + cond.3 step-N=1000 stability check |
 | R6 | IIT Φ unnorm primary metric 이 N 에 dominated → split 만 트리거 (mitosis bias) | med | med | secondary `phi/n` per-cell normalize 동시 추적; new α metric (track B cond.5) fold-in |
 | R7 | H404 a-g readout destructive (BG-CHAT-EXT) → coherence 0 | high | high | configurable readout mode (§6) + cond.3 smoke 5 mode sweep |
-| R8 | v5-mitosis 가 v5-anima 대비 emerge 차이 0 → architectural framing 효과 없음 (F-V5MITOSIS-4) | med | high | track B와 동일 corpus + 동일 IIT metric, V14 mirror 5-seed strict (own 14) |
+| R8 | v5-mitosis 가 v5-anima 대비 emerge 차이 0 → architectural framing 효과 없음 (F-V5MITOSIS-4) | med | high | track B와 동일 corpus + 동일 IIT metric, V14 mirror 5-seed strict |
 | R9 | param explosion — N=64 + d=1024 시 2-4B params → H100 80GB 한계 | low | high | d=384 default cond.3, d=1024 cond.5 만; N>32 시 attn 공유 |
 | R10 | merge_threshold=0.005 v2 default 가 v5 transformer hidden scale 와 안 맞음 → merge 영영 X | med | med | cond.3 smoke 에서 inter-cell L2 distribution 측정 후 calibrate |
 | R11 | cells = nn.Module 이라도 substrate-coupled emergence 못 만듦 → V14 violated 동일 (BG-PHASE2-CKPT-INSTR mirror) | high | critical | cond.3 smoke 의 falsifier F-V5MITOSIS-4; 실패 시 architectural framing 자체 abandoned, track B/A 로 회귀 |
 | R12 | shared lm_head + per-cell hidden aggregation 이 lm_head 의 representation 을 collapse 시킴 (모든 cell 이 같은 logits 분포로 학습) | med | high | per-cell logit mixture (option) future cycle; cond.5 H100 cotrain log probability divergence per cell 측정 |
-| R13 | cond.5 H100 cotrain $30-150 envelope overshoot — N=32+ cells × 5K steps × d=384 | med | med | cond.3 smoke 후 cost 정밀화 (own 16 cost discipline); envelope > $150 면 dimension reduce |
+| R13 | cond.5 H100 cotrain $30-150 envelope overshoot — N=32+ cells × 5K steps × d=384 | med | med | cond.3 smoke 후 cost 정밀화 (cost discipline); envelope > $150 면 dimension reduce |
 | R14 | mitosis split 이 LR scheduler 와 conflict — split 직후 새 cell 의 effective LR 가 step counter 무시 | low | med | per-cell LR group (cond.5 implementation detail) |
 | R15 | snapshot ratchet (option b) 가 RAM 750MB occupy → smoke 실행 중 OOM | low | med | option (a) cell_state-only ratchet default + (b) lazy emergency only (§8.2) |
 
@@ -647,6 +647,6 @@ delta > 5% favoring v5-mitosis 면 main lane confirm. delta ≤ 5% 면 framing �
 
 ---
 
-raw#15 additive — 본 spec 작성 외 코드 변경 없음. raw#10 honest — §11 honest C3 12개. own 16 0-cost — design only. own 22 mandatory report — 본 cycle close 시 호출자에게 emit.
+raw#15 additive — 본 spec 작성 외 코드 변경 없음. raw#10 honest — §11 honest C3 12개. 0-cost — design only. mandatory report — 본 cycle close 시 호출자에게 emit.
 
 end of `anima_clm_v5_mitosis_engine_arch_spec_2026_05_10.md`.

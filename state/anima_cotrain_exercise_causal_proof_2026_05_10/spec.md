@@ -1,10 +1,10 @@
 # BG-COTRAIN-EXERCISE-CAUSAL-PROOF — spec
 
-> own 14 — V14 mirror multi-seed ablation
-> own 16 — $0 local Mac CPU only
+> — V14 mirror multi-seed ablation
+> — $0 local Mac CPU only
 > raw#15 additive — both ckpts loaded read-only; in-memory mutation only
-> own 22 — REBORN.md direct append BLOCKED (dispatcher §50 slot)
-> own 38 — artifacts under state/anima_cotrain_exercise_causal_proof_2026_05_10/
+> — REBORN.md direct append BLOCKED (dispatcher §50 slot)
+> — artifacts under state/anima_cotrain_exercise_causal_proof_2026_05_10/
 
 ## §0 mission
 

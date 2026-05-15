@@ -31,8 +31,8 @@ AN11 v2 finetune lane에서 translation quality에 language-specific ceiling 존
 - prereg: `state/an11_v2_finetune_translation_ceiling_prereg_20260425.json`
 - sister: H_005 (corpus quality > capacity 정합)
 - roadmap: `.roadmap.anima_engines`
-- own: own 21
-- own cross-link: own 19 (corpus priority — translation ceiling은 corpus quality manifestation)
+- own:
+- own cross-link: (corpus priority — translation ceiling은 corpus quality manifestation)
 
 ## Honest Limits
 

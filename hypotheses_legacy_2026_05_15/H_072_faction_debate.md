@@ -29,7 +29,7 @@ Legacy file: `docs/hypotheses/cx/FACTION-DEBATE.md`. Pointer only.
 
 - legacy: `docs/hypotheses/cx/FACTION-DEBATE.md`
 - sister: H_049 (hivemind), H_072 sibling
-- own: own 21
+- own:
 
 ## Honest Limits
 

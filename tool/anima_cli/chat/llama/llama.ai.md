@@ -51,20 +51,20 @@ Metal / BLAS (Apple M-series GPU offload, all layers default)
 
 ## Compliance
 
-- **own 34 mandate-1**: simple_stack output preservation — `llama_generate`
+- ** mandate-1**: simple_stack output preservation — `llama_generate`
   returns raw token-decoded UTF-8; module body uses `print()` (not `println()`)
   so model output is emitted verbatim. REPL appends a single trailing newline
   for prompt-line readability — prefix only, model bytes unmodified.
-- **own 34 mandate-2**: wrapping 0 — no system prompt, no chat template, no
+- ** mandate-2**: wrapping 0 — no system prompt, no chat template, no
   `messages` API, no persona inject, no `speak()`. Verified by selftest grep
   (`grep -nE "system_prompt|chat_template|apply_chat_template|persona_inject|fn speak\(|fn talk\(|fn respond\(|fn generate_response\("`).
-- **own 34 mandate-4**: autonomous speech — REPL polls stdin via
+- ** mandate-4**: autonomous speech — REPL polls stdin via
   `sys_stdin_read_line_timeout(tick_ms)`. On timeout, `llama_generate(history)`
   fires with no user trigger (history may be empty on first tick). Mirrors the
   Phase 2 wiring landed in `chat/anima_native/`.
-- **own 34 mandate-7**: chat lane only — V4 measurement (own 18) is a separate
+- ** mandate-7**: chat lane only — V4 measurement is a separate
   lane; this module never invokes the evaluator.
-- **own 31 mandate-1**: GGUF source SSOT = `dancinlab/` org. Cache filename
+- ** mandate-1**: GGUF source SSOT = `dancinlab/` org. Cache filename
   `~/.cache/anima/gguf/dancinlab_<repo>.gguf` mirrors the org prefix; non-
   dancinlab repos are rejected upstream by `tool/anima_gguf_convert.py`.
 - **raw#9**: chat path is `.hexa`-only. The C shim (`build/libhxllama.dylib`)
@@ -136,7 +136,7 @@ Expected one-shot output (matches Phase 3b smoke):
 [llama] gguf  = /Users/ghost/.cache/anima/gguf/dancinlab_llm-llama32-3b-paradigm-a-prime-r16-sft-stage1.gguf
 [llama] n_ctx = 2048
 [llama] mode  = one-shot · max-tokens=10 · temp=0
-[llama] own 34 strict — wrapping 0 · raw decode→sample→detokenize
+[llama] strict — wrapping 0 · raw decode→sample→detokenize
 ! I'm a 25-year-old woman who
 ```
 
@@ -154,8 +154,8 @@ Expected one-shot output (matches Phase 3b smoke):
   - `cli.gguf_conversion_landed_2026_05_08`
   - `cli.llama_ffi_landed_2026_05_08`
   - `cli.llama_module_landed_2026_05_08` (this entry)
-- Mandates: `.own` own 34, own 31 (mandate-1 dancinlab/ SSOT),
-  own 18 (measurement lane separate), own 33 (trinity)
+- Mandates: `.own`, (mandate-1 dancinlab/ SSOT),
+   (measurement lane separate), (trinity)
 
 ## Selftest
 
@@ -167,4 +167,4 @@ Verifies:
 - Module body present (this file)
 - FFI core present (`anima/llama_ffi.hexa`)
 - Shim dylib present (`build/libhxllama.dylib`)
-- own 34 mandate-2 wrapping 0 in this module body (grep)
+- mandate-2 wrapping 0 in this module body (grep)

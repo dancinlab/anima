@@ -125,4 +125,4 @@ Built `ConsciousLMReconstructed` matching the exact 108 keys (vocab=256, d_model
 - v2 chat-capable model (recovered 2026-05-06): R2 `conscious-lm/convo-ft/convo_5k.pt` (70.3 MB)
 - artifacts: `state/anima_clm_v2_mitosis_cells_recovery_2026_05_09/`
 
-raw#9/10/15/37 + own 14/15 준수.
+raw#9/10/15/37 + 준수.

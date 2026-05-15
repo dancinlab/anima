@@ -162,6 +162,6 @@ F-CHAT-EXT-3 미발생. 모든 3 ckpt 가 strict load 108/108 PASS (miss=0 unexp
 - archive addendum (정정 대상): `CLM_V2_ARCHIVE_ADDENDUM_2026_05_10.md` §3 "chat-cap reproducibility" — 본 doc finding 으로 한 번 더 보강 필요 (chat structure 부분 회복은 실재)
 - v5-anima lane SSOT: `.roadmap.clm_v5_anima_native`
 
-raw#9/10/15 honest preservation. own 35 0-cost.
+raw#9/10/15 honest preservation. 0-cost.
 
 End of `anima_clm_v2_chat_ext_smoke_2026_05_10.md`.

@@ -22,7 +22,7 @@ PURPOSE
 raw#9   training/`*.py` is gitignored — local-only.
 raw#10  honest C3 — see DESIGN BLOCKERS at end. Several v2 features are simplified.
 raw#15  additive — original mitosis.py untouched.
-own 22  forward shape-checked.
+  forward shape-checked.
 """
 
 from __future__ import annotations

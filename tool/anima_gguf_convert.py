@@ -7,8 +7,8 @@
 #    pipeline. Output cached at ~/.cache/anima/gguf/<repo>.gguf for
 #    libllama (hexa C FFI) consumer.
 #
-#  LANE SEPARATION (raw#9 / own 34 정합)
-#    - chat path = hexa-only (own 34 strict, no .py wrapping)
+# LANE SEPARATION (raw#9 / 정합)
+# - chat path = hexa-only (strict, no .py wrapping)
 #    - conversion path = .py allowed (build/transformation, analogous to
 #      tool/transient_py/ — needs ML ecosystem: peft + transformers + gguf)
 #    - This script is NOT invoked at chat-time. Run once per model, output
@@ -46,8 +46,8 @@
 #    raw#9 hexa-only chat path (this is conversion infra, not chat)
 #    raw#10 honest C3 (limitations documented + reported)
 #    raw#15 no-hardcode (paths via HOME / cache resolution)
-#    own 31 mandate-1 (dancinlab/ org SSOT — alias DB rejects other orgs)
-#    own 34 unaffected (chat lane untouched)
+# mandate-1 (dancinlab/ org SSOT — alias DB rejects other orgs)
+# unaffected (chat lane untouched)
 #
 #  ENTRY: this script is .py; chat path stays in tool/anima_cli/chat/*.hexa
 # ════════════════════════════════════════════════════════════════════════════
@@ -69,7 +69,7 @@ GGUF_CACHE = CACHE_ANIMA / "gguf"
 LLAMACPP_DIR = CACHE_ANIMA / "llama.cpp"
 HF_TOKEN_FILE = HOME / ".cache" / "huggingface" / "token"
 
-# ─── alias DB (mirror chat.hexa _alias_resolve, own 31 mandate-1: dancinlab/) ─
+# ─── alias DB (mirror chat.hexa _alias_resolve, mandate-1: dancinlab/) ─
 ALIAS_DB = {
     "llama3b": "dancinlab/bg-km-llama3b-r32-pass-strict-2026-05-08",
     "latest": "dancinlab/bg-km-llama3b-r32-pass-strict-2026-05-08",
@@ -110,7 +110,7 @@ def _resolve_token() -> str | None:
 
 
 def _resolve_alias(alias: str) -> str:
-    """alias → HF repo. own 31 mandate-1: only dancinlab/ org accepted."""
+    """alias → HF repo. mandate-1: only dancinlab/ org accepted."""
     a = alias.strip().lower()
     if a in ALIAS_DB:
         return ALIAS_DB[a]
@@ -119,7 +119,7 @@ def _resolve_alias(alias: str) -> str:
         org = a.split("/", 1)[0]
         if org != "dancinlab":
             raise SystemExit(
-                f"[gguf_convert] org rejected: '{org}/' (own 31 mandate-1 — dancinlab/ only)\n"
+                f"[gguf_convert] org rejected: '{org}/' (mandate-1 — dancinlab/ only)\n"
                 f"                 known aliases: {', '.join(sorted(ALIAS_DB))}"
             )
         return alias
@@ -166,7 +166,7 @@ def _check_llamacpp() -> Path:
 def _list_subcommand() -> int:
     print("anima_gguf_convert — alias DB + cached GGUF files")
     print("")
-    print("ALIAS DB (own 31 mandate-1: dancinlab/ org SSOT)")
+    print("ALIAS DB (mandate-1: dancinlab/ org SSOT)")
     print(
         "  ALIAS              REPO                                                   "
     )

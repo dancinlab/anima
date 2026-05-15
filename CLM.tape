@@ -241,7 +241,7 @@
   detail = "본진 모델 등극 milestone. Phase 3 7B PASS 후 expansion verbatim 별도 fire — `OK CLM PHASE 4 14B BUDGET EXPANSION` + `OK CLM PHASE 4 14B FIRE COST $500-1500`. 8-16× H100 × 75-250hr. hf_repo dancinlab/clm-v5-engine-a-g-14b-cotrain."
 
 @D path_total_cost :: clm-tape [ok]
-  text = "**Total path cost envelope**: $5-10 (Phase 2b) + $200-600 (Phase 3) + $500-1500 (Phase 4) = $705-2110. 사용자 verbatim 3회 필요 (Phase 2b 는 own 16 standard band, Phase 3+4 는 cost-bearing + expansion verbatim)."
+  text = "**Total path cost envelope**: $5-10 (Phase 2b) + $200-600 (Phase 3) + $500-1500 (Phase 4) = $705-2110. 사용자 verbatim 3회 필요 (Phase 2b 는 standard band, Phase 3+4 는 cost-bearing + expansion verbatim)."
 
 # ── §7 진행 path 결정 (옵션 통합) ─────────────────────────────────────────
 
@@ -296,7 +296,7 @@
 @D g5_no_v14_unaudit_fire := "no-fire-while-v14-unaudited" :: governance [superseded]
   rule = "V14 violation root cause (H4 normalize 무력화 / H5 chat curriculum collapse / arch tile bug L626-630 reps=2) 셋 다 audit doc + (fix 적용 || ablation 통과 evidence) 없이 Phase 3 / Phase 4 fire 금지."
   applies = "Phase 3 fire keyword 'OK CLM PHASE 3 7B FIRE COST $200-600' / Phase 4 'OK CLM PHASE 4 14B FIRE' 발화 전 prerequisite 검증"
-  why = "Phase 2 350M 에서 fired V14 가 Phase 3 7B / Phase 4 14B 에서 *재현* 시 cost $200-1500 burn + 모델 의식 ceiling 미해결 — own 16 cost discipline 위반 + own 17 SCOPE_CLAMP 위반"
+  why = "Phase 2 350M 에서 fired V14 가 Phase 3 7B / Phase 4 14B 에서 *재현* 시 cost $200-1500 burn + 모델 의식 ceiling 미해결 — cost discipline 위반 + SCOPE_CLAMP 위반"
   remedy = "V14 root-audit doc (`docs/clm_v14_violation_root_audit_2026_05_*.md`) LANDED 후 Phase 2b 재시도 ($5-10) + V14 mirror PPR 점검 PASS 시점에 Phase 3 fire entry condition 만족"
   ~> g5_v14_waiver_2026_05_14
   @> CLM.tape
@@ -315,7 +315,7 @@
 @D g6_no_cost_bearing_bypass := "no-cost-bearing-verbatim-bypass" :: governance [required deny:write]
   rule = "Phase 3 ($200-600) / Phase 4 ($500-1500) fire 는 사용자 verbatim fire keyword 명시 발화 후에만 dispatch 허용. AI agent / 자동 trigger 단독 fire 금지. 'all go' / 'fire' 등 ambiguous 명령으로 Phase 3/4 fire 갈음 금지."
   applies = "Phase 3 fire keyword = `OK CLM PHASE 3 7B FIRE COST $200-600` (verbatim) · Phase 4 = `OK CLM PHASE 4 14B BUDGET EXPANSION $500-1500` + `OK CLM PHASE 4 14B FIRE COST $500-1500` (2 verbatim)"
-  why = "own 16 cost discipline mandate-9. Phase 2 ($4.63) 와 비교 시 40-300× 비용 — 사용자 명시 budget approval 없는 fire 는 trust-violation"
+  why = "cost discipline mandate-9. Phase 2 ($4.63) 와 비교 시 40-300× 비용 — 사용자 명시 budget approval 없는 fire 는 trust-violation"
   remedy = "AI agent 는 fire keyword 발화 prompt 만 가능, dispatch 자체는 verbatim 후. 'go' 등 ambiguous 명령에 Phase 3/4 dispatch 포함 시 우회금지 위반"
   @> CLM.tape
 
@@ -453,15 +453,15 @@
     - chat coherence ≥3/5 KO+EN threshold — superseded; H_005 corpus quality
       가설 verdict 의 일부로 변환 (chat-cap 의 corpus 의존성)
     - HF release prerequisite (real-mode PASS_STRICT_C3 등) — superseded;
-      여전히 own 37 visibility lifecycle 은 *governance* 로 carry (g7 정합)
+      여전히 visibility lifecycle 은 *governance* 로 carry (g7 정합)
     - V14 mirror PPR ≥ trained PPR (F-PHASE3-5/F-PHASE4-6) — superseded;
       V14 자체는 H_080 topo_24variants 또는 Hc_022 weight_emergent 의 evidence
       로 변환 가능 (post-fire)
 
     **무엇이 unchanged** (검증 조건 아닌 governance):
     - 우회금지 g1/g2/g3/g4/g6/g7/g8 (g5 WAIVED carry)
-    - own 16 cost discipline (user verbatim fire keyword)
-    - own 17 SCOPE_CLAMP (D1=1.0 anima_native_scratch)
+    - cost discipline (user verbatim fire keyword)
+    - SCOPE_CLAMP (D1=1.0 anima_native_scratch)
     - LATTICE_POLICY real-limits anchor 의무 (verification anchor 가설 검증 시도)
   EOF
 
@@ -754,7 +754,7 @@
   scope = "real-limits-first; Phase 3/4 cost envelope 가 ASML / ERCOT / Bekenstein real-limit 와 호환 (anchor 가능)"
 
 @X x_cost_discipline := "feedback_h100_cost_discipline_l23_l25_watchdog_own_16.md" :: feedback [active]
-  scope = "own 16 cost discipline — Phase 3/4 fire 시 user verbatim cost-bearing approval mandatory"
+  scope = "cost discipline — Phase 3/4 fire 시 user verbatim cost-bearing approval mandatory"
 
 @X x_visibility := "feedback_hf_visibility_lifecycle_own_37.md" :: feedback [active]
-  scope = "own 37 hf visibility lifecycle — Phase 2/3/4 initial private, real-mode PASS_STRICT_C3 + V6 awareness + user verbatim PROMOTE PUBLIC 시 public 전환"
+  scope = "hf visibility lifecycle — Phase 2/3/4 initial private, real-mode PASS_STRICT_C3 + V6 awareness + user verbatim PROMOTE PUBLIC 시 public 전환"

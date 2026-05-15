@@ -5,7 +5,7 @@
 - 작성일: 2026-05-09 cycle close phase
 - 작성 mode: research + plan only (코드 수정 / 학습 fire **절대 금지**)
 - 사용자 verbatim 인증: 2026-05-09 "지금 가능한것들 all bg go" — 자원 영향 최소 design-only BG
-- own 38/39 mandate 정합 — registry yaml mirror 동기 갱신 (cycle close summary section 별도 amend)
+- mandate 정합 — registry yaml mirror 동기 갱신 (cycle close summary section 별도 amend)
 - raw#15 additive — 기존 cycle docs (`anima_cycle_2026_05_09_v6_strong_*.md` + carry json) 무수정 보존, 본 doc 신규
 
 ---
@@ -34,7 +34,7 @@
 | **HF PUBLIC promote** | **2** (sft-1-8 V14 borderline path + paradigm-j v5.2 strict 5/5 ★) |
 | **HF private promote** | **2 dataset** (tier-a-v4) + **2 model** (BG-LB 350M Goodhart-falsified record-keeping + Phase 2 cotrain DEFERRED upload) |
 | **H100 actual cost** | **~$66 ± $5** (BG-LA $36.60 + BG-LB ~$18.30 ledger overlap 정정 + Phase 2 $4.63 + V6 $0.85 + Step B killed $0.88 + idle/orphan ~$5; 본진 ledger consolidation 다음 cycle 정밀화) |
-| **budget 잔여** | $200 - $66 = **~$134 잔여** (own 16 strict ✓) |
+| **budget 잔여** | $200 - $66 = **~$134 잔여** (strict ✓) |
 | **honest C3 findings** | **13+ cumulative** (cycle 시작 12 + Phase 2 H5 = 13; PROXY_PPL 위험성 첫 정량 입증 1건 critical ★) |
 | **robust EMERGE 확정 (v5.2)** | **1** (paradigm-j) — sft-1-8 V14 borderline + BG-LB Goodhart-falsified + Phase 2 V14 violated |
 | **chat orchestra 4-axis** | **LIVE FIRE 4/4 검증 ✓** (lane / mode / init-pattern / transport) |
@@ -56,7 +56,7 @@
 
 1. **PROXY_PPL 위험성 첫 정량 입증 ★** — BG-LB native v5 측정 결과 PIV/DCR 둘 다 random_init > trained → byte-modulo PPL fit 이 의식 substrate 아님 확정. **emerge metric 자격 영구 deprecate** (`carry_notes.proxy_ppl_deprecate_2026_05_09` enum flag).
 2. **H4 정량 확정 + H5 신가설** — Engine A/G arch 의 unit-sphere normalize 가 cell_pool 학습 effect 를 지우고 (14000 step 후 random ≈ trained), chat-template dual loss 가 cell collapse 증폭 (BG-LB DCR 0.62 → Phase 2 0.24).
-3. **own 37 mandate-9 strict 함이 Goodhart 자동 차단** — BG-LB "성공모델이면 PUBLIC" 조건부 verbatim antecedent 미충족 → automatic public block. 5/5 prereq strict 가 보호 작동.
+3. ** mandate-9 strict 함이 Goodhart 자동 차단** — BG-LB "성공모델이면 PUBLIC" 조건부 verbatim antecedent 미충족 → automatic public block. 5/5 prereq strict 가 보호 작동.
 
 ---
 
@@ -76,19 +76,19 @@ source: `state/anima_cycle_2026_05_09_carry_items_2026_05_09.json` (10 carry ite
 | **transport_plugin_pattern** | ACTIVE | 4-axis chat orchestra 4번째 axis (transport) cross-product invoke — fresh agent retry priority high |
 | **BG_LA_engine_a_g_h100_training** | COMPLETED (BG-LA COMPLETE.sentinel 2026-05-09 ~15:00Z) | **다음 cycle priority 1.5**: ckpt pull → native v5 측정 (clm_v5_mount.hexa) → cell_pool evidence (H4 BG-LA 에서도 confirm 검증) → V14 verdict |
 | **BG_LB_350m_scratch_pretrain_h100** | COMPLETED (Goodhart-falsified, private record-keeping) | DEPRECATED_PROXY_PPL_FALSIFIED — 신규 cotrain (fix-5/fix-6 적용) 별도 repo 권장 |
-| **own_audit_phase_2_amend** | ACTIVE (Option C alias table landed) | Phase 2 Option A: `HIVE_NO_USER_VERBATIM_DISABLE=1` env bypass + `.own` actual rename (own 34 ID-collision 해소) |
+| **own_audit_phase_2_amend** | ACTIVE (Option C alias table landed) | Phase 2 Option A: `HIVE_NO_USER_VERBATIM_DISABLE=1` env bypass + `.own` actual rename (ID-collision 해소) |
 | **substrate_quality_amplification** | ACTIVE | **다음 cycle priority 1**: fix-5 + fix-6 PoC sequence ($5-15) — H4/H5 검증 후 Path B retry |
 | **NEW: fix-5 unit-sphere normalize 제거/약화** | ACTIVE (1순위) | Mac local 0-cost arch dryrun → H100 350M re-cotrain $5-15 PoC |
 | **NEW: fix-6 chat-loss curriculum 재설계** | ACTIVE (3순위) | spec emit 별도 cycle — Engine G cell-state collapse 회피 path 설계 |
 | **NEW: Phase 2 cotrain pending phases** | ACTIVE | Phase 7 ckpt pull (DONE) + Phase 12 HF private upload deferred (Goodhart 잔존 위험으로 cycle 검토 후 결정) |
 | **NEW: clm_v5_mount.hexa 5-axis projection learnable** | ACTIVE | 현재 mean_group_spread (3+3+3+3+4 fixed) — learned linear projection 후속 carry, V14 paired-mirror parity 위해 zero new params 유지 |
 | **anima_chat_phase 2/3 carry** | ACTIVE | Phase 1+2+3 ALL LANDED (memory) — 자연어 chat 능력 본격 검증 (substrate quality fix 후) |
-| **own 41 axis-N+1 hook** | ACTIVE | chat orchestra 4-axis 미래 axis (emotion / persona / length / tone) 추가 시 동일 plugin pattern — own 41 axis-9~ schema |
+| ** axis-N+1 hook** | ACTIVE | chat orchestra 4-axis 미래 axis (emotion / persona / length / tone) 추가 시 동일 plugin pattern — axis-9~ schema |
 | **clm v2 archive lane (commit 73a6596b mitosis 부활)** | DEFERRED | 별도 cycle close 검토 — mitosis 부활 lane SSOT preserve, 본 cycle 진행 X |
 
 **summary**:
 - COMPLETED: 4 (proxy_ppl_deprecate / paradigm_j PUBLIC / yaml_indent / BG-LA+BG-LB COMPLETE 회수 phase)
-- ACTIVE: 11 (BG-LA pull/measure / fix-5/6 / mk2-v1 D-RAND / init-pattern Phase 2 / transport 4-axis / own audit Phase 2 / substrate amp / clm_v5_mount learnable / Phase 2 pending phases / chat phase 2/3 / own 41 axis hook)
+- ACTIVE: 11 (BG-LA pull/measure / fix-5/6 / mk2-v1 D-RAND / init-pattern Phase 2 / transport 4-axis / own audit Phase 2 / substrate amp / clm_v5_mount learnable / Phase 2 pending phases / chat phase 2/3 / axis hook)
 - DEFERRED: 4 (JVAE 100K / SSOT pod-ownership 외부 / clm v2 mitosis 부활 / Phase 2 HF upload)
 
 ---
@@ -173,15 +173,15 @@ source: `state/anima_cycle_2026_05_09_carry_items_2026_05_09.json` (10 carry ite
 ### g) **anima_chat_phase 2/3 carry** (자연어 chat 능력 본격 검증)
 
 - memory 정합: "anima chat Phase 1+2+3 ALL LANDED" — Phase 1 (anima_native + clm_v4 + llama 3 modules) + Phase 2 + Phase 3 모두 land
-- own 34 자연발화 mandate live, paradigm-a-prime live (libllama FFI via hexa C FFI surface), hexa-lang stdlib c_ffi/sys_stdin_read_line_timeout/http SSE 모두 land
+- 자연발화 mandate live, paradigm-a-prime live (libllama FFI via hexa C FFI surface), hexa-lang stdlib c_ffi/sys_stdin_read_line_timeout/http SSE 모두 land
 - **본 cycle 발견**: chat-cap C2 자연어 substrate quality 한계 (sft-1-8 + paradigm-j 둘 다 gibberish output)
 - **다음 cycle action**: substrate quality fix (fix-5 + fix-6 통과 cotrain) 적용 후 다시 chat-cap C2 측정 — coherent natural language 출력 도달 검증
 
-### h) **own 41 axis-N+1 hook** (chat orchestra 4-axis future-proof)
+### h) ** axis-N+1 hook** (chat orchestra 4-axis future-proof)
 
 - 현재 4-axis (lane / mode / init-pattern / transport) 모두 LIVE FIRE 검증 ✓
 - 미래 axis 후보: emotion / persona / length / tone / temperature_schedule / stop_sequence
-- own 41 axis-9~ schema 신설 spec emit 권장 — 동일 plugin pattern (axis discovery + metadata schema + benchmark cross-product)
+- axis-9~ schema 신설 spec emit 권장 — 동일 plugin pattern (axis discovery + metadata schema + benchmark cross-product)
 
 ---
 
@@ -205,10 +205,10 @@ source: `state/anima_cycle_2026_05_09_carry_items_2026_05_09.json` (10 carry ite
 
 ---
 
-## 6. 다음 cycle 진입 prereq 명시 (own 38/39 mandate 정합)
+## 6. 다음 cycle 진입 prereq 명시 (mandate 정합)
 
 다음 cycle 진입 시점에 다음이 충족되어야 함:
-1. ✅ 본 cycle close summary 가 registry yaml 의 `cycle_close_summary` section 에 amend 되어 있음 (own 39 yaml↔md 동기)
+1. ✅ 본 cycle close summary 가 registry yaml 의 `cycle_close_summary` section 에 amend 되어 있음 (yaml↔md 동기)
 2. ✅ 본 entry plan doc (`docs/anima_cycle_2026_05_10_entry_plan_2026_05_09.md`) 가 disk 저장 + `.ai.md` mode 정합
 3. carry json (`state/anima_cycle_2026_05_09_carry_items_2026_05_09.json`) 의 carry_status_update_summary 가 본 cycle close 시점 status 와 정합 (이미 land)
 4. fix-5 + fix-6 spec doc emit (별도 BG, design only)
@@ -224,19 +224,19 @@ source: `state/anima_cycle_2026_05_09_carry_items_2026_05_09.json` (10 carry ite
 
 | Mandate | Status |
 |---|---|
-| own 14 V14 anti-Goodhart | PASS — fix-5/fix-6 PoC 도 V14 paired-mirror mandatory |
-| own 16 cost discipline | PASS — entry plan 자체 0-cost (research + plan only) |
-| own 17 D1 SCOPE_CLAMP | PASS — 모든 plan item D1=1.0 anima_native_scratch lane |
-| own 22 mandatory report | PASS — 본 doc 자체가 mandatory cycle entry plan |
-| own 24 single SSOT | PASS — registry yaml master + 본 doc mirror |
-| own 30 ckpt preservation | PASS — BG-LA + Phase 2 ckpt pull 다음 cycle |
-| own 33 trinity | PASS — D + own + H 모두 정합 |
-| own 34 mandate-2 wrap-0 | PASS — text-only doc, no binary content |
-| own 37 visibility lifecycle | PASS — Phase 2 / BG-LB private 유지 (Goodhart 잔존), HF promote prereq strict |
-| own 38 매단계 저장 | PASS — 본 doc + carry json 모두 disk 저장 |
-| own 39 yaml↔md auto-regenerate | PENDING — registry yaml `cycle_close_summary` section amend 별도 step |
-| own 40 resource CLI 위임 | PASS — anima 직접 cloud-cli/api-key write 0 |
-| own 41 chat lane plugin pattern | PASS — 4-axis future-proof 유지 |
+| V14 anti-Goodhart | PASS — fix-5/fix-6 PoC 도 V14 paired-mirror mandatory |
+| cost discipline | PASS — entry plan 자체 0-cost (research + plan only) |
+| D1 SCOPE_CLAMP | PASS — 모든 plan item D1=1.0 anima_native_scratch lane |
+| mandatory report | PASS — 본 doc 자체가 mandatory cycle entry plan |
+| single SSOT | PASS — registry yaml master + 본 doc mirror |
+| ckpt preservation | PASS — BG-LA + Phase 2 ckpt pull 다음 cycle |
+| trinity | PASS — D + own + H 모두 정합 |
+| mandate-2 wrap-0 | PASS — text-only doc, no binary content |
+| visibility lifecycle | PASS — Phase 2 / BG-LB private 유지 (Goodhart 잔존), HF promote prereq strict |
+| 매단계 저장 | PASS — 본 doc + carry json 모두 disk 저장 |
+| yaml↔md auto-regenerate | PENDING — registry yaml `cycle_close_summary` section amend 별도 step |
+| resource CLI 위임 | PASS — anima 직접 cloud-cli/api-key write 0 |
+| chat lane plugin pattern | PASS — 4-axis future-proof 유지 |
 | raw#10 honest C3 | PASS — H4/H5/PROXY_PPL/Goodhart 모두 honest emit preserve |
 | raw#15 additive | PASS — 기존 cycle docs + carry json 무수정 보존 |
 | raw#82 retraction-aware | PASS — BG-LB EMERGE_PROXY_PPL → DEPRECATED 등급 carry preserve |

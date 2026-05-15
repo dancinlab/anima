@@ -14,7 +14,7 @@ statistically distinguishable weight signature vs. random_init.
   E: v2 convo_5k FT (extended)
 
 raw#15 additive: in-memory analysis only, no ckpt mutation.
-own 16: $0 local CPU.
+: $0 local CPU.
 """
 from __future__ import annotations
 import os

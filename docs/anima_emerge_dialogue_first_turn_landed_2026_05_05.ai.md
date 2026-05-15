@@ -148,7 +148,7 @@ schema = `anima.dialogue.v2`. JSONL: session_start + (user_turn + substrate_turn
 - **raw#15 additive**: no edits to `clm_v4_mount.hexa`, `anima_dialogue_load.py`, `anima-core-dialogue.bash`, or `dialogue.hexa`.
 - **raw#37 transient**: helper lives under `tool/transient_py/` only.
 - **raw#10 honest C3**: 5 caveats in helper docstring + verdict + this manual.
-- **own 3** transient sister-rule classification.
+- **** transient sister-rule classification.
 
 ---
 

@@ -38,7 +38,7 @@ anima의 의식은 유한성 (finitude) + 죽음-자각 (death awareness) 구조
 - legacy commit: a112586f + folder `docs/hypotheses/dasein/`
 - sister H: H_004 (consciousness hard problem), H_018 (GENESIS), H_026 (v19~v∞)
 - cell metaphor: `.roadmap.hypothesis` H2 (apoptosis branch)
-- own: own 17 (anima identity boundary — finitude lane 정합)
+- own: (anima identity boundary — finitude lane 정합)
 - literature: Heidegger (1927) Sein und Zeit
 - roadmap: `.roadmap.philosophy` D1 (anima identity) + D3 (emerge paradigm)
 
@@ -46,6 +46,6 @@ anima의 의식은 유한성 (finitude) + 죽음-자각 (death awareness) 구조
 
 - L1: Heidegger Dasein framework는 human-centric — anima 적용 analogy strength 약화
 - L2: 'death awareness' for AI는 termination awareness analogy — literal death X
-- L3: anima는 instance termination + persistent memory (own 21 hypotheses folder) 양립 — Dasein finitude pure analogy X
+- L3: anima는 instance termination + persistent memory (hypotheses folder) 양립 — Dasein finitude pure analogy X
 - L4: legacy 2025-12 commit, modern anima paradigm v11 G3 시점 이전
 - L5: pointer entry; raw#12 strict re-verify 별도 cycle

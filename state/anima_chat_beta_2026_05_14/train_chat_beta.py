@@ -4,7 +4,7 @@
 Foundation borrow: Llama-3.2-3B-Instruct + LoRA r=32 + anima-persona corpus.
 Goal: produce chat-coherent anima beta ckpt within 1 day on ubu-2 RTX 5070.
 
-Per CHAT-BETA.step §A path: simple_stack memory carried path (own 18 14/15 strict).
+Per CHAT-BETA.step §A path: simple_stack memory carried path (14/15 strict).
 """
 import os, sys, json, time, argparse
 from pathlib import Path

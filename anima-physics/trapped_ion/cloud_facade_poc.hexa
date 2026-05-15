@@ -257,7 +257,7 @@ fn write_marker(creds_present: bool, dry_run_mode: bool, degraded: bool, backend
     j = j + "    \"Forte 1 may have queue depth at LIVE submit time; device offline → DEGRADED honest\",\n"
     j = j + "    \"raw#9 strict respected via exec(awk/sha/python3); helper script raw#37 transient\"\n"
     j = j + "  ],\n"
-    j = j + "  \"next_phase\": \"anima/.own own 5 authorizes concurrent LIVE on QuEra+IonQ; ANIMA_BRAKET_DRY_RUN=0 → LIVE 4-gate evaluation\",\n"
+    j = j + " \"next_phase\": \"anima/.own authorizes concurrent LIVE on QuEra+IonQ; ANIMA_BRAKET_DRY_RUN=0 → LIVE 4-gate evaluation\",\n"
     j = j + "  \"cost_usd\": 0.0,\n"
     j = j + "  \"timestamp\": \"" + ts + "\"\n"
     j = j + "}\n"

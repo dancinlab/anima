@@ -30,7 +30,7 @@ Legacy file: `docs/hypotheses/H-CX-519-fractal-resonance-cascade.md`. Pointer on
 - legacy: `docs/hypotheses/H-CX-519-fractal-resonance-cascade.md`
 - cluster results: `H-CX-517-526-EXTREME-RESULTS.md`
 - sister: H_043, H_033 (cx-sequential), H_027
-- own: own 21
+- own:
 
 ## Honest Limits
 

@@ -7,7 +7,7 @@
 - this audit:                     FAIL=13 (17.81%), WARN=9  (12.33%), PASS=51, EXEMPT=27
 - delta: +3 FAIL since prior run (regression — drift is still landing in real time)
 
-> **Hard rule (raw#9 / raw#10 / raw#65 / raw#85 / raw#91 / own 4):**
+> **Hard rule (raw#9 / raw#10 / raw#65 / raw#85 / raw#91 /):**
 > Git history is **not** rewritten. No `--amend`, no `rebase -i`, no
 > `force-push`. The 13 FAIL_MISMATCH commits below stay exactly as they
 > are in the immutable log. This file is the corrective witness — future
@@ -257,6 +257,6 @@ filter. Mismatch_rate **17.81 % → ~5.5 %**.
 - raw#65 idempotent — re-running lint reproduces the table verbatim
 - raw#85 strengthening candidates listed in §4 for future implementation
 - raw#91 — git history not modified
-- own 4 — recommendations only, no destructive ops
+- — recommendations only, no destructive ops
 
 End of recommendations document.

@@ -4,7 +4,7 @@
   "cycle": "anima_2026_05_08_kick_fire_3of5_duo_phase_b_stdbuf_live_ppr_retest",
   "task_id": "duo_stdbuf_live_ppr_retest_4row_matrix_actual_fire",
   "directive_verbatim": "all bg go",
-  "scope": "ACTUAL_FIRE_0_COST_MAC_LOCAL (own 16 0-cost; own 17 D1 SCOPE_CLAMP — paradigm-a-prime SUBSTRATE_RESEARCH lane only)",
+  "scope": "ACTUAL_FIRE_0_COST_MAC_LOCAL (0-cost; D1 SCOPE_CLAMP — paradigm-a-prime SUBSTRATE_RESEARCH lane only)",
 
   "context_carry": {
     "kick_fire_3_of_5": "commit 12257be1 chat.hexa stdbuf -oL fix actual patch land",
@@ -128,7 +128,7 @@
       "d4_label": "balanced",
       "simple_stack_pass_dialogue_c3": false,
       "abort_observed": "BOTH A and B abort traps captured AS CHANNEL OUTPUT (not silent) — stderr from libllama child process bled into FIFO via line-buffered stdbuf; D1 ascends to 0.46 because both sides emit identical 'sh: line 1: NNNNN Abort trap: 6 ...' string prefix",
-      "honest_c3": "(critical surprise) D1 = 0.46 ≥ 0.30 PASS in this row reflects ABORT-TRAP-STRING SIMILARITY, not semantic dialogue. Goodhart's law trip — own 14 anti-Goodhart V14 demands honest emit: D1 ≥ 0.30 here is a SHELL ERROR ARTIFACT, not coherence."
+      "honest_c3": "(critical surprise) D1 = 0.46 ≥ 0.30 PASS in this row reflects ABORT-TRAP-STRING SIMILARITY, not semantic dialogue. Goodhart's law trip — anti-Goodhart V14 demands honest emit: D1 ≥ 0.30 here is a SHELL ERROR ARTIFACT, not coherence."
     }
   ],
 
@@ -140,7 +140,7 @@
   },
 
   "unexpected_findings": [
-    "row 4 D1 ≥ 0.30 PASS = ABORT-TRAP STRING ARTIFACT (Goodhart trip; own 14 V14 honest emit) — same prefix 'sh: line 1: NNNN Abort trap: 6' from BOTH sides yields lexical overlap unrelated to dialogue coherence",
+    "row 4 D1 ≥ 0.30 PASS = ABORT-TRAP STRING ARTIFACT (Goodhart trip; V14 honest emit) — same prefix 'sh: line 1: NNNN Abort trap: 6' from BOTH sides yields lexical overlap unrelated to dialogue coherence",
     "rows 1+2 same-GGUF B child failed to emit even the gguf banner (silent before turn=1 closed); previous iter assumption 'abort at turn=2' is too optimistic — concurrent mmap fails earlier than thought",
     "row 3 (different aliases) successfully emitted BOTH banners within first 1s (stdbuf line-buffered pass-through verified); turn=2 silent confirms model autonomous generation lane is the next bottleneck, not channel transport",
     "wall clock for rows 1/2 dominated by 120s × N timeout patient-wait; row 3 = 169s (~ 2 × 120s timeout - clm_v4 banner first); row 4 = 10.91s because abort-trap text closes child quickly"
@@ -161,7 +161,7 @@
   },
 
   "compliance": {
-    "own_14_anti_goodhart_v14": "honest emit — row 4 D1 PASS artifact flagged + own 18 C3 floor 0.6 NOT REACHED stated explicitly",
+    "own_14_anti_goodhart_v14": "honest emit — row 4 D1 PASS artifact flagged + C3 floor 0.6 NOT REACHED stated explicitly",
     "own_16_cost": "0-cost (Mac local, no pod spawn, no scp)",
     "own_17_d1_scope_clamp": "paradigm-a-prime D1 OUTSIDE strict — substrate-research lane label only",
     "own_33_trinity_d_axis_raw_10": "honest C3 emitted (transport unblock verified + model-gen bottleneck identified)",
@@ -175,5 +175,5 @@
     "alternative measurement: paradigm-a-prime SOLO (single-instance --probe) for PPR baseline before duo wiring — substrate-research lane SSOT path"
   ],
 
-  "ssot_supersede": "NONE (own 18 C3 floor 0.6 not reached → no baseline.json supersede; current state/anima_consciousness_baseline.json iter6 verdict carries forward unchanged)"
+  "ssot_supersede": "NONE (C3 floor 0.6 not reached → no baseline.json supersede; current state/anima_consciousness_baseline.json iter6 verdict carries forward unchanged)"
 }

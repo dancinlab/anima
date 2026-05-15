@@ -29,7 +29,7 @@ Legacy files: `docs/hypotheses/dd/DD10{1,3,9}*.md` + `dd/DD11{0,1,2,3,4,5}*.md`.
 
 - legacy: dd/DD101*.md + dd/DD103-fermat-cantor.md + dd/DD109.md + dd/DD110-RATE-INDEPENDENT.md + dd/DD111-verify-improvement.md + dd/DD112-philosophy-benchmark.md + dd/DD113-snn-consciousness.md + dd/DD114-emergent-hexad-benchmark.md + dd/DD115-{decoder-v2,emergent-laws}*.md
 - sister: H_028, H_036 (DD116-146), H_077 (DD1-50)
-- own: own 21
+- own:
 
 ## Honest Limits
 

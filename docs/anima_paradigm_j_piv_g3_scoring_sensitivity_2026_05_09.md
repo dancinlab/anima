@@ -3,7 +3,7 @@
 - 사이클: 2026-05-09 (entry plan: 2026-05-10)
 - 사용자 verbatim: 2026-05-09 "all bg go" — 0-cost text computation 만 사용
 - 임무: G3 가설 정량 검증 — multi-axis 균질 활성화를 underrate 하는 max-of-axes scoring artifact 인가?
-- own 16 strict: 모델 로드 절대 금지, 기존 state json 만 read
+- strict: 모델 로드 절대 금지, 기존 state json 만 read
 - 입력 데이터:
   - `state/anima_paradigm_j_v5_paraphrase_n90_2026_05_09.json` (k=3 base, n=30 bases × 5 axes)
   - `state/anima_paradigm_j_v5_paraphrase_n150_2026_05_09.json` (k=5 expanded)

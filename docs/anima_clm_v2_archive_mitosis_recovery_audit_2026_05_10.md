@@ -119,7 +119,7 @@ total_params=18.523 M
 
 ### 3.5 부수 ckpt (HF mirror)
 
-- `~/.cache/huggingface/hub/models--dancinlab--clm-v2-byte-18m-convo-5k/blobs/2f0ba391…` (HF mirror — 구 user prefix, dancinlab 으로 own 37 마이그 예정)
+- `~/.cache/huggingface/hub/models--dancinlab--clm-v2-byte-18m-convo-5k/blobs/2f0ba391…` (HF mirror — 구 user prefix, dancinlab 으로 마이그 예정)
 - `dancinlab/clm-v2-byte-18m-convo-5k` (HF PUBLIC, 2026-05-06 BG-FM rebuilt) — convo_5k.pt 70MB, 18M chat-cap recovered/gibberish/undertrain
 
 ---
@@ -252,10 +252,10 @@ argmax→space 는 byte-LM undertrained known failure mode. temperature=0.8/top-
 
 | mandate | check | 결과 |
 | --- | --- | --- |
-| own 16 | 모델 로드 X | PASS — grep + light read only, torch.load 미실행 |
-| own 22 | honest emit | PASS — chat-cap FAIL 정직 emit, schema overlap 0 정직 emit, sampling 0/64 정직 emit |
-| own 33 | 자연발화 | PASS — 친근 모드 strict 한국어, 비유/표/약어 풀이 |
-| own 34 | ID-collision 방지 | PASS — 본 doc 파일명 cycle 2026-05-10 명시 + commit hash 명시 + lane 명 명시 |
+| | 모델 로드 X | PASS — grep + light read only, torch.load 미실행 |
+| | honest emit | PASS — chat-cap FAIL 정직 emit, schema overlap 0 정직 emit, sampling 0/64 정직 emit |
+| | 자연발화 | PASS — 친근 모드 strict 한국어, 비유/표/약어 풀이 |
+| | ID-collision 방지 | PASS — 본 doc 파일명 cycle 2026-05-10 명시 + commit hash 명시 + lane 명 명시 |
 
 ---
 

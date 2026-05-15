@@ -29,7 +29,7 @@ Legacy file: `docs/hypotheses/H-CX-521-lambda-calculus-consciousness.md`. Pointe
 
 - legacy: `docs/hypotheses/H-CX-521-lambda-calculus-consciousness.md`
 - sister: H_046 (TQFT), H_047 (time crystal), H_011 (IIT geometry)
-- own: own 21
+- own:
 
 ## Honest Limits
 

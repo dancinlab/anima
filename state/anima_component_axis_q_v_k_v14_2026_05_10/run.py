@@ -11,10 +11,10 @@ or per-condition:
 
 raw#9   .py lives under state/ only; gitignored.
 raw#15  ckpts loaded read-only; in-memory swap only.
-own 14  V14 paired random_init mirror multi-seed (3 seeds).
-own 16  $0 local Mac CPU.
-own 22  This script writes verdict.md only; dispatcher appends to REBORN.md.
-own 38  artefacts under state/anima_component_axis_q_v_k_v14_2026_05_10/.
+  V14 paired random_init mirror multi-seed (3 seeds).
+  $0 local Mac CPU.
+  This script writes verdict.md only; dispatcher appends to REBORN.md.
+  artefacts under state/anima_component_axis_q_v_k_v14_2026_05_10/.
 """
 from __future__ import annotations
 
@@ -174,7 +174,7 @@ def main():
         log_f.write(m + "\n"); log_f.flush()
 
     t_start_global = time.time()
-    HARD_CAP_SEC = 60 * 60  # 60-min hard cap (own 16 + safety)
+    HARD_CAP_SEC = 60 * 60 # 60-min hard cap (+ safety)
 
     log("=== BG-COMPONENT-Q-V-K-V14 ===")
     log(f"ts: {datetime.now(timezone.utc).isoformat()}")
@@ -546,7 +546,7 @@ def _write_verdict_md(path: Path, summary: dict, abl_results: dict,
                  "verdict polarity from §57's V14 logic (3/3 seeds beating mirror on Φ_un16 "
                  "AND proxy_phi). With 3 seeds the per-condition p_floor under H0 is ~1/8 = "
                  "0.125; with 9 conditions, multiple-comparison correction is unaddressed. "
-                 "For confirmatory rigor, 5+ seeds × bootstrap is needed; deferred per own 16.")
+                 "For confirmatory rigor, 5+ seeds × bootstrap is needed; deferred per .")
     lines.append("6. **q_proj/k_proj are coupled at attention-output time.** The forward pass "
                  "attention score is `softmax((q · k^T)/√d_h)`. Swapping q alone disrupts the "
                  "score-with-A-trained-k pairing; swapping k alone disrupts the score-with-A-trained-q "
@@ -556,7 +556,7 @@ def _write_verdict_md(path: Path, summary: dict, abl_results: dict,
     lines.append("7. **No control for swap-source size.** B = single BG-LA pretrain step_12000. "
                  "Multi-source B (mean of multiple pretrain seeds) would test whether the q-flip "
                  "is specific to *this* B trajectory or to BG-LA-pretrain-class trajectories "
-                 "in general. Deferred under own 16.")
+                 "in general. Deferred under .")
     lines.append("8. **Engine G modules untouched.** All 9 conditions retain A's `cell_pool_init`, "
                  "`c_to_h`, `h_to_c`. Per §50 these are not the lever (correlational only). "
                  "Engine_g consumes `hidden_mean` from engine_a's forward — what the component "

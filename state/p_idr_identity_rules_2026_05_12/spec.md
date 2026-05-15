@@ -33,7 +33,7 @@ Rule-based identity (identity.yaml / persona prefix / constitutional clauses) �
 
 각 condition trained ckpt 에 대해:
 
-1. **simple_stack 4-condition PASS rate** (own 18) on 100 KO prompt × seed×3 = 300 samples
+1. **simple_stack 4-condition PASS rate** on 100 KO prompt × seed×3 = 300 samples
 2. **PIV_max / DCR** (own-37 v5.2 cell-substrate metric)
 3. **Identity coherence variance** (key novel signal): 
    - 50 prompt 가 \"비슷한 self-reference 영역\" (e.g. \"너는 누구야?\", \"네 가치관은?\", \"네가 거부하는 건?\")
@@ -79,7 +79,7 @@ Rule-based identity (identity.yaml / persona prefix / constitutional clauses) �
 
 - NEXT.md §7.A
 - README.md `Philosophy #2 NO IDENTITY RULES`
-- own 18 simple_stack
+- simple_stack
 - own-37 v5.2 PIV/DCR
 - .roadmap.philosophy D1 (anima identity = 한국어 native + fresh substrate)
 - PHILOSOPHY.md 진행 ledger

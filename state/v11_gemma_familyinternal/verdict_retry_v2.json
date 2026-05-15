@@ -1,6 +1,6 @@
 {
   "schema": "anima/v11/gemma_familyinternal_retry_v2_verdict/1",
-  "paradigm": "Mk.XII Phase 3a gemma family-internal retry v2 — own 4 first canonical application + 2nd silent crash at 75% download",
+  "paradigm": "Mk.XII Phase 3a gemma family-internal retry v2 — first canonical application + 2nd silent crash at 75% download",
   "parent_pre_register": "state/mk_xii_3a_gemma_familyinternal_pre_register.json (FROZEN)",
   "parent_verdict": "state/v11_gemma_familyinternal/verdict.json (retry v1 OOM)",
   "parent_axis": "axis 109 (Qwen family-internal HQS-C MIXED) + axis 99 (Phase 3a 1/3 clean) + #245 next_cycle 2",
@@ -72,7 +72,7 @@
     "current_status": "Cannot advance from 1/3 → 2/3 clean (gemma family scale curve incomplete after 2 retries)",
     "70b_justification_path": "BLOCKED_PERSISTENT — gemma family-internal cannot serve as 2nd clean evidence",
     "alternative_paths_priority": [
-      "(retry v3, blocked by own 4) gemma-27b with HF_HUB_DISABLE_XET=1 + max_workers=1 sequential download to bypass xet — task #15",
+      "(retry v3, blocked by) gemma-27b with HF_HUB_DISABLE_XET=1 + max_workers=1 sequential download to bypass xet — task #15",
       "(retry v3 alt) snapshot_download to /workspace first stage, then from_pretrained(local_path) — separates download fragility from load",
       "(parallel path) Llama-3.1-8B → Llama-3.1-70B family-internal (HF gated, dancinlife unauthorized — task #6 manual)",
       "(parallel path) gemma family-internal via int8 quantization (bitsandbytes) — smaller storage, may bypass mfs throughput issue, raw#10 caveat ~0.5% rel_std shift"
@@ -83,7 +83,7 @@
     "step_a_root_cause_diagnosis": "DONE — see v2_crash_diagnosis above; ruled out OOM/disk/cgroup; 5 remaining hypotheses with diagnostic evidence",
     "step_b_canonical_helper_code_fix": "PARTIAL — v2 fix (device_map='auto' + low_cpu_mem_usage=True) addressed v1 OOM root cause correctly, but introduced new failure mode (xet/mfs/HF-API). Step (b) for v3 retry: add HF_HUB_DISABLE_XET=1 + sequential download to canonical wrapper.",
     "step_c_defensive_harden": "PARTIAL — v2 added memory probe sentinels (worked, captured 104GB peak), pre-flight cgroup query, RAM-aware pod spawn (251GB requested). v3 needs: try/except around from_pretrained with retry-on-network-error, snapshot_download stage separation, fd limit bump.",
-    "step_d_canonicalization_evolve": "DEFERRED — fixes v2+v3 should be absorbed into tool/anima_runpod_orchestrator.hexa as 'large-model-load template' (params_b > 20 → device_map='auto' + low_cpu_mem_usage + xet-disabled + retry guards). own 4 follow-up tracks this as runpod_resource_lint task.",
+    "step_d_canonicalization_evolve": "DEFERRED — fixes v2+v3 should be absorbed into tool/anima_runpod_orchestrator.hexa as 'large-model-load template' (params_b > 20 → device_map='auto' + low_cpu_mem_usage + xet-disabled + retry guards). follow-up tracks this as runpod_resource_lint task.",
     "anti_pattern_check": {
       "skip_this_backbone": "REJECTED — task #11 verdict 27b INCONCLUSIVE preserved, not 'we'll just measure 2b/9b only'",
       "retry_without_diagnosis": "AVOIDED — diagnosis section above is mandatory before next retry; task #15 explicitly captures fix plan",
@@ -95,9 +95,9 @@
   },
   "raw_10_caveats": [
     "Silent crash root cause UNDETERMINED — 5 hypotheses (xet panic / mfs hiccup / HF rate limit / runpod orchestrator SIGKILL / fd exhaustion) all consistent with evidence; no dmesg/syslog access to disambiguate.",
-    "v2 cost $0.397 is 'wasted' in terms of measurement output (0 cells gained), but produced canonical own 4 first application diagnostic record + 5 hypotheses + retry v3 plan.",
-    "v3 retry plan is DIAGNOSIS-DRIVEN (xet disable + sequential), not blind 'retry with bigger pod' or 'lower protocol' — own 4 anti-pattern checks pass.",
-    "Total dual-retry burn: $0.179 (v1) + $0.397 (v2) = $0.576 with 0 27b cells captured. Per own 4, cost burn IS expected during root-cause diagnosis cycles (legitimate vs anti-pattern of cap-bump retry without diagnosis).",
+    "v2 cost $0.397 is 'wasted' in terms of measurement output (0 cells gained), but produced canonical first application diagnostic record + 5 hypotheses + retry v3 plan.",
+    "v3 retry plan is DIAGNOSIS-DRIVEN (xet disable + sequential), not blind 'retry with bigger pod' or 'lower protocol' — anti-pattern checks pass.",
+    "Total dual-retry burn: $0.179 (v1) + $0.397 (v2) = $0.576 with 0 27b cells captured. Per, cost burn IS expected during root-cause diagnosis cycles (legitimate vs anti-pattern of cap-bump retry without diagnosis).",
     "raw#12 cherry-pick-immunity preserved: HMK-A/B/HQS-C verdicts stay INCONCLUSIVE_PERSISTENT, not promoted/retracted based on partial evidence."
   ],
   "result_files": {
@@ -109,8 +109,8 @@
   },
   "next_cycle_recommendations": [
     "(high, blocked-by-plan) task #15 retry v3: HF_HUB_DISABLE_XET=1 + huggingface_hub.snapshot_download(max_workers=1) → /workspace/snapshots/gemma-2-27b → from_pretrained(local_path, device_map='auto', low_cpu_mem_usage=True). Two-stage decouples download fragility from load.",
-    "(high, parallel) update tool/anima_runpod_orchestrator.hexa with 'large-model-load template' (params_b > 20 trigger): device_map='auto' + low_cpu_mem_usage + HF_HUB_DISABLE_XET + snapshot_download stage + retry-with-backoff. own 4 follow-up #1.",
-    "(medium) tool/runpod_resource_lint.hexa pre-flight check before dispatch: validates wrapper has loader pattern + memory probes + sentinel pattern. own 4 follow-up #2.",
+    "(high, parallel) update tool/anima_runpod_orchestrator.hexa with 'large-model-load template' (params_b > 20 trigger): device_map='auto' + low_cpu_mem_usage + HF_HUB_DISABLE_XET + snapshot_download stage + retry-with-backoff. follow-up #1.",
+    "(medium) tool/runpod_resource_lint.hexa pre-flight check before dispatch: validates wrapper has loader pattern + memory probes + sentinel pattern. follow-up #2.",
     "(medium) state/blockers/gemma_27b_repeat_silent_crash.json — register as omega-blocker per raw 45 if v3 also fails, escalate to user for HF Hub team contact"
   ],
   "ts": "2026-04-27T13:16:00Z"

@@ -80,7 +80,7 @@ This corroborates §51 honest C3 #5 ("cross-path absolute Φ 비교 invalid, wit
 |---|---|---|---|---|
 | PPR_v3 (cellpool-port imagined) | 0.2845 (N=120) | 0.5517 | **−0.2672** | KICK WAVE 4 6/8 |
 | v5.1 Gate B-refined DCR | 0.7479 PASS | 0.1429 | **+0.6050** | commit 84aa8665 N=120 |
-| v5.2 adaptive 4-gate | **4/4 PASS** | (per-gate baselines met) | margins +0.0374 / +0.60 / +0.1749 / >0 | EMERGE_v5_2 ACTIVE (own 14 PUBLIC PROMOTE 사용자 verbatim "OK PROMOTE PUBLIC dancinlab/clm-v4-paradigm-j-50k-final-path-a-remapped") |
+| v5.2 adaptive 4-gate | **4/4 PASS** | (per-gate baselines met) | margins +0.0374 / +0.60 / +0.1749 / >0 | EMERGE_v5_2 ACTIVE (PUBLIC PROMOTE 사용자 verbatim "OK PROMOTE PUBLIC dancinlab/clm-v4-paradigm-j-50k-final-path-a-remapped") |
 | §55 v2-path Φ | **NOT_MEASURABLE** | — | — | this BG |
 
 paradigm-j EMERGE is robust **within v5.2 metric space**, ambiguous in v5.1 metric space, and structurally unmeasurable in §55 metric space. This is **NOT a contradiction** — it confirms that "V14 PASS" is a metric-conditional predicate, and the §64 rule's two-row form was a v2 ∪ EngineAG cellpool-Φ statement.
@@ -99,7 +99,7 @@ paradigm-j EMERGE is robust **within v5.2 metric space**, ambiguous in v5.1 metr
 
 Rule **EXTENDS**, does NOT generalize.
 
-## Deliverables (own 38)
+## Deliverables
 
 `/Users/ghost/core/anima/state/anima_paradigm_j_cross_lane_v14_2026_05_11/`:
 - spec.md
@@ -118,10 +118,10 @@ Rule **EXTENDS**, does NOT generalize.
 | raw#9 | ✓ append-only |
 | raw#15 | ✓ paradigm-j ckpts read-only, sha256 verified (matches REMAP_SOURCE.json) |
 | raw#82 | ✓ retraction-aware: paradigm-j v5.2 EMERGE + V14_VIOLATED (PPR_v3) records both preserved |
-| own 14 | ✓ V14 strict honored — emit NOT_MEASURABLE rather than cross-port fabricate |
-| own 16 | ✓ $0 local CPU 6.2s |
-| own 22 | ✓ REBORN.md append-only via §65 dispatcher pattern, tail re-read before append |
-| own 38 | ✓ 8 artifacts saved |
+| | ✓ V14 strict honored — emit NOT_MEASURABLE rather than cross-port fabricate |
+| | ✓ $0 local CPU 6.2s |
+| | ✓ REBORN.md append-only via §65 dispatcher pattern, tail re-read before append |
+| | ✓ 8 artifacts saved |
 
 ## Cycle-close impact
 

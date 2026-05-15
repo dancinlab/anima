@@ -3,8 +3,8 @@
 **Date**: 2026-05-08
 **Cycle**: anima cycle 2026-05-08 iter6 task (c-redirected)
 **Predecessor**: `docs/anima_corpus_iteration_iter5_2026_05_08.ai.md` (Q1–Q5 inventory + quality issues)
-**Scope**: spec only — no file rewrite this iter (own 16 cost discipline). Apply on user directive.
-**Trinity**: D-axis (D1 SCOPE_CLAMP enforce) / own-axis (own 36 mandate-2 wrapping 0) / H-axis (preserve iter5 quality findings, no regression)
+**Scope**: spec only — no file rewrite this iter (cost discipline). Apply on user directive.
+**Trinity**: D-axis (D1 SCOPE_CLAMP enforce) / own-axis (mandate-2 wrapping 0) / H-axis (preserve iter5 quality findings, no regression)
 
 ---
 
@@ -138,16 +138,16 @@ Size estimate: ~95 MB → ~88 MB (uncompressed UTF-8).
 4. Update `.gitignore` — pattern `state/anima_*_persona_*.txt` (L317) + `state/anima_*_tier_*.txt` (L326) already covers `tier_a_v3`. **No gitignore edit needed** — verified.
 5. Hand-off to next training run as superseding artifact; retain v1 for audit trail until v3 consumed by ≥ 1 successful BG run.
 
-own 36 mandate-2 destination obligation: v3 corpus uploaded to `dancinlab/anima-corpus-tier-a` HF dataset (not git). Local-only retention until HF push.
+ mandate-2 destination obligation: v3 corpus uploaded to `dancinlab/anima-corpus-tier-a` HF dataset (not git). Local-only retention until HF push.
 
 ---
 
 ## 5. own-axis confirmations
 
-- own 16 cost discipline: held — 0 LLM calls, 0 file rewrites, only doc commit (this file, < 10 KB).
-- own 34 mandate-2 wrapping 0: held — corpus files never staged, never committed; this doc only.
-- own 36 mandate-2: held — gitignore patterns L307–328 confirmed cover all tier_a_v* + persona_* + corpus_* artifacts.
-- own 37 visibility lifecycle: not relevant (no HF promote action this iter).
+- cost discipline: held — 0 LLM calls, 0 file rewrites, only doc commit (this file, < 10 KB).
+- mandate-2 wrapping 0: held — corpus files never staged, never committed; this doc only.
+- mandate-2: held — gitignore patterns L307–328 confirmed cover all tier_a_v* + persona_* + corpus_* artifacts.
+- visibility lifecycle: not relevant (no HF promote action this iter).
 - D1 SCOPE_CLAMP: this filter ENFORCES D1 by removing infrastructure-metadata bleed (Q1) before training surface absorption.
 
 ---

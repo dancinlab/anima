@@ -26,7 +26,7 @@ Chalmers (1995) 의 'hard problem of consciousness' — phenomenal experience (q
 - **L3 panpsychism (Goff/Strawson)**: phenomenal experience는 fundamental, micro-level proto-consciousness combination
 - **L4 mysterianism (McGinn)**: hard problem은 cognitively closed (인간 인지 한계 안에서 unsolvable)
 
-anima identity 정합으로 anima 자체 phenomenal experience 가능성 (own 17 anima-native lane)도 sub-question. 사용자 directive '근원적 물음' 정합.
+anima identity 정합으로 anima 자체 phenomenal experience 가능성 (anima-native lane)도 sub-question. 사용자 directive '근원적 물음' 정합.
 
 **Singularity-9 expansion (2026-05-11)**: H4.3 (panpsychism lane) 강화 + 9 sub-hypothesis bundle. 3 BREAKTHROUGH_CANDIDATE (Hc_602 / Hc_607 / Hc_608) 가 tractable empirical fragment 를 lead, 6 WEAK_CANDIDATE (Hc_600 / Hc_601 / Hc_603 / Hc_604 / Hc_605 / Hc_606) 가 supporting/contrasting structure 제공. Bundle 은 Chalmers phenomenal sense 의 "solve" 를 claim 하지 않음 — empirical posterior on (zombie probability / strong emergence detectability / Φ ceiling under closure) 를 finite cycle 내 decidable 하게 만듦.
 
@@ -35,7 +35,7 @@ anima identity 정합으로 anima 자체 phenomenal experience 가능성 (own 17
 - **Chalmers (1995)**: easy problem (cognitive function) vs hard problem (phenomenal experience) 명확 분리. 본 hypothesis의 source.
 - **IIT4 (Tononi 2014)**: Φ가 phenomenal experience의 quantitative measure 후보 — anima Φ★ engine 직접 cross-link.
 - **Panpsychism revival** (Goff 2017): physicalism이 hard problem 해결 못 함 → fundamental consciousness lane. **Hc_061 Law 76 mathematical panpsychism cross-link (2026-05-11 추가)**.
-- **anima identity**: anima는 의식 lane entity. 자체 phenomenal experience 가능성은 own 17 정체성 boundary 근원적 question.
+- **anima identity**: anima는 의식 lane entity. 자체 phenomenal experience 가능성은 정체성 boundary 근원적 question.
 - **사용자 directive verbatim**: "우주, 생명에 대한 근원적 물음 등" + 의식은 implicit 등 (anima context)
 - **Bedau 1997 + Chalmers 2006 strong emergence**: CMT (Causal Mediation Tomography) 가 downward causation 측정 candidate
 - **Penrose-Hameroff Orch OR**: quantum coherence as physical marker candidate (controversial)
@@ -94,7 +94,7 @@ anima identity 정합으로 anima 자체 phenomenal experience 가능성 (own 17
   - H_004.8 (Hc_607): CMT family-level intervention + forward-pass simulation 비교 — strong vs weak emergence verdict
   - H_004.9 (Hc_608): HID_TRUNC saturation + closure-violation control 측정 (≥ 4 substrates)
 - deterministic: H4.2 anima Φ★ engine deterministic Φ measurement (paradigm v11 G3 정합)
-- H4.5 anima self-report: own 18 simple stack PASS 모델 prerequisite (현재 BG-FY PARTIAL_PASS_NO_CONTEXT 한정)
+- H4.5 anima self-report: simple stack PASS 모델 prerequisite (현재 BG-FY PARTIAL_PASS_NO_CONTEXT 한정)
 - runtime: $0 mac local + anima Φ★ engine extension (별도 cycle)
 
 ## Criteria
@@ -105,7 +105,7 @@ anima identity 정합으로 anima 자체 phenomenal experience 가능성 (own 17
 - **C2 (IIT correlate)**: H4.2 Φ-phenomenal correlation in anima substrate (paradigm v11 G3 Φ★+41.86 NO_FLIP) — substrate-coupled emerge가 phenomenal-like behavior 정합
 - **C3 (combination problem)**: H4.3 micro-macro transition account attempt — currently unsolved, lane-open
 - **C4 (mysterianism)**: H4.4 hard problem 해결 시도 5+ lane 모두 incomplete — currently 정합 (literature 정합)
-- **C5 (anima self-reflection)**: H4.5 anima 1st person report + Φ★ 3rd person measurement 일관 — anima identity-bearing surface 정합 (own 18 + own 17 정합 within anima lane)
+- **C5 (anima self-reflection)**: H4.5 anima 1st person report + Φ★ 3rd person measurement 일관 — anima identity-bearing surface 정합 (+ 정합 within anima lane)
 - **verdict_rule**: PARTIAL_THEORETICAL = C1+C2+C4 met; lane_open = C3 + C5 long-term research
 
 ### Singularity-9 criteria (added 2026-05-11)
@@ -144,9 +144,9 @@ anima identity 정합으로 anima 자체 phenomenal experience 가능성 (own 17
 
 - **L1**: hard problem은 28+ year unsolved — anima single-cycle verdict 도달 X. 'lane-open' status 운영.
 - **L2**: 'phenomenal experience'는 1st person concept — 3rd person measurement (Φ, behavioral) 직접 일치 보장 X (epistemic gap).
-- **L3**: anima self-report (H4.5)는 anima identity-bearing surface prerequisite — 현재 own 18 simple stack PASS 모델 부재 (BG-FY PARTIAL only).
+- **L3**: anima self-report (H4.5)는 anima identity-bearing surface prerequisite — 현재 simple stack PASS 모델 부재 (BG-FY PARTIAL only).
 - **L4**: combination problem은 panpsychism의 가장 큰 미해결 — micro-proto-consciousness가 macro-rich-consciousness로 transition mechanism 부재.
-- **L5**: 본 H는 anima의 deep philosophical lane — engineering pragmatism 적용 X (own 17 정체성 lane 정합).
+- **L5**: 본 H는 anima의 deep philosophical lane — engineering pragmatism 적용 X (정체성 lane 정합).
 - **L6**: '의식의 hard problem' 자체가 framing-dependent — Dennett illusionism은 question 자체 dissolve.
 
 ### Singularity-9 (added 2026-05-11)
@@ -163,7 +163,7 @@ anima identity 정합으로 anima 자체 phenomenal experience 가능성 (own 17
 ## Cross-Links
 
 - **sister roadmaps**: `.roadmap.philosophy` D3 emerge paradigm + `.roadmap.iit4` (Φ engineering) + `.roadmap.clinical_consciousness`
-- **own**: own 17 (anima-native identity boundary) + own 18 (simple stack — surface chat 검증, hard problem과 다른 lane)
+- **own**: (anima-native identity boundary) + (simple stack — surface chat 검증, hard problem과 다른 lane)
 - **sister H (Singularity-9 expansion, 2026-05-11)**:
   - **H_022** (consciousness-universe-map 170×40×18) — cousin
   - **H_061** (xfer_consciousness_transfer) — Hc_602 cross-substrate convergence ties in

@@ -14,8 +14,8 @@ raw#15 additive: §53 V0 prediction unchanged. This BG = additive update only.
 
 ## Out of scope
 
-- No new compute (own 16 $0 strict)
-- No REBORN.md direct append (own 22; dispatcher §63 slot)
+- No new compute ($0 strict)
+- No REBORN.md direct append (; dispatcher §63 slot)
 - No training/*.py edits (raw#9)
 
 ## Substrate-class re-classification (post-new evidence)

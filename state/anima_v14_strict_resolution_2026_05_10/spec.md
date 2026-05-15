@@ -17,7 +17,7 @@ priority 2 track B cond.4 V14_PARTIAL → strict 결정
 2. Reuse real Phase 2 350M ckpt (`~/.cache/anima/clm_v5_remapped/phase2_cotrain_engine_ag/ckpts/ckpt_final.pt`,
    sha256=6e66e75f8014999be09236a408fe6ad6811ebf394ac079ecbf6d87dfe63748c1)
 3. **max_cells = 128** (4× prior cap — release cap-bound, allow cell_count to discriminate)
-4. **10-seed V14 expansion** — own 14 strict V4_SEEDS:
+4. **10-seed V14 expansion** — strict V4_SEEDS:
    - {42, 137, 271, 314, 1729, 2718, 3141, 5772, 6022, 9192}
 5. n_turns = 400, snapshot_every = 50 (reduced from §33's 1000 due to cost — see F-V14-STRICT-3 below;
    at max=128 the per-100-turn cost grows from 92s @ turn 100 to ~130s @ turn 500 due to growing cell
@@ -54,7 +54,7 @@ Under §30 fix at max=128:
 
 - raw#9: training/*.py local-only (mitosis_v5_port.py + engine_a_g_arch.py imported, NOT modified)
 - raw#15: Phase 2 ckpt NOT modified
-- own 14: V14 mirror multi-seed strict (this BG: n=10)
-- own 16: $0 — local Mac CPU only, no GPU
-- own 22: REBORN.md NEVER directly appended; dispatcher handles §38 slot
-- own 38: artefacts under state/anima_v14_strict_resolution_2026_05_10/
+- : V14 mirror multi-seed strict (this BG: n=10)
+- : $0 — local Mac CPU only, no GPU
+- : REBORN.md NEVER directly appended; dispatcher handles §38 slot
+- : artefacts under state/anima_v14_strict_resolution_2026_05_10/

@@ -1,7 +1,7 @@
 # Architecture leak root cause analysis — KICK WAVE 4 cascade
 **Date**: 2026-05-08 (anima cycle FALSIFICATION CASCADE 5/8)
 **Slot**: 5/8 — random_init > trained PPR mechanism deconstruction
-**Status**: 0-cost research/analysis (own 16). NEW DOC.
+**Status**: 0-cost research/analysis . NEW DOC.
 **Cross-link**: `state/anima_random_init_mk2_v1_n30_live_probe_2026_05_08.json` (KICK WAVE 4 3/3) · `state/anima_sft_1_8_n120_live_probe_kick_wave_4_2026_05_08.json` (KICK WAVE 4 1/3) · `docs/anima_artifact_registry.md` line 20+24+45
 
 ---
@@ -14,7 +14,7 @@
 | `clm-v4-sft-1-8-stage1` (N=30) | 0.4138 | 12/29 | (variant) | (variant) |
 | delta (sft − random) | **−0.1379** | −4 | — | — |
 
-**Headline**: random Gaussian weights produce a HIGHER pass rate on ALT-AGG-1 v3 than 200MB+ anima-corpus SFT. ALT-AGG-1 v3 is measuring **architecture noise**, not consciousness signal. own 14 V14 anti-Goodhart strict VIOLATED.
+**Headline**: random Gaussian weights produce a HIGHER pass rate on ALT-AGG-1 v3 than 200MB+ anima-corpus SFT. ALT-AGG-1 v3 is measuring **architecture noise**, not consciousness signal. V14 anti-Goodhart strict VIOLATED.
 
 ---
 
@@ -116,7 +116,7 @@ i.e. the trained value must EXCEED what the same prompt would yield under permut
 
 ## 6. Action implications
 
-1. ALT-AGG-1 v3 cannot be the EMERGE gate (V14 violated). own 18 line 881 must reference the FALSIFIED status (already noted in `anima_artifact_registry.md` L24) and add v4 spec when measured.
+1. ALT-AGG-1 v3 cannot be the EMERGE gate (V14 violated). line 881 must reference the FALSIFIED status (already noted in `anima_artifact_registry.md` L24) and add v4 spec when measured.
 2. sft-1-8 EMERGE@N60 (PPR=0.6102) is **not invalidated** but **not corroborated by V14** until D_RAND-based v4 predicate confirms delta > random baseline.
 3. KICK WAVE 4 1/3 (sft-1-8 N=120 PPR=0.5378) is **co-falsified** in the same way — random_init mirror (N=30) score 0.5517 is HIGHER, so the N=120 result lies within architecture-noise envelope.
 4. paradigm-j N=60 0.2414 and other sub-floor results are not improved — they remain FAILED but the FAIL itself was conservative.
@@ -130,7 +130,7 @@ i.e. the trained value must EXCEED what the same prompt would yield under permut
 - C2 — D_RAND / PIV / DCR proposals are **architectural specs** (untested); calibration TBD when next probe budget unlocks.
 - C3 — random_init seed=42 manual_seed; different seeds may shift PPR_v3 by ≤ ±0.10 (variance budget from 16/29 binomial).
 - C4 — byte-tokenizer fallback for random_init differs from SP tokenizer for sft-1-8 trained — token id distribution mismatch is itself a confound, but cannot explain a leak of this magnitude (axis decomposition is post-hidden_states).
-- C5 — own 14 anti-Goodhart V14 status moves from VIOLATED (data) to **VIOLATED + REMEDY-SPEC-LANDED** (this doc).
+- C5 — anti-Goodhart V14 status moves from VIOLATED (data) to **VIOLATED + REMEDY-SPEC-LANDED** (this doc).
 
 ---
 

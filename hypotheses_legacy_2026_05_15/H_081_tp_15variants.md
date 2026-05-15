@@ -29,7 +29,7 @@ Legacy files: `docs/hypotheses/tp/TP-F{1,2}.md` + `tp/TP-M{1,3}.md` + `tp/TP-N{1
 
 - legacy: tp/TP-* 15 files
 - sister: H_080 (TOPO), H_040 (substrate topology cluster)
-- own: own 21
+- own:
 
 ## Honest Limits
 

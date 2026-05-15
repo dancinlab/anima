@@ -1,4 +1,4 @@
-# BG-V5MITOSIS-D384-SWEEP — track C cond.3 d=384 V14 mirror (own 38)
+# BG-V5MITOSIS-D384-SWEEP — track C cond.3 d=384 V14 mirror
 
 ## ts
 2026-05-10 (cycle 2026-05-10 §37 priority 1)
@@ -10,7 +10,7 @@ track C cond.3 prereq for cond.5 H100 fire authorize:
 - §30 all-fix active: A1 dispersion + A2 per-cell threshold + B1 phi_per_cell + D1 Lorenz auto-cal
 - C1 callback STUB (Net2Net momentum copy 미구현, cond.5 prep)
 - 1K-3K turn long-trajectory inference
-- own 14 V14 mirror: trained vs 5 random_init seeds (strict)
+- V14 mirror: trained vs 5 random_init seeds (strict)
 - α V2 metric (log-log slope phi_per_cell vs n_cells)
 
 ## d=384 ckpt 결정
@@ -53,7 +53,7 @@ allows. 75% of initial cells (6/8) carry trained v2 weights; embeddings + final 
 - initial_cells=8, max_cells=128
 - §30 all-fix: dispersion ON, per_cell_threshold ON, lorenz_auto_calibrate ON, C1 STUB
 - readout_mode=a_minus_g, attention_sharing=auto, weight_tied_lm_head=True
-- turns=1000 (own 14 5-seed strict; 3K turn pushed to next cycle if 1K already V14_VIOLATED)
+- turns=1000 (5-seed strict; 3K turn pushed to next cycle if 1K already V14_VIOLATED)
 - seeds: trained + [7, 17, 23, 41, 71]
 - prompt_seed=2026 (deterministic, mode-shifting every 200 turns)
 - iit_every=25, log_every=200
@@ -69,7 +69,7 @@ allows. 75% of initial cells (6/8) carry trained v2 weights; embeddings + final 
   + IIT phi port wired; trained ckpt is byte-level (vocab=256), so smoke is byte-pattern not
   KO chat
 - raw#15: additive — v2 ckpt + mitosis_model_v5.py + mitosis_v5_port.py untouched
-- own 14: V14 mirror 5-seed strict
-- own 16: 0-cost ($0 local CPU)
-- own 22: REBORN.md 직접 append 안함; dispatcher가 §37 slot에 receive 후 append
-- own 38: doc save state/anima_v5mitosis_d384_sweep_2026_05_10/{spec.md, result.json, v14_verdict.md}
+- : V14 mirror 5-seed strict
+- : 0-cost ($0 local CPU)
+- : REBORN.md 직접 append 안함; dispatcher가 §37 slot에 receive 후 append
+- : doc save state/anima_v5mitosis_d384_sweep_2026_05_10/{spec.md, result.json, v14_verdict.md}

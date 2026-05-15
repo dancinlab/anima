@@ -127,6 +127,6 @@ combined a-g:      unicode garbage                     ❌
 - v2 chat recovery doc: `docs/anima_clm_v2_chat_recovered_2026_05_06.ai.md` (정정 필요 — bucket naming misread)
 - v2 deep research: `docs/anima_clm_v2_deep_research_landed_2026_05_06.ai.md`
 
-raw#9/10/15 honest preservation, raw#37 additive, own 16 0-cost.
+raw#9/10/15 honest preservation, raw#37 additive, 0-cost.
 
 End of `CLM_V2_ARCHIVE_ADDENDUM_2026_05_10.md`.

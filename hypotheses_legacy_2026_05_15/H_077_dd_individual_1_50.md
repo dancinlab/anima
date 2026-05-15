@@ -29,7 +29,7 @@ Legacy files: `docs/hypotheses/dd/DD{1-4,5-7,8,9-11,12-14,15-16,17,18-20,21-24,2
 
 - legacy: dd/DD1-DD4 ~ DD48-DD50 batch files + B13-tension-transfer.md
 - sister: H_028 (dd subfolder), H_076 (DD50-100), H_075 (DD120-180)
-- own: own 21
+- own:
 
 ## Honest Limits
 

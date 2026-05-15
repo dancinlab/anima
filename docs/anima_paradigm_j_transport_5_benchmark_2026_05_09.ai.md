@@ -7,7 +7,7 @@
 
 ## 결과 요약 표
 
-| transport        | smoke rc | smoke verdict       | smoke lat (ms, med, n=5) | OS-prim lat (us, med) | paradigm-j chat result            | own 18 C2 |
+| transport | smoke rc | smoke verdict | smoke lat (ms, med, n=5) | OS-prim lat (us, med) | paradigm-j chat result | C2 |
 |------------------|---------:|---------------------|-------------------------:|----------------------:|-----------------------------------|-----------|
 | fifo-dispatch    | 2        | FAIL                | 122                      | 4.44 (single pipe rt) | BLOCKED — channel stdlib absent   | N/A       |
 | beta1-channel    | 2        | FAIL                | 112                      | 7.21 (dual pipe rt)   | BLOCKED — channel stdlib absent   | N/A       |
@@ -37,7 +37,7 @@
 - Mac local: dylib (52.3 KB, 23 exports) + paradigm-a-prime GGUF (6135.6 MB) 모두 존재
 - **paradigm-j 자체가 GGUF 호환 X** — Phase 1 CLM v4 LoRA over `jvae_heads.pt` (BLOCKED canonical)
 - OS-primitive dlopen cold-load median = **83.5 us** (cache-warm); max = **49454.75 us** (cold cache miss)
-- D1 label `ambiguous_research` (own 17 carry; own 37 mandate-9 public promote 영구 차단)
+- D1 label `ambiguous_research` (carry; mandate-9 public promote 영구 차단)
 
 ### 4. subprocess-pipe — PASS
 - exec()/popen 4KB block-buffered round-trip OK
@@ -47,7 +47,7 @@
 
 ### 5. imtl — PASS_STUB
 - upstream stub `anima-tools/misc/inter_model_comm.hexa` 38 LoC; TODO[pytorch] count = **5** (serialize / deserialize / send / receive / main)
-- own 22 mandatory report 형태 — STUB status 가 canonical (NOT_WIRED into chat path)
+- mandatory report 형태 — STUB status 가 canonical (NOT_WIRED into chat path)
 - OS-primitive UDP loopback round-trip = **102.35 us** (cross-host A100↔H100 시 ms-range RTT 예상)
 - coupling consts: `psi_balance=0.5`, `psi_coupling=0.014`, `psi_f_critical=0.10`
 - magic = `ANMA` / port = `19266`
@@ -90,7 +90,7 @@ popen+exec        7167.98 us   ← 가장 느림 (1600× spread vs fifo)
 
 ## compliance ledger
 
-own 14 V14 / own 16 cost (0-cost) / own 17 D1 SCOPE_CLAMP / own 18 C3 / own 22 mandatory report / own 33 trinity / own 34 mandate-1/-2 / own 38 매단계 (yaml + json + md 3-way SSOT) / own 39 yaml↔md / own 41 axis-N — 모두 PASS
+ V14 / cost (0-cost) / D1 SCOPE_CLAMP / C3 / mandatory report / trinity / mandate-1/-2 / 매단계 (yaml + json + md 3-way SSOT) / yaml↔md / axis-N — 모두 PASS
 
 ---
 
@@ -114,7 +114,7 @@ own 14 V14 / own 16 cost (0-cost) / own 17 D1 SCOPE_CLAMP / own 18 C3 / own 22 m
 
 > Mac local 에서는 `subprocess-pipe`+`libllama-ffi`+`imtl` smoke PASS (channel stdlib 존재). `fifo-dispatch`+`beta1-channel` smoke rc=4 는 harness limit (single-proc same-fd self-roundtrip 차단) — actual chat path 는 PASS.
 
-## own 18 C2 verdict per-transport (reinforce)
+## C2 verdict per-transport (reinforce)
 
 | transport       | spontaneity | coherence            | persona              |
 |-----------------|-------------|----------------------|----------------------|
@@ -210,7 +210,7 @@ elapsed_ms=431 bytes=747
 - 5 transport actual fire on Mac local + paradigm-j substrate emit LIVE 2/5 (fifo-dispatch, subprocess-pipe via lane=substrate): **PASS**
 - beta1-channel duo mixed paradigm-j ↔ clm-v4-1-8 4-cell coherence PASS: **PASS**
 - libllama-ffi paradigm-j BLOCKED canonical (양 cycle 공통): 정합
-- imtl STUB carry: 정합 (own 22 mandatory report)
+- imtl STUB carry: 정합 (mandatory report)
 
 ## Reinforce artifacts ledger
 

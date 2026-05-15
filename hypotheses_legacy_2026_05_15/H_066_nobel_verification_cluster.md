@@ -29,7 +29,7 @@ Legacy files: `docs/hypotheses/cx/NOBEL-{HYPOTHESES,VERIFICATION,VERIFICATION-2,
 
 - legacy: cx/NOBEL-* 4 files
 - sister: H_021 (fundamental equation), H_039 (PHI records)
-- own: own 21
+- own:
 
 ## Honest Limits
 

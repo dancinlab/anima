@@ -103,8 +103,8 @@ per 2026-05-03 user directive (a) lock-in (`.roadmap.anima_tools.cond.1=decision
 | `bin/` (21 entries) | CLI mk2 entry-points (binaries, never feature-internal) | anima_cli_mk2 spec |
 | `state/` (~1828 entries) | run artifacts ledger; cross-cutting | raw#82 retraction protocol consumer |
 | `.roadmap.*` (~50 files) | per-domain JSONL metadata (mk2 roadmap_format=roadmap_v2_per_domain), not features | mk2_apex per_repo_override.anima |
-| `.own` / `.guide` | policy/mandate SSOT | own 17/18/19/20/21 |
-| `hypotheses/` (111 entries) | own 21 anima-hypotheses-folder-ssot, anima self-axis discovery framework | own 21 |
+| `.own` / `.guide` | policy/mandate SSOT | |
+| `hypotheses/` (111 entries) | anima-hypotheses-folder-ssot, anima self-axis discovery framework | |
 | `config/` (~87 entries) | host pool / pod / cross-feature config | mk2 host_pool component |
 | `scripts/` | operational scripts; cross-feature | — |
 | `tests/` (~217 entries) | shared test corpus | — |
@@ -237,4 +237,4 @@ Per raw#15, NO destructive deletes anywhere; all moves are history-preserving re
 - pilot: `anima/anima/{core,module}/rng/`
 - artifacts: `state/anima_canonical_layout_migration_wave_b_prep_2026_05_07/{survey.json,safe_partial_migrations.json,verdict.json}`
 - exec successor BG: BG-LAYOUT-MIGRATION-WAVE-B-EXEC (~2026-05-12)
-- mandates: own 14/15/16/17/18/19/20/21 (all consulted; no conflict — migration is operational, additive, non-falsifier-bearing)
+- mandates: (all consulted; no conflict — migration is operational, additive, non-falsifier-bearing)

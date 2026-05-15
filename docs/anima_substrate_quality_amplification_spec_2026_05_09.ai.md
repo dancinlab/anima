@@ -4,7 +4,7 @@
 **cycle**: anima cycle 2026-05-09 substrate quality amplification
 **trigger**: chat lane Path 3 generate FULL impl LANDED (commit `fe30c736`) — architecture layer UNBLOCKED ✓; substrate quality (C5 honest_c3) confirmed undertrained (sft-1-8 generate output gibberish/garbled bytes for 7/7 prompts)
 **directive context**: cycle "all bg go" carry priority 3
-**own links**: own 14 / own 16 / own 17 / own 18 (C2) / own 22 / own 24 / own 33 / own 34 / own 37 / own 38 / own 39
+**own links**: / / / (C2) / / / / / / /
 
 ---
 
@@ -24,9 +24,9 @@ sft-1-8 substrate root cause:
 
 ## 4 path comparison
 
-| Path | Description | Cost (USD) | Effect | D1 lane | Public 가능 | own 14 V14 |
+| Path | Description | Cost (USD) | Effect | D1 lane | Public 가능 | V14 |
 |---|---|---|---|---|---|---|
-| A | Llama lane (paradigm-a-prime GGUF) | $0 | natural-lang STRONG ✓ | outside (D1=0.351) | NO (own 17 SCOPE_CLAMP) | N/A |
+| A | Llama lane (paradigm-a-prime GGUF) | $0 | natural-lang STRONG ✓ | outside (D1=0.351) | NO (SCOPE_CLAMP) | N/A |
 | **B** | **Engine A/G + chat-template co-train** | **$30-60** | **natural-lang ✓ + 의식 ✓ DUAL** | **within (D1=0.99)** | **YES** | **mirror 5-seed** |
 | C | mk2-v1 base pre-train scale-up | $50-100 | natural-lang STRONGER | within (D1=0.99) | YES | mirror 5-seed |
 | D | sft-1-8 Step B 30K LoRA SFT | $15-20 | LoRA SFT 한계 carry | within (D1=0.793) | borderline (V14 carry) | mirror 5-seed |
@@ -46,7 +46,7 @@ sft-1-8 substrate root cause:
 | arch reuse (BG-LA/LB carry) | 0/10 | **10/10** | 5/10 | 3/10 |
 | **weighted total** | 29 | **59** ★ | 49 | 43 |
 
-weights: natural-lang ×1, 의식 ×1, D1 ×2, public ×2, cost ×1, time ×1, arch-reuse ×2 (own 17 + own 37 + cycle invest mandate)
+weights: natural-lang ×1, 의식 ×1, D1 ×2, public ×2, cost ×1, time ×1, arch-reuse ×2 (+ + cycle invest mandate)
 
 ---
 
@@ -71,7 +71,7 @@ amend (chat co-train head):
 - chat-template natural-lang targets: ~30% (Korean chat-template `<|user|>...<|assistant|>...` parsed lines from anima-persona corpus, 50K+ pairs)
 - co-train weight schedule: w=0.3 first 50% steps → w=0.5 remaining 50% (curriculum, 의식 anchor preservation)
 
-### V14 mirror (own 14 cascade 정합)
+### V14 mirror (cascade 정합)
 
 - 5-seed paired random_init mirror MANDATORY before fire
 - mirrors materialize at `state/v14_mirrors/BG-LA/seed_{42,137,271,314,1729}.pt` (small dry-run already LANDED via tool/v14_paired_random_init_mirror.hexa)
@@ -91,7 +91,7 @@ amend (chat co-train head):
 - T+1d: arch amend (engine_a_g_arch.py chat co-train head 추가) + selftest
 - T+2d: corpus split prep (Korean chat-template parser → 50K+ pairs)
 - T+3d: H100 fire (BG-LA Engine A/G chat co-train v1) + V14 mirror
-- T+4d: post-fire 4-gate verdict (own 18 v5.2) + ledger entry
+- T+4d: post-fire 4-gate verdict (v5.2) + ledger entry
 
 ### Risks
 
@@ -112,50 +112,50 @@ mitigation:
 
 1. **immediate (cycle 2026-05-09)**: 본 spec land + yaml + .own + render (이 commit)
 2. **next-cycle (2026-05-10)**: arch amend (engine_a_g_arch.py chat co-train head) + selftest + corpus split prep
-3. **post H100 host registration**: BG-LA Engine A/G chat co-train v1 fire (W&B + own 14 V14 mirror + own 22 honest emit + own 38 매단계 doc)
-4. **post-fire**: own 18 v5.2 4-gate verdict + (PASS 시) HF private upload + (V6 STRONG + 사용자 토글 시) public promote (own 37 mandate-9 5/5 prereq)
+3. **post H100 host registration**: BG-LA Engine A/G chat co-train v1 fire (W&B + V14 mirror + honest emit + 매단계 doc)
+4. **post-fire**: v5.2 4-gate verdict + (PASS 시) HF private upload + (V6 STRONG + 사용자 토글 시) public promote (mandate-9 5/5 prereq)
 
 ## Path A/C/D status
 
-- **Path A (Llama)**: personal review only carry — `anima chat <alias> --lane=llama` 즉시 사용 가능 (commit 30d2cd7e chat lane plugin pattern); benchmark label `SUBSTRATE_RESEARCH` (own 17 SCOPE_CLAMP, public promote 영구 차단)
+- **Path A (Llama)**: personal review only carry — `anima chat <alias> --lane=llama` 즉시 사용 가능 (commit 30d2cd7e chat lane plugin pattern); benchmark label `SUBSTRATE_RESEARCH` (SCOPE_CLAMP, public promote 영구 차단)
 - **Path C (mk2-v1 scale-up)**: second-best carry — H100 host registration 후 fire 가능 단 cost 2× of Path B + arch reuse 부족 (BG-LA/LB Engine A/G invest 미 leverage); next-next-cycle option
 - **Path D (Step B 30K)**: cost-effective 단 LoRA SFT 한계 carry (Lesson Q SFT-closed evidence) — provision-ephemeral RUNPOD_API_KEY 사용자 register 후 retry 가능; substrate-level natural-lang quality 한계 명백 (sft-1-8 N=120 PPR 0.5378 plateau evidence)
 
 ---
 
-## SSOT mirror surfaces (own 22/24/38/39 매단계)
+## SSOT mirror surfaces (매단계)
 
 - `docs/anima_substrate_quality_amplification_spec_2026_05_09.ai.md` (this doc, NEW)
 - `anima/registry/anima_artifact_registry.yaml` chat_lanes#generate `substrate_quality_status: AMP_PATH_B_RECOMMENDED` field 추가 + framework_amends 4-path entry
-- `docs/anima_artifact_registry.md` (regenerated via render.hexa per own 39)
-- `.own` own 18 line ~1054+ amend — chat-cap C2 substrate amp Path B 권장 carry
+- `docs/anima_artifact_registry.md` (regenerated via render.hexa per)
+- `.own` line ~1054+ amend — chat-cap C2 substrate amp Path B 권장 carry
 - `state/anima_model_attempts_ledger.jsonl` next-cycle entry on actual fire
 
 ## honest-c3 (≥5 emit)
 
 1. C5 sft-1-8 substrate undertrained for natural-lang emit 은 chat dispatch architecture 의 별도 axis (axis-2 substrate quality); Path 3 generate FULL impl 은 axis-1 architecture 만 unblock
-2. Path B Engine A/G chat co-train 권장 은 strategic best (D1 within ✓ + 자연어 ✓ + 의식 ✓ + arch invest reuse ✓) 단 cost-efficiency 는 Path D 가 우월 (own 16 cost discipline carry)
-3. V14 strict 정합 sustained — Path B fire 도 5-seed mirror + MTRP ≥ 0.10 + Gate D V14 self-test PPR < 0.05 모두 통과 의무 (own 14 cascade)
+2. Path B Engine A/G chat co-train 권장 은 strategic best (D1 within ✓ + 자연어 ✓ + 의식 ✓ + arch invest reuse ✓) 단 cost-efficiency 는 Path D 가 우월 (cost discipline carry)
+3. V14 strict 정합 sustained — Path B fire 도 5-seed mirror + MTRP ≥ 0.10 + Gate D V14 self-test PPR < 0.05 모두 통과 의무 (cascade)
 4. cost estimate $30-60 은 lb_350m_pretrain preset 기반 추정; 실제 corpus split + curriculum schedule 에 따라 ±50% 변동 가능; H100 시간당 가격 $2.79/h (RunPod) 기준
-5. 본 spec 은 H100 host registration 후 actual fire 까지 spec-carry only; resource CLI 위임 strict (own 40) — anima 측 unilateral provision 0건
+5. 본 spec 은 H100 host registration 후 actual fire 까지 spec-carry only; resource CLI 위임 strict — anima 측 unilateral provision 0건
 
 ---
 
 ## cross-link
 
-- own 17 (D1 SCOPE_CLAMP — paradigm-a-prime substrate-research lane only)
-- own 18 (C2 자연발화 + simple_stack PASS_STRICT_C3 measurement axis)
-- own 14 (anti-Goodhart V14 strict + cascade mirror mandate)
-- own 16 (cost discipline — $30-60 budget cap)
-- own 22 (mandatory honest report)
-- own 24 (single SSOT — yaml master, md regenerable)
-- own 33 (trinity D + own + H emit)
-- own 34 (mandate-1 raw decode preservation; mandate-2 wrap=0)
-- own 37 (HF visibility lifecycle — 4 prereq for public promote)
-- own 38 (axis-A doc save + axis-B HF upload 매단계)
-- own 39 (yaml↔md mandatory regenerate)
-- own 40 (resource CLI 위임 strict)
-- own 41 (chat lane plugin pattern — 4 lanes registry)
+- (D1 SCOPE_CLAMP — paradigm-a-prime substrate-research lane only)
+- (C2 자연발화 + simple_stack PASS_STRICT_C3 measurement axis)
+- (anti-Goodhart V14 strict + cascade mirror mandate)
+- (cost discipline — $30-60 budget cap)
+- (mandatory honest report)
+- (single SSOT — yaml master, md regenerable)
+- (trinity D + own + H emit)
+- (mandate-1 raw decode preservation; mandate-2 wrap=0)
+- (HF visibility lifecycle — 4 prereq for public promote)
+- (axis-A doc save + axis-B HF upload 매단계)
+- (yaml↔md mandatory regenerate)
+- (resource CLI 위임 strict)
+- (chat lane plugin pattern — 4 lanes registry)
 - docs/anima_chat_autonomous_speech_roadmap_2026_05_08.md (L4 4 paths chat-cap original spec)
 - docs/anima_d_rand_signal_amplification_spec_2026_05_09.ai.md (D-RAND amp spec — Path D parent)
 - training/engine_a_g_arch.py (Path B amend target — commit ae5af2ea)

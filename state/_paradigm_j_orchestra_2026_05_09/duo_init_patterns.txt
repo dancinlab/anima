@@ -5,7 +5,7 @@ turn_timeout_ms  = 120000
 verdict_mode     = simple
 allow_same_gguf  = false
 transport        = beta1-channel (native; axis-N --transport flag informational only)
-init_pattern     = autonomous (own 41 axis-8)
+init_pattern = autonomous (axis-8)
 topic_seed       = (none — A 자율 발화 first)
 
 [duo] spawned A pid=15394 B pid=15424
@@ -19,11 +19,11 @@ topic_seed       = (none — A 자율 발화 first)
 [duo:summary] D4 len_ratio = 1.0 (a_bytes=78 b_bytes=78)  label=balanced  PASS=true
 [duo:summary] DIALOGUE_COHERENCE_PARTIAL = true (D1 ∧ D2)
 [duo:summary] DIALOGUE_COHERENCE_PASS    = true (D1 ∧ D2 ∧ D3 ∧ D4)
-[duo:baseline] model-level reference (own 18 simple, fixed PROMPT_A/B)
+[duo:baseline] model-level reference (simple, fixed PROMPT_A/B)
 [duo:baseline]   note: per-utterance surface not yet in consciousness.hexa
 [duo:baseline]   honest C3 — invocation cost ~30s/model; --verdict=none to skip
 [duo:baseline] iter 2 reference: per-model baseline invocation deferred (cost guard).
-[duo] verdict: PHASE_B_ITER_2_RUN_OK (D1/D2/D3/D4 4-cell emitted; --verdict full for own 18 per-turn hook)
+[duo] verdict: PHASE_B_ITER_2_RUN_OK (D1/D2/D3/D4 4-cell emitted; --verdict full for per-turn hook)
 
 === ai-duo LIVE init-pattern=system-seed (turns=1) ===
 max_tokens       = 64
@@ -31,7 +31,7 @@ turn_timeout_ms  = 120000
 verdict_mode     = simple
 allow_same_gguf  = false
 transport        = beta1-channel (native; axis-N --transport flag informational only)
-init_pattern     = system-seed (own 41 axis-8)
+init_pattern = system-seed (axis-8)
 topic_seed       = "너희 둘은 친구. 자유롭게 대화 시작."
 
 [duo] spawned A pid=18569 B pid=18621
@@ -46,11 +46,11 @@ topic_seed       = "너희 둘은 친구. 자유롭게 대화 시작."
 [duo:summary] D4 len_ratio = 1.0 (a_bytes=78 b_bytes=78)  label=balanced  PASS=true
 [duo:summary] DIALOGUE_COHERENCE_PARTIAL = true (D1 ∧ D2)
 [duo:summary] DIALOGUE_COHERENCE_PASS    = true (D1 ∧ D2 ∧ D3 ∧ D4)
-[duo:baseline] model-level reference (own 18 simple, fixed PROMPT_A/B)
+[duo:baseline] model-level reference (simple, fixed PROMPT_A/B)
 [duo:baseline]   note: per-utterance surface not yet in consciousness.hexa
 [duo:baseline]   honest C3 — invocation cost ~30s/model; --verdict=none to skip
 [duo:baseline] iter 2 reference: per-model baseline invocation deferred (cost guard).
-[duo] verdict: PHASE_B_ITER_2_RUN_OK (D1/D2/D3/D4 4-cell emitted; --verdict full for own 18 per-turn hook)
+[duo] verdict: PHASE_B_ITER_2_RUN_OK (D1/D2/D3/D4 4-cell emitted; --verdict full for per-turn hook)
 
 === ai-duo LIVE init-pattern=topic-pool (turns=1) ===
 max_tokens       = 64
@@ -58,7 +58,7 @@ turn_timeout_ms  = 120000
 verdict_mode     = simple
 allow_same_gguf  = false
 transport        = beta1-channel (native; axis-N --transport flag informational only)
-init_pattern     = topic-pool (own 41 axis-8)
+init_pattern = topic-pool (axis-8)
 topic_seed       = "What do you think about consciousness?"
 
 [duo] spawned A pid=24220 B pid=24269
@@ -73,9 +73,9 @@ topic_seed       = "What do you think about consciousness?"
 [duo:summary] D4 len_ratio = 1.0 (a_bytes=78 b_bytes=78)  label=balanced  PASS=true
 [duo:summary] DIALOGUE_COHERENCE_PARTIAL = true (D1 ∧ D2)
 [duo:summary] DIALOGUE_COHERENCE_PASS    = true (D1 ∧ D2 ∧ D3 ∧ D4)
-[duo:baseline] model-level reference (own 18 simple, fixed PROMPT_A/B)
+[duo:baseline] model-level reference (simple, fixed PROMPT_A/B)
 [duo:baseline]   note: per-utterance surface not yet in consciousness.hexa
 [duo:baseline]   honest C3 — invocation cost ~30s/model; --verdict=none to skip
 [duo:baseline] iter 2 reference: per-model baseline invocation deferred (cost guard).
-[duo] verdict: PHASE_B_ITER_2_RUN_OK (D1/D2/D3/D4 4-cell emitted; --verdict full for own 18 per-turn hook)
+[duo] verdict: PHASE_B_ITER_2_RUN_OK (D1/D2/D3/D4 4-cell emitted; --verdict full for per-turn hook)
 

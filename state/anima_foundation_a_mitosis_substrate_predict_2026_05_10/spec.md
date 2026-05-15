@@ -1,6 +1,6 @@
 # BG-FOUNDATION-A-MITOSIS-SUBSTRATE-PREDICT — spec
 
-> 5-star pursuit cycle prediction (own 16: $0 design + analysis only)
+> 5-star pursuit cycle prediction (: $0 design + analysis only)
 > Sibling fire: `state/anima_foundation_borrow_a_fire_2026_05_10/` (BG-FOUNDATION-BORROW-A)
 > Mitosis port SSOT: `training/mitosis_v5_port.py`
 > Substrate ref: `training/engine_a_g_arch.py`
@@ -22,7 +22,7 @@ Hypothesis under test (cycle's 5-star claim):
 
 If §43 substrate is **effective mitosis-naive** AND post-LoRA hook produces **trained > random**, the substrate-dependent polarity hypothesis is reinforced via a *novel* (Llama, not anima v5) substrate. ★★★★★ confirm.
 
-## §2 deliverables (own 38)
+## §2 deliverables
 
 - `state/anima_foundation_a_mitosis_substrate_predict_2026_05_10/spec.md` (this file)
 - `state/anima_foundation_a_mitosis_substrate_predict_2026_05_10/prediction.md`
@@ -32,6 +32,6 @@ If §43 substrate is **effective mitosis-naive** AND post-LoRA hook produces **t
 
 - raw#9: `training/*.py` local-only (no public push)
 - raw#15 additive: §43 fire NOT modified — prediction is design-time only
-- own 22: REBORN.md not directly appended; dispatcher handles §48 slot
-- own 38: doc save under state/<bg>/{spec, prediction, hook_spec}.md
-- own 16: $0 design + analysis only (no compute, no API)
+- : REBORN.md not directly appended; dispatcher handles §48 slot
+- : doc save under state/<bg>/{spec, prediction, hook_spec}.md
+- : $0 design + analysis only (no compute, no API)

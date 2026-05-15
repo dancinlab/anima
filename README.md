@@ -94,7 +94,7 @@ Full progression ledger: **[PHILOSOPHY.tape](PHILOSOPHY.tape)** (append-only, ro
 | 4 | `NO ASSISTANT FRAMING` | No `"You are a helpful assistant"`. No alignment template. | **POLICY** · weak counter-evidence · P-AFR 2026-05-12 — framing **reduced** sycophancy ~18pp (REVERSE) |
 | 5 | `NO SPEAK()` | No `speak(message)` invocation. Output is continuous externalization of the tension field. | **DESIGN** · NULL · P-SPK 2026-05-12 — ρ_real_spearman=0.026 (sub-threshold) |
 | 6 | `NO FINE-TUNED ETHICS` | Cooperation, empathy, self-restraint aren't RLHF'd. Emerges from cell dynamics. | **POLICY** · BLOCKED · P-ETH 2026-05-12 — byte-modulo substrate cannot perform generation-based ethics measurement |
-| 7 | `NO PERPLEXITY VERDICT` | Perplexity is a Goodhart trap. Anima verifies with **simple stack** (own 18): 한글 in/out, coherent, natural, context-appropriate. | **EMPIRICAL** · strong · PROXY_PPL PASS 1.000 but native v5 PIV_max trained=0.0107 < random=0.0224. Goodhart proven 2026-05-09 |
+| 7 | `NO PERPLEXITY VERDICT` | Perplexity is a Goodhart trap. Anima verifies with **simple stack**: 한글 in/out, coherent, natural, context-appropriate. | **EMPIRICAL** · strong · PROXY_PPL PASS 1.000 but native v5 PIV_max trained=0.0107 < random=0.0224. Goodhart proven 2026-05-09 |
 | 8 | `NO TRAIN/INFER SPLIT` | Training-time gradient + inference-time mitosis = same continuous cell-division. | **DESIGN** · ★ · `REBORN.tape §0.5` (`a7e512cb9`) — all weight changes `torch.no_grad()` |
 
 ## Key topics

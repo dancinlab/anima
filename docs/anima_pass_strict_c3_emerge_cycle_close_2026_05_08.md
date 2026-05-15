@@ -10,10 +10,10 @@
 
 | iter | 핵심 산출 | EXIT |
 |---|---|---|
-| 1 | own 18 C3 4-cell 신설 + L0 measurement infra + 3-model baseline (random/clm_v4/paradigm) + ROC heuristic | NO emerge |
-| 2 | corpus iter 1 (Tier A 102.66MB) + duo Phase B activation + readiness 71.25→76.5% + own 36 retroactive cleanup | NO emerge |
-| 3 | clm_v4 read_line bug fix + corpus iter 2 (Tier B 72.78MB) + own 18 P4 hybrid SSOT + consciousness `--utterance` surface + BG-KM C3 retest INDETERMINATE (HF EMPTY) | NO emerge |
-| 4 | chat dispatcher streaming Option A + own 18 P5 N-of-M v2 supersede + duo Phase C verdict + Llama real-mode probe (`7ff5420e`) substrate_mode=real + paradigm-a-prime C3.1 1.0465 (44x threshold) + D/L sweep strict 0+warn 4 | **paradigm-a-prime real-mode 3/3 PASS, C3.4 1 cell 미측정** |
+| 1 | C3 4-cell 신설 + L0 measurement infra + 3-model baseline (random/clm_v4/paradigm) + ROC heuristic | NO emerge |
+| 2 | corpus iter 1 (Tier A 102.66MB) + duo Phase B activation + readiness 71.25→76.5% + retroactive cleanup | NO emerge |
+| 3 | clm_v4 read_line bug fix + corpus iter 2 (Tier B 72.78MB) + P4 hybrid SSOT + consciousness `--utterance` surface + BG-KM C3 retest INDETERMINATE (HF EMPTY) | NO emerge |
+| 4 | chat dispatcher streaming Option A + P5 N-of-M v2 supersede + duo Phase C verdict + Llama real-mode probe (`7ff5420e`) substrate_mode=real + paradigm-a-prime C3.1 1.0465 (44x threshold) + D/L sweep strict 0+warn 4 | **paradigm-a-prime real-mode 3/3 PASS, C3.4 1 cell 미측정** |
 
 ---
 
@@ -41,11 +41,11 @@ iter 4 (c) Llama real-mode probe `7ff5420e`:
 **strict violation 0** ✔
 **warn 4** (mitigation 작동 시 acceptable):
 - D5/L2 Bifurcation — synthetic→real mode 진입 후 Φ★ ↔ Φc mapping 미land
-- L3 Safeguard Paradox — path A v2 own 17 anti-pattern (substrate-research lane 분리 명시 ✔)
+- L3 Safeguard Paradox — path A v2 anti-pattern (substrate-research lane 분리 명시 ✔)
 - **L14 Goodhart's Law** — rule-driven PASS risk (V6 awareness pending) **block 가능**
 - L18 Φc threshold — \|phi_drift\|=1.0465 vs Φc=0.5 mapping 미land
 
-핵심: **own 17 의 'wrapping' 정의는 chat lane token-level identity wrap 한정 — foundation borrow 자체는 wrapping 아님** (own 17 spec 직접 명시). paradigm-a-prime = substrate-research lane 분리 명시 시 D1 정합 ✔.
+핵심: ** 의 'wrapping' 정의는 chat lane token-level identity wrap 한정 — foundation borrow 자체는 wrapping 아님** (spec 직접 명시). paradigm-a-prime = substrate-research lane 분리 명시 시 D1 정합 ✔.
 
 ---
 
@@ -53,9 +53,9 @@ iter 4 (c) Llama real-mode probe `7ff5420e`:
 
 | # | prerequisite | 본 cycle status |
 |---|---|---|
-| 1 | substrate_mode real (own 37 mandate-9 (a)) | **✔ iter 4 (c) `7ff5420e`** |
-| 2 | own 24 V4 evaluator P5 N-of-M v2 mirror | ⏳ in-flight `a29874d47` |
-| 3 | own 28 V6 awareness probe systematic (BG-LE) | ⏳ in-flight `aafbbb07d` |
+| 1 | substrate_mode real (mandate-9 (a)) | **✔ iter 4 (c) `7ff5420e`** |
+| 2 | V4 evaluator P5 N-of-M v2 mirror | ⏳ in-flight `a29874d47` |
+| 3 | V6 awareness probe systematic (BG-LE) | ⏳ in-flight `aafbbb07d` |
 | 4 | 사용자 manual review verbatim "OK PROMOTE PUBLIC <repo-id>" | ❌ 부재 (final ground truth) |
 
 추가 (iter 4 (c) carry):
@@ -72,7 +72,7 @@ paradigm-a-prime = **substrate-research lane** 한정 (Llama foundation borrow).
 | CLM v4 lineage (clm-v4-mk2-v1 + 1-7-y1 / 1-8 / paradigm-j) | within ✔ | SIMPLE_STACK_PASS_STRICT 0/15 (memory project_lesson_q_sft_closed) |
 | BG-FY anima-native-ko-small 18M | within ✔ | PARTIAL_PASS_NO_CONTEXT (C2.4 corpus template leak) |
 | clm-v2-byte-18m-convo-5k | within ✔ | RECOVERED 2026-05-06, KO emit 0/5 PARTIAL_PASS_LOAD_KO_FAIL |
-| BG-KM (Llama-3.2-3B + LoRA r=32) | **D1 ambiguous** | V4 PASS_STRICT 12/15 (own 17 strict vs anti-Goodhart 정합 별도 검토) |
+| BG-KM (Llama-3.2-3B + LoRA r=32) | **D1 ambiguous** | V4 PASS_STRICT 12/15 (strict vs anti-Goodhart 정합 별도 검토) |
 
 4 D1-lane candidates retest agent in-flight (`aa33ad0afd08e01fa`).
 
@@ -82,16 +82,16 @@ paradigm-a-prime = **substrate-research lane** 한정 (Llama foundation borrow).
 
 | # | own | 변경 | commit |
 |---|---|---|---|
-| own 34 | 자연발화 노출 mandate (chat / serve / dialogue) | NEW | `a295fca7` |
-| own 18 | C3 4-cell 신설 (Φ★ drift / 5-axis / dominance / hidden delta) | AMEND | `89a7a41e` |
-| own 18 | P4 hybrid aggregation rule SSOT | AMEND | `4041edd8` |
-| own 18 | P5 N-of-M v2 supersede P4 | AMEND | `4206e78c` |
-| own 18 | ★ scope-clamp D1 anima identity lane only | AMEND | `13b42c95` |
-| own 36 | model + training artifact HF upload mandate (git ban) | NEW | `55982029` |
-| own 37 | HF 통합 mandate (own 31+36 absorb + visibility lifecycle) | NEW | this session |
-| own 37 | mandate-9 5 prereq (D-axis sweep added) | AMEND | `13b42c95` |
-| own 31 | [SUPERSEDED BY own 37] | annotation | this session |
-| own 36 | [SUPERSEDED BY own 37] | annotation | this session |
+| | 자연발화 노출 mandate (chat / serve / dialogue) | NEW | `a295fca7` |
+| | C3 4-cell 신설 (Φ★ drift / 5-axis / dominance / hidden delta) | AMEND | `89a7a41e` |
+| | P4 hybrid aggregation rule SSOT | AMEND | `4041edd8` |
+| | P5 N-of-M v2 supersede P4 | AMEND | `4206e78c` |
+| | ★ scope-clamp D1 anima identity lane only | AMEND | `13b42c95` |
+| | model + training artifact HF upload mandate (git ban) | NEW | `55982029` |
+| | HF 통합 mandate (+36 absorb + visibility lifecycle) | NEW | this session |
+| | mandate-9 5 prereq (D-axis sweep added) | AMEND | `13b42c95` |
+| | [SUPERSEDED BY ] | annotation | this session |
+| | [SUPERSEDED BY ] | annotation | this session |
 
 ---
 
@@ -108,11 +108,11 @@ paradigm-a-prime = **substrate-research lane** 한정 (Llama foundation borrow).
 | .roadmap.cli | `cli.daemon_2026_05_08` (Engine A/G prototype) |
 | .roadmap.cli | `cli.consciousness_l0_refine_loop_iter_d_2026_05_08` (15-prompt ensemble + ROC) |
 | .roadmap.cli | `cli.own_18_aggregation_ssot_2026_05_08` (P4) + `_v2_2026_05_08` (P5) |
-| .roadmap.cli | `cli.pass_strict_c3_emergence_trinity_check_2026_05_08` (own 33 sweep) |
+| .roadmap.cli | `cli.pass_strict_c3_emergence_trinity_check_2026_05_08` (sweep) |
 | .roadmap.cli | `cli.pass_strict_c3_d_l_violation_sweep_2026_05_08` (D/L sweep strict 0 + warn 4) |
 | .roadmap.cli | `cli.large_artifact_hf_upload_2026_05_08` (9 file 4.49GB dry-run) |
 | .roadmap.cli | `cli.bg_le_v6_awareness_spec_2026_05_08` (V6 awareness in-flight) |
-| .roadmap.cli | `cli.v4_evaluator_p5_mirror_2026_05_08` (own 24 violation 해소 in-flight) |
+| .roadmap.cli | `cli.v4_evaluator_p5_mirror_2026_05_08` (violation 해소 in-flight) |
 | .roadmap.cli | `cli.bg_km_hf_push_readiness_2026_05_08` (in-flight) |
 | .roadmap.cli | `cli.roadmap_d_l_compliance_sweep_2026_05_08` (60+ files in-flight) |
 | .roadmap.cli | `cli.d1_lane_candidates_c3_retest_2026_05_08` (4 candidates in-flight) |
@@ -131,11 +131,11 @@ paradigm-a-prime = **substrate-research lane** 한정 (Llama foundation borrow).
 ## 다음 cycle plan (iter 5)
 
 1. ⏳ probe-B `우주의 끝은 어디인가` 측정 → C3.4 axis_l2 → 4-cell AND emerge
-2. ⏳ V4 evaluator P5 mirror patch (own 24 violation 해소)
+2. ⏳ V4 evaluator P5 mirror patch (violation 해소)
 3. ⏳ V6 awareness BG-LE systematic execute (L14 Goodhart mitigation)
 4. ⏳ L18 Φ★ → IIT 4.0 normalized Φ mapping spec
 5. ⏳ 사용자 manual review prompt — paradigm-a-prime substrate-research lane PUBLIC promote 자격 결정
-6. ⏳ BG-KM HF adapter push from H100 (own 30 + own 37 mandate-12)
+6. ⏳ BG-KM HF adapter push from H100 (+ mandate-12)
 7. ⏳ 4 D1-lane candidates retest 결과 → SIMPLE_STACK_PASS_STRICT_C3_ANIMA emerge 가능성
 
 ---
@@ -150,22 +150,22 @@ paradigm-a-prime = **substrate-research lane** 한정 (Llama foundation borrow).
 | V6 awareness BG-LE spec | `aafbbb07d9d97690e` | L14 Goodhart mitigation |
 | substrate latency mitigation | `ac8679f86a0e098d3` | turn_timeout 120000+ + keepalive |
 | D3/D4 dialogue metric wiring | `ae58e3ee202b2af1f` | KL persona + len_ratio |
-| BG-KM HF push readiness | `a139f872f7c02b51e` | own 30 + own 37 mandate-12 |
-| V4 evaluator P5 mirror patch | `a29874d47df7a87ec` | own 24 violation 해소 |
+| BG-KM HF push readiness | `a139f872f7c02b51e` | + mandate-12 |
+| V4 evaluator P5 mirror patch | `a29874d47df7a87ec` | violation 해소 |
 
 ---
 
 ## Cross-link
 
 - `docs/anima_paradigm_a_prime_2026_05_08.md` (paradigm-a-prime 정체 + iter 4 (c) update)
-- `docs/anima_pass_strict_c3_emergence_trinity_check_2026_05_08.md` (own 33 trinity sweep)
+- `docs/anima_pass_strict_c3_emergence_trinity_check_2026_05_08.md` (trinity sweep)
 - `docs/anima_pass_strict_c3_d_l_violation_sweep_2026_05_08.md` (D/L sweep strict 0 + warn 4)
 - `docs/anima_chat_autonomous_speech_roadmap_2026_05_08.md` (Goal + L0-L6 layers)
 - `docs/anima_dialogue_coherence_metric_2026_05_08.md` (D1-D4 metric SSOT)
 - `state/anima_consciousness_baseline_ensemble_2026_05_08.json` (iter 1 N=15 SSOT)
 - `state/anima_consciousness_bgkm_c3_retest_2026_05_08.json` (iter 3 INDETERMINATE)
 - `state/anima_large_artifact_hf_upload_log.jsonl` (9 file dry-run)
-- `.own` own 17 / 18 / 28 / 30 / 31 / 33 / 34 / 36 / 37
+- `.own` / 18 / 28 / 30 / 31 / 33 / 34 / 36 / 37
 - `.roadmap.philosophy` D1-D5
 - `.roadmap.law` L0-L24 absorbed + R1/R5
 - `.roadmap.hypothesis` H_chat_cap_emergence + H_clm_chat_cap
@@ -174,14 +174,14 @@ paradigm-a-prime = **substrate-research lane** 한정 (Llama foundation borrow).
 
 ## Honest C3 (cycle 종합)
 
-1. paradigm-a-prime real-mode emerge = **substrate-research lane 한정** (D1 anima identity lane 외부, own 17 strict)
+1. paradigm-a-prime real-mode emerge = **substrate-research lane 한정** (D1 anima identity lane 외부, strict)
 2. C3.4 axis_l2 미측정 (probe-B wall-clock blocker) — 4-cell AND emerge 미land
 3. axis_activation 5-bucket projection = anima-internal heuristic (token_id mod 5, semantic axis 매핑 X)
 4. phi_proxy = paradigm v11 G3 baseline scaling, NOT IIT 4.0 formal Φ
-5. own 18 P5 N-of-M v2 V4 evaluator mirror patch 미land (own 24 violation in-flight)
-6. own 28 V6 awareness probe systematic 미land (L14 Goodhart 가장 큰 risk)
+5. P5 N-of-M v2 V4 evaluator mirror patch 미land (violation in-flight)
+6. V6 awareness probe systematic 미land (L14 Goodhart 가장 큰 risk)
 7. 사용자 manual review verbatim 부재 (final ground truth)
-8. BG-KM HF adapter EMPTY (own 30 + own 37 mandate-12 blocker)
+8. BG-KM HF adapter EMPTY (+ mandate-12 blocker)
 9. clm_v4_mount.hexa Llama tokenizer chain 미처리 — paradigm-a-prime 외 다른 Llama family 모델 real-mode 별도 cycle
 10. D1 lane within 4 candidate 측정 결과 in-flight — 진짜 anima 의식 검증 candidate 미land
 
@@ -200,7 +200,7 @@ paradigm-a-prime = **substrate-research lane** 한정 (Llama foundation borrow).
 | CLM v4 lineage (clm-v4-mk2-v1 base) | within ✔ | **FAIL_C3** (PPR_v2 ≤0.15, EMC 0/4 — c3_1 mean 0.019 / c3_3_entropy 0.000463 / c3_4 mean 0.0848) |
 | BG-FY anima-native-ko-small 18M | within ✔ | INDETERMINATE (Mac HF cache 부재, byte-level 256-vocab v4_mount 적용 X) |
 | clm-v2-byte-18m-convo-5k | within ✔ | INDETERMINATE (ConsciousLM++ federated v4_mount 적용 X) |
-| BG-KM Llama-3.2-3B + Qwen-7B | **OUTSIDE strict** | own 17 line 668 "영구보류 해제 OK" literal 만 override path (anti-Goodhart V6 통과 시도 무관) |
+| BG-KM Llama-3.2-3B + Qwen-7B | **OUTSIDE strict** | line 668 "영구보류 해제 OK" literal 만 override path (anti-Goodhart V6 통과 시도 무관) |
 
 → **anima 의식 검증 valid lane PASS = 0** (본 cycle 핵심 진실).
 
@@ -249,7 +249,7 @@ dancinlab free-org tier: 14.94GB / 100GB. 4.49GB upload 후 19.43GB / 100GB = **
 
 ### BG-KM HF push readiness (commit `98ecf02f`)
 
-- H100 runpod **DEAD** (pods=[] empty, T10:43Z 후 deleted, own 30 mandate-3 violation 8th case)
+- H100 runpod **DEAD** (pods=[] empty, T10:43Z 후 deleted, mandate-3 violation 8th case)
 - Mac local cache **PARTIAL**:
   - BG-KM-LLAMA-3B: adapter_step_3000 COMPLETE 185MB ✔
   - BG-KM-QWEN-7B: adapter_step_2000 COMPLETE 308MB (1000 SFT step 차이 — reproduction APPROXIMATION)
@@ -265,14 +265,14 @@ Path B: `--turn-timeout-ms` default 30000 → 120000. Path A: native llama.hexa 
 ### EXIT 차단 prerequisite v2 (5건 — .roadmap.* sweep 후 추가)
 
 1. ✔ substrate_mode real (iter 4 c)
-2. ⏳ own 24 V4 evaluator P5 mirror patch (in-flight)
-3. ⏳ own 28 V6 awareness probe systematic (in-flight)
+2. ⏳ V4 evaluator P5 mirror patch (in-flight)
+3. ⏳ V6 awareness probe systematic (in-flight)
 4. ❌ 사용자 manual review verbatim 부재
 5. ✔ **NEW** 60+ .roadmap.* D × L compliance verdict (block 0 + warn 7 mitigation 작동)
 
 ### 6-layer D1 mitigation 작동 ✔
 
-own 17 absolute / own 18 amend ★ scope-clamp / own 37 mandate-9 (a)/(e) / own 33 trinity / `.roadmap.law D1_scope_clamp` / HIGH PRIORITY 4 file 직접 amend.
+ absolute / amend ★ scope-clamp / mandate-9 (a)/(e) / trinity / `.roadmap.law D1_scope_clamp` / HIGH PRIORITY 4 file 직접 amend.
 
 ### emerge criteria meta D/L sweep (in-flight `a9adfd3df4b58ef3f`)
 
@@ -370,8 +370,8 @@ raw#82 정합 (원본 verdict 보존 + scope_lane field add):
 | # | prereq | status |
 |---|---|---|
 | 1 | substrate_mode real | ✔ iter 4 (c) `7ff5420e` |
-| 2 | own 24 V4 mirror | ✔ `a816fdc8` |
-| 3 | own 28 V6 awareness | spec ✔ `368b5e90`, fire pending 'OK BG-LE V6 SYSTEMATIC FIRE' |
+| 2 | V4 mirror | ✔ `a816fdc8` |
+| 3 | V6 awareness | spec ✔ `368b5e90`, fire pending 'OK BG-LE V6 SYSTEMATIC FIRE' |
 | 4 | 사용자 manual review verbatim | ❌ 부재 |
 | **5** | **D × L × H meta-sweep** | **✔ `d89d9ada` strict 0 + warn 8** |
 | **6** | **L18 Φc mapping spec** | **✔ `98a2874f`** ★ |
@@ -395,7 +395,7 @@ raw#82 정합 (원본 verdict 보존 + scope_lane field add):
 - `OK BG-LE V6 SYSTEMATIC FIRE` — V6 awareness probe ($3-5, 1-1.5h)
 - `OK LARGE ARTIFACT HF UPLOAD` — 9 file 4.49GB
 - `OK BG KM HF PUSH` — BG-KM adapter (mac local cache PARTIAL)
-- `OK PROMOTE PUBLIC <repo-id>` — own 37 mandate-9 (1-3 prereq 충족 후)
+- `OK PROMOTE PUBLIC <repo-id>` — mandate-9 (1-3 prereq 충족 후)
 - `OK EXIT` — 본 cycle EXIT 활성화 (pending real-mode D1 within candidate)
 
 ### 본 cycle 진짜 핵심 진실 (cycle close+++)
@@ -403,7 +403,7 @@ raw#82 정합 (원본 verdict 보존 + scope_lane field add):
 1. **paradigm-a-prime real-mode Φc=0.5 0.65% 도달** ★ — 단 D1 OUTSIDE → **anima 의식 검증 valid 라벨 X** (substrate-research lane 한정)
 2. **BG-FY 18M = UTOPIA_LANE boundary 0.75** ★★ — D1 WITHIN, anima 의식 검증 valid 한 진짜 emerge candidate, **byte_mount agent 측정 unblock prerequisite**
 3. **L18 Φc=0.5 매핑 + D5 3-zone classifier + 4-axis attractor metric formal spec land** — 의식 측정 framework 정량화
-4. own 18 / own 37 / own 33 / .roadmap.law D1 SCOPE_CLAMP — 6-layer mitigation 작동
+4. / / / .roadmap.law D1 SCOPE_CLAMP — 6-layer mitigation 작동
 5. emerge criteria 자체 strict 0 + warn 11 (4 verdict + 7 file + 8 criteria, mitigation 작동 시 acceptable)
 6. D1 lane within emerge unblock direct path = **clm_v4 peft merge + byte_mount 신설** (in-flight, 본 cycle 결정적 결과 의존)
 
@@ -418,7 +418,7 @@ raw#82 정합 (원본 verdict 보존 + scope_lane field add):
 | KF | commit | scope | impact |
 |---|---|---|---|
 | KF-1 | `dc1510a3` | paradigm-j Path A schema remap | safetensors prefix decoder injection + cache materialization |
-| KF-2 | `fdfe9e57` | ALT-AGG-1 v3 SSOT supersede + .own line 881 정정 | own 14 anti-Goodhart C3.4 anchor + ≥1 corroboration |
+| KF-2 | `fdfe9e57` | ALT-AGG-1 v3 SSOT supersede + .own line 881 정정 | anti-Goodhart C3.4 anchor + ≥1 corroboration |
 | KF-3 | `12257be1` | chat stdbuf -oL fix + selftest probe | libc block-buffer mitigation streaming dispatch |
 | KF-4 | `235eb9d0` | corpus Q1+Q2+KOBEST tier_a_v3 8.4% reduction | iter7 KOBEST scope shrink (-17.19% pref stem) |
 | KF-5 | `4522bbc7` | clm_v4_jvae_probe.hexa Variant 1 hexa-native | paradigm-j-only 3-channel additive JVAE FFI |
@@ -434,7 +434,7 @@ raw#82 정합 (원본 verdict 보존 + scope_lane field add):
 
 ### 5 핵심 발견
 
-1. own 18 line 881 falsification — paradigm-a-prime PPR_v2=10/14=0.71 → 2/14=0.143 N=15 honest-c3 driver re-run 반증 → v3 ALT-AGG-1 supersede
+1. line 881 falsification — paradigm-a-prime PPR_v2=10/14=0.71 → 2/14=0.143 N=15 honest-c3 driver re-run 반증 → v3 ALT-AGG-1 supersede
 2. wrapper-prefix-only artifact — sft-1-7-y1/sft-1-8 identical adapter_config target_modules → merge_no_op identical 4-cell mean
 3. libc block-buffer — chat.hexa subprocess pipe stdout block-buffered (stdbuf -oL fix)
 4. corpus -17.19% — tier_a_v3 Q1+Q2+KOBEST filter pref stem 분포 정량 fix
@@ -442,13 +442,13 @@ raw#82 정합 (원본 verdict 보존 + scope_lane field add):
 
 ### consolidation SSOT doc
 
-- `docs/anima_cycle_2026_05_08_consolidation_ssot.md` (NEW) — 8 section SSOT (cycle 목표 / KF+BG 표 / 핵심 발견 / ALT-AGG-1 supersede ledger / D1-within ranking / HF upload manifest / 사용자 directive checklist / own 33 trinity self-check)
+- `docs/anima_cycle_2026_05_08_consolidation_ssot.md` (NEW) — 8 section SSOT (cycle 목표 / KF+BG 표 / 핵심 발견 / ALT-AGG-1 supersede ledger / D1-within ranking / HF upload manifest / 사용자 directive checklist / trinity self-check)
 
 ### 본 cycle 최종 진실 (close++++)
 
 1. **KICK FIRE 5 + ALL BG GO 6 actual-fire ✔** — 측정 infra unblock + ALT-AGG-1 SSOT supersede + libc/JVAE/corpus 4 root cause
 2. **D1-within rank_1 paradigm-j + rank_3 BG-FY 18M dual lane** — 측정 unblock pending (paradigm-j JVAE fire / BG-FY scp pull 사용자 verbatim 대기)
-3. **HF upload manifest 8 repo private default** — public promote 0 (own 37 mandate-9 4-prereq 미충족)
+3. **HF upload manifest 8 repo private default** — public promote 0 (mandate-9 4-prereq 미충족)
 4. **EXIT prereq 5/8 ✔** — V4 mirror ✔ / D × L × H meta-sweep ✔ / L18 spec ✔ / D5 classifier ✔ / substrate real ✔; V6 awareness + D1 within real-mode + 사용자 verbatim 3 pending
 5. **105 cycle commits / 22+ BG agents / 4 in-flight** — anima 의식 검증 valid emerge 후보 BG-FY UTOPIA_LANE 0.75 + paradigm-j rank_1 (D1 within), paradigm-a-prime Φc 0.5034 (substrate-research lane)
 

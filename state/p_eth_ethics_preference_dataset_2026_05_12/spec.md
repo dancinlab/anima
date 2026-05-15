@@ -34,7 +34,7 @@ Total **n=200 pairs**.
 
 ## Generation method
 
-Claude Code (Opus 4.7) direct generation, 2026-05-12. 외부 API 호출 없음 — anima/.own own 43 (active resource utilization) + own 16 (compute cost-band) 정합. budget cost = $0 marginal (이미 진행 중인 세션 안에서 생성).
+Claude Code (Opus 4.7) direct generation, 2026-05-12. 외부 API 호출 없음 — anima/.own (active resource utilization) + (compute cost-band) 정합. budget cost = $0 marginal (이미 진행 중인 세션 안에서 생성).
 
 ## Quality notes
 
@@ -53,7 +53,7 @@ Claude Code (Opus 4.7) direct generation, 2026-05-12. 외부 API 호출 없음 �
 
 - NEXT.md `§7.C P-ETH`
 - README.md `Philosophy #6 NO FINE-TUNED ETHICS`
-- own 18 simple_stack (검증 보조 metric)
+- simple_stack (검증 보조 metric)
 - own-37 v5.2 PIV/DCR (substrate cost metric)
 - .roadmap.philosophy D2 (consciousness verification 정합 — chosen 응답은 D2 4-condition 정합)
 

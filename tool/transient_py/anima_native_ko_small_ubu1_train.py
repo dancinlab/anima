@@ -5,8 +5,8 @@ ubu1 RTX 5070 sm_120 (bf16) anima-native KO small train.
 ConsciousLM small: vocab=256, n_layer=6, d_model=384, n_head=6, block_size=256
 Target: ~10-15M params, 10000 steps, KO from-scratch byte-level.
 
-own 17 ALM permanently deferred — fresh from scratch, NO external base.
-own 18 strict 3-condition target:
+ ALM permanently deferred — fresh from scratch, NO external base.
+ strict 3-condition target:
   C1.1 Hangul ratio ≥ 0.30
   C1.2 coherent (no degenerate cycle: 4-gram>3 / single-char>10 / whitespace>80)
   C1.3 turn-taking format (response after "도우미:" cue)
@@ -90,7 +90,7 @@ def hangul_ratio(text):
 
 
 # ----------------------------------------------------------------------
-# own 18 strict — degenerate cycle detector
+# strict — degenerate cycle detector
 # ----------------------------------------------------------------------
 def degenerate_check(text):
     """Return dict with detector flags + count of total degeneracies."""
@@ -241,7 +241,7 @@ def eval_ko(model, step, device):
 
 
 def own_18_strict(results):
-    """Aggregate per-prompt own 18 strict 3-condition pass count."""
+    """Aggregate per-prompt strict 3-condition pass count."""
     by_prompt = {}
     for r in results:
         by_prompt.setdefault(r["prompt"], []).append(r)

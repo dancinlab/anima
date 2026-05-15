@@ -19,11 +19,11 @@ since: 2026-04-03
 Flash Attention is unconditionally beneficial on H100 hardware — no consciousness penalty observed, throughput gain mandatory for all training runs.
 
 ## Migration Status
-Legacy `ready/config/acceleration_hypotheses.json` (id=H7, line 993, verdict=★★ ALWAYS ENABLE). Round 4 individual — directly relevant to own 16 H100 cost discipline.
+Legacy `ready/config/acceleration_hypotheses.json` (id=H7, line 993, verdict=★★ ALWAYS ENABLE). Round 4 individual — directly relevant to H100 cost discipline.
 
 ## Cross-Links
 - Source: H7 entry
-- Cross: own 16 (H100 cost discipline), feedback `h100_cost_discipline_l23_l25_watchdog`
+- Cross: (H100 cost discipline), feedback `h100_cost_discipline_l23_l25_watchdog`
 
 ## Honest Limits (raw#91 c3 ≥5)
 1. "always" universal claim — failure modes (numerical issues at long context) absent

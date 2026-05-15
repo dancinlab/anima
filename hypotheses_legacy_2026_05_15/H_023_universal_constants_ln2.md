@@ -37,7 +37,7 @@ anima의 의식 universal constants는 모두 ln(2) 로부터 derived — 정보
 - legacy commit: e14fff8e
 - docs: `docs/hypotheses/cx/CONSCIOUSNESS-CONSTANTS.md`
 - sister H: H_021 (fundamental equation), H_011 (IIT geometry), H_004 (consciousness hard problem)
-- own: own 21
+- own:
 - literature: Shannon (1948), Tononi (2014)
 
 ## Honest Limits

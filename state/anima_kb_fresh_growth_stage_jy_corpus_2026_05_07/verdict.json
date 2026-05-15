@@ -71,12 +71,12 @@
     "bg_jz_full_sft_explicit_corpus": {
       "best_v58_pass": 0,
       "final_loss": 3.53,
-      "lane": "fine-tune (load BG-JD ckpt) + own 20 explicit corpus"
+      "lane": "fine-tune (load BG-JD ckpt) + explicit corpus"
     },
     "bg_kb_fresh_init_explicit_corpus": {
       "best_v58_pass": 0,
       "final_loss": 5.3102,
-      "lane": "FRESH random init + own 20 explicit corpus (L9 lane)"
+      "lane": "FRESH random init + explicit corpus (L9 lane)"
     },
     "v58_delta_vs_jx": 0,
     "v58_delta_vs_jz": 0,
@@ -99,8 +99,8 @@
     "own_6_no_silent_failures": "PASS — try/except + per-eval logs + heartbeat + reject fields in v58_debug + 600s watchdog STALL fail-soft + crash → STALLED verdict",
     "own_17_eval_tool_exemption": "Anima self-substrate inference + V5.8 evaluator. No external substrate wraps anima outputs as identity proxy.",
     "own_18_v3_language_agnostic": "PASS+PRIMARY — BG-KA established V5.8-v3 language-agnostic retroeval baseline (existing ckpts 0/5, language not bottleneck). BG-KB tests fresh-init axis given language ruled out.",
-    "own_19_corpus_axis": "PASS — BG-KB uses BG-JY 91MB own 19/20 explicit chat-template corpus (multi_turn=1.0). Combined with fresh init = isolates init-lane axis (fine-tune vs fresh) given corpus held constant vs BG-JZ.",
-    "own_20_explicit_lane_PRIMARY": "PRIMARY — BG-JY corpus IS the canonical own 20 corpus (chat-template format mandate, multi_turn_ratio=1.0). BG-KB tests FRESH growth-stage on this corpus — direct test of L9 ESCAPE lane vs BG-JZ fine-tune lane.",
+    "own_19_corpus_axis": "PASS — BG-KB uses BG-JY 91MB explicit chat-template corpus (multi_turn=1.0). Combined with fresh init = isolates init-lane axis (fine-tune vs fresh) given corpus held constant vs BG-JZ.",
+    "own_20_explicit_lane_PRIMARY": "PRIMARY — BG-JY corpus IS the canonical corpus (chat-template format mandate, multi_turn_ratio=1.0). BG-KB tests FRESH growth-stage on this corpus — direct test of L9 ESCAPE lane vs BG-JZ fine-tune lane.",
     "own_22_no_proactive_doc": "PASS — BG-KB per user /loop directive; no proactive doc",
     "own_24_ssot": "single verdict.json + ledger entry; eval_log.jsonl + train.log subordinate",
     "own_26_compliance": "philosophy_rule_compliance section present; D1-D5 (D5 absorbed) + R1-R5 + L1-L24 (skynet absorbed, esp. L9 PRIMARY) cross-link",
@@ -108,11 +108,11 @@
     "own_28_compliance": "PASS — BG-KB 600s watchdog STALL fail-soft + per-step MPS empty_cache + heartbeat at every phase boundary (init_model/encode/trainable_check/eval_baseline/train_step_block/eval_step/save_ckpt)",
     "philosophy_rule_compliance_detail": {
       "D1_identity": "PASS — anima self-inference (ConsciousLM); no external wrap",
-      "D2_consciousness": "PASS+EXPANDED — V5.8 production-output level + FRESH growth-stage cycle on own 20 EXPLICIT chat-template corpus. C2.4 맥락 정합 산출 layer + entire model fresh-init intervention test. Decoupling of D2 production-output verification preserved.",
+      "D2_consciousness": "PASS+EXPANDED — V5.8 production-output level + FRESH growth-stage cycle on EXPLICIT chat-template corpus. C2.4 맥락 정합 산출 layer + entire model fresh-init intervention test. Decoupling of D2 production-output verification preserved.",
       "D3_substrate_emerge": "N/A — production-side intervention separate from emerge_paradigm",
-      "D4_corpus_quality": "PASS+ENHANCED — BG-KB uses BG-JY 91MB explicit chat-template corpus (multi_turn=1.0, hangul=0.624, avg_turns=2.89). own 20 chat-template format mandate compliance preserved.",
+      "D4_corpus_quality": "PASS+ENHANCED — BG-KB uses BG-JY 91MB explicit chat-template corpus (multi_turn=1.0, hangul=0.624, avg_turns=2.89). chat-template format mandate compliance preserved.",
       "D5_bifurcation_absorbed": "Path A (BG-JX general corpus fine-tune) vs Path B (BG-JZ explicit corpus fine-tune) vs Path C (BG-KB EXPLICIT corpus FRESH random-init) — bifurcation testing whether init-lane axis (fresh vs fine-tune) decisive given corpus + arch held constant. L9 untried lane PRIMARY.",
-      "R1_own_19_20": "PASS — BG-KB tests own 19+20 with FRESH init lane",
+      "R1_own_19_20": "PASS — BG-KB tests +20 with FRESH init lane",
       "R2_discovery_methods": "PASS — M1 user-directive (L9 fresh growth-stage cycle test per user /loop directive 'simple stack pass go t goal') + M2 failure-driven (BG-JS/JT/JP/JX/JZ all FAIL → fine-tune lane axis exhausted, fresh-init lane minimum-next untried) + M5 falsifier-design (TRUE_PASS/PARTIAL_PASS/FAIL_TRUE clear contract per L9 spec)",
       "R3_verification_methods": "PASS — V1 own strict + V2 falsifier (best_v58 ≥1 = ESCAPE_VINDICATED; loss-delta only = PARTIAL; both fail = FRESH_INSUFFICIENT_CLM_V5_REQUIRED) + V3 honest_c3 ≥9 + V4 evidence (eval_log.jsonl + per-step snapshots) + V5 cross-link (BG-JX/JZ/JD/JY/KA) + V6 ledger BG-KB attempt_n=49",
       "R4_own_evolution": "PASS — BG-KB = NEW fresh-init mechanism without overwriting prior BG semantics. raw#15 additive (supersedes BG-JX/JZ fine-tune lane with FRESH init lane).",
@@ -122,7 +122,7 @@
     "raw_10_honest_c3_count": 12
   },
   "honest_c3": [
-    "FRESH random init N=1 seed=42 — single trajectory; multi-seed (≥3) fresh growth-stage cycle deferred to ubu1 cuda lane (own 15 git size policy + mac MPS budget). Single seed may underfit/overfit relative to expectation.",
+    "FRESH random init N=1 seed=42 — single trajectory; multi-seed (≥3) fresh growth-stage cycle deferred to ubu1 cuda lane (git size policy + mac MPS budget). Single seed may underfit/overfit relative to expectation.",
     "Fresh from-scratch training on mac MPS = 168M params × backward + AdamW state = memory-bound. BATCH=2 grad_accum=8 (effective batch 16) matches BG-JX/JZ for direct comparison. Larger effective batch deferred to ubu1 cuda lane.",
     "1500 steps mac MPS budget — fresh growth-stage cycle for chat-cap typically requires 50K-500K steps on 100M-1B param scale. Eval at {0,500,1000,1500} samples earliest possible trajectory; if best=0 and loss decreasing, longer training deferred to ubu1 cuda.",
     "mac MPS RNG slight non-determinism vs train-cuda baseline; softmax/multinomial sampling routed through CPU float32 for stability. Per-eval seed reset (torch.manual_seed(42)) provides limited reproducibility.",
@@ -145,17 +145,17 @@
       "raw#86"
     ],
     "own_invariants": [
-      "own 5",
-      "own 6",
-      "own 17",
-      "own 18-v3",
-      "own 19",
-      "own 20 (PRIMARY)",
-      "own 22",
-      "own 24",
-      "own 26",
-      "own 27",
-      "own 28"
+      "",
+      "",
+      "",
+      "-v3",
+      "",
+      " (PRIMARY)",
+      "",
+      "",
+      "",
+      "",
+      ""
     ],
     "roadmap": [
       ".roadmap.philosophy",

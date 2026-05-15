@@ -64,7 +64,7 @@ This is the cross-paradigm form of the well-known "compare against the strongest
 | R35 sigma_tau_three (CONFIRMED) | sister-tier | R35 = mathematical identity (proven); R38 = methodological law (cross-paradigm alignment audit) |
 | R36 forty_d_dual_route (RETIRED 2026-04-26) | NOT related | R36 referent does not exist in runtime; retired |
 | R36-candidate cross_paradigm_self_enforcement_loop (proposed 2026-04-28) | DISTINCT | R36-self-enforcement anchors meta-process kick-loop; R38 anchors substrate-comparison methodology |
-| R37-candidate compute_resource_failure_discipline | DISTINCT | R37 is own 4 promotion; R38 is Law 64 finding |
+| R37-candidate compute_resource_failure_discipline | DISTINCT | R37 is promotion; R38 is Law 64 finding |
 | R28-R35 cross_paradigm continuum | EXTENDS | R38 is the methodological-law tier addition (8th tier after R28-R35) |
 
 R38 is best classified as **methodological law** anchoring the cross-paradigm comparison protocol itself, distinct from per-finding R-entries.

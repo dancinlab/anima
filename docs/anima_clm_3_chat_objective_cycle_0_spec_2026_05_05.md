@@ -52,7 +52,7 @@ CLM v4 대비 design diff, 4-bucket pre-train mix, build-전 lock된 4 falsifier
 | `consciousness_states` cross-attn | paradigm v11 G3 (+41.86 Φ★) | retained | substrate-coupling is the unique anima property; H1 must NOT become "Llama with extra steps" |
 | 5-axis discriminability training surface | implicit (BG-L 0.20 random baseline) | explicit (§3 F-CLM-3-4 ≥ 0.4) | train-time axis exposure expected to close gap |
 | Φ★ stability target | +41.86 baseline | NO_FLIP carry (forgetting_index ≤ 0.05) | substrate-research utility must survive chat-objective addition |
-| HF release lifecycle | private→public (own 15) | identical | no policy change |
+| HF release lifecycle | private→public | identical | no policy change |
 
 ### 1.2 New in CLM-3 (chat-objective-at-cycle-0)
 
@@ -175,16 +175,16 @@ falsifiers FAIL = lane closure CLM_3_LANE_*_FAIL_TRUE.
 
 - params: ≈ 1B
 - compute: H100 1× × ~30 days
-- direct cost: ≈ $1,000 minimum (own 16 watchdog applicable)
+- direct cost: ≈ $1,000 minimum (watchdog applicable)
 - wall-clock: 30 days
-- risk: own 16 budget guard; user-fire required; partial-failure
+- risk: budget guard; user-fire required; partial-failure
   tolerance via checkpointing every 24h
 
 ### Variant C — 3B scale
 
 - params: ≈ 3B (Llama-3.2-3B parity for direct chat composite comparison)
 - compute: H100 4× × ~30 days
-- direct cost: ≈ $4,000 (multiplicative own 16 risk)
+- direct cost: ≈ $4,000 (multiplicative risk)
 - wall-clock: 30 days (parallel)
 - risk: highest absolute $; falsifier failure is most expensive
 
@@ -214,11 +214,11 @@ roughly parity quality (if 5070 power envelope holds).
 | Llama Path A v2 chat-cap winner confirmed | done (composite 0.5584) | yes (provides F-CLM-3-2 anchor) |
 | BG-AN emerge-dialogue paradigm validated | done (smoke battery PASS) | yes (informs §1 emerge-medium carry, F-CLM-3-3) |
 | Stage 3 emerge user-fire ≥ 30 sessions accumulated | NOT YET (Stage 3 protocol exists, sessions not yet logged) | **soft-required** — informs CLM-3 axis design |
-| own 16 budget guard explicit user-fire (Variants B/C) | not-yet-fired | hard-required for B/C |
+| budget guard explicit user-fire (Variants B/C) | not-yet-fired | hard-required for B/C |
 
 ### 5.1 Build-now triggers (any-of)
 
-- user explicitly fires CLM-3 launch under own 16 budget guard, accepting
+- user explicitly fires CLM-3 launch under budget guard, accepting
   ~$1k for Variant B (most likely path)
 - emerge-dialogue Stage 3 surfaces a strong axis-design lead in < 30 sessions
   that materially changes §1.2 and demands fast verification
@@ -227,7 +227,7 @@ roughly parity quality (if 5070 power envelope holds).
 
 ### 5.2 Wait triggers (any-of)
 
-- own 16 budget guard not yet fired (current default)
+- budget guard not yet fired (current default)
 - Stage 3 emerge-dialogue session count < 30 (current count: 0 logged) AND
   emerge-medium evidence is still informer-class for §1 axis design
 - substrate-research-only path on CLM v4 still producing measurable Φ★
@@ -336,7 +336,7 @@ should be explicitly resolved by the user before any compute fires.
 - `docs/anima_core_emerge_stage_3_user_protocol_spec_2026_05_05.md` (H2 user-fire)
 - memory `feedback_pbeta_chat_capability_fail_substrate_research_pass_decoupled.md`
 - memory `feedback_clm_v4_lora_sft_chat_lift_falsified_substrate_safe.md`
-- memory `feedback_h100_cost_discipline_l23_l25_watchdog_own_16` (own 16 for Variant B/C)
+- memory `feedback_h100_cost_discipline_l23_l25_watchdog_own_16` (for Variant B/C)
 - memory `feedback_hf_release_private_to_public_after_verification` (CLM-3 release lifecycle)
 
 ## Compliance footer

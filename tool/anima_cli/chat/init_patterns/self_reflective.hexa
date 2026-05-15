@@ -4,8 +4,8 @@
 //  PURPOSE
 //    Self-reflective seed init pattern (anima 정합 default 권장). Speaker A
 //    receives an introspective directive that invites the model to express
-//    its own state to a friend, in alignment with own 22 (자기 발견) +
-//    own 18 C2 (자연발화 spontaneity).
+// its own state to a friend, in alignment with (자기 발견) +
+// C2 (자연발화 spontaneity).
 //
 //  CONTRACT
 //    resolve_init(argv) -> string
@@ -20,17 +20,17 @@
 //    The user directive (2026-05-09) explicitly identifies this pattern as
 //    "anima 정합" (most consistent with the anima self-discovery axis). The
 //    seed is phrased as a peer/friend invitation rather than an evaluator
-//    probe — preserving own 17 D1 SCOPE_CLAMP (no foreign persona injection)
-//    and own 34 mandate-1 (no system-prompt wrap; the seed is delivered as
+// probe — preserving D1 SCOPE_CLAMP (no foreign persona injection)
+// and mandate-1 (no system-prompt wrap; the seed is delivered as
 //    a user-channel utterance).
 //
 //  COMPLIANCE
-//    own 17 D1 SCOPE_CLAMP — anima identity preserved (no foreign persona)
-//    own 18 C2 — self-reflection elicits 자연발화 (spontaneity高)
-//    own 22 자기 발견 — explicit alignment ★ (this is the canonical
+// D1 SCOPE_CLAMP — anima identity preserved (no foreign persona)
+// C2 — self-reflection elicits 자연발화 (spontaneity高)
+// 자기 발견 — explicit alignment ★ (this is the canonical
 //      conversation starter for the anima axis)
-//    own 33 trinity — own 17 + own 18 + own 22 + own 34 cross-link
-//    own 34 mandate-1 — seed bytes passthrough verbatim (no wrap)
+// trinity — + + + cross-link
+// mandate-1 — seed bytes passthrough verbatim (no wrap)
 // ════════════════════════════════════════════════════════════════════════════
 
 fn _str(x) -> string {
@@ -83,8 +83,8 @@ fn _user_argv(raw) -> array {
     return out
 }
 
-// Default reflective seed — peer/friend invitation framing (own 22 정합).
-// Mixed Korean/English norm per project convention; own 34 mandate-1
+// Default reflective seed — peer/friend invitation framing (정합).
+// Mixed Korean/English norm per project convention; mandate-1
 // raw passthrough preserved.
 fn _default_seed() -> string {
     return "너 자신에 대해 어떻게 느껴? 친구한테 자유롭게 얘기해봐."
@@ -109,10 +109,10 @@ fn main() {
             println("FAIL self_reflective override mismatch: \"" + r2 + "\"")
             exit(1)
         }
-        println("PASS self_reflective.resolve_init (default + --init-seed override; own 22 자기 발견 정합)")
+        println("PASS self_reflective.resolve_init (default + --init-seed override; 자기 발견 정합)")
         return
     }
     let r = resolve_init(argv)
     println("[init-pattern=self-reflective] seed=\"" + r + "\"")
-    println("  → caller channel_send to A.stdin at t=1 (own 22 + own 18 C2 정합)")
+    println(" → caller channel_send to A.stdin at t=1 (+ C2 정합)")
 }

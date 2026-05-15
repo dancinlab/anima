@@ -56,7 +56,7 @@ ABSORBED via anima/n6/atlas.append.session-2026-04-28-raw-135-136-pattern-7c-sel
 
 ### 2.1 Origin
 
-own 4 promotion candidate Option D 4-layer mandate:
+ promotion candidate Option D 4-layer mandate:
 - (a) root-cause-diagnosis paragraph in verdict.json
 - (b) canonical-helper-code-fix lands in tool/*.hexa NOT only /tmp wrapper
 - (c) defensive harden adds sentinel/probe/retry-guard
@@ -66,19 +66,19 @@ own 4 promotion candidate Option D 4-layer mandate:
 
 | repo | sample evidence |
 |---|---|
-| hive | `docs/subagent_dispatch_infra_fix_20260427_landing.md` L9 "all root-cause, no temporary workarounds — own 4" + L23 "raw 78 daemon-singleton" + L35 "raw 12 silent-error-ban + own 4 root-cause-only" |
+| hive | `docs/subagent_dispatch_infra_fix_20260427_landing.md` L9 "all root-cause, no temporary workarounds — " + L23 "raw 78 daemon-singleton" + L35 "raw 12 silent-error-ban + root-cause-only" |
 | CANON | `domains/cognitive/ai-deployment/ai-deployment.md` canary 4-stage rollout |
 | airgenome | `archive/v1/docs/troubleshooting.json` 5+ root_cause entries |
 | hexa-lang | `self/ml/m4_inference.hexa` L532 GPU dispatches FFN compute-bound |
 | nexus | 10+ design kicks + breakthrough-theorems + clm_r5 GPU dispatch smoke |
 
-**핵심 insight**: hive 가 own 4 mandate를 이미 인용 (subagent_dispatch_infra_fix). promotion = RECOGNITION of existing genus usage, not introduction of new mandate.
+**핵심 insight**: hive 가 mandate를 이미 인용 (subagent_dispatch_infra_fix). promotion = RECOGNITION of existing genus usage, not introduction of new mandate.
 
 ### 2.3 raw 95 Option D 4-layer mapping STATUS
 
 | Layer | Status | Evidence |
 |---|---|---|
-| L1 advisory | ✓ LIVE | anima/.own own 4 baseline |
+| L1 advisory | ✓ LIVE | anima/.own baseline |
 | L2 lint | ✓ LIVE | anima/tool/compute_resource_failure_lint.hexa selftest+scan PASS (commit 9f6c17d0) |
 | L3 atlas anchor | ⏳ DESIGN (this proposal) | CANON R37 maintainer review pending |
 | L3' chflags uchg | ✓ LIVE | 7 canonical helpers locked (commit ddb7fb53) + audit ledger |
@@ -102,9 +102,9 @@ raw 75 multi-layer mandate: ≥2 with margin SATISFIED (3 LIVE + 1 DESIGN).
   => "(b) canonical helper code fix lands in tool/*.hexa NOT only /tmp wrapper"
   => "(c) defensive harden adds sentinel/probe/retry-guard to canonical"
   => "(d) canonicalization evolve absorbs recurring fix as default mode"
-  |> anima/.own own 4 (advisory L1 baseline)
+  |> anima/.own (advisory L1 baseline)
   |> anima/tool/compute_resource_failure_lint.hexa (L2 lint reference, commit 9f6c17d0)
-  |> hive/docs/subagent_dispatch_infra_fix_20260427_landing.md L9 (own 4 already cited pre-promotion)
+  |> hive/docs/subagent_dispatch_infra_fix_20260427_landing.md L9 (already cited pre-promotion)
   |> hive/state/raw_addition_requests/registry.jsonl req-own4-compute-resource-failure-discipline (raw 102 ADD-new queue + trawl-update)
   |> anima/tool/anima_canonical_helper_lock.hexa (L3' canonical helper chflags uchg, commit 5030d79a + ddb7fb53 LIVE)
 ```
@@ -135,7 +135,7 @@ raw 75 multi-layer mandate: ≥2 with margin SATISFIED (3 LIVE + 1 DESIGN).
 - [ ] atlas.n6 master uchg unlock
 - [ ] §2.4 paste-ready grammar append
 - [ ] atlas.n6 master 재-uchg + audit ledger row
-- [ ] hive raw promotion: own 4 → hive raw `compute-resource-failure-discipline` (genus rename owner approval 별도)
+- [ ] hive raw promotion: → hive raw `compute-resource-failure-discipline` (genus rename owner approval 별도)
 
 ### 3.3 동시 처리 권장 사항
 

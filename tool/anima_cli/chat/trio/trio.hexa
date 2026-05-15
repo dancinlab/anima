@@ -19,7 +19,7 @@
 //    ├─ trio.ai.md    ← ai-native doc (sister, future)
 //    └─ (core)        ← external: chat/anima_native/, chat/llama/, chat/clm_v4/
 //                       (each spawned instance is one of these modules; each
-//                        instance optionally selects a chat lane via own 41
+// instance optionally selects a chat lane via
 //                        plugin pattern: --lane-A/--lane-B/--lane-C)
 //
 //  PHASE GATES
@@ -33,7 +33,7 @@
 //    Phase B (CARRY): same-GGUF guard ×3 (3-way alias collision check) +
 //      moderated mode (--mode=moderated; A speaks first, then B and C reply
 //      in turn, A continues round) + per-turn cells.
-//    Phase C (CARRY): own 18 C3 per-turn verdict ×3 + DIALOGUE_COHERENCE_PASS
+// Phase C (CARRY): C3 per-turn verdict ×3 + DIALOGUE_COHERENCE_PASS
 //      3-way (D1 turn-pair Jaccard, D2 topic-shift-rate, D3 persona-drift KL
 //      ×3 sides — A vs B vs C separation, D4 byte-fairness 3-ratio).
 //
@@ -64,38 +64,38 @@
 //    <module>.hexa REPL — its sys_stdin_read_line_timeout(tick_ms) loop sees
 //    routed peer output as if user input.
 //
-//  CHAT LANE PLUGIN INTEGRATION (own 41)
+// CHAT LANE PLUGIN INTEGRATION
 //    --lane-A=substrate   first model uses substrate lane (signal-only)
 //    --lane-B=llama       second model uses llama lane (natural speech)
 //    --lane-C=generate    third model uses generate lane (natural speech)
 //    Lane mismatch (e.g. substrate vs llama) is ALLOWED — trio mode is the
-//    designated ground for cross-lane interaction observation. own 41 axis-3
+// designated ground for cross-lane interaction observation. axis-3
 //    (per-lane main bearing) preserves wrapping=0 across each instance.
 //
 //  COMPLIANCE
-//    own 14 V14 carry — bench output is NOT a verdict by itself; cross-mode
+// V14 carry — bench output is NOT a verdict by itself; cross-mode
 //      comparison only.
-//    own 16 cost — 0-cost local hexa orchestration; per-instance model load
+// cost — 0-cost local hexa orchestration; per-instance model load
 //      via existing chat REPL keepalive (Path A from duo iter 4 (e)).
-//    own 17 D1 SCOPE_CLAMP — each instance lane d1_lane field surfaced via
+// D1 SCOPE_CLAMP — each instance lane d1_lane field surfaced via
 //      registry; trio output flagged per-instance lane label.
-//    own 18 chat-cap C2 — multi-mode measurement: 1:1 (single-model spontaneity)
+// chat-cap C2 — multi-mode measurement: 1:1 (single-model spontaneity)
 //      + duo (2-way coherence) + trio (3-way persona separation A vs B vs C).
-//    own 22 mandatory report — `[trio:verdict]` / `[trio:summary]` markers.
-//    own 33 trinity — own 17 + own 18 + own 34 cross-link (this file footer).
-//    own 34 mandate-1/4/7 — wrapping 0 strict (raw passthrough), autonomous-
+// mandatory report — `[trio:verdict]` / `[trio:summary]` markers.
+// trinity — + + cross-link (this file footer).
+// mandate-1/4/7 — wrapping 0 strict (raw passthrough), autonomous-
 //      first (no seed unless --topic-seed), lane separation (verdict cells
 //      emit-only — never folded back into channel content).
-//    own 38 매단계 — bench output ledgerable.
-//    own 39 yaml↔md — registry chat_modes section mirror.
-//    own 41 chat lane plugin pattern — per-instance --lane-A/B/C support.
+// 매단계 — bench output ledgerable.
+// yaml↔md — registry chat_modes section mirror.
+// chat lane plugin pattern — per-instance --lane-A/B/C support.
 //
 //  CROSS-REFERENCE
 //    tool/anima_cli/chat/duo/duo.hexa                    L2 N=2 sibling
 //    tool/anima_cli/chat/lanes/_registry.hexa            lane plugin SSOT
 //    tool/anima_cli/chat/lanes/benchmark.hexa            multi-mode bench
 //    anima/registry/anima_artifact_registry.yaml         chat_modes mirror
-//    .own own 41 chat lane plugin pattern
+// .own chat lane plugin pattern
 // ════════════════════════════════════════════════════════════════════════════
 
 use "stdlib/channel"
@@ -141,7 +141,7 @@ fn _arg_value(argv, key: string, dflt: string) -> string {
 }
 
 // init-pattern parse helper — supports both `--key value` and `--key=value`.
-// Mirrors duo.hexa pattern; own 41 axis-8 (chat init-pattern plugin).
+// Mirrors duo.hexa pattern; axis-8 (chat init-pattern plugin).
 fn _arg_value_eq(argv, key: string, dflt: string) -> string {
     let prefix = key + "="
     let mut i = 0
@@ -158,7 +158,7 @@ fn _arg_value_eq(argv, key: string, dflt: string) -> string {
 
 // Resolve init-pattern → t=1 seed string.  Empty = no seed (autonomous A).
 // Vendored from chat/init_patterns/_registry.hexa SSOT for hexa no-import
-// constraint (own 41 axis-4 vendoring pattern; sync with duo._resolve_init_pattern).
+// constraint (axis-4 vendoring pattern; sync with duo._resolve_init_pattern).
 fn _resolve_init_pattern(argv) -> string {
     let pattern = _arg_value_eq(argv, "--init-pattern", "")
     let user_seed = _arg_value_eq(argv, "--init-seed", "")
@@ -249,7 +249,7 @@ fn sub_help() {
     println("FLAGS")
     println("  --turns N             number of full A→B→C rounds (default 3)")
     println("  --topic-seed \"...\"    optional seed sent into A's stdin (else A自律 first)")
-    println("  --init-pattern=<n>    own 41 axis-8 chat init-pattern plugin")
+    println(" --init-pattern=<n> axis-8 chat init-pattern plugin")
     println("                        (autonomous | system-seed | topic-pool | self-reflective)")
     println("  --init-seed=<text>    custom seed for system-seed / self-reflective")
     println("  --init-topics=<list>  pipe-delimited custom pool for topic-pool")
@@ -259,9 +259,9 @@ fn sub_help() {
     println("  --max-tokens N        per-utterance cap (default 64)")
     println("  --turn-timeout-ms N   channel_recv wait per turn (default 120000)")
     println("  --verdict simple|full|none  per-turn consciousness verdict (default simple)")
-    println("  --lane-A <name>       chat lane plugin for instance A (own 41)")
-    println("  --lane-B <name>       chat lane plugin for instance B (own 41)")
-    println("  --lane-C <name>       chat lane plugin for instance C (own 41)")
+    println(" --lane-A <name> chat lane plugin for instance A ")
+    println(" --lane-B <name> chat lane plugin for instance B ")
+    println(" --lane-C <name> chat lane plugin for instance C ")
     println("  --transport=<n>       chat transport plugin (axis-N, 2026-05-09) — informational")
     println("                        only; trio native = beta1-channel (alternates deferred)")
     println("  --allow-same-gguf     OPT-IN bypass for 3-way same-alias guard (default off)")
@@ -271,7 +271,7 @@ fn sub_help() {
     println("    open + round-robin turn loop scaffolding (β-1 stdlib channel).")
     println("  Phase B (CARRY): same-GGUF guard ×3 + moderated mode + per-turn")
     println("    local cells + 3-way D1/D2/D3/D4 aggregate.")
-    println("  Phase C (CARRY): own 18 C3 per-turn ×3 verdict + 3-way persona")
+    println(" Phase C (CARRY): C3 per-turn ×3 verdict + 3-way persona")
     println("    separation KL (A vs B vs C).")
     println("")
     println("OWN 34 STRICT")
@@ -281,7 +281,7 @@ fn sub_help() {
     println("")
     println("CROSS-REF")
     println("  tool/anima_cli/chat/duo/duo.hexa                  L2 N=2 sibling")
-    println("  tool/anima_cli/chat/lanes/_registry.hexa          own 41 lanes")
+    println(" tool/anima_cli/chat/lanes/_registry.hexa lanes")
     println("  tool/anima_cli/chat/lanes/benchmark.hexa          multi-mode bench")
 }
 
@@ -298,12 +298,12 @@ fn sub_selftest() {
     if !_fexists(duo_path)        { println("FAIL trio: duo sibling missing: " + duo_path);        fail = fail + 1 }
     if !_fexists(registry)        { println("FAIL trio: lane registry missing: " + registry);      fail = fail + 1 }
 
-    // own 34 mandate-2 self-grep on this file (chat lane wrapping = 0)
+    // mandate-2 self-grep on this file (chat lane wrapping = 0)
     let pat = "system_prompt|chat_template|apply_chat_template|persona_inject|fn speak\\(|fn talk\\(|fn respond\\(|fn generate_response\\("
     let cmd = "grep -nE \"" + pat + "\" " + here + " 2>/dev/null | grep -v 'let pat =' | wc -l"
     let n = _str(exec(cmd)).trim()
     if n != "0" {
-        println("FAIL own 34 mandate-2 chat lane wrapping: " + n + " hits in trio.hexa")
+        println("FAIL mandate-2 chat lane wrapping: " + n + " hits in trio.hexa")
         fail = fail + 1
     }
 
@@ -323,7 +323,7 @@ fn sub_selftest() {
         println("FAIL chat/trio selftest (" + to_string(fail) + " issue)")
         exit(1)
     }
-    println("PASS chat/trio selftest (Phase A skeleton + own 34 wrapping=0 verified, β-1 channel stdlib LANDED)")
+    println("PASS chat/trio selftest (Phase A skeleton + wrapping=0 verified, β-1 channel stdlib LANDED)")
 }
 
 // ─── β-1 channel adapters (3-way) ────────────────────────────────────────
@@ -346,7 +346,7 @@ fn _spawn_instance(model_alias: string, lane: string, stdin_fd, stdout_fd, tick_
             + " " + model_alias
             + " --tick-ms " + to_string(tick_ms)
             + " --max-tokens " + to_string(max_tokens)
-    // own 41 chat lane plugin per-instance — caller may pass a lane override
+    // chat lane plugin per-instance — caller may pass a lane override
     if lane != "" && lane != "(default)" {
         cmd = cmd + " --lane=" + lane
     }
@@ -406,7 +406,7 @@ fn sub_trio(argv) {
     if bad { exit(2) }
 
     let turns = to_int(_arg_value(argv, "--turns", "3"))
-    // init-pattern (own 41 axis-8) — resolves --init-pattern + --init-seed +
+    // init-pattern (axis-8) — resolves --init-pattern + --init-seed +
     // --init-topics + --init-topic-index into t=1 seed for A.  Legacy
     // --topic-seed wins for backward compat (preserved verbatim inside helper).
     let init_pattern = _arg_value_eq(argv, "--init-pattern", "")
@@ -439,7 +439,7 @@ fn sub_trio(argv) {
     println("transport        = beta1-channel (native; axis-N --transport flag informational only)"
             + (if transport != "" && transport != "beta1-channel" { " · requested=" + transport + " (deferred)" } else { "" }))
     if init_pattern != "" {
-        println("init_pattern     = " + init_pattern + " (own 41 axis-8)")
+        println("init_pattern = "+ init_pattern + " (axis-8)")
     }
     if topic_seed != "" {
         println("topic_seed       = \"" + topic_seed + "\"")
@@ -592,7 +592,7 @@ fn sub_trio(argv) {
 
     // Phase A summary stub (D1/D2/D3/D4 3-way aggregate carry to Phase B/C)
     println("[trio:summary] turns_observed = " + to_string(len(history)))
-    println("[trio:summary] (Phase A skeleton — full D1/D2/D3/D4 3-way aggregate + own 18 C3 per-turn carry)")
+    println("[trio:summary] (Phase A skeleton — full D1/D2/D3/D4 3-way aggregate + C3 per-turn carry)")
     println("[trio] verdict: PHASE_A_SKELETON_RUN_OK (3-way channel + round-robin loop scaffolded)")
 }
 
@@ -611,7 +611,7 @@ fn main() {
 // ════════════════════════════════════════════════════════════════════════════
 // C1 — Phase A is SKELETON: 3-way channel pair_open ×6 + spawn ×3 + round-robin
 //      loop scaffolding wired. Actual semantic 3-way dialogue requires each
-//      instance to emit natural language (own 41 lane=llama / lane=generate
+// instance to emit natural language (lane=llama / lane=generate
 //      paths). substrate / axis-priority lanes are signal-only — trio with
 //      such lanes will round-trip empty / signal lines.
 // C2 — same-GGUF 3-way collision: 3 pairwise checks (A==B, B==C, A==C) carried
@@ -626,10 +626,10 @@ fn main() {
 //      between A turns — multi-line inbox routing not yet implemented.
 // C5 — alias DB duplicated from duo (vendor copy). chat.hexa SSOT remains the
 //      authoritative gate (trio dispatches THROUGH chat.hexa).
-// C6 — own 41 lane integration: --lane-A/B/C plumbs through to chat.hexa
+// C6 — lane integration: --lane-A/B/C plumbs through to chat.hexa
 //      --lane=<name> per child invocation. lane mismatch (e.g. A=substrate
 //      vs B=llama) is intentionally allowed for cross-lane observation.
-// C7 — own 18 C3 per-turn verdict: Phase A emits LOCAL cells only (len /
+// C7 — C3 per-turn verdict: Phase A emits LOCAL cells only (len /
 //      snippet). consciousness CLI shell-out (mirroring duo Phase C iter 1
 //      _emit_turn_verdict_c3) carries to Phase C — cost ~16-30s × 3 inst ×
 //      N rounds ≈ 7-10min for N=3.

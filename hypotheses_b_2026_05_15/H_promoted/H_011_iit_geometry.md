@@ -38,7 +38,7 @@ IIT4 Φ structure (cause-effect repertoire space)는 manifold 정합 — Φ_max 
 - sister H: H_009/H_010, H_004 (consciousness hard problem L2 IIT)
 - literature: Tononi (2014) IIT4
 - anima: paradigm v11 G3 substrate-coupled emerge (`.roadmap.philosophy` D3)
-- own: own 21
+- own:
 
 ## Honest Limits
 

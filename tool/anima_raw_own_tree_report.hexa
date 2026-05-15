@@ -1,9 +1,9 @@
-// tool/anima_raw_own_tree_report.hexa — own 12 ASCII tree report for raw/own SSOT
+// tool/anima_raw_own_tree_report.hexa — ASCII tree report for raw/own SSOT
 // ─────────────────────────────────────────────────────────────────────────────
-// own 12 mandate: when user requests 'raw tree' / 'own tree' / 'tree report' /
+// mandate: when user requests 'raw tree' / 'own tree' / 'tree report' /
 // 'tree 보여줘', agent MUST produce ASCII tree visualization with metrics.
 //
-// Tree contents (own 12 spec):
+// Tree contents (spec):
 //   (a) hierarchy structure (raw/own → categories → entries)
 //   (b) strengthening level per entry (notes count + follow-up count + cross-ref density)
 //   (c) connection strength (deps cited + cross-cited count)
@@ -282,7 +282,7 @@ fn _emit_helper(mode: str) -> str {
 }
 
 fn _selftest() {
-    println("__ANIMA_RAW_OWN_TREE_REPORT_BEGIN__ selftest own 12 raw#9 raw#10 raw#37")
+    println("__ANIMA_RAW_OWN_TREE_REPORT_BEGIN__ selftest raw#9 raw#10 raw#37")
     println("tool_version=" + TOOL_VERSION)
     println("strength_tiers=" + str(STRENGTH_TIERS))
     println("own_path=" + OWN_PATH)
@@ -324,7 +324,7 @@ fn _selftest() {
     let gap_count_ok = fixture_gaps.len() == 3
     println("gap_fixture_count=" + str(fixture_gaps.len()) + " expected=3 result=" + str(gap_count_ok))
 
-    // Fixture: dep ref pattern — 'raw 25 + own 4' should yield 2 deps
+    // Fixture: dep ref pattern — 'raw 25 + ' should yield 2 deps
     let fixture_dep_count = 2
     let dep_pass = fixture_dep_count == 2
     println("dep_ref_fixture_count=" + str(fixture_dep_count) + " expected=2 result=" + str(dep_pass))
@@ -342,12 +342,12 @@ fn _selftest() {
         println("__ANIMA_RAW_OWN_TREE_REPORT_RESULT__ FAIL_SELFTEST")
     }
     println("raw_10_caveat=selftest verifies fixture logic + helper emission; ASCII tree generation requires python3 invocation against .own/.raw")
-    println("raw_10_caveat=tree report is OBSERVABILITY layer (own 12 mandate) — does not enforce gap closure, only surfaces them for visual review")
-    println("absorption_target=own 12 raw-own-tree-ascii-report-mandate canonical helper L3' chflags uchg lock candidate")
+    println("raw_10_caveat=tree report is OBSERVABILITY layer (mandate) — does not enforce gap closure, only surfaces them for visual review")
+    println("absorption_target= raw-own-tree-ascii-report-mandate canonical helper L3' chflags uchg lock candidate")
 }
 
 fn _own_tree() {
-    println("__ANIMA_RAW_OWN_TREE_REPORT_BEGIN__ own-tree own 12")
+    println("__ANIMA_RAW_OWN_TREE_REPORT_BEGIN__ own-tree ")
     let _path = _emit_helper("own-tree")
     println("helper_emitted=" + HELPER_PATH)
     println("__ANIMA_RAW_OWN_TREE_REPORT_RESULT__ HELPER_READY")
@@ -355,7 +355,7 @@ fn _own_tree() {
 }
 
 fn _raw_tree() {
-    println("__ANIMA_RAW_OWN_TREE_REPORT_BEGIN__ raw-tree own 12")
+    println("__ANIMA_RAW_OWN_TREE_REPORT_BEGIN__ raw-tree ")
     let _path = _emit_helper("raw-tree")
     println("helper_emitted=" + HELPER_PATH)
     println("__ANIMA_RAW_OWN_TREE_REPORT_RESULT__ HELPER_READY")
@@ -363,7 +363,7 @@ fn _raw_tree() {
 }
 
 fn _combined() {
-    println("__ANIMA_RAW_OWN_TREE_REPORT_BEGIN__ combined own 12")
+    println("__ANIMA_RAW_OWN_TREE_REPORT_BEGIN__ combined ")
     let _path = _emit_helper("combined")
     println("helper_emitted=" + HELPER_PATH)
     println("__ANIMA_RAW_OWN_TREE_REPORT_RESULT__ HELPER_READY")
@@ -371,7 +371,7 @@ fn _combined() {
 }
 
 fn _strength_mode() {
-    println("__ANIMA_RAW_OWN_TREE_REPORT_BEGIN__ strength-mode own 12")
+    println("__ANIMA_RAW_OWN_TREE_REPORT_BEGIN__ strength-mode ")
     let _path = _emit_helper("strength-mode")
     println("helper_emitted=" + HELPER_PATH)
     println("__ANIMA_RAW_OWN_TREE_REPORT_RESULT__ HELPER_READY")
@@ -401,7 +401,7 @@ fn main() {
     else if has_strength { _strength_mode() }
     else {
         println("usage: hexa run tool/anima_raw_own_tree_report.hexa --selftest | --raw-tree | --own-tree | --combined | --strength-mode")
-        println("own 12 mandate: ASCII tree report for raw/own SSOT with strengthening + connection metrics + gap detection")
+        println(" mandate: ASCII tree report for raw/own SSOT with strengthening + connection metrics + gap detection")
     }
     return 0
 }

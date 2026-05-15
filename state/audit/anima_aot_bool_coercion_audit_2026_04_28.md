@@ -3,7 +3,7 @@
 **Date:** 2026-04-28
 **Repo:** /Users/ghost/core/anima
 **Branch:** main
-**Auditor:** own 4 root-cause-only (NO AUTO-FIX)
+**Auditor:** root-cause-only (NO AUTO-FIX)
 **Bug origin:** T17 `mk_xii_eeg_corroboration.hexa` (raw#106) — surfaced during corroboration aggregator development
 **Cross-link:** RFC-009 (anima/hexa-lang AOT bool coercion semantics — to be drafted)
 
@@ -138,7 +138,7 @@ pipeline; in `hexa run` they are SAFE.
 
 3. **`anima-eeg/tool/behavioral_correlates_logger.hexa`** (3 hits)
    Same `has_flag(...) == 1` dispatch pattern, plus this is a daily-life
-   recorder (own 4 user-facing path).
+   recorder (user-facing path).
 
 Equally urgent (3 hits each): `wearable_health_integrator`,
 `daily_life_context_logger`, `commit_msg_diff_alignment_lint`,
@@ -146,7 +146,7 @@ Equally urgent (3 hits each): `wearable_health_integrator`,
 
 ---
 
-## 5. Recommended fix patterns (manual application — own 4 root-cause-only)
+## 5. Recommended fix patterns (manual application — root-cause-only)
 
 ### 5.1 Predicate-int → boolean predicate (preferred)
 
@@ -219,5 +219,5 @@ canonical "predicate-via-magnitude" idiom in RFC-009.
 - raw#10  honest C3 — only DEFINITE shapes counted; POSSIBLE explicitly separated
 - raw#65  idempotent — same grep set, same input → same audit output
 - raw#91  high-variance — supermajority of EEG modules implicated (12+ files)
-- own 4   root-cause-only — **NO AUTO-FIX**, manual verification mandatory
+- root-cause-only — **NO AUTO-FIX**, manual verification mandatory
 

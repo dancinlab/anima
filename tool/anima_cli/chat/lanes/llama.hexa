@@ -4,27 +4,27 @@
 //  PURPOSE
 //    Natural language generate via libllama FFI (paradigm-a-prime live;
 //    Llama-family GGUF). Thin wrapper that delegates to existing
-//    chat/llama/llama.hexa module — own 34 raw output preserved.
+// chat/llama/llama.hexa module — raw output preserved.
 //
 //  USER DIRECTIVE (2026-05-09)
 //    "Path 1 (Llama lane): paradigm-a-prime GGUF (Llama-3B base + chat-template).
-//     자연어 generate ✓ but D1 OUTSIDE (own 17 personal-review-only, public X)"
+// 자연어 generate ✓ but D1 OUTSIDE (personal-review-only, public X)"
 //
 //  COMPLIANCE
-//    own 14 V14 carry — llama lane own 18 measurement subject to V14 if
+// V14 carry — llama lane measurement subject to V14 if
 //      verdict-grade
-//    own 17 D1 SCOPE_CLAMP — paradigm-a-prime = ambiguous_research /
+// D1 SCOPE_CLAMP — paradigm-a-prime = ambiguous_research /
 //      Llama base = OUTSIDE strict; lane emits SUBSTRATE_RESEARCH label
 //      automatically in bench mode
-//    own 18 chat-cap C2 — natural utterance scored (spontaneity / coherence /
-//      persona) — measurement separate from chat lane (own 18 / own 34 split)
-//    own 22 mandatory report — bench mode emits structured marker
-//    own 33 trinity ✓
-//    own 34 mandate-1/2 — wrapping 0; chat/llama/llama.hexa preserves raw bytes
-//    own 37 mandate-9 — public promote 영구 차단 (Llama base D1 OUTSIDE);
+// chat-cap C2 — natural utterance scored (spontaneity / coherence /
+// persona) — measurement separate from chat lane (/ split)
+// mandatory report — bench mode emits structured marker
+// trinity ✓
+// mandate-1/2 — wrapping 0; chat/llama/llama.hexa preserves raw bytes
+// mandate-9 — public promote 영구 차단 (Llama base D1 OUTSIDE);
 //      bench output flagged SUBSTRATE_RESEARCH label strict
-//    own 38 매단계 — bench marker
-//    own 39 yaml↔md
+// 매단계 — bench marker
+// yaml↔md
 //
 //  PHASE
 //    LANDED — leverages chat/llama/llama.hexa (Phase 3c live)
@@ -125,7 +125,7 @@ fn main() {
     let argv = _user_argv(args())
     if _arg_present(argv, "--selftest") { sub_selftest(); return }
 
-    // own 17 D1 SCOPE_CLAMP carry — default repo = paradigm-a-prime (substrate
+    // D1 SCOPE_CLAMP carry — default repo = paradigm-a-prime (substrate
     // research lane); other Llama-family aliases require GGUF cache.
     let default_repo = "dancinlab/llm-llama32-3b-paradigm-a-prime-r16-sft-stage1"
     let repo = _arg_value(argv, "--repo", default_repo)
@@ -141,7 +141,7 @@ fn main() {
     }
 
     if bench_mode {
-        // own 37 mandate-9 carry — public promote 영구 차단 라벨
+        // mandate-9 carry — public promote 영구 차단 라벨
         println("[BENCH lane=llama label=SUBSTRATE_RESEARCH d1=ambiguous_research repo=" + repo + "]")
     }
     let out = _delegate_llama_module(prompt, repo, max_tok, temp)

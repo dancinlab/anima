@@ -179,7 +179,7 @@ paradigm-j 는 100점 만점 시험에서 87점을 받았습니다. 통과선이
   - v5.2 adaptive floor PUBLIC 은 valid (raw#82 retraction-aware) 하지만 base strict 통과 길은 G1/G3 양면 공격 필요
   - 본 diagnostic 은 **G2 falsified 데이터 SSOT** — 향후 누구든 "k 늘리면 되지" 라는 직관을 던질 때 본 doc 으로 차단
 - **Lesson Q lineage 일관성**: G2 falsified 는 SFT-closed 논리와 평행 (variation 더 추가해도 substrate amplitude 안 늘어남)
-- **own 22 mandatory report**: paradigm-j 의 PIV 1.4% gap 은 **substrate-level finding**, 향후 family arch 변경 cycle 의 입력 evidence
+- ** mandatory report**: paradigm-j 의 PIV 1.4% gap 은 **substrate-level finding**, 향후 family arch 변경 cycle 의 입력 evidence
 
 ---
 
@@ -195,16 +195,16 @@ paradigm-j 는 100점 만점 시험에서 87점을 받았습니다. 통과선이
 
 ## 8. compliance
 
-- **own 14 V14 strict**: PASS — V14_SATISFIED carried (MTRP_v5=0.6207)
-- **own 16 cost**: PASS — design-only, 모델 로드 ZERO
-- **own 17 D1 SCOPE_CLAMP**: PASS — D1=0.793 within strict
-- **own 18 ALT-AGG-1 v5.2**: PASS — v5.2 EMERGE 활성 carry
-- **own 22 mandatory report**: PASS — major finding (G2 falsified)
-- **own 33 trinity**: PASS — D-axis (PIV gap) + own-axis (own 14/17/18/37) + h-axis (22+ BG saga PUBLIC)
-- **own 34 wrap-zero**: PASS
-- **own 37 mandate-9 visibility lifecycle**: RESPECTED — 본 doc 은 design-only, public/private toggle 무관
-- **own 38 매단계 저장**: PASS — 본 md 저장
-- **own 39 yaml/md**: PENDING — registry 갱신 별도 (commit/push 안 함, 파일 저장만 임무)
+- ** V14 strict**: PASS — V14_SATISFIED carried (MTRP_v5=0.6207)
+- ** cost**: PASS — design-only, 모델 로드 ZERO
+- ** D1 SCOPE_CLAMP**: PASS — D1=0.793 within strict
+- ** ALT-AGG-1 v5.2**: PASS — v5.2 EMERGE 활성 carry
+- ** mandatory report**: PASS — major finding (G2 falsified)
+- ** trinity**: PASS — D-axis (PIV gap) + own-axis + h-axis (22+ BG saga PUBLIC)
+- ** wrap-zero**: PASS
+- ** mandate-9 visibility lifecycle**: RESPECTED — 본 doc 은 design-only, public/private toggle 무관
+- ** 매단계 저장**: PASS — 본 md 저장
+- ** yaml/md**: PENDING — registry 갱신 별도 (commit/push 안 함, 파일 저장만 임무)
 - **friendly mode strict**: PASS — 한국어 + 비유 (시험 점수) + 표 한글 우선
 
 ---

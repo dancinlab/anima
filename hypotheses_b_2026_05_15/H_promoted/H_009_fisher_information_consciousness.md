@@ -37,7 +37,7 @@ Fisher Information Matrix (FIM)의 spectrum이 IIT4 Φ proxy — FIM eigenvalue 
 - sister H: H_010 (holographic), H_011 (IIT geometry), H_006 (oscillator)
 - legacy prereg: `state/axis96_6th_bb_arch_separator_pre_register.json`
 - literature: Amari (1985) Differential Geometric Methods in Statistics
-- own: own 21
+- own:
 
 ## Honest Limits
 

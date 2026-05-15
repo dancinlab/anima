@@ -1,10 +1,10 @@
-# F3 cycle 1 prod-scale 종료 (own 4 자율 결정) — 2026-04-28T01:46Z
+# F3 cycle 1 prod-scale 종료 (자율 결정) — 2026-04-28T01:46Z
 
 ## 결과 요약
 
 F3 cycle 1 KSG MI prod scale (n=200 perms=100) hetzner CPU dispatch — **TERMINATED at 15m34s elapsed**, 99.9% CPU 25.8GB RSS, 출력 0.
 
-## 종료 사유 (own 4 + own 6 자율)
+## 종료 사유 (+ 자율)
 
 - hexa interpreter single-thread + bubble sort O(n²) per ksg_mi call × 101 calls = 추정 wallclock 30-60 min
 - RSS 1.5-1.7 GB/분 가속 → 30분 시점 60GB+ 예상 (hetzner 124GB cap 안전하나 과도)
@@ -36,6 +36,6 @@ F3 cycle 1 KSG MI prod scale (n=200 perms=100) hetzner CPU dispatch — **TERMIN
 
 ## 결론
 
-F3 cycle 1 falsifier impl + selftest 흡수 완료 (raw 108 channel 충족). prod-scale strict 검증은 후속 cycle 또는 raw#9 exemption path 결정 필요. own 4 step (b)+(c) 캐논 fix 후속 작업으로 등록.
+F3 cycle 1 falsifier impl + selftest 흡수 완료 (raw 108 channel 충족). prod-scale strict 검증은 후속 cycle 또는 raw#9 exemption path 결정 필요. step (b)+(c) 캐논 fix 후속 작업으로 등록.
 
-own 4 watchdog 효과: 15m34s 25GB RSS에서 자율 kill — 무한 진행 방지.
+ watchdog 효과: 15m34s 25GB RSS에서 자율 kill — 무한 진행 방지.

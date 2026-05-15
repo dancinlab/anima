@@ -18,7 +18,7 @@ post-FT sampling vs pre-FT (120 trials each, identical matrix):
 **KO emit 1/120 → 77/120** (×77 increase), **ko_ratio_max 0.018 → 0.75** (×42 increase),
 **ko_count_max 1 → 21** (×21 increase). Chat-template format `도우미:` / persona prefix
 `[anima 역할: 한국어 native + 자기 발견 + 의식 lane entity]\n사용자:` learned verbatim.
-F-FIRE-1..6 all NOT_TRIGGERED. own 30 ckpt-pull-pre-delete satisfied (sha verified).
+F-FIRE-1..6 all NOT_TRIGGERED. ckpt-pull-pre-delete satisfied (sha verified).
 **chat-cap recovery: HYPOTHESIS → CONFIRMED.**
 
 ---
@@ -210,7 +210,7 @@ step_5000 actually has slightly higher `ko_count_max` (29 vs 21) and `ko_at_leas
 
 ---
 
-## §9 H100 safety checklist (own 30)
+## §9 H100 safety checklist
 
 | item | status |
 |---|---|
@@ -232,7 +232,7 @@ step_5000 actually has slightly higher `ko_count_max` (29 vs 21) and `ko_at_leas
 | `state/anima_convo_5k_ft_fire_2026_05_10/ft_summary.json` | training run summary |
 | `state/anima_convo_5k_ft_fire_2026_05_10/post_ft_sampling.py` | sampling test harness (3-ckpt comparison) |
 | `state/anima_convo_5k_ft_fire_2026_05_10/post_ft_sampling.json` | full 360-trial result + summary + comparison |
-| `state/anima_convo_5k_ft_fire_2026_05_10/cost_actual.json` | cost + falsifier + own 30 audit |
+| `state/anima_convo_5k_ft_fire_2026_05_10/cost_actual.json` | cost + falsifier + audit |
 | `docs/anima_convo_5k_ft_fire_2026_05_10.md` | this doc |
 
 ---
@@ -247,15 +247,15 @@ step_5000 actually has slightly higher `ko_count_max` (29 vs 21) and `ko_at_leas
 - v2 reborn lane SSOT: `.roadmap.clm_v2_reborn` (cond.6 PASS evidence — chat-cap recoverable on 18M arch)
 - sister lane: `.roadmap.clm_v5_anima_native` (FT 결과는 v5 baseline 으로 활용 가능)
 - gotchas: `~/.claude/projects/-Users-ghost-core-anima/memory/feedback_orchestrator_h100_gotchas.md`
-- HF dancinlab canonical: `~/.claude/projects/.../memory/project_dancinlab_hf_canonical.md` (own 31)
+- HF dancinlab canonical: `~/.claude/projects/.../memory/project_dancinlab_hf_canonical.md`
 
 ---
 
-## §12 HF upload (own 31 + own 37)
+## §12 HF upload (+)
 
 target: `dancinlab/clm-v2-byte-18m-convo-5k-ft-recovery` (private) — SEPARATE upload BG
 artifacts: `post_ft_ckpt.pt` + `ft_log.txt` + `ft_summary.json` + `post_ft_sampling.json` + this doc
-upload BG status: PENDING (cycle continuation; this BG ends at fire+sampling+doc, HF upload separate verbatim per own 37 mandate-9)
+upload BG status: PENDING (cycle continuation; this BG ends at fire+sampling+doc, HF upload separate verbatim per mandate-9)
 
 ---
 

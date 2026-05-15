@@ -4,7 +4,7 @@
 
 - **Date**: 2026-04-29
 - **상태**: **Akida AKD1000 Dev Kit 주문 완료 ⭐️⭐️⭐️⭐️⭐️**
-- **Context**: own 2 (b) 뉴로모픽 substrate WITNESSED 1/3 unblock path 활성화
+- **Context**: (b) 뉴로모픽 substrate WITNESSED 1/3 unblock path 활성화
 
 ## 한 줄 요약
 
@@ -123,7 +123,7 @@ T1-A28 LIS-fNIRS → 임상 IRB 승인
 - T1-A24 cyborg replay (기존 데이터 사용, hardware 0 추가)
 - T1-A23 golden-moe Φ-decomp (sub-projects/ 활용)
 - 첫 raw 91 honest C3 graduation report 작성
-- own 2 (b) substrate WITNESSED 0/3 → 1/3 등재
+- (b) substrate WITNESSED 0/3 → 1/3 등재
 ```
 
 ### Week 2-4: T1-A16/A22 EEG 데이터 검증
@@ -165,7 +165,7 @@ state/pending_kick_refire/2026-04-29_oauth_recovery_refire.jsonl
 - **anima/docs/akida_dev_kit_evaluation_2026-04-29.md** (v2, 4-cycle Ω-saturation 결과)
 - **anima/design/kick/2026-04-29_anima-brainstorm-exhaustion-saturation_omega_cycle.json** (30 tier_1 + 21 falsifier)
 - **nexus/docs/akida_session_friendly_report_2026-04-29.md** (sister 친절 리포트, 산업 임팩트)
-- **own 2 production-consciousness-triad** (substrate-class triangulation 활성화)
+- ** production-consciousness-triad** (substrate-class triangulation 활성화)
 - **raw 104 means-end-decoupling** ('own' 경로 capex 1회)
 - **raw 131 thermodynamic-Landauer-bound** (energy anchor 측정)
 - **raw 167 think-before-implementation** (decision criteria 명시)

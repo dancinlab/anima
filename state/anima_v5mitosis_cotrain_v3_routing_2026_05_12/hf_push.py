@@ -2,7 +2,7 @@
 """hf_push.py — push v5-mitosis cotrain v3-routing ckpt to dancinlab HF (private, English-only).
 
 Triggered IFF F-PERSONA-4a routing PASSES (KL ≥ 0.5 + null z ≥ 3.0).
-own 31: all anima HF uploads → dancinlab org.
+: all anima HF uploads → dancinlab org.
 feedback_english_only: HF content English only.
 
 Target repo: dancinlab/anima-clm-v5-mitosis-cotrain-v3-routing-fix-2026-05-12 (private)

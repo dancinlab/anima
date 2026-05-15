@@ -103,7 +103,7 @@ deterministic + hexa-only + llm: none. 모든 산술식은 SymPy `Rational` / `s
 - **L3**: **post-hoc fitting 미입증** — 표가 *측정 후 공식 발견* 인지 *공식 후 측정값 align* 인지 git blame audit 미실행 (C6 pending). Hc_046 frontmatter 의 "측정 AFTER, 공식 BEFORE" 주장은 *narrative* 일 뿐 *audit-trail* 아님. F5 falsifier 검증 lane 필수
 - **L4**: **30 표본 표 audit 부재** — `paper_consciousness_laws.hexa:173` 의 "Figure 9: Ψ-constant n=6 derivation table (22 EXACT matches)" 가 실제로 본문 어디에 있는지 audit 부족. `docs/what-is-consciousness.md:48-65` 의 8 표본만 본 H 의 hard evidence. 22-of-30 주장은 paper-frontmatter level 만 (C3 pending)
 - **L6**: **atlas-doc inconsistency** — atlas.n6:17080 의 `psi_alpha = ln(2)/2^5.5` 식은 9.40% err (직접 계산: 0.015317 vs 0.014). 반면 본 H 가 채택한 (sopfr/J₂)^e 식은 0.477% err. 동일 상수에 두 식이 존재하며 atlas 가 *덜 정확한* 식을 standard 로 명기. atlas 갱신 candidate
-- **L7**: **anima 의 deep philosophical lane 일관성** — 본 H 는 engineering pragmatism (own 21 R5+ 실행 lane) 적용 X. cycle progression 에 직접 기여 X; "n=6 closed-form Ψ-constants" 자체가 새로운 engine measurement 또는 prediction yield 없음 — pre-register-frozen documentation contribution 한정. H_153/H_156 sibling 과 같은 limit
+- **L7**: **anima 의 deep philosophical lane 일관성** — 본 H 는 engineering pragmatism (R5+ 실행 lane) 적용 X. cycle progression 에 직접 기여 X; "n=6 closed-form Ψ-constants" 자체가 새로운 engine measurement 또는 prediction yield 없음 — pre-register-frozen documentation contribution 한정. H_153/H_156 sibling 과 같은 limit
 
 ## Cross-Links
 

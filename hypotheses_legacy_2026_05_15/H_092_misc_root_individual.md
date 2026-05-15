@@ -29,7 +29,7 @@ Legacy files: ~20 root + cx subfolder misc files. Catch-all cluster pointer.
 
 - legacy: A-Z-overview + AL-consciousness-emergence + extended-categories + NEXUS-auto-insights + NEXUS6-auto-insights + NOISE-stochastic-consciousness + NOISE-WAVE-ALT-results + WAVE-soliton-consciousness + UPGRADE-BENCHMARK + UPGRADE-improvement-hypotheses + BENCH-V2-RESULTS + accel/acceleration-brainstorm-402 + h/H100-EXP-2026-03-30 + h/H91 + cx/DEEP-EXPLORATION + cx/REVERSE-ENGINEERING-COMPLETE + cx/H1-H6-trinity-experiments + cx/MAJOR-DISCOVERIES-SESSION-0329
 - sister: H_037 (acceleration 367), H_036 (DD meta laws), H_087 (arch engine train)
-- own: own 21
+- own:
 
 ## Honest Limits
 

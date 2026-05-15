@@ -61,7 +61,7 @@
 - `f6a30470c` `witness(a25-d631a902-wire): 6-repo 23.35MB MEASURED 60.79% — DEFER 80%`  (matched in top-3: ['a25', 'd631a902', 'wire'])
 - `50002d89f` `fix(an11-fire18): Mode H fix #4 — cuda_max_good>=12.8 복원 + cu118 force`  (matched in top-3: ['an11'])
 - `fdf782215` `fix(an11-fire12): torch cu118 wheel — Mode D fix #2 (cuda=12.6 driver `  (matched in top-3: ['an11'])
-- `c1ddd0a02` `fix(an11-cuda12.6-fallback): cuda_max_good>=12.6 임계 완화 + own 5 완성도 기준 `  (matched in top-3: ['an11'])
+- `c1ddd0a02` `fix(an11-cuda12.6-fallback): cuda_max_good>=12.6 임계 완화 + 완성도 기준 ` (matched in top-3: ['an11'])
 - `34572c088` `fix(an11-multi-axis-env-vars): R38+R39 통합 dispatch 인프라 — LORA_RANK + M`  (matched in top-3: ['an11'])
 - `6d9e87fed` `fix(an11-fire10): apt install gcc — Mode F-2 (Triton runtime/build sti`  (matched in top-3: ['an11'])
 - `485a7cb51` `fix(an11-fire8): vllm --enforce-eager (Mode F: GCC 누락 / torch.compile `  (matched in top-3: ['an11', 'fire8'])

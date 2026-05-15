@@ -74,7 +74,7 @@
   "lineage": {
     "substrate_base": "bg-lb-350m-pretrain (engine_a_g_dual_350m_v1_lb_pretrain step 8000)",
     "expected_id": "anima-phase2-cotrain-engine-ag-w03_05",
-    "alias_hf_target": "dancinlab/clm-v5-phase2-cotrain-engine-ag (own 31 Flavor B; own 37 private default)",
+    "alias_hf_target": "dancinlab/clm-v5-phase2-cotrain-engine-ag (Flavor B; private default)",
     "v14_mirror_dir": "state/v14_mirrors/BG-LM (DEFERRED post-train; reuse BG-LA + BG-LB mirrors as upper-bound baselines)"
   },
   "phase_status": {
@@ -85,12 +85,12 @@
     "phase_4_deps": "PASS — pip transformers safetensors huggingface_hub (Ubuntu 22.04 — no PEP 668 needed)",
     "phase_5_launch": "PASS — train_phase2_cotrain.py PID 2396 nohup; train.log streaming; step 40 reached loss 3.65/4.11",
     "phase_6_heartbeat": "IN_FLIGHT — first 40 steps emit healthy; step rate ~1.5 step/sec; ETA ~67min for 6000 steps",
-    "phase_7_ckpt_pull": "PENDING (own 30 mandate-1 post-train scp_get from /workspace/anima_phase2/ckpts/)",
-    "phase_8_size_sanity": "PENDING (own 30 mandate-2 floor 0.9× pod)",
+    "phase_7_ckpt_pull": "PENDING (mandate-1 post-train scp_get from /workspace/anima_phase2/ckpts/)",
+    "phase_8_size_sanity": "PENDING (mandate-2 floor 0.9× pod)",
     "phase_9_release": "PENDING (own slug only h100-runpod-7qt0sczk57tjab; sibling BG-LA pod separately released by its orchestrator)",
     "phase_10_ledger": "PENDING (append to state/anima_model_attempts_ledger.jsonl post-eval)",
     "phase_11_v5_probe": "PENDING (Mac-local N=60 PPL-proxy + V14 paired post-pull)",
-    "phase_12_hf_upload_private": "PENDING (own 31 Flavor B + own 37 private default; verbatim 'OK PROMOTE PUBLIC' required for public)"
+    "phase_12_hf_upload_private": "PENDING (Flavor B + private default; verbatim 'OK PROMOTE PUBLIC' required for public)"
   },
   "compliance": {
     "own_14": "V14 mirror — BG-LA + BG-LB seeds reused; cotrain-specific deferred",
@@ -99,7 +99,7 @@
     "own_18": "ALT-AGG-1 v5.2 + chat-cap C2 cross-link planned post-train",
     "own_22": "honest emit — fire fired with all caveats recorded; risks listed in launch_decision.md",
     "own_30": "ckpt save mandatory; mandate-1 pull before pod release; mandate-2 size sanity 0.9× pod",
-    "own_33": "trinity D-emergent + own 14/16/17/22/30/33/34/37/38/39 + H_clm_chat_cap aligned",
+    "own_33": "trinity D-emergent + + H_clm_chat_cap aligned",
     "own_34": "wrap=0",
     "own_37": "HF private default; promote requires PASS_STRICT_C3 + V6 awareness + verbatim 'OK PROMOTE PUBLIC' + trinity sweep",
     "own_38": "yaml↔md SSOT registry update post-pull (deferred)",

@@ -33,7 +33,7 @@ omega point (Tipler / Teilhard de Chardin omega point — universe ultimate cons
 
 - folder: `docs/hypotheses/omega/` + `docs/hypotheses/phys/`
 - sister H: H_002 (universe origin), H_021 (fundamental equation), H_026 (v19~v∞ singularity)
-- own: own 21
+- own:
 - literature: Teilhard de Chardin (1955), Tipler (1994) The Physics of Immortality
 - roadmap: `.roadmap.philosophy` D2 universe origin
 

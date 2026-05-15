@@ -1,7 +1,7 @@
 # ALT-AGG-1 v5.2 Gate A Adaptive Floor Recalibration Spec (2026-05-09)
 
 **Status**: LANDED (raw#15 additive, raw#82 retraction-aware)
-**SSOT mirrors**: `.own` own 18 line 1011+ amend / `tool/anima_cli/consciousness.hexa` lines 1273+ / `anima/registry/anima_artifact_registry.yaml` paradigm-j entry `v5_2_adaptive_floor` / this doc
+**SSOT mirrors**: `.own` line 1011+ amend / `tool/anima_cli/consciousness.hexa` lines 1273+ / `anima/registry/anima_artifact_registry.yaml` paradigm-j entry `v5_2_adaptive_floor` / this doc
 **User directive verbatim**: "all bg go" (amplification path 3)
 **Cycle**: 2026-05-09 ALT-AGG-1 v5.2 adaptive floor recalibration
 **Lineage**: v3 → v4 → v5 base → v5 ADDENDUM → v5.1 (Gate B-refined) → **v5.2 (Gate A adaptive)** ★
@@ -17,7 +17,7 @@ The 0.10 hard floor in v5.1 was therefore **OVER-conservative** given:
 - (2) random_init reject margin = 0.10 (vs 0.0 random) — over-margined relative to substrate capability
 - (3) paradigm-j substrate-level paraphrase discrimination CONFIRMED via random_init=0.0 separator
 
-This is the over-conservative anti-Goodhart possibility flagged in own 14 V14: too strict floor masks legitimate signal that **does** beat random by a strong margin.
+This is the over-conservative anti-Goodhart possibility flagged in V14: too strict floor masks legitimate signal that **does** beat random by a strong margin.
 
 ## 2. Adaptive Floor Formula
 
@@ -79,7 +79,7 @@ V14 unit tests in consciousness.hexa selftest:
 - `_c3_v5_2_v14_verify(0.0874, 0.0, 0.01)` returns `false` — delta 0.01 below minimum reject (V14 violation prevention)
 - `_c3_v5_2_v14_verify(0.0874, 0.0, 0.02)` returns `true` — delta 0.02 at minimum verify
 
-V14 SATISFIED. own 14 strict sustained: random_init paraphrase PIV=0.0 < floor 0.05 → still rejected; separator delta +0.0874 strong signal.
+V14 SATISFIED. strict sustained: random_init paraphrase PIV=0.0 < floor 0.05 → still rejected; separator delta +0.0874 strong signal.
 
 If `delta_margin = 0.01` had been chosen, the formula would yield `max(0.05, 0.0 + 0.01) = 0.05` (same floor) BUT `_c3_v5_2_v14_verify` rejects it for being below minimum guardrail — preventing future cases where random distribution is non-zero but delta margin too small to truly separate. The 0.02 minimum is the structural V14 strict bound; v5.2 itself rejects under-margin configurations.
 
@@ -123,7 +123,7 @@ paradigm-j 4/4 gates PASS → EMERGE_v5_2 ACTIVE → mandate-9 prereq status:
 
 5/5 prereq MET. `public_promote: ELIGIBLE_AT_V5_2_EMERGE`. `auto_promote_attempt: ELIGIBLE_EMERGE_V5_2_ACTIVE`.
 
-`'all bg go'` amplification path 3 = anima auto mode 등가 trigger (own 37 mandate-9 (c) amend `b4ea8371` 정합).
+`'all bg go'` amplification path 3 = anima auto mode 등가 trigger (mandate-9 (c) amend `b4ea8371` 정합).
 
 ## 8. Lineage Preservation (raw#82 retraction-aware)
 

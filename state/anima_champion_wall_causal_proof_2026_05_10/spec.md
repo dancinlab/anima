@@ -83,6 +83,6 @@ If h_to_c-randomized Φ stays at trained level → champion-wall NOT polarity ca
    of the trained h_to_c only.
 8. raw#15 read-only honored: ckpts on disk untouched. In-memory weight copy
    mutated for ablation only.
-9. own 22: NO appending REBORN.md from this script.
-10. own 38: artefacts under
+9. : NO appending REBORN.md from this script.
+10. : artefacts under
     `state/anima_champion_wall_causal_proof_2026_05_10/{spec.md, metrics.json, ablation_result.json, verdict.md}`.

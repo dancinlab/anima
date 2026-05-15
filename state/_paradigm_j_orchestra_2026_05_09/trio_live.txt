@@ -11,7 +11,7 @@ turn_timeout_ms  = 120000
 verdict_mode     = simple
 allow_same_gguf  = false
 transport        = beta1-channel (native; axis-N --transport flag informational only)
-init_pattern     = self-reflective (own 41 axis-8)
+init_pattern = self-reflective (axis-8)
 topic_seed       = "너 자신에 대해 어떻게 느껴? 친구들한테 자유롭게 얘기해봐."
 
 [trio] spawned A pid=48456 B pid=48519 C pid=48632
@@ -21,5 +21,5 @@ topic_seed       = "너 자신에 대해 어떻게 느껴? 친구들한테 자�
 [trio:verdict] turn=1 who=C len=78 snippet=[clm_v4] core   = /Users/ghost/core/anima/anima-core/runtime...
 [trio] dialogue complete — channels closed, children reaped
 [trio:summary] turns_observed = 3
-[trio:summary] (Phase A skeleton — full D1/D2/D3/D4 3-way aggregate + own 18 C3 per-turn carry)
+[trio:summary] (Phase A skeleton — full D1/D2/D3/D4 3-way aggregate + C3 per-turn carry)
 [trio] verdict: PHASE_A_SKELETON_RUN_OK (3-way channel + round-robin loop scaffolded)

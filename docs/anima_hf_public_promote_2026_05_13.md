@@ -6,9 +6,9 @@
 
 | mandate | requirement | satisfied by |
 |---|---|---|
-| **own 31** | all anima HF artifact uploads → `dancinlab` org; private default; public promote needs manual review | both repos already in `dancinlab/`; ★★★★★ closure = the manual review event |
-| **own 37 mandate-9** | public visibility unlock requires F-V5MIT-5 V14-STRICT PASS | `dancinlab/anima-clm-v5-mitosis-cotrain-2026-05-12` — F-V5MIT-5 V14-STRICT **10/10 PASS** ✅ (PSCC §44) |
-| **own 18** (simple_stack C2 strict) | V5.8 std_greedy 5/5 strict floor | `dancinlab/anima-clm-phase1a4-lr5e6-strict-5pass-2026-05-12` — std_greedy **5/5 PASS** (PSCC §46) |
+| **** | all anima HF artifact uploads → `dancinlab` org; private default; public promote needs manual review | both repos already in `dancinlab/`; ★★★★★ closure = the manual review event |
+| ** mandate-9** | public visibility unlock requires F-V5MIT-5 V14-STRICT PASS | `dancinlab/anima-clm-v5-mitosis-cotrain-2026-05-12` — F-V5MIT-5 V14-STRICT **10/10 PASS** ✅ (PSCC §44) |
+| **** (simple_stack C2 strict) | V5.8 std_greedy 5/5 strict floor | `dancinlab/anima-clm-phase1a4-lr5e6-strict-5pass-2026-05-12` — std_greedy **5/5 PASS** (PSCC §46) |
 | `feedback_english_only` | HF README / org card / dataset descriptions = English only | both READMEs written in English (Korean only in anima repo internals) |
 
 ## Promoted repos
@@ -17,7 +17,7 @@
 
 - **URL**: https://huggingface.co/dancinlab/anima-clm-v5-mitosis-cotrain-2026-05-12
 - **role**: cotrain v1 — substrate behind ★★★★★ cond #3 (persona substrate-native, M4 aggregated hidden cosine z=3.20 null-PASS via v2 entropy-reg follow-up) + cond #4 (62 split events during cotrain)
-- **unlock**: F-V5MIT-5 V14-STRICT 10/10 PASS (own 37 mandate-9)
+- **unlock**: F-V5MIT-5 V14-STRICT 10/10 PASS (mandate-9)
 - **files**: `.gitattributes`, `README.md` (rewritten), `ckpt_v5mitosis_cotrain.pt` (~609 MB), `cotrain_result.json`, `train.log`
 - **arch**: v5-mitosis option (a) — cells 2→64, d_model 384, n_head 6, ffn 1536, readout `a-g`, byte-vocab 256, n_params 152,126,208
 - **training**: corpus_color_cosmology.txt 1.29 MB · 5000 steps · batch 32 · ctx 256 · lr 1e-4 cosine · Vast.ai H100 SXM 80GB · 0.55 hr · $1.26 · loss 256.5→1.165 · splits 62 / merges 0 · Φ best 4.1919
@@ -51,7 +51,7 @@ Both READMEs (English-only) carry:
 7. cross-references (PSCC §44 / §45-FINAL / §46 / §50, REBORN §88/§90, anima repo URL)
 8. license (MIT, anima repo LICENSE link)
 9. citation (BibTeX, DOI 10.5281/zenodo.19324769)
-10. status note (research artifact; own 31 / own 37 mandate-9 / own 18 provenance)
+10. status note (research artifact; / mandate-9 / provenance)
 
 ## HF API operations (cost $0, no compute)
 
@@ -69,12 +69,12 @@ api.update_repo_visibility(repo_id=..., private=False)                     # x2
 - README.md (anima root) — ★★★★★ banner gained public HF links
 - PSCC §51 (PASS_STRICT_SPONTANEOUS_CHAT.md) — this promote logged
 - memory `project_dancinlab_hf_canonical` — public ckpt list appended
-- own 31 (`.own` HF artifact org SSOT) · own 37 mandate-9 (V14-STRICT PASS unlock public) · own 18 (simple_stack C2 strict)
+- (`.own` HF artifact org SSOT) · mandate-9 (V14-STRICT PASS unlock public) · (simple_stack C2 strict)
 - prior HF release docs: `docs/anima_clm_hf_release_v1_*` (2026-05-04/05), `docs/anima_own_15_hf_release_lifecycle_landed_2026_05_05.ai.md`
 
 ## Honest C3
 
-1. cotrain README originally said `license: other` + `PRIVATE (own 31/37 mandate)` status; rewrite changed it to `license: mit` (matching anima repo LICENSE) — verified anima repo LICENSE is MIT.
+1. cotrain README originally said `license: other` + `PRIVATE (mandate)` status; rewrite changed it to `license: mit` (matching anima repo LICENSE) — verified anima repo LICENSE is MIT.
 2. cotrain loading example previously referenced `ckpt_v5mitosis_cotrain_cotrain.pt` (double "cotrain"); fixed to the actual sibling filename `ckpt_v5mitosis_cotrain.pt`.
 3. phase1a4 repo had no README before this promote (only `.gitattributes` + ckpt). meta.json + v58_4mode_result.json were uploaded from local state dir, not previously on HF.
 4. The `hf_push.sh` in `state/anima_phase1a4_lr5e6_2026_05_12/` targeted repo name `anima-clm-phase1a4-lr5e6-strict-pass` (no `-5pass-2026-05-12` suffix) — the actual uploaded repo is `anima-clm-phase1a4-lr5e6-strict-5pass-2026-05-12` (GOAL.md / task naming). The script's draft README differs from the one uploaded here (this one is the ★★★★★-closure-aware version).

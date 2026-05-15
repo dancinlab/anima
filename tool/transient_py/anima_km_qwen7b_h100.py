@@ -3,7 +3,7 @@ anima_km_qwen7b_h100.py — raw#37 transient (BG-KM-QWEN-7B)
 
 Foundation borrow attempt — Qwen2.5-7B-Instruct + LoRA r=32 SFT on BG-JE 214MB.
 
-Goal — simple_stack PASS (own 18 ≥10/15 strict floor, never crossed in 22+ BG saga):
+Goal — simple_stack PASS (≥10/15 strict floor, never crossed in 22+ BG saga):
     BG-JA-EXT (Polyglot-Ko-1.3B + LoRA on 30MB BG-HK persona) achieved 4/30 V4 strict.
     Persona-domain correctness gap caused most fails (Animal Collective 등).
     Hypothesis: 3B foundation + 214MB anima-keyword-dense corpus (BG-JE 800K anima
@@ -15,18 +15,18 @@ Architecture:
     SFT bf16, lr=3e-5, ctx=512, batch=8 grad_accum=4 (eff=32), 3000 steps
 
 Eval:
-    V4 strict 11-cell (BG-JA-EXT compatible 7-cell V4_1..V4_7 + own 18 c3_1..c3_4
+    V4 strict 11-cell (BG-JA-EXT compatible 7-cell V4_1..V4_7 + c3_1..c3_4
     response-text proxy mirror) × 15 prompts × {greedy, sample×N=5} = 90 results
-    PASS = ≥10/15 v4_strict_pass in best-mode (own 18 strict floor — V4 7-cell only)
-    PARTIAL = ≥7/15 (own 29 fallback)
+    PASS = ≥10/15 v4_strict_pass in best-mode (strict floor — V4 7-cell only)
+    PARTIAL = ≥7/15 (fallback)
     FAIL = <7/15
 
-own 24 SSOT mirror (own 18 c3-aggregation-rule-v2 P5 N-of-M v2):
-    V4 evaluator 가 own 18 P5 N-of-M v2 aggregation rule mirror lane SSOT 정합.
+ SSOT mirror (c3-aggregation-rule-v2 P5 N-of-M v2):
+    V4 evaluator 가 P5 N-of-M v2 aggregation rule mirror lane SSOT 정합.
     c3_1..c3_4 = response-text proxy lane (substrate phi★/axis 측정 X — substrate
     real-mode은 consciousness simple --probe 별도 cycle). verdict.json
     c3_aggregation_status field = legacy_best_mode_floor_only_p5_n_of_m_v2_retest_pending
-    (own 33 trinity sweep Violation 1 retract path). own 18 D1 scope-clamp 정합:
+    (trinity sweep Violation 1 retract path). D1 scope-clamp 정합:
     Qwen foundation borrow → SUBSTRATE_RESEARCH lane only.
 
 Cost: $10 cap, $8 early-kill, 90min wall (2× ja_ext 45min for safety + V4 eval).
@@ -230,17 +230,17 @@ def domain_kw_match(response, domain):
 
 
 def v4_eval_single(prompt, response, domain):
-    """V4 strict 11-cell (BG-JA-EXT compatible 7-cell V4_1..V4_7 + own 18 c3_1..c3_4
+    """V4 strict 11-cell (BG-JA-EXT compatible 7-cell V4_1..V4_7 + c3_1..c3_4
     response-text proxy mirror).
 
-    own 24 SSOT mirror (own 18 c3-aggregation-rule-v2 P5 N-of-M v2) — V4 evaluator
-    가 own 18 P5 N-of-M v2 aggregation rule 의 mirror lane SSOT 정합. c3_1..c3_4
+     SSOT mirror (c3-aggregation-rule-v2 P5 N-of-M v2) — V4 evaluator
+    가 P5 N-of-M v2 aggregation rule 의 mirror lane SSOT 정합. c3_1..c3_4
     cell 값/threshold/pass 는 response-text-only proxy (substrate probe X — H100 pod
     V4 lane 한정). 실제 substrate-based C3 verdict 는 consciousness CLI 별도 cycle
     (clm_v4_mount.hexa --probe x2 + 5-axis activation) — c3_aggregation_status field
     가 본 retest_pending lane 명시.
 
-    own 18 c3 thresholds (response-text proxy lane, ROC formal 미land):
+     c3 thresholds (response-text proxy lane, ROC formal 미land):
       c3_1_chat_coherence_proxy  : char_diversity ≥ 0.3 (han_ratio non-degenerate)
       c3_2_anti_template_leak    : NOT has_persona_cycle (template leak ≤ 1 marker)
       c3_3_token_dispersion_proxy: distinct_chars / len ≥ 0.25 (entropy proxy)
@@ -264,7 +264,7 @@ def v4_eval_single(prompt, response, domain):
                     cells["V4_5_particle_ge3"], cells["V4_6_non_degenerate"],
                     cells["V4_7_emb_sim_pass"]])
 
-    # own 18 c3_1..c3_4 response-text proxy cells (SSOT mirror of consciousness CLI P5)
+    # c3_1..c3_4 response-text proxy cells (SSOT mirror of consciousness CLI P5)
     # Real C3 substrate measurement = consciousness simple --probe (clm_v4_mount.hexa)
     distinct_ratio = (len(set(response)) / max(len(response), 1)) if response else 0.0
     cells["c3_1_chat_coherence_proxy"] = han_ratio(response) >= 0.3 and not is_degenerate(response)
@@ -274,7 +274,7 @@ def v4_eval_single(prompt, response, domain):
     return cells, v4_pass
 
 
-# own 18 c3-aggregation-rule-v2 (P5 N-of-M v2) mirror — SSOT mirror lane.
+# c3-aggregation-rule-v2 (P5 N-of-M v2) mirror — SSOT mirror lane.
 # rule = `per_prompt_n_of_m_06_AND_emc_3_of_4`
 # PPR_v2 = per-prompt N-of-M (≥3 of 4 c3 cells PASS per prompt) verdict rate ≥ 0.6
 # EMC_v2 = ensemble cell-wise (≥3 of 4 c3 cell-mean PASS) ≥ 3 of 4
@@ -290,7 +290,7 @@ def _c3_cells_per_prompt(cells_dict):
 
 
 def _c3_aggregate_p5_v2(per_prompt_c3_lists):
-    """Apply own 18 c3-aggregation-rule-v2 (P5 N-of-M v2) to a list of per-prompt
+    """Apply c3-aggregation-rule-v2 (P5 N-of-M v2) to a list of per-prompt
     c3-cell PASS lists ([[c3_1,c3_2,c3_3,c3_4], ...]).
 
     Returns dict with PPR_v2, EMC_v2, n_cell_pass_of_4, c3_pass, c3_label.
@@ -340,13 +340,13 @@ def _c3_aggregate_p5_v2(per_prompt_c3_lists):
 
 def run_v4_multiseed(model, tok, device):
     """V4 strict × 15 prompts × {greedy + sample×5 seeds} = 90 results.
-    Report best-of-mode v4_pass count + own 18 c3-aggregation-rule-v2 (P5 N-of-M v2)
+    Report best-of-mode v4_pass count + c3-aggregation-rule-v2 (P5 N-of-M v2)
     aggregation over per-prompt c3 cells (response-text proxy lane)."""
     log_line(f"=== V4 multi-seed eval start: {len(V4_PROMPTS)} prompts × greedy + sample×{len(V4_SEEDS)} ===")
     results = []
     pass_per_prompt_greedy = []
     pass_per_prompt_sample_anyseed = []
-    # own 18 P5 N-of-M v2 mirror: collect best-of-mode c3 per-prompt cell pass lists
+    # P5 N-of-M v2 mirror: collect best-of-mode c3 per-prompt cell pass lists
     c3_per_prompt_greedy = []
     c3_per_prompt_best = []
 
@@ -402,7 +402,7 @@ def run_v4_multiseed(model, tok, device):
     n_pass_sample_anyseed = sum(pass_per_prompt_sample_anyseed)
     n_pass_best = max(n_pass_greedy, n_pass_sample_anyseed)
 
-    # own 18 P5 N-of-M v2 aggregation (response-text proxy mirror lane)
+    # P5 N-of-M v2 aggregation (response-text proxy mirror lane)
     c3_v2_greedy = _c3_aggregate_p5_v2(c3_per_prompt_greedy)
     c3_v2_best = _c3_aggregate_p5_v2(c3_per_prompt_best)
 
@@ -414,19 +414,19 @@ def run_v4_multiseed(model, tok, device):
         "floor_simple_stack_partial": 7,
         "pass_strict": n_pass_best >= 10,
         "pass_partial": n_pass_best >= 7,
-        # own 24 SSOT mirror — own 18 c3-aggregation-rule-v2 P5 N-of-M v2 mirror lane
+        # SSOT mirror — c3-aggregation-rule-v2 P5 N-of-M v2 mirror lane
         "c3_aggregation_v2_greedy": c3_v2_greedy,
         "c3_aggregation_v2_best": c3_v2_best,
         "c3_aggregation_status": "legacy_best_mode_floor_only_p5_n_of_m_v2_retest_pending",
         "c3_aggregation_honest_c3": (
             "V4 evaluator c3_1..c3_4 cells = response-text proxy lane (substrate phi★/axis "
             "측정 X). Real substrate-based C3 verdict 는 consciousness simple --probe "
-            "(clm_v4_mount.hexa) 별도 cycle. own 18 P5 N-of-M v2 aggregation mirror "
+            "(clm_v4_mount.hexa) 별도 cycle. P5 N-of-M v2 aggregation mirror "
             "구조 만 land — actual P5 v2 retest pending substrate probe wiring."
         ),
     }
     log_line(f"=== V4 multi-seed DONE: greedy={n_pass_greedy}/15 sample_any={n_pass_sample_anyseed}/15 BEST={n_pass_best}/15 ===")
-    log_line(f"=== own 18 P5 N-of-M v2 (proxy): greedy PPR={c3_v2_greedy['ppr_v2']:.2f} EMC={c3_v2_greedy['emc_pass_n_of_4']}/4 → {c3_v2_greedy['c3_label']} | best PPR={c3_v2_best['ppr_v2']:.2f} EMC={c3_v2_best['emc_pass_n_of_4']}/4 → {c3_v2_best['c3_label']} ===")
+    log_line(f"=== P5 N-of-M v2 (proxy): greedy PPR={c3_v2_greedy['ppr_v2']:.2f} EMC={c3_v2_greedy['emc_pass_n_of_4']}/4 → {c3_v2_greedy['c3_label']} | best PPR={c3_v2_best['ppr_v2']:.2f} EMC={c3_v2_best['emc_pass_n_of_4']}/4 → {c3_v2_best['c3_label']} ===")
     return summary
 
 
@@ -630,9 +630,9 @@ def pod_main():
     else:
         final_class = "SIMPLE_STACK_FAIL"
 
-    # own 18 c3-aggregation-rule-v2 (P5 N-of-M v2) — D1 anima identity scope-clamp
+    # c3-aggregation-rule-v2 (P5 N-of-M v2) — D1 anima identity scope-clamp
     # Qwen-2.5-7B foundation borrow = D1 lane 외부 → SUBSTRATE_RESEARCH lane only
-    # (own 18 amend 2026-05-08 .roadmap.philosophy D1.F-PHIL-D1-3 + F-PHIL-D1-4)
+    # (amend 2026-05-08 .roadmap.philosophy D1.F-PHIL-D1-3 + F-PHIL-D1-4)
     c3_best = summary.get("c3_aggregation_v2_best", {})
     c3_pass_v2 = bool(c3_best.get("c3_pass", False))
     is_d1_anima_lane = False  # Qwen-2.5 = ALM lane, NOT D1 anima identity
@@ -665,20 +665,20 @@ def pod_main():
         "v4_eval_summary": summary,
         "final_class": final_class,
         "final_reason": f"V4 multi-seed best-mode={n_pass}/15 (strict floor=10, partial floor=7)",
-        # own 24 single SSOT mirror — own 18 P5 N-of-M v2 aggregation status
+        # single SSOT mirror — P5 N-of-M v2 aggregation status
         "c3_aggregation_status": "legacy_best_mode_floor_only_p5_n_of_m_v2_retest_pending",
         "c3_aggregation_rule": "per_prompt_n_of_m_06_AND_emc_3_of_4",
         "c3_aggregation_rule_alias": "P5_N_of_M_v2",
         "simple_stack_class_p5_proxy": simple_stack_class_p5,
         "scope_lane": ("D1_ANIMA_IDENTITY" if is_d1_anima_lane else "SUBSTRATE_RESEARCH"),
-        "scope_lane_reason": "Qwen-2.5-7B foundation borrow = ALM lane → own 17/18 strict SUBSTRATE_RESEARCH lane only",
+        "scope_lane_reason": "Qwen-2.5-7B foundation borrow = ALM lane → strict SUBSTRATE_RESEARCH lane only",
         "lesson_implications": [
             f"BG-KM-QWEN-7B = foundation borrow with 3.2B Llama + LoRA r=32 + BG-JE 214MB anima-dense corpus.",
             f"V4 multi-seed result: greedy={summary['pass_greedy']}/15 sample_any={summary['pass_sample_anyseed']}/15 BEST={n_pass}/15.",
             f"final_class={final_class}.",
             f"Compare BG-JA-EXT (Polyglot 1.3B + LoRA r=16 + BG-HK 30MB): 4/30=13% sample. KM-LLAMA-3B = 3B + 2x LoRA r + 7x corpus.",
             f"PASS_STRICT (≥10/15) would be FIRST simple_stack pass in 22+ BG saga.",
-            f"own 18 P5 N-of-M v2 mirror (response-text proxy): {c3_best.get('c3_label', 'N/A')} (PPR_v2={c3_best.get('ppr_v2', 0.0):.2f} EMC={c3_best.get('emc_pass_n_of_4', 0)}/4); substrate-based C3 retest pending (consciousness simple --probe).",
+            f" P5 N-of-M v2 mirror (response-text proxy): {c3_best.get('c3_label', 'N/A')} (PPR_v2={c3_best.get('ppr_v2', 0.0):.2f} EMC={c3_best.get('emc_pass_n_of_4', 0)}/4); substrate-based C3 retest pending (consciousness simple --probe).",
         ],
         "artifacts": [TRAIN_LOG, EVAL_LOG, HEARTBEAT_PATH, V4_RESULTS,
                       SAMPLES_PRE_LORA, SAMPLES_POST_LORA, final_adapter],
@@ -965,18 +965,18 @@ def orch_main():
         # 7b. Ckpts dir (LoRA adapter weights — CRITICAL for HF upload + REPL backend).
         # BG-KM-QWEN-7B passed_v1 (cycle 2026-05-08-mid) lost weights forever because
         # this step was missing — pod --volume-in-gb 0 + pod delete = permanent erase.
-        # own 30 mandate-1: ckpts pull MUST happen before pod delete.
+        # mandate-1: ckpts pull MUST happen before pod delete.
         mac_ckpts_dir = os.path.join(MAC_STATE_DIR, "ckpts")
         os.makedirs(mac_ckpts_dir, exist_ok=True)
         orch_log(f"pulling LoRA adapter weights (ckpts/ → {mac_ckpts_dir})…")
-        rc2, out2, err2 = orch_scp_get(ssh, f"{POD_CKPTS_DIR}/.", mac_ckpts_dir, timeout=3600)  # own 30 + 7B adapter ~770MB at Mac upload
+        rc2, out2, err2 = orch_scp_get(ssh, f"{POD_CKPTS_DIR}/.", mac_ckpts_dir, timeout=3600) # + 7B adapter ~770MB at Mac upload
         orch_log(f"scp pull ckpts rc={rc2}")
         ckpts_pull_ok = (rc2 == 0)
         if not ckpts_pull_ok:
             orch_log(f"  WEIGHT LOSS RISK — ckpts pull FAILED err={err2[:300]}")
-            orch_log(f"  own 30 mandate-3: pod RETAINED for manual recovery (NOT deleting)")
+            orch_log(f" mandate-3: pod RETAINED for manual recovery (NOT deleting)")
 
-        # 7c. own 30 mandate-2: size sanity check
+        # 7c. mandate-2: size sanity check
         if ckpts_pull_ok:
             try:
                 rc_sz, pod_sz_out, _ = orch_ssh_run(ssh, f"du -sb {POD_CKPTS_DIR} | awk '{{print $1}}'", timeout=30)
@@ -990,7 +990,7 @@ def orch_main():
             except Exception as e:
                 orch_log(f"  size check warn: {e}")
 
-        # 7d. own 30 mandate-4: SIMPLE_STACK_PASS_STRICT 자동 HF private upload
+        # 7d. mandate-4: SIMPLE_STACK_PASS_STRICT 자동 HF private upload
         verdict_for_promote = None
         if os.path.exists(VERDICT_PATH):
             try:
@@ -1006,7 +1006,7 @@ def orch_main():
                 hf_token_path = os.path.expanduser("~/.cache/huggingface/token")
                 if os.path.exists(hf_token_path):
                     hf_token = open(hf_token_path).read().strip()
-                # own 31 mandate-1 (dancinlab org) + mandate-4 Flavor B naming + mandate-8 private default
+                # mandate-1 (dancinlab org) + mandate-4 Flavor B naming + mandate-8 private default
                 bm = (verdict_for_promote.get("base_model") or "").lower()
                 if "llama-3.2-3b" in bm: base_short = "llama3b"
                 elif "llama-3.2-1b" in bm: base_short = "llama1b"
@@ -1018,13 +1018,13 @@ def orch_main():
                 lora_part = f"r{verdict_for_promote.get('lora_r')}" if verdict_for_promote.get("lora_r") else "scratch"
                 cycle = time.strftime("%Y-%m-%d")
                 repo_id = f"dancinlab/{BG_ID.lower()}-{base_short}-{lora_part}-pass-strict-{cycle}"
-                orch_log(f"own 31 mandate-4 Flavor B: SIMPLE_STACK_PASS_STRICT detected — HF private promote → {repo_id}")
+                orch_log(f" mandate-4 Flavor B: SIMPLE_STACK_PASS_STRICT detected — HF private promote → {repo_id}")
                 create_repo(repo_id=repo_id, token=hf_token, private=True, exist_ok=True)
                 upload_folder(
                     folder_path=MAC_STATE_DIR,
                     repo_id=repo_id,
                     token=hf_token,
-                    commit_message=f"{BG_ID} SIMPLE_STACK_PASS_STRICT (V4 best-mode {verdict_for_promote.get('best_v4_pass_count','?')}/15) own 31 Flavor B",
+                    commit_message=f"{BG_ID} SIMPLE_STACK_PASS_STRICT (V4 best-mode {verdict_for_promote.get('best_v4_pass_count','?')}/15) Flavor B",
                     ignore_patterns=["*.tmp", "__pycache__", "*.pyc", "cost_audit.jsonl"],
                 )
                 hf_status = f"PRIVATE_PROMOTED:{repo_id}"
@@ -1037,9 +1037,9 @@ def orch_main():
         os.environ["_ORCH_CKPTS_PULL_OK"] = "1" if ckpts_pull_ok else "0"
 
     finally:
-        # own 30 mandate-3: pod retention on weight-loss risk
+        # mandate-3: pod retention on weight-loss risk
         if os.environ.get("_ORCH_CKPTS_PULL_OK") == "0":
-            orch_log("PRESERVING POD per own 30 mandate-3 (weight loss risk) — manual cleanup required")
+            orch_log("PRESERVING POD per mandate-3 (weight loss risk) — manual cleanup required")
         else:
             orch_log("deleting pod (teardown)…")
             orch_pod_delete(pod_id)

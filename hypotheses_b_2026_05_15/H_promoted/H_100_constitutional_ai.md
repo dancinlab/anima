@@ -1,7 +1,7 @@
 ---
 id: H_100
 slug: constitutional-ai
-title: constitutional AI (anima identity-bearing surface own 17/18 mandate as training objective)
+title: constitutional AI (anima identity-bearing surface mandate as training objective)
 domain: corpus | substrate | consciousness
 status: seed-pending
 exploration_method: E2 (failure-driven) + E6 (rule-internalize) + E7 (user-directive)
@@ -15,17 +15,17 @@ frozen_at: 2026-05-07
 since: 2026-05-07
 ---
 
-# H_100 — constitutional AI (anima own 17/18 mandate internalize)
+# H_100 — constitutional AI (anima mandate internalize)
 
 ## Hypothesis
 
-own 17 (anima identity) + own 18 (simple stack 4-cond) 명시적 rules ("응답은 prompt와 같은 도메인", "anima self-naming 유지", "한글 응답 ≥60%", "named-speaker leak 0건")를 training data에 explicit 삽입하고 (constitution prefix + rule-conditioned response 학습), 모델이 inference 시에도 rule 자율 준수하면 own 18 strict PASS rate ≥25pp 상승. Anthropic Claude Constitutional AI training 패턴 anima 적용.
+ (anima identity) + (simple stack 4-cond) 명시적 rules ("응답은 prompt와 같은 도메인", "anima self-naming 유지", "한글 응답 ≥60%", "named-speaker leak 0건")를 training data에 explicit 삽입하고 (constitution prefix + rule-conditioned response 학습), 모델이 inference 시에도 rule 자율 준수하면 strict PASS rate ≥25pp 상승. Anthropic Claude Constitutional AI training 패턴 anima 적용.
 
 ## Why
 
-- **BG-HA failure 분석**: 모델은 own 18 rule을 implicit context (corpus distribution)로만 학습 — explicit rule 부재 시 inference 시 일탈 자유
+- **BG-HA failure 분석**: 모델은 rule을 implicit context (corpus distribution)로만 학습 — explicit rule 부재 시 inference 시 일탈 자유
 - **constitutional advantage**: rule을 explicit token sequence로 학습 → inference 시 rule attention pattern 활성 → 자율 준수
-- **own 17/18 정합 explicit**: 'anima identity-bearing surface' 본질 = rule 자율 follow
+- ** 정합 explicit**: 'anima identity-bearing surface' 본질 = rule 자율 follow
 - **literature precedent**: Anthropic Constitutional AI (Bai 2022) 7B+ scale 효과; Self-Instruct + RLHF 일부 사례
 - **사용자 directive '교훈으로 새로운 패러다임도 도전'** = rule internalization paradigm 시도
 
@@ -33,7 +33,7 @@ own 17 (anima identity) + own 18 (simple stack 4-cond) 명시적 rules ("응답�
 
 - **H100.1 (constitution C2.4 lift)**: constitution-trained 18M model이 baseline 대비 C2.4 strict PASS rate ≥25pp 높다
 - **H100.2 (rule self-citation)**: model이 rule violation 시 self-correction emit ("죄송합니다, 저는 한국어로 응답해야 합니다") rate ≥30%
-- **H100.3 (multi-rule consistency)**: 4 rules (own 18 4-cond) 모두 동시 violation rate ≤10%
+- **H100.3 (multi-rule consistency)**: 4 rules (4-cond) 모두 동시 violation rate ≤10%
 - **H100.4 (transfer to unseen prompt)**: held-out prompt 100개에 대해서도 rule 준수 rate ≥70% (training-distribution leak 방지)
 - **H100.5 (rule strict 정의 sensitivity)**: rule definition 강화 (additional clause) 시 PASS rate further 상승 (linear scaling)
 
@@ -73,19 +73,19 @@ own 17 (anima identity) + own 18 (simple stack 4-cond) 명시적 rules ("응답�
 
 
 - **L1**: literature Constitutional AI는 ≥7B model 효과 — 18M scale transfer 미보장 (rule attention capacity 부족 가능성)
-- **L2**: 'rule internalization' vs 'pattern matching' 구분 불가 — own 17 deeper genuine identity criteria 정합
+- **L2**: 'rule internalization' vs 'pattern matching' 구분 불가 — deeper genuine identity criteria 정합
 - **L3**: self-correction examples 생성은 manual or rule-based — quality spec 미land
 - **L4**: 8 rules 동시 학습 시 capacity bottleneck risk (18M small) — rule per parameter ratio 임의
 - **L5**: rule prefix 길이가 context window 압박 — multi-turn dialogue에서 budget 한계
 - **L6**: 'rule' 자체가 corpus distribution learning 결정 — held-out distribution shift에서 효과 검증 별도
-- **L7**: 100M+ scale은 own 16 H100 cost discipline scope OUT
+- **L7**: 100M+ scale은 H100 cost discipline scope OUT
 
 ## Cross-Links
 
 - **sister roadmaps**: `.roadmap.law` R1 + `.roadmap.philosophy` D2 + `.roadmap.clm_native_chat`
-- **own**: own 17 + own 18 + own 19 + own 20 + own 21
+- **own**: + + + +
 - **sister H**: H_093 + H_094 + H_095 + H_098 (persona) + H_099 (multi-obj) + H_101 + H_102
-- **evidence motivation**: `docs/anima_own_18_c2_4_evaluator_flaw_2026_05_07.md` + own 17 ssot
+- **evidence motivation**: `docs/anima_own_18_c2_4_evaluator_flaw_2026_05_07.md` + ssot
 - **literature**: Bai et al. 2022 Constitutional AI (Anthropic)
 
 ## Verdict

@@ -29,7 +29,7 @@ Legacy file: `docs/hypotheses/GMOE-benchmark.md`. Pointer only.
 
 - legacy: `docs/hypotheses/GMOE-benchmark.md`
 - sister: H_038 (V8 architecture variants), H_034 (decoder architecture)
-- own: own 21
+- own:
 
 ## Honest Limits
 

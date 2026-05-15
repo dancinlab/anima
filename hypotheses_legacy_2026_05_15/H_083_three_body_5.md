@@ -29,7 +29,7 @@ Legacy files: `docs/hypotheses/three/THREE-{1..5}.md` + `docs/hypotheses/THREE-B
 
 - legacy: three/THREE-1~5 + THREE-BODY.md
 - sister: cx/CX57-62 three-body chaos series, H_033 (cx-sequential)
-- own: own 21
+- own:
 
 ## Honest Limits
 

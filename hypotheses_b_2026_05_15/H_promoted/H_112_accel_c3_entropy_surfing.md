@@ -28,5 +28,5 @@ Legacy `ready/config/acceleration_hypotheses.json` (id=C3, line 358, verdict=★
 1. "free" claim suspicious — there is always a tuning cost
 2. orthogonality assumed not measured (no covariance reported)
 3. entropy term coefficient sensitivity unknown
-4. impact on chat-template strict-80 (own 19/20) untested
+4. impact on chat-template strict-80 untested
 5. Φ proxy variance band may swallow the boost

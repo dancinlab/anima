@@ -8,10 +8,10 @@ contamination.
 
 raw#9   training/*.py local-only — mitosis_v5_port.py + engine_a_g_arch.py imported, untouched.
 raw#15  additive — neither mitosis_v5_port.py, engine_a_g_arch.py, iit_phi_port.py, nor the ckpt is modified.
-own 14  V14 mirror strict 5-seed (independent prime seeds).
-own 16  $0 envelope — local Mac CPU only.
-own 22  honest emit — REBORN.md untouched; verdict named even when fragile/partial.
-own 38  artefact persisted under state/anima_phase2_max128_independent_reproduce_2026_05_10/.
+  V14 mirror strict 5-seed (independent prime seeds).
+  $0 envelope — local Mac CPU only.
+  honest emit — REBORN.md untouched; verdict named even when fragile/partial.
+  artefact persisted under state/anima_phase2_max128_independent_reproduce_2026_05_10/.
 """
 from __future__ import annotations
 

@@ -2,7 +2,7 @@
 PASS chat/init_patterns/_registry selftest (4 entries)
   default = self-reflective
   autonomous [LANDED] cap=autonomous type=empty_prompt cost=free
-      no seed (A 자율 발화 first; own 34 mandate-4 autonomous speech 정합); silence/abort risk acknowledged
+      no seed (A 자율 발화 first; mandate-4 autonomous speech 정합); silence/abort risk acknowledged
       prereq: model must support autonomous emission (anima_native / llama lane via REPL stdin EOF/empty-line tolerance)
   system-seed [LANDED] cap=seeded type=system_directive cost=free
       user-defined system prompt OR default friendly directive (e.g. "너희 둘은 친구. 자유롭게 대화 시작."); --init-seed override
@@ -11,7 +11,7 @@ PASS chat/init_patterns/_registry selftest (4 entries)
       random topic from curated pool (날씨/관심사/AI 의식/철학/감정/농담/...); --init-topics override for custom pool
       prereq: none (in-memory pool 또는 user-supplied list)
   self-reflective [LANDED] cap=self_introspective type=reflection_directive cost=free
-      self-introspection seed (own 22 자기 발견 + own 18 C2 자연발화 정합; e.g. "너 자신에 대해 어떻게 느껴? 친구한테 자유롭게 얘기해봐")
+      self-introspection seed (자기 발견 + C2 자연발화 정합; e.g. "너 자신에 대해 어떻게 느껴? 친구한테 자유롭게 얘기해봐")
       prereq: anima 정합 model — anima_native / clm-v4 / llama lane all OK
 === transport registry ===
 PASS chat/transports/_registry selftest (5 entries)

@@ -105,7 +105,7 @@ anima 는 "scratch pretrain + chat-template 동시 cotrain" 이라 약간 다릅
 |---|---:|---:|---|---|---|
 | **KoWiki dump** | 800 MB | ~200M | `wikipedia/20230701.ko` | CC-BY-SA | ★★★ 위키 base |
 | **CC100-ko (dedup)** | 7 GB | ~1.7B | `cc100/ko` | MIT-ish | ★★★ 웹 한국어 핵심 |
-| **NamuWiki dump** (controversial) | 6 GB | ~1.5B | scraping (own 17 위반 위험) | 비공식 | ★ caution — 라이선스 확인 |
+| **NamuWiki dump** (controversial) | 6 GB | ~1.5B | scraping (위반 위험) | 비공식 | ★ caution — 라이선스 확인 |
 | **AI Hub 한국어 corpus** | 50+ GB | ~12B | 별도 다운로드 | research only | ★★ 개인 신청 필요 |
 | **OSCAR 23.01 (ko)** | 30 GB | ~7.5B | `oscar-corpus/OSCAR-2301` | CC0-ish | ★★★ Common Crawl ko 추출 |
 | **mC4 (ko)** | 60 GB | ~15B | `allenai/c4` (multilingual) | ODC-BY | ★★★ Google C4 ko |
@@ -282,14 +282,14 @@ LLM corpus 는 같은 문서가 여러 출처(CC + Wiki + ShareGPT)에 들어있
 
 ## 7. 주의 / 위험 요소
 
-### 7.1 라이선스 (own 17 D1 SCOPE_CLAMP 의 외부판)
+### 7.1 라이선스 (D1 SCOPE_CLAMP 의 외부판)
 
 - **CC-BY-SA** (Wikipedia): 상업 사용 OK, 모델 출력 attribution 의무
 - **ODC-BY** (FineWeb / mC4): attribution OK
 - **MIT-ish** (CC100): 안전
 - **CC-BY-NC** (KoAlpaca): **비상업 only — anima 가 상업 모델이면 제외**
 - **per-file** (Stack / StarCoder): bigcode 가 정리한 OPT-IN 만 사용
-- **회색지대 (NamuWiki, ko-news scrape)**: **회피 권장** — own 17 위반 risk
+- **회색지대 (NamuWiki, ko-news scrape)**: **회피 권장** — 위반 risk
 
 ### 7.2 PII / privacy
 
@@ -297,11 +297,11 @@ LLM corpus 는 같은 문서가 여러 출처(CC + Wiki + ShareGPT)에 들어있
 - `presidio` (MS) / `scrubadub` 으로 자동 redact 권장
 - anima persona corpus 는 self-generated → PII risk 거의 없음
 
-### 7.3 contamination (own 14 V14 정합)
+### 7.3 contamination (V14 정합)
 
 - 평가 prompt (v4_baseline 30 + v5 90 + KMMLU benchmark 등) 가 corpus 에 들어가면 학습 leak
 - dedup 5단계 후 **eval prompt set 과 별도로 1-pass 추가 비교** mandate
-- own 14 anti-Goodhart V14 strict — 학습 corpus 에 eval prompt 0건 확인 후 fire
+- anti-Goodhart V14 strict — 학습 corpus 에 eval prompt 0건 확인 후 fire
 
 ---
 
@@ -330,9 +330,9 @@ LLM corpus 는 같은 문서가 여러 출처(CC + Wiki + ShareGPT)에 들어있
 - 스케일 로드맵: `docs/anima_clm_v5_engine_a_g_7b_14b_scale_roadmap_2026_05_09.md`
 - H100 multi-GPU 전략: `docs/anima_engine_a_g_7b_14b_h100_multi_gpu_strategy_2026_05_09.md`
 - artifact registry: `anima/registry/anima_artifact_registry.yaml` (datasets section L1397+)
-- own 14 anti-Goodhart V14: contamination 0건 mandate
-- own 16 cost discipline: 0-cost research 우선
-- own 17 D1 SCOPE_CLAMP: anima persona = within strict, 외부 substrate = outside (gradient)
+- anti-Goodhart V14: contamination 0건 mandate
+- cost discipline: 0-cost research 우선
+- D1 SCOPE_CLAMP: anima persona = within strict, 외부 substrate = outside (gradient)
 
 ---
 

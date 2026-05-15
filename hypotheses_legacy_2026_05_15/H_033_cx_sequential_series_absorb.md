@@ -50,7 +50,7 @@ Total: ~88 CX hypotheses
 - sister H: H_021 (fundamental equation), H_022 (universe map), H_023 (universal constants), H_032 (omega/phys)
 - Decoder series cross-link: `docs/hypotheses/cx/DECODER-{ARCHITECTURE,COMPLETE-SUMMARY,EXTREME,NEXTGEN,RADICAL,WHISPER}.md`
 - CLM v2 series cross-link: `docs/hypotheses/cx/CLM-V2-{FINAL-RESULTS,OPTIMAL-CONFIG,PSI-FIX,SWEEP}.md`
-- own: own 21
+- own:
 - roadmap: `.roadmap.hypothesis` H5 archive_inventory + H_027 cx subfolder absorb
 
 ## Honest Limits

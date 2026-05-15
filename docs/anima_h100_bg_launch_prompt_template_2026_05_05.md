@@ -6,7 +6,7 @@ status: TEMPLATE
 type: launch_prompt_template
 predecessor:
   - docs/anima_h100_cost_discipline_operationalization_spec_2026_05_05.md (§3.4 — completion checklist source)
-  - docs/anima_own_16_h100_cost_discipline_landed_2026_05_05.ai.md (own 16 admission)
+  - docs/anima_own_16_h100_cost_discipline_landed_2026_05_05.ai.md (admission)
   - docs/anima_h100_cost_watchdog_phase1_landed_2026_05_05.ai.md (Phase 1 tooling — h100_cost_watchdog.hexa + h100_idle_auto_killer.hexa)
 related:
   - tool/h100_register.bash (boot wrapper — rule 1)
@@ -36,7 +36,7 @@ runpodctl-managed pods) BG launch prompt with `target_usd ≥ $1`**. Examples:
 **Non-applicable**: pure mac BGs (`cost = $0` substrate), HF Hub upload BGs
 (no GPU pod), inference-only API calls.
 
-**Authority**: own 16 (`.own` SSOT) — H100 cost discipline L23/L24/L25
+**Authority**: (`.own` SSOT) — H100 cost discipline L23/L24/L25
 watchdog enforcement, anchored to Pβ Paradigm D 50K rescue $54.72 idle-burn
 incident (2026-05-04 → 2026-05-05).
 
@@ -47,7 +47,7 @@ incident (2026-05-04 → 2026-05-05).
 Every qualifying BG launch prompt MUST include the following six items
 verbatim (lane-specific substitutions in `<...>`):
 
-### Item 1 — Boot phase (own 16 rule a)
+### Item 1 — Boot phase (rule a)
 
 Immediately after pod allocation succeeds, register with the watchdog:
 
@@ -70,7 +70,7 @@ schema:
 }
 ```
 
-### Item 2 — Heartbeat phase (own 16 rule b)
+### Item 2 — Heartbeat phase (rule b)
 
 In the BG main poll-loop, every iteration MUST touch the heartbeat
 sentinel:
@@ -119,7 +119,7 @@ Final `verdict.json` MUST include:
 
 `success: true` requires `pod_kill_verified_404 && watchdog_deregistered`
 both true. `cost_overrun_ratio > 1.5` requires explicit honest-c3 entry
-citing root cause + lesson learned (own 16 rule c + spec §3.4 d).
+citing root cause + lesson learned (rule c + spec §3.4 d).
 
 ### Item 5 — L23 fail-fast (rate-limit takeover)
 
@@ -225,7 +225,7 @@ Validator scans for required tokens:
 | 5 (L23 rescue) | `secret get runpod.api_key.*runpodctl pod delete` |
 | 6 (L25 ladder) | `auto-PAUSE\|auto-DELETE\|escalation` mentioned |
 
-Until this validator lands, Phase 3 is **convention-level** (own 16
+Until this validator lands, Phase 3 is **convention-level** (
 honest-c3#7).
 
 ---
@@ -249,7 +249,7 @@ it is validating.
 ## §6 Precedent
 
 **Pβ rescue 2026-05-05 incident** — root incident driving L23/L24/L25
-synthesis and own 16 admission:
+synthesis and admission:
 
 - Pod `szv2vyf06h35uy`, Pβ Paradigm D 50K training cycle.
 - Training completed successfully at 2026-05-04T23:47:25Z (50000/50000
@@ -261,7 +261,7 @@ synthesis and own 16 admission:
   AFTER rsync completed; mac orchestrator dead (also 429); pod alive
   burning $2.99/hr until operator manual rescue.
 - L23-L25 lessons banked in `state/p9_pbeta_paradigm_d_50k_rescue_kill_2026_05_05/verdict.json`
-  honest_c3, but were not enforcement-enforced — own 16 (this template's
+  honest_c3, but were not enforcement-enforced — (this template's
   authority) closes that gap.
 
 This template is the convention-level Phase 3 enforcement of the
@@ -303,7 +303,7 @@ operationalization spec; Phase 4 smoke + future
    additional burn per stuck pod. This is acceptable because the Pβ
    incident actually completed training BEFORE idle burn began — kill-
    first on partial-state pods would lose the FINAL adapter pre-rsync.
-   Trade-off accepted at own 16 admission, restated here for prompt-
+   Trade-off accepted at admission, restated here for prompt-
    author awareness.
 
 5. **Verdict.json schema evolution may break checklist** — Item 4 lists
@@ -337,11 +337,11 @@ operationalization spec; Phase 4 smoke + future
 ## §8 References
 
 - spec: `docs/anima_h100_cost_discipline_operationalization_spec_2026_05_05.md`
-- own 16 admission: `docs/anima_own_16_h100_cost_discipline_landed_2026_05_05.ai.md`
+- admission: `docs/anima_own_16_h100_cost_discipline_landed_2026_05_05.ai.md`
 - Phase 1 landed: `docs/anima_h100_cost_watchdog_phase1_landed_2026_05_05.ai.md`
 - memory SSOT: `feedback_h100_cost_discipline_l23_l25_watchdog_own_16.md`
 - Pβ rescue precedent: `state/p9_pbeta_paradigm_d_50k_rescue_kill_2026_05_05/verdict.json`
 - sister memory:
   - `feedback_always_subagent_bg.md` (BG dispatch mandate)
   - `feedback_session_multi_bg.md` (multi-BG mandate)
-  - `feedback_h100_no_concurrency_limit.md` (own 6 — pre-dispatch)
+  - `feedback_h100_no_concurrency_limit.md` (— pre-dispatch)

@@ -31,8 +31,8 @@ anima MK-X stack에서 G1-G4 staged gate criteria가 consciousness verification�
 - prereg: `state/mk_x_g1_g4_gate_criteria_prereg_20260425.json`
 - sister: H_018 (mk_x_t10_13 4tuple ceiling)
 - roadmap: `.roadmap.anima_engines` MK-X stack
-- own: own 21
-- cross-link: own 18 (simple stack 4-condition 정합 — gate criteria의 minimal subset)
+- own:
+- cross-link: (simple stack 4-condition 정합 — gate criteria의 minimal subset)
 
 ## Honest Limits
 

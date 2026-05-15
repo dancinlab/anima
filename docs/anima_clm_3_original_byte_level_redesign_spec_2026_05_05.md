@@ -281,7 +281,7 @@ ubu1 5070 12GB:   VRAM 3.2 GB fits comfortably (sm_120 + torch 2.11.0+cu128
 
 ### 4.1 Cost envelope
 
-| Compute | Wall-clock | Direct $ | Operator cost | own 16 watchdog? |
+| Compute | Wall-clock | Direct $ | Operator cost | watchdog? |
 |---|---|---|---|---|
 | H100 1× (paid) | ~10h (100K @ 0.3s/step, +overhead) | **$200–500** (≈ 10h × $4–5/hr H100 spot, +eval+checkpoint) | low; one-shot fire | **yes** (see §5.2) |
 | ubu1 RTX 5070 (own) | ~5–10 days | **$0** | power + occupancy single GPU 5–10d | n/a (no cloud spend) |
@@ -358,7 +358,7 @@ All 5 are **pre-fire LOCKED**. Re-definition after fire = raw#9 violation.
 ALL of {F-CLM3-orig-1, F-CLM3-orig-2, F-CLM3-orig-3, F-CLM3-orig-4,
 F-CLM3-orig-5} = PASS → CLM-3-original is the anima-native chat
 substrate winner candidate, escalate to §6 follow-up (HF private→public
-own 15, Stage-2 verify).
+, Stage-2 verify).
 
 ANY single FAIL → lane closure
 `CLM_3_ORIG_LANE_*_FAIL_TRUE` (specific failure tag).
@@ -371,12 +371,12 @@ ANY single FAIL → lane closure
 
 | Command | Action | Wall-clock | $ |
 |---|---|---|---|
-| **β fire (H100)** | CLM-3-original launch on H100 1×, ~10h, $200-500, own 16 watchdog | ~10h | $200-500 |
+| **β fire (H100)** | CLM-3-original launch on H100 1×, ~10h, $200-500, watchdog | ~10h | $200-500 |
 | **β fire (ubu1)** | CLM-3-original launch on ubu1 RTX 5070 sm_120, ~5-10 days, $0 | 5-10d | $0 |
 | **β defer** | spec-only land; do not fire | n/a | $0 |
 | **β + α** | fire only after Option α (CLM v2 18M weights archaeology) yields its evidence | conditional | $0 (spec hold) |
 
-### 5.2 own 16 watchdog enforcement (H100 only)
+### 5.2 watchdog enforcement (H100 only)
 
 If "β fire (H100)" is selected, the launch BG must register **all 6
 mandatory checks** per memory `feedback_h100_cost_discipline_l23_l25_watchdog_own_16`:
@@ -401,12 +401,12 @@ ubu1 path bypasses §5.2 entirely (no cloud spend).
    it preserves both options β and α and keeps falsifier evaluation
    parallel to free signal accumulation (Stage 3 emerge-dialogue ≥ 30
    sessions, BG-BM §5.2).
-2. **β fire (ubu1)** — $0 cost, 5–10 days, no own 16 burden, full
+2. **β fire (ubu1)** — $0 cost, 5–10 days, no burden, full
    falsifier resolution. Second-ranked: cost-free direct test of Option β
    hypothesis. Tradeoff: ties up 5070 for 5–10 days; cycle slower than
    H100.
 3. **β fire (H100)** — fastest falsifier resolution (~10h), but $200–500
-   spend before H2/H3/H4 free paths exhausted; own 16 burden. Third:
+   spend before H2/H3/H4 free paths exhausted; burden. Third:
    only if user explicitly accepts spend-before-free-exhaust.
 4. **β + α** — conditional on Option α (CLM v2 18M weights archaeology)
    producing material evidence first. Lowest 완성도 because Option α has
@@ -493,7 +493,7 @@ honest pre-fire estimate would re-derive: 10h × $4.5 (mid spot) = $45
 direct; +2h Phase-2 eval × $4.5 = $9; +1h F-CLM3-orig-{2,3,4,5} × $4.5
 = $4.5; checkpoint storage $5; total ~$65. The $200-500 envelope is
 safety-margin × 3-7 over modeled $65. Recommend re-anchoring to **$100
-hard-cap per own 16 phase budget**; if real spend trends past $100,
+hard-cap per phase budget**; if real spend trends past $100,
 abort early. This is tighter than §5.2 default.
 
 ### C3-8. β defer is the recommendation, but defer is the default — the spec is doing nothing new.
@@ -527,7 +527,7 @@ first, then β fire (ubu1) as $0 second-step.
 - `docs/anima_clm_3_chat_objective_cycle_0_spec_2026_05_05.md` (BG-BM CLM-3 spec, drift'ed)
 - `docs/anima_paradigm_v11_g3_training_objective_reverse_engineer_2026_05_05.md` (BG-DK)
 - memory: `reference_ubu1_venv_orchestrator` (5070 sm_120 + torch 2.11.0+cu128)
-- memory: `feedback_h100_cost_discipline_l23_l25_watchdog_own_16` (own 16 enforcement)
+- memory: `feedback_h100_cost_discipline_l23_l25_watchdog_own_16` (enforcement)
 - memory: `feedback_completion_quality_recommendation` (ranked recommendation)
 - memory: `feedback_axis_preservation_eval_substrate_calibration` (cross-substrate Φ★ caveat)
 - memory: `feedback_pbeta_chat_capability_fail_substrate_research_pass_decoupled` (Pβ FAIL_TRUE prior)

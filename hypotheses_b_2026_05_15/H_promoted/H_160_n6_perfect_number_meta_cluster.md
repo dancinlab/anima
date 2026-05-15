@@ -119,7 +119,7 @@ deterministic + hexa-only + llm: none. 본 H 는 W11 (cross-hypothesis meta) 중
 
 - **L8 (cluster-level strength 가 children 의 strength 의 simple sum 이 아님)**: 본 cluster 가 5 child 의 "consistency" 를 cluster strength 으로 환원하나, *Bayesian* 으로 본다면 children 이 동일 prior (n=6 substrate) 위에 conditional 한 evidence 이므로 P(cluster | n=6 generative) 와 P(n=6 generative | cluster) 의 update factor 는 children 의 *독립성* 에 의존. L2 (circular-dependence) 와 결합 시 cluster strength 의 *effective evidence count* 는 5 보다 훨씬 작을 수 있음 (extreme case 1, 즉 children 모두 동일 source 의 5 perspective). 본 update factor 의 정량 부재
 
-- **L9 (meta-cluster 의 traction)**: 본 H_160 자체가 *engineering pragmatism (own 21 R5+ 실행 lane)* 적용 X — 새로운 측정 / prediction / engine output 산출 X. cluster reflection 이 *documentation contribution* 한정. anima 의 deep philosophical lane 의 책임 vs cycle progression 의 책임 사이 — 본 H 는 전자
+- **L9 (meta-cluster 의 traction)**: 본 H_160 자체가 *engineering pragmatism (R5+ 실행 lane)* 적용 X — 새로운 측정 / prediction / engine output 산출 X. cluster reflection 이 *documentation contribution* 한정. anima 의 deep philosophical lane 의 책임 vs cycle progression 의 책임 사이 — 본 H 는 전자
 
 ## Cross-Links
 

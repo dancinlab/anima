@@ -8,7 +8,7 @@
   "resolver_bypass_reason": "darwin-native: scipy.welch in .venv-eeg, mac local execution required for venv access",
   "pre_register_frozen": true,
   "frozen_at": "2026-04-28",
-  "hypothesis": "awake EEG gamma(30-50Hz)/theta(4-8Hz) band-power ratio == 3.0 (own 3 = TECS-L H-CX-1 sigma/tau identity)",
+  "hypothesis": "awake EEG gamma(30-50Hz)/theta(4-8Hz) band-power ratio == 3.0 (= TECS-L H-CX-1 sigma/tau identity)",
   "ssot_cite": {
     "own_3_sigma_over_tau": "sigma=6, tau=2, sigma/tau=3, n=6 unique solution",
     "paper_p3": "docs/discovery-algorithm-anima.md:289"
@@ -63,6 +63,6 @@
     "125hz_nyquist_marginal": "Nyquist=62.5Hz, gamma upper bound 50Hz only 12.5Hz away — anti-alias roll-off may attenuate",
     "single_subject": "single-subject result is not paper-generalizable (N=1, no demographics matching)",
     "eyes_state": "resting baseline only; eyes-open/eyes-closed pattern not separated; alpha-stop-band may inflate theta",
-    "no_independent_paper_p3": "paper P3 numerical target ratio=3 is internal SSOT (own 3 sigma/tau), not an external Buzsaki/Steriade citation"
+    "no_independent_paper_p3": "paper P3 numerical target ratio=3 is internal SSOT (sigma/tau), not an external Buzsaki/Steriade citation"
   }
 }

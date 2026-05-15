@@ -13,7 +13,7 @@
   "entries_validated": 25,
   "expected_entries_per_own_24_doc": 24,
   "actual_entries_observed": 25,
-  "entry_count_discrepancy_note": "own 24 doc says '24 entries', actual jsonl line count = 25 (1 duplicate 3-tuple BG-IA attempt_n=20 2026-05-07 — see uniqueness_violations). own 22 silent-discovery-forbidden 정합 사용자 리포트.",
+  "entry_count_discrepancy_note": " doc says '24 entries', actual jsonl line count = 25 (1 duplicate 3-tuple BG-IA attempt_n=20 2026-05-07 — see uniqueness_violations). silent-discovery-forbidden 정합 사용자 리포트.",
   "invalid_entries": [
     {
       "lineno": 3,
@@ -107,12 +107,12 @@
   "warn_total": 0,
   "validation_pass": false,
   "honest_c3": [
-    "raw#10 honest C3 #1: ledger jsonl 실측 25 lines / own 24 doc claim '24 entries' — 1 line discrepancy 발견 (BG-IA 3-tuple duplicate). own 22 silent-discovery-forbidden 정합 enum_violations + uniqueness_violations 둘 다 사용자 리포트 mandate.",
+    "raw#10 honest C3 #1: ledger jsonl 실측 25 lines / doc claim '24 entries' — 1 line discrepancy 발견 (BG-IA 3-tuple duplicate). silent-discovery-forbidden 정합 enum_violations + uniqueness_violations 둘 다 사용자 리포트 mandate.",
     "raw#10 honest C3 #2: enum_violations 2건 (final_class=SIMPLE_STACK_FAIL line 3 BG-FK / final_class=SEED_LUCK_FAIL line 25 BG-IE) — task spec enum list (10 values) 외 verdict. user-defined enum extension 또는 BG-FK + BG-IE entry final_class normalize 둘 중 1택 후속 cycle.",
     "raw#10 honest C3 #3: type_violations 1건 (BG-HZ training_steps=[500,1000,2000] list) — multi-checkpoint retrieval lane 의도, schema int_or_null vs data list 불일치. follow-up: schema에 int_or_array_or_null union 추가 또는 BG-HZ entry split (per ckpt) 둘 중 1택.",
     "raw#10 honest C3 #4: uniqueness_violations 1건 (BG-IA attempt_n=20 lineno 20 + 24 동일 3-tuple) — first PENDING + second FAILED. raw#82 retraction protocol 정합 follow-up: line 20 PENDING entry에 downgraded_at + downgrade_reason 추가, line 24 FAILED entry attempt_n=23 (또는 별도) 재배정 필요.",
-    "raw#10 honest C3 #5: schema는 task spec verbatim 반영했으나 ledger 실측 데이터 형태 (some required fields == null) 수용 위해 _or_null union 적용 — strict task-spec interpretation 시 4 required field nullability 추가 분기 (own 24 inline schema 명시 'required' but data has null).",
-    "raw#10 honest C3 #6: validation_pass=False (error_total=4). 본 task의 expected 0 violations은 aspirational target — actual 실측은 ledger entry 정합도 issue 4건 보고. own 22 silent-discovery-forbidden 정합으로 발견 보존하여 후속 retraction cycle 대응."
+    "raw#10 honest C3 #5: schema는 task spec verbatim 반영했으나 ledger 실측 데이터 형태 (some required fields == null) 수용 위해 _or_null union 적용 — strict task-spec interpretation 시 4 required field nullability 추가 분기 (inline schema 명시 'required' but data has null).",
+    "raw#10 honest C3 #6: validation_pass=False (error_total=4). 본 task의 expected 0 violations은 aspirational target — actual 실측은 ledger entry 정합도 issue 4건 보고. silent-discovery-forbidden 정합으로 발견 보존하여 후속 retraction cycle 대응."
   ],
   "honest_c3_count": 6,
   "follow_up_actions_recommended": [
@@ -124,7 +124,7 @@
     {
       "id": "FU-2",
       "rule": "enum_violations",
-      "action": "final_class enum 확장 — SIMPLE_STACK_FAIL + SEED_LUCK_FAIL을 schema enum에 add (own 24 inline schema에도 sync) 또는 BG-FK + BG-IE entry final_class normalize"
+      "action": "final_class enum 확장 — SIMPLE_STACK_FAIL + SEED_LUCK_FAIL을 schema enum에 add (inline schema에도 sync) 또는 BG-FK + BG-IE entry final_class normalize"
     },
     {
       "id": "FU-3",
@@ -134,7 +134,7 @@
     {
       "id": "FU-4",
       "rule": "VR-5 retraction",
-      "action": "BG-HA entry 외 raw82_retraction_history (own 24 line 1062-1064)에 명시된 BG-HQ + BG-HW 등도 ledger jsonl entry에 downgraded_at + downgrade_reason field add 후속 (현재 own 24 doc-level history만 기록, jsonl entry-level 부재)"
+      "action": "BG-HA entry 외 raw82_retraction_history (line 1062-1064)에 명시된 BG-HQ + BG-HW 등도 ledger jsonl entry에 downgraded_at + downgrade_reason field add 후속 (현재 doc-level history만 기록, jsonl entry-level 부재)"
     }
   ]
 }

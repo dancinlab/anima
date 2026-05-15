@@ -5,7 +5,7 @@ mac MPS tiny anima-native KO smoke train.
 ConsciousLM tiny: vocab=256, n_layer=4, d_model=256, n_head=4, block_size=256
 Target: ~3M params, 2000 steps, KO from-scratch byte-level.
 
-own 17 ALM permanently deferred — fresh from scratch, NO external base.
+ ALM permanently deferred — fresh from scratch, NO external base.
 """
 
 import os

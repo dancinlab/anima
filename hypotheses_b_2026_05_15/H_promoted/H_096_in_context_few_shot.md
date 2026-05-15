@@ -19,7 +19,7 @@ since: 2026-05-07
 
 ## Hypothesis
 
-pre-trained model (BG-HA 18M 등) 자체는 그대로 두고, inference 시 prompt에 few-shot example (k=3 또는 5)을 prepend 하면 own 18 simple-stack C2.4 strict PASS rate가 zero-shot baseline 대비 ≥30pp 상승한다. fine-tuning weight update 없이 prompt context manipulation만으로 chat-cap 회복 가능 가설 — 사실 BG-HA의 weights는 chat-format 학습 됐으나 단순 inference protocol 부족이 false PASS의 원인일 가능성.
+pre-trained model (BG-HA 18M 등) 자체는 그대로 두고, inference 시 prompt에 few-shot example (k=3 또는 5)을 prepend 하면 simple-stack C2.4 strict PASS rate가 zero-shot baseline 대비 ≥30pp 상승한다. fine-tuning weight update 없이 prompt context manipulation만으로 chat-cap 회복 가능 가설 — 사실 BG-HA의 weights는 chat-format 학습 됐으나 단순 inference protocol 부족이 false PASS의 원인일 가능성.
 
 ## Why
 
@@ -77,12 +77,12 @@ pre-trained model (BG-HA 18M 등) 자체는 그대로 두고, inference 시 prom
 - **L4**: prompt context length 18M model max context (e.g., 1024 token)에서 k=5 shot이 budget 압박 가능 — context truncation risk
 - **L5**: inference-only paradigm은 training paradigm (H_093/H_094)과 직접 비교 가능 — 어느 쪽이 own merit인지 ablation 별도
 - **L6**: same-domain example bias risk (test prompt domain leak via example) — held-out prompt set 분리 mandate
-- **L7**: own 18 simple-stack은 single-turn — multi-turn dialogue chat-cap은 별도 H
+- **L7**: simple-stack은 single-turn — multi-turn dialogue chat-cap은 별도 H
 
 ## Cross-Links
 
 - **sister roadmaps**: `.roadmap.law` R1 + `.roadmap.philosophy` D4 + `.roadmap.clm_native_chat`
-- **own**: own 17 + own 18 + own 19 + own 20 + own 21
+- **own**: + + + +
 - **sister H**: H_005 + H_093 (SFT-only) + H_094 (two-stage) + H_097 (curriculum)
 - **evidence motivation**: `docs/anima_own_18_c2_4_evaluator_flaw_2026_05_07.md` (BG-HA inference protocol limitation 가능성)
 

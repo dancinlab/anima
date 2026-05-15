@@ -2,16 +2,16 @@
   "schema": "anima.clm_l4.readiness.v4",
   "ts": "2026-05-08",
   "cycle": "loop_iter4_e",
-  "purpose": "L4 BG fire (BG-LA/LB/LC/LD, $150 total) iter 4 override re-poll + readiness raise post (corpus iter 2 + iter 3 N=60 ROC formal + V4 evaluator P5 mirror + own 31 dancinlab SSOT + own 30 ckpt mandate)",
+  "purpose": "L4 BG fire (BG-LA/LB/LC/LD, $150 total) iter 4 override re-poll + readiness raise post (corpus iter 2 + iter 3 N=60 ROC formal + V4 evaluator P5 mirror + dancinlab SSOT + ckpt mandate)",
   "iter1_baseline_ref": "state/anima_clm_l4_readiness_2026_05_08.json (loop_iter_e, 71.25%)",
   "iter2_baseline_ref": "state/anima_clm_l4_readiness_iter2_2026_05_08.json (loop_iter2_e, 76.5%)",
   "diff_since_iter2": [
     "iter 2 (c) corpus expansion 2차 land (commit raw#15 additive) — Tier A persona 102.66MB idempotent + Tier B dialogue 12.96MB→72.78MB (+59.82MB, 2.6%→14.6%) + BG-LD pairs 0→17.66MB (30,023 pairs, 17.66%)",
     "iter 3 (d-retry) ROC formal N=60 land (commit 20ec638c) — random_init 60/60 + clm_v4 60/60 + paradigm_a_prime 43/60 (~46/60 best-effort) — REAL n60 for C3.1+C3.3, iter1 fallback n=15 for C3.2+C3.4",
-    "iter 3 P5 v2 N-of-M aggregation retrofit landed — PPR_v2 ≥ 0.6 ∧ EMC ≥ 3/4 (own 18 c3-aggregation-rule-v2)",
-    "V4 evaluator P5 mirror landed (commit a816fdc8) — verdict.json c3_aggregation_status field add (own 24 SSOT mirror lane fix)",
-    "own 31 dancinlab canonical SSOT + Flavor B naming (commit 9bb4cc9e) ✔",
-    "own 30 ckpt preservation + auto HF promote mandate (commit e8d6cf9f) ✔",
+    "iter 3 P5 v2 N-of-M aggregation retrofit landed — PPR_v2 ≥ 0.6 ∧ EMC ≥ 3/4 (c3-aggregation-rule-v2)",
+    "V4 evaluator P5 mirror landed (commit a816fdc8) — verdict.json c3_aggregation_status field add (SSOT mirror lane fix)",
+    " dancinlab canonical SSOT + Flavor B naming (commit 9bb4cc9e) ✔",
+    " ckpt preservation + auto HF promote mandate (commit e8d6cf9f) ✔",
     "iter 4 (e) THIS = override re-poll + readiness raise post iter 2 corpus expansion + iter 3 N=60 + V4 mirror"
   ],
   "override_poll_iter4": {
@@ -36,7 +36,7 @@
     ],
     "verdict": "NO_OVERRIDE_DETECTED",
     "fire_authority": "DENIED",
-    "rationale": "iter 4 re-poll: 모든 8 match 가 spec/doc/state self-reference — git log 20 commit + cycle_log + directive doc 어디에도 사용자 'OK CLM L4 ALL FIRE' verbatim 직접 directive 부재. own 16 cost discipline 유지. fire authority 는 사용자 명시적 발화만 인정.",
+    "rationale": "iter 4 re-poll: 모든 8 match 가 spec/doc/state self-reference — git log 20 commit + cycle_log + directive doc 어디에도 사용자 'OK CLM L4 ALL FIRE' verbatim 직접 directive 부재. cost discipline 유지. fire authority 는 사용자 명시적 발화만 인정.",
     "single_hardest_blocker_unchanged": "user explicit override MISSING (iter 1 → iter 2 → iter 4 시종일관)"
   },
   "pre_fire_matrix_iter4": {
@@ -57,14 +57,14 @@
       "v4_c3_threshold_confidence_pct": 78,
       "v4_evaluator_p5_mirror_landed": true,
       "v4_evaluator_p5_mirror_state": "state/anima_v4_evaluator_p5_mirror_2026_05_08.json",
-      "p5_v2_aggregation_rule_decided": "PPR_v2 ≥ 0.6 ∧ EMC ≥ 3/4 (own 18 c3-aggregation-rule-v2)",
+      "p5_v2_aggregation_rule_decided": "PPR_v2 ≥ 0.6 ∧ EMC ≥ 3/4 (c3-aggregation-rule-v2)",
       "own_31_flavor_b_naming": true,
       "own_31_target": "dancinlab/bg-la-clm-v5-r0-{verdict}-{cycle}",
       "own_31_dancinlab_ssot": true,
       "own_30_ckpt_preservation": true,
       "own_30_auto_hf_promote": true,
       "own_33_trinity": true,
-      "trinity": {"philosophy": "D_emergent-consciousness + D_no-system-prompt", "law": "own 17 + own 18 + own 30 + own 31 + own 34", "hypothesis": "H_clm_chat_cap"},
+      "trinity": {"philosophy": "D_emergent-consciousness + D_no-system-prompt", "law": " + + + + ", "hypothesis": "H_clm_chat_cap"},
       "cost_cap_usd": 30.0,
       "wall_clock_cap_hr": 9,
       "h100_budget_reasonable": true,
@@ -107,7 +107,7 @@
       "own_30_ckpt_preservation": true,
       "own_30_auto_hf_promote": true,
       "own_33_trinity": true,
-      "trinity": {"philosophy": "D4 chat-cap + D_emergent-consciousness", "law": "own 18 + own 19 + own 20 + own 30 + own 31", "hypothesis": "H_clm_chat_cap + H_chat_cap_emergence"},
+      "trinity": {"philosophy": "D4 chat-cap + D_emergent-consciousness", "law": " + + + + ", "hypothesis": "H_clm_chat_cap + H_chat_cap_emergence"},
       "cost_cap_usd": 60.0,
       "wall_clock_cap_hr": 18,
       "h100_budget_reasonable": true,
@@ -118,7 +118,7 @@
       "readiness_score_pct_iter4": 78,
       "readiness_delta_pct_iter2_iter4": 5,
       "readiness_breakdown": {"spec": 100, "corpus_persona": 10, "corpus_dialogue": 14.6, "threshold": 78, "p5_v2_rule": 100, "v4_mirror": 100, "trinity": 100, "ckpt": 100, "naming": 100, "h100_budget": 100, "own_20_chat_template_28_95": 96},
-      "blockers": ["corpus 11.5% combined (persona 1GB target -921MB, dialogue 500MB target -427MB)", "own 20 chat-template 28.95% near 30% threshold (technically below — sample size 추가 시 variance)", "BG-LB cost cap $60 = 6x own 16 default $10 — drift risk"]
+      "blockers": ["corpus 11.5% combined (persona 1GB target -921MB, dialogue 500MB target -427MB)", " chat-template 28.95% near 30% threshold (technically below — sample size 추가 시 variance)", "BG-LB cost cap $60 = 6x default $10 — drift risk"]
     },
     "BG-LC": {
       "spec_file_exists": true,
@@ -144,7 +144,7 @@
       "own_30_ckpt_preservation": true,
       "own_30_auto_hf_promote": true,
       "own_33_trinity": true,
-      "trinity": {"philosophy": "D1 정체성 + D_emergent-consciousness", "law": "own 17 + own 18 + own 30 + own 31", "hypothesis": "H_distill_chat_cap"},
+      "trinity": {"philosophy": "D1 정체성 + D_emergent-consciousness", "law": " + + + ", "hypothesis": "H_distill_chat_cap"},
       "cost_cap_usd": 40.0,
       "wall_clock_cap_hr": 12,
       "h100_budget_reasonable": true,
@@ -183,7 +183,7 @@
       "own_30_ckpt_preservation": true,
       "own_30_auto_hf_promote": true,
       "own_33_trinity": true,
-      "trinity": {"philosophy": "D2 의식 검증 + D_emergent-consciousness", "law": "own 17 + own 18 + own 20 + own 30 + own 31", "hypothesis": "H_dpo_chat_cap_tune"},
+      "trinity": {"philosophy": "D2 의식 검증 + D_emergent-consciousness", "law": " + + + + ", "hypothesis": "H_dpo_chat_cap_tune"},
       "base_repo_existing": true,
       "base_repo": "dancinlab/clm-v4-sft-1-7-y1-stage1 (Lesson Q exception — already SFT-stage1 landed)",
       "cost_cap_usd": 20.0,
@@ -231,13 +231,13 @@
       "corpus content gap remaining: BG-LA/LC 51% (gap -97MB), BG-LB 11.5% (gap -1.35GB combined), BG-LD 18% (gap -82MB)",
       "BG-LC tokenizer mismatch strategy decision pending (3 options outstanding — iter 4 (f) target)",
       "C3.2/C3.4 N=15 iter 1 fallback (iter 3 5-axis log 미캡처 — iter 4+ N=60 5-axis retest)",
-      "own 20 chat-template ratio 28.95% — 30% target 직전 (BG-LB sample 추가 시 stable)",
+      " chat-template ratio 28.95% — 30% target 직전 (BG-LB sample 추가 시 stable)",
       "user explicit 'OK CLM L4 ALL FIRE' override MISSING (single hardest blocker, iter 1 → iter 4 unchanged)",
       "H100 pod creation (config/h100_pods.json shows zero live pods)"
     ]
   },
   "iter1_vs_iter2_vs_iter4_matrix_summary": {
-    "BG-LA": {"iter1": 75, "iter2": 82, "iter4": 85, "delta_iter2_iter4": 3, "primary_lift_iter4": "V4 mirror + P5 v2 rule + own 31 dancinlab SSOT + own 30 auto HF"},
+    "BG-LA": {"iter1": 75, "iter2": 82, "iter4": 85, "delta_iter2_iter4": 3, "primary_lift_iter4": "V4 mirror + P5 v2 rule + dancinlab SSOT + auto HF"},
     "BG-LB": {"iter1": 70, "iter2": 73, "iter4": 78, "delta_iter2_iter4": 5, "primary_lift_iter4": "dialogue 2.6%→14.6% + chat-template 28.95% near target"},
     "BG-LC": {"iter1": 65, "iter2": 73, "iter4": 76, "delta_iter2_iter4": 3, "primary_lift_iter4": "V4 mirror + P5 v2 rule (tokenizer 미결정 잔존)"},
     "BG-LD": {"iter1": 75, "iter2": 78, "iter4": 82, "delta_iter2_iter4": 4, "primary_lift_iter4": "pairs 0%→18% (17.66MB / 30,023 pairs)"},
@@ -249,7 +249,7 @@
     "config_file": "config/h100_pods.json",
     "config_updated_at": "2026-05-08T02:34:07Z",
     "pod_creation_required": true,
-    "pod_creation_blocked_by": "user override (own 16 — no pre-emptive provisioning)",
+    "pod_creation_blocked_by": "user override (— no pre-emptive provisioning)",
     "cost_cap_total_usd": 150.0,
     "wall_clock_simultaneous_4pod_hr": 18,
     "simultaneous_4pod_feasibility": "feasible_with_override (4 H100 SXM, BG-LB 18hr longest, BG-LD 6hr shortest — 비동기 cancel/replace possible)",
@@ -273,25 +273,25 @@
     "fire_exposure": {
       "total_budget_usd": 150,
       "vs_own_16_default_cap_usd": 10,
-      "exposure_multiple": "15x own 16 default $10 cap (BG-LA $30 + BG-LB $60 + BG-LC $40 + BG-LD $20)",
+      "exposure_multiple": "15x default $10 cap (BG-LA $30 + BG-LB $60 + BG-LC $40 + BG-LD $20)",
       "wall_clock_simultaneous_hr": 18,
       "wall_clock_total_4path_2_4_cycle_estimated_weeks": 4
     },
     "own_28_anti_goodhart_v6_concurrent_fire_consideration": {
       "spec_landed": true,
       "spec_ref": "BG-LE V6 awareness probe (commit 368b5e90)",
-      "concurrent_fire_recommendation": "BG-LE V6 awareness probe 와 4 BG L4 simultaneous fire 동시 트리거 시 own 28 anti-Goodhart 측정 lane 증가 — V4 metric 만 Goodhart-saturated 상태 방지. 별도 override 'OK BG-LE V6 FIRE' 도 함께 발화 가능 (선택).",
+      "concurrent_fire_recommendation": "BG-LE V6 awareness probe 와 4 BG L4 simultaneous fire 동시 트리거 시 anti-Goodhart 측정 lane 증가 — V4 metric 만 Goodhart-saturated 상태 방지. 별도 override 'OK BG-LE V6 FIRE' 도 함께 발화 가능 (선택).",
       "interaction_risk": "BG-LE V6 = mac-local (no H100 cost) → cost interaction 없음. metric lane 충돌 없음 (V4 strict ↔ V6 awareness 직교)."
     },
-    "explicit_consent_template_for_user": "필자(사용자)가 본 readiness 80%+ 달성 후 4 BG simultaneous fire 진행 의향 시 다음 keyword verbatim 발화: 'OK CLM L4 ALL FIRE'. 본 발화 시 (1) git commit msg 또는 (2) 직접 채팅 발화 어느 하나라도 가능. own 16 cost discipline override 1회 명시 = $150 전체 budget exposure 동의 + ~4 week wall-clock 동의로 간주.",
+    "explicit_consent_template_for_user": "필자(사용자)가 본 readiness 80%+ 달성 후 4 BG simultaneous fire 진행 의향 시 다음 keyword verbatim 발화: 'OK CLM L4 ALL FIRE'. 본 발화 시 (1) git commit msg 또는 (2) 직접 채팅 발화 어느 하나라도 가능. cost discipline override 1회 명시 = $150 전체 budget exposure 동의 + ~4 week wall-clock 동의로 간주.",
     "fire_authority_post_override_actions": [
       "Step 1: emit FIRE_AUTHORITY_GRANTED state file (state/anima_clm_l4_fire_authority_granted_2026_05_08.json)",
       "Step 2: tool/transient_py/anima_clm_l[abcd]_h100.py NotImplementedError gate 해제 prerequisite — corpus path inject + V4 evaluator P5 v2 import + verdict.json schema verify",
       "Step 3: H100 pod 4 simultaneous create (RunPod GraphQL) — region TBD, 4 H100 SXM @ $2.99/hr × max 18hr (BG-LB longest)",
-      "Step 4: pre-flight verify per BG — corpus path file exists + size match + ckpt scp_get hook + own 31 HF target placeholder + own 33 trinity self-check 4-line",
+      "Step 4: pre-flight verify per BG — corpus path file exists + size match + ckpt scp_get hook + HF target placeholder + trinity self-check 4-line",
       "Step 5: 4 path simultaneous fire — Python subprocess 4-spawn (BG-LA + BG-LB + BG-LC + BG-LD) per orchestrator entry",
-      "Step 6: monitor verdict.json emit per BG (own 18 PASS_STRICT_C3 4-cell P5 v2 + V4 7-cell ≥10/15 + own 24 c3_aggregation_status field present)",
-      "Step 7: own 30 auto HF promote on PASS_STRICT_C3 (dancinlab/bg-l[abcd]-…r0-PASS_STRICT_C3_ANIMA-cycle{N})",
+      "Step 6: monitor verdict.json emit per BG (PASS_STRICT_C3 4-cell P5 v2 + V4 7-cell ≥10/15 + c3_aggregation_status field present)",
+      "Step 7: auto HF promote on PASS_STRICT_C3 (dancinlab/bg-l[abcd]-…r0-PASS_STRICT_C3_ANIMA-cycle{N})",
       "Step 8: ledger append + .roadmap.cli status update + cycle close summary"
     ]
   },
@@ -311,17 +311,17 @@
     ]
   },
   "honest_c3": [
-    "iter 4 readiness 80.25% = iter 2 (c) corpus expansion (+59.82MB dialogue, +17.66MB BG-LD pairs) + iter 3 N=60 ROC formal C3.1+C3.3 + V4 mirror + own 31 dancinlab SSOT + own 30 auto HF 누적 lift",
+    "iter 4 readiness 80.25% = iter 2 (c) corpus expansion (+59.82MB dialogue, +17.66MB BG-LD pairs) + iter 3 N=60 ROC formal C3.1+C3.3 + V4 mirror + dancinlab SSOT + auto HF 누적 lift",
     "iter 4 target 80% 도달했으나 (gap +0.25%) — 본 통과 = readiness floor crossing 이며 fire authority 와 직교 (사용자 override MISSING 단일 blocker 유지)",
     "C3.2 + C3.4 axis_min/axis_l2_pairwise = iter 1 N=15 fallback 잔존 — iter 3 5-axis 값 log 미캡처 (system overload 의 cost), iter 4+ clean re-fire 별도 cycle",
     "BG-LC tokenizer mismatch strategy = iter 4 시점 미결정 (3 options 잔존) — iter 4 (f) target 별도 cycle",
-    "BG-LB own 20 chat-template ratio 28.95% < 30% target 직전 (gap -1.05%) — sample 추가 시 stable 가능, BG-LB fire 전 verify 필요",
-    "BG-LD synthetic rejected 비율 (template_leak + degenerate '이' repeat) = ROC discrimination signal augmentation — 실제 BG saga FAIL sample 만 으로 부족 시 본 augmentation 비율 metrics 에 emit (own 23 정합)",
+    "BG-LB chat-template ratio 28.95% < 30% target 직전 (gap -1.05%) — sample 추가 시 stable 가능, BG-LB fire 전 verify 필요",
+    "BG-LD synthetic rejected 비율 (template_leak + degenerate '이' repeat) = ROC discrimination signal augmentation — 실제 BG saga FAIL sample 만 으로 부족 시 본 augmentation 비율 metrics 에 emit (정합)",
     "h100 pod count = 0 (config/h100_pods.json 2026-05-08T02:34:07Z) — fire 시 fresh provision × 4 필요",
-    "BG-LB cost cap $60 = own 16 default $10 의 6x — override 도착 후에도 drift risk 평가 필요 (BG-LB longest wall 18hr — early-kill $50 trigger 사실상 임박)",
+    "BG-LB cost cap $60 = default $10 의 6x — override 도착 후에도 drift risk 평가 필요 (BG-LB longest wall 18hr — early-kill $50 trigger 사실상 임박)",
     "single hardest blocker (override MISSING) iter 1 → iter 2 → iter 4 unchanged — readiness % 상승은 spec/data/threshold 측면이며 fire authority 와 직교",
     "wall-clock 4-week 추정 = 4 path × 2-4 cycle each 가정 (immediate PASS 가정 시 단축; FAIL 시 corpus+threshold+paradigm retune cycle 추가)",
-    "own 28 anti-Goodhart V6 awareness probe = mac-local 별도 lane (BG-LE) — concurrent fire 검토 시 cost interaction 없음 (Goodhart-saturated 방지 신호)"
+    " anti-Goodhart V6 awareness probe = mac-local 별도 lane (BG-LE) — concurrent fire 검토 시 cost interaction 없음 (Goodhart-saturated 방지 신호)"
   ],
   "cross_link": [
     "state/anima_clm_l4_readiness_2026_05_08.json (iter 1 baseline)",
@@ -336,6 +336,6 @@
     "docs/anima_clm_l4_corpus_progress_2026_05_08.md",
     "config/h100_pods.json (zero live pods)",
     "tool/transient_py/anima_clm_l[abcd]_h100.py (4 spec files — NotImplementedError gate present)",
-    "own 16 (cost discipline) + own 18 (PASS_STRICT_C3 P5 v2) + own 20 (chat-template) + own 24 (V4 mirror) + own 28 (anti-Goodhart) + own 30 (ckpt preservation + auto HF promote) + own 31 (Flavor B + dancinlab SSOT) + own 33 (trinity) + own 37 (HF mandate)"
+    " (cost discipline) + (PASS_STRICT_C3 P5 v2) + (chat-template) + (V4 mirror) + (anti-Goodhart) + (ckpt preservation + auto HF promote) + (Flavor B + dancinlab SSOT) + (trinity) + (HF mandate)"
   ]
 }

@@ -31,11 +31,11 @@ anima research artifact — **SIMPLE_STACK_PASS_STRICT** verdict, V4 strict best
 - H100 cost: $?
 
 ## own SSOT compliance
-- own 18 (simple_stack 4-condition): satisfied
-- own 29 (V4 strict ≥10/15 floor): ?/15 ≥ 10 → check
-- own 30 mandate-1/2/3: ckpts pull verified pre-pod-delete
-- own 31 mandate-4 Flavor B: BG iteration naming
-- own 31 mandate-8: private (manual review pending for public promote)
+- (simple_stack 4-condition): satisfied
+- (V4 strict ≥10/15 floor): ?/15 ≥ 10 → check
+- mandate-1/2/3: ckpts pull verified pre-pod-delete
+- mandate-4 Flavor B: BG iteration naming
+- mandate-8: private (manual review pending for public promote)
 
 ## Cross-link
 - ledger: `state/anima_model_attempts_ledger.jsonl` bg_id=BG-KM-QWEN-7B

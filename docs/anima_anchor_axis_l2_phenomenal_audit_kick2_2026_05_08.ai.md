@@ -89,7 +89,7 @@
 - predicate (`p4 ∧ (p1 ∨ p2 ∨ p3)`) **불변**
 - prompt 변경만 (semantic redesign) — proxy gaming X, **measurand integrity preserved**
 
-own 18 SSOT C3 predicate 그대로. own 14 V14 ✓.
+ SSOT C3 predicate 그대로. V14 ✓.
 
 ## 7. EXIT 차단 상태 유지
 
@@ -98,7 +98,7 @@ own 18 SSOT C3 predicate 그대로. own 14 V14 ✓.
 - V4 mirror gap pending
 - 사용자 verbatim "OK PROMOTE PUBLIC" pending
 
-→ 본 audit 는 **informational only**, public promote 트리거 없음 (own 37 visibility lifecycle 준수).
+→ 본 audit 는 **informational only**, public promote 트리거 없음 (visibility lifecycle 준수).
 
 ---
 

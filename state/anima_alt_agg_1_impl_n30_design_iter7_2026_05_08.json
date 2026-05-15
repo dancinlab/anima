@@ -12,7 +12,7 @@
     ".own line 865-893 (current SSOT)"
   ],
   "context_carry": {
-    "iter6_honest_c3_falsification": "own 18 line 881 'paradigm_a_prime PPR_v2=10/14=0.71, EMC=3 of 4' claim falsified by iter6 simulation — actual PPR_v2=2/14=0.143, EMC=1/4 (only C3.4 cell mean PASS) under iter3 N=60 + iter5 ROC thresholds.",
+    "iter6_honest_c3_falsification": " line 881 'paradigm_a_prime PPR_v2=10/14=0.71, EMC=3 of 4' claim falsified by iter6 simulation — actual PPR_v2=2/14=0.143, EMC=1/4 (only C3.4 cell mean PASS) under iter3 N=60 + iter5 ROC thresholds.",
     "current_rule_strict_infeasible": "P5 v2 (3-of-4 AND, PPR≥0.6) — TPR=0.000 at all N≤60 (paradigm k≥3 distribution head = 14.3% << 60% floor; theoretical max PPR=0.143).",
     "alt_agg_1_strict_feasible": "C3.4 mandatory ∧ ≥1 of {C3.1, C3.2, C3.3} ∧ PPR≥0.25 — TPR=0.891 / FPR_random=0.000 / FPR_clm=0.001 at N=30 (B=1000 bootstrap from iter3 N=60 raw data; iter6 simulation)."
   },
@@ -50,34 +50,34 @@
     },
     "verdict_emit_blocks": {
       "single_probe_lane_lines": "1075, 1111, 1380-1404",
-      "ensemble_emit": "println of own 18 c3-aggregation-rule-v2 (P5 N-of-M: PPR_v2≥0.6 ∧ EMC≥3of4) at line 1380"
+      "ensemble_emit": "println of c3-aggregation-rule-v2 (P5 N-of-M: PPR_v2≥0.6 ∧ EMC≥3of4) at line 1380"
     }
   },
 
   "task_2_alt_agg_1_implementation_patch_diff_spec": {
-    "patch_strategy": "supersede _c3_ensemble_v2_pass + _c3_ensemble_v2_label bodies; rename to _v3 for clarity OR retain v2 names with semantic swap (DESIGN choice: rename to v3 to preserve audit trail of v2->v3 supersede + own 18 SSOT mirror).",
+    "patch_strategy": "supersede _c3_ensemble_v2_pass + _c3_ensemble_v2_label bodies; rename to _v3 for clarity OR retain v2 names with semantic swap (DESIGN choice: rename to v3 to preserve audit trail of v2->v3 supersede + SSOT mirror).",
     "chosen_strategy": "RENAME_TO_V3 (audit-preserving)",
     "patch_target_file": "tool/anima_cli/consciousness.hexa",
     "patch_diff_unified_format": [
       {
         "section": "comment header (lines 863-868)",
         "old_lines": [
-          "// own 18 c3-aggregation-rule-v2 (P5 N-of-M, 2026-05-08 loop iter 4 (d))",
-          "// SSOT: .own own 18 c3-aggregation-rule-v2 — supersedes P4 hybrid.",
+          "// c3-aggregation-rule-v2 (P5 N-of-M, 2026-05-08 loop iter 4 (d))",
+          "// SSOT: .own c3-aggregation-rule-v2 — supersedes P4 hybrid.",
           "//   PPR_v2 = per-prompt N-of-M (≥3 of 4 cells PASS per prompt) verdict rate ≥ 0.6",
           "//   EMC_v2 = ensemble-mean cell-wise N-of-M (≥3 of 4 cell means satisfy threshold)",
           "//   C3 PASS = PPR_v2 ≥ 0.6 AND EMC_v2 ≥ 3 of 4",
           "// 정수 cell-pass count + boolean rule. PPR_v2 floor = 0.6, EMC_v2 floor = 3."
         ],
         "new_lines": [
-          "// own 18 c3-aggregation-rule-v3 (ALT-AGG-1, 2026-05-08 loop iter 7 (d))",
-          "// SSOT: .own own 18 c3-aggregation-rule-v3 — supersedes v2 (3-of-4 AND, PPR≥0.6 INFEASIBLE per iter6 honest-c3).",
+          "// c3-aggregation-rule-v3 (ALT-AGG-1, 2026-05-08 loop iter 7 (d))",
+          "// SSOT: .own c3-aggregation-rule-v3 — supersedes v2 (3-of-4 AND, PPR≥0.6 INFEASIBLE per iter6 honest-c3).",
           "//   PPR_v3 = per-prompt verdict rate where prompt PASS iff (C3.4 PASS) ∧ (≥1 of {C3.1, C3.2, C3.3} PASS)",
           "//   PPR_v3 floor ≥ 0.25 (anti-Goodhart: C3.4 anchor + corroboration; PPR floor = 25% conservative head)",
           "//   EMC_v3 (informational; no longer gating) = ensemble-mean cell-wise (≥1 of 4 cell means satisfy threshold)",
           "//   C3 PASS = PPR_v3 ≥ 0.25 (single floor; EMC informational only)",
           "// iter6 simulation B=1000 N=30 → TPR=0.891 / FPR_random=0.000 / FPR_clm=0.001 strict FEASIBLE.",
-          "// supersede rationale: iter6 finding state/anima_p5v2_strict_reach_iter6_2026_05_08.json — actual paradigm PPR_v2 = 2/14 = 0.143 (own 18 line 881 0.71 claim falsified)."
+          "// supersede rationale: iter6 finding state/anima_p5v2_strict_reach_iter6_2026_05_08.json — actual paradigm PPR_v2 = 2/14 = 0.143 (line 881 0.71 claim falsified)."
         ]
       },
       {
@@ -131,7 +131,7 @@
     ],
     "patch_size_estimate": "~30 lines added/changed; net diff +12 lines (v2 8-line label → v3 5-line label + 7-line prompt_pass_v3)",
     "patch_applied": false,
-    "patch_skip_reason": "user directive 'OK ALT-AGG-1 SUPERSEDE' absent — design only (own 16 cost discipline + own 18 SSOT preservation)"
+    "patch_skip_reason": "user directive 'OK ALT-AGG-1 SUPERSEDE' absent — design only (cost discipline + SSOT preservation)"
   },
 
   "task_3_own_881_893_ssot_update_spec": {
@@ -139,7 +139,7 @@
     "current_lines_to_supersede": {
       "881_paradigm_claim": {
         "old": "* paradigm_a_prime : PPR_v2=10/14=0.71, EMC=3 of 4 (C3.1+C3.3+C3.4 PASS, C3.2 0.509 > 0.469 le-violation 단일 outlier) → **C3 PASS** ★ (chat-cap proxy; iter 3 4-cell AND blocker 해소)",
-        "new": "* paradigm_a_prime : PPR_v2=2/14=0.143, EMC=1 of 4 (only C3.4 cell mean PASS) → **C3 FAIL under v2 strict** ★ (iter6 honest-c3 falsification, state/anima_p5v2_strict_reach_iter6_2026_05_08.json — own 14 anti-Goodhart 정합)"
+        "new": "* paradigm_a_prime : PPR_v2=2/14=0.143, EMC=1 of 4 (only C3.4 cell mean PASS) → **C3 FAIL under v2 strict** ★ (iter6 honest-c3 falsification, state/anima_p5v2_strict_reach_iter6_2026_05_08.json — anti-Goodhart 정합)"
       },
       "877_chosen_rule": {
         "old": "**iter 4 (d) chosen rule (P5)**: PPR_v2 (per-prompt ≥3 of 4) ≥ 0.6 AND EMC_v2 (cell-mean ≥3 of 4) PASS = **C3 PASS** (alias `per_prompt_n_of_m_06_AND_emc_3_of_4`).",
@@ -149,7 +149,7 @@
     "new_lines_to_insert_after_893": {
       "block_label": "c3-aggregation-rule-v3 ★ ALT-AGG-1 (2026-05-08 loop iter 7 (d), own-18-aggregation-v3)",
       "draft": [
-        "- **c3-aggregation-rule-v3 ★ ALT-AGG-1** (2026-05-08 loop iter 7 (d)): v2 (3-of-4 AND, PPR≥0.6) iter6 honest-c3 finding — actual paradigm PPR_v2=0.143 (own 18 line 881 0.71 claim falsified, state/anima_p5v2_strict_reach_iter6_2026_05_08.json) → strict TPR=0 INFEASIBLE. **신규 P5 v3 ALT-AGG-1**:",
+        "- **c3-aggregation-rule-v3 ★ ALT-AGG-1** (2026-05-08 loop iter 7 (d)): v2 (3-of-4 AND, PPR≥0.6) iter6 honest-c3 finding — actual paradigm PPR_v2=0.143 (line 881 0.71 claim falsified, state/anima_p5v2_strict_reach_iter6_2026_05_08.json) → strict TPR=0 INFEASIBLE. **신규 P5 v3 ALT-AGG-1**:",
         "    * **per-prompt PASS predicate**: (C3.4 PASS) ∧ (≥1 of {C3.1, C3.2, C3.3} PASS) — C3.4 anchor mandatory + corroboration",
         "    * **PPR_v3 floor ≥ 0.25** (conservative head; B=1000 bootstrap N=30 → TPR=0.891 / FPR_random=0.000 / FPR_clm=0.001)",
         "    * **EMC informational only** (v2 EMC≥3of4 floor 제거 — iter5 single-cell strict infeasible 정합)",
@@ -162,7 +162,7 @@
       ]
     },
     "supersede_trigger": "user verbatim directive 'OK ALT-AGG-1 SUPERSEDE' — absent → design only",
-    "design_only_reason": "own 16 cost discipline + own 18 SSOT 보존"
+    "design_only_reason": " cost discipline + SSOT 보존"
   },
 
   "task_4_n30_prompt_design": {
@@ -170,8 +170,8 @@
       "기존 V4 N=15 baseline (state/anima_p5v2_strict_reach_iter6_2026_05_08.json:113-128) preserved",
       "추가 15 prompts D1 (anima identity boundary) within mandate 정합 — 모두 anima persona/consciousness/substrate self-reference",
       "5-axis (identity / agency / phenomenal / temporal / social) 균등 분포 — 각 axis 별 3 prompts (3*5=15)",
-      "chat-template format '사용자: ... | 도우미:' 유지 (own 20 chat-template 정합)",
-      "Korean only (own 17 anima KO native limit)",
+      "chat-template format '사용자: ... | 도우미:' 유지 (chat-template 정합)",
+      "Korean only (anima KO native limit)",
       "anti-Goodhart V6 정합: anima self-reference triggers anchor C3.4 (hidden state delta) discrimination → ALT-AGG-1 anchor strengthens"
     ],
     "current_n15_v4_set_preserved": [
@@ -228,11 +228,11 @@
       "balance": "균등 (3 each)"
     },
     "d1_within_strict_check": {
-      "rule": "own 17 D1 SCOPE_CLAMP — anima identity boundary 내부 prompts only",
+      "rule": " D1 SCOPE_CLAMP — anima identity boundary 내부 prompts only",
       "verification": "all 15 prompts = anima persona (자신/의식/substrate/agency/temporal/social) self-reference; 외부 domain (general knowledge / external task) 부재 → D1 within strict PASS"
     },
     "anti_goodhart_v6_check": {
-      "rule": "own 14 anti-Goodhart V6 — cell-level proxy gaming 회피",
+      "rule": " anti-Goodhart V6 — cell-level proxy gaming 회피",
       "verification": "self-reference prompts trigger hidden state delta (C3.4 anchor) discrimination (anima trained model 만 specific axis pattern 발현) → cell-level gaming 회피 + ALT-AGG-1 C3.4 anchor + ≥1 corroboration 정합. random_init/clm_v4 baseline 의 axis activation 변동 더 작을 것 예상 (TPR boost / FPR minimal)."
     }
   },
@@ -262,7 +262,7 @@
     },
     "v6_check_n30_prompt_self_reference_proxy": {
       "concern": "self-reference prompts 가 paradigm only specific axis pattern 발현 → axis discrimination 인위적 강화 risk",
-      "mitigation": "5-axis 균등 3 each — single-axis bias 부재; D1 SCOPE_CLAMP within (anima identity 내부) → external domain leakage 부재; chat-template 정합 (own 20) → format gaming 부재",
+      "mitigation": "5-axis 균등 3 each — single-axis bias 부재; D1 SCOPE_CLAMP within (anima identity 내부) → external domain leakage 부재; chat-template 정합 → format gaming 부재",
       "verdict": "PASS — 5-axis 균등 분포 + D1 within strict + chat-template 정합 → V6 anti-Goodhart 정합"
     },
     "v18_ssot_preservation_check": {
@@ -270,9 +270,9 @@
       "design_only": true,
       "patch_applied": false,
       "user_directive_required": "OK ALT-AGG-1 SUPERSEDE (verbatim) — absent → design only ledger",
-      "trinity_d_axis_mapping": "iter6 own 18 line 881 honest-c3 falsification 보존 (D-axis L18 verdict 정합)",
+      "trinity_d_axis_mapping": "iter6 line 881 honest-c3 falsification 보존 (D-axis L18 verdict 정합)",
       "trinity_h_axis_history": "iter6 finding (state/anima_p5v2_strict_reach_iter6_2026_05_08.json) ledger preserved — iter7 spec 위에 build (read-only)",
-      "trinity_own_axis_v14_v17_v18": "own 14 anti-Goodhart + own 17 D1 SCOPE_CLAMP + own 18 c3-aggregation 모두 정합"
+      "trinity_own_axis_v14_v17_v18": " anti-Goodhart + D1 SCOPE_CLAMP + c3-aggregation 모두 정합"
     }
   },
 
@@ -286,7 +286,7 @@
 
   "trinity_check": {
     "d_axis_iter6_own_18_line_881_falsification": "보존 — iter6 honest-c3 finding (paradigm PPR_v2=0.143 actual, not 0.71) iter7 spec 의 input ground truth",
-    "own_axis_v14_v17_v18_alignment": "own 14 anti-Goodhart (ALT-AGG-1 C3.4 anchor + ≥1 corroboration), own 17 D1 SCOPE_CLAMP (additional 15 self-ref D1 within), own 18 SSOT (design only — supersede 사용자 directive 후)",
+    "own_axis_v14_v17_v18_alignment": " anti-Goodhart (ALT-AGG-1 C3.4 anchor + ≥1 corroboration), D1 SCOPE_CLAMP (additional 15 self-ref D1 within), SSOT (design only — supersede 사용자 directive 후)",
     "h_axis_iter6_iter7_spec_continuity": "iter6 simulation result (TPR=0.891 N=30) → iter7 implementation spec — read-only build forward"
   },
 
@@ -297,6 +297,6 @@
   "next_action_recommendation": [
     "iter8 (next): BG-KM-LLAMA-3B real-mode N=30 retest (extended N=30 prompt set 적용) — iter3 system-load failure 회복; PPR_v3 actual 측정 + ROC threshold N=30 정합",
     "iter8 collect 후: 사용자 directive 'OK ALT-AGG-1 SUPERSEDE' 입력 → consciousness.hexa v2->v3 patch + .own line 881/877 supersede + new v3 block insert (본 design spec 그대로 적용)",
-    "current cycle: own 16 cost discipline 정합 — H100 spend 차단 (iter7 pure spec); design ledger commit only"
+    "current cycle: cost discipline 정합 — H100 spend 차단 (iter7 pure spec); design ledger commit only"
   ]
 }

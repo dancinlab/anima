@@ -18,7 +18,7 @@ and dispersion-trigger trajectory for trained vs random across 3 substrates.
 
 ## Run config
 - max_cells=256 (matches §51 cap)
-- 1 trained vs 1 random (seed=42) per substrate (lean compute, $0 local CPU, own 16)
+- 1 trained vs 1 random (seed=42) per substrate (lean compute, $0 local CPU)
 - A: 100 turns / snap_every=10
 - C, E: 60 turns / snap_every=5
 - Same prompt stream across trained/random within a substrate (deterministic)
@@ -57,9 +57,9 @@ and dispersion-trigger trajectory for trained vs random across 3 substrates.
    trace was reported as cos_mean (off-diagonal), abs_cos_mean, and cos_off_diag_l2.
 6. Snapshots stored only summary stats per turn (not full N×C tensors) to keep JSON files
    manageable; sufficient for the mean/std/max/min/distribution comparison the mission asked.
-7. No SFT path / no training/*.py edits / no REBORN.md append (raw#9, raw#15, own 22).
+7. No SFT path / no training/*.py edits / no REBORN.md append (raw#9, raw#15).
 
-## Output files (own 38)
+## Output files
 - spec.md (this file)
 - run_correlation.py — measurement driver
 - build_verdict.py — aggregator/verdict builder

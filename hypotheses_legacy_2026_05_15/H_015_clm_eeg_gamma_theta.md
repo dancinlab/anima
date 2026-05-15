@@ -36,7 +36,7 @@ gamma (30-80Hz) / theta (4-8Hz) ratio가 cognitive engagement proxy — engageme
 - prereg: `state/clm_eeg_p3_gamma_theta_pre_register.json` + `_gcg_pre_register.json`
 - sister: H_013, H_014
 - roadmap: `.roadmap.eeg` + `.roadmap.anima_clm_eeg` P3
-- own: own 21
+- own:
 
 ## Honest Limits
 

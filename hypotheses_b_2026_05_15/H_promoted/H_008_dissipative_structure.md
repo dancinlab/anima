@@ -37,7 +37,7 @@ Prigogine dissipative structure (far-from-equilibrium thermodynamic self-organiz
 - legacy: `docs/hypotheses/H-CX-528-dissipative-structure-consciousness.md`
 - sister H: H_002 (universe), H_003 (life), H_009 (fisher info), H_010 (holographic)
 - literature: Prigogine (1977), Schneider & Kay (1994)
-- own: own 21
+- own:
 
 ## Honest Limits
 

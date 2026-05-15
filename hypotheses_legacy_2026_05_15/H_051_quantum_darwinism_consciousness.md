@@ -29,7 +29,7 @@ Legacy file: `docs/hypotheses/H-CX-527-quantum-darwinism-consciousness.md`. Poin
 
 - legacy: `docs/hypotheses/H-CX-527-quantum-darwinism-consciousness.md`
 - sister: H_010 (holographic), H_011 (IIT)
-- own: own 21
+- own:
 
 ## Honest Limits
 

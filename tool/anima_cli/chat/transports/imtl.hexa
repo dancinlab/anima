@@ -22,7 +22,7 @@
 //    5. coupling const: psi_balance=0.5, psi_coupling=0.014,
 //       psi_f_critical=0.10
 //
-//  STATUS (own 22 mandatory report — honest)
+// STATUS (mandatory report — honest)
 //    · UPSTREAM STUB: anima-tools/misc/inter_model_comm.hexa lines 16-32
 //      all TODO[pytorch] — serialize/deserialize/send/receive bodies = 0 / NO-OP.
 //    · NOT WIRED into chat path (chat.hexa / duo.hexa / trio.hexa do not
@@ -38,12 +38,12 @@
 //    · multi-server dialogue (council L3 across geo-separated GPU pools)
 //
 //  COMPLIANCE
-//    own 16 cost — net_io cost class (UDP datagram, no retry; loss tolerated)
-//    own 17 D1 SCOPE_CLAMP — cross-host transport is research lane until
-//      protocol body lands + own 18 verdict pipeline integrated
-//    own 22 mandatory report — STUB status surfaced verbatim (this file IS
+// cost — net_io cost class (UDP datagram, no retry; loss tolerated)
+// D1 SCOPE_CLAMP — cross-host transport is research lane until
+// protocol body lands + verdict pipeline integrated
+// mandatory report — STUB status surfaced verbatim (this file IS
 //      the discovery 발견 report carrying the stub forward)
-//    own 34 mandate-1 — when LANDED, byte payload verbatim through UDP (no
+// mandate-1 — when LANDED, byte payload verbatim through UDP (no
 //      transformation; ANMA magic = control-band only)
 // ════════════════════════════════════════════════════════════════════════════
 
@@ -79,7 +79,7 @@ fn transport_describe() -> string {
 }
 
 // transport_smoke — benchmark hook. Validates upstream stub presence + reports
-// NOT_WIRED status honestly (own 22 mandatory report). Returns 0 on PASS
+// NOT_WIRED status honestly (mandatory report). Returns 0 on PASS
 // (stub present + status honest) so benchmark cross-product doesn't FAIL on
 // imtl axis — STUB is the canonical state.
 fn transport_smoke(repo: string, argv) -> int {
@@ -101,7 +101,7 @@ fn transport_smoke(repo: string, argv) -> int {
     println("[transport:imtl] STATUS = STUB (NOT_WIRED into chat path; future axis-N+1 hook)")
     println("[transport:imtl] coupling consts: psi_balance=0.5 psi_coupling=0.014 psi_f_critical=0.10")
     println("[transport:imtl] default port=19266 magic=ANMA")
-    println("[transport:imtl] smoke PASS (own 22 mandatory report — STUB status surfaced verbatim)")
+    println("[transport:imtl] smoke PASS (mandatory report — STUB status surfaced verbatim)")
     return 0
 }
 

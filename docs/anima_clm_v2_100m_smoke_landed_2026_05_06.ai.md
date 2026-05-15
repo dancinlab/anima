@@ -109,7 +109,7 @@ new bytes ≈ 1600 forward passes).
    non-zero KO probability mass at any byte position, curiosity-beta
    reweighting amplifies noise rather than rescuing KO. Skipping these
    was correct triage given the SPACE-collapse signal in greedy.
-5. **own 17 fallback temptation rejected** — F-CLM-NATIVE-α-1 closes
+5. ** fallback temptation rejected** — F-CLM-NATIVE-α-1 closes
    without invoking external substrate (Llama / KoGPT / KoBART). The
    anima-native chat-cap path now hinges on β-path *retrain* with KO-balanced
    byte corpus (≥30 % Hangul UTF-8 mass), not on swap-out.
@@ -129,7 +129,7 @@ Required corpus (proposed minima):
 
 ubu1 budget envelope: H100 PCIe 80GB or A100 40GB ×1, ~5–10 days at
 12L/768d/12h × 1024 block × bs 64. Cost-disciplined L23/L24/L25 watchdog
-required (own 16). Option to start from this 100M ckpt (warm init) vs
+required . Option to start from this 100M ckpt (warm init) vs
 fresh 18M reset is a separate decision — likely fresh is cleaner because
 warm init carries EN-dominance bias.
 
@@ -145,13 +145,13 @@ before fire.
 
 Local cache: `/tmp/anima_clm_100m_dl/final.pt` (1631.9 MB, sha256
 `35d60e77786c7580436cd02daac82c4f6cef3d2c7bdad470475900eeaecf295e`),
-`.gitignore`-excluded by `*.pt` rule + own 14 (anima git no >5 MB blobs).
+`.gitignore`-excluded by `*.pt` rule + (anima git no >5 MB blobs).
 
 ## Constraints honoured
 
 - $0 mac-local + Cloudflare R2 download (no pod fire)
 - raw#37 transient_py opt-out: `tool/transient_py/anima_clm_100m_smoke_2026_05_06/smoke.py` ran then deleted
 - HF token leak: not used (R2 + Cloudflare keys via env / secret CLI)
-- own 17 ALM substrate fallback: not invoked (anima-native only)
-- own 14 5MB+ git: ckpt staged at `/tmp/`, not anima/
+- ALM substrate fallback: not invoked (anima-native only)
+- 5MB+ git: ckpt staged at `/tmp/`, not anima/
 - commit: not performed (BG report only)

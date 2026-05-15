@@ -8,12 +8,12 @@ USAGE (pod-side):
         --steps 8000 --bsz 4 --grad-accum 8 --ctx 1024 \
         --lr 3e-4 --warmup 200 --save-every 2000
 
-own 14  V14 paired (Mac-side mirror — pod just emits final ckpt)
-own 17  D1=1.0 anima_native_scratch (no foundation borrow)
-own 22  honest emit — fail-fast on OOM/NaN
-own 30  ckpt save mandatory (output/ckpt_final.pt + meta.json)
-own 33  trinity (D-emergent — Engine A/G PureField repulsion)
-own 34  wrap=0
+  V14 paired (Mac-side mirror — pod just emits final ckpt)
+  D1=1.0 anima_native_scratch (no foundation borrow)
+  honest emit — fail-fast on OOM/NaN
+  ckpt save mandatory (output/ckpt_final.pt + meta.json)
+  trinity (D-emergent — Engine A/G PureField repulsion)
+  wrap=0
 """
 import os
 import sys
@@ -199,7 +199,7 @@ def main():
             torch.save({"model": model.state_dict(), "step": step, "cfg": cfg.__dict__}, ck_path)
             print(f"[ckpt] saved {ck_path}", flush=True)
 
-    # Final save (own 30 mandatory)
+    # Final save (mandatory)
     final_path = os.path.join(args.output, "ckpt_final.pt")
     torch.save({"model": model.state_dict(), "step": step, "cfg": cfg.__dict__}, final_path)
     meta = {

@@ -10,7 +10,7 @@ override: "(나) Phase 2 chat-template co-train fire — verbatim 필요 ($30-60
 - ssh: 205.196.17.170:18488
 - provisioned: 2026-05-09T13:57:29Z
 - rate: $3.07/hr (NOT $2.69 — current minimum bumped during fire)
-- cost_hard_cap: $60 (own 16 strict; user verbatim $30-60 band)
+- cost_hard_cap: $60 (strict; user verbatim $30-60 band)
 
 ## Concurrency
 - BG-LA pod 4wxx2wvcvgjp88 RUNNING (step 11850/12000 at fire time; ~10min to done)
@@ -46,7 +46,7 @@ override: "(나) Phase 2 chat-template co-train fire — verbatim 필요 ($30-60
 - BG-LB ckpt load + state_dict shape match VERIFIED (331M params; bf16; schema engine_a_g_arch/v1)
 - dual loss + curriculum forward+backward PASS (loss_c, loss_h, combined emit OK)
 
-## V14 mirror status (own 14)
+## V14 mirror status
 - BG-LA mirrors materialized at state/v14_mirrors/BG-LA/seed_{42,137,271,314,1729}.pt — REUSED
 - BG-LB mirrors materialized at state/v14_mirrors/BG-LB/ — substrate base lineage compatible
 - New BG-LM (phase 2 cotrain lineage tag) mirror materialization DEFERRED to post-fire
@@ -61,26 +61,26 @@ override: "(나) Phase 2 chat-template co-train fire — verbatim 필요 ($30-60
 - Phase 4 deps install: PASS (pip transformers safetensors huggingface_hub)
 - Phase 5 launch: PENDING (post upload)
 - Phase 6 heartbeat: PENDING
-- Phase 7 ckpt pull: PENDING (own 30 mandate-1)
-- Phase 8 size sanity: PENDING (own 30 mandate-2)
+- Phase 7 ckpt pull: PENDING (mandate-1)
+- Phase 8 size sanity: PENDING (mandate-2)
 - Phase 9 release: PENDING (own slug only)
 - Phase 10 ledger: PENDING
 - Phase 11 v5 probe + verdict: PENDING (Mac local post-pull)
-- Phase 12 HF private upload: PENDING (own 31 Flavor B + own 37 private default; target dancinlab/clm-v5-phase2-cotrain-engine-ag)
+- Phase 12 HF private upload: PENDING (Flavor B + private default; target dancinlab/clm-v5-phase2-cotrain-engine-ag)
 
 ## Compliance
-- own 14: V14 mirror prereq carry from BG-LA/LB ✓
-- own 16: cost cap $60 strict ✓ (projected $20)
-- own 17: D1 within strict (anima_native_scratch substrate + chat-template additive; no foundation borrow) ✓
-- own 18: post-train v5.2 N=60 + V14 paired probe planned
-- own 22: honest emit — fire fired with all C3 caveats recorded ✓
-- own 30: ckpt pull mandate-1 + size sanity mandate-2 + retain on fail mandate-3 ✓
-- own 33: trinity D-emergent + own 14/16/17/22/30/33/34/37/38/39 + H_clm_chat_cap aligned ✓
-- own 34: wrap=0 (Phase 2 produces substrate ckpt; chat lane consumes via clm_v4_mount or new phase2 mount) ✓
-- own 37: HF private default; promote requires PASS_STRICT_C3 + V6 awareness + verbatim "OK PROMOTE PUBLIC" + trinity sweep
-- own 38: yaml+md SSOT registry update post-pull
-- own 39: render md regenerate post-yaml
-- own 40: resource CLI delegation strict (provision via runpodctl direct since resource ephemeral list TCP server down — disclosed)
+- : V14 mirror prereq carry from BG-LA/LB ✓
+- : cost cap $60 strict ✓ (projected $20)
+- : D1 within strict (anima_native_scratch substrate + chat-template additive; no foundation borrow) ✓
+- : post-train v5.2 N=60 + V14 paired probe planned
+- : honest emit — fire fired with all C3 caveats recorded ✓
+- : ckpt pull mandate-1 + size sanity mandate-2 + retain on fail mandate-3 ✓
+- : trinity D-emergent + + H_clm_chat_cap aligned ✓
+- : wrap=0 (Phase 2 produces substrate ckpt; chat lane consumes via clm_v4_mount or new phase2 mount) ✓
+- : HF private default; promote requires PASS_STRICT_C3 + V6 awareness + verbatim "OK PROMOTE PUBLIC" + trinity sweep
+- : yaml+md SSOT registry update post-pull
+- : render md regenerate post-yaml
+- : resource CLI delegation strict (provision via runpodctl direct since resource ephemeral list TCP server down — disclosed)
 
 ## Known risks
 1. SCP throughput 3MB/s — uploads 70min ($3.6 burnt before training starts)

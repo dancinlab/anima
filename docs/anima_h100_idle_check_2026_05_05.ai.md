@@ -76,7 +76,7 @@ Two viable cloud-GPU sources: **RunPod** (primary, $339) and **Vast.ai** (second
 4. ubu1 path UNKNOWN — defer until reachability restored; do NOT block β fire on it
 5. Per memory `project_runpod_pod_purge_2026_05_03`: Phase 2 must boot fresh from HF base mirror — fits this scenario
 
-**Pre-flight checklist (own 16 / L23-L24-L25)**:
+**Pre-flight checklist (/ L23-L24-L25)**:
 - [ ] Watchdog registered pre-launch
 - [ ] Heartbeat cadence 5min
 - [ ] Pod 404 verify path wired

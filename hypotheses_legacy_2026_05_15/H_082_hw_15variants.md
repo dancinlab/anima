@@ -29,7 +29,7 @@ Legacy files: `docs/hypotheses/hw/HW-{2a,2b,2c,5,9,10,11,12,13,14,15,16,17}.md` 
 
 - legacy: hw/HW-* 14 files + HW-overview.md + CONSCIOUSNESS-CHIP-FINAL-DESIGN.md
 - sister: H_080 (TOPO), H_040 (substrate topology)
-- own: own 21
+- own:
 
 ## Honest Limits
 

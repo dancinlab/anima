@@ -2,7 +2,7 @@
 
 > **task_id**: an11_fire_20260428T044952Z
 > **session**: anima-cmd-loop autonomous-loop-dynamic 2026-04-28
-> **session totals**: 6 fire iters, 5 distinct root-cause iters per own 4
+> **session totals**: 6 fire iters, 5 distinct root-cause iters per
 > **status**: AN11_FIRE_6_FIRST_PASS_2_OF_4_VERDICT_LIVE
 
 ---

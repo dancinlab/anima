@@ -36,7 +36,7 @@
     "bytes": 154854977,
     "size_mb": 147.68,
     "sha256": "2d15ca7d277aaaef95c7dbc9eb810ec38f0510e0578269810aa4eb879f51e0e8",
-    "git_status": "IGNORED (own 14: corpus >5MB → HF only, never anima git)"
+    "git_status": "IGNORED (: corpus >5MB → HF only, never anima git)"
   },
   "honest_c3": [
     {"id": "C3-1", "issue": "PATH-B-1 concat: wiki block first then dialogue block. DataLoader shuffle=True at train time will mix; if shuffle disabled, dialogue starvation in early steps. Mitigation: confirm trainer shuffle=True on ubu1 launch."},
@@ -50,7 +50,7 @@
   "next_steps": [
     "user confirms recipes",
     "anima session executes scp_recipe.txt mac → ubu1",
-    "anima session executes hf_upload_recipe.txt PRIVATE upload (own 15 lifecycle)",
+    "anima session executes hf_upload_recipe.txt PRIVATE upload (lifecycle)",
     "ubu1 CLM-3-original trainer points at /home/aiden/core/anima/data/corpus_mix_70wiki_30dialogue.txt"
   ]
 }

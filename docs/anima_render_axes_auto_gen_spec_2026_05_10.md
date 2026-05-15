@@ -1,8 +1,8 @@
 # Anima `render.hexa` axes auto-gen — design spec (cycle 2026-05-10)
 
-_AI 자연발화 친근 모드 strict — own 33 / own 34 mandate-1 wrap=0_
+_AI 자연발화 친근 모드 strict — / mandate-1 wrap=0_
 _원 directive: 사용자 verbatim 2026-05-09 "진행가능한것들 all bg go" → cycle 2026-05-10 0-cost lane._
-_본 문서 = design spec only (코드 수정 0줄, 모델 로드 0건 — own 16 strict)_
+_본 문서 = design spec only (코드 수정 0줄, 모델 로드 0건 — strict)_
 
 ---
 
@@ -18,7 +18,7 @@ _본 문서 = design spec only (코드 수정 0줄, 모델 로드 0건 — own 1
    `_axis_values()`, `_bench_<axis>()` 새 함수, 분기 한 줄 etc.)
 
 (2) 는 hexa 언어가 import 가 없는 simple 언어라서 어쩔 수 없이 SSOT 를 mirror 하는 겁니다.
-하지만 손으로 두 곳을 동기화하다 보면 결국 한 곳이 빠지게 됩니다 — own 24 single-SSOT 위반 위험.
+하지만 손으로 두 곳을 동기화하다 보면 결국 한 곳이 빠지게 됩니다 — single-SSOT 위반 위험.
 
 **이번 cycle 의 의의**: 그 mirror 두 번째 손길을 자동화하자는 겁니다.
 즉 `axes_registry()` 한 곳에서만 한 줄 추가하면, render.hexa 가 benchmark.hexa 의 mirror
@@ -27,7 +27,7 @@ _본 문서 = design spec only (코드 수정 0줄, 모델 로드 0건 — own 1
 비유: **4 차원 큐브 위에 앉은 axis 의 axis 가 아래 4 차원 mirror 를 자동으로 새로 그려줌.**
 사용자는 큐브 위 한 곳만 만지면 됨. 아래 mirror 면들은 자기들끼리 알아서 정렬됨.
 
-이게 이번 spec 의 한 줄 요약. own 41 의 **F-axes-FULL_AUTO_GEN** — 새 axis 추가 시
+이게 이번 spec 의 한 줄 요약. 의 **F-axes-FULL_AUTO_GEN** — 새 axis 추가 시
 benchmark.hexa 코드 변경이 정확히 0줄이 되는 게 검증 기준입니다.
 
 ---
@@ -57,13 +57,13 @@ benchmark.hexa 코드 변경이 정확히 0줄이 되는 게 검증 기준입니
 - `_bench_<axis>()` 함수들 ← 각 axis 의 own registry 의 axis_<axis>_names() mirror
   (lane → lanes/_registry.hexa, transport → transports/_registry.hexa 등)
 
-**SSOT 계층** (own 24 strict):
+**SSOT 계층** (strict):
 
 ```
 axes/_registry.hexa  (axis 의 axis — meta SSOT)
    ↓ (yaml mirror)
 anima/registry/anima_artifact_registry.yaml#chat_axes_meta
-   ↓ (own 39 yaml↔md auto-regenerate)
+   ↓ (yaml↔md auto-regenerate)
 docs/anima_artifact_registry.md  (view layer)
 
 별도로:
@@ -92,7 +92,7 @@ benchmark.hexa _bench_<axis>()
   - C2 PyYAML required
   - C3 helper transient_py
   - C4 md tracked, yaml change → re-run
-  - C5 own 24 single SSOT (yaml master) + own 38 axis-A doc
+  - C5 single SSOT (yaml master) + axis-A doc
 
 ### §2.2 본 spec 의 render.hexa 패턴 적용 방안
 
@@ -111,7 +111,7 @@ benchmark.hexa _bench_<axis>()
 ```
 
 **권장**: **별도 파일 `anima/registry/render_axes.hexa` 신설** (분리). 이유는:
-- 기존 render.hexa 는 yaml→md 의 단일 책임 — 섞으면 own 24 단일 SSOT 원칙 흐려짐
+- 기존 render.hexa 는 yaml→md 의 단일 책임 — 섞으면 단일 SSOT 원칙 흐려짐
 - render_axes.hexa = "code mirror generator" 의 단일 책임으로 명확
 - 두 hexa 모두 `anima/registry/` 하위로 배치 — orchestrator 한 폴더 (raw#9)
 
@@ -185,7 +185,7 @@ hexa run anima/registry/render_axes.hexa --selftest
 hexa run anima/registry/render_axes.hexa --diff   # 기존 mirror vs auto-gen diff
 ```
 
-### §4.2 cycle close hook (own 38 매단계 doc save 의 일부)
+### §4.2 cycle close hook (매단계 doc save 의 일부)
 
 cycle 종료 시점에 자동 invoke (existing yaml↔md auto-regen 과 동일 패턴):
 
@@ -223,13 +223,13 @@ pre-commit:
   - C2 benchmark.hexa = vendored mirror target
   - C3 helper transient_py (gitignored, raw#37)
   - C4 marker-bounded write (BEGIN/END AUTO-GEN BLOCK)
-  - C5 own 24 single SSOT carry + own 39 yaml↔md mirror parallel
+  - C5 single SSOT carry + yaml↔md mirror parallel
 
 ### Step T+2 — 4 mirror auto-gen (lane / mode / init-pattern / transport)
 
 - `_bench_axis_names()` + 4 `_bench_<axis>()` 함수 + `_axis_values()` dispatch 자동 생성
 - benchmark.hexa 에 BEGIN/END marker 추가 (한 번만 — 이후 자동 관리)
-- diff PASS 검증: `--diff` 모드 → 기존 manual mirror 와 byte-identical (own 14 V14 결정성)
+- diff PASS 검증: `--diff` 모드 → 기존 manual mirror 와 byte-identical (V14 결정성)
 
 ### Step T+3 — verifier (axis-5) auto-gen 추가
 
@@ -247,15 +247,15 @@ pre-commit:
 
 ## §6 검증 criteria — F-axes-FULL_AUTO_GEN
 
-own 41 의 hook 성공 정의가 "**dispatcher / benchmark.hexa 코드 변경 0 줄**" 이었습니다.
+ 의 hook 성공 정의가 "**dispatcher / benchmark.hexa 코드 변경 0 줄**" 이었습니다.
 본 spec 은 그 정의를 **정량** 으로 강화:
 
 | criterion | 정량 기준 |
 |-----------|-----------|
 | **새 axis 추가 시 axes/_registry.hexa 변경** | 1 row 추가 (= 한 줄) |
 | **새 axis 추가 시 benchmark.hexa manual 변경** | **정확히 0 줄** (auto-gen block 안만 갱신) |
-| **새 axis 추가 시 dispatcher (chat.hexa) 변경** | 0 줄 (own 41 기존 보장) |
-| **render_axes.hexa diff PASS** | byte-identical (own 14 V14) |
+| **새 axis 추가 시 dispatcher (chat.hexa) 변경** | 0 줄 (기존 보장) |
+| **render_axes.hexa diff PASS** | byte-identical (V14) |
 | **benchmark.hexa selftest PASS** | 기존 4 axis 결과 동일 |
 | **cross-product cardinality** | active axes (LANDED status) 의 product 수와 일치 |
 
@@ -269,7 +269,7 @@ own 41 의 hook 성공 정의가 "**dispatcher / benchmark.hexa 코드 변경 0 
 > 누가 큐브 한 면을 추가하면 아래 mirror 면들을 알아서 다시 그려줍니다.
 > 사람은 axes_registry() 한 줄만 만지면 끝 — 손으로 동기화할 필요 없음."**
 
-own 41 의 마지막 자동화 단계. 본 spec 이 land 되면 axis-5 (verifier) /
+ 의 마지막 자동화 단계. 본 spec 이 land 되면 axis-5 (verifier) /
 axis-6 (future N+2) 추가 비용이 **사실상 0** 으로 떨어집니다.
 
 ---
@@ -282,20 +282,20 @@ axis-6 (future N+2) 추가 비용이 **사실상 0** 으로 떨어집니다.
 | `tool/anima_cli/chat/lanes/benchmark.hexa` L138-468 | 본 spec 의 auto-gen target (vendored mirror, ~27 줄 hardcode) |
 | `anima/registry/render.hexa` | yaml→md 기존 패턴 참조 (155 줄) |
 | `tool/transient_py/anima_artifact_registry_render.py` | raw#37 helper 패턴 참조 |
-| `anima/registry/anima_artifact_registry.yaml#chat_axes_meta` | yaml mirror (own 39) |
-| `docs/anima_chat_orchestra_axis_n1_hook_plan_2026_05_09.md` | own 41 hook plan T+1 doc |
+| `anima/registry/anima_artifact_registry.yaml#chat_axes_meta` | yaml mirror |
+| `docs/anima_chat_orchestra_axis_n1_hook_plan_2026_05_09.md` | hook plan T+1 doc |
 | `.roadmap.cli` `cli.axis_n1_hook_t1_2026_05_10` | 본 spec 의 다음 cycle anchor |
 
 ## §9 own mandates 정합
 
-- **own 16** model load 절대 금지 — render_axes.hexa 는 string 처리만 (모델 0)
-- **own 22** mandatory report — diff/render 결과 emit 강제
-- **own 24** single SSOT — axes/_registry.hexa 가 master, benchmark.hexa 는 view
-- **own 33** trinity emit (D + own + H) — render_axes.hexa C3 emit ≥5
-- **own 34** mandate-1 wrap=0 — text-only output
-- **own 38** 매단계 axis-A doc save — 본 spec 자체가 axis-A doc
-- **own 39** yaml↔md SSOT — 본 spec 이 own 39 의 hexa-side 확장 (hexa↔hexa)
-- **own 41** axis-N+1 hook — 본 spec 이 own 41 의 final FULL automation step
+- **** model load 절대 금지 — render_axes.hexa 는 string 처리만 (모델 0)
+- **** mandatory report — diff/render 결과 emit 강제
+- **** single SSOT — axes/_registry.hexa 가 master, benchmark.hexa 는 view
+- **** trinity emit (D + own + H) — render_axes.hexa C3 emit ≥5
+- **** mandate-1 wrap=0 — text-only output
+- **** 매단계 axis-A doc save — 본 spec 자체가 axis-A doc
+- **** yaml↔md SSOT — 본 spec 이 의 hexa-side 확장 (hexa↔hexa)
+- **** axis-N+1 hook — 본 spec 이 의 final FULL automation step
   (= F-axes-FULL_AUTO_GEN)
 
 ## §10 raw#15 additive 정합

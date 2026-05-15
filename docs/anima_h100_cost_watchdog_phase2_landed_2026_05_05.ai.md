@@ -5,7 +5,7 @@ own: 16 (Phase 2)
 spec: docs/anima_h100_cost_discipline_operationalization_spec_2026_05_05.md §3.3
 predecessor_phases:
   - Phase 1 LANDED: tool/h100_cost_watchdog.hexa + tool/h100_register.bash + tool/h100_alert_emit.bash
-  - own 16 admission landed (.own taxonomy)
+  - admission landed (.own taxonomy)
 successor_phases:
   - Phase 3 (next): BG launch prompt template + memory entry update (mac, $0, ~30min)
   - Phase 4: H100 smoke test ($1-3, ~30min) — dogfood Phase 2 hooks against live pod
@@ -16,7 +16,7 @@ raw_compliance: raw#9 (hexa+bash carve-out OK), raw#10 (≥5 honest C3), raw#15 
 
 ## Summary
 
-- **6 orchestrator hexa templates patched** with own 16 Phase 2 watchdog hooks:
+- **6 orchestrator hexa templates patched** with Phase 2 watchdog hooks:
   - `tool/clm_v4_lora_train_orchestrator.hexa` (BG-CLM-2-EXEC, target $10)
   - `tool/p9_path_a_retrain_v2_h100_orchestrator.hexa` (BG-PA-RETRAIN-V2, target $24)
   - `tool/p9_base_validation_h100_orchestrator.hexa` (BG-P9-BASE-VALIDATION, target $5)
@@ -25,10 +25,10 @@ raw_compliance: raw#9 (hexa+bash carve-out OK), raw#10 (≥5 honest C3), raw#15 
   - `tool/p9_opt_1_v4_exec_h100_orchestrator.hexa` (BG-P9-OPT-1-V4-EXEC, target $2)
 
 - **4 hooks per orchestrator** (all 6 files have all 4 marker banners — verified):
-  1. `# === own 16 Phase 2 watchdog hook (boot) ===` — registers pod with watchdog after pod_id capture; calls `bash tool/h100_register.bash $POD_ID $BG_LANE $TARGET_USD`; graceful warn-only on failure.
-  2. `# === own 16 Phase 2 watchdog hook (heartbeat) ===` — fire-and-forget per-poll-iter `echo > state/h100_watchdog/heartbeats/<BG_LANE>.txt`; failure is silent (mkdir -p + write || true).
-  3. `# === own 16 Phase 2 watchdog hook (trap pre-stop) ===` — augments existing `_kill_pod` trap: writes EXITING marker → `runpodctl pod stop+delete` (existing) → 404 verify (3 retries × 30s) → `hexa run tool/h100_cost_watchdog.hexa --deregister $POD_ID` (only if 404 confirmed).
-  4. `# === own 16 Phase 2 verdict schema (cost-discipline fields) ===` — adds 5 fields to verdict.json: `pod_kill_verified_404`, `watchdog_deregistered`, `cost_target_usd`, `cost_actual_usd`, `cost_overrun_ratio`, `cost_overrun_2x_alerted` (additive — does not displace existing `actual_cost_usd` / `budget_target_usd` / `pod_terminated`).
+  1. `# === Phase 2 watchdog hook (boot) ===` — registers pod with watchdog after pod_id capture; calls `bash tool/h100_register.bash $POD_ID $BG_LANE $TARGET_USD`; graceful warn-only on failure.
+  2. `# === Phase 2 watchdog hook (heartbeat) ===` — fire-and-forget per-poll-iter `echo > state/h100_watchdog/heartbeats/<BG_LANE>.txt`; failure is silent (mkdir -p + write || true).
+  3. `# === Phase 2 watchdog hook (trap pre-stop) ===` — augments existing `_kill_pod` trap: writes EXITING marker → `runpodctl pod stop+delete` (existing) → 404 verify (3 retries × 30s) → `hexa run tool/h100_cost_watchdog.hexa --deregister $POD_ID` (only if 404 confirmed).
+  4. `# === Phase 2 verdict schema (cost-discipline fields) ===` — adds 5 fields to verdict.json: `pod_kill_verified_404`, `watchdog_deregistered`, `cost_target_usd`, `cost_actual_usd`, `cost_overrun_ratio`, `cost_overrun_2x_alerted` (additive — does not displace existing `actual_cost_usd` / `budget_target_usd` / `pod_terminated`).
 
 - **Selftests PASS** for 4 of 6 orchestrators (clm_v4_lora_train, p9_path_a_retrain_v2, p9_llama_anchor, p9_opt_1_v4_exec). The other 2 (p9_base_validation, p9_lora_mode1_eval) FAIL at the **pre-existing T4 secret-check** (uses bare `secret` not absolute path under hexa exec sandbox PATH); confirmed pre-existing via stash-and-rerun. T9 watchdog-hook block is unreachable behind T4 in those 2, but the patches themselves are syntactically valid (verified via `--emit` + bash parse on the unaffected paths).
 

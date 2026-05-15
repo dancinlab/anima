@@ -83,7 +83,7 @@
       "02:29:20Z release 0pqljzm0qgkr37 ckpt_override=n (sibling v6-anima-1)",
       "02:29:34Z release h100-runpod-nfvcb923nq920j-1778292770 ckpt_override=y *** OUR POD ***"
     ],
-    "release_initiator": "UNKNOWN — anima current task did NOT call resource release; concurrent agent/process operating on shared .resource SSOT initiated termination with ckpt_override=y bypass of own 30 ckpt-pull-verify mandate",
+    "release_initiator": "UNKNOWN — anima current task did NOT call resource release; concurrent agent/process operating on shared .resource SSOT initiated termination with ckpt_override=y bypass of ckpt-pull-verify mandate",
     "post_release_state": "ephemeral-list shows 0 active pods; pod terminated mid-tokenization at 40%; no checkpoints written"
   },
 
@@ -117,7 +117,7 @@
   "phase_8_hf_private_upload": {
     "status": "NOT_APPLICABLE",
     "reason": "no ckpt to upload",
-    "intended_repo": "dancinlab/clm-v4-sft-1-8-30k-path-a-remapped (own 37 PRIVATE only)"
+    "intended_repo": "dancinlab/clm-v4-sft-1-8-30k-path-a-remapped (PRIVATE only)"
   },
 
   "compliance": {
@@ -125,7 +125,7 @@
     "own_16_cost_discipline": "PARTIAL_PASS — $0.88 incurred (within authorized $15-20 budget) but 0 value produced due to concurrent kill",
     "own_17_d1_scope_clamp": "carry",
     "own_22_mandatory_report": "PASS — this state json + ledger update + commit",
-    "own_30_ckpt_pull_pre_release": "VIOLATED_BY_CONCURRENT_RELEASE — release happened with ckpt_override=y (no ckpt existed to pull); anima current task did NOT initiate release; SSOT contention is the failure mode, not own 30 violation by anima",
+    "own_30_ckpt_pull_pre_release": "VIOLATED_BY_CONCURRENT_RELEASE — release happened with ckpt_override=y (no ckpt existed to pull); anima current task did NOT initiate release; SSOT contention is the failure mode, not violation by anima",
     "own_33_trinity": "pending — no measurement to sweep",
     "own_34_wrap_zero": "PASS — no wrap-bearing artifacts",
     "own_37_hf_visibility_lifecycle": "carry — no upload occurred",

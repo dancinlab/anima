@@ -8,7 +8,7 @@
   ],
   "parent_omega_blocker": "state/blockers/gemma_27b_repeat_silent_platform_termination.json",
   "task_axis": "alternative path 1 (int8/int4 fallback) per omega-blocker.alternative_paths[0]; H1 (mfs throughput cap) hypothesis test",
-  "diagnostic_framing": "HYPOTHESIS-CONFIRMATION (own 4 + omega-blocker mandatory_commit_gate compliant) — NOT blind retry of fp16",
+  "diagnostic_framing": "HYPOTHESIS-CONFIRMATION (+ omega-blocker mandatory_commit_gate compliant) — NOT blind retry of fp16",
   "dispatched_at": "2026-04-27T13:37:01Z",
   "completed_at": "2026-04-27T13:51:00Z",
   "wallclock_sec": 725,
@@ -95,7 +95,7 @@
     "2. unsloth/gemma-2-27b-bnb-4bit is BASE variant (matches 2b/9b base baseline); -it instruct shift caveat does NOT apply here — protocol consistency on base/instruct axis is preserved (this is one of two axes; quantization axis is the violator).",
     "3. Pod region was EUR-NO-2 (DE), NOT us-ne-1 like v1/v2/v3. Side-effect: incidentally tests H3 (region hypothesis). Download succeeded in DE, but this could be DE-specific OR int4-specific OR both — not disambiguated.",
     "4. Pod terminated mid-diagnosis by SELF-INFLICTED modprobe call (helper attempted to reload nvidia_uvm to fix cuInit=999) — runpod treats kernel module manipulation as abuse trigger, auto-killed the pod. NOT a platform-fault termination; was operator error during diagnostic phase. Cost burn $0.60 — diagnostic cost, not measurement cost.",
-    "5. cuInit=999 on fresh runpod/pytorch:2.4.0-cuda12.4.1 is a known recurring RunPod pod-cold-start fault (host driver 580.126.09/CUDA 13.0 vs container CUDA 12.4 mismatch tolerance issue). Should be added to anima_runpod_orchestrator pre-flight check (own 4 step (d) canonicalization).",
+    "5. cuInit=999 on fresh runpod/pytorch:2.4.0-cuda12.4.1 is a known recurring RunPod pod-cold-start fault (host driver 580.126.09/CUDA 13.0 vs container CUDA 12.4 mismatch tolerance issue). Should be added to anima_runpod_orchestrator pre-flight check (step (d) canonicalization).",
     "6. H1 mfs-throughput-cap rejection is based on download phase succeeding once (16GB) vs fp16 failing 3 times (54GB, >=40GB ingress) — strong but single-data-point. Re-running int4 dispatch with cuda fix would corroborate (and would attempt the int4 measurement which is INFORMATIVE for raw#10 separate-axis scale curve)."
   ],
   "omega_blocker_status_update_recommendation": {
@@ -107,7 +107,7 @@
   "next_cycle_recommendations": [
     "(priority 1) alternative path 2: provision RunPod persistent network volume (~$8/month for 60GB), pre-download gemma-2-27b fp16 weights ONCE on a dedicated download pod with cuInit fix, attach volume to measurement pod; survives pod cycles. Directly tests H2 ingress quota.",
     "(priority 1.5, low-risk) re-dispatch alternative path 1 (int4) on a fresh pod with cuda fix (nvidia-smi-before-import + fallback pod restart on cuInit=999); if it passes, captures int4 27b cell as SEPARATE-axis evidence (raw#10 caveat). If 2b/9b are also re-run in int4, full int4 family-internal scale curve becomes available as a parallel-axis dataset.",
-    "(priority 2) own 4 step (d) canonicalization: add cuInit=999 pre-flight check + auto-restart-once policy to tool/anima_runpod_orchestrator.hexa large-model-load template.",
+    "(priority 2) step (d) canonicalization: add cuInit=999 pre-flight check + auto-restart-once policy to tool/anima_runpod_orchestrator.hexa large-model-load template.",
     "(priority 3) alternative path 5 (Llama family-internal) remains a dependency-blocked option (task #6 manual HF unblock)."
   ],
   "result_files": {

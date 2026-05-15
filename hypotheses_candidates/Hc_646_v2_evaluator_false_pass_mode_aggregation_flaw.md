@@ -23,6 +23,6 @@ V2 ANY-mode aggregation 이 greedy persona prefix dump cycle + sample mode RNG s
 - F-V2-3: BG-HQ/HU 외 다른 V2 PASS verdict 가 V3 retroeval 에서 모두 0/N 확인
 
 ## Migration TODO
-- [ ] own 18 mandate: V3 6-cell schema default chat-cap evaluator
+- [ ] mandate: V3 6-cell schema default chat-cap evaluator
 - [ ] V2 + V3 parallel evidence mandatory for chat-cap PASS claim
 - [ ] cells_v3 (6-cell) + cells_v3_legacy (4-cell) preserve raw#15 additive

@@ -45,13 +45,13 @@
   "ld_pair_format": "{\"prompt\": ..., \"chosen\": ..., \"rejected\": ..., \"domain\": ..., \"source_chosen\": ..., \"source_rejected\": ...}",
   "honest_c3": [
     "iter-2 Tier A expansion = paragraph-level multi-keyword set co-hit ≥2 sets / 6 axes (semantic-density proxy) + char-density ≥ 0.4% — sentence-transformers MiniLM 미적용 (raw#9 hexa-only 정합 — 외부 ML lib 검토 별도 cycle).",
-    "iter-2 Tier B BG-JE 80MB extension = same h098_h101 corpus 의 deeper portion — anima-native lane 정합 유지 (own 17 chat-template subset).",
+    "iter-2 Tier B BG-JE 80MB extension = same h098_h101 corpus 의 deeper portion — anima-native lane 정합 유지 (chat-template subset).",
     "iter-2 Tier B 500MB target 미달 — BG-JE 214MB ceiling + 자체 dialogue ledger 소량. iter-3 추가 (V4 evaluator 산출물 만 으로는 전체 500MB 도달 불가능; 사용자 ↔ Claude session log archive 별도 access 필요).",
     "BG-LD pairs 100MB target 미달 — 본 sample 은 V4 PASS pool (12 pairs × 5 seeds ≈ 60) × rejected pool (degenerate 만 select) 의 cartesian expansion 으로 sample 채움. iter-3 에서 추가 prompt expansion (15 V4 prompts → 100+ prompts) 후 100MB 도달.",
     "BG-LD synthetic rejected (template_leak '서연:' + degenerate '이' repeat) 는 ROC discrimination signal 강화용 — 실제 BG saga FAIL sample 만 으로 부족 시 augmentation. 본 augmentation 비율 metrics 에 emit.",
-    "own 18 C2.4 mismatch filter = is_degenerate (han_ratio < 0.30, repeat ≥20, replacement char ≥5) heuristic — full domain-keyword overlap 미적용 (V4 evaluator 자체 metric 계산 결과 활용 별도 cycle).",
+    " C2.4 mismatch filter = is_degenerate (han_ratio < 0.30, repeat ≥20, replacement char ≥5) heuristic — full domain-keyword overlap 미적용 (V4 evaluator 자체 metric 계산 결과 활용 별도 cycle).",
     "iter-2 Tier A persona file = iter-1 file (anima_persona_tier_a_2026_05_08.txt) 에 append — raw#15 additive (iter-1 file 보존, expansion section 마커 명시).",
-    "anima_core_dialogues = substrate probe lane (echo-mode, weak Q/A coupling) — Tier B 입력 sample weight 낮음. own 18 C2.4 PASS 보장 X.",
+    "anima_core_dialogues = substrate probe lane (echo-mode, weak Q/A coupling) — Tier B 입력 sample weight 낮음. C2.4 PASS 보장 X.",
     "raw measurement SSOT = state/anima_clm_l4_corpus_iter2_metrics.json (size + density + chat-template ratio + counts)."
   ],
   "elapsed_s": 10.69

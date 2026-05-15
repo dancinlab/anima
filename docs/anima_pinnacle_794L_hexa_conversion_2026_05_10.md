@@ -356,10 +356,10 @@ hexa 에서 사용한 primitive (`tensor_*`, `nn_*`, `gru_cell_*`, `list_*`, `ma
 ## Deliverables 확인
 
 - ✅ `models/archive-legacy/mitosis.hexa` (805L) — main repo tracked, raw#9 hexa-only mandatory 충족
-- ✅ `docs/anima_pinnacle_794L_hexa_conversion_2026_05_10.md` (이 문서) — own 38 직접 save
+- ✅ `docs/anima_pinnacle_794L_hexa_conversion_2026_05_10.md` (이 문서) — 직접 save
 - ✅ `state/anima_lost_asset_d_recovery_2026_05_10/mitosis_pinnacle_794L.py` 미수정 — raw#15 additive 충족
 - ✅ worktree-12/13 archive 미수정 — raw#15 additive 충족
-- ✅ REBORN.md 미수정 — own 22 (dispatcher 가 §39 slot append)
+- ✅ REBORN.md 미수정 — (dispatcher 가 §39 slot append)
 
 ---
 

@@ -12,15 +12,15 @@
 //    hexa run substrate.hexa --repo <hf-id> --bench-prompt "..." --bench-mode 1
 //
 //  COMPLIANCE
-//    own 14 V14 carry — substrate output subject to V14 if used as verdict
-//    own 17 D1 within_strict (anima-native substrate; clm-v4 family)
-//    own 18 chat-cap C2 — substrate signal scored as "spontaneity X / coherence
-//      via axis activation match / persona X" (own 18 C2 measurement spec)
-//    own 22 mandatory report — bench-mode emits one-line JSON to stdout
-//    own 33 trinity ✓ (own 17 + own 18 + own 34 cross-link)
-//    own 34 mandate-1/2 — wrapping 0 strict, raw output preserved verbatim
-//    own 38 매단계 — bench-mode marker `[BENCH lane=substrate]` framed
-//    own 39 yaml↔md — registry mirror in anima_artifact_registry.yaml
+// V14 carry — substrate output subject to V14 if used as verdict
+// D1 within_strict (anima-native substrate; clm-v4 family)
+// chat-cap C2 — substrate signal scored as "spontaneity X / coherence
+// via axis activation match / persona X" (C2 measurement spec)
+// mandatory report — bench-mode emits one-line JSON to stdout
+// trinity ✓ (+ + cross-link)
+// mandate-1/2 — wrapping 0 strict, raw output preserved verbatim
+// 매단계 — bench-mode marker `[BENCH lane=substrate]` framed
+// yaml↔md — registry mirror in anima_artifact_registry.yaml
 //
 //  PHASE
 //    LANDED (mirrors existing chat/clm_v4 + chat/anima_native delegation)

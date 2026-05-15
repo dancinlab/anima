@@ -16,10 +16,10 @@ read-only into memory:
 Constraints honoured:
 - raw#9   training/*.py local-only — this script lives under state/, gitignored.
 - raw#15  ckpts loaded read-only via torch.load + .clone(); no file mutation.
-- own 16  $0 local CPU; both ckpts are 350M bf16 ≈ 600MB each, comfortably
+- $0 local CPU; both ckpts are 350M bf16 ≈ 600MB each, comfortably
           within free RAM (≈2GB free at start).
-- own 22  every metric scalar emitted to JSON.
-- own 38  artefacts under
+- every metric scalar emitted to JSON.
+- artefacts under
           state/anima_engineag_cotrain_dual_loss_localize_2026_05_10/
           {spec.md, component_metrics.json, heatmap_table.md, verdict.md}.
 
@@ -37,7 +37,7 @@ from pathlib import Path
 
 import torch
 
-# ─── paths (own 38) ────────────────────────────────────────────────
+# ─── paths ────────────────────────────────────────────────
 ANIMA = "/Users/ghost/core/anima"
 OUT_DIR = Path(f"{ANIMA}/state/anima_engineag_cotrain_dual_loss_localize_2026_05_10")
 OUT_DIR.mkdir(parents=True, exist_ok=True)

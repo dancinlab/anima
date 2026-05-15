@@ -185,4 +185,4 @@ F-D4B SMOKE PASS  (22/22)
 - PSCC §37 (next available) — append entry
 - MEMORY.md → `project_anima_chat_mitosis_wiring_2026_05_12.md` index
 
-raw#9/10/15/37 honest, own 16 0-cost (Mac local), own 42 SSOT, own 43 cost-bearing BG 미해당 (본 cycle 은 $0 wiring).
+raw#9/10/15/37 honest, 0-cost (Mac local), SSOT, cost-bearing BG 미해당 (본 cycle 은 $0 wiring).

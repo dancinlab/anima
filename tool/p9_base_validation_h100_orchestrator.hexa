@@ -53,7 +53,7 @@ let MAX_WALL_MIN        = 180
 let BUDGET_TARGET_USD   = 5.0
 let BUDGET_HARD_CAP_USD = 10.0
 
-// === own 16 Phase 2 watchdog hook (constants) ===
+// === Phase 2 watchdog hook (constants) ===
 let BG_LANE             = "BG-P9-BASE-VALIDATION"
 let TARGET_USD          = "5"
 let WATCHDOG_HEXA       = "/Users/ghost/core/anima/tool/h100_cost_watchdog.hexa"
@@ -150,8 +150,8 @@ fn _selftest() {
         eprintln("WARN: ubu1 CLM v4 HF dir not confirmed (network or path) — emit will still proceed but launch will need manual recheck")
     }
 
-    // own 16 Phase 2: probe watchdog tools (graceful warn-only)
-    println("[T9] own 16 Phase 2 watchdog hooks:")
+    // Phase 2: probe watchdog tools (graceful warn-only)
+    println("[T9] Phase 2 watchdog hooks:")
     println("       BG_LANE=" + BG_LANE + " TARGET_USD=$" + TARGET_USD)
     let _wr_ok = exec_with_status("test -f " + _sq(WATCHDOG_REGISTER))[1] == 0
     if _wr_ok { println("       T9a register OK: " + WATCHDOG_REGISTER) }
@@ -244,7 +244,7 @@ fn _emit() {
 "log \"pod_id=$POD_ID\"\n" +
 "echo '{\"pod_id\":\"'$POD_ID'\",\"booted_ts\":\"'$(date -u +%FT%TZ)'\"}' > \"$POD_INFO\"\n" +
 "\n" +
-"# === own 16 Phase 2 watchdog hook (boot) ===\n" +
+"# === Phase 2 watchdog hook (boot) ===\n" +
 "BG_LANE='" + BG_LANE + "'\n" +
 "TARGET_USD='" + TARGET_USD + "'\n" +
 "WATCHDOG_REGISTER='" + WATCHDOG_REGISTER + "'\n" +
@@ -263,7 +263,7 @@ fn _emit() {
 "fi\n" +
 "\n" +
 "# ── Stage 1b: kill-on-exit trap MANDATORY ─────────────────────────────────\n" +
-"# === own 16 Phase 2 watchdog hook (trap pre-stop) ===\n" +
+"# === Phase 2 watchdog hook (trap pre-stop) ===\n" +
 "POD_KILL_VERIFIED_404=0\n" +
 "WATCHDOG_DEREGISTERED=0\n" +
 "_kill_pod() {\n" +
@@ -275,7 +275,7 @@ fn _emit() {
 "    sleep 5\n" +
 "    $RUNPODCTL pod delete \"$POD_ID\" 2>&1 | tee -a \"$RUN_LOG\" || true\n" +
 "    sleep 5\n" +
-"    # own 16: 404 verify (3 retries × 30s)\n" +
+" # : 404 verify (3 retries × 30s)\n" +
 "    POD_KILL_VERIFIED_404=0\n" +
 "    for vi in 1 2 3; do\n" +
 "        STATUS=$($RUNPODCTL pod get \"$POD_ID\" -o json 2>&1 | head -3)\n" +
@@ -288,7 +288,7 @@ fn _emit() {
 "        sleep 30\n" +
 "    done\n" +
 "    log \"[trap] post-kill status=$STATUS pod_kill_verified_404=$POD_KILL_VERIFIED_404\"\n" +
-"    # own 16: deregister cost-watchdog\n" +
+" # : deregister cost-watchdog\n" +
 "    WATCHDOG_DEREGISTERED=0\n" +
 "    if [ \"$POD_KILL_VERIFIED_404\" = \"1\" ] && [ -f \"$WATCHDOG_HEXA\" ]; then\n" +
 "        if /Users/ghost/core/hexa-lang/hexa run \"$WATCHDOG_HEXA\" --deregister \"$POD_ID\" 2>&1 | tee -a \"$RUN_LOG\"; then\n" +
@@ -392,7 +392,7 @@ fn _emit() {
 "    PROBE=$($SSH 'ls /workspace/p9_base_val/results/COMPLETE.sentinel 2>/dev/null; ps -p $(cat /workspace/p9_base_val/run.pid 2>/dev/null) -o pid,etime,cmd 2>/dev/null | tail -1' 2>/dev/null)\n" +
 "    log \"elapsed=${ELAPSED_MIN}min cost=\\$${ELAPSED_COST} probe=$PROBE\"\n" +
 "\n" +
-"    # === own 16 Phase 2 watchdog hook (heartbeat) ===\n" +
+" # === Phase 2 watchdog hook (heartbeat) ===\n" +
 "    if [ -n \"${WATCHDOG_HB_DIR:-}\" ]; then\n" +
 "        mkdir -p \"$WATCHDOG_HB_DIR\" 2>/dev/null || true\n" +
 "        echo \"poll $(date -u +%FT%TZ) pod=$POD_ID elapsed=${ELAPSED_MIN}min cost=\\$${ELAPSED_COST}\" > \"$WATCHDOG_HB_DIR/$BG_LANE.txt\" 2>/dev/null || true\n" +
@@ -433,7 +433,7 @@ fn _emit() {
 "    VERDICT_LABEL='PARTIAL'\n" +
 "fi\n" +
 "\n" +
-"# === own 16 Phase 2 verdict schema (cost-discipline fields) ===\n" +
+"# === Phase 2 verdict schema (cost-discipline fields) ===\n" +
 "COST_TARGET_USD=$TARGET_USD\n" +
 "COST_ACTUAL_USD=$FINAL_COST\n" +
 "COST_OVERRUN_RATIO=$(awk -v a=\"$COST_ACTUAL_USD\" -v t=\"$COST_TARGET_USD\" 'BEGIN{ if (t+0 > 0) printf \"%.4f\", a/t; else print \"0\" }')\n" +

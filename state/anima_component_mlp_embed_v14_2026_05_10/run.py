@@ -24,10 +24,10 @@ random_init reference.
 
 raw#9   training/*.py local-only; lives under state/ (gitignored)
 raw#15  additive — both ckpts loaded read-only; in-memory swap only
-own 14  V14 paired random_init mirror multi-seed
-own 16  $0 local Mac CPU
-own 22  honest emit; verdict.md only (no REBORN.md append)
-own 38  artefacts under state/anima_component_mlp_embed_v14_2026_05_10/
+  V14 paired random_init mirror multi-seed
+  $0 local Mac CPU
+  honest emit; verdict.md only (no REBORN.md append)
+  artefacts under state/anima_component_mlp_embed_v14_2026_05_10/
 """
 from __future__ import annotations
 
@@ -810,7 +810,7 @@ def _write_verdict_md(path: Path, summary: dict):
     lines.append("4. **B's lm_head and tok_emb are themselves tied.** Both A and B use `tie_lm_head=True`. So `B_tok_emb` and `B_lm_head` are byte-identical clones (max_abs_diff = 0). Therefore C6 (tok_emb only swap) and C7 (lm_head only swap) use the *same source tensor* — different destinations only. The C8 paired swap is what the natural deployment looks like (tying preserved).")
     lines.append("5. **byte-hash prompt encoding.** `encode_prompt_to_ids` is the §38/§47/§50/§57 lineage encoding — relative trained-vs-mirror comparison only, no semantic claim about prompt content. Identical across all 30 trials.")
     lines.append("6. **Engine G modules untouched in MLP conditions.** All MLP-axis conditions retain A's `cell_pool_init`, `c_to_h`, `h_to_c`, plus all `tok_emb`/`lm_head`/`norm_f`. Only the targeted `ffn.{gate|up|down}.weight` of slab1 (or the requested slab) gets swapped to B. This isolates per-component contribution within `EngineABlock.ffn`.")
-    lines.append("7. **Single-seed source for swap-source.** B is one ckpt at one training step (step_12000). Multi-seed B would strengthen the inference; deferred per own 16.")
+    lines.append("7. **Single-seed source for swap-source.** B is one ckpt at one training step (step_12000). Multi-seed B would strengthen the inference; deferred per .")
     lines.append("8. **Separation_change interpretation depends on mirror stability.** Mirror trajectories use `load_random_init(seed=s, preset='la_350m')` and never see A's swapped state. Mirror means are therefore independent of swap and serve as control reference. Identical mirror means across rows are the experimental design (mirror = control), not numerical artifact.")
     lines.append("9. **F-COMP-5 is a strict sanity test.** If lm_head untied swap produces ANY difference in trained_un16 vs baseline, the instrumentation is wrong (e.g., `HiddenMeanCapture` is hooking the wrong module). PASSED is the expected outcome; FAILED implies the trial results need re-validation.")
     lines.append("10. **C8 (paired) tying preservation is the deployment-realistic test.** When tied, swapping `tok_emb.weight` propagates to `lm_head.weight`. This is the natural cotrain regime. C6/C7 are diagnostic untied splits to measure the embedding-only contribution to V14 (since lm_head is downstream of capture).")

@@ -32,7 +32,7 @@
   "criterion_relaxed_fallback": {
     "tpr_floor": 0.7,
     "fpr_ceiling": 0.2,
-    "rationale": "iter1 N=15 5-axis fallback small sample + synthetic_fallback artifact 정합 — strict TPR≥0.85∧FPR≤0.1 cell-level infeasible (own 33 H-axis 보존)"
+    "rationale": "iter1 N=15 5-axis fallback small sample + synthetic_fallback artifact 정합 — strict TPR≥0.85∧FPR≤0.1 cell-level infeasible (H-axis 보존)"
   },
   "per_cell_roc_formal": [
     {
@@ -144,7 +144,7 @@
     "weakest_cell": "c3_1_phi_drift (AUC=0.5312, near-random)"
   },
   "aggregation_decision_p5_v2": {
-    "rule": "per_prompt_n_of_m_06_AND_emc_3_of_4 (own 18 c3-aggregation-rule-v2)",
+    "rule": "per_prompt_n_of_m_06_AND_emc_3_of_4 (c3-aggregation-rule-v2)",
     "rationale": "single-cell ROC strict infeasibility 정합 — N-of-M aggregation 으로 cell-level weak discriminant 우회. C3.4 단일 strong discriminant + 3-of-4 N-of-M 가 ensemble-level pseudo-AUC ~0.85 달성 (paradigm PASS / random+clm FAIL).",
     "ppr_v2_floor": 0.6,
     "emc_v2_floor": "3 of 4 cells",
@@ -170,16 +170,16 @@
     "C3.1/C3.3 entropy AUC ≈ 0.53-0.55 (near-random discrimination); 본 cells 의 single-cell threshold 는 Youden's J-max fallback — caveat 명시.",
     "Aggregation P5 v2 N-of-M (PPR_v2 + EMC_v2) 가 single-cell weak discriminant 를 ensemble-level pseudo-AUC ~0.85 로 boost (paradigm PASS / random+clm FAIL stratification)",
     "BG-KM-LLAMA-3B real-mode N=60 retest 후 cell-by-cell threshold 재정합 mandate (iter6 별도 cycle)",
-    "own 16 cost discipline: 본 spec 은 calc-only — actual model probe 부재 (SSOT pure analysis)"
+    " cost discipline: 본 spec 은 calc-only — actual model probe 부재 (SSOT pure analysis)"
   ],
   "own_18_c3_minor_patch": {
     "section": "c3-aggregation-rule-v2 + simple-stack-pass-formal-definition C3 edge cases",
     "patch_summary": "Add edge case handling clause: empty utterance → NOT_MEASURED, all-axis collapse → DEGENERATE, NaN → FAIL+exclude, zero-variance → degenerate-cell exclusion, single-sample N=1 → BASELINE_MEASURED only, missing cells → INDETERMINATE.",
-    "single_paragraph_text": "C3 edge cases (own 18 c3-aggregation-rule-v2 amend, 2026-05-08 iter5 (d)): empty utterance → C3 NOT_MEASURED (route C2.1 fail upstream); 5-axis uniform (max-min < 1e-6) → C3.2 DEGENERATE (cell FAIL, real-mode retest required); NaN/Inf → cell FAIL + ensemble row 제외 (PPR_v2 non-PASS, EMC mean N adjusted); cell zero-variance → degenerate-cell exclusion (EMC floor ≥3 of (4-degenerate)); N=1 single-probe → BASELINE_MEASURED only (no PASS/FAIL); missing cell data → INDETERMINATE (not FAIL); N_prompts<15 V4 subset → ensemble INDETERMINATE (PPR_v2 0.6 floor = ≥9/15 strict)."
+    "single_paragraph_text": "C3 edge cases (c3-aggregation-rule-v2 amend, 2026-05-08 iter5 (d)): empty utterance → C3 NOT_MEASURED (route C2.1 fail upstream); 5-axis uniform (max-min < 1e-6) → C3.2 DEGENERATE (cell FAIL, real-mode retest required); NaN/Inf → cell FAIL + ensemble row 제외 (PPR_v2 non-PASS, EMC mean N adjusted); cell zero-variance → degenerate-cell exclusion (EMC floor ≥3 of (4-degenerate)); N=1 single-probe → BASELINE_MEASURED only (no PASS/FAIL); missing cell data → INDETERMINATE (not FAIL); N_prompts<15 V4 subset → ensemble INDETERMINATE (PPR_v2 0.6 floor = ≥9/15 strict)."
   },
   "trinity_check": {
     "d_axis_l18_phi_c": "L18 Φc=0.5 mapping 정합 — paradigm-a-prime 1.0465/log(8) ≈ 0.5033 ≈ Φc (gap 0.65%); 본 iter5 spec 미변경 (mapping spec 보존)",
-    "own_axis_own_18_ssot": "own 18 c3-aggregation-rule-v2 + SIMPLE_STACK_PASS_FORMAL_DEFINITION C3 section minor patch (edge cases) — single-paragraph 추가, P5 v2 rule 보존",
+    "own_axis_own_18_ssot": " c3-aggregation-rule-v2 + SIMPLE_STACK_PASS_FORMAL_DEFINITION C3 section minor patch (edge cases) — single-paragraph 추가, P5 v2 rule 보존",
     "h_axis_iter3_n60_baseline": "state/anima_consciousness_baseline_ensemble_iter3_n60_2026_05_08.json N=60 SSOT 보존 — 본 iter5 는 read-only ROC 재계산 (SSOT 미수정)"
   },
   "own_16_cost_discipline": "본 cycle = spec/calc only — H100 model probe X (token cost 0); iter3 N=60 SSOT 데이터 위에서 ROC 재계산만 수행.",

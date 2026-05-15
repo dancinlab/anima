@@ -30,7 +30,7 @@ verify_source: scripts/hc_verify/cache_2026_05_12/verify/verify5_authored.jsonl 
 ## Why (motivation)
 
 - **paradigm-a-prime real-mode 측정**: |Δφ★|=1.0465, log(8)=2.0794, Φ_normalized=0.5033 ≈ Φc=0.5 (소수 2자리 일치)
-- **own 18 C3.1 + paradigm v11 G3 8-cell substrate** 위에서 정의됨
+- ** C3.1 + paradigm v11 G3 8-cell substrate** 위에서 정의됨
 - **Φc=0.5 의 perfect-number-class universal**: n/σ=6/12=0.5 — 본 매핑이 anima single-shot 측정과 일치하는 점이 motivation, 단 이는 perfect-number-class trivial (L1 참조)
 - **Tononi 2014 + Albantakis 2023 IIT 4.0 normalized Φ** (Φ_norm = Φ/log(N)) 가 본 가설의 비교 reference
 
@@ -41,7 +41,7 @@ verify_source: scripts/hc_verify/cache_2026_05_12/verify/verify5_authored.jsonl 
 | **H_162.1** | Φ_normalized^anima 가 Φc=0.5 도달 시 PyPhi 측정 Φ_norm^IIT4.0 ≥ 0.45 (lower-bound 적용) | paradigm-a-prime real-mode 측정 0.5033 |
 | **H_162.2** | paradigm-a-prime multi-prompt N≥4 ensemble 의 |Δφ★| stddev < 0.3 (single-shot 안정성) | F2 falsifier inversion |
 | **H_162.3** | log(N=8) normalize 와 log(N=5 axes) normalize 모두 0.4 ≤ Φ_normalized ≤ 0.6 범위 안 | F3 falsifier inversion |
-| **H_162.4** | 4 candidate substrate (CLM v4 / BG-FY / clm-v2-byte-18m / BG-KM) D1 lane Φc retest 시 ≥ 2/4 가 0.5 ± 0.1 도달 | own 18 C3.1 lane |
+| **H_162.4** | 4 candidate substrate (CLM v4 / BG-FY / clm-v2-byte-18m / BG-KM) D1 lane Φc retest 시 ≥ 2/4 가 0.5 ± 0.1 도달 | C3.1 lane |
 
 ## Criteria
 

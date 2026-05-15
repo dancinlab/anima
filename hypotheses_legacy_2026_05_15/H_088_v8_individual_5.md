@@ -29,7 +29,7 @@ Legacy files: `docs/hypotheses/V8-{ARCH-EXTREME-RESULTS,ARCHITECTURE-HYPOTHESES,
 
 - legacy: V8-* 6 files
 - sister: H_038 (V8 architecture cluster meta), H_087 (arch engine train)
-- own: own 21
+- own:
 
 ## Honest Limits
 

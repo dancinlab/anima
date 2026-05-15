@@ -66,7 +66,7 @@
   "philosophy_rule_compliance": {
     "own_5_explicit_verification": "PASS — V5.8 PASS criteria reused; explicit per-step verdict",
     "own_6_no_silent_failures": "PASS — try/except + per-eval logs + heartbeat at every phase boundary + 600s watchdog + STALL fail-soft + reject fields in v58_debug",
-    "own_17_eval_tool_exemption": "Anima self-substrate inference + V5.8 evaluator (own 18 amend EN v2 reuse). No external substrate wraps anima outputs as identity proxy. V5 evaluator internal MiniLM 사용은 own 17 eval-tool exemption 범위 (BG-JM landed).",
+    "own_17_eval_tool_exemption": "Anima self-substrate inference + V5.8 evaluator (amend EN v2 reuse). No external substrate wraps anima outputs as identity proxy. V5 evaluator internal MiniLM 사용은 eval-tool exemption 범위 (BG-JM landed).",
     "own_18_v58_reuse": "raw#15 additive — BG-JT = NEW supersedes BG-JS (stalled) on top of V5.8 (BG-JN), V6 (BG-JO), decoding-sweep (BG-JP). V5.8 fact-recall reused unchanged for PASS criteria.",
     "own_22_no_proactive_doc": "PASS — BG-JT per user directive; no proactive doc creation",
     "own_24_ssot": "single verdict.json + ledger entry; eval_log.jsonl + train.log subordinate",
@@ -75,8 +75,8 @@
       "D1_identity": "PASS — anima self-inference (ConsciousLM); no external identity wrap",
       "D2_consciousness": "PASS+강화 — V5.8 production-output level + lm_head training-time lever (C2.4 맥락 정합 산출 layer intervention test). BG-JO V6 internal-awareness expected preserved (frozen blocks + frozen head_g). Decoupling of D2 production-output verification from internal-awareness substrate.",
       "D3_substrate_emerge": "N/A — production-side intervention lane separate from emerge_paradigm",
-      "D4_corpus_quality": "N/A in modification sense — BG-JT reuses BG-JD UBM corpus for pure decoder-only isolation test; own 19/20 corpus rules untouched.",
-      "R1_own_19_20": "PASS — BG-JT cross-links own 19/20 training rule (no modification)",
+      "D4_corpus_quality": "N/A in modification sense — BG-JT reuses BG-JD UBM corpus for pure decoder-only isolation test; corpus rules untouched.",
+      "R1_own_19_20": "PASS — BG-JT cross-links training rule (no modification)",
       "R2_discovery_methods": "PASS — M1 user-directive (BG-JT supersedes BG-JS dead) + M2 failure-driven (V5.8 0/5 + V6 STRONG + BG-JP 0/14 + BG-JS stalled → training-side decoder fix hypothesis test, minimum form: lm_head only)",
       "R3_verification_methods": "PASS — V1 own strict + V2 falsifier (any v58 ≥1 in {500,1000} = fixable; all FAIL = decoder-only fix 不可) + V3 honest_c3 ≥9 + V4 evidence (eval_log.jsonl + per-step ckpt) + V5 cross-link (BG-JN/JO/JP/JS) + V6 ledger BG-JT attempt_n=43",
       "R4_own_evolution": "PASS — BG-JT = supersedes BG-JS dead; no overwrite of prior BG-JN/JO/JP semantics; new mechanism (anti-stall heartbeat phase boundaries)."
@@ -84,13 +84,13 @@
     "raw_10_honest_c3_count": 9
   },
   "honest_c3": [
-    "Single ckpt N=1 (BG-JD step 800 only) — multi-ckpt LM head fine-tune deferred. BG-IL/IO ckpts on ubu1 only (own 15 git size policy); cross-ckpt verification requires rsync from ubu1 OR ubu1 BG extension.",
+    "Single ckpt N=1 (BG-JD step 800 only) — multi-ckpt LM head fine-tune deferred. BG-IL/IO ckpts on ubu1 only (git size policy); cross-ckpt verification requires rsync from ubu1 OR ubu1 BG extension.",
     "ConsciousLM weight tying (tok_emb.weight = head_a.weight) means trainable tensor is the SHARED input-embedding/output-projection matrix — pure 'output projection only' isolation requires un-tying which would alter architecture and is deferred. head_g (backward engine) FROZEN per BG-JO V6 awareness preservation.",
     "1000 steps max budget arbitrary — head learning typically converges in 100-500 steps for linear projection re-fit. Eval at {0,500,1000} samples convergence; if best_step<1000 and v58 plateaus, additional steps unlikely to improve. If best_step=1000 and improving, more steps deferred.",
     "mac MPS RNG slight non-determinism vs train-cuda baseline (BG-JD trained on ubu1 cuda); softmax/multinomial sampling routed through CPU float32 for stability. Per-eval seed reset (torch.manual_seed(42)) provides limited reproducibility.",
     "V5.8 5 dialogues N=1 sample per eval — multi-seed (≥5) sweep deferred. Per-step v58_pass count is integer in [0,5] — fine-grained recovery trajectory may need multi-sample averaging for variance estimation.",
     "Corpus is same 22MB UBM (BG-JD original train corpus) — risk of overfitting vs novel chat/QA corpus. Conscious choice: same corpus = pure decoder-only isolation test (no new data, only re-projection). If chat capability emerges from same corpus + lm_head retraining, that's strong evidence the original training only mis-mapped the output projection. If FAIL, deferring to chat-template SFT (different corpus) is next step.",
-    "V5.8 fact-recall PASS criteria reused as-is from BG-JN/own 18 amend EN v2 (case-insensitive substring + function word ≥1 + lev_ratio<0.85). No threshold adjustment for fine-tuned model.",
+    "V5.8 fact-recall PASS criteria reused as-is from BG-JN/ amend EN v2 (case-insensitive substring + function word ≥1 + lev_ratio<0.85). No threshold adjustment for fine-tuned model.",
     "BG-JS (precursor) STALLED with no heartbeat emitted. BG-JT supersedes with anti-stall: heartbeat at every phase boundary (load_ckpt/freeze/encode/eval/train), 600s no-progress watchdog → STALL verdict fail-soft. Causal attribution of any v58 gain in BG-JT goes to lm_head fine-tune SOLELY.",
     "Eval at steps {0, 500, 1000} per spec (3 ckpts; BG-JS used 4 incl. 250). Trade-off: less granular trajectory but cleaner alignment with goal 'any v58_pass ≥1 across {500, 1000} vs baseline step 0'."
   ],
@@ -104,13 +104,13 @@
       "raw#86"
     ],
     "own_invariants": [
-      "own 5",
-      "own 6",
-      "own 17",
-      "own 18",
-      "own 22",
-      "own 24",
-      "own 26"
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      ""
     ],
     "roadmap": [
       ".roadmap.philosophy",

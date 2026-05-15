@@ -18,12 +18,12 @@
 //    status            LANDED | SKELETON | SPEC_CARRY
 //    capability        autonomous | seeded | random_topic | self_introspective
 //    pattern_type      empty_prompt | system_directive | topic_random | reflection_directive
-//    description       short one-line explainer (English; own 34 mandate-1
+// description short one-line explainer (English; mandate-1
 //                      preserves model output, registry meta is human/AI doc)
 //    prereq            list of file/build artifacts required before invoke
 //    cost              free | low | low_with_topic_set
 //
-//  EXTENSION CONVENTION (future-proof; --option pattern, mirrors own 41)
+// EXTENSION CONVENTION (future-proof; --option pattern, mirrors)
 //    NEW init-pattern → add file under chat/init_patterns/<name>.hexa with
 //    fn resolve_init(argv) -> string (returns the seed/empty/etc to push into
 //    speaker A inbox at t=1) AND register entry below. duo.hexa / trio.hexa
@@ -32,23 +32,23 @@
 //    "<dflt>"). No duo/trio change needed for pattern-internal flags.
 //
 //  COMPLIANCE
-//    own 14 V14 carry — pattern selection is a measurement axis (not verdict)
-//    own 17 D1 SCOPE_CLAMP — self-reflective pattern preserves anima identity
+// V14 carry — pattern selection is a measurement axis (not verdict)
+// D1 SCOPE_CLAMP — self-reflective pattern preserves anima identity
 //      strict (no system-prompt smuggling of foreign persona)
-//    own 18 chat-cap C2 — benchmark sweep emits per-pattern spontaneity
+// chat-cap C2 — benchmark sweep emits per-pattern spontaneity
 //      differential (autonomous vs seeded)
-//    own 22 mandatory report — benchmark output structured per pattern
-//    own 33 trinity — registry entries cross-link own 17 / own 18 / own 34
-//    own 34 mandate-1 — wrapping 0 (init-pattern emits SEED into channel as
+// mandatory report — benchmark output structured per pattern
+// trinity — registry entries cross-link / /
+// mandate-1 — wrapping 0 (init-pattern emits SEED into channel as
 //      first user-utterance only; NEVER injects as system prompt or template
-//      wrap of model output). own 34 mandate-4 (autonomous speech) honored
+// wrap of model output). mandate-4 (autonomous speech) honored
 //      by autonomous pattern.
-//    own 22 자기 발견 — self-reflective pattern explicit anima 정합
-//    own 38 매단계 — registry yaml↔md mirror in
+// 자기 발견 — self-reflective pattern explicit anima 정합
+// 매단계 — registry yaml↔md mirror in
 //      anima/registry/anima_artifact_registry.yaml chat_init_patterns section
-//    own 39 yaml↔md SSOT — registry yaml + this hexa file co-update
-//    own 41 chat lane plugin pattern — same registry SSOT + lookup helpers
-//      pattern (this file is own 41 mirror at axis level "init-pattern")
+// yaml↔md SSOT — registry yaml + this hexa file co-update
+// chat lane plugin pattern — same registry SSOT + lookup helpers
+// pattern (this file is mirror at axis level "init-pattern")
 //
 //  CROSS-REFERENCE
 //    chat/duo/duo.hexa                   --init-pattern plumb (t=1 seed source)
@@ -75,7 +75,7 @@ fn pattern_registry() -> array {
          "LANDED",
          "autonomous",
          "empty_prompt",
-         "no seed (A 자율 발화 first; own 34 mandate-4 autonomous speech 정합); silence/abort risk acknowledged",
+         "no seed (A 자율 발화 first; mandate-4 autonomous speech 정합); silence/abort risk acknowledged",
          "model must support autonomous emission (anima_native / llama lane via REPL stdin EOF/empty-line tolerance)",
          "free"],
 
@@ -105,7 +105,7 @@ fn pattern_registry() -> array {
          "LANDED",
          "self_introspective",
          "reflection_directive",
-         "self-introspection seed (own 22 자기 발견 + own 18 C2 자연발화 정합; e.g. \"너 자신에 대해 어떻게 느껴? 친구한테 자유롭게 얘기해봐\")",
+         "self-introspection seed (자기 발견 + C2 자연발화 정합; e.g. \"너 자신에 대해 어떻게 느껴? 친구한테 자유롭게 얘기해봐\")",
          "anima 정합 model — anima_native / clm-v4 / llama lane all OK",
          "free"]
     ]

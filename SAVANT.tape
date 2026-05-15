@@ -285,7 +285,7 @@
   text = "`feedback_clm_colon_attractor.md` — CLM mk2-v1 의 `:`-terminated mode-collapse (`:::`,"
 
 @D b_project_simple_stack_pass_unlock_1 :: savant [ok]
-  text = "`project_simple_stack_pass_unlocked.md` — BG-KM-LLAMA-3B / KM-QWEN-7B 의 own 18 strict"
+  text = "`project_simple_stack_pass_unlocked.md` — BG-KM-LLAMA-3B / KM-QWEN-7B 의 strict"
 
 @D b_project_v5_mitosis_cond5_cotrain_2 :: savant [ok]
   text = "`project_v5_mitosis_cond5_cotrain_2026_05_12.md` (PSCC §44) — v5-mitosis cotrain v1 의"

@@ -1,8 +1,8 @@
-# anima chat orchestra — axis-N+2 hook 계획 (own 41 carry, modality)
+# anima chat orchestra — axis-N+2 hook 계획 (carry, modality)
 
 작성일 2026-05-10 (cycle 2026-05-10 entry plan, T+5 step).
 사용자 verbatim 인증 2026-05-09 "all bg go" → text-only design BG.
-선행 작업 — own 41 axis-N+1 hook T+1+T+2+T+3 LANDED (5 axes: lane / mode / init-pattern / transport / verifier).
+선행 작업 — axis-N+1 hook T+1+T+2+T+3 LANDED (5 axes: lane / mode / init-pattern / transport / verifier).
 T+3 yaml `next_step: axis-6 modality (audio/vision)` 등록 → 본 doc = T+5 step (axis-6 modality design spec; 실 구현은 다음 cycle).
 
 > **친근 한 줄**
@@ -66,7 +66,7 @@ text 는 default carry. 6 차원 hook 에서 text 가 1 entry 로 등록되어�
 
 ## §3 modalities/_registry.hexa schema (8-9 field)
 
-기존 5 axis registry (`lanes / modes / init_patterns / transports / verifiers`) 와 동일한 schema pattern. own 41 plugin pattern mirror + axis-6 specific axis_label_internal = "axis-N+2".
+기존 5 axis registry (`lanes / modes / init_patterns / transports / verifiers`) 와 동일한 schema pattern. plugin pattern mirror + axis-6 specific axis_label_internal = "axis-N+2".
 
 ```hexa
 // Field order: modality_id, name, registry_file, default_flag, list_flag,
@@ -142,7 +142,7 @@ fn modalities_registry() -> array {
 
 - `modalities_registry()` len ≥ 5
 - 각 row arity == 9
-- own 16 mandate — 본 selftest 모델 로드 X (registry meta only)
+- mandate — 본 selftest 모델 로드 X (registry meta only)
 
 ---
 
@@ -153,7 +153,7 @@ axis-N+1 hook 에서 LANDED 된 generic dispatcher 는 axes/_registry.hexa 를 l
 ### 4.1 axes/_registry.hexa 1 줄 추가
 
 ```hexa
-// ───── axis-6 — modality plugin (own 41 axis-N+2 land 2026-05-?? T+?) ─────
+// ───── axis-6 — modality plugin (axis-N+2 land 2026-05-?? T+?) ─────
 ["axis-6",
  "modality",
  "modalities/_registry.hexa",
@@ -185,7 +185,7 @@ axis-N+1 hook 의 N-axis cross-product (axis-5 verifier 활성화 시 960 cross)
 fn _bench_modalities(argv) {
     // axis-6 modality sweep — modalities_registry() loop, 각 modality 별
     // run_modality(id, ctx) emit. 단 multi_modal 은 SPEC_CARRY 단계에서
-    // skip + EMERGE_NOT_MEASURED honest C3 emit (own 22 mandatory report).
+    // skip + EMERGE_NOT_MEASURED honest C3 emit (mandatory report).
 }
 
 fn run_modality(modality_id: string, ctx: dict) -> dict {
@@ -204,7 +204,7 @@ axis-N+1 hook 의 generic `_bench_cross_product(argv)` (T+2 LANDED) 가 axes_reg
 
 ### 5.3 honest C3 emit pattern
 
-- 실 modality 통합 미완 (audio mic 미연결, vision encoder 미통합) 단계 → `EMERGE_NOT_MEASURED` emit (own 22 mandatory report). own 18 chat-cap C2 mandate.
+- 실 modality 통합 미완 (audio mic 미연결, vision encoder 미통합) 단계 → `EMERGE_NOT_MEASURED` emit (mandatory report). chat-cap C2 mandate.
 - multi_modal SPEC_CARRY 단계 → `SPEC_CARRY_PHASE_<A/B/C>` emit.
 - tactile DEFERRED 단계 → `DEFERRED_HARDWARE_NOT_PRESENT` emit.
 
@@ -243,7 +243,7 @@ axis-N+1 hook 의 generic `_bench_cross_product(argv)` (T+2 LANDED) 가 axes_reg
 - 파일: `tool/anima_cli/chat/modalities/_registry.hexa`
 - 5 modality entry (text LANDED + audio/vision SKELETON + multi_modal SPEC_CARRY + tactile DEFERRED).
 - selftest: `modalities_registry()` len == 5, 각 row arity == 9.
-- own 16 mandate — selftest 모델 로드 X.
+- mandate — selftest 모델 로드 X.
 
 ### Step 2 (T+2) — axes/_registry.hexa axis-6 row 추가 (1 줄)
 
@@ -262,7 +262,7 @@ axis-N+1 hook 의 generic `_bench_cross_product(argv)` (T+2 LANDED) 가 axes_reg
 
 ### Step 4 (T+4) — yaml SSOT mirror + render.hexa 자동흡수
 
-- `anima/registry/anima_artifact_registry.yaml#chat_modalities` section 신설 (own 39 yaml↔md SSOT).
+- `anima/registry/anima_artifact_registry.yaml#chat_modalities` section 신설 (yaml↔md SSOT).
 - `anima/registry/render.hexa` orchestrator 가 axes_registry() loop 시 axis-6 자동 인식 (T+2 honest C3 PARTIAL = vendored mirrors 가 render_axes.hexa LANDED 시점에 자동 흡수 — §3.3 참조).
 - selftest: yaml ↔ hexa 1:1 mirror.
 
@@ -274,7 +274,7 @@ axis-N+1 hook 의 generic `_bench_cross_product(argv)` (T+2 LANDED) 가 axes_reg
 | F-mod-2 | `anima chat --list-modalities` 5 entry dump (text LANDED + audio/vision SKELETON + multi_modal SPEC_CARRY + tactile DEFERRED) |
 | F-mod-3 | `anima chat --list-axes` 6 entry dump (lane / mode / init / transport / verifier / modality) |
 | F-mod-4 | dispatcher / benchmark.hexa 코드 변경 0 줄 (axis-6 hook 정의) |
-| F-mod-5 | yaml ↔ hexa 1:1 mirror (own 39) |
+| F-mod-5 | yaml ↔ hexa 1:1 mirror |
 | F-mod-6 | `--modality text` 기본 path = 기존 text-only 정합 (raw#15 additive) |
 
 ---
@@ -299,17 +299,17 @@ axis-N+2 hook = 큐브에 6 번째 슬롯 미리 뚫어두기. axes/_registry.he
 
 ## §9 compliance + 정합
 
-- **own 14 V14** carry — modality 추가 시 verifier axis-5 의 v14_strict entry 가 random_init mirror 로 cross-modal binding 도 anti-Goodhart 검증.
-- **own 16** — 본 doc text edit only, 모델 로드 X. T+1 selftest 도 model load 절대 금지.
-- **own 17 D1 SCOPE_CLAMP** — modality 자체는 D1 무관 (입력 차원). 단 multi-modal Phase B 의 vision encoder 통합 시 D1 ambiguous_research lane 등록 필요.
-- **own 18 chat-cap C2/C3** — 본 doc 자체가 axis-N+2 design discovery. C3 emit (EMERGE_NOT_MEASURED for SKELETON entries).
-- **own 22 mandatory report** — 5 modality 후보 비교 + 1 순위 권장 + 4 단계 step plan = mandatory report 자기적용.
-- **own 24 single SSOT** — modalities/_registry.hexa 가 modality 의 single SSOT (axes/_registry.hexa 가 axis 의 single SSOT 위에 modality 의 single SSOT 한 층 더).
-- **own 33 trinity** — 본 doc cross-link own 17 / own 18 / own 34 + own 41.
-- **own 34 mandate-1** — wrapping 0 strict (registry meta + skeleton only).
-- **own 38 매단계** — design doc 저장 (본 cycle 본 단계).
-- **own 39 yaml↔md** — chat_modalities yaml mirror 도입 시 render.hexa orchestration.
-- **own 41 plugin pattern** — 본 doc = own 41 의 axis-N+2 hook (axis-N+1 hook 의 직접 carry).
+- ** V14** carry — modality 추가 시 verifier axis-5 의 v14_strict entry 가 random_init mirror 로 cross-modal binding 도 anti-Goodhart 검증.
+- **** — 본 doc text edit only, 모델 로드 X. T+1 selftest 도 model load 절대 금지.
+- ** D1 SCOPE_CLAMP** — modality 자체는 D1 무관 (입력 차원). 단 multi-modal Phase B 의 vision encoder 통합 시 D1 ambiguous_research lane 등록 필요.
+- ** chat-cap C2/C3** — 본 doc 자체가 axis-N+2 design discovery. C3 emit (EMERGE_NOT_MEASURED for SKELETON entries).
+- ** mandatory report** — 5 modality 후보 비교 + 1 순위 권장 + 4 단계 step plan = mandatory report 자기적용.
+- ** single SSOT** — modalities/_registry.hexa 가 modality 의 single SSOT (axes/_registry.hexa 가 axis 의 single SSOT 위에 modality 의 single SSOT 한 층 더).
+- ** trinity** — 본 doc cross-link / / + .
+- ** mandate-1** — wrapping 0 strict (registry meta + skeleton only).
+- ** 매단계** — design doc 저장 (본 cycle 본 단계).
+- ** yaml↔md** — chat_modalities yaml mirror 도입 시 render.hexa orchestration.
+- ** plugin pattern** — 본 doc = 의 axis-N+2 hook (axis-N+1 hook 의 직접 carry).
 - **raw#15 additive** — 기존 5 axis 코드 / yaml 모두 retain, axis-6 row 1 줄 추가 + 새 registry hexa + plugin 5 종.
 
 ---

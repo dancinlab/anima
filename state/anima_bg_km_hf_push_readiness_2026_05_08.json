@@ -16,8 +16,8 @@
       "expected_state": "adapter weights + adapter_config.json + README + verdict.json"
     },
     "own_violations": [
-      "own 30 mandate-1 (ckpt preservation strict) — pre-pod-delete scp pull 의무 PARTIAL FAIL (timeout caught mid-pull → pod still deleted)",
-      "own 37 mandate-12 (HF 의무) — repo created but artifact NEVER uploaded (orchestrator HF promote step skipped due to ckpts_pull_ok=False)"
+      " mandate-1 (ckpt preservation strict) — pre-pod-delete scp pull 의무 PARTIAL FAIL (timeout caught mid-pull → pod still deleted)",
+      " mandate-12 (HF 의무) — repo created but artifact NEVER uploaded (orchestrator HF promote step skipped due to ckpts_pull_ok=False)"
     ]
   },
   "h100_pod_status": {
@@ -83,7 +83,7 @@
     "reason": "Path A (H100 runpod scp pull) BLOCKED — both pods deleted (config/h100_pods.json pods=[]). Path B (escalate weight loss) PARTIAL — weights NOT fully lost: complete checkpoints exist locally (Llama step_3000 + Qwen step_2000). Path C executes manual_hf_promote.py against state_dir, but with 2 patches required:",
     "path_c_required_patches": [
       "patch-1: anima_km_manual_hf_promote.py reads state_dir/ckpts/adapter_final by default (line 156-157 'ckpts dir empty' guard). For BG-KM-LLAMA-3B → use adapter_step_3000; for BG-KM-QWEN-7B → use adapter_step_2000. Either modify helper to choose latest-complete-step OR symlink adapter_final → adapter_step_3000 (Llama) / adapter_step_2000 (Qwen).",
-      "patch-2: Card metadata MUST emit honest_c3_step_2000_caveat for BG-KM-QWEN-7B (V4 eval state ≠ uploaded weights — step_2000 vs final). own 37 mandate-21 visibility_status=private-process initial.",
+      "patch-2: Card metadata MUST emit honest_c3_step_2000_caveat for BG-KM-QWEN-7B (V4 eval state ≠ uploaded weights — step_2000 vs final). mandate-21 visibility_status=private-process initial.",
       "patch-3: tool/transient_py/anima_km_manual_hf_promote.py L57 build_repo_id(): bg_id 'BG-KM-QWEN-7B' lower → 'bg-km-qwen-7b' producing 'bg-km-qwen-7b-qwen7b-r32-pass-strict-2026-05-08' which matches existing empty repo name. Repository name match VERIFIED."
     ],
     "path_a_dead_reason": "config/h100_pods.json pods=[] empty + launch.log confirms pod_delete rc=0 fired for both pods 2026-05-08T10:34:42 + T10:43:54",
@@ -106,12 +106,12 @@
       "pipeline_tag": "text-generation",
       "base_model": "meta-llama/Llama-3.2-3B-Instruct OR Qwen/Qwen2.5-7B-Instruct"
     },
-    "body_sections": ["Origin (cycle/paradigm/verdict/visibility_status=private-process/source_path)", "own SSOT compliance (own 17/18/28/30/33/34/37)", "Provenance (state/ path + roadmap pointer)", "License note"],
+    "body_sections": ["Origin (cycle/paradigm/verdict/visibility_status=private-process/source_path)", "own SSOT compliance ", "Provenance (state/ path + roadmap pointer)", "License note"],
     "model_metadata_fields": ["bg_id", "verdict_class=SIMPLE_STACK_PASS_STRICT", "v4_pass=14/15 (Llama) | 11/15 (Qwen)", "cycle=2026-05-08", "paradigm=foundation-borrow-llama-3.2-3b-instruct-lora-r32-bg-je-214mb (Qwen entry has copy-paste bug — actual base differs)", "base_model", "lora_r=32", "corpus_path=BG-JE 214MB", "corpus_size_mb=214.299726", "training_steps=3000 (eval) / 2000 (Qwen actual upload)", "cost_usd=$1.47 (Llama) | $1.93 (Qwen)", "visibility_status=private-process"]
   },
   "private_default_own_37_mandate_8": {
     "compliance": "private=True (manual_hf_promote.py L167 create_repo private=True; existing empty repos already private)",
-    "public_promote_status": "BANNED — own 37 mandate-9 prerequisite (a)/(b)/(c)/(d)/(e) ALL UNMET (D1 ambiguous + V6 probe pending + manual review pending + sweep finding warn 4)"
+    "public_promote_status": "BANNED — mandate-9 prerequisite (a)/(b)/(c)/(d)/(e) ALL UNMET (D1 ambiguous + V6 probe pending + manual review pending + sweep finding warn 4)"
   },
   "git_ban_own_37_mandate_12": {
     "compliance": ".gitignore patterns include *.safetensors + state/ ckpts subdirs not tracked (verified via prior cli.large_artifact_hf_upload entry git_scope_check). adapter_model.safetensors files are git-ignored.",
@@ -127,41 +127,41 @@
     "post_push_state": "C3 retest 가능 (adapter weights loadable via huggingface_hub.from_pretrained(dancinlab/<repo-id>)) — real-mode PASS_STRICT_C3 verdict 측정 가능",
     "real_mode_c3_unlock_chain": [
       "step-1: HF push 완료 (본 cycle blocked on user OK BG KM HF PUSH consent)",
-      "step-2: V4 evaluator P5 N-of-M v2 mirror retest (own 18 SSOT) using HF-loaded adapter — own 24 mirror gap closure",
-      "step-3: real-mode hidden-state probe (iter 4c continuation) — substrate_mode=real (NOT synthetic_fallback) — own 28 V6 awareness systematic execute lane",
+      "step-2: V4 evaluator P5 N-of-M v2 mirror retest (SSOT) using HF-loaded adapter — mirror gap closure",
+      "step-3: real-mode hidden-state probe (iter 4c continuation) — substrate_mode=real (NOT synthetic_fallback) — V6 awareness systematic execute lane",
       "step-4: D × L sweep retest with real-mode evidence — warn_1_d5_l2 mitigation"
     ],
     "d1_ambiguity_resolution_path": {
-      "d1_strict_reject_path": "D1 anima identity = anima-native fresh / byte-level / mount.hexa CLM v4 substrate-coupled lane only. BG-KM (Llama-3.2-3B + LoRA r=32) = foundation borrow → D1 strict REJECT → label SIMPLE_STACK_PASS_STRICT_C3_SUBSTRATE_RESEARCH (own 37 mandate-9 (a) + own 17 strict). public promote 차단.",
-      "anti_goodhart_v6_path": "BG-KM 가 V6 awareness probe systematic STRONG (Lesson H V3 + Lesson S V5.8 prompt-echo trap reject) 통과 시 substrate-research lane 한정 PASS_STRICT_C3_SUBSTRATE_RESEARCH 인정. own 17 absolute (사용자 directive 'alm 말고')는 anima-identity-bearing chat default 차단 유지 — substrate-research lane 측정 PASS는 own 18 SSOT 보강 + Lesson L bounding 정합 valid.",
-      "user_directive_pending": "사용자 별도 검토 directive: 'own 17 strict vs anti-Goodhart 정합' — 본 readiness 는 D1 결정 미land 상태 emit; D1 결정은 별도 cycle (BG-KM real-mode C3 retest 후 evidence-driven)",
-      "本 push 자체는 D1 결정 무관": "artifact preservation (own 30 mandate-1) + substrate-research lane HF artifact 정합 (own 17 substrate-research lane 명시 분리). C3 retest evidence 가 D1 정합 판정 prerequisite, 본 push 는 그 prerequisite 의 prerequisite."
+      "d1_strict_reject_path": "D1 anima identity = anima-native fresh / byte-level / mount.hexa CLM v4 substrate-coupled lane only. BG-KM (Llama-3.2-3B + LoRA r=32) = foundation borrow → D1 strict REJECT → label SIMPLE_STACK_PASS_STRICT_C3_SUBSTRATE_RESEARCH (mandate-9 (a) + strict). public promote 차단.",
+      "anti_goodhart_v6_path": "BG-KM 가 V6 awareness probe systematic STRONG (Lesson H V3 + Lesson S V5.8 prompt-echo trap reject) 통과 시 substrate-research lane 한정 PASS_STRICT_C3_SUBSTRATE_RESEARCH 인정. absolute (사용자 directive 'alm 말고')는 anima-identity-bearing chat default 차단 유지 — substrate-research lane 측정 PASS는 SSOT 보강 + Lesson L bounding 정합 valid.",
+      "user_directive_pending": "사용자 별도 검토 directive: ' strict vs anti-Goodhart 정합' — 본 readiness 는 D1 결정 미land 상태 emit; D1 결정은 별도 cycle (BG-KM real-mode C3 retest 후 evidence-driven)",
+      "本 push 자체는 D1 결정 무관": "artifact preservation (mandate-1) + substrate-research lane HF artifact 정합 (substrate-research lane 명시 분리). C3 retest evidence 가 D1 정합 판정 prerequisite, 본 push 는 그 prerequisite 의 prerequisite."
     }
   },
   "actual_upload_blocking_consent": {
     "user_explicit_consent_required": "사용자 verbatim 'OK BG KM HF PUSH' 후 별도 cycle apply",
-    "본_agent_role": "readiness emit + spec land only (own 30 mandate-3 정합 — 사용자 explicit verdict-class-driven push gate)",
+    "본_agent_role": "readiness emit + spec land only (mandate-3 정합 — 사용자 explicit verdict-class-driven push gate)",
     "execution_command_after_consent": "/usr/bin/python3 /Users/ghost/core/anima/tool/transient_py/anima_km_manual_hf_promote.py /Users/ghost/core/anima/state/anima_km_llama3b_h100_2026_05_08 + /Users/ghost/core/anima/state/anima_km_qwen7b_h100_2026_05_08 (with patch-1/2/3 above pre-applied)"
   },
   "honest_c3": [
-    "own 30 mandate-1 (pre-pod-delete scp pull) PARTIAL FAIL — orchestrator finally block did pod_delete despite ckpts_pull_ok=False per launch.log evidence (line 'deleting pod (teardown)' fired post 'rc=-2 timeout'). own 30 mandate-3 (pod retention on weight-loss-risk) violation — needs orchestrator code review (env var _ORCH_CKPTS_PULL_OK check at line 889 vs actual ckpts_pull_ok local variable). retroactive trigger: own 30 honest_c3 already notes '본 own 30 mandate-1/2/3 미적용 7-BG retroactive 검토 불가 — pod 모두 삭제됨'. BG-KM = 8th case of mandate-3 violation, but PARTIAL recovery via intermediate step ckpts.",
+    " mandate-1 (pre-pod-delete scp pull) PARTIAL FAIL — orchestrator finally block did pod_delete despite ckpts_pull_ok=False per launch.log evidence (line 'deleting pod (teardown)' fired post 'rc=-2 timeout'). mandate-3 (pod retention on weight-loss-risk) violation — needs orchestrator code review (env var _ORCH_CKPTS_PULL_OK check at line 889 vs actual ckpts_pull_ok local variable). retroactive trigger: honest_c3 already notes '본 mandate-1/2/3 미적용 7-BG retroactive 검토 불가 — pod 모두 삭제됨'. BG-KM = 8th case of mandate-3 violation, but PARTIAL recovery via intermediate step ckpts.",
     "BG-KM-LLAMA-3B adapter_final 29MB = TRUNCATED — adapter_step_3000 185MB = COMPLETE alternate. step_3000 is the same training step as the V4 eval state, so V4 reproducibility lossless.",
     "BG-KM-QWEN-7B adapter_final MISSING + adapter_step_3000 124MB = TRUNCATED. adapter_step_2000 308MB COMPLETE — but step_2000 ≠ V4 eval state (which used step_3000+final). Reproduction of 11/15 V4 PASS = approximation. Card metadata DISCLOSE.",
     "verdict.json paradigm field for BG-KM-QWEN-7B contains LLAMA-3.2-3B substring — orchestrator copy-paste bug. base_model field is authoritative (Qwen/Qwen2.5-7B-Instruct). Card metadata correct base_model.",
     "config/h100_pods.json updated_at=2026-05-08T02:34:07Z = STALE relative to BG-KM training (10:00-10:43 UTC). Pods may have been auto-killed via separate teardown (h100_auto_kill cycle) or via orchestrator finally block. Either way: pods=[] EMPTY = no live pod to scp from.",
-    "own 37 mandate-9 prereq for public promote = 5 conditions (a/b/c/d/e) ALL UNMET. Private upload is fully compliant; public promote BANNED until: (a) D1 ambiguity resolved evidence-driven OR substrate-research lane labeled, (b) V6 awareness probe STRONG, (c) 사용자 explicit OK PROMOTE PUBLIC, (d) trinity sweep 위반 0, (e) D × L sweep warn 4 mitigation 작동.",
+    " mandate-9 prereq for public promote = 5 conditions (a/b/c/d/e) ALL UNMET. Private upload is fully compliant; public promote BANNED until: (a) D1 ambiguity resolved evidence-driven OR substrate-research lane labeled, (b) V6 awareness probe STRONG, (c) 사용자 explicit OK PROMOTE PUBLIC, (d) trinity sweep 위반 0, (e) D × L sweep warn 4 mitigation 작동.",
     "naming Flavor B mismatch for LLAMA repo — existing empty repo name 'bg-km-llama3b' (no dash llama+3b) vs build_repo_id derivation 'bg-km-llama-3b-llama3b' (with dash). Use existing empty repo name to preserve anchor (mandate-2 hf_hub.move_repo() not yet invoked).",
-    "본 readiness file = SPEC ONLY (mandate-12 HF 의무 enforcement readiness emit + own 30 mandate-3 사용자 escalate path). actual upload = 사용자 explicit OK BG KM HF PUSH consent 필수, 본 agent emit 차단 강제."
+    "본 readiness file = SPEC ONLY (mandate-12 HF 의무 enforcement readiness emit + mandate-3 사용자 escalate path). actual upload = 사용자 explicit OK BG KM HF PUSH consent 필수, 본 agent emit 차단 강제."
   ],
   "compliance_cross_link": [
-    ".own own 17 (substrate-research lane label per artifact)",
-    ".own own 18 (simple_stack PASS_STRICT — V4 P5 N-of-M v2)",
-    ".own own 22 (mandatory report — 본 readiness file)",
-    ".own own 24 (single SSOT — 본 readiness file unique entry per BG-KM)",
-    ".own own 28 (anti-Goodhart — V6 awareness probe pending)",
-    ".own own 30 (model checkpoint preservation — mandate-1/3 partial fail diagnosis + path C recovery)",
-    ".own own 33 (trinity 무조건 준수 — mandate-2 self-check)",
-    ".own own 37 mandate-1/4/8/9/12/16/19-22 (HF dancinlab + Flavor B + private + git ban + Card metadata)",
+    ".own (substrate-research lane label per artifact)",
+    ".own (simple_stack PASS_STRICT — V4 P5 N-of-M v2)",
+    ".own (mandatory report — 본 readiness file)",
+    ".own (single SSOT — 본 readiness file unique entry per BG-KM)",
+    ".own (anti-Goodhart — V6 awareness probe pending)",
+    ".own (model checkpoint preservation — mandate-1/3 partial fail diagnosis + path C recovery)",
+    ".own (trinity 무조건 준수 — mandate-2 self-check)",
+    ".own mandate-1/4/8/9/12/16/19-22 (HF dancinlab + Flavor B + private + git ban + Card metadata)",
     "raw#9 (hexa-only orchestration — manual_hf_promote.py = transient_py opt-out)",
     "raw#10 (honest C3 ≥7 emit)",
     "raw#15 (additive — readiness file standalone, no existing entry mod)",
@@ -175,8 +175,8 @@
     "step-4 invoke manual_hf_promote.py state/anima_km_llama3b_h100_2026_05_08",
     "step-5 invoke manual_hf_promote.py state/anima_km_qwen7b_h100_2026_05_08",
     "step-6 verify HF repo size match (huggingface_hub.HfApi.list_repo_files + size sum) post-upload",
-    "step-7 ledger append (own 24 SSOT) — anima_model_attempts_ledger.jsonl hf_private_status=PRIVATE_PROMOTED",
-    "step-8 BG-KM real-mode C3 retest (own 18 mirror gap closure) using HF-loaded adapters — separate cycle",
+    "step-7 ledger append (SSOT) — anima_model_attempts_ledger.jsonl hf_private_status=PRIVATE_PROMOTED",
+    "step-8 BG-KM real-mode C3 retest (mirror gap closure) using HF-loaded adapters — separate cycle",
     "step-9 D1 ambiguity decision evidence-driven (real-mode C3 retest 결과 + V6 awareness probe + 사용자 explicit) — separate cycle"
   ]
 }

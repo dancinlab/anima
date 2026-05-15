@@ -668,7 +668,7 @@ CLM v4 chat-incapability is **architectural**, NOT training-recipe correctable:
 This section is the empirical-evidence amendment to the C1 architectural
 disclosure (#115 chat category error) and to the C2 F1_score_v2 RED-band
 caveat. The C1 architectural framing is now backed by two-cycle measured
-evidence, not just a-priori reasoning. own 15 verification gate G5 (honest
+evidence, not just a-priori reasoning. verification gate G5 (honest
 C3 model card with chat-incapability disclosure) is strengthened by this
 amendment: chat-incapability disclosure is now both architectural
 (single-axis design) AND empirical (two-cycle evidence).

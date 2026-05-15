@@ -1,7 +1,7 @@
-// tool/anima_canonical_helper_lock.hexa — own 4 L3' chflags uchg lockfile registration
+// tool/anima_canonical_helper_lock.hexa — L3' chflags uchg lockfile registration
 // ─────────────────────────────────────────────────────────────────────────────
-// own 4 promotion candidate Option D 4-layer enforce mapping:
-//   L1 advisory     anima/.own own 4 baseline (severity warn)
+// promotion candidate Option D 4-layer enforce mapping:
+// L1 advisory anima/.own baseline (severity warn)
 //   L2 lint         anima/tool/compute_resource_failure_lint.hexa (commit 9f6c17d0)
 //   L3 atlas anchor CANON/atlas/atlas.n6 R37 candidate (owner approval pending)
 //   L3' chflags uchg THIS TOOL — kernel EPERM ground truth on canonical helpers
@@ -167,7 +167,7 @@ fn _emit_helper(action: str, reason: str) -> str {
 }
 
 fn _selftest() {
-    println("__ANIMA_CANONICAL_HELPER_LOCK_BEGIN__ selftest own 4 L3' raw#9 raw#10")
+    println("__ANIMA_CANONICAL_HELPER_LOCK_BEGIN__ selftest L3' raw#9 raw#10")
     let helpers = _canonical_helpers()
     println("canonical_helper_count=" + str(helpers.len()))
     println("helpers:")
@@ -184,11 +184,11 @@ fn _selftest() {
     println("__ANIMA_CANONICAL_HELPER_LOCK_RESULT__ PASS_SELFTEST")
     println("raw_10_caveat=selftest verifies helper list + tmp emission; production lock/unlock requires python3 + chflags")
     println("raw_10_caveat=raw 85 escalation-audit-trail mandates de-escalation within escalation_window_sec=300 after unlock")
-    println("absorption_target=own 4 promotion Option D 4-layer mapping L3' kernel-EPERM canonical helpers")
+    println("absorption_target= promotion Option D 4-layer mapping L3' kernel-EPERM canonical helpers")
 }
 
 fn _status() {
-    println("__ANIMA_CANONICAL_HELPER_LOCK_BEGIN__ status own 4 L3'")
+    println("__ANIMA_CANONICAL_HELPER_LOCK_BEGIN__ status L3'")
     let _path = _emit_helper("status", "")
     println("helper_emitted=" + HELPER_PATH_TMP)
     println("__ANIMA_CANONICAL_HELPER_LOCK_RESULT__ HELPER_READY")
@@ -196,15 +196,15 @@ fn _status() {
 }
 
 fn _lock() {
-    println("__ANIMA_CANONICAL_HELPER_LOCK_BEGIN__ lock own 4 L3' chflags uchg apply")
-    let _path = _emit_helper("lock", "own 4 promotion L3' canonical helper set lock")
+    println("__ANIMA_CANONICAL_HELPER_LOCK_BEGIN__ lock L3' chflags uchg apply")
+    let _path = _emit_helper("lock", " promotion L3' canonical helper set lock")
     println("helper_emitted=" + HELPER_PATH_TMP)
     println("__ANIMA_CANONICAL_HELPER_LOCK_RESULT__ HELPER_READY")
     println("fix: 1) python3 " + HELPER_PATH_TMP + "  2) verify chflags uchg applied  3) raw 85 audit ledger row appended")
 }
 
 fn _unlock(reason: str) {
-    println("__ANIMA_CANONICAL_HELPER_LOCK_BEGIN__ unlock own 4 L3' chflags nouchg")
+    println("__ANIMA_CANONICAL_HELPER_LOCK_BEGIN__ unlock L3' chflags nouchg")
     let _path = _emit_helper("unlock", reason)
     println("helper_emitted=" + HELPER_PATH_TMP)
     println("__ANIMA_CANONICAL_HELPER_LOCK_RESULT__ HELPER_READY")
@@ -238,7 +238,7 @@ fn main() {
     }
     else {
         println("usage: hexa run tool/anima_canonical_helper_lock.hexa --selftest | --status | --lock | --unlock --reason '<text>'")
-        println("own 4 L3' canonical helper chflags uchg lockfile registration (raw 1 os-lock pattern)")
+        println(" L3' canonical helper chflags uchg lockfile registration (raw 1 os-lock pattern)")
     }
     return 0
 }

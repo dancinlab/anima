@@ -109,7 +109,7 @@ With BG-DP (~250) projected: ~2575.
      coupled). User-substrate paradigm valid; not external chatbot.
    - **C = Korean Pythia + CLM hybrid**: BG-CG / BG-BX H3 hybrid
      pipeline PASS. Korean tokenization carry from sister.
-4. **HF promote time-gated** (PRIVATE → PUBLIC lifecycle, own 15):
+4. **HF promote time-gated** (PRIVATE → PUBLIC lifecycle):
    T-29h `clm-v4-mk2-v1` private→public verification window;
    T-33h Pβ Φ★-axis distill private→public window. Re-verify
    verdict gates before flip (refer BG-DD §4 lock criteria).
@@ -122,7 +122,7 @@ With BG-DP (~250) projected: ~2575.
 7. **cron d1682837 1m fire** — if still running at hand-off, recommend
    `CronDelete` to user. Cron auto-stop suggestion is part of Stage 3
    protocol (BG-CR §3 / BG-CX §3). Verify pod 404 before cron-delete
-   per L25 cost-discipline (own 16).
+   per L25 cost-discipline .
 
 ### §3.1 hand-off paste-block (ready to copy)
 

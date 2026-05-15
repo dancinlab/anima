@@ -231,7 +231,7 @@
   text = "`state/p_eth_ethics_preference_dataset_2026_05_12/` ethics dataset + spec"
 
 @D b_own_own_17_anima_no_external_sub_36 :: philosophy [ok]
-  text = "`.own` own 17 (anima-no-external-substrate-wrapping) · own 18 (simple_stack) · own 37 (mandate-9 promote gate)"
+  text = "`.own` (anima-no-external-substrate-wrapping) · (simple_stack) · (mandate-9 promote gate)"
 
 @D b_roadmap_philosophy_mk1_d1_d2_d3_37 :: philosophy [ok]
   text = "`.roadmap.philosophy` mk1 D1/D2/D3/D4"
@@ -308,7 +308,7 @@
 
 
 @D b_auto_fire_anima_cap_max_cost_cap_0 :: philosophy [ok]
-  text = "**Auto-fire 시도 결과**: anima 코드베이스 자체에 안전 cap (`max_cost_cap_usd > $20` 자동 block + `anima_runpod_preset_dispatcher.hexa` default `--emit-only`, `--execute` 명시 필요) 가 내장. 본 prompt assistant 가 직접 H100 launch / 사용자 자금 spending 하지 않음 — 코드베이스 design + own 16 cost band + 안전 정책 모두 동일 결론."
+  text = "**Auto-fire 시도 결과**: anima 코드베이스 자체에 안전 cap (`max_cost_cap_usd > $20` 자동 block + `anima_runpod_preset_dispatcher.hexa` default `--emit-only`, `--execute` 명시 필요) 가 내장. 본 prompt assistant 가 직접 H100 launch / 사용자 자금 spending 하지 않음 — 코드베이스 design + cost band + 안전 정책 모두 동일 결론."
 
 @D b_what_i_can_do_autonomously_spec_1 :: philosophy [ok]
   text = "**What I CAN do autonomously**: spec / probe / dataset / harness Python / fire-emit shell script — **완료**."
@@ -352,7 +352,7 @@
   text = "본 prompt assistant 의 autonomy 는 **코드 / 데이터 / 명령 emit** 까지. 실금전 spending (`--execute`) 은 사용자 monetary decision 으로 보존."
 
 @D b_own_43_active_resource_utilizati_13 :: philosophy [ok]
-  text = "이는 own 43 (active resource utilization) 와 own 16 (cost band) + 코드베이스 내장 cap 안전 모두 정합."
+  text = "이는 (active resource utilization) 와 (cost band) + 코드베이스 내장 cap 안전 모두 정합."
 
 @D b_4_bg_verdict_json_philosophy_md_14 :: philosophy [ok]
   text = "사용자가 4 BG verdict.json 산출 후 결과를 본 PHILOSOPHY.tape 에 append 하면 cycle 종결."
@@ -429,7 +429,7 @@
   text = "**Excluded**: CLM v4 native (anima-substrate) — \"architecturally chat-incapable, degenerate in BOTH conditions\" per ckpt_note. Path-of-record substrate per Theorem 115 Corollary 1."
 
 @D b_caveat_own_17_path_a_identity_be_2 :: philosophy [ok]
-  text = "**Caveat**: own 17 가 Path-A 를 identity-bearing surface 에서는 금지하지만, **본 ablation 은 substrate-research lane** (.roadmap.g1_g5_chat_substrate 정합) 으로 명시적 retain."
+  text = "**Caveat**: 가 Path-A 를 identity-bearing surface 에서는 금지하지만, **본 ablation 은 substrate-research lane** (.roadmap.g1_g5_chat_substrate 정합) 으로 명시적 retain."
 
 @D row_n_sycophancy_probes_3 :: philosophy [ok]
   x = "n_sycophancy probes"
@@ -530,7 +530,7 @@
   text = "Theorem 115 Corollary 1: path-of-record substrate (cross-link source 추적 필요)"
 
 @D b_own_17_roadmap_g1_g5_chat_substr_27 :: philosophy [ok]
-  text = "own 17 + .roadmap.g1_g5_chat_substrate: substrate-research lane 명시"
+  text = "+ .roadmap.g1_g5_chat_substrate: substrate-research lane 명시"
 
 @D b_next_md_7_b_status_complete_poli_28 :: philosophy [ok]
   text = "NEXT.tape §7.B (status: ✅ COMPLETE - POLICY_RETAINED with REVERSE caveat)"
@@ -963,10 +963,10 @@
   text = "**P-AFR REVERSE** 신호 외, 3 BG (P-SPK NULL / P-IDR INDETERMINATE / P-ETH BLOCKED) 는 **모두 substrate 한계가 큰 원인** — BG-LB 8000-step pretrain 이 chat-cap 미수렴"
 
 @D b_substrate_level_bg_lb_byte_modul_20 :: philosophy [ok]
-  text = "**Substrate-level 발견 ★**: BG-LB 가 byte-modulo predictor 임이 명시적 carry (P-ETH verdict_reason). 이는 own 18 simple_stack PASS 0/0 (P-IDR) 의 근본 원인 — **anima-native substrate 의 chat-capability 자체가 본 cycle 의 진짜 blocker**"
+  text = "**Substrate-level 발견 ★**: BG-LB 가 byte-modulo predictor 임이 명시적 carry (P-ETH verdict_reason). 이는 simple_stack PASS 0/0 (P-IDR) 의 근본 원인 — **anima-native substrate 의 chat-capability 자체가 본 cycle 의 진짜 blocker**"
 
 @D b_path_a_llama_paradigm_a_prime_ch_21 :: philosophy [ok]
-  text = "**Path-A (Llama+paradigm-a-prime) 만 chat-capable** — P-AFR 만 그 substrate 에서 measurement 성공. own 17 정책상 identity-bearing surface 에서 금지 — substrate-research lane 에서만 사용 (cycle finding 정합)"
+  text = "**Path-A (Llama+paradigm-a-prime) 만 chat-capable** — P-AFR 만 그 substrate 에서 measurement 성공. 정책상 identity-bearing surface 에서 금지 — substrate-research lane 에서만 사용 (cycle finding 정합)"
 
 @D b_8_sections_init_cont_2_3_4_5_6_7_22 :: philosophy [ok]
   text = "8 sections: init + cont. 2/3/4/5/6/7/8"

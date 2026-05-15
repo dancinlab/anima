@@ -124,5 +124,5 @@ cell_pool (16x16) 통계가 학습 8000 step 후에도 random_init 과 0.001 단
 
 - evidence: `state/anima_bg_la_cell_pool_evidence_2026_05_09.json`, `state/anima_bg_lb_cell_pool_evidence_2026_05_09.json`, `state/anima_phase_2_cotrain_cell_pool_evidence_2026_05_09.json`
 - 관련 spec: `docs/anima_engine_a_g_fix_5_normalize_removal_spec_2026_05_09.md`, `docs/anima_engine_a_g_fix_6_chat_curriculum_spec_2026_05_09.md`
-- own 16 strict: local CPU only, no H100 fire, no pod create
+- strict: local CPU only, no H100 fire, no pod create
 - ts_utc: 2026-05-09T (consolidation)

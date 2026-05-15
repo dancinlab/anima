@@ -27,7 +27,7 @@
 - P4_5: M1 clm v4 || M5 conscious-lm-100m
 - P6: M1 clm v4 || M6 BG-HU
 - P6_5: M1 clm v4 || M4 BG-HS R1
-- own 17 정합: M2 Llama Path A v2 (LLM well-inside lineage) excluded — substrate-research lane only
+- 정합: M2 Llama Path A v2 (LLM well-inside lineage) excluded — substrate-research lane only
 
 ## Hexa script (raw#9 strict)
 
@@ -37,7 +37,7 @@ Commands:
 - `--selftest` — smoke test (6 phases, fallback chain coverage)
 - `--status` — current phase + counts
 - `--transition --to <P0|P1_2|P3|P4_5|P6|P6_5>` — manual phase transition
-- `--add-axis --id K1.N --name <name> --rationale <text>` — axes 자율증가 (own 22 정합)
+- `--add-axis --id K1.N --name <name> --rationale <text>` — axes 자율증가 (정합)
 - `--absorb --primitive-id <id> --kind <axis|own|raw|H|Lesson> --description <text>` — new primitive absorb (P6_5 → P0 feed)
 
 Shell pass-through: `date`, `mkdir`, `wc`, `grep`, `printf`, `cat <<EOF`. No python bridge.
@@ -58,7 +58,7 @@ Shell pass-through: `date`, `mkdir`, `wc`, `grep`, `printf`, `cat <<EOF`. No pyt
 ## Honest limits (raw#10)
 
 1. Phase transition logic = design-time spec; actual emergence detection (Φ★ NO_FLIP, axis_activation, dominant_cells) depends on M1 clm v4 substrate-coupled response — not the hexa script.
-2. Axes 자율증가 = explicit CLI gate (`--add-axis`), no silent discovery (own 22).
+2. Axes 자율증가 = explicit CLI gate (`--add-axis`), no silent discovery .
 3. 4-step automation phase entry = marker only; emergence algorithms live elsewhere.
 4. Model fallback primaries (M6 BG-HU, M7 BG-HR) currently PENDING — full chain validation requires their landing.
 5. ρ → 1/3 meta fixed-point = OUROBOROS theoretical attractor; empirical verification partial via Law 75 + p* = 0.5001 cross-link.

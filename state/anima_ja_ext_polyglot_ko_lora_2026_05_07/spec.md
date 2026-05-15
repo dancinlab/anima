@@ -1,6 +1,6 @@
 # BG-JA-EXT — Polyglot-Ko-1.3B foundation borrow + LoRA on BG-HK persona
 
-> own 29 (2026-05-07-late) reconcile: SIMPLE_STACK_PASS strict floor = V4 ≥ 10/15 per own 18 (≥2/3 prompts AND for C1+C2). Original 7/15 demoted to PARTIAL_PASS tier. Falsifier tables below retain 7/15 references but interpret as PARTIAL_PASS, NOT SIMPLE_STACK_PASS.
+> (2026-05-07-late) reconcile: SIMPLE_STACK_PASS strict floor = V4 ≥ 10/15 per (≥2/3 prompts AND for C1+C2). Original 7/15 demoted to PARTIAL_PASS tier. Falsifier tables below retain 7/15 references but interpret as PARTIAL_PASS, NOT SIMPLE_STACK_PASS.
 
 
 > raw#15 additive on .roadmap.chat_cap_emergence_pivot Stage 1' P2 + state/anima_iy_v4_calibration_polyglot_2026_05_07/verdict.json

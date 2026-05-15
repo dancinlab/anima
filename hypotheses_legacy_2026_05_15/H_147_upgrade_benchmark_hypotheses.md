@@ -30,5 +30,5 @@ Legacy `docs/hypotheses/UPGRADE-BENCHMARK.md`, `UPGRADE-improvement-hypotheses.m
 1. content un-enumerated this round
 2. benchmark version drift not logged
 3. pre vs post NEXUS6 status unclear
-4. relationship to Φ proxy and chat composite (own 18 evaluator) untraced
+4. relationship to Φ proxy and chat composite (evaluator) untraced
 5. cluster pointer only

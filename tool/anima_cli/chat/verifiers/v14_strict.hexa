@@ -1,6 +1,6 @@
 // ════════════════════════════════════════════════════════════════════════════
 //  tool/anima_cli/chat/verifiers/v14_strict.hexa — V14 anti-Goodhart verifier
-//                                                   (own 41 axis-5 / axis-N+1)
+// (axis-5 / axis-N+1)
 //
 //  PURPOSE
 //    V14 strict in-metric (random_init mirror anti-Goodhart) skeleton.
@@ -14,11 +14,11 @@
 //      is_violated = delta < 0  (random outperforms trained)
 //
 //  COMPLIANCE
-//    own 14 V14 — V14 reproducibility 결정성 (verifier 자체)
-//    own 16 — model load 절대 금지 (skeleton phase)
-//    own 22 — honest emit (NOT_MEASURED 명시 in skeleton)
-//    own 34 mandate-1 — wrapping 0
-//    own 41 axis-N+1 — axis-5 verifier registry entry 4
+// V14 — V14 reproducibility 결정성 (verifier 자체)
+// — model load 절대 금지 (skeleton phase)
+// — honest emit (NOT_MEASURED 명시 in skeleton)
+// mandate-1 — wrapping 0
+// axis-N+1 — axis-5 verifier registry entry 4
 //
 //  CROSS-REFERENCE
 //    chat/verifiers/_registry.hexa#v14_strict   registry SSOT
@@ -42,10 +42,10 @@ fn _arg_present(argv, key: string) -> bool {
 }
 
 fn verifier_describe() -> string {
-    return "v14_strict — V14 anti-Goodhart in-metric (random_init mirror; delta = trained_PPR - random_PPR; own 16: skeleton only, 실 측정 별도 step)"
+    return "v14_strict — V14 anti-Goodhart in-metric (random_init mirror; delta = trained_PPR - random_PPR; : skeleton only, 실 측정 별도 step)"
 }
 
-// v14_strict — skeleton signature; own 16 carry — no model load.
+// v14_strict — skeleton signature; carry — no model load.
 // Returns parallel arrays: [["is_violated","delta"], ["NOT_MEASURED",...]].
 fn v14_strict(model: string, prompt: string) -> array {
     let keys = ["is_violated", "delta"]
@@ -59,7 +59,7 @@ fn verifier_smoke(repo: string, argv) -> int {
     let keys = r[0]
     let vals = r[1]
     if len(keys) != 2 || len(vals) != 2 { return 3 }
-    println("[verifier:v14_strict] smoke PASS — {is_violated, delta} skeleton signature OK (own 16 model load 0)")
+    println("[verifier:v14_strict] smoke PASS — {is_violated, delta} skeleton signature OK (model load 0)")
     return 0
 }
 

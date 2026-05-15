@@ -1,10 +1,10 @@
-# own 3 + own 4 + atlas R36 + R37 — paste-ready grep evidence (maintainer 30s verify)
+# + + atlas R36 + R37 — paste-ready grep evidence (maintainer 30s verify)
 # generated: 2026-04-28T07:25Z by anima-cmd-loop sub-agent kick (Agent D recommendation #1)
 # usage: each line below is a literal grep command; copy-paste into shell, expect EXACT match.
 # raw 91 C3 honest cites — every claim verifiable in <30 seconds total.
 
 # ─────────────────────────────────────────────────────────────────────────
-# §1 own 3 (σ/τ=3 → hive raw n6-mean-divisor-three-bridge)
+# §1 (σ/τ=3 → hive raw n6-mean-divisor-three-bridge)
 # ─────────────────────────────────────────────────────────────────────────
 
 # (a) Mamba/Jamba ×3 throughput / TECS-L H-CX-8
@@ -40,16 +40,16 @@ hexa run /Users/ghost/core/anima/tool/sigma_tau_alignment_lint.hexa --selftest 2
 
 
 # ─────────────────────────────────────────────────────────────────────────
-# §2 own 4 (training-resource-root-cause → hive raw compute-resource-failure-discipline)
+# §2 (training-resource-root-cause → hive raw compute-resource-failure-discipline)
 # ─────────────────────────────────────────────────────────────────────────
 
-# 4-step mandate text in own 4
+# 4-step mandate text in
 grep -A4 "training-resource troubleshooting" /Users/ghost/core/anima/.own
 # expected: (a) root-cause diagnosis (b) canonical helper code fix (c) defensive harden (d) canonicalization evolve
 
-# ★ KEY EVIDENCE: hive ALREADY CITES own 4 in subagent_dispatch_infra_fix landing doc
-grep -n "own 4\|raw 78 daemon-singleton\|raw 12 silent-error-ban" /Users/ghost/core/hive/docs/subagent_dispatch_infra_fix_20260427_landing.md
-# expected: L9 "all root-cause, no temporary workarounds — own 4" + L23 raw 78 + L35 raw 12 + own 4
+# ★ KEY EVIDENCE: hive ALREADY CITES in subagent_dispatch_infra_fix landing doc
+grep -n "\|raw 78 daemon-singleton\|raw 12 silent-error-ban" /Users/ghost/core/hive/docs/subagent_dispatch_infra_fix_20260427_landing.md
+# expected: L9 "all root-cause, no temporary workarounds — " + L23 raw 78 + L35 raw 12 +
 
 # CANON canary 4-stage rollout pattern
 grep -n "canary\|4-stage\|rollback" /Users/ghost/core/canon/domains/cognitive/ai-deployment/ai-deployment.md
@@ -70,12 +70,12 @@ ls -la /Users/ghost/core/nexus/state/clm_r5_*.json 2>/dev/null | head -5
 # note: identical mirrors also exist under nexus/.claude/worktrees/agent-ab3a85dc/shared/state/
 #       — canonical is /Users/ghost/core/nexus/state/ (Agent D §6 citation drift fix 2026-04-28)
 
-# own 4 L2 lint impl + selftest
+# L2 lint impl + selftest
 ls -la /Users/ghost/core/anima/tool/compute_resource_failure_lint.hexa
 hexa run /Users/ghost/core/anima/tool/compute_resource_failure_lint.hexa --selftest 2>&1 | grep "RESULT"
 # expected: __COMPUTE_RESOURCE_FAILURE_LINT_RESULT__ PASS_SELFTEST
 
-# own 4 L3' chflags uchg 7 canonical helpers verification
+# L3' chflags uchg 7 canonical helpers verification
 ls -lO /Users/ghost/core/anima/tool/anima_cmt.hexa /Users/ghost/core/anima/tool/anima_runpod_orchestrator.hexa /Users/ghost/core/anima/tool/compute_resource_failure_lint.hexa /Users/ghost/core/anima/tool/sigma_tau_alignment_lint.hexa /Users/ghost/core/anima/tool/discovery_auto_absorption_lint.hexa /Users/ghost/core/anima/tool/kick_result_ai_native_lint.hexa /Users/ghost/core/anima/tool/kick_with_trailer_wrapper.hexa | awk '{print $5, $NF}'
 # expected: all 7 lines start with "uchg"
 
@@ -119,7 +119,7 @@ wc -l /Users/ghost/core/anima/state/discovery_absorption/registry.jsonl
 ls -lO /Users/ghost/core/anima/state/discovery_absorption/registry.jsonl | awk '{print $5}'
 # expected: 39 entries, flag uappnd
 
-# hive raw_addition_requests registry (own 3 + own 4 disposition queue)
+# hive raw_addition_requests registry (+ disposition queue)
 wc -l /Users/ghost/core/hive/state/raw_addition_requests/registry.jsonl
 grep -c "req-own3-sigma-tau-3-promotion\|req-own4-compute-resource-failure-discipline" /Users/ghost/core/hive/state/raw_addition_requests/registry.jsonl
 # expected: 5 total entries; 4 own3+own4 entries (2 ADD-new + 2 trawl-update)

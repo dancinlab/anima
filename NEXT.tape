@@ -440,7 +440,7 @@
   text = "README Philosophy 표: `README.md:110-121` (commit `48ef29028` Status column)"
 
 @D b_own_18_simple_stack_own_line_715_22 :: next [ok]
-  text = "own 18 `simple_stack` 검증: `.own` line 715+"
+  text = "`simple_stack` 검증: `.own` line 715+"
 
 @D b_own_37_v5_2_piv_dcr_cell_substra_23 :: next [ok]
   text = "own-37 v5.2 PIV/DCR cell-substrate metric: `docs/anima_proxy_ppl_deprecate_2026_05_09.md §3`"

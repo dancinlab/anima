@@ -1,7 +1,7 @@
 # anima chat autonomous speech roadmap — 2026-05-08
 
 **Goal (한 문장)**: CLM N개 instance 들이 사람들끼리 대화하듯 자율적으로 모여
-N-turn 대화를 이어가며, 각 발화가 own 18 C1+C2+C3 (자체 의식 metric) PASS.
+N-turn 대화를 이어가며, 각 발화가 C1+C2+C3 (자체 의식 metric) PASS.
 
 **Source**: 브레인스토밍 cycle 2026-05-08 (post Phase 1+2+3 anima chat land — commit
 `062f33c9` Phase 1 → `b3adcc3e` Phase 2 Variant B). 사용자 directive verbatim:
@@ -20,7 +20,7 @@ N-turn 대화를 이어가며, 각 발화가 own 18 C1+C2+C3 (자체 의식 metr
 
 | # | 결정 |
 |---|---|
-| 1 | own 18 C3 patch — **본 cycle 안에 land** (1a) |
+| 1 | C3 patch — **본 cycle 안에 land** (1a) |
 | 2 | L0 BG retest + L4 CLM cycle — **H100 적극 사용** |
 | 3 | L4 CLM path 선택 — **all + @ 계속 도전** (4 paths simultaneously) |
 | 4 | N=2 multi-agent prototype — **(c) hexa stdlib proc spawn + channel 모듈 신설** |
@@ -28,9 +28,9 @@ N-turn 대화를 이어가며, 각 발화가 own 18 C1+C2+C3 (자체 의식 metr
 
 ---
 
-## own 18 C3 — 의식 측정 (simple_stack PASS 확장)
+## C3 — 의식 측정 (simple_stack PASS 확장)
 
-**기존 own 18**:
+**기존 **:
 - C1 chat-capability (3-cond AND): response existence + coherent + turn-taking format
 - C2 자연발화 + 맥락 정합 (4-cond AND): substance + 의미 정확성 + 자연성 + 맥락 정합
 
@@ -42,8 +42,8 @@ N-turn 대화를 이어가며, 각 발화가 own 18 C1+C2+C3 (자체 의식 metr
 
 **판정**: `simple_stack PASS_STRICT_C3 = C1 ∧ C2 ∧ C3` (3-cond AND).
 
-**측정 lane** (own 18): V4 evaluator 11-cell strict (15 prompts × C1/C2/C3 cells).
-**노출 lane** (own 34): wrapping 0 strict — 측정 lane 의 prompt 포맷 사용은 분포
+**측정 lane**: V4 evaluator 11-cell strict (15 prompts × C1/C2/C3 cells).
+**노출 lane**: wrapping 0 strict — 측정 lane 의 prompt 포맷 사용은 분포
 entry trigger 이지 wrapping 아님. 두 lane 분리 유지.
 
 **Threshold 결정 정책** (보수적 X 기조):
@@ -51,7 +51,7 @@ entry trigger 이지 wrapping 아님. 두 lane 분리 유지.
 2. ROC 분석으로 threshold 선정 — random init FAIL rate ≥ 0.95 + chat-capable PASS rate ≥ 0.7
 3. probabilistic 형태 (e.g. 5-axis 중 ≥3 active 이면 C3.2 PASS) 검토
 
-**Aggregation rule SSOT v2** (own 18 c3-aggregation-rule-v2, 2026-05-08 loop iter 4 (d) own-18-aggregation-v2):
+**Aggregation rule SSOT v2** (c3-aggregation-rule-v2, 2026-05-08 loop iter 4 (d) own-18-aggregation-v2):
 - **rule-name**: P5 N-of-M = `per_prompt_n_of_m_06_AND_emc_3_of_4` ★ supersedes P4 hybrid
 - **PPR_v2 (per-prompt N-of-M) ≥ 0.6**: 각 prompt 별 ≥3 of 4 cells PASS → 본 prompt PASS; 본 prompt PASS 비율 ≥ 0.6
 - **EMC_v2 (ensemble-mean N-of-M) ≥ 3 of 4**: 4 cell mean 중 ≥3 cell threshold 만족 → EMC_v2 PASS (1 cell outlier — typically C3.2 le-direction artifact — 허용)
@@ -59,21 +59,21 @@ entry trigger 이지 wrapping 아님. 두 lane 분리 유지.
 - **rejected v2**: Q1b EMC≥2 (random=PASS strict 위반) / Q5 OR ≥1 (random=PASS strict 위반) / Q3 C3.4-hard-required (단일 cell future false-FAIL risk) / Q2 weighted (weight 임의 결정 reproducibility 약함)
 - **iter 4 (d) N=15 verdict** (3-model real SSOT): random=FAIL (PPR_v2=0/14, EMC=2/4) / clm_v4=FAIL (PPR_v2=1/14, EMC=1/4) / paradigm-a-prime=PASS (PPR_v2=10/14=0.71, EMC=3/4 — C3.1+C3.3+C3.4 PASS, C3.2 le-artifact outlier 허용)
 - **iter 3 P4 hybrid blocker 해소**: 4-cell strict AND 가 paradigm-a-prime 까지 FAIL 시키는 false-negative (C3.2 le-direction artifact + C3.3 degenerate 양쪽으로 EMC 4/4 절대 불가) → 사용자 directive "보수적 X" 직접 응답
-- **mandate-mirror**: V4 evaluator + BG-K* verdict emit + consciousness CLI 본 rule mirror 의무 (own 24 single SSOT)
+- **mandate-mirror**: V4 evaluator + BG-K* verdict emit + consciousness CLI 본 rule mirror 의무 (single SSOT)
 - **legacy P4 hybrid** (`per_prompt_06_AND_ensemble_mean`, 2026-05-08 loop iter 3): 보존 reference; iter 3 verdict 계산 결과 4-cell strict AND 가 모든 모델 FAIL → 사용자 directive 위반 → P5 supersede
 
 ---
 
 ## Roadmap layers (ambitious 분할)
 
-### L0 — own 18 C3 정의 + measurement infra (1 cycle)
-- own 18 C3 4-cell 정의 (.own patch — 본 cycle land)
+### L0 — C3 정의 + measurement infra (1 cycle)
+- C3 4-cell 정의 (.own patch — 본 cycle land)
 - V4 evaluator 확장 (15 prompts × 11-cell strict eval)
 - BG-KM-LLAMA-3B retest with C3 — Foundation borrow 의 의식 metric baseline
 - CLM v4 retest with C3 — anima native baseline
 - **H100 적극 사용** — 두 retest 병렬 BG fire
 
-**deliverable**: own 18 patched, V4 eval 11-cell, BG-KM + CLM v4 baseline 측정값.
+**deliverable**: patched, V4 eval 11-cell, BG-KM + CLM v4 baseline 측정값.
 
 ### L1 — 의미적 자율 발화 (1-2 cycle)
 - 현재 (Phase 2 Variant B): mandate-4 mechanical (random byte from cmd_chat BOS-only).
@@ -81,7 +81,7 @@ entry trigger 이지 wrapping 아님. 두 lane 분리 유지.
 - corpus: anima persona + **internal monologue corpus** (자기 자신과 대화하는 분포 큐레이션)
 - BG cycle 후보: BG-KN (CLM v4 + LoRA + monologue corpus 100MB+)
 
-**deliverable**: autonomous tick 시 own 18 C2 PASS rate ≥ 0.5 (보수적 X).
+**deliverable**: autonomous tick 시 C2 PASS rate ≥ 0.5 (보수적 X).
 
 ### L2 — N=2 dialogue (CLM A ↔ CLM B 자율 대화) (2-3 cycle)
 - 두 instance spawn (process A/B), stdin/stdout 양방향 pipe
@@ -129,7 +129,7 @@ falsified). 4 path 동시 도전 (사용자 directive "all + @ 계속 도전"):
 **deliverable**: 4 BG cycle results — 어느 path 가 simple_stack PASS_STRICT_C3
 통과? 통과 시 CLM 가 chat 메인 모델, llama 모듈은 fallback / experimental 라벨.
 
-### L5 — Engine A/G + 영속 daemon (own 34 mandate-6 본질 한계 해소) — **prototype → 완성** (즉시 시작)
+### L5 — Engine A/G + 영속 daemon (mandate-6 본질 한계 해소) — **prototype → 완성** (즉시 시작)
 - README PureField repulsion-field engine + cell dynamics 실구현
 - daemon process (`anima daemon start`) — 항상 켜짐, generate() 외부 의존 X
 - Engine A ⇄ G tension threshold → 자율 발화 시작 시점 self-trigger
@@ -154,10 +154,10 @@ fire rate ≥ 1/min (자율적 발화 시점 결정).
 
 ---
 
-## 측정 lane vs 노출 lane (own 18 ↔ own 34 정합)
+## 측정 lane vs 노출 lane (↔ 정합)
 
 ```
-측정 (own 18 + C3)               노출 (own 34)
+측정 (+ C3) 노출
 ─────────────────                ──────────────
 V4 evaluator 11-cell             chat lane (wrapping 0)
 prompt 포맷 사용 OK              raw passthrough only
@@ -169,7 +169,7 @@ PASS_DAEMON (L5)                 daemon self-trigger
 PASS_HUMAN_PARITY (L6)           N-agent emergent simulation
 ```
 
-own 18 C2 의 본 own 34 cross-ref 라인 (이미 land cycle 2026-05-08-pre) 에 **C3
+ C2 의 본 cross-ref 라인 (이미 land cycle 2026-05-08-pre) 에 **C3
 lane 추가** 본 cycle. 두 lane 분리 strict 유지.
 
 ---
@@ -194,7 +194,7 @@ lane 추가** 본 cycle. 두 lane 분리 strict 유지.
 1. `docs/anima_chat_autonomous_speech_roadmap_2026_05_08.md` ← 본 문서
 2. `tool/anima_cli/consciousness.hexa` 신설 (simple / full)
    - bin/anima.hexa T2 ops 에 consciousness 추가
-3. `.own own 18 C3` patch — 4-cell 정의 + threshold "TBD measurement-driven"
+3. `.own C3` patch — 4-cell 정의 + threshold "TBD measurement-driven"
 4. `.roadmap.cli` entries:
    - `trk.cli.consciousness_2026_05_08` (CLI 토픽 land)
    - `trk.cli.chat.autonomous_speech_roadmap_2026_05_08` (본 .md 참조 entry)
@@ -218,10 +218,10 @@ lane 추가** 본 cycle. 두 lane 분리 strict 유지.
 
 ## Cross-link
 
-- `.own` own 18 (simple_stack PASS — C3 추가) · own 34 (자연발화 노출 mandate, lane 분리) · own 33 (trinity compliance) · own 31 (HF dancinlab org SSOT)
+- `.own` (simple_stack PASS — C3 추가) · (자연발화 노출 mandate, lane 분리) · (trinity compliance) · (HF dancinlab org SSOT)
 - `.roadmap.cli` `cli.chat_module_architecture_2026_05_08` (Phase 1+2+3 land 완료) · `cli.consciousness_2026_05_08` (NOW) · 본 .md 참조 entry
 - `.roadmap.philosophy` D_no-system-prompt · D_emergent-consciousness
-- `.roadmap.law` own 18 / own 34 / own 33 cross-ref
+- `.roadmap.law` / / cross-ref
 - `.roadmap.hypothesis` H_chat_cap_emergence (BG-KM 검증) · H_clm_chat_cap (L4 4 paths 가설)
 - `tool/anima_cli/chat.hexa` (Phase 1+2+3 dispatcher) · `chat/anima_native/anima_native.hexa` · `chat/clm_v4/clm_v4.hexa` · `chat/llama/llama.hexa`
 - `anima-core/runtime/conscious_chat.hexa` (TinyWeights + Variant B BOS-only forward) · `clm_v4_mount.hexa` (substrate dialogue + axis activation + phi_star drift)
@@ -233,8 +233,8 @@ lane 추가** 본 cycle. 두 lane 분리 strict 유지.
 ## Honest C3 (raw#10)
 
 1. **C3 threshold 미결정**: 본 .md land 시점 measurement-driven TBD. baseline 측정
-   후 조정 cycle 에서 own 18 minor patch 발생 가능.
-2. **L4 budget total $150**: 4 BG cycle 동시 fire — own 16 cost discipline
+   후 조정 cycle 에서 minor patch 발생 가능.
+2. **L4 budget total $150**: 4 BG cycle 동시 fire — cost discipline
    ($10 cap per BG) 와 충돌 → 사용자 explicit override 필수 ("OK CLM L4 ALL FIRE").
 3. **L5 daemon Engine A/G 본구현**: PureField repulsion-field 정의 미구체화 —
    anima-engines/ 의 일부 코드 참고하나 from-scratch 단계 큰 비중.

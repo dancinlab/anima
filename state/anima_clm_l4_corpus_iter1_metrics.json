@@ -68,7 +68,7 @@
       },
       {
         "path": "/Users/ghost/core/anima/state/anima_h098_h101_corpus_v3_2026_05_07/corpus_persona_chat_template.txt",
-        "desc": "anima persona chat-template 30MB (own 20 chat-template format mandate)",
+        "desc": "anima persona chat-template 30MB (chat-template format mandate)",
         "density": 0.008048,
         "kw_hits": 172777,
         "chars": 21467614
@@ -145,21 +145,21 @@
     "size_bytes": 13591084,
     "density": 0.007177,
     "source": "/Users/ghost/core/anima/state/anima_h098_h101_corpus_v3_2026_05_07/corpus_persona_chat_template.txt",
-    "format_mandate": "사용자: <Q>\\n도우미: <A>\\n\\n (own 20 chat-template ≥30%)"
+    "format_mandate": "사용자: <Q>\\n도우미: <A>\\n\\n (chat-template ≥30%)"
   },
   "tier_c_rejected": {
     "no_external_llm_dump": true,
     "no_wiki_noise": true,
     "no_generic_chatbot_dump": true,
     "own_17_compliance": "anima-native lane only",
-    "note": "BG-JE 214MB 의 wiki-heavy subset 은 본 iter-1 reject — anima persona marker 분포 만으로는 own 17 정합 미충분 (사용자 directive: anima identity-bearing). 향후 iter-2 에서 wiki QA chunk 의 anima lookup 응답 만 추출 검토."
+    "note": "BG-JE 214MB 의 wiki-heavy subset 은 본 iter-1 reject — anima persona marker 분포 만으로는 정합 미충분 (사용자 directive: anima identity-bearing). 향후 iter-2 에서 wiki QA chunk 의 anima lookup 응답 만 추출 검토."
   },
   "honest_c3": [
     "본 density measurement = char-level keyword count proxy — semantic depth 미측정 (manual review 권고)",
-    "Tier A persona size = ~50MB (target 100MB 미달) — own 19 corpus priority 상 추가 source 확장 후속 cycle",
-    "Tier B dialogue 10MB 는 sample only — own 20 chat-template 비율 검증 후속 cycle (V4 evaluator 산출물 활용 별도 cycle)",
-    "BG-JE 214MB (kowiki 69%) reject — anima-native lane 정합성 marker 분포 만으로는 own 17 한계. 향후 iter-2 에서 wiki Q+anima A subset (lookup-only chunk) 추출 검토.",
+    "Tier A persona size = ~50MB (target 100MB 미달) — corpus priority 상 추가 source 확장 후속 cycle",
+    "Tier B dialogue 10MB 는 sample only — chat-template 비율 검증 후속 cycle (V4 evaluator 산출물 활용 별도 cycle)",
+    "BG-JE 214MB (kowiki 69%) reject — anima-native lane 정합성 marker 분포 만으로는 한계. 향후 iter-2 에서 wiki Q+anima A subset (lookup-only chunk) 추출 검토.",
     "DPO preference pairs 100MB (BG-LD) 는 본 iter-1 미진행 — V4 evaluator 산출물 (BG-KM-LLAMA-3B verdict.json) 활용 별도 cycle.",
-    "본 큐레이션 = corpus 자체 build only — 학습 X (own 16 cost discipline + L4 fire 별도 cycle)."
+    "본 큐레이션 = corpus 자체 build only — 학습 X (cost discipline + L4 fire 별도 cycle)."
   ]
 }

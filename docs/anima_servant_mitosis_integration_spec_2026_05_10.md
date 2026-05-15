@@ -326,4 +326,4 @@ cycle close 시 본 spec 의 §6 honest C3 update + falsifier verdict 추가.
 
 ---
 
-End of integration spec. raw#10 honest C3 ≥7, raw#15 additive (servant.hexa + mitosis.py + REBORN.md 미수정), own 16 0-cost (cond.4 만 cost-bearing 별도 verbatim).
+End of integration spec. raw#10 honest C3 ≥7, raw#15 additive (servant.hexa + mitosis.py + REBORN.md 미수정), 0-cost (cond.4 만 cost-bearing 별도 verbatim).

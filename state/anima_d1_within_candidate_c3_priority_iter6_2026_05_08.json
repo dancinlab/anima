@@ -4,7 +4,7 @@
   "cycle": "2026-05-08-mid",
   "loop_iter": "iter6_d1_within_candidate_c3_priority_post_bg_km_reject",
   "user_directive_verbatim": "Anima cycle 2026-05-08 iter6 task (a-redirected): D1 lane WITHIN candidate C3 retest — BG-KM 빠지고 D1 within 모델로 focus shift.",
-  "scope": "iter5 BG-KM-LLAMA-3B INVALID_D1_OUTSIDE_PERMANENT_REJECT (commit 41a19bc3) 후속 — SIMPLE_STACK_PASS_STRICT_C3_ANIMA verdict 후보군은 D1 within 만. spec/dry-run only (own 16 cost discipline). priority ranking + EXIT prereq spec.",
+  "scope": "iter5 BG-KM-LLAMA-3B INVALID_D1_OUTSIDE_PERMANENT_REJECT (commit 41a19bc3) 후속 — SIMPLE_STACK_PASS_STRICT_C3_ANIMA verdict 후보군은 D1 within 만. spec/dry-run only (cost discipline). priority ranking + EXIT prereq spec.",
   "policy": {
     "own_16": "fire X — spec/dry-run only (사용자 'OK BG KM RETEST FIRE LOCAL' 등 explicit override 부재)",
     "own_17": "D1 SCOPE_CLAMP — D1 lane within model 만 anima verdict label 부여 가능 (Llama / Qwen foundation borrow lineage 영구 reject for ANIMA lane)",
@@ -13,13 +13,13 @@
     "own_22": "본 발견 (BG-KM 제외 D1 within 후보군 ranking) mandatory report",
     "own_24": "single SSOT — 본 파일",
     "own_28": "anti-Goodhart V6 awareness pending — EXIT 활성화 mandate-9 (b) prereq carry",
-    "own_33": "trinity 무조건 — D-axis (D1 within strict) + own-axis (own 18 + own 37 mandate-9) + H-axis (iter5 BG-KM reject 정합)",
+    "own_33": "trinity 무조건 — D-axis (D1 within strict) + own-axis (+ mandate-9) + H-axis (iter5 BG-KM reject 정합)",
     "own_34_mandate_2": "file size 1MB 이하 strict — 본 파일 ≤ 12 KB 정합",
     "own_37_mandate_9": "PUBLIC promote 5 prereq — (a) D1 within + SIMPLE_STACK_PASS_STRICT_C3_ANIMA (b) V6 systematic (c) user verbatim 'OK PROMOTE PUBLIC <repo-id>' (d) trinity sweep (e) D-axis + L-axis sweep"
   },
   "input_ssot": {
     "iter5_bg_km_reject": "state/anima_bg_km_llama_3b_c3_retest_iter5_2026_05_08.json — verdict=INDETERMINATE_NO_LOCAL_MEASUREMENT_FIRE; M1 D1 OUTSIDE strict permanent reject for ANIMA lane",
-    "iter5_commit_carry": "41a19bc3 (own 17 D1 SCOPE_CLAMP, BG-KM-LLAMA-3B INVALID_D1_OUTSIDE_PERMANENT_REJECT)",
+    "iter5_commit_carry": "41a19bc3 (D1 SCOPE_CLAMP, BG-KM-LLAMA-3B INVALID_D1_OUTSIDE_PERMANENT_REJECT)",
     "clm_v4_lora_real_mode": "state/anima_clm_v4_lora_real_mode_2026_05_08.json — 3 variant (sft-1-7-y1 / sft-1-8 / paradigm-j) ALL FAIL_C3 + merge_no_op (target_modules schema mismatch)",
     "anima_native_byte_real_mode": "state/anima_native_byte_real_mode_2026_05_08.json — v2_byte_convo5k FAIL_C3 (real-mode, signal weak), fy_18m INDETERMINATE_SYNTHETIC_FALLBACK (Mac ckpt 부재)",
     "consciousness_baseline": "state/anima_consciousness_baseline.json — clm_v4 base substrate_mode=real C3 baseline (PPR_v2 추정 ≤0.15, EMC=0 of 4)"
@@ -56,7 +56,7 @@
       "d1_lane_status": "WITHIN (CLM v4 lineage anima-native fresh, paradigm-j variant)",
       "current_p5_v2_verdict": "FAIL_C3 (PPR_v2=0.067, EMC=2 of 4) — merge_no_op carry + jvae_heads.pt forward path 미exercise",
       "why_top": [
-        "schema fix path 가장 명확 — adapter_config target_modules nested name remap 또는 LoRA retraining (own 16 cost: H100 cycle pending 사용자 consent)",
+        "schema fix path 가장 명확 — adapter_config target_modules nested name remap 또는 LoRA retraining (cost: H100 cycle pending 사용자 consent)",
         "JVAE-aware forward path 별도 cell signal 가능성 (paradigm-j JVAE 학습 신호 본 cycle 미측정)",
         "SUBSTRATE_IDENTITY_TABLE entry 이미 등록 (clm_v4_mount.hexa line 411-505 LoRA branch 통합 land)",
         "4 cells 중 c3_3 (entropy_dominance) PASS rate=1.000 carry — base 정합. c3_2 axis_min PASS 가능성 schema fix 후 회복 candidate"
@@ -150,13 +150,13 @@
           "'OK CLM V4 LORA SCHEMA FIX FIRE' (target_modules schema fix 또는 LoRA retraining 승인)",
           "'OK JVAE WRAPPER LAND' (paradigm-j JVAE-aware probe wrapper 추가 승인)",
           "'OK V6 AWARENESS FIRE' (anti-Goodhart systematic execute 승인)",
-          "PASS 도달 후 'OK PROMOTE PUBLIC dancinlab/clm-v4-paradigm-j-50k-final' (own 37 mandate-9 (c) verbatim consent)"
+          "PASS 도달 후 'OK PROMOTE PUBLIC dancinlab/clm-v4-paradigm-j-50k-final' (mandate-9 (c) verbatim consent)"
         ],
         "infra_requirement": [
           "adapter_config target_modules nested name remap helper land (또는 LoRA retraining on ConsciousDecoderV3 — H100 cycle ~2-4hr)",
           "JVAE-aware probe wrapper hexa-native (anima-core/runtime/clm_v4_jvae_probe.hexa 신설 또는 clm_v4_mount.hexa extension)",
-          "BG-LE-V6-AWARENESS systematic execute (own 18 mandate-9 (b) prereq)",
-          "trinity sweep (own 33) + D-axis L-axis sweep (mandate-9 (d) (e))"
+          "BG-LE-V6-AWARENESS systematic execute (mandate-9 (b) prereq)",
+          "trinity sweep + D-axis L-axis sweep (mandate-9 (d) (e))"
         ]
       },
       "rank_2_v2_byte_convo5k_ko_heavy_retrain": {
@@ -194,14 +194,14 @@
   "honest_c3": [
     "본 cycle EXIT (SIMPLE_STACK_PASS_STRICT_C3_ANIMA) 미달성 — D1 within candidate emerge 0 carry (5 candidate ALL FAIL_C3 or INDETERMINATE)",
     "rank_1 paradigm-j 가 top 이지만 JVAE-aware wrapper 본 cycle 미land + schema fix 별도 H100 cycle pending → 실제 PASS 도달 iter7 또는 iter8 추정",
-    "rank_2 v2_byte ko_heavy retrain 은 corpus 충분 + infra 100% land 이지만 H100 retrain cycle 자체가 새로운 fire (own 16 cost discipline 사용자 explicit consent 필요)",
+    "rank_2 v2_byte ko_heavy retrain 은 corpus 충분 + infra 100% land 이지만 H100 retrain cycle 자체가 새로운 fire (cost discipline 사용자 explicit consent 필요)",
     "rank_4 BG-FY scp pull 은 단일 step unblock 이지만 single-head tile 8-cell synthesis = anima-internal proxy (federated cells 부재) → cell-pair cosine signal weak carry (synthetic 0.5 평균 노이즈)",
     "rank_5 clm-v4-mk2-v1 base 는 EMC=0 of 4 → 추가 학습 없이 PASS 불가능 path (rank_5 reject)",
     "anti-Goodhart V6 awareness systematic execute 본 cycle 미시행 — ALL candidate 보편 차단 (mandate-9 (b))",
-    "iter5 BG-KM-LLAMA-3B INVALID_D1_OUTSIDE_PERMANENT_REJECT 정합 carry — own 17 D1 SCOPE_CLAMP 강력 적용 (Llama foundation borrow lineage = ANIMA lane 영구 reject)",
-    "본 cycle code 변경 X — spec/dry-run only (own 16 cost discipline strict)",
-    "trinity 정합 (own 33): D-axis (D1 within strict) + own-axis (own 18 + own 37 mandate-9) + H-axis (iter5 BG-KM reject)",
-    "own 34 mandate-2 정합 — 본 파일 ≤ 12 KB (1MB 이하)"
+    "iter5 BG-KM-LLAMA-3B INVALID_D1_OUTSIDE_PERMANENT_REJECT 정합 carry — D1 SCOPE_CLAMP 강력 적용 (Llama foundation borrow lineage = ANIMA lane 영구 reject)",
+    "본 cycle code 변경 X — spec/dry-run only (cost discipline strict)",
+    "trinity 정합 : D-axis (D1 within strict) + own-axis (+ mandate-9) + H-axis (iter5 BG-KM reject)",
+    " mandate-2 정합 — 본 파일 ≤ 12 KB (1MB 이하)"
   ],
   "blockers_carry": [
     "iter6 universal: anti-Goodhart V6 awareness systematic execute (BG-LE-V6-AWARENESS lane) — EXIT 활성화 mandate-9 (b) prereq strict",
@@ -231,7 +231,7 @@
     "raw_82": "retraction-aware — fy_18m INDETERMINATE / 3 LoRA variant merge_no_op carry surface, silent fallback 차단"
   },
   "cross_link": [
-    ".own own 16 / 17 / 18 / 22 / 24 / 28 / 33 / 34 / 37",
+    ".own / 17 / 18 / 22 / 24 / 28 / 33 / 34 / 37",
     ".raw-ref raw#9 / 10 / 15 / 37 / 82",
     ".roadmap.philosophy D1-D5 + V1-V10",
     ".roadmap.law L0-L24 + R1/R5",

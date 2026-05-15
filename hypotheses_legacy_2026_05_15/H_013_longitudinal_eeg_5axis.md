@@ -43,7 +43,7 @@ within-subject N=1 longitudinal EEG study (subject search5599@proton.me, 170 ses
 - prereg JSON: `state/longitudinal_pre_register.json`
 - sister: clm_eeg p1/p2/p3 prereg (`state/clm_eeg_p*_pre_register.json`)
 - roadmap: `.roadmap.eeg` longitudinal entry
-- own: own 21
+- own:
 - literature: Marzano (2010), Schartner (2017) LZ76 criteria
 
 ## Honest Limits

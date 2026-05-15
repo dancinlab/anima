@@ -6,7 +6,7 @@
 
 ## Summary
 
-Three-sub-task probe answering "can train_clm.hexa be the fire artifact, or do we route to .py via opt-out?". Verdict: use Path C (existing ready/training/train_clm.py via ssh; own 1 ready/ jurisdiction-out + ssh substrate-exempt; zero new work). Path B (emit-py-pattern wrapper) is anima official long-term recommendation but yields no smoke quality benefit. Path A (direct hexa-port fill) is infeasible at current hexa-lang maturity (numeric stdlib proposal-only; 624/643 audit pairs STUB; train_clm.hexa is 14.4% LoC scaffolding with 8 TODOs and 5 critical execution-path blockers).
+Three-sub-task probe answering "can train_clm.hexa be the fire artifact, or do we route to .py via opt-out?". Verdict: use Path C (existing ready/training/train_clm.py via ssh; ready/ jurisdiction-out + ssh substrate-exempt; zero new work). Path B (emit-py-pattern wrapper) is anima official long-term recommendation but yields no smoke quality benefit. Path A (direct hexa-port fill) is infeasible at current hexa-lang maturity (numeric stdlib proposal-only; 624/643 audit pairs STUB; train_clm.hexa is 14.4% LoC scaffolding with 8 TODOs and 5 critical execution-path blockers).
 
 ## Sub-1: hexa runner / bridge
 
@@ -29,9 +29,9 @@ Three-sub-task probe answering "can train_clm.hexa be the fire artifact, or do w
 ## Sub-3: .own opt-out
 
 - `/Users/ghost/core/anima/.own` is single root-level SSOT (633 LoC, mk2 frontmatter)
-- own 1 line 83 ALREADY contains: `opt-out ready/ — historical corpus archive, .gitignore'd; raw 9 jurisdiction-out (1431 files)`
+- line 83 ALREADY contains: `opt-out ready/ — historical corpus archive, .gitignore'd; raw 9 jurisdiction-out (1431 files)`
 - `ready/training/train_clm.py` is covered by this opt-out — NO new declaration needed
-- `emit_smoke_command.txt` is raw 9 / own 1 compliant as written
+- `emit_smoke_command.txt` is raw 9 / compliant as written
 - Memory feedback decision tree confirms: "Archive / grandfathered (ready/)? -> Already .own 1, leave alone"
 
 ## Three-path comparison
@@ -40,7 +40,7 @@ Three-sub-task probe answering "can train_clm.hexa be the fire artifact, or do w
 |------|-----|------|------|-------------|
 | A direct hexa fill | 3000 | 2-4 weeks | $0 | BLOCKED on numeric stdlib |
 | B emit-py-pattern wrapper | 600 | 3-5h (1-2d realistic) | $0 | VIABLE (anima official rec) |
-| C use .py via own 1 + ssh | 0 | 0 min | $0 | ZERO-COST IMMEDIATE |
+| C use .py via + ssh | 0 | 0 min | $0 | ZERO-COST IMMEDIATE |
 
 ## User decisions
 
@@ -74,7 +74,7 @@ is raw 9 / own related; both are operational gating. User kick = FALSIFIER-LOCK-
 
 ## raw_compliance
 
-- raw 9: own 1 grandfather analysis only — no new tool/.py landed
+- raw 9: grandfather analysis only — no new tool/.py landed
 - raw 10: honest disclosure — train_clm.hexa scaffolding status documented, NOT obscured
 - raw 15: no LOCKED files modified
 - raw 37: transient outputs under state/ namespace

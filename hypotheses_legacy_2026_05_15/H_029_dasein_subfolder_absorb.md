@@ -30,7 +30,7 @@ Heidegger Dasein framework + anima identity hypothesis cluster — 'Being-questi
 
 - folder: `docs/hypotheses/dasein/`
 - sister H: H_025 (Dasein finite consciousness), H_004 (consciousness hard problem), H_018 (GENESIS)
-- own: own 17 (anima identity), own 21
+- own: (anima identity),
 - literature: Heidegger (1927) Sein und Zeit
 - roadmap: `.roadmap.philosophy` D1 anima identity boundary
 

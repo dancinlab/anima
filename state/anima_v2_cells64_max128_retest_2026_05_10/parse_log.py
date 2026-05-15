@@ -4,7 +4,7 @@ Parses the v5mitosis_d384_v14_mirror.py stdout (run_300_max128.log) and emits a
 JSON snapshot of all completed runs (TRAINED + RANDOM_s* fully traversed). Can be
 called repeatedly during training; writes to partial_result.json.
 
-own 38: deliverable; raw#9 local script.
+: deliverable; raw#9 local script.
 """
 from __future__ import annotations
 

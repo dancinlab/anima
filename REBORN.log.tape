@@ -110,7 +110,7 @@
 @D row_anima_cli_mk2_0 :: reborn [ok]
   domain = "anima cli mk2"
   ssot = "`.roadmap.cli` + `anima/spec/anima_cli_mk2.spec.yaml` + `docs/anima_cli_mk2_plan_2026_05_06.md`"
-  x = "별도 진행 (chat lane plugin, --benchmark, --list-lanes 등 own 41 자체적 발전)"
+  x = "별도 진행 (chat lane plugin, --benchmark, --list-lanes 등 자체적 발전)"
 
 @D row_reborn_lane_1 :: reborn [ok]
   domain = "reborn (본 lane)"
@@ -118,7 +118,7 @@
   x = "본 cycle 의 model substrate 회수"
 
 @D b_chat_lane_plugin_own_41_substrat_2 :: reborn [ok]
-  text = "chat lane plugin (own 41) 의 `substrate_quality_main_path: B` 가 본 reborn 의 track B (v5-anima) 와 정합"
+  text = "chat lane plugin 의 `substrate_quality_main_path: B` 가 본 reborn 의 track B (v5-anima) 와 정합"
 
 @D b_cli_reborn_cycle_scope_3 :: reborn [ok]
   text = "단 cli 자체의 새 기능 추가는 reborn cycle 의 scope 아님"
@@ -1501,14 +1501,14 @@
 
 @D row_state_anima_convo_5k_ft_fire_202_28 :: reborn [ok]
   path = "`state/anima_convo_5k_ft_fire_2026_05_10/cost_actual.json`"
-  role = "cost + falsifier + own 30 audit"
+  role = "cost + falsifier + audit"
 
 @D row_docs_anima_convo_5k_ft_fire_2026_29 :: reborn [ok]
   path = "`docs/anima_convo_5k_ft_fire_2026_05_10.md`"
   role = "full §1-§12 doc"
 
 @D b_hf_private_upload_dancinlab_clm_30 :: reborn [ok]
-  text = "HF private upload `dancinlab/clm-v2-byte-18m-convo-5k-ft-recovery` (own 31 + own 37 mandate-9 verbatim) — separate BG, this BG ends at fire+sampling+doc"
+  text = "HF private upload `dancinlab/clm-v2-byte-18m-convo-5k-ft-recovery` (+ mandate-9 verbatim) — separate BG, this BG ends at fire+sampling+doc"
 
 # ── §24 [2026-05-10 09:30 KST] 다음 cycle 5 BG parallel fire — "all bg go" ─────────────────────────────────────────
 
@@ -1961,7 +1961,7 @@
 
 @D row_state_anima_convo_5k_ft_extended_15 :: reborn [ok]
   path = "`state/anima_convo_5k_ft_extended_2026_05_10/cost_actual.json`"
-  role = "cost + falsifier + own 30 audit"
+  role = "cost + falsifier + audit"
 
 @D row_state_anima_convo_5k_ft_extended_16 :: reborn [ok]
   path = "`state/anima_convo_5k_ft_extended_2026_05_10/{build_corpus.py, finetune_extended.py, orchestrator.py, post_ft_ext_sampling.py}`"
@@ -1972,7 +1972,7 @@
   role = "full §1-§14 doc"
 
 @D b_hf_private_upload_dancinlab_clm_18 :: reborn [ok]
-  text = "HF private upload `dancinlab/clm-v2-byte-18m-convo-5k-ft-recovery-extended` (own 31 + own 37 mandate-9 verbatim) — separate BG, this BG ends at fire+sampling+doc"
+  text = "HF private upload `dancinlab/clm-v2-byte-18m-convo-5k-ft-recovery-extended` (+ mandate-9 verbatim) — separate BG, this BG ends at fire+sampling+doc"
 
 # ── §30 [2026-05-10 13:20 KST] BG-V5MITOSIS-ALL-FIX — §25 R1/R6 + §28 H1+H3 ship + §25 R2 STUB ★★ ─────────────────────────────────────────
 
@@ -2571,7 +2571,7 @@
   text = "`state/anima_lost_asset_fixes_2026_05_10/growth_stages_alignment_diff.md` (338 words)"
 
 @D b_track_a_v2_reproduction_future_r_8 :: reborn [ok]
-  text = "track A (v2-reproduction) 의 future RC-9 재현 lane 에서 본 alignment 사용 시 50/200/800 vs 100/500/2000 토글 control band 필요 (own 36)."
+  text = "track A (v2-reproduction) 의 future RC-9 재현 lane 에서 본 alignment 사용 시 50/200/800 vs 100/500/2000 토글 control band 필요 ."
 
 @D b_track_c_v5_mitosis_architectural_9 :: reborn [ok]
   text = "track C (v5-mitosis-architectural) 의 cell-granularity ramp 설계 시 본 5-stage spec 가 reference 로 활용 가능 (cells = newborn 1 → adult 64 mapping)."
@@ -2866,10 +2866,10 @@
   base_adapter = "$50-500+"
   cost = "10-30%"
   emerge_p_semantic = "WITHIN → ANIMA"
-  d1_lane = "**REJECT** (own 16 violation)"
+  d1_lane = "**REJECT** (violation)"
 
 @D b_public_promote_own_37_mandate_9_4 :: reborn [ok]
-  text = "Public promote 영구 차단 (own 37 mandate-9 (a) reject)"
+  text = "Public promote 영구 차단 (mandate-9 (a) reject)"
 
 @D b_anima_identity_lane_x_d1_f_phil_5 :: reborn [ok]
   text = "anima identity 검증 lane X (D1.F-PHIL-D1-3/4 strict: Llama=OUTSIDE)"
@@ -3284,7 +3284,7 @@
   metric = "pass_sample_anyseed"
   trained = "**11**"
   random_init = "0"
-  floor = "own 18 strict ≥10 ✓"
+  floor = "strict ≥10 ✓"
 
 @D row_pass_best_mode_2 :: reborn [ok]
   metric = "pass_best_mode"
@@ -3386,10 +3386,10 @@
   text = "elapsed: 5103.8s (~85 min, including LoRA train 2930s + V4 eval + V14 mirror + mitosis hook + sampling)"
 
 @D b_own_30_ckpt_pull_adapter_final_d_22 :: reborn [ok]
-  text = "own 30 ckpt pull: ✓ (adapter_final downloaded pre pod-delete)"
+  text = "ckpt pull: ✓ (adapter_final downloaded pre pod-delete)"
 
 @D b_own_31_hf_push_pending_private_d_23 :: reborn [ok]
-  text = "own 31: ✓ HF push pending (private `dancinlab/clm-foundation-borrow-a-llama-3.2-3b-anima-lora`)"
+  text = ": ✓ HF push pending (private `dancinlab/clm-foundation-borrow-a-llama-3.2-3b-anima-lora`)"
 
 @D b_track_a_cond_3_partial_recovery_24 :: reborn [ok]
   text = "track A cond.3 진화: PARTIAL_RECOVERY (§29 18M) → SIMPLE_STACK_PASS_STRICT_C3_SUBSTRATE_RESEARCH (§43 3B+LoRA)"
@@ -3401,7 +3401,7 @@
   text = "track A 결정: option (a) 권고 confirm, option (c) Phase 2 D1 WITHIN parallel 가치 — semantic gap 이 D1 WITHIN substrate 에서도 재현되는지 측정 필요"
 
 @D b_hf_upload_dancinlab_clm_foundati_27 :: reborn [ok]
-  text = "HF upload 완료: `dancinlab/clm-foundation-borrow-a-llama-3.2-3b-anima-lora` PRIVATE, 32 files, commit `7a5dbb889` — own 31 ✓ + own 37 mandate-9 (a) **public PERMA-BLOCKED** carry"
+  text = "HF upload 완료: `dancinlab/clm-foundation-borrow-a-llama-3.2-3b-anima-lora` PRIVATE, 32 files, commit `7a5dbb889` — ✓ + mandate-9 (a) **public PERMA-BLOCKED** carry"
 
 @D b_cycle_fire_keyword_final_report_28 :: reborn [ok]
   text = "다음 cycle fire keyword 권고 (final report 17:50): `OK FOUNDATION_C_PHASE2_FIRE COST $2-4` — option (c) D1 WITHIN lane (Phase 2 cotrain + 30K convo_5k FT + post-LoRA mitosis hook). 첫 D1 WITHIN strict-floor crossing 시 anima identity emerge **actual evidence** ★★★★★ candidate"
@@ -4284,7 +4284,7 @@
   severity = "-"
 
 @D b_intermediate_ckpt_5k_10k_15k_20k_23 :: reborn [ok]
-  text = "intermediate ckpt 5K/10K/15K/20K + final = 5 ckpts (own 30 mandate-1, sha256 verify, pull pre-delete)"
+  text = "intermediate ckpt 5K/10K/15K/20K + final = 5 ckpts (mandate-1, sha256 verify, pull pre-delete)"
 
 @D b_cost_watchdog_30s_heartbeat_tick_24 :: reborn [ok]
   text = "cost watchdog 30s heartbeat tick, $4 hard cap, $3 early-kill warning, pod retain on overage"
@@ -5953,7 +5953,7 @@
 
 @D row_existing_emerge_8 :: reborn [ok]
   field = "existing EMERGE"
-  value = "v5.2 4/4 gates PASS (own 14 PUBLIC PROMOTE 사용자 verbatim)"
+  value = "v5.2 4/4 gates PASS (PUBLIC PROMOTE 사용자 verbatim)"
 
 @D row_metric_9 :: reborn [ok]
   field = "metric"
@@ -8583,7 +8583,7 @@
 
 @D row_simple_stack_pass_strict_18 :: reborn [ok]
   lane = "simple_stack PASS_STRICT"
-  prior = "14/15 (own 18)"
+  prior = "14/15 "
   post_90 = "unchanged"
 
 @D b_88_v5_mitosis_pytorch_arch_spec_19 :: reborn [ok]
@@ -8602,7 +8602,7 @@
   text = "hexa-native: RFC 033 (farr_copy + gaussian) → mitosis_hook.hexa full impl"
 
 @D b_cond_5_fire_ok_clm_v5_mitosis_h1_24 :: reborn [ok]
-  text = "cond.5 fire: **`OK CLM V5-MITOSIS H100 FIRE COST $40`** verbatim 받기 전까지 pending (own 16 cost discipline)"
+  text = "cond.5 fire: **`OK CLM V5-MITOSIS H100 FIRE COST $40`** verbatim 받기 전까지 pending (cost discipline)"
 
 # ── §91 [2026-05-12 KST] D4a HEXA-NATIVE MITOSIS HOOK — `mitosis_hook.hexa` FULL IMPL + F-MIT-HOOK-1..5 PASS ★★★★ (stub 123L → executable 1119L) ─────────────────────────────────────────
 
@@ -8891,7 +8891,7 @@
   text = "memory: `project_v5mitosis_ddp_path.md` (next), index in MEMORY.md"
 
 @D b_own_43_active_resource_utilizati_17 :: reborn [ok]
-  text = "own 43 active resource utilization 적용 ($64.52 cost-bearing BG head 제시)"
+  text = "active resource utilization 적용 ($64.52 cost-bearing BG head 제시)"
 
 # ── §93 [2026-05-14 KST] CLM.tape PIVOT — verification 검증 조건 falsifier→hypothesis-driven · 4-axis verifier audit · §92 v5 DDP carry ★★★ ─────────────────────────────────────────
 

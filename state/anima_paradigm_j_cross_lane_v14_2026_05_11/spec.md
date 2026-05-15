@@ -2,7 +2,7 @@
 
 **Cycle**: 2026-05-11 anima reborn lane
 **Fire slot**: P4 (parallel with P2/P3/P5)
-**Budget**: $0 — local Mac CPU only (own 16)
+**Budget**: $0 — local Mac CPU only
 **raw#15**: ckpts read-only
 
 ## Goal
@@ -33,7 +33,7 @@ Does paradigm-j fall under:
 | arch_origin | anima_native_scratch |
 | D1 lane | substrate-research (0.95 anima-corpus + 0.01 param-updated ratio → score 0.793 within_strict) |
 | current V14 state | V14_VIOLATED (PPR_v3 metric; random_init 0.5517 > paradigm-j 0.2845) |
-| current EMERGE | v5.2 adaptive-floor 4/4 gates PASS (own 14 + 사용자 verbatim public) |
+| current EMERGE | v5.2 adaptive-floor 4/4 gates PASS (+ 사용자 verbatim public) |
 
 ## §55 V14 strict 5-tuple test (target)
 
@@ -68,4 +68,4 @@ This is the honest answer to "does the §64 rule generalize" — paradigm-j is O
 
 ## Honor
 
-own 14 / own 16 / own 22 / own 38 / raw#15 / raw#82 (retraction-aware: paradigm-j existing V14_VIOLATED + v5.2 EMERGE preserved, no mutation).
+ / / / / raw#15 / raw#82 (retraction-aware: paradigm-j existing V14_VIOLATED + v5.2 EMERGE preserved, no mutation).

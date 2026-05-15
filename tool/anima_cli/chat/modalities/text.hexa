@@ -1,6 +1,6 @@
 // ════════════════════════════════════════════════════════════════════════════
 //  tool/anima_cli/chat/modalities/text.hexa — text modality (default carry)
-//                                              (own 41 axis-6 / axis-N+2)
+// (axis-6 / axis-N+2)
 //
 //  PURPOSE
 //    Default modality — str → str identity passthrough. axis-6 비활성 시
@@ -12,11 +12,11 @@
 //      → {input_kind: "text", output_kind: "text", status: "LANDED"}
 //
 //  COMPLIANCE
-//    own 14 V14 — 결정성 (random / time / env 의존 없음)
-//    own 16 — model load 절대 금지 (passthrough only)
-//    own 22 — honest emit (LANDED 명시; default 통로)
-//    own 34 mandate-1 — wrapping 0 (str → str identity)
-//    own 41 axis-N+2 — axis-6 modality registry entry 1
+// V14 — 결정성 (random / time / env 의존 없음)
+// — model load 절대 금지 (passthrough only)
+// — honest emit (LANDED 명시; default 통로)
+// mandate-1 — wrapping 0 (str → str identity)
+// axis-N+2 — axis-6 modality registry entry 1
 //
 //  CROSS-REFERENCE
 //    chat/modalities/_registry.hexa#text   registry SSOT
@@ -52,7 +52,7 @@ fn run_modality(ctx) -> array {
     return [keys, vals]
 }
 
-// modality_smoke — registry hook. own 16 carry — no model load.
+// modality_smoke — registry hook. carry — no model load.
 fn modality_smoke(repo: string, argv) -> int {
     let r = run_modality([])
     if len(r) != 2 { return 2 }
@@ -60,7 +60,7 @@ fn modality_smoke(repo: string, argv) -> int {
     let vals = r[1]
     if len(keys) != 3 || len(vals) != 3 { return 3 }
     if _str(vals[0]) != "text" || _str(vals[1]) != "text" { return 4 }
-    println("[modality:text] smoke PASS — str→str identity passthrough OK (own 16 model load 0)")
+    println("[modality:text] smoke PASS — str→str identity passthrough OK (model load 0)")
     return 0
 }
 

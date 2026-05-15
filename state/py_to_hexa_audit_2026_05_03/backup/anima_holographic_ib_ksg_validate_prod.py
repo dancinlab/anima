@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # tool/anima_holographic_ib_ksg_validate_prod.py — F3 prod KSG MI scipy permutation_test
 # ─────────────────────────────────────────────────────────────────────────────
-# @raw9-relaxation: anima/.own own 1 opt-out (commit f890d69f 2026-04-28).
+# @raw9-relaxation: anima/.own opt-out (commit f890d69f 2026-04-28).
 # Rationale: hexa interp single-thread cannot complete F3 cycle 1 prod-scale
 # (n=200 perms=100 = 20K ops) within 15m Mac jetsam memory window. scipy
 # vectorized + sklearn KSG MI completes same task in seconds.
@@ -149,7 +149,7 @@ def run(n_samples: int, n_permutations: int, dim_x: int = 8, dim_y: int = 8,
                     else ("PASS_BORDERLINE" if f3_threshold_pass_borderline
                           else "FAIL_above_threshold")),
         "ts": datetime.datetime.now(datetime.UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
-        "raw_10_caveat": "scipy + sklearn deps; per anima/.own own 1 raw 9 explicit relaxation; scope narrow measurement-statistics-only",
+        "raw_10_caveat": "scipy + sklearn deps; per anima/.own raw 9 explicit relaxation; scope narrow measurement-statistics-only",
     }
 
 

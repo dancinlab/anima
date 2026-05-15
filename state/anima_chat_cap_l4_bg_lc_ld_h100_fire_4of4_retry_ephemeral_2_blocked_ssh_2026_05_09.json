@@ -9,7 +9,7 @@
     "752bee02 fire(BG-LA + BG-LB chat-cap L4 ephemeral chain — D1=0.99): BLOCKED_PROVIDER_API_KEY_MISSING",
     "anima/registry/anima_artifact_registry.yaml fire_attempt_log[FIRE-4/4-RETRY-EPHEMERAL]",
     "state/anima_chat_cap_l4_bg_lc_ld_h100_fire_4of4_retry_ephemeral_blocked_2026_05_09.json (predecessor blocker shape: provider api-key INVALID Cloudflare 1010)",
-    "/Users/ghost/.hx/packages/resource/bin/resource (provision-ephemeral, ephemeral-status, release subcmds — own 40 strict)",
+    "/Users/ghost/.hx/packages/resource/bin/resource (provision-ephemeral, ephemeral-status, release subcmds — strict)",
     "~/.config/resource-ephemeral/runpod.token (51-byte token file present since FIRE-3/4-RETRY; this cycle = partial validity unlocked)"
   ],
   "user_directive_observed": {
@@ -54,13 +54,13 @@
       "(c) Cloudflare WAF or upstream NAT: SSH ingress rule blocked (parity carry from prior cycle 1010 hypothesis)",
       "(d) provider client polling timing: ssh_host may eventually populate post 60-300s warm-up; this cycle observed empty across multiple polls (~30-90s elapsed) — but uptime_s=0 throughout suggests provider has not started container yet"
     ],
-    "anima_oob_constraint": "own 40 strict — anima cannot modify RunPod console SSH key registry, cannot edit template default, cannot modify Cloudflare WAF; OOB credential state inspect (~/.config/resource-ephemeral/runpod.token stat) = read-only only"
+    "anima_oob_constraint": " strict — anima cannot modify RunPod console SSH key registry, cannot edit template default, cannot modify Cloudflare WAF; OOB credential state inspect (~/.config/resource-ephemeral/runpod.token stat) = read-only only"
   },
   "step_3_release_invocations": {
     "BG-LC": {
       "command": "/Users/ghost/.hx/packages/resource/bin/resource release h100-runpod-4xdc0o59hji9jk-1778292758 --no-pull-ckpt --reason 'fire-4-of-4-retry-ephemeral-2 ssh_host empty BLOCKED_SSH_NOT_ALLOCATED'",
       "response": "__RESOURCE__ PASS release slug=h100-runpod-4xdc0o59hji9jk-1778292758 provider=runpod pod_id=4xdc0o59hji9jk ckpt_override=y",
-      "ckpt_pull_status": "N/A — fire 미실행 (uptime_s=0 at provision; no SSH = no training; --no-pull-ckpt 정합 own 30 override)"
+      "ckpt_pull_status": "N/A — fire 미실행 (uptime_s=0 at provision; no SSH = no training; --no-pull-ckpt 정합 override)"
     },
     "BG-LD": {
       "command": "/Users/ghost/.hx/packages/resource/bin/resource release h100-runpod-ieobytbuwr4uvb-1778292760 --no-pull-ckpt --reason 'fire-4-of-4-retry-ephemeral-2 ssh_host empty BLOCKED_SSH_NOT_ALLOCATED'",
@@ -71,9 +71,9 @@
   "step_4_fire_path_decision": {
     "verdict": "BLOCKED_SSH_NOT_ALLOCATED",
     "rationale": [
-      "own 40 strict — anima 측 RunPod console SSH key 등록 / template 변경 / Cloudflare unblock 0건 (provider account ownership = 사용자)",
-      "own 30 ckpt-pull mandate vacuously satisfied (uptime_s=0 → no ckpt to lose; --no-pull-ckpt 정합)",
-      "own 22 honest BLOCKED emit — provision PASS + state RUNNING + ssh_host=='' + repeat polls identical + release PASS",
+      " strict — anima 측 RunPod console SSH key 등록 / template 변경 / Cloudflare unblock 0건 (provider account ownership = 사용자)",
+      " ckpt-pull mandate vacuously satisfied (uptime_s=0 → no ckpt to lose; --no-pull-ckpt 정합)",
+      " honest BLOCKED emit — provision PASS + state RUNNING + ssh_host=='' + repeat polls identical + release PASS",
       "user_consent_verbatim 'H100 4 개fire' explicit override 인정 — credential validity 부분 회복 + SSH 미할당 새 blocker shape 발견"
     ],
     "fire_attempted": false,
@@ -95,13 +95,13 @@
       "path_label": "(c) CLM v4 + Llama-3.2-3B distill (teacher logit KL → student LoRA r=32 + persona 200MB tier_a_v4)",
       "d1_score": 0.351,
       "d1_lane": "ambiguous_research",
-      "d1_scope_clamp_note": "own 17 strict — Llama teacher distillation lane = SUBSTRATE_RESEARCH label only on EMERGE",
+      "d1_scope_clamp_note": " strict — Llama teacher distillation lane = SUBSTRATE_RESEARCH label only on EMERGE",
       "verdict": null,
       "ppr_v3": null,
       "ppr_v5": null,
       "ppr_v5_1": null,
       "ckpt_local_path_planned": "~/.cache/anima/clm_v4_remapped/bg_lc/",
-      "hf_repo_planned_private": "dancinlab/clm-v4-bg-lc-llama-distill (PRIVATE, axis-B mandate; own 38)",
+      "hf_repo_planned_private": "dancinlab/clm-v4-bg-lc-llama-distill (PRIVATE, axis-B mandate;)",
       "hf_repo_public_promote": "BLOCKED — separate verbatim 'OK PROMOTE PUBLIC AMBIGUOUS RESEARCH <repo>' required",
       "promote_label_on_emerge": "SIMPLE_STACK_PASS_STRICT_C3_AMBIGUOUS_RESEARCH",
       "cost_actual_usd": 0.0,
@@ -116,8 +116,8 @@
       "dcr_change_rate_baseline_sft_1_7_y1": 0.8475,
       "dcr_change_rate_post_dpo_target": "verify whether persists (≥0.85) or amplifies (≥0.90) post-RLHF",
       "ckpt_local_path_planned": "~/.cache/anima/clm_v4_remapped/bg_ld/",
-      "hf_repo_planned_private": "dancinlab/clm-v4-bg-ld-dpo-rlhf (PRIVATE, axis-B mandate; own 38)",
-      "hf_repo_public_promote": "PRIVATE only on EMERGE (own 37 mandate-9 4 prereq carry)",
+      "hf_repo_planned_private": "dancinlab/clm-v4-bg-ld-dpo-rlhf (PRIVATE, axis-B mandate;)",
+      "hf_repo_public_promote": "PRIVATE only on EMERGE (mandate-9 4 prereq carry)",
       "preference_pairs_dataset_status": "clm-l4-ld-preference-pairs-iter1 Q3 MED diversity issue carry",
       "cost_actual_usd": 0.0,
       "cost_planned_usd": 20.0,
@@ -149,11 +149,11 @@
   "honest_c3": [
     "C3-1 'H100 4 개fire' verbatim recognized; FIRE-4/4-RETRY-EPHEMERAL precedent 'all bg go' carry — explicit override 인정.",
     "C3-2 NEW BLOCKER SHAPE — provision PASS + state RUNNING + ssh_host=='' (delta from prior cycle Cloudflare 1010). Token validity tier transitioned: invalid → partial-valid (provision/status OK, SSH endpoint allocation MISSING).",
-    "C3-3 anima released both pods immediately upon ssh_host empty observation across multiple polls (uptime_s=0 throughout) — own 16 cost discipline PASS, $0 actual incur.",
+    "C3-3 anima released both pods immediately upon ssh_host empty observation across multiple polls (uptime_s=0 throughout) — cost discipline PASS, $0 actual incur.",
     "C3-4 BG-LC ambiguous_research lane public promote 차단 carry — 별도 verbatim 'OK PROMOTE PUBLIC AMBIGUOUS RESEARCH <repo>' 본 cycle 미관측.",
     "C3-5 BG-LD DPO uplift 가설 = sft-1-7-y1 v5.1 DCR change_rate 0.8475 baseline 위 RLHF 강화 — 검증 fire 미실행 carry.",
     "C3-6 cumulative L4 fire BLOCKED count = 4 cycles × 2 BG pairs = 8 BG×attempts $0 actual; cumulative savings $270.",
-    "C3-7 own 39 yaml→md render 본 cycle 실행 — FIRE-4/4-RETRY-EPHEMERAL-2 fire_attempt_log entry 반영.",
+    "C3-7 yaml→md render 본 cycle 실행 — FIRE-4/4-RETRY-EPHEMERAL-2 fire_attempt_log entry 반영.",
     "C3-8 commit message 'fire(BG-LC + BG-LD chat-cap L4 H100 ephemeral actual fire)' 사용자 directive 형식 carry — body 에 BLOCKED_SSH_NOT_ALLOCATED 명시. local commit only push X strict.",
     "C3-9 next_cycle SSH allocation 해제 path: (a) 사용자 RunPod 콘솔 SSH key 등록 + template public IP / SSH endpoint 활성 옵션 enable; (b) 또는 RunPod template 변경 (community-cloud → secure-cloud 또는 vice versa); (c) Cloudflare/upstream NAT SSH ingress 룰 확인. credential validity 부분 회복은 본 cycle 진전 — SSH endpoint allocation 만 해결되면 즉시 fire 가능."
   ],

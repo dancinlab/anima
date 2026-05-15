@@ -21,7 +21,7 @@
 - **Closure docs**:
   - `docs/an11_fire6_first_pass_2026-04-28.md` (commit 3ebf79cc) — 첫 PASS 사이클
   - `docs/an11_fire6_vs_fire10_reproducibility_2026-04-28.md` (commit 29951636) — Hexad signal NOT reproducible
-- **11 distinct failure modes** (own 4 four-fold ladder × 11 iter):
+- **11 distinct failure modes** (four-fold ladder × 11 iter):
   1. SCP race → TCP probe (d5956ad7)
   2. SSH boot timeout → nohup detach (c55fd840)
   3. SCP recurrence (same fix)

@@ -75,8 +75,8 @@
   },
   "honest_c3": [
     "BG-KA = retroeval ONLY (no new training); existing BG-JD step 800 + BG-JT lm_head deltas (steps 0/500/1000) on mac MPS/CPU $0",
-    "v3 evaluator language-agnostic — NO Hangul/English ratio mandate per own 18 v3 amend (사용자 directive)",
-    "v3 PASS criteria lenient vs v1 KO + v2 EN baseline — false positive rate increase mitigated by own 28 prompt-echo + persona-cycle reject + manual review top-5 emit",
+    "v3 evaluator language-agnostic — NO Hangul/English ratio mandate per v3 amend (사용자 directive)",
+    "v3 PASS criteria lenient vs v1 KO + v2 EN baseline — false positive rate increase mitigated by prompt-echo + persona-cycle reject + manual review top-5 emit",
     "BG-IL/IO ckpts ubu1-only (best_eval_ckpt_meta.json ckpt_best_local: /home/aiden/...) — BG-KA scope = mac-local only, BG-JN closure precedent",
     "BG-JT lm_head deltas applied on BG-JD base ckpt by overwriting head_a.weight + tied tok_emb.weight only (transformer FROZEN); functionally equivalent to BG-JS evaluation at corresponding step",
     "5-dialogue test set is BG-JN spec set (Color/Profession/Day/Anima/Cosmology) — language-agnostic v3 evaluator applied; not logic-exhaustion across multilingual probes",

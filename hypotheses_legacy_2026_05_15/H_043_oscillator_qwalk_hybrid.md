@@ -30,7 +30,7 @@ Legacy file: `docs/hypotheses/H-CX-518-oscillator-qwalk-hybrid.md`. Cluster resu
 - legacy: `docs/hypotheses/H-CX-518-oscillator-qwalk-hybrid.md`
 - cluster: `docs/hypotheses/H-CX-517-526-EXTREME-RESULTS.md`
 - sister: H_006 (coupled oscillator), H_027 (cx subfolder), H_033 (cx-sequential)
-- own: own 21
+- own:
 
 ## Honest Limits
 

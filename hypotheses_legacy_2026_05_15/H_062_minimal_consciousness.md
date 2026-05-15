@@ -29,7 +29,7 @@ Legacy file: `docs/hypotheses/cx/MINIMAL-CONSCIOUSNESS.md`. Pointer only.
 
 - legacy: `docs/hypotheses/cx/MINIMAL-CONSCIOUSNESS.md`
 - sister: H_017 (G1-G4 gate), H_004 (consciousness hard problem)
-- own: own 21
+- own:
 
 ## Honest Limits
 

@@ -48,7 +48,7 @@
 
 ### Beta-usable with explicit caveat
 
-6. **own 4 four-fold ladder root-cause protocol** — 13-iter cumulative
+6. ** four-fold ladder root-cause protocol** — 13-iter cumulative
    - SCP race / SSH timeout / SCP recurrence / CUDA driver / Early destroy /
      PHASE_D full SVD / GPU OOM / torch.compile GCC / TCP-after-SCP race /
      Triton GCC / cu118 conda priority / cu118 cuDNN mismatch / Mode H fix #4

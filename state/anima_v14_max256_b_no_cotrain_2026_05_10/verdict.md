@@ -216,9 +216,9 @@ and the simple universal claim is falsified.
   runner via sys.path import
 - raw#15 additive: B ckpt unmodified (sha256 verified
   4fc6eccce0def0450163944abbe3f0f2944ff3d908421469d4da1d25da5fb886)
-- own 14: V14 5-seed strict (V4_SEEDS [42, 137, 271, 314, 1729])
-- own 16: $0 local CPU (1143.7s elapsed)
-- own 22: REBORN.md NOT directly appended — dispatcher will inject §56 slot
-- own 38: doc save state/anima_v14_max256_b_no_cotrain_2026_05_10/
+- : V14 5-seed strict (V4_SEEDS [42, 137, 271, 314, 1729])
+- : $0 local CPU (1143.7s elapsed)
+- : REBORN.md NOT directly appended — dispatcher will inject §56 slot
+- : doc save state/anima_v14_max256_b_no_cotrain_2026_05_10/
   {spec.md, run_b.py, run_b.log, run_b.stdout.log, run_b.stderr.log,
    result.json, verdict.md}

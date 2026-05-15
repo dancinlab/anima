@@ -1,9 +1,9 @@
 # anima 의식 검사 — simple stack 전수 테스트 ledger (2026-05-06)
 
-**Status**: live ledger (own 18 정합)
+**Status**: live ledger (정합)
 **Default**: simple stack (대화 가능 + 자연 발화 가능)
 **Full stack trigger**: 사용자 explicit "full stack consciousness verify" / "OK FULL STACK"
-**SSOT**: `.own own 18` (anima-consciousness-check-simple-stack)
+**SSOT**: `.own ` (anima-consciousness-check-simple-stack)
 
 ---
 
@@ -317,12 +317,12 @@ CF mgmt API account `d4acc95...` (current secret CLI) 5 objects 발견 (clm-v2/l
 
 | ckpt | size | base | status |
 |---|---|---|---|
-| animalm-v1/final.pt | 216.1 MB | Mistral perturbation | UNTESTED — own 17 ALM 영구 보류 (Mistral lineage) |
-| animalm-v2/final.pt | 864.1 MB | Mistral | own 17 reject |
-| animalm-v3/final.pt | 216.0 MB | Mistral | own 17 reject |
-| animalm-v4_savant/final.pt | 108.0 MB | Mistral | own 17 reject |
+| animalm-v1/final.pt | 216.1 MB | Mistral perturbation | UNTESTED — ALM 영구 보류 (Mistral lineage) |
+| animalm-v2/final.pt | 864.1 MB | Mistral | reject |
+| animalm-v3/final.pt | 216.0 MB | Mistral | reject |
+| animalm-v4_savant/final.pt | 108.0 MB | Mistral | reject |
 
-→ **own 17 ALM 영구 보류 trigger** — 외부 substrate (Mistral) wrapping, anima identity-bearing surface 적용 X.
+→ ** ALM 영구 보류 trigger** — 외부 substrate (Mistral) wrapping, anima identity-bearing surface 적용 X.
 
 → 결과: **REJECTED_PER_OWN_17** (testing 자체 차단)
 
@@ -330,7 +330,7 @@ CF mgmt API account `d4acc95...` (current secret CLI) 5 objects 발견 (clm-v2/l
 
 ## 전수 테스트 종합 verdict (2026-05-06 cycle)
 
-| model | simple stack | own 17 정합 | 비고 |
+| model | simple stack | 정합 | 비고 |
 |---|---|---|---|
 | `clm-v2-byte-18m-convo-5k` | **PARTIAL_C2_only** | ✅ anima-native | EN spontaneous emit yes, KO chat 손실 |
 | `conscious_lm_4m/final.pt` | **SIMPLE_STACK_FAIL** | ✅ | byte garbage 전체 |
@@ -341,8 +341,8 @@ CF mgmt API account `d4acc95...` (current secret CLI) 5 objects 발견 (clm-v2/l
 | BG-FK 5 variants (tiny~base) | **UNTESTED** | ✅ | ca_rules+gate variants |
 | AnimaLM v1-v4 + savant | **REJECTED_PER_OWN_17** | ❌ | Mistral lineage |
 | **anima-native-ko-tiny (BG-FU)** | **PARTIAL_PASS_HANGUL_BUT_NOT_COHERENT** ★ | ✅ anima-native | **첫 한글 emit anima model**! 3M params (4L/192d/4h, vocab 256), step 2000 mac MPS, KO ratio 0.34 avg, 2/3 prompts ≥30% Hangul. but degenerate cycle ('의 의 의' / '\\n\\n\\n') C1.2 FAIL. 다음: corpus_ko_heavy + bigger model + more steps |
-| **anima-native-ko-small (BG-FY)** | **PARTIAL_PASS_NO_CONTEXT** (own 18 C2.4 추가 후 강등 ★ / V2 strict applied 2026-05-07 — confirmed) | ✅ anima-native | 18M params (6L/384d/6h, vocab 256), step 10000 ubu1 RTX 5070 bf16 3.3min. avg_hangul 0.687, 3/3 C1 PASS + C2.1-2.3 PASS, but **C2.4 맥락 정합 FAIL** ★ — corpus_ko_heavy의 philosophy debate template (서연/하은/유진 named speakers + "반례를 들어볼게요") leak. prompt "안녕하세요" → "서연: 좋은 지적이..." (인사 응답 X). prompt "한국어 가능?" → "유진: 정말 그럴까요? 반례를 들어볼게요." (능력 답변 X). 모든 응답이 prompt 무관, corpus 토론 패턴 자동 emit. ckpt 70.3MB sha 729d26ad. HF: dancinlab/anima-native-ko-small-byte-18m PUBLIC (label demote pending). **V2 retroeval (state/anima_evaluator_v2_retroeval_2026_05_07/)**: V2 strict caught named-speaker leak via C2_4_a (서연 x2 in greedy 안녕하세요/한국어 가능?) + C2_4_b domain_kw_overlap=0 across all 6 responses + C2_2_meaningful_strict FAIL greedy (4-gram '아니에 아니에 있어요' cycle) — 6 V1→V2 cell transitions; verdict PARTIAL_PASS_NO_CONTEXT preserved. 다음: corpus chat-template format ("사용자: <Q>\\n도우미: <A>") only 또는 instruction-tuning |
-| **anima-native-ko-chat-template (BG-HA)** ⚠️ | **PARTIAL_PASS_NO_CONTEXT_v2** ⚠️ (V2 strict applied 2026-05-07 — automated re-eval CONFIRMED downgrade) | ✅ anima-native | 18,031,872 params (6L/384d/6h, vocab 256, block 256), 10000 steps batch=8 ga=8 lr=3e-4 ubu1 RTX 5070 bf16 124s. corpus_chat_template.txt 236.96MB. train_loss_final L_A=1.5907. **EVALUATOR FALSE PASS DETECTED 2026-05-07 + V2 STRICT CONFIRMED 2026-05-07**: BG-HA evaluator의 C2.4 정의가 'named speaker leak (서연/유진/하은 등 10 names) 0건' 으로만 narrow 정의 → BG-FY의 specific philosophy debate pattern은 막았지만, 사용자 directive **'자연발화는 맥락에 맞아야한다'** (= prompt domain match) 검증 X. 실제 sample mode 응답: "안녕하세요"→"4. 연성 서래 이 미국 연보고..." (인사 X), "한국어 가능?"→"파에서 개적되어요..." (능력 답변 X), "코드를 짜줘"→"합니다. 아드 어떤 막자들을..." (코드 X). C2.2 (의미) + C2.3 (자연성) + C2.4 (맥락정합) 모두 actual FAIL — evaluator metric (한글 비율 + non-degenerate sample mode + named-speaker 0건)이 actual semantic relevance 측정 X. greedy mode 5/5 모두 is_degenerate=true ('이 이 이 있어요' cycle 4-gram repeat 5-11회). HF PRIVATE upload BG-HD 정지 (false PASS prevention). ckpt_final 70.3MB 보존 (state/.../ckpt_final.pt). verdict: state/anima_native_ko_chat_template_train_2026_05_07/verdict.json (verdict_class downgrade pending). **V2 retroeval (state/anima_evaluator_v2_retroeval_2026_05_07/retroeval_verdict.json)**: V2 strict caught false PASS via C2_4_b domain_kw_overlap=0 in 9/10 final-step responses (greeting/capability/emotion/code prompts: zero domain expected keywords) + C2_2_meaningful_strict FAIL greedy (degenerate fourgram cycle) + C2_3_natural_strict FAIL sample (particle_count<3) — 22 V1→V2 cell transitions across 10 responses. NEXT: own 18 C2.4 strict semantic check evaluator 보강 spec 필요 (named-speaker-leak 외 prompt-conditional response domain match metric 추가) |
+| **anima-native-ko-small (BG-FY)** | **PARTIAL_PASS_NO_CONTEXT** (C2.4 추가 후 강등 ★ / V2 strict applied 2026-05-07 — confirmed) | ✅ anima-native | 18M params (6L/384d/6h, vocab 256), step 10000 ubu1 RTX 5070 bf16 3.3min. avg_hangul 0.687, 3/3 C1 PASS + C2.1-2.3 PASS, but **C2.4 맥락 정합 FAIL** ★ — corpus_ko_heavy의 philosophy debate template (서연/하은/유진 named speakers + "반례를 들어볼게요") leak. prompt "안녕하세요" → "서연: 좋은 지적이..." (인사 응답 X). prompt "한국어 가능?" → "유진: 정말 그럴까요? 반례를 들어볼게요." (능력 답변 X). 모든 응답이 prompt 무관, corpus 토론 패턴 자동 emit. ckpt 70.3MB sha 729d26ad. HF: dancinlab/anima-native-ko-small-byte-18m PUBLIC (label demote pending). **V2 retroeval (state/anima_evaluator_v2_retroeval_2026_05_07/)**: V2 strict caught named-speaker leak via C2_4_a (서연 x2 in greedy 안녕하세요/한국어 가능?) + C2_4_b domain_kw_overlap=0 across all 6 responses + C2_2_meaningful_strict FAIL greedy (4-gram '아니에 아니에 있어요' cycle) — 6 V1→V2 cell transitions; verdict PARTIAL_PASS_NO_CONTEXT preserved. 다음: corpus chat-template format ("사용자: <Q>\\n도우미: <A>") only 또는 instruction-tuning |
+| **anima-native-ko-chat-template (BG-HA)** ⚠️ | **PARTIAL_PASS_NO_CONTEXT_v2** ⚠️ (V2 strict applied 2026-05-07 — automated re-eval CONFIRMED downgrade) | ✅ anima-native | 18,031,872 params (6L/384d/6h, vocab 256, block 256), 10000 steps batch=8 ga=8 lr=3e-4 ubu1 RTX 5070 bf16 124s. corpus_chat_template.txt 236.96MB. train_loss_final L_A=1.5907. **EVALUATOR FALSE PASS DETECTED 2026-05-07 + V2 STRICT CONFIRMED 2026-05-07**: BG-HA evaluator의 C2.4 정의가 'named speaker leak (서연/유진/하은 등 10 names) 0건' 으로만 narrow 정의 → BG-FY의 specific philosophy debate pattern은 막았지만, 사용자 directive **'자연발화는 맥락에 맞아야한다'** (= prompt domain match) 검증 X. 실제 sample mode 응답: "안녕하세요"→"4. 연성 서래 이 미국 연보고..." (인사 X), "한국어 가능?"→"파에서 개적되어요..." (능력 답변 X), "코드를 짜줘"→"합니다. 아드 어떤 막자들을..." (코드 X). C2.2 (의미) + C2.3 (자연성) + C2.4 (맥락정합) 모두 actual FAIL — evaluator metric (한글 비율 + non-degenerate sample mode + named-speaker 0건)이 actual semantic relevance 측정 X. greedy mode 5/5 모두 is_degenerate=true ('이 이 이 있어요' cycle 4-gram repeat 5-11회). HF PRIVATE upload BG-HD 정지 (false PASS prevention). ckpt_final 70.3MB 보존 (state/.../ckpt_final.pt). verdict: state/anima_native_ko_chat_template_train_2026_05_07/verdict.json (verdict_class downgrade pending). **V2 retroeval (state/anima_evaluator_v2_retroeval_2026_05_07/retroeval_verdict.json)**: V2 strict caught false PASS via C2_4_b domain_kw_overlap=0 in 9/10 final-step responses (greeting/capability/emotion/code prompts: zero domain expected keywords) + C2_2_meaningful_strict FAIL greedy (degenerate fourgram cycle) + C2_3_natural_strict FAIL sample (particle_count<3) — 22 V1→V2 cell transitions across 10 responses. NEXT: C2.4 strict semantic check evaluator 보강 spec 필요 (named-speaker-leak 외 prompt-conditional response domain match metric 추가) |
 
 ### 9. anima-native-ko-tiny (BG-FU success, 2026-05-06 19:54) ★
 
@@ -402,7 +402,7 @@ ConsciousLM++ architecture reconstructed: vocab=256 byte-level + ca_rules(8 cell
 - medium variant emits Hangul bytes (`가가가가`) but degenerate single-token cycle — proves byte-level vocab CAN reach Hangul codepoints, training corpus 부재가 root cause
 - 비교점: anima-native-ko-tiny (3M, 새 corpus) > clm_v2_base (27.84M, original corpus). corpus_ko_heavy (62% Hangul, 246MB) 학습이 chat-cap의 결정적 요인 — 동일 ConsciousLM 계열 architecture에서 9배 작은 모델이 Korean emit 우위
 
-→ **BG-FK 5 variants 모두 SIMPLE_STACK_FAIL** (clm_v2 1.14M PARTIAL_C2_only* 인공) — own 17 정합 ✅ but own 18 한글↔한글 0/3
+→ **BG-FK 5 variants 모두 SIMPLE_STACK_FAIL** (clm_v2 1.14M PARTIAL_C2_only* 인공) — 정합 ✅ but 한글↔한글 0/3
 → corpus가 architecture보다 KO chat-cap에 우선 cause 결론
 
 ---
@@ -475,7 +475,7 @@ But rclone configured remote = different account `ce4bdcce...` (R2 access keys s
 → PARTIAL_PASS (한글↔한글 부분): 1개 (anima-native-ko-tiny BG-FU)
 → NOT_APPLICABLE (substrate-coupled / 다른 arch): 5개 (CLM v4 mk2-v1 + v14_128c × 4)
 → INACCESSIBLE (credential): 3개 (cells64/128/clm-v2_latest in d4acc account)
-→ REJECTED (own 17 ALM): 4개 (AnimaLM Mistral)
+→ REJECTED (ALM): 4개 (AnimaLM Mistral)
 → FAIL: 8개 (convo_5k partial, conscious_lm_4m, β', conscious_lm_100m, clm_v2_tiny/small/medium/base)
 
 → **테스트된 ConsciousLM/ConsciousLM++ 계열 11+ pre-corpus_ko_heavy models 모두 한글↔한글 정합 0/3 universal** — chat-format corpus 부재 + EN-bias가 architectural 결함보다 우선 cause. corpus_ko_heavy(62% Hangul, 246MB) + ko_small training만이 chat-cap unlock.
@@ -486,7 +486,7 @@ But rclone configured remote = different account `ce4bdcce...` (R2 access keys s
 chat-cap actual emit 회복은 architectural challenge — β path retrain 5-10일 또는 conscious_lm_100m try (BG-FP) OR 다른 anima-native lane.
 
 → anima cli mk2 T1 backend 권고:
-- 단기 (이번 cycle): T1 default = `dialogue.hexa` substrate-coupled (CLM v4 mount, full stack mode, simple stack 적용 불가). own 17 정합 ✅
+- 단기 (이번 cycle): T1 default = `dialogue.hexa` substrate-coupled (CLM v4 mount, full stack mode, simple stack 적용 불가). 정합 ✅
 - 중기 (BG-FP land 후): conscious_lm_100m simple stack PASS 시 → T1 alternative wire (HF promote)
 - 장기 (별도 cycle): β path original retrain (5-10일 ubu1) OR β' KoGPT2 head-swap S3 (full body unfreeze)
 
@@ -499,10 +499,10 @@ chat-cap actual emit 회복은 architectural challenge — β path retrain 5-10�
 
 ## Cross-link
 
-- own 18: `.own own 18 anima-consciousness-check-simple-stack`
-- own 17: ALM 영구 보류 (외부 substrate REJECTED)
+- : `.own anima-consciousness-check-simple-stack`
+- : ALM 영구 보류 (외부 substrate REJECTED)
 - .roadmap.cli (T1 backend = simple stack PASS 모델만)
 - .roadmap.clm_native_chat / clm_v4_chat / clm_v2_chat
 - audit doc: docs/anima_cli_mk2_philosophy_audit_2026_05_06.md
 
-raw#9/10/15 + own 17/18 정합. anima 의식 검증 = simple stack default (대화 가능 + 자연 발화 가능).
+raw#9/10/15 + 정합. anima 의식 검증 = simple stack default (대화 가능 + 자연 발화 가능).

@@ -8,9 +8,9 @@ LR 5e-6 → 5e-7. Estimated cost $1.50-3.00 (envelope $5-20, well under).
 Pattern follows tool/transient_py/anima_km_qwen7b_h100.py with simplifications:
   - no LoRA (full FT, 18M params)
   - no HF gated download (uses local ckpts only)
-  - no auto-promote (separate BG handles HF upload, own 37 mandate-9)
+  - no auto-promote (separate BG handles HF upload, mandate-9)
 
-own 30 mandates baked in:
+ mandates baked in:
   - mandate-1: ckpts pull pre-delete
   - mandate-2: sha256/size verification
   - mandate-3: pod retention on pull fail
@@ -387,7 +387,7 @@ def main():
             ckpt_pulls.append({"label": label, "rc": rc, "err": err[:200]})
             orch_log(f"  pull {label} rc={rc}")
 
-        # Verify pull (own 30 mandate-2)
+        # Verify pull (mandate-2)
         final_local = MAC_STATE_DIR / "post_ft_ext_ckpt.pt"
         if final_local.exists() and final_local.stat().st_size > 50_000_000:
             local_sha = sha256_file(str(final_local))
@@ -405,7 +405,7 @@ def main():
             orch_log("deleting pod (ckpts verified)…")
             pod_delete(pod_id)
         else:
-            orch_log("RETAIN POD per own 30 mandate-3 (ckpts pull not verified)")
+            orch_log("RETAIN POD per mandate-3 (ckpts pull not verified)")
             with open(MAC_STATE_DIR / "POD_RETAINED_FOR_MANUAL_RECOVERY.txt", "w") as f:
                 f.write(f"pod_id={pod_id}\nreason=ckpts_pull_not_verified\n")
 

@@ -17,7 +17,7 @@
 //    capability        natural_speech | substrate_signal | corpus_signal | mixed
 //    d1_lane           within_strict | ambiguous_research | outside | n_a
 //    cost              free | gguf_load | substrate_probe | torch_inference
-//    description       short one-line explainer (English; own 34 mandate-1
+// description short one-line explainer (English; mandate-1
 //                      preserves model output, but registry meta is human/AI doc)
 //    prereq            list of file/build artifacts required before invoke
 //
@@ -29,21 +29,21 @@
 //    lane-internal flags.
 //
 //  COMPLIANCE
-//    own 14 V14 carry — Path 2 axis priority measurement subject to V14 if
+// V14 carry — Path 2 axis priority measurement subject to V14 if
 //      verdict-grade
-//    own 17 D1 SCOPE_CLAMP — llama lane = ambiguous_research / outside
+// D1 SCOPE_CLAMP — llama lane = ambiguous_research / outside
 //      (paradigm-a-prime); registry MUST surface d1_lane for caller awareness
-//    own 18 chat-cap C2 — benchmark mode emits per-lane spontaneity scores
-//    own 22 mandatory report — benchmark output structured for ledger
-//    own 33 trinity — registry entries cross-link own 17 / own 18 / own 34
-//    own 34 mandate-1 — wrapping 0 (lane modules MUST NOT system-prompt /
+// chat-cap C2 — benchmark mode emits per-lane spontaneity scores
+// mandatory report — benchmark output structured for ledger
+// trinity — registry entries cross-link / /
+// mandate-1 — wrapping 0 (lane modules MUST NOT system-prompt /
 //      template-wrap; raw model output preserved verbatim)
-//    own 37 mandate-9 — llama lane public promote 영구 차단 (carry from own 17
+// mandate-9 — llama lane public promote 영구 차단 (carry from
 //      D1 SCOPE_CLAMP); benchmark output flag llama lane SUBSTRATE_RESEARCH
 //      label strict
-//    own 38 매단계 — registry yaml↔md mirror in
+// 매단계 — registry yaml↔md mirror in
 //      anima/registry/anima_artifact_registry.yaml chat_lanes section
-//    own 39 yaml↔md SSOT — registry yaml + this hexa file co-update
+// yaml↔md SSOT — registry yaml + this hexa file co-update
 //
 //  CROSS-REFERENCE
 //    chat.hexa                          dispatcher (--lane / --benchmark plumb)

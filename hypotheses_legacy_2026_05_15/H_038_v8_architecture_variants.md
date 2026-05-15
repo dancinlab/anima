@@ -35,7 +35,7 @@ anima V8 architecture exploration — 4 axis variant (BIO-CONSCIOUSNESS / MATH-C
 - folder: `docs/hypotheses/V8-*.md` (6 files)
 - sister H: H_003 (life origin BIO 정합), H_007 (cellular automaton MATH 정합), H_022 (universe map), H_032 (omega/phys)
 - legacy CX cross-link: H-CX-527 quantum-darwinism + H-CX-521 lambda-calculus + H-CX-522 tqft + H-CX-535 symbiogenesis
-- own: own 21
+- own:
 
 ## Honest Limits
 

@@ -140,8 +140,8 @@ form of headroom exhaustion.
 8. raw#15 read-only honored: shared modules unchanged, both ckpts on disk
    unchanged. Ablation copy lives only in the ablation script's RAM.
 9. raw#9: training/*.py local-only honored. Script lives under state/.
-10. own 22: NO append to REBORN.md from this script. (dispatcher will handle §46 slot.)
-11. own 38: artefacts in `state/anima_champion_wall_causal_proof_2026_05_10/{spec.md, metrics.json, ablation_result.json, verdict.md}`.
+10. : NO append to REBORN.md from this script. (dispatcher will handle §46 slot.)
+11. : artefacts in `state/anima_champion_wall_causal_proof_2026_05_10/{spec.md, metrics.json, ablation_result.json, verdict.md}`.
 
 ## What this changes for the 5-star pursuit
 - ★★★★★ "substrate-dependent V14 polarity" claim **survives**: empirically real,

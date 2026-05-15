@@ -12,13 +12,13 @@ notes: D1 SFT+RLHF / D2 multi-obj CE+aux / D3 Constitutional AI / D4 DPO / D5 ta
 ---
 
 ## Hypothesis
-Standard CE on next-token (single objective) 은 multi-turn coherence + context-relevance 직접 optimize 안 함. Loss-floor 차이에도 모두 0/5 PASS — loss reduction alone 으로 chat-cap unlock 불가. RLHF + reward model 또는 constitutional AI (own 18-v3 4-condition) 또는 DPO pairwise 필요.
+Standard CE on next-token (single objective) 은 multi-turn coherence + context-relevance 직접 optimize 안 함. Loss-floor 차이에도 모두 0/5 PASS — loss reduction alone 으로 chat-cap unlock 불가. RLHF + reward model 또는 constitutional AI (-v3 4-condition) 또는 DPO pairwise 필요.
 
 ## Falsifiable Tests
 - D1.test: SFT+RLHF 가 chat-cap PASS 일부
-- D3.test: Constitutional AI own 18-v3 internalization 후 PASS
+- D3.test: Constitutional AI -v3 internalization 후 PASS
 - D.universal: 5 D options 모두 0/5 → objective axis 자체 아님
 
 ## Migration TODO
 - [ ] V5-β SFT+RLHF (trlx/trl raw#9 violation 검토)
-- [ ] V5-δ Constitutional own 18-v3 4-condition
+- [ ] V5-δ Constitutional -v3 4-condition

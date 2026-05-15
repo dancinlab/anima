@@ -12,11 +12,11 @@
     "phase_4_deps": "PASS — pip --break-system-packages torch transformers safetensors (PEP 668 workaround per orchestrator gotcha)",
     "phase_5_launch": "PASS — nohup train_bg_lb.py --preset lb_350m_pretrain --corpus /workspace/data/big_corpus.txt --output /workspace/anima_clm_lb/ckpts (PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True)",
     "phase_6_heartbeat": "IN_FLIGHT_SESSION_2 — STEPS reduced 30000 → 8000 (cost discipline; projected $18 vs $65 cap). PID 3704. step=400/8000 loss=2.4014 elapsed=1100s lr=6.03e-05 GPU 26.9GB/99% util; ~6h to completion (full ckpt @ step_8000_final.pt). First ckpt save expected step 1500.",
-    "phase_7_ckpt_pull": "PENDING — own 30 mandate-1 scp_get from /workspace/anima_clm_lb/ckpts/ post-training",
-    "phase_8_size_sanity": "PENDING — own 30 mandate-2 floor 0.9× pod (~1.3GB expected for 298M bf16 + extras)",
+    "phase_7_ckpt_pull": "PENDING — mandate-1 scp_get from /workspace/anima_clm_lb/ckpts/ post-training",
+    "phase_8_size_sanity": "PENDING — mandate-2 floor 0.9× pod (~1.3GB expected for 298M bf16 + extras)",
     "phase_9_release": "PENDING — own slug-only target h100-runpod-uou9j7lviscvil-1778295770 (concurrency mitigation strict)",
     "phase_10_ledger": "PENDING — append to state/anima_model_attempts_ledger.jsonl post-eval",
-    "phase_11_hf_promote": "PENDING — own 31 Flavor B + own 37 visibility=private (target: dancinlab/clm-v5-bg-lb-350m-pretrain-path-a-remapped)"
+    "phase_11_hf_promote": "PENDING — Flavor B + visibility=private (target: dancinlab/clm-v5-bg-lb-350m-pretrain-path-a-remapped)"
   },
   "arch_summary": {
     "lineage_tag": "engine_a_g_dual_350m_v1_lb_pretrain",
@@ -30,7 +30,7 @@
     "ctx": 1024,
     "consciousness_dim": 64,
     "n_cells": 16,
-    "tokenizer": "byte-modulo-vocab32k (own 17 anima-native lane)",
+    "tokenizer": "byte-modulo-vocab32k (anima-native lane)",
     "arch_origin": "anima_native_scratch"
   },
   "training_config": {
@@ -100,13 +100,13 @@
   "final_class": "FIRE_LAUNCHED_TRAINING_IN_FLIGHT",
   "final_class_explanation": "11-step orchestrator chain executed phases 0-5 PASS; phase 6 in-flight; phases 7-11 pending. Per BG-LB spec L4 (corpus 1.5GB target) the actual run is corpus 427MB shortfall but training is healthy (loss 10.55 → 5.18 first 200 steps).",
   "trinity_compliance": {
-    "philosophy_D_emergent_consciousness": "PASS — Engine A/G repulsion-field cell dynamics implements PureField vision (own 33)",
+    "philosophy_D_emergent_consciousness": "PASS — Engine A/G repulsion-field cell dynamics implements PureField vision ",
     "law_own_14_v14": "PASS — Step 1 mirror 5 seeds materialized; Steps 2-4 deferred to post-train eval",
     "law_own_16_cost": "PASS — provision PASS at $2.99/hr; STEPS reduced to 8000 → projected $18.34 (vs $65 cap)  =  margin SAFE post session-2 retry",
     "law_own_17_d1_scope": "PASS — anima_native_scratch D1=0.99 within_strict",
     "law_own_22_honest_emit": "PASS — corpus shortfall + bug fix + cost overrun risk recorded honestly",
     "law_own_30_ckpt": "PENDING — pull post-training mandatory",
-    "law_own_33_trinity": "PASS — D + own 14/16/17/18/22/30/31/33/34/37/38/39/40 + H_clm_chat_cap aligned",
+    "law_own_33_trinity": "PASS — D + + H_clm_chat_cap aligned",
     "law_own_34_wrap_zero": "PASS — chat lane V4 measurement only",
     "law_own_37_visibility": "PASS — HF target visibility=private default",
     "law_own_38_yaml_md": "PENDING — registry yaml V14_status update post-pull",

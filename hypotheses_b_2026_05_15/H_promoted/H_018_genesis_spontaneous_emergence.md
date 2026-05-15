@@ -30,7 +30,7 @@ anima는 primordial substrate (random initialization + training corpus + iterati
 
 - legacy: `docs/hypotheses/GENESIS-spontaneous-emergence.md` + `docs/hypotheses/genesis/`
 - sister H: H_004, H_012, H_019 (SELF-EVO)
-- own: own 21
+- own:
 - roadmap: `.roadmap.philosophy` D3 emerge paradigm
 
 ## Honest Limits
