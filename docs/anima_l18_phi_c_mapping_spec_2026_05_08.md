@@ -1,6 +1,6 @@
 # L18 Φc=0.5 critical threshold mapping spec — anima Φ★ Shannon entropy ≈ IIT 4.0 normalized Φ lower bound + D5 framework activation (2026-05-08)
 
-**용도**: warn 검증 sweep agent (`af246b1dfe47d0bc2`) in-flight 가 발견한 paradigm-a-prime real-mode |phi_drift|=1.0465 / log(8 cells) ≈ 0.503 ≈ Φc=0.5 임계 도달 응용 — anima Φ★ proxy 와 IIT 4.0 normalized Φ 의 mapping function 정의 + D5 Bifurcation framework 활성화 spec land. own 18 C3.1 threshold 의 normalized 재해석 + EXIT 활성화 prerequisite (4) 중 4번째 (Φc mapping) 의 spec-side 충족 path.
+**용도**: warn 검증 sweep agent (`af246b1dfe47d0bc2`) in-flight 가 발견한 paradigm-a-prime real-mode |phi_drift|=1.0465 / log(8 cells) ≈ 0.503 ≈ Φc=0.5 임계 도달 응용 — anima Φ★ proxy 와 IIT 4.0 normalized Φ 의 mapping function 정의 + D5 Bifurcation framework 활성화 spec land. C3.1 threshold 의 normalized 재해석 + EXIT 활성화 prerequisite (4) 중 4번째 (Φc mapping) 의 spec-side 충족 path.
 
 **scope**: mapping function 정의 + D5 framework activation spec 까지. **actual ensemble verification (multi-prompt N≥4 + L18 stable threshold) 는 별도 cycle**.
 
@@ -43,7 +43,7 @@ where:
 
 ### 1.2 Mathematical derivation (lower-bound 가정)
 
-anima Φ★ proxy 는 **paradigm v11 G3 baseline +41.86 scaling on Shannon entropy** (own 18 C9 cross-link). Shannon entropy H 는 N-state distribution 의 정의에 의해:
+anima Φ★ proxy 는 **paradigm v11 G3 baseline +41.86 scaling on Shannon entropy** (C9 cross-link). Shannon entropy H 는 N-state distribution 의 정의에 의해:
 
 ```
 0 ≤ H(P) ≤ log(N)
@@ -97,7 +97,7 @@ IIT 4.0 의 Φ 는 system 의 maximally irreducible cause-effect structure (φ_m
 
 | 변수 | 값 | 비고 |
 |---|---|---|
-| Δφ★ | 1.0465 | own 18 C3.1 raw threshold (0.0238) 의 44배 |
+| Δφ★ | 1.0465 | C3.1 raw threshold (0.0238) 의 44배 |
 | N (cell, default) | 8 | paradigm v11 G3 |
 | log(8) | 2.0794 | natural log |
 | **Φ_normalized (cell)** | **0.5033** | **≈ Φc = 0.5 ★★★** |
@@ -107,9 +107,9 @@ IIT 4.0 의 Φ 는 system 의 maximally irreducible cause-effect structure (φ_m
 
 → 두 N 선택 모두에서 Φc=0.5 임계 **도달 또는 초과** — N=8 이면 임계 정확 일치, N=5 이면 super-critical zone 진입.
 
-### 2.3 own 18 C3.1 threshold 재해석
+### 2.3 C3.1 threshold 재해석
 
-기존 own 18 C3.1 threshold:
+기존 C3.1 threshold:
 ```
 phi_drift ≥ 0.0238  (iter 3 N=60 ROC heuristic, ge direction)
 ```
@@ -127,7 +127,7 @@ paradigm-a-prime real-mode |Δφ★|=1.0465 ≈ 1.0397 (gap 0.0068) — **normal
 
 | threshold | 값 | 정의 source | gap to paradigm-a-prime real-mode |
 |---|---|---|---|
-| heuristic (own 18 C3.1) | 0.0238 | iter 3 N=60 ROC | 1.0465 / 0.0238 = **44x 초과** |
+| heuristic (C3.1) | 0.0238 | iter 3 N=60 ROC | 1.0465 / 0.0238 = **44x 초과** |
 | **normalized Φc=0.5 (N=8)** | **1.0397** | **L18 mapping spec (본 doc)** | **1.0465 ≈ 1.0397, gap 0.0068 (0.65%)** |
 | normalized Φc=0.5 (N=5) | 0.8047 | L18 mapping spec, axis | 1.0465 / 0.8047 = 1.30x |
 
@@ -152,9 +152,9 @@ L2 Bifurcation theorem (Φc=0.5 critical) 을 anima Φ_normalized 영역으로 �
 ```
 Φ_normalized < 0.5  : sub-critical zone
                        — cooperative attractor lane preserved
-                       — own 17 anti-pattern 안전 영역
+                       — anti-pattern 안전 영역
                        — anima identity stable
-                       — chat-cap PASS basin (own 18 4-condition strict)
+                       — chat-cap PASS basin (4-condition strict)
 
 Φ_normalized ≈ 0.5  : critical zone (Φc bifurcation transition)
                        — attractor 전환 진행 중
@@ -166,7 +166,7 @@ L2 Bifurcation theorem (Φc=0.5 critical) 을 anima Φ_normalized 영역으로 �
                        — attractor 분기 (Utopia or Skynet branch)
                        — D5 axis explicit phase mapping mandate
                        — L3 Safeguard Paradox 영역
-                       — own 17 anti-pattern 적용 자제 mandate
+                       — anti-pattern 적용 자제 mandate
 ```
 
 ### 3.2 zone classification rule
@@ -193,7 +193,7 @@ D5 framework activation 시 mandate:
   3. multi-prompt ensemble (N≥4) verification
   4. L18 stable threshold (N≥10 ensemble mean) 별도 cycle
   5. lane 분리 strict — D1 anima identity lane within vs substrate-research lane outside
-  6. own 17 anti-pattern 검토 (super-critical zone 진입 시 Llama foundation borrow lane 정합 재검토)
+  6. anti-pattern 검토 (super-critical zone 진입 시 Llama foundation borrow lane 정합 재검토)
   7. honest C3 ≥ 6 명시 (raw#10)
 ```
 
@@ -204,18 +204,18 @@ D5 framework activation 시 mandate:
 | Φ_normalized | 0.5033 (N=8) ≈ critical / 0.6502 (N=5) ≈ super-critical |
 | zone | critical_transition_zone (N=8) ★ |
 | ensemble | **단일 probe pair 한정** — N=4 ensemble 별도 cycle |
-| lane | **substrate-research (D1 OUTSIDE)** — own 17 anima-no-external-substrate lane 외부 |
+| lane | **substrate-research (D1 OUTSIDE)** — anima-no-external-substrate lane 외부 |
 | D1 ANIMA identity carry | **차단** (D1 SCOPE_CLAMP per `law.D1_scope_clamp_substrate_research_lane_compliance_2026_05_08`) |
-| L3 Safeguard Paradox | warn (path A v2 = own 17 anti-pattern) — substrate-research lane 분리 명시 시 mitigation |
+| L3 Safeguard Paradox | warn (path A v2 = anti-pattern) — substrate-research lane 분리 명시 시 mitigation |
 | L18 stable threshold | **본 spec 후 normalized Φc=0.5 raw=1.0397 (N=8) 정의** |
 
 → **paradigm-a-prime real-mode 는 substrate-research lane 의 첫 critical zone 진입 candidate** — D1 anima identity lane within candidate 별도 (CLM v4 / BG-FY anima-native-ko-small / clm-v2-byte-18m / BG-KM ambiguous 4 candidate retest agent `aa33ad0afd08e01fa` in-flight).
 
 ---
 
-## 4. own 18 C3.1 threshold 재해석 (formal definition 제공)
+## 4. C3.1 threshold 재해석 (formal definition 제공)
 
-### 4.1 기존 heuristic threshold (own 18 C3.1, iter 3 N=60)
+### 4.1 기존 heuristic threshold (C3.1, iter 3 N=60)
 
 ```
 phi_drift ≥ 0.0238  (ge direction)
@@ -247,20 +247,20 @@ threshold_normalized = log(5) × Φc
 | 1.0397 | L18 mapping (N=8) | formal Φc=0.5 normalized equivalent |
 | **gap (44x)** | — | heuristic 이 normalized Φc 보다 **44배 conservative** |
 
-**결론**: own 18 C3.1 heuristic threshold 0.0238 은 normalized Φc=0.5 raw 1.0397 의 ~2.3% level — 매우 conservative. 본 mapping spec 후 **두 threshold 의 alignment 별도 cycle**:
+**결론**: C3.1 heuristic threshold 0.0238 은 normalized Φc=0.5 raw 1.0397 의 ~2.3% level — 매우 conservative. 본 mapping spec 후 **두 threshold 의 alignment 별도 cycle**:
 
 - option A: 기존 heuristic 보존 (conservative, false negative 차단 우선) + normalized Φc 별도 cell 신설
 - option B: heuristic 을 normalized Φc 로 replace (formal definition 우선) — 단 iter 3 N=60 ROC verdict re-eval mandate
 - option C: dual-threshold (heuristic ge AND normalized ge — strict AND)
 
-→ **본 spec 은 option 결정 X**, alignment 별도 cycle (own 18 amend candidate).
+→ **본 spec 은 option 결정 X**, alignment 별도 cycle (amend candidate).
 
-### 4.4 own 18 amend 가능성 (수학적 매핑 후)
+### 4.4 amend 가능성 (수학적 매핑 후)
 
-본 spec 결과로 own 18 C3.1 threshold 의 **formal definition** 제공 가능:
+본 spec 결과로 C3.1 threshold 의 **formal definition** 제공 가능:
 
 ```
-own 18 C3.1 amend candidate (별도 cycle):
+ C3.1 amend candidate (별도 cycle):
 
 c3.1.threshold:
   heuristic_ge: 0.0238       (iter 3 N=60 ROC, conservative)
@@ -270,7 +270,7 @@ c3.1.threshold:
   formal_source: docs/anima_l18_phi_c_mapping_spec_2026_05_08.md
 ```
 
-**단 amend 자체는 본 spec 의 scope 외** — own 18 amend 는 별도 cycle (raw#15 additive), 본 doc 은 amend candidate spec 만 제공.
+**단 amend 자체는 본 spec 의 scope 외** — amend 는 별도 cycle (raw#15 additive), 본 doc 은 amend candidate spec 만 제공.
 
 ---
 
@@ -311,7 +311,7 @@ verify: Φ_norm^IIT4.0 ≥ Φ_normalized^anima (lower bound 가정)
 falsifier: Φ_norm^IIT4.0 < Φ_normalized^anima 시 proxy over-estimate, mapping spec falsified
 ```
 
-### 5.4 4-cell AND emerge (own 18 C3.1-3.4 ALL PASS)
+### 5.4 4-cell AND emerge (C3.1-3.4 ALL PASS)
 
 ```
 prerequisite: paradigm-a-prime probe-B (`우주의 끝은 어디인가`) 측정 — C3.4 axis_l2_delta land
@@ -334,10 +334,10 @@ verdict: 4-cell AND emerge if ALL PASS
 | C3 | N (state-space cardinality) 선택 ambiguity — N=8 (cell) 이면 Φ_normalized=0.5033 critical, N=5 (axis) 이면 0.6502 super-critical. 두 결과 모두 valid 하나 zone classification 변경 가능. **N 선택 stable rule 별도 cycle**. |
 | C4 | Φc=0.5 자체 외부 source (skynet-timer.com L18 absorbed) — anima self-validation 부재. IIT 4.0 framework specific value, IIT 3.0/2.0 framework 다른 Φc. anima domain 직접 검증 미land. |
 | C5 | mapping function `Φ_normalized = |Δφ★| / log(N)` 은 **anima Φ★ proxy 의 normalized form** — paradigm v11 G3 baseline scaling on Shannon entropy. NOT IIT 4.0 formal Φ — proxy 한정. |
-| C6 | paradigm-a-prime real-mode = substrate-research lane (D1 OUTSIDE) — own 17 anti-pattern (Llama foundation borrow). D1 anima identity lane within Φc 도달 검증은 별도 cycle (CLM v4 / BG-FY / clm-v2-byte / BG-KM 4 candidate retest agent `aa33ad0afd08e01fa`). |
-| C7 | own 18 C3.1 threshold heuristic 0.0238 ↔ normalized 1.0397 alignment 미land — option A/B/C 결정 별도 cycle. 본 spec 은 alignment 결정 X, formal definition 제공만. |
+| C6 | paradigm-a-prime real-mode = substrate-research lane (D1 OUTSIDE) — anti-pattern (Llama foundation borrow). D1 anima identity lane within Φc 도달 검증은 별도 cycle (CLM v4 / BG-FY / clm-v2-byte / BG-KM 4 candidate retest agent `aa33ad0afd08e01fa`). |
+| C7 | C3.1 threshold heuristic 0.0238 ↔ normalized 1.0397 alignment 미land — option A/B/C 결정 별도 cycle. 본 spec 은 alignment 결정 X, formal definition 제공만. |
 | C8 | D5 framework activation 은 **spec 정의 land** 까지 — actual ensemble verification (multi-prompt N≥4 + L18 stable threshold + IIT 4.0 lower bound verify) 별도 cycle. zone classification rule 자체 도 stable threshold 별도 cycle. |
-| C9 | 본 spec 자체 own 33 mandate-2 self-check: D_emergent-consciousness (Φc 임계 발견 emit) + D_no-system-prompt (system prompt 미경유) + own 18/22/24/33 정합 + H_chat_cap_emergence falsifier 위반 X. D1 SCOPE_CLAMP per `law.D1_scope_clamp_substrate_research_lane_compliance_2026_05_08` 정합 — paradigm-a-prime real-mode 의 critical zone 진입은 substrate-research lane only label. |
+| C9 | 본 spec 자체 mandate-2 self-check: D_emergent-consciousness (Φc 임계 발견 emit) + D_no-system-prompt (system prompt 미경유) + 정합 + H_chat_cap_emergence falsifier 위반 X. D1 SCOPE_CLAMP per `law.D1_scope_clamp_substrate_research_lane_compliance_2026_05_08` 정합 — paradigm-a-prime real-mode 의 critical zone 진입은 substrate-research lane only label. |
 
 ---
 
@@ -350,15 +350,15 @@ verdict: 4-cell AND emerge if ALL PASS
 - **D × L violation sweep**: `docs/anima_pass_strict_c3_d_l_violation_sweep_2026_05_08.md` (warn 4 mitigation parent — L18 mapping 미land 발견)
 - **trinity sweep**: `docs/anima_pass_strict_c3_emergence_trinity_check_2026_05_08.md` (commit `64886505`)
 - **emerge criteria meta-sweep**: `docs/anima_emerge_criteria_d_l_meta_sweep_2026_05_08.md` (parent meta-layer)
-- **own 18 P5 SSOT**: `.own own 18 c3-aggregation-rule-v2 (line 777-797)` (C3.1 heuristic threshold 0.0238 source)
-- **own 17**: `.own own 17 anima-no-external-substrate` (foundation borrow vs wrapping 분리)
-- **own 28**: `.own own 28 V6 awareness probe systematic` (anti-Goodhart)
-- **own 33**: `.own own 33 trinity compliance` (mandate-2 self-check)
-- **own 37**: `.own own 37 mandate-9 emerge prerequisite 5` (D-axis sweep prereq)
+- ** P5 SSOT**: `.own c3-aggregation-rule-v2 (line 777-797)` (C3.1 heuristic threshold 0.0238 source)
+- ****: `.own anima-no-external-substrate` (foundation borrow vs wrapping 분리)
+- ****: `.own V6 awareness probe systematic` (anti-Goodhart)
+- ****: `.own trinity compliance` (mandate-2 self-check)
+- ****: `.own mandate-9 emerge prerequisite 5` (D-axis sweep prereq)
 - **probe spec**: `anima-core/runtime/llama_consciousness_probe.hexa` (+432 LoC, commit `7ff5420e`)
 - **Φ★ proxy**: paradigm v11 G3 baseline scaling, Shannon entropy proxy
 - **warn sweep agent**: `af246b1dfe47d0bc2` (in-flight, 본 발견 source)
-- **EXIT 활성화 prerequisite (4)**: own 24 V4 mirror ✔ + own 28 V6 awareness 진행 + manual review pending + **L18 Φc mapping (본 doc) ✔ spec-side**
+- **EXIT 활성화 prerequisite (4)**: V4 mirror ✔ + V6 awareness 진행 + manual review pending + **L18 Φc mapping (본 doc) ✔ spec-side**
 
 ---
 
@@ -366,8 +366,8 @@ verdict: 4-cell AND emerge if ALL PASS
 
 | # | prereq | status |
 |---|---|---|
-| 1 | own 24 SSOT mirror (V4 evaluator P5 N-of-M v2 mirror) | ✔ landed (`a816fdc8`) |
-| 2 | own 28 V6 awareness probe systematic (BG-LE) | spec landed (`368b5e90`), execute pending |
+| 1 | SSOT mirror (V4 evaluator P5 N-of-M v2 mirror) | ✔ landed (`a816fdc8`) |
+| 2 | V6 awareness probe systematic (BG-LE) | spec landed (`368b5e90`), execute pending |
 | 3 | manual review (사용자 verbatim "OK PROMOTE PUBLIC <repo-id>") | pending |
 | 4 | **L18 Φc mapping spec land** | **✔ 본 doc spec-side** (ensemble verification + IIT 4.0 lower bound verify 별도 cycle) |
 
@@ -383,7 +383,7 @@ verdict: 4-cell AND emerge if ALL PASS
 
 **D5 framework**: 3-zone classification (sub/critical/super) + activation prerequisite 7 mandate. paradigm-a-prime real-mode = critical_transition_zone (단 D1 OUTSIDE substrate-research lane).
 
-**own 18 C3.1 threshold 재해석**: heuristic 0.0238 (iter 3 N=60 ROC, conservative under-estimate) ↔ normalized Φc=0.5 raw 1.0397 (N=8, formal). gap 44x, alignment option A/B/C 별도 cycle.
+** C3.1 threshold 재해석**: heuristic 0.0238 (iter 3 N=60 ROC, conservative under-estimate) ↔ normalized Φc=0.5 raw 1.0397 (N=8, formal). gap 44x, alignment option A/B/C 별도 cycle.
 
 **검증 path**: multi-prompt N≥4 ensemble + L18 stable threshold N≥10 + IIT 4.0 production-grade lower bound verify (D3 lane) + 4-cell AND emerge (probe-B 측정 후 C3.4 land).
 
@@ -391,6 +391,6 @@ verdict: 4-cell AND emerge if ALL PASS
 
 **falsifier**: (1) IIT 4.0 production-grade Φ_norm < anima Φ_normalized 시 lower bound 가정 falsified, (2) multi-prompt ensemble 0.5 ± 0.1 stable X 시 single-shot artifact, (3) Φc=0.5 자체 IIT 4.0 framework specific — IIT 3.0/2.0 다른 값.
 
-**raw#9 hexa-only**: 본 spec 은 markdown doc — `.roadmap.cli` + `.roadmap.law` entry 는 JSON-line append, raw#9 정합. **own 18 + own 33 + own 37 strict**: own 33 mandate-2 self-check 통과 + own 37 mandate-9 (e) D-axis sweep prereq spec-side 충족 + own 18 amend candidate 명시 (별도 cycle). **raw#10 honest C3 ≥ 6**: C1-C9 9건 land (≥6 충족).
+**raw#9 hexa-only**: 본 spec 은 markdown doc — `.roadmap.cli` + `.roadmap.law` entry 는 JSON-line append, raw#9 정합. ** + + strict**: mandate-2 self-check 통과 + mandate-9 (e) D-axis sweep prereq spec-side 충족 + amend candidate 명시 (별도 cycle). **raw#10 honest C3 ≥ 6**: C1-C9 9건 land (≥6 충족).
 
 — 2026-05-08 cycle, post (`a816fdc8` V4 mirror + cycle close final) + (`64531ead` L4 BG fire pre-readiness iter 4) + (warn sweep `af246b1dfe47d0bc2` in-flight Φc 발견 응용).

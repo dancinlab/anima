@@ -49,7 +49,7 @@ ratio >= 0.05.
 | raw 68      | 3     | orthogonal-to-raw-52, orthogonal-to-raw-18, related-to-raw-65 |
 | raw 100     | 3     | FORWARD-SPEC + 2026-04-27 kick-infra-fallback + canonical-hexa-binary-path |
 | raw 103     | 3     | FORWARD-SPEC + raw 99 cron split + autonomy/review binary |
-| raw 108     | 4     | FORWARD-SPEC + own#1 vs raw 108 axis + raw 38 vs 108 axis + nexus own 2 lineage |
+| raw 108 | 4 | FORWARD-SPEC + own#1 vs raw 108 axis + raw 38 vs 108 axis + nexus lineage |
 
 Root cause: strengthening cycles, incident evidence, deferred-follow-up
 rationale, and cross-rule relation prose all accumulate as `note` because no
@@ -231,8 +231,8 @@ without violating it.
 
 ## 15. raw 47 Cross-Repo Trawl Results
 
-Sister repos surveyed: hive (canonical L0, 116 rules), anima (own 4+ /
-ext 2+ / roadmap 168+), nexus (own 2 raw 108 lineage), hexa-lang (legacy
+Sister repos surveyed: hive (canonical L0, 116 rules), anima (+ /
+ext 2+ / roadmap 168+), nexus (raw 108 lineage), hexa-lang (legacy
 4-rule retired), airgenome (inherited), CANON (atlas SSOT shards).
 
 Common pattern: all repos use raw 2 grammar; all hit note-overflow on rules

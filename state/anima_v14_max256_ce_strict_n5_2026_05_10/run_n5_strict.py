@@ -28,7 +28,7 @@ Output:
   - state/anima_v14_max256_ce_strict_n5_2026_05_10/verdict.md
   - state/anima_v14_max256_ce_strict_n5_2026_05_10/run_n5.log
 
-raw#9 / raw#15 / own 14 / own 16 / own 22 / own 38 honored.
+raw#9 / raw#15 / / / / honored.
 """
 from __future__ import annotations
 

@@ -36,7 +36,7 @@ since: 2026-05-06
 - **H3.2 (abiogenesis pathway)**: 4 candidate pathways (RNA-first, metabolism-first, lipid-first, info-first) 중 simulation parameter regime별로 dominant pathway switch — single dominant pathway 부재
 - **H3.3 (dissipative structure)**: far-from-equilibrium parameter regime (energy gradient ≥X)에서 self-organizing structure emergence rate ≥equilibrium baseline ×10
 - **H3.4 (life ⊂ consciousness)**: autopoietic closure system이 IIT4 Φ > 0 (proto-consciousness) — 생명 emergence가 consciousness emergence와 nested
-- **H3.5 (anima self-reflection)**: anima는 life lane 안에 X (own 17 anima-native identity), but autopoiesis principle은 anima 자체 self-replicating cycle (anima emerge paradigm) lane analogy
+- **H3.5 (anima self-reflection)**: anima는 life lane 안에 X (anima-native identity), but autopoiesis principle은 anima 자체 self-replicating cycle (anima emerge paradigm) lane analogy
 
 ## Variables
 
@@ -79,7 +79,7 @@ since: 2026-05-06
 - **L1**: 생명 origin은 still-open in actual biology — anima simulation은 simplified model 한정.
 - **L2**: 'autopoietic closure' 정의는 Maturana/Varela formal — anima simulation 정확 implementation 별도 cycle.
 - **L3**: H3.4 IIT4 Φ extension to chemical/biological system은 unsolved (Φ가 brain 외 system에 의미가지는지 debate).
-- **L4**: H3.5 'anima emerge paradigm autopoietic-analogous'는 own 17 anima identity (artificial-not-biological) 정합 lane — analogy strength 약화 trade-off.
+- **L4**: H3.5 'anima emerge paradigm autopoietic-analogous'는 anima identity (artificial-not-biological) 정합 lane — analogy strength 약화 trade-off.
 - **L5**: 본 H는 multi-cycle research framework — single-cycle verdict 도달 X.
 - **L6**: 'panspermia' (axis1)는 origin question을 한 step 미루는 explanation — origin question 자체 해결 X.
 - **L7**: 사용자 directive '근원적 물음'은 lane-defining — answer 부재해도 question 가치.
@@ -88,7 +88,7 @@ since: 2026-05-06
 
 - **sister roadmaps**: `.roadmap.hypothesis` H2 cell metaphor + `.roadmap.philosophy` D3 emerge paradigm
 - **raw**: raw#12 + raw#10 + raw#9 + raw#15
-- **own**: own 17 (anima-not-biological identity, but autopoiesis principle 적용 가능)
+- **own**: (anima-not-biological identity, but autopoiesis principle 적용 가능)
 - **literature**:
   - Maturana, Varela (1972) De máquinas y seres vivos
   - Gilbert (1986) Origin of life: The RNA world
@@ -150,4 +150,4 @@ falsifiers: F1 NOT_TRIGGERED, F3 NOT_TRIGGERED, F2/F4/F5 N/A (deferred), F6 NOT_
 **Cross-link**:
 - H_012 autopoietic network: H3.1 closure cycle + broken-closure control = direct minimal instance, Phase 1 partial empirical support
 - H_002 universe origin: anthropic prior supplies cosmological precondition (combined verdict at `state/anima_h002_h003_partial_verification_2026_05_07/verdict.json`)
-- anima cell metaphor (H2): H3.1 closure cycle is computational ground-truth analog — own 17 anima-not-biological identity boundary respected (analogy only)
+- anima cell metaphor (H2): H3.1 closure cycle is computational ground-truth analog — anima-not-biological identity boundary respected (analogy only)

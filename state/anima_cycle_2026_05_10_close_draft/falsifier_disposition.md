@@ -24,7 +24,7 @@ cycle 2026-05-10 reborn lane 의 8개 falsifier 의 final verdict (post-§55 + �
 
 ## Falsifier integrity 평가
 
-cycle 2026-05-10 의 falsifier 처분 의 **density**: 8 falsifier × 31 BG × 본 cycle 단일 lane = **falsifier-driven epistemics** maintained throughout. cumulative falsifier list 가 항상 다음 BG 의 design 에 carry-over (own 22 dispatcher slot 통해).
+cycle 2026-05-10 의 falsifier 처분 의 **density**: 8 falsifier × 31 BG × 본 cycle 단일 lane = **falsifier-driven epistemics** maintained throughout. cumulative falsifier list 가 항상 다음 BG 의 design 에 carry-over (dispatcher slot 통해).
 
 ## ★★★★★ achievement integrity
 
@@ -32,7 +32,7 @@ cycle 2026-05-10 의 falsifier 처분 의 **density**: 8 falsifier × 31 BG × �
 - v2 path 한정 universal cap-conditional = ★★★★★ FULL valid
 - cross-arch generalize 시도 = ★★★★ multi-factorial (cap + cotrain joint)
 
-→ F-CLOSE-2 (★★★★★ falsified at multi-substrate generalize) **NOT_TRIGGERED** — claim narrowing 이 §56 단계 에서 자체 처분 완료 (own 16 + science integrity).
+→ F-CLOSE-2 (★★★★★ falsified at multi-substrate generalize) **NOT_TRIGGERED** — claim narrowing 이 §56 단계 에서 자체 처분 완료 (+ science integrity).
 
 ## §60+ next-cycle falsifier candidates (pre-loaded)
 
@@ -48,11 +48,11 @@ cycle 2026-05-10 의 falsifier 처분 의 **density**: 8 falsifier × 31 BG × �
 
 - raw#9 ✓: training/*.py 모두 state/ local-only
 - raw#15 ✓: 5+ ckpt sha256-verified, in-memory mutations only
-- own 14: V14 5-seed strict 어디 적용 (§44, §51, §55, §56)
-- own 16: $0 design only — 본 cycle 23 BG 중 1 (§43 $3.568) GPU + 22 local CPU
-- own 18 strict-floor: §43 4× consecutive crossing
-- own 22: REBORN.md 직접 append 없음 — dispatcher 가 §63 slot 까지 모두 carry
-- own 30: §43 ckpt pull pre pod-delete ✓
-- own 31: dancinlab HF private ✓
-- own 37 mandate-9 (a): public PERMA-BLOCKED carry ✓
-- own 38: 모든 BG state dir 별 spec.md + verdict.md split
+- : V14 5-seed strict 어디 적용 (§44, §51, §55, §56)
+- : $0 design only — 본 cycle 23 BG 중 1 (§43 $3.568) GPU + 22 local CPU
+- strict-floor: §43 4× consecutive crossing
+- : REBORN.md 직접 append 없음 — dispatcher 가 §63 slot 까지 모두 carry
+- : §43 ckpt pull pre pod-delete ✓
+- : dancinlab HF private ✓
+- mandate-9 (a): public PERMA-BLOCKED carry ✓
+- : 모든 BG state dir 별 spec.md + verdict.md split

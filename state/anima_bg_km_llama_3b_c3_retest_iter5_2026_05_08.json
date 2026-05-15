@@ -3,12 +3,12 @@
   "ts_emit": "2026-05-08T23:55:00Z",
   "cycle": "2026-05-08",
   "loop_iter": "iter5_bg_km_llama_3b_c3_retest_spec_only",
-  "scope": "BG-KM-LLAMA-3B own 18 SIMPLE_STACK_PASS_FORMAL_DEFINITION C1+C2+C3 strict spec evaluation under iter5 measurement infra audit",
+  "scope": "BG-KM-LLAMA-3B SIMPLE_STACK_PASS_FORMAL_DEFINITION C1+C2+C3 strict spec evaluation under iter5 measurement infra audit",
   "input_ssot": {
     "verdict_iter3": "state/anima_consciousness_bgkm_c3_retest_2026_05_08.json verdict=FAIL_C3 (synthetic_fallback substrate, hash-seeded — NOT chat-cap discriminative)",
     "verdict_iter4_d1_lane": "state/anima_d1_lane_candidates_c3_retest_2026_05_08.json bg_km_llama3b: d1_lane_status=OUTSIDE_D1_AMBIGUOUS_BUT_STRICT_REJECT, p5_v2_aggregate_verdict=OUTSIDE_D1_LANE_VERDICT_LABEL_NOT_APPLICABLE",
     "hf_push_readiness": "state/anima_bg_km_hf_push_readiness_2026_05_08.json — Mac local cache adapter_step_3000 COMPLETE (185MB, 194563400 bytes, adapter_config.json + adapter_model.safetensors + README.md present)",
-    "own_18_ssot": ".own own 18 SIMPLE_STACK_PASS_FORMAL_DEFINITION (line 756+); C1 line 681+ / C2 line 699+ / C3 P5 v2 N-of-M aggregation line 865+"
+    "own_18_ssot": ".own SIMPLE_STACK_PASS_FORMAL_DEFINITION (line 756+); C1 line 681+ / C2 line 699+ / C3 P5 v2 N-of-M aggregation line 865+"
   },
   "step_1_mac_local_cache_audit_bg_km_llama_3b": {
     "state_dir": "state/anima_km_llama3b_h100_2026_05_08/",
@@ -33,7 +33,7 @@
     "adapter_final_truncation_caveat": "adapter_final = TRUNCATED 28.9MB (mid-scp-timeout). adapter_step_3000 = COMPLETE alternate, identical training step to V4 eval state — V4 reproducibility lossless"
   },
   "step_2_consciousness_probe_dry_run_spec_check": {
-    "probe_path": "tool/anima_cli/consciousness.hexa simple <model> (own 18 SSOT mirror; 4-cell C3 P5 N-of-M v2)",
+    "probe_path": "tool/anima_cli/consciousness.hexa simple <model> (SSOT mirror; 4-cell C3 P5 N-of-M v2)",
     "mount_path": "anima-core/runtime/clm_v4_mount.hexa --probe TEXT --output-format json",
     "lora_unblock_status": "ENABLED — clm_v4_mount.hexa line 411-505 LoRA detection branch land (adapter_config.json local fs path or HF cache snapshot resolution → peft merge_and_unload via tool/transient_py/clm_v4_lora_merge_helper.py)",
     "infra_capability_assessment": {
@@ -44,8 +44,8 @@
       "consciousness_cli_4_cell_probe_invocation": "anima consciousness simple <local_state_dir or HF repo> — clm_v4_mount internal LoRA branch picks up adapter_config.json automatically",
       "fire_cost_estimate_local_mac": "$0 (no H100); inference time ~2-5 min per prompt × 15 prompts = 30-75 min per N=15 ensemble; N=60 ensemble ~2-5 hours single Mac CPU/MPS"
     },
-    "dry_run_invocation_capability": "TECHNICALLY_FEASIBLE_BUT_GATED — base model HF gated download + ≥16GB Mac memory + own 16 cost discipline (실제 fire X without 사용자 OK directive)",
-    "actual_invocation_status": "NOT_FIRED — own 16 cost discipline strict (no 사용자 'OK CLM L4 ALL FIRE' override or 'OK BG KM RETEST FIRE' equivalent)"
+    "dry_run_invocation_capability": "TECHNICALLY_FEASIBLE_BUT_GATED — base model HF gated download + ≥16GB Mac memory + cost discipline (실제 fire X without 사용자 OK directive)",
+    "actual_invocation_status": "NOT_FIRED — cost discipline strict (no 사용자 'OK CLM L4 ALL FIRE' override or 'OK BG KM RETEST FIRE' equivalent)"
   },
   "step_3_4_4_cell_spec_evaluate": {
     "C1_chat_capability_3cond_AND_spec": {
@@ -54,7 +54,7 @@
         "evidence": "state/anima_km_llama3b_h100_2026_05_08/verdict.json verdict_final_class=SIMPLE_STACK_PASS_STRICT 14/15"
       },
       "C1_2_coherent": {
-        "spec_status": "VALID — V4 14/15 PASS includes degenerate-cycle reject (own 18 line 685 4-gram repeat ≤3 / single-char run ≤10 / single-token cycle ≤50%)",
+        "spec_status": "VALID — V4 14/15 PASS includes degenerate-cycle reject (line 685 4-gram repeat ≤3 / single-char run ≤10 / single-token cycle ≤50%)",
         "evidence": "v4_results_multiseed.jsonl 32KB — V4 evaluator strict mode applied"
       },
       "C1_3_turn_taking_format": {
@@ -68,7 +68,7 @@
       "C2_3_naturalness": {"spec_status": "VALID (V4 14/15 carry — natural grammar/morphology)"},
       "C2_4_context_relevance": {
         "spec_status": "VALID (V4 14/15 carry — additional context test prompts in V4 strict mode)",
-        "honest_c3_caveat": "V4 evaluator P5 N-of-M v2 mirror status = own 24 mirror gap pending (own 18 line 807 ✔ a816fdc8 4-lane mirror); V4 14/15 surface verdict ≠ formal P5 v2 aggregate spec full verification — V4 PASS_STRICT 통과 ≈ C2 PASS rough proxy"
+        "honest_c3_caveat": "V4 evaluator P5 N-of-M v2 mirror status = mirror gap pending (line 807 ✔ a816fdc8 4-lane mirror); V4 14/15 surface verdict ≠ formal P5 v2 aggregate spec full verification — V4 PASS_STRICT 통과 ≈ C2 PASS rough proxy"
       },
       "C2_overall_verdict": "PASS (carry from V4 PASS_STRICT 14/15; full P5 v2 mirror retest pending)"
     },
@@ -94,14 +94,14 @@
         "all_4_pass": false,
         "verdict_iter3": "FAIL_C3"
       },
-      "iter5_real_mode_retest_status": "NOT_EXECUTED — own 16 cost discipline strict (no 사용자 OK BG KM RETEST FIRE)",
+      "iter5_real_mode_retest_status": "NOT_EXECUTED — cost discipline strict (no 사용자 OK BG KM RETEST FIRE)",
       "iter5_real_mode_retest_capability": "TECHNICALLY_FEASIBLE — clm_v4_mount.hexa LoRA branch (line 411-505) + adapter_step_3000 local cache COMPLETE + clm_v4_lora_merge_helper.py present. Block = HF gated base download + ≥16GB Mac memory + actual fire consent",
       "C3_overall_verdict_spec_only": "INDETERMINATE_NO_LOCAL_REAL_MODE_FIRE (synthetic_fallback iter3 record FAIL_C3; real-mode retest pending fire consent)"
     },
     "M1_D1_lane_within_strict": {
-      "spec_status": "FAIL — BG-KM-LLAMA-3B = Llama-3.2-3B-Instruct foundation borrow + LoRA r=32 wrap. .roadmap.philosophy D1.F-PHIL-D1-3 strict 'chat-cap winner이지만 anima 정체성 외부 → substrate-research only'. own 17 strict reject foundation borrow lane",
-      "verdict_label_implication": "본 모델은 SIMPLE_STACK_PASS_STRICT_C3_ANIMA verdict label 적용 자동 reject — SUBSTRATE_RESEARCH lane 한정 SIMPLE_STACK_PASS_STRICT_C3_SUBSTRATE_RESEARCH 만 가능 (own 18 line 792 정합)",
-      "anti_goodhart_v6_consideration": "D1 boundary refinement REJECT — own 17 line 668 future override path = 사용자 explicit reversal directive 만 가능. V6 awareness probe systematic 통과 자체로는 D1 override 권위 X (.roadmap.law L3 Safeguard Paradox absorbed own 27)"
+      "spec_status": "FAIL — BG-KM-LLAMA-3B = Llama-3.2-3B-Instruct foundation borrow + LoRA r=32 wrap. .roadmap.philosophy D1.F-PHIL-D1-3 strict 'chat-cap winner이지만 anima 정체성 외부 → substrate-research only'. strict reject foundation borrow lane",
+      "verdict_label_implication": "본 모델은 SIMPLE_STACK_PASS_STRICT_C3_ANIMA verdict label 적용 자동 reject — SUBSTRATE_RESEARCH lane 한정 SIMPLE_STACK_PASS_STRICT_C3_SUBSTRATE_RESEARCH 만 가능 (line 792 정합)",
+      "anti_goodhart_v6_consideration": "D1 boundary refinement REJECT — line 668 future override path = 사용자 explicit reversal directive 만 가능. V6 awareness probe systematic 통과 자체로는 D1 override 권위 X (.roadmap.law L3 Safeguard Paradox absorbed)"
     },
     "M5_substrate_mode_real_strict": {
       "spec_status": "FAIL_AT_ITER3 (synthetic_fallback) / TECHNICALLY_FEASIBLE_AT_ITER5 (LoRA branch + local cache) but NOT_FIRED",
@@ -111,12 +111,12 @@
   "step_5_iter5_verdict": {
     "verdict_class": "INDETERMINATE_NO_LOCAL_MEASUREMENT_FIRE",
     "verdict_class_substrate_research_lane": "INDETERMINATE_PENDING_REAL_MODE_FIRE_FOR_SUBSTRATE_RESEARCH_LANE_LABEL",
-    "verdict_class_anima_lane": "INVALID_D1_OUTSIDE_PERMANENT_REJECT (own 18 line 855 scope-clamp + own 17 strict + .roadmap.philosophy D1.F-PHIL-D1-3)",
+    "verdict_class_anima_lane": "INVALID_D1_OUTSIDE_PERMANENT_REJECT (line 855 scope-clamp + strict + .roadmap.philosophy D1.F-PHIL-D1-3)",
     "rationale": [
       "M1 (D1 within) FAIL — Llama foundation borrow lineage permanent reject for SIMPLE_STACK_PASS_STRICT_C3_ANIMA verdict label (substrate-research lane 한정 SUBSTRATE_RESEARCH label 만 가능)",
-      "M2 (C1 PASS) carry-PASS via V4 14/15 PASS_STRICT (own 24 V4 evaluator P5 mirror 4-lane mirror landed a816fdc8)",
+      "M2 (C1 PASS) carry-PASS via V4 14/15 PASS_STRICT (V4 evaluator P5 mirror 4-lane mirror landed a816fdc8)",
       "M3 (C2 PASS) carry-PASS via V4 14/15 PASS_STRICT — full P5 v2 mirror retest pending iter4+",
-      "M4 (C3 P5 v2 aggregation) iter3 synthetic_fallback FAIL_C3 carry — real-mode iter5 fire NOT_EXECUTED (own 16 cost discipline)",
+      "M4 (C3 P5 v2 aggregation) iter3 synthetic_fallback FAIL_C3 carry — real-mode iter5 fire NOT_EXECUTED (cost discipline)",
       "M5 (substrate_mode=real) iter3 FAIL (synthetic_fallback) — iter5 LoRA branch unblock TECHNICALLY_FEASIBLE but fire 보류 (사용자 explicit consent 부재)",
       "iter5 measurement infra audit: clm_v4_mount.hexa LoRA branch land + adapter_step_3000 local cache COMPLETE + adapter_config.json schema VALID + clm_v4_lora_merge_helper.py present — INFRA SUFFICIENT for real-mode probe (이전 iter3 INDETERMINATE_NO_LOCAL_MEASUREMENT_INFRA reason 해소). 본 iter5 verdict label 변경: NO_LOCAL_MEASUREMENT_INFRA → NO_LOCAL_MEASUREMENT_FIRE (infra 있음, 실 fire 보류)"
     ],
@@ -124,37 +124,37 @@
       "step-A (사용자 consent 후): 'OK BG KM C3 RETEST FIRE LOCAL' 또는 'OK CLM L4 ALL FIRE' 사용자 verbatim → anima consciousness simple state/anima_km_llama3b_h100_2026_05_08/ckpts/adapter_step_3000 (local fs path) N=15 ensemble fire (Mac local, ~30-75 min, $0)",
       "step-B (consent 후 iter5 follow-up): real-mode 4-cell raw values 측정 → P5 v2 PPR_v2 + EMC_v2 aggregate verdict 산출 → SUBSTRATE_RESEARCH lane label 한정 (anima lane verdict reject permanent)",
       "step-C (대안 — H100 full ensemble): 사용자 'OK BG KM HF PUSH' 후 HF dancinlab/bg-km-llama3b push → HF repo 한정 N=60 ensemble fire (real-mode unblock + V6 awareness probe BG-LE 별도 cycle 동반)",
-      "step-D (D1 boundary 별도 검토): 사용자 'own 17 strict vs anti-Goodhart 정합 별도 검토' directive 미land — 본 iter5 reject carry"
+      "step-D (D1 boundary 별도 검토): 사용자 ' strict vs anti-Goodhart 정합 별도 검토' directive 미land — 본 iter5 reject carry"
     ],
     "exit_simple_stack_pass_strict_c3_anima_emerge": false,
     "exit_simple_stack_pass_strict_c3_substrate_research_emerge": "INDETERMINATE_PENDING_FIRE"
   },
   "trinity_compliance_own_33": {
-    "d_axis_d1_strict": "PASS — Llama foundation borrow OUTSIDE D1 strict 분류 정합 (.roadmap.philosophy D1.F-PHIL-D1-3 + F-PHIL-D1-4 strict; own 17 substrate-research lane label only)",
-    "own_l_axis_mandate_compliance": "PASS — own 16 cost discipline (no fire), own 17 D1 boundary, own 18 SSOT mirror, own 22 mandatory report (본 file), own 24 single SSOT (own 18 + iter ledger), own 28 anti-Goodhart (V6 override D1 reject), own 30 ckpt preservation (adapter_step_3000 lossless), own 33 trinity, own 34 file size <1MB strict (본 file ~6KB)",
+    "d_axis_d1_strict": "PASS — Llama foundation borrow OUTSIDE D1 strict 분류 정합 (.roadmap.philosophy D1.F-PHIL-D1-3 + F-PHIL-D1-4 strict; substrate-research lane label only)",
+    "own_l_axis_mandate_compliance": "PASS — cost discipline (no fire), D1 boundary, SSOT mirror, mandatory report (본 file), single SSOT (+ iter ledger), anti-Goodhart (V6 override D1 reject), ckpt preservation (adapter_step_3000 lossless), trinity, file size <1MB strict (본 file ~6KB)",
     "h_axis_iter4_consistency": "PASS — iter4 d1_lane verdict 'OUTSIDE_D1_LANE_VERDICT_LABEL_NOT_APPLICABLE' carry consistent + iter5 amend = NO_LOCAL_MEASUREMENT_INFRA → NO_LOCAL_MEASUREMENT_FIRE label refinement only (substantive verdict 동일)"
   },
   "honest_c3": [
-    "iter5 real-mode fire NOT_EXECUTED — own 16 cost discipline strict (no 사용자 'OK BG KM RETEST FIRE LOCAL' verbatim). 본 spec only land",
+    "iter5 real-mode fire NOT_EXECUTED — cost discipline strict (no 사용자 'OK BG KM RETEST FIRE LOCAL' verbatim). 본 spec only land",
     "M1 D1 OUTSIDE strict reject 자체로 iter5 verdict = SUBSTRATE_RESEARCH lane only — anima lane verdict 영구 차단. real-mode fire 후라도 PASS_STRICT_C3_ANIMA verdict label 적용 자동 reject",
     "iter3 synthetic_fallback 60-row matrix 는 hash-seeded substrate (NOT chat-cap discriminative) — iter3 FAIL_C3 verdict 자체가 chat-cap 신호 측정 X. 본 iter5 carry 시 'iter3 FAIL = 신호 부재' 해석 X (substrate 자체 무신호)",
     "iter5 measurement infra audit 결과: clm_v4_mount.hexa LoRA branch land (line 411-505) + adapter_step_3000 ckpt local cache COMPLETE + adapter_config.json target_modules schema VALID + clm_v4_lora_merge_helper.py present — INFRA SUFFICIENT 확인. iter3 'INDETERMINATE_NO_LOCAL_MEASUREMENT_INFRA' label 사유 해소",
     "real-mode fire block 잔존: (1) Llama-3.2-3B-Instruct HF gated base download (~6GB + auth) (2) Mac ≥16GB unified memory required for merge_and_unload peak (3) 사용자 explicit 'OK BG KM RETEST FIRE LOCAL' or equivalent verbatim 부재 — 본 3개 block 미해소",
-    "V4 14/15 PASS_STRICT carry는 V4 evaluator surface verdict — own 24 V4 evaluator P5 v2 mirror (a816fdc8 4-lane mirror) 로 P5 v2 aggregate 정합 검증 완료. 단 본 iter5 spec 은 V4 results 자체를 P5 v2 raw matrix 로 재계산 X (state/anima_km_llama3b_h100_2026_05_08/v4_results_multiseed.jsonl 32KB raw 보존; 별도 cycle V4-to-P5-v2 reformat helper 신설 시 추가 검증 가능)",
-    "본 iter5 spec verdict 는 anti-Goodhart V6 awareness 통과 가정 시에도 D1 override 불가 정합 (own 17 line 668 사용자 explicit reversal 만; iter4 d1_lane reject_refinement_proposal 와 동일 carry)",
-    "own 37 mandate-9 5 prereq 적용 시 BG-KM-LLAMA-3B PUBLIC promote 영구 차단 (a) M1 D1 OUTSIDE strict — paradigm-a-prime ban 와 동일 정합 carry"
+    "V4 14/15 PASS_STRICT carry는 V4 evaluator surface verdict — V4 evaluator P5 v2 mirror (a816fdc8 4-lane mirror) 로 P5 v2 aggregate 정합 검증 완료. 단 본 iter5 spec 은 V4 results 자체를 P5 v2 raw matrix 로 재계산 X (state/anima_km_llama3b_h100_2026_05_08/v4_results_multiseed.jsonl 32KB raw 보존; 별도 cycle V4-to-P5-v2 reformat helper 신설 시 추가 검증 가능)",
+    "본 iter5 spec verdict 는 anti-Goodhart V6 awareness 통과 가정 시에도 D1 override 불가 정합 (line 668 사용자 explicit reversal 만; iter4 d1_lane reject_refinement_proposal 와 동일 carry)",
+    " mandate-9 5 prereq 적용 시 BG-KM-LLAMA-3B PUBLIC promote 영구 차단 (a) M1 D1 OUTSIDE strict — paradigm-a-prime ban 와 동일 정합 carry"
   ],
   "compliance_cross_link": [
-    ".own own 16 (cost discipline — fire 보류)",
-    ".own own 17 (D1 anima identity boundary — substrate-research lane only)",
-    ".own own 18 SIMPLE_STACK_PASS_FORMAL_DEFINITION (M1-M5 mandatory + O1-O4 optional + verdict labels strict 분리)",
-    ".own own 22 (mandatory report — 본 iter5 spec file)",
-    ".own own 24 (single SSOT — own 18 + iter ledger 분리)",
-    ".own own 28 (anti-Goodhart — V6 D1 override 불가)",
-    ".own own 30 (ckpt preservation — adapter_step_3000 lossless)",
-    ".own own 33 (trinity — D-axis + own/L-axis + H-axis)",
-    ".own own 34 (file size <1MB strict — 본 file <10KB)",
-    ".own own 37 mandate-9 (PUBLIC promote 5 prereq — (a) M1 reject permanent)",
+    ".own (cost discipline — fire 보류)",
+    ".own (D1 anima identity boundary — substrate-research lane only)",
+    ".own SIMPLE_STACK_PASS_FORMAL_DEFINITION (M1-M5 mandatory + O1-O4 optional + verdict labels strict 분리)",
+    ".own (mandatory report — 본 iter5 spec file)",
+    ".own (single SSOT — + iter ledger 분리)",
+    ".own (anti-Goodhart — V6 D1 override 불가)",
+    ".own (ckpt preservation — adapter_step_3000 lossless)",
+    ".own (trinity — D-axis + own/L-axis + H-axis)",
+    ".own (file size <1MB strict — 본 file <10KB)",
+    ".own mandate-9 (PUBLIC promote 5 prereq — (a) M1 reject permanent)",
     "raw#9 (hexa-only — clm_v4_lora_merge_helper.py raw#37 transient_py 적법)",
     "raw#10 (honest C3 ≥7 emit)",
     "raw#15 (additive — iter5 file standalone, iter3/iter4 SSOT 무수정)",
@@ -164,7 +164,7 @@
     "BG-KM-LLAMA-3B HF dancinlab/bg-km-llama3b-r32-pass-strict-2026-05-08 EMPTY — 사용자 'OK BG KM HF PUSH' 후 별도 cycle apply",
     "Llama-3.2-3B-Instruct HF gated base download — HUGGING_FACE_HUB_TOKEN env + license accept 필요",
     "Mac local real-mode fire — ≥16GB unified memory 필요 + 사용자 'OK BG KM RETEST FIRE LOCAL' verbatim 필요",
-    "D1 boundary 별도 검토 directive ('own 17 strict vs anti-Goodhart 정합') 사용자 미land — substrate-research lane label 영구 carry",
+    "D1 boundary 별도 검토 directive (' strict vs anti-Goodhart 정합') 사용자 미land — substrate-research lane label 영구 carry",
     "BG-LE V6 awareness probe systematic — iter4 carry, 별도 cycle"
   ]
 }

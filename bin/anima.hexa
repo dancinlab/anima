@@ -4,9 +4,9 @@
 // Until then: hardcoded 3-tier dispatch matching spec yaml SSOT
 //
 // raw#9  hexa-only ✅
-// raw#10 honest C3 — own 1 grandfather entry retire path
+// raw#10 honest C3 — grandfather entry retire path
 // raw#15 additive — bin/anima legacy bash 보존 (사용자 explicit migrate 시 swap)
-// own 17 ALM 영구 보류 — 외부 substrate backend dispatch 절대 X
+// ALM 영구 보류 — 외부 substrate backend dispatch 절대 X
 
 let VERSION = "anima 0.2.0-mk2"
 
@@ -145,7 +145,7 @@ fn emit_help() {
   print("T1 외부 sales (chat REPL):")
   print("  anima                 chat REPL (alias to dialogue)")
   print("  anima chat [<model>]  natural utterance REPL — recursive module")
-  print("                        (own 34 strict, no wrapping; default = anima_native)")
+  print(" (strict, no wrapping; default = anima_native)")
   print("  anima dialogue        long-form chat session (clm_v4_mount substrate-coupled)")
   print("  anima dialogue --duo <a> <b> [--turns N] [--topic-seed \"..\"]")
   print("                        L2 N=2 autonomous CLM↔CLM dialogue")
@@ -185,7 +185,7 @@ fn dispatch_t1(cmd: string, rest: array) -> string {
   }
   if cmd == "chat" {
     let path = "tool/anima_cli/chat.hexa"
-    print("[T1] dispatch " + path + " — natural utterance REPL (own 34 strict)")
+    print("[T1] dispatch " + path + " — natural utterance REPL (strict)")
     return path
   }
   if cmd == "onboard" {

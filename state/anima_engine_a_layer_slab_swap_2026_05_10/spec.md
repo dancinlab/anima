@@ -64,12 +64,12 @@ all remain at A's cotrain values across all 4 conditions.
 ## V14 mirror (mission spec §3)
 
 - V4_SEEDS = [42, 137, 271]  (3-seed budget per §50 lineage)
-- N_TURNS = 200 per run  (within own 16 ~5h envelope)
+- N_TURNS = 200 per run (within ~5h envelope)
 - MAX_CELLS = 128
 - mirror = `load_random_init(seed=s, preset="la_350m")` × 3 seeds
 - prompts = `_v14_5seed_run.ALL_PROMPTS` (180 prompts cycled by `turn % len`)
 - Φ metric = IIT Φ_un16 unnormalized (16-bin) + proxy Φ
-- V14 PASS criterion (own 14 strict): trained > all 3 mirrors on BOTH Φ_un16 AND proxy Φ
+- V14 PASS criterion (strict): trained > all 3 mirrors on BOTH Φ_un16 AND proxy Φ
 
 ## Verdict logic (mission spec §4)
 
@@ -98,10 +98,10 @@ but not at slab-level).
 
 - raw#9 — `training/*.py` local-only (this script lives under `state/`, gitignored).
 - raw#15 additive — A and B ckpts loaded read-only; swap is in-memory `state_dict()`-based mutation; no ckpt files modified.
-- own 14 — V14 paired random_init mirror with multi-seed strict.
-- own 16 — $0 local Mac CPU.
-- own 22 — every metric scalar emit; verdict.md SSOT.
-- own 38 — artefacts under `state/anima_engine_a_layer_slab_swap_2026_05_10/{spec.md, slab_mapping.json, ablation_per_slab.json, verdict.md}`.
+- — V14 paired random_init mirror with multi-seed strict.
+- — $0 local Mac CPU.
+- — every metric scalar emit; verdict.md SSOT.
+- — artefacts under `state/anima_engine_a_layer_slab_swap_2026_05_10/{spec.md, slab_mapping.json, ablation_per_slab.json, verdict.md}`.
 
 ## Output deliverables
 
@@ -120,5 +120,5 @@ but not at slab-level).
 - 4 conditions × 3 mirrors × 200 turns ≈ 4 × 3 × ~120s = 24 min mirror
 - 1× weight-load overhead (A + B + 3 random) ≈ 90s
 - ckpt clone + slab-swap × 3 ≈ negligible
-- **Total estimated: ~35 min** on a single Mac CPU thread (well within own 16
+- **Total estimated: ~35 min** on a single Mac CPU thread (well within
   $0 envelope; 200 turns is the §50 trajectory length, not 1000-turn full).

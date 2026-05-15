@@ -63,8 +63,8 @@ PURPOSE
 
 raw#15  additive — neither `engine_a_g_arch.py` nor `mitosis.py` modified.
 raw#10  honest — see DESIGN BLOCKERS at end of file. Stubs labeled inline.
-own 22  honest emit — `forward()` returns shape-checked output; raises if mismatch.
-own 30  ckpt-friendly — `state_dict()` exposes new cell rows under
+  honest emit — `forward` returns shape-checked output; raises if mismatch.
+  ckpt-friendly — `state_dict` exposes new cell rows under
         `engine_g.cell_pool_init` (same key, expanded shape).
 """
 

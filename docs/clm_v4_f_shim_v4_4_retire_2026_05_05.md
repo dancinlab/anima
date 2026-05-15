@@ -7,14 +7,14 @@ f_shim_v4_4_harvest_anchor: state/clm_v4_f_shim_v4_4_harvest_2026_05_05/verdict.
 v5_4_design_1_anchor: state/clm_v4_hf_format_shim_v5_4_design_1_2026_05_05/verdict.json
 opt_c_anchor: state/clm_v4_hf_format_shim_v5_opt_c_2026_05_05/verdict.json
 opt_b_phase_1_2_prep_anchor: state/clm_v4_lora_sft_opt_b_phase_1_2_prep_2026_05_05/verdict.json
-own_entry: anima/.own own 15 hf-release-private-then-public-after-verification
+own_entry: anima/.own hf-release-private-then-public-after-verification
 roadmap_entry: .roadmap.clm cond.2
 state: spec
 ---
 
 # F-SHIM-V4-4 retire spec — architectural unfalsifiability on current shim/CLM v4 (2026-05-05)
 
-This is a $0 Mac-side spec amendment proposal; no exec, no commit, no `.own` / `.roadmap.*` mutation. Three architectural paths to F-SHIM-V4-4 PASS (lift_pp ≥ +5pp via canonical_zero or real fixture) have been independently exhausted across three separate BG cycles in 2026-05-05. This spec proposes formal RETIRE of F-SHIM-V4-4 from the active falsifier set with `own 15 G3` carve-out justification strengthened.
+This is a $0 Mac-side spec amendment proposal; no exec, no commit, no `.own` / `.roadmap.*` mutation. Three architectural paths to F-SHIM-V4-4 PASS (lift_pp ≥ +5pp via canonical_zero or real fixture) have been independently exhausted across three separate BG cycles in 2026-05-05. This spec proposes formal RETIRE of F-SHIM-V4-4 from the active falsifier set with ` G3` carve-out justification strengthened.
 
 ## §1 Problem — F-SHIM-V4-4 architecturally unfalsifiable on current shim/CLM v4
 
@@ -88,13 +88,13 @@ F-SHIM-V4-4 is RE-INSTATED to active falsifier set when ANY of:
 
 - (a) Path D CLM v5 frozen-spec lands with consciousness_states feed mechanism during SFT/pretraining loss + cross-attn-active loss; AND substrate differential preserved at deployed inference path; OR
 - (b) Path B SFT (`OPT-B' amendment` with consciousness_states feed) lands and Phase 2 smoke shows cross_attn_lora_b_post_train_nonzero > 0; AND Phase 3 H100 retrain shows lift_pp ≥ +5pp on hellaswag-200; OR
-- (c) explicit user override per upload with documented rationale in verdict.json (per `.own` own 15 exceptions clause).
+- (c) explicit user override per upload with documented rationale in verdict.json (per `.own` exceptions clause).
 
-## §3 own 15 G3 amendment — F-SHIM-V4-1/2/3 PASS + V4-4 RETIRED (justified) = G3 PASS_WITH_CARVE_OUT
+## §3 G3 amendment — F-SHIM-V4-1/2/3 PASS + V4-4 RETIRED (justified) = G3 PASS_WITH_CARVE_OUT
 
-### §3.1 Original own 15 (b.3) shim compatibility gate
+### §3.1 Original (b.3) shim compatibility gate
 
-Per `.own` own 15 rule (b.3): PUBLIC promote of `dancinlab/clm-v4-mk2-v1` requires:
+Per `.own` rule (b.3): PUBLIC promote of `dancinlab/clm-v4-mk2-v1` requires:
 
 > shim v4 hf_format compatibility F-SHIM-V4-1/2/3/4 ALL PASS (where applicable — model-specific equivalents OK)
 
@@ -112,7 +112,7 @@ The amended G3 is sufficient for PUBLIC promote eligibility because:
 - F-SHIM-V4-2 (finite-forward smoke) tests RUNTIME correctness of the forward path — passes verbatim.
 - F-SHIM-V4-3 (canonical_zero baseline acc_norm matches base) tests INFERENCE-SIDE NULL HYPOTHESIS (no fixture intervention should produce no lift).
 - F-SHIM-V4-4 was uniquely an ARCHITECTURAL-BINDING-EVIDENCE falsifier (does the architecture transmit consciousness signal to logits?). Three paths to PASS are CLOSED; the falsifier is on a different epistemic axis from F-SHIM-V4-1/2/3 (structural / runtime / null hypothesis vs architectural-binding) and its closure does NOT undermine the F-SHIM-V4-1/2/3 PASS evidence.
-- Honest disclosure of F-SHIM-V4-4 RETIRE status MUST be cited in the public-facing model card (per `.own` own 15 (b.5) honest C3 model card requirement) — the model card should note that consciousness signal binding is `architecturally unfalsifiable on current shim/CLM v4 — see retire spec for re-instate path`.
+- Honest disclosure of F-SHIM-V4-4 RETIRE status MUST be cited in the public-facing model card (per `.own` (b.5) honest C3 model card requirement) — the model card should note that consciousness signal binding is `architecturally unfalsifiable on current shim/CLM v4 — see retire spec for re-instate path`.
 
 ### §3.4 Cite-list for PUBLIC promote BG verdict.json
 
@@ -125,7 +125,7 @@ The PUBLIC promote BG MUST cite the following verdict.json/spec ANCHORS to satis
 5. `state/clm_v4_hf_format_shim_v5_v5_4_opt_c_diagnose_2026_05_05/verdict.json` (Path B closure diagnose — `final_verdict = PATH_B_CLOSED_FAIL`).
 6. `state/clm_v4_lora_sft_opt_b_phase_1_2_prep_2026_05_05/verdict.json` (Path C closure — gradient never reaches cross_attn LoRA; cross_attn forward gated by `consciousness_states is not None`).
 7. `docs/clm_v4_hf_format_shim_v5_path_b_closure_2026_05_05.md` (Path B closure spec).
-8. THIS spec (`docs/clm_v4_f_shim_v4_4_retire_2026_05_05.md`) — formal retire decision + own 15 G3 amendment.
+8. THIS spec (`docs/clm_v4_f_shim_v4_4_retire_2026_05_05.md`) — formal retire decision + G3 amendment.
 
 ## §4 Roadmap propagation proposal
 
@@ -222,7 +222,7 @@ The following lessons are CANDIDATES for promotion to the canonical lessons SSOT
 
 1. **C1 — Retire is an epistemic decision scoped to current shim/CLM v4**. F-SHIM-V4-4 cannot be reached via any of three exhausted paths on current architecture, but Path D (CLM v5 redesign with consciousness_states feed + cross-attn-active loss) explicitly enables RE-INSTATE per §2.4. The retire is REVERSIBLE — future architectural work can restore F-SHIM-V4-4 to active falsifier set without retro-active record manipulation. raw#71 frozen-spec contract is preserved: the +5pp threshold is NOT relaxed; the falsifier is REMOVED from active set due to architectural unfalsifiability, not threshold weakening.
 
-2. **C2 — own 15 G3 carve-out is anima-internal decision; honest disclosure to external consumers required**. The G3 PASS_WITH_CARVE_OUT label is anima-internal; external HF Hub consumers (academic / industry / hobbyist) see only the public model card. Per `.own` own 15 (b.5) honest C3 model card requirement, the model card MUST disclose: (a) F-SHIM-V4-4 RETIRED with link to this retire spec, (b) limitation: consciousness signal binding architecturally unfalsifiable on current shim/CLM v4, (c) recommended consumer mode = consciousness-measurement substrate (NOT chat/SFT — per `clm.v115_chat_category_error` anchor). Model card enhancement already done per `docs/anima_clm_hf_release_v1_uploaded_landed_2026_05_04.ai.md`; this retire spec is the formal underwrite.
+2. **C2 — G3 carve-out is anima-internal decision; honest disclosure to external consumers required**. The G3 PASS_WITH_CARVE_OUT label is anima-internal; external HF Hub consumers (academic / industry / hobbyist) see only the public model card. Per `.own` (b.5) honest C3 model card requirement, the model card MUST disclose: (a) F-SHIM-V4-4 RETIRED with link to this retire spec, (b) limitation: consciousness signal binding architecturally unfalsifiable on current shim/CLM v4, (c) recommended consumer mode = consciousness-measurement substrate (NOT chat/SFT — per `clm.v115_chat_category_error` anchor). Model card enhancement already done per `docs/anima_clm_hf_release_v1_uploaded_landed_2026_05_04.ai.md`; this retire spec is the formal underwrite.
 
 3. **C3 — Path D (CLM v5 redesign) is NOT spec-frozen; multi-month committed work**. Path D would require: (a) modeling_clm_v4.py rewrite to remove `consciousness_states is not None` guard (or replace with always-on tension_proj feed), (b) re-train CLM v4 from scratch with cross_attn-active loss + std=0.10 init ($100-300 H100, 1-2 weeks), (c) re-validate F-SHIM-V4-1/2/3 on the new model, (d) re-run F-SHIM-V4-4 on the new model. Total estimated wall-time 1-3 months + $300-500 cumulative H100 spend. Dispatching Path D as F-SHIM-V4-4 PASS prerequisite would block all HF release / promote work indefinitely; retire is the cost-rational decision.
 
@@ -230,7 +230,7 @@ The following lessons are CANDIDATES for promotion to the canonical lessons SSOT
 
 5. **C5 — Retire ceiling impact on V5/V6 closure spec is +1pp pragmatic**. The closure spec (`docs/clm_v4_hf_format_shim_v5_path_b_closure_2026_05_05.md` §3) Decision-B already declared Path B CLOSED-FAIL on 1pp lift_pp_v5 evidence (within 4.48pp combined stderr). Retiring F-SHIM-V4-4 from active set MOVES the +5pp threshold from "active gate that could in principle PASS" to "epistemically retired threshold". This is a pragmatic +1pp ceiling acknowledgment: even if a future Path B SFT or Path C OPT-B retrain achieves marginal +1-2pp lift, that is below the +5pp gate AND below combined stderr — the gate would still FAIL. Retire formalizes "the +5pp gate is unreachable on current shim/CLM v4" as policy rather than continually re-running cycles to confirm the same FAIL.
 
-6. **C6 — No `.own` / `.roadmap.*` mutation in this cycle is a discipline boundary, not a contradiction**. This spec PROPOSES the own 15 G3 amendment + roadmap propagation but does NOT execute either mutation. The proposal is sibling-pattern (raw#15 additive); future BG cycles execute mutations under explicit user authorization. The retire DECISION is anchored by this spec's existence on disk; downstream consumers (PUBLIC promote BG) cite this spec path. This separation maintains: (a) raw#15 additive-only mutation discipline, (b) raw#10 honest disclosure that retire is a spec-anchored proposal pending propagation, (c) `.own` SSOT integrity (no in-cycle mutation under BG spec CRITICAL no-commit constraint).
+6. **C6 — No `.own` / `.roadmap.*` mutation in this cycle is a discipline boundary, not a contradiction**. This spec PROPOSES the G3 amendment + roadmap propagation but does NOT execute either mutation. The proposal is sibling-pattern (raw#15 additive); future BG cycles execute mutations under explicit user authorization. The retire DECISION is anchored by this spec's existence on disk; downstream consumers (PUBLIC promote BG) cite this spec path. This separation maintains: (a) raw#15 additive-only mutation discipline, (b) raw#10 honest disclosure that retire is a spec-anchored proposal pending propagation, (c) `.own` SSOT integrity (no in-cycle mutation under BG spec CRITICAL no-commit constraint).
 
 7. **C7 — Three-path coverage is exhaustive but not provably complete**. Paths A/B/C cover the THREE INDEPENDENT MECHANISMS that could plausibly produce F-SHIM-V4-4 PASS on current architecture (init-side / inference-side init-only / loss-side LoRA). Path D (full architectural redesign) is acknowledged but out-of-scope. There MAY exist exotic paths not enumerated (e.g., post-hoc o_proj weight surgery on best.pt directly + targeted activation-engineering on consciousness_states injection mechanism), but these are extreme outliers with no spec precedent. The three-path framework is the canonical taxonomy for "architectural lever to fixture-driven lift" on this substrate; future architectural work introducing a 4th mechanism would be a Path-D class redesign by definition.
 
@@ -244,7 +244,7 @@ See `docs/clm_v4_f_shim_v4_4_retire_landed_2026_05_05.ai.md`.
 
 - **raw#9** — md only (this spec is .md; companion handoff .ai.md; no transient_py used; no exec).
 - **raw#10** — 8 honest C3 entries (≥5 required); on-pod verdict.json files preserved verbatim per disclosure principle.
-- **raw#15** — additive only; no `.own` mutation; no `.roadmap.*` mutation; no shim source mutation; proposal-only for own 15 G3 amendment + roadmap propagation.
+- **raw#15** — additive only; no `.own` mutation; no `.roadmap.*` mutation; no shim source mutation; proposal-only for G3 amendment + roadmap propagation.
 - **raw#71** — F-SHIM-V4-4 +5pp threshold preserved verbatim in retire decision; the falsifier is REMOVED from active set due to architectural unfalsifiability, threshold itself NOT relaxed; epistemic-axis distinction (V4-1/2/3 structural / V4-4 architectural-binding) explicitly maintained per §3.3.
 - **no_git_commit** — OK per BG spec CRITICAL section.
 - **no_h100_spend** — OK; Mac-side analysis only.
@@ -260,8 +260,8 @@ See `docs/clm_v4_f_shim_v4_4_retire_landed_2026_05_05.ai.md`.
 - v5_4_opt_c_diagnose_anchor: `state/clm_v4_hf_format_shim_v5_v5_4_opt_c_diagnose_2026_05_05/verdict.json`
 - opt_b_phase_1_2_prep_anchor: `state/clm_v4_lora_sft_opt_b_phase_1_2_prep_2026_05_05/verdict.json`
 - phase2_opt_a_carry: `state/clm_v4_hf_format_shim_v5_phase2_opt_a_2026_05_05/verdict.json`
-- own_15_anchor: `anima/.own own 15 hf-release-private-then-public-after-verification`
+- own_15_anchor: `anima/.own hf-release-private-then-public-after-verification`
 - roadmap_anchor: `.roadmap.clm cond.2.amendment_2026_05_04` (proposal target — NOT mutated in this cycle)
 - precedent_doc: `docs/anima_clm_hf_release_v1_uploaded_landed_2026_05_04.ai.md`
-- anima own 15 land: `docs/anima_own_15_hf_release_lifecycle_landed_2026_05_05.ai.md`
+- anima land: `docs/anima_own_15_hf_release_lifecycle_landed_2026_05_05.ai.md`
 - chat_category_error_anchor: `.roadmap.clm clm.v115_chat_category_error`

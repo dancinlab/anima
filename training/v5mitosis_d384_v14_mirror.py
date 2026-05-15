@@ -3,7 +3,7 @@
 PURPOSE
     Run MitosisModelEngine (training/mitosis_model_v5.py) at d=384, max_cells=128, with §30
     all-fix (A1/A2/B1/D1 active, C1 STUB) on real-ckpt-init vs random-init for the V14
-    mirror invariant (own 14: 5-seed strict).
+    mirror invariant (: 5-seed strict).
 
     Real init: v2 cells64 d=384 ckpt
         /Users/ghost/core/anima/state/anima_clm_v2_mitosis_cells_recovery_2026_05_09/
@@ -17,9 +17,9 @@ PURPOSE
 raw#9    training/*.py local-only (gitignored)
 raw#10   honest — v2→v5 schema delta documented above; cells 6,7 are random by necessity
 raw#15   additive — v2 ckpt and mitosis_model_v5.py untouched
-own 14   V14 mirror 5-seed strict (trained vs 5 random seeds)
-own 22   honest emit — every metric scalar; cell-count growth tracked
-own 38   doc save → state/anima_v5mitosis_d384_sweep_2026_05_10/
+   V14 mirror 5-seed strict (trained vs 5 random seeds)
+   honest emit — every metric scalar; cell-count growth tracked
+   doc save → state/anima_v5mitosis_d384_sweep_2026_05_10/
 """
 from __future__ import annotations
 
@@ -188,7 +188,7 @@ def init_engine_random(cfg: MitosisModelConfig, seed: int) -> MitosisModelEngine
 def make_prompt_stream(seed: int, n_turns: int, vocab: int, max_seq: int) -> List[torch.Tensor]:
     """Synthetic diverse-prompt stream — random byte sequences with mode shifts.
 
-    own 14 V14 mirror reproducibility: same seed → same prompt sequence across runs.
+     V14 mirror reproducibility: same seed → same prompt sequence across runs.
     """
     rng = random.Random(seed)
     prompts: List[torch.Tensor] = []
@@ -418,7 +418,7 @@ def main():
         if (t["alpha_v2"] is not None and mean_rand_alpha is not None)
         else None
     )
-    # V14 verdict (own 14 strict): trained must outperform ALL 5 randoms on phi_per_cell
+    # V14 verdict (strict): trained must outperform ALL 5 randoms on phi_per_cell
     # AND show separation > 0 on at least 2 of {phi, phi_per_cell, alpha_v2}
     trained_better_than_all_random_pc = all(
         t["phi_per_cell_final"] > r["phi_per_cell_final"] for r in rs

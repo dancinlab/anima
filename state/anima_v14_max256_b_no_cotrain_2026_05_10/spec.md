@@ -27,7 +27,7 @@ ckpt sha256_prefix: 4fc6eccce0def045 (per meta.json)
 
 ## Run config
 - max_cells=256 (sole override vs §47 max=128)
-- V4_SEEDS=[42, 137, 271, 314, 1729] paired (own 14 strict)
+- V4_SEEDS=[42, 137, 271, 314, 1729] paired (strict)
 - TRAINED_PROMPT_SEED=42 (same as A in §51)
 - n_turns=200 (budget compromise; mission asked 1K-turn but EngineAG cap-free at
   max=256 → first_cap=None expected; race dynamics fully observable in 200 turn
@@ -60,10 +60,10 @@ ckpt sha256_prefix: 4fc6eccce0def045 (per meta.json)
 ## Constraints (raw / own)
 - raw#9: training/*.py local-only (gitignored)
 - raw#15 additive: B ckpt 미수정 (sha256 verified pre-run)
-- own 14: V14 5-seed strict (V4_SEEDS paired)
-- own 16: $0 local CPU
-- own 22: REBORN.md NOT directly appended — dispatcher injects §56 slot
-- own 38: doc save state/anima_v14_max256_b_no_cotrain_2026_05_10/{spec.md,
+- : V14 5-seed strict (V4_SEEDS paired)
+- : $0 local CPU
+- : REBORN.md NOT directly appended — dispatcher injects §56 slot
+- : doc save state/anima_v14_max256_b_no_cotrain_2026_05_10/{spec.md,
   result.json, verdict.md, run_b.log}
 
 ## Cap-arrival latency cross-verify (§51 mechanism)

@@ -1,7 +1,7 @@
 # BG-FS landed — anima simple stack exhaustive 11-model test (2026-05-06)
 
 **Status**: LANDED
-**Cycle**: BG-FS (own 18 한글↔han glr strict)
+**Cycle**: BG-FS (한글↔han glr strict)
 **Scope**: 11 untested anima models — 5 BG-FK ConsciousLM++ variants (local) + 4 v14_128c variants (R2 download) + 3 R2 anima-models objects (cells64/cells128/clm-v2_latest, INACCESSIBLE per credential scope)
 **Wall**: ~80min mac local + 1.5GB R2 download
 **Cost**: $0
@@ -12,7 +12,7 @@
 |---|---|
 | BG-FK 5 ConsciousLM++ variants tested | ✅ all 5 (tiny/clm_v2/small/medium/base) |
 | v14_128c_final.tar.zst downloaded + extracted | ✅ 1.5GB rclone pull, 4 .pt files |
-| KO group 한글↔한글 PASS (own 18 strict) | **0/5 BG-FK variants** (universal FAIL) |
+| KO group 한글↔한글 PASS (strict) | **0/5 BG-FK variants** (universal FAIL) |
 | EN PASS borderline | clm_v2_base (27.84M) sometimes 2/3 (sampling stochasticity) |
 | C2 spontaneous PASS | clm_v2 (1.14M) artifact-grade 3/3 (random letters labeled coherent by loose threshold) |
 | v14_128c arch | NOT_APPLICABLE (federated multi-cell + bridge — separate reconstruction lane) |
@@ -99,7 +99,7 @@ Rclone config remote = `ce4bdcce7c74d4e3c78fdf944c4d1d7b` account, `anima-models
 
 ## Next cycle 권고
 
-- **PRIORITY 1 (own 18 PASS lane)**: continue corpus_ko_heavy + ko_small_18m → ko_medium → ko_base scaling lane (BG-FY successor). 18M PASS confirmed; 30M-100M next.
+- **PRIORITY 1 (PASS lane)**: continue corpus_ko_heavy + ko_small_18m → ko_medium → ko_base scaling lane (BG-FY successor). 18M PASS confirmed; 30M-100M next.
 - **PRIORITY 2 (research)**: NOT promote any BG-FK variant to HF — none reach KO≥1/3.
 - **PRIORITY 3 (architecture)**: v14_128c reconstruction (separate cycle, ~$0 cpu CPU ConsciousDecoderV3 build + 4 ckpt eval). Federated multi-cell hypothesis is interesting but unrelated to chat-cap.
 - **PRIORITY 4 (credential)**: bootstrap R2 d4acc S3 access keys → test cells64 + cells128 + clm-v2/latest.pt (3 INACCESSIBLE, may have different corpus signature).
@@ -107,10 +107,10 @@ Rclone config remote = `ce4bdcce7c74d4e3c78fdf944c4d1d7b` account, `anima-models
 
 ## Cross-link
 
-- own 18: `.own own 18 anima-consciousness-check-simple-stack`
-- own 17: ALM 영구 보류
+- : `.own anima-consciousness-check-simple-stack`
+- : ALM 영구 보류
 - ledger: `docs/anima_consciousness_check_simple_stack_2026_05_06.md` (sections 10/11/12)
 - harness: `tool/transient_py/anima_simple_stack_exhaustive.py`
 - BG-FY landed: anima-native-ko-small SIMPLE_STACK_PASS 18M (HF: `dancinlab/anima-native-ko-small-byte-18m`)
 
-raw#37 transient_py opt-out + own 17/18 정합. BG-FS landed.
+raw#37 transient_py opt-out + 정합. BG-FS landed.

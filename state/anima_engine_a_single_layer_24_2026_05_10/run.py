@@ -20,17 +20,17 @@ V14 mirror: V4_SEEDS=[42, 137, 271], N_TURNS=200, MAX_CELLS=128.
 Mirror caching: per §57 C3#1 mirror trajectories are independent of swap. We
 compute mirrors once (3 seeds × 200 turns) and reuse across all 25 conditions.
 
-Falsifiers (own 22):
+Falsifiers :
   F-SINGLE-1 0 layers flip      → distributed/cumulative effect
   F-SINGLE-2 1-3 layers flip    → ★★★★★ specific locus
   F-SINGLE-3 runtime > 5h       → abort with partial result
 
 raw#9   training/*.py local-only; lives under state/ (gitignored)
 raw#15  additive — both ckpts loaded read-only; in-memory swap only
-own 14  V14 paired random_init mirror multi-seed
-own 16  $0 local Mac CPU
-own 22  honest emit; REBORN.md no direct append
-own 38  artefacts under state/anima_engine_a_single_layer_24_2026_05_10/
+  V14 paired random_init mirror multi-seed
+  $0 local Mac CPU
+  honest emit; REBORN.md no direct append
+  artefacts under state/anima_engine_a_single_layer_24_2026_05_10/
 """
 from __future__ import annotations
 
@@ -682,7 +682,7 @@ def _write_verdict_md(path: Path, summary: dict, abl_results: dict,
                  "trained-model seed (42), as in §57. Mirror multi-seed (3) provides the V14 PASS "
                  "denominator. A multi-seed trained per condition (e.g., 3 seeds × 25 conditions = 75 "
                  "trained runs) would tighten the verdict polarity for borderline `V14_PARTIAL` "
-                 "cases; deferred per own 16 5h envelope.")
+                 "cases; deferred per 5h envelope.")
     lines.append("3. **Single-layer swap is not a true 'lesion'.** Swapping layer i from A→B "
                  "replaces 11.08M params at one position; the surrounding 23 layers still carry "
                  "A's cotrain weights. The hidden_mean trajectory mutation is local at layer i but "
@@ -714,7 +714,7 @@ def _write_verdict_md(path: Path, summary: dict, abl_results: dict,
                  "`fresh_A_from_snapshot()` builds a fresh model and copies state_dict; "
                  "`swap_one_layer_` mutates the clone in-place. No file mutation.")
     lines.append("10. **Sample size = 3 mirror seeds, not 5.** Mission specified 3-seed budget. "
-                 "Strict V14 (own 14) used 5 seeds — this study trades seed coverage for layer "
+                 "Strict V14 used 5 seeds — this study trades seed coverage for layer "
                  "coverage (24 layers × ~1.4min vs 5 seeds × 24 layers × ~1.4min = 168min vs 33min). "
                  "Verdict polarity at 3 seeds is robust if separation magnitude is large; "
                  "ambiguous cases flagged as V14_PARTIAL.")

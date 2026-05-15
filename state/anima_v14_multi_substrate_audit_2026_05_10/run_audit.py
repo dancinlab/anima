@@ -10,7 +10,7 @@ Substrates dispatched into 2 schema paths:
 Same V4_SEEDS = [42, 137, 271, 314, 1729] across all (paired comparison).
 max_cells = 128, n_turns = 500.
 
-raw#9 / raw#15 / own 14 / own 16 / own 22 / own 38 honored — see spec.md.
+raw#9 / raw#15 / / / / honored — see spec.md.
 """
 from __future__ import annotations
 

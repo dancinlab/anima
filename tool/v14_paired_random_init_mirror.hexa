@@ -2,14 +2,14 @@
 //                                            (BG-LA + BG-LB Engine A/G arch shared lane)
 //
 // PURPOSE
-//   own 14 V14 CASCADE 8/8 mandatory pre-EMERGE — paired random_init mirror = same arch
+// V14 CASCADE 8/8 mandatory pre-EMERGE — paired random_init mirror = same arch
 //   untrained, multi-seed n≥5; provides null baseline for trained model EMERGE claim.
 //
 //   Registry yaml BG-LA `measurement.v14_paired_mirror_plan` =
 //     "random_init mirror = same Engine A/G arch untrained, seed=42 baseline +
 //      multi-seed n≥5 strengthening; Step 1-4 enforce"
 //
-// V14 STEP 1-4 (own 14 CASCADE)
+// V14 STEP 1-4 (CASCADE)
 //   Step 1: random_init mirror immediate — same arch + matching seed (training=0)
 //   Step 2: MTRP (mirror trained-vs-random performance) ≥ 0.10 floor — trained must
 //           clearly exceed random; floor blocks <0.10 lift as "not significant"
@@ -34,13 +34,13 @@
 // raw#15  repo-relative paths
 // raw#37  transient-py allowed for actual model construction (training/engine_a_g_arch.py)
 //
-// own 14  V14 CASCADE 8/8 mandatory — this tool is the gate
-// own 16  0-cost dev — Mac-side only, no H100 spend
-// own 17  D1=1.0 (anima_native_scratch) within strict — mirror inherits arch_origin
-// own 18  C3 measurement adapter compat — mirror exposes same hidden_states/attentions
-// own 22  honest emit — failure halts; no fabricated mirror
-// own 30  ckpt save — mirror ckpts saved to state/v14_mirrors/<bg_id>/seed_<n>.pt
-// own 33  trinity compliance — D_no-fabricated-baseline + own 14 + H_v14_mandatory_floor
+// V14 CASCADE 8/8 mandatory — this tool is the gate
+// 0-cost dev — Mac-side only, no H100 spend
+// D1=1.0 (anima_native_scratch) within strict — mirror inherits arch_origin
+// C3 measurement adapter compat — mirror exposes same hidden_states/attentions
+// honest emit — failure halts; no fabricated mirror
+// ckpt save — mirror ckpts saved to state/v14_mirrors/<bg_id>/seed_<n>.pt
+// trinity compliance — D_no-fabricated-baseline + + H_v14_mandatory_floor
 
 let SCHEMA              = "anima/v14_paired_random_init_mirror/v1"
 let CYCLE_TAG           = "v14_paired_mirror_2026_05_09"
@@ -50,8 +50,8 @@ let MIRROR_BASE_DIR     = "/Users/ghost/core/anima/state/v14_mirrors"
 let ARCH_PY_PATH        = "/Users/ghost/core/anima/training/engine_a_g_arch.py"
 let MATERIALIZE_PY_PATH = "/Users/ghost/core/anima/tool/transient_py/v14_materialize_mirror.py"
 
-let SEEDS_DEFAULT       = "42,137,271,314,1729"  // V4_SEEDS parity (own 18 정합)
-let MTRP_FLOOR          = 0.10                    // Step 2 own 14 floor
+let SEEDS_DEFAULT = "42,137,271,314,1729" // V4_SEEDS parity (정합)
+let MTRP_FLOOR = 0.10 // Step 2 floor
 let CI95_N_MIN          = 5                       // Step 3 multi-seed minimum
 
 // ─── helpers ──────────────────────────────────────────────────────────────
@@ -131,7 +131,7 @@ fn _emit() {
     let body = "" +
         "\"\"\"v14_materialize_mirror.py — V14 random_init mirror ckpt materializer.\n" +
         "raw#37 transient (Mac-side; called by tool/v14_paired_random_init_mirror.hexa --materialize-mirrors).\n" +
-        "own 14 Step 1 — paired random_init mirror at multi-seed.\n" +
+        " Step 1 — paired random_init mirror at multi-seed.\n" +
         "\"\"\"\n" +
         "import os, sys, json, argparse\n" +
         "sys.path.insert(0, '" + ANIMA_ROOT + "/training')\n" +

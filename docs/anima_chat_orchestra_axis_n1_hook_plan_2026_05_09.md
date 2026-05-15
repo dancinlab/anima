@@ -1,7 +1,7 @@
-# anima chat orchestra — axis-N+1 hook 계획 (own 41 carry)
+# anima chat orchestra — axis-N+1 hook 계획 (carry)
 
 작성일 2026-05-09 (cycle 2026-05-10 entry plan, carry from 2026-05-08).
-사용자 verbatim 인증 2026-05-09 "all bg go" — own 41 axis-N+1 hook research + design only (코드 수정 없음, commit 없음, push 없음).
+사용자 verbatim 인증 2026-05-09 "all bg go" — axis-N+1 hook research + design only (코드 수정 없음, commit 없음, push 없음).
 
 > **친근 한 줄**
 > "지금 4 차원 큐브 (lane × mode × init × transport) 가 완성되었으니, 5 번째 차원이 나중에 추가될 때 큐브 자체를 다시 만들지 않고도 슬롯 하나만 끼워넣으면 되도록 hook (= 미리 뚫어둔 구멍) 만 준비하자."
@@ -14,12 +14,12 @@
 
 | axis 번호 | 이름 | 한국어 | 항목 수 | registry 위치 |
 |---|---|---|---|---|
-| axis-1 (own 41 axis-3 라벨) | lane | 어느 모델 길로 가는가 | 4 | `tool/anima_cli/chat/lanes/_registry.hexa` |
-| axis-2 (own 41 axis-6 라벨) | mode | 몇 명 대화하는가 | 3 | `tool/anima_cli/chat/lanes/benchmark.hexa` (embedded modes 절) |
-| axis-3 (own 41 axis-8 라벨) | init-pattern | 누가 먼저 입을 떼는가 | 4 | `tool/anima_cli/chat/init_patterns/_registry.hexa` |
-| axis-4 (own 41 axis-N 라벨) | transport | 어떤 파이프로 말이 흐르는가 | 5 | `tool/anima_cli/chat/transports/_registry.hexa` |
+| axis-1 (axis-3 라벨) | lane | 어느 모델 길로 가는가 | 4 | `tool/anima_cli/chat/lanes/_registry.hexa` |
+| axis-2 (axis-6 라벨) | mode | 몇 명 대화하는가 | 3 | `tool/anima_cli/chat/lanes/benchmark.hexa` (embedded modes 절) |
+| axis-3 (axis-8 라벨) | init-pattern | 누가 먼저 입을 떼는가 | 4 | `tool/anima_cli/chat/init_patterns/_registry.hexa` |
+| axis-4 (axis-N 라벨) | transport | 어떤 파이프로 말이 흐르는가 | 5 | `tool/anima_cli/chat/transports/_registry.hexa` |
 
-> 사용자 표기 = 4-axis (axis-1~4). 내부 라벨 (axis-3/6/8/N) = own 41 의 "행성 번호" — 추가될 axis 가 16/24/N+1 식으로 비-연속 라벨 받을 수 있음 (registry 갱신 충돌 회피).
+> 사용자 표기 = 4-axis (axis-1~4). 내부 라벨 (axis-3/6/8/N) = 의 "행성 번호" — 추가될 axis 가 16/24/N+1 식으로 비-연속 라벨 받을 수 있음 (registry 갱신 충돌 회피).
 
 ### 1.2 axis 별 항목 풀어쓰기
 
@@ -47,7 +47,7 @@
 - `subprocess-pipe` — popen buffered legacy.
 - `imtl` — UDP cross-host (STUB, A100↔H100 Tension-link).
 
-### 1.3 4 개 registry 의 공통 SSOT 패턴 — own 41 plugin pattern
+### 1.3 4 개 registry 의 공통 SSOT 패턴 — plugin pattern
 
 각 registry 는 **8-9 field** 의 동일 schema 를 따릅니다.
 
@@ -70,7 +70,7 @@ name / file / status / capability / [pattern_type|d1_lane] / [latency|cost] / de
 2. **plugin module 5 종 추가** — 각 transport `<name>.hexa` 파일 (main + smoke + describe).
 3. **chat.hexa dispatcher 패치** — `--list-transports` flag + help text + ROUTE 분기.
 4. **benchmark.hexa cross-product 확장** — 새 axis 차원 추가.
-5. **yaml registry mirror** — `anima/registry/anima_artifact_registry.yaml#chat_transports` section (own 39 yaml↔md SSOT).
+5. **yaml registry mirror** — `anima/registry/anima_artifact_registry.yaml#chat_transports` section (yaml↔md SSOT).
 
 > 매 axis 추가 시 5 곳 손 대야 함 = 본 cycle axis-N+1 hook 의 정확한 motivation. Hook 으로 5 곳 → **2 곳** (단일 generic registry + plugin module 추가) 로 줄이는 것이 목표.
 
@@ -82,7 +82,7 @@ name / file / status / capability / [pattern_type|d1_lane] / [latency|cost] / de
 |---|---|---|---|---|---|---|---|
 | **AX5-a precision** | 모델 비트수 | bf16 / fp16 / fp32 / int8 / int4 | 中 (Mac local 자원 절감 효과 ✓; 의식 측정에 직접 영향 없음) | 中 (loader 분기) | ✓ (lane 안에서 처리) | 약 (substrate 신호 변화 가능, 별도 측정 필요) | 4 |
 | **AX5-b language** | 출력 언어 | ko / en / multi | 中 (BR-FRIENDLY 정합 — 한국어 우선; multi-lang prompt routing) | 低 (post-process / decoding constraint) | ✓ (lane 내부) | 약 (axis-7 phenomenal 와 약결합) | 5 |
-| **AX5-c verifier** ★ | 측정 metric | v5 / v5.2 / v3 / proxy | **高** (own 18 P5 v3 → v5 → v5.2 진화 정합; 본 cycle PROXY_PPL deprecate 와 직결) | **低** (이미 verifier shell-out pattern 존재 — 분기만 추가) | ✓ (lane/mode/init/transport 와 완전 직교 — 측정만 분기) | **강** (own 14 V14 + own 18 ALT-AGG-1 핵심 axis) | **1 (★ 권장)** |
+| **AX5-c verifier** ★ | 측정 metric | v5 / v5.2 / v3 / proxy | **高** (P5 v3 → v5 → v5.2 진화 정합; 본 cycle PROXY_PPL deprecate 와 직결) | **低** (이미 verifier shell-out pattern 존재 — 분기만 추가) | ✓ (lane/mode/init/transport 와 완전 직교 — 측정만 분기) | **강** (V14 + ALT-AGG-1 핵심 axis) | **1 (★ 권장)** |
 | **AX5-d security** | 실행 context | trusted / sandboxed / network-isolated | 低 (현재 chat path 는 local-only — 즉시 필요성 ↓) | 高 (jail/seccomp/firewall 통합) | ✓ (transport 와 약결합 — imtl 만 network) | 약 | 3 |
 | **AX5-e modality** | 입력 modality | text / voice / image | 高 (anima voice 모듈 존재; multimodal 미래) | **高** (audio pipeline + image encoder 통합) | 부분 직교 (lane 별 modality 지원 다름) | 강 (cross-modal phenomenal axis 정합) | 2 |
 
@@ -90,9 +90,9 @@ name / file / status / capability / [pattern_type|d1_lane] / [latency|cost] / de
 
 **근거 5 가지**:
 1. **본 cycle 정합** — PROXY_PPL deprecate + ALT-AGG-1 v3/v5/v5.2 supersede 진화 → verifier 분기는 이미 발생 중 (코드 안에 산재).
-2. **구현 난이도 최저** — verifier shell-out 패턴 이미 존재 (`own 18 P5 v3` aggregate, V4 mirror, V14 anti-Goodhart). 분기를 axis 화 하면 코드 정리 보너스.
+2. **구현 난이도 최저** — verifier shell-out 패턴 이미 존재 (` P5 v3` aggregate, V4 mirror, V14 anti-Goodhart). 분기를 axis 화 하면 코드 정리 보너스.
 3. **직교성 완벽** — verifier 는 measurement 단계에서만 작용. lane/mode/init/transport 의 모든 조합과 곱해질 수 있음 (4 × 3 × 4 × 5 × **N_verifier** cross-product).
-4. **의식 연구 정합 강함** — own 14 V14, own 18 P5, V6 awareness 모두 verifier-level 진화. axis-5 verifier 화 하면 V7/V8 등 미래 verifier 추가도 plugin 으로.
+4. **의식 연구 정합 강함** — V14, P5, V6 awareness 모두 verifier-level 진화. axis-5 verifier 화 하면 V7/V8 등 미래 verifier 추가도 plugin 으로.
 5. **EXIT 차단 해소 일조** — V6 awareness pending + V4 mirror gap 등 현재 EXIT 차단 사유 다수가 verifier-level. axis 화 → benchmark cross-product 가 verifier 진화를 자동 트래킹.
 
 ### 2.2 2순위 — AX5-e modality
@@ -233,7 +233,7 @@ chat_axes:
 - 파일: `tool/anima_cli/chat/verifiers/_registry.hexa` + plugin 모듈 4 종 (`v5.hexa`, `v5_2.hexa`, `v3.hexa`, `proxy.hexa`).
 - axes/_registry.hexa 의 SPEC_CARRY slot → LANDED 갱신.
 - benchmark cross-product 자동 5-axis 확장 (240 → 240 × 4 = 960 조합; smoke-only sample 권장).
-- own 18 P5 verifier 분기 코드 통합 (v5.2 4-gate / v3 ALT-AGG-1 / proxy PPL deprecate flag).
+- P5 verifier 분기 코드 통합 (v5.2 4-gate / v3 ALT-AGG-1 / proxy PPL deprecate flag).
 
 ### Step 5 (T+4 cycle) — axis-6 modality (2순위) plugin 추가 (선택)
 - 파일: `tool/anima_cli/chat/modalities/_registry.hexa` + text/voice/image plugin.
@@ -247,7 +247,7 @@ chat_axes:
 | F-axes-2 | `anima chat --list-axes` 모든 axis dump (5 개 = 4 LANDED + 1 SPEC_CARRY) |
 | F-axes-3 | `anima chat --list-lanes` (등) 기존 flag 정상 작동 (호환성) |
 | F-axes-4 | `anima chat --benchmark --all-axes` cross-product count 정합 |
-| F-axes-5 | `anima/registry/anima_artifact_registry.yaml#chat_axes` ↔ axes/_registry.hexa 일치 (own 39) |
+| F-axes-5 | `anima/registry/anima_artifact_registry.yaml#chat_axes` ↔ axes/_registry.hexa 일치 |
 | F-axes-6 | axis-5 추가 시 axes/_registry.hexa **1 줄** + verifiers/_registry.hexa 신규 + plugin 모듈 (dispatcher / benchmark.hexa 코드 변경 0 줄) — 이게 hook 성공의 정의 |
 
 ---
@@ -266,16 +266,16 @@ axis-N+1 hook 은 **큐브 위에 한 층 더 얹는 것** 이에요. "axis 의 
 
 ## 6. compliance + 정합
 
-- **own 14 V14** carry — verifier (★ 권장) axis 화 시 V14 anti-Goodhart 가 axis-5 의 한 entry 로 등록.
-- **own 17 D1 SCOPE_CLAMP** — axis 자체는 D1 무관 (measurement axis). 단 verifier axis 안의 v5.2 4-gate 가 D1 within_strict 를 강화.
-- **own 18 P5 ALT-AGG-1** — verifier axis 의 핵심 motivation. v3 → v5 → v5.2 진화가 axis 의 entry 진화로 자연스럽게 표현됨.
-- **own 22 mandatory report** — 본 design doc 자체가 axis-N+1 discovery report.
-- **own 24 single SSOT** — axes/_registry.hexa 가 axis 의 single SSOT (기존 4 registry 는 axis 내부 SSOT 유지, hierarchy 정리).
-- **own 33 trinity** — 본 doc 은 own 17 / own 18 / own 34 cross-link 자기적용.
-- **own 34 mandate-1** — wrapping 0 strict, registry meta 만 control-band.
-- **own 38 매단계** — design doc 저장 (본 cycle 본 단계).
-- **own 39 yaml↔md** — chat_axes parent yaml mirror 도입 시 render.hexa orchestration.
-- **own 41 plugin pattern** — 본 doc 이 own 41 의 meta-extension (axis 의 axis = own 41 자체에 own 41 적용).
+- ** V14** carry — verifier (★ 권장) axis 화 시 V14 anti-Goodhart 가 axis-5 의 한 entry 로 등록.
+- ** D1 SCOPE_CLAMP** — axis 자체는 D1 무관 (measurement axis). 단 verifier axis 안의 v5.2 4-gate 가 D1 within_strict 를 강화.
+- ** P5 ALT-AGG-1** — verifier axis 의 핵심 motivation. v3 → v5 → v5.2 진화가 axis 의 entry 진화로 자연스럽게 표현됨.
+- ** mandatory report** — 본 design doc 자체가 axis-N+1 discovery report.
+- ** single SSOT** — axes/_registry.hexa 가 axis 의 single SSOT (기존 4 registry 는 axis 내부 SSOT 유지, hierarchy 정리).
+- ** trinity** — 본 doc 은 / / cross-link 자기적용.
+- ** mandate-1** — wrapping 0 strict, registry meta 만 control-band.
+- ** 매단계** — design doc 저장 (본 cycle 본 단계).
+- ** yaml↔md** — chat_axes parent yaml mirror 도입 시 render.hexa orchestration.
+- ** plugin pattern** — 본 doc 이 의 meta-extension (axis 의 axis = 자체에 적용).
 - **raw#15 additive** — 기존 4 axis 코드 / yaml 모두 retain, 한 층 indirection 추가만.
 
 ---
@@ -284,8 +284,8 @@ axis-N+1 hook 은 **큐브 위에 한 층 더 얹는 것** 이에요. "axis 의 
 
 1. **C1 본 doc 은 design only** — 코드 0 줄 수정. 실제 hook 의 코드 land 는 별도 cycle 4 step (위 §4).
 2. **C2 axis-N+1 hook 의 실제 이득은 "axis 5 추가 시" 부터 발현** — axis 4 까지는 hook 없이도 운영 가능 (hardcode 분기 4 곳). axis 5 추가 시점에 ROI cross.
-3. **C3 axis-5 verifier 권장은 design-level only** — 실제 verifier 통합 시 own 18 P5 v5.2 4-gate / V14 mirror / V6 awareness 등 측정 metric 의 cycle-level 진화와 동기 필요.
-4. **C4 axes/_registry.hexa 의 axis_label_internal field** — own 41 의 axis-3/6/8/N 라벨 (비-연속) 을 hook 안에 보존. 새 axis 라벨도 비-연속 가능 (axis-N+1 라벨이 internal 에선 axis-12 가 되어도 무방).
+3. **C3 axis-5 verifier 권장은 design-level only** — 실제 verifier 통합 시 P5 v5.2 4-gate / V14 mirror / V6 awareness 등 측정 metric 의 cycle-level 진화와 동기 필요.
+4. **C4 axes/_registry.hexa 의 axis_label_internal field** — 의 axis-3/6/8/N 라벨 (비-연속) 을 hook 안에 보존. 새 axis 라벨도 비-연속 가능 (axis-N+1 라벨이 internal 에선 axis-12 가 되어도 무방).
 5. **C5 본 cycle 의 PROXY_PPL deprecate 작업과 직결** — verifier axis 가 1순위인 이유는 PROXY_PPL → v5.2 cascade 가 이미 코드 안에 산재. axis 화 = 정리 + 미래 V7 add 시 plugin 으로 흡수.
 
 ---
@@ -304,9 +304,9 @@ axis-N+1 hook 은 **큐브 위에 한 층 더 얹는 것** 이에요. "axis 의 
 ## 9. cross-link
 
 - 본 doc SSOT — `docs/anima_chat_orchestra_axis_n1_hook_plan_2026_05_09.md` (이 파일)
-- own 41 chat lane plugin pattern entry — `.roadmap.cli` `cli.chat_lane_plugin_pattern_2026_05_09`
-- own 41 init-pattern plugin entry — `.roadmap.cli` `cli.chat_init_pattern_plugin_2026_05_09`
-- own 41 transport plugin entry — `.roadmap.cli` `cli.chat_transport_plugin_2026_05_09`
+- chat lane plugin pattern entry — `.roadmap.cli` `cli.chat_lane_plugin_pattern_2026_05_09`
+- init-pattern plugin entry — `.roadmap.cli` `cli.chat_init_pattern_plugin_2026_05_09`
+- transport plugin entry — `.roadmap.cli` `cli.chat_transport_plugin_2026_05_09`
 - 4 개 registry SSOT — `tool/anima_cli/chat/{lanes,init_patterns,transports}/_registry.hexa` + `tool/anima_cli/chat/lanes/benchmark.hexa#modes`
 - yaml SSOT mirror — `anima/registry/anima_artifact_registry.yaml#chat_lanes / chat_modes / chat_init_patterns / chat_transports`
 - substrate quality main path B (다음 cycle 본진) — `docs/anima_substrate_quality_amplification_spec_2026_05_09.ai.md`

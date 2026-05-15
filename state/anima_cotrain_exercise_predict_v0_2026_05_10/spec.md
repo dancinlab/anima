@@ -1,9 +1,9 @@
 # BG-COTRAIN-EXERCISE-PREDICT-V0 — spec
 
-> own 16 — $0 design + analysis only
+> — $0 design + analysis only
 > raw#15 additive — option (c) actual fire NOT modified
-> own 22 — REBORN.md direct append BLOCKED (dispatcher §53 slot)
-> own 38 — doc save state/anima_cotrain_exercise_predict_v0_2026_05_10/{spec.md, prediction.md, hook_spec.md, falsifier_predict.md}
+> — REBORN.md direct append BLOCKED (dispatcher §53 slot)
+> — doc save state/anima_cotrain_exercise_predict_v0_2026_05_10/{spec.md, prediction.md, hook_spec.md, falsifier_predict.md}
 
 ## §0 mission
 
@@ -28,7 +28,7 @@
 - estimated breakdown: H100 1× × 1.0–1.5h = $2.99–4.49; ckpt pull (4 × 75MB intermediate + 1 × 75MB final) safety margin negligible (FT ckpts already 74MB each per `state/anima_convo_5k_ft_extended_2026_05_10/convo_5k_ft_ext_step_*.pt`).
 - $2–4 envelope verified within KM-CONVO-FT-EXT $1.71 + 1.5× scale precedent.
 - F-FOUNDATION-2 trigger remains > $15 — 4× envelope upper, comfortable margin.
-- own 30 mandate: ckpts pull mandatory before pod release; intermediate cadence 5K/10K/15K/20K/final.
+- mandate: ckpts pull mandatory before pod release; intermediate cadence 5K/10K/15K/20K/final.
 
 ## §3 cotrain-exercise hypothesis lineage
 
@@ -53,7 +53,7 @@
 
 Detailed wire spec: see `hook_spec.md` (this BG).
 
-## §5 deliverables (own 38 + own 22)
+## §5 deliverables (+)
 
 Files saved in this BG (all under `state/anima_cotrain_exercise_predict_v0_2026_05_10/`):
 
@@ -62,7 +62,7 @@ Files saved in this BG (all under `state/anima_cotrain_exercise_predict_v0_2026_
 - `hook_spec.md` — H1 + H2 wire spec + grad-leak verifier protocol
 - `falsifier_predict.md` — F-PREDICT-V0-1/2/3 explicit + post-fire match scoring rubric
 
-REBORN.md append: blocked per own 22 — dispatcher §53 slot path only.
+REBORN.md append: blocked per — dispatcher §53 slot path only.
 .roadmap.* SSOT: untouched per raw#15 additive.
 
 ## §6 fire keyword

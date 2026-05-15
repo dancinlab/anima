@@ -3,25 +3,25 @@
 #  tool/anima_corpus_hf_upload.py
 #
 #  PURPOSE
-#    own 36 mandate-1/2/3 destination 의무 응용 (FIRST CYCLE) —
+# mandate-1/2/3 destination 의무 응용 (FIRST CYCLE) —
 #    L4 corpus 3 files (Tier A persona / Tier B dialogue / BG-LD pref pairs)
 #    → HF dancinlab dataset repos upload (private + Card metadata).
 #
 #    이 cycle 직전 (loop iter 1 commit 0116a35d) 에서 102MB persona corpus 가
-#    git 에 push 됐다가 GitHub 100MB 한도로 reject 된 incident 가 own 36 의
+# git 에 push 됐다가 GitHub 100MB 한도로 reject 된 incident 가 의
 #    직접 trigger. iter 2 commit 88787533 에서 retroactive cleanup (3 파일
-#    git untrack + .gitignore 강화) 완료. 본 script 는 own 36 mandate-1/2/3
+# git untrack + .gitignore 강화) 완료. 본 script 는 mandate-1/2/3
 #    destination 의무 (HF dancinlab dataset upload) 첫 응용.
 #
 #  COMPLIANCE
-#    own 36 mandate-2 (corpus ≥10MB → HF dataset upload 의무)
-#    own 36 mandate-3 (preference pairs ≥10MB → HF dataset upload 의무)
-#    own 36 mandate-8 (HF dancinlab + Flavor B + private + Card metadata)
-#    own 31 mandate-1 (org = dancinlab)
-#    own 31 mandate-4 Flavor B (BG iteration naming convention)
-#    own 31 mandate-8 (visibility default = private)
-#    own 31 mandate-9 (HF Card metadata mandatory tags)
-#    own 17 (anima-native curated — 외부 LLM dump / wiki 없음)
+# mandate-2 (corpus ≥10MB → HF dataset upload 의무)
+# mandate-3 (preference pairs ≥10MB → HF dataset upload 의무)
+# mandate-8 (HF dancinlab + Flavor B + private + Card metadata)
+# mandate-1 (org = dancinlab)
+# mandate-4 Flavor B (BG iteration naming convention)
+# mandate-8 (visibility default = private)
+# mandate-9 (HF Card metadata mandatory tags)
+# (anima-native curated — 외부 LLM dump / wiki 없음)
 #    raw#9 / raw#37 (HF upload script .py allowed; chat path 외)
 #    raw#10 honest C3 (--dry-run default, --apply requires explicit consent)
 #
@@ -30,7 +30,7 @@
 #    python3 tool/anima_corpus_hf_upload.py --apply      (real upload)
 #    python3 tool/anima_corpus_hf_upload.py --verify     (verify post-upload)
 #
-#  FILES (own 36 mandate-2/3 scope, 본 cycle):
+# FILES (mandate-2/3 scope, 본 cycle):
 #    1. state/anima_persona_tier_a_2026_05_08.txt          103.59MB  →
 #       dancinlab/anima-persona-tier-a-corpus-2026-05-08
 #    2. state/anima_dialogue_tier_a_iter2_2026_05_08.txt   72.78MB   →
@@ -55,12 +55,12 @@ import time
 from pathlib import Path
 
 ANIMA_ROOT = Path("/Users/ghost/core/anima")
-HF_ORG = "dancinlab"  # own 31 mandate-1
+HF_ORG = "dancinlab" # mandate-1
 HF_TOKEN_FILE = Path(os.path.expanduser("~/.cache/huggingface/token"))
 LOG_PATH = ANIMA_ROOT / "state" / "anima_corpus_hf_upload_log.jsonl"
 CYCLE_DATE = "2026-05-08"
 
-# ─── 3 corpus files (own 36 mandate-2/3 scope) ────────────────────────────
+# ─── 3 corpus files (mandate-2/3 scope) ────────────────────────────
 CORPUS_PLAN = [
     {
         "file": ANIMA_ROOT / "state" / "anima_persona_tier_a_2026_05_08.txt",
@@ -96,7 +96,7 @@ CORPUS_PLAN = [
             "chat_template_ratio": 0.2895,
             "n_user_turns": 136073,
             "n_assistant_turns": 136140,
-            "format": "사용자: <Q>\\n도우미: <A>\\n\\n (own 20 chat-template marginal 28.95%)",
+            "format": "사용자: <Q>\\n도우미: <A>\\n\\n (chat-template marginal 28.95%)",
             "iter": "iter-2 (12.96MB → 72.78MB ext)",
             "compliance_own": [17, 18, 19, 20, 31, 36],
         },
@@ -130,7 +130,7 @@ def hf_token() -> str:
 
 
 def build_card_md(plan: dict) -> str:
-    """Generate README.md (HF Dataset Card) per own 31 mandate-9."""
+    """Generate README.md (HF Dataset Card) per mandate-9."""
     meta = plan["card_meta"]
     repo_id = plan["repo_id"]
     name = repo_id.split("/")[-1]
@@ -163,7 +163,7 @@ def build_card_md(plan: dict) -> str:
         f"- Density: {meta.get('density','n/a')}",
     ]
     if "chat_template_ratio" in meta:
-        body_lines.append(f"- Chat-template ratio: {meta['chat_template_ratio']*100:.2f}% (own 20 ≥30% target marginal)")
+        body_lines.append(f"- Chat-template ratio: {meta['chat_template_ratio']*100:.2f}% (≥30% target marginal)")
     if "n_user_turns" in meta:
         body_lines.append(f"- User turns: {meta['n_user_turns']:,} / Assistant turns: {meta['n_assistant_turns']:,}")
     if "files_scanned" in meta:
@@ -236,7 +236,7 @@ def upload_one(plan: dict, token: str) -> dict:
     f = plan["file"]
     t0 = time.time()
     try:
-        # own 31 mandate-8: private default
+        # mandate-8: private default
         api.create_repo(
             repo_id=repo_id,
             repo_type="dataset",
@@ -249,16 +249,16 @@ def upload_one(plan: dict, token: str) -> dict:
             path_in_repo=f.name,
             repo_id=repo_id,
             repo_type="dataset",
-            commit_message=f"own 36 mandate-2/3 destination 의무 — {plan['kind']} corpus upload (cycle {CYCLE_DATE})",
+            commit_message=f" mandate-2/3 destination 의무 — {plan['kind']} corpus upload (cycle {CYCLE_DATE})",
         )
-        # upload Dataset Card README.md (own 31 mandate-9)
+        # upload Dataset Card README.md (mandate-9)
         card_md = build_card_md(plan)
         api.upload_file(
             path_or_fileobj=card_md.encode("utf-8"),
             path_in_repo="README.md",
             repo_id=repo_id,
             repo_type="dataset",
-            commit_message="own 31 mandate-9 — HF Dataset Card metadata emit",
+            commit_message=" mandate-9 — HF Dataset Card metadata emit",
         )
         elapsed = time.time() - t0
         return {
@@ -307,7 +307,7 @@ def verify_one(plan: dict, token: str) -> dict:
 
 
 def main():
-    ap = argparse.ArgumentParser(description="own 36 응용 — anima corpus HF dancinlab dataset upload")
+    ap = argparse.ArgumentParser(description=" 응용 — anima corpus HF dancinlab dataset upload")
     g = ap.add_mutually_exclusive_group()
     g.add_argument("--dry-run", action="store_true", default=True, help="Plan only (default)")
     g.add_argument("--apply", action="store_true", help="Real upload (사용자 explicit consent 필요)")
@@ -316,8 +316,8 @@ def main():
 
     mode = "verify" if args.verify else ("apply" if args.apply else "dry-run")
     print(f"[anima_corpus_hf_upload] mode={mode} cycle={CYCLE_DATE}")
-    print(f"[anima_corpus_hf_upload] org={HF_ORG} (own 31 mandate-1)")
-    print(f"[anima_corpus_hf_upload] files={len(CORPUS_PLAN)} (own 36 mandate-2/3 scope)")
+    print(f"[anima_corpus_hf_upload] org={HF_ORG} (mandate-1)")
+    print(f"[anima_corpus_hf_upload] files={len(CORPUS_PLAN)} (mandate-2/3 scope)")
     print()
 
     token = None

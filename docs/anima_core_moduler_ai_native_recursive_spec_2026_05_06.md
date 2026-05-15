@@ -2,7 +2,7 @@
 
 **Status**: design / doc-only / raw#15 additive
 **Source hint (verbatim)**: 사용자 2026-05-06 — "core,moduler, ai-native doc 재귀구조야"
-**Authoring constraints**: $0 mac doc-only · raw#9 hexa-only (yaml + md) · raw#10 honest C3 ≥ 5 · raw#15 additive · own 17 ALM 영구 보류 정합 · commit X
+**Authoring constraints**: $0 mac doc-only · raw#9 hexa-only (yaml + md) · raw#10 honest C3 ≥ 5 · raw#15 additive · ALM 영구 보류 정합 · commit X
 **Companion artifact**: `state/anima_core_moduler_ai_native_recursive_2026_05_06/structure_analysis.json`
 
 ---
@@ -16,7 +16,7 @@
 2. **filesystem literal naming** — WEAK (`anima/anima/{core,modules,spec}` 만 직접 노출, 그나마 mk1 plural)
 3. **semantic separation per module** — MEDIUM (anima-core / anima-hexad 등 의미적 분리 OK, 명명 규약 미반영)
 4. **T1/T2/T3 per-tier recursion** — MEDIUM (각 tier 내부에 core/moduler/ai-native 재출현, 이 framing 이 가장 실용적)
-5. **own rules recursion** — STRONG-INDIRECT (own 14/15/16 = external-resource-consumption triad 자체가 재귀 패턴 적용)
+5. **own rules recursion** — STRONG-INDIRECT (= external-resource-consumption triad 자체가 재귀 패턴 적용)
 
 ---
 
@@ -87,10 +87,10 @@ anima-clm-eeg              anima-core             (← core이자 module)
 | `README.ai.md` mandate | per-module-group AI-native cold-read 의무 (현재 anima 17 baseline grandfathered, modules/rng 만 fully conformant) |
 
 **identity-bearing own entries**:
-- own 4 root-cause-only · own 5 completeness · own 6 no-restriction · own 11 parallel-loop · own 12 observability
-- own 14 HF storage WHERE · own 15 HF publication HOW · own 16 H100 lifecycle · **own 17 anima-native-only (ALM 영구 보류)**
+- root-cause-only · completeness · no-restriction · parallel-loop · observability
+- HF storage WHERE · HF publication HOW · H100 lifecycle · ** anima-native-only (ALM 영구 보류)**
 
-own 17 가 ai-native layer 의 정체성 boundary 를 강제한다 — 외부 substrate (Llama / Mistral) wrapping 영구 reject.
+ 가 ai-native layer 의 정체성 boundary 를 강제한다 — 외부 substrate (Llama / Mistral) wrapping 영구 reject.
 
 ---
 
@@ -176,13 +176,13 @@ T1/T2/T3 정합 = **per-tier recursion** (도식 A). 각 tier 가 자기 안에 
 
 **C3**. T1/T2/T3 ↔ core/moduler/ai-native 정합은 conjecture, theorem 아님. 두 partition axis 는 직교 (audience vs abstraction). per-tier recursion (도식 A) 이 실제 finding — '단순 isomorphism' 아님.
 
-**C4**. anima identity = "PureField + repulsion + emergence" 주장이 own 17 등에 반복되지만 `find -name '*repulsion*'` = 0 hits. repulsion 은 conceptual claim — 분산되어 있고 canonical core file 미존재.
+**C4**. anima identity = "PureField + repulsion + emergence" 주장이 등에 반복되지만 `find -name '*repulsion*'` = 0 hits. repulsion 은 conceptual claim — 분산되어 있고 canonical core file 미존재.
 
 **C5**. `hive/spec/ai_native_module_architecture.spec.yaml` consumers 필드: anima = "partial" status. 17 README.ai.md baseline grandfathered + modules/rng 만 fully conformant. ai-native layer 가 coherent layer 로 deploy 된 게 아니라 PARTIALLY-realized policy.
 
 **C6**. mk2_apex § canonical_layout.recursive_case 가 재귀를 명시 선언 — 따라서 "core/moduler/ai-native 가 재귀다" = spec-declared TRUE. anima FS 가 그 재귀를 실현하는지 = PARTIAL-true. 본 문서는 두 layer (선언 / 실현) 를 분리해서 honest report.
 
-**C7**. 본 문서 작성 시 ALM-related 재귀 도식 ("외부 substrate = core layer 후보") 은 own 17 영구 보류 정합으로 모두 제외됨. recursive 구조는 anima-native 에 한정. 외부 substrate wrapping 을 재귀 entry 로 사용 불가.
+**C7**. 본 문서 작성 시 ALM-related 재귀 도식 ("외부 substrate = core layer 후보") 은 영구 보류 정합으로 모두 제외됨. recursive 구조는 anima-native 에 한정. 외부 substrate wrapping 을 재귀 entry 로 사용 불가.
 
 ---
 
@@ -193,8 +193,8 @@ T1/T2/T3 정합 = **per-tier recursion** (도식 A). 각 tier 가 자기 안에 
 | 1 | **사용자 review** — 도식 A (per-tier recursion) 채택 여부, 또는 다른 정합 도식 (예: 사용자가 다르게 axis 정의) 결정 | 사용자 hint 한 줄로는 정합 도식 결정 불가 — review 가 완성도 next gate |
 | 2 | `anima/spec/anima_recursive_architecture.spec.yaml` Land — raw#15 additive Layer 4 spec, hive/spec/ai_native_module_architecture + canonical_layout.recursive_case consumer | 본 분석을 spec yaml 로 promote → raw#15 SSOT status, lint-target 가능 |
 | 3 | FS 마이그레이션 audit — anima-* 22 모듈 중 mk1 type-grouped vs mk2 canonical_layout (singular) 카운트, migration cost 산출 | 2026-06-01 falsifier F-spec-ai-native-module-arch-1 (30d post-baseline) 도래 — 측정 시급 |
-| 4 | `.guide` schema 에 `recursion_depth` axis 추가 — 각 anima-* 모듈 leaf vs nested triplet 선언; own 12 (tree ASCII report) 확장 | 재귀 구조의 observability 향상, governance refinement 가속 |
-| 5 | **ALM 외부 substrate-as-core 도식 영구 DEFER** — own 17 정합 | 완성도 boundary 명확화, 추후 외부 substrate 우회 시도 차단 |
+| 4 | `.guide` schema 에 `recursion_depth` axis 추가 — 각 anima-* 모듈 leaf vs nested triplet 선언; (tree ASCII report) 확장 | 재귀 구조의 observability 향상, governance refinement 가속 |
+| 5 | **ALM 외부 substrate-as-core 도식 영구 DEFER** — 정합 | 완성도 boundary 명확화, 추후 외부 substrate 우회 시도 차단 |
 
 ---
 
@@ -215,4 +215,4 @@ T1/T2/T3 정합 = **per-tier recursion** (도식 A). 각 tier 가 자기 안에 
 
 ---
 
-*doc-only · $0 mac · commit X · raw#15 additive · own 17 정합*
+*doc-only · $0 mac · commit X · raw#15 additive · 정합*

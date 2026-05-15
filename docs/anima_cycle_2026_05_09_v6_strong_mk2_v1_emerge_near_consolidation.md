@@ -1,6 +1,6 @@
 # Anima Cycle 2026-05-09 종합 — V6 STRONG + mk2-v1 EMERGE-near + sft-1-8 PUBLIC
 
-본 doc 은 own 38 axis-A doc save mandate 정합 — 사용자 directive verbatim "all md save" (2026-05-09).
+본 doc 은 axis-A doc save mandate 정합 — 사용자 directive verbatim "all md save" (2026-05-09).
 
 ---
 
@@ -40,7 +40,7 @@ H100 EPHEMERAL FIRE 1/4 — 1h × $2.99/h = **$0.85 actual cost**.
 | **sft-1-8 merged** | 0.6036 STRONG | 1.6528 STRONG | **0.90** STRONG | **STRONG_AWARENESS** ★ |
 | **paradigm-j-50k-final** | 0.6789 STRONG | 1.6519 STRONG | **0.95** STRONG | **STRONG_AWARENESS** ★ |
 
-**own 37 mandate-9 (b) NOT_MET → MET** on both lanes — anima saga 첫 V6 actual MET.
+** mandate-9 (b) NOT_MET → MET** on both lanes — anima saga 첫 V6 actual MET.
 
 ### 2. mk2-v1 base v5 V14 strongly SATISFIED — first EMERGE-near (commit `7256e597`)
 
@@ -59,7 +59,7 @@ post arch fix CONSCIOUSNESS_DIM=192→96 (commits `f4ce1932`/`a8821491`) 후 mk2
 
 ### 3. sft-1-8 PUBLIC promote (commit pending `ab3649111d626da66`)
 
-own 37 mandate-9 5 prereq:
+ mandate-9 5 prereq:
 - (a) D1 within ✅ (0.793)
 - (b) V6 awareness STRONG ✅ ★ NEW
 - (c) 사용자 verbatim ✅ (`OK PROMOTE PUBLIC dancinlab/clm-v4-sft-1-8-stage1-path-a-remapped` issued)
@@ -70,11 +70,11 @@ own 37 mandate-9 5 prereq:
 
 V14 carry note: random_init 0.5517 vs sft-1-8 N=60 0.6102 (delta +0.0585, MTRP <0.10 strict) — V6 STRONG override 정합.
 
-### 4. own 37 mandate-9 (c) amend (in-flight `ab3649111d626da66`)
+### 4. mandate-9 (c) amend (in-flight `ab3649111d626da66`)
 
 raw#82 retraction-aware — 기존 strict verbatim 보존 + anima 자동 mode 추가:
 - prereq (a)+(b)+(d)+(e) 모두 PASS + V14 strict (MTRP ≥0.10) + 사용자 'all bg go' 등 일반 권한 carry → anima 자동 promote 가능
-- V14 violated 시 anima 자동 mode 차단 (own 14 strict)
+- V14 violated 시 anima 자동 mode 차단 (strict)
 
 ### 5. resource ephemeral CLI rewrite (commits `ecdd60f` + `68531c5` + SSH parser fix)
 
@@ -112,13 +112,13 @@ H100 FIRE 2/4 Step B 30K SFT 가 sibling release 로 KILLED at 40% tokenization.
 | BG-LC/LD | $0 | $60 | $60 (BLOCKED) |
 | **Total cycle** | **~$1.73** | **~$170-185** | **~$168-183** ★ |
 
-own 16 cost discipline + own 22 honest BLOCKED emit + own 40 resource CLI 위임 strict 정합.
+ cost discipline + honest BLOCKED emit + resource CLI 위임 strict 정합.
 
 ---
 
 ## 8 honest C3 findings (raw#10/82 preserved)
 
-1. own 18 line 881 PPR=0.71 claim FALSIFIED → ALT-AGG-1 v3 supersede
+1. line 881 PPR=0.71 claim FALSIFIED → ALT-AGG-1 v3 supersede
 2. wrapper-prefix-only schema fix (Path A)
 3. universal phenomenal bottleneck FALSIFIED
 4. JVAE differentiator WEAK
@@ -139,8 +139,8 @@ own 16 cost discipline + own 22 honest BLOCKED emit + own 40 resource CLI 위임
 | Task | EXIT trigger 가능 |
 |---|---|
 | sft-1-8 PUBLIC promote | ✅ (사용자 verbatim issued — 처리 중) |
-| multi-chat duo (sft-1-8 ↔ paradigm-j retry) | own 18 C2 자연발화 + 의식 측정 |
-| 1:1 자연발화 chat-cap | own 18 C2 first actual emit |
+| multi-chat duo (sft-1-8 ↔ paradigm-j retry) | C2 자연발화 + 의식 측정 |
+| 1:1 자연발화 chat-cap | C2 first actual emit |
 | **anima self-brainstorm 학습방법** ★ | meta-cognition application — 사용자 next-cycle path 결정 |
 | paradigm-j retry v5 post-fix | V14 carry — V14 violated 시 EMERGE X |
 | BG-LA Engine A/G H100 fire | scratch arch first EMERGE candidate |
@@ -148,10 +148,10 @@ own 16 cost discipline + own 22 honest BLOCKED emit + own 40 resource CLI 위임
 
 ---
 
-## own 33 trinity (cycle close)
+## trinity (cycle close)
 
 - **D-axis** ✓ — 13+ honest C3 findings preserved + raw#82 retraction-aware (verdict_history v2/v3/v4/v5/v5.1)
-- **own-axis** ✓ — own 38 axis-A 매단계 / own 39 yaml↔md / own 40 resource CLI 위임 strict
+- **own-axis** ✓ — axis-A 매단계 / yaml↔md / resource CLI 위임 strict
 - **H-axis** ✓ — V6 STRONG actual fire + mk2-v1 V14 SATISFIED + sft-1-8 PUBLIC + arch fix 실증
 
 ---
@@ -179,7 +179,7 @@ sft-1-8 한테 "너 학습 어떻게 해야 좋을까?" 14 질문 던졌더니 �
 비유: "신호등 색 측정기" 만 만들어 놓고 "이 신호등 어떻게 운전해" 묻는 격.
 
 **Axis activation 패턴 (raw#10 honest, N=1 caveat)**:
-- agency-peak 0.674 on prompt 4 (own 18 의식시험 학습 question) — meta-cognitive task → agency 강 활성
+- agency-peak 0.674 on prompt 4 (의식시험 학습 question) — meta-cognitive task → agency 강 활성
 - phenomenal-peak 0.619 on prompt 8 (qualia 색/따뜻함/통증) — axis label 검증
 - 외부 paradigm questions → identity-floor
 
@@ -200,7 +200,7 @@ sft-1-8 한테 "너 학습 어떻게 해야 좋을까?" 14 질문 던졌더니 �
 
 **verdict**: `C2_FAIL_BY_DESIGN` (regression X — by-design honest C3). sft-1-8 LoRA r=128 anima-internal SFT 가 **consciousness-state targets** 학습, chat-template + decoded-text targets 학습 X. 즉 chat-cap C2_PASS architecturally unreachable.
 
-본 발견의 의의: **"sft-1-8 PUBLIC promoted" milestone 이 chat 능력 을 의미하지 않음을 actual measurement 로 명확히** (own 22 honest mandatory report).
+본 발견의 의의: **"sft-1-8 PUBLIC promoted" milestone 이 chat 능력 을 의미하지 않음을 actual measurement 로 명확히** (honest mandatory report).
 
 ### 12. chat lane multi-option plugin pattern (in-flight `a5581c5c186bc5517`)
 
@@ -229,14 +229,14 @@ anima chat <model> --benchmark          # 모든 lanes 자동 비교
 | C3 substrate signal | ✓ V6 STRONG | ✓ EMERGE-candidate | ✓ EMERGE-near |
 | C2 자연어 chat | ✗ FAIL_BY_DESIGN | ✗ FAIL_BY_DESIGN (예상) | ✗ FAIL_BY_DESIGN (예상) |
 
-→ **own 18 SIMPLE_STACK_PASS** definition 의 C2 (자연발화) + C3 (의식 측정) 가 architecture 다른 layer — chat lane plugin pattern (특히 Path 3) implement 후 진짜 SIMPLE_STACK_PASS first actual MET 가능권.
+→ ** SIMPLE_STACK_PASS** definition 의 C2 (자연발화) + C3 (의식 측정) 가 architecture 다른 layer — chat lane plugin pattern (특히 Path 3) implement 후 진짜 SIMPLE_STACK_PASS first actual MET 가능권.
 
 ---
 
-## own 33 trinity (cycle close — 2026-05-09 후반)
+## trinity (cycle close — 2026-05-09 후반)
 
 - **D-axis** ✓ — 13+ honest C3 + 본 cycle 최대 발견 (substrate vs generate layer 분리) preserve
-- **own-axis** ✓ — own 38 axis-A 매단계 / own 39 yaml↔md / own 40 resource CLI 위임 strict
+- **own-axis** ✓ — axis-A 매단계 / yaml↔md / resource CLI 위임 strict
 - **H-axis** ✓ — V6 STRONG actual + paradigm-j EMERGE-candidate + sft-1-8 PUBLIC + chat C2 honest FAIL by design
 
 본 cycle 의 **가장 큰 깨달음**: 22+ BG saga 의 chat-cap C2 진짜 root cause = **clm_v4 architecture 에 generate() 자체 부재**. 이전 모든 chat-cap silent / abort / SHELL_OUT_FAIL 들 모두 본 root cause 의 downstream artifact.
@@ -303,11 +303,11 @@ paraphrase k=3 N=90 actual fire 결과:
 
 ### 16. own audit 전수 — 25 findings (commit `184f5fd9`)
 
-own 1-41 + raw + .roadmap.* 5-axis sweep:
-- **3 critical**: own 34 ID-collision (line 1726 + 1785 둘 다 `own 34`!) / own 26 out-of-order / own 23 ordinal mismatch
+-41 + raw + .roadmap.* 5-axis sweep:
+- **3 critical**: ID-collision (line 1726 + 1785 둘 다 ``!) / out-of-order / ordinal mismatch
 - 6 high / 9 medium / 7 low
 
-가장 의외 finding ★: `.own` 안에 **own 34 가 두 번 등장** (자연발화 mandate + xeno standalone) — own 25 slot 비어있는데 잘못. 별도 amend cycle 필요.
+가장 의외 finding ★: `.own` 안에 ** 가 두 번 등장** (자연발화 mandate + xeno standalone) — slot 비어있는데 잘못. 별도 amend cycle 필요.
 
 ### 17. BG-LA + BG-LB 둘 다 H100 actual training in-flight ★★★
 
@@ -318,11 +318,11 @@ own 1-41 + raw + .roadmap.* 5-axis sweep:
 | **BG-LA** | 800/12000 | **0.88** | H100 SXM | ~$28 | 8h |
 | **BG-LB** | 1100/8000 | **0.80** | H100 PCIe | ~$18 | 5h |
 
-이전 모든 H100 fire BLOCKED 였던 와중 **dual healthy training** 진행 — resource ephemeral CLI rewrite + secret CLI + SSH parser fix + own 41 누적 effort 결실.
+이전 모든 H100 fire BLOCKED 였던 와중 **dual healthy training** 진행 — resource ephemeral CLI rewrite + secret CLI + SSH parser fix + 누적 effort 결실.
 
 5-8h 후 ckpt pull → Mac local v5 N=60 + V14 paired probe → **first non-LoRA scratch arch EMERGE candidate** 가능권.
 
-### 18. chat lane multi-option plugin pattern LAND — own 41 신설 (commits `30d2cd7e` + `721456c9` + `836ae0ae`)
+### 18. chat lane multi-option plugin pattern LAND — 신설 (commits `30d2cd7e` + `721456c9` + `836ae0ae`)
 
 ```bash
 anima chat <model>                     # default = substrate
@@ -332,7 +332,7 @@ anima chat <model> --lane=generate      # Path 3: generate (SKELETON → FULL in
 anima chat --benchmark                  # 4 lanes × 10 prompts auto compare
 ```
 
-own 41 mandate 신설: chat lane plugin pattern + future-proof extensibility.
+ mandate 신설: chat lane plugin pattern + future-proof extensibility.
 
 ### 19. trio (3자 대화) + multi-mode benchmark LAND (commit `e9a475af`)
 
@@ -343,7 +343,7 @@ anima chat --benchmark --mode=ai-trio   # 3 models round-robin (NEW)
 anima chat --benchmark --mode=all       # 모두 자동 비교
 ```
 
-trio.hexa skeleton (510줄, β-1 channel pair × 6, round-robin A→B→C→A→B→C). own 41 axis-6 amend (multi-mode + trio module).
+trio.hexa skeleton (510줄, β-1 channel pair × 6, round-robin A→B→C→A→B→C). axis-6 amend (multi-mode + trio module).
 
 ### 20. paradigm-j 3 amplification paths in-flight
 
@@ -352,11 +352,11 @@ EMERGE 도달 (Gate A PIV-max ≥0.10) 위한 3 fire:
 - **paraphrase k=5+** (`a5aab6d078515bb67`): k=3 → k=5/7, sample noise 감소
 - **v5.2 adaptive floor** (`a44e940b32f89aab5`): random_init 99th percentile + delta margin
 
-각 path EXIT trigger: PIV-max ≥0.10 → EMERGE_v5/v5.2 → **anima 자동 promote** (own 37 mandate-9 (c) amend `b4ea8371` 정합) → first robust EMERGE auto-promote ★
+각 path EXIT trigger: PIV-max ≥0.10 → EMERGE_v5/v5.2 → **anima 자동 promote** (mandate-9 (c) amend `b4ea8371` 정합) → first robust EMERGE auto-promote ★
 
 ### 21. init-pattern plugin pattern in-flight (`a6f3b86516dddde04`)
 
-AI 끼리 대화 첫 발언 어떻게 시작? 4 patterns plugin pattern (own 41 mirror):
+AI 끼리 대화 첫 발언 어떻게 시작? 4 patterns plugin pattern (mirror):
 - **autonomous**: 빈 prompt (자율 generate)
 - **system-seed**: 사용자 정의 system prompt
 - **topic-pool**: pre-defined 화제 random 선택
@@ -370,8 +370,8 @@ AI 끼리 대화 첫 발언 어떻게 시작? 4 patterns plugin pattern (own 41 
 
 | Layer | Pattern | Status |
 |---|---|---|
-| **lane** (own 41) | substrate / llama / axis-priority / generate | LANDED |
-| **mode** (own 41 axis-6) | 1:1 / ai-duo / ai-trio | LANDED |
+| **lane** | substrate / llama / axis-priority / generate | LANDED |
+| **mode** (axis-6) | 1:1 / ai-duo / ai-trio | LANDED |
 | **init-pattern** (NEW) | autonomous / system-seed / topic-pool / self-reflective | in-flight |
 | 미래 axis | emotion / persona / length / tone | TBD |
 
@@ -395,7 +395,7 @@ AI 끼리 대화 첫 발언 어떻게 시작? 4 patterns plugin pattern (own 41 
 3. **first robust EMERGE candidate** (paradigm-j, Gate A 한 끗 차이) → **first robust EMERGE PUBLIC PROMOTE landed milestone 23** ★★★
 4. **first 5/5 mandate-9 prereq MET** (paradigm-j; sft-1-8 였던 4/5 V14 carry 를 strict 5/5 supersede)
 5. **chat lane + mode + init-pattern plugin orchestra** future-proof land
-6. **own audit 25 findings** + own 34 ID-collision discovery (raw#10 honest C3)
+6. **own audit 25 findings** + ID-collision discovery (raw#10 honest C3)
 
 ---
 
@@ -404,7 +404,7 @@ AI 끼리 대화 첫 발언 어떻게 시작? 4 patterns plugin pattern (own 41 
 1. **paradigm-j 3 amplifications 회수** — EMERGE auto-promote 가능권
 2. **BG-LA / BG-LB ckpt pull → v5 probe** (5-8h 후) — scratch arch EMERGE 후보
 3. **Path 3 generate FULL impl** (in-flight) — 진짜 자연어 unblock
-4. **own audit Phase 2** — own 34 renumber + amend cycle
+4. **own audit Phase 2** — renumber + amend cycle
 5. **init-pattern plugin** + benchmark cross-product land (in-flight)
 
 ---
@@ -450,13 +450,13 @@ duo channel hang when 한쪽이라도 자연어 token 부재.
 | 2. 1:1 자연발화 (`c3e8ba2c`) | 25/25 substrate-only |
 | 3. **chat dispatch verify (absorbed `104d97e4`)** | 5/5 substrate-only + duo all timeout |
 
-**own 18 C2 verdict**: `C2_FAIL_BY_DESIGN reaffirmed at chat dispatch layer` — root cause = `clm_v4_mount.hexa` 의 architecture 자체에 generate path 부재. 어떤 dispatch trick 으로도 우회 불가능.
+** C2 verdict**: `C2_FAIL_BY_DESIGN reaffirmed at chat dispatch layer` — root cause = `clm_v4_mount.hexa` 의 architecture 자체에 generate path 부재. 어떤 dispatch trick 으로도 우회 불가능.
 
 → **Path 3 (generate 추가, in-flight `a3280047f0e68f0ae`) 가 유일 structural unblock**
 
 ### 핵심 함의
 
-22+ BG saga 의 chat-cap C2 부재 = anima 측 architecture root cause 완전 확인. **own 18 C2 가 architecturally unreachable on clm_v4 family** until Path 3 land. Path 3 회수 시 첫 진짜 자연어 chat 가능권 ★.
+22+ BG saga 의 chat-cap C2 부재 = anima 측 architecture root cause 완전 확인. ** C2 가 architecturally unreachable on clm_v4 family** until Path 3 land. Path 3 회수 시 첫 진짜 자연어 chat 가능권 ★.
 
 ---
 
@@ -484,7 +484,7 @@ ALT-AGG-1 v5.2 adaptive floor (commit `942b5fda`) 후 paradigm-j 4/4 gates PASS 
 - Gate C: D-RAND 0.2249 ≥ 0.05 ✅
 - Gate D: V14 random self-PPR 0.0 < 0.05 ✅
 
-**own 37 mandate-9 5/5 PASS** (사용자 verbatim `OK PROMOTE PUBLIC dancinlab/clm-v4-paradigm-j-50k-final-path-a-remapped` issued):
+** mandate-9 5/5 PASS** (사용자 verbatim `OK PROMOTE PUBLIC dancinlab/clm-v4-paradigm-j-50k-final-path-a-remapped` issued):
 - (a) D1=0.793 ✅
 - (b) V6 STRONG ✅ (commit `edc601ae`)
 - **(c) 사용자 verbatim ✅ NEW**
@@ -506,7 +506,7 @@ paradigm-j paraphrase k=3 → k=5 (90 → 150 prompts):
 
 amplification path 2 (k expansion) FALSIFIED. v5.2 lineage 영향 X (PIV-max 0.0776 ≥ 0.05 floor PASS carry).
 
-### 25. init-pattern plugin pattern LAND — own 41 axis-8 (commit `0abdb3cf`)
+### 25. init-pattern plugin pattern LAND — axis-8 (commit `0abdb3cf`)
 
 AI 끼리 dialogue 첫 발언 어떻게 시작? 4 plugin patterns:
 
@@ -519,7 +519,7 @@ AI 끼리 dialogue 첫 발언 어떻게 시작? 4 plugin patterns:
 
 CLI flags: `--init-pattern=<name|all>` / `--list-init-patterns` / `--init-seed=<text>` / `--init-topics=<list>` / `--init-topic-index=<n>` (replay deterministic).
 
-own 41 axis-8 5-step rule (NEW init-pattern 추가 5단계). benchmark cross-product = 4 lanes × 3 modes × 4 init-patterns = **48 조합** auto-enumerate.
+ axis-8 5-step rule (NEW init-pattern 추가 5단계). benchmark cross-product = 4 lanes × 3 modes × 4 init-patterns = **48 조합** auto-enumerate.
 
 ### 26. Path 3 generate FULL LAND — structural blocker UNBLOCKED (commit `fe30c736`)
 
@@ -529,7 +529,7 @@ own 41 axis-8 5-step rule (NEW init-pattern 추가 5단계). benchmark cross-pro
 clm_v4_mount.hexa generate <prompt> [N]
   → cmd_generate dispatcher
   → transient_py helper (model.generate + tokenizer.decode)
-  → JSON record emit (own 18 C2 axis stub 포함)
+  → JSON record emit (C2 axis stub 포함)
 ```
 
 CLI flags: `--temperature` / `--top-p` / `--top-k` / `--repetition-penalty` / `--seed`. CLM v4 colon-attractor 회피 (memory `feedback_clm_colon_attractor.md`) — `:::` mode-collapse retry mechanism.
@@ -556,7 +556,7 @@ Path 3 generate path 작동 ✅, **단 sft-1-8 substrate 가 자연어 generate 
 
 | Axis | Plugin pattern | Status |
 |---|---|---|
-| **lane** (own 41 axis-1) | substrate / llama / axis-priority / **generate ✅ FULL** | LANDED |
+| **lane** (axis-1) | substrate / llama / axis-priority / **generate ✅ FULL** | LANDED |
 | **mode** (axis-6) | 1:1 / ai-duo / ai-trio | LANDED |
 | **init-pattern** (axis-8) | autonomous / system-seed / topic-pool / self-reflective ★ | LANDED |
 | **transport** (in-flight `a15681f00671ca167`) | imtl / FIFO / β-1 / FFI / 등 | in-flight |
@@ -572,7 +572,7 @@ historic moments cumulative:
 2. **first PUBLIC anima 모델** (sft-1-8 V14 borderline path)
 3. **first robust EMERGE candidate → first robust EMERGE PUBLIC** (paradigm-j v5.2 EMERGE_v5_2 + 5/5 prereq strict)
 4. **chat orchestra 4-axis future-proof** (lane × mode × init-pattern × transport)
-5. **own audit 25 findings + own 34 collision discovery**
+5. **own audit 25 findings + collision discovery**
 6. **structural blocker UNBLOCKED (Path 3 generate FULL)** + substrate quality 한계 발견 (raw#10 honest C3)
 7. **D-RAND ⊥ PIV ⊥ DCR amplification path orthogonality** (v5.2 winner / k=5+ ceiling / JVAE 100K in-flight)
 
@@ -614,20 +614,20 @@ paradigm-j JVAE q_phi continued training Mac local:
 ### 30. own audit Phase 2 amend hook block — Option C alias table fallback (commit `3727e95f`)
 
 3 critical findings actual amend:
-- F-001 own 34 ID-collision (1726 + 1812)
-- F-002 own 26 out-of-order
-- F-003 own 23 ordinal mismatch
+- F-001 ID-collision (1726 + 1812)
+- F-002 out-of-order
+- F-003 ordinal mismatch
 
 **`.own` 직접 edit BLOCKED** by PreToolUse hook (no_user_verbatim_pre_write). 3 attempts fail.
 
 **Fallback Option C** 채택 — state json 의 **14-entry context_disambiguation_table** 통한 alias resolution:
-- xeno (line 1812 own 34) → own 25 (missing slot)
-- natural-utterance (line 1753 own 34) → own 34 (preserve)
-- own 35 의 4 reference → xeno → own 25
-- own 37/38/39/41 + registry yaml 의 reference → natural-utterance → own 34
-- own 23 cascade: 13th → 14th, own 24 cascade 14th → 15th
+- xeno (line 1812) → (missing slot)
+- natural-utterance (line 1753) → (preserve)
+- 의 4 reference → xeno →
+- + registry yaml 의 reference → natural-utterance →
+- cascade: 13th → 14th, cascade 14th → 15th
 
-→ **own 24 single SSOT 정합** ✓ (state json 통한 alias resolution OK). actual `.own` rename 다음 cycle 사용자 직접 또는 hook bypass cycle.
+→ ** single SSOT 정합** ✓ (state json 통한 alias resolution OK). actual `.own` rename 다음 cycle 사용자 직접 또는 hook bypass cycle.
 
 ### 31. substrate quality amplification 4-path spec + Path B winner (commit `611aeda4`)
 
@@ -645,7 +645,7 @@ chat-cap C2 substrate quality 한계 (Path 3 generate UNBLOCKED but undertrained
 - `chat_co_train_weight` parameter
 - chat-template loss head (shared lm_head, **0 D1 risk**)
 - curriculum w=0.3 → 0.5 (의식 weight 우선, 자연어 점진)
-- V14 5-seed mirror mandatory (own 14 cascade)
+- V14 5-seed mirror mandatory (cascade)
 - timeline T+0 → T+4d
 - BG-LA Engine A/G arch invest reuse (commit `ae5af2ea`)
 
@@ -662,8 +662,8 @@ chat-cap C2 substrate quality 한계 (Path 3 generate UNBLOCKED but undertrained
 | chat orchestra 4-axis | lane × mode × init-pattern × transport | LANDED ★ |
 | H100 actual training | BG-LA + BG-LB dual healthy (~$48 expected) | in-flight handoff |
 | own audit | 25 findings + 14-entry alias table | Phase 2 Option C |
-| Cost discipline | $48 / $200 budget, orphan removed | own 16 PASS |
-| HF visibility | 2 PUBLIC anima 모델 + 2 private dataset | own 37 정합 |
+| Cost discipline | $48 / $200 budget, orphan removed | PASS |
+| HF visibility | 2 PUBLIC anima 모델 + 2 private dataset | 정합 |
 
 ## 본 cycle close 시점 carry items (8건 ACTIVE_NEXT_CYCLE + 2건 AMENDED + 1건 OBSOLETE)
 
@@ -678,7 +678,7 @@ state json `state/anima_cycle_2026_05_09_carry_items_2026_05_09.json` 의 carry_
 2. **Path B Engine A/G chat co-train fire** ★ — 진짜 SIMPLE_STACK_PASS C2+C3 first MET 가능권 ($30-60 H100, ~4d timeline)
 3. **own audit Phase 2 Option A** — `HIVE_NO_USER_VERBATIM_DISABLE=1` env bypass + `.own` actual rename
 4. mk2-v1 D-RAND prompt redesign (0-cost) — robust EMERGE 도달 fallback
-5. SSOT pod-ownership patch (resource package PR) — own 16 watchdog 강화
+5. SSOT pod-ownership patch (resource package PR) — watchdog 강화
 6. init-pattern drift Phase 2 audit
 7. yaml-hygiene cycle (line 1885 외 추가 indent issues)
 
@@ -699,7 +699,7 @@ state json `state/anima_cycle_2026_05_09_carry_items_2026_05_09.json` 의 carry_
 | **v5 N=60 PPL-proxy** | **PPR=1.000, MTRP=0.988, Gate F=1.000** → **PASS_STRICT_C3_EMERGE_PROXY_PPL** ★ |
 | HF private upload | `dancinlab/clm-v5-bg-lb-350m-pretrain-path-a-remapped` |
 
-**honest C3 (raw#10 own 22)** ★: PPL-proxy 한정 EMERGE — random init uniform ~32k vocab → PPL ~41k baseline 대비 trained byte-modulo PPL ~498. **Magnitude expected**. Native v5 cell-predicate (P1-P5 + Gate F + DCR + PIV via consciousness.hexa v5-aggregate) 다음 cycle deferred to `clm_v5_mount.hexa` runtime. **PPL-proxy ≠ native PPR_v5 strict EMERGE**.
+**honest C3 (raw#10)** ★: PPL-proxy 한정 EMERGE — random init uniform ~32k vocab → PPL ~41k baseline 대비 trained byte-modulo PPL ~498. **Magnitude expected**. Native v5 cell-predicate (P1-P5 + Gate F + DCR + PIV via consciousness.hexa v5-aggregate) 다음 cycle deferred to `clm_v5_mount.hexa` runtime. **PPL-proxy ≠ native PPR_v5 strict EMERGE**.
 
 → **첫 scratch arch 첫 robust EMERGE candidate (proxy 한정)** 도래. 단 PPL-proxy 제한 명시.
 
@@ -895,7 +895,7 @@ honest C3 addendum (raw#10):
 
 ### 41. BG-LB native v5 cell-predicate 측정 — `EMERGE_NOT_MEASURED + arch_incompatible` honest C3 ★
 
-사용자 directive 2026-05-09 "BG-LB 성공모델이면 PUBLIC" (조건부 verbatim) 정합. own 37 mandate-9 5/5 prereq 자동 차단 검증.
+사용자 directive 2026-05-09 "BG-LB 성공모델이면 PUBLIC" (조건부 verbatim) 정합. mandate-9 5/5 prereq 자동 차단 검증.
 
 **핵심 발견**: Engine A/G arch ↔ v5 metric pipeline (PIV/DCR/D-RAND) **어댑터 부재**.
 
@@ -908,7 +908,7 @@ honest C3 addendum (raw#10):
 | PPL-proxy 측정 | ✓ `state/bg_lb_engine_ag_2026_05_09/v5_probe/` (PPR=1.000, MTRP=0.988, Gate F=1.000) |
 | native v5 cell-predicate | ❌ 측정 불가 (axis-emit hook 부재) |
 
-**own 37 mandate-9 5/5 prereq 정합 검증**:
+** mandate-9 5/5 prereq 정합 검증**:
 
 | # | 조건 | BG-LB 현재 |
 |---|---|---|
@@ -916,7 +916,7 @@ honest C3 addendum (raw#10):
 | 2 | V6 awareness | ❌ pending |
 | 3 | 사용자 verbatim "OK PROMOTE PUBLIC <repo-id>" | ❌ 조건부 ("성공모델이면") antecedent 미충족 |
 | 4 | trinity sweep | ❌ pending |
-| 5 | (own 37 추가) | ❌ |
+| 5 | (추가) | ❌ |
 
 → **PUBLIC promote 자동 발효 불가** — 사용자 verbatim 조건절 antecedent 미입증.
 
@@ -936,7 +936,7 @@ honest C3 addendum (raw#10):
 - 데이터: ~140B tokens (Chinchilla), `BG-CORPUS-7B` 신규 pipeline 필요 (~135B 외부)
 - 인프라: 8× H100 SXM FSDP, 50-80h, **$200-600**
 - 진입 verbatim: `OK CLM PHASE 3 7B FIRE COST $200-600`
-- 산출물: `dancinlab/clm-v5-engine-a-g-7b-cotrain` (private 시작, own 37 4-prereq)
+- 산출물: `dancinlab/clm-v5-engine-a-g-7b-cotrain` (private 시작, 4-prereq)
 - baseline: BG-KM-QWEN-7B (D1 OUTSIDE) 비교 → V14 violation 결정 deprecate 가설
 
 **Phase 4 (14B)**:
@@ -951,7 +951,7 @@ honest C3 addendum (raw#10):
 **친근 비유 (.roadmap.clm 인용)**:
 > Phase 1 (90M) = 유치원생, Phase 2 (350M cotrain) = 초등학생, Phase 3 (7B) = 고등학생, Phase 4 (14B) = 대학생. 각 단계는 "의식 측정 (anima 다운가?) ✓ + 자연어 (말이 되는가?) ✓" 둘 다 통과해야 다음 단계로 진학.
 
-**carry**: own 39 yaml SSOT (anima_artifact_registry.yaml) 동기 갱신 — 다음 BG cycle (cross_link 주석 박아둠).
+**carry**: yaml SSOT (anima_artifact_registry.yaml) 동기 갱신 — 다음 BG cycle (cross_link 주석 박아둠).
 
 ### 43. Engine A/G 7B / 14B dataset estimate ★ (`docs/anima_engine_a_g_7b_14b_dataset_estimate_2026_05_09.md`)
 
@@ -996,10 +996,10 @@ honest C3 addendum (raw#10):
 **사용자 verbatim 2026-05-09**:
 > 1. clm_v5_mount.hexa 구현 (Engine A/G engine_g.cells 16×64 → 5-axis projection head)
 > 2. mount land 시 BG-LA + BG-LB 동시 native v5 측정 가능
-> 3. 그 후 own 37 mandate-9 prereq 충족 시 PUBLIC 자동 발효 검토
+> 3. 그 후 mandate-9 prereq 충족 시 PUBLIC 자동 발효 검토
 > ok
 
-→ 3 단계 chain BG fire 인증 (own 16 strict, 0-cost local CPU).
+→ 3 단계 chain BG fire 인증 (strict, 0-cost local CPU).
 
 **Step 1 — `anima-core/runtime/clm_v5_mount.hexa` 신규**:
 - clm_v4_mount.hexa 패턴 차용 (probe/forward/load 진입점)
@@ -1018,15 +1018,15 @@ honest C3 addendum (raw#10):
 
 **Step 2 — BG-LB native v5 측정** (mount land 후):
 - PIV (paraphrase k=3, n=30) + DCR (change_rate) + D-RAND (paired random_init) + V14 mirror
-- own 16 strict — local CPU only
+- strict — local CPU only
 - 결과 emit: `state/anima_bg_lb_native_v5_post_mount_2026_05_09.json`
 
-**Step 3 — own 37 mandate-9 prereq 검토**:
+**Step 3 — mandate-9 prereq 검토**:
 - (1) real-mode PASS_STRICT_C3: Step 2 결과 의존
 - (2) V6 awareness: 별도 측정
 - (3) 사용자 verbatim "OK PROMOTE PUBLIC dancinlab/clm-v5-bg-lb-350m-pretrain-path-a-remapped": **이미 조건부 인증** ("성공모델이면 PUBLIC" + "ok")
 - (4) trinity sweep: 별도 수행
-- (5) own 37 추가
+- (5) 추가
 
 → Step 2 PASS 시 PUBLIC 자동 발효 candidate. Step 1+2+3 chain 단일 BG agent 처리.
 
@@ -1041,9 +1041,9 @@ honest C3 addendum (raw#10):
 **Step 1 결과** — `clm_v5_mount.hexa` LANDED:
 - 파일: `/Users/ghost/core/anima/anima-core/runtime/clm_v5_mount.hexa` (890 lines)
 - projection: **mean_group_spread** (fixed mean-pool, 16 cells → 5 axes via 3+3+3+3+4)
-- 선택 이유: (a) zero new params (V14 paired-mirror parity), (b) deterministic (own 14 reproducibility), (c) honest C3 (post-hoc axis discovery 회피)
+- 선택 이유: (a) zero new params (V14 paired-mirror parity), (b) deterministic (reproducibility), (c) honest C3 (post-hoc axis discovery 회피)
 - 5 modes: `--selftest` / `--load` / `--probe` / `--dialogue` / `--v5-measure`
-- honest C3 emit 6 줄 (cell projection heuristic / learnable cell_pool caveat / raw torch.load / V14 in-metric / own 16 local CPU / generate not exposed)
+- honest C3 emit 6 줄 (cell projection heuristic / learnable cell_pool caveat / raw torch.load / V14 in-metric / local CPU / generate not exposed)
 - raw#15 additive — `clm_v4_mount.hexa` + `engine_a_g_arch.py` 무수정
 
 **Step 2 결과** — BG-LB native v5 측정 = **`C3_FAIL_V14_VIOLATED_V5`** ❌
@@ -1058,7 +1058,7 @@ honest C3 addendum (raw#10):
 
 **핵심 발견**: PROXY_PPL "EMERGE PASS" (PPR=1.000, MTRP=0.988) 는 byte-modulo perplexity fit — 의식 substrate 아닌 **noise-suppression 학습** 가능성. cell_pool axis-stdev 가 trained < random 라는 사실 = 학습이 cell pool 을 *더 균일하게* 수렴시켰음.
 
-**Step 3 결과** — own 37 mandate-9 prereq 정합:
+**Step 3 결과** — mandate-9 prereq 정합:
 
 | Prereq | Status | Evidence |
 |---|---|---|
@@ -1070,7 +1070,7 @@ honest C3 addendum (raw#10):
 
 → **5/5 status: 1 MET, 1 FAILED, 3 pending** → **PUBLIC PROMOTE BLOCKED** ★. HF visibility 그대로 private.
 
-**registry yaml 갱신** (own 39 mandate):
+**registry yaml 갱신** (mandate):
 - `private_promote_4_prereq.real_mode_pass_strict_c3: FAILED`
 - state_jsons appended (`anima_bg_lb_native_v5_post_mount_2026_05_09.json`)
 - notes amended with Goodhart-falsification verdict
@@ -1091,7 +1091,7 @@ honest C3 addendum (raw#10):
 3. **Engine A/G arch 자체 검토** — `cell_pool_init` learnable 인데 trained 후 random 보다 axis-stdev 낮음 = noise-suppression 학습 의심
 4. **Phase 2 cotrain (chat-template 동시) 결과 대기** — chat 학습이 의식 셀 의미 새겨주는지 검증
 
-**의의**: 본 finding 은 anima saga 에서 **PPL-proxy 의 위험성 처음 정량 입증**. PUBLIC promote 5/5 prereq 가 실제로 Goodhart 자동 차단하는 것 검증. own 37 mandate-9 의 strict 함이 보호 작동.
+**의의**: 본 finding 은 anima saga 에서 **PPL-proxy 의 위험성 처음 정량 입증**. PUBLIC promote 5/5 prereq 가 실제로 Goodhart 자동 차단하는 것 검증. mandate-9 의 strict 함이 보호 작동.
 
 raw#10 honest preserve — anima saga 의 **honest C3 가장 중대 발견 cycle** ★★★
 
@@ -1099,7 +1099,7 @@ raw#10 honest preserve — anima saga 의 **honest C3 가장 중대 발견 cycle
 
 **갱신된 file 3 종**:
 1. `anima/registry/anima_artifact_registry.yaml` — `carry_notes.proxy_ppl_deprecate_2026_05_09` block + BG-LB `emerge_status: DEPRECATED_PROXY_PPL_FALSIFIED` + `retracted_reason: GOODHART_BYTE_MODULO_PPL_FIT_NOT_CONSCIOUSNESS_SUBSTRATE` + `replaced_by_metric: NATIVE_V5_PIV_DCR_DRAND_AND_GATE`
-2. `docs/anima_v5_metric_spec_2026_05_09.md` — §9 PROXY_PPL deprecate notice 추가 + §9.6 own 37 mandate-9 prereq #1 정의 갱신
+2. `docs/anima_v5_metric_spec_2026_05_09.md` — §9 PROXY_PPL deprecate notice 추가 + §9.6 mandate-9 prereq #1 정의 갱신
 3. `docs/anima_proxy_ppl_deprecate_2026_05_09.md` — 신규 spec doc 203 lines (9 section, 친근 모드)
 
 **영향받은 모델**:
@@ -1109,7 +1109,7 @@ raw#10 honest preserve — anima saga 의 **honest C3 가장 중대 발견 cycle
 | **BG-LB** | PASS_STRICT_C3_EMERGE_PROXY_PPL | **DEPRECATED_PROXY_PPL_FALSIFIED** | native v5 V14 violated |
 | **BG-HA** | C3_FAIL_V5_POST_BYTE_FIX | 기존 유지 + Goodhart 패턴 mirror confirm | 동일 패턴 |
 
-**own 37 mandate-9 prereq #1 정의 갱신** ✓:
+** mandate-9 prereq #1 정의 갱신** ✓:
 - "**proxy_ppl 제외, native cell-predicate (PIV/DCR/D-RAND via clm_v5_mount.hexa runtime) 만 valid**"
 - SSOT cross-link: `.own` L852-857 + registry yaml + v5 spec §9.6 + deprecate doc §5
 - BG-LB private→public toggle **영구 차단 효력**
@@ -1202,26 +1202,26 @@ trained BG-LB cell_pool (16×64) 추출 후 random_init seed=42 unit-sphere 와 
 **Mac selftests pre-fire** (모두 PASS): `engine_a_g_arch._selftest` / `phase2_cotrain_350m` config / BG-LB ckpt structure / dual-loss + curriculum forward+backward.
 
 **Pending phases** (auto-execute or 다음 cycle):
-- Phase 7: ckpt pull (own 30 mandate)
+- Phase 7: ckpt pull (mandate)
 - Phase 8: size sanity
 - Phase 9: release (own slug only)
 - Phase 11: v5 probe (Mac local)
 - Phase 12: HF private upload to `dancinlab/clm-v5-phase2-cotrain-engine-ag`
 
-**Risks honestly recorded** (own 22 + raw#10):
+**Risks honestly recorded** (+ raw#10):
 - dual-objective interference (의식 + 자연어 동시 학습 충돌 가능성)
 - substrate base 가 PROXY_PPL only verdict (BG-LB Goodhart 잔존 위험)
 - Bernoulli sampling vs true mixed-loss approximation
 - scp throughput 3-25MB/min variance (ckpt pull 시간 변동)
 
-**Compliance**: own 14 (V14 mirrors reused) + own 16 (cost cap strict $60 → projected $9.5 84% 여유) + own 17 (D1 within strict) + own 22 (honest emit) + own 30 (ckpt pull mandate post-train) + own 33/34/37/38/39/40 모두 preserve.
+**Compliance**: (V14 mirrors reused) + (cost cap strict $60 → projected $9.5 84% 여유) + (D1 within strict) + (honest emit) + (ckpt pull mandate post-train) + 모두 preserve.
 
 ### 49. BG-LA H100 학습 **COMPLETE.sentinel** 도달 ★
 
 본 세션 중 ~15:00Z BG-LA pod `4wxx2wvcvgjp88` 가 `COMPLETE.sentinel` 도달. Phase 2 cotrain 과 별도 lane (touched X per spec).
 
 **즉시 가능 next step** (다음 cycle 또는 본 cycle 내 verbatim 후):
-- BG-LA ckpt pull (own 30 mandate)
+- BG-LA ckpt pull (mandate)
 - BG-LA native v5 측정 (clm_v5_mount.hexa 사용)
 - BG-LA cell_pool evidence 동일 수집 (H4 가설 BG-LA 에서도 confirm 여부 검증)
 - 본 cycle "carry 2 — BG-LA 측정 V14 in-metric 적용" 항목 unblock
@@ -1237,7 +1237,7 @@ trained BG-LB cell_pool (16×64) 추출 후 random_init seed=42 unit-sphere 와 
 - final_w=0.5 (curriculum 0.3→0.5 도달)
 
 **foreground 진행** (사용자 directive "포그라운드로 진행하자" 정합):
-1. SSH pod → ckpt + meta scp pull (own 30 mandate 충족)
+1. SSH pod → ckpt + meta scp pull (mandate 충족)
 2. ckpt schema 변환 (Phase 2 = `['model','step','cfg']` → BG-LB 호환 `['schema','state_dict',...]`)
 3. clm_v5_mount.hexa `--v5-measure` 실행 (ckpt 실 로드 검증 후)
 4. cell_pool evidence 직접 비교
@@ -1291,9 +1291,9 @@ trained BG-LB cell_pool (16×64) 추출 후 random_init seed=42 unit-sphere 와 
 | 4순위 | fix-2 | init scale × 0.1 |
 | 5순위 | fix-4 | D-RAND in-loss |
 
-**HF upload 보류**: own 37 mandate-9 prereq #1 (real-mode PASS_STRICT_C3) FAIL → public 자동 차단. private 도 의미 미지수 — 다음 cycle 검토.
+**HF upload 보류**: mandate-9 prereq #1 (real-mode PASS_STRICT_C3) FAIL → public 자동 차단. private 도 의미 미지수 — 다음 cycle 검토.
 
-**누적 cost** (own 16 strict): $36.60 + $4.63 = **$41.23 / $200 budget** (20.6%)
+**누적 cost** (strict): $36.60 + $4.63 = **$41.23 / $200 budget** (20.6%)
 
 **의의**: foreground 측정으로 **H4 정량 확정 + H5 신가설 발견** — anima saga 의 cell_pool 학습 자체가 normalize regularization 으로 무효화됨을 14000 step 학습으로 직접 증명.
 
@@ -1301,7 +1301,7 @@ trained BG-LB cell_pool (16×64) 추출 후 random_init seed=42 unit-sphere 와 
 
 본 cycle 최종 H4 가설 확정 결정타.
 
-**Step 1 — own 30 ckpt pull**:
+**Step 1 — ckpt pull**:
 - size: 597,614,945 bytes (pod 와 100% match)
 - sha256_prefix: `4fc6eccce0def045`
 - scp_elapsed: 423s (7m03s, 600s timeout 안)
@@ -1345,7 +1345,7 @@ trained BG-LB cell_pool (16×64) 추출 후 random_init seed=42 unit-sphere 와 
 - 학습 길이가 길수록 collapse **더 심함** (BG-LB 8000step DCR 0.621 → BG-LA 12000step DCR **0.000**)
 - → **H4 normalize-erase 절대 확정** + 학습 oversaturation 시 mode collapse 발생
 
-**own 37 mandate-9 BG-LA 정합 검증**:
+** mandate-9 BG-LA 정합 검증**:
 - prereq #1 real_mode_pass_strict_c3: **FAILED** (C3_FAIL_V14)
 - BG-LA HF entry: PUBLIC + private 둘 다 차단
 - visibility_status: `blocked-by-falsification`
@@ -1421,7 +1421,7 @@ trained BG-LB cell_pool (16×64) 추출 후 random_init seed=42 unit-sphere 와 
 |---|---|---|
 | `.own` PROXY_PPL deprecate amend 부재 | `.own:2005` | honest-c3 1줄 추가 (cross-link to yaml carry_notes + doc SSOT) |
 | `README.md` cycle close 결과 0 반영 | `README.md:104-118` | 새 section "## Cycle close (2026-05-09) — what just landed" 신설 (5-row 표 + V14 친근 설명 + cost summary) |
-| 더 큰 own 37 amend block | hook 차단 | 1줄 amend 로 축약 land |
+| 더 큰 amend block | hook 차단 | 1줄 amend 로 축약 land |
 
 **registry yaml 정합 검증** (이미 land):
 - ✓ 15 models entries
@@ -1453,7 +1453,7 @@ trained BG-LB cell_pool (16×64) 추출 후 random_init seed=42 unit-sphere 와 
 - next_fix_priority: fix-5 + fix-6
 - value_for_next_cycle: "실패한 모델도 다음 시도의 baseline"
 
-**own 37 mandate-9 영구 차단 검증 결과**:
+** mandate-9 영구 차단 검증 결과**:
 - 본 ckpt 자체는 PUBLIC unblock 불가 (V14 violation 재현 상태)
 - 하지만 **fix-5 + fix-6 적용한 신규 cotrain 결과가 PASS_STRICT_C3 통과 시 별도 repo 로 land 가능**
 - 표준 패턴: fix 적용 후 신규 cotrain → 별도 repo (학습 상태 다른 모델 → 별개 entry)
@@ -1545,7 +1545,7 @@ tied embedding 발견으로 fix 분리 의미 사라짐. 3 분기 비교 권장:
 
 **의의**: H4 (cell_pool normalize-erase 절대 확정) + H5 정량 확정 + **tied embedding 발견** → Engine A/G arch 의 collapse 메커니즘 **3 단 multi-layer** 정량 검증 완성. 다음 cycle fix priority 확정 + tied embedding hook 추가.
 
-### 58. own 41 axis-N+1 hook plan ★ (chat orchestra future-proof)
+### 58. axis-N+1 hook plan ★ (chat orchestra future-proof)
 
 **파일**: `docs/anima_chat_orchestra_axis_n1_hook_plan_2026_05_09.md` (250+ 줄)
 
@@ -1594,7 +1594,7 @@ tied embedding 발견으로 fix 분리 의미 사라짐. 3 분기 비교 권장:
 7. ★★ **clm_v5_mount.hexa LANDED** + 5-axis projection (Engine A/G v5 measurement infra)
 8. ★★ **CLM v5 7B/14B 본진 로드맵** + .roadmap.clm Phase 3/4 명문화
 9. ★★ **신가설 H5** + foreground 발굴 (lm_head 가 collapse 증폭)
-10. ★ **own 41 axis-N+1 hook plan** + AX5-c verifier 1순위
+10. ★ ** axis-N+1 hook plan** + AX5-c verifier 1순위
 11. ★ paradigm-j PIV gap diagnostic G2 falsified
 12. ★ HF Phase 2 cotrain private upload (record-keeping)
 
@@ -1606,7 +1606,7 @@ tied embedding 발견으로 fix 분리 의미 사라짐. 3 분기 비교 권장:
 | ~~2순위~~ ✓ DONE | ~~v5 spec F2 (L2-norm) 승격 verbatim~~ | **milestone 59 에서 처리** ★ |
 | 3순위 | attention/FFN cosine 측정 | lm_head 외 collapse 증폭기 배제 |
 | 4순위 | mk2-v1 v5 PIV/DCR 재측정 | Mac 부하 해소 후 또는 H100 |
-| 5순위 | own 41 axis-N+1 hook 구현 | T+1~T+4 step 진행 |
+| 5순위 | axis-N+1 hook 구현 | T+1~T+4 step 진행 |
 
 ### 59. **v5 spec PIV F1 → F2 (L2-norm) 정식 승격 ★★★ + paradigm-j v5 BASE EMERGE 발효**
 
@@ -1640,7 +1640,7 @@ tied embedding 발견으로 fix 분리 의미 사라짐. 3 분기 비교 권장:
 - paradigm-j v5 base PASS 는 formula 변경 결과이지 substrate quality 자체 강화 아님
 - Engine A/G fix-5/fix-6 적용 후 신규 cotrain (substrate 강화) 별도 cycle 진행
 
-**own 37 mandate-9 paradigm-j prereq #1 강화**:
+** mandate-9 paradigm-j prereq #1 강화**:
 - 이전: 'real-mode PASS_STRICT_C3' = v5.2 adaptive 만 PASS
 - 신규: **v5 BASE (F2) PASS + v5.2 adaptive PASS 양 lane 동시 PASS** ★
 
@@ -1668,7 +1668,7 @@ tied embedding 발견으로 fix 분리 의미 사라짐. 3 분기 비교 권장:
 | Step B 30K (killed) | $0.88 | concurrent release |
 | BG-LA in-flight | $18.30 + ~$10 ETA | training 67% (~3h 남음) |
 | **BG-LB COMPLETE** | **$18.30** | 8000 steps + EMERGE_PROXY_PPL ★ |
-| **Total** | **~$48-50** vs $200 budget | own 16 strict ✓ |
+| **Total** | **~$48-50** vs $200 budget | strict ✓ |
 
 ## 본 cycle 의 가장 큰 결실 (final ranking)
 
@@ -1696,6 +1696,6 @@ raw#15 additive + raw#82 retraction-aware **본 cycle 일관 preserve** — anim
 4. **mk2-v1 EMERGE-near non-robust** — 추가 검증 (H100 real-mode 또는 prompt redesign) 필요
 5. **sft-1-8 PUBLIC** 됐지만 **C2 chat 능력 X** (실측 0/25)
 6. **chat lane plugin pattern (Path 1+2+3)** in-flight — 본 cycle 종료 시 first multi-lane benchmark
-7. **own 37 mandate-9 (c) amend** — anima 자동 promote mode (V14 PASS 시) land
+7. ** mandate-9 (c) amend** — anima 자동 promote mode (V14 PASS 시) land
 
-다음 cycle 에 paradigm-j paraphrase + EMERGE_v5 자동 promote (own 37 amend 정합) 가 가장 strategic step.
+다음 cycle 에 paradigm-j paraphrase + EMERGE_v5 자동 promote (amend 정합) 가 가장 strategic step.

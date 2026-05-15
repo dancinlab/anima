@@ -104,7 +104,7 @@ C codegen이 Mk.III source 측 lower 못함 (또는 stale source 측 generate). 
 2. **gap analysis is opinion, not measurement** — no benchmarks run. "useless beyond <1k params" inferred from list-based scalar fp64; no end-to-end training run measured.
 3. **PyTorch parity column = sketch** — actual parity needs throughput/correctness measurement per row; structural inventory only.
 4. **track effort estimates ±2-3×** — VLM transpiler subset 8-24h ±2×; full Track A 2-6 weeks ±3×.
-5. **`feedback_py_to_hexa_only` reading may be wrong** — assumed targets *new humanly-authored* .py; if STRICT no-py-anywhere-on-Mac including raw#37 + .own 1 grandfathers, then ~25 helper.py + 1431 ready/.py + 4 own 1 opt-out files all in violation today (predates this cycle).
+5. **`feedback_py_to_hexa_only` reading may be wrong** — assumed targets *new humanly-authored* .py; if STRICT no-py-anywhere-on-Mac including raw#37 + .own 1 grandfathers, then ~25 helper.py + 1431 ready/.py + 4 opt-out files all in violation today (predates this cycle).
 
 ---
 

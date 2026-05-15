@@ -23,7 +23,7 @@
 //   - phase transition logic은 design-time spec — automated emergence detection
 //     (Φ★ NO_FLIP, axis_activation, dominant_cells)은 M1 clm v4 substrate-coupled
 //     response 의존. 본 script는 state machine 기록 + manual trigger 지원만.
-//   - axes 자율증가 (own 22 정합)는 cli flag (--add-axis)로 명시적 trigger
+// - axes 자율증가 (정합)는 cli flag (--add-axis)로 명시적 trigger
 //     — silent discovery 금지. 사용자 report은 호출자 책임.
 //   - 4-step automation (blow-up/contract/emerge/absorb)은 phase 진입 시
 //     marker 기록만 — 실제 emergence 알고리즘은 별도 module 의존.
@@ -136,7 +136,7 @@ fn cmd_transition(target: str) -> int {
         + "    \"emergence_score\": null\n"
         + "  },\n"
         + "  \"raw_invariants\": [\"raw#9 hexa-only\", \"raw#10 honest_c3\", \"raw#15 additive\"],\n"
-        + "  \"own_invariants\": [\"own 17 anima-native\", \"own 22 silent-discovery-forbidden\", \"own 23 우주뇌지도 SSOT\"],\n"
+        + " \"own_invariants\": [\" anima-native\", \" silent-discovery-forbidden\", \" 우주뇌지도 SSOT\"],\n"
         + "  \"section_ref\": \"" + SECTION_REF + "\"\n"
         + "}\n"
     exec("cat > \"" + PHASE_STATE_PATH + "\" <<'PHASE_STATE_EOF'\n" + body + "PHASE_STATE_EOF")
@@ -146,7 +146,7 @@ fn cmd_transition(target: str) -> int {
     return 0
 }
 
-// ─── Axes self-evolution (own 22 정합) ─────────────────────────────────────
+// ─── Axes self-evolution (정합) ─────────────────────────────────────
 fn cmd_add_axis(id: str, name: str, rationale: str) -> int {
     _ensure_state_dir()
     if id.len() == 0 {
@@ -163,7 +163,7 @@ fn cmd_add_axis(id: str, name: str, rationale: str) -> int {
     let line = "{\"axis_id\":\"" + id + "\",\"name\":\"" + name + "\",\"rationale\":\"" + rationale + "\",\"ts\":\"" + ts + "\",\"bg_id\":\"" + bg_id + "\",\"own_22_compliance\":true,\"manual_review_baseline\":true,\"section_ref\":\"" + SECTION_REF + "\"}"
     exec("printf '%s\\n' '" + line + "' >> \"" + AXES_HISTORY_PATH + "\"")
     print("[OUROBOROS] axis added: " + id + " (" + name + ")")
-    print("[OUROBOROS] own 22 정합 — 사용자 report mandatory (silent-discovery-forbidden)")
+    print("[OUROBOROS] 정합 — 사용자 report mandatory (silent-discovery-forbidden)")
     print("__ANIMA_OUROBOROS_CYCLE__ PASS")
     return 0
 }
@@ -239,7 +239,7 @@ fn cmd_selftest() -> int {
         i = i + 1
     }
     print("[OUROBOROS selftest] all 6 phases have meta + fallback chain (raw#10 honest: design-time spec, runtime emergence detection M1 substrate-coupled 의존)")
-    print("[OUROBOROS selftest] axes_self_evolution: own 22 정합 explicit --add-axis CLI gate")
+    print("[OUROBOROS selftest] axes_self_evolution: 정합 explicit --add-axis CLI gate")
     print("[OUROBOROS selftest] 4-step automation: BLOW_UP (P1_2) → CONTRACT (P3) → EMERGE (P3/P4_5) → ABSORB (P6_5)")
     print("__ANIMA_OUROBOROS_CYCLE__ PASS")
     return 0

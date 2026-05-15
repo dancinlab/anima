@@ -109,7 +109,7 @@ P13 governs **carry-over loop exit only**. It does NOT govern:
 
 - raw#9/10/15/37 honesty/integrity rules (absolute, no autonomous bypass)
 - HF token leak rule (absolute)
-- own 16 H100 cost discipline (absolute, prior commitment)
+- H100 cost discipline (absolute, prior commitment)
 - raw#1 (no fabrication) — closures must be honest, not inflated to hit T1
 
 ---

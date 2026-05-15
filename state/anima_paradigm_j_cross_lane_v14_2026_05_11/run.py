@@ -15,7 +15,7 @@ Outputs:
   - result.json (V14 strict 5-tuple {NOT_MEASURABLE, paradigm-j summary})
 
 raw#15 strict-additive: read-only ckpts, no mutation.
-own 16: $0 local CPU.
+: $0 local CPU.
 """
 from __future__ import annotations
 
@@ -205,7 +205,7 @@ def classify_under_arch_aware_3rule(audit, compat, log):
         log("\n  PROPOSED 3rd row extension (post-§55 confirmed empirical):")
         log("    if arch == 'clm_v4_consciousdecoder':")
         log("        return PASS if v5_2_4_gate_adaptive_floor else VIOLATED")
-        log("  - paradigm-j has v5.2 4/4 gates PASS (own 14 verbatim PUBLIC PROMOTE)")
+        log(" - paradigm-j has v5.2 4/4 gates PASS (verbatim PUBLIC PROMOTE)")
         log("  - paradigm-j has V14_VIOLATED at PPR_v3 metric (random_init 0.5517 > 0.2845)")
         log("  - paradigm-j EMERGE lives in adaptive-floor metric, NOT cellpool Φ")
         log("  → metric-conditional, not just arch-conditional")
@@ -232,7 +232,7 @@ def main():
 
     t0 = time.time()
     log(f"=== BG-PARADIGM-J-CROSS-LANE-V14 — {datetime.now(timezone.utc).isoformat()} ===")
-    log("$0 local CPU only (own 16). raw#15 read-only.")
+    log("$0 local CPU only . raw#15 read-only.")
 
     audit = audit_paradigm_j_substrate(log)
     compat = attempt_v55_pipeline_compat_check(audit, log)

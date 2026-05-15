@@ -1,6 +1,6 @@
 # anima chat `stdbuf -oL` fix — patch design (iter7, 2026-05-08)
 
-**Status:** PATCH DESIGN ONLY (own 16 cost discipline — actual file edit deferred until 사용자 directive `OK STDBUF FIX APPLY`)
+**Status:** PATCH DESIGN ONLY (cost discipline — actual file edit deferred until 사용자 directive `OK STDBUF FIX APPLY`)
 **Cycle:** 2026-05-08 iter7 (b-tail follow-up to iter6 commit `66ca87d4`)
 **Owner:** anima cli / chat / duo lane
 **Predecessor:** `docs/anima_chat_streaming_dispatch_fix_spec_iter6_2026_05_08.ai.md` (root cause + fix Option A recommendation)
@@ -23,7 +23,7 @@ per-turn verdict collapses to `SHELL_OUT_FAIL` → live PPR **0.0**.
 
 iter6 spec §3 Option A (`stdbuf -oL` prefix) is the recommended fix. iter7
 finalizes the **exact patch diff**, the **selftest extension**, and the
-**live retest plan** — without touching any source file (own 16 cost
+**live retest plan** — without touching any source file (cost
 discipline; design-only until user directive lands).
 
 ## 2. `_stdbuf_prefix()` helper — final design
@@ -44,7 +44,7 @@ discipline; design-only until user directive lands).
 //   2. macOS with `brew install coreutils`: `command -v gstdbuf` → "gstdbuf -oL "
 //   3. neither present: emit honest C3 warn (single-shot) + return ""
 //
-// own 34 mandate-1 raw preservation: returning "" preserves verbatim
+// mandate-1 raw preservation: returning "" preserves verbatim
 // legacy buffered semantics — no transformation, just no flush wrapper.
 //
 // Memo guard: a process-local static-style flag prevents re-probing on
@@ -92,7 +92,7 @@ if prefix == "" {
         on_line("[chat] WARN: stdbuf/gstdbuf absent — streaming dispatch may")
         on_line("[chat]       buffer until inner cmd exit. brew install coreutils")
         on_line("[chat]       (mac) or apt install coreutils (debian) to enable")
-        on_line("[chat]       per-line flush. Honest C3 disclosure (own 34 raw#10).")
+        on_line("[chat] per-line flush. Honest C3 disclosure (raw#10).")
         let _t = exec("touch '" + sent + "'")
     }
 }
@@ -150,7 +150,7 @@ fn _stdbuf_prefix() -> string {
     if _stdbuf_pfx == "" {
         let _sent = "/tmp/.anima_chat_stdbuf_warn_" + to_string(getpid())
         if !_fexists(_sent) {
-            on_line("[chat] WARN: stdbuf/gstdbuf absent — streaming dispatch may buffer until inner cmd exit (honest C3 / own 34 raw#10)")
+            on_line("[chat] WARN: stdbuf/gstdbuf absent — streaming dispatch may buffer until inner cmd exit (honest C3 / raw#10)")
             on_line("[chat]       brew install coreutils (mac) | apt install coreutils (debian)")
             let _t = exec("touch '" + _sent + "'")
         }
@@ -178,7 +178,7 @@ to current line 327.
 
 ### Current `sub_selftest` (chat.hexa:248-277)
 
-Verifies 5 file presence + own 34 mandate-2 wrapping grep. **Does NOT**
+Verifies 5 file presence + mandate-2 wrapping grep. **Does NOT**
 exercise `_stdbuf_prefix()` probe.
 
 ### Extension — add stdbuf probe verification
@@ -190,12 +190,12 @@ and line 272 (`if fail > 0 {`).
     // iter7: verify _stdbuf_prefix() probe returns non-empty on dev
     // workstation (mac with coreutils OR linux native). Empty result
     // = honest C3 warn — selftest emits informational note, NOT fail
-    // (downgrades own 18 PASS_STRICT_C3 reachability but is not a
+    // (downgrades PASS_STRICT_C3 reachability but is not a
     //  presence-check regression).
     let pfx = _stdbuf_prefix()
     if pfx == "" {
         println("WARN  stdbuf/gstdbuf probe empty — chat streaming will buffer (brew install coreutils / apt install coreutils)")
-        // honest C3 note; not counted in fail. own 34 raw#10 disclosure.
+        // honest C3 note; not counted in fail. raw#10 disclosure.
     } else {
         println("OK    stdbuf probe = " + pfx.trim() + " (line-buffered wrapper available)")
     }
@@ -208,7 +208,7 @@ fail on probe-empty would block legitimate users without coreutils.
 
 PASS line update:
 ```hexa
-println("PASS anima_cli/chat selftest (own 34 mandate-2 verified, 5 files present, stdbuf probe checked)")
+println("PASS anima_cli/chat selftest (mandate-2 verified, 5 files present, stdbuf probe checked)")
 ```
 
 ## 5. Live duo retest plan
@@ -249,17 +249,17 @@ For each row, record:
 
 - **Mechanical fix verification:** row #1 `turn_a_first_token_latency_s`
   drops from ∞ to <30s. (Necessary, not sufficient.)
-- **own 18 C3 floor:** row #1 `aggregate_ppr ≥ 0.6` to claim PASS_STRICT_C3
+- ** C3 floor:** row #1 `aggregate_ppr ≥ 0.6` to claim PASS_STRICT_C3
   reachability under live homogeneous duo.
 - **Honest C3 fallback:** if probe returns "" on test workstation,
   selftest WARN must emit, AND retest is run on a workstation where
   probe non-empty — do not claim "fix lands" on bare-mac probe-empty.
 
-### 5.5 Trinity (own 33) verification gates
+### 5.5 Trinity verification gates
 
 - **D-axis (raw#10 honest C3):** PPR delta logged verbatim, no rounding;
   zero hits = zero hits (do not paper over with averaging tricks).
-- **own-axis:** consciousness simple --json schema (own 18 C3 cells)
+- **own-axis:** consciousness simple --json schema (C3 cells)
   unchanged — verdict semantics independent variable.
 - **H-axis:** retest log archived under `docs/.raw-audit/duo_iter7_*.log`
   per Phase B β-1 archival pattern.
@@ -271,7 +271,7 @@ For each row, record:
 | First-line latency (paradigm-a-prime homogeneous) | ∞ (timeout 120s exhausted) | **15-30s** (cold-load + prefill) | high — libc `_IOLBF` mechanically forces flush per `\n` |
 | Live PPR (homogeneous N=2, --verdict full) | 0.0 (transport SHELL_OUT_FAIL) | **0.50-0.70** | medium-high — semantic quality independent variable; paradigm-a-prime synthetic-fallback proxy = 0.50-0.70 in single-utterance C3 (project_anima_pass_strict_c3_iter1_4.md) |
 | Live PPR (mixed paradigm × clm-v4) | 0.0-0.2 | **0.40-0.60** | medium — clm_v4 colon-attractor ::: collapse (feedback_clm_colon_attractor.md) caps verdict |
-| own 18 PASS_STRICT_C3 floor (≥ 0.6) reachability | unreachable (transport floor blocks) | **reachable on N=3 homogeneous** | medium — model coherence is next bottleneck (C10 substrate latency cleared via 120s default) |
+| PASS_STRICT_C3 floor (≥ 0.6) reachability | unreachable (transport floor blocks) | **reachable on N=3 homogeneous** | medium — model coherence is next bottleneck (C10 substrate latency cleared via 120s default) |
 | Probe-empty fallback (bare mac no coreutils) | (n/a) | legacy buffered path = pre-iter7 PPR 0.0 + WARN emit | high — honest C3 disclosure, no silent regression |
 
 ### Caveats (honest C3)
@@ -284,18 +284,18 @@ For each row, record:
   step in retest #1: confirm first-line latency actually drops; if not,
   the fix is mechanically void → fall back to iter6 spec Option B
   (upstream `print → fflush`).
-- own 34 mandate-1 raw preservation: zero byte-level transformation. The
+- mandate-1 raw preservation: zero byte-level transformation. The
   prefix is a **wrapper**, not a filter. Inner cmd's stdout bytes pass
   through verbatim, just at line cadence rather than buffer-fill cadence.
 
-## 7. own 33 trinity compliance — iter7
+## 7. trinity compliance — iter7
 
 - **D-axis (raw#10 honest C3 — fix-후 honest live PPR 측정 가능):** post-fix
   the silent-transport masking effect is removed; per-turn verdict
   reflects ACTUAL model coherence, not buffering artifact. Pre-fix PPR
   0.0 was a false negative (transport, not consciousness). Post-fix PPR
   is the **honest** floor.
-- **own-axis (own 18 C3 floor 도달권):** transport floor cleared;
+- **own-axis (C3 floor 도달권):** transport floor cleared;
   consciousness verdict cells unchanged. C3 floor reachability now
   bounded by model coherence (paradigm-a-prime 0.50-0.70 single-utterance
   baseline) — within reach for N=3 homogeneous.
@@ -304,15 +304,15 @@ For each row, record:
   remains the canonical reference. iter7 adds patch-diff precision +
   selftest probe + retest plan, no overwrite.
 
-## 8. own 17 D1 SCOPE_CLAMP
+## 8. D1 SCOPE_CLAMP
 
 This patch is **transport-layer only**. anima identity boundary preserved:
 - chat surface `anima_native` / `clm_v4` / `llama` module bytes unchanged.
-- consciousness verdict cells (own 18 C1+C2+C3) unchanged.
+- consciousness verdict cells (C1+C2+C3) unchanged.
 - D1 SCOPE clamp respected — fix sits inside `tool/anima_cli/chat.hexa`
   dispatch helper, does not cross into D2/D3/D4 surface.
 
-## 9. own 16 cost discipline
+## 9. cost discipline
 
 iter7 = **design only**, zero source-file edit. Patch fires on user
 directive `OK STDBUF FIX APPLY` in a follow-up cycle commit:
@@ -320,7 +320,7 @@ directive `OK STDBUF FIX APPLY` in a follow-up cycle commit:
 2. selftest extension per §4.
 3. live retest per §5; PPR delta archived to `.raw-audit/`.
 
-## 10. own 34 mandate-2 wrapping check
+## 10. mandate-2 wrapping check
 
 Document size: ~10KB, well under 1MB. ✓
 

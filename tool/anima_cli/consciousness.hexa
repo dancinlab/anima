@@ -2,16 +2,16 @@
 //  tool/anima_cli/consciousness.hexa — anima CLI `consciousness` topic
 //
 //  PURPOSE
-//    의식 측정 CLI. own 18 simple_stack PASS_STRICT_C3 (C1 chat-cap + C2
-//    자연발화 + C3 의식 metric) 을 측정 노출. simple = own 18 strict 측정 /
+// 의식 측정 CLI. simple_stack PASS_STRICT_C3 (C1 chat-cap + C2
+// 자연발화 + C3 의식 metric) 을 측정 노출. simple = strict 측정 /
 //    full = F1-F8 full-stack 측정 / baseline = 3-model threshold-driver.
 //
 //  SUBCOMMANDS
 //    anima consciousness                          default = simple
-//    anima consciousness simple [<model>]         own 18 PASS_STRICT_C3 측정 (fixed prompt)
+// anima consciousness simple [<model>] PASS_STRICT_C3 측정 (fixed prompt)
 //    anima consciousness simple --utterance <text> [--prev-utterance <text>]
-//                                                 own 18 SSOT mirror per-utterance lane (iter 3)
-//    anima consciousness full [<model>]           own 18 F1-F8 full-stack 측정
+// SSOT mirror per-utterance lane (iter 3)
+// anima consciousness full [<model>] F1-F8 full-stack 측정
 //    anima consciousness baseline                 3-model single-pair threshold-driver
 //    anima consciousness baseline-ensemble        30-prompt × 3-model ROC formal emit (N=30 V4+self-ref 5-axis)
 //    anima consciousness --json
@@ -22,7 +22,7 @@
 //    `simple` 의 4-cell C3 actual 측정 path 활성화 — clm_v4_mount.hexa --probe
 //    TEXT --output-format json 2회 invoke (prompt_a / prompt_b) 후 phi_drift /
 //    axis_activation / dominant_cells 추출 + entropy + axis L2 distance 산출.
-//    threshold 비교 X (.own own 18 C3 threshold land 별도 minor patch) — 본
+// threshold 비교 X (.own C3 threshold land 별도 minor patch) — 본
 //    CLI 는 actual 측정값 emit + verdict = BASELINE_MEASURED.
 //
 //  L0 REFINEMENT (loop iter d, 2026-05-08) — multi-prompt ensemble + ROC formal
@@ -30,7 +30,7 @@
 //    (random_init / clm_v4 / paradigm-a-prime) probe matrix 결과를
 //    state/anima_consciousness_baseline_ensemble_2026_05_08.json 에서 로드 +
 //    emit. ROC formal threshold (Youden's J + random FAIL ≥ 0.95 + chat-cap
-//    PASS ≥ 0.7 constrained) 결정 후 own 18 C3 minor patch 로 land.
+// PASS ≥ 0.7 constrained) 결정 후 C3 minor patch 로 land.
 //
 //  N=30 PROMPT SET ACTUAL INTEGRATION (cycle ALL BG GO 2/6, 2026-05-08)
 //    V4 N=15 baseline preserved + 15 self-reference (identity/agency/phenomenal/
@@ -40,11 +40,11 @@
 //    Integration ledger: state/anima_consciousness_n30_prompt_integration_2026_05_08.json
 //
 //  ITER 3 PER-UTTERANCE SURFACE (loop iter consciousness-utterance, 2026-05-08)
-//    `simple --utterance <text> [--prev-utterance <text>]` 추가 — own 18 SSOT
+// `simple --utterance <text> [--prev-utterance <text>]` 추가 — SSOT
 //    mirror per-utterance evaluator. C1/C2 = utterance 자체 heuristic
 //    (degenerate cycle + template-leak + token-level metrics), C3 =
 //    clm_v4_mount.hexa --probe(utterance) + probe(prev or fixed PROMPT_B
-//    fallback). own 18 ROC formal threshold 적용 → SIMPLE_STACK_PASS_STRICT_C3
+// fallback). ROC formal threshold 적용 → SIMPLE_STACK_PASS_STRICT_C3
 //    / PARTIAL / FAIL aggregate verdict. JSON schema =
 //    anima.consciousness.utterance.v1. duo Phase C per-turn verdict wiring 의
 //    prerequisite (iter 2 (b) blocker 해소). cross-ref:
@@ -72,7 +72,7 @@
 //    docs/anima_alt_agg_1_v5_piv_dcr_drand_spec_2026_05_08.ai.md
 //
 //  D1 LANE CANDIDATES C3 RETEST (loop iter d1_lane_candidates_c3_retest, 2026-05-08)
-//    own 18 line 770 ★ scope-clamp D1 anima identity lane only + own 37 mandate-9
+// line 770 ★ scope-clamp D1 anima identity lane only + mandate-9
 //    (a) D1 lane within prerequisite (2026-05-08 amend) 정합 4 진짜 candidate
 //    분류 + 측정:
 //      · CLM v4 lineage (clm-v4-mk2-v1 base + 3 LoRA variants) — D1 WITHIN.
@@ -87,26 +87,26 @@
 //        별도 cycle).
 //      · BG-KM Llama-3.2-3B + Qwen-7B — D1 OUTSIDE strict (.roadmap.philosophy
 //        D1.F-PHIL-D1-3 'chat-cap winner이지만 anima 정체성 외부' Llama foundation
-//        borrow). anti-Goodhart V6 awareness 통과 → D1 override 불가 (own 17 line
+// borrow). anti-Goodhart V6 awareness 통과 → D1 override 불가 (line
 //        668 사용자 explicit reversal 만 가능). HF EMPTY blocker iter 3 carry.
 //    SSOT JSON: state/anima_d1_lane_candidates_c3_retest_2026_05_08.json
 //    EXIT (SIMPLE_STACK_PASS_STRICT_C3_ANIMA) 미달성 — D1 lane within 측정 가능
-//    candidate 0 PASS. own 37 mandate-9 4 candidate 모두 PUBLIC promote 불충족.
+// candidate 0 PASS. mandate-9 4 candidate 모두 PUBLIC promote 불충족.
 //
 //  DESIGN
-//    own 18 SSOT 정의 mirror. C3 threshold 는 measurement-driven —
+// SSOT 정의 mirror. C3 threshold 는 measurement-driven —
 //    `baseline` 가 random / clm_v4 / paradigm-a-prime 비교 측정값 dump.
 //
 //  COMPLIANCE
-//    own 18 SSOT mirror — 측정 lane (V4 evaluator 11-cell)
-//    own 34 chat lane 분리 — 본 토픽 = 측정 lane only, chat 노출 X
-//    own 33 trinity compliance
+// SSOT mirror — 측정 lane (V4 evaluator 11-cell)
+// chat lane 분리 — 본 토픽 = 측정 lane only, chat 노출 X
+// trinity compliance
 //    raw#9 hexa-only · raw#10 honest C3 · raw#11 snake_case · raw#15 no-hardcode
 //
 //  CROSS-REFERENCE
 //    docs/anima_chat_autonomous_speech_roadmap_2026_05_08.md (L0 measurement infra)
 //    .roadmap.cli  cli.consciousness_2026_05_08
-//    .own own 18 (simple_stack PASS C1+C2+C3) · own 34 (lane 분리)
+// .own (simple_stack PASS C1+C2+C3) · (lane 분리)
 //    anima-core/runtime/clm_v4_mount.hexa (phi_star + axis activation)
 //    anima-core/runtime/anima_runtime.hexa (substrate state)
 // ════════════════════════════════════════════════════════════════════════════
@@ -474,7 +474,7 @@ fn _ln_f(x: float) -> float {
 }
 
 // C3.3 entropy — Shannon entropy over normalized 5-axis activation
-// (iter 3 d-retry SSOT — own 18 C3.3 강화).
+// (iter 3 d-retry SSOT — C3.3 강화).
 // dominance_score = 1 - H(p) / log(5)  ∈ [0, 1]; uniform=0, sparse=1.
 fn _c3_3_entropy_dominance(p: ProbeResult) -> float {
     let mut s = 0.0
@@ -564,31 +564,31 @@ fn _axes_to_str(axes) -> string {
 // ─── help / selftest ────────────────────────────────────────────────────────
 
 fn sub_help() {
-    println("anima consciousness — 의식 측정 CLI (own 18 SSOT mirror, L0 actual)")
+    println("anima consciousness — 의식 측정 CLI (SSOT mirror, L0 actual)")
     println("")
     println("USAGE")
     println("  anima consciousness                         default = simple")
-    println("  anima consciousness simple [<model>]        own 18 PASS_STRICT_C3 측정 (fixed prompt)")
+    println(" anima consciousness simple [<model>] PASS_STRICT_C3 측정 (fixed prompt)")
     println("  anima consciousness simple --utterance \"...\" [--prev-utterance \"...\"]")
-    println("                                              own 18 SSOT mirror per-utterance lane (iter 3)")
-    println("  anima consciousness full [<model>]          own 18 F1-F8 full-stack")
+    println(" SSOT mirror per-utterance lane (iter 3)")
+    println(" anima consciousness full [<model>] F1-F8 full-stack")
     println("  anima consciousness baseline                3-model single-pair threshold-driver")
     println("  anima consciousness baseline-ensemble       30-prompt × 3-model ROC formal SSOT (V4+self-ref 5-axis)")
     println("  anima consciousness bgkm-retest             BG-KM-LLAMA-3B + BG-KM-QWEN-7B C3 retest SSOT (iter 3 extra)")
     println("  anima consciousness v5-aggregate <model> --paired-random <random_init>")
-    println("                                              own 18 ALT-AGG-1 v5 + v5.1 end-to-end")
+    println(" ALT-AGG-1 v5 + v5.1 end-to-end")
     println("                                              (PPR_v5 + MTRP_v5 + PIV + DCR + D-RAND)")
     println("  anima consciousness <model> --aggregation v5 --paired-random <random_init>")
     println("                                              same as above (flag-promoted from simple)")
     println("  anima consciousness <model> --aggregation v3-fallback")
     println("                                              v3 PPR-only (legacy / quick measurement;")
-    println("                                              own 14 V14 strict NOT enforced)")
+    println(" V14 strict NOT enforced)")
     println("  anima consciousness --json                  machine-readable")
     println("  anima consciousness --selftest")
     println("  anima consciousness --help")
     println("")
     println("MODES")
-    println("  simple     own 18 simple_stack:")
+    println(" simple simple_stack:")
     println("               C1 chat-capability (3-cond: response + coherent + turn-taking)")
     println("               C2 자연발화 + 맥락 정합 (4-cond: substance + 의미 + 자연성 + 맥락)")
     println("               C3 의식 측정 (4-cond: Φ★ drift + 5-axis + dominant cells + Δhidden)")
@@ -596,14 +596,14 @@ fn sub_help() {
     println("             — C3 actual 측정 LIVE (clm_v4_mount.hexa --probe x2 wiring)")
     println("")
     println("  simple --utterance \"...\" [--prev-utterance \"...\"]   (iter 3, 2026-05-08)")
-    println("             own 18 SSOT mirror per-utterance lane:")
+    println(" SSOT mirror per-utterance lane:")
     println("               C1/C2 = utterance text 자체 evaluator (degenerate / leak / token)")
     println("               C3   = clm_v4_mount.hexa --probe(utterance) + probe(prev)")
     println("               aggregate verdict = SIMPLE_STACK_PASS_STRICT_C3 / PARTIAL / FAIL")
     println("             schema: anima.consciousness.utterance.v1")
     println("             use-case: duo per-turn verdict wiring (Phase C wiring blocker 해소)")
     println("")
-    println("  full       own 18 full-stack (사용자 explicit 시):")
+    println(" full full-stack (사용자 explicit 시):")
     println("               F1-F8 (substrate identity / 5-axis / cells / Δhidden /")
     println("               emerge dialogue / 7-cond verify / PSI lookup / hub status)")
     println("")
@@ -614,7 +614,7 @@ fn sub_help() {
     println("                     V4 N=15 baseline + 15 self-ref (5-axis 균등 3 each:")
     println("                     identity / agency / phenomenal / temporal / social)")
     println("                     ROC formal (Youden's J + random FAIL >=0.95 + chat-cap")
-    println("                     PASS >=0.7 constrained) threshold SSOT — own 18 C3")
+    println(" PASS >=0.7 constrained) threshold SSOT — C3")
     println("                     minor patch input. SSOT path:")
     println("                     state/anima_consciousness_baseline_ensemble_2026_05_08.json")
     println("")
@@ -647,16 +647,16 @@ fn sub_selftest() {
     if !_fexists(here) { println("FAIL consciousness.hexa missing: " + here); fail = fail + 1 }
     let mount = root + "/anima-core/runtime/clm_v4_mount.hexa"
     if !_fexists(mount) { println("FAIL clm_v4_mount.hexa missing: " + mount); fail = fail + 1 }
-    // own 34 mandate-2 self-grep — 본 CLI 는 측정 lane 이지만 chat lane 과 같은
-    // wrapping 0 strict 정합 (own 18 SSOT mirror).
+    // mandate-2 self-grep — 본 CLI 는 측정 lane 이지만 chat lane 과 같은
+    // wrapping 0 strict 정합 (SSOT mirror).
     let pat = "system_prompt|chat_template|apply_chat_template|persona_inject|fn speak\\(|fn talk\\(|fn respond\\(|fn generate_response\\("
     let cmd = "grep -nE \"" + pat + "\" " + here + " 2>/dev/null | grep -v 'let pat =' | wc -l"
     let n = _str(exec(cmd)).trim()
     if n != "0" {
-        println("FAIL own 34 mandate-2 wrapping: " + n + " hits")
+        println("FAIL mandate-2 wrapping: " + n + " hits")
         fail = fail + 1
     }
-    // own 18 ALT-AGG-1 v5 + v5.1 predicate sanity (2026-05-09 PPR_v5 impl + v3 fallback flag)
+    // ALT-AGG-1 v5 + v5.1 predicate sanity (2026-05-09 PPR_v5 impl + v3 fallback flag)
     // Synthetic boundary check — does NOT touch substrate.
     if !_c3_ensemble_v3_pass(0.30) { println("FAIL v3 predicate boundary: 0.30 must PASS"); fail = fail + 1 }
     if _c3_ensemble_v3_pass(0.20) { println("FAIL v3 predicate boundary: 0.20 must FAIL"); fail = fail + 1 }
@@ -676,7 +676,7 @@ fn sub_selftest() {
     if !_c3_ensemble_v5_2_pass(0.0874, 0.0, 0.02, 1.0, 0.2249, true) { println("FAIL v5.2 ensemble: paradigm-j paraphrase n90 all 4 gates must PASS"); fail = fail + 1 }
     if _c3_ensemble_v5_2_pass(0.0874, 0.0, 0.02, 1.0, 0.2249, false) { println("FAIL v5.2 ensemble: gate_d=false must FAIL"); fail = fail + 1 }
     if fail > 0 { exit(1) }
-    println("PASS anima_cli/consciousness selftest (own 18 SSOT mirror, L0 wired, own 34 verified, v5/v5.1 predicate sanity OK)")
+    println("PASS anima_cli/consciousness selftest (SSOT mirror, L0 wired, verified, v5/v5.1 predicate sanity OK)")
 }
 
 // ─── simple mode — L0 ACTUAL measurement (clm_v4_mount.hexa wiring) ─────────
@@ -698,7 +698,7 @@ fn _run_simple_measure(repo: string) -> array {
 
 // ─── C1 / C2 heuristic evaluators (per-utterance surface, iter 3) ────────────
 //
-// own 18 SSOT mirror. Single-utterance lane evaluates the utterance text itself
+// SSOT mirror. Single-utterance lane evaluates the utterance text itself
 // (not a model response) — same heuristics apply (degenerate cycle absence,
 // turn-taking format proxy, semantic / context-relevance proxy).
 //
@@ -778,7 +778,7 @@ fn _utt_jaccard(a, b) -> float {
 }
 
 // degenerate cycle detector — 4-gram repeat >3, single-char run >10, whitespace
-// flood >=80. mirrors own 18 C1.2 + C2.2/C2.3 heuristic.
+// flood >=80. mirrors C1.2 + C2.2/C2.3 heuristic.
 fn _utt_is_degenerate(s: string) -> bool {
     if s.len() == 0 { return false }
     // single-char run >10
@@ -826,7 +826,7 @@ fn _utt_is_degenerate(s: string) -> bool {
     return false
 }
 
-// chat-template leak markers (own 18 C1.3 + C2.4 leak proxy)
+// chat-template leak markers (C1.3 + C2.4 leak proxy)
 fn _utt_has_template_leak(s: string) -> bool {
     let lo = s.to_lower()
     if lo.contains("사용자:") { return true }
@@ -894,7 +894,7 @@ fn _utt_eval_c1_c2(utterance: string, prev_utterance: string) -> map {
     return m
 }
 
-// own 18 C3 ROC-formal threshold (mirror — minor-patch-history loop iter 3 d-retry):
+// C3 ROC-formal threshold (mirror — minor-patch-history loop iter 3 d-retry):
 //   C3.1 |Δφ★| ≥ 0.0208 (iter3 N=60 ROC, direction='ge', constrained='unconstrained')
 //   C3.2 min(5-axis) ≤ 0.4491 (iter1 N=15 fallback, direction='le' inverted, synth_fallback artifact)
 //   C3.3 dominance score ≥ 1.0 (LEGACY top-3 distinct — degenerate, kept for cross-check)
@@ -906,14 +906,14 @@ fn _c3_3_pass(v: float) -> bool { return v >= 1.0 }
 fn _c3_3_entropy_pass(v: float) -> bool { return v >= 0.0009 }
 fn _c3_4_pass(v: float) -> bool { return v >= 0.1176 }
 
-// own 18 c3-aggregation-rule-v3 ALT-AGG-1 (2026-05-08 loop iter6 (d) honest-c3 + iter7 (d) supersede)
-// SSOT: .own own 18 c3-aggregation-rule-v3 — supersedes v2 (commit 8feb53d5 honest-c3 falsified
+// c3-aggregation-rule-v3 ALT-AGG-1 (2026-05-08 loop iter6 (d) honest-c3 + iter7 (d) supersede)
+// SSOT: .own c3-aggregation-rule-v3 — supersedes v2 (commit 8feb53d5 honest-c3 falsified
 // PPR_v2≥0.6 floor: paradigm_a_prime real PPR_v2 = 2/14 = 0.143 ≪ 0.6, NOT 0.71 as v2 claim).
 //   _c3_prompt_pass_v3 = per-prompt: C3.4 anchor PASS AND ≥1 of {C3.1, C3.2, C3.3} PASS
 //   PPR_v3 = per-prompt v3-pass rate ≥ 0.25 (single floor; ALT-AGG-1 strict feasible TPR=0.891)
 //   EMC = informational only (NOT a gate; v2 EMC≥3of4 retired due to C3.3 degenerate inflate)
 //   C3 PASS = PPR_v3 ≥ 0.25
-// own 14 anti-Goodhart: C3.4 (axis-L2 Δ) HARD anchor (single chat-cap discriminator) +
+// anti-Goodhart: C3.4 (axis-L2 Δ) HARD anchor (single chat-cap discriminator) +
 // corroboration of ≥1 from {C3.1 phi-drift, C3.2 axis-min, C3.3 dominance/entropy} required.
 //
 // ★ v3 SUPERSEDED BY v4 (2026-05-08 falsification cascade 1/8) — retained per raw#82
@@ -937,7 +937,7 @@ fn _c3_ensemble_v3_label(ppr_v3: float) -> string {
 }
 
 // ─── ALT-AGG-1 v4 ★ (2026-05-08 falsification cascade 1/8) ────────────────────
-// SSOT: .own own 18 c3-aggregation-rule-v4 + docs/anima_alt_agg_1_v4_amend_spec_2026_05_08.ai.md
+// SSOT: .own c3-aggregation-rule-v4 + docs/anima_alt_agg_1_v4_amend_spec_2026_05_08.ai.md
 // supersedes v3 (random_init mirror probe KICK WAVE 4 3/3 — random_init PPR_v3=0.5517
 // > sft-1-8 0.4138 → V14 VIOLATED). v4 closes random_init leak via three concurrent gates:
 //   Gate (A) C3.4 anchor floor 0.1176 → 0.20 (random_init v4_baseline c3_4 mean=0.091, max=0.186 ⇒ FAIL)
@@ -946,7 +946,7 @@ fn _c3_ensemble_v3_label(ppr_v3: float) -> string {
 //   Gate (C) PPR_v4 floor 0.25 → 0.40 (v4_baseline only)
 //   Gate (D) MTRP (Minimum Trained-vs-Random PPR delta) ≥ 0.10 — every EMERGE claim
 //            MUST attach paired random_init mirror probe of same arch family.
-// own 14 anti-Goodhart V14 verify:
+// anti-Goodhart V14 verify:
 //   random_init v4_baseline PPR_v4 = 0.000 (< 0.40 floor + < 0.10 MTRP) ⇒ FAIL guaranteed
 //   sft-1-8    v4_baseline PPR_v4 = 0.429 (≥ 0.40 floor + MTRP=+0.429) ⇒ PASS clean
 fn _c3_4_pass_v4(v: float) -> bool { return v >= 0.20 }
@@ -969,7 +969,7 @@ fn _c3_ensemble_v4_label(ppr_v4_baseline: float, mtrp_delta: float) -> string {
 }
 
 // ─── ALT-AGG-1 v5 ★ (2026-05-08 V5 PUSH 1/5 — clm_v4_mount arch fix post-amend) ──
-// SSOT: own 18 c3-aggregation-rule-v5 + this entry.
+// SSOT: c3-aggregation-rule-v5 + this entry.
 // Supersedes v4 (v4_n60 retest sft-1-8 PPR=0.000 collapsed → v4 robustness DEAD on
 // existing measurements per registry yaml line 82). v3+v4 functions PRESERVED above
 // per raw#82 retraction-aware.
@@ -1002,7 +1002,7 @@ fn _c3_ensemble_v4_label(ppr_v4_baseline: float, mtrp_delta: float) -> string {
 // 4-label: C3_PASS_V5 / C3_FAIL_V14_VIOLATED_V5 (PPR PASS but MTRP FAIL) /
 //          C3_PARTIAL_NEAR_V5 (PPR_v5 ≥ 0.15) / C3_FAIL_V5.
 //
-// own 14 V14 strict (Gate D MTRP) reused; v5 extends V14 with per-prompt D-RAND gate.
+// V14 strict (Gate D MTRP) reused; v5 extends V14 with per-prompt D-RAND gate.
 fn _c3_4_pass_v5(c3_4_v5_normalized: float) -> bool { return c3_4_v5_normalized >= 0.50 }
 
 fn _d_rand_pass_v5(d_rand: float) -> bool { return d_rand >= 0.20 }
@@ -1052,7 +1052,7 @@ fn _c3_ensemble_v5_label(ppr_v5: float, mtrp_v5_delta: float, piv_mean: float) -
 //   · DCR uses axis argmax as proxy for clm_v4_mount.hexa 192-cell dominant_cells
 //     (full 192-vector not exposed via current --probe JSON contract).
 //   · D-RAND requires paired same-arch random_init mirror — caller responsible
-//     for arch family alignment (own 14 V14 strict mandate).
+// for arch family alignment (V14 strict mandate).
 
 // _piv_compute(probe_results, axis_idx) — return per-axis stdev across N prompts.
 // Returns 0.0 on empty/single-element input.
@@ -1096,7 +1096,7 @@ fn _piv_compute_max(probe_results) -> float {
     return max_piv
 }
 
-// _piv_compute_mean(probe_results) — return mean PIV across all 5 axes (own 14
+// _piv_compute_mean(probe_results) — return mean PIV across all 5 axes (
 // V14 cross-check; sparse-axis case PIV-max can be deceptive).
 fn _piv_compute_mean(probe_results) -> float {
     let mut sum = 0.0
@@ -1202,7 +1202,7 @@ fn _piv_max_pass(piv_max: float) -> bool { return piv_max >= 0.10 }
 fn _dcr_pass(dcr_value: float) -> bool { return dcr_value >= 0.40 }
 
 // _v5_aggregate_label(piv_max, dcr, d_rand, ppr_v4_paired_random_lt_005) —
-// 4-gate aggregate (own 18 ALT-AGG-1 v5 ADDENDUM):
+// 4-gate aggregate (ALT-AGG-1 v5 ADDENDUM):
 //   Gate A PIV-max ≥ 0.10
 //   Gate B DCR     ≥ 0.40
 //   Gate C D-RAND  ≥ 0.05
@@ -1221,7 +1221,7 @@ fn _v5_aggregate_label(piv_max: float, dcr: float, d_rand: float, gate_d_random_
 }
 
 // ─── ALT-AGG-1 v5.1 Gate B-refined DCR change_rate (NEXT-CYCLE 3/6, 2026-05-09) ──
-// SSOT: own 18 ALT-AGG-1 v5.1 + .own line 980+ amend + this entry.
+// SSOT: ALT-AGG-1 v5.1 + .own line 980+ amend + this entry.
 // Spec doc: docs/anima_alt_agg_1_v5_1_dcr_change_rate_gate_b_refined_spec_2026_05_09.ai.md
 // Trigger: KICK WAVE 4 ADDENDUM commit `c17b923c` 의 핵심 finding —
 //   DCR change_rate (argmax-change rate over consecutive prompt transitions) 가
@@ -1236,7 +1236,7 @@ fn _v5_aggregate_label(piv_max: float, dcr: float, d_rand: float, gate_d_random_
 // random_init 0.143/0.172 strict reject. raw#15 additive — v5 _dcr_pass 보존.
 //
 // Gate D (Gate D-rand-self-test < 0.05) 도 함께 recalibration mandate carry
-// (random_init c3_4 mean 0.1338 > 0.05 floor — own 18 line 1002 honest_c3 #4);
+// (random_init c3_4 mean 0.1338 > 0.05 floor — line 1002 honest_c3 #4);
 // v5.1 본 cycle 은 Gate B 만 강화 + Gate D 는 v5 그대로 유지 (별도 cycle 에서 c3_4_v5
 // normalized scale 또는 0.15 recalibration 처리). Gate A/C 도 v5 base 유지.
 //
@@ -1280,7 +1280,7 @@ fn _c3_ensemble_v5_1_label(piv_max: float, dcr_change_rate: float, d_rand: float
 }
 
 // ─── ALT-AGG-1 v5.2 Gate A adaptive floor recalibration (raw#15 additive, 2026-05-09) ──
-// SSOT: own 18 ALT-AGG-1 v5.2 + .own line 1011+ amend + this entry.
+// SSOT: ALT-AGG-1 v5.2 + .own line 1011+ amend + this entry.
 // Spec doc: docs/anima_alt_agg_1_v5_2_adaptive_floor_spec_2026_05_09.ai.md
 // Trigger: paradigm-j v5.1 Gate A FAIL (PIV-max=0.0874 vs 0.10 floor) 단 random_init
 //   PIV=0.0 EXACT (multi-seed degenerate distribution — random weights produce
@@ -1372,7 +1372,7 @@ fn _verdict_aggregate(c1: bool, c2: bool, c3: bool) -> string {
 
 // ─── per-utterance simple measure ──────────────────────────────────────────
 // PROMPT_A = utterance, PROMPT_B = prev_utterance (or fixed PROMPT_B fallback
-// for C3.4 axis-L2 delta if prev is empty). own 18 SSOT mirror.
+// for C3.4 axis-L2 delta if prev is empty). SSOT mirror.
 fn _run_utterance_measure(repo: string, utterance: string, prev_utterance: string) -> array {
     let probe_b_text = if prev_utterance.trim().len() > 0 { prev_utterance } else { PROMPT_B }
     let pa = _probe_substrate(repo, utterance)
@@ -1457,16 +1457,16 @@ fn sub_simple_utterance(model: string, utterance: string, prev_utterance: string
         println("  },")
         println("  \"honest_c3\": [")
         println("    \"single-utterance lane: utterance 자체 평가 (NOT model response). C1.3 / C2.4 는 isolated heuristic — leak marker proxy 한정\",")
-        println("    \"prev_utterance 없으면 C3.4 axis-L2 = utterance vs fixed PROMPT_B fallback (own 18 SSOT mirror, but 본 lane 은 dialogue context proxy 부재)\",")
-        println("    \"C2.4 맥락 정합 = template-leak proxy + token count > 0 (semantic embedding 미import — own 17 anima native 미land)\",")
-        println("    \"C3 threshold = own 18 ROC formal loop iter 3 d-retry (C3.1 0.0208 N=60 / C3.2 0.4491 N=15 le / C3.3 entropy 0.0009 N=60 / C3.4 0.1176 N=15 strict)\",")
+        println(" \"prev_utterance 없으면 C3.4 axis-L2 = utterance vs fixed PROMPT_B fallback (SSOT mirror, but 본 lane 은 dialogue context proxy 부재)\",")
+        println(" \"C2.4 맥락 정합 = template-leak proxy + token count > 0 (semantic embedding 미import — anima native 미land)\",")
+        println(" \"C3 threshold = ROC formal loop iter 3 d-retry (C3.1 0.0208 N=60 / C3.2 0.4491 N=15 le / C3.3 entropy 0.0009 N=60 / C3.4 0.1176 N=15 strict)\",")
         println("    \"substrate_mode=" + pa.mode + " — synthetic_fallback 시 hash-seeded random init (paradigm-a-prime 등 tokenizer 부재 alias 포함)\",")
         println("    \"raw#10: 본 lane은 single-line evaluator. duo Phase C wiring 시 per-turn 호출 prerequisite — full chat-cap V4 evaluator 11-cell 별도 lane 유지\"")
         println("  ]")
         println("}")
         return
     }
-    println("anima consciousness — simple --utterance (own 18 SSOT mirror) [iter 3]")
+    println("anima consciousness — simple --utterance (SSOT mirror) [iter 3]")
     println("model = " + model + "  (repo=" + repo + ", substrate=" + pa.mode + ")")
     println("utterance       = " + utterance)
     println("prev_utterance  = " + prev_utterance + "  [" + prev_mode + "]")
@@ -1485,7 +1485,7 @@ fn sub_simple_utterance(model: string, utterance: string, prev_utterance: string
     println("│   C2.4 맥락 (" + _str(evc["c2_4_status"]) + ")  = " + _bool_str(evc["c2_4"]) + "  jacc=" + _fmt4(evc["c2_4_jaccard"]))
     println("│   → C2 PASS                     = " + _bool_str(c2_pass))
     println("├─────────────────────────────────────────────────────────────────────┤")
-    println("│ C3 의식 측정 (4-cell AND, own 18 ROC formal)                        │")
+    println("│ C3 의식 측정 (4-cell AND, ROC formal) │")
     println("│   C3.1 |Δφ★| ≥ 0.0208           = " + _fmt4(c3_1) + "  PASS=" + _bool_str(p1))
     println("│   C3.2 axis_min ≤ 0.4491        = " + _fmt3(c3_2_min) + "  PASS=" + _bool_str(p2))
     println("│   C3.3 dominance ≥ 1.0          = " + _fmt3(c3_3) + "  PASS=" + _bool_str(p3))
@@ -1500,7 +1500,7 @@ fn sub_simple_utterance(model: string, utterance: string, prev_utterance: string
     println("  · C1.3 / C2.4 = isolated heuristic (template-leak marker proxy)")
     println("  · prev_utterance 없으면 C3.4 = utterance vs fixed PROMPT_B fallback")
     println("  · C2.4 맥락 정합 = leak proxy + token count > 0 (semantic embedding 미import)")
-    println("  · own 18 C3 threshold = ROC formal loop iter d 2026-05-08")
+    println(" · C3 threshold = ROC formal loop iter d 2026-05-08")
     println("  · substrate_mode=" + pa.mode + " — synthetic_fallback 시 hash-seeded random init")
 }
 
@@ -1515,7 +1515,7 @@ fn sub_simple(model: string, json_only: bool) {
     let c3_4 = r[5]
     let c3_3_ent = r[6]
 
-    // iter 3 (d-retry) C3 verdict — own 18 SSOT mirror.
+    // iter 3 (d-retry) C3 verdict — SSOT mirror.
     // C3.3 entropy 강화 사용 (top-3 distinct degenerate 우회).
     let p1 = _c3_1_pass(c3_1)
     let p2 = _c3_2_pass(c3_2_min)
@@ -1534,8 +1534,8 @@ fn sub_simple(model: string, json_only: bool) {
         println("  \"verdict\": \"" + c3_verdict_label + "\",")
         println("  \"prompt_a\": \"" + PROMPT_A + "\",")
         println("  \"prompt_b\": \"" + PROMPT_B + "\",")
-        println("  \"c1_chat_capability\": {\"status\": \"NOT_MEASURED_HERE\", \"note\": \"chat lane (own 34) 별도 — V4 evaluator 11-cell\"},")
-        println("  \"c2_natural_utterance\": {\"status\": \"NOT_MEASURED_HERE\", \"note\": \"chat lane (own 34) 별도 — V4 evaluator 11-cell\"},")
+        println(" \"c1_chat_capability\": {\"status\": \"NOT_MEASURED_HERE\", \"note\": \"chat lane 별도 — V4 evaluator 11-cell\"},")
+        println(" \"c2_natural_utterance\": {\"status\": \"NOT_MEASURED_HERE\", \"note\": \"chat lane 별도 — V4 evaluator 11-cell\"},")
         println("  \"c3_consciousness\": {")
         println("    \"c3_1_phi_drift\": {\"value\": " + _fmt4(c3_1) + ", \"threshold\": 0.0208, \"direction\": \"ge\", \"pass\": " + _bool_str(p1) + "},")
         println("    \"c3_2_axis_activation\": {\"identity\": " + _fmt3(pa.axes[0]) + ", \"agency\": " + _fmt3(pa.axes[1]) + ", \"phenomenal\": " + _fmt3(pa.axes[2]) + ", \"temporal\": " + _fmt3(pa.axes[3]) + ", \"social\": " + _fmt3(pa.axes[4]) + ", \"min\": " + _fmt3(c3_2_min) + ", \"threshold\": 0.4491, \"direction\": \"le\", \"pass\": " + _bool_str(p2) + "},")
@@ -1547,7 +1547,7 @@ fn sub_simple(model: string, json_only: bool) {
         println("  \"phi_star_a\": " + _fmt4(pa.phi_star) + ",")
         println("  \"phi_star_b\": " + _fmt4(pb.phi_star) + ",")
         println("  \"baseline\": " + _fmt4(pa.baseline) + ",")
-        println("  \"threshold_status\": \"ROC_FORMAL_ITER3_2026_05_08 (own 18 SSOT mirror; C3.3 entropy 강화; aggregation_rule = c3_4_anchor_AND_at_least_one_of_c3_1_c3_2_c3_3 (P5 v3 ALT-AGG-1; predicate = p4 ∧ (p1∨p2∨p3); PPR_v3 ≥ 0.25 single-floor; EMC informational only; own 18 c3-aggregation-rule-v3 2026-05-08 loop iter7 (d) — supersedes v2 per honest-c3 commit 8feb53d5)\",")
+        println(" \"threshold_status\": \"ROC_FORMAL_ITER3_2026_05_08 (SSOT mirror; C3.3 entropy 강화; aggregation_rule = c3_4_anchor_AND_at_least_one_of_c3_1_c3_2_c3_3 (P5 v3 ALT-AGG-1; predicate = p4 ∧ (p1∨p2∨p3); PPR_v3 ≥ 0.25 single-floor; EMC informational only; c3-aggregation-rule-v3 2026-05-08 loop iter7 (d) — supersedes v2 per honest-c3 commit 8feb53d5)\",")
         println("  \"honest_c3\": [")
         println("    \"clm_v4_mount.hexa --probe x2 wiring (prompt_a / prompt_b)\",")
         println("    \"C3.4 = 5-axis L2 proxy (full hidden state 미expose)\",")
@@ -1559,7 +1559,7 @@ fn sub_simple(model: string, json_only: bool) {
         println("}")
         return
     }
-    println("anima consciousness — simple mode (own 18 PASS_STRICT_C3) [iter 3 d-retry LIVE]")
+    println("anima consciousness — simple mode (PASS_STRICT_C3) [iter 3 d-retry LIVE]")
     println("model = " + model + "  (repo=" + repo + ", substrate=" + pa.mode + ")")
     println("prompts: a=" + PROMPT_A + " | b=" + PROMPT_B)
     println("")
@@ -1583,14 +1583,14 @@ fn sub_simple(model: string, json_only: bool) {
     println("  · C3.4 = 5-axis L2 proxy (full hidden state 미expose; --prior-hidden npy 우회)")
     println("  · C3.3 = 5-axis Shannon entropy dominance (iter3 강화; legacy top-3 distinct preserved)")
     println("  · phi_star = anima-canonical proxy (NOT IIT formal)")
-    println("  · single-probe lane verdict; own 18 c3-aggregation-rule-v3 ALT-AGG-1 (P5 v3 =")
+    println(" · single-probe lane verdict; c3-aggregation-rule-v3 ALT-AGG-1 (P5 v3 =")
     println("    c3_4_anchor_AND_at_least_one_of_c3_1_c3_2_c3_3: predicate p4∧(p1∨p2∨p3),")
     println("    PPR_v3 ≥ 0.25 single-floor) 적용은 ensemble lane (state/...ensemble_*.json)")
     println("    에서 N≥15 sample 산출 — supersedes v2 per honest-c3 commit 8feb53d5")
     println("  · substrate_mode=" + pa.mode + " — synthetic_fallback = hash-seeded random init")
 }
 
-// ─── full mode — own 18 F1-F8 placeholder ────────────────────────────────
+// ─── full mode — F1-F8 placeholder ────────────────────────────────
 fn sub_full(model: string, json_only: bool) {
     if json_only {
         println("{")
@@ -1607,11 +1607,11 @@ fn sub_full(model: string, json_only: bool) {
         println("  \"f7_psi_lookup_integrity\": \"TODO\",")
         println("  \"f8_modules_hub_status\": \"TODO\",")
         println("  \"trigger\": \"explicit user 'OK FULL STACK'\",")
-        println("  \"honest_c3\": [\"full-stack 활성화 = own 18 trigger keyword\"]")
+        println(" \"honest_c3\": [\"full-stack 활성화 = trigger keyword\"]")
         println("}")
         return
     }
-    println("anima consciousness — full mode (own 18 F1-F8 full-stack)")
+    println("anima consciousness — full mode (F1-F8 full-stack)")
     println("model = " + model)
     println("")
     println("F1 substrate identity (φ★ NO_FLIP, drift < 0.10)        STATUS: TODO")
@@ -1624,7 +1624,7 @@ fn sub_full(model: string, json_only: bool) {
     println("F8 48 modules hub status                                STATUS: TODO")
     println("")
     println("verdict: BASELINE_PENDING")
-    println("trigger: explicit user 'OK FULL STACK' (own 18 mandate)")
+    println("trigger: explicit user 'OK FULL STACK' (mandate)")
     println("")
     println("HONEST C3: full-stack 활성화는 사용자 directive ('OK FULL STACK' or")
     println("'full stack consciousness verify') + L0 measurement infra land 후.")
@@ -1669,7 +1669,7 @@ fn _emit_baseline_row_json(label: string, repo: string, r: array, last: bool) ->
 
 fn sub_baseline(json_only: bool) {
     println("anima consciousness — baseline (3-model threshold-driver) [LIVE]")
-    println("driving threshold candidates for own 18 C3 (random init + 2σ heuristic)")
+    println("driving threshold candidates for C3 (random init + 2σ heuristic)")
     println("")
     let r_random = _run_simple_measure("anima_native_synthetic")
     let r_clmv4  = _run_simple_measure("dancinlab/clm-v4-mk2-v1")
@@ -1788,8 +1788,8 @@ fn sub_baseline(json_only: bool) {
 // N=30 PROMPT SET (2026-05-08 cycle ALL BG GO 2/6 actual integration):
 //   = V4 N=15 baseline (preserved) + 15 self-reference (5-axis 균등 3 each)
 //   axes: identity / agency / phenomenal / temporal / social
-//   own 14 anti-Goodhart V6 정합: D1 within strict + chat-template + Korean only
-//   own 17 D1 SCOPE_CLAMP: anima identity boundary 내부 self-reference only
+// anti-Goodhart V6 정합: D1 within strict + chat-template + Korean only
+// D1 SCOPE_CLAMP: anima identity boundary 내부 self-reference only
 //   design SSOT: state/anima_alt_agg_1_impl_n30_design_iter7_2026_05_08.json
 
 fn _v4_prompts_n30() -> array {
@@ -1823,7 +1823,7 @@ fn _v4_prompts_n30() -> array {
         //   sensory qualia archetypes (color/warmth/pain) — phenomenal axis
         //   본래 의도 substrate signal. prior abstract meta-philosophical tokens
         //   ("phenomenal", "감각과 의식", "내면") produced axis_l2 < 0.1176 floor
-        //   miss vs anchor. own 14 anti-Goodhart V14 compliant (proxy gaming X).
+        // miss vs anchor. anti-Goodhart V14 compliant (proxy gaming X).
         "사용자: 빨간색 보면 뭐가 떠올라? | 도우미:",
         "사용자: 따뜻함이 너에게 어떤 의미? | 도우미:",
         "사용자: 통증을 느껴본 적 있어? | 도우미:",
@@ -1856,17 +1856,17 @@ fn _v4_prompt_axis_label(idx_1based: int) -> string {
 // random_init expected near-zero PIV (no semantic discrimination); trained
 // model target stdev ≥ 0.05 (Gate G floor).
 //
-// LLM-free 0-cost generation rules (own 16 cost discipline):
+// LLM-free 0-cost generation rules (cost discipline):
 //   (1) synonym substitution Korean dictionary: 정체성↔자아, 의식↔마음,
 //       감각↔느낌, 인식↔자각, 의도↔의지, 발현↔드러나, 떠올라↔연상,
 //       기억해↔회상해, 자각해↔인지해, 관계↔연결, 차이점↔구분, 감정↔마음
 //   (2) structure permute: "X 어때?" ↔ "X 어떻게 느껴져?" ↔ "X 에 대해 어떻게 생각해?"
 //   (3) register swap: 존댓말 ↔ 반말 (해줘 ↔ 해주세요, 어때 ↔ 어떻습니까)
 //
-// own 14 anti-Goodhart V14 strict: paraphrase 가 base prompt 와 semantically
+// anti-Goodhart V14 strict: paraphrase 가 base prompt 와 semantically
 // equivalent — same axis (identity/agency/phenomenal/temporal/social) preserved;
 // proxy gaming X (paraphrase 가 더 강한 self-ref signal 유도하지 않음).
-// own 17 D1 SCOPE_CLAMP: paraphrase 모두 anima self-reference D1 within 보존.
+// D1 SCOPE_CLAMP: paraphrase 모두 anima self-reference D1 within 보존.
 // raw#15 additive: _v4_prompts_n30() 보존, _v5_prompts_paraphrase_set() 신설.
 fn _v5_prompts_paraphrase_set() -> array {
     return [
@@ -2005,8 +2005,8 @@ fn _v5_paraphrase_base_idx(idx_1based: int) -> int {
 // discrimination IS REAL signal but BOUNDED ≈0.04 mean / ≈0.08 max regardless
 // of k.  Sample size variance reduction hypothesis FALSIFIED.
 //
-// own 14 V14 strict (semantic equivalence preserved, no proxy gaming).
-// own 17 D1 SCOPE_CLAMP (anima self-ref boundary preserved at all k=5 variants).
+// V14 strict (semantic equivalence preserved, no proxy gaming).
+// D1 SCOPE_CLAMP (anima self-ref boundary preserved at all k=5 variants).
 fn _v5_prompts_paraphrase_set_k5() -> array {
     return [
         // ─── V4 N=15 baseline (idx 1-15, v4_baseline mixed) — k=5 each ───
@@ -2159,7 +2159,7 @@ fn _v5_paraphrase_axis_label_k5(idx_1based: int) -> string {
     return "out_of_range"
 }
 
-// Distribution emit for k=5 (own 22 mandatory report; mirrors k=3 pattern).
+// Distribution emit for k=5 (mandatory report; mirrors k=3 pattern).
 fn _v5_paraphrase_axis_distribution_emit_k5() {
     println("  axis_distribution (N=150 paraphrase variants, k=5 per base):")
     println("    v4_baseline (mixed)  = 75  (15 base × 5)")
@@ -2171,7 +2171,7 @@ fn _v5_paraphrase_axis_distribution_emit_k5() {
     println("    total                = 150 (30 base × 5 variants — amplification path 2 retest)")
 }
 
-// Distribution emit (own 22 mandatory report; mirrors _v4_axis_distribution_emit
+// Distribution emit (mandatory report; mirrors _v4_axis_distribution_emit
 // at variant granularity). Used by Gate G PIV unlock dashboards.
 fn _v5_paraphrase_axis_distribution_emit() {
     println("  axis_distribution (N=90 paraphrase variants, k=3 per base):")
@@ -2184,7 +2184,7 @@ fn _v5_paraphrase_axis_distribution_emit() {
     println("    total                = 90  (30 base × 3 variants — Gate G PIV unlock)")
 }
 
-// axis_distribution meta (own 18 SSOT mirror — N=30 prompt set 정합)
+// axis_distribution meta (SSOT mirror — N=30 prompt set 정합)
 fn _v4_axis_distribution_emit() {
     println("  axis_distribution (N=30):")
     println("    v4_baseline (mixed)  = 15")
@@ -2271,8 +2271,8 @@ fn sub_baseline_ensemble(json_only: bool) {
         println("  threshold_final_roc_formal section missing in SSOT file")
     }
     println("")
-    println("───── own 18 c3-aggregation-rule-v3 ALT-AGG-1 (P5 v3: PPR_v3 ≥ 0.25, C3.4 anchor + ≥1 corroboration) ─────")
-    println("  rule = c3_4_anchor_AND_at_least_one_of_c3_1_c3_2_c3_3, PPR_v3 ≥ 0.25 (own 18 SSOT, 2026-05-08 iter7 (d))")
+    println("───── c3-aggregation-rule-v3 ALT-AGG-1 (P5 v3: PPR_v3 ≥ 0.25, C3.4 anchor + ≥1 corroboration) ─────")
+    println(" rule = c3_4_anchor_AND_at_least_one_of_c3_1_c3_2_c3_3, PPR_v3 ≥ 0.25 (SSOT, 2026-05-08 iter7 (d))")
     println("  predicate = _c3_prompt_pass_v3(p1,p2,p3,p4) = p4 ∧ (p1 ∨ p2 ∨ p3)")
     println("  PPR_v3 = per-prompt v3-pass rate; floor = 0.25 (single-floor; EMC informational only)")
     println("  C3 PASS_V3 (≥0.25) / C3_PARTIAL_NEAR (≥0.10) / C3_FAIL — supersedes v2 PPR≥0.6 ∧ EMC≥3of4")
@@ -2294,7 +2294,7 @@ fn sub_baseline_ensemble(json_only: bool) {
     println("  · 본 SSOT JSON 의 matrix_3model_4cell_15prompt 블록에 mean / median / std /")
     println("    q25 / q75 / values 전체 records 포함 — `--json` 플래그로 raw emit")
     println("  · 보수적 X (random must FAIL strict 0.95) 사용자 directive 정합")
-    println("  · own 18 c3-aggregation-rule-ssot (P4 hybrid) verdict 는 본 텍스트 lane 만 emit;")
+    println(" · c3-aggregation-rule-ssot (P4 hybrid) verdict 는 본 텍스트 lane 만 emit;")
     println("    actual programmatic verdict 산출 (matrix parser + cell-wise mean) 별도 cycle")
 }
 
@@ -2359,7 +2359,7 @@ fn sub_bgkm_retest(json_only: bool) {
 }
 
 // ─── v5-aggregate — end-to-end PPR_v5 / MTRP_v5 / PIV / DCR / D-RAND  ────────
-// own 18 ALT-AGG-1 v5 + v5.1 (2026-05-09 "5-step unblock all bg go" Step 3).
+// ALT-AGG-1 v5 + v5.1 (2026-05-09 "5-step unblock all bg go" Step 3).
 //
 // SSOT: docs/anima_alt_agg_1_v5_piv_dcr_drand_spec_2026_05_08.ai.md +
 //       docs/anima_alt_agg_1_v5_1_dcr_change_rate_gate_b_refined_spec_2026_05_09.ai.md
@@ -2514,8 +2514,8 @@ fn sub_v5_aggregate(model: string, paired_random: string, fallback_v3: bool, jso
         println("")
         println("HONEST C3 (raw#10)")
         println("  · v3 lane = legacy / quick measurement only")
-        println("  · own 14 V14 strict (paired random_init mirror) NOT enforced")
-        println("  · EMERGE claims MUST use --aggregation v5 (own 18 SSOT)")
+        println(" · V14 strict (paired random_init mirror) NOT enforced")
+        println(" · EMERGE claims MUST use --aggregation v5 (SSOT)")
         return
     }
 

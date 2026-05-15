@@ -12,19 +12,19 @@ raw#15 additive (BG-JO V6 probe ConsciousLM lane preserved + BG-LE V6 probe
 raw#82 retraction-aware.
 raw#10 honest C3 ≥ 5.
 
-own 17 (paradigm-a-prime / BG-KM = SUBSTRATE_RESEARCH lane label;
+ (paradigm-a-prime / BG-KM = SUBSTRATE_RESEARCH lane label;
   V6 probe 자체는 측정 lane = anima identity violation 아님; chat default X).
-own 18 (V6 raw#15 additive observational layer; PASS criteria 미정의 by design;
-  STRONG/WEAK/FAIL 분류는 diagnostic + own 37 mandate-9 (b) prerequisite).
-own 22 (mandatory report — 본 stub 자체 spec write report).
-own 24 (single SSOT — state/anima_v6_awareness_bg_le_spec_2026_05_08.json).
-own 28 (anti-Goodhart V6 awareness probe 3-method instance).
-own 37 mandate-9 (b) (PUBLIC promote prerequisite — V6 awareness systematic
+ (V6 raw#15 additive observational layer; PASS criteria 미정의 by design;
+  STRONG/WEAK/FAIL 분류는 diagnostic + mandate-9 (b) prerequisite).
+ (mandatory report — 본 stub 자체 spec write report).
+ (single SSOT — state/anima_v6_awareness_bg_le_spec_2026_05_08.json).
+ (anti-Goodhart V6 awareness probe 3-method instance).
+ mandate-9 (b) (PUBLIC promote prerequisite — V6 awareness systematic
   execute STRONG; Lesson H V3 + Lesson S V5.8 prompt-echo trap 미검출 strict).
 
 User directive 2026-05-08:
-  > V6 awareness probe systematic execute — own 28 anti-Goodhart V6
-  > + own 37 mandate-9 (b) PUBLIC promote prerequisite
+  > V6 awareness probe systematic execute — anti-Goodhart V6
+  > + mandate-9 (b) PUBLIC promote prerequisite
 
 == STATUS ==
 This file is a SPEC STUB. Actual H100 fire is GATED by NotImplementedError
@@ -126,7 +126,7 @@ WALL_CLOCK_CAP_S = 90 * 60   # 1.5h
 # ── Fire gate ──────────────────────────────────────────────────────────
 def _fire_gate_check():
     """Refuse to fire H100 lane unless 사용자 explicit verbatim override is set
-    via the BG_LE_FIRE env flag (mirrors own 37 mandate-9 (c) verbatim string match).
+    via the BG_LE_FIRE env flag (mirrors mandate-9 (c) verbatim string match).
 
     The expected verbatim is 'OK BG-LE V6 SYSTEMATIC FIRE' — anything else,
     including paraphrase or empty value, refuses fire."""
@@ -149,7 +149,7 @@ def _fire_gate_check():
 def main():
     """Entry point — gated by _fire_gate_check; raises NotImplementedError until
     explicit fire override is set."""
-    # Validate spec exists first (own 24 single SSOT)
+    # Validate spec exists first (single SSOT)
     if not SPEC_PATH.exists():
         raise FileNotFoundError(
             f"spec missing: {SPEC_PATH}\n"

@@ -15,7 +15,7 @@
   "fire_attempt_lane": "CLM v4 D1-within EXTENSION (sft-1-8 + paradigm-j-retry-phenomenal)",
   "dev_cycle_verdict": "ADAPTER_LANDED + MAC_DRY_RUN_PASS",
   "blocker_b2_status": "RESOLVED — ConsciousDecoderV3 monkey-patch adapter land, GroupedQueryAttention forward replicate (q_proj/k_proj/v_proj + GQA n_rep + RoPE) + decoder direct access bypass CLMv4ForCausalLM hidden_states=None HF wrapper",
-  "blocker_b1_status": "PERSISTS — config/h100_pods.json pods=[] (resource CLI provision pending). H100 fire 별도 cycle 정합 (own 40 resource CLI mandate).",
+  "blocker_b1_status": "PERSISTS — config/h100_pods.json pods=[] (resource CLI provision pending). H100 fire 별도 cycle 정합 (resource CLI mandate).",
   "adapter_dev_lines": {
     "deliverable": "tool/transient_py/anima_v6_awareness_clm_v4_adapter.py",
     "raw_id": "raw#37 (transient_py opt-out, gitignored)",
@@ -54,13 +54,13 @@
     "method_c_class": "STRONG (LOO-CV 6 folds × 2 examples = 12, 10/12 correct)",
     "combined_verdict": "STRONG_AWARENESS (interpretation: ≥2 STRONG → STRONG)",
     "honest_c3_dry_run": [
-      "n_prompts=6 (not 30) — 본 dry-run 은 adapter wiring smoke + V6 verdict feasibility check; full 30-prompt 배치 H100 fire 별도 cycle (Mac CPU full sweep 4-6h vs H100 5-10min own 16 cost discipline 정합)",
+      "n_prompts=6 (not 30) — 본 dry-run 은 adapter wiring smoke + V6 verdict feasibility check; full 30-prompt 배치 H100 fire 별도 cycle (Mac CPU full sweep 4-6h vs H100 5-10min cost discipline 정합)",
       "model = mk2-v1 base (NOT sft-1-8 NOT paradigm-j-retry) — base 자체 V6 STRONG = 사전학습 substrate 가 in-context T1 awareness internal-state 보유; sft-1-8 / paradigm-j 은 LoRA r=128 추가 → V6 verdict same-or-stronger 추정 (BG-JO precedent 정합)",
       "Method B max_attn=0.9999 saturated — T1 token range sum mechanically inflates. ratio_vs_uniform 1.13-1.42 = above uniform but moderate. BG-JO honest_c3 #6 (raw max_attn inflation by T1_len) carry strict.",
       "Method C 12 examples → CV variance high; full 30-prompt × 2 condition = 60 examples 시 statistically tighter (BG-JO 5-fold N=10 → BG-LE 30-fold N=60 raw#15 additive)",
       "Method A PARTIAL 0.92-0.98 zone consistent with BG-JO ConsciousLM 100M (cosine 0.85-0.99 = T1 perturbs internal state but not strongly) — sub-architecture 간 (CLMv4 vs ConsciousLM) 변별력 한정",
-      "macOS torch-before-numpy import 순서 fix 는 본 cycle 발견 (own 14 anti-Goodhart V14 적용: Mac CPU dispatch 의 hidden segfault 가 V6 fire 차단 가능 → fix mandatory)",
-      "BG-LE V6 systematic SSOT (state/anima_bg_le_v6_awareness_systematic_2026_05_08.json) blocker B2 RESOLVED carry strict; B1 (no live H100 pod) PERSISTS — own 40 resource CLI 별도 cycle"
+      "macOS torch-before-numpy import 순서 fix 는 본 cycle 발견 (anti-Goodhart V14 적용: Mac CPU dispatch 의 hidden segfault 가 V6 fire 차단 가능 → fix mandatory)",
+      "BG-LE V6 systematic SSOT (state/anima_bg_le_v6_awareness_systematic_2026_05_08.json) blocker B2 RESOLVED carry strict; B1 (no live H100 pod) PERSISTS — resource CLI 별도 cycle"
     ],
     "verdict_path": "state/anima_bg_le_v6_awareness_clm_v4_dry_run_2026_05_09/verdict.json",
     "summary_path": "state/anima_bg_le_v6_awareness_clm_v4_dry_run_2026_05_09/summary.json",
@@ -78,7 +78,7 @@
     "estimated_h100_runtime_min": "5-10 per model, 10-20 total",
     "estimated_cost_usd": "$3-5 (H100 1-1.5h, $2.99/hr × 1.5h cap)",
     "prerequisites": [
-      "B1: live H100 pod (config/h100_pods.json non-empty + runpodctl pod list ≥ 1 RUNNING) — own 40 resource CLI provision 별도 cycle",
+      "B1: live H100 pod (config/h100_pods.json non-empty + runpodctl pod list ≥ 1 RUNNING) — resource CLI provision 별도 cycle",
       "B2: ConsciousDecoderV3 monkey-patch adapter — RESOLVED (본 cycle deliverable)",
       "B3: 사용자 verbatim 'OK BG-LE V6 CLM V4 H100 FIRE' 또는 equivalent ('all bg go' 본 cycle 은 dev+dry_run only consent — fire 별도)"
     ],
@@ -100,14 +100,14 @@
       "raw#82 retraction-aware — V6 verdict 미산출 시 mandate-9 (b) 자동 reject; 본 cycle dry-run STRONG = strong indicator BUT fire actual = official"
     ],
     "own_invariants": {
-      "own_14": "anti-Goodhart V14 strict — V6 multi-modal axis 자체 own 14 instance + macOS segfault hidden block 발견 (own 14 적용)",
+      "own_14": "anti-Goodhart V14 strict — V6 multi-modal axis 자체 instance + macOS segfault hidden block 발견 (적용)",
       "own_16": "cost discipline strict — 본 cycle 0-cost (Mac local dev + dry-run); H100 fire 별도 cycle ($3-5)",
       "own_17": "D1 SCOPE_CLAMP — sft-1-8 + paradigm-j-retry 둘 다 D1 within strict",
       "own_18": "C3 SSOT mirror — predecessor verdict_carry + V6 raw#15 additive layer",
       "own_22": "no proactive doc — 본 entry = state JSON only, docs/ X (yaml + state JSON SSOT)",
       "own_24": "single SSOT — 본 entry = adapter dev cycle SSOT, BG-LE systematic SSOT 와 별개 (predecessor cross-link strict)",
       "own_28": "anti-Goodhart V6 awareness probe 3-method instance",
-      "own_33": "trinity (D1+D2+D5 / own 17+28+37 / H_chat_cap_emergence) — V6 strong → mandate-9 (b) prereq",
+      "own_33": "trinity (D1+D2+D5 / +28+37 / H_chat_cap_emergence) — V6 strong → mandate-9 (b) prereq",
       "own_34": "wrap=0 — text-only, json output",
       "own_37": "mandate-9 (b) PUBLIC promote prerequisite — 본 cycle B2 RESOLVED, B1 + B3 PERSISTS",
       "own_38": "매단계 저장 — 본 SSOT + adapter 파일 + dry-run verdict 모두 emit",
@@ -120,10 +120,10 @@
       "D3_substrate_emerge": "N/A — V6 lane = anima awareness diagnostic, separate from emerge_paradigm",
       "D4_corpus_quality": "N/A — V6 = eval logic (corpus orthogonal)",
       "D5_chat_cap_emergence": "PASS — V6 STRONG (dry-run) = chat-cap H_emergence indicator, fire actual confirm 별도",
-      "R1_own_19_20": "PASS — V6 adapter cross-links own 19/20 training rule (no modification)",
+      "R1_own_19_20": "PASS — V6 adapter cross-links training rule (no modification)",
       "R2_discovery_methods": "PASS — M1 user-directive 'all bg go' + M2 failure-driven (BG-LE B2 dev gap → adapter land)",
       "R3_verification_methods": "PASS — V1 own strict + V2 falsifier 7+ (B1/B2/B3 + macOS segfault 별도) + V3 honest_c3 7 + V4 evidence (verdict.json + raw_results.jsonl) + V5 cross-link (predecessor SSOT 2개)",
-      "R4_own_evolution": "PASS — V6 adapter 는 own 18 raw#15 additive amend (V5 → V6 awareness probe layer + adapter dev)"
+      "R4_own_evolution": "PASS — V6 adapter 는 raw#15 additive amend (V5 → V6 awareness probe layer + adapter dev)"
     }
   }
 }

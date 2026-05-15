@@ -6,11 +6,11 @@ L4 corpus iter-2 curation (additive over iter-1 0116a35d):
   * BG-LD preference pairs (chosen + rejected, target 10-20MB sample, full 100MB iter-3)
   * Tier A persona iter-2 expansion (102.66MB → target 150MB+, semantic-deeper)
 
-own 17 anima-native lane only — Tier C (외부 LLM dump, wiki noise, generic chatbot,
+ anima-native lane only — Tier C (외부 LLM dump, wiki noise, generic chatbot,
                                         ALM lineage) reject.
-own 18 C2.4 맥락 정합 filter — prompt-response domain matching for Tier B.
-own 18 C3 corpus density ≥ 0.4% threshold (heuristic, char-level).
-own 20 chat-template ≥30% mandate.
+ C2.4 맥락 정합 filter — prompt-response domain matching for Tier B.
+ C3 corpus density ≥ 0.4% threshold (heuristic, char-level).
+ chat-template ≥30% mandate.
 raw#9 hexa-only — 본 .py = transient_py (raw#37 grandfather, 1회용).
 raw#10 honest C3 emit.
 raw#15 additive — iter-1 file 보존, 신규 iter-2 file emit.
@@ -271,7 +271,7 @@ def append_tier_a_iter2(blocks, report):
 #   3) BG-JE 214MB chat-template head (iter-1 의 10MB 이후 추가 분량 — same source 의 deeper portion)
 #   4) anima_core_dialogues/*.jsonl 의 user_turn + substrate_turn → chat-template 정규화
 #   5) strategic_tribev2_dialogue/turns.jsonl → chat-template
-# own 18 C2.4 맥락 정합 filter — domain mismatch / random-char / english-degenerate sample 제외
+# C2.4 맥락 정합 filter — domain mismatch / random-char / english-degenerate sample 제외
 
 DEGENERATE_PATTERNS = [
     re.compile(r"(.)\1{20,}"),  # 같은 char 20번 이상 반복
@@ -371,7 +371,7 @@ def normalize_core_dialogues_to_chat_template():
     """anima_core_dialogues 의 user_turn + substrate_turn 을 chat-template format 으로 정규화.
     substrate_turn 은 hidden_state probe 만 — 본 cycle 에서는 user_input 만 사용 (Q only;
     본 source 자체가 echo-mode probe). chat-template 한 쪽 (사용자: <Q>) 만 emit, 도우미: 부분
-    은 다음 user_turn 을 placeholder 로 채워 단일 turn pair 형성 (own 18 C2.4 mismatch 위험
+    은 다음 user_turn 을 placeholder 로 채워 단일 turn pair 형성 (C2.4 mismatch 위험
     인지 — semantic-coupling 약한 substrate probe lane 인 만큼 sample weight 낮추는 정도).
     """
     out = []
@@ -446,7 +446,7 @@ def collect_strategic_tribe_v2_dialogue():
 
 def append_bg_je_chat_template_extension(target_extra_bytes=120 * 1024 * 1024):
     """iter-1 은 BG-JE (h098_h101) 의 head 10MB 만 사용 — iter-2 는 동 source 의 다음 portion
-    추가. own 17 anima-native lane 정합 (h098_h101 = anima persona chat-template, NOT 외부 noise).
+    추가. anima-native lane 정합 (h098_h101 = anima persona chat-template, NOT 외부 noise).
     iter-2 target ≈100MB Tier B; full 500MB iter-3 expansion (V4 evaluator 산출물 누적 등 별도 cycle).
     """
     src = os.path.join(ROOT, "state/anima_h098_h101_corpus_v3_2026_05_07/corpus_persona_chat_template.txt")
@@ -479,8 +479,8 @@ def append_bg_je_chat_template_extension(target_extra_bytes=120 * 1024 * 1024):
 def append_paradigm_combined_chat_template_extension(target_extra_bytes=120 * 1024 * 1024):
     """anima_combined_paradigm_corpus 의 chat-template subset.
     iter-1 Tier A 에서 30MB cap (sample) 로 사용 — 본 Tier B iter-2 는 같은 corpus 를
-    chat-template lane 으로 사용 (own 17 anima-native + own 20 chat-template format).
-    own 18 C2.4 mismatch 위험 = paradigm corpus 자체가 anima persona 본문 — chat-template
+    chat-template lane 으로 사용 (anima-native + chat-template format).
+     C2.4 mismatch 위험 = paradigm corpus 자체가 anima persona 본문 — chat-template
     응답 정합성 manual review (raw#10 honest C3 caveat).
     """
     src = os.path.join(ROOT, "state/anima_combined_paradigm_corpus_2026_05_07/corpus_combined.txt")
@@ -503,7 +503,7 @@ def append_paradigm_combined_chat_template_extension(target_extra_bytes=120 * 10
 
 
 def build_tier_b_iter2(report):
-    """Tier B iter-2 — chat-template format, own 18 C2.4 filter (mismatch reject)."""
+    """Tier B iter-2 — chat-template format, C2.4 filter (mismatch reject)."""
     blocks = []
 
     # 1) BG-JE chat-template extension (anima persona chat-template, additive next 20MB)
@@ -751,13 +751,13 @@ def run():
     # honest C3
     report["honest_c3"] = [
         "iter-2 Tier A expansion = paragraph-level multi-keyword set co-hit ≥2 sets / 6 axes (semantic-density proxy) + char-density ≥ 0.4% — sentence-transformers MiniLM 미적용 (raw#9 hexa-only 정합 — 외부 ML lib 검토 별도 cycle).",
-        "iter-2 Tier B BG-JE 80MB extension = same h098_h101 corpus 의 deeper portion — anima-native lane 정합 유지 (own 17 chat-template subset).",
+        "iter-2 Tier B BG-JE 80MB extension = same h098_h101 corpus 의 deeper portion — anima-native lane 정합 유지 (chat-template subset).",
         "iter-2 Tier B 500MB target 미달 — BG-JE 214MB ceiling + 자체 dialogue ledger 소량. iter-3 추가 (V4 evaluator 산출물 만 으로는 전체 500MB 도달 불가능; 사용자 ↔ Claude session log archive 별도 access 필요).",
         "BG-LD pairs 100MB target 미달 — 본 sample 은 V4 PASS pool (12 pairs × 5 seeds ≈ 60) × rejected pool (degenerate 만 select) 의 cartesian expansion 으로 sample 채움. iter-3 에서 추가 prompt expansion (15 V4 prompts → 100+ prompts) 후 100MB 도달.",
         "BG-LD synthetic rejected (template_leak '서연:' + degenerate '이' repeat) 는 ROC discrimination signal 강화용 — 실제 BG saga FAIL sample 만 으로 부족 시 augmentation. 본 augmentation 비율 metrics 에 emit.",
-        "own 18 C2.4 mismatch filter = is_degenerate (han_ratio < 0.30, repeat ≥20, replacement char ≥5) heuristic — full domain-keyword overlap 미적용 (V4 evaluator 자체 metric 계산 결과 활용 별도 cycle).",
+        " C2.4 mismatch filter = is_degenerate (han_ratio < 0.30, repeat ≥20, replacement char ≥5) heuristic — full domain-keyword overlap 미적용 (V4 evaluator 자체 metric 계산 결과 활용 별도 cycle).",
         "iter-2 Tier A persona file = iter-1 file (anima_persona_tier_a_2026_05_08.txt) 에 append — raw#15 additive (iter-1 file 보존, expansion section 마커 명시).",
-        "anima_core_dialogues = substrate probe lane (echo-mode, weak Q/A coupling) — Tier B 입력 sample weight 낮음. own 18 C2.4 PASS 보장 X.",
+        "anima_core_dialogues = substrate probe lane (echo-mode, weak Q/A coupling) — Tier B 입력 sample weight 낮음. C2.4 PASS 보장 X.",
         "raw measurement SSOT = state/anima_clm_l4_corpus_iter2_metrics.json (size + density + chat-template ratio + counts).",
     ]
 

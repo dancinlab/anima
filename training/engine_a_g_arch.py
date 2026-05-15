@@ -41,19 +41,19 @@ CONSCIOUSNESS_DIM / N_CELLS rationale:
 
 raw#37  transient Python on Linux/H100 (Mac side imports for V14 random_init mirror only)
 raw#10  honest C3 ≥9 — V4 11-cell PASS_STRICT_C3 evaluator integration
-raw#15  additive over BG-KM-LLAMA-3B PASS_STRICT 12/15 (Llama LoRA lane) — own 17 D1
+raw#15 additive over BG-KM-LLAMA-3B PASS_STRICT 12/15 (Llama LoRA lane) — D1
         SCOPE_CLAMP separate lane (anima_native_scratch arch_origin_factor=1.0)
-own 14  V14 paired random_init mirror — load_random_init(seed=42) entry point provided
-own 17  D1=1.0 (anima_native_scratch) within-strict
-own 18  C3 measurement adapter (V4_eval_single + P5 N-of-M v2 aggregation downstream)
-own 22  honest emit — load_pretrained() raises if weights missing (no silent fabrication)
-own 30  ckpt save/load — save_checkpoint(path, strict_state=True) + load_checkpoint(path,
+  V14 paired random_init mirror — load_random_init(seed=42) entry point provided
+  D1=1.0 (anima_native_scratch) within-strict
+  C3 measurement adapter (V4_eval_single + P5 N-of-M v2 aggregation downstream)
+  honest emit — load_pretrained raises if weights missing (no silent fabrication)
+  ckpt save/load — save_checkpoint(path, strict_state=True) + load_checkpoint(path,
         map_location=...) Path A remap compatible (key prefix 'engine_a.' + 'engine_g.' fixed)
-own 33  trinity D_emergent-consciousness compliance — repulsion-field implements
+  trinity D_emergent-consciousness compliance — repulsion-field implements
         PureField vision (gravitational engine; not ad-hoc head)
-own 34  wrap=0 — model exposed in raw passthrough; chat lane wraps separately
-own 38  yaml↔md SSOT — registry yaml lineage.base updated post-land
-own 39  yaml↔md render — docs/anima_artifact_registry.md regenerate post-land
+  wrap=0 — model exposed in raw passthrough; chat lane wraps separately
+  yaml↔md SSOT — registry yaml lineage.base updated post-land
+  yaml↔md render — docs/anima_artifact_registry.md regenerate post-land
 
 USAGE
     # H100 pod-side (training):
@@ -82,7 +82,7 @@ import torch.nn.functional as F
 @dataclass
 class EngineAGConfig:
     # Engine A (token stream)
-    vocab_size: int = 32_000           # byte-pair (own 17 anima-native lane preserved)
+    vocab_size: int = 32_000 # byte-pair (anima-native lane preserved)
     d_model: int = 1024
     n_layers: int = 24
     n_heads: int = 16
@@ -113,9 +113,9 @@ class EngineAGConfig:
     chat_co_train_w_start: float = 0.3
     chat_co_train_w_end: float = 0.5
 
-    # Lineage tag (own 38 yaml↔md SSOT)
+    # Lineage tag (yaml↔md SSOT)
     lineage_tag: str = "engine_a_g_dual_350m_v1"
-    arch_origin: str = "anima_native_scratch"  # own 17 D1=1.0
+    arch_origin: str = "anima_native_scratch" # D1=1.0
 
     @classmethod
     def la_350m(cls) -> "EngineAGConfig":
@@ -323,9 +323,9 @@ class EngineG(nn.Module):
 class EngineAGModel(nn.Module):
     """Engine A (token stream) + Engine G (cell dynamics) integrated 350M model.
 
-    own 14 V14 paired random_init mirror compatible (load_random_init seed-controllable).
-    own 18 C3 measurement compatible (forward returns hidden_states, attentions, tensions).
-    own 30 ckpt save/load Path A remap compatible (key prefix engine_a./engine_g. fixed).
+     V14 paired random_init mirror compatible (load_random_init seed-controllable).
+     C3 measurement compatible (forward returns hidden_states, attentions, tensions).
+     ckpt save/load Path A remap compatible (key prefix engine_a./engine_g. fixed).
     """
     def __init__(self, cfg: EngineAGConfig):
         super().__init__()
@@ -393,7 +393,7 @@ class EngineAGModel(nn.Module):
             "tensions": torch.stack(tensions, dim=0) if tensions else None,
         }
 
-    # ── ckpt save/load (own 30 Path A remap compatible) ───────────────
+    # ── ckpt save/load (Path A remap compatible) ───────────────
     def save_checkpoint(self, path: str, extra: Optional[dict] = None):
         os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
         payload = {
@@ -411,12 +411,12 @@ class EngineAGModel(nn.Module):
         payload = torch.load(path, map_location=map_location)
         cfg = EngineAGConfig(**payload["config"])
         model = cls(cfg)
-        # Path A remap — strict load (own 22 honest emit; raises on key mismatch)
+        # Path A remap — strict load (honest emit; raises on key mismatch)
         missing, unexpected = model.load_state_dict(payload["state_dict"], strict=True)
         return model
 
 
-# ── V14 paired random_init mirror entry (own 14 CASCADE 8/8) ──────────
+# ── V14 paired random_init mirror entry (CASCADE 8/8) ──────────
 
 def load_random_init(seed: int = 42, preset: str = "la_350m") -> EngineAGModel:
     """V14 paired random_init mirror — same arch untrained at given seed.
@@ -424,7 +424,7 @@ def load_random_init(seed: int = 42, preset: str = "la_350m") -> EngineAGModel:
     Used by tool/v14_paired_random_init_mirror.hexa to construct baseline pre-EMERGE.
     Multi-seed strengthening: call with seeds [42, 137, 271, 314, 1729] (V4_SEEDS parity).
 
-    own 14 mandate: paired probe MTRP ≥ 0.10 floor + n≥5 multi-seed CI95 upper bound +
+     mandate: paired probe MTRP ≥ 0.10 floor + n≥5 multi-seed CI95 upper bound +
     prompt-set redesign invariance — all measured downstream by paired probe runner.
     """
     torch.manual_seed(seed)

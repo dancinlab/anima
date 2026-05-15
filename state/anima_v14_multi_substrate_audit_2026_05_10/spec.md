@@ -69,10 +69,10 @@ core 4/4 verdict, only reported as supplementary.
 
 - raw#9: training/*.py local-only (mitosis_v5_port.py + engine_a_g_arch.py + iit_phi_port.py + mitosis_model_v5.py imported, NOT modified)
 - raw#15: additive — all ckpts unmodified
-- own 14: V14 5-seed strict per substrate
-- own 16: $0 envelope — local Mac CPU only
-- own 22: REBORN.md 직접 append 안함; dispatcher가 §47 slot에 receive 후 append
-- own 38: artefact persisted under state/anima_v14_multi_substrate_audit_2026_05_10/
+- : V14 5-seed strict per substrate
+- : $0 envelope — local Mac CPU only
+- : REBORN.md 직접 append 안함; dispatcher가 §47 slot에 receive 후 append
+- : artefact persisted under state/anima_v14_multi_substrate_audit_2026_05_10/
 
 ## Falsifiers
 

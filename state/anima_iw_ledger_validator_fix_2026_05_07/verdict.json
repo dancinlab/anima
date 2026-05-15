@@ -11,7 +11,7 @@
   "spec_input": "BG-IW prompt cron 5m fire — 4 violations to resolve (FU-1 enum SIMPLE_STACK_FAIL, FU-2 enum SEED_LUCK_FAIL, FU-3 uniqueness BG-IA dup, FU-4 type BG-HZ list)",
 
   "schema_extensions": [
-    "final_class enum +SIMPLE_STACK_FAIL (BG-FK precedent — own 18 ≥1 cell fail)",
+    "final_class enum +SIMPLE_STACK_FAIL (BG-FK precedent — ≥1 cell fail)",
     "final_class enum +SEED_LUCK_FAIL (BG-IE precedent — non-reproducibility under seed pin)",
     "final_class enum +SUPERSEDED (raw#82 audit-trail marker for intermediate-state entries replaced by later final-verdict append)",
     "final_class enum +CORPUS_READY (BG-IK precedent — corpus-build BG completion downstream-ready)",
@@ -65,7 +65,7 @@
     "spec_target_retraction_violations": 0,
     "out_of_scope_post_iw_findings": {
       "required_field_violations": 7,
-      "details": "BG-IS line 30 missing 7 required fields (corpus_chat_template_ratio / corpus_hangul_ratio / artifacts / cross_link_h_id / cross_link_roadmap / hf_private_status / notes); BG-IS landed AFTER BG-IH initial audit and is NOT in BG-IW spec-resolution scope (raw#15 additive forbids rewriting other BGs' entries); own 22 silent-discovery-forbidden 정합으로 명시 보고",
+      "details": "BG-IS line 30 missing 7 required fields (corpus_chat_template_ratio / corpus_hangul_ratio / artifacts / cross_link_h_id / cross_link_roadmap / hf_private_status / notes); BG-IS landed AFTER BG-IH initial audit and is NOT in BG-IW spec-resolution scope (raw#15 additive forbids rewriting other BGs' entries); silent-discovery-forbidden 정합으로 명시 보고",
       "follow_up_owner": "BG-IS author OR dedicated follow-up BG"
     },
     "schema_extensions_count": 17,
@@ -76,7 +76,7 @@
     "raw#15 additive enum extension은 existing entry semantic 변경 X — 단지 honest verdict label legalize. 4 spec-defined violations (FU-1/2/3/4) 모두 additive 방식으로 resolved.",
     "BG-IA line 20 final_class PENDING→SUPERSEDED 변경은 spec exception (raw#82 retraction protocol audit-trail mandate) — superseded_by 새 field로 line 24 canonical successor reference. validator VR-4 uniqueness check exclusion 정합.",
     "BG-HZ training_steps=[500,1000,2000] union type 도입은 future ambiguity (single int vs list) 위험 — bg_kind=multi_ckpt_retrieval로 disambiguates. backward-compat 기존 int|null entries 영향 X.",
-    "validation_post_iw spec target 'invalid: 0'은 sister-BG racing (BG-IS/IT/IL/IM/IH absent BG-IW append window 동안 5 entries appended) 으로 부분 미달성 — 4 spec-defined violations 0/0 resolved, 7 sister-BG-introduced required_field_violations out-of-scope. own 22 정합으로 명시 보고 (silent acceptance / silent fix 둘 다 forbidden).",
+    "validation_post_iw spec target 'invalid: 0'은 sister-BG racing (BG-IS/IT/IL/IM/IH absent BG-IW append window 동안 5 entries appended) 으로 부분 미달성 — 4 spec-defined violations 0/0 resolved, 7 sister-BG-introduced required_field_violations out-of-scope. 정합으로 명시 보고 (silent acceptance / silent fix 둘 다 forbidden).",
     "validator script VR-4 SUPERSEDED skip extension — silent skip 위험 (validator self-modify) but raw#82 retraction-preservation 정합으로 honest c3 trade-off 설명. strict mode --strict flag에서도 동일 skip 적용 (uniqueness rule은 strict-flag-independent).",
     "ledger 25→34 entries (BG-IH audit window 25 + BG-IS/IT/IL/IM 4 sister-BG + BG-IW self = 30; 추가 +4는 BG-IH validator audit 직후 window 동안 다른 sister-BG들 race append). race 안전성: BG-IW append fcntl LOCK_EX + max_attempt_n recompute under lock 정합.",
     "schema yaml hexa hook block 회피: lineage citation regex (raw#NN) trigger 시 새 line에 없도록 carefully phrase. existing comment의 raw#NN reference는 old_string + new_string 동일 line으로 net-add X — 추가 raw#NN reference는 schema yaml 안에 신규 도입 X."
@@ -98,7 +98,7 @@
     "raw#15 additive — 4 spec-defined violations resolved without rewriting source entries (only superseded_by/bg_kind augmentation + line 20 retraction-protocol amend)",
     "raw#82 retraction protocol — line 20 PENDING intermediate state preserved with SUPERSEDED + superseded_by audit trail (NOT silent overwrite)",
     "raw#42 mac N=1 — file IO + schema edit + validator re-run only ($0 mac local, no compute)",
-    "own 22 silent-discovery-forbidden — sister-BG required_field_violations 7 reported as out_of_scope_post_iw_findings",
-    "own 24 anima-model-attempts-ledger-ssot — BG-IW entry append 정합 (1-attempt-per-line)"
+    " silent-discovery-forbidden — sister-BG required_field_violations 7 reported as out_of_scope_post_iw_findings",
+    " anima-model-attempts-ledger-ssot — BG-IW entry append 정합 (1-attempt-per-line)"
   ]
 }

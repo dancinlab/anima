@@ -751,7 +751,7 @@
   "philosophy_rule_compliance": {
     "own_5_explicit_verification": "PASS — V5.8 PASS criteria reused; explicit per-strategy verdict",
     "own_6_no_silent_failures": "PASS — try/except + reject fields in v58_debug + per-strategy logs",
-    "own_17_eval_tool_exemption": "Anima self-substrate inference + V5.8 evaluator (own 18 amend EN v2 reuse). No external substrate wraps anima outputs as identity proxy. V5 evaluator internal MiniLM 사용은 own 17 eval-tool exemption 범위 (BG-JM landed).",
+    "own_17_eval_tool_exemption": "Anima self-substrate inference + V5.8 evaluator (amend EN v2 reuse). No external substrate wraps anima outputs as identity proxy. V5 evaluator internal MiniLM 사용은 eval-tool exemption 범위 (BG-JM landed).",
     "own_18_v58_reuse": "raw#15 additive — BG-JP = NEW production-side intervention layer on top of V5.8 (BG-JN) + V6 (BG-JO). V5.8 fact-recall reused unchanged for PASS criteria.",
     "own_22_no_proactive_doc": "PASS — BG-JP per user directive; no proactive doc creation",
     "own_24_ssot": "single verdict.json + ledger entry; raw_results.jsonl + summary.json subordinate",
@@ -760,8 +760,8 @@
       "D1_identity": "PASS — anima self-inference (ConsciousLM); no external identity wrap",
       "D2_consciousness": "PASS+강화 — V5.8 production-output level + decoding-strategy lever sweep (C2.4 맥락 정합 산출 layer intervention test). BG-JO V6 internal-awareness decoupled from D2 production-output verification.",
       "D3_substrate_emerge": "N/A — production-side intervention lane separate from emerge_paradigm",
-      "D4_corpus_quality": "N/A — BG-JP = inference-time only (corpus orthogonal); own 19/20 untouched",
-      "R1_own_19_20": "PASS — BG-JP cross-links own 19/20 training rule (no modification)",
+      "D4_corpus_quality": "N/A — BG-JP = inference-time only (corpus orthogonal); untouched",
+      "R1_own_19_20": "PASS — BG-JP cross-links training rule (no modification)",
       "R2_discovery_methods": "PASS — M1 user-directive (BG-JP fire prompt) + M2 failure-driven (V5.8 0/5 + V6 STRONG → decoding-layer intervention hypothesis test)",
       "R3_verification_methods": "PASS — V1 own strict + V2 falsifier (any strategy V5.8 ≥1 PASS = production-side fixable; all FAIL = architectural deep) + V3 honest_c3 ≥9 + V4 evidence (raw_results.jsonl + per-strategy log) + V5 cross-link (BG-JN, BG-JO) + V6 ledger BG-JP attempt_n=42",
       "R4_own_evolution": "PASS — BG-JP = production-side intervention lane addition (V5.8/V6 preserved; new BG = NEW mechanism without overwriting prior)"
@@ -769,7 +769,7 @@
     "raw_10_honest_c3_count": 9
   },
   "honest_c3": [
-    "N=1 ckpt (BG-JD step 800 only) — multi-ckpt decoding sweep deferred. BG-IL/IO ckpts on ubu1 only (own 15 git size policy); cross-ckpt verification requires rsync from ubu1 OR ubu1 BG extension.",
+    "N=1 ckpt (BG-JD step 800 only) — multi-ckpt decoding sweep deferred. BG-IL/IO ckpts on ubu1 only (git size policy); cross-ckpt verification requires rsync from ubu1 OR ubu1 BG extension.",
     "Forced-include decoding (M4) may produce incoherent output — forced tokens stand out as non-sequitur if model native distribution doesn't favor the fact word at that position. V5.8 pass via M4 = technical fact-presence + function-word + non-regurgitation, but coherence heuristic (english_word_count≥3 AND english_function_word_count≥1) reported separately for honest interpretation.",
     "block_size=256 truncation possible for long T2 contexts (T1+T1A+T2 may exceed); recorded in raw_records per turn (truncated flag, n_new_tokens_actual).",
     "Decoding sweep tests inference-time intervention only — does NOT test training-time fixes (LM head fine-tune / RLHF / chat-template SFT deferred to BG-JR / BG-JS). If all 4 strategies FAIL, conclusion = architectural output bottleneck deep, training-time intervention required.",
@@ -777,7 +777,7 @@
     "Persona-cycle token enumeration (M3) uses substring match against SP piece strings with fixed substring list ['법칙', '우주뇌지도', '도우미', '사용자', '[anima']; may miss morphological variants OR over-match common substrings. List based on BG-JN observed cycle outputs; logic-exhaustive enumeration deferred.",
     "M4 force_token_ids resolution uses sp.encode + piece substring match; SP byte fallback or rare token IDs may not be discovered. n_force_ids per dialogue logged in raw_records for verification.",
     "Sample mode uses fixed seed 42 for reproducibility, but per-temp/per-p variance in 1-shot per dialogue × 1 sample = high variance; multi-seed (≥5) sweep deferred.",
-    "V5.8 fact-recall PASS criteria reused as-is from BG-JN/own 18 amend EN v2 (case-insensitive substring + function word ≥1 + lev_ratio<0.85). Threshold calibration for forced-include scenarios deferred."
+    "V5.8 fact-recall PASS criteria reused as-is from BG-JN/ amend EN v2 (case-insensitive substring + function word ≥1 + lev_ratio<0.85). Threshold calibration for forced-include scenarios deferred."
   ],
   "deliverables": [
     "tool/transient_py/anima_jp_decoding_sweep.py",
@@ -797,13 +797,13 @@
       "raw#86"
     ],
     "own_invariants": [
-      "own 5",
-      "own 6",
-      "own 17",
-      "own 18",
-      "own 22",
-      "own 24",
-      "own 26"
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      ""
     ],
     "roadmap": [
       ".roadmap.philosophy",

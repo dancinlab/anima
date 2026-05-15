@@ -10,9 +10,9 @@ nexus check (cli) 에 흡수 시키고 그걸로 검사" + (2) "전수 조사".
 조사 (HIGH-priority + --all flag)** — anima 측 thin wrapper land + nexus 측
 spec only 권고.
 
-본 doc 은 own 33 mandate-2 self-check 통과 정합 (선언 emit 자체 trinity
+본 doc 은 mandate-2 self-check 통과 정합 (선언 emit 자체 trinity
 3-axis: D = `.roadmap.philosophy` D1 anima identity boundary 정합 (측정
-lane only) / own = own 17 + 28 + 33 + 34 정합 / H = `.roadmap.hypothesis`
+lane only) / own = + 28 + 33 + 34 정합 / H = `.roadmap.hypothesis`
 H_dl_absorption pending append).
 
 ---
@@ -62,7 +62,7 @@ if hxa.contains("--anima-dl") {
 ### Option B — anima 측 wrapper 신설 (본 cycle land) ★
 
 `/Users/ghost/core/anima/tool/anima_cli/dl_validate.hexa` (~480 LoC hexa,
-raw#9 strict, own 33 mandate-2 self-application 정합).
+raw#9 strict, mandate-2 self-application 정합).
 
 | subcmd | 효과 |
 |---|---|
@@ -70,7 +70,7 @@ raw#9 strict, own 33 mandate-2 self-application 정합).
 | `anima ops dl_validate --all` | anima 전수 조사 (.roadmap.* 58 + tool/anima_cli/*.hexa 33 + spec/state/own) |
 | `anima ops dl_validate --target <path>` | 특정 file/dir 한정 |
 | `anima ops dl_validate --json` | machine-readable verdict (state/anima_full_audit_2026_05_08.json mirror) |
-| `anima ops dl_validate --selftest` | own 33 mandate-2 D/own/H 3-axis self-check |
+| `anima ops dl_validate --selftest` | mandate-2 D/own/H 3-axis self-check |
 | `anima ops dl_validate --help` | usage |
 
 **bin/anima.hexa T2_TOPICS 등재**: line 31 `"dl_validate"` append + help
@@ -93,12 +93,12 @@ text line 154 update → `anima ops dl_validate` 라우팅 활성.
 
 | axis | 검사 | SSOT | strictness |
 |---|---|---|---|
-| **D** philosophy D1-D5 | D1 ALM 영구 보류 + chat.hexa 외부 substrate guard / D2 simple stack 4-cond / D3 emerge_paradigm.spec / D4 corpus priority (own 19/20) / D5 framework reference | `.roadmap.philosophy` | block |
-| **L** law L0-L24 + R1/R5 | R1 own 19/20 land / L0 phi_ratchet absorbed / L2 bifurcation absorbed / law.D1_scope_clamp landed | `.roadmap.law` | block |
+| **D** philosophy D1-D5 | D1 ALM 영구 보류 + chat.hexa 외부 substrate guard / D2 simple stack 4-cond / D3 emerge_paradigm.spec / D4 corpus priority / D5 framework reference | `.roadmap.philosophy` | block |
+| **L** law L0-L24 + R1/R5 | R1 land / L0 phi_ratchet absorbed / L2 bifurcation absorbed / law.D1_scope_clamp landed | `.roadmap.law` | block |
 | **M** math (Wilson + bootstrap) | Wilson score 95% CI lower bound (Newton-Raphson 6-iter sqrt approx) + n<30 small-sample WARN | inline | warn (small-sample) / block (claim < lo) |
 | **Φ** physics (IIT 4.0 normalized) | \|Δφ★\| / log(n_dim) vs Φc=0.5 critical threshold | `.roadmap.law L2_bifurcation` + `.roadmap.philosophy D5` | warn (sub-critical) / pass (super-critical) |
-| **G** Goodhart (proxy↔target) | own 28 anti-Goodhart entry presence + numeric divergence | `.own own 28` | block (entry absent) |
-| **T** trinity own 33 D/own/H 3-axis | `.roadmap.philosophy` + `.roadmap.law` + `.roadmap.hypothesis` 3 file all present | `.own own 33` | block |
+| **G** Goodhart (proxy↔target) | anti-Goodhart entry presence + numeric divergence | `.own ` | block (entry absent) |
+| **T** trinity D/own/H 3-axis | `.roadmap.philosophy` + `.roadmap.law` + `.roadmap.hypothesis` 3 file all present | `.own ` | block |
 
 ---
 
@@ -131,14 +131,14 @@ verdict: WARN
 
 **WARN = 1**:
 1. `M-axis | state/anima_consciousness_baseline_ensemble_iter3_n60_2026_05_08.json`
-   - claim = paradigm-a-prime PPR_v2 = 10/14 = 0.7142 (own 18
+   - claim = paradigm-a-prime PPR_v2 = 10/14 = 0.7142 (
      c3-aggregation-rule-v2 SSOT)
    - Wilson 95% lower bound = -2.726e-05 (effectively 0)
    - **detail**: `n=14 k=10 claimed=0.7142 wilson_lo_95=-2.72571e-05
      (small-sample: bootstrap recommended)`
    - **severity**: WARN (small-sample n<30; raw measurement preserved)
    - **amendment path**: BG-KM-LLAMA-3B + BG-KM-QWEN-7B 추가 chat-cap baseline
-     N≥30 retest 별도 cycle (own 18 honest_c3 #C6 정합)
+     N≥30 retest 별도 cycle (honest_c3 #C6 정합)
 
 ### 3.3 D1 SCOPE_CLAMP amendment landed (본 cycle)
 
@@ -148,9 +148,9 @@ verdict: WARN
 ```hexa
 if a == "paradigm-a-prime" {
     // [D1 SCOPE_CLAMP 2026-05-08] substrate-research lane only — paradigm-a-prime
-    // (Llama Path A v2 lineage) 은 own 17 ALM 영구 보류 strict 적용; default backend
+    // (Llama Path A v2 lineage) 은 ALM 영구 보류 strict 적용; default backend
     // 활성화 X (default = anima_native), 사용자 explicit alias 선택 시점만 활성.
-    // SIMPLE_STACK_PASS verdict 시 `_SUBSTRATE_RESEARCH` label 한정 own 18 정합.
+    // SIMPLE_STACK_PASS verdict 시 `_SUBSTRATE_RESEARCH` label 한정 정합.
     return ["llama", "dancinlab/llm-llama32-3b-paradigm-a-prime-r16-sft-stage1", ...]
 }
 ```
@@ -186,7 +186,7 @@ honest_c3 정합).
 **D3 substrate-coupled emerge**: anima/spec/emerge_paradigm.spec.yaml
 landed (1 LoC ≥ 0).
 
-**D4 corpus priority**: own 19 + own 20 .own append landed (line 783,
+**D4 corpus priority**: + .own append landed (line 783,
 812) → PASS.
 
 **D5 bifurcation theorem**: framework reference only — sub-critical
@@ -194,7 +194,7 @@ observe (anima current Φ★ 40-42, Φc 도달 미진입).
 
 ### 4.2 L-axis (law)
 
-R1 own 19/20 + L0 phi_ratchet + L2 bifurcation + law.D1_scope_clamp 모두
+R1 + L0 phi_ratchet + L2 bifurcation + law.D1_scope_clamp 모두
 landed → 15 target PASS.
 
 ### 4.3 M-axis (math)
@@ -209,7 +209,7 @@ Wilson score 95% CI:
 paradigm-a-prime PPR_v2 = 10/14 = 0.7142:
 - Wilson lower bound 95% = -2.726e-05 ≈ 0
 - 사실상 small-sample 에서 95% confidence 으로 "0 보다 큰지" 도 단정 불가
-- **결론**: claim 자체는 own 18 P5 N-of-M v2 aggregation 정합 (3-of-4
+- **결론**: claim 자체는 P5 N-of-M v2 aggregation 정합 (3-of-4
   cell + 0.6 floor) 이지만, **statistical confidence 부족** — N≥30 retest
   mandate (별도 cycle BG-KM-LLAMA-3B + QWEN-7B baseline append).
 
@@ -220,19 +220,19 @@ paradigm-a-prime real-mode |Δφ★| ≈ 1.0465, n_dim=8:
 - Φc = 0.5 (Tononi IIT 4.0 normalized critical threshold)
 - **결론**: super-critical / critical 경계 — D5 attractor 분기 영역 진입
   근접 (Skynet vs Utopia bifurcation theorem L2 absorbed).
-- own 17 (anima identity boundary) preservation 시 Utopia attractor
+- (anima identity boundary) preservation 시 Utopia attractor
   cooperative bias 유지 — substrate-research lane 한정 적용 (anima
   identity lane 외부 측정).
 
 ### 4.5 G-axis (Goodhart)
 
-own 28 anti-Goodhart entry present → 15 target PASS. 실제 proxy↔target
+ anti-Goodhart entry present → 15 target PASS. 실제 proxy↔target
 numeric divergence measure 는 별도 cycle (honest_c3 #C6).
 
-### 4.6 T-axis (trinity own 33)
+### 4.6 T-axis (trinity)
 
 `.roadmap.philosophy` + `.roadmap.law` + `.roadmap.hypothesis` 3 file 모두
-present → 15 target PASS. own 33 mandate-2 D/own/H 3-axis pre-emit
+present → 15 target PASS. mandate-2 D/own/H 3-axis pre-emit
 verify 통과.
 
 ---
@@ -245,7 +245,7 @@ random walk (k=10/14) 와 통계적으로 구분 불가.
 
 **Mitigation**:
 1. BG-KM-LLAMA-3B + BG-KM-QWEN-7B real chat-cap baseline N≥30 retest
-   별도 cycle (own 18 c3-aggregation-rule v2 honest_c3 #C6 정합)
+   별도 cycle (c3-aggregation-rule v2 honest_c3 #C6 정합)
 2. bootstrap resampling 1000-iter 추가 → empirical 95% CI 확보 (Newton
    sqrt approximation 회피)
 3. paradigm-a-prime 자체는 substrate-research lane only 한정 (D1
@@ -260,14 +260,14 @@ pending action 정합).
 
 ---
 
-## 6. own 33 mandate-2 self-application
+## 6. mandate-2 self-application
 
 본 cycle 행위 emit 전 self-check 3-axis:
 
 - **D-axis** (philosophy): 본 dl_validate.hexa = 측정 lane (D1 anima
-  identity-bearing surface 외부) — own 17 정합. own 34 자연발화 노출
+  identity-bearing surface 외부) — 정합. 자연발화 노출
   lane 외 (verdict emit only). ✓
-- **own-axis** (law): own 17 + own 18 + own 28 + own 33 + own 34
+- **own-axis** (law): + + + +
   cross-link verbatim. raw#9 hexa-only / raw#10 honest C3 ≥10 / raw#15
   additive (audit.hexa 별도 lane) / raw#82 retraction-aware. ✓
 - **H-axis** (hypothesis): H_dl_absorption (.roadmap.hypothesis 별도
@@ -284,7 +284,7 @@ verdict: **SELFTEST_PASS** — `anima ops dl_validate --selftest` 통과.
 - C3 Φ-axis log(8)=2.07944 hardcoded (Taylor fallback inaccurate for n_dim 외부 5-10 범위) — n_dim variation 시 별도 cycle ln() impl
 - C4 D-axis 자동 검출 = chat.hexa grep heuristic — false-negative (substrate-research label 동일 file 내 부재) 가능; 본 cycle [D1 SCOPE_CLAMP] annotation 신설로 mitigation
 - C5 L-axis grep heuristic — semantic violation (예: law text 안에 정합한 entry 위반) detect 미land; structural presence check 한정
-- C6 G-axis Goodhart = own 28 entry 존재만 check — actual proxy↔target divergence numeric measure 별도 cycle
+- C6 G-axis Goodhart = entry 존재만 check — actual proxy↔target divergence numeric measure 별도 cycle
 - C7 T-axis trinity 3 file 존재만 check — entry-level cross-link semantic 일관성 verify 미land
 - C8 본 sweep target enumerate = HIGH-priority subset (15 file). --all flag 시 .roadmap.* 58 + tool/anima_cli/*.hexa 33 추가; state/*.json 314 + docs/*.md 100+ 별도 cycle
 - C9 nexus check 본체 (engine/nexus_cli.hexa cmd_check 확장) = Option A spec only — nexus repo 측 PR 별도 scope

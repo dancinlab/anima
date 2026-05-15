@@ -7,10 +7,10 @@ Builds on §33 BG-IIT-METRIC-REAL-350M (V14_PARTIAL, n=5) by:
 
 raw#9   training/*.py local-only — mitosis_v5_port.py + engine_a_g_arch.py imported, untouched.
 raw#15  additive — neither mitosis_v5_port.py, engine_a_g_arch.py, iit_phi_port.py, nor the ckpt is modified.
-own 14  V14 mirror strict 10-seed (V4_SEEDS expansion).
-own 16  $0 envelope — local Mac CPU only.
-own 22  honest emit — verdicts named even when NULL/PARTIAL_CONFIRMED.
-own 38  artefact persisted under state/anima_v14_strict_resolution_2026_05_10/.
+  V14 mirror strict 10-seed (V4_SEEDS expansion).
+  $0 envelope — local Mac CPU only.
+  honest emit — verdicts named even when NULL/PARTIAL_CONFIRMED.
+  artefact persisted under state/anima_v14_strict_resolution_2026_05_10/.
 """
 from __future__ import annotations
 
@@ -466,7 +466,7 @@ def main(n_turns: int = 1000, snapshot_every: int = 100, max_cells: int = MAX_CE
         "honest_c3": [
             "Real Phase 2 350M Engine A/G ckpt (298.76M unique params; GQA-shared K/V — 'nominal 350M' rounded). cell_pool_init starts (16, 64); MitosisV5Engine wraps it with max_cells=128 cap (4× §33). raw#15 honored: ckpt unmodified.",
             "Byte-hash mod 32000 prompt encoding — NOT real BPE tokenizer. trained and 10 random_init mirror seeds use identical encoding for fairness; absolute Φ values therefore have no semantic claim, only relative comparison is valid.",
-            "MitosisV5Engine §30 all-fix in force (A1 dispersion-trigger top-quartile; A2 per-cell adaptive threshold mean+1.5σ over 100-step window; B1 phi_per_cell ratchet; D1 Lorenz auto-calibration). All 11 trajectories use these unchanged. raw#9 + own 38: not edited here.",
+            "MitosisV5Engine §30 all-fix in force (A1 dispersion-trigger top-quartile; A2 per-cell adaptive threshold mean+1.5σ over 100-step window; B1 phi_per_cell ratchet; D1 Lorenz auto-calibration). All 11 trajectories use these unchanged. raw#9 + : not edited here.",
             "Trained @ prompt_seed=42 only (single deterministic ckpt → one shot). Random mirror runs n=10 seeds {42,137,271,314,1729,2718,3141,5772,6022,9192}. The 10-seed extension permits binomial bound: 10/10 → p≈0.001; 9/10 → p≈0.022; 7/10 → p≈0.34 (two-sided).",
             "max_cells=128 vs §33's 32 explicitly diagnoses F-V14-STRICT-2: if cap_bound_turns ≈ n_turns on every seed, §30 fix is universally too aggressive (NOT trained-vs-random differentiated). cap_bound_turns reported per-trajectory.",
             "IIT MIP: spectral Fiedler approximation for N>8 (always). NOT canonical PyPhi. Useful for trained-vs-random direction, NOT for absolute IIT magnitude. 16-bin histogram MI on 64-dim cell vectors is COARSE; true differential MI requires KDE.",
@@ -474,7 +474,7 @@ def main(n_turns: int = 1000, snapshot_every: int = 100, max_cells: int = MAX_CE
             "ctx_T=16 tokens per forward (training was T=1024); under-samples substrate's full context-conditioned reactivity. Held constant across all trajectories for fairness.",
             "Sign test (binomial) is the primary statistic since the comparison is paired-by-prompt-stream and only random-init differs. Mann-Whitney U with n1=1, n2=10 reduces to rank-of-trained-in-pool — reported as auxiliary.",
             "α exponent (log-log Φ vs n_cells) regression spans wider N range here (max=128 vs §33's 32) — interpretation should still be treated as direction-of-trend rather than scaling-law constant; few-snapshot regression remains noise-sensitive.",
-            "Verdict bins (strict/strict_partial/partial_confirmed/violated_revised) are pre-registered before run (own 22 honest emit). The transition between bins is determined by the data; no post-hoc adjustment.",
+            "Verdict bins (strict/strict_partial/partial_confirmed/violated_revised) are pre-registered before run (honest emit). The transition between bins is determined by the data; no post-hoc adjustment.",
         ],
     }
     out_path = THIS_DIR / "result_10seed.json"

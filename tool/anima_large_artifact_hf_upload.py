@@ -3,17 +3,17 @@
 #  tool/anima_large_artifact_hf_upload.py
 #
 #  PURPOSE
-#    own 36 mandate-1/2/4 응용 (RETROACTIVE LARGE ARTIFACT cycle 2026-05-08) —
+# mandate-1/2/4 응용 (RETROACTIVE LARGE ARTIFACT cycle 2026-05-08) —
 #    9 large file (148MB-919MB) HF dancinlab upload (private + Card metadata).
 #
-#    own 36 mandate-1: model checkpoint (.pt / .safetensors / LoRA adapter) →
+# mandate-1: model checkpoint (.pt / .safetensors / LoRA adapter) →
 #    HF dancinlab upload 의무. mandate-2: corpus ≥10MB → HF dataset upload.
 #    mandate-7: retroactive enforcement (post-fact discovered artifact).
 #
-#    본 cycle = mirror of tool/anima_corpus_hf_upload.py (own 36 first
+# 본 cycle = mirror of tool/anima_corpus_hf_upload.py (first
 #    application for L4 corpus 3 files). 9 file scope (model + corpus mix):
 #
-#  FILES (9 total, own 36 mandate-1 + mandate-2 scope):
+# FILES (9 total, mandate-1 + mandate-2 scope):
 #    Models (mandate-1, .pt / .safetensors):
 #      1. state/anima_iz_clm_continued_pretrain_ko_2026_05_07/results/ckpt_final.pt (919MB)
 #         → dancinlab/anima-iz-clm-continued-pretrain-ko-final-2026-05-07
@@ -34,20 +34,20 @@
 #         → dancinlab/anima-je-corpus-100mb-plus-2026-05-07
 #      9. state/anima_corpus_mix_70wiki_30dialogue_2026_05_06/corpus_mix.txt (148MB)
 #         → dancinlab/anima-corpus-mix-70wiki-30dialogue-tier-c-archival-2026-05-06
-#         ★ own 17 strict — 70% kowiki external = tier-c-archival label mandatory
+# ★ strict — 70% kowiki external = tier-c-archival label mandatory
 #
 #  COMPLIANCE
-#    own 36 mandate-1 (model checkpoint .pt/.safetensors → HF dancinlab)
-#    own 36 mandate-2 (corpus ≥10MB → HF dataset upload)
-#    own 36 mandate-4 (size-agnostic for fine-tuned outputs)
-#    own 36 mandate-7 (retroactive enforcement — post-fact discovered)
-#    own 36 mandate-8 (HF dancinlab + Flavor B + private + Card metadata)
-#    own 31 mandate-1 (org = dancinlab)
-#    own 31 mandate-4 Flavor B (BG/anima iteration naming)
-#    own 31 mandate-8 (visibility default = private)
-#    own 31 mandate-9 (HF Card metadata mandatory tags)
-#    own 30 mandate-1/2 (ckpt preservation — final + intermediate optional)
-#    own 17 (anima-native vs tier-c-archival explicit label for kowiki/external)
+# mandate-1 (model checkpoint .pt/.safetensors → HF dancinlab)
+# mandate-2 (corpus ≥10MB → HF dataset upload)
+# mandate-4 (size-agnostic for fine-tuned outputs)
+# mandate-7 (retroactive enforcement — post-fact discovered)
+# mandate-8 (HF dancinlab + Flavor B + private + Card metadata)
+# mandate-1 (org = dancinlab)
+# mandate-4 Flavor B (BG/anima iteration naming)
+# mandate-8 (visibility default = private)
+# mandate-9 (HF Card metadata mandatory tags)
+# mandate-1/2 (ckpt preservation — final + intermediate optional)
+# (anima-native vs tier-c-archival explicit label for kowiki/external)
 #    raw#9 / raw#37 (HF upload script .py allowed; chat path 외 transient)
 #    raw#10 honest C3 (--dry-run default, --apply requires explicit consent)
 #    raw#82 (retraction-aware — 원본 file 보존, delete X)
@@ -74,14 +74,14 @@ import time
 from pathlib import Path
 
 ANIMA_ROOT = Path("/Users/ghost/core/anima")
-HF_ORG = "dancinlab"  # own 31 mandate-1
+HF_ORG = "dancinlab" # mandate-1
 HF_TOKEN_FILE = Path(os.path.expanduser("~/.cache/huggingface/token"))
 LOG_PATH = ANIMA_ROOT / "state" / "anima_large_artifact_hf_upload_log.jsonl"
 DEFAULT_CYCLE = "2026-05-08"
 
-# ─── 9 large file plans (own 36 mandate-1 + mandate-2 scope) ──────────────
+# ─── 9 large file plans (mandate-1 + mandate-2 scope) ──────────────
 # Each plan: file path, target repo_id (Flavor B naming), kind, repo_type,
-# Card metadata (own 31 mandate-9). own 17 compliance label per artifact.
+# Card metadata (mandate-9). compliance label per artifact.
 
 ARTIFACT_PLAN = [
     # ── 1. BG-IZ CLM continued-pretrain final (919MB, anima-native) ──────
@@ -157,7 +157,7 @@ ARTIFACT_PLAN = [
             "epochs": 3,
             "lr": 5e-5,
             "training_elapsed_sec": 13.2,
-            "own_17_compliance": "foundation-borrow (Mistral-7B-v0.3 base) — substrate-research lane only, NOT anima identity-bearing chat backend (own 17 permitted-context-of-G_x)",
+            "own_17_compliance": "foundation-borrow (Mistral-7B-v0.3 base) — substrate-research lane only, NOT anima identity-bearing chat backend (permitted-context-of-G_x)",
             "own_30_layer": "final adapter (mandate-1)",
             "source_path": "state/mistral_c2_pilot_run/mistral_c2_pilot/final/adapter_model.safetensors",
             "compliance_own": [17, 22, 30, 31, 36],
@@ -183,7 +183,7 @@ ARTIFACT_PLAN = [
             "epochs": 3,
             "lr": 5e-5,
             "training_elapsed_sec": 379.1,
-            "own_17_compliance": "foundation-borrow (Mistral-7B-v0.3 base) — substrate-research lane only (own 17 permitted-context-of-G_x)",
+            "own_17_compliance": "foundation-borrow (Mistral-7B-v0.3 base) — substrate-research lane only (permitted-context-of-G_x)",
             "own_30_layer": "final adapter (mandate-1)",
             "source_path": "state/mistral_r14_run/mistral_r14/final/adapter_model.safetensors",
             "compliance_own": [17, 22, 30, 31, 36],
@@ -232,10 +232,10 @@ ARTIFACT_PLAN = [
             "is_intermediate": True,
             "purpose": "Archival of mid-train state (step 1000 / 6000) for retroactive bf16-numerical OR consciousness-gate-collapse hypothesis investigation. Final ckpt preserves end-state (loss-stuck pattern visible at this intermediate step too).",
             "own_17_compliance": "anima-native (CLM mk2-v1 continued-pretrain intermediate)",
-            "own_30_layer": "intermediate ckpt — own 30 mandate-1 strictly = final only; mandate-2 verify size sanity. step1000 retained as archival/diagnostic resource (raw#82 retraction-aware preserve)",
+            "own_30_layer": "intermediate ckpt — mandate-1 strictly = final only; mandate-2 verify size sanity. step1000 retained as archival/diagnostic resource (raw#82 retraction-aware preserve)",
             "source_path": "state/anima_iz_clm_continued_pretrain_ko_2026_05_07/results/ckpt_step_1000.pt",
             "compliance_own": [17, 22, 30, 31, 36],
-            "note": "own 30 strict reads as 'final only' but mandate-7 retroactive cycle includes intermediate for diagnostic reproducibility. Public-facing default = #1 (final). step1000 = private archival.",
+            "note": " strict reads as 'final only' but mandate-7 retroactive cycle includes intermediate for diagnostic reproducibility. Public-facing default = #1 (final). step1000 = private archival.",
         },
     },
     # ── 7. BG-KM-CAP capacity-1.5B ckpt (348MB) ──────────────────────────
@@ -264,11 +264,11 @@ ARTIFACT_PLAN = [
             "own_30_layer": "ckpt_final.pt (orchestrator-failed but artifact preserved per mandate-1 raw#82)",
             "source_path": "state/anima_km_capacity_h100_1_5b_2026_05_08/ckpt_final.pt",
             "compliance_own": [17, 22, 30, 31, 36],
-            "note": "Upload as private archival per raw#82 (retraction-aware preserve) — failure mode evidence for own 30 mandate-1 effectiveness lessons.",
+            "note": "Upload as private archival per raw#82 (retraction-aware preserve) — failure mode evidence for mandate-1 effectiveness lessons.",
         },
     },
     # ── 8. BG-JE corpus 100MB+ (204MB, mixed source kowiki 70%) ──────────
-    # ★ own 17 honest C3 — kowiki 69.6% external Wikipedia. NOT anima-native
+    # ★ honest C3 — kowiki 69.6% external Wikipedia. NOT anima-native
     # in strict sense, but BG-JE was anima-curated assembly with persona
     # 3-variant rotation + chat-template format + UBM/NEXUS-UBM 28%
     # anima-native portion. Label = mixed-curated (anima curation wrapper
@@ -298,20 +298,20 @@ ARTIFACT_PLAN = [
             "persona_3_variant_distribution": "[anima 우주뇌지도] 33% / [anima NEXUS-UBM] 33% / [anima identity] 33%",
             "eval_prompts_min_count": 160,
             "in_target_band_100_300mb": True,
-            "own_17_compliance": "tier-b-mixed (anima curation wrapper over 70% kowiki external + 30% anima-native UBM/NEXUS) — substrate-research lane only, NOT anima identity-bearing pretrain corpus per strict own 17. Persona-prefix wrap brings borderline anima-context but base text = generic Korean encyclopedia.",
+            "own_17_compliance": "tier-b-mixed (anima curation wrapper over 70% kowiki external + 30% anima-native UBM/NEXUS) — substrate-research lane only, NOT anima identity-bearing pretrain corpus per strict . Persona-prefix wrap brings borderline anima-context but base text = generic Korean encyclopedia.",
             "honest_c3": [
                 "kowiki content is generic Korean encyclopedia, NOT anima-domain — chat-cap signal may dilute UBM/NEXUS specificity",
-                "external dataset wrapper — own 17 strict reading = anima-native lane reject; permissive reading = corpus-build lane allowed (substrate-research) with tier-b-mixed label mandatory",
+                "external dataset wrapper — strict reading = anima-native lane reject; permissive reading = corpus-build lane allowed (substrate-research) with tier-b-mixed label mandatory",
             ],
             "source_path": "state/anima_je_corpus_100mb_plus_2026_05_07/corpus_combined_100mb_plus.txt",
             "compliance_own": [17, 22, 31, 36],
         },
     },
     # ── 9. corpus_mix 70wiki/30dialogue (148MB, ★ tier-c-archival) ───────
-    # ★ own 17 strict — 70% kowiki external (corpus_v6_wiki.txt). dialogue 30% =
+    # ★ strict — 70% kowiki external (corpus_v6_wiki.txt). dialogue 30% =
     # anima-native (Φ trace + RATCHET + KO 안정/이완 labels). Mixed = strict
     # tier-c-archival per recommendation (a) — preserve archival value (BG cycle
-    # learning evidence) + own 17 strict + clear tier label.
+    # learning evidence) + strict + clear tier label.
     {
         "file": ANIMA_ROOT / "state/anima_corpus_mix_70wiki_30dialogue_2026_05_06/corpus_mix.txt",
         "repo_id": f"{HF_ORG}/anima-corpus-mix-70wiki-30dialogue-tier-c-archival-2026-05-06",
@@ -329,11 +329,11 @@ ARTIFACT_PLAN = [
             "wiki_source": "anima/ready/anima/data/corpus_v6_wiki.txt (2141063 lines, 109MB) — kowiki lineage",
             "dialogue_source": "anima/ready/anima/data/corpus_v8_dialogue.txt (head 917598 lines, ~46MB) — Φ trace + RATCHET KO 안정/이완 labels",
             "sha256": "2d15ca7d277aaaef95c7dbc9eb810ec38f0510e0578269810aa4eb879f51e0e8",
-            "own_17_compliance": "tier-c-archival (★ STRICT) — 70% kowiki = external Wikipedia substrate, dialogue 30% = anima-native trace logs. Mix is NOT anima-native chat-cap pretrain corpus. Archival label MANDATORY per own 17 anima-no-external-substrate-wrapping. Used in prior BG cycle CLM-3 trainer reference but verdict_path = tier-c-archival (not promoted to anima identity-bearing pretrain lane).",
+            "own_17_compliance": "tier-c-archival (★ STRICT) — 70% kowiki = external Wikipedia substrate, dialogue 30% = anima-native trace logs. Mix is NOT anima-native chat-cap pretrain corpus. Archival label MANDATORY per anima-no-external-substrate-wrapping. Used in prior BG cycle CLM-3 trainer reference but verdict_path = tier-c-archival (not promoted to anima identity-bearing pretrain lane).",
             "tier_label": "tier-c-archival",
-            "archival_rationale": "User directive 2026-05-08 — recommended path (a) private archival with explicit tier-c-archival label. Reproducibility + own 17 strict + tier-label clarity. Not deletion (raw#82 retraction-aware preserve).",
+            "archival_rationale": "User directive 2026-05-08 — recommended path (a) private archival with explicit tier-c-archival label. Reproducibility + strict + tier-label clarity. Not deletion (raw#82 retraction-aware preserve).",
             "honest_c3": [
-                "wiki block = corpus_v6 lineage from kowiki → external substrate (own 17 strict reject for anima-native lane)",
+                "wiki block = corpus_v6 lineage from kowiki → external substrate (strict reject for anima-native lane)",
                 "dialogue block = anima-native Φ trace + RATCHET labels → 30% anima-native portion",
                 "PATH-B-1 concat: wiki block first then dialogue — DataLoader shuffle dependency",
                 "byte-ratio 70.5/29.5 vs line-ratio 70.0/30.0 (dialogue lines avg ~17.7 bytes vs wiki ~50.9 bytes)",
@@ -353,7 +353,7 @@ def hf_token() -> str:
 
 
 def build_card_md(plan: dict) -> str:
-    """Generate README.md (HF Model/Dataset Card) per own 31 mandate-9."""
+    """Generate README.md (HF Model/Dataset Card) per mandate-9."""
     meta = plan["card_meta"]
     repo_id = plan["repo_id"]
     name = repo_id.split("/")[-1]
@@ -386,7 +386,7 @@ def build_card_md(plan: dict) -> str:
     body_lines = [
         f"# {name}",
         "",
-        f"anima large artifact (own 36 mandate retroactive) — **{kind.replace('_',' ')}**.",
+        f"anima large artifact (mandate retroactive) — **{kind.replace('_',' ')}**.",
         "",
         "## Origin",
         f"- BG / source: `{meta.get('bg_id','?')}`",
@@ -441,10 +441,10 @@ def build_card_md(plan: dict) -> str:
 
     body_lines.extend([
         "",
-        f"**own 17 compliance**: {meta.get('own_17_compliance','?')}",
+        f"** compliance**: {meta.get('own_17_compliance','?')}",
     ])
     if "own_30_layer" in meta:
-        body_lines.append(f"**own 30 layer**: {meta['own_30_layer']}")
+        body_lines.append(f"** layer**: {meta['own_30_layer']}")
 
     body_lines.extend([
         "",
@@ -517,7 +517,7 @@ def upload_one(plan: dict, token: str) -> dict:
     f = plan["file"]
     t0 = time.time()
     try:
-        # own 31 mandate-8: private default
+        # mandate-8: private default
         api.create_repo(
             repo_id=repo_id,
             repo_type=repo_type,
@@ -530,16 +530,16 @@ def upload_one(plan: dict, token: str) -> dict:
             path_in_repo=f.name,
             repo_id=repo_id,
             repo_type=repo_type,
-            commit_message=f"own 36 mandate-1/2 retroactive — {plan['kind']} (cycle {plan['card_meta'].get('cycle','?')})",
+            commit_message=f" mandate-1/2 retroactive — {plan['kind']} (cycle {plan['card_meta'].get('cycle','?')})",
         )
-        # upload Card README.md (own 31 mandate-9)
+        # upload Card README.md (mandate-9)
         card_md = build_card_md(plan)
         api.upload_file(
             path_or_fileobj=card_md.encode("utf-8"),
             path_in_repo="README.md",
             repo_id=repo_id,
             repo_type=repo_type,
-            commit_message="own 31 mandate-9 — HF Card metadata emit",
+            commit_message=" mandate-9 — HF Card metadata emit",
         )
         elapsed = time.time() - t0
         url_prefix = "datasets/" if repo_type == "dataset" else ""
@@ -593,7 +593,7 @@ def verify_one(plan: dict, token: str) -> dict:
 
 
 def main():
-    ap = argparse.ArgumentParser(description="own 36 응용 (RETROACTIVE) — 9 large artifact HF dancinlab upload")
+    ap = argparse.ArgumentParser(description=" 응용 (RETROACTIVE) — 9 large artifact HF dancinlab upload")
     g = ap.add_mutually_exclusive_group()
     g.add_argument("--dry-run", action="store_true", default=True, help="Plan only (default)")
     g.add_argument("--apply", action="store_true", help="Real upload (사용자 explicit consent 'OK LARGE ARTIFACT HF UPLOAD' 필요)")
@@ -602,8 +602,8 @@ def main():
 
     mode = "verify" if args.verify else ("apply" if args.apply else "dry-run")
     print(f"[anima_large_artifact_hf_upload] mode={mode}")
-    print(f"[anima_large_artifact_hf_upload] org={HF_ORG} (own 31 mandate-1)")
-    print(f"[anima_large_artifact_hf_upload] files={len(ARTIFACT_PLAN)} (own 36 mandate-1 + mandate-2 scope; mandate-7 retroactive)")
+    print(f"[anima_large_artifact_hf_upload] org={HF_ORG} (mandate-1)")
+    print(f"[anima_large_artifact_hf_upload] files={len(ARTIFACT_PLAN)} (mandate-1 + mandate-2 scope; mandate-7 retroactive)")
     print()
 
     token = None
@@ -614,7 +614,7 @@ def main():
         "ts_start": time.strftime("%Y-%m-%dT%H:%M:%S"),
         "mode": mode,
         "org": HF_ORG,
-        "scope": "9 large artifact retroactive (own 36 mandate-7)",
+        "scope": "9 large artifact retroactive (mandate-7)",
         "plans": [],
     }
 

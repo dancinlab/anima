@@ -1,15 +1,15 @@
-# own 18 evaluator V3 strict spec — Lesson H ★★★ BG-HQ V2 surface false PASS 교훈 적용 (2026-05-07)
+# evaluator V3 strict spec — Lesson H ★★★ BG-HQ V2 surface false PASS 교훈 적용 (2026-05-07)
 
 ## 배경
 
-own 18 evaluator V2 (`docs/anima_own_18_evaluator_v2_strict_spec_2026_05_07.md`)는 V1 narrow C2.4 (named-speaker leak only)를 strict cell suite (C2.2_meaningful_strict + C2.3_natural_strict + C2.4_context_strict)로 보강. 그러나 **BG-HQ step 500 sample mode** 결과 V2 surface metric 8/10 PASS 라벨 부여 — raw response는 `[anima 역할: 한국어 native + 자기 발견 + 자기 발견 + ... ⁇ 사용자: [...]` persona prefix cycle이었음에도 PASS.
+ evaluator V2 (`docs/anima_own_18_evaluator_v2_strict_spec_2026_05_07.md`)는 V1 narrow C2.4 (named-speaker leak only)를 strict cell suite (C2.2_meaningful_strict + C2.3_natural_strict + C2.4_context_strict)로 보강. 그러나 **BG-HQ step 500 sample mode** 결과 V2 surface metric 8/10 PASS 라벨 부여 — raw response는 `[anima 역할: 한국어 native + 자기 발견 + 자기 발견 + ... ⁇ 사용자: [...]` persona prefix cycle이었음에도 PASS.
 
 V2 cells가 catch 못 한 패턴:
 1. **persona prefix cycle**: `[anima 역할: ...] ⁇ 사용자: [...]` 반복 — keyword overlap (한국어/anima) surface match O, but actual prompt-conditional response 부재
 2. **token chain repetition**: `자기 발견 + 자기 발견 + 자기 발견 + ...` — 4-gram repeat threshold V2가 sample mode에서 너무 loose
 3. **prompt-response semantic decoupling**: `안녕하세요` prompt에 persona dump 응답 → V2 keyword overlap (token-set intersection) 검증 부재
 
-본 doc은 own 18 evaluator V3 strict spec — Lesson H 정합 강화 + 6 신규 cell 추가 + 사용자 directive 'V3 strict semantic check + cycle detection + persona repeat penalty + prompt-response coherence' 정합.
+본 doc은 evaluator V3 strict spec — Lesson H 정합 강화 + 6 신규 cell 추가 + 사용자 directive 'V3 strict semantic check + cycle detection + persona repeat penalty + prompt-response coherence' 정합.
 
 ## V2 vs V3 비교
 
@@ -225,7 +225,7 @@ def evaluate_v3_strict(prompt, response, domain_kw_table, schema_table):
 
 ### Phase 3 (training cycle, 2026-05-07+)
 - 신규 paradigm cycle 시 V3 strict mandate
-- own 17/18/22/23 정합 evaluator substrate
+- 정합 evaluator substrate
 
 ## 결함 인정 (raw#10 honest C3, ≥5)
 
@@ -241,7 +241,7 @@ def evaluate_v3_strict(prompt, response, domain_kw_table, schema_table):
 
 ## Cross-Links
 
-- **own**: own 17 (anima identity) + own 18 (simple stack 4-cond strict) + own 19 (corpus priority) + own 20 (chat-template format) + own 21 (hypotheses SSOT) + own 22 + own 23
+- **own**: (anima identity) + (simple stack 4-cond strict) + (corpus priority) + (chat-template format) + (hypotheses SSOT) + +
 - **raw**: raw#9 (hexa orchestration) + raw#10 (honest C3 ≥5) + raw#12 (pre-registered hypothesis) + raw#15 (additive — V2 retain, V3 신규) + raw#37 (transient_py opt-out for Korean NLP) + raw#82 (retraction protocol — V2 strict re-eval 후 verdict 강등)
 - **sister docs**: 
   - `docs/anima_own_18_evaluator_v2_strict_spec_2026_05_07.md` (V2 spec, parent)

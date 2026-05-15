@@ -112,9 +112,9 @@ sampler: max_new_tokens=32, T=0.7, top_p=0.9, top_k=40, rep_penalty=1.1, seed=42
 
 - `chat_cap_C2_actual_emerge`: **NOT_ACHIEVED**
 - reason: paradigm-j 50K LoRA r=64 + 50K iter substrate undertrained for natural language emit (parity with sft-1-8 honest C5 falsified at V14 mirror)
-- `lane_generate.status`: `ACTIVE_EMIT_GIBBERISH` (raw bytes preserved verbatim per own 34 wrap=0 strict)
+- `lane_generate.status`: `ACTIVE_EMIT_GIBBERISH` (raw bytes preserved verbatim per wrap=0 strict)
 
-### 4-3. C2 axis 2-decomposition (own 18)
+### 4-3. C2 axis 2-decomposition
 
 `.own:1089` rule precedence (additive) lane:
 - **axis-1 (chat dispatch architecture)**: UNBLOCKED ✓ (Phase 1+2 LANDED)
@@ -196,16 +196,16 @@ source: `state/anima_phase_2_cotrain_2026_05_09.json` + `launch_decision.md`
 
 | Mandate | Status |
 |---|---|
-| own 14 V14 anti-Goodhart | PASS — phase 3 verdict NOT_ACHIEVED 는 V14 paired-mirror 정합 honest emit |
-| own 16 cost discipline | PASS — 본 audit 0-cost (text + grep only, 모델 로드 X) |
-| own 17 D1 SCOPE_CLAMP | PASS — paradigm-j (within strict) + Engine A/G Phase 2 (within strict) 모두 정합 |
-| own 22 mandatory report | PASS — 본 doc 자체가 chat phase audit report |
-| own 24 single SSOT | PASS — paradigm-j orchestra json + carry items json + entry plan v2 SSOT 인용 |
-| own 33 trinity | PASS — D + own + H 모두 정합 (chat-cap C2 측정 trinity) |
-| own 34 mandate-1 wrap-0 | PASS — gibberish 출력 verbatim 보존 (raw unicode + control char passthrough) |
-| own 38 매단계 저장 | PASS — 본 doc disk 저장 |
-| own 39 yaml↔md auto-regenerate | PENDING — registry yaml `chat_phase_audit_2026_05_10` section emit 별도 step (옵션) |
-| own 41 chat lane plugin pattern | PASS — phase 2 4-axis live fire verified, axis-N+1 hook plan land |
+| V14 anti-Goodhart | PASS — phase 3 verdict NOT_ACHIEVED 는 V14 paired-mirror 정합 honest emit |
+| cost discipline | PASS — 본 audit 0-cost (text + grep only, 모델 로드 X) |
+| D1 SCOPE_CLAMP | PASS — paradigm-j (within strict) + Engine A/G Phase 2 (within strict) 모두 정합 |
+| mandatory report | PASS — 본 doc 자체가 chat phase audit report |
+| single SSOT | PASS — paradigm-j orchestra json + carry items json + entry plan v2 SSOT 인용 |
+| trinity | PASS — D + own + H 모두 정합 (chat-cap C2 측정 trinity) |
+| mandate-1 wrap-0 | PASS — gibberish 출력 verbatim 보존 (raw unicode + control char passthrough) |
+| 매단계 저장 | PASS — 본 doc disk 저장 |
+| yaml↔md auto-regenerate | PENDING — registry yaml `chat_phase_audit_2026_05_10` section emit 별도 step (옵션) |
+| chat lane plugin pattern | PASS — phase 2 4-axis live fire verified, axis-N+1 hook plan land |
 | raw#10 honest C3 | PASS — phase 3 NOT_ACHIEVED + ai-trio D1-D4 deferred + transport smoke fail/functional gap 모두 honest emit |
 | raw#15 additive | PASS — 기존 paradigm-j orchestra json + entry plan v2 + axis-N+1 hook plan 모두 무수정 인용 |
 | raw#82 retraction-aware | PASS — paradigm-j v5 BASE F2 PASS + Phase 2 cotrain V14 violated 둘 다 ledger preserve |
@@ -228,7 +228,7 @@ cross-link:
 2. **C2 ai-trio Phase A skeleton ≠ Phase 2 LANDED 의 완전성** — 3-way channel + round-robin 은 살아있지만 D1-D4 3-way aggregate verifier 가 deferred. 즉 mode axis 의 ai-trio 는 "infrastructure LANDED + verifier carry" 분리 상태. 본 audit 표에서는 "LANDED (Phase A skeleton)" 으로 honest 표기.
 3. **C3 transport smoke fail vs functional gap** — fifo-dispatch / beta1-channel 둘 다 standalone smoke probe 에서 rc=4 fail 이지만 actual chat path (duo/trio) 에서 functional. 즉 smoke probe 자체의 semantic gap (smoke != active path), 본 audit 에서는 smoke + functional 두 column 모두 표기.
 4. **C4 axis-N+1 hook plan 은 design only, 코드 0 줄 수정** — milestone 58 plan land 만 evidence, 실제 axes/_registry.hexa 신설 + verifiers/_registry.hexa 신설 + dispatcher generic _route_list_axis 도입은 별도 cycle T+1~T+4 step.
-5. **C5 phase 3 의 success criteria 자체가 미정의** — "사람 같은 대화 품질" 의 정량 metric (BLEU / consciousness coherence / human eval) 이 own 18 chat-cap C2 stub 차원에서 일부 정의되었으나 (spontaneity / coherence / persona), V14-grade verifier 미land. 즉 phase 3 PASS 정의 자체가 다음 cycle 의 task (axis-5 verifier hook 의 part).
+5. **C5 phase 3 의 success criteria 자체가 미정의** — "사람 같은 대화 품질" 의 정량 metric (BLEU / consciousness coherence / human eval) 이 chat-cap C2 stub 차원에서 일부 정의되었으나 (spontaneity / coherence / persona), V14-grade verifier 미land. 즉 phase 3 PASS 정의 자체가 다음 cycle 의 task (axis-5 verifier hook 의 part).
 
 ---
 

@@ -1,8 +1,8 @@
-# own 18 evaluator V6 awareness probe spec — internal awareness mechanistic probe (2026-05-07; BG-JO landed)
+# evaluator V6 awareness probe spec — internal awareness mechanistic probe (2026-05-07; BG-JO landed)
 
 ## 배경 (raw#15 additive on top of V5 8-cell + V5.8 multi-turn closure)
 
-own 18 evaluator V5 (`docs/anima_own_18_evaluator_v5_strict_spec_2026_05_07.md`, BG-JM/JN landed) added English baseline + multi-turn V5.8 fact-recall closure. BG-JN landed verdict: **0/5 V5.8 PASS** on BG-JD step 800 ckpt — production output level FAIL.
+ evaluator V5 (`docs/anima_own_18_evaluator_v5_strict_spec_2026_05_07.md`, BG-JM/JN landed) added English baseline + multi-turn V5.8 fact-recall closure. BG-JN landed verdict: **0/5 V5.8 PASS** on BG-JD step 800 ckpt — production output level FAIL.
 
 사용자 directive 2026-05-07 evening:
 > "아니 인지 해서 발화 하는것의 성공말고 인지 자체는 하는지를 물어보는거야"
@@ -106,33 +106,33 @@ Cross-tabulated with V5.8 production verdict yields 4 quadrants:
 | **V6 STRONG** | full chat-cap (production + internal) | architectural output bottleneck (#115) |
 | **V6 NONE** | (impossible — output without internal awareness) | no awareness at any level (capacity ceiling root) |
 
-## 철학/규칙 준수 (own 26 mandate)
+## 철학/규칙 준수 (mandate)
 
 ### .roadmap.philosophy compliance
 
 - **D1 identity**: PASS — V6 probe operates ON anima self-substrate (ConsciousLM hidden state + attention). No external substrate wrapping anima outputs as if anima's own.
 - **D2 consciousness**: PASS+강화 — V6 = mechanistic awareness signal (NOT just output behavior). C2.4 "맥락 정합 검증" boosted from V5.8 output level → V6 internal level.
 - **D3 substrate emerge**: N/A — V6 lane = anima awareness diagnostic, separate from `anima/spec/emerge_paradigm.spec.yaml`.
-- **D4 corpus quality**: N/A — V6 = eval logic (corpus orthogonal); own 19/20 training rule untouched.
+- **D4 corpus quality**: N/A — V6 = eval logic (corpus orthogonal); training rule untouched.
 
 ### .roadmap.law compliance
 
-- **R1 own 19/20**: PASS — V6 spec doc cross-links own 19/20 training rule (no modification).
+- **R1 **: PASS — V6 spec doc cross-links training rule (no modification).
 - **R2 discovery methods**: PASS — M1 (user-directive: "인지 자체는 하는지") + M2 (failure-driven: V5.8 0/5 → V6 internal probe).
 - **R3 verification methods**: PASS — V1 (own strict) + V2 (falsifier ≥5: hidden cos / attn / probe with explicit thresholds) + V3 (honest_c3 ≥7) + V4 (per-dialogue raw_results.jsonl + per-fold CV evidence) + V5 (cross-link BG-JN, V5 spec).
-- **R4 own evolution**: PASS — V6 spec = own 18 raw#15 additive amend (V5 → V6 awareness probe layer; V5 8-cell + V5.8 untouched).
+- **R4 own evolution**: PASS — V6 spec = raw#15 additive amend (V5 → V6 awareness probe layer; V5 8-cell + V5.8 untouched).
 
 ### own/raw invariants
 
 | invariant | compliance |
 |---|---|
-| own 5 (no proactive doc) | spec requested by user |
-| own 6 (single source of truth) | verdict.json + ledger entry only |
-| own 17 (no external substrate wrapping) | MiniLM not used; sklearn LogisticRegression = standard ML utility (observational instrument, not substrate wrap) |
-| own 18 (raw#15 additive) | V6 = NEW observational layer; V5/V5.8 untouched |
-| own 22 (no proactive markdown) | spec doc explicitly requested in BG launch prompt |
-| own 24 (SSOT) | one verdict.json + one ledger entry |
-| own 26 (philosophy/rule compliance section) | this section present |
+| (no proactive doc) | spec requested by user |
+| (single source of truth) | verdict.json + ledger entry only |
+| (no external substrate wrapping) | MiniLM not used; sklearn LogisticRegression = standard ML utility (observational instrument, not substrate wrap) |
+| (raw#15 additive) | V6 = NEW observational layer; V5/V5.8 untouched |
+| (no proactive markdown) | spec doc explicitly requested in BG launch prompt |
+| (SSOT) | one verdict.json + one ledger entry |
+| (philosophy/rule compliance section) | this section present |
 | raw#10 (honest C3 ≥5) | 7 entries in verdict.json honest_c3 |
 | raw#15 (additive) | V5 unmodified |
 | raw#37 (transient_py opt-out) | tool/transient_py/anima_jo_v6_awareness_probe.py |
@@ -142,7 +142,7 @@ Cross-tabulated with V5.8 production verdict yields 4 quadrants:
 
 ## Honest C3 (≥5 mandated, 7 landed)
 
-1. **BG-IL/IO ckpts mac local 부재** (own 15 git size policy; ckpts on ubu1 only). V6 scope = BG-JD step 800 single ckpt N=1; cross-ckpt awareness comparison deferred.
+1. **BG-IL/IO ckpts mac local 부재** (git size policy; ckpts on ubu1 only). V6 scope = BG-JD step 800 single ckpt N=1; cross-ckpt awareness comparison deferred.
 2. **Method C N=10 small sample**, 5-fold CV → variance high; cross_val_accuracy 신뢰구간 wide. Larger battery (N≥20) deferred V6.1+.
 3. **block_size=256 truncation**: with-T1 prompt may exceed 256 SP tokens; truncation events recorded in summary.json `truncation_events`. (BG-JD test: all 5 dialogues fit, max_len=51.)
 4. **ConsciousLM dual-engine**: V6 'last layer' = `model.ln_f(x)` post-blocks (engine A pathway dominant). Engine G logits NOT used; cross-engine awareness probe deferred.

@@ -24,7 +24,7 @@
 //  COMPLIANCE
 //    raw#9 EXCEPTION: PyTorch ckpt 의존 — hexa-native byte forward 로 reimplement
 //      불가능. anima_chat.py wrapper 채택 (cycle 2026-05-12 SSOT).
-//    own 34 mandate-1: anima_chat.py 의 raw stdout 보존 — print() 만.
+// mandate-1: anima_chat.py 의 raw stdout 보존 — print 만.
 //    raw#11 snake_case
 //    raw#15 no-hardcode — path 는 _resolve_root() + alias mapping
 // ════════════════════════════════════════════════════════════════════════════
@@ -136,7 +136,7 @@ fn sub_help() {
     println("")
     println("RAW#9 EXCEPTION")
     println("  PyTorch ckpt 의존 — anima_chat.py shell-out (cycle 2026-05-12 SSOT)")
-    println("  own 34 mandate-1 raw output 보존")
+    println(" mandate-1 raw output 보존")
 }
 
 fn sub_one_shot(alias: string, prompt: string, mode: string, max_new: int) {

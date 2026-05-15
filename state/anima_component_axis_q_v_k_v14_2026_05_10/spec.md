@@ -77,7 +77,7 @@ A "flip" = condition's verdict differs from §57 baseline (`A0_baseline = V14_PA
 - **P_layer (slab×component)**: Q1 effect > Q2 ≈ Q3 (layer drift U-shape
   inverted by V14 causal effect).
 
-## Falsifiers (own 22)
+## Falsifiers
 
 - **F-COMP-1**: Q1 does NOT flip V14 → component-locus prediction falsified;
   the V14 lever is not in the q_proj weight delta of slab1_early.
@@ -99,7 +99,7 @@ A "flip" = condition's verdict differs from §57 baseline (`A0_baseline = V14_PA
 
 - raw#9: `.py` lives only under `state/`, gitignored.
 - raw#15: ckpts loaded read-only via `_load_engine_ag`; in-memory swap only.
-- own 14: V14 paired random-init mirror multi-seed.
-- own 16: Mac CPU, $0.
-- own 22: dispatcher appends to REBORN.md; this BG only writes verdict.md.
-- own 38: artefacts under `state/anima_component_axis_q_v_k_v14_2026_05_10/`.
+- : V14 paired random-init mirror multi-seed.
+- : Mac CPU, $0.
+- : dispatcher appends to REBORN.md; this BG only writes verdict.md.
+- : artefacts under `state/anima_component_axis_q_v_k_v14_2026_05_10/`.

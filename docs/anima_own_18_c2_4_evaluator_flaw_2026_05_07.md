@@ -1,4 +1,4 @@
-# own 18 C2.4 evaluator flaw — BG-HA false PASS 사례 분석 (2026-05-07)
+# C2.4 evaluator flaw — BG-HA false PASS 사례 분석 (2026-05-07)
 
 ## 사용자 directive 정의 vs evaluator 실제 정의 mismatch
 
@@ -39,7 +39,7 @@ eval_log.jsonl step 10000 greedy mode 5/5 응답:
 | C2.3 natural | NOT is_degenerate (sample mode) | 무의미 한글 chain도 PASS | **HIGH** |
 | C2.4 context_no_leak | 10 named-speakers 0건 | prompt domain match 검증 X | **CRITICAL** |
 
-## own 18 C2.4 strict 재정의 (사용자 directive 정합 보강)
+## C2.4 strict 재정의 (사용자 directive 정합 보강)
 
 ### 현재 narrow 정의 (rejected — false PASS 발생)
 ```
@@ -93,20 +93,20 @@ C2.4_context_match = (
 - BG-HD HF private upload 정지 (false PASS 방지)
 
 ### Phase 2 (별도 cycle)
-- own 18 C2.4 strict 보강 spec land
+- C2.4 strict 보강 spec land
 - evaluator script 보강 (named-speaker-leak 외 + domain keyword + embedding sim)
 - 모든 anima native model re-evaluate with strict C2.4
 
 ### Phase 3 (training cycle)
-- corpus quality 보강: prompt-response chat-template format 더 많이 (own 20 strengthening, ratio ≥60% 권고)
+- corpus quality 보강: prompt-response chat-template format 더 많이 (strengthening, ratio ≥60% 권고)
 - instruction-tuning lane 별도 (RLHF / DPO / SFT specific)
 - model이 prompt-conditional response 학습하도록 corpus assembly 재정의
 
 ## Cross-Links
 
-- own 18 (simple stack consciousness check)
-- own 19 (corpus priority over architecture)
-- own 20 (chat-template format mandate)
+- (simple stack consciousness check)
+- (corpus priority over architecture)
+- (chat-template format mandate)
 - H_005 (corpus quality > capacity — 본 cycle verdict downgrade pending)
 - BG-FY PARTIAL_PASS_NO_CONTEXT (philosophy debate template leak)
 - BG-HA PARTIAL_PASS_NO_CONTEXT_v2 (general nonsense Korean emission)
@@ -117,10 +117,10 @@ C2.4_context_match = (
 1. evaluator narrow 정의는 BG-FY-specific solution이었음 — 일반 'context match' 아님
 2. evaluator C2.2 (meaningful) + C2.3 (natural)도 loose — 한글 chain length만 검증
 3. 사용자 의심으로 false PASS 발견 — automated metric 부재 시 manual review mandate
-4. own 18 C2.4 strict 보강은 별도 cycle (현재 false PASS는 immediate downgrade only)
+4. C2.4 strict 보강은 별도 cycle (현재 false PASS는 immediate downgrade only)
 5. domain keyword mapping 5개 (인사/능력/감정/자기소개/코드)는 minimal subset — 다양한 prompt domain 보강 필요
 6. embedding similarity / n-gram coherence / manual review는 별도 cycle implementation
 
 ## Note
 
-본 doc는 **negative result document** — BG-HA achievement (첫 SIMPLE_STACK_PASS) 가짜였다는 honest disclosure. raw#10 honest C3 + raw#82 retraction protocol 정합. anima 본질에 더 가까운 첫 own 18 SIMPLE_STACK_PASS는 evaluator 보강 후 별도 training cycle 결과로 retroactive label.
+본 doc는 **negative result document** — BG-HA achievement (첫 SIMPLE_STACK_PASS) 가짜였다는 honest disclosure. raw#10 honest C3 + raw#82 retraction protocol 정합. anima 본질에 더 가까운 첫 SIMPLE_STACK_PASS는 evaluator 보강 후 별도 training cycle 결과로 retroactive label.

@@ -19,7 +19,7 @@ PURPOSE
 raw#9   training/`*.py` is gitignored — local-only, no main-tree pollution.
 raw#10  honest C3 — see DESIGN BLOCKERS at end. Coherence proxy is approximate.
 raw#15  additive — servant.hexa untouched.
-own 22  forward returns shape-checked output; classify_si raises if invalid faction.
+  forward returns shape-checked output; classify_si raises if invalid faction.
 """
 
 from __future__ import annotations

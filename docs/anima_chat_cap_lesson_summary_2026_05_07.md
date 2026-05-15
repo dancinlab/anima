@@ -90,8 +90,8 @@ BG-HG retroeval 검증: V2 strict가 BG-FY + BG-HA 모두 false PASS auto-catch 
   - BG-HP V3_PARTIAL_SIGNAL (V3.6 catches `,,,'''` filler, partial_sig=70/120)
   - BG-HS-R1 V3_PARTIAL_SIGNAL (best step 4000 V3=1/30, partial_sig=270/300, V3 partial label retained)
 → **V3 internal V2 recompute alignment**: V3 script recomputes V2 cells with V3-expanded domain table + sample-mode strict n-gram threshold; BG-HQ V2_recomputed=0/20 step 500 (vs inline V2=8/10) confirms V2 surface metric inadequacy already from stricter threshold alone
-→ **own 24 ledger update**: BG-IJ entry appended; BG-IC status DEGRADED → SUPERSEDED_BY_BG_IJ
-→ **own 18 mandate update**: V3 6-cell schema = default chat-cap evaluator; V2 strict + V3 6-cell parallel evidence required for chat-cap PASS claim; both cells_v3 (6-cell) and cells_v3_legacy (4-cell) preserved per raw#15 additive
+→ ** ledger update**: BG-IJ entry appended; BG-IC status DEGRADED → SUPERSEDED_BY_BG_IJ
+→ ** mandate update**: V3 6-cell schema = default chat-cap evaluator; V2 strict + V3 6-cell parallel evidence required for chat-cap PASS claim; both cells_v3 (6-cell) and cells_v3_legacy (4-cell) preserved per raw#15 additive
 → **final_class**: V3_EVALUATOR_LANDED_8BG_RETROEVAL_VALIDATED (`state/anima_evaluator_v3_retroeval_2026_05_07/verdict.json`)
 
 ### Lesson H 15-BG combined SSOT ★★★ (BG-IS NEW 2026-05-07): V3 retroeval extension on 7 missed BGs (HU/HW/IA/HT/IE/IF/IG)
@@ -106,8 +106,8 @@ BG-HG retroeval 검증: V2 strict가 BG-FY + BG-HA 모두 false PASS auto-catch 
 → **BG-IG (BPE-7K 13/15 manual substring)**: V2 WEAK_PARTIAL 3/15 step 1500 → V3=0/30 strict 6 steps + cycle=2-3 emerging step 1500-3000 (subthreshold V3.2) + partial_sig=27-30/30 → V3_PARTIAL_SIGNAL — BG-HS-R1 byte-level과 동일 ceiling 재확인
 → **15-BG combined SSOT** (BG-IJ 8 + BG-IS 7 = 1300 + 1150 = 2450 responses): zero SIMPLE_STACK_PASS, zero TRUE_PARTIAL_PASS_W_F4 surfaced; persona_cycle_responses 추적 (BG-HQ=55, BG-HU=80 across 3 steps, BG-IG=12 subthreshold) → Lesson H persona-cycle architectural failure mode = 18M-100M scale, 30MB-246MB corpus range, byte-level + BPE-7K 모두 횡단 universal 패턴
 → **chat-cap lane closure 강화**: byte-level 18M-27M (Lesson F #115) + BPE 18M (BG-HP/IG) + 100M scale (BG-IF) + early-stopping (BG-IA) + combined paradigm 52MB (BG-HU) + outside-well-anchored (BG-HW) → 6 architectural lane × 15 BG 모두 V3 strict 0/N → architecture lane shift only (CLM v4 substrate / .roadmap.philosophy D3) 만 남음
-→ **own 24 ledger update**: BG-IS attempt_n=29 entry appended (paradigm=v3-retroeval-extension, cost=$0, training_steps=0)
-→ **HF private upload spec stub**: NOT EMITTED (no PASS surfaced; own 15 lifecycle gate not entered)
+→ ** ledger update**: BG-IS attempt_n=29 entry appended (paradigm=v3-retroeval-extension, cost=$0, training_steps=0)
+→ **HF private upload spec stub**: NOT EMITTED (no PASS surfaced; lifecycle gate not entered)
 → **final_class**: V3_RETROEVAL_EXTENSION_LANDED_NO_PASS_SURFACED_BG_HU_DOWNGRADED (`state/anima_evaluator_v3_retroeval_extension_2026_05_07/verdict.json`)
 
 ### Lesson K ★★★ (BG-JF NEW 2026-05-07): substring trap mitigation + V4.7 embedding sim — V4 strict evaluator landed + 18-BG retroeval
@@ -134,8 +134,8 @@ BG-HG retroeval 검증: V2 strict가 BG-FY + BG-HA 모두 false PASS auto-catch 
   - **Peak deg% trap evidence**: BG-IF step 2500 deg_count=29/30=96.7%, BG-IO step 1400 deg=27/30=90%, BG-IL step 1400 deg=26/30=86.7% — V4.4 GUARD 3 (deg auto-demote) fires correctly
 
 → **embedding model**: `sentence-transformers/all-MiniLM-L6-v2` (cached `~/.cache/huggingface/hub/`, offline, 384-dim, mean-pool + L2 norm, mac CPU 1-shot ~10-50ms per record)
-→ **own 24 ledger update**: BG-JF attempt_n=34 entry appended (bg_kind=tooling, paradigm=v4-eval-tool-with-embedding-sim-and-lesson-k-mitigation, cost=$0)
-→ **HF private upload spec stub**: NOT EMITTED (no PASS surfaced; own 15 lifecycle gate not entered)
+→ ** ledger update**: BG-JF attempt_n=34 entry appended (bg_kind=tooling, paradigm=v4-eval-tool-with-embedding-sim-and-lesson-k-mitigation, cost=$0)
+→ **HF private upload spec stub**: NOT EMITTED (no PASS surfaced; lifecycle gate not entered)
 → **final_class**: V4_EVALUATOR_LANDED_18BG_RETROEVAL_VALIDATED (`state/anima_evaluator_v4_retroeval_2026_05_07/verdict.json`)
 
 → **chat-cap lane closure 추가 강화** (V4 lens): byte-level 18M-27M + BPE 18M-100M + 100M scale + early-stopping + combined paradigm 27.5MB + outside-well-anchored + NEXUS-UBM 27MB combined corpus → **18 BGs × 3410 records V4 strict 0/N** → architecture lane shift only (CLM v4 substrate / .roadmap.philosophy D3) 만 남음 (Lesson L 재확인)
@@ -172,7 +172,7 @@ BG-HG retroeval 검증: V2 strict가 BG-FY + BG-HA 모두 false PASS auto-catch 
 2. **tokenizer lane** (H_154): BPE/SentencePiece Korean tokenizer → BG-HP mac local 18M with 8K BPE
 
 **OR fall-through**:
-3. **own 17 architectural admission**: anima-native 18M-27M byte-level chat-cap intrinsically impossible (#115 architectural ceiling) — chat-cap는 다른 lane (CLM v4 substrate-coupled emerge paradigm v11 G3, .roadmap.philosophy D3)으로 전환
+3. ** architectural admission**: anima-native 18M-27M byte-level chat-cap intrinsically impossible (#115 architectural ceiling) — chat-cap는 다른 lane (CLM v4 substrate-coupled emerge paradigm v11 G3, .roadmap.philosophy D3)으로 전환
 
 ## Honest C3 (raw#91 c3 ≥5)
 
@@ -196,7 +196,7 @@ BG-HG retroeval 검증: V2 strict가 BG-FY + BG-HA 모두 false PASS auto-catch 
   - BG-HJ: state/anima_h094_instruction_tuning_two_stage_2026_05_07/verdict.json
   - BG-HK: state/anima_h098_h101_persona_conditioned_train_2026_05_07/verdict.json
   - BG-IA (Lesson G N1): state/anima_ia_early_stopping_train_2026_05_07/verdict.json
-- own 18 (simple stack 4-cond strict) + own 19 (corpus priority) + own 20 (chat-template format) + own 21 (hypotheses SSOT)
+- (simple stack 4-cond strict) + (corpus priority) + (chat-template format) + (hypotheses SSOT)
 
 ## 다음 BG fire plan (2026-05-07 same session)
 
@@ -308,14 +308,14 @@ V5.8 PASS criteria: fact_keyword in T2A (case-insensitive) + Levenshtein ratio <
 
 Result:
 - BG-JD step 800: **0/5 V5.8 PASS** (model output = mode-collapse Korean, '법칙 emotion' + persona prefix '[anima 우주뇌지도]', no English fact recall)
-- BG-IL/IO: ckpt local sync 부재 (own 15 + anima git 5MB+ size policy) → V5.8 N/A explicit fallback recorded
+- BG-IL/IO: ckpt local sync 부재 (+ anima git 5MB+ size policy) → V5.8 N/A explicit fallback recorded
 
 **Implication**: KO-trained 100M ConsciousLM은 English fact recall 능력 X. multi-turn context awareness 검증은 corpus axis 의존 (KO-only corpus → KO multi-turn만 가능, EN multi-turn 불가). V5.8 = simplified named-entity recall first-light, V6 cross-turn coreference + topic continuation deferred.
 
 Honest C3:
 - block_size=256 multi-turn truncation 가능했으나 BG-JD 5 dialogues 모두 truncated=False (prompts 짧아 200 tokens 이내 fit)
 - V5.8 lenient threshold = ≥1/5 dialogues PASS criterion. 0/5는 strict floor — V6 evolution 후 재평가 필요
-- BG-IL/IO ckpt mac sync 미실행 — 사용자 explicit directive 없이 ubu1→mac ckpt copy 자제 (HF private upload 후 download path가 own 15 정합)
+- BG-IL/IO ckpt mac sync 미실행 — 사용자 explicit directive 없이 ubu1→mac ckpt copy 자제 (HF private upload 후 download path가 정합)
 
 ### Architectural-lane-shift candidates (unmet)
 

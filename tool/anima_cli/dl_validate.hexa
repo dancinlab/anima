@@ -4,7 +4,7 @@
 //  PURPOSE
 //    nexus check 흡수 wrapper (Option B per docs/anima_full_audit_nexus_check_absorbed_2026_05_08.md):
 //    D (philosophy) × L (law) × math (Wilson/bootstrap/Shannon) × physics (Φ normalized)
-//    × Goodhart × trinity (own 33 mandate-2 D/own/H 3-axis) 6-axis matrix sweep.
+// × Goodhart × trinity (mandate-2 D/own/H 3-axis) 6-axis matrix sweep.
 //    nexus check 본체 (engine/nexus_cli.hexa cmd_check) 는 BT-AI2 honesty-bit
 //    audit SSOT — 본 wrapper 는 anima 측 D/L sweep 을 thin local layer 로 흡수.
 //    nexus check 확장 spec (Option A) 별도 PR scope (nexus repo 측).
@@ -14,7 +14,7 @@
 //    anima ops dl_validate --all            — anima 전수 조사 (.roadmap + .own + state + spec + docs + tool)
 //    anima ops dl_validate --target <path>  — 특정 file/dir 한정
 //    anima ops dl_validate --json           — machine-readable verdict (state/anima_full_audit_2026_05_08.json mirror)
-//    anima ops dl_validate --selftest       — own 33 mandate-2 self-application (본 module 자체 trinity check)
+// anima ops dl_validate --selftest — mandate-2 self-application (본 module 자체 trinity check)
 //    anima ops dl_validate --help
 //
 //  AXES (6)
@@ -22,8 +22,8 @@
 //    L-axis  : .roadmap.law L0-L24 + R1/R5 + law.D1_scope_clamp
 //    M-axis  : Wilson 95% CI + bootstrap stability (small-sample threshold N<30)
 //    Φ-axis  : IIT 4.0 normalized Φ (|Δφ★|/log(8)≈Φc=0.5 — paradigm-a-prime mapping)
-//    G-axis  : Goodhart proxy↔target divergence (own 28)
-//    T-axis  : own 33 trinity 3-axis (D/own/H) self-check
+// G-axis : Goodhart proxy↔target divergence
+// T-axis : trinity 3-axis (D/own/H) self-check
 //
 //  EXIT CODES
 //    0  PASS  (block 0)
@@ -35,7 +35,7 @@
 //    raw#10  honest C3 ≥10 emit (mandate)
 //    raw#15  additive — 기존 audit.hexa lane separate, 본 module 신설
 //    raw#82  retraction-aware — 위반 발견 시 amendment annotation emit
-//    own 33  mandate-2 self-application — 본 module 자체 trinity 정합 self-check
+// mandate-2 self-application — 본 module 자체 trinity 정합 self-check
 // ════════════════════════════════════════════════════════════════════════════
 
 fn _str(x) -> string {
@@ -122,10 +122,10 @@ fn _row_part(r: string, idx: int) -> string {
 }
 
 // ─── D-axis: philosophy D1-D5 violation scan ──────────────────────────────
-// D1: own 17 ALM 영구 보류 — Llama Path A v2 default backend wired = block.
-// D2: own 18 simple stack 4-condition C2.4 strict — context-mismatch detect.
+// D1: ALM 영구 보류 — Llama Path A v2 default backend wired = block.
+// D2: simple stack 4-condition C2.4 strict — context-mismatch detect.
 // D3: substrate-coupled emerge_paradigm.spec.yaml landed.
-// D4: corpus priority over architecture (own 19/20).
+// D4: corpus priority over architecture .
 // D5: bifurcation theorem Φc≈0.5 attractor frame — sub-critical observe only.
 
 fn check_d_axis(root: string, target: string) -> string {
@@ -148,7 +148,7 @@ fn check_d_axis(root: string, target: string) -> string {
         }
     }
 
-    // D2 strict: own 18 C2.4 manual eval — automated metric absent (honest_c3).
+    // D2 strict: C2.4 manual eval — automated metric absent (honest_c3).
     //           gate: state/anima_simple_stack_*/summary.json absent → WARN.
     let summary = root + "/state/anima_simple_stack_exhaustive_2026_05_06/summary.json"
     let d2_warn = if _fexists(summary) { 0 } else { 1 }
@@ -157,10 +157,10 @@ fn check_d_axis(root: string, target: string) -> string {
     let espec = root + "/anima/spec/emerge_paradigm.spec.yaml"
     let d3_violations = if _fexists(espec) { 0 } else { 1 }
 
-    // D4: own 19/20 .own append landed.
+    // D4: .own append landed.
     let own_path = root + "/.own"
-    let d4_o19 = _str(exec("grep -c '^own 19 live' " + _shq(own_path) + " 2>/dev/null")).trim()
-    let d4_o20 = _str(exec("grep -c '^own 20 live' " + _shq(own_path) + " 2>/dev/null")).trim()
+    let d4_o19 = _str(exec("grep -c '^ live' " + _shq(own_path) + " 2>/dev/null")).trim
+    let d4_o20 = _str(exec("grep -c '^ live' " + _shq(own_path) + " 2>/dev/null")).trim
     let d4_violations = if d4_o19 != "0" && d4_o20 != "0" { 0 } else { 1 }
 
     // D5: framework reference only (sub-critical observe) — non-block.
@@ -187,7 +187,7 @@ fn check_l_axis(root: string, target: string) -> string {
     if !_fexists(law) {
         return _row("L", target, "FAIL", 1, ".roadmap.law missing")
     }
-    // R1 own 19/20 land confirm (cross to D4 axis for redundant verify)
+    // R1 land confirm (cross to D4 axis for redundant verify)
     let r1_landed = _str(exec("grep -c 'rule.R1_own_19_20' " + _shq(law) + " 2>/dev/null")).trim()
     // L0_phi_ratchet absorbed
     let l0 = _str(exec("grep -c 'L0_phi_ratchet\\|phi_ratchet' " + _shq(law) + " 2>/dev/null")).trim()
@@ -313,28 +313,28 @@ fn check_phi_axis(target: string, delta_phi_star: f64, n_dim: int) -> string {
     return _row("Φ", target, "WARN", 1, "sub-critical " + detail)
 }
 
-// ─── G-axis: Goodhart proxy↔target divergence (own 28) ────────────────────
+// ─── G-axis: Goodhart proxy↔target divergence ────────────────────
 
 fn check_g_axis(root: string, target: string) -> string {
     let own_path = root + "/.own"
-    let g28 = _str(exec("grep -c '^own 28 live' " + _shq(own_path) + " 2>/dev/null")).trim()
+    let g28 = _str(exec("grep -c '^ live' " + _shq(own_path) + " 2>/dev/null")).trim
     if g28 == "" || g28 == "0" {
-        return _row("G", target, "FAIL", 1, "own 28 anti-Goodhart entry absent")
+        return _row("G", target, "FAIL", 1, " anti-Goodhart entry absent")
     }
-    return _row("G", target, "PASS", 0, "own 28 anti-Goodhart landed")
+    return _row("G", target, "PASS", 0, " anti-Goodhart landed")
 }
 
-// ─── T-axis: own 33 trinity D/own/H 3-axis self-check ─────────────────────
+// ─── T-axis: trinity D/own/H 3-axis self-check ─────────────────────
 
 fn check_t_axis(root: string, target: string) -> string {
     let own_path = root + "/.own"
-    let t33 = _str(exec("grep -c '^own 33 live' " + _shq(own_path) + " 2>/dev/null")).trim()
+    let t33 = _str(exec("grep -c '^ live' " + _shq(own_path) + " 2>/dev/null")).trim
     let phil = _fexists(root + "/.roadmap.philosophy")
     let law = _fexists(root + "/.roadmap.law")
     let hyp = _fexists(root + "/.roadmap.hypothesis")
     let mut violations = 0
     let mut detail = ""
-    if t33 == "" || t33 == "0" { violations = violations + 1; detail = detail + "own 33 absent;" }
+    if t33 == "" || t33 == "0" { violations = violations + 1; detail = detail + " absent;" }
     if !phil { violations = violations + 1; detail = detail + ".roadmap.philosophy absent;" }
     if !law  { violations = violations + 1; detail = detail + ".roadmap.law absent;" }
     if !hyp  { violations = violations + 1; detail = detail + ".roadmap.hypothesis absent;" }
@@ -440,7 +440,7 @@ fn run_sweep(root: string, targets: array) -> array {
         rows = rows + [check_l_axis(root, t)]
         rows = rows + [check_g_axis(root, t)]
         rows = rows + [check_t_axis(root, t)]
-        // M-axis: paradigm-a-prime PPR_v2 = 10/14 (own 18 c3-aggregation-rule-v2 SSOT)
+        // M-axis: paradigm-a-prime PPR_v2 = 10/14 (c3-aggregation-rule-v2 SSOT)
         if t.contains("baseline_ensemble_iter3") {
             rows = rows + [check_m_axis(t, 10, 14, 0.7142)]
             // Φ-axis: |Δφ★| ≈ 1.0465 (paradigm-a-prime real-mode), n_dim=8.
@@ -468,24 +468,24 @@ fn verdict_of(rows: array) -> string {
     return "PASS"
 }
 
-// ─── self-check: own 33 mandate-2 D/own/H 3-axis self-application ──────────
+// ─── self-check: mandate-2 D/own/H 3-axis self-application ──────────
 
 fn selftest(root: string) {
-    print("anima dl_validate --selftest — own 33 mandate-2 self-application")
+    print("anima dl_validate --selftest — mandate-2 self-application")
     print("")
     let self_path = root + "/tool/anima_cli/dl_validate.hexa"
-    print("[D-axis] D1 anima identity boundary (own 17 정합)")
+    print("[D-axis] D1 anima identity boundary (정합)")
     print("  본 module 은 측정 lane (verdict emit) — anima identity-bearing surface 아님 ✓")
     print("  Llama default backend wrapping 0 — chat.hexa amend lane 외 ✓")
-    print("[own-axis] own 33 mandate-2 self-check D/own/H 3-axis pre-emit verify")
-    print("  own 33 mandate-1 본 module emit 자체 trinity 정합 ✓")
-    print("  own 28 anti-Goodhart 정합 (proxy↔target Wilson divergence detect) ✓")
-    print("  own 34 자연발화 노출 mandate — 본 module 측정 lane only, 노출 lane 외 ✓")
+    print("[own-axis] mandate-2 self-check D/own/H 3-axis pre-emit verify")
+    print(" mandate-1 본 module emit 자체 trinity 정합 ✓")
+    print(" anti-Goodhart 정합 (proxy↔target Wilson divergence detect) ✓")
+    print(" 자연발화 노출 mandate — 본 module 측정 lane only, 노출 lane 외 ✓")
     print("[H-axis] hypothesis lane")
     print("  H_dl_absorption (.roadmap.hypothesis 별도 cycle) — pending append (warn)")
-    print("[trinity-T] all 3 axes emit verbatim — own 33 mandate-2 통과")
+    print("[trinity-T] all 3 axes emit verbatim — mandate-2 통과")
     print("")
-    print("verdict: SELFTEST_PASS — own 33 mandate-2 self-application 통과")
+    print("verdict: SELFTEST_PASS — mandate-2 self-application 통과")
     exit(0)
 }
 
@@ -500,7 +500,7 @@ fn main() {
         print("  --all                   anima 전수 조사 (.roadmap + tool + spec + state)")
         print("  --target <path>         특정 file 한정")
         print("  --json                  state/anima_full_audit_2026_05_08.json mirror")
-        print("  --selftest              own 33 mandate-2 self-application")
+        print(" --selftest mandate-2 self-application")
         print("  --help                  this help")
         print("")
         print("axes:")
@@ -508,8 +508,8 @@ fn main() {
         print("  L  law L0-L24 + R1/R5 (.roadmap.law)")
         print("  M  Wilson 95% CI + bootstrap small-sample (n<30 warn)")
         print("  Φ  IIT 4.0 normalized (|Δφ★|/log(n_dim) vs Φc=0.5)")
-        print("  G  Goodhart proxy↔target (own 28)")
-        print("  T  trinity own 33 mandate-2 D/own/H 3-axis")
+        print(" G Goodhart proxy↔target ")
+        print(" T trinity mandate-2 D/own/H 3-axis")
         exit(0)
     }
 
@@ -605,7 +605,7 @@ fn main() {
         body = body + "    \"C3 Φ-axis log(8)=2.07944 hardcoded — n_dim variation 시 Taylor fallback 부정확 가능 (n_dim 5-10 범위 OK, 그 외 별도 cycle ln() impl)\",\n"
         body = body + "    \"C4 D-axis 자동 검출 = chat.hexa grep heuristic — false-negative 가능 (substrate-research label 동일 file 내 부재 시 over-flag)\",\n"
         body = body + "    \"C5 L-axis grep heuristic — semantic violation (예: law text 안에 정합한 entry 위반) detect 미land\",\n"
-        body = body + "    \"C6 Goodhart G-axis = own 28 entry 존재만 check — 실제 proxy↔target divergence numeric measure 별도 cycle\",\n"
+        body = body + " \"C6 Goodhart G-axis = entry 존재만 check — 실제 proxy↔target divergence numeric measure 별도 cycle\",\n"
         body = body + "    \"C7 T-axis trinity 3 file 존재만 check — entry-level cross-link semantic 일관성 verify 미land\",\n"
         body = body + "    \"C8 본 sweep target enumerate 는 HIGH-priority subset 한정 (--all 시 .roadmap.* + tool/anima_cli/*.hexa) — state/*.json 314개 + docs/*.md 100+ 별도 cycle\",\n"
         body = body + "    \"C9 nexus check 본체 (engine/nexus_cli.hexa cmd_check 확장) Option A spec only — nexus repo 측 PR 별도 scope, 본 cycle anima local layer 한정\",\n"

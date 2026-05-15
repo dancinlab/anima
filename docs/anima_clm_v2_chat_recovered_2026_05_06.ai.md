@@ -104,7 +104,7 @@ list URL: `https://api.cloudflare.com/client/v4/accounts/<id>/r2/buckets`
 3. ✅ inspect architecture (byte vocab 256, 6 layers, 384 d_model, 18.52M params)
 4. ⏸ Korean emit smoke (load test + 10+ KO tokens — pending)
 5. ⏸ HF private upload (dancinlab/clm-v2-byte-18m-convo-5k)
-6. ⏸ PUBLIC promote (own 15 lifecycle, F-CLM-NATIVE-α-1 PASS verification 후)
+6. ⏸ PUBLIC promote (lifecycle, F-CLM-NATIVE-α-1 PASS verification 후)
 7. ⏸ .roadmap.clm_v2_chat status transition: archive_active → restored
 
 ---
@@ -151,7 +151,7 @@ list URL: `https://api.cloudflare.com/client/v4/accounts/<id>/r2/buckets`
 
 ## Next cycle steps
 
-1. **HF upload** (own 15 PRIVATE first):
+1. **HF upload** (PRIVATE first):
    - `dancinlab/clm-v2-byte-18m-convo-5k` (private, then PUBLIC promote after F-CLM-NATIVE-α-1 PASS)
    - `dancinlab/clm-v2-byte-18m-base` (private, optional archive)
 2. **Korean emit smoke** ($0 mac, ~5min):
@@ -177,4 +177,4 @@ list URL: `https://api.cloudflare.com/client/v4/accounts/<id>/r2/buckets`
 - R2 hint: `docs/cp1_serve_deploy_plan.md`
 - roadmaps: `.roadmap.clm_native_chat` + `.roadmap.clm_v4_chat` + `.roadmap.clm_v2_chat`
 
-raw#9/10/15/37 + own 14/15 준수.
+raw#9/10/15/37 + 준수.

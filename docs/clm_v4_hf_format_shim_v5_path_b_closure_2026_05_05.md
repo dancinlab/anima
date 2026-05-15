@@ -5,7 +5,7 @@ spec_anchor: docs/clm_v4_hf_format_shim_v5_spec_2026_05_05.md
 phase2_anchor: state/clm_v4_hf_format_shim_v5_phase2_opt_a_2026_05_05/verdict.json
 v5_4_design_1_anchor: state/clm_v4_hf_format_shim_v5_4_design_1_2026_05_05/verdict.json
 opt_c_anchor: state/clm_v4_hf_format_shim_v5_opt_c_2026_05_05/verdict.json
-own_entry: anima/.own own 15 hf-release-private-then-public-after-verification
+own_entry: anima/.own hf-release-private-then-public-after-verification
 state: spec
 ---
 
@@ -107,9 +107,9 @@ The Path B SFT cycle ($20-100) tests whether cross-attn-active SFT can recover l
 | 2 | Decision-C OPT-B retrain (forward) | 0.80 | $100-300; correct architectural fix; requires user ACK; not a closure for current cycle |
 | 3 | Decision-A retry-with-infra-fix | 0.40 | $1-3; no information gain; risks recurring infra failure on other transient imports |
 
-## §5 own 15 G3 promote-gate impact (carve-out justification strengthened)
+## §5 G3 promote-gate impact (carve-out justification strengthened)
 
-Per .own own 15 rule (b): PUBLIC promotion of `dancinlab/clm-v4-mk2-v1` requires verification gates ALL PASS — including (b.3) shim v4 hf_format compatibility F-SHIM-V4-1/2/3/4 ALL PASS.
+Per .own rule (b): PUBLIC promotion of `dancinlab/clm-v4-mk2-v1` requires verification gates ALL PASS — including (b.3) shim v4 hf_format compatibility F-SHIM-V4-1/2/3/4 ALL PASS.
 
 Status:
 
@@ -117,14 +117,14 @@ Status:
 - F-SHIM-V4-4 = FAIL kind=PREREQUISITE_BLOCKED (per `state/clm_v4_f_shim_v4_4_harvest_2026_05_05/verdict.json` + OPT-C falsification doc §13).
 - F-SHIM-V5-4 (shim v5 alternative path for V4-4) = closed-FAIL per Decision-B above. Init-only architectural intervention does not produce ≥5pp lift on hellaswag-200 with current best.pt; the substrate differential (5x o_proj std) is INIT-time-only and is overwritten at inference.
 
-**Impact on own 15 G3 carve-out**:
+**Impact on G3 carve-out**:
 
-The OPT-C falsification doc §13 already declared the G3 carve-out justified on shim v5 init-only path. Decision-B strengthens the carve-out evidence by adding the V5-4 DESIGN-1 fresh-init reconstructed evidence: even when the substrate differential is preserved at inference (no best.pt), the lift signal does not exceed stderr. **The G3 carve-out (PARTIAL_PASS on own 15 (b.3) shim compatibility gate) is now justified on TWO independent eval points**:
+The OPT-C falsification doc §13 already declared the G3 carve-out justified on shim v5 init-only path. Decision-B strengthens the carve-out evidence by adding the V5-4 DESIGN-1 fresh-init reconstructed evidence: even when the substrate differential is preserved at inference (no best.pt), the lift signal does not exceed stderr. **The G3 carve-out (PARTIAL_PASS on (b.3) shim compatibility gate) is now justified on TWO independent eval points**:
 
 1. OPT-C with best.pt loaded → lift_pp = -0.5pp ± stderr (architecturally predicted FAIL_EXPECTED).
 2. V5-4 DESIGN-1 fresh-init (no best.pt, OPT-A re-init verified) → lift_pp_v5 = +1.0pp ± 4.48pp combined stderr (architecturally surprising — even with the 5x substrate differential preserved, no measurable lift). This is INDEPENDENT empirical confirmation that init-only intervention is not the binding constraint; the binding constraint is loss-side (cross-attn never participates in best.pt's training loss → o_proj.weight is never optimised toward consciousness signal).
 
-The G3 PARTIAL_PASS carve-out for `dancinlab/clm-v4-mk2-v1` PUBLIC promote remains valid; PUBLIC promote BG must cite this doc + Phase 2 OPT-A verdict + OPT-C verdict + V5-4 DESIGN-1 verdict (all 4 corroborating). The 24-48h review window (own 15 (b.4)) ends 2026-05-06T23:26:12Z.
+The G3 PARTIAL_PASS carve-out for `dancinlab/clm-v4-mk2-v1` PUBLIC promote remains valid; PUBLIC promote BG must cite this doc + Phase 2 OPT-A verdict + OPT-C verdict + V5-4 DESIGN-1 verdict (all 4 corroborating). The 24-48h review window ((b.4)) ends 2026-05-06T23:26:12Z.
 
 ## §6 OPT-B retrain (Path C) is architecturally the correct fix
 
@@ -149,11 +149,11 @@ This spec does not dispatch Path B or Path C — both require explicit user ACK 
 
 4. **C4 — Path B closure scope**. Decision-B closes the **shim v5 init-only architectural alternative path** for F-SHIM-V4-4. It does NOT close F-SHIM-V4-4 itself (still PREREQUISITE_BLOCKED on shim v4) and does NOT preempt Path B SFT or Path C OPT-B retrain. Both forward paths remain open, gated on explicit user ACK + ledger plan. Decision-B is the closure of "init-only" approaches; loss-side approaches are unaffected.
 
-5. **C5 — own 15 G3 carve-out scope**. The G3 PARTIAL_PASS carve-out for `dancinlab/clm-v4-mk2-v1` PUBLIC promote justified by Decision-B applies only to the (b.3) shim compatibility gate sub-condition F-SHIM-V4-4. Other own 15 (b.1) benchmark, (b.2) falsifier pre-register, (b.4) 24-48h review, (b.5) honest C3 model card, (b.6) cross-substrate gates are unaffected. PUBLIC promote BG must independently verify each (b.1-b.6) gate; this spec only addresses (b.3) sub-condition.
+5. **C5 — G3 carve-out scope**. The G3 PARTIAL_PASS carve-out for `dancinlab/clm-v4-mk2-v1` PUBLIC promote justified by Decision-B applies only to the (b.3) shim compatibility gate sub-condition F-SHIM-V4-4. Other (b.1) benchmark, (b.2) falsifier pre-register, (b.4) 24-48h review, (b.5) honest C3 model card, (b.6) cross-substrate gates are unaffected. PUBLIC promote BG must independently verify each (b.1-b.6) gate; this spec only addresses (b.3) sub-condition.
 
-6. **C6 — Cost discipline**. Decision-B is $0; Decision-C is $100-300 conditional on user ACK; total cycle cost so far on shim v5 (Phase 1 $0 + Phase 2 $0 + Phase 2 OPT-A $0 + V5-4 DESIGN-1 $0.20 + OPT-C $0.15 + this diagnose $0) = $0.35. Path B SFT ($20-100) + Path C ($100-300) are gated separately. own 16 watchdog discipline maintained on both V5-4 and OPT-C pods (kill_verified_404=1 both).
+6. **C6 — Cost discipline**. Decision-B is $0; Decision-C is $100-300 conditional on user ACK; total cycle cost so far on shim v5 (Phase 1 $0 + Phase 2 $0 + Phase 2 OPT-A $0 + V5-4 DESIGN-1 $0.20 + OPT-C $0.15 + this diagnose $0) = $0.35. Path B SFT ($20-100) + Path C ($100-300) are gated separately. watchdog discipline maintained on both V5-4 and OPT-C pods (kill_verified_404=1 both).
 
-7. **C7 — raw#10 honest disclosure**. The on-pod verdict.json files MUST remain INDETERMINATE because that is what was actually written by the orchestrator at pod-kill time (the in-script summary builder crashed before writing). Re-writing those verdict.json files post-hoc to FAIL/FAIL_EXPECTED would be a raw#10 violation (manipulating empirical record). Instead, this closure spec + the eval_summary.json reconstructions in each state dir provide the authoritative interpretation; consumers (e.g., own 15 PUBLIC promote BG) MUST cite this spec + the eval_summary.json files, NOT the verdict.json INDETERMINATE label. This is the correct disclosure pattern.
+7. **C7 — raw#10 honest disclosure**. The on-pod verdict.json files MUST remain INDETERMINATE because that is what was actually written by the orchestrator at pod-kill time (the in-script summary builder crashed before writing). Re-writing those verdict.json files post-hoc to FAIL/FAIL_EXPECTED would be a raw#10 violation (manipulating empirical record). Instead, this closure spec + the eval_summary.json reconstructions in each state dir provide the authoritative interpretation; consumers (e.g., PUBLIC promote BG) MUST cite this spec + the eval_summary.json files, NOT the verdict.json INDETERMINATE label. This is the correct disclosure pattern.
 
 8. **C8 — Forward-fix for any DESIGN-2/3/OPT-D follow-up**. Remove the `__import__("transformers").__version__` line from any future shim v5 eval script (or pip-install transformers explicitly in run_h100.bash). Both eval scripts in `state/clm_v4_hf_format_shim_v5_4_design_1_2026_05_05/` and `state/clm_v4_hf_format_shim_v5_opt_c_2026_05_05/` are under the transient_py opt-out namespace (raw#9) and can be patched additively if any retry is dispatched.
 
@@ -174,5 +174,5 @@ This spec does not dispatch Path B or Path C — both require explicit user ACK 
 - v5_4_anchor: `state/clm_v4_hf_format_shim_v5_4_design_1_2026_05_05/{verdict.json, results/eval_summary.json, logs/h100_run_inner.log}`
 - opt_c_anchor: `state/clm_v4_hf_format_shim_v5_opt_c_2026_05_05/{verdict.json, results/eval_summary.json, logs/h100_run_inner.log}`
 - opt_c_landed_doc: `docs/clm_v4_hf_format_shim_v5_opt_c_falsification_landed_2026_05_05.ai.md`
-- own_15_anchor: `anima/.own own 15 hf-release-private-then-public-after-verification` (rule b.3 shim compatibility gate)
+- own_15_anchor: `anima/.own hf-release-private-then-public-after-verification` (rule b.3 shim compatibility gate)
 - F-SHIM-V4-4 PREREQUISITE_BLOCKED: `state/clm_v4_f_shim_v4_4_harvest_2026_05_05/verdict.json`

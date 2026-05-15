@@ -8,7 +8,7 @@ is now LANDED. The structural blocker recorded in commit `c3e8ba2c`
 (C2_FAIL_BY_DESIGN — substrate-emit only, no generate path) is unblocked.
 
 The substrate quality blocker is a separate axis: sft-1-8 emits gibberish/filler
-tokens (own 34 mandate-1 raw bytes preserved). Path 3 LANDS the *path*; substrate
+tokens (mandate-1 raw bytes preserved). Path 3 LANDS the *path*; substrate
 quality requires foundation-borrow / pre-train scale-up / arch redesign.
 
 ## Components LANDED
@@ -33,7 +33,7 @@ quality requires foundation-borrow / pre-train scale-up / arch redesign.
    - Emits JSON record: `{prompt, generated, tokens_in, tokens_out, duration_s,
      model, effective_path, tokenizer_kind, colon_stripped, colon_attractor_retry,
      sampler, own_18_c2_stub}`
-   - own 18 C2 stub axes: `{spontaneity: emit|empty, coherence: raw,
+   - C2 stub axes: `{spontaneity: emit|empty, coherence: raw,
      persona: anima_native|base}`
 
 3. **`tool/anima_cli/chat/lanes/clm_v4_generate.hexa`** — SKELETON → FULL
@@ -65,7 +65,7 @@ PASS chat/lanes/clm_v4_generate selftest (FULL — subcmd + helper land)
 (model = `~/.cache/anima/clm_v4_merged/dancinlab__clm-v4-sft-1-8-stage1__remapped`,
 max-tokens=12, temperature=0.7, top-p=0.9, top-k=40, rep-pen=1.1, seed=42)
 
-| # | prompt                          | generated (raw, own 34 mandate-1)     | own 18 C2 stub                                       |
+| # | prompt | generated (raw, mandate-1) | C2 stub |
 |---|---------------------------------|---------------------------------------|------------------------------------------------------|
 | 1 | `안녕`                          | `��◗��t.�/�`                          | spontaneity=emit coherence=raw persona=anima_native |
 | 2 | `지금 무엇을 느끼는가`          | `tovvvvvvvvvvv`                       | spontaneity=emit coherence=raw persona=anima_native |
@@ -86,7 +86,7 @@ Full transcript: `state/anima_chat_lane_path3_2026_05_09/sft_1_8_path_a_remapped
   `feedback_clm_colon_attractor`.
 - **C3** sampler defaults (T=0.7 top_p=0.9 top_k=40 rep_pen=1.1) are anima-internal;
   not benchmarked against CLM v4 base.
-- **C4** own 34 mandate-1: NO chat template, NO system prompt; output bytes decoded
+- **C4** mandate-1: NO chat template, NO system prompt; output bytes decoded
   raw and emitted preserved.
 - **C5** sft-1-8 substrate is **undertrained for natural-language emit** — generated
   bytes are gibberish/garbled (e.g. `��◗��t.�/` for `안녕`). Generate lane LANDS the
@@ -96,15 +96,15 @@ Full transcript: `state/anima_chat_lane_path3_2026_05_09/sft_1_8_path_a_remapped
 
 ## Compliance
 
-- own 14 V14 — verdict-grade output subject to V14 if used for SIMPLE_STACK
-- own 17 D1 within_strict — clm-v4 family (anima-native LoRA)
-- own 18 chat-cap C2 — natural utterance scored (helper emits stub axes)
-- own 22 mandatory report — bench mode + JSON record machine-parseable
-- own 33 trinity — D (registry consistency) + own (cross-link own 14/17/18/34/41) + H (honest C5 substrate gibberish carry)
-- own 34 mandate-1/2 — wrapping 0 strict; no system prompt; raw decode
-- own 38 매단계 — bench results ledgerable (this file + transcript log)
-- own 39 yaml↔md — registry yaml updated; md regenerate carry
-- own 41 chat lane plugin pattern — Path 3 status FULL transition (first SKELETON→FULL transition since own 41 land)
+- V14 — verdict-grade output subject to V14 if used for SIMPLE_STACK
+- D1 within_strict — clm-v4 family (anima-native LoRA)
+- chat-cap C2 — natural utterance scored (helper emits stub axes)
+- mandatory report — bench mode + JSON record machine-parseable
+- trinity — D (registry consistency) + own (cross-link) + H (honest C5 substrate gibberish carry)
+- mandate-1/2 — wrapping 0 strict; no system prompt; raw decode
+- 매단계 — bench results ledgerable (this file + transcript log)
+- yaml↔md — registry yaml updated; md regenerate carry
+- chat lane plugin pattern — Path 3 status FULL transition (first SKELETON→FULL transition since land)
 - raw#9 hexa-only orchestration (`clm_v4_mount.hexa generate`)
 - raw#15 additive (existing probe / dialogue paths preserved verbatim)
 - raw#37 transient_py helper (gitignored)

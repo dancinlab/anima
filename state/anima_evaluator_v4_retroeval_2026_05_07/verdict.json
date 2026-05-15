@@ -357,7 +357,7 @@
   "v4_driver_loc": "tool/transient_py/anima_jf_v4_retroeval.py",
   "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
   "raw_opt_out": "raw#37 transient_py + raw#42 mac N=1 (file IO + 1-time MiniLM CPU load)",
-  "own_compliance": "own 5 + own 6 + own 22 + own 24 ledger + own 18 V4 evaluator",
+  "own_compliance": " + + + ledger + V4 evaluator",
   "honest_c3": [
     "Embedding model = MiniLM-L6-v2 multilingual proxy (English-trained subword tokenizer); BM-K/KoSimCSE-bert preferred but not cached locally and online required.",
     "V4.7 cosine sim threshold [0.20, 0.85] is heuristic; ablation N=1 (no formal sweep). Empirically validated on 4 cases (Lesson K trap=0.02, legit chat=0.69-0.77, char filler=0.34, English noise=0.10).",

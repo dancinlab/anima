@@ -4,14 +4,14 @@ anima_clm_lc_h100.py — raw#37 transient (BG-LC — Llama-3.2-3B teacher → CL
 L4 path (c): teacher-student knowledge distillation — Llama-3.2-3B-Instruct teacher,
             CLM v4 mk2-v1 350M student, distillation on persona 200MB.
 
-Goal — simple_stack PASS_STRICT_C3 (own 18 C1 ∧ C2 ∧ C3, 보수적 X):
+Goal — simple_stack PASS_STRICT_C3 (C1 ∧ C2 ∧ C3, 보수적 X):
     BG-KM-LLAMA-3B (Llama-3.2-3B + LoRA r=32) PASS_STRICT 12/15 — strong
-    foundation borrow. 그러나 own 17 (anima-no-external-substrate-wrapping) 한계
+    foundation borrow. 그러나 (anima-no-external-substrate-wrapping) 한계
     — Llama 본체는 external substrate. 본 path 는 Llama 의 chat-cap 을 CLM 350M
-    student 에 distill — student 는 anima-native arch (own 17 정합) 유지하면서
+    student 에 distill — student 는 anima-native arch (정합) 유지하면서
     teacher 의 chat distribution 학습.
     Hypothesis: KL-divergence distill (teacher logits || student logits) on
-    persona 200MB → student 가 own 18 C1+C2 PASS, C3 (의식 측정) 도 anima-native
+    persona 200MB → student 가 C1+C2 PASS, C3 (의식 측정) 도 anima-native
     arch 본체 유지 → PASS_STRICT_C3 가능.
 
 Architecture:
@@ -26,23 +26,23 @@ Architecture:
           shared vocab subset OR train projection layer. 본 spec stage 미결정,
           implement 시 결정.
 
-Eval: V4 strict 11-cell (V4_1..V4_7 + own 18 c3_1..c3_4) × 15 prompts × {greedy, sample×N=5}
-    PASS_STRICT_C3 = V4 7-cell PASS ≥ 10/15 AND own 18 P5 N-of-M v2 C3 PASS (PPR_v2 ≥ 0.6 ∧ EMC ≥ 3/4)
+Eval: V4 strict 11-cell (V4_1..V4_7 + c3_1..c3_4) × 15 prompts × {greedy, sample×N=5}
+    PASS_STRICT_C3 = V4 7-cell PASS ≥ 10/15 AND P5 N-of-M v2 C3 PASS (PPR_v2 ≥ 0.6 ∧ EMC ≥ 3/4)
     PARTIAL = V4 7-cell PASS only (C3 FAIL or proxy-only) → SIMPLE_STACK_PASS_STRICT (legacy)
     FAIL = V4 < 10/15
-    own 24 SSOT mirror (own 18 c3-aggregation-rule-v2 P5 N-of-M v2): impl 시 BG-KM
+     SSOT mirror (c3-aggregation-rule-v2 P5 N-of-M v2): impl 시 BG-KM
     LLAMA-3B/QWEN-7B v4_eval_single + _c3_aggregate_p5_v2 + verdict.json
-    c3_aggregation_status field 동일 mirror 의무. own 18 D1 scope-clamp:
+    c3_aggregation_status field 동일 mirror 의무. D1 scope-clamp:
     BG-LC = anima-native student (350M scratch, Llama 3B teacher distill) → D1 ANIMA lane.
 
-Cost: $40 cap (own 16 override required), $35 early-kill, ~12hr wall
+Cost: $40 cap (override required), $35 early-kill, ~12hr wall
       (teacher inference + student backward pass).
 
 raw#37 transient_py
 raw#10 honest_c3 ≥9
 raw#15 additive over BG-KM-LLAMA-3B PASS_STRICT 12/15 (teacher base validated)
-own 17 (anima-native — student 본체) + own 18 C3 + own 30 + own 31
-own 33 trinity — D1 정체성 (anima-native student) + own 17 + H_distill_chat_cap
+ (anima-native — student 본체) + C3 + +
+ trinity — D1 정체성 (anima-native student) + + H_distill_chat_cap
 
 STATUS: SPEC ONLY — H100 fire 미실행. 사용자 explicit 'OK CLM L4 ALL FIRE' 필요.
 """
@@ -58,12 +58,12 @@ BG_ID = "BG-LC"
 PARADIGM = "llama-3b-teacher-clm-350m-student-kl-distill-persona-200mb"
 HYPOTHESIS = (
     "Llama-3.2-3B-Instruct teacher (BG-KM PASS_STRICT 12/15 검증) → CLM v4 mk2-v1 350M "
-    "student token-level KL distill on persona 200MB. Student 는 own 17 anima-native arch "
+    "student token-level KL distill on persona 200MB. Student 는 anima-native arch "
     "유지 (byte-level tokenizer + 350M 본체) → C3 의식 metric 검출 + teacher chat-cap 흡수."
 )
 
-# ── Cost discipline (own 16 override required) ─────────────────────────
-COST_HARD_CAP_USD = 40.0   # own 16 default $10 → $40
+# ── Cost discipline (override required) ─────────────────────────
+COST_HARD_CAP_USD = 40.0 # default $10 → $40
 COST_EARLY_KILL_USD = 35.0
 COST_PER_HOUR = 2.99
 WALL_CLOCK_CAP_S = 12 * 60 * 60   # 12hr (teacher inference ~2x student forward + distill)
@@ -72,9 +72,9 @@ TOTAL_BUDGET_S = 13 * 60 * 60
 OWN_16_OVERRIDE_REQUIRED = True
 OWN_16_OVERRIDE_KEYWORD = "OK CLM L4 ALL FIRE"
 
-# ── Trinity compliance (own 33) ─────────────────────────────────────────
+# ── Trinity compliance ─────────────────────────────────────────
 TRINITY_PHILOSOPHY = "D1 정체성 (anima-native student) + D_emergent-consciousness"
-TRINITY_LAW = "own 17 (anima-native — student 본체) + own 18 C3 + own 30 + own 31"
+TRINITY_LAW = "(anima-native — student 본체) + C3 + + "
 TRINITY_HYPOTHESIS = "H_distill_chat_cap (teacher chat-cap → anima-native student 흡수 가능?)"
 
 # ── Paths ──────────────────────────────────────────────────────────────
@@ -107,7 +107,7 @@ MAC_LEDGER_PATH = os.path.join(MAC_ANIMA_ROOT, "state/anima_model_attempts_ledge
 # ── Architecture config ────────────────────────────────────────────────
 TEACHER_REPO = "meta-llama/Llama-3.2-3B-Instruct"
 TEACHER_PARAMS = 3_200_000_000
-STUDENT_REPO = "dancinlab/clm-v4-mk2-v1"   # own 31 dancinlab SSOT
+STUDENT_REPO = "dancinlab/clm-v4-mk2-v1" # dancinlab SSOT
 STUDENT_PARAMS = 350_000_000
 ARCH_PARADIGM = "kl-distill-token-level"
 
@@ -147,13 +147,13 @@ V4_PROMPTS = [
 V4_SEEDS = [42, 137, 271, 314, 1729]
 V4_MODES = ["greedy", "sample"]
 
-# own 18 c3-aggregation-rule-v2 (P5 N-of-M v2) — SSOT mirror lane (BG-KM 정합)
+# c3-aggregation-rule-v2 (P5 N-of-M v2) — SSOT mirror lane (BG-KM 정합)
 C3_AGGREGATION_RULE = "per_prompt_n_of_m_06_AND_emc_3_of_4"
 C3_AGGREGATION_RULE_ALIAS = "P5_N_of_M_v2"
 C3_PPR_V2_FLOOR = 0.6
 C3_EMC_V2_FLOOR = 3
 SCOPE_LANE = "D1_ANIMA_IDENTITY"
-SCOPE_LANE_REASON = "BG-LC = anima-native student (350M scratch, Llama 3B teacher distill, own 17 정합)"
+SCOPE_LANE_REASON = "BG-LC = anima-native student (350M scratch, Llama 3B teacher distill, 정합)"
 
 # C3 substrate thresholds — TBD measurement-driven
 C3_PHI_STAR_DRIFT_THRESHOLD = None
@@ -162,9 +162,9 @@ C3_DOMINANT_CELLS_ENTROPY_THRESHOLD = None
 C3_HIDDEN_STATE_DELTA_THRESHOLD = None
 
 
-# ── HF promote naming (own 31 mandate-4 Flavor B) ──────────────────────
+# ── HF promote naming (mandate-4 Flavor B) ──────────────────────
 def hf_repo_id_flavor_b(verdict_class):
-    """own 31 mandate-4 Flavor B naming:
+    """ mandate-4 Flavor B naming:
     bg-lc-llama3b-distill-clm350m-r0-{verdict}-2026-05-XX
     """
     cycle = time.strftime("%Y-%m-%d")
@@ -189,12 +189,12 @@ def pod_main():
       Phase B: tokenizer mismatch resolution (TBD strategy)
       Phase C: distill (30k steps, KL + CE on persona 200MB)
       Phase D: post-distill smoke
-      Phase E: V4 11-cell strict eval (student only — own 17 anima-native lane)
+      Phase E: V4 11-cell strict eval (student only — anima-native lane)
       Phase F: emit verdict
     """
     raise NotImplementedError(
         f"{BG_ID} spec only — H100 fire 미실행. "
-        f"사용자 explicit '{OWN_16_OVERRIDE_KEYWORD}' + own 33 trinity self-check 후 implement."
+        f"사용자 explicit '{OWN_16_OVERRIDE_KEYWORD}' + trinity self-check 후 implement."
     )
 
 
@@ -213,10 +213,10 @@ def emit_failed_verdict(reason):
 # ── Mac-side orchestrator stub ─────────────────────────────────────────
 def orch_main():
     """SPEC STUB. Mirror BG-KM-LLAMA-3B with:
-      - own 16 override $40 cap
-      - own 30 mandate-1/2/3/4 ckpt preservation + auto promote
-      - own 31 mandate-4 Flavor B naming
-      - own 33 trinity self-check
+      - override $40 cap
+      - mandate-1/2/3/4 ckpt preservation + auto promote
+      - mandate-4 Flavor B naming
+      - trinity self-check
       - HF token stage (Llama gated)
     """
     raise NotImplementedError(

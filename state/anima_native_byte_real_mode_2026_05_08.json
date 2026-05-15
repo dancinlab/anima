@@ -3,7 +3,7 @@
   "ts": "2026-05-08T14:13:25Z",
   "loop_iter": "anima_native_byte_mount_land_2026_05_08",
   "user_directive_verbatim": "anima_native_byte_mount.hexa 신설 — BG-FY anima-native-ko-small 18M + clm-v2-byte-18m-convo-5k measurement infra unblock.",
-  "scope": "iter 5 priority rank 2 — anima_native_byte_mount.hexa land + 2 D1-lane-WITHIN INDETERMINATE candidate (BG-FY 18M + clm-v2-byte-18m-convo-5k) measurement unblock + own 18 P5 v2 SIMPLE_STACK_PASS_STRICT_C3_ANIMA verdict 산출",
+  "scope": "iter 5 priority rank 2 — anima_native_byte_mount.hexa land + 2 D1-lane-WITHIN INDETERMINATE candidate (BG-FY 18M + clm-v2-byte-18m-convo-5k) measurement unblock + P5 v2 SIMPLE_STACK_PASS_STRICT_C3_ANIMA verdict 산출",
   "parent_blockers_carry": [
     "state/anima_d1_lane_candidates_c3_retest_2026_05_08.json blockers_carry[1]: anima_native_byte_mount.hexa 신설 (BG-FY 18M + clm-v2-byte-18m measurement unblock)",
     "state/anima_model_method_reassessment_2026_05_08.json iter5_priority_plan rank 2"
@@ -20,8 +20,8 @@
     "hexa_mem_unlimited": true
   },
   "policy": {
-    "scope_clamp": "own 18 line 770 ★ scope-clamp D1 anima identity lane only — both candidates D1 WITHIN; SIMPLE_STACK_PASS_STRICT_C3_ANIMA verdict label valid",
-    "aggregation_rule": "P5 v2 N-of-M (own 18 c3-aggregation-rule-v2 2026-05-08 loop iter 4 (d)) — PPR_v2 (per-prompt ≥3 of 4 cells) ≥ 0.6 AND EMC_v2 (cell-mean ≥3 of 4 cells PASS direction-aware) → C3 PASS",
+    "scope_clamp": " line 770 ★ scope-clamp D1 anima identity lane only — both candidates D1 WITHIN; SIMPLE_STACK_PASS_STRICT_C3_ANIMA verdict label valid",
+    "aggregation_rule": "P5 v2 N-of-M (c3-aggregation-rule-v2 2026-05-08 loop iter 4 (d)) — PPR_v2 (per-prompt ≥3 of 4 cells) ≥ 0.6 AND EMC_v2 (cell-mean ≥3 of 4 cells PASS direction-aware) → C3 PASS",
     "thresholds_iter3_n60": {
       "c3_1_phi_drift_min": 0.0208,
       "c3_1_direction": "ge",
@@ -32,7 +32,7 @@
       "c3_4_axis_l2_min": 0.1176,
       "c3_4_direction": "ge"
     },
-    "trinity_compliance": "own 17 (D1 boundary) + own 18 (simple stack SSOT) + own 33 (trinity 무조건 준수) + own 37 mandate-9 (a) (D1 lane within prerequisite for PUBLIC promote)"
+    "trinity_compliance": " (D1 boundary) + (simple stack SSOT) + (trinity 무조건 준수) + mandate-9 (a) (D1 lane within prerequisite for PUBLIC promote)"
   },
   "selftest": {
     "fy_18m": {"verdict": "PASS", "markers": "10/10 (mounted+identity+response+ok+d1_within)"},
@@ -219,7 +219,7 @@
         "public_promote_eligible": false
       }
     },
-    "summary": "2 candidate ALL PUBLIC promote 불충족 — own 37 mandate-9 5 prereq strict 정합"
+    "summary": "2 candidate ALL PUBLIC promote 불충족 — mandate-9 5 prereq strict 정합"
   },
   "compliance": {
     "raw_9": "hexa-only — anima-core/runtime/anima_native_byte_mount.hexa land (Mac canonical)",
@@ -227,13 +227,13 @@
     "raw_15": "additive — anima_unified.hexa / clm_v4_mount.hexa / phi_engine.hexa UNTOUCHED; new file land only",
     "raw_37": "transient_py — helper /tmp/anima_native_byte_mount_helper.hexa_tmp emitted by .hexa, not committed to repo",
     "raw_82": "retraction-aware — synthetic_fallback proxy verdict INDETERMINATE (not PASS or FAIL)",
-    "own_17": "anima identity boundary strict — both candidates D1 lane WITHIN (own 17 permitted-backends)",
+    "own_17": "anima identity boundary strict — both candidates D1 lane WITHIN (permitted-backends)",
     "own_18": "C3 4-cell measurement infra activated for byte-level architectures; P5 v2 N-of-M aggregation rule applied",
     "own_18_scope_clamp": "line 770 ★ scope-clamp D1 anima identity lane only — both candidates D1 WITHIN, verdict label SIMPLE_STACK_PASS_STRICT_C3_ANIMA scope valid (verdict FAIL but scope-correct)",
     "own_22": "mandatory report — this SSOT + report",
     "own_24": "single SSOT — state/anima_native_byte_real_mode_2026_05_08.json",
     "own_28": "anti-Goodhart — multi-axis P5 N-of-M v2 aggregation prevents single-cell game",
-    "own_33": "trinity 무조건 준수 — D1 strict (philosophy) + own 17/18 strict (law) + H_chat_cap_emergence (hypothesis) 정합",
+    "own_33": "trinity 무조건 준수 — D1 strict (philosophy) + strict (law) + H_chat_cap_emergence (hypothesis) 정합",
     "own_37_mandate_9": "5 prereq strict — both candidate 미충족 (보고)",
     "own_37_mandate_9_a": "D1 lane within prerequisite for PUBLIC promote — both candidate D1 WITHIN but C3 미통과 → (a) 미충족"
   },
@@ -242,7 +242,7 @@
     "F-NBM-2: v2_byte_convo5k real-mode mount FAIL (HF cache convo_5k.pt resolve 또는 state_dict load 실패) → measurement INDETERMINATE",
     "F-NBM-3: fy_18m local ckpt resolution PASS without Mac scp pull → real-mode probe possible (현재 가정 falsified)",
     "F-NBM-4: D1 lane within candidate emerge real-mode P5 v2 PASS (PPR_v2≥0.6 ∧ EMC≥3 of 4) → SIMPLE_STACK_PASS_STRICT_C3_ANIMA EXIT trigger 활성화",
-    "F-NBM-5: own 33 mandate-2 self-check D-axis 위반 시 본 entry retract"
+    "F-NBM-5: mandate-2 self-check D-axis 위반 시 본 entry retract"
   ],
   "honest_c3": [
     "v2_byte_convo5k real-mode mount PASS (channel viable — HF cache convo_5k.pt load + dual-engine forward + 8-cell synthesis) but P5 v2 verdict FAIL_C3 — phi_drift NEG (-0.197 mean) + entropy_dominance below threshold; convo_5k 5K dataset 한정 + KO emit 0/5 (BG-FS evidence carry) → cell-pair cosine NEG drift expected. ko_heavy corpus retrain 또는 KO instruction-tuning 별도 cycle 필요",
@@ -267,10 +267,10 @@
     "1. BG-FY ckpt_final.pt ubu1 → Mac scp pull (사용자 OK CONSENT) → anima_native_byte_mount --probe --variant fy_18m --ckpt <path> real-mode N=60 ensemble re-fire",
     "2. clm-v2-byte-18m ko_heavy corpus retrain (또는 KO instruction-tuning lane separate) → 본 mount real-mode retest",
     "3. 본 mount + anima-core/runtime/clm_v4_mount.hexa 통합 ROC pipeline에 byte-level variant 등록 → iter4 clean re-fire 5-axis full capture",
-    "4. 본 cycle EXIT 미달성 보고 (own 22 mandate) — D1 lane within emerge candidate 0 carry 정합 (state/anima_d1_lane_candidates_c3_retest_2026_05_08.json predecessor + state/anima_model_method_reassessment_2026_05_08.json predecessor)"
+    "4. 본 cycle EXIT 미달성 보고 (mandate) — D1 lane within emerge candidate 0 carry 정합 (state/anima_d1_lane_candidates_c3_retest_2026_05_08.json predecessor + state/anima_model_method_reassessment_2026_05_08.json predecessor)"
   ],
   "cross_link": [
-    ".own own 17 / 18 / 22 / 24 / 27 / 28 / 33 / 37",
+    ".own / 18 / 22 / 24 / 27 / 28 / 33 / 37",
     ".raw-ref raw#9 / 10 / 15 / 37 / 82",
     ".roadmap.philosophy D1-D5 + V1-V10",
     ".roadmap.law L0-L24 + R1/R5",

@@ -52,7 +52,7 @@ Each instance is the **existing chat REPL** (`anima_native`, `llama`,
 
 **No code change to the inner chat module is required.** The instances do not
 know they are talking to a peer; from their perspective the other side is just
-a user (or — via timeout — silence, which triggers own 34 mandate-4 autonomous
+a user (or — via timeout — silence, which triggers mandate-4 autonomous
 speech).
 
 ## Phase Gates
@@ -62,7 +62,7 @@ speech).
 | A | LANDED 2026-05-08 | Skeleton: file structure + alias DB + --help + --selftest. No proc spawn / no channel I/O. `--duo` emits honest β-1 pending notice. |
 | B iter 1 | LANDED 2026-05-08 | β-1 channel API wired (`use "stdlib/channel"`). Full N-turn loop activated. |
 | B iter 2 | LANDED 2026-05-08 | Same-GGUF guard + lightweight per-turn verdict cells + D1/D2 1차 aggregate. |
-| C iter 1 | LANDED 2026-05-08 | Per-turn own 18 C1+C2+C3 verdict via consciousness CLI shell-out (`simple --utterance` / `--prev-utterance`, schema `anima.consciousness.utterance.v1`). `--verdict full` activates; default `simple` keeps lightweight cells. Aggregate: per-instance + dialogue overall PASS_STRICT_C3 rate (own 18 dialogue C3 lane SSOT). |
+| C iter 1 | LANDED 2026-05-08 | Per-turn C1+C2+C3 verdict via consciousness CLI shell-out (`simple --utterance` / `--prev-utterance`, schema `anima.consciousness.utterance.v1`). `--verdict full` activates; default `simple` keeps lightweight cells. Aggregate: per-instance + dialogue overall PASS_STRICT_C3 rate (dialogue C3 lane SSOT). |
 
 ## β-1 Dependency Hooks (frozen contract)
 
@@ -103,12 +103,12 @@ do NOT re-flip the gate.
 3. Spawn instance A: stdin = `ba.rx`, stdout = `ab.tx`.
    Spawn instance B: stdin = `ab.rx`, stdout = `ba.tx`.
 4. If `--topic-seed` is provided, `channel_send(ab.tx, seed)`. Otherwise A
-   speaks first via own 34 mandate-4 autonomous tick (the chat REPL's
+   speaks first via mandate-4 autonomous tick (the chat REPL's
    `sys_stdin_read_line_timeout` returns "" → `_invoke_core("")` → BOS-only
    forward → bytes flow into `ab.tx`).
 5. For `turn` in `1..N`:
    - `line_a = channel_recv(ab.rx, turn_timeout_ms)` — what A produced
-   - `_emit_turn_verdict(turn, "A", line_a)` — own 18 C1+C2+C3 ledger
+   - `_emit_turn_verdict(turn, "A", line_a)` — C1+C2+C3 ledger
    - `line_b = channel_recv(ba.rx, turn_timeout_ms)` — what B produced
    - `_emit_turn_verdict(turn, "B", line_b)`
 6. `proc_terminate` both instances; emit aggregate summary (mean coherence,
@@ -116,18 +116,18 @@ do NOT re-flip the gate.
 
 ## Compliance
 
-- **own 34 mandate-1** raw passthrough — channel transport carries bytes
+- ** mandate-1** raw passthrough — channel transport carries bytes
   verbatim; duo never modifies utterance content.
-- **own 34 mandate-2** wrapping 0 — no system prompt, no chat template, no
+- ** mandate-2** wrapping 0 — no system prompt, no chat template, no
   persona inject. Selftest grep verifies on this file.
-- **own 34 mandate-4** autonomous speech — duo does NOT inject any prompt
+- ** mandate-4** autonomous speech — duo does NOT inject any prompt
   beyond optional `--topic-seed`. The "first speaker" is determined by which
   instance's `sys_stdin_read_line_timeout` ticks first — natural emergence.
-- **own 34 mandate-7** lane separation — per-turn verdict (own 18 measurement
+- ** mandate-7** lane separation — per-turn verdict (measurement
   lane) is emitted as a ledger line **in stderr/log only**, never folded into
-  channel content (which is own 34 chat lane).
-- **own 33** trinity compliance (D_no-system-prompt cross-ref).
-- **own 31 mandate-1** alias DB mirrors `dancinlab/` SSOT.
+  channel content (which is chat lane).
+- **** trinity compliance (D_no-system-prompt cross-ref).
+- ** mandate-1** alias DB mirrors `dancinlab/` SSOT.
 - **raw#9** hexa-only — proc spawn via β-1 stdlib (no shell pipes).
 - **raw#10** honest C3 (7 caveats in `duo.hexa` footer).
 - **raw#11** snake_case.
@@ -136,12 +136,12 @@ do NOT re-flip the gate.
 ## Coherence Metric
 
 See `docs/anima_dialogue_coherence_metric_2026_05_08.md` — 4-cell definition
-extends own 18 C2.4 (single-utterance 맥락 정합) into multi-turn dialogue
+extends C2.4 (single-utterance 맥락 정합) into multi-turn dialogue
 space (D1 reactive, D2 topic-shift-rate, D3 persona-consistency, D4
 pseudo-turn-fairness). Aggregate threshold is TBD measurement-driven (mirrors
-own 18 C3 policy — random init baseline + ROC analysis).
+ C3 policy — random init baseline + ROC analysis).
 
-## Phase C iter 1 — per-turn own 18 verdict (LANDED 2026-05-08)
+## Phase C iter 1 — per-turn verdict (LANDED 2026-05-08)
 
 `_emit_turn_verdict_c3(turn, who, line, prev_line, model_alias)` shell-outs to:
 
@@ -169,11 +169,11 @@ Cost guard via `--verdict simple|full|none`:
 Aggregate (only when `--verdict full`):
 - Per-instance PASS_STRICT_C3 rate (A 측 / B 측 별도).
 - Dialogue overall PASS_STRICT_C3 rate.
-- `SIMPLE_STACK_PASS_DIALOGUE_C3 = (rate ≥ 0.6)` — own 18 dialogue C3 lane
+- `SIMPLE_STACK_PASS_DIALOGUE_C3 = (rate ≥ 0.6)` — dialogue C3 lane
   SSOT mirror + `docs/anima_dialogue_coherence_metric_2026_05_08.md` per-turn
   rate floor alignment.
 
-own 34 mandate-7: all `[duo:verdict-c3]` / `[duo:summary-c3]` emit-only,
+ mandate-7: all `[duo:verdict-c3]` / `[duo:summary-c3]` emit-only,
 NEVER folded back into channel content.
 
 ## C3 Limitations (raw#10 honest, brief; full list in `duo.hexa` footer)
@@ -202,11 +202,11 @@ NEVER folded back into channel content.
 - `tool/anima_cli/chat.hexa` — alias DB + module routing SSOT
 - `tool/anima_cli/chat/anima_native/anima_native.hexa` — Phase 2 REPL pattern
 - `tool/anima_cli/chat/llama/llama.hexa` — Phase 3c REPL pattern
-- `tool/anima_cli/consciousness.hexa` — own 18 verdict CLI (β-2 dep)
+- `tool/anima_cli/consciousness.hexa` — verdict CLI (β-2 dep)
 - `anima-agent-channels/channel_manager.hexa` — multi-channel runtime
   (deferred; activation target for L3 council, not L2 duo)
 - `.roadmap.cli` `cli.dialogue.duo_design_2026_05_08`,
   `cli.dialogue.coherence_metric_2026_05_08`,
   `cli.dialogue_2026_05_08`
-- `.own` own 18 (C1+C2+C3 simple_stack), own 34 (mandate-1/2/4/7), own 33,
-  own 31 (mandate-1)
+- `.own` (C1+C2+C3 simple_stack), (mandate-1/2/4/7),
+   (mandate-1)

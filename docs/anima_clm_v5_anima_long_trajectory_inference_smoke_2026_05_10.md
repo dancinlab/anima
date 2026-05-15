@@ -141,6 +141,6 @@ deterministic per prompt, hash-based.
 - `training/mitosis_v5_smoke_test.py` — mechanism smoke (PASS 5/5)
 - `CLM_V2_ARCHIVE_2026_05_09.md` §2 mitosis 본체
 
-raw#9/10/15 honest preservation, raw#37 additive, own 16 0-cost.
+raw#9/10/15 honest preservation, raw#37 additive, 0-cost.
 
 End of `anima_clm_v5_anima_long_trajectory_inference_smoke_2026_05_10.md`.

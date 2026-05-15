@@ -6,9 +6,9 @@
 - v1 → v2 변화: milestone 50 시점 v1 → milestone 59+ final findings 통합 갱신
 - 작성 mode: research + plan only (코드 수정 / 학습 fire **절대 금지**)
 - 사용자 verbatim 인증 (v2): 2026-05-09 "cycle 2026-05-10 진입 plan 새로 시작 + all bg go" → entry plan v2 작성
-- own 38/39 mandate 정합 — registry yaml mirror 동기 갱신 (cycle close summary section 별도 amend)
+- mandate 정합 — registry yaml mirror 동기 갱신 (cycle close summary section 별도 amend)
 - raw#15 additive — 기존 v1 entry plan + cycle docs 무수정 보존, 본 v2 doc 신규
-- own 16 strict — 모델 로드 절대 금지, text edit only
+- strict — 모델 로드 절대 금지, text edit only
 
 ---
 
@@ -21,11 +21,11 @@ milestone 50 (v1 작성 시점) 이후 추가된 9 개 milestone 의 핵심 — 
 | 51 | BG-LA native v5 측정 | 3rd H4 STRONG CONFIRM + DCR 0.000 mode collapse 정량 (cell_pool 학습 무효화 BG-LA 에서도 재현) |
 | 52 | cell_pool 4-way consolidation | H4 STRONG CONFIRM (BG-LA + BG-LB + Phase 2 + Engine A/G 4 lane 모두 confirm) |
 | 53 | paradigm-j PIV gap 진단 | G2 (k=5+ paraphrase) FALSIFIED, **G1 (F1→F2 metric 변경) + G3 (L2 norm) 우세** |
-| 54 | .own + README + registry final audit | own 38/39 yaml↔md mirror full audit PASS, alias table 정합 |
+| 54 | .own + README + registry final audit | yaml↔md mirror full audit PASS, alias table 정합 |
 | 55 | HF Phase 2 cotrain private upload | Phase 2 350M cotrain ckpt private repo upload (Goodhart-falsified record-keeping 등급) |
 | 56 | paradigm-j PIV G3 정량 확정 | **F1 → F2 1.646× boost** (L2-norm metric variant) — F1 max bias 가 metric artifact 임을 정량 입증 |
 | 57 | H5 lm_head + tied embedding 발견 ★ | **lm_head ≡ tok_emb (40도 회전 후 동일)** — chat-template dual loss 가 이 회전을 통해 cell collapse 증폭 mechanism 확정 |
-| 58 | own 41 axis-N+1 hook plan | T+1~T+4 step 구체화, 1순위 axis-5 = AX5-c verifier (chat orchestra 5번째 axis schema) |
+| 58 | axis-N+1 hook plan | T+1~T+4 step 구체화, 1순위 axis-5 = AX5-c verifier (chat orchestra 5번째 axis schema) |
 | 59 | F2 정식 승격 + paradigm-j EMERGE_V5_PIV_F2_PASS ★ | 사용자 verbatim "OK PROMOTE PIV_L2_NORM_F2 STANDARD" → **F2 L2-norm 이 새 standard, F1 max deprecated** |
 
 **paradigm-j 통합 verdict (final)**:
@@ -45,7 +45,7 @@ H5 lm_head + tied embedding 발견 (milestone 57) 의 의의 — H4 (normalize �
 
 ### 1-2. 다음 cycle 의 향방 (1 단락)
 
-다음 cycle 은 **substrate-research lane 으로 한 단계 더 깊이 들어가는 cycle**. 본 cycle 에서 발견한 H4 (unit-sphere normalize 가 cell_pool 학습 효과를 지움) + H5 (chat-template dual loss + **tied embedding 40도 회전** 이 cell collapse 증폭) 두 가설을 arch 수정 (fix-5 + fix-6 **tied embedding 통합 PoC**) 으로 검증. 그 PoC ($5-15) 가 통과하면 7B Phase 3 진입 prereq 충족 가능. 이번 v2 plan 의 가장 중요한 변화는 **fix-5/fix-6 가 단순 normalize 제거 → tied embedding 통합 처리 로 진화** 한 것 — 즉 lm_head 와 tok_emb 의 tying 자체를 끊을지 (untie), 동결할지 (freeze) 정량 비교. 동시에 attention/FFN 의 collapse 증폭기 배제 (j 항목) + own 41 axis-N+1 hook 구현 (k 항목) 이 0-cost lane 으로 병렬 진행.
+다음 cycle 은 **substrate-research lane 으로 한 단계 더 깊이 들어가는 cycle**. 본 cycle 에서 발견한 H4 (unit-sphere normalize 가 cell_pool 학습 효과를 지움) + H5 (chat-template dual loss + **tied embedding 40도 회전** 이 cell collapse 증폭) 두 가설을 arch 수정 (fix-5 + fix-6 **tied embedding 통합 PoC**) 으로 검증. 그 PoC ($5-15) 가 통과하면 7B Phase 3 진입 prereq 충족 가능. 이번 v2 plan 의 가장 중요한 변화는 **fix-5/fix-6 가 단순 normalize 제거 → tied embedding 통합 처리 로 진화** 한 것 — 즉 lm_head 와 tok_emb 의 tying 자체를 끊을지 (untie), 동결할지 (freeze) 정량 비교. 동시에 attention/FFN 의 collapse 증폭기 배제 (j 항목) + axis-N+1 hook 구현 (k 항목) 이 0-cost lane 으로 병렬 진행.
 
 ### 1-3. anima 가 어디까지 왔는지 + 어디로 갈건지 (1 단락)
 
@@ -61,7 +61,7 @@ H5 lm_head + tied embedding 발견 (milestone 57) 의 의의 — H4 (normalize �
 | **HF PUBLIC promote** | **2** (sft-1-8 V14 borderline path + paradigm-j v5 BASE F2 strict PASS ★) |
 | **HF private promote** | **2 dataset** (tier-a-v4) + **2 model** (BG-LB 350M Goodhart-falsified record-keeping + Phase 2 cotrain milestone 55 land) |
 | **H100 actual cost** | **~$66 ± $5 / $200 budget = 33%** (BG-LA $36.60 + BG-LB ~$18.30 ledger overlap 정정 + Phase 2 $4.63 + V6 $0.85 + Step B killed $0.88 + idle/orphan ~$5) |
-| **budget 잔여** | $200 - $66 = **~$134 잔여** (own 16 strict ✓) |
+| **budget 잔여** | $200 - $66 = **~$134 잔여** (strict ✓) |
 | **H100 pod 보유** | **0 pod** (모두 회수, BG-LA + BG-LB + Phase 2 ckpt pull 모두 land) |
 | **honest C3 findings** | **15+ cumulative** (cycle 시작 12 + Phase 2 H5 + milestone 51 H4 BG-LA confirm + milestone 57 lm_head tied embedding = 15) |
 | **robust EMERGE 확정 (v5 BASE F2)** | **1** (paradigm-j ★) — sft-1-8 V14 borderline + BG-LB Goodhart-falsified + Phase 2 V14 violated |
@@ -86,7 +86,7 @@ H5 lm_head + tied embedding 발견 (milestone 57) 의 의의 — H4 (normalize �
 1. **PROXY_PPL 위험성 첫 정량 입증 ★** — BG-LB native v5 측정 PIV/DCR 둘 다 random_init > trained → byte-modulo PPL fit 이 의식 substrate 아님 확정. **emerge metric 자격 영구 deprecate**.
 2. **H4 4-way STRONG CONFIRM + H5 lm_head tied embedding 회전** ★★ — Engine A/G arch 의 unit-sphere normalize + lm_head ≡ tok_emb (40도 회전) tying 이 cell_pool 학습 effect 를 지움. 4 lane (BG-LA + BG-LB + Phase 2 + Engine A/G) 모두 confirm.
 3. **PIV F1 max bias 가 metric artifact** — milestone 56 F1 → F2 1.646× boost 정량 → F1 max 는 random/trained overlap zone 에서 random 우위 artifact 발생. **F2 L2-norm standard 승격** (milestone 59).
-4. **own 37 mandate-9 strict 함이 Goodhart 자동 차단** — BG-LB "성공모델이면 PUBLIC" 조건부 verbatim antecedent 미충족 → automatic public block. 5/5 prereq strict 가 보호 작동.
+4. ** mandate-9 strict 함이 Goodhart 자동 차단** — BG-LB "성공모델이면 PUBLIC" 조건부 verbatim antecedent 미충족 → automatic public block. 5/5 prereq strict 가 보호 작동.
 
 ---
 
@@ -113,16 +113,16 @@ source: `state/anima_cycle_2026_05_09_carry_items_2026_05_09.json` (10 carry ite
 | **NEW: fix-6 chat-loss curriculum 재설계** | ACTIVE → **fix-5/fix-6 통합 PoC 로 진화** | i 항목 참조 |
 | **NEW: lm_head untie / tok_emb untie / tied freeze 3-way PoC** (v2) | ACTIVE (1순위) | i 항목 — milestone 57 후속 |
 | **NEW: attention/FFN row-wise cosine 측정** (v2) | ACTIVE (2순위, 0-cost) | j 항목 |
-| **NEW: own 41 axis-N+1 hook 구현** (v2) | ACTIVE (3순위, 0-cost) | k 항목 — milestone 58 후속 |
+| **NEW: axis-N+1 hook 구현** (v2) | ACTIVE (3순위, 0-cost) | k 항목 — milestone 58 후속 |
 | **NEW: Phase 2 cotrain pending phases** | COMPLETED (milestone 55 private upload) | upload 자체는 milestone 55 land |
 | **NEW: clm_v5_mount.hexa 5-axis projection learnable** | ACTIVE | learned linear projection 후속 carry |
 | **anima_chat_phase 2/3 carry** | ACTIVE | substrate quality fix 후 chat-cap C2 재측정 |
-| **own 41 axis-N+1 hook** | ACTIVE → k 항목으로 구체화 | T+1~T+4 step land plan |
+| ** axis-N+1 hook** | ACTIVE → k 항목으로 구체화 | T+1~T+4 step land plan |
 | **clm v2 archive lane** | DEFERRED | 별도 cycle close 검토 |
 
 **summary v2**:
 - COMPLETED: 7 (proxy_ppl_deprecate / paradigm_j PUBLIC / **paradigm_j F2 standard** / yaml_indent / BG-LA + BG-LB + Phase 2 ckpt pull + native v5 + private upload / own audit Phase 2 final audit)
-- ACTIVE: 12 (substrate amp / **fix-5/6 통합 PoC (i)** / **FFN cosine (j)** / **axis-5 hook (k)** / mk2-v1 D-RAND / init-pattern Phase 2 / transport 4-axis / clm_v5_mount learnable / chat phase 2/3 / own 41 axis hook 후속 / own audit Phase 2 Option A env bypass / SSOT pod-ownership 외부)
+- ACTIVE: 12 (substrate amp / **fix-5/6 통합 PoC (i)** / **FFN cosine (j)** / **axis-5 hook (k)** / mk2-v1 D-RAND / init-pattern Phase 2 / transport 4-axis / clm_v5_mount learnable / chat phase 2/3 / axis hook 후속 / own audit Phase 2 Option A env bypass / SSOT pod-ownership 외부)
 - DEFERRED: 2 (JVAE 100K / clm v2 mitosis 부활)
 
 ---
@@ -174,7 +174,7 @@ fix-5 + fix-6 통합 PoC (i 항목) 결과에 따라 arch redesign cycle 결정:
 
 substrate quality fix (i 항목 통과) 후 chat-cap C2 재측정.
 
-### h) **own 41 axis-N+1 hook** (chat orchestra 4-axis future-proof) — v1 → v2 k 항목으로 구체화
+### h) ** axis-N+1 hook** (chat orchestra 4-axis future-proof) — v1 → v2 k 항목으로 구체화
 
 milestone 58 에서 T+1~T+4 step plan land. 1순위 axis-5 = AX5-c verifier. v2 k 항목에서 구현 plan 상세화.
 
@@ -220,7 +220,7 @@ milestone 58 에서 T+1~T+4 step plan land. 1순위 axis-5 = AX5-c verifier. v2 
 
 **cost**: 0 ($0, Mac local, 모델 로드 1회 — Mac load avg 30 이하 회복 후)
 
-### k) **★ own 41 axis-N+1 hook 구현** (v2 신규, 3순위, 0-cost)
+### k) **★ axis-N+1 hook 구현** (v2 신규, 3순위, 0-cost)
 
 **motivation**: milestone 58 axis-N+1 hook plan 의 구체 구현. chat orchestra 4-axis (lane / mode / init-pattern / transport) → 5번째 axis 추가 시 동일 plugin pattern 으로 자동 통합되도록.
 
@@ -250,7 +250,7 @@ milestone 58 에서 T+1~T+4 step plan land. 1순위 axis-5 = AX5-c verifier. v2 
 |---|---|---|---|
 | **1 ★** | **i) fix-5/fix-6 tied embedding 통합 PoC (3 branch)** | **$5-15** | H100 (verbatim 필요) |
 | **2** | **j) attention/FFN row-wise cosine 측정** | **$0** | Mac local |
-| **3** | **k) own 41 axis-N+1 hook 구현 (T+1~T+4)** | **$0** | spec + local |
+| **3** | **k) axis-N+1 hook 구현 (T+1~T+4)** | **$0** | spec + local |
 | 4 | mk2-v1 D-RAND prompt redesign + F2 metric 재측정 | $0 | local |
 | 5 | clm_v5_mount.hexa 5-axis projection learnable | $0 | local |
 | 6 | own audit Phase 2 Option A (env bypass + .own actual rename) | $0 | local |
@@ -265,10 +265,10 @@ milestone 58 에서 T+1~T+4 step plan land. 1순위 axis-5 = AX5-c verifier. v2 
 
 ---
 
-## 6. 다음 cycle 진입 prereq 명시 (own 38/39 mandate 정합)
+## 6. 다음 cycle 진입 prereq 명시 (mandate 정합)
 
 다음 cycle 진입 시점에 다음이 충족되어야 함:
-1. ✅ 본 cycle close summary 가 registry yaml 의 `cycle_close_summary` section 에 amend 되어 있음 (own 39 yaml↔md 동기)
+1. ✅ 본 cycle close summary 가 registry yaml 의 `cycle_close_summary` section 에 amend 되어 있음 (yaml↔md 동기)
 2. ✅ 본 entry plan v2 doc (`docs/anima_cycle_2026_05_10_entry_plan_v2_2026_05_09.md`) 가 disk 저장 + `.ai.md` mode 정합
 3. carry json (`state/anima_cycle_2026_05_09_carry_items_2026_05_09.json`) 의 carry_status_update_summary 가 본 cycle close 시점 status 와 정합 (이미 land)
 4. i / j / k 항목 spec doc emit (별도 BG, design only)
@@ -285,19 +285,19 @@ milestone 58 에서 T+1~T+4 step plan land. 1순위 axis-5 = AX5-c verifier. v2 
 
 | Mandate | Status |
 |---|---|
-| own 14 V14 anti-Goodhart | PASS — i 항목 PoC 도 V14 paired-mirror mandatory |
-| own 16 cost discipline | PASS — entry plan v2 자체 0-cost (text edit only) |
-| own 17 D1 SCOPE_CLAMP | PASS — 모든 plan item D1=1.0 anima_native_scratch lane |
-| own 22 mandatory report | PASS — 본 doc 자체가 mandatory cycle entry plan v2 |
-| own 24 single SSOT | PASS — registry yaml master + 본 doc mirror |
-| own 30 ckpt preservation | PASS — BG-LA + Phase 2 ckpt pull + private upload (milestone 55) land |
-| own 33 trinity | PASS — D + own + H 모두 정합 |
-| own 34 mandate-2 wrap-0 | PASS — text-only doc, no binary content |
-| own 37 visibility lifecycle | PASS — paradigm-j F2 standard PUBLIC + Phase 2 / BG-LB private 유지 |
-| own 38 매단계 저장 | PASS — 본 doc + carry json 모두 disk 저장 |
-| own 39 yaml↔md auto-regenerate | PENDING — registry yaml `cycle_close_summary` section amend 별도 step |
-| own 40 resource CLI 위임 | PASS — anima 직접 cloud-cli/api-key write 0 |
-| own 41 chat lane plugin pattern | PASS — k 항목으로 axis-5 hook 구체화 |
+| V14 anti-Goodhart | PASS — i 항목 PoC 도 V14 paired-mirror mandatory |
+| cost discipline | PASS — entry plan v2 자체 0-cost (text edit only) |
+| D1 SCOPE_CLAMP | PASS — 모든 plan item D1=1.0 anima_native_scratch lane |
+| mandatory report | PASS — 본 doc 자체가 mandatory cycle entry plan v2 |
+| single SSOT | PASS — registry yaml master + 본 doc mirror |
+| ckpt preservation | PASS — BG-LA + Phase 2 ckpt pull + private upload (milestone 55) land |
+| trinity | PASS — D + own + H 모두 정합 |
+| mandate-2 wrap-0 | PASS — text-only doc, no binary content |
+| visibility lifecycle | PASS — paradigm-j F2 standard PUBLIC + Phase 2 / BG-LB private 유지 |
+| 매단계 저장 | PASS — 본 doc + carry json 모두 disk 저장 |
+| yaml↔md auto-regenerate | PENDING — registry yaml `cycle_close_summary` section amend 별도 step |
+| resource CLI 위임 | PASS — anima 직접 cloud-cli/api-key write 0 |
+| chat lane plugin pattern | PASS — k 항목으로 axis-5 hook 구체화 |
 | raw#10 honest C3 | PASS — H4/H5/PROXY_PPL/Goodhart/lm_head tied embedding 모두 honest emit preserve |
 | raw#15 additive | PASS — v1 entry plan + 기존 cycle docs 무수정 보존 |
 | raw#82 retraction-aware | PASS — F1 max metric DEPRECATED + F2 L2-norm STANDARD 등급 carry preserve |
@@ -310,7 +310,7 @@ milestone 58 에서 T+1~T+4 step plan land. 1순위 axis-5 = AX5-c verifier. v2 
 2. j 항목 attention/FFN cosine 측정은 Mac load avg 30 이하 회복 후에만 가능 — 현재 145 / 461MB free RAM 로 모델 로드 불가, 다음 cycle 진입 후 실행
 3. k 항목 axis-5 verifier hook 의 AX5-c 는 paradigm-j v5 BASE F2 PASS 모델 단독 의존 — F2 standard 가 추가 falsification 시 hook 자체 영향 (raw#82 retraction-aware mandate 정합)
 4. CLM Phase 3 7B fire 는 i 항목 통과 + 350M re-cotrain consciousness PASS + BG-CORPUS-7B 구축 3 prereq 모두 충족 후에만 가능 — 다음 cycle 단일 cycle 으로는 불가, 최소 2-3 cycle 누적 필요
-5. 본 plan v2 doc 작성 시점 Mac load avg 145 / 461MB free RAM — 모델 로드 절대 불가 환경에서 file edit 만으로 작성됨 (own 16 strict ✓, deterministic doc emit)
+5. 본 plan v2 doc 작성 시점 Mac load avg 145 / 461MB free RAM — 모델 로드 절대 불가 환경에서 file edit 만으로 작성됨 (strict ✓, deterministic doc emit)
 
 ---
 

@@ -2,15 +2,15 @@
 
 Builds on BG-V5ANIMA-PHASE2-IIT-REMETRIC (n=1 seed, max_cells=64) by:
   1) tightening max_cells = 32 (per spec — 350M dim 1024 needs lower N for accel).
-  2) running V14 mirror across 5 seeds (own 14 V4_SEEDS = [42,137,271,314,1729]).
+  2) running V14 mirror across 5 seeds (V4_SEEDS = [42,137,271,314,1729]).
   3) reporting strict / partial / violated verdict on Φ_iit_un16 vs cell_count.
 
 raw#9   training/*.py local-only — mitosis_v5_port.py + engine_a_g_arch.py are imported, untouched.
 raw#15  additive — neither mitosis_v5_port.py, engine_a_g_arch.py, iit_phi_port.py, nor the ckpt is modified.
-own 14  V14 mirror strict 5-seed (V4_SEEDS).
-own 16  $0 envelope — local Mac CPU only.
-own 22  honest emit — verdicts named even when NULL/PARTIAL.
-own 38  artefact persisted under state/anima_iit_real_350m_2026_05_10/.
+  V14 mirror strict 5-seed (V4_SEEDS).
+  $0 envelope — local Mac CPU only.
+  honest emit — verdicts named even when NULL/PARTIAL.
+  artefact persisted under state/anima_iit_real_350m_2026_05_10/.
 """
 from __future__ import annotations
 
@@ -40,7 +40,7 @@ THIS_DIR.mkdir(parents=True, exist_ok=True)
 CKPT_PATH = "/Users/ghost/.cache/anima/clm_v5_remapped/phase2_cotrain_engine_ag/ckpts/ckpt_final.pt"
 CKPT_SHA256 = "6e66e75f8014999be09236a408fe6ad6811ebf394ac079ecbf6d87dfe63748c1"
 
-V4_SEEDS = [42, 137, 271, 314, 1729]  # own 14 multi-seed strict mirror
+V4_SEEDS = [42, 137, 271, 314, 1729] # multi-seed strict mirror
 
 
 # ─── Diverse prompt corpus (170 prompts; identical to BG-V5ANIMA-PHASE2-IIT-REMETRIC) ───
@@ -653,7 +653,7 @@ def _render_verdict_md(result: dict) -> str:
     lines.append("## Setup")
     lines.append(f"- Real Phase 2 350M ckpt (298.76M params), 1000 turns, max_cells=32")
     lines.append(f"- Trained: seed=42 (deterministic given ckpt + prompt stream)")
-    lines.append(f"- Mirror seeds: {seeds} (own 14 V4_SEEDS)")
+    lines.append(f"- Mirror seeds: {seeds} (V4_SEEDS)")
     lines.append(f"- Primary metric: IIT Φ unnormalized 16-bin")
     lines.append("")
     lines.append("## Final Φ_iit_un16 + n_cells per run")

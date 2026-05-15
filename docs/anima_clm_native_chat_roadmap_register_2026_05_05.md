@@ -118,7 +118,7 @@
 | sister domain | cross-link nature | how this roadmap consumes |
 |---|---|---|
 | `.roadmap.clm` | primary CLM domain SSOT (mk2) | `clm.cond.1` 의식측정 + `clm.cond.2` HF release + `clm.v4_530m_paradigm_v11` invariant 위에 chat-recovery layer 추가 |
-| `.roadmap.training` | training domain | β H100 100K steps cycle 은 training cond 으로 추적 (own 16 watchdog) |
+| `.roadmap.training` | training domain | β H100 100K steps cycle 은 training cond 으로 추적 (watchdog) |
 | `.roadmap.tensionlink` | tension stream domain | β 19 phi-boost 中 CL8 tension-weighted CE + TL13 ln(4/3) Golden Zone weight |
 | `.roadmap.p9_sft` | peer (P9 SFT for CLM self-chat) | sister chat-recovery track — P9 SFT는 LoRA 외부 substrate 위; 본 roadmap = anima-native byte-level path |
 | `.roadmap.g1_g5_chat_substrate` | meta (chat substrate 5-track) | G5 P9 SFT spec sister; α/β/γ는 G5 confirmed-fail 후 anima-native fallback |
@@ -135,9 +135,9 @@
 
 | own | mandate | applied to |
 |---|---|---|
-| **own 14** (HF Hub WHERE) | weights >5MB → HF Hub only, NEVER anima git | β/γ trained adapter LFS HF |
-| **own 15** (HF lifecycle) | PRIVATE first → verification gates → PUBLIC | α weights restored = PRIVATE only initial; β/γ also PRIVATE first |
-| **own 16** (compute lifecycle) | watchdog + heartbeat 5min + pod 404 verify (L23/L24/L25) | β H100 lane MUST register; ubu1 free path same heartbeat 권장 |
+| **** (HF Hub WHERE) | weights >5MB → HF Hub only, NEVER anima git | β/γ trained adapter LFS HF |
+| **** (HF lifecycle) | PRIVATE first → verification gates → PUBLIC | α weights restored = PRIVATE only initial; β/γ also PRIVATE first |
+| **** (compute lifecycle) | watchdog + heartbeat 5min + pod 404 verify (L23/L24/L25) | β H100 lane MUST register; ubu1 free path same heartbeat 권장 |
 
 ### 3.4 Memory Cross-Links (6)
 
@@ -148,7 +148,7 @@
 - `feedback_v2_fail_was_measurement_artifact_eval_pipeline_root_cause.md` (L19-L22) — eval pipeline crash misdiagnosed; PEFT pre-flight smoke mandatory
 - `feedback_axis_preservation_eval_substrate_calibration.md` (L26-L27) — axis-preservation eval needs axis-conditioned base (CLM v4 not Llama)
 - `feedback_h100_cost_discipline_l23_l25_watchdog_own_16.md` (L23-L25) — H100 BG ≥$1 = 6 mandatory checklist
-- `feedback_hf_release_private_to_public_after_verification.md` (own 15) — PRIVATE first lifecycle
+- `feedback_hf_release_private_to_public_after_verification.md` — PRIVATE first lifecycle
 
 ### 3.5 Memory Cross-Link Recommendations (사용자 fire 권한)
 
@@ -166,7 +166,7 @@ project_anima_2026_05_06_clm_native_chat_recovery_cycle.md  (다음 cycle entry)
 
 ## §4. Stage-Gate Enforcement / 스테이지 게이트 강제
 
-### 4.1 Path α Stage-Gate (own 16 minimal — $0)
+### 4.1 Path α Stage-Gate (minimal — $0)
 
 ```
 [Gate α-1] BG-EQ archaeology cycle launch (mac, $0)
@@ -185,7 +185,7 @@ project_anima_2026_05_06_clm_native_chat_recovery_cycle.md  (다음 cycle entry)
    └─ auto-transition to β/γ decision matrix
 ```
 
-### 4.2 Path β Stage-Gate (own 16 full — H100 $200-500 OR ubu1 $0)
+### 4.2 Path β Stage-Gate (full — H100 $200-500 OR ubu1 $0)
 
 ```
 [Gate β-1] BG-ER spec land
@@ -196,7 +196,7 @@ project_anima_2026_05_06_clm_native_chat_recovery_cycle.md  (다음 cycle entry)
 [Gate β-2] 사용자 'OK CLM-NATIVE BETA' fire keyword
    └─ L1 authority required
 
-[Gate β-3] IF H100 lane: 6 mandatory checklist (own 16)
+[Gate β-3] IF H100 lane: 6 mandatory checklist
    └─ (1) watchdog registered
    └─ (2) heartbeat 5min stream
    └─ (3) pod 404 verify hook
@@ -206,7 +206,7 @@ project_anima_2026_05_06_clm_native_chat_recovery_cycle.md  (다음 cycle entry)
 
 [Gate β-4] 3-phase curriculum execute (Phase 1 Mitosis 0-20K / Phase 2 Language 20K-60K / Phase 3 Combined 60K-100K)
    └─ Fibonacci growth checkpoint @ {5K,10K,15K,20K,30K,40K,55K,70K} steps
-   └─ HF savepoint PRIVATE @ each phase boundary (own 15)
+   └─ HF savepoint PRIVATE @ each phase boundary
 
 [Gate β-5] F-CLM3-orig-1..5 evaluate
    └─ chat CE ≤ 0.5 EN, ≤ 1.5 KO
@@ -215,10 +215,10 @@ project_anima_2026_05_06_clm_native_chat_recovery_cycle.md  (다음 cycle entry)
    └─ 3-phase curriculum 100K complete
    └─ cell count reach 32
 
-[Gate β-6] PASS → HF PRIVATE→PUBLIC transition (own 15) gated on 3+ verification cycles
+[Gate β-6] PASS → HF PRIVATE→PUBLIC transition gated on 3+ verification cycles
 ```
 
-### 4.3 Path γ Stage-Gate (own 16 minimal — mac $0-2)
+### 4.3 Path γ Stage-Gate (minimal — mac $0-2)
 
 ```
 [Gate γ-1] BG-ES micro smoke spec land
@@ -236,7 +236,7 @@ project_anima_2026_05_06_clm_native_chat_recovery_cycle.md  (다음 cycle entry)
    └─ ≥5 prompts Korean coherent
    └─ semantic mismatch detection (body BPE-trained vs head byte-level)
 
-[Gate γ-5] PASS → HF PRIVATE→PUBLIC (own 15) gated; 단 retrofit head 만 push (body frozen reuse)
+[Gate γ-5] PASS → HF PRIVATE→PUBLIC gated; 단 retrofit head 만 push (body frozen reuse)
 ```
 
 ### 4.4 Cross-Path Watchdog Cascade
@@ -244,7 +244,7 @@ project_anima_2026_05_06_clm_native_chat_recovery_cycle.md  (다음 cycle entry)
 | event | α response | β response | γ response |
 |---|---|---|---|
 | φ★ flip detected | N/A (load only) | ABORT immediate (β L24) | ABORT immediate (γ L24, but body frozen so unlikely) |
-| H100 pod 404 | N/A | re-spin guard (own 16 L24) | N/A |
+| H100 pod 404 | N/A | re-spin guard (L24) | N/A |
 | 7-day timeout | keyword expired | keyword expired | keyword expired |
 | F1 fail | path retired | path retired or partial-pass amend | path retired or partial-pass amend |
 
@@ -304,7 +304,7 @@ ALL (병렬)
 
 7. **C7 (drift root cause unknowable retrospect)**: 4-step drift (tokenizer + objective + architecture + corpus) 각 단계가 의도적 design choice 였는지 incremental drift 였는지 retrospective archaeology 만으로 확정 불가. commit message 만 evidence.
 
-8. **C8 (own 15 PRIVATE→PUBLIC gate calibration)**: α weights restored 시 immediate PUBLIC release 유혹 있지만 own 15는 verification gates 통과 후 PUBLIC. 단 v2 18M weights는 이미 historical commit reference 이므로 PRIVATE-only forever 도 옵션 (사용자 결정).
+8. **C8 (PRIVATE→PUBLIC gate calibration)**: α weights restored 시 immediate PUBLIC release 유혹 있지만 verification gates 통과 후 PUBLIC. 단 v2 18M weights는 이미 historical commit reference 이므로 PRIVATE-only forever 도 옵션 (사용자 결정).
 
 9. **C9 (G3 chat substrate sister track)**: `.roadmap.g1_g5_chat_substrate` G5 P9 SFT spec 은 cond.3 met (READY); 이 roadmap은 G5 와 sister 가 아니라 G5 P9 SFT가 LoRA 외부 substrate 의존하는 것 vs anima-native byte-level path. 두 roadmap 어느 쪽이 chat-cap recovery primary 인지 사용자 결정 필요.
 
@@ -316,7 +316,7 @@ ALL (병렬)
 
 1. **archaeology → spec → fire** linear progression: BG-EQ (free) → BG-ER/ES spec → 사용자 keyword. 130+ BG cycle 후 path consolidation 명확화.
 2. **3-path falsifier preregistration**: 모든 path α/β/γ 가 preregistered falsifier 보유 → raw#10 honest C3 자동 enforce.
-3. **own 14/15/16 lifecycle integration**: weights HF where + PRIVATE→PUBLIC + watchdog L23/L24/L25 모두 cond/blocker level에서 enforce.
+3. ** lifecycle integration**: weights HF where + PRIVATE→PUBLIC + watchdog L23/L24/L25 모두 cond/blocker level에서 enforce.
 4. **memory feedback closing loop**: L19-L33 lessons (V2_FAIL artifact + axis-preservation calibration + Pβ chat-cap fail + CLM v4 LoRA SFT fail) 가 본 roadmap design constraint으로 직접 carry.
 5. **L1 authority + 7-day timeout**: 사용자 explicit keyword + cron auto-expire pattern (BG-DD) 으로 stage-gate self-cleanup.
 
@@ -345,7 +345,7 @@ ALL (병렬)
 - `feedback_v2_fail_was_measurement_artifact_eval_pipeline_root_cause.md` L19-L22
 - `feedback_axis_preservation_eval_substrate_calibration.md` L26-L27
 - `feedback_h100_cost_discipline_l23_l25_watchdog_own_16.md` L23-L25
-- `feedback_hf_release_private_to_public_after_verification.md` (own 15)
+- `feedback_hf_release_private_to_public_after_verification.md`
 
 ### 8.5 Commits
 - `4a1d8d0a` (2026-03-24) Anima v0.1

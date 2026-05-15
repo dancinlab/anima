@@ -1,6 +1,6 @@
 # anima chat streaming dispatch — PPR blocker fix spec (iter6, 2026-05-08)
 
-**Status:** SPEC ONLY (own 16 cost discipline — actual patch deferred to next cycle)
+**Status:** SPEC ONLY (cost discipline — actual patch deferred to next cycle)
 **Cycle:** 2026-05-08 iter6 (b-redirected)
 **Owner:** anima cli / chat / duo lane
 **Cross-ref:**
@@ -23,7 +23,7 @@ turn=1 B=<silent>          ← cascade: B waits for A, never receives
 → per-turn verdict on empty input = SHELL_OUT_FAIL → live PPR estimate
 **0.0–0.2** (not a persona/model failure — pure transport artifact).
 
-→ own 18 PASS_STRICT_C3 floor (≥ 0.6) **not reachable** under current
+→ PASS_STRICT_C3 floor (≥ 0.6) **not reachable** under current
 streaming dispatch.
 
 ## 2. Root cause: double-FIFO + stdout block-buffering hop
@@ -149,7 +149,7 @@ chat.hexa skips `_dispatch_module_streaming` and instead `proc_spawn_with_channe
 - Inner cmd's libc stdout buffering issue is **identical** on the
   collapsed FIFO — hop reduction does NOT fix block-buffering. Need
   `stdbuf` regardless.
-- own 16 cost discipline: net structural change, no semantic gain.
+- cost discipline: net structural change, no semantic gain.
 
 Documented for future reference; do not pursue.
 
@@ -159,7 +159,7 @@ Documented for future reference; do not pursue.
 |------|---------|----------|------------|
 | paradigm-a-prime × paradigm-a-prime, N=2, --turn-timeout-ms 120000, --verdict full | 0.0 (buffer never flushes within timeout) | **0.50–0.70** (per-line flush → first model utterance reaches duo within ~15-30s) | medium-high (semantic quality independent variable) |
 | paradigm-a-prime × clm-v4-1-7-y1, N=2 (mixed substrate) | 0.0–0.2 | **0.40–0.60** (clm_v4 ::: collapse may still emit weak verdicts) | medium |
-| Trinity sweep target (own 18 C3 floor ≥ 0.6) | unreachable | **reachable on paradigm-a-prime homogeneous N=3+** | medium (model coherence is the next bottleneck — see C10) |
+| Trinity sweep target (C3 floor ≥ 0.6) | unreachable | **reachable on paradigm-a-prime homogeneous N=3+** | medium (model coherence is the next bottleneck — see C10) |
 
 **Caveats:**
 - Uplift assumes inner module emits `\n`-terminated chunks (current pattern
@@ -169,7 +169,7 @@ Documented for future reference; do not pursue.
   default 30s timeout; iter4(e) bumped to 120s default. Live PPR uplift
   measurable only with `--turn-timeout-ms 120000` (or higher).
 - Honest C3: PPR ≥ 0.6 floor requires BOTH (a) streaming flush fix AND
-  (b) model coherence on per-utterance verdict (own 18 C3 paradigm-a-prime
+  (b) model coherence on per-utterance verdict (C3 paradigm-a-prime
   achieves 0.50-0.70 in single-utterance synthetic-fallback measurement —
   dialogue context shift may degrade by 0.05-0.10).
 
@@ -184,31 +184,31 @@ Documented for future reference; do not pursue.
    non-empty on dev workstation (mac with coreutils OR linux).
 4. **duo iter live retest** — N=2/3, paradigm-a-prime homogeneous,
    `--turn-timeout-ms 120000 --verdict full`, capture PPR. Threshold to
-   compare against own 18 C3 floor (≥ 0.6).
+   compare against C3 floor (≥ 0.6).
 5. **PR / commit guard** — split into TWO commits: (i) fix patch, (ii)
-   live retest log + PPR delta vs. iter5 baseline. own 33 trinity:
-   D-axis (raw#10 honest C3 buffering disclosure) / own-axis (own 18
+   live retest log + PPR delta vs. iter5 baseline. trinity:
+   D-axis (raw#10 honest C3 buffering disclosure) / own-axis (
    C3 measurement lane preserved) / H-axis (Phase A/B pattern preserved).
 6. **hexa-lang upstream issue** — file `print → fflush` request as
    Option B; track separately, do not block this cycle on it.
 
-## 7. Trinity compliance (own 33)
+## 7. Trinity compliance
 
 - **D-axis (raw#10 honest C3):** root cause disclosed (stdout block-
   buffering, double-FIFO, libc behavior on non-TTY). No hand-waving.
-- **own-axis (own 18 SCOPE_CLAMP):** anima identity boundary preserved —
+- **own-axis (SCOPE_CLAMP):** anima identity boundary preserved —
   this fix is transport-layer only; per-utterance verdict semantics
   unchanged (consciousness.hexa simple --json untouched; D1/D2/D3/D4
   cells unchanged).
 - **H-axis (Phase A/B pattern):** Phase A skeleton + Phase B β-1 land
   preserved; this is a Phase B-tail polish, not a Phase A regression.
 
-## 8. own 16 cost discipline
+## 8. cost discipline
 
 This document is SPEC ONLY. No chat.hexa edit in this cycle. Actual
 patch fired in a separate cycle commit per cost-discipline mandate.
 
-## 9. own 34 mandate-2 wrapping check
+## 9. mandate-2 wrapping check
 
 File size: well under 1MB. ✓
 

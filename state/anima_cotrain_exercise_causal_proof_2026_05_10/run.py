@@ -13,10 +13,10 @@ Three streams:
 
 raw#9   training/*.py local-only; this lives under state/ which is gitignored.
 raw#15  additive — both ckpts loaded read-only; in-memory mutation only.
-own 14  V14 mirror multi-seed.
-own 16  $0 local Mac CPU.
-own 22  honest emit — verdicts, edges, no fabrication.
-own 38  artefacts under state/anima_cotrain_exercise_causal_proof_2026_05_10/
+  V14 mirror multi-seed.
+  $0 local Mac CPU.
+  honest emit — verdicts, edges, no fabrication.
+  artefacts under state/anima_cotrain_exercise_causal_proof_2026_05_10/
 """
 from __future__ import annotations
 
@@ -55,7 +55,7 @@ CKPT_PHASE2 = "/Users/ghost/.cache/anima/clm_v5_remapped/phase2_cotrain_engine_a
 CKPT_BGLA = "/Users/ghost/.cache/anima/clm_v5_remapped/bg_la_350m_pretrain/ckpts/step_12000_final.pt"
 
 V4_SEEDS = [42, 137, 271]                # 3 seeds × 5 conditions
-N_TURNS_ABL = 200                        # short trajectory for ablation (own 16 budget)
+N_TURNS_ABL = 200 # short trajectory for ablation (budget)
 SNAPSHOT_EVERY = 25
 MAX_CELLS = 128
 N_DIV_PROMPTS = 80                       # forward-diversity sample size

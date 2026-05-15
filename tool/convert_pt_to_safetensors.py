@@ -16,7 +16,7 @@ OUTPUTS
                                      (n_layers, d_model, etc. — for hexa to parse)
 
 COMPLIANCE
-    own 34 mandate: raw output preserved (no transformations).
+     mandate: raw output preserved (no transformations).
     raw#9 EXCEPTION: PyTorch pickle deserialization is python-only.
     This is a one-time bridge; the hexa-native inference path reads
     .safetensors directly via stdlib/safetensors.hexa.

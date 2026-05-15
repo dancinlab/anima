@@ -8,7 +8,7 @@ Substrates:
   C_cells64_aware  — v2 d=384 path (mitosis-aware)
   E_convo5k_ft     — v2 d=384 path (mitosis-naive FT, no in-loop mitosis)
 
-raw#9 / raw#15 / own 14 / own 16 / own 22 / own 38 honored.
+raw#9 / raw#15 / / / / honored.
 """
 from __future__ import annotations
 
@@ -53,7 +53,7 @@ from training.v5mitosis_d384_v14_mirror import (  # noqa: E402
 V4_SEEDS = [42, 137, 271, 314, 1729]
 TRAINED_PROMPT_SEED = 42
 MAX_CELLS = 256  # ★ §45/§47 used 128; this is the SOLE override
-N_TURNS = 200    # budget compromise (own 16); mission asked 1K-turn
+N_TURNS = 200 # budget compromise; mission asked 1K-turn
 SNAP_EVERY = 25  # denser than §47
 
 SUBSTRATES = {

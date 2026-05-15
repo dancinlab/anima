@@ -121,7 +121,7 @@ deterministic + hexa-only + llm: none. 본 H 는 W11 (cross-hypothesis meta) 중
 
 - **L8 (cluster-level strength 가 children 의 strength 의 simple sum 이 아님)**: 본 cluster 가 5 child 의 "consistency" 를 cluster strength 으로 환원하나, *Bayesian* 으로 본다면 children 이 동일 prior (n=6 substrate) 위에 conditional 한 evidence 이므로 P(cluster | n=6 generative) 와 P(n=6 generative | cluster) 의 update factor 는 children 의 *독립성* 에 의존. L2 (circular-dependence) 와 결합 시 cluster strength 의 *effective evidence count* 는 5 보다 훨씬 작을 수 있음 (extreme case 1, 즉 children 모두 동일 source 의 5 perspective). 본 update factor 의 정량 부재
 
-- **L9 (meta-cluster 의 traction)**: 본 H_160 자체가 *engineering pragmatism (own 21 R5+ 실행 lane)* 적용 X — 새로운 측정 / prediction / engine output 산출 X. cluster reflection 이 *documentation contribution* 한정. anima 의 deep philosophical lane 의 책임 vs cycle progression 의 책임 사이 — 본 H 는 전자
+- **L9 (meta-cluster 의 traction)**: 본 H_160 자체가 *engineering pragmatism (R5+ 실행 lane)* 적용 X — 새로운 측정 / prediction / engine output 산출 X. cluster reflection 이 *documentation contribution* 한정. anima 의 deep philosophical lane 의 책임 vs cycle progression 의 책임 사이 — 본 H 는 전자
 
 ## Cross-Links
 
@@ -184,7 +184,7 @@ frozen_at: 2026-05-12
 - **Promoted from**: **none** (Hc origin 없음 — meta-level synthesis, raw#91 meta-reflection 의 직접 응답)
 - **User directive**: 2026-05-12 — "5 H 의 epistemic boundary meta-가설로 통합"
 - **Math verification**: 본 file 의 arithmetic_audit 섹션 — 4 EXACT identities (PERFECT_NUMBER_CLASS V6, Euclid σ(n)=2n for {6,28}, 5 child frontmatter homogeneity) — 모두 children 또는 state lane 의 직접 cite
-- **Reason for new H (meta-level)**: 5 child H 가 동일 substrate 의 cascade 라는 meta-claim 은 *어느 single child H 에도 위치할 수 없음* — H_067 super-H 는 own 24-Hc parent 책임, 본 H_160 은 H_067 자신 + 4 child 의 cluster-level reflection. H_160 의 raw#91 meta-reflection 이 cluster boundary 와 epistemic limit 의 직접 declaration 역할
+- **Reason for new H (meta-level)**: 5 child H 가 동일 substrate 의 cascade 라는 meta-claim 은 *어느 single child H 에도 위치할 수 없음* — H_067 super-H 는 -Hc parent 책임, 본 H_160 은 H_067 자신 + 4 child 의 cluster-level reflection. H_160 의 raw#91 meta-reflection 이 cluster boundary 와 epistemic limit 의 직접 declaration 역할
 - **DO NOT promote any Hc**: 본 가설은 Hc origin 없는 meta-synthesis. children 의 Hc 흡수 X (children 이 이미 흡수 완료)
 - **DO NOT modify child H files in this commit**: cross-link 추가 (5 child H 의 Cross-Links 섹션에 H_160 pointer) 는 **TODO next session** — 본 H 의 land 후 별도 cycle 에서 5 child cross-link 보강
 - **Next steps**:

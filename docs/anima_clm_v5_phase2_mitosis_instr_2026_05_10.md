@@ -11,7 +11,7 @@ substrate **suppresses** mitosis (cells 16→19, 3 splits) while V14 random_init
 **accelerates** it (cells 16→28, 12 splits). α_trained=**1.009** super-linear
 on the cells it does grow; α_random=0.155 (mostly flat after early burst).
 
-raw#10 honest. raw#15 additive. own 30 ckpt verified.
+raw#10 honest. raw#15 additive. ckpt verified.
 
 ---
 
@@ -44,7 +44,7 @@ plot: `state/anima_clm_v5_phase2_mitosis_instr_2026_05_10/phi_trajectory.png`
 | sha256 | `6e66e75f8014999be09236a408fe6ad6811ebf394ac079ecbf6d87dfe63748c1` |
 | schema | `{model: state_dict, step: int, cfg: dict}` (222 keys) |
 | lineage_tag | `engine_a_g_dual_350m_v1_phase2_cotrain` |
-| arch_origin | `anima_native_scratch` (own 17 D1=1.0) |
+| arch_origin | `anima_native_scratch` (D1=1.0) |
 | training step | 6000/6000 final |
 | final loss_c | 0.222 (consciousness) |
 | final loss_h | 0.627 (chat-template) |
@@ -199,11 +199,11 @@ or real substrate.
 | ★ | step | cost | notes |
 |---|---|---:|---|
 | ★★★ | recover Phase 2 BPE tokenizer (training/train_phase2_cotrain.py — local only; or pull from pod cycle artifacts) and re-run mitosis-instr with semantically faithful tokens | $0 Mac | likely shifts α and growth ceiling; current finding is tokenizer-mismatch limited |
-| ★★★ | promote-public Phase 2 cotrain ckpt to private HF (`dancinlab/clm-v5-phase2-cotrain-engine-ag`) per own 31 + own 37 | $0 | currently local-only; HF backup mandate |
+| ★★★ | promote-public Phase 2 cotrain ckpt to private HF (`dancinlab/clm-v5-phase2-cotrain-engine-ag`) per + | $0 | currently local-only; HF backup mandate |
 | ★★ | extended trajectory 10K-turn on real 350M (BG-V5ANIMA-LONG-TRAJ-EXT scoped to real substrate) | $0 Mac | check if cells 19→32+ at 10K turn or saturates |
 | ★★ | IIT Φ remetric port (BG-V5ANIMA-IIT-METRIC) on real 350M cell trajectory — current Φ is anima-internal proxy, IIT MI provides standardized scale | $0 Mac | cells 16-28 range tractable for exact MIP |
-| ★ | re-run V14 mirror with multi-seed n=5 (seeds [42, 137, 271, 314, 1729] per own 14) — current uses seed=42 only; n=1 cannot CI95 | $0 Mac | strengthens V14 verdict |
+| ★ | re-run V14 mirror with multi-seed n=5 (seeds [42, 137, 271, 314, 1729] per) — current uses seed=42 only; n=1 cannot CI95 | $0 Mac | strengthens V14 verdict |
 
-raw#9/10/15/37 honest preservation, own 16 0-cost.
+raw#9/10/15/37 honest preservation, 0-cost.
 
 End of `anima_clm_v5_phase2_mitosis_instr_2026_05_10.md`.

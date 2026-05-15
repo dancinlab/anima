@@ -62,6 +62,6 @@ Source files:
 ## Constraints honored
 
 - raw#15: existing data only, no model re-fire
-- own 16: $0 local CPU only
-- own 22: REBORN.md NOT directly appended; dispatcher injects §59 slot
-- own 38: doc save to state/anima_cap_vs_training_ratio_audit_2026_05_10/
+- : $0 local CPU only
+- : REBORN.md NOT directly appended; dispatcher injects §59 slot
+- : doc save to state/anima_cap_vs_training_ratio_audit_2026_05_10/

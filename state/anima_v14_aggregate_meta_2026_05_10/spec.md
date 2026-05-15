@@ -3,7 +3,7 @@
 - bg_id: BG-V14-STRICT-AGGREGATE-META-ANALYSIS
 - ts: 2026-05-10
 - scope: cycle 2026-05-10 V14 results — §33, §38, §43, §44, §47, §51, §55, §56, §57
-- mode: $0 local CPU analysis (own 16). raw#15 only existing data; raw#9 no training.
+- mode: $0 local CPU analysis . raw#15 only existing data; raw#9 no training.
 - output: /Users/ghost/core/anima/state/anima_v14_aggregate_meta_2026_05_10/{spec.md, all_v14_results.json, meta_analysis.json, verdict.md}
 - code: run_meta.py — pure stdlib (math + json), no scipy/numpy.
 
@@ -36,6 +36,6 @@
 ## Constraints
 - raw#15: existing data only
 - raw#9: no training/*.py
-- own 16: $0 local CPU
-- own 22: REBORN.md not appended directly
-- own 38: state/ output only
+- : $0 local CPU
+- : REBORN.md not appended directly
+- : state/ output only

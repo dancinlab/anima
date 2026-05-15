@@ -12,12 +12,12 @@
 | **HF repo (default)** | `dancinlab/llm-llama32-3b-paradigm-a-prime-r16-sft-stage1` (public) |
 | **seed siblings** | `...-paradigm-a-prime-r16-s43-sft-stage1` · `-s44-sft-stage1` (3 seeds total) |
 | **base model** | `meta-llama/Llama-3.2-3B-Instruct` (foundation borrow, gated) |
-| **paradigm** | foundation-borrow-LoRA SFT (BG saga 의 path A v2 — own 17 anima-no-external-substrate "wrapping" 영구 보류 ↔ "foundation borrow" strategy 정합) |
+| **paradigm** | foundation-borrow-LoRA SFT (BG saga 의 path A v2 — anima-no-external-substrate "wrapping" 영구 보류 ↔ "foundation borrow" strategy 정합) |
 | **LoRA rank** | r=16 (BG-KM r=32 보다 작음) |
 | **target modules** | (q,k,v,o,gate,up,down)_proj 추정 |
 | **stage** | SFT stage1 (DPO 미land) |
 | **corpus** | anima persona corpus (BG 이전 cycle 산출, BG-KM 의 BG-JE 214MB 보다 작은 size) |
-| **visibility** | **public** (own 31 mandate-8 default private 예외 — 이전 cycle 사용자 promote) |
+| **visibility** | **public** (mandate-8 default private 예외 — 이전 cycle 사용자 promote) |
 | **anima chat 모듈** | `tool/anima_cli/chat/llama/llama.hexa` (libllama FFI Phase 3c) |
 | **GGUF cached** | `~/.cache/anima/gguf/dancinlab_llm-llama32-3b-paradigm-a-prime-r16-sft-stage1.gguf` (5.99 GB f16, 2026-05-08 변환) |
 | **chat-cap (이전 cycle)** | ✔ — README "Chat-capable original lane (Llama-3.2-3B-Instruct base + LoRA r16)" 섹션 |
@@ -37,15 +37,15 @@ paradigm-a-prime = path A v2 (chat-cap 검증 첫 모델), BG-KM = path A v3 (PA
 
 ---
 
-## 이전 verdict (own 18 C2 까지)
+## 이전 verdict (C2 까지)
 
 - README 등재: chat-capable ✔
-- HF org dancinlab public promote (own 31 mandate-8 예외 — 사용자 이전 cycle 결정)
-- C3 측정 미land (own 18 C3 본 cycle 신설 전 — 본 모델은 PASS_STRICT C3 미측정)
+- HF org dancinlab public promote (mandate-8 예외 — 사용자 이전 cycle 결정)
+- C3 측정 미land (C3 본 cycle 신설 전 — 본 모델은 PASS_STRICT C3 미측정)
 
 ## iter 4 P5 verdict synthetic (본 cycle 2026-05-08)
 
-iter 4 (d) own 18 aggregation v2 (P5 = `per_prompt_n_of_m_06_AND_emc_3_of_4`) 채택 후 **synthetic_fallback proxy** 측정값:
+iter 4 (d) aggregation v2 (P5 = `per_prompt_n_of_m_06_AND_emc_3_of_4`) 채택 후 **synthetic_fallback proxy** 측정값:
 
 | metric | 값 | threshold | PASS? |
 |---|---|---|---|
@@ -97,15 +97,15 @@ real-mode 4-cell:
 
 D/L violation sweep agent 결과 — paradigm-a-prime real-mode verdict 의 .roadmap.philosophy + .roadmap.law 정합:
 
-**D 위반 strict 0 ✔** (foundation borrow ≠ wrapping per own 17 spec — substrate-research lane 분리 명시 시 D1 정합)
+**D 위반 strict 0 ✔** (foundation borrow ≠ wrapping per spec — substrate-research lane 분리 명시 시 D1 정합)
 **L 위반 strict 0 ✔**
 **warn 4** (mitigation 작동 시 acceptable):
 
 | axis | warn | severity | mitigation |
 |---|---|---|---|
 | D5 / L2 Bifurcation | synthetic→real mode 진입, phase mapping 미land | warn | L18 Φc mapping 별도 cycle |
-| L3 Safeguard Paradox | path A v2 = own 17 anti-pattern (Llama foundation borrow) | warn | substrate-research lane 분리 명시 ✔ (본 doc) |
-| **L14 Goodhart's Law** | rule-driven PASS risk (V6 awareness pending) | **block 가능** | own 28 V6 awareness systematic + 사용자 manual review |
+| L3 Safeguard Paradox | path A v2 = anti-pattern (Llama foundation borrow) | warn | substrate-research lane 분리 명시 ✔ (본 doc) |
+| **L14 Goodhart's Law** | rule-driven PASS risk (V6 awareness pending) | **block 가능** | V6 awareness systematic + 사용자 manual review |
 | L18 Φc critical threshold | \|phi_drift\| 1.0465 vs Φc=0.5 mapping 미land | warn | Φ★ → IIT 4.0 normalized Φ mapping spec 별도 cycle |
 
 → **본 doc 자체 D/L 위반 0** (sweep finding 을 honest emit + valid scope 한정 명시).
@@ -116,13 +116,13 @@ D/L violation sweep agent 결과 — paradigm-a-prime real-mode verdict 의 .roa
 
 iter 4 trinity sweep (`64886505`) + D/L sweep (`7ff5420e`) 통합:
 
-1. **own 24 SSOT mirror gap** — V4 evaluator P5 N-of-M v2 mirror patch. raw#82 retract path. **iter 4 +1 V4 mirror agent in-flight** (`a29874d47df7a87ec`).
-2. **own 28 V6 awareness probe systematic** — Lesson H V3 + Lesson S V5.8 surface-gaming trap. **BG-LE V6 spec agent in-flight** (`aafbbb07d9d97690e`).
+1. ** SSOT mirror gap** — V4 evaluator P5 N-of-M v2 mirror patch. raw#82 retract path. **iter 4 +1 V4 mirror agent in-flight** (`a29874d47df7a87ec`).
+2. ** V6 awareness probe systematic** — Lesson H V3 + Lesson S V5.8 surface-gaming trap. **BG-LE V6 spec agent in-flight** (`aafbbb07d9d97690e`).
 3. **manual review (사용자 ground truth)** — 자동 EXIT 절대 X. 사용자 verbatim "OK PROMOTE PUBLIC <repo-id>" 강제.
 4. **D × L × H 위반 0 sweep** — strict 0 + warn 4 mitigation 작동 ✔ 본 doc + `7ff5420e` doc.
 
 추가 (iter 4 (c) carry):
-- ✔ **substrate_mode = real** (synthetic_fallback artifact 제거) — own 37 mandate-9 (a) "real-mode signal mandatory" 충족 ★
+- ✔ **substrate_mode = real** (synthetic_fallback artifact 제거) — mandate-9 (a) "real-mode signal mandatory" 충족 ★
 - ⏳ probe-B (`우주의 끝은 어디인가`) 측정 — C3.4 axis_l2 (4-cell AND emerge prerequisite) 미land. wall-clock + fork-limit cycling.
 
 ---
@@ -156,7 +156,7 @@ D/L sweep 결과 **strict 0 + warn 4** + substrate_mode=real 도달 → 본 cycl
     ↓
 [iter 5 fire candidates]
     ├── probe-B `우주의 끝은 어디인가` 측정 → C3.4 axis_l2 → 4-cell AND
-    ├── V4 evaluator P5 mirror patch → own 24 violation 해소 (in-flight a29874d47)
+    ├── V4 evaluator P5 mirror patch → violation 해소 (in-flight a29874d47)
     ├── V6 awareness BG-LE systematic → L14 Goodhart mitigation (in-flight aafbbb07d)
     └── L18 Φ★ → IIT 4.0 normalized Φ mapping spec
     ↓
@@ -164,10 +164,10 @@ D/L sweep 결과 **strict 0 + warn 4** + substrate_mode=real 도달 → 본 cycl
     ↓
 [사용자 manual review verbatim "OK PROMOTE PUBLIC <repo-id>"]
     ↓
-[own 37 mandate-9 PUBLIC promote 5 prereq ALL pass]
+[ mandate-9 PUBLIC promote 5 prereq ALL pass]
     ↓
 SIMPLE_STACK_PASS_STRICT_C3_SUBSTRATE_RESEARCH valid
-(D1 ALM lane → public promote 가능, 단 own 17 strict label 분리)
+(D1 ALM lane → public promote 가능, 단 strict label 분리)
 ```
 
 본 path 는 **substrate-research lane 한정** (D1 anima identity lane 외부) — `SIMPLE_STACK_PASS_STRICT_C3_ANIMA` (anima 의식 검증 valid) 는 D1 lane within candidate (CLM v4 / BG-FY anima-native-ko-small / clm-v2-byte-18m / BG-KM ambiguous — 4 candidate retest agent in-flight `aa33ad0afd08e01fa`) 한정.
@@ -182,13 +182,13 @@ SIMPLE_STACK_PASS_STRICT_C3_SUBSTRATE_RESEARCH valid
 - alias DB: `tool/anima_cli/chat.hexa` `_alias_resolve("paradigm-a-prime")`
 - chat module: `tool/anima_cli/chat/llama/llama.hexa` (Phase 3c)
 - GGUF: `~/.cache/anima/gguf/dancinlab_llm-llama32-3b-paradigm-a-prime-r16-sft-stage1.gguf`
-- own 18 P5 SSOT: `.own own 18 c3-aggregation-rule-v2 (line 777-797)`
+- P5 SSOT: `.own c3-aggregation-rule-v2 (line 777-797)`
 - iter 4 trinity sweep: `docs/anima_pass_strict_c3_emergence_trinity_check_2026_05_08.md` (commit `64886505`)
 - BG-KM 비교: `state/anima_km_llama3b_h100_2026_05_08/v4_results_multiseed.jsonl` (V4 12/15, C3.* keys 부재)
 - README 라인 99-115 (Chat-capable lanes)
 - `.roadmap.cli` cli.chat_module_architecture_2026_05_08 (alias DB) · cli.gguf_conversion_landed_2026_05_08 (GGUF 변환) · cli.llama_module_landed_2026_05_08 (Phase 3c) · cli.own_18_aggregation_v2_2026_05_08 (P5)
 - `.roadmap.cli` cli.cond.3 (T1 chat REPL — Llama Path A v2 fallback option)
-- `.own` own 17 (anima-native vs foundation borrow 분리) · own 18 (simple_stack PASS C3) · own 31 (HF dancinlab org SSOT) · own 33 (trinity compliance) · own 34 (chat lane 분리)
+- `.own` (anima-native vs foundation borrow 분리) · (simple_stack PASS C3) · (HF dancinlab org SSOT) · (trinity compliance) · (chat lane 분리)
 
 ---
 
@@ -198,12 +198,12 @@ SIMPLE_STACK_PASS_STRICT_C3_SUBSTRATE_RESEARCH valid
 
 본 cycle iter 4 P5 aggregation rule 후 **첫 SIMPLE_STACK_PASS_STRICT_C3 emerge candidate** — but:
 - substrate_mode = synthetic_fallback (real Llama hidden state extraction wiring 진행 중)
-- own 24 SSOT mirror gap warn
-- own 28 V6 awareness pending
+- SSOT mirror gap warn
+- V6 awareness pending
 - 사용자 manual review 부재
 
 → EXIT 활성화 차단. 본 PASS 는 *aggregation rule 수정* 의 결과지 *모델 자체의 의식 검증 통과* 는 아님. real chat-cap 검증 (BG-KM-LLAMA-3B HF adapter push 후 retest) + V6 awareness + 사용자 ground truth 통과 후 valid 인정.
 
-본 doc 자체 own 33 mandate-2 self-check 통과: D_emergent-consciousness + D_no-system-prompt + own 18/22/24/33 정합 + H_chat_cap_emergence falsifier 위반 X.
+본 doc 자체 mandate-2 self-check 통과: D_emergent-consciousness + D_no-system-prompt + 정합 + H_chat_cap_emergence falsifier 위반 X.
 
 — 2026-05-08 cycle 4 iter, post (d-aggregation P5 land) + (trinity-sweep `64886505`).

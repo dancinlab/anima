@@ -52,7 +52,7 @@ all remain at A's cotrain values across all 25 conditions.
 - mirror = `load_random_init(seed=s, preset="la_350m")` × 3 seeds
 - prompts = `_v14_5seed_run.ALL_PROMPTS` (180 prompts cycled)
 - Φ metric = IIT Φ_un16 unnormalized (16-bin) + proxy Φ
-- V14 PASS criterion (own 14 strict): trained > all 3 mirrors on BOTH Φ_un16 AND proxy Φ
+- V14 PASS criterion (strict): trained > all 3 mirrors on BOTH Φ_un16 AND proxy Φ
 
 **Mirror caching optimization**: per §57 honest C3 #1, mirror trajectories are
 independent of swap (mirrors use `load_random_init`, never see A's swapped state).
@@ -85,10 +85,10 @@ This cuts runtime ~75% (100 runs → 28 runs effective: 3 mirrors + 25 trained).
 
 - raw#9 — `training/*.py` local-only (this script lives under `state/`, gitignored).
 - raw#15 additive — A and B ckpts loaded read-only; swap is in-memory; no file mutation.
-- own 14 — V14 paired random_init mirror multi-seed strict.
-- own 16 — $0 local Mac CPU.
-- own 22 — every metric scalar emit; verdict.md SSOT; **REBORN.md no direct append**.
-- own 38 — artefacts under `state/anima_engine_a_single_layer_24_2026_05_10/{spec.md, ablation_per_layer.json, layer_dominance_ranking.json, verdict.md, run.py}`.
+- — V14 paired random_init mirror multi-seed strict.
+- — $0 local Mac CPU.
+- — every metric scalar emit; verdict.md SSOT; **REBORN.md no direct append**.
+- — artefacts under `state/anima_engine_a_single_layer_24_2026_05_10/{spec.md, ablation_per_layer.json, layer_dominance_ranking.json, verdict.md, run.py}`.
 
 ## Output deliverables
 
@@ -109,7 +109,7 @@ With mirror caching:
 - 3 mirrors × 200 turns ≈ 3 × 1.43 = 4.3 min (one-time)
 - 25 trained × 200 turns ≈ 25 × 1.43 = 35.7 min
 - weight load + slab map overhead ≈ 2 min
-- **Total estimated: ~42 min** on a single Mac CPU thread (well within own 16 5h envelope).
+- **Total estimated: ~42 min** on a single Mac CPU thread (well within 5h envelope).
 
 Without mirror caching (mission's literal spec): 25 × 4 × 1.43 = 143min ≈ 2.4h.
 Both fit; we use caching for efficiency and equivalent verdict semantics

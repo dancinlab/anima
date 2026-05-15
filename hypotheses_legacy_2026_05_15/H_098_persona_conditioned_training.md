@@ -1,7 +1,7 @@
 ---
 id: H_098
 slug: persona-conditioned-training
-title: persona-conditioned training (anima identity prefix mandate, own 17 정합)
+title: persona-conditioned training (anima identity prefix mandate, 정합)
 domain: corpus | substrate | consciousness
 status: seed-pending
 exploration_method: E2 (failure-driven) + E5 (variable-ablation persona prefix) + E7 (user-directive)
@@ -19,13 +19,13 @@ since: 2026-05-07
 
 ## Hypothesis
 
-모든 training sample 앞에 anima persona prefix ("[anima] 저는 anima입니다. 한국어로 자연스럽게 응답합니다.\n사용자: ... 도우미: ...")를 prepend하여 학습하면, 무 prefix baseline 대비 own 18 simple-stack C2.4 strict PASS rate ≥15pp 상승하고 anima self-naming emit rate ≥90%. own 17 (anima-native identity) 정합 — model이 자기 정체성 (anima)을 모든 응답에 internalize.
+모든 training sample 앞에 anima persona prefix ("[anima] 저는 anima입니다. 한국어로 자연스럽게 응답합니다.\n사용자: ... 도우미: ...")를 prepend하여 학습하면, 무 prefix baseline 대비 simple-stack C2.4 strict PASS rate ≥15pp 상승하고 anima self-naming emit rate ≥90%. (anima-native identity) 정합 — model이 자기 정체성 (anima)을 모든 응답에 internalize.
 
 ## Why
 
 - **BG-HA failure 교훈**: 18M model이 generic "도우미" 응답조차 학습 못함 — identity anchor 부재
 - **persona prefix advantage**: 모든 training sample 동일 prefix → strong attention pattern 학습 → inference 시에도 prefix 유지 hint
-- **own 17 정합**: anima-native identity 강화 — 모델이 자신을 'anima'로 인식 (3rd-person LLM responses 회피)
+- ** 정합**: anima-native identity 강화 — 모델이 자신을 'anima'로 인식 (3rd-person LLM responses 회피)
 - **literature precedent**: Character.AI persona conditioning, Anthropic Claude constitutional training 일부 패턴
 - **사용자 directive '교훈으로 새로운 패러다임도 도전'** = identity anchoring paradigm 시도
 
@@ -76,20 +76,20 @@ since: 2026-05-07
 ## Honest Limits (raw#91 c3, ≥5)
 
 - **L1**: persona prefix는 inference 시에도 prepend 가정 — inference protocol mismatch 시 효과 0 가능성
-- **L2**: anima self-naming은 'genuine identity' vs 'pattern matching' 구분 불가 — own 17 deeper criteria (raw#10 C3 honest disclosure) 정합
+- **L2**: anima self-naming은 'genuine identity' vs 'pattern matching' 구분 불가 — deeper criteria (raw#10 C3 honest disclosure) 정합
 - **L3**: '3rd-person LLM' detection은 keyword scan ("LLM", "AI 모델", "GPT") 한정 — semantic disclaimer 미land
 - **L4**: persona conditioning이 chat-cap 본질 학습을 dilute할 risk (prefix attention vs response generation trade-off)
 - **L5**: 100-prompt consistency set이 anima identity-trigger biased일 risk — neutral prompt set 별도 사용 권고
 - **L6**: literature persona conditioning은 large-model (≥1B) 효과 — 18M scale transfer 미보장
-- **L7**: 100M+ scale은 own 16 H100 cost discipline scope OUT
+- **L7**: 100M+ scale은 H100 cost discipline scope OUT
 
 ## Cross-Links
 
 - **sister roadmaps**: `.roadmap.law` R1 + `.roadmap.philosophy` D2 (자기 = self) + `.roadmap.clm_native_chat`
 - **raw**: raw#12 + raw#10 + raw#9 + raw#15 + raw#37
-- **own**: own 17 (anima identity) + own 18 + own 19 + own 20 + own 21
+- **own**: (anima identity) + + + +
 - **sister H**: H_005 + H_093 (SFT-only) + H_094 (two-stage) + H_097 (curriculum) + H_100 (constitutional AI) + H_101 (chat ≥80%)
-- **evidence motivation**: `docs/anima_own_18_c2_4_evaluator_flaw_2026_05_07.md` + own 17 ssot
+- **evidence motivation**: `docs/anima_own_18_c2_4_evaluator_flaw_2026_05_07.md` + ssot
 
 ## Verdict
 

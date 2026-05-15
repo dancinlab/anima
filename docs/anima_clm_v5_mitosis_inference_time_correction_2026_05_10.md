@@ -183,6 +183,6 @@ mitosis 가 weight 를 deepcopy + noise 만 하는 것 외에, 추가로:
 - `CLM_V2_EXHAUSTIVE_13_STAGES_2026_05_09.md` §7-§9 stage 7/8/9 mitosis empirical
 - mitosis source canonical: worktree-12 mitosis.py 794L
 
-raw#9/10/15 honest, raw#37 additive preserve, own 16 0-cost.
+raw#9/10/15 honest, raw#37 additive preserve, 0-cost.
 
 End of `anima_clm_v5_mitosis_inference_time_correction_2026_05_10.md`.
