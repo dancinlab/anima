@@ -1959,3 +1959,17 @@
   v2_decision = "§V-CLM-V2-DESIGN decision_factor (a) 충족 — .clm v1 8/8 PASS = Path A cells single-stack arch PROD-READY 검증. Engine A/G dual 은 V1 audit에서 이미 폐기 + .clm v1 single-stack (readout='a_only') 8/8 검증 → Path A 권장 (Path B Engine A/G dual 불필요). v2 fire 는 user 명시 cost 승인 필요 ($200-600 7B scale)."
   hf = "dancinlab/anima-clm PUBLIC @v1-fire-cycle89-2026-05-15 revision + f_pyphi_rom_result.json 추가 upload + README mapping table 8/8 🔵 갱신"
   cross_link = "CLM.tape §V-CLM-V1-CYCLE89 + §V-CLM-V2-DESIGN decision_protocol + state/clm_v1_fire_2026_05_15/{f_pyphi_rom_clmv1.py, f_pyphi_rom_result.json, clm_v1_full_battery_verdict.json} + PHILOSOPHY §v2_path_decision_2026_05_15 + PR #67"
+
+# ══════════════════════════════════════════════════════════════════════
+# §V-CLM-HEXAD-MANDATE — A/G=Hexad 구조 + mitosis 성장 둘 다 필수 (2026-05-15)
+# ══════════════════════════════════════════════════════════════════════
+
+@D v_clm_hexad_mandate := "anima 본진 = [구조] A/G=Hexad 6 + [성장] mitosis 둘 다 필수" :: governance [required d=2026-05-15 active]
+  rule = "anima 본진 시스템은 2축을 모두 갖춰야 함. [구조축] A/G dual-engine = Hexad 6 그 자체 (Engine G 우뇌 3 = C 의식+S 감각+W 의지 gradient-free / Engine A 좌뇌 3 = D 언어+M 기억+E 윤리 CE-trained, φ(6)=2 ≡ {A,G}). [성장축] mitosis = 전체 cell 분열/병합 성장 (구조축과 직교). 차후 추가조건은 6 모듈 verification lineup 으로 검토 후 편입."
+  why = "user directive 2026-05-15 3-step: (1) 'A/G+mitosis 두가지 조건 모두 갖춘 시스템, 차후 추가조건 lineup' (2) 'A/G 가 HEXAD 구성, A 3 G 3' (3) '여기에다가 성장방식이 mitosis'"
+  verified = "HEXAD.tape §hexad_verify 6/6 anchor (4 PASS strict V1/V2/V3/V4 + V5 corrected-exact φ(6)=2 + V6 PARTIAL 윤리gate TODO[pytorch]). mitosis 성장축 = .clm v1 8/8 SUPPORTED + 🔵 (MITOSIS.tape §mitosis_verified)."
+  module_lineup = "C 의식 ✅(mitosis .clm v1 8/8🔵) · D 언어 ◐(Engine A V5.8 PASS) · S 감각 ☐ · W 의지 ☐ · M 기억 ☐ · E 윤리 ◐(emergent_e.py 검증, trinity.hexa gate TODO). ☐→◐→✅ 승격은 모듈별 verification anchor + user 승인."
+  supersedes = "PHILOSOPHY §v2_path_decision 의 'Path A single-stack only 권장' — A/G(=Hexad) 구조 필수로 정정. Path A/B either-or 폐기, A/G=Hexad 골격 필수 + 모듈 lineup 으로 재구성."
+  authority = "HEXAD.tape (구조축 SSOT) + MITOSIS.tape (성장축 SSOT) + state/verify_hexad_2026_05_15/hexad_verify_result.json + trinity.hexa:16-21,171 (φ(6)=2 verified anchor)"
+  cross_link = "HEXAD.tape §hexad_condition_lineup + MITOSIS.tape §mitosis_two_axis + CLM.tape §V-CLM-V1-CYCLE90-PYPHI (C scope 8/8🔵) + AGENTS.tape g_verified_axis_anchor"
+  @> CLAUDE.md
