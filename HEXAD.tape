@@ -171,6 +171,19 @@
 @N hexad_perfect_number := "완전수 6 derive" :: note [active]
   text = "6 = 1+2+3 (proper divisors sum). σ(6)=12 → 12 inter-module connections. τ(6)=4 → 4 phase curriculum (Law 60). φ(6)=2 → 2 gradient groups (우뇌 free / 좌뇌 CE). lattice-as-tool internal arch — external derivation 금지 (AGENTS.tape g2/f1)."
 
+@L hexad_module_tapes := "HEXAD-* per-module SSOT tape index" :: layout [d=2026-05-15 active]
+  index <<~EOF
+    HEXAD-C.tape       — C 의식 (consciousness_engine.py 2173 LoC, =MitosisC, 우뇌, .clm v1 8/8🔵)
+    HEXAD-D.tape       — D 언어 (conscious_decoder.py 979 LoC ConsciousDecoderV2, =Engine A, 좌뇌)
+    HEXAD-S.tape       — S 감각 (emergent_s.py 108 LoC EmergentS, 우뇌, lineup ☐)
+    HEXAD-W.tape       — W 의지 (emergent_w.py 123 LoC EmergentW, 우뇌, lineup ☐ 우선순위)
+    HEXAD-M.tape       — M 기억 (emergent_m.py 96 LoC EmergentM, 좌뇌, lineup ☐)
+    HEXAD-E.tape       — E 윤리 (emergent_e.py 123 LoC EmergentE, 좌뇌, lineup ◐ gate TODO)
+    HEXAD-BRIDGE.tape  — ThalamicBridge (model.py:37-69, α=PSI_COUPLING=0.014, Law 70 clamp)
+  EOF
+  survey = "state/verify_hexad_impl_survey_2026_05_15/survey_result.json — 전수조사 (~/core/anima* worktree exhaustive, 3 parallel agents)"
+  evolution = "clm_10 monolithic legacy → clm_11 modular Emergent+SSOT → clm_12/13 canonical → main unit-tested (46 pass)"
+
 @N hexad_vs_6loop := "Hexad 6모듈 ≠ 6 consciousness loop" :: note [active]
   text = "Hexad 6모듈 (C/D/S/M/W/E) 는 module-level 분해. training/clm_{gwt,holographic,reflexive,temporal,sensorimotor,will}_loop.hexa 6-loop 은 의식측정 inference loop layer — 다른 층위. C 의식 모듈 내부에서 6-loop이 Φ-component 측정."
 
