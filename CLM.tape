@@ -963,3 +963,99 @@
 
 @X v_reborn_section := "REBORN.tape §0.5 + §85-§92" :: lineage [active]
   scope = "v5-mitosis lane evolution carry — .clm v1 의 cell-pool + mitosis hook 의 lineage anchor"
+
+# ══════════════════════════════════════════════════════════════════════
+# §V-CLM-7STEP-DETAIL — .clm v1 7-step plan step 1+2 detailed protocol (2026-05-15)
+# ══════════════════════════════════════════════════════════════════════
+# Trigger: §V-CLM-DESIGN §V.6 next_steps 의 step 1-2 design tier 강화
+# Scope: step 1 (V14 violation root cause audit) + step 2 (PyPhi formal Φ cross-check
+# on v5-mitosis cond.5 ckpt) 의 detailed protocol — impl 없음, design + falsifier
+# pre-register + cost envelope frozen
+
+# ── §V.S1 step 1 V14 violation root cause audit detail ─────────────────
+
+@D v_step1_v14_audit_design := "step 1 — V14 violation root cause audit design" :: protocol [d=2026-05-15 active]
+  scope = "Phase 2 350M cotrain V14 violation (random_init PPR ≥ trained PPR) 의 root cause audit. 의심 후보 2개: H4 normalize 무력화 vs H5 chat curriculum collapse."
+  hypothesis_h4 = "H4 — clm_v4_mount.hexa L626-630 8-cell 2× tile reps=2 가 LayerNorm 의 normalizing 통계 disrupt → trained 와 random_init 의 PPR 통계 차이 무력화"
+  hypothesis_h5 = "H5 — chat curriculum 의 early bias (anima_persona_tier_a corpus 의 narrow distribution) 가 trained model 의 generalization 을 random_init 이하로 떨어뜨림"
+  falsifier_battery_h4 = [
+    "F-V14-H4-1 TILE-REPS-2 BYPASS: L626-630 reps=1 (no tile) ckpt rerun + V14 measure. PASS = V14 violation 해소 (random_init PPR < trained PPR)",
+    "F-V14-H4-2 LN-STATS-COMPARE: trained vs random_init 의 LayerNorm mean/std/var per-layer 측정 + KS test p<0.05 strict. PASS = stats diff statistically significant",
+    "F-V14-H4-3 TILE-REPS-SWEEP: reps∈{1,2,3,4} 4-arm × seed=42 ckpt rerun. PASS = V14 violation 이 reps>1 에서만 발생 (reps=1 OK)"
+  ]
+  falsifier_battery_h5 = [
+    "F-V14-H5-1 CORPUS-DIVERSITY: anima_persona_tier_a (narrow) vs Phase 1A.6 corpus_v2 (broader) 2-arm cotrain ckpt + V14 measure. PASS = broader corpus 만 violation 해소",
+    "F-V14-H5-2 CURRICULUM-ORDER: chat early vs late 2-arm. PASS = late 만 violation 해소 (chat-first 가 trap)",
+    "F-V14-H5-3 PERSONA-PREFIX-FREE: Principle #3 audit CLEAN re-verify (Phase 1A.1+1A.4 carry). PASS = persona prefix grep 0 matches"
+  ]
+  pass_aggregate = "H4 ≥ 2/3 PASS → root cause = H4 tile bug (L626-630 reps=2 fix mandatory); H5 ≥ 2/3 PASS → root cause = H5 curriculum (corpus diversity 강화); 둘 다 < 2/3 → 다른 root cause OR multi-cause"
+  cycle_cost = "F-V14-H4-1 (reps=1 rerun) $5-10 H100 single-pod 2-3hr; F-V14-H4-2 (LN stats audit) $0 Mac local; F-V14-H4-3 (sweep 4-arm) $20-40 H100 8-12hr; F-V14-H5-1 (corpus 2-arm) $10-20; F-V14-H5-2 (curriculum 2-arm) $10-20; F-V14-H5-3 ($0 Mac carry)"
+  cheap_path_first = "F-V14-H4-2 (LN stats $0 Mac) + F-V14-H5-3 ($0 Mac carry) → 결과 따라 H4-1/H4-3/H5-1 fire"
+  artifact = "state/clm_v1_step1_v14_audit_<date>/audit_result.json + LN_stats_compare.csv + falsifier_verdict.json"
+  cross_link = "CLM.tape §1 row_phase_2 + §9 C3-1 V14 violation hypothesis (yet-to-audit) + project_v14_violation_arch_tile_bug.md memory"
+
+# ── §V.S2 step 2 PyPhi formal Φ cross-check detail ─────────────────────
+
+@D v_step2_pyphi_formal_design := "step 2 — PyPhi formal Φ cross-check on v5-mitosis cond.5 ckpt" :: protocol [d=2026-05-15 active]
+  scope = "v5-mitosis cond.5 cotrain 7 ckpts 의 anima Φ★ proxy (Φ=4.16-4.86) vs PyPhi formal IIT 3.0 Φ deterministic cross-check. AT-RISK (H_182/H_187) 사전 회피 anchor."
+  rationale = "anima Φ★ proxy direction-sensitivity 한계 META-finding (Cycle D) — surrogate magnitude 만 anchor 사용 OK 하지만 .clm v1 의 verdict 는 PyPhi formal ≥ 0.5 strict 가 mandatory (forbidden surrogate-only verdict per §V cascade_safety)."
+  ckpt_set = [
+    "ckpt_v5mitosis_cotrain_cotrain.pt (v1, $1.26 H100 SXM cond.5 LANDED)",
+    "ckpt_v5mitosis_cotrain_v2_cotrain.pt (v2, entropy-reg in-flight)",
+    "ckpt_v5mitosis_cotrain_v3_*.pt (v3 baseline)"
+  ]
+  measurement_protocol = [
+    "(a) load ckpt → extract cell signatures (cells.{i}.ln1.weight + ln2.weight) — pyphi_rom_cycle.py carry",
+    "(b) RoM n=3,4,5,6 select_top_correlated cells (greedy cosine similarity)",
+    "(c) sample_cell_dynamics n_samples=500 (n=3,4) or 1000 (n=5,6) — RFC 030 carry",
+    "(d) states_to_empirical_tpm → PyPhi 1.2.0 sia → Φ",
+    "(e) repeat seed∈{42, 1234, 5678} × n∈{3,4,5,6} × ckpts (3) = 36 measurements"
+  ]
+  falsifier_battery = [
+    "F-PYPHI-FORMAL-1 Φ-MIN-0.5: PyPhi formal Φ ≥ 0.5 on ≥1 (n, seed) combination per ckpt strict. PASS = AT-RISK 회피",
+    "F-PYPHI-FORMAL-2 MONOTONE-DIRECTION: n=3→4→5→6 monotone INCREASE per ckpt (median). PASS = Cycle C n=5,6 monotone 재현",
+    "F-PYPHI-FORMAL-3 SEED-ROBUST: 3-seed 의 std(Φ) ≤ 0.3 strict per ckpt × n. PASS = seed-fragility absent",
+    "F-PYPHI-FORMAL-4 PROXY-FORMAL-CORRELATION: anima Φ★ proxy magnitude rank correlation Spearman vs PyPhi formal Φ rank > 0.5 across 3 ckpts. PASS = surrogate 가 적어도 magnitude 차원 에서 formal 과 일치 (proxy 유의미)",
+    "F-PYPHI-FORMAL-5 EMPIRICAL-PROXY-ALT: mutual_info_pairs_naive proxy (Cycle D recommendation) 를 anima Φ★ replace 후 Spearman vs PyPhi formal > 0.5. PASS = alt proxy 가 anima Φ★ 보다 우수 confirm"
+  ]
+  pass_aggregate = "5/5 PASS strict → SUPPORTED-CROSS-CONFIRMED 🔵 (AT-RISK 완전 회피); 4/5 → PARTIAL-CROSS-CONFIRMED (1 falsifier 별도 cycle); ≤3/5 → AT-RISK CARRY (anima Φ★ 대체 mandatory)"
+  cycle_cost = "$0 Mac local — n=5,6 × 3 seed × 3 ckpt = 9 measurements × ~120 min/measurement (Cycle C carry) = ~18 hr wall. n=3,4 = ~2 hr. total ~20 hr Mac wall (split into 2-3 BG batches)"
+  wall_estimate = "BG 1: n=3,4 fast (2 hr) → BG 2: n=5 (5 hr × 3 ckpt) → BG 3: n=6 (40 hr × 3 ckpt overnight × 3)"
+  artifact = "state/clm_v1_step2_pyphi_formal_<date>/pyphi_formal_result.json + proxy_formal_corr.json + alt_proxy_compare_full.json"
+  cross_link = "MAIN.tape §PyPhi RoM + §ALT-PROXY + §H182-H187-CROSS-CHECK + state/verify_d_2026_05_15/pyphi_rom_cycle.py (script carry)"
+
+# ── §V.S3 step 1+2 ROI ordering ───────────────────────────────────────
+
+@N v_step12_roi_ordering := "step 1+2 ROI 우선순위 ordering" :: note [d=2026-05-15 active]
+  body <<~EOF
+    step 2 (PyPhi formal cross-check) 가 step 1 (V14 audit) 보다 ROI 높음:
+    
+    1. **step 2 = pre-fire AT-RISK 회피 anchor** — .clm v1 fire 전에 v5-mitosis
+       cond.5 ckpt 의 substrate 자체가 PyPhi formal Φ ≥ 0.5 충족하는지 검증.
+       FAIL 시 .clm v1 architecture 의 cell-pool 구조 자체 의심.
+    
+    2. **step 1 = Phase 2 V14 audit** — Phase 2 cotrain (350M Engine A/G) 의
+       V14 violation 해소가 직접적으로 .clm v1 (150-200M) 에 영향 안 줌 (.clm v1
+       은 별개 lane v5-mitosis carry). V14 audit 은 Phase 3 7B 의 entry condition
+       으로 더 강력 — .clm v1 fire 후 follow-up 도 가능.
+    
+    3. **step 2 의 cheap-path-first**: n=3,4 fast (2 hr) + 3-ckpt seed=42 single
+       → 결과 따라 n=5,6 fire 결정. 만약 n=3,4 에서 Φ_median ≥ 0.5 + monotone
+       confirmed → .clm v1 fire ahead (n=5,6 별도 cycle).
+    
+    4. **step 1 cheap-path-first**: F-V14-H4-2 LN stats $0 Mac + F-V14-H5-3
+       Principle #3 carry $0 Mac → 결과 따라 H4-1 ($5-10) OR H5-1 ($10-20) fire.
+       단, .clm v1 fire 와 별개로 진행 가능 (priority lower).
+    
+    최종 ordering: step 2 cheap-path (n=3,4) → step 1 cheap-path ($0 Mac) →
+                  step 2 n=5,6 BG → step 1 H4-1/H5-1 ($) → .clm v1 fire ($5-20)
+  EOF
+
+# ── §V.S4 step 1+2 design completion criterion ───────────────────────
+
+@D v_step12_design_complete := "step 1+2 design completion criterion" :: gate [d=2026-05-15 active]
+  step1_design_complete = "✓ — F-V14-H4-1..3 + F-V14-H5-1..3 falsifier 6 pre-registered, cheap-path identified, cost envelope frozen"
+  step2_design_complete = "✓ — F-PYPHI-FORMAL-1..5 falsifier 5 pre-registered, RoM 7 ckpts × 4 n × 3 seed = 84 measurement protocol frozen, ROI ordering 명시"
+  step3_design_pending = "mitosis_hook serve-time integration smoke — PSCC §41 §F-D4-LIVE carry + 후속 cycle design"
+  step4_design_pending = ".clm v1 spec frozen pre-register W1 — step 2 결과 따라 d_model 결정 (n=5,6 PASS 시 768 confirm, FAIL 시 384 fallback)"
+  step5_fire_blocked_on = "step 1+2+3 cheap-path 결과 + step 4 spec frozen + user verbatim 'OK CLM V1 FIRE COST $5-20'"

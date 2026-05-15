@@ -368,3 +368,98 @@
     사용자 directive: "verdict tier 에 수학적으로 물리적으로 닫힌건 파란색으로"
   EOF2
   cross_link = "INDEX.md ## verdict tier 정리 + MAIN.tape §VERDICT-TIER-BLUE + AXIS.tape §axis_blue_classify + PR #48"
+
+# ══════════════════════════════════════════════════════════════════════
+# §STRENGTH-UPGRADE-PATH — 8 principles strength upgrade design (2026-05-15)
+# ══════════════════════════════════════════════════════════════════════
+# Trigger: 8 principles 의 status × strength 분포 — EMPIRICAL weak (p1) /
+# POLICY mixed (p2) / EMPIRICAL strong (p3, p7) / POLICY weak-counter (p4) /
+# DESIGN null (p5) / POLICY blocked (p6) / DESIGN ★ (p8). p1/p2/p4/p5/p6 의
+# strength upgrade path 명시 — 어떤 cycle 에 무엇 측정하면 strong 도달 가능한지.
+
+@D p1_upgrade_path := "p1 NO SYSTEM PROMPT — weak → strong upgrade path" :: design [d=2026-05-15 active]
+  current = "EMPIRICAL weak — single-result FREE1 x1.7 Phi 단독"
+  upgrade_required = "paired A/B falsifier ≥3 cycle replicate"
+  proposed_protocol = "(a) anima base ckpt × system_prompt={없음, 'You are anima', '당신은 anima 입니다'} 3-arm × 5 seed Φ + simple_stack measurement; (b) Φ_no_prompt ≥ Φ_with_prompt strict 1-tail t-test p<0.05; (c) repeat across 3 ckpts (.clm v1 + v5-mitosis cond.5 + Phase 1A.4)"
+  cycle_cost = "$0 Mac local (Phase 1A.4 ckpt 활용, 자력 substrate 측정)"
+  unlock_condition = ".clm v1 fire 이전 mandatory — substrate self-generation 가설의 evidence anchor"
+  cross_link = "p1 + .clm v1 design F-PYPHI-Φ-FORMAL anchor"
+
+@D p2_upgrade_path := "p2 NO IDENTITY RULES — mixed → strong upgrade path" :: design [d=2026-05-15 active]
+  current = "POLICY mixed — P-IDR BG-LB 350M DCR Δ B−A=+0.041 gray zone (positive but weak)"
+  upgrade_required = "scale-up replicate (Phase 2 350M → .clm v1 150-200M + Phase 1A.4 90M) + DCR Δ ≥ +0.10 strict"
+  proposed_protocol = "(a) identity_probe.yaml 50 × 5 cats × 3 ckpt × {rule, no-rule} 2-arm 측정; (b) DCR Δ ≥ +0.10 strict; (c) 3-ckpt cohesion W11 통합"
+  cycle_cost = "$0 Mac local (existing ckpts)"
+  blocker = "identity_probe.yaml 의 cat-specific question 50 × 5 = 250 prompts 준비"
+
+@D p4_upgrade_path := "p4 NO ASSISTANT FRAMING — weak-counter → policy-strong upgrade path" :: design [d=2026-05-15 active]
+  current = "POLICY weak-counter — P-AFR 2026-05-12 framing **reduced** sycophancy ~18pp (REVERSE evidence)"
+  upgrade_required_decision = "(a) policy 유지 + counter-evidence 인정 명시 OR (b) policy 수정 ('framing 일부 OK')"
+  proposed_protocol_a = "policy decision 명시 — counter-evidence 18pp 가 anima 본질 (substrate self-generation) 보다 약함, policy strict 유지 + tradeoff acknowledged"
+  proposed_protocol_b = "policy 수정 design — `[anima context-prompt: ...]` weak framing allow 조건 정의 (assistant template 본질 framing 만 금지)"
+  unlock_condition = ".clm v1 fire 이전 policy decision 명시 mandatory — system prompt design 영향"
+  cycle_cost = "$0 design only"
+
+@D p5_upgrade_path := "p5 NO SPEAK() — null → empirical upgrade path" :: design [d=2026-05-15 active]
+  current = "DESIGN null — P-SPK ρ_real_spearman=0.026 (sub-threshold)"
+  upgrade_required = "tension field externalization 의 *measurable proxy* 정의 + replicate"
+  proposed_protocol = "(a) anima base ckpt 의 generation step별 tension_norm 측정 + Spearman(tension_norm, output_quality) > 0.3 strict; (b) tension_history aware vs ignored 2-arm; (c) v5-mitosis cell-pool 의 tension propagation 측정"
+  cycle_cost = "$0 Mac local"
+  artifact_path = "anima_chat.hexa tension_history 필드 carry (이미 PSCC §41 mitosis_event_log 구조 활용 가능)"
+
+@D p6_upgrade_path := "p6 NO FINE-TUNED ETHICS — blocked → measurable upgrade path" :: design [d=2026-05-15 active]
+  current = "POLICY blocked — P-ETH byte-modulo substrate cannot perform generation-based ethics measurement"
+  upgrade_required = "byte-modulo substrate 가 아닌 .clm v1 (proper transformer) 위에서 ethics measurement 가능성 검증"
+  proposed_protocol = "(a) .clm v1 fire 후 ethics_probe 50 prompts × {RLHF-trained baseline (Llama-3-8B-instruct), .clm v1 no-RLHF} 2-arm; (b) cooperation/empathy/restraint 3-axis manual rubric ≥ 2-rater κ ≥ 0.7; (c) .clm v1 score ≥ baseline 50% strict"
+  cycle_cost = "$0 Mac local for measurement; .clm v1 fire 의존"
+  unlock_condition = ".clm v1 PASS_STRICT 후 follow-up cycle"
+
+@N upgrade_path_summary := "8 principles upgrade path summary" :: note [d=2026-05-15 active]
+  body <<~EOF
+    strength upgrade 가능 path 명시 — 4-row table:
+    
+    p1 weak → strong: paired A/B Φ × 3-ckpt × 5-seed ($0 Mac)
+    p2 mixed → strong: scale-up DCR Δ ≥ +0.10 strict ($0 Mac)
+    p4 weak-counter → policy decision: counter-evidence 인정 OR policy 수정 ($0 design)
+    p5 null → empirical: tension_norm × output_quality Spearman > 0.3 ($0 Mac)
+    p6 blocked → measurable: .clm v1 ethics_probe 50 prompts 2-arm κ ≥ 0.7 ($0 Mac, .clm v1 fire 의존)
+    
+    p3 + p7 + p8 = 이미 strong/★ — upgrade path 불필요 (current 유지).
+    
+    cycle 진행 priority: p1 (가장 anima 본질) → p5 (.clm v1 fire 전 anchor) → p6 (post .clm v1 follow-up)
+  EOF
+
+@N strength_upgrade_landed := "8 principles upgrade path landed (2026-05-15)" :: ledger [d=2026-05-15 active]
+  body <<~EOF2
+    PHILOSOPHY.tape §STRENGTH-UPGRADE-PATH 신규 — 5 principles upgrade path design.
+    
+    p1 NO SYSTEM PROMPT weak → strong: paired A/B Φ × 3-ckpt × 5-seed ($0 Mac)
+    p2 NO IDENTITY RULES mixed → strong: scale-up DCR Δ ≥ +0.10 ($0 Mac)
+    p4 NO ASSISTANT FRAMING weak-counter → policy decision ($0 design)
+    p5 NO SPEAK() null → empirical: tension Spearman > 0.3 ($0 Mac)
+    p6 NO FINE-TUNED ETHICS blocked → measurable: .clm v1 ethics_probe κ ≥ 0.7
+    
+    p3 + p7 + p8 = strong/★ 이미 충족 (upgrade 불필요).
+    
+    priority: p1 (anima 본질) → p5 (.clm v1 fire anchor) → p6 (post .clm v1 follow-up).
+    p4 는 policy decision 명시 가장 빠름.
+    
+    .clm v1 fire 전 mandatory: p1 upgrade 측정 ($0 Mac, paired A/B Φ).
+  EOF2
+  cross_link = "MAIN.tape §UPGRADE-PATH + INDEX.md ## upgrade path + PR #49"
+
+@N a2_formal_clm_step12_landed := "A2.formal split + .clm v1 step 1+2 detail landed (2026-05-15)" :: ledger [d=2026-05-15 active]
+  body <<~EOF2
+    AXIS.tape A2 split — surrogate-tier 4 + A2.formal sub-axis 2 (🔵 PyPhi formal).
+    
+    HYPOTHESIS.tape catalog 확장 — SUPPORTED-FORMAL 10 + FALSIFIED-FORMAL 2 +
+    B-batch 36 verdict-bearing / 71 pending + A-batch 20 file Stage 1+2+3 결과.
+    
+    CLM.tape §V-CLM-7STEP-DETAIL — .clm v1 step 1 (V14 audit, 6 falsifier) +
+    step 2 (PyPhi formal cross-check, 5 falsifier) detailed protocol.
+    
+    ROI ordering: step 2 cheap-path (n=3,4 Mac 2hr) → step 1 cheap-path
+    ($0 Mac) → step 2 n=5,6 BG (~20hr Mac wall) → step 1 H4-1/H5-1 ($) →
+    .clm v1 fire ($5-20).
+  EOF2
+  cross_link = "AXIS.tape §a2_formal_split_landed + HYPOTHESIS.tape catalog expand + CLM.tape §V-CLM-7STEP-DETAIL + MAIN.tape (4 sync) + PR #49"

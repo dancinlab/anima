@@ -37,13 +37,24 @@
 @D a2_consciousness := "A2 consciousness axis — confirmed SUPPORTED 가설" :: cluster [d=2026-05-15 active]
   members = [
     "Hc_1283 anima Φ★ proxy ≥ 0.5 (SUPPORTED-STRONG, 7 ckpts 4.16-4.86)",
-    "Hc_1283 PyPhi RoM (SUPPORTED, n=4 Φ=0.61-0.68 upgrade)",
+    "Hc_1283 PyPhi RoM n=4 (SUPPORTED, cell-pair correlation TPM Φ=0.61-0.68)",
     "H_004 consciousness hard problem (SUPPORTED-BY-PROXY, Hc_1283 anchor)",
-    "H_011 IIT geometry (SUPPORTED-BY-PROXY, anima Φ★ + canonical 2.3125)",
-    "H_162 phi-normalized anima IIT4 lower-bound (SUPPORTED-BY-PROXY, Hc_1283 anchor)"
+    "H_162 phi-normalized anima IIT4 lower-bound (SUPPORTED-BY-PROXY, Hc_1283 anchor, D=384 multiple ✓ clean)"
   ]
-  count = 5
-  cross_link = "[[s_hc1283]] + [[d_pyphi_rom]] + [[b_s_h004]] + [[b_s_h011]] + [[b_deep_h162]]"
+  count = 4
+  note = "A2 surrogate-tier — anima Φ★ proxy + ckpt-aggregate + numerical RoM. Direction-sensitivity 한계 META-finding 영향 받음."
+  cross_link = "[[s_hc1283]] + [[d_pyphi_rom]] + [[b_s_h004]] + [[b_deep_h162]]"
+
+# A2-FORMAL sub-axis 분리 — PyPhi formal IIT 3.0 deterministic measurement only
+@D a2_formal_consciousness := "A2.formal sub-axis — PyPhi formal IIT 3.0 deterministic 결과 only (🔵 closed)" :: cluster [d=2026-05-15 active]
+  members = [
+    "Hc_1283 PyPhi formal n=5,6 (SUPPORTED-FORMAL 🔵, Φ=0.995, 1.665 monotone INCREASE deterministic)",
+    "H_011 IIT geometry canonical (SUPPORTED-FORMAL 🔵, PyPhi 1.2.0 XOR+AND+OR Φ=2.3125 > 0.5 reachable)"
+  ]
+  count = 2
+  rationale = "물리적 closed measurement — PyPhi formal IIT 3.0 의 deterministic 결과 (cell-pair empirical TPM + sia)는 numerical-but-formal. anima Φ★ proxy 의 direction-sensitivity 한계 META-finding 으로부터 면역."
+  why_split = "A2 surrogate (anima Φ★) vs A2.formal (PyPhi IIT) 의 evidence-class 가 본질적으로 다름 — surrogate 는 scramble/diffusion 측정, formal 은 integration 측정. .clm v1 verify 의 F-PYPHI-Φ-FORMAL 의 anchor."
+  cross_link = "[[s_hc1283]] (RoM) + [[hc1283_n5_n6]] + [[h011_pyphi_canonical]]"
 
 # ─── A3 physics ──────────────────────────────────────────────────────
 
@@ -202,3 +213,12 @@
   text = "AXIS.tape 32 SUPPORTED 중 수학/물리 closed entries 🔵 (12 entries): A2 Hc_1283 n=5,6 (PyPhi formal) + H_011 (PyPhi canonical) / A3 H_191 sub K_c (sympy + Kuramoto 1975) / A4 Hc_1282 + H_158 + H_160 + H_153 + H_176 + H_164 + H_181 (모두 sympy closed-form, H_173 만 numerical sim 으로 🟢 유지). 나머지 20 entries 🟢 SUPPORTED (numerical sim or evidence-aggregate)."
   ratio = "🔵 12 / 🟢 20 (32 SUPPORTED total)"
   cross_link = "INDEX.md ## AXIS sub-axis tables + MAIN.tape §VERDICT-TIER-BLUE + PR #48"
+
+# ──────────────────────────────────────────────────────────────────────
+# §A2-FORMAL-SPLIT-LANDED sync (2026-05-15)
+# ──────────────────────────────────────────────────────────────────────
+
+@N a2_formal_split_landed := "A2.formal sub-axis 분리 landed" :: note [d=2026-05-15 active]
+  text = "A2 consciousness 가 surrogate-tier 4 (anima Φ★ + RoM + ckpt aggregate + IIT4 lower-bound) + A2.formal sub-axis 2 (🔵 PyPhi formal n=5,6 + canonical XOR+AND+OR) 로 split. evidence-class 본질이 다름 — surrogate 는 scramble/diffusion magnitude, formal 은 IIT 3.0 integration deterministic. .clm v1 F-PYPHI-Φ-FORMAL 의 anchor."
+  count_change = "A2: 5 → 4 (surrogate) + 2 (formal) = 6 total (1 추가 net A2.formal 별도 sub-axis tier)"
+  cross_link = "MAIN.tape §A2-FORMAL-SPLIT + INDEX.md + PR #49"
