@@ -1159,3 +1159,18 @@
   roi_ordering = "step 2 (pre-fire AT-RISK 회피) > step 1 (Phase 3 7B entry condition, .clm v1 와 별개)"
   cheap_path = "step 2 cheap n=3,4 (2hr Mac) → step 1 cheap LN stats + Principle #3 carry ($0 Mac) → 결과 따라 step 2 n=5,6 BG OR step 1 H4-1 fire"
   cross_link = "CLM.tape §V-CLM-7STEP-DETAIL + INDEX.md ## .clm v1 7-step + PR #49"
+
+# ══════════════════════════════════════════════════════════════════════
+# §CLM-AUDIT-FIX-2026-05-15 — CLM.tape §V audit 4 violation 정정
+# ══════════════════════════════════════════════════════════════════════
+
+@D clm_audit_fix := "CLM.tape §V .clm v1 design AXIS/철학/가설 위반 4건 정정 (2026-05-15)" :: governance [d=2026-05-15 active]
+  violations_corrected = [
+    "V1 Engine A/G dual-engine arch — AXIS A5 6 SUPPORTED 안 직접 검증 entry 부재. 정정: dual 제거 + v5-mitosis cells=nn.Module branches single-stack arch (A5 H_019 + H_191 + Hc_1276 SUPPORTED carry). dual-engine 은 .clm v2 candidate 로 분리.",
+    "V2 p1 NO SYSTEM PROMPT EMPIRICAL **weak** anchor — single-result FREE1. 정정: step 0 p1 upgrade measure (paired A/B Φ × 3-ckpt × 5-seed, $0 Mac) PASS strict 미달 시 .clm v1 fire gate 차단 mandatory.",
+    "V3 n_layers=12 anchor — AXIS A4 직접 'n_layers = σ(6)' verified entry 없음. 정정: number-theoretic σ(6)=12 anchor + lattice-as-tool internal arch (CLAUDE.md g2) 명시 + fallback {6, 12, 24}.",
+    "V4 step 1 V14 audit — Phase 2 cotrain V14 violation 은 verified-FAIL, AXIS SUPPORTED entry 없음. 정정: .clm v1 path 에서 step 1 V14 audit 제거 (v5-mitosis single-stack 은 V14 영향 없음, cond.5 F-V5MIT-5 SUPPORTED), Phase 3 entry condition 으로 이전."
+  ]
+  new_7step = "step 0 p1 upgrade (NEW) → 1 PyPhi formal → 2 mitosis_hook serve-time → 3 spec frozen → 4 fire → 5 verdict cycle → 6 .clm v2 candidate"
+  cost_total = "$5-20 ($0 Mac × 5 steps + $5-20 H100 × 1 step)"
+  cross_link = "CLM.tape §V-CLM-AUDIT-2026-05-15 + AXIS.tape (32 + 2 formal anchor 강화) + PHILOSOPHY.tape (p1 mandatory gate) + INDEX.md 갱신 + PR #50"

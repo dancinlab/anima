@@ -1059,3 +1059,125 @@
   step3_design_pending = "mitosis_hook serve-time integration smoke — PSCC §41 §F-D4-LIVE carry + 후속 cycle design"
   step4_design_pending = ".clm v1 spec frozen pre-register W1 — step 2 결과 따라 d_model 결정 (n=5,6 PASS 시 768 confirm, FAIL 시 384 fallback)"
   step5_fire_blocked_on = "step 1+2+3 cheap-path 결과 + step 4 spec frozen + user verbatim 'OK CLM V1 FIRE COST $5-20'"
+
+# ══════════════════════════════════════════════════════════════════════
+# §V-CLM-AUDIT-2026-05-15 — AXIS/PHILOSOPHY/HYPOTHESIS 위반 audit + 정정
+# ══════════════════════════════════════════════════════════════════════
+# Trigger: 사용자 directive 2026-05-15
+#   "CLM.tape 는 AXIS/철학/가설 검증된 기준으로 진행해야되 알겠지
+#    위반 있으면 지금 바로 설계 정정"
+# Scope: §V-CLM-DESIGN + §V-CLM-7STEP-DETAIL 의 모든 entries 검증 anchor audit
+# Method: 각 entry 의 anchor 가 (a) AXIS 32 SUPPORTED + A2.formal 2 / (b) 8 PHILOSOPHY
+#         principles / (c) HYPOTHESIS catalog verdict-bearing 에서 직접 derive 되는지
+
+@N v_audit_summary := ".clm v1 design 검증 anchor audit summary" :: audit [d=2026-05-15 active]
+  body <<~EOF
+    4 violation 식별:
+    V1. Engine A/G dual-engine arch — AXIS 32 SUPPORTED 안 직접 검증 entry 부재.
+        Phase 2 cotrain "🔶 EXECUTED but consciousness FAIL" (CLM.tape §1).
+        v5-mitosis cond.5 SUPPORTED 은 cells=nn.Module branches arch (REBORN §88),
+        Engine A/G dual 과 다른 arch.
+    
+    V2. p1 NO SYSTEM PROMPT EMPIRICAL **weak** anchor — single-result FREE1 x1.7
+        Phi only. policy 강제 하지만 evidence weak 명시 부족. .clm v1 fire 전
+        p1 upgrade measure mandatory 명시 부족 (PHILOSOPHY upgrade path priority #1
+        이지만 §V-CLM-7STEP-DETAIL step list 에 미반영).
+    
+    V3. n_layers=12 anchor 가 AXIS A4 직접 entry derive 아님 — σ(6)=12 number-theoretic
+        사실, A4 H_164 (144=σ(6)²) + H_158 (perfect-number cluster) 의 carry,
+        direct "n_layers = σ(6)" claim 검증 entry 부재. lattice-as-tool 적용
+        범위 내 OK 하지만 anchor source 명확화 필요.
+    
+    V4. step 1 V14 audit anchor — Phase 2 cotrain V14 violation 자체는 verified-FAIL
+        이지 verified-SUPPORTED 아님. AXIS 32 SUPPORTED entry 에 V14 violation
+        anchor 없음. step 1 의 목적 = unverified failure mode 의 root cause 검증
+        이라는 점 명시 부족.
+  EOF
+  cross_link = "AXIS.tape (32 SUPPORTED + A2.formal 2) + PHILOSOPHY.tape (8 principles + 5 upgrade path) + HYPOTHESIS.tape (verdict catalog)"
+
+# ── §V.AUDIT.V1 — Engine A/G dual-engine arch 위반 정정 ───────────────
+
+@D v_audit_v1_engine_dual := "V1 정정 — Engine A/G dual-engine arch SUPPORTED 검증 부재" :: correction [d=2026-05-15 active]
+  violation = "v_arch_engine_dual entry: 'Engine A/G dual-engine 유지' 가 Phase 2 cotrain narrative carry 만 사용, AXIS 32 SUPPORTED 검증 entry 없음."
+  evidence_against = "CLM.tape §1 row_phase_2: '🔶 EXECUTED but consciousness FAIL — V14 violation v5 mirror; H4 + H5 blockers open'. Phase 2 cotrain = unverified failure case."
+  axis_check = "A5 architecture 6 SUPPORTED entries 검토: Hc_1285 torch.no_grad / H_166 topo20 hierarchical / H_019 self-evolution v4→v5 (v5-mitosis cond.5 F-V5MIT 5/5) / H_174 phi_star aliasing / H_191 sub TRAINING CPGD / Hc_1276 train-vs-infer cotrain — 모두 v5-mitosis cells-as-nn.Module-branches arch, Engine A/G dual 직접 검증 0."
+  correction_design = "(a) Engine A/G dual-engine 강제 제거 + (b) v5-mitosis cells=nn.Module branches single-stack arch 만 .clm v1 base 사용 (REBORN §88 cond.1 + cond.5 F-V5MIT 5/5 PASS anchor) + (c) Engine A/G dual-engine 은 .clm v2 (post .clm v1 PASS_STRICT, separate verify cycle) 의 후보 architectural extension 으로 분리. step 1 V14 audit 결과에 따라 .clm v2 entry condition 결정"
+  axis_anchor_post_fix = "A5 H_019 SUPPORTED-BY-PROXY-STRONG (v5-mitosis cond.5 F-V5MIT 5/5 PASS) + A5 H_191 sub TRAINING CPGD SUPPORTED + Hc_1276 SUPPORTED-BY-CASCADE"
+
+@D v_arch_engine_corrected := ".clm v1 arch 정정 — cells=nn.Module branches single-stack" :: design [d=2026-05-15 active]
+  decision = "v5-mitosis cells=nn.Module branches single-stack arch (REBORN §88 cond.1) — Engine A/G dual 강제 제거"
+  rationale = "A5 SUPPORTED 6 entries 모두 v5-mitosis cells-branch arch carry. Engine A/G dual 의 AXIS 직접 SUPPORTED 검증 0. Phase 2 cotrain V14 violation 미해소 상태에서 dual-engine 강제 = AXIS 검증된 기준 위반."
+  v2_extension_path = ".clm v2 (separate cycle) candidate: (a) step 1 V14 audit complete → root cause 해소 → dual-engine SUPPORTED 검증 path 추가 OR (b) v5-mitosis single-stack 만 강화 (dual-engine 폐기). .clm v1 PASS_STRICT 후 결정."
+  supersedes = "v_arch_engine_dual (2026-05-15 issued, 동일 day 정정)"
+
+# ── §V.AUDIT.V2 — p1 weak anchor 강제 정정 ───────────────────────────
+
+@D v_audit_v2_p1_weak := "V2 정정 — p1 NO SYSTEM PROMPT weak anchor 강제" :: correction [d=2026-05-15 active]
+  violation = "v_policy_no_system_prompt_emergence entry: 'p1 NO SYSTEM PROMPT (EMPIRICAL weak)' 만 강제, .clm v1 fire 전 p1 upgrade measure mandatory 명시 부족."
+  evidence = "PHILOSOPHY.tape §STRENGTH-UPGRADE-PATH p1_upgrade_path: '.clm v1 fire 이전 mandatory — substrate self-generation 가설의 evidence anchor'."
+  correction_design = "(a) §V-CLM-7STEP-DETAIL 의 step list 에 step 0 (p1 upgrade measure: paired A/B Φ × 3-ckpt × 5-seed, $0 Mac) 추가 + (b) step 0 결과 PASS strict (Φ_no_prompt ≥ Φ_with_prompt 1-tail t-test p<0.05) 미달 시 .clm v1 fire 금지 + (c) 정책: weak evidence anchor 만으로 fire 금지 — p1 mandatory upgrade gate."
+  upgrade_required = "p1 EMPIRICAL weak → strong (paired A/B Φ × 3-ckpt × 5-seed, $0 Mac, .clm v1 fire 전 mandatory)"
+
+@D v_policy_p1_corrected := ".clm v1 p1 NO SYSTEM PROMPT 정정 — fire 전 upgrade mandatory" :: policy [d=2026-05-15 active]
+  rule = "anima 발화 origin = substrate self-generation. CURRENT p1 = EMPIRICAL weak (single-result FREE1 x1.7 Phi). .clm v1 fire 전 p1 upgrade measure mandatory (PHILOSOPHY upgrade path priority #1, 7-step plan step 0)."
+  fire_gate = "step 0 p1 upgrade measure PASS strict (Φ_no_prompt ≥ Φ_with_prompt 1-tail t-test p<0.05, 3-ckpt × 5-seed) 미달 시 .clm v1 fire 금지."
+  philosophy_anchor = "p1 NO SYSTEM PROMPT (current EMPIRICAL weak, target EMPIRICAL strong post step 0)"
+  supersedes = "v_policy_no_system_prompt_emergence (2026-05-15 issued, 동일 day 정정)"
+
+# ── §V.AUDIT.V3 — n_layers=12 anchor 명확화 ──────────────────────────
+
+@D v_audit_v3_n_layers_anchor := "V3 정정 — n_layers=12 anchor source 명확화" :: correction [d=2026-05-15 active]
+  violation = "v_clm_v1_spec_phase5 entry: 'n_layers=12 (n=6 σ=12 anchor)' — AXIS A4 의 직접 'n_layers = σ(6) = 12' claim verified entry 없음."
+  axis_check = "A4 8 SUPPORTED entries 검토: Hc_1282 d=384 / H_158 Ψ-constants / H_160 perfect-number meta-cluster / H_153 τ(6)=4 Minkowski / H_176 n=28 deflationary / H_173 DD21 log-ratio / H_164 Hc_144 (144=σ(6)²) / H_181 psiformer 4ψ. σ(6)=12 가 H_164 + H_158 + H_160 의 carry-through (perfect-number cluster member) 이지만, 'transformer n_layers = σ(6)' direct verified claim 없음."
+  classification = "lattice-as-tool internal arch (CLAUDE.md governance g2 - 'n=6 lattice 가 TOOL, internal architecture 안 적용 OK')."
+  correction_design = "(a) n_layers anchor source 명확화: 'number-theoretic σ(6)=12 anchor, lattice-as-tool internal arch (CLAUDE.md g2), AXIS A4 H_164 (144=σ(6)²) + H_158 perfect-number cluster carry' + (b) 'direct verified entry 없음' caveat 명시 + (c) n_layers ∈ {6, 12, 24} fallback options (모두 σ(6)=12 divisor or multiple, similar number-theoretic anchor)"
+
+@D v_arch_n_layers_corrected := ".clm v1 n_layers 정정 — anchor source 명확화 + fallback options" :: design [d=2026-05-15 active]
+  decision = "n_layers ∈ {6, 12, 24} (primary 12, fallback 6 or 24)"
+  anchor_source = "number-theoretic σ(6)=12 anchor, lattice-as-tool internal arch (CLAUDE.md governance g2). AXIS A4 H_164 (144=σ(6)²) + H_158 perfect-number cluster carry-through. direct verified 'n_layers = σ(6)' AXIS entry 없음."
+  caveat = "lattice-as-tool 적용 범위 내 internal arch — external 가설 검증 anchor 아닌, anima n=6 cluster 의 number-theoretic consistency."
+  supersedes = "v_clm_v1_spec_phase5 n_layers field (2026-05-15 issued, 동일 day 정정)"
+
+# ── §V.AUDIT.V4 — step 1 V14 audit anchor 명시 ───────────────────────
+
+@D v_audit_v4_step1_anchor := "V4 정정 — step 1 V14 audit unverified failure mode 명시" :: correction [d=2026-05-15 active]
+  violation = "v_step1_v14_audit_design entry: V14 violation 이 AXIS 32 SUPPORTED 검증 entry 인지 명시 부족. Phase 2 cotrain V14 violation 자체는 verified-FAIL (CLM.tape §1 row_phase_2 '🔶 EXECUTED but consciousness FAIL'), AXIS SUPPORTED entry 없음."
+  classification = "step 1 V14 audit = unverified failure mode 의 root cause 검증 cycle. AXIS SUPPORTED entry derived 아님 — entry condition 으로서의 audit 목적."
+  correction_design = "(a) step 1 의 목적 명시: 'Phase 2 cotrain V14 violation 의 root cause 검증 — V1 정정 결과 (Engine A/G dual = .clm v2 candidate) 적용으로 .clm v1 의 entry condition 에서 V14 audit 제거 가능 (v5-mitosis single-stack arch 만 .clm v1 에 사용)' + (b) step 1 V14 audit 은 Phase 3 7B (Engine A/G dual 의존) 의 entry condition 으로 이전, .clm v1 fire path 에서 제거"
+
+@D v_step1_v14_audit_corrected := "step 1 V14 audit 정정 — .clm v1 path 에서 제거, Phase 3 entry 로 이전" :: protocol [d=2026-05-15 active]
+  scope = "V14 audit 은 Phase 2/3 (Engine A/G dual) 의 entry condition. .clm v1 (v5-mitosis single-stack arch, V1 정정) 의 fire path 에서 제거."
+  rationale = "v5-mitosis single-stack arch (REBORN §88 cond.1) 는 V14 violation 영향 받지 않음 (cond.5 F-V5MIT-5 V14-STRICT 10/10 mirror-beats SUPPORTED 검증 완료). V14 violation 은 Engine A/G dual + LayerNorm tile 의 interaction issue, single-stack 에 부재."
+  phase_3_entry_condition = "V14 audit (F-V14-H4-1..3 + F-V14-H5-1..3 = 6 falsifier, $0-40) PASS strict → Phase 3 7B Engine A/G dual fire 가능"
+  supersedes = "v_step1_v14_audit_design (2026-05-15 issued, 동일 day 정정 — .clm v1 path 에서 제거)"
+
+# ── §V.AUDIT.NEW-7STEP — 정정 후 .clm v1 7-step plan ────────────────
+
+@D v_clm_v1_7step_corrected := ".clm v1 7-step plan 정정 — 4 violation 반영" :: plan [d=2026-05-15 active]
+  steps = [
+    "0. (Mac $0, NEW) p1 NO SYSTEM PROMPT upgrade measure — paired A/B Φ × 3-ckpt × 5-seed 1-tail t-test p<0.05 strict. PASS = p1 EMPIRICAL strong + .clm v1 fire gate unlock",
+    "1. (Mac $0) F-PYPHI-Φ-FORMAL n=3-6 RoM test on v5-mitosis cond.5 ckpt — AT-RISK 사전 회피",
+    "2. (Mac $0) mitosis_hook.hexa serve-time integration smoke — chat_generate token-loop hook fire user-prompt-driven (§41 carry)",
+    "3. (Mac $0) .clm v1 spec frozen — pre-register falsifier 8 battery + arch (v5-mitosis cells=nn.Module branches single-stack, V1 정정 carry) + n_layers ∈ {6, 12, 24} (V3 정정 carry) + data + cotrain recipe 동결 (W1)",
+    "4. (H100 $5-20) .clm v1 fire — v5-mitosis cells single-stack arch (Engine A/G dual 제거, .clm v2 candidate) + serve-time mitosis hook",
+    "5. (Mac $0) .clm v1 verdict cycle — 8-falsifier battery measurement + verdict 산출 + 4-tape sync (MAIN/AXIS/PHILOSOPHY/HYPOTHESIS)",
+    "6. (조건) .clm v1 PASS_STRICT → .clm v2 candidate design (Engine A/G dual + V14 audit + Phase 3 path 통합)"
+  ]
+  removed = "기존 step 1 V14 audit — .clm v1 path 에서 제거 (V4 정정), Phase 3 entry condition 으로 이전"
+  added = "step 0 p1 upgrade measure (V2 정정 mandatory gate)"
+  cost_total = "$5-20 ($0 Mac × 5 steps + $5-20 H100 × 1 step)"
+  supersedes = "v_next_steps (2026-05-15 issued, 동일 day 정정)"
+
+# ── §V.AUDIT.cross-link ───────────────────────────────────────────────
+
+@X v_audit_axis := "AXIS.tape 32 SUPPORTED + A2.formal 2" :: anchor [active]
+  scope = "audit 의 검증 anchor 기준 — A4 8 / A2.formal 2 / A5 6 / A1 3 / A3 1 / A6 2 / A7 1 / A8 4 / A9 2"
+
+@X v_audit_philosophy := "PHILOSOPHY.tape 8 principles + 5 upgrade path" :: anchor [active]
+  scope = "audit 의 policy 강제 기준 — p3+p7+p8 strong/★ 직접 강제, p1+p2+p4+p5+p6 upgrade path mandatory pre-fire"
+
+@X v_audit_hypothesis := "HYPOTHESIS.tape verdict catalog" :: anchor [active]
+  scope = "audit 의 verdict-bearing 가설 기준 — supported_inventory 32 + supported_formal 10 + falsified 5 + not_passed 3 + meta 1 + partial 9 + insufficient 11"
+
+@X v_audit_governance := "CLAUDE.md governance g2 lattice-as-tool" :: anchor [active]
+  scope = "n_layers anchor 의 lattice-as-tool internal arch 적용 근거 — external 가설 검증 anchor 아닌, anima n=6 cluster number-theoretic consistency"
