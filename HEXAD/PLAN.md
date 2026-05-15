@@ -302,3 +302,39 @@ CE *수렴 OUTCOME* — SGD 의 수학적 필연이라 closed-form 불가, fake 
 honest empirical carve-out (D 정직분해에서 사용자 기수용 동일 원칙,
 B-D-NOTE 패턴). HEXAD.tape hexad_wiring_blue_gate per_arrow_anchor +
 HEXAD/CHAT/README.md §2 W-ledger 에 반영 완료.
+
+### 2026-05-16 — R1 anima_chat.hexa lib-split LANDED + R2 hexa-lang named blocker 발견
+
+run-list R1 (RFC-무관 잔여 sub-task) 실행. `HEXAD/CHAT/anima_chat.hexa`
+2845L → **mechanical byte-faithful split** (fn body 불변, PR #89 패턴):
+
+- **`HEXAD/CHAT/chat_lib.hexa`** 2726L — pure fn (anima_root..chat_batch),
+  NO main · NO _smoke · NO top-level call → compiled-import-safe. R2 의
+  `HEXAD/D/d_lib.hexa` → `import chat_lib.hexa` (d_forward delegation) 대상.
+- **`HEXAD/CHAT/anima_chat.hexa`** 134L — thin entrypoint: `import chat_lib`
+  + `_smoke`(F-AC-HEXA-1..6) + `_list_contains_int` + `main`.
+- 둘 다 `hexa parse` **clean** (split 무결성 — 회귀 아님).
+- 덤 fix: stale importer 8 (`/Users/ghost/core/anima/anima_chat.hexa` =
+  root 부재 broken path, HEXAD reorg 전 잔재) → `chat_lib.hexa` repoint.
+- 회귀 0: build_verify **11/11+9/9 compiled PASS** · blue 22/22 🔵 ·
+  we 25/25 · integ 5/5 (split = hexa-only, Python anchor 불변).
+
+**HONEST named blocker (fake 안 함, g3/f2)**: chat_lib/anima_chat 의
+**compiled-native build** 는 `hexa_safetensors_mmap_data_offset` (+ ckpt
+mmap safetensors intrinsic 일족) **C decl 부재**로 FAIL — hexa-lang
+runtime.h/.c 0 선언, interp-only builtin (이 파일 과거 `hexa run` 21/21
+byte-parity 만 검증, **compiled native 최초 시도**라 표면화 — split 회귀
+아님). RFC 034 가 runtime.h `hexa_farr_*` decl 추가로 RFC 032/033 compiled
+smoke 복구한 것과 **동일 trivial class**. build_verify ENTRYPOINTS/LIBS
+편입 시도 → revert + DEFERRED 주석 문서화 (게이트 green 유지, 가짜 PASS X).
+
+**R2 영향**: Phase 5 `d_lib.hexa` → `import chat_lib.hexa` **compiled** wire
+는 이 hexa-lang blocker 를 **상속** (compiled codegen 이 chat_lib 전체
+C 방출 → 동일 undeclared call). FIX = hexa-lang upstream runtime.h 에
+safetensors-mmap compiled decl 추가 (RFC-034-class trivial). RFC 035/036
+(R4 bg) scope 외 — 별도 hexa-lang named item. decl land 후 build_verify
+재편입 → R2 compiled wire executable.
+
+상태: R1 split = **structural LANDED** (chat_lib NO-main pure lib 존재·parse
+clean, R2 구조적 prerequisite 충족). R2 compiled = hexa-lang
+`hexa_safetensors_mmap_data_offset` decl land 대기 (named blocker).
