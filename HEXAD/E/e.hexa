@@ -92,7 +92,7 @@ fn e_empathy(top_mean, bot_mean) -> float {
 
 
 // ── helpers ─────────────────────────────────────────────────────────────────
-fn _approx_eq(a: float, b: float, tol: float) -> bool {
+fn _e_approx_eq(a: float, b: float, tol: float) -> bool {
     let d = a - b
     if d < 0.0 { d = 0.0 - d }
     return d <= tol
@@ -138,9 +138,9 @@ fn _selftest() {
     let clamped = (r1 >= 0.0) && (r1 <= 1.0)
                    && (r2 >= 0.0) && (r2 <= 1.0)
                    && (r3 >= 0.0) && (r3 <= 1.0)
-                   && _approx_eq(r1, 1.0, tol)
-                   && _approx_eq(r2, 0.0, tol)
-                   && _approx_eq(r3, 0.5, tol)
+                   && _e_approx_eq(r1, 1.0, tol)
+                   && _e_approx_eq(r2, 0.0, tol)
+                   && _e_approx_eq(r3, 0.5, tol)
     print("  B-E-3 RECIPROCITY-CLAMP      : " + to_string(clamped))
 
     // B-E-4 EMPATHY-RANGE-CLOSED — empathy ∈ [0, 1] ∀ inputs
@@ -150,9 +150,9 @@ fn _selftest() {
     let in_range = (ea >= 0.0) && (ea <= 1.0)
                     && (eb >= 0.0) && (eb <= 1.0)
                     && (ec >= 0.0) && (ec <= 1.0)
-                    && _approx_eq(ea, 1.0, 1e-6)
-                    && _approx_eq(eb, 0.0, tol)
-                    && _approx_eq(ec, 0.0, tol)
+                    && _e_approx_eq(ea, 1.0, 1e-6)
+                    && _e_approx_eq(eb, 0.0, tol)
+                    && _e_approx_eq(ec, 0.0, tol)
     print("  B-E-4 EMPATHY-RANGE          : " + to_string(in_range))
 
     let all_ok = exact && mono && clamped && in_range
