@@ -118,7 +118,6 @@ neural_vocoder.fail (numerical instability — NaN logits)
        → if persistent, plc_crossfade.fail returns prev_pcm forever
 ```
 
-## raw#10 caveats
 
 1. **Anima-speak L4.3 emotion JND limit.** Ekman-6 emotion fusion is empirically just-noticeable-different at threshold 0.18 — finer emotion gradients alias. See project_omega_audio_limits weakest-link list.
 2. **L6.2 nasal antiresonance limit.** Vocoder's source-filter approximation drifts on nasal phonemes — formant locations off by ~5%. Known artefact.

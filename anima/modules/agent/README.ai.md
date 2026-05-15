@@ -139,13 +139,11 @@ hexa run ready/anima/modules/agent/hexa/test_agent_platform.hexa
 - **Code guardian is advisory.** `code_guardian.hexa` lints but does not gate commits — gating happens at hive layer.
 - **target/ files are codegen output.** Editing `target/*.hexa` will be overwritten on next codegen run. Edit the upstream `.hexa` source instead.
 
-## raw#10 caveats
 
 1. **76-file group**, second-largest in the repo. Touching `agent.hexa` constants ripples through `target/types.hexa` (946 LOC) and `target/main.hexa` (773 LOC) — verify the n=6 derivation block first.
 2. **target/std_proposals/** are not yet stdlib — they are proposals for hexa-lang stdlib (hashmap / TLS / websocket). Treat as RFC-stage.
 3. **Ψα = 0.014 hardcode**. `consciousness.hexa` and `phi_router.hexa` should read from `anima/config/psi_constants.json` SSOT — verify before assuming hardcode is canonical.
 4. **Faction debate path is 689 LOC of generated logic.** Don't refactor without regenerating from upstream spec.
-5. **No selftest aggregator** — each `test_*.hexa` runs independently. Adding an `agent_main.hexa` that walks all selftests is recommended raw#10 debt.
 
 ## File index (76 files)
 

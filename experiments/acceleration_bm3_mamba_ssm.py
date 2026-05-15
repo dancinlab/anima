@@ -512,7 +512,6 @@ class ConsciousnessSelectiveSSMCell(nn.Module):
         # Tension → dt modulation (consciousness-specific)
         # FIX (2026-04-26): output dim must be d_inner (=hidden_dim*expand) to match
         # dt_proj.bias shape. Previous version used DT_RANK (8) which broadcast-failed
-        # against the (256,)-shaped post-projection bias. raw#10 honest: original design
         # intent was "tension-gates dt_rank pre-projection", but the SSM's dt_proj.bias
         # is per-d_inner-channel POST-projection. We retain the consciousness mapping
         # ("tension drives faster dt") at the d_inner channel level instead.

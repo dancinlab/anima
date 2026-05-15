@@ -70,13 +70,10 @@ Each `src/*.hexa` file declares additional structs and `pure fn`s. Names follow 
 - `chip_body_direct.hexa` and `cross_substrate.hexa` reference substrate concepts (FPGA / memristor / photonic) that map to `anima/modules/physics/engines/*` but are not wired to those engines.
 - `multi_body.hexa` does not implement multi-agent body sync.
 
-## raw#10 caveats
 
-1. **Stub tree.** All 18 files are signature-only; no functional implementation lands here. raw#82 honest.
 2. **Migration target ambiguous.** If body becomes a real product surface, port to a `core/body/` abstraction + `modules/body/<vendor>/` plugins (mirror RNG abstraction pattern in `anima/core/rng/`).
 3. **No selftest.** No `verify` block, no `--selftest` CLI. Adding a selftest is part of any future un-stubbing.
 4. **Phase 4b origin.** Generated as part of stub fan-out for Phase 4b roadmap; design intent encoded in struct shapes, not behaviour.
-5. **Falsifier debt.** raw#71 `≥3 falsifiers` not satisfied (zero falsifiers across 18 files).
 
 ## File index
 

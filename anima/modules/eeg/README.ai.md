@@ -109,14 +109,12 @@ realtime.fail (closed-loop dropout)
       → closed_loop falls open (no neurofeedback signal)
 ```
 
-## raw#10 caveats
 
 1. **Stub vs live duality.** This `ready/anima/modules/eeg/` tree is the namespace; the live runtime is `anima-eeg-core/tool/modules/_*/`. Don't confuse — wrapper-complete files (closed_loop / dual_stream / experiment / collect / calibrate / realtime) here are 25-30 LOC stubs, the real implementations are 800+ LOC and live in anima-eeg-core.
 2. **brain_like_pct=85.6** is the SSOT target (4-way alignment: validate.hexa + eeg.hexa + README + config.json — verified 2026-04-26). If you change the target, sync all 4 anchors.
 3. **R33 α-coherence channel pair frozen = O1↔O2** (occipital, Berger 1929). See anima-clm-eeg/docs/eeg_arrival_impact_5fold.md §4.
 4. **No Welch implementation here.** PSD/coherence is computed in `anima-eeg-core/tool/modules/_metrics/alpha_coherence.hexa` (real impl). The `ready/` tree references metric names but does not implement them.
 5. **Protocols stub-only.** `protocols/multi_eeg.hexa` and `scripts/organize_recordings` are the 2 remaining stubs in the Phase 4 9/9 path (project_phase4_silent_land_audit_correction).
-6. **No selftest.** Adding a `eeg_main.hexa` aggregator that walks all 18 stubs is recommended raw#10 debt.
 
 ## File index
 

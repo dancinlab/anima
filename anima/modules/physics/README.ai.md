@@ -87,12 +87,9 @@ Each engine + benchmark + bridge is a stub — calling them returns default-valu
 - `src/eeg_physics_bridge.hexa` references EEG metric paths but does not import anima-eeg-core SSOTs.
 - `src/esp32_network.hexa` does not open a real socket / serial port. The actual ESP32 wire is `anima-physics/esp32/qrng_bridge.hexa` (preserved chflags-locked).
 
-## raw#10 caveats
 
-1. **Stub tree.** All 17 files are signature-only; no functional implementation. raw#82 honest.
 2. **Substrate-witness ledger orthogonal.** The 9-substrate witness coverage tracked in `mk_xii_substrate_witness_ledger_aggregator_v2_*.marker` references `anima-physics/` artefacts, not these stubs. Don't double-count.
 3. **No selftest.** Adding `verify` blocks per engine is part of any future un-stubbing.
-4. **Cross-substrate phi_proxy NOT comparable.** raw#12 notes substrate-multiplicity is `phi_proxy_cross_comparable=false` — these engines model 9 distinct substrates that should not be averaged.
 5. **`anima-physics/esp32/qrng_bridge.hexa` is preserved unchanged** (chflags uchg). Don't refactor / migrate without an explicit migration cycle.
 
 ## File index

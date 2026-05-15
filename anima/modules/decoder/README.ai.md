@@ -91,13 +91,11 @@ sample_token.fail (degenerate logits — all -inf)
   → emits BOS / 0 byte; downstream consumer sees null byte
 ```
 
-## raw#10 caveats
 
 1. **Pure-Hexa numerics ≠ PyTorch numerics.** Forward pass is bit-equivalent within 1e-5 vs PyTorch reference but **not byte-identical**. Adversarial inputs can drift further (Mk.X T10-13 retrieval head sweep).
 2. **Weight format coupled.** `load_weights.hexa` expects the hexa-pickle layout used by the v14 retrained checkpoint. v1 / pre-v14 checkpoints need a separate loader.
 3. **Array mutation quirk.** `a[i] = v` is silent no-op (Hexa 0.1.0-stage1). All in-place updates use `write_at(arr, idx, val)` rebuild — slow on hot loops, OK for KV-cache append (`kv_cache_append` builtin handles this).
 4. **GPU path absent.** Pure-Hexa forward runs on CPU only. On Mac MPS targets, see `anima/core/decoder/` (if it exists post-migration) or stay on PyTorch reference.
-5. **`ready/` vs `decoder/module/` duplication.** Both copies live; `decoder/module/` is the pre-ready twin and should be considered legacy. Diff is ~0.2% per file (mostly path-prefix changes). raw#82 honest debt.
 
 ## File index
 
