@@ -5,6 +5,11 @@
 // ║   _smoke + main = HEXAD/CHAT/anima_chat.hexa (imports this lib).             ║
 // ║   R2 Phase-5 wire: HEXAD/D/d_lib.hexa imports THIS (d_forward delegation).   ║
 // ╚══════════════════════════════════════════════════════════════════════════╝
+// R2-AC cross-module imports (2026-05-16): cell_pool_init/mitosis_forward_tail
+// + gen_m3_rep_penalty live in sibling modules — lib-split halves imported here
+// so compiled codegen resolves them (interp resolved cross-module implicitly).
+import "/Users/ghost/core/anima/tool/hexa_native/mitosis_hook_lib.hexa"
+import "/Users/ghost/core/anima/tool/hexa_native/gen_modes_lib.hexa"
 // ════════════════════════════════════════════════════════════════════════════
 //  anima_chat.hexa — pure-hexa port of anima_chat.py v2.3
 //

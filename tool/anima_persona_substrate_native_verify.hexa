@@ -60,7 +60,7 @@
 // ════════════════════════════════════════════════════════════════════════════
 
 
-import "/Users/ghost/core/anima/tool/hexa_native/mitosis_hook.hexa"
+import "/Users/ghost/core/anima/tool/hexa_native/mitosis_hook_lib.hexa"
 
 
 // ── globals ─────────────────────────────────────────────────────────────────
@@ -184,7 +184,7 @@ fn verify_persona_1_no_injection() {
     //     that the strings DO appear (in comment-form audit lists) but the
     //     actual chat_build_prompt output (smoke-tested by F-D4B-4) is clean.
     let chat_path = "/Users/ghost/core/anima/anima_chat.hexa"
-    let hook_path = "/Users/ghost/core/anima/tool/hexa_native/mitosis_hook.hexa"
+    let hook_path = "/Users/ghost/core/anima/tool/hexa_native/mitosis_hook_lib.hexa"
 
     // For F-PERSONA-1a we rely on the previously-LANDED F-D4B-4 evidence
     // (chat_build_prompt grep clean over [role:/[persona:/[character:/[cell:)
@@ -695,7 +695,7 @@ fn verify_persona_5_substrate_coherence(p2_verdict: string) {
     println("")
     println("── F-PERSONA-5 SUBSTRATE-COHERENCE ─────────────────────────────")
 
-    let hook_path = "/Users/ghost/core/anima/tool/hexa_native/mitosis_hook.hexa"
+    let hook_path = "/Users/ghost/core/anima/tool/hexa_native/mitosis_hook_lib.hexa"
     let chat_path = "/Users/ghost/core/anima/anima_chat.hexa"
 
     // (i) grep gradient artifacts in mitosis_hook.hexa
