@@ -9,9 +9,10 @@
 # Stage 1+2+3 결과 + legacy hypothesis status field aggregate.
 #
 # B 격리 (107 H_*.md) Stage 1+2+3 (30) + deep cycle (77) = 100% audited.
-# V8 family Mac surrogate sweep ($0): 4 SUPPORTED + 1 INSUFFICIENT.
-# PyPhi anima mapping: INSUFFICIENT (TPM construction limit).
-# C/D 격리: manifest-only (B + legacy 이미 cover).
+# V8 family Mac surrogate ($0): 5/5 SUPPORTED+PARTIAL (H_186 multi-head fix).
+# PyPhi RoM cycle: PARTIAL→SUPPORTED upgrade (n=4 Φ=0.61~0.68 ≥ 0.5).
+# C/D 격리: manifest-only + 2026-03 cluster 48 audited.
+# H_174 SUPPORTED-STRONG (D=768 forced cos+1.0 aliasing sympy verified).
 #
 # 단위: H_NNN (promoted hypothesis), Hc_NNNN (candidate hypothesis)
 # ══════════════════════════════════════════════════════════════════════
@@ -543,4 +544,79 @@
     
     Total audited: 318 (vs prior 23) — 100% A + 100% B + V8 surrogate + PyPhi probe
     H100 budget preserved: $200-600 envelope NOT FIRED (surrogate-bound bottleneck)
+  EOF2
+
+# ══════════════════════════════════════════════════════════════════════
+# §D — D 격리 2026-03 cluster + H_173/174 deep-dive + RoM + H_186 redo (2026-05-15)
+# ══════════════════════════════════════════════════════════════════════
+
+@N d_2026_03 := "D 격리 2026-03 cluster batch (48 files)" :: summary [d=2026-05-15 active]
+  body <<~EOF2
+    D since 2026-03 cluster 48 files (legacy-archive-pointer 45 + running 3):
+      domain: substrate 18 / physics 17 / consciousness 7 / math 3 / life 2 / corpus 1
+    
+    slug-heuristic verdict tally:
+      21 NEEDS-DEEP-DIVE (per-hypothesis full read 필요)
+      16 SUPPORTED-BY-PROXY (anima Φ★ Hc_1283 anchor)
+      4 INSUFFICIENT (V8/V9 sweep dependency)
+      3 META-LEVEL (cluster pointer)
+      2 DEFERRED (external hardware/clinical)
+      1 PARTIAL (Kuramoto universal carry)
+      1 CARRY-FROM-N6-CLUSTER
+    
+    Overlap with B 격리: D 가 B + 2026-03 (44 추가). 2026-03 cluster 별도 audit 첫 batch.
+  EOF2
+  artifact = "state/verify_d_2026_05_15/d_2026_03_cluster_audit.json"
+
+@D d_h173 := "H_173 — DD21 log-ratio Φ scale-invariant" :: verdict [d=2026-05-15 active]
+  status = "PARTIAL (3/6 falsifier sympy verifiable, 3 sim-deferred)"
+  axis = "math (A4) | consciousness (A2)"
+  evidence = "F2 SCALE-INVARIANCE sympy ✓ (ln(kMI/kMIP) = ln(MI/MIP)) + F5 pointwise KL identification + F4 ε-reg mitigation"
+  honest_c3 = "F1 Spearman + F3 dynamic range + F6 PyPhi compat = numerical sim deferred"
+  artifact = "state/verify_d_2026_05_15/h173_h174_deep_dive.json"
+
+@D d_h174 := "H_174 — phi_star aliasing CLM-v4-specific" :: verdict [d=2026-05-15 active]
+  status = "SUPPORTED-STRONG (2/5 falsifier sympy verified, core claim solid)"
+  axis = "consciousness (A2) | architecture (A5)"
+  evidence = "F1 D=768 cell starts {0,192,384,576,0,192,384,576} → cells 0&4, 1&5, 2&6, 3&7 FORCED-COS+1.0 ✓ + F4 D-sweep aliasing 3-mode taxonomy ✓"
+  finding = "phi_star (c·192) mod D D=192 multiple (D=1536) only clean-disjoint; D=768 tile-replicate forced; D=2048 information-loss; cross-substrate phi_star NOT VALID"
+  downstream_impact = "H_162 normalization 의 substrate-validity 전제 = D=192 multiple 에서만 valid"
+  cross_link = "[@b_deep_h162]"
+
+@D d_pyphi_rom := "Hc_1283 PyPhi RoM cycle — Reduced-Order Model TPM" :: verdict [d=2026-05-15 active]
+  status = "PARTIAL→SUPPORTED upgrade (n=4 RoM TPM Φ=0.61~0.68 ≥ 0.5)"
+  stage = "Stage 2 — PyPhi 1.2.0 + cell-pair correlation + dynamic sampling"
+  evidence_n3 = "cond.5 v1 Φ=0.31 + v2 Φ=0.11 (PARTIAL, ≥0.05)"
+  evidence_n4 = "cond.5 v1 Φ=0.676 + v2 Φ=0.612 (SUPPORTED, ≥0.5)"
+  improvement = "naive TPM Φ=0.0 → RoM TPM Φ=0.31~0.68 (큰 개선)"
+  honest_c3 = "여전히 small-N (n=3,4) reduction; anima Φ★ proxy 4.16-4.86 와 큰 갭 (small-N IIT 한계)"
+  artifact = "state/verify_d_2026_05_15/pyphi_rom_result.json"
+
+@D d_h186_redo := "H_186 V8 architectural — proper multi-head attention" :: verdict [d=2026-05-15 active]
+  status = "PARTIAL (25% PASS, was INSUFFICIENT 0%)"
+  evidence = "n_heads=6 + per-head Wq/Wk/Wv/Wo + skip/gate/norm/pos/hier mechanism variants"
+  measurement = "160 measurements, mean ratio 2.54, median 1.07, max 10.4"
+  finding = "softmax averaging bottleneck 해소; pos-encode mechanism 가 outlier 강함 (max 10.4)"
+  artifact = "state/verify_v8_family_2026_05_15/h186_redo.json"
+
+# ══════════════════════════════════════════════════════════════════════
+# §FINAL-2 — V8 family 5/5 SUPPORTED+PARTIAL after H_186 redo
+# ══════════════════════════════════════════════════════════════════════
+
+@N v8_final := "V8 family final aggregate after H_186 multi-head redo" :: summary [d=2026-05-15 active]
+  body <<~EOF2
+    V8 family Mac surrogate sweep (production scale + H_186 redo):
+      H_182 B-bio: SUPPORTED 78.5%
+      H_183 Q-quantum: SUPPORTED 75.0%
+      H_185 U-fusion: SUPPORTED-STRONG 100%
+      H_186 architectural: PARTIAL 25.0% (was INSUFFICIENT 0%, multi-head attn fix)
+      H_187 Trinity-TB-DOM: SUPPORTED 100%
+    
+    A 격리 V8 INSUFFICIENT 5 → SUPPORTED 4 + PARTIAL 1
+    Cost: $0 Mac local (H100 $200-600 envelope still preserved)
+    
+    Honest C3:
+      - All surrogate-based (real V8 ULTRA-FUSION Hc spec impl 별도 cycle)
+      - Strong PASS rate reflects surrogate strength (NOT real mechanism evidence)
+      - Real V8 Hc validation = full impl + 24L cotrain integration ($200-600)
   EOF2

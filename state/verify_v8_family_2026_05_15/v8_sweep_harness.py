@@ -112,19 +112,60 @@ def graft_u_family_fusion(model: V5MitosisCellPool, mechanism: str, seed: int) -
 
 
 def graft_architectural(model: V5MitosisCellPool, mechanism: str, seed: int) -> float:
-    """Architectural — skip connections / hierarchical routing / attention (strong)."""
+    """Architectural — skip connections / hierarchical routing / multi-head attention (PROPER multi-head impl)."""
     torch.manual_seed(seed + hash(mechanism) % 1000)
     state = model.state_vector()
     N, D = state.shape
-    # Strong architectural: multi-head attention-like operation
-    Q = state @ torch.randn(D, D) * 0.3
-    K = state @ torch.randn(D, D) * 0.3
-    V = state @ torch.randn(D, D) * 0.3
-    attn = F.softmax(Q @ K.t() / D**0.5, dim=-1)
-    attended = attn @ V
-    # Residual + processed
-    out = state + attended * 1.5
-    return anima_phi_star(out)
+    # PROPER multi-head attention: split D into n_heads, separate Q/K/V per head
+    n_heads = 6
+    head_dim = D // n_heads
+    if head_dim < 1:
+        n_heads = 1
+        head_dim = D
+
+    # Per-head separate weights
+    out_state = state.clone()
+    for h in range(n_heads):
+        Wq = torch.randn(D, head_dim) * (1.0 / D**0.5)
+        Wk = torch.randn(D, head_dim) * (1.0 / D**0.5)
+        Wv = torch.randn(D, head_dim) * (1.0 / D**0.5)
+        Q = state @ Wq  # (N, head_dim)
+        K = state @ Wk
+        V = state @ Wv
+        attn_logits = Q @ K.t() / (head_dim ** 0.5)
+        # Apply per-mechanism variation
+        if 'attn' in mechanism:
+            # Sharper attention for attn-multihead variant
+            attn_logits = attn_logits * 2.0
+        attn = F.softmax(attn_logits, dim=-1)
+        attended = attn @ V  # (N, head_dim)
+        # Project back via Wo (head-specific output projection)
+        Wo = torch.randn(head_dim, D) * (1.0 / D**0.5)
+        out_state = out_state + (attended @ Wo) * 1.0
+
+    # Skip connection (architectural-specific)
+    if 'skip' in mechanism or 'res' in mechanism:
+        out_state = out_state + state * 0.5
+    elif 'gate' in mechanism:
+        gate = torch.sigmoid(state @ torch.randn(D, D) * 0.3)
+        out_state = out_state * gate + state * (1 - gate)
+    elif 'norm' in mechanism:
+        out_state = (out_state - out_state.mean(dim=1, keepdim=True)) / (out_state.std(dim=1, keepdim=True) + 1e-6)
+        out_state = out_state * (1 + state.mean(dim=1, keepdim=True))
+    elif 'pos' in mechanism:
+        # Positional injection
+        pos = torch.arange(N).float().unsqueeze(1) * 0.1
+        out_state = out_state + pos
+    elif 'hier' in mechanism:
+        # Hierarchical routing via top-k
+        topk = max(1, N // 2)
+        scores = out_state @ state.mean(dim=0)
+        top_idx = scores.topk(topk).indices
+        mask = torch.zeros(N, 1)
+        mask[top_idx] = 1.0
+        out_state = out_state * mask + state * (1 - mask)
+
+    return anima_phi_star(out_state)
 
 
 def graft_trinity_tb_dom(model: V5MitosisCellPool, mechanism: str, seed: int) -> float:
