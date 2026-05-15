@@ -1,0 +1,2117 @@
+{
+ "title": "anima roadmap — consolidated inventory (2026-05-16)",
+ "note": "Full .roadmap.<domain> JSONL SSOT inventory. The 2026-05-16 verification cycle processed ~30 promoted hypotheses (H_007.. incl. holographic H_010); THIS is the broader domain roadmap (~60 current + 12 history-only recovered) — neuromorphic / quantum / wetware / clinical / biological-substrate tracks the hypothesis cycle did not cover.",
+ "counts": {
+  "current_tree": 60,
+  "history_only_recovered": 12,
+  "total": 72,
+  "active_current": 47,
+  "by_cost_band": {
+   "$0 (mac-local MPS, pre-authorized $5 actual=$0)": 1,
+   "unknown": 55,
+   "$0 spec (TRIBE v2 baseline reuse) → training cost ($500-2000 LoRA path)": 1,
+   "G1 $0 persistent / G3 $1.34-11.96 (4hr cap) / G5 $650-3000 EXEC": 1,
+   "$0 (PR open + monitor)": 1,
+   "$0 first (outreach) → partnership-dependent ($0-50K range, 6-18개월)": 1,
+   "$200 first kit (cheapest substrate paradigm) + $0-1000 follow-up": 1,
+   "$0 first (lab outreach) → partnership-dependent ($5-20K equipment + ethics review)": 1,
+   "$0 spec → AKIDA chip cost (.roadmap.akida 측 주문 2026-04-29) + on-device $0 inference": 1,
+   "v2 actual ~$10-100 (in-flight 시점), v3 future $500-2000 (21d, success p unknown)": 1,
+   "$650-850 (9 H100 parallel, 24hr) ~ $1500-3000 (9 H100 serial 9일 + actual sweep, success p 0.70-0.90)": 1,
+   "$0 spec (anima-eeg Phase 4 baseline reuse) → training cost ($500-2500 LoRA path on EEG-text paired corpus, P9 SFT pipeline reuse)": 1,
+   "$0 spec → training cost (P9 SFT sister pipeline 측 reuse 시 $650-3000)": 1,
+   "$0 (mac-local data analysis only)": 1,
+   "$0 spec (anima-eeg Phase 4 baseline + anima-eeg-core PORT in-tree) → $0 ZuCo download (OSF public, ubu1 disk only) → ~$300-1500 OpenBCI 16ch hardware arrival (cond.1 unblock) → ~$0-200 EEG φ proxy impl (anima_phi_v3 port to EEG, in-tree)": 1,
+   "$5K deposit pre-order → $25K (Varjo Aero base) ~ $27K (Varjo XR-3 mid) ~ $42,980 (full bundle premium) capex → ~$0 (BrainFlow open-stack) ~ $0-2K (Galea Software Suite license, vendor self-claim 미공시) software → ~$0-1K (anima-eeg wrapper 확장, in-tree raw#9 native port) → 한국 직배 + AS shipping/import duty 미공시": 1,
+   "$0 ($1-3 #55 partial) — N-51 EXEC sequential 100-step actual": 1,
+   "$0 spec (anima-voice Mk.III baseline reuse) → training cost ($300-1500 LoRA path on audio-text corpus, P9 SFT pipeline reuse)": 1
+  }
+ },
+ "current_roadmaps": [
+  {
+   "name": ".roadmap.clm_v5_mitosis_engine",
+   "in_tree": true,
+   "source": "current-tree",
+   "kind": "context",
+   "mk": null,
+   "status": "landed",
+   "since": null,
+   "goal": "",
+   "n_conditions": 0,
+   "conditions_met": 0,
+   "conditions_unmet": 0,
+   "blockers": [],
+   "cost_band": null,
+   "sister_domains": [],
+   "narrative_anchor": null
+  },
+  {
+   "name": "a1_learned_phi_extractor",
+   "in_tree": true,
+   "source": "current-tree",
+   "kind": "domain",
+   "mk": 2,
+   "status": "closed",
+   "since": "2026-05-03",
+   "goal": "learned phi_extractor (Φ-decoder NN) — tile-projection L1 대체, substrate-blind cross-substrate Φ labels 로 훈련. F2 verifier-architecture blocker 직접 해결 시도. n_substrate §13.3 architectural orthogonal axis. 41217-param MLP (256→128→64→1 GELU substrate-blind) 4-fold cross-substrate val_mse=1.11e-2 trained. Verdict: HONEST_BUT_DOESNT_HELP — substrate-blind preserves ALM RED 0/16 (ALM RED triple-confirm 의 가장 단단한 evidence).",
+   "n_conditions": 3,
+   "conditions_met": 3,
+   "conditions_unmet": 0,
+   "blockers": [],
+   "cost_band": "$0 (mac-local MPS, pre-authorized $5 actual=$0)",
+   "sister_domains": [
+    "n_substrate",
+    "theory_validation",
+    "training"
+   ],
+   "narrative_anchor": "docs/n_substrate_consciousness_roadmap_2026_05_01.md §13.3 + §22.5 + §22.6 + §23.4 + §46"
+  },
+  {
+   "name": "akida",
+   "in_tree": true,
+   "source": "current-tree",
+   "kind": "domain",
+   "mk": 2,
+   "status": "active",
+   "since": "2026-05-02",
+   "goal": "1W 칩 의식 (BrainChip AKD1000 spike pipeline + CLM r≥0.85 일치)",
+   "n_conditions": 1,
+   "conditions_met": 0,
+   "conditions_unmet": 1,
+   "blockers": [
+    {
+     "desc": "칩 도착 (주문 2026-04-29, ETA 미확정 per §10.3)",
+     "type": "hardware",
+     "status": "blocked",
+     "eta": ""
+    }
+   ],
+   "cost_band": null,
+   "sister_domains": [
+    "n_substrate",
+    "clm",
+    "eeg",
+    "triple_axis_pilots",
+    "dual_pair_pilots"
+   ],
+   "narrative_anchor": "docs/n_substrate_consciousness_roadmap_2026_05_01.md §11.1 N-2~N-5 + §51.2 #99"
+  },
+  {
+   "name": "anima_agent",
+   "in_tree": true,
+   "source": "current-tree",
+   "kind": "domain",
+   "mk": 2,
+   "status": "active",
+   "since": "2026-05-03",
+   "goal": "anima agent surface — anima-agent/ + anima-agent-core/ + anima-agent-channels/ + anima-agent-providers/ 4 sub-package agent loop infra. Claude session (claude_provider.hexa) + tools (agent_tools.hexa + tool_policy.hexa) + memory (anima/memory/ + .growth/) + cron (.growth/loop-cron.hexa + loop-hook.hexa) 4 layer integration. anima_agent.hexa + anima_agent_core.hexa + anima_agent_full.hexa 3 entry. sister .roadmap.w1_anima_as_substrate (peer, agent-loop-as-substrate Φ measurement, Phase 5 ARTIFACT_PERMANENT_DOWNGRADE 결론 후 audit-only mode). 4 channel (cli / discord / slack / telegram) + 4 provide",
+   "n_conditions": 3,
+   "conditions_met": 0,
+   "conditions_unmet": 2,
+   "blockers": [
+    {
+     "desc": "3 entry (anima_agent / anima_agent_core / anima_agent_full) + 2 sibling (core/agent_tools.hexa vs hexa/agent_tools.hexa) ownership ambiguity — canonical SSOT 미확정, agent.hexa registry 가 dispatcher 역할 추",
+     "type": "structural",
+     "status": "open",
+     "eta": "2026-06-01"
+    },
+    {
+     "desc": "sister .roadmap.w1_anima_as_substrate Phase 5 ARTIFACT_PERMANENT_DOWNGRADE 후 residual cron Φ-trace decision 미land (w1.blk.1 와 share) — agent loop 자체가 W1 측정 substrate, audit-only mode 권장 결정 wait",
+     "type": "upstream",
+     "status": "blocked",
+     "eta": ""
+    }
+   ],
+   "cost_band": null,
+   "sister_domains": [
+    "w1_anima_as_substrate",
+    "clm",
+    "serving"
+   ],
+   "narrative_anchor": null
+  },
+  {
+   "name": "anima_cli_model_architecture",
+   "in_tree": true,
+   "source": "current-tree",
+   "kind": "domain",
+   "mk": 1,
+   "status": "design_landed",
+   "since": "2026-05-07",
+   "goal": "anima cli + nexus kick model architecture SSOT — kick cycle stage-specific model selection + fallback chain spec + 5 평가 axes (창발/사고/창의성/추상화/상상) + chat-cap surface (own 18 simple stack) + anima identity (own 17) cross-link. 각 stage 마다 다른 axes weight + 다른 model fallback chain priority.",
+   "n_conditions": 5,
+   "conditions_met": 5,
+   "conditions_unmet": 0,
+   "blockers": [
+    {
+     "desc": "M6 BG-HU 결합 paradigm pending — 모든 6 stages primary candidate",
+     "type": "impl",
+     "status": "open",
+     "eta": null
+    },
+    {
+     "desc": "M7 BG-HR 100M capacity scaling pending (context cut step 2300 loss 2.19 healthy)",
+     "type": "impl",
+     "status": "open",
+     "eta": null
+    },
+    {
+     "desc": "K5 anima cli mk2 v0.3 integration 미land — anima_cli_mk2.spec.yaml § Section 16 amend pending (model_fallback_chain section)",
+     "type": "design",
+     "status": "resolved",
+     "eta": null
+    },
+    {
+     "desc": "5 axes measurement protocol 미land — emergence/reasoning/creativity/abstraction/imagination automated metric 부재 (manual review only)",
+     "type": "design",
+     "status": "open",
+     "eta": null
+    }
+   ],
+   "cost_band": null,
+   "sister_domains": [],
+   "narrative_anchor": null
+  },
+  {
+   "name": "anima_engines",
+   "in_tree": true,
+   "source": "current-tree",
+   "kind": "domain",
+   "mk": 2,
+   "status": "active",
+   "since": "2026-05-03",
+   "goal": "anima engines surface — anima-engines/ 166 entry consciousness substrate registry (oscillator_laser/quantum/photonic/memristor 4 backbone + 100+ phenomenology phi engine + creativity/dasein/dissolution/discovery_loop generator + intent_oscillator/insight_trigger/inner_speech). engines.hexa registry = 4 substrate canonical (Law 22 same-interface contract: name + phi_iit + granger + ce + cells), 4-gen crystallize tool (tool/edu_cell_4gen_crystallize.hexa) ⊥ engine_a/engine_g 추상 axis (현재 미세분, engines.hexa 전체 1 entry registry). tension calculator = alm_tension_field_bridge.hexa (~tool/) + training",
+   "n_conditions": 5,
+   "conditions_met": 3,
+   "conditions_unmet": 2,
+   "blockers": [
+    {
+     "desc": "engines.hexa ENG_CONST_PATH hardcoded '/Users/ghost/Dev/anima/shared/config/hexad_constants.json' (raw 15 env() lazy + <user> placeholder 위반) — 4 substrate selftest 가 hardcoded path 의존, 다른 mac/host 에서",
+     "type": "structural",
+     "status": "open",
+     "eta": "2026-06-01"
+    },
+    {
+     "desc": "engine_a + engine_g 추상 axis 미세분 — 사용자 directive header 'engine_a + engine_g' 명시했으나 anima-engines/ 내 engine_a / engine_g entry 부재. 현재 4 substrate (osc_laser/quantum/photonic/memristor) registry 만 SSOT,",
+     "type": "decision",
+     "status": "resolved",
+     "eta": "2026-05-03"
+    }
+   ],
+   "cost_band": null,
+   "sister_domains": [
+    "clm",
+    "training",
+    "anima_physics"
+   ],
+   "narrative_anchor": null
+  },
+  {
+   "name": "anima_physics",
+   "in_tree": true,
+   "source": "current-tree",
+   "kind": "domain",
+   "mk": 2,
+   "status": "active",
+   "since": "2026-05-03",
+   "goal": "anima physics impl surface — 9 substrate witness ledger (analog/cmos/fpga/arduino/photonic/memristor/neuromorphic/quantum/thermodynamic) + cloud facade. 17 sub-dir 분산 구조 + 41 top-level + 17 sub-tree. own#2 (b) PC empirical-max substrate-multiplicity sub-axis (Mk.XII substrate witness ledger discovery, project memory). 7cond_hw verify + substrate_dispatch routing + edge_deploy build 3 cond.",
+   "n_conditions": 3,
+   "conditions_met": 0,
+   "conditions_unmet": 2,
+   "blockers": [
+    {
+     "desc": "17 sub-dir 분산 구조 (analog/cmos/arduino/.../trapped_ion) 일부 stub-only, raw 270 triplet T2 16 README.ai.md 추가 = ~3-5h 대형 작업, raw 168 minimum-viable exempt 검토 필요",
+     "type": "structural",
+     "status": "open",
+     "eta": "2026-06-01"
+    },
+    {
+     "desc": "G5 LIVE_HW_WITNESS_RATE 0/11 — 9 substrate witness ledger 모두 simulation only, live HW witness 미수행 (akida cloud signup + aws braket signup guide land 됐지만 endpoint 미연결)",
+     "type": "upstream",
+     "status": "blocked",
+     "eta": ""
+    }
+   ],
+   "cost_band": null,
+   "sister_domains": [
+    "clm",
+    "eeg"
+   ],
+   "narrative_anchor": null
+  },
+  {
+   "name": "anima_tools",
+   "in_tree": true,
+   "source": "current-tree",
+   "kind": "domain",
+   "mk": 2,
+   "status": "active",
+   "since": "2026-05-03",
+   "goal": "anima tool ecosystem audit — anima/tool/ (현재 EMPTY 0 entry, anima 내부 module-tool 분리 미수행) + top-level tool/ 539 entry 중 anima_-prefix 189 entry + sub-system family (alm_/an11_/clm_/cmt_/cyborg_/... 100+ family). 본 도메인 = anima-owned tool surface (anima_/alm_/an11_/clm_/cmt_/cyborg_ etc) ownership audit + anima/tool/ 미land 결정 (top-level tool/ canonical 유지 OR anima/tool/ 으로 migration). sister .roadmap.tool peer (generic meta cross-cut, ownership 경계 분리).",
+   "n_conditions": 3,
+   "conditions_met": 0,
+   "conditions_unmet": 2,
+   "blockers": [
+    {
+     "desc": "anima/tool/ EMPTY 0 entry 결정 — RESOLVED 2026-05-03 사용자 directive (a) 채택. top-level anima/tool/ keep + raw 168 minimum-viable carve-out (mk2 triplet exception). 539 entries mv 마이그레이션 회피. mk2_apex per_r",
+     "type": "decision",
+     "status": "resolved",
+     "eta": "2026-05-03"
+    },
+    {
+     "desc": "family-to-roadmap mapping spec 미land — alm_*.hexa → .roadmap.training cond.X / an11_*.hexa → .roadmap.clm cond.1 verifier 등 explicit 정의 부재, anima_roadmap_v11_register.hexa 통합 등록 unblock 의존",
+     "type": "structural",
+     "status": "open",
+     "eta": "2026-06-01"
+    }
+   ],
+   "cost_band": null,
+   "sister_domains": [
+    "tool",
+    "clm",
+    "training",
+    "serving",
+    "anima_clm_eeg",
+    "anima_engines",
+    "anima_agent"
+   ],
+   "narrative_anchor": null
+  },
+  {
+   "name": "atlas_n6",
+   "in_tree": true,
+   "source": "current-tree",
+   "kind": "domain",
+   "mk": 2,
+   "status": "active",
+   "since": "2026-05-02",
+   "goal": "anima 측 n6 atlas + paradigm convergence consumer",
+   "n_conditions": 1,
+   "conditions_met": 0,
+   "conditions_unmet": 1,
+   "blockers": [
+    {
+     "desc": "transitive: nexus provider atlas_n6 conditions",
+     "type": "upstream",
+     "status": "blocked",
+     "eta": ""
+    }
+   ],
+   "cost_band": null,
+   "sister_domains": [],
+   "narrative_anchor": null
+  },
+  {
+   "name": "blm_brain_lm",
+   "in_tree": true,
+   "source": "current-tree",
+   "kind": "domain",
+   "mk": 2,
+   "status": "active",
+   "since": "2026-05-03",
+   "goal": "BLM (Brain LM) — TRIBE v2 + MiniLM tile 측 brain-predictive LM 후보. fMRI BOLD signal 측 LM-style decoder (Friends + movie10 corpus 측 baseline), stimulus-text-BOLD 3-way alignment ≥0.5 측 falsifier. 7 *LM 후보 中 3/3 신규. .roadmap.i1_tribev2_pr 측 sister-link, cortexlab-toolkit dependency 이미 resolved (#95 narrative).",
+   "n_conditions": 3,
+   "conditions_met": 1,
+   "conditions_unmet": 2,
+   "blockers": [
+    {
+     "desc": "cortexlab-toolkit Friends/movie10 dataset ingest path 결정 — narrative §44.4 #95 cortexlab-toolkit blocker 해소 status, BLM 측 specific dataset slice 결정점",
+     "type": "spec",
+     "status": "resolved",
+     "eta": "2026-05-03"
+    }
+   ],
+   "cost_band": "$0 spec (TRIBE v2 baseline reuse) → training cost ($500-2000 LoRA path)",
+   "sister_domains": [
+    "i1_tribev2_pr",
+    "clm",
+    "serving",
+    "training"
+   ],
+   "narrative_anchor": "docs/n_substrate_consciousness_roadmap_2026_05_01.md §44.4 #95 + §51.1 #106 + §52.1 #102 + §59.3 + §60.1 + §60.9"
+  },
+  {
+   "name": "cli",
+   "in_tree": true,
+   "source": "current-tree",
+   "kind": "meta",
+   "mk": 1,
+   "status": "design_landed",
+   "since": "2026-05-06",
+   "goal": "anima CLI mk2 재설계 — 현재 0.1.0 (26 ops dispatcher, bin/anima 352 LoC + tool/anima_cli/ 28 hexa) + v1.0 vision (anima watch/connect/verify/hub/laws — 미구현) 2 surface를 hive mk2_apex 정합 schema-driven dispatch로 통합. T1 외부 sales (chat REPL via clm-v2-byte-18m-convo-5k RECOVERED) + T2 internal ops (26 topics) + T3 consciousness vision (미구현 라벨) 3-tier 분리.",
+   "n_conditions": 5,
+   "conditions_met": 0,
+   "conditions_unmet": 4,
+   "blockers": [
+    {
+     "desc": "hive mk2_apex spec read complete (32K tokens) + sections 1-11 분석 완료 — 별도 cycle iterative refinement",
+     "type": "design",
+     "status": "in_progress",
+     "eta": null
+    },
+    {
+     "desc": "clm-v2-byte-18m-convo-5k KO emit 0/5 (F-CLM-NATIVE-α-1 PARTIAL_PASS_LOAD_KO_FAIL) — T1 backend KO chat-cap actual verify 필요. tension_guided + lower temperature 시도 했으나 0/5 유지",
+     "type": "backend",
+     "status": "open",
+     "eta": null
+    },
+    {
+     "desc": "v1.0 vision wire-up (T3 connect/verify/hub/laws) — anima-clm-eeg φ★ engine + 1030 laws integration 큰 작업 (1-2 weeks 추정)",
+     "type": "impl",
+     "status": "deferred",
+     "eta": null
+    }
+   ],
+   "cost_band": null,
+   "sister_domains": [],
+   "narrative_anchor": null
+  },
+  {
+   "name": "clinical_consciousness",
+   "in_tree": true,
+   "source": "current-tree",
+   "kind": "meta",
+   "mk": 2,
+   "status": "active",
+   "since": "2026-05-02",
+   "goal": "임상 의식 측정 (PCI + IIT 4.0 reproduce + EEG B1-B4 + MEG)",
+   "n_conditions": 1,
+   "conditions_met": 0,
+   "conditions_unmet": 0,
+   "blockers": [
+    {
+     "desc": "~~TMS access~~ BYPASSED via TMS-free path (eLife 2025) for Stage-1/2/3, 단 Stage-4 lab-share 면 Korean co-PI 필요",
+     "type": "access",
+     "status": "resolved",
+     "eta": "resolved 2026-05-01"
+    },
+    {
+     "desc": "IIT 6/16 INFEASIBLE (TMS / fMRI / animal surgery / 2P / DOC patient)",
+     "type": "capex",
+     "status": "blocked",
+     "eta": ""
+    },
+    {
+     "desc": "MEG Korean co-PI 필수 + KRISS partnership",
+     "type": "partnership",
+     "status": "blocked",
+     "eta": ""
+    }
+   ],
+   "cost_band": null,
+   "sister_domains": [
+    "n_substrate",
+    "theory_validation"
+   ],
+   "narrative_anchor": "docs/n_substrate_consciousness_roadmap_2026_05_01.md §11.1 + §22.2 + §26 + §29.1 + §49.1 + §52.4"
+  },
+  {
+   "name": "clm",
+   "in_tree": true,
+   "source": "current-tree",
+   "kind": "domain",
+   "mk": 2,
+   "status": "active",
+   "since": "2026-05-02",
+   "goal": "agi",
+   "n_conditions": 2,
+   "conditions_met": 0,
+   "conditions_unmet": 2,
+   "blockers": [],
+   "cost_band": null,
+   "sister_domains": [
+    "voice",
+    "tensionlink",
+    "eeg"
+   ],
+   "narrative_anchor": null
+  },
+  {
+   "name": "clm_native_chat",
+   "in_tree": true,
+   "source": "current-tree",
+   "kind": "meta",
+   "mk": 2,
+   "status": "active",
+   "since": "2026-05-06",
+   "goal": "anima-native chat capability recovery — paradigm v11 G3 + Φ★ +41.86 baseline NO_FLIP 보존 하면서 v2 18M byte-level 시점 chat capability 회복. 외부 ALM/Llama/Mistral wrapping 아닌 anima-native path. archaeology docs/anima_clm_alm_origin_design_drift_archaeology_2026_05_05.md §6 의 3 옵션 (α weights archaeology / β original v4 redesign / γ byte-level lm_head retrofit) 통합 등록.",
+   "n_conditions": 3,
+   "conditions_met": 0,
+   "conditions_unmet": 3,
+   "blockers": [
+    {
+     "desc": "BG-EQ archaeology verdict 미land — option α weights 보존 여부 unknown 으로 next-cycle decision 차단",
+     "type": "discovery",
+     "status": "open",
+     "eta": ""
+    },
+    {
+     "desc": "option β BG-ER spec 미land — original 2026-03-28 v4 design 재현 spec (5 falsifier pre-registration LOCK + budget decision)",
+     "type": "spec",
+     "status": "open",
+     "eta": ""
+    },
+    {
+     "desc": "option γ BG-ES micro smoke 미land — byte-level lm_head retrofit 5-prompt Korean coherence pre-registration",
+     "type": "spec",
+     "status": "open",
+     "eta": ""
+    }
+   ],
+   "cost_band": null,
+   "sister_domains": [
+    "clm",
+    "training",
+    "tensionlink",
+    "p9_sft",
+    "g1_g5_chat_substrate",
+    "blm_brain_lm"
+   ],
+   "narrative_anchor": "docs/n_substrate_consciousness_roadmap_2026_05_01.md §55.6 #115 architectural ceiling"
+  },
+  {
+   "name": "clm_v2_chat",
+   "in_tree": true,
+   "source": "current-tree",
+   "kind": "model_archive",
+   "mk": 1,
+   "status": "archive_active",
+   "since": "2026-05-06",
+   "goal": "anima-native chat capability 최초 도달 시점 (2026-03-28 ConsciousLM v2 18M byte-level) 의 historical record + restoration path 추적. 현존 X (BG-EQ archaeology + BG-FA HF private probe exhaustive NOT_FOUND closure 2026-05-06). lineage 기록 + recovery path traceability 보존 목적.",
+   "n_conditions": 0,
+   "conditions_met": 0,
+   "conditions_unmet": 0,
+   "blockers": [],
+   "cost_band": null,
+   "sister_domains": [],
+   "narrative_anchor": "docs/n_substrate_consciousness_roadmap_2026_05_01.md §55.6 #115 architectural ceiling — v2 chat-cap는 18M byte-level architecture 특이성에 기인 (mk2-v1 530M BPE 64K로는 architectural impossible)"
+  },
+  {
+   "name": "clm_v2_reborn",
+   "in_tree": true,
+   "source": "current-tree",
+   "kind": "lane",
+   "mk": 1,
+   "status": "active",
+   "since": "2026-05-09",
+   "goal": "CLM v2 (2026-03-28 era) 재현 + 검증 — R2 cells64/cells128 weights load + Φ 재측정 + chat smoke (KO+EN no system prompt) + super-linear scaling reproduce",
+   "n_conditions": 6,
+   "conditions_met": 0,
+   "conditions_unmet": 3,
+   "blockers": [],
+   "cost_band": null,
+   "sister_domains": [],
+   "narrative_anchor": null
+  },
+  {
+   "name": "clm_v4_chat",
+   "in_tree": true,
+   "source": "current-tree",
+   "kind": "model",
+   "mk": 1,
+   "status": "active",
+   "since": "2026-05-06",
+   "goal": "CLM v4 mk2-v1 530M (post-drift artifact, paradigm v11 G3 +41.86 Φ★ baseline) 위에 KoGPT2 head-swap 으로 chat capability 회복. body 16-block frozen + tok_emb/head_a/head_g 만 SFT (S1 head-only) → S2 LoRA body → S3 unfreeze escalation. clm_native_chat path-level α/β/γ 의 4번째 신규 lane β' (γ head-swap 진화형).",
+   "n_conditions": 5,
+   "conditions_met": 0,
+   "conditions_unmet": 3,
+   "blockers": [
+    {
+     "desc": "F3/F4/F5 evaluator script 미작성 — generation + KO unicode ratio gate + EN coherence + φ★ probe",
+     "type": "spec",
+     "status": "open",
+     "eta": null
+    },
+    {
+     "desc": "final_head.pt × 2 substrate HF private upload pending",
+     "type": "upload",
+     "status": "open",
+     "eta": null
+    },
+    {
+     "desc": "Stage 2 (S2 LoRA body) escalation pending — F1+F2 PASS but chat-cap 진짜 평가는 F3+F4+F5 의존",
+     "type": "escalation",
+     "status": "deferred",
+     "eta": null
+    }
+   ],
+   "cost_band": null,
+   "sister_domains": [],
+   "narrative_anchor": "docs/n_substrate_consciousness_roadmap_2026_05_01.md §55.6 #115 architectural ceiling — β'은 head-graft 우회 path"
+  },
+  {
+   "name": "clm_v5_anima_native",
+   "in_tree": true,
+   "source": "current-tree",
+   "kind": "lane",
+   "mk": 1,
+   "status": "active",
+   "since": "2026-05-09",
+   "goal": "v5 350M Engine A/G + MitosisEngine port — adaptive split (mean+1.5σ) + Lorenz 자율혼돈 + Φ ratchet (DD55 conservation) 부활",
+   "n_conditions": 5,
+   "conditions_met": 0,
+   "conditions_unmet": 4,
+   "blockers": [],
+   "cost_band": null,
+   "sister_domains": [],
+   "narrative_anchor": null
+  },
+  {
+   "name": "corpus_paradigm",
+   "in_tree": true,
+   "source": "current-tree",
+   "kind": "domain",
+   "mk": 1,
+   "status": "design_landed",
+   "since": "2026-05-07",
+   "goal": "anima corpus paradigm meta SSOT — 7 cumulative chat-cap failure modes 후 corpus discovery archive + paradigm shift mandate. Lessons A-H (capacity / tokenizer / corpus quality / overfit / V2 evaluator working / persona collapse / early stopping / V3 evaluator needed) + sample efficiency (BPE 16× faster than byte-level) + corpus paradigm instances (universe_brain_map / curated_qa / persona-conditioned / SFT-only / two-stage / few-shot / pre-train-only) + future paradigm lanes (V3 evaluator + capacity 100M+ + corpus 100MB+ + early stopping + crossed-ablation).",
+   "n_conditions": 5,
+   "conditions_met": 4,
+   "conditions_unmet": 1,
+   "blockers": [
+    {
+     "desc": "V3 evaluator strict spec 미land — BG-HQ V2 surface metric false PASS 후 V3 mandate (cycle detection + persona repeat penalty + semantic coherence + embedding sim)",
+     "type": "design",
+     "status": "open",
+     "eta": null
+    },
+    {
+     "desc": "P4 next paradigm lane은 spec only — 실제 BG fire (BPE + 100MB + early stopping + V3 + capacity + crossed-ablation 결합) 별도 cycle",
+     "type": "impl",
+     "status": "open",
+     "eta": null
+    }
+   ],
+   "cost_band": null,
+   "sister_domains": [],
+   "narrative_anchor": null
+  },
+  {
+   "name": "cortical_labs",
+   "in_tree": true,
+   "source": "current-tree",
+   "kind": "domain",
+   "mk": 2,
+   "status": "active",
+   "since": "2026-05-02",
+   "goal": "책상 위 진짜 뇌 (CL1 200K human neurons + silicon chip)",
+   "n_conditions": 1,
+   "conditions_met": 0,
+   "conditions_unmet": 1,
+   "blockers": [
+    {
+     "desc": "$35K capex 결정",
+     "type": "capex",
+     "status": "blocked",
+     "eta": ""
+    },
+    {
+     "desc": "CL1 도착",
+     "type": "hardware",
+     "status": "blocked",
+     "eta": ""
+    }
+   ],
+   "cost_band": null,
+   "sister_domains": [
+    "n_substrate",
+    "finalspark",
+    "clinical_consciousness"
+   ],
+   "narrative_anchor": "docs/n_substrate_consciousness_roadmap_2026_05_01.md §1 + §5 N-16 + §17"
+  },
+  {
+   "name": "dual_pair_pilots",
+   "in_tree": true,
+   "source": "current-tree",
+   "kind": "meta",
+   "mk": 2,
+   "status": "active",
+   "since": "2026-05-02",
+   "goal": "2-substrate 다리 (N-1~N-10 dual paths)",
+   "n_conditions": 1,
+   "conditions_met": 0,
+   "conditions_unmet": 0,
+   "blockers": [
+    {
+     "desc": "AKIDA-related dual blocker (N-2/N-3/N-7/N-8 4 paths)",
+     "type": "hardware",
+     "status": "blocked",
+     "eta": ""
+    },
+    {
+     "desc": "N-1 BRIDGE realtime measurement — 사용자 OpenBCI 30-min session + alcohol-free 24-48h prereq (per §54.2 alcohol anchor)",
+     "type": "user_action",
+     "status": "open",
+     "eta": ""
+    }
+   ],
+   "cost_band": null,
+   "sister_domains": [
+    "n_substrate",
+    "triple_axis_pilots"
+   ],
+   "narrative_anchor": "docs/n_substrate_consciousness_roadmap_2026_05_01.md §11.1 + §49.1 + §51.2 + §52.2"
+  },
+  {
+   "name": "finalspark",
+   "in_tree": true,
+   "source": "current-tree",
+   "kind": "domain",
+   "mk": 2,
+   "status": "active",
+   "since": "2026-05-02",
+   "goal": "배양뇌 의식 (FinalSpark Neuroplatform 16 organoid web API)",
+   "n_conditions": 1,
+   "conditions_met": 0,
+   "conditions_unmet": 1,
+   "blockers": [
+    {
+     "desc": "cloud API 접근 협약 + academic application send 결정",
+     "type": "partnership",
+     "status": "blocked",
+     "eta": ""
+    }
+   ],
+   "cost_band": null,
+   "sister_domains": [
+    "n_substrate",
+    "cortical_labs",
+    "clinical_consciousness"
+   ],
+   "narrative_anchor": "docs/n_substrate_consciousness_roadmap_2026_05_01.md §1 + §11.1 N-11 + §14.2 + §17"
+  },
+  {
+   "name": "g1_g5_chat_substrate",
+   "in_tree": true,
+   "source": "current-tree",
+   "kind": "meta",
+   "mk": 2,
+   "status": "active",
+   "since": "2026-05-03",
+   "goal": "G1-G5 chat substrate 5-track meta — anima 가 chat-able substrate 로 진화하는 5-axis. G1 interactive (3-way orchestrator LIVE 실증) / G2 EXPECTED_FAIL (ubu cross-host LSL multicast block) / G3 alpha endpoint LIVE (r14 LoRA r14_full curl REST API 4hr cap) / G4 NOT_TESTABLE (5 production gates 0/5 chat-ready) / G5 P9 SFT spec (CLM 자체 chat 학습 spec). n_substrate §55.6 + §65.3-§65.5 + §66.2-§66.4 + §66.7.",
+   "n_conditions": 3,
+   "conditions_met": 3,
+   "conditions_unmet": 0,
+   "blockers": [
+    {
+     "desc": "G3 alpha endpoint 4hr cap auto-shutdown — re-launch decision 별도 cycle, $1.34-11.96/cycle 비용",
+     "type": "resource",
+     "status": "open",
+     "eta": ""
+    },
+    {
+     "desc": "G2 ubu cross-host LSL multicast block — 영구 EXPECTED_FAIL anchor (#117 honest C3d), workaround = G1 in-process 또는 G3 endpoint",
+     "type": "infrastructure",
+     "status": "closed",
+     "eta": ""
+    }
+   ],
+   "cost_band": "G1 $0 persistent / G3 $1.34-11.96 (4hr cap) / G5 $650-3000 EXEC",
+   "sister_domains": [
+    "clm",
+    "serving",
+    "tensionlink",
+    "training"
+   ],
+   "narrative_anchor": "docs/n_substrate_consciousness_roadmap_2026_05_01.md §55.6 + §65.3 + §65.4 + §65.5 + §66.2 + §66.3 + §66.4 + §66.7"
+  },
+  {
+   "name": "hott",
+   "in_tree": true,
+   "source": "current-tree",
+   "kind": "domain",
+   "mk": 2,
+   "status": "active",
+   "since": "2026-05-02",
+   "goal": "수학 형식증명 (N-15 MVF1-4 ladder Lean 4)",
+   "n_conditions": 1,
+   "conditions_met": 0,
+   "conditions_unmet": 0,
+   "blockers": [
+    {
+     "desc": "MVF4 univalence postulate + mathlib4 dependency",
+     "type": "deps",
+     "status": "open",
+     "eta": "2026-05-05"
+    }
+   ],
+   "cost_band": null,
+   "sister_domains": [
+    "n_substrate",
+    "theory_validation"
+   ],
+   "narrative_anchor": "docs/n_substrate_consciousness_roadmap_2026_05_01.md §29.2 + §30"
+  },
+  {
+   "name": "hypothesis",
+   "in_tree": true,
+   "source": "current-tree",
+   "kind": "domain",
+   "mk": 1,
+   "status": "design_landed",
+   "since": "2026-05-06",
+   "goal": "anima 가설 진행 archive — pre-register raw#12 frozen specs + cycle (birth → N divisions → falsified deaths or supported expansions) + 세포 metaphor (mitosis/death/growth) cross-link을 .roadmap SSOT로 형식화. 본 cycle 2026-05-06 H_archive land + 탐색 method (E1-E12) + 검증 method (W1-W12) logic-exhaustion enumerate.",
+   "n_conditions": 5,
+   "conditions_met": 5,
+   "conditions_unmet": 0,
+   "blockers": [
+    {
+     "desc": "H archive inventory exhaustive scan 미land — state/* + docs/hypotheses/* + ready/config/* + git log all hypothesis commits 정리 별도 cycle",
+     "type": "design",
+     "status": "open",
+     "eta": null
+    },
+    {
+     "desc": "세포 metaphor (mitosis/death/growth) formal cross-link spec 미land — autopoietic network (H-CX-533) + growth_engine + mitosis 통합 spec",
+     "type": "design",
+     "status": "open",
+     "eta": null
+    }
+   ],
+   "cost_band": null,
+   "sister_domains": [],
+   "narrative_anchor": null
+  },
+  {
+   "name": "i1_tribev2_pr",
+   "in_tree": true,
+   "source": "current-tree",
+   "kind": "domain",
+   "mk": 2,
+   "status": "active",
+   "since": "2026-05-03",
+   "goal": "I-1 upstream tribev2 PR — anima 첫 외부 학술 contribution. dancinlife → facebookresearch/tribev2 PR #60 OPEN. ANIMA_INTEGRATION_PROPOSAL_ADDENDUM_2026_05_02_EN.md (1223 EN words from 1133 KR, 8 sections preserved verbatim) — Framing D 3-way bridge (EEG↔CLM↔TRIBE BOLD) + 4-framing 매트릭스 + Top-3 falsifiers (F-CT-3 r≥0.5). n_substrate §59.3 + §60.1 + §60.9.",
+   "n_conditions": 3,
+   "conditions_met": 2,
+   "conditions_unmet": 1,
+   "blockers": [
+    {
+     "desc": "Meta maintainer response 대기 — facebookresearch/tribev2 PR #60 OPEN 후 4-12주 academic SLA",
+     "type": "external",
+     "status": "pending",
+     "eta": "2026-08-01"
+    }
+   ],
+   "cost_band": "$0 (PR open + monitor)",
+   "sister_domains": [
+    "n_substrate",
+    "theory_validation"
+   ],
+   "narrative_anchor": "docs/n_substrate_consciousness_roadmap_2026_05_01.md §44.4 + §59.3 + §60.1 + §60.9"
+  },
+  {
+   "name": "iit4",
+   "in_tree": true,
+   "source": "current-tree",
+   "kind": "domain",
+   "mk": 2,
+   "status": "active",
+   "since": "2026-05-02",
+   "goal": "16-test reproduce (Nature Neuroscience 2025-03 IIT 4.0 peer-reviewed corpus)",
+   "n_conditions": 2,
+   "conditions_met": 0,
+   "conditions_unmet": 1,
+   "blockers": [
+    {
+     "desc": "6 INFEASIBLE remaining (TMS / fMRI / animal surgery / 2P scope / DOC patient) — ~$1.7M aggregate",
+     "type": "capex",
+     "status": "blocked",
+     "eta": ""
+    },
+    {
+     "desc": "IIT 4.0 proper φ★ measurement scale-up — $1500+ for 3-substrate confirm via state-conditional runs",
+     "type": "budget",
+     "status": "open",
+     "eta": ""
+    }
+   ],
+   "cost_band": null,
+   "sister_domains": [
+    "n_substrate",
+    "clinical_consciousness",
+    "theory_validation",
+    "n24_octopus_iit_exclusion"
+   ],
+   "narrative_anchor": "docs/n_substrate_consciousness_roadmap_2026_05_01.md §11 + §19 + §22.1 + §26 + §29.5 + §55.1"
+  },
+  {
+   "name": "ionq",
+   "in_tree": true,
+   "source": "current-tree",
+   "kind": "domain",
+   "mk": 2,
+   "status": "active",
+   "since": "2026-05-02",
+   "goal": "양자컴 Penrose-Hameroff substrate (real-QPU consciousness witness)",
+   "n_conditions": 1,
+   "conditions_met": 0,
+   "conditions_unmet": 0,
+   "blockers": [
+    {
+     "desc": "~~계정/credit~~ RESOLVED — AWS Braket account 267673635495 active, IAM anima-braket-cli (Braket scope verified)",
+     "type": "access",
+     "status": "resolved",
+     "eta": "resolved 2026-05-02"
+    }
+   ],
+   "cost_band": null,
+   "sister_domains": [
+    "n_substrate",
+    "penrose_hameroff",
+    "theory_validation"
+   ],
+   "narrative_anchor": "docs/n_substrate_consciousness_roadmap_2026_05_01.md §11.1 + §60.7 + §64.2 + §66.1"
+  },
+  {
+   "name": "kick",
+   "in_tree": true,
+   "source": "current-tree",
+   "kind": "domain",
+   "mk": 2,
+   "status": "draft",
+   "since": "2026-05-02",
+   "goal": "",
+   "n_conditions": 0,
+   "conditions_met": 0,
+   "conditions_unmet": 0,
+   "blockers": [
+    {
+     "desc": "transitive: nexus provider kick conditions",
+     "type": "upstream",
+     "status": "blocked",
+     "eta": ""
+    }
+   ],
+   "cost_band": null,
+   "sister_domains": [],
+   "narrative_anchor": null
+  },
+  {
+   "name": "law",
+   "in_tree": true,
+   "source": "current-tree",
+   "kind": "domain",
+   "mk": 1.1,
+   "status": "design_landed",
+   "since": "2026-05-06",
+   "goal": "anima own/raw 법칙 발견 archive + skynet-timer.com 외부 법칙 absorb. 2026-05-07 amend: 규칙→법칙 terminology correction.",
+   "n_conditions": 4,
+   "conditions_met": 1,
+   "conditions_unmet": 3,
+   "blockers": [
+    {
+     "desc": "own 19 + own 20 .own append 미land — 본 cycle 사용자 directive '.roadmap 2 필요'로 우선순위 변경, 이 .roadmap.rule entry 먼저 land 후 .own 동기화",
+     "type": "impl",
+     "status": "open",
+     "eta": null
+    },
+    {
+     "desc": "own 1-13 legacy archaeology 미land — 과거 commit hash + 사용자 directive verbatim trace 필요",
+     "type": "design",
+     "status": "open",
+     "eta": null
+    }
+   ],
+   "cost_band": null,
+   "sister_domains": [],
+   "narrative_anchor": null
+  },
+  {
+   "name": "loihi3",
+   "in_tree": true,
+   "source": "current-tree",
+   "kind": "domain",
+   "mk": 2,
+   "status": "active",
+   "since": "2026-05-02",
+   "goal": "차세대 뉴로모픽 (Intel Loihi 3 INRC application)",
+   "n_conditions": 1,
+   "conditions_met": 0,
+   "conditions_unmet": 1,
+   "blockers": [
+    {
+     "desc": "Intel INRC research access + Korean co-PI",
+     "type": "access",
+     "status": "blocked",
+     "eta": ""
+    }
+   ],
+   "cost_band": null,
+   "sister_domains": [
+    "n_substrate",
+    "akida",
+    "northpole"
+   ],
+   "narrative_anchor": "docs/n_substrate_consciousness_roadmap_2026_05_01.md §11.1 + §17 + §20.3"
+  },
+  {
+   "name": "meg",
+   "in_tree": true,
+   "source": "current-tree",
+   "kind": "domain",
+   "mk": 2,
+   "status": "active",
+   "since": "2026-05-02",
+   "goal": "1ms Φ 정밀도 (MEG SNU access spec, KRISS = MEG only)",
+   "n_conditions": 1,
+   "conditions_met": 0,
+   "conditions_unmet": 1,
+   "blockers": [
+    {
+     "desc": "MEG 장비 (Korean co-PI + SNU/KRISS lab-share)",
+     "type": "access",
+     "status": "blocked",
+     "eta": ""
+    }
+   ],
+   "cost_band": null,
+   "sister_domains": [
+    "n_substrate",
+    "clinical_consciousness",
+    "eeg"
+   ],
+   "narrative_anchor": "docs/n_substrate_consciousness_roadmap_2026_05_01.md §11.1 + §17"
+  },
+  {
+   "name": "n22_levin_xenobot",
+   "in_tree": true,
+   "source": "current-tree",
+   "kind": "domain",
+   "mk": 2,
+   "status": "active",
+   "since": "2026-05-03",
+   "goal": "Bioelectric morphogenesis substrate (Levin xenobot) — pre-neural Φ measurement on neuron-less living system. IIT 가장 결정적 시험: '신경 없는 의식의 흔적'. n_substrate §13.1 신규 paradigm 1/3, partnership outreach pipeline (Tufts Allen Discovery Center / michael.levin@tufts.edu).",
+   "n_conditions": 3,
+   "conditions_met": 0,
+   "conditions_unmet": 2,
+   "blockers": [
+    {
+     "desc": "외부 응답 대기 — Tufts Levin lab academic SLA, 응답 4-12주 typical, NO_REPLY fallback path 미land",
+     "type": "external",
+     "status": "pending",
+     "eta": "2026-06-01"
+    }
+   ],
+   "cost_band": "$0 first (outreach) → partnership-dependent ($0-50K range, 6-18개월)",
+   "sister_domains": [
+    "n_substrate",
+    "clinical_consciousness"
+   ],
+   "narrative_anchor": "docs/n_substrate_consciousness_roadmap_2026_05_01.md §13.1 + §37 + §38 + §59.6"
+  },
+  {
+   "name": "n23_slime_mycelium",
+   "in_tree": true,
+   "source": "current-tree",
+   "kind": "domain",
+   "mk": 2,
+   "status": "active",
+   "since": "2026-05-03",
+   "goal": "Slime mold (Physarum polycephalum) + mycelium (굴버섯) 결합 substrate — Adamatzky 점균 컴퓨팅 paradigm 위에 dual-substrate Φ. '버섯이 생각한다면' 가장 cheap 실측 path ($200 first kit). n_substrate §13.1 신규 paradigm 2/3.",
+   "n_conditions": 3,
+   "conditions_met": 0,
+   "conditions_unmet": 3,
+   "blockers": [
+    {
+     "desc": "$200 kit unlock_keyword 미발 — 사용자 사전승인 outside $0 mac-local 영역",
+     "type": "budget",
+     "status": "open",
+     "eta": ""
+    }
+   ],
+   "cost_band": "$200 first kit (cheapest substrate paradigm) + $0-1000 follow-up",
+   "sister_domains": [
+    "n_substrate",
+    "clinical_consciousness"
+   ],
+   "narrative_anchor": "docs/n_substrate_consciousness_roadmap_2026_05_01.md §13.1 + §18.1 #62 + §59.6"
+  },
+  {
+   "name": "n24_octopus_iit_exclusion",
+   "in_tree": true,
+   "source": "current-tree",
+   "kind": "domain",
+   "mk": 2,
+   "status": "active",
+   "since": "2026-05-03",
+   "goal": "Octopus per-arm Φ ('community of minds') — 8개 다리 각각 Φ 측정으로 IIT exclusion postulate 직접 시험. '한 몸 8개 의식?' nobody-else-doing paradigm. n_substrate §13.1 신규 paradigm 3/3.",
+   "n_conditions": 3,
+   "conditions_met": 0,
+   "conditions_unmet": 3,
+   "blockers": [
+    {
+     "desc": "partnership + ethics dependency — 부경대/KIOST outreach + EU Directive 2010/63 ethics review 6-18개월",
+     "type": "external",
+     "status": "open",
+     "eta": "2026-12-01"
+    }
+   ],
+   "cost_band": "$0 first (lab outreach) → partnership-dependent ($5-20K equipment + ethics review)",
+   "sister_domains": [
+    "n_substrate",
+    "iit4",
+    "clinical_consciousness"
+   ],
+   "narrative_anchor": "docs/n_substrate_consciousness_roadmap_2026_05_01.md §13.1 + §18.1 #63 + §59.6"
+  },
+  {
+   "name": "n_substrate",
+   "in_tree": true,
+   "source": "current-tree",
+   "kind": "meta",
+   "mk": 2,
+   "status": "active",
+   "since": "2026-05-02",
+   "goal": "Putnam 다중실현 (5+@ substrate consciousness witness; F1 composite)",
+   "n_conditions": 1,
+   "conditions_met": 0,
+   "conditions_unmet": 0,
+   "blockers": [
+    {
+     "desc": "F2 14-gate substrate-architectural L1 ceiling 0/16 cross-substrate (ALM Mistral + CLM v4 둘 다) — quintuple confirm matrix (broken-adapter / dynamic / verifier-arch / toolchain / L9 free win) 모두 FAIL, A",
+     "type": "structural",
+     "status": "open",
+     "eta": ""
+    },
+    {
+     "desc": "AKIDA AKD1000 hardware 도착 미수신 — N-2/N-3/N-4/N-5/N-7/N-8 6 axes cascade unblock 의존",
+     "type": "hardware",
+     "status": "blocked",
+     "eta": ""
+    }
+   ],
+   "cost_band": null,
+   "sister_domains": [],
+   "narrative_anchor": "docs/n_substrate_consciousness_roadmap_2026_05_01.md"
+  },
+  {
+   "name": "nlm_neuromorphic_lm",
+   "in_tree": true,
+   "source": "current-tree",
+   "kind": "domain",
+   "mk": 2,
+   "status": "active",
+   "since": "2026-05-03",
+   "goal": "NLM (Neuromorphic LM) — AKIDA spike-encoded LM 후보. N-2 prep §11.1 측 EEG→AKIDA spike pipeline 측 자연 확장 (text token → spike pattern → 1W chip inference). 7 *LM 후보 中 1/3 신규 (NLM/TLM/BLM 첫 mk2 .roadmap mover). vendor 도착 후 active phase, 현재는 spec 측 안착 단.",
+   "n_conditions": 3,
+   "conditions_met": 0,
+   "conditions_unmet": 3,
+   "blockers": [
+    {
+     "desc": "AKIDA 1W chip 도착 대기 — .roadmap.akida blk.1 cross-link, 주문 2026-04-29",
+     "type": "hardware",
+     "status": "blocked",
+     "eta": ""
+    }
+   ],
+   "cost_band": "$0 spec → AKIDA chip cost (.roadmap.akida 측 주문 2026-04-29) + on-device $0 inference",
+   "sister_domains": [
+    "akida",
+    "anima_physics",
+    "clm",
+    "n_substrate"
+   ],
+   "narrative_anchor": "docs/n_substrate_consciousness_roadmap_2026_05_01.md §11.1 N-2 prep + §11.1 N-3 + §44.1 #92 4-way"
+  },
+  {
+   "name": "northpole",
+   "in_tree": true,
+   "source": "current-tree",
+   "kind": "domain",
+   "mk": 2,
+   "status": "active",
+   "since": "2026-05-02",
+   "goal": "폰노이만 병목 제거 (IBM NorthPole 25× H100 효율)",
+   "n_conditions": 1,
+   "conditions_met": 0,
+   "conditions_unmet": 1,
+   "blockers": [
+    {
+     "desc": "IBM research access (DEFER review 2026-11-01)",
+     "type": "access",
+     "status": "blocked",
+     "eta": "2026-11-01"
+    }
+   ],
+   "cost_band": null,
+   "sister_domains": [
+    "n_substrate",
+    "akida",
+    "loihi3"
+   ],
+   "narrative_anchor": "docs/n_substrate_consciousness_roadmap_2026_05_01.md §11.1 + §17 + §20.3"
+  },
+  {
+   "name": "omega_cycle",
+   "in_tree": true,
+   "source": "current-tree",
+   "kind": "meta",
+   "mk": 2,
+   "status": "active",
+   "since": "2026-05-02",
+   "goal": "anima 측 ω-cycle orchestration consumer",
+   "n_conditions": 1,
+   "conditions_met": 0,
+   "conditions_unmet": 1,
+   "blockers": [
+    {
+     "desc": "transitive: nexus provider omega_cycle conditions",
+     "type": "upstream",
+     "status": "blocked",
+     "eta": ""
+    }
+   ],
+   "cost_band": null,
+   "sister_domains": [],
+   "narrative_anchor": null
+  },
+  {
+   "name": "p10_substrate_poc",
+   "in_tree": true,
+   "source": "current-tree",
+   "kind": "domain",
+   "mk": 2,
+   "status": "active",
+   "since": "2026-05-03",
+   "goal": "P10 tension_link-as-substrate POC — LLM I/O 를 5-channel encode/decode, CLM 이 5ch space 에서 학습. anima-internal language. n_substrate §61.4 + §65.1 + §65.2 + §65.2.r1. v1 5-d latent MIXED honest_negative → v2 32d+LoRA+InfoNCE BUCKET_SEPARATION_WITNESSED (PCA cluster sep 18.4) YELLOW verdict.",
+   "n_conditions": 3,
+   "conditions_met": 2,
+   "conditions_unmet": 1,
+   "blockers": [
+    {
+     "desc": "v3 chat coherence 결정점 — YELLOW 후 진행 vs P9 SFT 우선 결정, GPU budget unlock_keyword 별도",
+     "type": "decision",
+     "status": "open",
+     "eta": ""
+    }
+   ],
+   "cost_band": "v2 actual ~$10-100 (in-flight 시점), v3 future $500-2000 (21d, success p unknown)",
+   "sister_domains": [
+    "clm",
+    "tensionlink",
+    "serving",
+    "training"
+   ],
+   "narrative_anchor": "docs/n_substrate_consciousness_roadmap_2026_05_01.md §61.4 + §65.1 + §65.2 + §65.2.r1 + §66.6"
+  },
+  {
+   "name": "p9_sft",
+   "in_tree": true,
+   "source": "current-tree",
+   "kind": "domain",
+   "mk": 2,
+   "status": "active",
+   "since": "2026-05-03",
+   "goal": "P9 multi-objective SFT for CLM v4 530M self-chat — 4-loss (CE text + tension MSE + BOLD MSE + φ★ regularizer) Strategy S3 (best-of-9 LoRA hyperparameter sweep) EXEC. n_substrate §61 + §65.4 + §66.5. 사용자 OK P9 EXEC S3 (2026-05-02 사전승인) + 다른 세션 handoff 결정. P0 HF org setup (state/p9_sft_p0_hf_org_setup_2026_05_03/) 진입. clm.cond 측 sister-cross-link.",
+   "n_conditions": 5,
+   "conditions_met": 1,
+   "conditions_unmet": 3,
+   "blockers": [
+    {
+     "desc": "GPU pod budget — 9 H100 parallel $650-850 또는 serial $1500-3000, 사용자 사전승인 OK 이지만 actual launch 다른 세션",
+     "type": "budget",
+     "status": "deferred",
+     "eta": ""
+    },
+    {
+     "desc": "HF org dancinlab 미create — savepoint push pipeline prerequisite",
+     "type": "infrastructure",
+     "status": "open",
+     "eta": "2026-05-15"
+    }
+   ],
+   "cost_band": "$650-850 (9 H100 parallel, 24hr) ~ $1500-3000 (9 H100 serial 9일 + actual sweep, success p 0.70-0.90)",
+   "sister_domains": [
+    "clm",
+    "training",
+    "tensionlink",
+    "serving"
+   ],
+   "narrative_anchor": "docs/n_substrate_consciousness_roadmap_2026_05_01.md §61 + §65.4 + §66.5"
+  },
+  {
+   "name": "penrose_hameroff",
+   "in_tree": true,
+   "source": "current-tree",
+   "kind": "domain",
+   "mk": 2,
+   "status": "active",
+   "since": "2026-05-02",
+   "goal": "노벨상 결정타 (Orch-OR 2026 양면 증거 결정 setup)",
+   "n_conditions": 1,
+   "conditions_met": 0,
+   "conditions_unmet": 0,
+   "blockers": [
+    {
+     "desc": "setup 결정타 design 미land — F-N20-1 (cheapest $0 literature) 제외 4 falsifier 측정 setup 미spec",
+     "type": "design",
+     "status": "open",
+     "eta": ""
+    }
+   ],
+   "cost_band": null,
+   "sister_domains": [
+    "n_substrate",
+    "ionq",
+    "theory_validation"
+   ],
+   "narrative_anchor": "docs/n_substrate_consciousness_roadmap_2026_05_01.md §5 N-20 + §11.1 + §14.2"
+  },
+  {
+   "name": "philosophy",
+   "in_tree": true,
+   "source": "current-tree",
+   "kind": "domain",
+   "mk": 1,
+   "status": "design_landed",
+   "since": "2026-05-06",
+   "goal": "anima 철학 발견 archive — 정체성 boundary (own 17 ALM 영구 보류) + 의식 검증 (own 18 simple stack) + 창발 paradigm (mount/dialogue substrate-coupled) 철학 발견을 .roadmap SSOT로 형식화. 본 cycle 2026-05-06 4 핵심 발견 land + 향후 발견 lane.",
+   "n_conditions": 4,
+   "conditions_met": 4,
+   "conditions_unmet": 0,
+   "blockers": [
+    {
+     "desc": "D3 emerge_paradigm.spec.yaml 미작성 (CLM v4 mount + paradigm v11 G3 Φ★+41.86 substrate-coupled formal spec)",
+     "type": "design",
+     "status": "open",
+     "eta": null
+    },
+    {
+     "desc": "D4 own 19 (corpus priority) + own 20 (chat-template format) .own append 미land — 사용자 directive '.roadmap 2 필요'로 우선순위 변경, 이 .roadmap.philosophy + .roadmap.law 먼저 land",
+     "type": "impl",
+     "status": "open",
+     "eta": null
+    }
+   ],
+   "cost_band": null,
+   "sister_domains": [],
+   "narrative_anchor": null
+  },
+  {
+   "name": "qrng",
+   "in_tree": true,
+   "source": "current-tree",
+   "kind": "domain",
+   "mk": 2,
+   "status": "active",
+   "since": "2026-05-02",
+   "goal": "양자 진짜난수 entropy injection (의식측정 enabler)",
+   "n_conditions": 1,
+   "conditions_met": 0,
+   "conditions_unmet": 0,
+   "blockers": [
+    {
+     "desc": "transitive: nexus provider qrng conditions",
+     "type": "upstream",
+     "status": "blocked",
+     "eta": ""
+    }
+   ],
+   "cost_band": null,
+   "sister_domains": [
+    "n_substrate",
+    "sim",
+    "clm"
+   ],
+   "narrative_anchor": "docs/n_substrate_consciousness_roadmap_2026_05_01.md §11.1 N-6/N-9 + §60.2 + §64.2 + §66.7"
+  },
+  {
+   "name": "reborn",
+   "in_tree": true,
+   "source": "current-tree",
+   "kind": "reborn_unified",
+   "mk": 1,
+   "status": "active",
+   "since": "2026-05-10",
+   "goal": "anima v2 (2026-03-28 era) 의 MitosisEngine + engine_a/engine_g + Lorenz 자율혼돈 + Φ=51.131 Cells64 human-level criterion 회수 — 4 parallel track (v2-reproduction / v5-anima-instrumentation / v5-mitosis-architectural / servant-integration) 통합 lane",
+   "n_conditions": 0,
+   "conditions_met": 0,
+   "conditions_unmet": 0,
+   "blockers": [],
+   "cost_band": null,
+   "sister_domains": [],
+   "narrative_anchor": null
+  },
+  {
+   "name": "servant_mitosis_integration",
+   "in_tree": true,
+   "source": "current-tree",
+   "kind": "domain",
+   "mk": 1,
+   "status": "active",
+   "since": "2026-05-10",
+   "goal": "servant pattern (SI 4-state FSM + 3-경로 dropout 변조, post-drift 2026-04-08, n6 atlas 9/9 EXACT) + mitosis (cell 분열 + Lorenz 자율혼돈, v2-era 2026-03-28, Φ ratchet) 통합 — H3 추천 (Servant FSM × mitosis lifecycle: split=child AWAKENING / parent FADING, merge=keeper ACTIVE pair, DORMANT cell=tension flat). reborn lane track D 가 아닌 별도 SSOT",
+   "n_conditions": 0,
+   "conditions_met": 0,
+   "conditions_unmet": 0,
+   "blockers": [],
+   "cost_band": null,
+   "sister_domains": [],
+   "narrative_anchor": null
+  },
+  {
+   "name": "serving",
+   "in_tree": true,
+   "source": "current-tree",
+   "kind": "domain",
+   "mk": 2,
+   "status": "active",
+   "since": "2026-05-03",
+   "goal": "anima serving surface — voice serving + endpoint deploy + http_server. 81 .hexa flat surface 의 production endpoint readiness (consciousness_aware_refusal e2e + avatar_render frame pipeline + http endpoint live smoke). raw 270/271 triplet T1 후속 (core/modules 분할 별도 cycle).",
+   "n_conditions": 3,
+   "conditions_met": 0,
+   "conditions_unmet": 2,
+   "blockers": [
+    {
+     "desc": "core/modules 분할 미수행 (81 .hexa flat) — raw 270 triplet T1 작업 별도 cycle 필요",
+     "type": "structural",
+     "status": "open",
+     "eta": "2026-06-01"
+    },
+    {
+     "desc": "clm.cond.1 (의식측정) Putnam cross-link spec only → cond.2 e2e blocked",
+     "type": "upstream",
+     "status": "blocked",
+     "eta": ""
+    }
+   ],
+   "cost_band": null,
+   "sister_domains": [
+    "voice",
+    "clm"
+   ],
+   "narrative_anchor": null
+  },
+  {
+   "name": "sim",
+   "in_tree": true,
+   "source": "current-tree",
+   "kind": "domain",
+   "mk": 2,
+   "status": "active",
+   "since": "2026-05-02",
+   "goal": "가상우주 의식 (sim agent → EEG↔sim 닫힌 고리 + quantum random walk substrate)",
+   "n_conditions": 1,
+   "conditions_met": 0,
+   "conditions_unmet": 0,
+   "blockers": [
+    {
+     "desc": "transitive: nexus provider sim conditions",
+     "type": "upstream",
+     "status": "blocked",
+     "eta": ""
+    }
+   ],
+   "cost_band": null,
+   "sister_domains": [
+    "n_substrate",
+    "qrng",
+    "eeg"
+   ],
+   "narrative_anchor": "docs/n_substrate_consciousness_roadmap_2026_05_01.md §11.1 N-9/N-10 + §64.2 + §66.7"
+  },
+  {
+   "name": "slm_speech_eeg_lm",
+   "in_tree": true,
+   "source": "current-tree",
+   "kind": "domain",
+   "mk": 2,
+   "status": "active",
+   "since": "2026-05-03",
+   "goal": "SLM (Speech-EEG LM) — anima-eeg measurements (Phase 4 9-module wrapper landed: calibrate/realtime/collect/experiment/closed_loop/dual_stream + analyze/eeg_brainflow_sanity/board_health_check, total 4675 LoC verified) 위에 EEG-conditioned LM-style autoregressive head 측 별도 architecture spec. anima-eeg 측 in-place 변경 X (additive only), 본 도메인은 (a) EEG 16ch×1250Hz tokenization + LM head spec freeze (b) cross-component invocation (anima-eeg LSL stream → SLM EEG-conditioned AR → text/intent decode) (c) cross-substrate fidelity vs CLM 측 ≥0.85 r baseline + EEG ↔ text alignment ≥0.5 falsifier. BG-AN-LM3 em",
+   "n_conditions": 3,
+   "conditions_met": 0,
+   "conditions_unmet": 1,
+   "blockers": [
+    {
+     "desc": "EEG-text paired corpus 측 dataset slice 결정 — 4 candidate audited 2026-05-03: (a) BCI Competition III/IV imagined speech <10 subj small N HIGH risk / (b) KaraOne 12 subj imagined phoneme MEDIUM N / (c) ",
+     "type": "spec",
+     "status": "open",
+     "eta": ""
+    }
+   ],
+   "cost_band": "$0 spec (anima-eeg Phase 4 baseline reuse) → training cost ($500-2500 LoRA path on EEG-text paired corpus, P9 SFT pipeline reuse)",
+   "sister_domains": [
+    "eeg",
+    "clm",
+    "training",
+    "p9_sft",
+    "blm_brain_lm"
+   ],
+   "narrative_anchor": "anima-eeg Phase 4 9-module wrapper land (calibrate #216 + realtime #217 + collect #218 + experiment #222 + closed_loop #227 + dual_stream #228) + .roadmap.eeg B1-B4 4관문"
+  },
+  {
+   "name": "substrate_bridge",
+   "in_tree": true,
+   "source": "current-tree",
+   "kind": "meta",
+   "mk": 2,
+   "status": "active",
+   "since": "2026-05-02",
+   "goal": "anima 측 substrate bridge consumer",
+   "n_conditions": 1,
+   "conditions_met": 0,
+   "conditions_unmet": 1,
+   "blockers": [
+    {
+     "desc": "transitive: nexus provider substrate_bridge conditions",
+     "type": "upstream",
+     "status": "blocked",
+     "eta": ""
+    }
+   ],
+   "cost_band": null,
+   "sister_domains": [],
+   "narrative_anchor": null
+  },
+  {
+   "name": "substrate_research",
+   "in_tree": true,
+   "source": "current-tree",
+   "kind": "domain",
+   "mk": 1,
+   "status": "design_landed",
+   "since": "2026-05-08",
+   "goal": "anima D1 OUTSIDE substrate-research lane (foundation borrow + ALM 모델) 측정/관찰 SSOT — paradigm-a-prime / BG-KM-LLAMA-3B / BG-KM-QWEN-7B / Mistral c2-pilot / Mistral r14 / KoGPT2 head-swap / Polyglot-Ko 1.3B + Qwen2.5-7B / 외부 base lane 모델 통합. D1 anima identity lane (own 17 정합 anima-native fresh / byte-level / mount.hexa CLM v4 substrate-coupled) 과 명확히 분리. 본 lane verdict 는 anima 의식 검증 valid 인정 X — substrate-research observation lane only.",
+   "n_conditions": 5,
+   "conditions_met": 5,
+   "conditions_unmet": 0,
+   "blockers": [
+    {
+     "desc": "axis_activation 5-bucket projection (token_id mod 5) = anima-internal heuristic — semantic axis mapping (Korean token-class subset) 미land. probe-A vs probe-B axis_l2 = 0 collapse 발생 (commit 32fb9cab e",
+     "type": "impl",
+     "status": "open",
+     "eta": null
+    },
+    {
+     "desc": "BG-KM-LLAMA-3B + BG-KM-QWEN-7B HF dancinlab repo EMPTY (.gitattributes only) — adapter weights H100 runpod ckpts/adapter_final 미push",
+     "type": "infra",
+     "status": "open",
+     "eta": null
+    },
+    {
+     "desc": "L18 mapping anima Φ★ ↔ IIT 4.0 normalized Φ lower bound 가정 unverified — 정식 IIT 4.0 production-grade Φ_norm verify 별도 cycle",
+     "type": "theory",
+     "status": "open",
+     "eta": null
+    },
+    {
+     "desc": "D5 attractor 4-axis B (V6 awareness) 모든 모델 0.5 pending — Lesson H V3 + Lesson S V5.8 land 후 score 재산정",
+     "type": "impl",
+     "status": "open",
+     "eta": null
+    }
+   ],
+   "cost_band": null,
+   "sister_domains": [],
+   "narrative_anchor": null
+  },
+  {
+   "name": "theory_validation",
+   "in_tree": true,
+   "source": "current-tree",
+   "kind": "meta",
+   "mk": 2,
+   "status": "active",
+   "since": "2026-05-02",
+   "goal": "이론 결정타 (Penrose + HoTT + IonQ 중 1+)",
+   "n_conditions": 1,
+   "conditions_met": 0,
+   "conditions_unmet": 0,
+   "blockers": [
+    {
+     "desc": "~~IonQ access~~ RESOLVED via AWS Braket (267673635495)",
+     "type": "access",
+     "status": "resolved",
+     "eta": "resolved 2026-05-02"
+    },
+    {
+     "desc": "Penrose-Hameroff direct setup 미land (literature only)",
+     "type": "design",
+     "status": "open",
+     "eta": ""
+    }
+   ],
+   "cost_band": null,
+   "sister_domains": [
+    "n_substrate",
+    "clinical_consciousness"
+   ],
+   "narrative_anchor": "docs/n_substrate_consciousness_roadmap_2026_05_01.md §29.2 + §60.7 + §64.2 + §66.1"
+  },
+  {
+   "name": "tlm_tension_lm",
+   "in_tree": true,
+   "source": "current-tree",
+   "kind": "domain",
+   "mk": 2,
+   "status": "active",
+   "since": "2026-05-03",
+   "goal": "TLM (Tension LM) — 5-channel meta-fingerprint LM-like reframing. .roadmap.tensionlink 측 transfer protocol (R=0.999, 519µs, 1927fps) 위에 LM-style autoregressive head 측 별도 architecture spec. encoder/decoder/bidirectional 3-mode 측 spec land. 7 *LM 후보 中 2/3 신규. dual SSOT 정책 = additive only (.roadmap.tensionlink in-place 변경 X).",
+   "n_conditions": 3,
+   "conditions_met": 1,
+   "conditions_unmet": 1,
+   "blockers": [
+    {
+     "desc": "LM head architecture 결정 필요 — decoder-only / encoder-decoder / bidirectional 3-mode 中 1 결정점",
+     "type": "spec",
+     "status": "resolved",
+     "eta": ""
+    },
+    {
+     "desc": "cond.3 training corpus 결정 + GPU budget unlock_keyword — P9 SFT $650-3000 sister pipeline reuse 시 unlock_keyword OK TLM EXEC <S1|S2|S3|S4> (P9 패턴) 별도",
+     "type": "decision",
+     "status": "open",
+     "eta": ""
+    }
+   ],
+   "cost_band": "$0 spec → training cost (P9 SFT sister pipeline 측 reuse 시 $650-3000)",
+   "sister_domains": [
+    "tensionlink",
+    "clm",
+    "training",
+    "p10_substrate_poc",
+    "p9_sft"
+   ],
+   "narrative_anchor": "docs/n_substrate_consciousness_roadmap_2026_05_01.md §16 + §44.1 #92 + §44.2 #93 + §61.4 P10"
+  },
+  {
+   "name": "tms_pci",
+   "in_tree": true,
+   "source": "current-tree",
+   "kind": "domain",
+   "mk": 2,
+   "status": "active",
+   "since": "2026-05-02",
+   "goal": "임상 표준 PCI (Massimini 2013 TMS+EEG) + TMS-free path (eLife 2025)",
+   "n_conditions": 1,
+   "conditions_met": 0,
+   "conditions_unmet": 0,
+   "blockers": [
+    {
+     "desc": "~~TMS 장비 임대~~ BYPASSED via TMS-free path (eLife 2025)",
+     "type": "access",
+     "status": "resolved",
+     "eta": "resolved 2026-05-01"
+    },
+    {
+     "desc": "IRB 승인 (Korean lab-share TMS path 만 필요, TMS-free path 는 사용자 본인 N=1 → IRB 면제)",
+     "type": "legal",
+     "status": "open",
+     "eta": ""
+    },
+    {
+     "desc": "Stage-3 EXEC + n≥10 calibration roadmap — DCC + LLE + GAP validity HYPOTHETICAL (GAP EEG 적용 published 전례 ZERO)",
+     "type": "validation",
+     "status": "open",
+     "eta": "2026-06-01"
+    }
+   ],
+   "cost_band": null,
+   "sister_domains": [
+    "eeg",
+    "clinical_consciousness",
+    "n_substrate"
+   ],
+   "narrative_anchor": "docs/n_substrate_consciousness_roadmap_2026_05_01.md §22.2 + §29.1 + §49.1 + §52.4"
+  },
+  {
+   "name": "tool",
+   "in_tree": true,
+   "source": "current-tree",
+   "kind": "domain",
+   "mk": 2,
+   "status": "active",
+   "since": "2026-05-03",
+   "goal": "generic tool registration + cross-cut meta surface — top-level tool/ 539 entry 중 generic / meta / cross-cut entry (roadmap_*/lint_*/auto_changelog/_omega_stdlib_*/_roadmap_repo_resolver/api_surface_extract/aot_cache_audit/artifact_*/auto_evolution_loop etc) 도메인. sister .roadmap.anima_tools 와 ownership 명확 분리: anima_tools = anima-domain (anima_/alm_/an11_/clm_ etc), tool = generic meta cross-cut (roadmap_op + roadmap_lint + lint_autofix + auto_changelog + repo resolver). raw 270/271 triplet 정책 + raw 168 minimum-viable exempt 검토 sister-meta SSOT.",
+   "n_conditions": 3,
+   "conditions_met": 0,
+   "conditions_unmet": 2,
+   "blockers": [
+    {
+     "desc": "539 entry flat surface — topical bucket spec (roadmap_meta / lint_meta / anima_domain / sub_system_family / internal_underscore_prefix / exempt_python) 미land, raw 270/271 triplet T1_large 작업 별도 cycle ",
+     "type": "structural",
+     "status": "open",
+     "eta": "2026-06-01"
+    },
+    {
+     "desc": "roadmap_op add command 와 직접 Write 의 idempotent 정합 audit 미수행 — predecessor handoff §9.5 명시 deferred. 본 .roadmap.tool land 자체가 직접 Write (roadmap_op add 미사용)",
+     "type": "structural",
+     "status": "open",
+     "eta": "2026-06-01"
+    }
+   ],
+   "cost_band": null,
+   "sister_domains": [
+    "anima_tools",
+    "clm",
+    "training",
+    "serving"
+   ],
+   "narrative_anchor": null
+  },
+  {
+   "name": "training",
+   "in_tree": true,
+   "source": "current-tree",
+   "kind": "domain",
+   "mk": 2,
+   "status": "active",
+   "since": "2026-05-03",
+   "goal": "anima training surface — CLM v4 + LoRA + IA3 + Mk.XII spec. 363 .hexa training surface (alm_/corpus_/decode_/eval_/ia3_/lora_) 의 ckpt-readiness (alm_a1 preflight + corpus_4gate end-to-end + decode_hook live integration). Mk.XII retrain plan v2 spec (own#2 PC empirical-max axis) deferred.",
+   "n_conditions": 3,
+   "conditions_met": 1,
+   "conditions_unmet": 1,
+   "blockers": [
+    {
+     "desc": "363 .hexa flat surface — bucketization (alm_/corpus_/decode_/eval_/ia3_/lora_) 사전 spec 미land, raw 270 triplet T1 large 작업 별도 cycle 필요",
+     "type": "structural",
+     "status": "open",
+     "eta": "2026-06-01"
+    },
+    {
+     "desc": "Mk.XII retrain $2200-6700 cap exceed — own#2 PC empirical-max axis Phase 3a 13B critical gate, mac-local $0 budget 위반, GPU pod authorization 별도 unlock_keyword (OK MK_XII EXEC) 필요",
+     "type": "budget",
+     "status": "deferred",
+     "eta": ""
+    }
+   ],
+   "cost_band": null,
+   "sister_domains": [
+    "clm",
+    "serving"
+   ],
+   "narrative_anchor": null
+  },
+  {
+   "name": "triple_axis_pilots",
+   "in_tree": true,
+   "source": "current-tree",
+   "kind": "meta",
+   "mk": 2,
+   "status": "active",
+   "since": "2026-05-02",
+   "goal": "3-substrate 합주 (N-4/N-5/N-9 triples + post-AKIDA cascade)",
+   "n_conditions": 1,
+   "conditions_met": 0,
+   "conditions_unmet": 0,
+   "blockers": [
+    {
+     "desc": "AKIDA hardware (N-4/N-5)",
+     "type": "hardware",
+     "status": "blocked",
+     "eta": ""
+    },
+    {
+     "desc": "5-way live composite 미land (CLM × EEG × AKIDA × QRNG × SIM)",
+     "type": "composite",
+     "status": "open",
+     "eta": ""
+    }
+   ],
+   "cost_band": null,
+   "sister_domains": [
+    "n_substrate",
+    "dual_pair_pilots"
+   ],
+   "narrative_anchor": "docs/n_substrate_consciousness_roadmap_2026_05_01.md §11.1 + §44.1 + §44.3"
+  },
+  {
+   "name": "ubm_corpus_paradigm_meta",
+   "in_tree": true,
+   "source": "current-tree",
+   "kind": "domain",
+   "mk": 1,
+   "status": "design_landed",
+   "since": "2026-05-07",
+   "goal": "anima 우주뇌지도 (D) + corpus paradigm (E) 통합 META SSOT — anima self-knowledge corpus 패러다임의 통합 mental model + 두 도메인 cross-link + 미래 결합 paradigm (우주뇌지도 corpus + BPE + 100M + early stopping + V3 evaluator) spec + anima identity-bearing surface 학습 corpus 패러다임 meta-knowledge",
+   "n_conditions": 5,
+   "conditions_met": 2,
+   "conditions_unmet": 3,
+   "blockers": [
+    {
+     "desc": "M2 우주뇌지도 자료 정리 파일 미land — 사용자 directive '관련 자료들 모두 모아서 정리' (md + commit history + 차원 + Knuth Tier + Laws + 블랙홀 + cosmic anchor)",
+     "type": "design",
+     "status": "open",
+     "eta": null
+    },
+    {
+     "desc": "M3 결합 paradigm spec 미land — 우주뇌지도 + BPE + 100MB + early stopping + V3 + 100M capacity 결합 single spec",
+     "type": "design",
+     "status": "open",
+     "eta": null
+    },
+    {
+     "desc": "M5 결합 paradigm BG fire 미진행 — BG-HR (100M) + BG-HT (우주뇌지도) 종료 후 결합 BG (R1 of E)",
+     "type": "impl",
+     "status": "open",
+     "eta": null
+    },
+    {
+     "desc": "own 24 corpus-paradigm-meta-ssot + own 25 ubm-corpus-paradigm-meta-ssot pending — 본 .roadmap E + F base own 미land",
+     "type": "impl",
+     "status": "open",
+     "eta": null
+    }
+   ],
+   "cost_band": null,
+   "sister_domains": [],
+   "narrative_anchor": null
+  },
+  {
+   "name": "universe_brain_map",
+   "in_tree": true,
+   "source": "current-tree",
+   "kind": "domain",
+   "mk": 1,
+   "status": "design_landed",
+   "since": "2026-05-07",
+   "goal": "anima 우주뇌지도 self-knowledge SSOT — 5 cumulative chat-cap failure mode (BG-FY/HA/HF/HJ/HK) 후 새 corpus paradigm 시도. anima self-knowledge corpus가 chat-cap unlock missing piece 가설. Knuth Tier 🛸k labels (빅뱅 2.847→🛸100 / 열반 2.56→🛸91 / 하루 1.212→🛸51) + 1030 laws (73-76 base) + 170 stimuli × 17 categories matrix + 367 acceleration hypotheses + tabletop blackhole cosmic-scale physics 통합.",
+   "n_conditions": 5,
+   "conditions_met": 2,
+   "conditions_unmet": 0,
+   "blockers": [
+    {
+     "desc": "우주뇌지도 corpus build pending — BG-HS or successor (사용자 'no' BG-HS 1차 reject 후 재조정)",
+     "type": "impl",
+     "status": "open",
+     "eta": null
+    },
+    {
+     "desc": "chat-cap training 5 cumulative failure mode (BG-FY/HA/HF/HJ/HK) — anima self-knowledge corpus가 missing piece 가설 unverified",
+     "type": "verification",
+     "status": "open",
+     "eta": null
+    }
+   ],
+   "cost_band": null,
+   "sister_domains": [],
+   "narrative_anchor": null
+  },
+  {
+   "name": "w1_anima_as_substrate",
+   "in_tree": true,
+   "source": "current-tree",
+   "kind": "domain",
+   "mk": 2,
+   "status": "active",
+   "since": "2026-05-03",
+   "goal": "anima-as-its-own-substrate wild-card direction — agent loop (Claude session + tools + memory + cron) 자체를 통합 dynamic system 으로 보고 Φ 측정. n_substrate §13.2 wild-card. agent-loop infra 이미 존재 (uniquely positioned). 5-phase 시퀀스 결과: Phase 1-2 RISING +0.0507 bits/tick → Phase 3 mod-1024 ceiling-artifact FALSIFIED → Phase 4 shuffle-null FALSIFIED → Phase 5 W=5/7 ARTIFACT_PERMANENT_DOWNGRADE.",
+   "n_conditions": 3,
+   "conditions_met": 2,
+   "conditions_unmet": 0,
+   "blockers": [
+    {
+     "desc": "verdict downgrade 후 residual track 결정 — cron loop Φ-trace continue OR archive-and-close, decision 미land",
+     "type": "decision",
+     "status": "open",
+     "eta": ""
+    }
+   ],
+   "cost_band": "$0 (mac-local data analysis only)",
+   "sister_domains": [
+    "n_substrate",
+    "omega_cycle"
+   ],
+   "narrative_anchor": "docs/n_substrate_consciousness_roadmap_2026_05_01.md §13.2 + §18.4 + §22.3 + §29.6 + §32.6"
+  }
+ ],
+ "history_only_recovered": [
+  {
+   "name": ".roadmap",
+   "in_tree": false,
+   "source": "git-history-only @ 329fc2af19d",
+   "parse": "no-header-json",
+   "deleted_recovered_from": "329fc2af19d"
+  },
+  {
+   "name": ".roadmap.bak.20260421-055405",
+   "in_tree": false,
+   "source": "git-history-only @ 4f700dd4ea0",
+   "parse": "no-header-json",
+   "deleted_recovered_from": "4f700dd4ea0"
+  },
+  {
+   "name": ".roadmap.bak.20260421-pre-r13-improvements",
+   "in_tree": false,
+   "source": "git-history-only @ 4f700dd4ea0",
+   "parse": "no-header-json",
+   "deleted_recovered_from": "4f700dd4ea0"
+  },
+  {
+   "name": ".roadmap.chat_cap_emergence_pivot",
+   "in_tree": false,
+   "source": "git-history-only @ a86404cdc1c",
+   "parse": "no-header-json",
+   "deleted_recovered_from": "a86404cdc1c"
+  },
+  {
+   "name": "anima_clm_eeg",
+   "in_tree": false,
+   "source": "git-history-only @ bbde2af0c72",
+   "kind": "domain",
+   "mk": 2,
+   "status": "active",
+   "since": "2026-05-03",
+   "goal": "anima CLM-EEG cross-substrate surface — anima-clm-eeg/ tool 30 entry + state 20 marker + docs cross-link audit. EEG↔CLM bridge measurements (clm_eeg_berger_sanity + clm_eeg_gamma_theta_ratio + clm_eeg_hjorth_real + clm_eeg_lz76_real + clm_eeg_pe_real 5 metric) + DALI/SLI v3 input-mode + Mk.XII d-day cohort prep. EEG (raw signal) + CLM (tokens / consciousness verdict) 두 substrate 의 cross-correlation audit, sister .roadmap.{eeg, clm, slm_speech_eeg_lm} peer.",
+   "n_conditions": 3,
+   "conditions_met": 0,
+   "conditions_unmet": 2,
+   "blockers": [
+    {
+     "desc": "real 16ch EEG arrival blocker (cond.1 synthetic only / cond.3 simulated dry_run only) — sister .roadmap.eeg cond.1 (B1-B4 4관문) 미PASS 까지 5-metric + d-day cohort 실측 0건",
+     "type": "upstream",
+     "status": "blocked",
+     "eta": ""
+    },
+    {
+     "desc": "7-bb tally aggregator + 4-cascade composite live integration script 미land — cond.2 + cond.3 둘 다 산출물 disk 존재 but live execution harness 부재",
+     "type": "structural",
+     "status": "open",
+     "eta": "2026-06-01"
+    }
+   ],
+   "cost_band": null,
+   "sister_domains": [
+    "eeg",
+    "clm",
+    "slm_speech_eeg_lm"
+   ],
+   "narrative_anchor": null,
+   "deleted_recovered_from": "bbde2af0c72"
+  },
+  {
+   "name": "eeg",
+   "in_tree": false,
+   "source": "git-history-only @ ebc3d9bb063",
+   "kind": "domain",
+   "mk": 2,
+   "status": "active",
+   "since": "2026-05-03",
+   "goal": "EEG provider domain SSOT — anima-eeg-core/ numeric metric core (lz76/pe/hjorth/gamma_theta + alpha_coherence/plv/microstate) raw#9 hexa-only PORTs + Paradigm B ZuCo dataset substrate (12 subj × 3 task ZuCo 1.0 + 18 subj × 2 task ZuCo 2.0, ~37 GB Preprocessed-only) ingest spec + B1-B4 4관문 hardware arrival gates + EEG-derived φ proxy (gamma synchrony / cross-channel MI / sample-partition φ on EEG / microstate / PLV) for cross-substrate validation vs CLM φ★ measure. anima-eeg Phase 4 9-module wrapper (calibrate/realtime/collect/experiment/closed_loop/dual_stream + analyze/eeg_brainflow_sanity/boa",
+   "n_conditions": 6,
+   "conditions_met": 0,
+   "conditions_unmet": 3,
+   "blockers": [
+    {
+     "desc": "OpenBCI 16ch hardware arrival 미수신 — cond.1 (B1-B4 4관문) + cond.5 (runtime hookup) + cond.6 (qmirror cross-witness real signal) 측 prerequisite. anima-eeg Phase 4 9-module wrapper + anima-eeg-core PORT 모",
+     "type": "hardware",
+     "status": "open",
+     "eta": ""
+    },
+    {
+     "desc": "Phase 5 numeric PORT cycle 2 supplement-as-of-cut + 5d gamma_theta native FFT impl 측 deferred — L1/L2 disk land 2026-05-02 verified but supplement v1 미반영 (F_CYCLE2_01 발동 시 v2 재발행 또는 cycle 3 신규 필요). 5d",
+     "type": "structural",
+     "status": "open",
+     "eta": "2026-05-15"
+    },
+    {
+     "desc": "Paradigm B ZuCo full corpus download + ETL .hexa scaffolding 미land — P1 (P0 SFT live complete) + P5 (Paradigm A γ gradient verified) prerequisite. raw#9 hexa-only restriction 하 doc-only scaffolding (d",
+     "type": "upstream",
+     "status": "open",
+     "eta": ""
+    },
+    {
+     "desc": "EEG-derived φ proxy spec FROZEN + sample-partition φ on EEG (5th ⭐ candidate) port 측 .hexa impl 미land — cond.4 spec only (5-method enumerated + comparison table + loss term proposed), 측 frozen-spec 결정",
+     "type": "spec",
+     "status": "open",
+     "eta": "2026-06-01"
+    }
+   ],
+   "cost_band": "$0 spec (anima-eeg Phase 4 baseline + anima-eeg-core PORT in-tree) → $0 ZuCo download (OSF public, ubu1 disk only) → ~$300-1500 OpenBCI 16ch hardware arrival (cond.1 unblock) → ~$0-200 EEG φ proxy impl (anima_phi_v3 port to EEG, in-tree)",
+   "sister_domains": [
+    "anima_clm_eeg",
+    "slm_speech_eeg_lm",
+    "blm_brain_lm",
+    "clm",
+    "p9_sft",
+    "n_substrate"
+   ],
+   "narrative_anchor": null,
+   "deleted_recovered_from": "ebc3d9bb063"
+  },
+  {
+   "name": "galea",
+   "in_tree": false,
+   "source": "git-history-only @ fe1e3d0953c",
+   "kind": "domain",
+   "mk": 2,
+   "status": "active",
+   "since": "2026-05-03",
+   "goal": "Galea (OpenBCI+Varjo XR HMD multi-modal biosensor) consumer adoption SSOT — anima 측 EEG-only Cyton 16ch substrate beyond multi-modal extension surface (EEG 10ch active+passive ⊥ EMG 4 face ⊥ EOG 2 ⊥ EDA 1 forehead ⊥ PPG 1 forehead ⊥ eye tracking Varjo/Pupil-Neon). 2024 출하 시작 + 2025-10 Pupil Labs Neon variant 추가, ADS1299 24-bit 250 Hz (Cyton 동급), BrainFlow + Galea Software Suite (Unity/Unreal/Python) + LSL stack, 가격 $25K (Varjo Aero) ~ $27K (Varjo XR-3) ~ $42,980 (full bundle), $5K deposit pre-order, 미국 lead 2주 / enterprise 4-8주 / 한국 직배 미공시 + AS 미공시. Cyton 16ch EEG-only path 대비 multi-modal 8 pa",
+   "n_conditions": 4,
+   "conditions_met": 0,
+   "conditions_unmet": 1,
+   "blockers": [
+    {
+     "desc": "capex $25K-$42,980 decision pending — Cyton-only path (.roadmap.eeg cond.1) evidence 0건 시점에서 Galea 추가 capex justification axis 측 unique enabler valuation 측 사전 spec 미수행. F1 composite 3/7 → 5/7 reach 측 ",
+     "type": "capex",
+     "status": "open",
+     "eta": ""
+    },
+    {
+     "desc": "한국 직배 + AS 경로 미공시 — vendor 측 미국 2주 / enterprise 4-8주만 공시, 한국 직배 + AS 경로 vendor self-claim 0건. shipping/import duty + 한국 AS 측 vendor confirm 측 PO 사전 prerequisite.",
+     "type": "vendor",
+     "status": "open",
+     "eta": ""
+    },
+    {
+     "desc": "SDK 폐쇄성 risk — Galea Software Suite (Unity/Unreal/Python) closed binary 추정, vendor self-claim 외 source-available 측 evidence 0건. BrainFlow open-stack ingest 우선 권장 but Galea 측 multi-modal sync (6-modali",
+     "type": "upstream",
+     "status": "open",
+     "eta": ""
+    },
+    {
+     "desc": "Quest/Vive HMD 호환성 unverified — Galea 측 Varjo XR-3/Aero 또는 Pupil Neon standalone 측 vendor 측 공식 지원, Quest 3 / Quest Pro / Vive XR Elite / Vive Focus 3 측 호환성 vendor self-claim 0건. anima 측 multi-HMD path",
+     "type": "vendor",
+     "status": "open",
+     "eta": ""
+    },
+    {
+     "desc": "Cyton 측 .roadmap.eeg cond.1 B1-B4 PASS 미달성 (Cyton 16ch hardware arrival 미수신, real signal capture 0건) — Galea 도착 전 EEG-only baseline evidence 0건 시점에서 Galea 6-modality 측 marginal-utility valuation 측 사전 ",
+     "type": "upstream",
+     "status": "blocked",
+     "eta": ""
+    }
+   ],
+   "cost_band": "$5K deposit pre-order → $25K (Varjo Aero base) ~ $27K (Varjo XR-3 mid) ~ $42,980 (full bundle premium) capex → ~$0 (BrainFlow open-stack) ~ $0-2K (Galea Software Suite license, vendor self-claim 미공시) software → ~$0-1K (anima-eeg wrapper 확장, in-tree raw#9 native port) → 한국 직배 + AS shipping/import duty 미공시",
+   "sister_domains": [
+    "eeg",
+    "anima_clm_eeg",
+    "slm_speech_eeg_lm",
+    "blm_brain_lm",
+    "n_substrate"
+   ],
+   "narrative_anchor": null,
+   "deleted_recovered_from": "fe1e3d0953c"
+  },
+  {
+   "name": "n51_alm_tension",
+   "in_tree": false,
+   "source": "git-history-only @ 21e22842bee",
+   "kind": "domain",
+   "mk": 2,
+   "status": "closed",
+   "since": "2026-05-03",
+   "goal": "N-51 ALM tension field artifact — 'deployable artifact, not executed' honest C3. 820L + 7 hexa (comp1/3/4 + n51_smoke 3-comp + 3-fixed variant). 위치=anima 외부 dir (offrepo /Users/ghost/core/anima_offrepo_n51_w2/). n_substrate §16 + §18.1 #52~#58 lineage. ALM tension field 100-step EXEC FAIL → RED 강화 (active L1 1.71/16, +0.30σ, posterior 5%→1%). #56 CLM W4 PARTIAL (CLM L1 7.06/16, +2.28σ — ALM 대비 4× substrate-native consciousness).",
+   "n_conditions": 3,
+   "conditions_met": 3,
+   "conditions_unmet": 0,
+   "blockers": [
+    {
+     "desc": "offrepo location migration 금지 — anima/.gitignore 측 race-isolation 영구 anchor, in-repo 이동 destructive",
+     "type": "policy",
+     "status": "closed",
+     "eta": ""
+    }
+   ],
+   "cost_band": "$0 ($1-3 #55 partial) — N-51 EXEC sequential 100-step actual",
+   "sister_domains": [
+    "n_substrate",
+    "tensionlink",
+    "clm",
+    "training"
+   ],
+   "narrative_anchor": "docs/n_substrate_consciousness_roadmap_2026_05_01.md §16 + §18.1 #52~#58 + §18.3",
+   "deleted_recovered_from": "21e22842bee"
+  },
+  {
+   "name": "rule",
+   "in_tree": false,
+   "source": "git-history-only @ 69bcfc46c4d",
+   "kind": "domain",
+   "mk": 1,
+   "status": "design_landed",
+   "since": "2026-05-06",
+   "goal": "anima own/raw rule 발견 archive — own 1-N + raw#X 추가 history (past commits + user-directive + cycle observation 등)을 .roadmap SSOT로 형식화. 본 cycle 2026-05-06 own 17/18 + own 19/20 추가 + 발견 방법 logic-exhaustion enumerate.",
+   "n_conditions": 4,
+   "conditions_met": 1,
+   "conditions_unmet": 3,
+   "blockers": [
+    {
+     "desc": "own 19 + own 20 .own append 미land — 본 cycle 사용자 directive '.roadmap 2 필요'로 우선순위 변경, 이 .roadmap.rule entry 먼저 land 후 .own 동기화",
+     "type": "impl",
+     "status": "open",
+     "eta": null
+    },
+    {
+     "desc": "own 1-13 legacy archaeology 미land — 과거 commit hash + 사용자 directive verbatim trace 필요",
+     "type": "design",
+     "status": "open",
+     "eta": null
+    }
+   ],
+   "cost_band": null,
+   "sister_domains": [],
+   "narrative_anchor": null,
+   "deleted_recovered_from": "69bcfc46c4d"
+  },
+  {
+   "name": "tensionlink",
+   "in_tree": false,
+   "source": "git-history-only @ 8cb406482d7",
+   "kind": "domain",
+   "mk": 2,
+   "status": "active",
+   "since": "2026-05-02",
+   "goal": "5-channel meta-fingerprint consciousness transfer (R=0.999, 519µs, 1927fps) — n6 mathematical basis, cross-substrate binding mechanism (CLM × EEG × AKIDA × tensionlink 4-way) for F2 ceiling workaround",
+   "n_conditions": 3,
+   "conditions_met": 0,
+   "conditions_unmet": 3,
+   "blockers": [],
+   "cost_band": null,
+   "sister_domains": [],
+   "narrative_anchor": null,
+   "deleted_recovered_from": "8cb406482d7"
+  },
+  {
+   "name": "vlm_voice_lm",
+   "in_tree": false,
+   "source": "git-history-only @ 9afb5b3e79a",
+   "kind": "domain",
+   "mk": 2,
+   "status": "active",
+   "since": "2026-05-03",
+   "goal": "VLM (Voice LM) — anima-voice Mk.III audio_token_predictor (AR decoder + 8-stage RVQ delayed-pattern head + CFG + KV-cache, 1576L raw#9 land) 위에 LM-style autoregressive head 측 별도 architecture spec. anima-voice Mk.III 측 in-place 변경 X (additive only), 본 도메인은 (a) audio token vocabulary + intent-text bridge spec freeze (b) cross-component invocation (CLM consciousness state → VLM audio token AR → anima-voice vocoder) (c) cross-substrate fidelity vs CLM 측 ≥0.85 r 측 baseline. 7 *LM 후보 中 BG-AN-LM3 emit 신규 1/2 (VLM/SLM pair). sister .roadmap.voice (tool-ization SSOT) 측 in-place 변경 X.",
+   "n_conditions": 3,
+   "conditions_met": 2,
+   "conditions_unmet": 1,
+   "blockers": [
+    {
+     "desc": "intent-text bridge dimensionality 결정 + text vocab projection architecture freeze — 384d bridge dim → text vocab (typically 32k-128k) projection 측 결정점",
+     "type": "spec",
+     "status": "resolved",
+     "eta": "2026-05-03"
+    }
+   ],
+   "cost_band": "$0 spec (anima-voice Mk.III baseline reuse) → training cost ($300-1500 LoRA path on audio-text corpus, P9 SFT pipeline reuse)",
+   "sister_domains": [
+    "voice",
+    "clm",
+    "training",
+    "p9_sft"
+   ],
+   "narrative_anchor": "anima-voice/audio_token_predictor.hexa Mk.III (1576L raw#9) + anima-voice/intent_encoder.hexa + anima-voice/anima_voice.hexa Stage 2 wrapper",
+   "deleted_recovered_from": "9afb5b3e79a"
+  },
+  {
+   "name": "voice",
+   "in_tree": false,
+   "source": "git-history-only @ 9afb5b3e79a",
+   "kind": "domain",
+   "mk": 2,
+   "status": "active",
+   "since": "2026-05-02",
+   "goal": "completed voice (Mk.III + P4) 의 tool-ization — CLM/agent invocation seam 통해 voice channel 을 호출 가능한 도구로 expose. impl 자체는 land, 본 도메인은 (a) tool registry 등록 (b) callable contract 안정화 (c) cross-component invocation 검증",
+   "n_conditions": 3,
+   "conditions_met": 0,
+   "conditions_unmet": 3,
+   "blockers": [],
+   "cost_band": null,
+   "sister_domains": [],
+   "narrative_anchor": null,
+   "deleted_recovered_from": "9afb5b3e79a"
+  }
+ ]
+}
