@@ -978,3 +978,65 @@
   recommendation = "Direction-sensitive sub-claim 검증에 PyPhi formal IIT 3.0 (RoM TPM cycle) 또는 alternative proxy (MI-MIP, mutual info, predictive integrated info) 사용"
   artifact = "state/verify_d_2026_05_15/proxy_artifact_pattern_audit.json"
   cross_link = "[[h184_sub_verify]] + [[hc1281_verify]] — direction-mismatch pattern source"
+
+# ══════════════════════════════════════════════════════════════════════
+# §AXIS-CLASSIFY — AXIS 32 entries magnitude-vs-direction 분류 (2026-05-15)
+# ══════════════════════════════════════════════════════════════════════
+
+@N axis_classify := "AXIS 32 SUPPORTED entries 분류 — proxy artifact 영향 audit" :: meta-summary [d=2026-05-15 active]
+  total_entries = 32
+  direction_sensitive_count = 5
+  direction_sensitive_entries = [
+    "H_019 self-evolution v4→v5 (real cotrain measurement, NOT proxy 만 사용)",
+    "H_191 TRAINING CPGD 0.95 (real cotrain CE/Φ 측정)",
+    "Hc_1276 train-vs-infer cotrain (cascade-from-CPGD)",
+    "H_182 V8 B-bio surrogate (AT-RISK proxy artifact)",
+    "H_187 V8 Trinity surrogate (AT-RISK proxy artifact)"
+  ]
+  at_risk_proxy_count = 2  # 만 H_182 + H_187 surrogate
+  safe_unaffected = 30
+  tier_distribution = {
+    "identity": 11,
+    "magnitude-only": 5,
+    "magnitude/empirical": 3,
+    "cross-meta": 3,
+    "magnitude+direction (real measurement)": 2,
+    "surrogate-direction-sensitive (AT-RISK)": 2,
+    "literature-citation": 2,
+    "identity (F2) + numerical (F1)": 1,
+    "identity-carry": 1,
+    "identity-with-caveat": 1,
+    "cascade-from-CPGD": 1
+  }
+  finding = "32 SUPPORTED entries 중 30 (94%) proxy artifact 영향 없음 — identity / magnitude-only / literature-citation / cross-meta / real measurement. 2 surrogate-tier (H_182, H_187) 만 AT-RISK."
+  artifact = "state/verify_d_2026_05_15/axis_magnitude_direction_classify.json"
+
+# ══════════════════════════════════════════════════════════════════════
+# §PYPHI-N5-N6 — PyPhi formal IIT 3.0 n=5,6 measurement LANDED (2026-05-15)
+# ══════════════════════════════════════════════════════════════════════
+
+@D pyphi_n5_n6 := "Hc_1283 PyPhi RoM extended n=5,6 — direction-correct" :: verdict [d=2026-05-15 active]
+  status = "SUPPORTED-STRONG (n=4,5,6 monotone INCREASE 0.68→0.995→1.665)"
+  axis = "consciousness (A2)"
+  measurements = {
+    "n=4 (cond.5 v1+v2)": "Φ = 0.61-0.68 (PyPhi RoM cycle prior)",
+    "n=5 (cells 9,33,7,6,44)": "Φ = 0.995, wall ~5.4 min",
+    "n=6 (cells 9,33,7,6,44,2)": "Φ = 1.665, wall ~119 min"
+  }
+  finding = "n 증가 시 Φ monotone INCREASE — PyPhi formal IIT 3.0 direction matches expectation (more cells = more integrated info possible)"
+  proxy_separation = "PyPhi formal IIT 3.0 = direction-correct (별개의 measurement framework, anima Φ★ proxy artifact 와 독립). §PROXY-ARTIFACT 의 direction-mismatch 문제는 anima Φ★ proxy 만 영향, PyPhi 본체는 영향 없음."
+  artifact = "state/verify_d_2026_05_15/pyphi_n5_6_result.json"
+  cross_link = "[[s_hc1283]] + [[d_pyphi_rom]] (n=4 RoM) + [[proxy_artifact_pattern]] (proxy 한계 별도)"
+
+# ══════════════════════════════════════════════════════════════════════
+# §CASCADE-AUDIT — §PROXY-ARTIFACT cascade audit (2026-05-15)
+# ══════════════════════════════════════════════════════════════════════
+
+@D cascade_h178 := "H_178 Frustration sweep 50% optimum — POTENTIAL-DIRECTION-MISMATCH" :: verdict [d=2026-05-15 active]
+  prior_status = "PARTIAL (legacy mechanism)"
+  cascade_status = "POTENTIAL-DIRECTION-MISMATCH (HIGH risk per §PROXY-ARTIFACT)"
+  axis = "math (A4) | physics (A3)"
+  evidence = "claim: 50% antiferromagnetic frustration peak on hypercube — non-monotone signal"
+  risk = "anima Φ★ proxy direction-sensitive failure 가능 (Scenario 1+3 mismatch pattern)"
+  needed = "PyPhi formal IIT 3.0 frustration sweep (RoM TPM 별도 cycle) 또는 alternative proxy (MI-MIP)"
+  artifact = "state/verify_d_2026_05_15/proxy_cascade_audit.json"
