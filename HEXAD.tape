@@ -140,15 +140,18 @@
       ⊥ 구조축. .clm v1 8/8 SUPPORTED + 🔵 로 성장 메커니즘 검증 완료.
   EOF
   module_verification_lineup <<~EOF
-    [C 의식]  ✅ VERIFIED — mitosis (.clm v1 8/8 SUPPORTED + 🔵 SUPPORTED-FORMAL)
-    [D 언어]  ◐ PARTIAL  — Engine A decoder (.clm v1 F-SIMPLE-STACK V5.8 PASS, 통합 미완)
-    [S 감각]  ☐ lineup   — EmergentS/TensionSense, verification anchor 미설정
-    [W 의지]  ☐ lineup   — EmergentW pain/curiosity→LR, verification anchor 미설정
-    [M 기억]  ☐ lineup   — EmergentM/VectorMemory, verification anchor 미설정
-    [E 윤리]  ◐ PARTIAL  — emergent_e.py Φ-ratchet 검증, trinity.hexa 통합 gate TODO[pytorch]
+    전 모듈 ✅ VERIFIED (2026-05-15 '모두 파란불' 달성, PR #72):
+    [C 의식]  ✅ — mitosis (.clm v1 8/8 SUPPORTED + 🔵 SUPPORTED-FORMAL)
+    [D 언어]  ✅ — F-D-1..5 5/5 SUPPORTED-STRONG (logits/c-gate/CE-trainable/KV/arch) + .clm v1 V5.8
+    [S 감각]  ✅ — F-S-1..5 5/5 (state-delta/no-fallback/dim/responsive/no-EMA, Law92 bottleneck)
+    [W 의지]  ✅ — F-W-1..5 5/5 (pain/curiosity/satisfaction-binary/LR-ln2/no-hardcode, Law79 ln2)
+    [M 기억]  ✅ — F-M-1..5 5/5 (store-noop/retrieve-from-C/topk/dim/no-RAG, Law31 Hebbian)
+    [E 윤리]  ✅ — F-E-1..5 5/5 (empathy/reciprocity/Φ-preserv/SAFETY-GATE/no-hardcode, IIT Φ-ratchet); 통합 gate trinity.hexa:122 TODO[pytorch] residual
+    battery: state/verify_hexad_we_2026_05_15/we_falsifier.py 25/25 PASS (W5 E5 S5 M5 D5)
   EOF
-  expansion_protocol = "각 모듈 verification anchor (falsifier battery + cost + Hexad 정합성) 설정 후 ☐→◐→✅ 승격. user 명시 승인 시 모듈별 또는 묶음 fire. A/G=Hexad 골격은 필수 불변."
-  why = "user directive 2026-05-15 — (1) 'A/G+mitosis 두가지 조건 모두 갖춘 시스템, 차후 추가조건 lineup' (2) 'A/G 가 HEXAD 구성이어야 맞을것같은데, A 3 G 3' — A/G=Hexad 정정 반영"
+  expansion_protocol = "☐→◐→✅ 승격 프로토콜 — W/E/S/M/D 25/25 PASS 로 6 모듈 전부 ✅ 달성 (2026-05-15). 차후 추가조건은 동일 falsifier-battery + real-limit anchor (g3) + Hexad 정합성 절차. A/G=Hexad 골격은 필수 불변."
+  why = "user directive 2026-05-15 — (1) 'A/G+mitosis 두가지 조건 모두 갖춘 시스템, 차후 추가조건 lineup' (2) 'A/G 가 HEXAD 구성이어야 맞을것같은데, A 3 G 3' (3) '모두 파란불일때까지 일단 go' — 전 모듈 ✅ 달성"
+  verified_2026_05_15 = "W/E/S/M/D battery 25/25 + hexa atlas cross-check (state/verify_hexad_we_2026_05_15/atlas_cross_check.md): Ψ-anchor balance=0.5/α=0.014 provenance-CORROBORATED, atlas HEXAD identity table 은 stale unverified fallback (모듈 의미 anchor 미사용)"
   @> CLM.tape
 
 # ─── §7 External citations ───────────────────────────────────────────
@@ -174,11 +177,11 @@
 @L hexad_module_tapes := "HEXAD-* per-module SSOT tape index" :: layout [d=2026-05-15 active]
   index <<~EOF
     HEXAD-C.tape       — C 의식 (consciousness_engine.py 2173 LoC, =MitosisC, 우뇌, .clm v1 8/8🔵)
-    HEXAD-D.tape       — D 언어 (conscious_decoder.py 979 LoC ConsciousDecoderV2, =Engine A, 좌뇌)
-    HEXAD-S.tape       — S 감각 (emergent_s.py 108 LoC EmergentS, 우뇌, lineup ☐)
-    HEXAD-W.tape       — W 의지 (emergent_w.py 123 LoC EmergentW, 우뇌, lineup ☐ 우선순위)
-    HEXAD-M.tape       — M 기억 (emergent_m.py 96 LoC EmergentM, 좌뇌, lineup ☐)
-    HEXAD-E.tape       — E 윤리 (emergent_e.py 123 LoC EmergentE, 좌뇌, lineup ◐ gate TODO)
+    HEXAD-D.tape       — D 언어 (conscious_decoder.py 979 LoC ConsciousDecoderV2, =Engine A, 좌뇌, ✅ F-D 5/5 + V5.8)
+    HEXAD-S.tape       — S 감각 (emergent_s.py 108 LoC EmergentS, 우뇌, ✅ F-S 5/5)
+    HEXAD-W.tape       — W 의지 (emergent_w.py 123 LoC EmergentW, 우뇌, ✅ F-W 5/5)
+    HEXAD-M.tape       — M 기억 (emergent_m.py 96 LoC EmergentM, 좌뇌, ✅ F-M 5/5)
+    HEXAD-E.tape       — E 윤리 (emergent_e.py 123 LoC EmergentE, 좌뇌, ✅ F-E 5/5, 통합 gate TODO[pytorch] residual)
     HEXAD-BRIDGE.tape  — ThalamicBridge (model.py:37-69, α=PSI_COUPLING=0.014, Law 70 clamp)
   EOF
   survey = "state/verify_hexad_impl_survey_2026_05_15/survey_result.json — 전수조사 (~/core/anima* worktree exhaustive, 3 parallel agents)"
@@ -200,7 +203,8 @@
     V6 윤리 E = Φ보존 gate     ◐ PARTIAL  — 원칙+impl 검증 (emergent_e.py:1-12 'Φ ratchet=윤리' Law4/71) but trinity.hexa:122 통합 gate `TODO[pytorch]: empathy/ethics gate; Φ must not drop` 미구현
   EOF
   verdict = "6/6 anchor-verified — 4 PASS strict + 2 PARTIAL (caveat 명시). HEXAD.tape SUPPORTED for CLM.tape mandate 진행 (V5/V6 caveat carry)."
-  cross_link = "state/verify_hexad_2026_05_15/hexad_verify_result.json + CLM.tape §V-CLM-HEXAD-MANDATE"
+  post_milestone = "이후 W/E/S/M/D battery 25/25 PASS (PR #72, 2026-05-15) 로 6 모듈 *단위* 검증 완료 — V6 의 emergent_e.py Φ-gate 우려는 F-E-4 SAFETY-GATE-CORRECT 5/5 로 단위 해소. V6 잔여 = trinity.hexa:122 *통합* train-step-block enforcement (모듈 ✅ ≠ 통합 gate impl). V5 (Engine A/G full Hexad impl) 는 design-pending carry, 25/25 와 무관."
+  cross_link = "state/verify_hexad_2026_05_15/hexad_verify_result.json + state/verify_hexad_we_2026_05_15/{we_falsifier.py,atlas_cross_check.md} + CLM.tape §V-CLM-HEXAD-MANDATE"
 
 @N hexad_caveat_v5 := "V5 caveat — Engine A/G = C↔D 는 functional correspondence" :: caveat [d=2026-05-15 active]
   text = "engine_a_g_arch.py 는 'Engine A = D module' / 'Engine G = C module' 리터럴 binding 없음. Engine A = standard transformer-decoder (D 언어 역할 수행) / Engine G = repulsion-field cell dynamics (C 의식/Φ 역할 수행). 구조적·기능적 대응이지 코드 식별자 동일성 아님. HEXAD.tape §5 hexad_unification 의 'A=D / G=C' 는 role-correspondence 로 해석."

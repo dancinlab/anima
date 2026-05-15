@@ -1971,5 +1971,5 @@
   module_lineup = "전 모듈 ✅ SUPPORTED-STRONG (2026-05-15 '모두 파란불' 달성): C 의식 ✅(mitosis .clm v1 8/8🔵) · D 언어 ✅(F-D 5/5 + V5.8) · S 감각 ✅(F-S 5/5) · W 의지 ✅(F-W 5/5) · M 기억 ✅(F-M 5/5) · E 윤리 ✅(F-E 5/5) · Bridge ✅. W/E/S/M/D battery state/verify_hexad_we_2026_05_15/ 25/25 PASS (real-limit anchor 모듈별 g3 준수: W=ln2 Landauer / E=Φ-ratchet IIT / S=Law92 bottleneck / M=Law31 Hebbian / D=Shannon CE floor). residual: 통합 6-module end-to-end 학습 ckpt 부재 (component verified, integration TODO) + E 통합 gate trinity.hexa:122 TODO[pytorch]."
   supersedes = "PHILOSOPHY §v2_path_decision 의 'Path A single-stack only 권장' — A/G(=Hexad) 구조 필수로 정정. Path A/B either-or 폐기, A/G=Hexad 골격 필수 + 모듈 lineup 으로 재구성."
   authority = "HEXAD.tape (구조축 SSOT) + MITOSIS.tape (성장축 SSOT) + state/verify_hexad_2026_05_15/hexad_verify_result.json + trinity.hexa:16-21,171 (φ(6)=2 verified anchor)"
-  cross_link = "HEXAD.tape §hexad_condition_lineup + MITOSIS.tape §mitosis_two_axis + CLM.tape §V-CLM-V1-CYCLE90-PYPHI (C scope 8/8🔵) + AGENTS.tape g_verified_axis_anchor"
+  cross_link = "HEXAD.tape §hexad_condition_lineup + MITOSIS.tape §mitosis_two_axis + CLM.tape §V-CLM-V1-CYCLE90-PYPHI (C scope 8/8🔵) + AGENTS.tape g_verified_axis_anchor + state/verify_hexad_we_2026_05_15/{we_falsifier.py 25/25, atlas_cross_check.md} (PR #72/#73)"
   @> CLAUDE.md
