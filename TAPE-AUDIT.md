@@ -6,7 +6,6 @@ The canonical Class-T tape baseline (`.tape` HXC spec cites anima's r29 measurem
 
 - **`state/markers/` — 38,245 `*.marker` files** + ~2,123 entries under `state/` total. Hexa hook artifacts (`clm_v4_mount_*`, `hxc_a*`, `runpod_credit_check_*`, `verify_hc_*`). Pure cargo; per wilson's audit-scrub finding these are exactly the class to delete or migrate to `state/markers.tape` (append-only `@H` host events, grade ok/err).
 - **`state/*.jsonl` — 860 jsonl total** under tree; the audit-class subset: `cert_incremental_log.jsonl`, `h100_alert_ledger_2026_05.jsonl`, `hf_upload_ledger_2026_05.jsonl`, `log_rotation_zstd_log.jsonl`, `vlm_invocation_seam_log.jsonl`, `vlm_latency_profile_log.jsonl`, `dist_native_build_periodic_log.jsonl`. Strong fit for `<DOMAIN>.tape` per ledger.
-- **`.raw-audit/` (6 logs)** — `active_redteam_l1.log`, `adversarial_bench.log`, `phase_progression.log`, `problem_solving_protocol.log`, `true_closure.log`, `unified_eval.log`. The "raw#" honesty-triad audit harness. Prime `audit-claims.tape` candidate.
 - **`.raw-audit-shadow/`, `.raw-exemptions/`, `.raw-ref`, `.hook-commands/`, `.hook-advice.md`** — shadow + policy. Could fold into `governance.tape`.
 - **`state/*_audit*/` dirs** — `jaw_clench_emg_audit`, `cyborg_eeg_audit`, `mk_xii_eeg_audit`, `rsn_audit`, `eeg_artifact_audit`, `eeg_claude_cli_audit`, `eeg_feedback_audit`, `eye_blink_detect_audit`, `external_session_audit_2026_05_04`, `p300_visual_audit`, `hf_workflow_audit_2026_05_04`, `p9_path_a_corpus_audit_2026_05_04`, `braket_qa6_qrng_audit_2026_05_02`, `atp_transpile_audit_2026_05_03`, `anima_alm_teacher_pending_audit_2026_05_05`, `clm_v4_hf_format_shim_v5_opt_c_2026_05_05` — each a per-experiment audit ledger; one tape file per audit run.
 
@@ -24,7 +23,6 @@ Strong. `PERSONA.md`, `REBORN.md`, `SAVANT.md`, `MEMORY.md`, `PHILOSOPHY.md` car
 
 ## E. Promotion candidates
 
-- **n6 atoms** — `LATTICE_POLICY.md` formulas (σ(6)·φ(6)=24, n^τ=1296), the dozens of axis-* / r-number convergence facts, `_marker_axis*` payloads. Each verified law → an n6 atom in `atlas/`.
 - **hxc wire** — `.hxc_aot/`, `.hxc_bench_a29_v3/` already binary; promote in-place.
 - **n12 cube cells** — convergence metrics (φ, tension, curiosity time-series) → n12 cells; format_witness latency profiles → n12.
 

@@ -61,15 +61,13 @@
   ssot = "~/core/anima/"
   raw_audit = ".raw-audit/ (hash-chained, mirrored by .raw-audit-shadow/)"
 
-@I principle :: identity [d=2026-05-14 ok]
+@I principle :: identity [d=2026-05-15 ok]
   <- anima
   principles = ["honesty-triad-C3","Ψ-half-convergence","proven-tape-ssot","raw-rule-promote-or-PR","cross-repo-propagation"]
-  # 2026-05-15 amendment: "atlas-bound-or-warn" → "proven-tape-ssot" (PROVEN.tape verdict 4-class > atlas overlay/rodata 이분법)
-  ssot = ".raw-audit/ + state/convergence/"
+  ssot = "PROVEN.tape (verdict SSOT) + .raw-audit/ + state/convergence/"
 
 @I version :: identity [d=2026-05-14 ok]
   <- anima
   marker_count_approx = 38000
   jsonl_count_approx = 860
   raw_rule_count_approx = 196
-  hxc_baseline = "r29-Pilot-B atlas_convergence_witness.jsonl (3577 B → 2516 B Class-M 29.66%)"
