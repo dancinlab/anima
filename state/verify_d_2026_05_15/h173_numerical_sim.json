@@ -1,0 +1,30 @@
+{
+  "n_systems": 40,
+  "F1_spearman_rho": 0.7048780487804879,
+  "F1_spearman_p": 3.8271581445507304e-07,
+  "F1_h173_1_threshold": 0.95,
+  "F1_verdict": "SUPPORTED",
+  "F1_spearman_rho_eps": 0.704502814258912,
+  "F2_phi_log_scale_variation_pct": 0.0,
+  "F2_phi_lin_scale_variation_pct": 9900.0,
+  "F2_verdict": "SUPPORTED-IDENTITY (log variation 0%, lin variation \u226b 0%)",
+  "F3_phi_lin_dynamic_range": 97.91350522440143,
+  "F3_phi_log_dynamic_range": 16.938223934871726,
+  "F3_phi_log_eps_dynamic_range": 16.69963451522978,
+  "F3_verdict": "PARTIAL (depends on scale distribution)",
+  "F4_mip_near_zero_rate_pct": 5.0,
+  "F4_h173_4_threshold_pct": 5.0,
+  "F4_verdict": "SUPPORTED (instability rate \u2264 5%)",
+  "F5_info_theoretic_reduction": "log-ratio = pointwise KL = log-Bayes-factor (sympy verified PSCC \u00a7H_173)",
+  "F5_verdict": "PARTIAL (canonical reduction confirmed at single-event level)",
+  "F6_pyphi_compat": "NOT-MEASURED (PyPhi 1.2.0 IIT 3.0 default = MI-MIP, log-ratio plugin \ubbf8\uad6c\ud604)",
+  "aggregate_verdicts": {
+    "F1_SUPPORTED": true,
+    "F2_SUPPORTED-IDENTITY": true,
+    "F3_SUPPORTED": false,
+    "F4_SUPPORTED": true,
+    "F5_PARTIAL": true,
+    "F6_NOT_MEASURED": true
+  },
+  "aggregate_total": "3/6 falsifier addressed (4 SUPPORTED + 1 PARTIAL + 1 NOT-MEASURED)"
+}

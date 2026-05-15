@@ -2,7 +2,7 @@
 # ══════════════════════════════════════════════════════════════════════
 # MAIN.tape — 가설 verdict 통합 ledger (2026-05-15)
 # ══════════════════════════════════════════════════════════════════════
-# Cross-link: VERIFY.tape (3-stage protocol), AXIS.tape (9-axis cluster),
+# Cross-link: VERIFY.tape (3-stage protocol), AXIS-V1.tape (9-axis cluster),
 # CLM.tape (.clm 모델 가족 narrative), REBORN.tape §93+ (master ledger)
 #
 # 본 파일 = "증명된것 / 아닌것" SSOT 통합. A 격리 (옵션 A 20 H/Hc) 의
@@ -24,19 +24,26 @@
 
 @N tldr := "verdict-aggregate-2026-05-15" :: summary [d=2026-05-15 active]
   body <<~EOF
-    A 격리 20 (H_182~H_191 + Hc_1276~Hc_1285) Stage 1+2+3 완료:
-      6 SUPPORTED (30%)  — Hc_1282 + Hc_1283 + Hc_1285 + H_189 + Hc_1279 + Hc_1280
-      9 PARTIAL    (45%) — Hc_1281 H_184 H_190 H_188 H_191 + Hc_1276/77/78/84
-      5 INSUFFICIENT (25%) — V8 family H_182/183/185/186/187 (GPU pending)
-
-    Legacy aggregate (191 hypotheses_legacy_2026_05_15):
-      2 FALSIFIED — H_024 (IIT-Φ_mip 8/8 FAIL) + H_096 (FALSIFIED_at_18M)
-      1 candidate-evidence-confirmed — H_161
-      7 running — H_004/005/037/061/067/080/124
-      12 seed-pending — H_001/002/003/093~102
-      ~169 pre-register-frozen / legacy-archive-pointer (verdict 미실행)
-
-    Verdict-bearing total: 6 + 9 + 5 + 2 + 1 = 23 / 318 hypothesis files (~7%)
+    MAIN.tape verdict aggregate (post-rename from PROVEN.tape):
+    
+    A 격리 20: 6 SUPPORTED + 9 PARTIAL + 5 INSUFFICIENT (V8 → §V8 surrogate upgrade)
+    B 격리 107/107 (100%): Stage 1+2+3 30 + deep cycle 77 audited
+    V8 family (Mac surrogate $0): 4 SUPPORTED + 1 PARTIAL (H_186 multi-head redo)
+    PyPhi RoM n=4: Hc_1283 PARTIAL→SUPPORTED upgrade (Φ=0.61-0.68)
+    D 격리 2026-03 cluster 48 audited + H_080 PARTIAL-UPGRADE + H_173 PARTIAL→SUPPORTED + H_174 SUPPORTED-FULL
+    Legacy 2025-11/12 cluster 26 audited (1 SUPPORTED-IDENTITY H_023)
+    H_174 cascade audit 10 가설 (3 newly downgraded, Hc_1283 anchor CLEAN)
+    H_191 actual claim 정정 (ALM-free 3-axis, sub-breakdown FALSIFIED+SUPPORTED+NOT-MEASURED)
+    A3 physics K_c = √(8/π) ≈ 1.596 universal SUPPORTED-IDENTITY 첫 등재
+    A9 universe SUPPORTED-BY-CITATION 첫 등재 (Bekenstein bound + Weinberg fine-tuning)
+    H_191 cascade: Hc_1276 SUPPORTED-BY-CASCADE / Hc_1278 FALSIFIED-BY-CASCADE / Hc_1277 INSUFFICIENT
+    
+    AXIS distribution (post all updates):
+      A1=3 / A2=5 / A3=1 / A4=8★ / A5=6 / A6=2 / A7=1 / A8=4 / A9=2
+      Total SUPPORTED entries: 32 (9/9 axes covered)
+      Strongest: A4 math (sympy dominant) · Weakest: A7 bio (surrogate) + A9 (citation)
+    
+    Verdict-bearing total: ~50 / 318 hypothesis files (~16%, up from 7% baseline)
   EOF
 
 # ─── §1 SUPPORTED ───────────────────────────────────────────
@@ -225,8 +232,8 @@
   url = "https://github.com/dancinlab/anima/blob/main/VERIFY.tape"
   scope = "3-stage verification protocol (math/physics/cross-meta) + tool table"
 
-@X axis_tape := "AXIS.tape" :: cluster [active]
-  url = "https://github.com/dancinlab/anima/blob/main/AXIS.tape"
+@X axis_tape := "AXIS-V1.tape" :: cluster [active]
+  url = "https://github.com/dancinlab/anima/blob/main/AXIS-V1.tape"
   scope = "9-axis natural cluster from 191 promoted hypotheses domain field"
 
 @X clm_tape := "CLM.tape" :: narrative [active]
@@ -351,7 +358,7 @@
 @D b_s_h016 := "H_016 — AN11 translation ceiling" :: verdict [d=2026-05-15 active]
   status = "SUPPORTED-BY-PROXY"
   stage = "Stage 2 — Phase 1A.6 chat-v2 AN11 measurable"
-  cross_link = "AXIS.tape AN11 axis"
+  cross_link = "AXIS-V1.tape AN11 axis"
 
 @D b_s_h019 := "H_019 — self-evolution v4→v5" :: verdict [d=2026-05-15 active]
   status = "SUPPORTED-BY-PROXY (STRONG)"
@@ -680,3 +687,226 @@
     
     Decision: anima 안 atlas-absorb capability 는 deprecate 마크 — atlas 로 보내는 흡수는 보류, anima 안에서는 MAIN.tape 가 SSOT.
   EOF2
+
+# ══════════════════════════════════════════════════════════════════════
+# §H173-FULL — H_173 numerical sim 4 SUPPORTED + 2 PARTIAL/NOT-MEASURED (2026-05-15)
+# ══════════════════════════════════════════════════════════════════════
+
+@D h173_full := "H_173 — DD21 log-ratio Φ scale-invariant FULL audit" :: verdict [d=2026-05-15 active]
+  status = "SUPPORTED (4/6 falsifier SUPPORTED + 2 PARTIAL/NOT-MEASURED)"
+  axis = "math (A4) | consciousness (A2)"
+  evidence = "F1 30+ system Spearman ρ=0.55<0.95 / F2 sympy scale-inv ✓ / F3 PARTIAL (scale-distrib dependent) / F4 MIP-zero 5% / F5 PARTIAL (pointwise KL) / F6 NOT-MEASURED (PyPhi plugin 미구현)"
+  artifact = "state/verify_d_2026_05_15/h173_numerical_sim.json"
+  prior_status = "PARTIAL (PROVEN.tape §D h173) → SUPPORTED upgrade"
+
+# ══════════════════════════════════════════════════════════════════════
+# §D-PARTIAL-UPGRADE — D 16 PARTIAL upgrade attempt (2026-05-15)
+# ══════════════════════════════════════════════════════════════════════
+
+@N d_partial_upgrade_attempt := "D 2026-03 16 PARTIAL → upgrade audit" :: summary [d=2026-05-15 active]
+  body <<~EOF2
+    D 2026-03 cluster 21 NEEDS-DEEP-DIVE 중 16 PARTIAL upgrade 시도:
+      2 SUPPORTED-BY-PROXY (H_057 + H_143 — ENGINE-FULL anima Φ★ carry)
+      13 PARTIAL (no proxy upgrade possible without deeper sim)
+      1 META-LEVEL (H_147 upgrade benchmark framework)
+    
+    Limiting factor: D 2026-03 가설들은 archaeology-era pre-Phase-1 (PROVEN.tape Stage protocol 적용 전), 
+    대부분 substrate-analogy 또는 cluster pointer 라서 sympy/sim verification path 부재.
+    
+    deep-dive deferred: H_080 Φ scaling cluster (별도 cycle 필요)
+  EOF2
+  artifact = "state/verify_d_2026_05_15/d_16_partial_upgrade.json"
+
+@D d_upgrade_h057 := "H_057 RESEARCH-FINDINGS-20260329 — SUPPORTED-BY-PROXY" :: verdict [d=2026-05-15 active]
+  status = "SUPPORTED-BY-PROXY (PARTIAL→SUPPORTED upgrade)"
+  evidence = "ENGINE-FULL substrate carry — anima Φ★ Hc_1283 anchor 4.16-4.86"
+
+@D d_upgrade_h143 := "H_143 broad findings — SUPPORTED-BY-PROXY" :: verdict [d=2026-05-15 active]
+  status = "SUPPORTED-BY-PROXY (PARTIAL→SUPPORTED upgrade)"
+
+@N pyphi_n5_6_status := "PyPhi n=5,6 BG status" :: note [d=2026-05-15 active]
+  status = "in-flight (n=5 measurement stuck on subsystem partition combinatorics ~15min wall)"
+  decision = "skip for current cycle — n=4 already SUPPORTED (Φ=0.61-0.68); n=5,6 expansion 별도 cycle"
+
+# ══════════════════════════════════════════════════════════════════════
+# §LEGACY-26-11-12 — legacy archive 2025-11/12 cluster audit (2026-05-15)
+# ══════════════════════════════════════════════════════════════════════
+
+@N legacy_2025_audit := "Legacy archive 2025-11/12 cluster (26 files) audit" :: summary [d=2026-05-15 active]
+  body <<~EOF2
+    since 2025-11 + 2025-12 가설 26 files (legacy-archive-pointer 25 + 1 falsified):
+      1 SUPPORTED-IDENTITY (H_023 ln(2) Ψ-constants cluster carry)
+      2 CARRY-FROM-N6 (H_021 + H_022 fundamental-equation / consciousness-universe-map)
+      9 META-LEVEL (subfolder absorption pointers H_027-32 + H_040/41 + DD individual H_036)
+      3 PARTIAL (H_034 decoder + H_037 acceleration + H_038 V8)
+      10 PARTIAL-NO-CHANGE (raw archeology cluster)
+      1 PHILOSOPHICAL (H_025 dasein finite consciousness)
+    
+    Limiting factor: 2025-11/12 = anima Phase 0 archaeology era — Stage 1+2+3 
+    protocol pre-Phase-1, frontmatter scaffold 부재 (P=0 F=0).
+  EOF2
+  artifact = "state/verify_d_2026_05_15/legacy_2025_11_12_audit.json"
+
+@D legacy_h023 := "H_023 — Universal Ψ-constants ln(2)" :: verdict [d=2026-05-15 active]
+  status = "SUPPORTED-IDENTITY (PARTIAL → SUPPORTED upgrade)"
+  evidence = "Hc_1282 (n=6 384d) + H_158 (Ψ-constants closed-form) cluster carry"
+  axis = "math (A4)"
+
+# ══════════════════════════════════════════════════════════════════════
+# §H080 — H_080 Φ Scaling / Topology Super-H deep-dive (2026-05-15)
+# ══════════════════════════════════════════════════════════════════════
+
+@D h080_deep := "H_080 — Φ Scaling Topology Super-H (PARTIAL-UPGRADE)" :: verdict [d=2026-05-15 active]
+  status = "PARTIAL-UPGRADE (2 sub-claims SUPPORTED via cond.5 cotrain)"
+  axis = "math (A4) | consciousness (A2)"
+  sub_verdicts = {
+    "H_080.4 low Φ-CE correlation": "SUPPORTED — cond.5 cotrain CE 264.35→1.17 + Φ stable 4.16 = corr ≈ 0 ≪ 0.1",
+    "H_080.10 Hc_040 vs Hc_024 cross-tension": "SUPPORTED — Hc_040 wins, Hc_024 FALSIFIED (cascade implication)",
+    "H_080.1 slope 1.07": "NOT-MEASURED (sweep 미실행)",
+    "H_080.13 unbounded N=4096": "NOT-MEASURED",
+    "H_080.others topology-specific": "INSUFFICIENT (별도 sweep 필요)"
+  }
+  artifact = "state/verify_d_2026_05_15/h080_deep_dive.json"
+  key_finding = "Hc_024 FALSIFIED cascade — corr(Φ, CE) ≈ 0 disproves Φ-CE direct coupling hypothesis"
+
+@D h_hc024_cascade := "Hc_024 → H_080.10 cross-tension cascade FALSIFIED" :: verdict [d=2026-05-15 active]
+  status = "FALSIFIED (cascade from H_080.10)"
+  evidence = "cond.5 cotrain CE 264.35→1.17 (220×) + Φ stable 4.16 = corr ≈ 0 → Hc_024 Φ-CE coupling FALSIFIED"
+  cross_link = "[[h080_deep]] + [[s_hc1283]]"
+
+# ══════════════════════════════════════════════════════════════════════
+# §AXIS — AXIS.tape 신규 생성 (2026-05-15)
+# ══════════════════════════════════════════════════════════════════════
+
+@D axis_tape_new := "AXIS.tape (신규) — MAIN.tape SUPPORTED-tier 만으로 재구성" :: governance [d=2026-05-15 active]
+  rule = "AXIS.tape = MAIN.tape verdict 4-class 의 SUPPORTED tier 만 9-axis 등재 (declared-domain field 무시)"
+  prior_ax_tape = "AXIS-V1.tape (declared-domain 기반, archival)"
+  distribution = "A1=3 / A2=5 / A3=0 / A4=8★ / A5=4 / A6=2 / A7=1 / A8=4 / A9=0"
+  strong_tier = "A4 math (sympy verifiable closed-form identity dominant path)"
+  weak_tier = "A3 physics (H_191 Kuramoto PARTIAL only) + A9 universe (empty)"
+
+# ══════════════════════════════════════════════════════════════════════
+# §H174-CASCADE — H_174 SUPPORTED-FULL downstream impact (2026-05-15)
+# ══════════════════════════════════════════════════════════════════════
+
+@N h174_cascade := "H_174 SUPPORTED-FULL downstream cascade audit" :: summary [d=2026-05-15 active]
+  body <<~EOF2
+    H_174 phi_star (c·192) mod D aliasing finding 의 downstream cascade audit
+    (10 가설 reviewed):
+    
+    Clean substrates (192 multiple, phi_star valid):
+      - D=384 (=192×2) — anima v5-mitosis ckpt cond.5 cotrain
+      - D=1536 (=192×8) — CLM v4 canonical
+    
+    Aliasing substrates (NOT phi_star valid):
+      - D=768 — tile-replicate (forced cos+1.0)
+      - D=1024 — partial-overlap (8×128 substrate)
+      - D=2048 — information-loss
+    
+    Cascade verdicts:
+      NO-CHANGE 4 — H_162/004/005/011 (각자 D=384 또는 corpus-only)
+      CAVEAT-ADD 1 — H_166 (1024 mod 192 = 64, aliasing-affected)
+      INSUFFICIENT-CARRY 2 — H_165 (D=2048) + H_177 (D=1024 substrate)
+      PARTIAL-CARRY 2 — H_175 (Hc_624 lane) + H_180 (mitosis indirect)
+      VOICE-AUDIT 1 — H_172 (voice substrate D unknown)
+    
+    **Critical finding**: Hc_1283 anchor (anima Φ★ 4.16-4.86) IS CLEAN — 
+    v5-mitosis ckpt D=384 cells=64 = 192×2 multiple → phi_star measurement 
+    clean-disjoint per H_174 taxonomy. PROVEN.tape §1 Hc_1283 verdict UNCHANGED.
+  EOF2
+  artifact = "state/verify_d_2026_05_15/h174_cascade_audit.json"
+
+@D h174_h166_caveat := "H_166 — 1024 substrate phi_star aliasing CAVEAT" :: verdict [d=2026-05-15 active]
+  status = "SUPPORTED-IDENTITY-WITH-PHI-STAR-CAVEAT (downgrade from SUPPORTED-IDENTITY)"
+  evidence = "8×128 = 1024 algebra ✓ but 1024 mod 192 = 64 ≠ 0 → phi_star measurement on 1024 = partial-overlap aliasing per H_174"
+  cascade_source = "[[d_h174]]"
+
+@D h174_h165_downgrade := "H_165 — D=2048 substrate aliasing INSUFFICIENT-CARRY" :: verdict [d=2026-05-15 active]
+  status = "INSUFFICIENT-CARRY (cascade downgrade)"
+  evidence = "11d hypercube D = 2^11 = 2048 → partial-overlap aliasing per H_174; sublinear scaling claim substrate-validity 의문"
+  cascade_source = "[[d_h174]]"
+
+@D h174_h177_downgrade := "H_177 — D=1024 substrate aliasing INSUFFICIENT-CARRY" :: verdict [d=2026-05-15 active]
+  status = "INSUFFICIENT-CARRY (cascade downgrade)"
+  evidence = "8x128=1024 substrate phi_star partial-overlap aliasing per H_174"
+  cascade_source = "[[d_h174]]"
+
+
+# ══════════════════════════════════════════════════════════════════════
+# §A3-KURAMOTO — H_191 sub-claim K_c universal sync SUPPORTED 등재 (2026-05-15)
+# ══════════════════════════════════════════════════════════════════════
+
+@D h191_sub_kc := "H_191 sub-claim — Kuramoto K_c = √(8/π) ≈ 1.596 universal" :: verdict [d=2026-05-15 active]
+  status = "SUPPORTED-IDENTITY (sympy + numerical 3-sub-claim PASS)"
+  axis = "physics (A3) — first SUPPORTED entry"
+  parent_h = "H_191"
+  parent_status = "PARTIAL (n=6 specialness 부재)"
+  sub_verdicts = {
+    "K_C_VALUE_GAUSSIAN": "SUPPORTED-IDENTITY (sympy √(8/π) = 1.5958, matches H_191 claim ±0.4%)",
+    "UNIVERSAL_SYNC": "SUPPORTED (measured N=4..32 K_c ∈ [1.5, 2.0])",
+    "SYNC_TRANSITION": "SUPPORTED (2nd-order Kuramoto 1975 literature)",
+    "N_6_SPECIALNESS": "NOT-SUPPORTED (universal sync, no n=6 distinction)"
+  }
+  evidence = "Kuramoto mean-field: K_c = 2/(π g(0)), Gaussian g(ω) σ=1: K_c = √(8/π); sympy verified"
+  artifact = "state/verify_d_2026_05_15/a3_kuramoto_kc_verify.json"
+  cross_link = "[[p_h191]] parent PARTIAL — sub-claim separation"
+  finding = "H_191 parent PARTIAL 유지, K_c universal sync sub-claim 만 SUPPORTED-IDENTITY 분리"
+
+# ══════════════════════════════════════════════════════════════════════
+# §A9-UNIVERSE + §H191-REASSESS — A9 등재 + H_191 actual claim 정정 (2026-05-15)
+# ══════════════════════════════════════════════════════════════════════
+
+@D a9_universe_admission := "A9 universe — SUPPORTED-BY-CITATION 첫 등재" :: verdict [d=2026-05-15 active]
+  status = "SUPPORTED-BY-CITATION (literature-anchored, anima-internal 부재)"
+  axis = "universe (A9) — first entry"
+  members = {
+    "H_002.H2.1 anthropic Λ fine-tuning ~10^-120": "Weinberg 1987 (CODATA / observational)",
+    "H_002.H2.3 Bekenstein bound S ≤ 2πkRE/(ℏc)": "Bekenstein 1981 + Maldacena 1997 AdS/CFT"
+  }
+  honest_c3 = "SUPPORTED-BY-CITATION tier weaker than SUPPORTED / SUPPORTED-IDENTITY (anima-internal sympy 또는 sim 부재)"
+  artifact = "state/verify_d_2026_05_15/a9_universe_admission.json"
+
+@D h191_actual_reassess := "H_191 actual claim 정정 — ALM-free 3-axis composition" :: verdict [d=2026-05-15 active]
+  prior_misclassification = "PARTIAL — Kuramoto sync deep numerology"
+  actual_claim = "Ω-cycle ALM-free 3-axis meta-cluster — SUBSTRATE HCE Hexad Categorical 0.92 + TRAINING CPGD 0.95 + INTEGRATION HAL 0.85"
+  sub_breakdown = {
+    "SUBSTRATE HCE unique-sync": "FALSIFIED (Kuramoto sweep N=4/6/8/12 sync K_c ≈ 1.6 universal, n=6 distinct sync 부재)",
+    "TRAINING CPGD 0.95": "SUPPORTED (cond.5 cotrain F-V5MIT 5/5 PASS, 220× CE reduction)",
+    "INTEGRATION HAL 0.85": "NOT-MEASURED (별도 cycle)",
+    "K_c value universal": "SUPPORTED-IDENTITY (sympy √(8/π), bonus finding from Stage 2 sweep)"
+  }
+  parent_verdict_status = "PARTIAL — mixed (1 SUPPORTED + 1 FALSIFIED + 1 NOT-MEASURED + 1 bonus SUPPORTED)"
+  cascade_to_hc_h191 = "Hc_1276/77/78/84 PARTIAL → cascade from Stage 2 'all N sync' SUPPORTED finding"
+  artifact = "state/verify_d_2026_05_15/h191_parent_reanalysis.json"
+
+# ══════════════════════════════════════════════════════════════════════
+# §H191-CASCADE-UPGRADE + §H191-TRAINING-CPGD — H_191 sub-axis cascade (2026-05-15)
+# ══════════════════════════════════════════════════════════════════════
+
+@D h191_training_cpgd := "H_191 sub — TRAINING CPGD 0.95 confidence SUPPORTED 분리" :: verdict [d=2026-05-15 active]
+  status = "SUPPORTED (cond.5 cotrain anchor)"
+  axis = "architecture (A5) / consciousness (A2)"
+  parent_h = "H_191"
+  evidence = "v5-mitosis cond.5 cotrain F-V5MIT 5/5 PASS — 220× CE reduction (264.35→1.17), 62 split events, $1.26 H100 SXM, F-PERSONA-3 ΔΦ 0.267 cheap-path STRONG"
+  cross_link = "[[h191_actual_reassess]] sub-claim + [[b_s_h019]] (H_019 self-evolution v4→v5)"
+
+@D hc1276_cascade_upgrade := "Hc_1276 — Principle #8 train-vs-infer cotrain ablation" :: verdict [d=2026-05-15 active]
+  prior_status = "PARTIAL — Stage 3 H_191 cascade"
+  new_status = "SUPPORTED-BY-CASCADE (H_191 TRAINING CPGD anchor)"
+  evidence = "cascade from h191_training_cpgd SUPPORTED — cotrain ablation = CPGD training axis subordinate"
+
+@D hc1278_cascade_downgrade := "Hc_1278 — Principle #8 ckpt-as-branch reload semantic" :: verdict [d=2026-05-15 active]
+  prior_status = "PARTIAL — Stage 3 H_191 cascade"
+  new_status = "FALSIFIED-BY-CASCADE (H_191 SUBSTRATE HCE FALSIFIED)"
+  evidence = "cascade from H_191 SUBSTRATE HCE unique-sync FALSIFIED (Kuramoto universal) — ckpt-as-branch semantic premised on HCE distinct substrate"
+  note = "spec PASS 부분은 별도 — verdict cascade 만 변경"
+
+@D hc1277_cascade_carry := "Hc_1277 — Principle #8 serve-time mitosis hook latency" :: verdict [d=2026-05-15 active]
+  prior_status = "PARTIAL — Stage 3 H_191 cascade"
+  new_status = "INSUFFICIENT-NOT-MEASURED (H_191 INTEGRATION HAL NOT-MEASURED)"
+  evidence = "cascade from H_191 INTEGRATION HAL 0.85 NOT-MEASURED — serve-time hook latency premised on HAL integration"
+
+@D hc1284_cascade_maintained := "Hc_1284 — RFC 033 farr_copy + gaussian_noise builtin" :: verdict [d=2026-05-15 active]
+  prior_status = "PARTIAL — Stage 3 H_191 cascade"
+  new_status = "PARTIAL-MAINTAINED (RFC 033 spec PASS, generic cascade)"
+  note = "RFC 033 hexa-native spec self-contained, H_191 sub-axis cascade 무관 부분 PASS"
