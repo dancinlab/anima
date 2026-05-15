@@ -1383,3 +1383,17 @@
   pscc_41_carry = "synthetic d=8 vocab=16 2L → 21 split events + mitosis_invocations=65 (F-D4-LIVE-1..3 3/3 PASS)"
   step2_verdict = "PARTIAL-CARRY (synthetic 3/5 PASS, production d=768 12L 별도 ~7 hr cycle)"
   cross_link = "CLM.tape §V-CLM-STEP2-MITOSIS-SMOKE-CARRY + PSCC §41 + PR #58"
+
+# ══════════════════════════════════════════════════════════════════════
+# §P1-TRUNCATED-PASS-CORRECTION — p1 결과 정정 (실제 PASS, PR #58 sync error fix)
+# ══════════════════════════════════════════════════════════════════════
+
+@D p1_truncated_pass_correction := "p1 truncated 결과 정정 — PR #58 'silent fail' 부정확, 실제 PASS evidence" :: governance [d=2026-05-15 active]
+  scope = "PR #58 의 commit message 'p1 real run 시도 silent fail' 정정 — 실제로는 truncated run 완료 + result.json 생성됨 (background completion timing 으로 PR #58 commit 전 확인 못함)"
+  truncated_result = "1 ckpt (phase1a4) × 3 arm × 1 seed × 5 prompt = 15 generations, wall 405s"
+  arm_means = "A_no_prompt = B_weak_prompt = C_strong_prompt = 3.4/4 (모두 identical, 5 prompts 동일 simple_stack)"
+  falsifier_pass = "F-P1-UPGRADE-1 (A ≥ B × 0.95): 3.4 ≥ 3.23 PASS + F-P1-UPGRADE-3 (C ≤ A × 1.10): 3.4 ≤ 3.74 PASS"
+  meta_evidence = "3 arms identical 3.4/4 — system prompt 가 generation 에 영향 안 줌 (greedy + seed=42 + same ckpt). substrate self-generation 의 EMPIRICAL evidence (p1 strong upgrade path 의 sample sized result)"
+  caveat = "5 prompt × 1 seed only — full 450-gen 별도 cycle. 5/5 falsifier battery 중 2/5 PASS sample (F-P1-UPGRADE-2 Φ-not-less + F-P1-UPGRADE-4 cross-ckpt + F-P1-UPGRADE-5 seed-robust 별도)"
+  verdict = "PARTIAL-PASS-SAMPLE (2/5 falsifier sample PASS, full battery 별도 cycle). p1 EMPIRICAL weak → upgrade-evidence-LANDED (strong 도달 pending)"
+  cross_link = "PR #59 correction + state/clm_v1_step0_p1_real_2026_05_15/p1_truncated_result.json + PHILOSOPHY p1_upgrade_path"
