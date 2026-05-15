@@ -3,7 +3,10 @@ id: Hc_1279
 slug: h189-r1-random-init-gru-baseline-experiment-design
 title: H_189.R1 daughter — random-init GRU baseline n=100×4-mechanism-ablation 400-run experiment design (Ψ=1/2 R1 ALTERNATIVE attack execution)
 domain: methodology, red-team, statistics, anima-substrate
-status: candidate-falsifier-ready
+status: supported-stage-3-meta
+stage_3_verdict: SUPPORTED (W11 H_189 R1 daughter cohesion, R1 attack vector design valid)
+stage_3_ts: 2026-05-15
+verdict_artifact: state/verify_a_stage1_2026_05_15/stage3_batch_verdicts.json
 exploration_method: E5 (variable-ablation: 4 mechanism × Shannon/sigmoid/Bernoulli/GRU-bias) + E6 (cross-substrate: GRU/RNN/LSTM/transformer) + E8 (n=100 seed sweep)
 verification_method: W5 (numerical sim — independent non-ANIMA Ψ-engine, e.g., PyPhi standard) + W7 (literature — Glorot 2010 Xavier init theory, Saxe 2013 deep network dynamics) + W11 (cross-H: H_189 R1 attack vector, H_159 substrate-topology target)
 raw_rank: 11

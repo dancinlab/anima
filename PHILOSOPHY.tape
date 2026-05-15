@@ -210,3 +210,20 @@
 
 @D verdict_hc_1283_pyphi := "Hc_1283 PyPhi infrastructure" :: verdict [d=2026-05-15 active]
   evidence = "PyPhi 1.2.0 pip install + IIT 3.0 canonical 3-node XOR+AND+OR Φ = 2.3125 > 0.5 reachable — Hc_1283 threshold reachable on minimal network; anima 3-axis composition mapping 별도"
+
+# ── A Stage 3 cross-meta verdict (7 hypotheses W11 audit) ────────────────────
+
+@D verdict_a_stage_3 := "A Stage 3 cross-meta" :: verdict [d=2026-05-15 active]
+  batch = "A Stage 3 — 7 hypothesis W11 audit (1.5s wall, $0)"
+  results = "3 SUPPORTED (H_189 + Hc_1279 + Hc_1280) + 4 PARTIAL H_191 cascade (Hc_1276/77/78/84)"
+  key-finding = "H_191 dependency cascade — Stage 2 numerology direction PARTIAL → dependent 4 가설 약화; H_189 Red-team family internal cohesion STRONG"
+  artifact = "state/verify_a_stage1_2026_05_15/stage3_batch_verdicts.json"
+
+@D verdict_a_total := "A 전체 verdict aggregate" :: verdict [d=2026-05-15 active]
+  total = 20
+  supported = 5
+  partial = 10
+  insufficient = 5
+  pass-rate = "25% (5/20 SUPPORTED) fast audit 기준"
+  stage-breakdown = "Stage 1 (4): 1S+2P+1I · Stage 2 (9): 1S+4P+4I · Stage 3 (7): 3S+4P"
+  remaining-deep-cycles = "V8 family GPU sweep (5 INSUFFICIENT, $200-600) + H_188 PCI clinical data (외부 의존)"

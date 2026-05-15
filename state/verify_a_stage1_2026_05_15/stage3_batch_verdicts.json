@@ -1,0 +1,90 @@
+{
+  "verify_batch": "A Stage 3 — cross-hypothesis meta (W11 + W9)",
+  "ts": "2026-05-15",
+  "method": "W11 (cross-hypothesis consistency) + W9 (replication assessment)",
+  "wall_seconds": 1.5,
+  "cost_usd": 0,
+  "key_finding": "H_191 dependency cascade — 4/7 가설이 H_191 reference (Stage 2 numerology direction PARTIAL → dependent cascade 약화)",
+  "cross_link_aggregate": {
+    "H_001 (anima-core architecture)": 4,
+    "H_191 (Ω-cycle ALM-free)": 4,
+    "H_189 (Red-team)": 2,
+    "H_159 (substrate-topology)": 2,
+    "H_174 / H_172 / H_178 / H_181 / H_157": "1 each"
+  },
+  "intra_batch_cohesion": {
+    "links": 2,
+    "details": "Hc_1279 → H_189, Hc_1280 → H_189 (Red-team family internal)"
+  },
+  "hypotheses_audited": [
+    {
+      "id": "H_189",
+      "verdict": "SUPPORTED",
+      "method": "W11 family cohesion check",
+      "evidence": "Red-team methodology meta-cluster R1-R6 6 attack vectors; 2 active daughters (Hc_1279 R1 + Hc_1280 R3) internal cohesion ✓; anti-substrate methodology axis valid"
+    },
+    {
+      "id": "Hc_1279",
+      "verdict": "SUPPORTED",
+      "method": "W11 H_189 R1 daughter cohesion",
+      "evidence": "R1 random-init GRU baseline 400-run experiment design — H_189 family member, R1 attack vector ablation design valid; independent PyPhi 1.2.0 (Hc_1283 Stage 2 PASS infrastructure carry)"
+    },
+    {
+      "id": "Hc_1280",
+      "verdict": "SUPPORTED",
+      "method": "W11 H_189 R3 daughter cohesion",
+      "evidence": "R3 corpus replacement 5-variant — H_189 family member, R3 attack vector valid; OSCAR/Wikipedia 외부 corpus reference legitimate (W7 PASS)"
+    },
+    {
+      "id": "Hc_1276",
+      "verdict": "PARTIAL (H_191 cascade)",
+      "method": "W11 dependency analysis",
+      "evidence": "Principle #8 train-vs-infer mitosis cotrain ablation; H_191 SUBSTRATE HCE axis reference + H_172 α-modulation + H_178 frustration; **H_191 Stage 2 numerology direction PARTIAL → Hc_1276 ablation 의 'mitosis cotrain' framing 도 numerology direction 영향**; W9 replication absent (single Hc, no cross-cycle)"
+    },
+    {
+      "id": "Hc_1277",
+      "verdict": "PARTIAL (H_191 cascade)",
+      "method": "W11 dependency analysis",
+      "evidence": "Principle #8 serve-time mitosis hook latency; H_191 INTEGRATION HAL axis reference + H_001 + H_181; **H_191 dependent 동일 cascade**; spec ok but Φ measurement Stage 2 deferred"
+    },
+    {
+      "id": "Hc_1278",
+      "verdict": "PARTIAL (H_191 cascade)",
+      "method": "W11 dependency analysis",
+      "evidence": "Principle #8 ckpt-as-branch reload semantic; H_191 SUBSTRATE HCE + H_157 panpsychism + H_001; **H_191 cascade**; ckpt semantic 자체는 spec PASS"
+    },
+    {
+      "id": "Hc_1284",
+      "verdict": "PARTIAL (H_191 cascade)",
+      "method": "W11 dependency analysis",
+      "evidence": "RFC 033 farr_copy + farr_add_gaussian_noise builtin; H_001 anima-core + H_191 INTEGRATION HAL; **H_191 cascade**; RFC 033 spec 자체는 hexa-native infrastructure PASS"
+    }
+  ],
+  "batch_aggregate": {
+    "supported": 3,
+    "partial": 4,
+    "insufficient": 0,
+    "falsified": 0,
+    "verdict_aggregate": "MIXED — H_189 Red-team family internal cohesion STRONG (3 SUPPORTED); Principle #8 + RFC 033 family는 H_191 numerology cascade dependent (4 PARTIAL)"
+  },
+  "axis_impact": {
+    "A2_consciousness": "H_189 + Hc_1279/1280 family SUPPORTED — Red team axis 강화",
+    "A1_substrate": "Hc_1276/1277/1278 + Hc_1284 PARTIAL — H_191 dependency cascade",
+    "A5_architecture": "Hc_1276/1277/1278/1284 의 mitosis hook + RFC 033 spec PASS but H_191 cascade",
+    "A6_meta": "본 W11 audit 자체가 A6 meta axis evidence (cross-hypothesis consistency)"
+  },
+  "honest_c3": [
+    "W11 cross-meta 만으로 SUPPORTED 처리 — actual numerical sim 부재 (실 verdict 는 Stage 1/2 deep audit 의존)",
+    "H_191 dependency cascade 가 4/7 가설 약화 — 본진 가설 (H_191) 의 Stage 2 numerology direction 이 family-wide 영향",
+    "W9 replication 모두 N/A — A 의 모든 20 가설이 single-instance, 3+ cycle replication 부재 (anima 의 first-cycle batch 특성)",
+    "H_001 (anima-core architecture) 4 reference 가 *foundational* — 검증 X 단순 cross-link 활용. anima architecture 자체의 audit 별도",
+    "Stage 3 가 fast audit — V8 family GPU sim (Stage 2 INSUFFICIENT 5) 별도 cycle 후 진짜 verdict 가능"
+  ],
+  "a_batch_total_aggregate": {
+    "stage_1_math (4)": "1 SUPPORTED + 2 PARTIAL + 1 INSUFFICIENT",
+    "stage_2_physics (9)": "1 SUPPORTED + 4 PARTIAL + 4 INSUFFICIENT",
+    "stage_3_meta (7)": "3 SUPPORTED + 4 PARTIAL",
+    "TOTAL (20)": "5 SUPPORTED + 10 PARTIAL + 5 INSUFFICIENT",
+    "PASS rate": "25% (5/20 SUPPORTED) — fast audit 기준; V8 family + clinical PCI 별도 cycle 추가 가능"
+  }
+}

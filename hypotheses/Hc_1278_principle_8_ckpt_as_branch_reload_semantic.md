@@ -3,7 +3,10 @@ id: Hc_1278
 slug: principle-8-ckpt-as-branch-reload-semantic
 title: Principle #8 falsifier 3 — ckpt-as-branch reload semantic (frozen vs live-tree-branch divergence)
 domain: philosophy, persistence, mitosis, falsifier, anima-native
-status: candidate-falsifier-ready
+status: partial-stage-3-h191-cascade
+stage_3_verdict: PARTIAL (H_191 SUBSTRATE HCE cascade, ckpt semantic spec PASS)
+stage_3_ts: 2026-05-15
+verdict_artifact: state/verify_a_stage1_2026_05_15/stage3_batch_verdicts.json
 exploration_method: E5 (variable-ablation: frozen ckpt vs live tree branch) + E6 (input × ckpt state cross) + E8 (multi-divergence-metric sweep)
 verification_method: W5 (numerical sim — anima v5-mitosis ckpt sweep) + W7 (literature — Hochreiter 1997 LSTM ckpt semantics, Kingma 2014 Adam state recovery) + W11 (cross-H: H_191 SUBSTRATE HCE axis, H_157 mathematical panpsychism)
 raw_rank: 10

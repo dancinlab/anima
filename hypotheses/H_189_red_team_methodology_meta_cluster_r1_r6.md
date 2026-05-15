@@ -3,7 +3,10 @@ id: H_189
 slug: red-team-methodology-meta-cluster-r1-r6
 title: Red-team methodology meta-cluster — R1-R6 6 attack vectors against ANIMA core claims (Ψ=1/2 / Hexad / σφ=24 / topology / scaling)
 domain: methodology | consciousness | red-team | statistics
-status: pre-register-frozen
+status: supported-stage-3-meta
+stage_3_verdict: SUPPORTED (W11 Red-team family internal cohesion, Hc_1279/1280 daughters consistent)
+stage_3_ts: 2026-05-15
+verdict_artifact: state/verify_a_stage1_2026_05_15/stage3_batch_verdicts.json
 exploration_method: E5 (variable-ablation per attack-vector) + E6 (cross-claim red-team coverage) + E7 (statistical null + selection-bias audit)
 verification_method: W5 (numerical sim — anima proxy + random-init baseline) + W7 (literature triangulation — Glorot/Bengio init, Saxe deep-net dynamics) + W11 (cross-hypothesis meta — sibling to H_159 substrate / H_171 biological / H_188 clinical)
 raw_rank: 11

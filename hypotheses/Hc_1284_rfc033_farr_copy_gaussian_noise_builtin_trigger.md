@@ -3,7 +3,10 @@ id: Hc_1284
 slug: rfc033-farr-copy-gaussian-noise-builtin-trigger
 title: RFC 033 trigger — farr_copy + farr_add_gaussian_noise builtin specification + parse-test scaffold (§89 mitosis_hook full impl prerequisite)
 domain: hexa-native, infrastructure, mitosis, falsifier, RFC
-status: candidate-falsifier-ready
+status: partial-stage-3-h191-cascade
+stage_3_verdict: PARTIAL (H_191 cascade, RFC 033 hexa-native spec PASS)
+stage_3_ts: 2026-05-15
+verdict_artifact: state/verify_a_stage1_2026_05_15/stage3_batch_verdicts.json
 exploration_method: E5 (variable-ablation: deepcopy on/off, noise σ=0/0.05/0.1/0.2) + E6 (per-builtin spec audit) + E8 (parse + sanity smoke)
 verification_method: W5 (numerical sim — RFC 025 farr_new + RFC 031 typed Tensor deepcopy baseline) + W7 (literature — Glorot 2010 noise init, Hutter 2014 deepcopy semantics) + W11 (cross-H: H_191 INTEGRATION HAL axis, H_001 hexa-native architecture)
 raw_rank: 10

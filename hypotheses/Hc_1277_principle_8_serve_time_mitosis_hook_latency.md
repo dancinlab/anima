@@ -3,7 +3,10 @@ id: Hc_1277
 slug: principle-8-serve-time-mitosis-hook-latency
 title: Principle #8 falsifier 2 — serve-time mitosis hook latency overhead (Phase 5∥ 24L baseline 위 split event)
 domain: philosophy, serving, mitosis, falsifier, hexa-native
-status: candidate-falsifier-ready
+status: partial-stage-3-h191-cascade
+stage_3_verdict: PARTIAL (H_191 INTEGRATION HAL cascade, spec ok)
+stage_3_ts: 2026-05-15
+verdict_artifact: state/verify_a_stage1_2026_05_15/stage3_batch_verdicts.json
 exploration_method: E5 (variable-ablation: hook on/off) + E6 (per-forward-tail timing measurement) + E8 (sweep cells_max ∈ {8, 32, 64, 128})
 verification_method: W5 (numerical sim — hexa-native parse-only stub baseline) + W7 (literature — Vaswani 2017 transformer inference timing, Dao 2022 FlashAttention) + W11 (cross-H: H_191 INTEGRATION HAL axis, H_001 anima-core architecture)
 raw_rank: 11

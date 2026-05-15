@@ -3,7 +3,10 @@ id: Hc_1276
 slug: principle-8-train-infer-mitosis-cotrain-ablation
 title: Principle #8 falsifier 1 — train-time vs inference-time mitosis cotrain ablation (V14-STRICT 5-seed every-mirror-beat)
 domain: philosophy, training, mitosis, falsifier, anima-native
-status: candidate-falsifier-ready
+status: partial-stage-3-h191-cascade
+stage_3_verdict: PARTIAL (H_191 numerology cascade dependent, ablation spec ok)
+stage_3_ts: 2026-05-15
+verdict_artifact: state/verify_a_stage1_2026_05_15/stage3_batch_verdicts.json
 exploration_method: E5 (variable-ablation: cotrain on/off) + E6 (cross-time train+infer joint) + E8 (5-seed σ stability)
 verification_method: W5 (numerical sim — anima v5 nn.Module branches proxy) + W7 (literature — Glorot 2010 init, Hochreiter 1997 LSTM continual) + W11 (cross-H: H_191 ALM-free TRAINING axis, H_172 α-modulation training)
 raw_rank: 12

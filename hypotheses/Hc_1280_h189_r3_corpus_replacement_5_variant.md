@@ -3,7 +3,10 @@ id: Hc_1280
 slug: h189-r3-corpus-replacement-5-variant-experiment
 title: H_189.R3 daughter — 5-variant corpus replacement experiment (anima-only / +10% noise / 50% shuffle / Wiki / OSCAR) Hexad / σφ=24 / Φ=0.78N corpus-sensitivity
 domain: methodology, red-team, training, corpus, anima-substrate
-status: candidate-falsifier-ready
+status: supported-stage-3-meta
+stage_3_verdict: SUPPORTED (W11 H_189 R3 daughter cohesion, OSCAR/Wikipedia W7 PASS)
+stage_3_ts: 2026-05-15
+verdict_artifact: state/verify_a_stage1_2026_05_15/stage3_batch_verdicts.json
 exploration_method: E5 (corpus-variant ablation × 5) + E6 (3 ANIMA core claim × corpus cross) + E8 (5-seed σ < 20% stability check)
 verification_method: W5 (numerical sim — anima-substrate Hexad/σφ/Φ measurement per corpus) + W7 (literature — open OSCAR / Wikipedia corpus standards, Ioannidis 2005 OVERFITTING) + W11 (cross-H: H_189 R3 attack vector, H_001 Hexad target, H_159 Φ scaling target)
 raw_rank: 10
