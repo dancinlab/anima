@@ -224,3 +224,54 @@ rfc_034 substance 불변, acceptance 문구 정밀도만 (anima build_verify.sh 
 **carry**: Phase 5 BLOCKER = "RFC 034 제출됨, hexa-lang land 대기" 불변.
 compiled-first 는 RFC-무관 인프라 작업 — RFC 034 land 와 병렬 완료.
 다음 RFC-무관: Phase 1 D inference wrapper (anima_chat.hexa, compiled).
+
+---
+
+## 마무리 (PLAN CLOSURE — 2026-05-16, user directive "PLAN 마무리")
+
+anima-side **RFC-무관** 작업은 전부 LANDED. 잔여는 hexa-lang RFC land 또는
+명시된 별도 sub-task 뿐 — PLAN 은 이 RFC 경계에서 CLOSED.
+
+### ✅ DONE (RFC-무관, LANDED)
+
+| 항목 | 상태 | evidence |
+|---|---|---|
+| HEXAD/ hexa-native 트리 | ✅ | PR #78, 8 .hexa + 8 README |
+| cross-file wire (task b) | ✅ | PR #79 + #89 lib-split, integ_test 7/7 native |
+| compiled-first 전환 + lib-split | ✅ | PR #89, `build_verify.sh` 10/10+8/8 PASS |
+| 6/7 모듈 full 🔵 | ✅ | blue_falsifier 22/22 (S/M/W/E/D/BRIDGE + C carry) |
+| 통합 harness (Python anchor) | ✅ | PR #77 F-INTEG 5/5 fire_gate=true |
+| **Phase 1 — D inference wrapper** | ✅ **CONTRACT LANDED** | `d_lib.hexa` `d_forward_contract()` + F-D-PORT-1 사전등록 (24L byte-parity = anima_chat.hexa 21/21 anchor carry). compiled-clean. |
+| **Phase 2 — C state mgmt (scaffold-tier)** | ✅ **CONTRACT LANDED** | `c_lib.hexa` `c_state_contract()` + F-C-PORT-1 사전등록 (mitosis 동역학 = mitosis_hook.hexa 5/5 anchor). compiled-clean. |
+
+### ⏳ 잔여 — anima-side RFC-무관 sub-task (PLAN 외연, 게이트 시 진행)
+
+- **anima_chat.hexa lib-split** (1589 LoC → `chat_lib.hexa` NO main + entrypoint)
+  → Phase 1 functional delegation (`d_forward` 실 호출). compiled-first lib-split
+  패턴(PR #89) 동일 적용. RFC-무관이나 별도 cycle (대용량 mechanical).
+
+### 🔒 TERMINAL — hexa-lang RFC land 대기 (anima 게이트 X)
+
+| Phase | blocker | RFC |
+|---|---|---|
+| Phase 2 GRU nn 동역학 (full) | hexa-native nn-primitive (GRU cell) | hexa-lang RFC (미제출) |
+| Phase 3 C↔Python parity | Phase 2 full 의존 | ↑ |
+| Phase 4 Φ FFI | phi_rs Rust FFI byte-equal | **RFC 036** (RFC 034 Roadmap 명시, 미제출) |
+| Phase 5 D training | reverse-mode AD (CE+AdamW) | **RFC 034** (제출됨 `77456c01`/`7ae624bf`, land 대기) |
+| Phase 6 통합 fire | Phase 1-5 + GPU $1-5 | Phase 5 land 후 재게이트 |
+
+### PLAN 상태
+
+**CLOSED at RFC boundary** (2026-05-16). anima 가 RFC 없이 할 수 있는 것은
+모두 완료 (contracts + 사전등록 falsifier + compiled-native gate). 다음 진척
+trigger = (a) hexa-lang RFC 034 land 알림 → Phase 5/6, (b) RFC 036 제출/land
+→ Phase 4, (c) anima_chat lib-split sub-task 게이트 → Phase 1 functional.
+이 PLAN.md 는 그 trigger 도착 시 `## 진행 로그` append 로 재개.
+
+### 2026-05-16 — PLAN-CLOSE: Phase 1/2 contract LANDED + closure
+
+user directive "PLAN 마무리". Phase 1 (`d_forward_contract` + F-D-PORT-1) +
+Phase 2 (`c_state_contract` + F-C-PORT-1) contract 사전등록 LANDED,
+compiled-clean (`build_verify.sh` 10/10+8/8 불변). PLAN = RFC 경계 CLOSED.
+RFC-무관 잔여 = anima_chat lib-split 단 1건 (별도 cycle). Phase 4/5/6 +
+Phase 2-GRU = hexa-lang RFC terminal.
