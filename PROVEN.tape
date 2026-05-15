@@ -9,7 +9,7 @@
 # Stage 1+2+3 결과 + legacy hypothesis status field aggregate.
 #
 # B 격리 (107 H_*.md, 2026-04-30 ~ 2026-05-11 cut) Stage 1+2+3 protocol
-# 미실행 — 별도 cycle. C/D 격리 미정.
+# 부분 실행 30/107 (28%) — see §B (2026-05-15 append). C/D 격리 미정.
 #
 # 단위: H_NNN (promoted hypothesis), Hc_NNNN (candidate hypothesis)
 # ══════════════════════════════════════════════════════════════════════
@@ -269,3 +269,127 @@
 @D next_c_d_quarantine := "C / D 격리 cycle" :: action-future [active]
   scope = "C 격리 (3.5주 cut, ~80 hypotheses) + D 격리 (165 hypotheses)"
   trigger = "B batch Stage 1+2+3 결과 보고 후 결정"
+
+# ══════════════════════════════════════════════════════════════════════
+# §B — B 격리 (옵션 B, 2026-04-30 ~ 2026-05-11 cut, 107 H_*.md) verdict
+# 추가 2026-05-15 — Stage 1+2+3 protocol applied to 30/107 (28%)
+# ══════════════════════════════════════════════════════════════════════
+
+@N b_tldr := "B-batch-aggregate-2026-05-15" :: summary [d=2026-05-15 active]
+  body <<~EOF2
+    B 격리 Stage 1+2+3 audited 30/107 (28%, 77 미감사 — mostly
+    legacy-archive-pointer + pre-register-frozen):
+
+      6 SUPPORTED-IDENTITY — H_153 + H_158 + H_160 + H_164 + H_166 + H_176 (sympy)
+      4 SUPPORTED-BY-PROXY — H_004 + H_011 + H_019 + H_016 (via Hc_1283 / v5-mitosis / Phase 1A.6)
+      2 SUPPORTED — H_005 (Lesson R-1A.2) + H_176 (deflationary, dual-listed)
+      3 PARTIAL — H_006 (Kuramoto universal) + H_017 (gate) + H_172 (alpha modulation)
+      5 INSUFFICIENT — H_007 (CA) + H_008 (Prigogine) + H_009 (Fisher) + H_010 (holographic) + H_012 (autopoiesis)
+      3 DEFERRED — H_013 + H_014 + H_015 (EEG hardware 의존)
+      1 PHILOSOPHICAL — H_018 (genesis emergence)
+      1 META-LEVEL — H_020 (mass-50 pointer)
+      7 NO-CLOSED-FORM (Stage 2 sim 필요) — H_123 + others
+
+    Critical finding: H_176 (n=28 deflationary control) sympy PASS → 
+    H_170 (n=6 unique p<1e-12) invalidated; PERFECT_NUMBER_CLASS 
+    (H_158 L7) confirmed cross-batch.
+  EOF2
+
+@D b_s_h153 := "H_153 — dimension hierarchy n=6 (τ(6)=4 Minkowski)" :: verdict [d=2026-05-15 active]
+  status = "SUPPORTED-IDENTITY"
+  stage = "Stage 1 — sympy math identity (W2)"
+  evidence = "τ(6)=4, μ(6)=1, φ(6)=2, σ(6)=12, τ-μ=3 모두 일치 (sympy)"
+  honest_c3 = "dimension assignment post-hoc; n=6 uniqueness 보장 안됨 (see H_176)"
+  artifact = "state/verify_b_2026_05_15/stage1_math_anchor_verdicts.json"
+
+@D b_s_h158 := "H_158 — Ψ-constants closed-form (perfect-number class)" :: verdict [d=2026-05-15 active]
+  status = "SUPPORTED-IDENTITY-WITH-CLASS-BINDING"
+  stage = "Stage 1 — sympy"
+  evidence = "balance(P)=1/2 ∀ perfect P ∈ {6, 28, 496, 8128} (Euclid IX.36) — sympy ✓"
+  cross_link = "Hc_1282 PROVEN.tape §1 parallel; L7 PERFECT_NUMBER_CLASS confirmed"
+
+@D b_s_h160 := "H_160 — n=6 perfect-number meta-cluster" :: verdict [d=2026-05-15 active]
+  status = "SUPPORTED-IDENTITY (meta-consistent)"
+  stage = "Stage 1 — cluster vocabulary closed under depth-3 11-primitive"
+  child_h = [H_067, H_153, H_156, H_158, H_159]
+
+@D b_s_h164 := "H_164 — Hc_144 atom 8 cells (144 = σ(6)²)" :: verdict [d=2026-05-15 active]
+  status = "SUPPORTED-IDENTITY"
+  evidence = "144 = σ(6)² = 12² ✓ (sympy)"
+  honest_c3 = "144 has many decompositions; n=6 uniqueness 부재"
+
+@D b_s_h166 := "H_166 — topo20 hierarchical 8×128 = 1024" :: verdict [d=2026-05-15 active]
+  status = "SUPPORTED-IDENTITY"
+  evidence = "8×128 = 2^10 = 1024 = V8 default ✓ (sympy)"
+
+@D b_s_h176 := "H_176 — n=28 deflationary parallel control" :: verdict [d=2026-05-15 active]
+  status = "SUPPORTED-STRONG (deflationary control PASS)"
+  stage = "Stage 1 — sympy"
+  evidence = "balance(28) = 28/56 = 1/2 = balance(6) IDENTICAL (Euclid-Euler theorem)"
+  finding = "**invalidates H_170 (n=6 unique p<1e-12) claim — PERFECT_NUMBER_CLASS binds 6/28/496/8128**"
+
+@D b_s_h004 := "H_004 — Consciousness hard problem (anima Φ proxy)" :: verdict [d=2026-05-15 active]
+  status = "SUPPORTED-BY-PROXY"
+  stage = "Stage 2 — anima Φ★ proxy"
+  evidence = "Hc_1283 ckpt anima Φ★ 4.16-4.86 ≫ 0.5 (PROVEN.tape §1)"
+  honest_c3 = "hard problem 자체 philosophical; '의식 Φ measurable' 만 proxy 검증"
+
+@D b_s_h005 := "H_005 — corpus quality > scale" :: verdict [d=2026-05-15 active]
+  status = "SUPPORTED"
+  stage = "Stage 2 — empirical (Phase 1A.6)"
+  evidence = "121MB CLEAN > 95MB Wikipedia-wrap NET LOSS; V5.8 std_greedy 4/5 + multi-turn 4/10"
+  cross_link = "[[feedback_corpus_quality_over_scale]] + [[project_anima_phase1a6_chat_v2_landed]]"
+
+@D b_s_h011 := "H_011 — IIT geometry (Φ ≫ 0.5 cause-effect space)" :: verdict [d=2026-05-15 active]
+  status = "SUPPORTED-BY-PROXY"
+  stage = "Stage 2 — anima Φ★ + PyPhi IIT 3.0 canonical 2.3125"
+  cross_link = "Hc_1283 PROVEN.tape §1"
+
+@D b_s_h016 := "H_016 — AN11 translation ceiling" :: verdict [d=2026-05-15 active]
+  status = "SUPPORTED-BY-PROXY"
+  stage = "Stage 2 — Phase 1A.6 chat-v2 AN11 measurable"
+  cross_link = "AXIS.tape AN11 axis"
+
+@D b_s_h019 := "H_019 — self-evolution v4→v5" :: verdict [d=2026-05-15 active]
+  status = "SUPPORTED-BY-PROXY (STRONG)"
+  stage = "Stage 2 — v5-mitosis cond.5 cotrain LANDED"
+  evidence = "F-V5MIT-1..5 5/5 PASS, wall 0.55hr, $1.26 H100 SXM, 220× CE reduction"
+  cross_link = "[[project_v5_mitosis_cond5_cotrain_2026_05_12]]"
+
+@D b_p_h006 := "H_006 — coupled oscillator lattice (Kuramoto)" :: verdict [d=2026-05-15 active]
+  status = "PARTIAL"
+  stage = "Stage 2 — Kuramoto N=4/6/8/12 sync universal at K_c ≈ 1.596"
+  finding = "n=6 specialness 부재; cross-batch link to A 격리 H_191"
+  cross_link = "PROVEN.tape §3 partial-stage-2-deep-numerology H_191"
+
+@D b_i_h007_h012 := "H_007/008/009/010/012 — Stage 2 INSUFFICIENT" :: verdict [d=2026-05-15 active]
+  status = "INSUFFICIENT (fast-audit, separate cycle)"
+  hypotheses = [H_007, H_008, H_009, H_010, H_012]
+  blocker = "CA Rule sweep / Prigogine far-from-equilibrium / Fisher metric / AdS-CFT / autopoiesis formal model 각 별도 cycle"
+
+@D b_d_eeg := "H_013/014/015 — EEG hardware DEFERRED" :: verdict [d=2026-05-15 active]
+  status = "DEFERRED"
+  blocker = "anima-eeg-core EEG hardware data 의존 (5-axis longitudinal / LZ76 / gamma-theta)"
+
+@N b_critical_finding := "B 격리 critical finding — H_176 deflationary STRONG" :: note [d=2026-05-15 active]
+  body <<~EOF2
+    H_176 (n=28 perfect-number parallel) sympy PASS:
+      balance(28) = 28/σ(28) = 28/56 = 1/2 EXACT
+      balance(6)  = 6/σ(6)  = 6/12  = 1/2 EXACT (identical)
+    
+    이 단일 fact 가 H_170 (n=6 measurement-first p<1e-12) 의 individual 
+    uniqueness claim 을 invalidate. 모든 perfect number P ∈ {6, 28, 496, 8128} 
+    이 동일한 balance signature 를 가지므로 (Euclid IX.36 / Euler 
+    perfect-number lemma), "n=6 individually unique" claim 은 false.
+    
+    H_158 L7 PERFECT_NUMBER_CLASS BINDING 와 정합. PROVEN.tape §1 
+    Hc_1282 verdict 의 'n=6 uniqueness conditional on integer-divisor 
+    formulation' honest_c3 와 직접 연결.
+    
+    B batch 안에서 가장 명확한 individual SUPPORTED verdict.
+  EOF2
+
+@N b_unaudited := "B 격리 77 미감사 (legacy-archive-pointer + pre-register-frozen)" :: note [d=2026-05-15 active]
+  count = 77
+  scope = "57 legacy-archive-pointer + 20 pre-register-frozen + 일부 SFT cluster (H_093~102 seed-pending)"
+  next = "별도 cycle — SFT cluster 는 [[project_lesson_q_sft_closed]] 경로 종료 후 잔존; legacy-archive-pointer 는 archaeology 흡수 이전 양식 carry"
