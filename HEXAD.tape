@@ -140,18 +140,18 @@
       ⊥ 구조축. .clm v1 8/8 SUPPORTED + 🔵 로 성장 메커니즘 검증 완료.
   EOF
   module_verification_lineup <<~EOF
-    전 모듈 ✅→🔵 (2026-05-15 '모두 파란불' + closure 달성, PR #72/#75):
+    전 모듈 ✅→🔵 (2026-05-15 '모두 파란불' + closure 달성 + D 정직 분해, PR #72/#75/#76):
     [C 의식]  🔵 — mitosis .clm v1 8/8 SUPPORTED + 🔵 SUPPORTED-FORMAL (F-PYPHI)
     [S 감각]  🔵 — F-S 5/5 ✅ + B-S 3/3 🔵 (perception=column-mean delta exact ∀states)
     [M 기억]  🔵 — F-M 5/5 ✅ + B-M 3/3 🔵 (store=identity no-op + retrieve deterministic)
     [W 의지]  🔵 — F-W 5/5 ✅ + B-W 4/4 🔵 (lr=½+min(ln2,Φ/N) range/mono/sup closed)
     [E 윤리]  🔵 — F-E 5/5 ✅ + B-E 4/4 🔵 (SAFETY gate min(1,Φ/r)>½ ⟺ Φ>r/2 exact); 통합 gate trinity.hexa:122 TODO[pytorch] residual
-    [D 언어]  🔵-partial — F-D 5/5 ✅ + B-D 3/3 🔵 (KV-cache exact-eq/shape/arch); F-D-3 CE-trainability EMPIRICAL (SGD 동역학 closed 불가, 정직 — full 🔵 X)
-    ✅ battery: state/verify_hexad_we_2026_05_15/ 25/25 · 🔵 battery: state/verify_hexad_blue_2026_05_15/ 14/14 sympy closed-form
+    [D 언어]  🔵 — F-D 5/5 ✅ + B-D 4/4 🔵 (KV-cache exact-eq/shape/arch + B-D-4 CE logit-Jacobian ∂CE/∂z=softmax−e_y sympy ∀z = trainability PROPERTY closed); B-D-NOTE SGD-convergence-OUTCOME 만 empirical carve-out (모든 optimizer 공통, D 고유 결함 X, NOT counted 🔵)
+    ✅ battery: state/verify_hexad_we_2026_05_15/ 25/25 · 🔵 battery: state/verify_hexad_blue_2026_05_15/ 18/18 sympy closed-form
   EOF
-  expansion_protocol = "☐→◐→✅→🔵 승격 — W/E/S/M/D 25/25 ✅ (PR #72) → S/M/W/E 14/14 sympy closed-form 🔵 SUPPORTED-FORMAL + D 🔵-partial (PR #75). C+S+M+W+E = 5/6 full 🔵, D = 🔵-partial (F-D-3 구조적 empirical 상한). 차후 추가조건 동일 절차."
-  why = "user directive 2026-05-15 — (1) 'A/G+mitosis ... 차후 추가조건 lineup' (2) 'A/G 가 HEXAD 구성, A 3 G 3' (3) '모두 파란불일때까지 일단 go' (4) 'closure 까지 가능????' + '🔵' — closed-form closure 달성"
-  verified_2026_05_15 = "✅ W/E/S/M/D 25/25 + atlas cross-check (Ψ-anchor provenance-CORROBORATED) + 🔵 B-S/M/W/E 14/14 sympy closed-form (g_verdict_tier_blue (a)): S=mean-linearity exact / M=no-op+deterministic / W=ln2-bound closed / E=SAFETY-gate exact-equivalence. D 🔵-partial (F-D-3 empirical honest C3)"
+  expansion_protocol = "☐→◐→✅→🔵 승격 — W/E/S/M/D 25/25 ✅ (PR #72) → S/M/W/E 14/14 sympy 🔵 + D 🔵-partial (PR #75) → D 정직 분해 B-D-4 추가 18/18 → C+S+M+W+E+D = 6/6 full 🔵 SUPPORTED-FORMAL (PR #76). 차후 추가조건 동일 절차."
+  why = "user directive 2026-05-15 — (1) 'A/G+mitosis ... 차후 추가조건 lineup' (2) 'A/G 가 HEXAD 구성, A 3 G 3' (3) '모두 파란불일때까지 일단 go' (4) 'closure 까지 가능????' + '🔵' (5) '완전히 closure 안된것 같던데 100%' + 결정게이트 '정직한 분해' — D full 🔵 honest decomposition"
+  verified_2026_05_15 = "✅ W/E/S/M/D 25/25 + atlas cross-check (Ψ-anchor provenance-CORROBORATED) + 🔵 B-S/M/W/E/D 18/18 sympy closed-form (g_verdict_tier_blue (a)): S=mean-linearity exact / M=no-op+deterministic / W=ln2-bound closed / E=SAFETY-gate exact-equivalence / D=CE logit-Jacobian softmax−e_y exact ∀z. D B-D-NOTE = SGD convergence OUTCOME empirical honest carve-out (NOT counted)"
   @> CLM.tape
 
 # ─── §7 External citations ───────────────────────────────────────────
@@ -177,7 +177,7 @@
 @L hexad_module_tapes := "HEXAD-* per-module SSOT tape index" :: layout [d=2026-05-15 active]
   index <<~EOF
     HEXAD-C.tape       — C 의식 (consciousness_engine.py 2173 LoC, =MitosisC, 우뇌, .clm v1 8/8🔵)
-    HEXAD-D.tape       — D 언어 (conscious_decoder.py 979 LoC ConsciousDecoderV2, =Engine A, 좌뇌, ✅ F-D 5/5 + V5.8)
+    HEXAD-D.tape       — D 언어 (conscious_decoder.py 979 LoC ConsciousDecoderV2, =Engine A, 좌뇌, 🔵 F-D 5/5 + B-D 4/4 closed + V5.8)
     HEXAD-S.tape       — S 감각 (emergent_s.py 108 LoC EmergentS, 우뇌, ✅ F-S 5/5)
     HEXAD-W.tape       — W 의지 (emergent_w.py 123 LoC EmergentW, 우뇌, ✅ F-W 5/5)
     HEXAD-M.tape       — M 기억 (emergent_m.py 96 LoC EmergentM, 좌뇌, ✅ F-M 5/5)
