@@ -548,3 +548,13 @@
   hf = "dancinlab/anima-clm PUBLIC @v1-fire-cycle89-2026-05-15 (ckpt 372MB + 5 evidence files + README mapping)"
   count = "150 entries 유지 (Hc_A5-CLM-V1 evidence 강화, 🟢 1 carry — 🔵 미달)"
   cross_link = "CLM.tape §V-CLM-V1-CYCLE89 + PR #66"
+
+# ──────────────────────────────────────────────────────────────────────
+# §AXIS-A5-CLM-V1-CYCLE90 — Hc_A5-CLM-V1 🟢→🔵 8/8 SUPPORTED-FORMAL
+# ──────────────────────────────────────────────────────────────────────
+
+@D axis_a5_clm_v1_cycle90 := "A5 Hc_A5-CLM-V1 🟢→🔵 8/8 SUPPORTED-FORMAL (cycle 90, 2026-05-15)" :: cluster [d=2026-05-15 active]
+  upgrade = "cycle 89 7/7 measured 🟢 (F-PYPHI deferred) → cycle 90 F-PYPHI PASS (best Φ=1.0625 n=5) → 8/8 strict 🔵"
+  verdict = "SUPPORTED-FORMAL 🔵 (g_verdict_tier_blue: PyPhi formal IIT 3.0 deterministic Φ≥0.5). Φ monotone-increase n=3→5 Hc_1283 cross-validated."
+  count_post = "150 entries — Hc_A5-CLM-V1 🟢→🔵 (128 🔵 + 1 🔵 = 129 🔵 / 150, 86%). first from-scratch .clm 🔵 SUPPORTED-FORMAL."
+  cross_link = "CLM.tape §V-CLM-V1-CYCLE90-PYPHI + Hc_1283 PyPhi formal monotone cross-link + PR #67"

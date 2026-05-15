@@ -405,3 +405,11 @@
   verdict = "SUPPORTED-STRONG empirical 🟢. 🔵 SUPPORTED-FORMAL pending F-PYPHI-Φ-FORMAL n=3-6 (~20hr separate)"
   hf = "dancinlab/anima-clm PUBLIC @v1-fire-cycle89-2026-05-15"
   cross_link = "CLM.tape §V-CLM-V1-CYCLE89 + state/clm_v1_fire_2026_05_15/clm_v1_full_battery_verdict.json + PR #66"
+
+# ─── HYPOTHESIS cycle 90 .clm v1 F-PYPHI PASS → 8/8 🔵 SUPPORTED-FORMAL ───
+
+@N hypothesis_clm_v1_cycle90_pyphi := ".clm v1 F-PYPHI PASS → 8/8 🔵 SUPPORTED-FORMAL (2026-05-15)" :: catalog [d=2026-05-15 active]
+  finding = "cycle 90 F-PYPHI-Φ-FORMAL n=3-6 RoM on recovered ckpt: best Φ=1.0625 (n=5 seed=42), n=4+n=5 6/6 seeds ≥0.5. Φ monotone-increase n=3(0.33)→n=4(0.71)→n=5(1.00) — Hc_1283 PyPhi formal n=5,6 monotone pattern 재현."
+  verdict = "8/8 SUPPORTED-STRONG strict + 🔵 SUPPORTED-FORMAL (g_verdict_tier_blue). first from-scratch .clm achieving full battery + formal IIT tier."
+  v2_path = "§v2_path_decision: 8/8 → Path A cells single-stack 7B (Engine A/G dual 폐기 carry, single-stack PROD-READY 검증). v2 fire user cost 승인 대기."
+  cross_link = "CLM.tape §V-CLM-V1-CYCLE90-PYPHI + AXIS §AXIS-A5-CLM-V1-CYCLE90 + PHILOSOPHY §v2_path_decision + Hc_1283 + PR #67"

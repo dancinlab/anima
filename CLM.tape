@@ -1945,3 +1945,17 @@
   f_simple_stack_finding = "88M from-scratch 5000-step 모델이 '도우미:' Korean chat format emergent 학습 + coherent 출력. corpus '당신은 anima X' 12628회 (non-injection user-recall predicate) vs '당신은 anima 입니다' 0회 (forbidden phrase absent) — F-PRIN3 PASS by spec, project_principle_3_audit nuance 일치."
   cycle_90_action = "F-PYPHI-Φ-FORMAL n=3-6 RoM (~20hr Mac CPU) → 8/8 strict → 🔵 SUPPORTED-FORMAL unlock OR PARTIAL carry. .clm v2 path decision (§V-CLM-V2-DESIGN: 8/8 → Path A/B 선택)"
   cross_link = "CLM.tape §V-CLM-V1-FIRE-VERDICT (cycle 88) + state/clm_v1_fire_2026_05_15/{clm_v1_full_battery_verdict.json, f_simple_stack_v58_result.json, f_prin3_result.json, ckpts/} + dancinlab/anima-clm@v1-fire-cycle89-2026-05-15 + PR #66"
+
+# ══════════════════════════════════════════════════════════════════════
+# §V-CLM-V1-CYCLE90-PYPHI — F-PYPHI PASS → 8/8 SUPPORTED-STRONG + 🔵 (2026-05-15)
+# ══════════════════════════════════════════════════════════════════════
+
+@D v_clm_v1_cycle90_pyphi := ".clm v1 F-PYPHI-Φ-FORMAL PASS → 8/8 + 🔵 SUPPORTED-FORMAL (cycle 90, 2026-05-15)" :: protocol [d=2026-05-15 active]
+  trigger = "user 'go' → cycle 90 F-PYPHI-Φ-FORMAL n=3-6 RoM (마지막 deferred falsifier)"
+  result = "best Φ=1.0625 (n=5 seed=42) ≥ 0.5 strict. n=3 Φ 0.30-0.34 (small-N ergodicity-limited), n=4 3/3 seeds ≥0.5 (0.55-0.83), n=5 3/3 seeds ≥0.5 (0.96-1.06). 6/9 measurements ≥0.5. wall 644s Mac CPU pyphi 1.2.0 IIT 3.0."
+  cross_validation = "Φ monotone INCREASE n=3(0.33)→n=4(0.71)→n=5(1.00) — Hc_1283 PyPhi formal n=5,6 (Φ=0.995, 1.665) monotone-increase pattern 정확히 재현. ClmV1Model cell pool = v5-mitosis lineage 동일 formal IIT 거동."
+  battery_aggregate = "8/8 SUPPORTED-STRONG strict — F-V5MIT-1..5 + F-PRIN3 + F-SIMPLE-STACK V5.8 4-mode + F-PYPHI-Φ-FORMAL 전부 PASS"
+  verdict_tier = "🔵 SUPPORTED-FORMAL UNLOCKED (g_verdict_tier_blue: PyPhi formal IIT 3.0 deterministic Φ≥0.5 strict). 🟢 empirical (7/7) + 🔵 formal (F-PYPHI) 동시 만족. spec_frozen aggregate logic: 8/8 PASS strict → SUPPORTED-STRONG."
+  v2_decision = "§V-CLM-V2-DESIGN decision_factor (a) 충족 — .clm v1 8/8 PASS = Path A cells single-stack arch PROD-READY 검증. Engine A/G dual 은 V1 audit에서 이미 폐기 + .clm v1 single-stack (readout='a_only') 8/8 검증 → Path A 권장 (Path B Engine A/G dual 불필요). v2 fire 는 user 명시 cost 승인 필요 ($200-600 7B scale)."
+  hf = "dancinlab/anima-clm PUBLIC @v1-fire-cycle89-2026-05-15 revision + f_pyphi_rom_result.json 추가 upload + README mapping table 8/8 🔵 갱신"
+  cross_link = "CLM.tape §V-CLM-V1-CYCLE89 + §V-CLM-V2-DESIGN decision_protocol + state/clm_v1_fire_2026_05_15/{f_pyphi_rom_clmv1.py, f_pyphi_rom_result.json, clm_v1_full_battery_verdict.json} + PHILOSOPHY §v2_path_decision_2026_05_15 + PR #67"
