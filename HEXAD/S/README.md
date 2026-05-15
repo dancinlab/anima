@@ -1,6 +1,6 @@
 # HEXAD/S — 감각 (sense)
 
-> SSOT: [`HEXAD-S.tape`](../../HEXAD-S.tape) · Python anchor: `ready/anima/hexad/s/emergent_s.py` (108 LoC) · 🔵 SUPPORTED-FORMAL
+> SSOT: [`HEXAD-S.tape`](HEXAD-S.tape) · Python anchor: `ready/anima/hexad/s/emergent_s.py` (108 LoC) · 🔵 SUPPORTED-FORMAL
 
 ## 핵심 원리 (closed-form, sympy-verified)
 

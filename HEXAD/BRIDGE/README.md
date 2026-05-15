@@ -1,6 +1,6 @@
 # HEXAD/BRIDGE — ThalamicBridge (C → .detach() → D)
 
-> SSOT: [`HEXAD-BRIDGE.tape`](../../HEXAD-BRIDGE.tape) · Python anchor: `ready/anima/hexad/model.py` `ThalamicBridge` (~50 LoC) · 🔵 PSI_COUPLING clamp closed
+> SSOT: [`HEXAD-BRIDGE.tape`](HEXAD-BRIDGE.tape) · Python anchor: `ready/anima/hexad/model.py` `ThalamicBridge` (~50 LoC) · 🔵 PSI_COUPLING clamp closed
 
 ## 핵심 원리
 

@@ -7,15 +7,15 @@
 
 ## SSOT 매핑
 
-| 모듈 | 디렉토리 | hexa entry | tape SSOT (root) | Python anchor (ready/) |
+| 모듈 | 디렉토리 | hexa entry | tape SSOT (co-located, 2026-05-16 reorg) | Python anchor (ready/) |
 |---|---|---|---|---|
-| **C** 의식 | `HEXAD/C/` | `c.hexa` | [`HEXAD-C.tape`](../HEXAD-C.tape) | `ready/core/consciousness_engine.py` (2173 LoC) |
-| **D** 언어 | `HEXAD/D/` | `d.hexa` | [`HEXAD-D.tape`](../HEXAD-D.tape) | `ready/models/conscious_decoder.py` (979 LoC) |
-| **S** 감각 | `HEXAD/S/` | `s.hexa` | [`HEXAD-S.tape`](../HEXAD-S.tape) | `ready/anima/hexad/s/emergent_s.py` (108 LoC) |
-| **W** 의지 | `HEXAD/W/` | `w.hexa` | [`HEXAD-W.tape`](../HEXAD-W.tape) | `ready/anima/hexad/w/emergent_w.py` (123 LoC) |
-| **M** 기억 | `HEXAD/M/` | `m.hexa` | [`HEXAD-M.tape`](../HEXAD-M.tape) | `ready/anima/hexad/m/emergent_m.py` (96 LoC) |
-| **E** 윤리 | `HEXAD/E/` | `e.hexa` | [`HEXAD-E.tape`](../HEXAD-E.tape) | `ready/anima/hexad/e/emergent_e.py` (123 LoC) |
-| **BRIDGE** | `HEXAD/BRIDGE/` | `bridge.hexa` | [`HEXAD-BRIDGE.tape`](../HEXAD-BRIDGE.tape) | `ready/anima/hexad/model.py` `ThalamicBridge` |
+| **C** 의식 | `HEXAD/C/` | `c.hexa` | [`HEXAD-C.tape`](C/HEXAD-C.tape) | `ready/core/consciousness_engine.py` (2173 LoC) |
+| **D** 언어 | `HEXAD/D/` | `d.hexa` | [`HEXAD-D.tape`](D/HEXAD-D.tape) | `ready/models/conscious_decoder.py` (979 LoC) |
+| **S** 감각 | `HEXAD/S/` | `s.hexa` | [`HEXAD-S.tape`](S/HEXAD-S.tape) | `ready/anima/hexad/s/emergent_s.py` (108 LoC) |
+| **W** 의지 | `HEXAD/W/` | `w.hexa` | [`HEXAD-W.tape`](W/HEXAD-W.tape) | `ready/anima/hexad/w/emergent_w.py` (123 LoC) |
+| **M** 기억 | `HEXAD/M/` | `m.hexa` | [`HEXAD-M.tape`](M/HEXAD-M.tape) | `ready/anima/hexad/m/emergent_m.py` (96 LoC) |
+| **E** 윤리 | `HEXAD/E/` | `e.hexa` | [`HEXAD-E.tape`](E/HEXAD-E.tape) | `ready/anima/hexad/e/emergent_e.py` (123 LoC) |
+| **BRIDGE** | `HEXAD/BRIDGE/` | `bridge.hexa` | [`HEXAD-BRIDGE.tape`](BRIDGE/HEXAD-BRIDGE.tape) | `ready/anima/hexad/model.py` `ThalamicBridge` |
 | 통합 | `HEXAD/` | `hexad.hexa` | [`HEXAD.tape`](../HEXAD.tape) §hexad_condition_lineup | `ready/anima/hexad/model.py` `Hexad` |
 
 ## 검증 status (2026-05-16)
@@ -75,7 +75,18 @@ HEXAD/
   BRIDGE/             ← ThalamicBridge (C→D gradient barrier + PSI_COUPLING clamp)
     README.md
     bridge.hexa
+    HEXAD-BRIDGE.tape   ← per-module tape SSOT (co-located 2026-05-16 reorg)
+  C/ … E/ … 동일 패턴 (각 dir 안에 HEXAD-<X>.tape SSOT co-located)
+  INDEX.md            ← 이전 /INDEX.md (root) → 2026-05-16 reorg 로 이동
+  MITOSIS.tape        ← 성장축 SSOT (이전 /MITOSIS.tape, 2026-05-16 reorg)
+  SAVANT/             ← 이전 /SAVANT*.tape + tool/anima_savant_*.hexa + anima-engines/savant_phi.hexa (2026-05-16 reorg)
+    SAVANT.tape · SAVANT.log.tape · SAVANT-TOOL.tape · SAVANT-TOOL.log.tape
+    anima_savant_tool.hexa · anima_savant_si_monitor.hexa
+    anima_savant_routing_overlay.hexa · anima_chat_savant_cli.hexa · savant_phi.hexa
 ```
+
+> root 에 남는 것 (이동 X): `HEXAD.tape` (통합 arch SSOT — AGENTS.tape 직접 참조) + `AGENTS.tape` / `CLAUDE.md` (symlink) / 기타 root tape SSOTs (`AXIS`, `HYPOTHESIS`, `PHILOSOPHY`, `MAIN`, `CLM`, `VERIFY`, `NEXT`, `REBORN` 등) + `/INDEX.md` (이제 redirect stub 역할).
+
 
 ## 거버넌스 anchors (AGENTS.tape)
 

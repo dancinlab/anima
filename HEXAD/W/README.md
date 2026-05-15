@@ -1,6 +1,6 @@
 # HEXAD/W — 의지 (will)
 
-> SSOT: [`HEXAD-W.tape`](../../HEXAD-W.tape) · Python anchor: `ready/anima/hexad/w/emergent_w.py` (123 LoC) · 🔵 SUPPORTED-FORMAL
+> SSOT: [`HEXAD-W.tape`](HEXAD-W.tape) · Python anchor: `ready/anima/hexad/w/emergent_w.py` (123 LoC) · 🔵 SUPPORTED-FORMAL
 
 ## 핵심 원리 (closed-form, sympy-verified)
 

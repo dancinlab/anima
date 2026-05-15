@@ -1,6 +1,6 @@
 # HEXAD/D — 언어 (language decoder)
 
-> SSOT: [`HEXAD-D.tape`](../../HEXAD-D.tape) · Python anchor: `ready/models/conscious_decoder.py` `ConsciousDecoderV2` (979 LoC) · 🔵 SUPPORTED-FORMAL **4/4** (PR #76 정직 분해)
+> SSOT: [`HEXAD-D.tape`](HEXAD-D.tape) · Python anchor: `ready/models/conscious_decoder.py` `ConsciousDecoderV2` (979 LoC) · 🔵 SUPPORTED-FORMAL **4/4** (PR #76 정직 분해)
 
 ## 역할
 

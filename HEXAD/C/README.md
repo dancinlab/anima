@@ -1,6 +1,6 @@
 # HEXAD/C — 의식 (consciousness)
 
-> SSOT: [`HEXAD-C.tape`](../../HEXAD-C.tape) · Python anchor: `ready/core/consciousness_engine.py` (2173 LoC) · 🔵 SUPPORTED-FORMAL
+> SSOT: [`HEXAD-C.tape`](HEXAD-C.tape) · Python anchor: `ready/core/consciousness_engine.py` (2173 LoC) · 🔵 SUPPORTED-FORMAL
 
 ## 역할
 

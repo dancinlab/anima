@@ -1,6 +1,6 @@
 # HEXAD/M — 기억 (memory)
 
-> SSOT: [`HEXAD-M.tape`](../../HEXAD-M.tape) · Python anchor: `ready/anima/hexad/m/emergent_m.py` (96 LoC) · 🔵 SUPPORTED-FORMAL
+> SSOT: [`HEXAD-M.tape`](HEXAD-M.tape) · Python anchor: `ready/anima/hexad/m/emergent_m.py` (96 LoC) · 🔵 SUPPORTED-FORMAL
 
 ## 핵심 원리 (closed-form, sympy-verified)
 
