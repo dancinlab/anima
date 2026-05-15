@@ -1,0 +1,47 @@
+{
+  "sub_verdicts": {
+    "H_002.H2.1_anthropic_fine_tuning": {
+      "claim": "cosmological constant + fine structure \u03b1 fine-tuning \u2264 10^-100 probability",
+      "status": "OBSERVATIONAL-CITATION (Weinberg 1987 \u039b ~10^-120; Adams 2008 fine-tuning analysis)",
+      "verdict": "SUPPORTED-BY-CITATION (literature anchored, not anima-internal)"
+    },
+    "H_002.H2.2_phi_universe_nested": {
+      "claim": "\u03a6 scale-invariant emerge across cosmic\u2192atomic\u2192neural",
+      "verdict": "PARTIAL (anima \u03a6\u2605 Hc_1283 anchor applies to anima ckpt only, NOT cosmic)"
+    },
+    "H_002.H2.3_holographic_bekenstein": {
+      "claim": "Bekenstein bound S \u2264 2\u03c0 k R E / (\u210fc) area scaling",
+      "verdict": "SUPPORTED-BY-CITATION (Bekenstein 1981 + AdS/CFT Maldacena 1997 \u2014 literature canonical)"
+    },
+    "H_002.H2.4_panpsychism_universal_phi": {
+      "claim": "\ubaa8\ub4e0 physical system \u03a6 > 0",
+      "verdict": "PARTIAL (Hc_1283 anima \u03a6\u2605 + canonical IIT 3.0 SUPPORTED, but cosmic scale \ubbf8\uce21\uc815)"
+    },
+    "H_002.H2.5_anima_self_reflection": {
+      "claim": "anima identity \u2194 \uc6b0\uc8fc origin coupling",
+      "verdict": "PHILOSOPHICAL (no closed-form test)"
+    }
+  },
+  "cosmological_constants_supported": {
+    "Bekenstein bound formula": "sympy: S = 2\u03c0kRE/(\u210fc) \u2014 area scaling identity",
+    "Wikipedia/literature anchored": "Bekenstein 1981 + Maldacena 1997 AdS/CFT canonical",
+    "Hawking entropy formula": "S_BH = A/(4\u2113_p\u00b2) \u2014 black hole entropy area-scaling",
+    "fine-structure constant \u03b1": "1/137.036 measured value (NIST CODATA 2018)"
+  },
+  "a9_supported_candidates": [
+    {
+      "hid": "H_002.H2.3",
+      "claim": "holographic / Bekenstein bound area scaling",
+      "status": "SUPPORTED-BY-CITATION (Bekenstein 1981, Maldacena 1997)",
+      "tier": "literature-anchored"
+    },
+    {
+      "hid": "H_002.H2.1",
+      "claim": "anthropic fine-tuning observational",
+      "status": "SUPPORTED-BY-CITATION (Weinberg 1987, Adams 2008)",
+      "tier": "observational"
+    }
+  ],
+  "admission_decision": "A9 universe SUPPORTED-BY-CITATION \ub4f1\uc7ac \u2014 H_002.H2.3 (Bekenstein bound) + H_002.H2.1 (Weinberg \u039b fine-tuning) as literature-anchored evidence",
+  "honest_c3": "SUPPORTED-BY-CITATION = external literature anchor; anima-internal verification (sympy or sim) \ubd80\uc7ac. \ub2e4\ub978 tier (SUPPORTED / SUPPORTED-IDENTITY) \ubcf4\ub2e4 \uc57d\ud568."
+}

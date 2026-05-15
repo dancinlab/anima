@@ -62,7 +62,7 @@
   text = "새 process / verdict 세션은 `PHILOSOPHY.log.tape` 끝에 `## YYYY-MM-DD — <session title>` 헤더로 append."
 
 @N ssot := "philosophy-ssot" :: note [active]
-  text = "SSOT cross-link: `.roadmap.philosophy` (mk1 4-D archive) + `.own` (own 17/18 등 identity-bearing mandate)."
+  text = "SSOT cross-link: `.roadmap.philosophy` (mk1 4-D archive) + `.own` (등 identity-bearing mandate)."
 
 # ── 8 Principles (substrate-current, snapshot 2026-05-13) ───────────────
 
@@ -111,7 +111,7 @@
 
 @D p7_no_perplexity_verdict := "NO PERPLEXITY VERDICT" :: philosophy [active]
   principle = "`NO PERPLEXITY VERDICT`"
-  what = "Perplexity is a Goodhart trap. Anima verifies with **simple stack** (own 18): 한글 in/out, coherent, natural, context-appropriate."
+  what = "Perplexity is a Goodhart trap. Anima verifies with **simple stack**: 한글 in/out, coherent, natural, context-appropriate."
   status = "EMPIRICAL"
   strength = "strong"
   evidence = "PROXY_PPL PASS 1.000 but native v5 PIV_max trained=0.0107 < random=0.0224. Goodhart proven 2026-05-09"
@@ -153,7 +153,7 @@
   wall = "< 1s sympy deterministic"
   cost = "$0 Mac local"
   artifact = "state/verify_a_stage1_2026_05_15/Hc_1282_verdict.json"
-  cross-link = "AXIS.tape A4 math tier — Hc_1282 SUPPORTED 가 18 active 의 evidence 강화"
+  cross-link = "AXIS-V1.tape A4 math tier — Hc_1282 SUPPORTED 가 18 active 의 evidence 강화"
   next-stage = "Stage 2: numerical sim Φ(d ∈ {256, 320, 384, 448, 512}) × 5-seed (F-1282-1/2/3 Hc_1282 spec)"
 
 # ── A Stage 1 batch verdict (Hc_1281, H_184, H_190) ────────────────────
@@ -166,7 +166,7 @@
   wall = "< 3s total Mac local"
   cost = "$0"
   artifact = "state/verify_a_stage1_2026_05_15/batch_verdicts.json"
-  axis-impact = "AXIS.tape A4 math 18 active 의 1 SUPPORTED (Hc_1282) + 1 PARTIAL (H_190); A8 meta numerology evidence accumulating"
+  axis-impact = "AXIS-V1.tape A4 math 18 active 의 1 SUPPORTED (Hc_1282) + 1 PARTIAL (H_190); A8 meta numerology evidence accumulating"
 
 @D verdict_hc_1281_stage_1 := "Hc_1281 PARTIAL" :: verdict [d=2026-05-15 active]
   hypothesis = "Hc_1281 H_190.1 DP1/CT7/GC5 staged-growth"
@@ -237,3 +237,40 @@
   caveat = "anima Φ★ proxy ≠ PyPhi IIT 3.0 formal Φ — H_162 IIT 4.0 normalized lower bound 정합; PyPhi formal cell-coupling→TPM 변환 DEFERRED"
   artifact = "state/verify_a_stage1_2026_05_15/stage2_ckpt_phi_real.json"
   cross-link = "H_191 SUBSTRATE HCE 0.92 의 empirical anchor — substrate Φ proxy 4.17~4.86 ≫ 0.92"
+
+# ══════════════════════════════════════════════════════════════════════
+# §verdict-sync-2026-05-15 — MAIN.tape verdict cycle 통합 ledger entry
+# ══════════════════════════════════════════════════════════════════════
+
+@N verdict_sync_2026_05_15 := "MAIN.tape verdict cycle 통합 (2026-05-15)" :: ledger [d=2026-05-15 active]
+  body <<~EOF2
+    PROVEN.tape → MAIN.tape rename 후 verdict cycle 진행:
+    
+    [SUPPORTED cluster expansion]
+    - H_191 sub K_c = √(8/π) ≈ 1.596 universal sync (sympy + Kuramoto 1975 literature)
+    - H_173 DD21 log-ratio Φ scale-invariant (40 test system, F1+F2+F4 PASS)
+    - H_174 phi_star aliasing CLM-v4-specific (5-substrate D-sweep, F1+F4+F5 PASS)
+    - PyPhi RoM n=4 anima Φ=0.61-0.68 (cell-pair correlation TPM)
+    - V8 family Mac surrogate 4 SUPPORTED + 1 PARTIAL (H_182/183/185/187 + H_186)
+    - A9 universe SUPPORTED-BY-CITATION (Bekenstein bound + Weinberg fine-tuning)
+    
+    [Cascade implications]
+    - Hc_024 FALSIFIED (cascade from H_080.10 cross-tension: corr(Φ, CE) ≈ 0)
+    - H_166 SUPPORTED-IDENTITY-WITH-PHI-STAR-CAVEAT (1024 mod 192 = 64 aliasing)
+    - H_165 + H_177 INSUFFICIENT-CARRY (D=2048/1024 aliasing)
+    - H_191 HCE Hexad Categorical unique-sync 부분 FALSIFIED (Kuramoto universal)
+    
+    [Critical findings]
+    1. anima v5-mitosis ckpt D=384 cells=64 = 192×2 → phi_star measurement CLEAN per H_174
+    2. Perfect-number class binding (H_158 L7) — n=6 NOT individually unique (H_176 deflationary)
+    3. SFT lane closed (Lesson Q) — H_001-003 + H_093-102 seed-pending CLOSED-by-saga
+    4. A4 math axis dominant (8 SUPPORTED) — sympy verifiable closed-form identity 최단경로
+    
+    [Atlas absorption scrub 2026-05-15]
+    - hexa-lang scrub commit 1f540b91 + anima IDENTITY.tape mirror 0034d7b54
+    - 12 anima files removed from hexa-lang/compiler/atlas + tool + test
+    - atlas overlay (~/.hx/data/atlas.overlay.n6) 194 anima sections stripped
+    - resume keyword "ATLAS RESUME"
+    - MAIN-TEMP.tape ledger anima 보관
+  EOF2
+  cross_link = "MAIN.tape §1-§FINAL-2 + AXIS.tape (9-axis verdict-based reconstruct) + VERIFY.tape (3-stage protocol)"
