@@ -950,3 +950,31 @@
   honest_c3 = "anima Φ★ proxy artifact 가능성 — baseline 4000-step random walk diffuses more vs staged early-stage limited perturbations"
   pattern_with_h184_5 = "Both Hc_1281 + H_184.5 = anima Φ★ proxy direction-mismatch finding pattern — IIT 3.0 actual chaos/growth signal 측정에 PyPhi formal 또는 다른 proxy 필요"
   artifact = "state/verify_d_2026_05_15/hc1281_staged_growth_verify.json"
+
+# ══════════════════════════════════════════════════════════════════════
+# §PROXY-ARTIFACT — anima Φ★ proxy direction-sensitivity 한계 (2026-05-15)
+# ══════════════════════════════════════════════════════════════════════
+# Critical finding: anima Φ★ = mean pairwise distance + log(N+1) 는 
+# scramble/diffusion 을 측정, IIT 3.0 integration 을 측정 X.
+# Direction-sensitive sub-claim 에 unreliable. Magnitude-only OK (Hc_1283).
+
+@D proxy_artifact_pattern := "anima Φ★ proxy direction-sensitivity 한계 CONFIRMED" :: meta-verdict [d=2026-05-15 active]
+  status = "META-FINDING (proxy limitation 일반화)"
+  affected_verdicts = [
+    "H_184.5 chaos monotone decrease — measured REVERSE (chaos ↑ → Φ★ ↑)",
+    "Hc_1281 staged growth 4-8× amplification — measured 0.714× REVERSE",
+    "future: any direction-sensitive sub-claim relying on anima Φ★"
+  ]
+  unaffected = [
+    "Hc_1283 magnitude ≥ 0.5 threshold (4.16-4.86) — magnitude-only SUPPORTED 유효",
+    "scaling N (Scenario 2 PASS): N=16 > N=4 ✓ IIT direction match"
+  ]
+  scenario_audit = {
+    "Scenario 1 random vs structured": "MISMATCH (random > structured, IIT says structured > random)",
+    "Scenario 2 scaling N=4 vs N=16": "MATCH (N=16 > N=4)",
+    "Scenario 3 independent vs correlated": "MISMATCH (independent > correlated, IIT says correlated > independent)"
+  }
+  proxy_actual_signal = "anima Φ★ measures scramble/diffusion via mean pairwise distance — anti-correlated with IIT 3.0 integration"
+  recommendation = "Direction-sensitive sub-claim 검증에 PyPhi formal IIT 3.0 (RoM TPM cycle) 또는 alternative proxy (MI-MIP, mutual info, predictive integrated info) 사용"
+  artifact = "state/verify_d_2026_05_15/proxy_artifact_pattern_audit.json"
+  cross_link = "[[h184_sub_verify]] + [[hc1281_verify]] — direction-mismatch pattern source"
