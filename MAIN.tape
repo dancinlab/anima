@@ -1090,3 +1090,12 @@
   scope = "318 가설 file inventory + naming convention + lifecycle pipeline + supported/falsified/partial/insufficient catalogs"
   cross_link = "MAIN.tape (verdict source) + AXIS.tape (9-axis catalog) + PHILOSOPHY.tape (ledger) + INDEX.md (navigation)"
   catalogs = ["supported_inventory (32 entries 9-axis)", "falsified_inventory (5 FALSIFIED + 3 NOT-PASSED-direction + 1 META)", "partial_inventory (9 from A/B)", "insufficient_inventory (7 INSUFFICIENT + 4 DEFERRED)"]
+
+# ══════════════════════════════════════════════════════════════════════
+# §INDEX-TABLE-FORMAT — INDEX.md 전체 표 형식 변환 (2026-05-15)
+# ══════════════════════════════════════════════════════════════════════
+
+@D index_table_format := "INDEX.md 모든 entries 3-column table 변환 — PHILOSOPHY/HYPOTHESIS 전부 한 줄" :: governance [d=2026-05-15 active]
+  scope = "INDEX.md sections 전체 표 형식 — AXIS (9 sub-axis tables) + HYPOTHESIS (5 폴더 + FALSIFIED 5 + NOT-PASSED 3 + META 1 + PARTIAL 9 + INSUFFICIENT 7 + DEFERRED 4) + PHILOSOPHY (8 principles + 13 verdict cycle + 4 §verdict-sync ledger)"
+  format = "| Tier | ID | 한 줄 설명 | (3-column standard)"
+  cross_link = "INDEX.md root SSOT — MAIN/AXIS/HYPOTHESIS/PHILOSOPHY 4-tape integrated navigation, PR #47"

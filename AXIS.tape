@@ -185,3 +185,11 @@
 @X hypothesis_tape := "HYPOTHESIS.tape" :: catalog [active]
   scope = "318 가설 inventory + naming convention + lifecycle + supported/falsified/partial/insufficient catalogs"
   cross_link = "AXIS.tape SUPPORTED-tier 32 entries 는 HYPOTHESIS.tape supported_inventory 와 동일"
+
+# ──────────────────────────────────────────────────────────────────────
+# §INDEX-TABLE-FORMAT sync (2026-05-15)
+# ──────────────────────────────────────────────────────────────────────
+
+@N index_table_sync := "INDEX.md 표 형식 변환 sync" :: note [d=2026-05-15 active]
+  text = "INDEX.md AXIS section 9 sub-axis 각 sub-table (Tier | ID | 한 줄 설명) — 본 AXIS.tape 32 entries 와 1:1 매핑 (A1 3 + A2 6 + A3 1 + A4 8 + A5 6 + A6 2 + A7 1 + A8 4 + A9 2 — INDEX 측 Hc_1283 RoM/n=5,6 별행 표기로 A2 5→6 적용)."
+  cross_link = "INDEX.md ## AXIS section + MAIN.tape §INDEX-TABLE-FORMAT + PR #47"

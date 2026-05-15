@@ -314,3 +314,19 @@
     PHILOSOPHY (cycle ledger entries 한 줄) + verdict tier 13 분류 + critical findings.
   EOF2
   cross_link = "HYPOTHESIS.tape + INDEX.md + MAIN.tape §HYPOTHESIS-TAPE"
+
+@N index_table_format := "INDEX.md 전체 표 형식 변환 (2026-05-15)" :: ledger [d=2026-05-15 active]
+  body <<~EOF2
+    INDEX.md 의 모든 sections 을 3-column table 형식으로 펼침:
+    
+    AXIS: 9 sub-axis 각 (Tier | ID | 한 줄 설명) — A1 3 / A2 6 / A3 1 / A4 8 / A5 6 / A6 2 / A7 1 / A8 4 / A9 2
+    
+    HYPOTHESIS: 폴더 summary table + naming/lifecycle + FALSIFIED 5 한 줄 + NOT-PASSED-direction 3 + META 1 + PARTIAL A-batch 6 + PARTIAL B-batch 3 + INSUFFICIENT 7 + DEFERRED 4 한 줄씩
+    
+    PHILOSOPHY: 8 principles 한 줄씩 (p1~p8 Status/ID/한 줄 설명) + A 격리 verdict cycle 13 한 줄씩 (Stage 1+2+3 + aggregate + Hc_1283 ckpt) + §verdict-sync ledger 4 한 줄씩
+    
+    verdict tier 13 분류 + VERIFY 3-stage + Critical findings + atlas absorption + cross-links + PR history 모두 표.
+    
+    사용자 directive: "표로" + "철학도, 가설도 마찬가지 전부 한줄".
+  EOF2
+  cross_link = "INDEX.md (root SSOT) + MAIN.tape §INDEX-TABLE-FORMAT + AXIS.tape sync note + PR #47"
