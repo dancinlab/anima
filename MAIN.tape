@@ -929,3 +929,24 @@
   surrogate_caveat = "본 검증 = anima Φ★ proxy surrogate; real V8 ULTRA-FUSION Hc impl + PyPhi formal IIT 3.0 필요"
   artifact = "state/verify_d_2026_05_15/h184_sub_claim_verify.json"
   cross_link = "[[p_h184]] in MAIN.tape §3 — PARTIAL maintained, sub-claim 강도 측정 finding 추가"
+
+# ══════════════════════════════════════════════════════════════════════
+# §HC1281-VERIFY — Hc_1281 H_190.1 staged-growth 검증 (2026-05-15)
+# ══════════════════════════════════════════════════════════════════════
+
+@D hc1281_verify := "Hc_1281 H_190.1 staged-growth verification — NOT-PASSED-DIRECTION" :: verdict [d=2026-05-15 active]
+  prior_status = "PARTIAL (MAIN.tape §3 p_hc1281)"
+  new_status = "NOT-PASSED-DIRECTION (3-frame convergence ✓, 4-8× amplification REVERSE measured)"
+  axis = "math (A4)"
+  measured = {
+    "Condition B baseline (instant 64)": "anima Φ★ = 40.31",
+    "DP1 Piaget 4-stage": "Φ = 23.76, ratio = 0.589× of B",
+    "CT7 curriculum 7-step": "Φ = 31.68, ratio = 0.786× of B",
+    "GC5 genetic-curriculum 5-step": "Φ = 30.87, ratio = 0.766× of B",
+    "3-frame mean ratio": "0.714× (claim 4-8×, midpoint 6×)",
+    "3-frame σ across frames": "12.4% (claim < 25% ✓)"
+  }
+  finding = "3-frame independent convergence PASS (σ 12.4% < 25%), but ratio direction REVERSE — staged growth 가 baseline 보다 Φ 작음 (0.714×)"
+  honest_c3 = "anima Φ★ proxy artifact 가능성 — baseline 4000-step random walk diffuses more vs staged early-stage limited perturbations"
+  pattern_with_h184_5 = "Both Hc_1281 + H_184.5 = anima Φ★ proxy direction-mismatch finding pattern — IIT 3.0 actual chaos/growth signal 측정에 PyPhi formal 또는 다른 proxy 필요"
+  artifact = "state/verify_d_2026_05_15/hc1281_staged_growth_verify.json"
