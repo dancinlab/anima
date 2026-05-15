@@ -149,8 +149,10 @@
   authority = "CLM.tape §V-CLM-FROM-SCRATCH-2026-05-15"
   @> CLAUDE.md
 
-@D g_hf_naming := "HF dancinlab/* canonical 네이밍 체계 + 과정 업로드 protocol" :: governance [required d=2026-05-15 active]
-  rule = "HF dancinlab org 의 anima 산출물은 2개 canonical name 만 사용 — dancinlab/anima-clm (model) + dancinlab/anima-corpus (dataset). 버전은 HF revisions (branch) + README mapping table 로 internal 관리. collection 생성 금지 (PR #54 carry)."
+@D g_hf_naming := "HF naming — dancinlab canonical RETIRED → dancinlife junk (2026-05-16 정정)" :: governance [required d=2026-05-16 active]
+  ~> "이전 g_hf_naming (d=2026-05-15, dancinlab/anima-clm+corpus = canonical PUBLIC) supersede. user directive 2026-05-16 '기존 anima-clm, anima-corpus dancinlife 로 또 옮기자' + 결정게이트 'retire/deprecate PR #54 junk 패턴'."
+  status_2026_05_16 = "dancinlab/anima-clm (PUBLIC) + dancinlab/anima-corpus (private) → HfApi.move_repo → dancinlife/anima-clm + dancinlife/anima-corpus, 둘 다 private 설정 완료. dancinlab/* old path 는 HF redirect→dancinlife private (실질 retire). 사유: anima 가 HEXAD hexa-native 로 pivot — 구 .clm 모델/corpus superseded."
+  rule = "HF canonical anima 모델 artifact = **현재 없음** (HEXAD hexa-native pivot, Phase 5/6 fire 미실행). dancinlife/* = deprecated junk graveyard (PR #54 71-junk + 2026-05-16 anima-clm/corpus 추가), 전부 private, 신규 upload 금지·손대지 않음. 차후 HF 산출물 필요 시 (Phase 6 통합 fire 후) 새 canonical name + visibility 사용자 게이트로 재정의 (dancinlab 자동 canonical 아님)."
   why = "2026-05-15 PR #54 HF cleanup 직후 chaos names 50+ 정리 (TRANSFER dancinlab→dancinlife/* private + 2 CLM collections DELETE). 신규 산출물은 canonical 2-name 으로 통일. 2026-05-15 user directive: canonical 산출물 PUBLIC 공개 (이전 private default 폐기)."
   revision_naming = "revisions = `v{major}-{kind}-cycle{N}-{YYYY-MM-DD}` 예: v1-fire-cycle88-2026-05-15 (.clm v1 P2 첫 fire) / v1-pyphi-cycle89-2026-05-16 (post-fire formal Φ ckpt update)"
   apply = "신규 ckpt/dataset 업로드 시 (a) dancinlab/anima-clm revision push (model) 또는 dancinlab/anima-corpus revision push (dataset); (b) README mapping table 신규 row append (revision sha + fire date + cost + cycle PR# + falsifier breakdown); (c) PUBLIC default (user directive 2026-05-15 'HF 모델, 데이터셋 등은 public 으로') — canonical dancinlab/anima-clm + dancinlab/anima-corpus 공개; (d) dancinlife/* 는 deprecated junk transfer, 그대로 private 유지 (신규 upload 금지)."
