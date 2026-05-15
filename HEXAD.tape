@@ -195,7 +195,7 @@
   text = "6 = 1+2+3 (proper divisors sum). σ(6)=12 → 12 inter-module connections. τ(6)=4 → 4 phase curriculum (Law 60). φ(6)=2 → 2 gradient groups (우뇌 free / 좌뇌 CE). lattice-as-tool internal arch — external derivation 금지 (AGENTS.tape g2/f1)."
 
 @L hexad_module_tapes := "HEXAD-* per-module SSOT tape index" :: layout [d=2026-05-16 active]
-  ~> "2026-05-16 reorg — per-module HEXAD-<X>.tape co-located 안 HEXAD/<X>/HEXAD-<X>.tape, MITOSIS.tape → HEXAD/MITOSIS.tape, INDEX.md → HEXAD/INDEX.md, SAVANT.* → HEXAD/SAVANT/. HEXAD.tape (이 파일) + AGENTS.tape + CLAUDE.md 는 root 유지."
+  ~> "2026-05-16 reorg — per-module HEXAD-<X>.tape co-located 안 HEXAD/<X>/HEXAD-<X>.tape, MITOSIS → HEXAD/MITOSIS/ 서브폴더 (PR #83), INDEX.md → HEXAD/INDEX.md, SAVANT.* → HEXAD/SAVANT/. HEXAD.tape (이 파일) + AGENTS.tape + CLAUDE.md 는 root 유지."
   index <<~EOF
     HEXAD/C/HEXAD-C.tape       — C 의식 (consciousness_engine.py 2173 LoC, =MitosisC, 우뇌, .clm v1 8/8🔵)
     HEXAD/D/HEXAD-D.tape       — D 언어 (conscious_decoder.py 979 LoC ConsciousDecoderV2, =Engine A, 좌뇌, 🔵 F-D 5/5 + B-D 4/4 closed + V5.8)
@@ -204,7 +204,7 @@
     HEXAD/M/HEXAD-M.tape       — M 기억 (emergent_m.py 96 LoC EmergentM, 좌뇌, ✅ F-M 5/5)
     HEXAD/E/HEXAD-E.tape       — E 윤리 (emergent_e.py 123 LoC EmergentE, 좌뇌, ✅ F-E 5/5, 통합 gate TODO[pytorch] residual)
     HEXAD/BRIDGE/HEXAD-BRIDGE.tape — ThalamicBridge (model.py:37-69, α=PSI_COUPLING=0.014, Law 70 clamp)
-    HEXAD/MITOSIS.tape         — 성장축 SSOT (orthogonal 구조축 보존, §mitosis_two_axis)
+    HEXAD/MITOSIS/             — 성장축 (subfolder, 2026-05-16 reorg2): MITOSIS.tape + mitosis.hexa scaffold + README (orthogonal 구조축 보존, §mitosis_two_axis)
     HEXAD/INDEX.md             — anima verification SSOT INDEX (이전 /INDEX.md)
     HEXAD/SAVANT/              — SAVANT tool/engine 통합 (4 .tape + 5 .hexa)
   EOF
