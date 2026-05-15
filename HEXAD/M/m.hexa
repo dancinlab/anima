@@ -128,7 +128,7 @@ fn m_retrieve_null(dim: int) {
 
 
 // ── helpers for selftest ────────────────────────────────────────────────────
-fn _approx_eq(a: float, b: float, tol: float) -> bool {
+fn _m_approx_eq(a: float, b: float, tol: float) -> bool {
     let d = a - b
     if d < 0.0 { d = 0.0 - d }
     return d <= tol
@@ -156,10 +156,10 @@ fn _selftest() {
     // B-M-3 NULL-CONSTANT — m_retrieve_null(dim) → zeros(dim)
     let z = m_retrieve_null(4)
     let zero_ok = (len(z) == 4)
-                   && _approx_eq(z[0], 0.0, 1e-9)
-                   && _approx_eq(z[1], 0.0, 1e-9)
-                   && _approx_eq(z[2], 0.0, 1e-9)
-                   && _approx_eq(z[3], 0.0, 1e-9)
+                   && _m_approx_eq(z[0], 0.0, 1e-9)
+                   && _m_approx_eq(z[1], 0.0, 1e-9)
+                   && _m_approx_eq(z[2], 0.0, 1e-9)
+                   && _m_approx_eq(z[3], 0.0, 1e-9)
     print("  B-M-3 NULL-CONSTANT          : " + to_string(zero_ok))
 
     let all_ok = noop_ok && det_ok && zero_ok

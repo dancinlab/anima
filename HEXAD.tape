@@ -185,7 +185,8 @@
   status = "S/M/W/E/BRIDGE working selftest (B-X 🔵 closed-form witnesses, hexa parse + run PASS) + C/D scaffold cross-link (기존 tool/hexa_native/mitosis_hook.hexa + anima_chat.hexa 재사용) + hexad.hexa spec invariants 5/5 PASS"
   verified_2026_05_16 = "hexa parse 8/8 clean (S/M/W/E/BRIDGE/C/D/hexad) + hexa run 5/5 working selftest PASS (S B-S 3/3, M B-M 3/3, W B-W 4/4, E B-E 4/4, BRIDGE Law 70 clamp) + C/D/hexad scaffold invariants PASS"
   ssot_mapping = "HEXAD/<X>/ ↔ HEXAD-<X>.tape (root) ↔ ready/anima/hexad/<x>/ (Python anchor)"
-  residual = "통합 cross-file integration (모든 모듈 single-hexa-process forward) = TODO[wire] — namespace prefix RFC 후 future cycle. 현재 통합 검증 evidence: state/verify_hexad_integ_2026_05_16/ Python harness (PR #77, 5/5 SUPPORTED-STRONG fire_gate=true)."
+  residual_resolved_2026_05_16_b = "통합 cross-file integration RESOLVED (PR #79 task b) — 모든 모듈 helper namespace prefix (`_approx_eq` → `_<x>_approx_eq` per s/m/w/e/b) + `HEXAD/integ_test.hexa` 7 모듈 single hexa-process import + public API 호출 → F-INTEG-WIRE 7/7 PASS. 통합 검증 evidence 2-tier: (i) hexa-native HEXAD/integ_test.hexa F-INTEG-WIRE 7/7 PASS (single hexa run, PR #79) + (ii) Python state/verify_hexad_integ_2026_05_16/integ_harness.py F-INTEG-1..5 5/5 fire_gate=true (PR #77, 실 6모듈 forward + Bridge clamp + CE descent + scratch init)."
+  residual = "C/D full hexa-native port = HEXAD/PLAN.md 의 Phase 2-5 (별도 cycle). hexa-native CE backprop + AdamW = hexa-lang autograd RFC 의존."
   @> CLAUDE.md
 
 # ─── §8 Notes ────────────────────────────────────────────────────────

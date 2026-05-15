@@ -49,7 +49,7 @@ fn w_effective_lr(base_lr: float, phi: float, n_cells: int) -> float {
 
 
 // ── helpers for selftest ────────────────────────────────────────────────────
-fn _approx_eq(a: float, b: float, tol: float) -> bool {
+fn _w_approx_eq(a: float, b: float, tol: float) -> bool {
     let d = a - b
     if d < 0.0 { d = 0.0 - d }
     return d <= tol
@@ -94,10 +94,10 @@ fn _selftest() {
     // B-W-3 LR-SUP-ATTAINED — saturated at phi/n_cells ≥ ln 2 → m == ln 2
     // Witness: phi = 100, n = 1 → phi/n = 100 ≥ ln 2 → cap = ln 2 → lr = Ψ + ln 2
     let sup = w_lr_mult(100.0, 1)
-    let sup_ok = _approx_eq(sup, psi + ln2, 1e-12)
+    let sup_ok = _w_approx_eq(sup, psi + ln2, 1e-12)
     // also test Min(L, kL) = L for k > 1: with L = ln 2 (cap), kL > L → min = L
     let kL_test = w_lr_mult(5.0 * ln2, 1)  // phi/n = 5 · ln 2 > ln 2 → min = ln 2
-    let kL_ok = _approx_eq(kL_test, psi + ln2, 1e-12)
+    let kL_ok = _w_approx_eq(kL_test, psi + ln2, 1e-12)
     print("  B-W-3 LR-SUP-ATTAINED        : " + to_string(sup_ok && kL_ok))
 
     // B-W-4 SATISFACTION-BINARY-CLOSED — output ∈ {0, 1} ∀ inputs
@@ -105,8 +105,8 @@ fn _selftest() {
     let s2 = w_satisfaction(0.5, 0.4)   // ≥ → 1
     let s3 = w_satisfaction(0.3, 0.4)   // <  → 0
     let s4 = w_satisfaction(-1.0, 0.0)  // <  → 0
-    let bin_ok = _approx_eq(s1, 1.0, tol) && _approx_eq(s2, 1.0, tol)
-                  && _approx_eq(s3, 0.0, tol) && _approx_eq(s4, 0.0, tol)
+    let bin_ok = _w_approx_eq(s1, 1.0, tol) && _w_approx_eq(s2, 1.0, tol)
+                  && _w_approx_eq(s3, 0.0, tol) && _w_approx_eq(s4, 0.0, tol)
     print("  B-W-4 SATISFACTION-BINARY    : " + to_string(bin_ok))
 
     let all_ok = in_range && mono && sup_ok && kL_ok && bin_ok

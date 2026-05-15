@@ -59,7 +59,7 @@ fn bridge_gate_scale(inference: bool) -> float {
 
 
 // ── helpers ─────────────────────────────────────────────────────────────────
-fn _approx_eq(a: float, b: float, tol: float) -> bool {
+fn _b_approx_eq(a: float, b: float, tol: float) -> bool {
     let d = a - b
     if d < 0.0 { d = 0.0 - d }
     return d <= tol
@@ -76,17 +76,17 @@ fn _selftest() {
 
     // 1) saturate above → clamp = hi
     let s_hi = bridge_clamp(2.0)
-    let ok_hi = _approx_eq(s_hi, hi, tol)
+    let ok_hi = _b_approx_eq(s_hi, hi, tol)
     print("  clamp upper saturated        : " + to_string(ok_hi))
 
     // 2) saturate below → clamp = lo
     let s_lo = bridge_clamp(-2.0)
-    let ok_lo = _approx_eq(s_lo, lo, tol)
+    let ok_lo = _b_approx_eq(s_lo, lo, tol)
     print("  clamp lower saturated        : " + to_string(ok_lo))
 
     // 3) interior pass-through (within window)
     let s_mid = bridge_clamp(0.5 + 0.005)  // |·| < α → pass
-    let ok_mid = _approx_eq(s_mid, 0.5 + 0.005, tol)
+    let ok_mid = _b_approx_eq(s_mid, 0.5 + 0.005, tol)
     print("  clamp interior pass-through  : " + to_string(ok_mid))
 
     // 4) vectorized: all outputs in [lo, hi]
@@ -103,7 +103,7 @@ fn _selftest() {
     // 5) gate scale switches
     let g_t = bridge_gate_scale(false)
     let g_i = bridge_gate_scale(true)
-    let scale_ok = _approx_eq(g_t, 1.0, tol) && _approx_eq(g_i, 0.6, tol)
+    let scale_ok = _b_approx_eq(g_t, 1.0, tol) && _b_approx_eq(g_i, 0.6, tol)
     print("  gate_scale train/infer       : " + to_string(scale_ok))
 
     let all_ok = ok_hi && ok_lo && ok_mid && in_window && scale_ok

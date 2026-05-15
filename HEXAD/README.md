@@ -41,7 +41,8 @@
 | **BRIDGE** | ✅ scaffold (closed-form) | `hexa run HEXAD/BRIDGE/bridge.hexa` | PSI_COUPLING=0.014 clamp |
 | **C** 의식 | 🔶 scaffold (cross-link) | — | 기존 `tool/hexa_native/mitosis_hook.hexa` (1119 LoC FULL IMPL D4a) 재사용 |
 | **D** 언어 | 🔶 scaffold (cross-link) | — | 기존 `anima_chat.hexa` v0.3 (24L 21/21 byte-parity) 재사용 |
-| **통합** | 🔶 scaffold | — | `HEXAD/hexad.hexa` 단일 forward 진입점 + TODO[wire] cross-file integration |
+| **통합 (single process)** | ✅ cross-file wire LANDED | `hexa run HEXAD/integ_test.hexa` | F-INTEG-WIRE 7/7 PASS — 7 모듈 single hexa-process import + 각 모듈 public API 호출 (PR #79 task b) |
+| **통합 spec** | ✅ scaffold | `hexa run HEXAD/hexad.hexa` | σ(6)=12 + φ(6)=2 + forward graph spec 5/5 invariants PASS |
 
 `hexa parse <file>` 로 모든 신규 .hexa 가 깨끗하게 parse 됨을 보장 (PR 검증 게이트).
 
@@ -50,7 +51,9 @@
 ```
 HEXAD/
   README.md           ← (이 파일) 최상위 overview · SSOT 매핑 · status
+  PLAN.md             ← C/D full hexa-native port roadmap (task a)
   hexad.hexa          ← top-level 통합 entry (S→C→Bridge→D + M/W/E single-forward)
+  integ_test.hexa     ← cross-file wire test (F-INTEG-WIRE 7/7 PASS, task b)
   C/                  ← C 의식 (consciousness)
     README.md
     c.hexa
