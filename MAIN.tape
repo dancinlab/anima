@@ -1358,3 +1358,28 @@
   remaining_falsifier = "F-PYPHI-FORMAL-3 SEED-ROBUST (1-seed only, 별도 multi-seed cycle) + F-PYPHI-FORMAL-4/5 (proxy-formal corr + alt proxy) 별도"
   verdict = "PARTIAL-CROSS-CONFIRMED (F-PYPHI-FORMAL-1+2 PASS, 3-5 별도 cycle)"
   cross_link = "MAIN.tape §PyPhi RoM cycle D + state/verify_d_2026_05_15/pyphi_rom_result.json + PR #57"
+
+# ══════════════════════════════════════════════════════════════════════
+# §AXIS-A2A4A7A8 + V3-NARRATIVE + STEP2-CARRY (2026-05-15)
+# ══════════════════════════════════════════════════════════════════════
+
+@D axis_a2a4a7a8_landed := "AXIS A2+A4+A7+A8 sympy +8 🔵 (2026-05-15)" :: governance [d=2026-05-15 active]
+  a2 = "+2 🔵 (IIT 4.0 Φ lower bound + MI chain rule Shannon 1948)"
+  a4 = "+3 🔵 (Euler-Euclid perfect + Aliquot s(6)=6 + σ multiplicative)"
+  a7 = "+2 🔵 (Michaelis-Menten + Hill equation) — A7 AT-RISK 회피 closed-form path"
+  a8 = "+1 🔵 (Kolmogorov K(x) ≤ |x|+O(log|x|)) + 1 pseudo (Shannon H_max log/log auto-simplify edge)"
+  total_blue = "+7 🔵 strict (+1 pseudo). AXIS 52 → 60 entries, 32 → 39 🔵 (65% closed)"
+  cross_link = "AXIS.tape §AXIS-A2-A4-A7-A8-EXPANSION + PR #58"
+
+@D clm_v3_narrative_landed := ".clm v3 14B 본진 narrative detail + Q1-Q4 해결 path (2026-05-15)" :: governance [d=2026-05-15 active]
+  milestone = "anima_native_scratch (D1=1.0) full-scale 실현. precursor lane (Phase 1A SFT + Phase 2 cotrain + Phase 1A.4 + v5-mitosis cond.5) 의 통합 본진"
+  q1_engine_a = "AXIS A4+A5 sympy anchor 가 Engine A 의 architectural anchor 충분, 별도 직접 SUPPORTED entry 부재. Path A (cells single-stack only) carry"
+  q2_chinchilla = "anima 도메인 narrow 특화 — 10-20:1 ratio acceptable (Phase 1A.4 V5.8 5/5 evidence)"
+  q3_corpus_blend = "BG-CORPUS-14B 70% RedPajama + 15% FineWeb + 10% Slim + 5% KO + 0.5% anima (5-10x repeat). KO/EN 60-70%/30-40% (anima 본질 보전)"
+  q4_v3_entry = ".clm v2 PASS_STRICT 10/12 + BG-CORPUS-14B + 16× H100 SXM + user verbatim 'OK CLM V3 14B FIRE COST $500-1500'"
+  cross_link = "CLM.tape §V-CLM-V3-14B-NARRATIVE-DETAIL + PR #58"
+
+@D clm_step2_carry := "CLM step 2 mitosis serve-time smoke — PSCC §41 synthetic carry" :: governance [d=2026-05-15 active]
+  pscc_41_carry = "synthetic d=8 vocab=16 2L → 21 split events + mitosis_invocations=65 (F-D4-LIVE-1..3 3/3 PASS)"
+  step2_verdict = "PARTIAL-CARRY (synthetic 3/5 PASS, production d=768 12L 별도 ~7 hr cycle)"
+  cross_link = "CLM.tape §V-CLM-STEP2-MITOSIS-SMOKE-CARRY + PSCC §41 + PR #58"

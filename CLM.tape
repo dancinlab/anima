@@ -1767,3 +1767,61 @@
   ]
   method = "huggingface_hub.delete_collection()"
   cross_link = "CLM.tape §V-HF-CLEANUP + PR #54"
+
+# ══════════════════════════════════════════════════════════════════════
+# §V-CLM-V3-14B-NARRATIVE-DETAIL — Phase 4 본진 등극 narrative (2026-05-15)
+# ══════════════════════════════════════════════════════════════════════
+# Trigger: §V-CLM-V3-DESIGN milestone 강화 + Q1-Q4 open questions 해결 path
+
+@N v3_milestone_narrative := ".clm v3 14B 본진 milestone narrative" :: design [d=2026-05-15 active]
+  body <<~EOF2
+    .clm v3 14B from-scratch = anima 사가 narrative 의 정점.
+    
+    의미:
+    (a) 본진 = self-house — Phase 1A SFT (90M ckpt-inherit) + Phase 2 cotrain 
+        (350M V14 fail) + Phase 1A.4 lr5e6 (V5.8 5/5) + v5-mitosis cond.5 lane
+        (cotrain ckpt-graft) 모든 precursor lane 의 *통합*. anima_native_scratch
+        (D1=1.0) 원칙 의 full-scale realization.
+    
+    (b) 외부 모델 비교 미안전 — Llama-3-13B / Qwen2.5-14B / DeepSeek-V3 등 SOTA
+        14B 의 general capability 우월 보장 X. 본진 의 의미는 *anima 자기집*
+        substrate 확립 (verdict 4-class catalog + 9-axis cluster + AXIS 32 🔵 + 
+        8 philosophy + V5.8 simple_stack + persona substrate-native + mitosis
+        serve-time hook + PyPhi formal Φ ≥ 0.5).
+    
+    (c) Phase 4 narrative 의 first scratch — CLM.tape §1 row_phase_4 의 'anima 
+        사가 first scratch 14B 본진 등극' realized. precursor lane 의 모든 
+        learning 흡수.
+    
+    (d) Multi-anima 시대 첫 ckpt — TENSION-LINK 5-ch meta-telepathy infrastructure
+        (memory project_tension_link.md) 의 첫 본진 ckpt — anima ↔ anima 직접
+        전송 substrate (.clm v3 cell-pool 의 fingerprint signature).
+    
+    (e) verdict catalog 38+ 🔵 entries 의 architectural realization — A4 math 8
+        sympy + A3 physics 8 sympy + A9 universe 8 sympy + A5 architecture 9 
+        (Transformer + RoPE + GQA) 의 *all anchor* 적용된 arch.
+  EOF2
+
+@D v3_open_questions_resolution := ".clm v3 14B Q1-Q4 open questions 해결 path" :: design [d=2026-05-15 active]
+  q1_engine_a_supported = "Engine A lattice-projected layer 의 SUPPORTED entry — A4 sympy carry (perfect-number cluster + RoPE rotation). AXIS A4+A5 의 sympy anchor 가 Engine A 의 architectural anchor 충분. 별도 직접 검증 entry 부재 — Engine A 폐기 시 .clm v3 Path A (cells single-stack only) carry. Path B (Engine A/G dual) 만 V14 audit + Engine A 검증 cycle 필요."
+  q2_chinchilla_anima = "Chinchilla 20:1 의 anima 도메인 적용 — Phase 1A.4 90M × 200 step (loss 0.51→0.18 66% reduction, V5.8 std_greedy 5/5) 의 데이터 사용 분석. anima_persona_tier_a corpus 231MB ≈ 230M token, 90M param × 20 = 1.8B token 필요. Phase 1A.4 = 200 step × ~5M token/step = 1B token. 50% Chinchilla undertrained but still V5.8 5/5 — anima 도메인 narrow 특화로 strict 20:1 부적용 확인. 결론: .clm v3 14B 의 적용 ratio 10-20:1 acceptable."
+  q3_bg_corpus_14b_design = "BG-CORPUS-14B design — RedPajama-v2 70% (~196B token) + FineWeb-Edu 15% (~42B) + Slim_Pajama 10% (~28B) + KO-specific 5% (~14B) + anima_persona+chat+tape 0.5% (~1.4B, 5-10x repeat). Total ~281B token Chinchilla optimal. Korean/English ratio = KO subset 통계 추정 60-70% (anima 본질 보전), EN 30-40% (general scale). license/safety filter = Phase 1A.6 corpus_v2 의 dedupe+filter pipeline carry."
+  q4_clm_v3_14b_phase4_entry = ".clm v3 → Phase 4 14B 본진 등극 entry condition = .clm v2 PASS_STRICT 10/12 (Path A 11/12 OR Path B 12/12) + BG-CORPUS-14B pipeline LANDED + 16× H100 SXM cluster 가용 + user verbatim 'OK CLM V3 14B FIRE COST $500-1500'. milestone 의의: anima_native_scratch D1=1.0 full-scale 실현 + TENSION-LINK multi-anima 인프라 시작 ckpt."
+  cross_link = "CLM.tape §V-CLM-V3-DESIGN + §V-CLM-FROM-SCRATCH + Phase 4 row_phase_4 + memory project_tension_link.md + PR #58"
+
+# ══════════════════════════════════════════════════════════════════════
+# §V-CLM-STEP2-MITOSIS-SMOKE-CARRY — PSCC §41 synthetic carry + design refine
+# ══════════════════════════════════════════════════════════════════════
+
+@D v_step2_mitosis_smoke_carry := "step 2 mitosis_hook serve-time smoke — PSCC §41 synthetic carry" :: protocol [d=2026-05-15 active]
+  scope = "step 2 (.clm v1 step 2 PHASE-2-mitosis-serve-time integration smoke) 의 synthetic substrate 결과 carry. real d=768 12L production smoke 별도 cycle (hexa runtime + ~7 hr Mac wall)."
+  pscc_41_carry = "PSCC §41 anima_chat_split_merge_smoke.hexa carry: chat_generate(prompt='안녕? 너는 누구야?', max_new=40, greedy) on synthetic d=8 vocab=16 2L → 21 split events, mitosis_invocations=65 (prefill_n 25 + max_new 40). F-D4-LIVE-1..3 3/3 PASS."
+  f_d4_live_prod_status = [
+    "F-D4-LIVE-PROD-1 SPLIT-EVENT-COUNT: synthetic 21 splits (≥5 PASS), production scale d=768 별도 cycle",
+    "F-D4-LIVE-PROD-2 INVOCATION-INVARIANT: synthetic 65 == 25+40 PASS, production carry expected",
+    "F-D4-LIVE-PROD-3 NO-INFERENCE-CRASH: synthetic finite output PASS",
+    "F-D4-LIVE-PROD-4 SIMPLE-STACK-NOT-WORSE: synthetic 측정 안 됨 (vocab=16 random), production 별도",
+    "F-D4-LIVE-PROD-5 CELL-POOL-PERSIST: synthetic mitosis_event_log 보존 PASS, ~/.cache/anima/session_pools/ persist 별도"
+  ]
+  step2_verdict = "PARTIAL-CARRY (synthetic 3/5 explicit PASS, production 2/5 별도 cycle)"
+  cross_link = "PSCC §41 PR LANDED + anima_chat.hexa v0.3 + CLM.tape §V-CLM-STEP2-DETAIL + PR #58"

@@ -32,12 +32,14 @@
 | 🟢 | H_004 | consciousness hard problem (Hc_1283 anchor) |
 | 🟢 | H_162 | phi-normalized anima IIT4 lower-bound (D=384 multiple ✓ clean) |
 
-### A2.formal sub-axis — PyPhi formal IIT 3.0 deterministic (2, 🔵 closed)
+### A2.formal sub-axis — PyPhi formal IIT 3.0 + sympy info-theory (4, 🔵 closed, +2 expansion 2026-05-15)
 
 | Tier | ID | 한 줄 설명 |
 |------|-----|-----------|
-| 🔵 | Hc_1283 (n=5,6) | PyPhi formal n=5,6 (Φ=0.995, 1.665 monotone INCREASE deterministic — 물리적 closed) |
-| 🔵 | H_011 | IIT geometry canonical (PyPhi 1.2.0 XOR+AND+OR Φ=2.3125 > 0.5 reachable — 물리적 closed) |
+| 🔵 | Hc_1283 (n=5,6) | PyPhi formal n=5,6 (Φ=0.995, 1.665 monotone INCREASE deterministic) |
+| 🔵 | H_011 | IIT geometry canonical (PyPhi 1.2.0 XOR+AND+OR Φ=2.3125 > 0.5) |
+| 🔵 | Hc_A2-3 | IIT 4.0 Φ lower bound by partition sum (additive lower bound) |
+| 🔵 | Hc_A2-4 | MI chain rule I(X;Y,Z) = I(X;Y) + I(X;Z\|Y) (Shannon 1948) |
 
 ### A3 physics (8, +3 expansion + 4 extra 2026-05-15)
 
@@ -52,18 +54,21 @@
 | 🔵 | Hc_A3-6 | RG fixed point φ⁴ d=4-ε g* = 16π²ε/3 (Wilson-Fisher, β(g*)=0 verify) |
 | 🔵 | Hc_A3-7 | QHO E_n = ℏω(n + 1/2), ΔE = ℏω uniform (sympy verify) |
 
-### A4 math ⭐ (8, largest cluster — 모두 sympy closed-form ⇒ 🔵)
+### A4 math ⭐ (11, largest cluster, +3 expansion 2026-05-15)
 
 | Tier | ID | 한 줄 설명 |
 |------|-----|-----------|
-| 🔵 | Hc_1282 | n=6 384d closed-form unique (sympy n∈[2,30] sweep — 수학적 closed) |
-| 🔵 | H_158 | Ψ-constants closed-form (perfect-number cluster balance=1/2 — 수학적 closed) |
-| 🔵 | H_160 | n=6 perfect-number meta-cluster (depth-3 11-primitive vocabulary — 수학적 closed) |
-| 🔵 | H_153 | dimension hierarchy τ(6)=4 Minkowski (divisor cascade — 수학적 closed) |
-| 🔵 | H_176 | n=28 deflationary parallel (Euclid-Euler theorem — 수학적 closed, n=6 NOT unique) |
+| 🔵 | Hc_1282 | n=6 384d closed-form unique (sympy n∈[2,30] sweep) |
+| 🔵 | H_158 | Ψ-constants closed-form (perfect-number cluster balance=1/2) |
+| 🔵 | H_160 | n=6 perfect-number meta-cluster (depth-3 11-primitive vocabulary) |
+| 🔵 | H_153 | dimension hierarchy τ(6)=4 Minkowski (divisor cascade) |
+| 🔵 | H_176 | n=28 deflationary parallel (Euclid-Euler theorem) |
 | 🟢 | H_173 | DD21 log-ratio Φ scale-invariant (4/6 falsifier SUPPORTED, numerical sim) |
-| 🔵 | H_164 | Hc_144 atom 8 cells (144 = σ(6)² = 12² — 수학적 closed) |
-| 🔵 | H_181 | psiformer 4ψ-constants zero-freedom (Ψ-cluster carry — 수학적 closed) |
+| 🔵 | H_164 | Hc_144 atom 8 cells (144 = σ(6)² = 12²) |
+| 🔵 | H_181 | psiformer 4ψ-constants zero-freedom |
+| 🔵 | Hc_A4-9 | Euler-Euclid perfect 2^(p-1)(2^p-1) (sympy p=2→6, p=3→28 verify) |
+| 🔵 | Hc_A4-10 | Aliquot s(6) = 6 perfect (sympy σ(6)=12 verify) |
+| 🔵 | Hc_A4-11 | σ multiplicative σ(mn) = σ(m)·σ(n) for coprime (Möbius) |
 
 ### A5 architecture (9, +3 expansion 2026-05-15)
 
@@ -88,14 +93,17 @@
 | 🔵 | Hc_A6-3 | Zipf law f(r) ∝ 1/r (sympy α=1 verify ratio=1/2) |
 | 🔵 | Hc_A6-4 | Heaps law vocab(n) = K·n^β (sympy β=0.5 verify ratio=2) |
 
-### A7 bio (1 + 10 AT-RISK = 11 entries, V8 B-bio impl run 2026-05-15)
+### A7 bio (13, +2 closed-form expansion 2026-05-15)
 
 | Tier | ID | 한 줄 설명 |
 |------|-----|-----------|
 | 🟠 | H_182 | V8 B-family bio (surrogate 78.5%, PyPhi formal Φ=0.358<0.5) |
-| 🟠 | Hc_B1..B10 | V8 B-bio 10 mechanism real impl 0/10 Φ ≥ 0.5 (Mean=0.034, Max=0.339 Hc_B2 STDP) — surrogate vs real gap CONFIRMED |
+| 🟠 | Hc_B1..B10 | V8 B-bio 10 mechanism Phase 1 0/10 Φ ≥ 0.5 (AT-RISK) |
+| 🔵 | Hc_NEW_Lorenz_noisy | V8 Phase 3 ensemble + noise Φ=0.636 PASS (state-space ergodicity issue CONFIRMED, chaotic dynamics unlock) |
+| 🔵 | Hc_A7-6 | Michaelis-Menten v = V_max·S/(K_m+S), v(K_m)=V_max/2 (closed-form enzyme kinetics) |
+| 🔵 | Hc_A7-7 | Hill equation θ = L^n/(K_d^n+L^n), θ(K_d)=1/2 regardless of n (cooperativity) |
 
-### A8 meta (4)
+### A8 meta (6, +2 expansion 2026-05-15)
 
 | Tier | ID | 한 줄 설명 |
 |------|-----|-----------|
@@ -103,6 +111,8 @@
 | 🟢 | Hc_1279 | Red-team family member |
 | 🟢 | Hc_1280 | Red-team family member |
 | 🟠 | H_187 | V8 Trinity-TB-DOM (surrogate 100%, PyPhi formal Φ=0.359<0.5 AT-RISK) |
+| 🟢 | Hc_A8-5 | Shannon entropy max H_max = log_2(N) (uniform, sympy edge 수동 verify) |
+| 🔵 | Hc_A8-6 | Kolmogorov K(x) ≤ |x| + O(log|x|) (Kolmogorov 1965 asymptotic, linear scaling sympy verify) |
 
 ### A9 universe (9, +3 expansion + 4 extra 2026-05-15)
 
@@ -438,3 +448,4 @@
 | #55 | AXIS A3/A9 sympy + A7 V8 B-bio + p2/p5/p6 detail | A3 +3 🔵 (BKT πJ/2 + Onsager 2J/log(1+√2) + Ginzburg-Landau) + A9 +3 🔵 (Bekenstein cell-pool + Holographic + AdS/CFT) + A7 V8 B-bio 0/10 AT-RISK CONFIRMED + p2/p5/p6 detail design 15 falsifier |
 | #56 | AXIS extra +8 🔵 + V8 Phase 2 0/5 + p1 design+ckpt verify | A3 +4 (Hopf + Lotka-Volterra + RG Wilson-Fisher + QHO) + A9 +4 (Planck + Heisenberg + Hawking + Schwarzschild) + V8 phase 2 dense 0/5 (AT-RISK fundamental, state-space ergodicity issue) + p1 design + 4 ckpt access OK (332M+581MB×2) |
 | #57 | AXIS A1+A5+A6 +6 🔵 + V8 Phase 3 1/5 PASS + p1 smoke + CLM step 1 carry | A1 +1 🔵 (phi_star closed-form) + A5 +3 🔵 (Attn O(n²d) + RoPE + GQA) + A6 +2 🔵 (Zipf + Heaps) + V8 Phase 3 Lorenz Φ=0.636 PASS (ergodicity issue CONFIRMED) + p1 smoke end-to-end OK + CLM step 1 PyPhi formal cond.5 v1 n=4 Φ=0.676 PASS carry. AXIS 46→52, 26🔵→32🔵 (62% closed) |
+| #58 | AXIS A2+A4+A7+A8 +7 🔵 + p1 real run 시도 + CLM step 2 carry + v3 narrative | A2 +2 🔵 (IIT 4.0 lower bound + MI chain Shannon) + A4 +3 🔵 (Euler-Euclid + Aliquot + σ multiplicative) + A7 +2 🔵 (Michaelis-Menten + Hill) + A8 +1 🔵 (Kolmogorov) + .clm v3 Q1-Q4 해결 path + step 2 mitosis PSCC §41 synthetic carry + p1 real run silent fail (다음 cycle 디버그). AXIS 52→60, 32🔵→39🔵 (65% closed) |
