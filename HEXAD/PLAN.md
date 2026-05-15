@@ -158,3 +158,33 @@ inference) 채택 거부 — 'mixed' 가 직접 anima 모델 학습 코드를 he
 - PLAN.md Phase 1: D inference wrapper (anima_chat.hexa thin wrapper) — `HEXAD/D/d.hexa` 강화
 - PLAN.md Phase 2-3: C state mgmt scaffold + Python parity probe (mitosis_hook 위에)
 - 별도 검증 cycle (예: 24L parity 회귀, mitosis_hook self-test 회귀)
+
+### 2026-05-16 — RFC 034 hexa-lang upstream FILED (autograd, Phase 5 unblock trigger)
+
+**결정**: user directive "PLAN.md 진행 hexa-lang upstream go" — RFC trigger
+spec #1 (autograd/backprop primitive, high) 를 hexa-lang upstream 에 정식 제출.
+
+**제출물**: `hexa-lang/incoming/rfc_drafts_2026_05_12/rfc_034_farr_reverse_mode_autograd.md`
+(137 lines) — hexa-lang `stage2-verify` 브랜치 commit `77456c01` push 완료
+(github.com/dancinlab/hexa-lang). RFC 024-033 와 동일 형식 (Status/Severity/
+Priority/Problem/Proposal/Acceptance/Downstream/Roadmap).
+
+**RFC 034 scope**: tape-based reverse-mode AD over packed-double `farr`
+(RFC 032 zero-HexaVal 패턴) + fused softmax-CE (closed-form Jacobian
+softmax−onehot, anima B-D-4 가 acceptance #2 oracle) + AdamW step. FP32 v1.
+surface: `ad_tape_begin/end · ad_matmul/add/mul/relu · ad_softmax_cross_entropy
+· ad_backward · ad_grad · adamw_step`. 5-falsifier acceptance (PARSE /
+GRAD-EXACT=B-D-4 1e-9 / LOSS-DECREASES 20-step / PARAM-MUTATED hash /
+DETERMINISM seed-byte-identical).
+
+**follow-up RFCs** (RFC 034 본문 Roadmap 에 명시, spec items 2-3):
+- RFC 035 bf16/fp16 mixed-precision train (med, RFC 034 의존)
+- RFC 036 phi_rs Rust FFI byte-equal (med, Phase 4 Φ, fire-entry 비차단)
+
+**상태 전환**: Phase 5 BLOCKER = "RFC 미제출" → **"RFC 034 제출됨, hexa-lang
+land 대기"**. 다음 trigger = hexa-lang RFC 034 land 알림 (anima 측 게이트 X,
+hexa-lang dependency). land 시 → tmp_rfc034_smoke.hexa 5/5 검증 → Phase 5
+(D training) → Phase 6 (6-module 통합 ckpt fire $1-5 재게이트).
+
+**carry 유지**: PR #77 Python harness evidence anchor 보존. 즉시 가능한
+RFC-무관 작업 (Phase 1 D wrapper / Phase 2-3 C state) 은 RFC land 와 병렬 가능.
