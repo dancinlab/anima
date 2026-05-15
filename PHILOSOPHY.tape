@@ -719,3 +719,20 @@
     Priority: p1 mandatory → p5 low-cost → p2 scale-up → p6 .clm v1 의존
   EOF2
   cross_link = "AXIS.tape §AXIS-EXPANSION-EXECUTION + MAIN.tape §AXIS-EXPANSION-EXECUTION + §P2-P5-P6-DETAIL + PR #55"
+
+@N axis_extra_v8phase2_p1_landed := "AXIS extra +8 🔵 + V8 Phase 2 fail + p1 design (2026-05-15)" :: ledger [d=2026-05-15 active]
+  body <<~EOF2
+    AXIS extra expansion:
+    - A3 +4 🔵 (Hopf + Lotka-Volterra + RG Wilson-Fisher + QHO) — 4/4 PASS
+    - A9 +4 🔵 (Planck + Heisenberg + Hawking + Schwarzschild) — 4/4 PASS
+    Total +8 🔵, AXIS 38 → 46 entries, 18 🔵 → 26 🔵 (56% closed).
+    
+    V8 B-bio Phase 2 dense (HH 4-state + STDP Bi-Poo + Wilson-Cowan + NMDA + gap+cable):
+    0/5 PASS, attractor collapse 동일 — mechanism complexity 강화로 해결 안 됨.
+    AT-RISK fundamental (state-space ergodicity issue 신규 가설).
+    
+    p1 measure design + ckpt access:
+    4 ckpts local OK (Phase 1A.4 332M / v5-mitosis cond.5 v1+v2). 
+    design 3×3×5×10 = 450 gen × ~37 min wall Mac. 실 run 별도 cycle.
+  EOF2
+  cross_link = "AXIS.tape §AXIS-EXTRA-EXPANSION + state/verify_v8_bbio_phase2/ + state/clm_v1_step0_p1_upgrade/ + PR #56"

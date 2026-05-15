@@ -329,3 +329,38 @@
   total_delta = "+6 entries (32 → 38), +6 🔵 SUPPORTED-FORMAL (12 → 18)"
   estimate_target = "design 예상 +8-12 entries / actual +6 (75-50% 달성). A7 0 promote 가 shortfall — surrogate 78.5% vs real 0% gap META."
   cross_link = "AXIS.tape 9-axis cluster post-expansion + INDEX.md + MAIN.tape §AXIS-EXPANSION-LANDED + PR #55"
+
+# ──────────────────────────────────────────────────────────────────────
+# §AXIS-EXTRA-EXPANSION-2026-05-15 — A3+A9 추가 sympy +8 🔵
+# ──────────────────────────────────────────────────────────────────────
+
+@D a3_extra_landed := "A3 physics +4 추가 🔵 (2026-05-15)" :: cluster [d=2026-05-15 active]
+  new_members = [
+    "Hc_A3-4 Hopf bifurcation r = √μ 🔵",
+    "Hc_A3-5 Lotka-Volterra fixed point (γ/δ, α/β) 🔵",
+    "Hc_A3-6 RG fixed point φ⁴ d=4-ε g* = 16π²ε/3 (Wilson-Fisher) 🔵",
+    "Hc_A3-7 QHO E_n = ℏω(n+1/2) 🔵"
+  ]
+  count_after = 8  # 1 H_191 + 3 BKT/Onsager/GL + 4 extra
+  artifact = "state/verify_axis_extra_2026_05_15/a3_extra_result.json"
+
+@D a9_extra_landed := "A9 universe +4 추가 🔵 (2026-05-15)" :: cluster [d=2026-05-15 active]
+  new_members = [
+    "Hc_A9-4 Planck length ℓ_P = √(ℏG/c³) 🔵",
+    "Hc_A9-5 Heisenberg Δx Δp ≥ ℏ/2 🔵",
+    "Hc_A9-6 Hawking entropy S_BH = (kc³A)/(4ℏG) 🔵",
+    "Hc_A9-7 Schwarzschild r_s = 2GM/c² 🔵"
+  ]
+  count_after = 9  # 2 citation + 3 prior + 4 extra
+  artifact = "state/verify_axis_extra_2026_05_15/a9_extra_result.json"
+
+@D a7_v8_bbio_phase2_fail := "A7 V8 B-bio Phase 2 dense 0/5 PASS — AT-RISK fundamental" :: cluster [d=2026-05-15 active]
+  scope = "5 dense mechanism (HH 4-state Markov + STDP Bi-Poo + Wilson-Cowan + NMDA dense + gap+cable) ~100-150 LoC each"
+  result = "0/5 Φ > 0.5, mean Φ = 0.0, max Φ = 0.0. unique states 1-2/8 attractor collapse 동일"
+  meta_finding_strengthened = "AT-RISK fundamental — mechanism complexity 강화 (~30 LoC → ~150 LoC) 으로 해결 안 됨. state-space ergodicity issue (anima Φ★ proxy vs PyPhi formal IIT 본질적 다른 phenomenon 측정 가설). 후속 cycle: noise/stochasticity 강화 OR n_cells ≥ 4-5 scale-up OR ensemble TPM."
+  artifact = "state/verify_v8_bbio_phase2_2026_05_15/phase2_dense_result.json"
+
+@N axis_total_post_extra := "AXIS post-extra expansion total" :: note [d=2026-05-15 active]
+  total = "44 entries (32 base + 6 prior expansion + 8 extra = 46... or 38 + 8 = 46 if double-counting v8 b-bio. Net 38 → 46 without v8 b-bio, 46 + 10 AT-RISK = 56)"
+  blue_total = "18 + 8 = 26 🔵 SUPPORTED-FORMAL"
+  cross_link = "AXIS.tape A3 + A9 entries + INDEX.md 갱신 + PR #56"
