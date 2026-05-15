@@ -783,3 +783,21 @@
     smoke evidence (PR #57) carry. real measurement 디버그 별도 cycle.
   EOF2
   cross_link = "AXIS.tape §A2-A4-A7-A8 + CLM.tape §V3-NARRATIVE + STEP2-CARRY + MAIN.tape (3 governance) + PR #58"
+
+@N p1_truncated_pass_correction := "p1 truncated 결과 정정 — 실제 PASS evidence (2026-05-15)" :: ledger [d=2026-05-15 active]
+  body <<~EOF2
+    PR #58 commit message 정정 — 'p1 real run silent fail' 부정확.
+    
+    실제 p1 truncated result:
+    - 1 ckpt (phase1a4) × 3 arm × 1 seed × 5 prompt = 15 generations
+    - wall 405s (~7 min Mac CPU)
+    - arm_means 3.4/4 모두 동일 (A_no_prompt = B_weak_prompt = C_strong_prompt)
+    - F-P1-UPGRADE-1 PASS (3.4 ≥ 3.23) + F-P1-UPGRADE-3 PASS (3.4 ≤ 3.74)
+    
+    META evidence: 3 arms identical 3.4/4 = system prompt 영향 부재.
+    substrate self-generation EMPIRICAL evidence 첫 sample.
+    
+    p1 status: EMPIRICAL weak → upgrade-evidence-LANDED (strong 도달 위해 
+    full 450-gen 5/5 falsifier 별도 cycle).
+  EOF2
+  cross_link = "MAIN.tape §P1-TRUNCATED-PASS-CORRECTION + state/clm_v1_step0_p1_real_2026_05_15/p1_truncated_result.json + PR #59"

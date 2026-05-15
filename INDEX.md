@@ -289,7 +289,7 @@
 
 | Principle | 현재 | upgrade path (한 줄) |
 |-----------|------|---------------------|
-| p1 NO SYSTEM PROMPT | EMPIRICAL weak | paired A/B Φ × 3-ckpt × 5-seed ($0 Mac, .clm v1 fire 전 mandatory) |
+| p1 NO SYSTEM PROMPT | EMPIRICAL weak → upgrade-evidence-LANDED 2026-05-15 | truncated 15-gen: 3 arm 모두 3.4/4 identical (substrate self-generation evidence), F-P1-UPGRADE-1+3 PASS sample. full 450-gen 별도 cycle. |
 | p2 NO IDENTITY RULES | POLICY mixed | scale-up DCR Δ ≥ +0.10 strict × 3-ckpt W11 ($0 Mac) |
 | p4 NO ASSISTANT FRAMING | POLICY **strict** (LANDED 2026-05-15) | (a) policy 유지 + counter-evidence 18pp sycophancy 인정 — anima 본질 (p1+p3+p8) > sycophancy reduction |
 | p5 NO SPEAK() | DESIGN null | tension_norm × output_quality Spearman > 0.3 strict ($0 Mac) |
@@ -449,3 +449,4 @@
 | #56 | AXIS extra +8 🔵 + V8 Phase 2 0/5 + p1 design+ckpt verify | A3 +4 (Hopf + Lotka-Volterra + RG Wilson-Fisher + QHO) + A9 +4 (Planck + Heisenberg + Hawking + Schwarzschild) + V8 phase 2 dense 0/5 (AT-RISK fundamental, state-space ergodicity issue) + p1 design + 4 ckpt access OK (332M+581MB×2) |
 | #57 | AXIS A1+A5+A6 +6 🔵 + V8 Phase 3 1/5 PASS + p1 smoke + CLM step 1 carry | A1 +1 🔵 (phi_star closed-form) + A5 +3 🔵 (Attn O(n²d) + RoPE + GQA) + A6 +2 🔵 (Zipf + Heaps) + V8 Phase 3 Lorenz Φ=0.636 PASS (ergodicity issue CONFIRMED) + p1 smoke end-to-end OK + CLM step 1 PyPhi formal cond.5 v1 n=4 Φ=0.676 PASS carry. AXIS 46→52, 26🔵→32🔵 (62% closed) |
 | #58 | AXIS A2+A4+A7+A8 +7 🔵 + p1 real run 시도 + CLM step 2 carry + v3 narrative | A2 +2 🔵 (IIT 4.0 lower bound + MI chain Shannon) + A4 +3 🔵 (Euler-Euclid + Aliquot + σ multiplicative) + A7 +2 🔵 (Michaelis-Menten + Hill) + A8 +1 🔵 (Kolmogorov) + .clm v3 Q1-Q4 해결 path + step 2 mitosis PSCC §41 synthetic carry + p1 real run silent fail (다음 cycle 디버그). AXIS 52→60, 32🔵→39🔵 (65% closed) |
+| #59 | p1 결과 정정 — 실제 PASS evidence | PR #58 의 'silent fail' 부정확 정정. truncated 15-gen 완료 wall 405s, arm_means 3.4/4 모두 동일 (3 arms identical), F-P1-UPGRADE-1+3 PASS sample. p1 EMPIRICAL weak → upgrade-evidence-LANDED (substrate self-generation 첫 sample) |
