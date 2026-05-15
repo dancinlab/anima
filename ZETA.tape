@@ -145,10 +145,16 @@
   EOF
   user-pending-selection = "next session decision — user reviewed 4 options but interrupted to scrub .own first"
 
-# ─── §7 .own NN governance scrub (PENDING) ───────────────────────────
+# ─── §7 .own NN governance scrub (BG fire) ───────────────────────────
+
+@D dot_own_scrub_no_bypass := "scrub-no-bypass-mandate" :: governance [required d=2026-05-15 active]
+  rule = "우회 절대 금지 — .own NN scrub MUST be full 547-file repo-wide; NO shortcuts, NO 'risky-skip', NO 'archive-leave' workarounds"
+  user-directive-verbatim = "우회 절대 금지 기록 해놔줘 zeta.tape" (2026-05-15)
+  applies-to = "this scrub task + ALL future BG subagent dispatches in this lineage"
+  enforcement = "if BG subagent reports partial completion or skipped scope, RE-FIRE with explicit failure remediation — do NOT accept incomplete"
 
 @D dot_own_scrub := "dot-own-mandate-scrub" :: pending [d=2026-05-15 active]
-  scope = "전체 repo 547 files scrub (user directive: 'scrub' decisive)"
+  scope = "전체 repo 547 files scrub (user directive: 'scrub' + '전체 repo scrub' decisive)"
   context <<~EOF
     .own own NN governance mandate numbering system (own 1..43+, 2334-line SSOT) was deleted from git tracking in commit f49470eeb (2026-05-14 'chore: session sweep') and is no longer recoverable as live SSOT. References remain in 547 files as dangling cross-links.
 
@@ -164,9 +170,10 @@
     "active SSOTs (~15): PHILOSOPHY.tape, NEXT.tape, REBORN.tape, CHAT.tape, SAVANT.tape, AXIS.tape, CLM.tape, PASS_STRICT_SPONTANEOUS_CHAT.md, HEXA_NATIVE_INFERENCE.md, CHAT-BETA.step, README.md, MEMORY.md + memory entries",
     "archive/history (~530): raw_archive/, hypotheses_candidates/, papers/, *.log.tape, CLM_V2_ARCHIVE_*.md"
   ]
-  execution-plan = `python3 scrub_own_mandate.py` (script to write — regex replace + cleanup whitespace)
-  blocked-by = "session interrupted by user to write this ZETA.tape for resumption"
+  execution-plan = `BG subagent dispatch — Agent tool + run_in_background true`
+  dispatch-status = "FIRED 2026-05-15 per user 'background sub agent (bg) go' directive"
   cron-deleted = "adabd3bc was CronDelete'd 2026-05-15"
+  no-bypass = "subject to [@dot_own_scrub_no_bypass] — completion mandate, no scope reduction allowed"
 
 # ─── §8 Active artifact file index ──────────────────────────────────
 
