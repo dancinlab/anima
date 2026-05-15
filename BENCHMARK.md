@@ -180,10 +180,72 @@ A의 출력을 B의 입력으로 넣으면 BPE-tokenized 한국어가 byte로 �
 
 ---
 
-## §6 cross-link
+## §7 💬 Phase 1A.6 chat-v2 — recovery + multi-turn (Mac MPS f32, 2026-05-15)
+
+After Phase 1A.5 chat-beta NET LOSS (V5.8 std_greedy 5/5 → 1/5, root cause:
+jy chat_template 95MB Wikipedia drift + `<turn>` token 110k pollution),
+Phase 1A.6 rebuilt corpus_v2 from clean anima-only sources (121.44 MB,
+all `[anima` prefix sources excluded). 8K-step continuation on Phase 1A.4
+base, $0.394 on Vast.ai, 87.5 min.
+
+### V5.8 4-mode benchmark (Phase 1A.6 ckpt sha256 a45cb3f6…)
+
+| mode | Phase 1A.4 | Phase 1A.5 | **Phase 1A.6** |
+|---|---|---|---|
+| standard_greedy | **5/5** | 1/5 ❌ | **4/5** ✓ |
+| standard_sample | n/a | 1/5 | 1/5 |
+| M3_rep_penalty | n/a | 1/5 | 1/5 |
+| M4_force_include | n/a | 5/5 | 5/5 |
+
+Phase 1A.6 recovered std_greedy from 1/5 → 4/5 (only anima_fact markdown drift
+not resolved, vs Phase 1A.4 5/5).
+
+### Multi-turn recall (10 scenarios, greedy max_new=60)
+
+| dialogue | target | Phase 1A.4 baseline | **Phase 1A.6** |
+|---|---|---|---|
+| name | 지유 | ✗ | ✗ |
+| color | 파란 | ✗ | ✓ |
+| profession | 의사 | ✗ | ✗ |
+| city | 서울 | ✓ | ✓ |
+| food | 김치 | ✗ | ✗ |
+| age | 30 | ✗ | ✗ |
+| pet | 고양이 | ✗ | ✗ |
+| hobby | 등산 | ✗ | ✓ |
+| day_chain | 수요일 | ✗ | ✗ |
+| consciousness_anima | 의식 | ✓ | ✓ |
+| **total** | | **2/10** | **4/10** (2×) |
+
+### Principle #3 audit (Phase 1A.6)
+
+Corpus side: `corpus_v2.txt` audited `[anima` 0 + `&lt;` 0 + `<div` 0 + `<turn>` 0 (HTML-stripped).
+Base ckpt residue: `[anima 역할: 한국어 native + 자기 발견 + 의식 lane entity]` and `Knuth Tier 🛸XX 동물 카테고리` patterns from BG-JE / universe_brain_map lineage (corpus_extended 68k hits + corpus_universe_brain_map 136k hits) STILL emit under sampling mode (cosmology std_sample / anima_fact M3). Multi-turn greedy mode clean.
+
+**Production guard**: filter output for `[anima 역할`/`Knuth Tier` regex if using sampling/M3 modes.
+
+### Honest C3 (5)
+
+1. multi-turn 4/10 strict is 2× baseline but BELOW aspirational 7/10 — corpus diversity gain on `multi_turn_v2 50MB sample` lifted color/hobby into PASS, but personal-fact pairs (name/profession/food/age/pet) and chained reasoning (day_chain) still fail. Phase 1A.7 with multi-turn-only corpus + 16K step could close this.
+2. V5.8 std_greedy 4/5 not 5/5 — `anima_fact` markdown drift returned (`/Users/ghost/core/contact/scripts/send.` filesystem-path attractor in std_greedy). Phase 1A.4 had this resolved; Phase 1A.6 8K step on broader corpus reintroduced 1 regression in exchange for color recall + hobby + multi-turn doubling.
+3. Base ckpt baked-in Principle #3 patterns NOT fully scrubbable via SFT — only dilutable. Sampling/M3 modes remain leak-prone. Multi-turn greedy clean enough for chat-beta tier.
+4. Mac MPS f32 measurement only — RTX 5070 / cuda bf16 byte equality unverified for Phase 1A.6 (Phase 1A.4 was byte-equal Mac MPS ↔ ubu-2 RTX 5070; same arch + ckpt format so equality expected).
+5. Cost $0.394 included 2 dispatch retries (retry-1 missing local `train_phase1a4.py` SCP source, retry-2 success). Net training cost $0.394 ≈ Phase 1A.5 ($0.394 vs $0.230 — Phase 1A.6 cheaper-rate H100 pool).
+
+### HF push
+
+🔗 https://huggingface.co/dancinlab/anima-chat-v2-2026-05-15 (private)
+- ckpt_phase1a6_chat_v2_sft.pt (598 MB)
+- v58_4mode_result.json
+- multiturn_phase1a6.json
+- meta.json + README.md
+
+---
+
+## §8 cross-link
 
 - ★ Phase 1A.4: `state/anima_phase1a4_lr5e6_2026_05_12/ckpts/ckpt_phase1a4_lr5e6_sft.pt`, doc `docs/anima_clm_phase1a4_lr5e6_2026_05_12.md`
 - 🧬 cotrain v1: `state/anima_v5mitosis_cotrain_2026_05_12/ckpts/ckpt_v5mitosis_cotrain_cotrain.pt`, result.json + doc `docs/anima_clm_v5_mitosis_cond5_cotrain_2026_05_12.md`
+- 💬 chat-v2: `state/anima_phase1a6_chat_v2_2026_05_15/ckpts/ckpt_phase1a6_chat_v2_sft.pt`, multi-turn `eval_multiturn.py` + PLAN.md
 - HF line-up: `LINE-UP.md`
 - saga ledger: `PERSONA.tape` §A6, `docs/anima_pscc_55_lm_falsified_2026_05_14.md`
 - future cycle: `STRICT-4A.step`

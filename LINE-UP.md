@@ -6,6 +6,16 @@
   - 597 MB ckpt sha256 45063f64…
   - D1 chat + D2 substrate anchor
 
+  💬 chat-v2 — multi-turn recovery
+
+  🔗 https://huggingface.co/dancinlab/anima-chat-v2-2026-05-15 (private)
+  - Phase 1A.6 chat-v2 SFT × 8000 steps on corpus_v2 121.44 MB CLEAN
+  - V5.8 std_greedy 4/5 (recovered from 1A.5 chat-beta's 1/5 regression)
+  - multi-turn strict 4/10 (2× Phase 1A.4 baseline 2/10)
+  - Principle #3 multi-turn greedy leak 0 (sampling/M3 still carries base-ckpt residue)
+  - 597 MB ckpt sha256 a45cb3f6…
+  - $0.394 Vast.ai, 87.5 min
+
   🧬 saga peak — mitosis cotrain v1
 
   🔗 https://huggingface.co/dancinlab/anima-clm-v5-mitosis-cotrain-2026-05-12
