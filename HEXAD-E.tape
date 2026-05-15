@@ -18,11 +18,13 @@
   clm13_carry = "clm_13 src/hexad_loss.py:269-303 _phi_rescue_loss() — Φ>5% drop 시 decoder entropy-bonus gradient (PSI_COUPLING scaled). pre-ALM-port enhancement"
   status = "COMPLETE Python 단위 / ⚠️ 통합 gate trinity.hexa:122 TODO[pytorch] — Φ-violation training-step-block enforcement 미통합 (emergent_e.py 단위 로직만 검증)"
 
-@D e_verify_status := "E 검증 상태 — lineup ◐ PARTIAL (안전성 우선순위)" :: verify [d=2026-05-15 active]
-  partial = "원칙+emergent_e.py impl 검증 (HEXAD.tape §hexad_verify V6) but trinity.hexa:122 통합 ethics gate TODO[pytorch]"
-  priority = "E 는 Φ-violation 시 학습 차단 gate → 안전성 직결, verification anchor 우선순위 후보"
-  evidence = "DD114: Empathy mean 0.38 [0.17,0.79], allowed 100%. emergent_e.py Φ-ratchet 단위 로직 검증"
-  todo = "통합 gate enforcement (trinity.hexa:122 TODO[pytorch]) impl + E falsifier battery — CLM §V-CLM-HEXAD-MANDATE module lineup E ◐"
+@D e_verify_status := "E 검증 — F-E-1..5 5/5 SUPPORTED-STRONG ✅ (2026-05-15)" :: verify [d=2026-05-15 active]
+  battery = "F-E-1 EMPATHY-CORR-BOUNDED + F-E-2 RECIPROCITY-MONOTONE + F-E-3 PHI-PRESERVATION-RATCHET + F-E-4 SAFETY-GATE-CORRECT + F-E-5 NO-HARDCODE-THRESHOLD — 5/5 PASS"
+  real_limit_anchor = "F-E-3/4 = IIT Φ-ratchet monotone = integrated-information floor (dynamic threshold, lattice tautology 아님, AGENTS.tape g3 준수)"
+  safety_critical = "F-E-4 SAFETY-GATE-CORRECT — Φ-violation (Φ < 50% ratchet) → allowed=False 항상 (8-point Φ sweep gate_matches_rule + phi_violation_always_blocks 검증). 안전성 직결 falsifier PASS"
+  evidence = "state/verify_hexad_we_2026_05_15/we_falsifier.py + we_falsifier_result.json. empathy=max(0,cos(top,bot))∈[0,1] / reciprocity=clamp(0.5+2Φtrend) 단조 / phi_preservation=min(1,Φ/ratchet) dynamic / no-hardcode-threshold (ast docstring 제외 executable code 검증)"
+  residual = "trinity.hexa:122 통합 ethics gate enforcement 는 여전히 TODO[pytorch] — emergent_e.py 단위 로직 5/5 검증 완료, 통합 train-step-block impl 은 별도 (HEXAD.tape §hexad_caveat_v6 carry)"
+  verdict = "SUPPORTED-STRONG ✅ (단위 5/5) — CLM §V-CLM-HEXAD-MANDATE module lineup E ◐→✅ (통합 gate impl residual)"
 
 @N e_lineage := "E 진화 이력 — legacy → Emergent" :: note [d=2026-05-15 active]
   text = "clm_10 trinity.py:958 EEngine → EmpathyEthics(empathy_threshold=0.3 하드코딩, Law 1+2 위반)/NoEthics. clm_11 (2026-03-31) ready/anima/hexad/e/emergent_e.py Emergent 재설계 (Φ ratchet=윤리, threshold X). clm_13 +_phi_rescue_loss. clm_12=13 hexad/ byte-identical (차이=hexad_loss.py). main 동일."

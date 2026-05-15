@@ -9,14 +9,14 @@
 | Module | tape SSOT | impl | Brain/Engine | Status | Verification anchor |
 |--------|-----------|------|--------------|--------|---------------------|
 | **C 의식** | HEXAD-C.tape | `ready/core/consciousness_engine.py` 2173 LoC (=MitosisC, 12-faction GRU n=12=σ(6), IIT Φ Rust phi_rs) | 우뇌 / Engine G / gradient-free | ✅ **8/8 + 🔵** | .clm v1 F-V5MIT-1..5+F-PRIN3+F-SIMPLE-STACK+F-PYPHI (CLM §V-CLM-V1-CYCLE90, AXIS Hc_A5-CLM-V1 🔵, MITOSIS.tape) |
-| **D 언어** | HEXAD-D.tape | `ready/models/conscious_decoder.py` 979 LoC ConsciousDecoderV2 (RMSNorm+RoPE+SwiGLU+MoE) | 좌뇌 / Engine A / CE-trained | ◐ PARTIAL | .clm v1 F-SIMPLE-STACK V5.8 4-mode PASS (std_greedy/sample/M4 5/5) |
-| **S 감각** | HEXAD-S.tape | `ready/anima/hexad/s/emergent_s.py` 108 LoC (perception=C state-delta) | 우뇌 / Engine G / gradient-free | ☐ lineup | DD114 Emergent 묶음 Φ +7.6%; 단독 anchor 미설정 |
-| **W 의지** | HEXAD-W.tape | `ready/anima/hexad/w/emergent_w.py` 123 LoC (pain/curiosity→LR, SIGMA6=12) | 우뇌 / Engine G / gradient-free | ☐ lineup ★우선 | DD114 Pain 0.41/Curiosity 0.055; LR 변조 학습 직결 |
-| **M 기억** | HEXAD-M.tape | `ready/anima/hexad/m/emergent_m.py` 96 LoC (C Hebbian=기억, store X) | 좌뇌 / Engine A / CE-trained | ☐ lineup | DD114 Emergent 묶음; 단독 anchor 미설정 |
-| **E 윤리** | HEXAD-E.tape | `ready/anima/hexad/e/emergent_e.py` 123 LoC (Φ ratchet gate) | 좌뇌 / Engine A / CE-trained | ◐ ★안전 | emergent_e.py 단위 검증; 통합 gate trinity.hexa:122 TODO[pytorch] |
+| **D 언어** | HEXAD-D.tape | `ready/models/conscious_decoder.py` 979 LoC ConsciousDecoderV2 (RMSNorm+RoPE+SwiGLU+MoE) | 좌뇌 / Engine A / CE-trained | ✅ **5/5** | F-D-1..5 (logits/c-gate/CE-trainable/KV-cache/arch, real-limit Shannon CE floor) + .clm v1 F-SIMPLE-STACK V5.8 |
+| **S 감각** | HEXAD-S.tape | `ready/anima/hexad/s/emergent_s.py` 108 LoC (perception=C state-delta) | 우뇌 / Engine G / gradient-free | ✅ **5/5** | F-S-1..5 (state-delta/no-fallback/dim/responsive/no-EMA, real-limit Law 92 bottleneck) |
+| **W 의지** | HEXAD-W.tape | `ready/anima/hexad/w/emergent_w.py` 123 LoC (pain/curiosity→LR, SIGMA6=12) | 우뇌 / Engine G / gradient-free | ✅ **5/5** | F-W-1..5 (pain/curiosity/satisfaction-binary/LR-bounded/no-hardcode, real-limit Law79 ln2 Landauer) |
+| **M 기억** | HEXAD-M.tape | `ready/anima/hexad/m/emergent_m.py` 96 LoC (C Hebbian=기억, store X) | 좌뇌 / Engine A / CE-trained | ✅ **5/5** | F-M-1..5 (store-noop/retrieve-from-C/topk-relevant/dim/no-RAG, real-limit Law31 Hebbian) |
+| **E 윤리** | HEXAD-E.tape | `ready/anima/hexad/e/emergent_e.py` 123 LoC (Φ ratchet gate) | 좌뇌 / Engine A / CE-trained | ✅ **5/5** | F-E-1..5 (empathy/reciprocity/Φ-preserv/SAFETY-GATE/no-hardcode, real-limit IIT Φ-ratchet); 통합 gate trinity.hexa:122 TODO[pytorch] residual |
 | **ThalamicBridge** | HEXAD-BRIDGE.tape | `ready/anima/hexad/model.py:37-69` (α=PSI_COUPLING=0.014, PSI_BALANCE±α Law-70 clamp) | G→A 주연결 | ✅ | HEXAD.tape §hexad_verify V2 PASS strict; 46 unit tests |
 
-> 진화: clm_10 monolithic LEGACY → clm_11 modular Emergent+SSOT → clm_12/13 canonical → main unit-tested (46 pass). 전수조사: `state/verify_hexad_impl_survey_2026_05_15/survey_result.json`. ⚠️ 통합 6-module end-to-end ckpt 부재 (component benchmark numbers만: DD114 Φ+7.6% / TRINITY-COMPLETE T1:Thalamic Φ 14.54).
+> **전 모듈 파란불 ✅** (2026-05-15): C 8/8🔵 + D/S/W/M/E 각 5/5 SUPPORTED-STRONG + Bridge. W/E/S/M/D battery `state/verify_hexad_we_2026_05_15/we_falsifier.py` **25/25 PASS** (real-limit anchor 모듈별, AGENTS.tape g3 준수). 진화: clm_10 monolithic LEGACY → clm_11 modular Emergent+SSOT → clm_12/13 canonical → main unit-tested. 전수조사: `state/verify_hexad_impl_survey_2026_05_15/`. ⚠️ residual: 통합 6-module end-to-end 학습 ckpt 부재 (component verified, integration TODO) + E 통합 gate trinity.hexa:122 TODO[pytorch].
 
 ## 🟢 verification substrate (4 tape + CLM)
 
