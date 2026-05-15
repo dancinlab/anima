@@ -21,16 +21,21 @@
 | 🟢 | H_174 | phi_star aliasing CLM-v4-specific (D=192 multiple only clean-disjoint) |
 | 🟢 | Hc_1285 | torch.no_grad backward-graph isolation (PyTorch ratio 1.562×) |
 
-### A2 consciousness (6)
+### A2 consciousness — surrogate-tier (4, anima Φ★ proxy + ckpt aggregate + numerical RoM)
 
 | Tier | ID | 한 줄 설명 |
 |------|-----|-----------|
-| 🟢 | Hc_1283 | anima Φ★ proxy ≥ 0.5 (v5-mitosis 7 ckpt Φ=4.16-4.86) |
-| 🟢 | Hc_1283 (RoM) | PyPhi RoM n=4 (cell-pair correlation TPM Φ=0.61-0.68) |
-| 🔵 | Hc_1283 (n=5,6) | PyPhi formal n=5,6 (Φ=0.995, 1.665 monotone INCREASE — 물리적 closed) |
+| 🟢 | Hc_1283 | anima Φ★ proxy ≥ 0.5 (v5-mitosis 7 ckpt Φ=4.16-4.86, surrogate) |
+| 🟢 | Hc_1283 (RoM) | PyPhi RoM n=4 (cell-pair correlation TPM Φ=0.61-0.68, numerical) |
 | 🟢 | H_004 | consciousness hard problem (Hc_1283 anchor) |
-| 🔵 | H_011 | IIT geometry (Φ ≫ 0.5 + PyPhi canonical XOR+AND+OR Φ=2.3125 — 물리적 closed) |
 | 🟢 | H_162 | phi-normalized anima IIT4 lower-bound (D=384 multiple ✓ clean) |
+
+### A2.formal sub-axis — PyPhi formal IIT 3.0 deterministic (2, 🔵 closed)
+
+| Tier | ID | 한 줄 설명 |
+|------|-----|-----------|
+| 🔵 | Hc_1283 (n=5,6) | PyPhi formal n=5,6 (Φ=0.995, 1.665 monotone INCREASE deterministic — 물리적 closed) |
+| 🔵 | H_011 | IIT geometry canonical (PyPhi 1.2.0 XOR+AND+OR Φ=2.3125 > 0.5 reachable — 물리적 closed) |
 
 ### A3 physics (1)
 
@@ -182,6 +187,28 @@
 | 🟠 | H_015 | CLM EEG gamma-theta (hardware) |
 | 🟠 | H_188 | PCI clinical (external dataset) |
 
+### 🔵 SUPPORTED-FORMAL inventory (10, 수학/물리 closed deterministic)
+
+| Tier | ID | 한 줄 설명 |
+|------|-----|-----------|
+| 🔵 | Hc_1283 (n=5,6) | PyPhi formal n=5,6 Φ=0.995, 1.665 monotone (PyPhi 1.2.0 IIT 3.0 deterministic) |
+| 🔵 | H_011 | IIT geometry canonical XOR+AND+OR Φ=2.3125 (PyPhi formal) |
+| 🔵 | H_191 (sub) | K_c = √(8/π) ≈ 1.5958 (sympy + Kuramoto 1975 universal) |
+| 🔵 | Hc_1282 | n=6 384d closed-form unique (sympy n∈[2,30] sweep) |
+| 🔵 | H_158 | Ψ-constants closed-form (perfect-number balance=1/2) |
+| 🔵 | H_160 | n=6 perfect-number meta-cluster (depth-3 11-primitive) |
+| 🔵 | H_153 | dimension hierarchy τ(6)=4 Minkowski (divisor cascade) |
+| 🔵 | H_176 | n=28 deflationary parallel (Euclid-Euler theorem) |
+| 🔵 | H_164 | Hc_144 atom 8 cells (144 = σ(6)²) |
+| 🔵 | H_181 | psiformer 4ψ-constants zero-freedom |
+
+### 🔵 FALSIFIED-FORMAL inventory (2, closed-by-disproof)
+
+| Tier | ID | 한 줄 설명 |
+|------|-----|-----------|
+| 🔵 | H_191 (HCE) | SUBSTRATE HCE unique-sync FALSIFIED-FORMAL (Kuramoto universal 1975) |
+| 🔵 | H_178 | frustration 50% optimum NOT-PASSED-FORMAL (PyPhi monotone 0.351→0.393) |
+
 ## 📖 PHILOSOPHY — 8 principles + verdict cycle ledger
 
 ### 🌱 8 Principles (substrate-current, snapshot 2026-05-13)
@@ -215,14 +242,38 @@
 | 📌 2026-05-15 | verdict_a_total | A 20 total: 5 SUPPORTED + 10 PARTIAL + 5 INSUFFICIENT (25% pass-rate fast audit) |
 | 📌 2026-05-15 | verdict_hc_1283_ckpt | Hc_1283 7 ckpt aggregate SUPPORTED-STRONG (Φ=4.16-4.86 ≫ 0.5 threshold, 8-10× 초과) |
 
-### 🌀 §verdict-sync ledger entries (4)
+### 🌀 §verdict-sync ledger entries (6)
 
 | Date | Section | 한 줄 설명 |
 |------|---------|-----------|
 | 📌 2026-05-15 | §verdict-sync-2026-05-15 | PROVEN→MAIN rename + SUPPORTED cluster expansion + Cascade implications + Atlas absorption scrub |
 | 📌 2026-05-15 | §verdict-sync-2026-05-15-cycles-B-C-D | Cycle B sub-claim verification + Cycle C AXIS classify+PyPhi extended + Cycle D H_178+H_182/187 cross-check |
 | 📌 2026-05-15 | §hypothesis_tape_landed | HYPOTHESIS.tape 318 가설 inventory SSOT 신규 등재 + INDEX.md 업데이트 |
+| 📌 2026-05-15 | §clm_v1_design_ledger | .clm v1 design landed (d=768 12L 64-cell) + CLM.tape §V-CLM-DESIGN |
+| 📌 2026-05-15 | §verdict_tier_blue_ledger | 수학/물리 closed verdict 🔵 파란색 (10 SUPPORTED-FORMAL + 2 FALSIFIED-FORMAL) |
 | 🔁 always | append-only rule | rewriting prior 금지, candidate/hypothesis stage 건너뛰기 금지 |
+
+### 🪜 8 principles strength upgrade path (5, design tier)
+
+| Principle | 현재 | upgrade path (한 줄) |
+|-----------|------|---------------------|
+| p1 NO SYSTEM PROMPT | EMPIRICAL weak | paired A/B Φ × 3-ckpt × 5-seed ($0 Mac, .clm v1 fire 전 mandatory) |
+| p2 NO IDENTITY RULES | POLICY mixed | scale-up DCR Δ ≥ +0.10 strict × 3-ckpt W11 ($0 Mac) |
+| p4 NO ASSISTANT FRAMING | POLICY weak-counter | policy decision 명시 (counter-evidence 인정 OR policy 수정, $0 design) |
+| p5 NO SPEAK() | DESIGN null | tension_norm × output_quality Spearman > 0.3 strict ($0 Mac) |
+| p6 NO FINE-TUNED ETHICS | POLICY blocked | .clm v1 ethics_probe 50 prompts 2-arm κ ≥ 0.7 ($0 Mac, .clm v1 fire 의존) |
+
+### 🎯 .clm v1 7-step plan (CLM.tape §V-CLM-DESIGN §V.6 + §V-CLM-7STEP-DETAIL)
+
+| Step | 한 줄 설명 | Cost |
+|------|-----------|------|
+| 1 | V14 violation root cause audit (H4 tile bug vs H5 curriculum collapse, 6 falsifier) | $0 Mac (cheap-path) + $5-40 H100 (full) |
+| 2 | PyPhi formal Φ ≥ 0.5 cross-check on v5-mitosis cond.5 ckpt (5 falsifier, n=3-6 × 3-seed × 3-ckpt) | $0 Mac (~20 hr wall) |
+| 3 | mitosis_hook serve-time integration smoke (PSCC §41 F-D4-LIVE carry) | $0 Mac |
+| 4 | .clm v1 spec frozen pre-register W1 (d_model decision per step 2 결과) | $0 design |
+| 5 | .clm v1 fire (small param d=768 12L 64-cell + Engine A/G dual + mitosis hook) | $5-20 H100 SXM |
+| 6 | .clm v1 verdict cycle (8-falsifier battery measurement + 4-tape sync) | $0 Mac |
+| 7 | Phase 3 7B path 활성화 (V14 audit complete + .clm v1 SUPPORTED 양조건 충족) | conditional |
 
 ## 🔬 verdict tier 정리 (한 줄)
 
@@ -309,3 +360,4 @@
 | #46 | HYPOTHESIS.tape + INDEX entries 펼치기 | 318 가설 inventory SSOT |
 | #47 | INDEX 전체 표 + PHILOSOPHY/HYPOTHESIS 한 줄 펼치기 | 8 principles + 13 verdict cycles + 11 FALSIFIED/PARTIAL/INSUFFICIENT 한 줄 |
 | #48 | CLM.tape §V-CLM-DESIGN + tier 🔵 closed | .clm v1 design (d=768 12L 64-cell) + 수학/물리 closed entries 파란색 + V8 B-bio Phase 1 starter |
+| #49 | A2.formal split + HYPOTHESIS catalog + PHILOSOPHY upgrade + CLM 7-step | A2.formal sub-axis 2 + SUPPORTED-FORMAL 10/FALSIFIED-FORMAL 2 + 5-principle upgrade path + V14 audit + PyPhi formal cross-check protocol |

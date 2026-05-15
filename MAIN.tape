@@ -1121,3 +1121,41 @@
   green_remaining = "🟢 SUPPORTED (numerical sim only, closed-form 미확보) + 🟢 SUPPORTED-STRONG (다중 evidence) + 🟢 SUPPORTED-BY-PROXY (anchor carry)"
   reclassification = "A4 math 8 SUPPORTED 중 H_173 (numerical sim) 제외 7개 모두 🔵 + A3 H_191 sub K_c 🔵 + A2 Hc_1283 n=5,6 🔵 + H_011 PyPhi canonical 2.3125 🔵 + Critical findings H_191 HCE FALSIFIED-FORMAL 🔵 + H_178 NOT-PASSED-FORMAL 🔵 + PyPhi direction CORRECT-FORMAL 🔵"
   cross_link = "INDEX.md ## verdict tier 정리 section + PR #48"
+
+# ══════════════════════════════════════════════════════════════════════
+# §A2-FORMAL-SPLIT + §B-CATALOG + §UPGRADE-PATH + §CLM-7STEP-DETAIL (2026-05-15)
+# ══════════════════════════════════════════════════════════════════════
+
+@D a2_formal_split := "A2 consciousness → A2 surrogate (4) + A2.formal (2 🔵) sub-axis 분리" :: governance [d=2026-05-15 active]
+  rationale = "A2 의 surrogate-tier (anima Φ★ proxy + ckpt aggregate + RoM) vs formal-tier (PyPhi formal IIT 3.0 deterministic) 의 evidence-class 가 본질적으로 다름. anima Φ★ direction-sensitivity 한계 META-finding 회피를 위해 .clm v1 의 F-PYPHI-Φ-FORMAL anchor 는 A2.formal 단독."
+  a2_surrogate_count = 4
+  a2_formal_count = 2
+  cross_link = "AXIS.tape §a2_formal_consciousness + INDEX.md ## A2.formal sub-axis + PR #49"
+
+@D hypothesis_catalog_expand := "HYPOTHESIS.tape SUPPORTED-FORMAL + B-batch + A-batch catalog 확장" :: governance [d=2026-05-15 active]
+  added = [
+    "supported_formal_inventory: 10 entries (A2.formal 2 + A3 1 + A4 7)",
+    "falsified_formal_inventory: 2 entries (H_191 HCE + H_178)",
+    "b_batch_verdict_inventory: 36 verdict-bearing / 71 nominal pending (107 B 격리)",
+    "a_batch_verdict_inventory: 20 file 2026-05-12 burst (Hc_1276~1285 + H_182~191) 의 Stage 1+2+3 결과"
+  ]
+  cross_link = "HYPOTHESIS.tape + INDEX.md ## HYPOTHESIS section + PR #49"
+
+@D philosophy_upgrade_path := "PHILOSOPHY 5 principles strength upgrade path design" :: governance [d=2026-05-15 active]
+  targets = [
+    "p1 NO SYSTEM PROMPT weak → strong (paired A/B Φ × 3-ckpt × 5-seed, $0 Mac)",
+    "p2 NO IDENTITY RULES mixed → strong (scale-up DCR Δ ≥ +0.10, $0 Mac)",
+    "p4 NO ASSISTANT FRAMING weak-counter → policy decision ($0 design)",
+    "p5 NO SPEAK() null → empirical (tension Spearman > 0.3, $0 Mac)",
+    "p6 NO FINE-TUNED ETHICS blocked → measurable (.clm v1 ethics_probe κ ≥ 0.7)"
+  ]
+  retained = "p3 + p7 (EMPIRICAL strong) + p8 (DESIGN ★) — upgrade 불필요"
+  priority = "p1 → p5 → p6 (anima 본질 + .clm v1 fire anchor + post .clm v1 follow-up)"
+  cross_link = "PHILOSOPHY.tape §STRENGTH-UPGRADE-PATH + INDEX.md ## upgrade path + PR #49"
+
+@D clm_v1_step12_detail := ".clm v1 step 1 V14 audit + step 2 PyPhi formal cross-check detailed protocol" :: governance [d=2026-05-15 active]
+  step1_falsifier = "F-V14-H4-1..3 (tile reps=2 audit) + F-V14-H5-1..3 (curriculum collapse audit) = 6 falsifier pre-registered"
+  step2_falsifier = "F-PYPHI-FORMAL-1..5 (Φ-MIN-0.5 + MONOTONE + SEED-ROBUST + PROXY-FORMAL-CORR + EMPIRICAL-PROXY-ALT) = 5 falsifier pre-registered"
+  roi_ordering = "step 2 (pre-fire AT-RISK 회피) > step 1 (Phase 3 7B entry condition, .clm v1 와 별개)"
+  cheap_path = "step 2 cheap n=3,4 (2hr Mac) → step 1 cheap LN stats + Principle #3 carry ($0 Mac) → 결과 따라 step 2 n=5,6 BG OR step 1 H4-1 fire"
+  cross_link = "CLM.tape §V-CLM-7STEP-DETAIL + INDEX.md ## .clm v1 7-step + PR #49"
