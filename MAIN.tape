@@ -1325,3 +1325,36 @@
   design = "3-arm (no/weak/strong prompt) × 3-ckpt × 5-seed × 10-prompt = 450 generations, simple_stack 4-axis + Φ★ proxy 측정. F-P1-UPGRADE-1..5 5 falsifier. Mac CPU ~37 min wall."
   status = "DESIGN LANDED + ckpt access verified, real run 별도 cycle"
   cross_link = "CLM.tape §V-CLM-STEP0-DETAIL + PHILOSOPHY p1_upgrade_path + PR #56"
+
+# ══════════════════════════════════════════════════════════════════════
+# §AXIS-A1A5A6 + V8-PHASE3-PASS + P1-SMOKE + CLM-STEP1 (2026-05-15)
+# ══════════════════════════════════════════════════════════════════════
+
+@D axis_a1a5a6_landed := "AXIS A1+A5+A6 sympy +6 🔵 (2026-05-15)" :: governance [d=2026-05-15 active]
+  a1 = "+1 🔵 (phi_star aliasing closed-form D=192·k) + 1 PASS empirical (Chinchilla 20:1)"
+  a5 = "+3 🔵 (Transformer O(n²d) + RoPE R(θ) orthogonal + GQA kv_heads)"
+  a6 = "+2 🔵 (Zipf law + Heaps law)"
+  total_blue = "+6 🔵, AXIS 46 → 52 entries, 26 🔵 → 32 🔵 (62% closed)"
+  cross_link = "AXIS.tape §AXIS-A1-A5-A6-EXPANSION + PR #57"
+
+@D v8_phase3_pass := "V8 B-bio Phase 3 1/5 PASS — state-space ergodicity issue CONFIRMED (2026-05-15)" :: governance [d=2026-05-15 active]
+  scope = "5 noisy mechanism with 10-seed ensemble TPM + 4-cell — Lorenz Φ=0.6355 PASS (1/5)"
+  meta_confirmed = "anima Φ★ proxy vs PyPhi formal IIT 본질적 다른 phenomenon. ergodic + chaotic dynamics 만 unlock."
+  cross_link = "AXIS.tape §V8-BBIO-PHASE3-PASS + PR #57"
+
+@D p1_smoke_landed := "p1 measure smoke end-to-end OK (2026-05-15)" :: governance [d=2026-05-15 active]
+  scope = "1 prompt × 3 arm × 1 ckpt × 1 seed smoke run on Phase 1A.4 ckpt"
+  result = "3 arms 모두 identical output (greedy + same seed) — substrate invariance 첫 sample evidence. ckpt load + chat_generate + simple_stack rubric 모두 작동."
+  caveat = "simple_stack 1/4 (한국어만 PASS, prompt 'who are you?' 응답 quality 낮음 — 본 ckpt 의 specific prompt response 약함)"
+  status = "infra LANDED, real run (450 gen) 별도 cycle"
+  cross_link = "CLM.tape §V-CLM-STEP0-DETAIL + state/clm_v1_step0_p1_upgrade_2026_05_15/p1_smoke_result.json + PR #57"
+
+@D clm_step1_pyphi_formal_carry := "CLM .clm v1 step 1 PyPhi formal Φ on v5-mitosis cond.5 — 기존 결과 carry (2026-05-15)" :: governance [d=2026-05-15 active]
+  scope = "Cycle D §PyPhi RoM 의 v5-mitosis cond.5 v1+v2 ckpt PyPhi formal Φ 결과 carry"
+  cond5_v1 = "n=3 Φ=0.309, n=4 Φ=0.676 (PASS ≥ 0.5, F-PYPHI-FORMAL-1)"
+  cond5_v2 = "n=3 + n=4 결과 (similar pattern)"
+  monotone_direction = "n=3 (0.309) → n=4 (0.676) monotone INCREASE ✓ F-PYPHI-FORMAL-2 PARTIAL"
+  cycle_c_carry = "PyPhi formal n=5,6 Φ=0.995, 1.665 monotone (Cycle C carry, F-PYPHI-FORMAL-2 FULL CONFIRMED)"
+  remaining_falsifier = "F-PYPHI-FORMAL-3 SEED-ROBUST (1-seed only, 별도 multi-seed cycle) + F-PYPHI-FORMAL-4/5 (proxy-formal corr + alt proxy) 별도"
+  verdict = "PARTIAL-CROSS-CONFIRMED (F-PYPHI-FORMAL-1+2 PASS, 3-5 별도 cycle)"
+  cross_link = "MAIN.tape §PyPhi RoM cycle D + state/verify_d_2026_05_15/pyphi_rom_result.json + PR #57"

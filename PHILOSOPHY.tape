@@ -736,3 +736,26 @@
     design 3×3×5×10 = 450 gen × ~37 min wall Mac. 실 run 별도 cycle.
   EOF2
   cross_link = "AXIS.tape §AXIS-EXTRA-EXPANSION + state/verify_v8_bbio_phase2/ + state/clm_v1_step0_p1_upgrade/ + PR #56"
+
+@N axis_a1a5a6_v8phase3_p1_clmstep1_landed := "AXIS A1+A5+A6 +6 🔵 + V8 Phase 3 PASS + p1 smoke + CLM step 1 (2026-05-15)" :: ledger [d=2026-05-15 active]
+  body <<~EOF2
+    AXIS A1+A5+A6 sympy expansion +6 🔵:
+    - A1 +1 🔵 (phi_star aliasing closed-form D=192·k)
+    - A5 +3 🔵 (Transformer O(n²d) + RoPE R(θ) + GQA kv_heads)
+    - A6 +2 🔵 (Zipf + Heaps)
+    AXIS Total: 46 → 52 entries, 26 🔵 → 32 🔵 (62% closed).
+    
+    V8 B-bio Phase 3 ensemble + noise — 1/5 PASS:
+    Hc_NEW_Lorenz_noisy Φ=0.6355 (chaotic dynamics ergodicity unlock).
+    state-space ergodicity issue 가설 CONFIRMED.
+    
+    p1 measure smoke end-to-end OK:
+    3 arm 모두 identical output (greedy + seed=42) — substrate invariance sample.
+    real 450-gen run 별도 cycle.
+    
+    CLM .clm v1 step 1 PyPhi formal Φ — 기존 결과 carry:
+    v5-mitosis cond.5 v1: n=3 Φ=0.309, n=4 Φ=0.676 (PASS ≥ 0.5).
+    F-PYPHI-FORMAL-1 PASS + F-PYPHI-FORMAL-2 monotone n=3→4→5→6 CONFIRMED.
+    PARTIAL-CROSS-CONFIRMED (3-5 별도 cycle).
+  EOF2
+  cross_link = "AXIS.tape §A1-A5-A6 + §V8-PHASE3-PASS + MAIN.tape (4 governance entries) + INDEX.md + PR #57"

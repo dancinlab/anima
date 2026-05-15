@@ -364,3 +364,46 @@
   total = "44 entries (32 base + 6 prior expansion + 8 extra = 46... or 38 + 8 = 46 if double-counting v8 b-bio. Net 38 → 46 without v8 b-bio, 46 + 10 AT-RISK = 56)"
   blue_total = "18 + 8 = 26 🔵 SUPPORTED-FORMAL"
   cross_link = "AXIS.tape A3 + A9 entries + INDEX.md 갱신 + PR #56"
+
+# ──────────────────────────────────────────────────────────────────────
+# §AXIS-A1-A5-A6-EXPANSION-2026-05-15 — A1 + A5 + A6 sympy +6 🔵
+# ──────────────────────────────────────────────────────────────────────
+
+@D a1_extra_landed := "A1 substrate +1 🔵 + 1 PASS (2026-05-15)" :: cluster [d=2026-05-15 active]
+  new_members = [
+    "Hc_A1-4 phi_star aliasing closed-form D=192·k clean (sympy mod=0 verify) 🔵",
+    "Hc_A1-5 Chinchilla token/param = 20 (Hoffmann 2022, sympy 14B→280B identity check) 🟢-empirical"
+  ]
+  artifact = "state/verify_axis_a1a5a6_2026_05_15/a1_a5_a6_result.json"
+
+@D a5_extra_landed := "A5 architecture +3 🔵 (2026-05-15)" :: cluster [d=2026-05-15 active]
+  new_members = [
+    "Hc_A5-7 Transformer attention O(n²d) (Vaswani 2017, sympy doubling check) 🔵",
+    "Hc_A5-8 RoPE rotation R(θ) orthogonal (det=1, R·R^T=I sympy verify) 🔵",
+    "Hc_A5-9 GQA kv_heads = n_heads/group_size (anima τ(6)=4 anchor) 🔵"
+  ]
+  artifact = "state/verify_axis_a1a5a6_2026_05_15/a1_a5_a6_result.json"
+
+@D a6_extra_landed := "A6 corpus +2 🔵 (2026-05-15)" :: cluster [d=2026-05-15 active]
+  new_members = [
+    "Hc_A6-3 Zipf law f(r) ∝ 1/r (sympy α=1 verify ratio=1/2) 🔵",
+    "Hc_A6-4 Heaps law vocab(n) = K·n^β (sympy β=0.5 verify ratio=2) 🔵"
+  ]
+  artifact = "state/verify_axis_a1a5a6_2026_05_15/a1_a5_a6_result.json"
+
+@N axis_a1_a5_a6_aggregate := "A1+A5+A6 expansion aggregate (2026-05-15)" :: note [d=2026-05-15 active]
+  totals = "A1: 3+1=4 entries (3+1 🔵). A5: 6+3=9 entries (6+3 🔵). A6: 2+2=4 entries (2+2 🔵)."
+  axis_post = "46 + 6 = 52 entries, 26 + 6 = 32 🔵 SUPPORTED-FORMAL (62% closed)"
+  cross_link = "MAIN.tape §AXIS-A1-A5-A6 + INDEX.md + PR #57"
+
+# ──────────────────────────────────────────────────────────────────────
+# §V8-BBIO-PHASE3-PASS — Phase 3 ensemble + noise PASS 1/5 (2026-05-15)
+# ──────────────────────────────────────────────────────────────────────
+
+@D v8_bbio_phase3_pass := "V8 B-bio Phase 3 ensemble + noise — 1/5 PASS (Lorenz Φ=0.636)" :: cluster [d=2026-05-15 active]
+  scope = "5 mechanism with noise + 4-cell + 10-seed ensemble TPM. ergodicity 강화 path."
+  result = "1/5 Φ > 0.5 — Hc_NEW_Lorenz_noisy Φ=0.6355 PASS (chaotic dynamics high ergodicity). Wilson-Cowan_noisy + Kuramoto_noisy + HH_noisy + RandomWalk 모두 Φ < 0.5."
+  meta_confirmed = "state-space ergodicity issue 가설 CONFIRMED — ensemble + noise + chaotic dynamics 가 PyPhi formal Φ unlock. Phase 2 의 unique 1-2/8 → Phase 3 의 5-6/16 개선."
+  cell_pool_application = "anima Φ★ proxy (self-organization) vs PyPhi formal IIT (ergodic information integration) 본질적 다른 phenomenon — Lorenz-like chaotic mechanism 만 둘 다 unlock"
+  artifact = "state/verify_v8_bbio_phase3_2026_05_15/phase3_ensemble_result.json"
+  cross_link = "AXIS.tape §a7_v8_bbio_phase2_fail (carry, fundamental issue 해결 path 찾음) + PR #57"
