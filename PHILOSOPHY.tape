@@ -491,3 +491,27 @@
                 3 spec frozen → 4 fire → 5 verdict → 6 .clm v2 candidate
   EOF2
   cross_link = "CLM.tape §V-CLM-AUDIT-2026-05-15 + MAIN.tape §CLM-AUDIT-FIX + AXIS.tape + INDEX.md + PR #50"
+
+@N clm_step0_2_3_v2_landed := ".clm v1 step 0+2+3 detail + .clm v2 preliminary design (2026-05-15)" :: ledger [d=2026-05-15 active]
+  body <<~EOF2
+    CLM.tape §V step 0+2+3 detail + .clm v2 preliminary design landed:
+    
+    step 0 (NEW p1 upgrade mandatory gate): 3-arm × 3-ckpt × 5-seed × 10-prompt
+    = 450 generations, F-P1-UPGRADE-1..5 (no-prompt-not-worse, Φ-not-less,
+    strong-not-better, cross-ckpt-consistent, seed-robust). $0 Mac ~37 min.
+    
+    step 2 (mitosis_hook serve-time): PSCC §41 synthetic carry → real d=768 12L
+    64-cell substrate. F-D4-LIVE-PROD-1..5 (split count, invocation invariant,
+    no crash, simple_stack ≥2.5/4, cell_pool persist). $0 Mac ~7 hr hexa-interp.
+    
+    step 3 (.clm v1 spec frozen W1): 9 spec fields frozen + decision rules
+    per step 0+1+2 결과 + falsifier pre-register hash. $0 design.
+    
+    .clm v2 preliminary design: 2 alternative path
+    - Path A: cells single-stack 7B scale-up only (~7-8B, $200-600)
+    - Path B: Engine A/G dual + V14 audit complete (Phase 3 narrative, ~7-14B, $200-640)
+    
+    10 falsifier battery (8 v1 carry + F-V14-NO-VIOLATION Path B + F-CHINCHILLA-OPTIMAL).
+    4 open questions for future cycle.
+  EOF2
+  cross_link = "CLM.tape §V-CLM-STEP0/2/3-DETAIL + §V-CLM-V2-DESIGN + MAIN.tape §CLM-STEP0-2-3-V2 + PR #51"
