@@ -188,3 +188,39 @@ hexa-lang dependency). land 시 → tmp_rfc034_smoke.hexa 5/5 검증 → Phase 5
 
 **carry 유지**: PR #77 Python harness evidence anchor 보존. 즉시 가능한
 RFC-무관 작업 (Phase 1 D wrapper / Phase 2-3 C state) 은 RFC land 와 병렬 가능.
+
+### 2026-05-16 — COMPILED-first migration + lib/entrypoint split (interp 폐기 대비)
+
+**결정**: user directive "컴파일 버전에 해야되 · 인터프리터 폐기 예정 참고".
+검증·실행 기준을 `hexa run` (interpreter) → **`hexa build` (native binary)** 로
+전환. `hexa run` 은 PR 게이트에서 폐기.
+
+**문제**: 단일파일 모듈(`fn _selftest` + `fn main` 동거) 을 `import` 하면
+컴파일러가 `_selftest`/`u_main` **C 심볼 중복정의** 거부 (interpreter 만 관용).
+`integ_test.hexa` 가 7-file import → clang `redefinition` 2 errors.
+초기 batch: 9/10 entrypoint compiled+PASS, integ_test 만 BUILD 실패.
+
+**해결 (compiled-native 정석 lib-split)**: 7 모듈 (S/M/W/E/BRIDGE/C/D/MITOSIS)
+각각 `<x>_lib.hexa` (pure fns, NO main/_selftest) + `<x>.hexa` (import lib +
+selftest + main) 분리. `integ_test.hexa` 는 `*_lib.hexa` 만 import → 심볼충돌
+0. spike (S) 검증 후 일괄 적용.
+
+**검증 (compiled, HEXA_MAC_BUILD_OK=1, _hexa_build/ gitignored)**:
+`bash HEXAD/build_verify.sh` → **entrypoint 10/10 + lib 8/8 `hexa build` PASS**.
+integ_test.hexa native = F-INTEG-WIRE 7/7 PASS (interp 결과와 byte-동일).
+blue_falsifier 22/22 / we 25/25 (Python 검증 anchor) 불변.
+
+**산출물**: `HEXAD/build_verify.sh` (canonical compiled gate, ubu fallback 명시)
++ 14 신규 `*_lib.hexa` + 7 `<x>.hexa` 재작성 (import lib) + integ_test 재배선
++ README hexa-lang 관습/status/layout compiled-first 갱신 + .gitignore /_hexa_build/.
+
+**RFC 034 동기화 (APPLIED)**: rfc_034 acceptance criterion "via hexa run" →
+"via compiled path (hexa build + native binary)" + BUILD+PARSE 항목 정정.
+hexa-lang `main` checkout 보존 위해 **git worktree 방식** (user directive
+"worktree 방식 go") — `git worktree add stage2-verify` → edit → commit
+`7ae624bf` → push origin → `worktree remove`. hexa-lang main 불변 확인됨.
+rfc_034 substance 불변, acceptance 문구 정밀도만 (anima build_verify.sh 와 동일 gate).
+
+**carry**: Phase 5 BLOCKER = "RFC 034 제출됨, hexa-lang land 대기" 불변.
+compiled-first 는 RFC-무관 인프라 작업 — RFC 034 land 와 병렬 완료.
+다음 RFC-무관: Phase 1 D inference wrapper (anima_chat.hexa, compiled).

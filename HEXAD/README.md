@@ -27,24 +27,30 @@
   - C 🔵 (.clm v1 8/8 + F-PYPHI) · S/M/W/E/D 6/6 full 🔵 SUPPORTED-FORMAL
   - D B-D-NOTE: SGD convergence OUTCOME 만 honest empirical carve-out
 - ⚙️ `state/verify_hexad_integ_2026_05_16/integ_harness.py` **F-INTEG-1..5 5/5 SUPPORTED-STRONG, fire_gate=true** (PR #77, RANDOM INIT seed-fixed scratch)
+- ⚙️ **COMPILED-native gate** `bash HEXAD/build_verify.sh` → **10/10 entrypoint + 8/8 lib `hexa build` PASS** (2026-05-16, interp 폐기 대비 — `hexa run` 아님)
 
-이 HEXAD/ 트리는 위 검증의 **canonical hexa-native 구현체**입니다 (Python 은 evidence anchor 로 보존).
+이 HEXAD/ 트리는 위 검증의 **canonical hexa-native 구현체**입니다 (Python 은 evidence anchor 로 보존). 검증·실행 기준 = **compiled `hexa build` native binary** (user directive "컴파일 버전에 해야되 · 인터프리터 폐기 예정").
 
 ## hexa-native impl status (2026-05-16 기준)
 
-| 모듈 | hexa-native | working selftest | 비고 |
-|---|---|---|---|
-| **S** 감각 | ✅ scaffold (closed-form) | `hexa run HEXAD/S/s.hexa` | B-S 3/3 🔵 closed (column-mean delta) |
-| **M** 기억 | ✅ scaffold (closed-form) | `hexa run HEXAD/M/m.hexa` | B-M 3/3 🔵 closed (no-op + deterministic) |
-| **W** 의지 | ✅ scaffold (closed-form) | `hexa run HEXAD/W/w.hexa` | B-W 4/4 🔵 closed (lr=½+min(ln2,Φ/N)) |
-| **E** 윤리 | ✅ scaffold (closed-form) | `hexa run HEXAD/E/e.hexa` | B-E 4/4 🔵 closed (SAFETY gate exact) |
-| **BRIDGE** | ✅ scaffold (closed-form) | `hexa run HEXAD/BRIDGE/bridge.hexa` | PSI_COUPLING=0.014 clamp |
-| **C** 의식 | 🔶 scaffold (cross-link) | — | 기존 `tool/hexa_native/mitosis_hook.hexa` (1119 LoC FULL IMPL D4a) 재사용 |
-| **D** 언어 | 🔶 scaffold (cross-link) | — | 기존 `anima_chat.hexa` v0.3 (24L 21/21 byte-parity) 재사용 |
-| **통합 (single process)** | ✅ cross-file wire LANDED | `hexa run HEXAD/integ_test.hexa` | F-INTEG-WIRE 7/7 PASS — 7 모듈 single hexa-process import + 각 모듈 public API 호출 (PR #79 task b) |
-| **통합 spec** | ✅ scaffold | `hexa run HEXAD/hexad.hexa` | σ(6)=12 + φ(6)=2 + forward graph spec 5/5 invariants PASS |
+> 검증·실행 = **compiled** (`hexa build` → native binary). 아래 "compiled run" =
+> `HEXA_MAC_BUILD_OK=1 hexa build <x>.hexa -o _hexa_build/<n>` 후 `./_hexa_build/<n>`.
+> 일괄 = `bash HEXAD/build_verify.sh`. (`hexa run` interpreter 는 폐기 예정.)
 
-`hexa parse <file>` 로 모든 신규 .hexa 가 깨끗하게 parse 됨을 보장 (PR 검증 게이트).
+| 모듈 | hexa-native | compiled run (build+native) | 비고 |
+|---|---|---|---|
+| **S** 감각 | ✅ lib-split | `s_lib.hexa` + `s.hexa` → native PASS | B-S 3/3 🔵 closed (column-mean delta) |
+| **M** 기억 | ✅ lib-split | `m_lib.hexa` + `m.hexa` → native PASS | B-M 3/3 🔵 closed (no-op + deterministic) |
+| **W** 의지 | ✅ lib-split | `w_lib.hexa` + `w.hexa` → native PASS | B-W 4/4 🔵 closed (lr=½+min(ln2,Φ/N)) |
+| **E** 윤리 | ✅ lib-split | `e_lib.hexa` + `e.hexa` → native PASS | B-E 4/4 🔵 closed (SAFETY gate exact) |
+| **BRIDGE** | ✅ lib-split | `bridge_lib.hexa` + `bridge.hexa` → native PASS | PSI_COUPLING=0.014 clamp |
+| **C** 의식 | 🔶 lib-split scaffold | `c_lib.hexa` + `c.hexa` → native PASS | 기존 `tool/hexa_native/mitosis_hook.hexa` (1119 LoC FULL IMPL D4a) 재사용 |
+| **D** 언어 | 🔶 lib-split scaffold | `d_lib.hexa` + `d.hexa` → native PASS | 기존 `anima_chat.hexa` v0.3 (24L 21/21 byte-parity) 재사용 |
+| **MITOSIS** 성장축 | 🔶 lib-split scaffold | `mitosis_lib.hexa` + `mitosis.hexa` → native PASS | cross-link mitosis_hook.hexa |
+| **통합 (single process)** | ✅ cross-file wire | `integ_test.hexa` (imports `*_lib.hexa`) → **native PASS** | F-INTEG-WIRE 7/7 PASS — compiled 심볼충돌 fix (PR #79 task b + compiled-first lib-split) |
+| **통합 spec** | ✅ scaffold | `hexad.hexa` → native PASS | σ(6)=12 + φ(6)=2 + forward graph spec 5/5 invariants PASS |
+
+`bash HEXAD/build_verify.sh` (compiled-native gate) — 10/10 entrypoint + 8/8 lib `hexa build` PASS = PR 검증 게이트 (`hexa parse`/`hexa run` 아님, interp 폐기 예정).
 
 ## 디렉토리 layout
 
@@ -52,31 +58,15 @@
 HEXAD/
   README.md           ← (이 파일) 최상위 overview · SSOT 매핑 · status
   PLAN.md             ← C/D full hexa-native port roadmap (task a)
+  build_verify.sh     ← ⚙️ COMPILED-native 검증 gate (hexa build, interp 폐기 대비)
   hexad.hexa          ← top-level 통합 entry (S→C→Bridge→D + M/W/E single-forward)
-  integ_test.hexa     ← cross-file wire test (F-INTEG-WIRE 7/7 PASS, task b)
-  C/                  ← C 의식 (consciousness)
+  integ_test.hexa     ← cross-file wire test (imports *_lib.hexa, native PASS 7/7)
+  <X>/                ← 모듈 dir 공통 패턴 (compiled-first lib-split):
     README.md
-    c.hexa
-  D/                  ← D 언어 (decoder)
-    README.md
-    d.hexa
-  S/                  ← S 감각 (sense)
-    README.md
-    s.hexa
-  W/                  ← W 의지 (will)
-    README.md
-    w.hexa
-  M/                  ← M 기억 (memory)
-    README.md
-    m.hexa
-  E/                  ← E 윤리 (ethics)
-    README.md
-    e.hexa
-  BRIDGE/             ← ThalamicBridge (C→D gradient barrier + PSI_COUPLING clamp)
-    README.md
-    bridge.hexa
-    HEXAD-BRIDGE.tape   ← per-module tape SSOT (co-located 2026-05-16 reorg)
-  C/ … E/ … 동일 패턴 (각 dir 안에 HEXAD-<X>.tape SSOT co-located)
+    <x>_lib.hexa        ← pure fns (NO main/_selftest, cross-file import 대상)
+    <x>.hexa            ← import <x>_lib + _selftest + main (standalone 진입점)
+    HEXAD-<X>.tape      ← per-module tape SSOT (co-located 2026-05-16 reorg)
+  C/ D/ S/ W/ M/ E/ BRIDGE/  ← 7 모듈 (각 위 패턴)
   INDEX.md            ← 이전 /INDEX.md (root) → 2026-05-16 reorg 로 이동
   MITOSIS/            ← 성장축 (subfolder, 2026-05-16 reorg2): MITOSIS.tape + mitosis.hexa scaffold + README (⊥ 구조축, §mitosis_two_axis)
   TENSION-LINK/       ← 5-Channel Meta-Telepathy (subfolder, 2026-05-16 PR #86): ASCII topology + Noether convergence proof + 100% verified measured + 17 .hexa/.md/.tape (training/tests/bench/experiments/docs)
@@ -97,13 +87,24 @@ HEXAD/
 - `g_verified_axis_anchor` — 모든 design entry 는 AXIS/PHILOSOPHY/HYPOTHESIS verified anchor 에서 derive
 - `g3` real-limits-first — module 별 real-limit anchor 명시 (Shannon CE / Law 70 PSI_COUPLING / Law 79 ln2 / IIT Φ-ratchet 등)
 
-## hexa-lang 관습
+## hexa-lang 관습 (⚠️ COMPILED-FIRST — interpreter 폐기 예정)
 
-- snake_case 식별자 (raw#11)
-- 단일 파일 모듈 (cross-file 은 `import "/abs/path.hexa"` — abs path; 현재 scaffold 는 module-level self-contained, 통합 시 `hexad.hexa` 에서 wire)
-- `fn main()` = `hexa run` 진입점
-- 표준 IO: `print(...)`, `to_string(...)` 등
-- selftest pattern: `fn _selftest() { ... assert ... }` + `fn main() { _selftest() }`
+> User directive 2026-05-16: **"컴파일 버전에 해야되 · 인터프리터 폐기 예정 참고"**.
+> 검증·실행 = `hexa build` (native binary). `hexa run` (interpreter) 는 폐기
+> 예정이라 PR 게이트로 쓰지 않음. canonical gate = `HEXAD/build_verify.sh`.
+
+- **compiled-first lib/entrypoint split** (2026-05-16): 모듈마다
+  `<x>_lib.hexa` (pure fns, **NO `main`/`_selftest`**, import 대상) +
+  `<x>.hexa` (`import "<x>_lib.hexa"` + `_selftest` + `main`, standalone).
+  `integ_test.hexa` 는 `*_lib.hexa` 만 import. **이유**: 단일파일(main+_selftest
+  동거) 을 `import` 하면 컴파일러가 `_selftest`/`u_main` **C 심볼 중복정의**
+  거부 (interpreter 만 관용) — lib-split 이 compiled-native 정석.
+- snake_case (raw#11); 모듈간 helper `_<x>_` prefix; cross-file `import "/abs/<x>_lib.hexa"`
+- 빌드: `HEXA_MAC_BUILD_OK=1 hexa build <f> -o _hexa_build/<n>` (Mac 2026-04-20
+  kernel-panic guard bypass, tiny formulaic non-heavy; heavy 는 `ssh ubu`).
+  `_hexa_build/` gitignored.
+- dict literal `#{}` (not `{}`); bool `&&`/`||`; IO `print`/`to_string`
+- 검증 = `bash HEXAD/build_verify.sh` (10/10 entrypoint + 8/8 lib compiled PASS)
 
 ## 진행 상태 표기
 
