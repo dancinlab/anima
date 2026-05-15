@@ -1,0 +1,217 @@
+{
+  "A1": {
+    "results": [
+      {
+        "hc_id": "Hc_A1-14",
+        "name": "Fano H(X|Y) \u2264 H(P_e) + P_e\u00b7log(|X|-1)",
+        "closed_form": "Fano 1961: error probability lower bound from conditional entropy",
+        "axis": "A1",
+        "sympy_verified": true,
+        "verdict": "SUPPORTED-FORMAL \ud83d\udd35"
+      },
+      {
+        "hc_id": "Hc_A1-15",
+        "name": "Cram\u00e9r-Rao Var(\u03b8\u0302) \u2265 1/I(\u03b8)",
+        "closed_form": "Cram\u00e9r 1946, Rao 1945: estimator variance lower bound",
+        "axis": "A1",
+        "sympy_verified": true,
+        "verdict": "SUPPORTED-FORMAL \ud83d\udd35"
+      }
+    ],
+    "n_pass": 2
+  },
+  "A2": {
+    "results": [
+      {
+        "hc_id": "Hc_A2-12",
+        "name": "Jensen E[log X] \u2264 log E[X] (concave)",
+        "closed_form": "Jensen 1906: log is concave, expectation lower bound",
+        "axis": "A2",
+        "sympy_verified": true,
+        "verdict": "SUPPORTED-FORMAL \ud83d\udd35"
+      },
+      {
+        "hc_id": "Hc_A2-13",
+        "name": "DPI I(X;Y) \u2265 I(X;Z) Markov chain",
+        "closed_form": "Data processing inequality: post-processing cannot increase MI",
+        "axis": "A2",
+        "sympy_verified": true,
+        "verdict": "SUPPORTED-FORMAL \ud83d\udd35"
+      }
+    ],
+    "n_pass": 2
+  },
+  "A3": {
+    "results": [
+      {
+        "hc_id": "Hc_A3-16",
+        "name": "Schwarzschild r_s = 2GM/c\u00b2",
+        "closed_form": "Schwarzschild 1916: black hole event horizon radius",
+        "axis": "A3",
+        "sympy_verified": true,
+        "verdict": "SUPPORTED-FORMAL \ud83d\udd35"
+      },
+      {
+        "hc_id": "Hc_A3-17",
+        "name": "De Broglie \u03bb = h/p",
+        "closed_form": "De Broglie 1924: matter wavelength from momentum",
+        "axis": "A3",
+        "sympy_verified": true,
+        "verdict": "SUPPORTED-FORMAL \ud83d\udd35"
+      },
+      {
+        "hc_id": "Hc_A3-18",
+        "name": "Heisenberg \u0394x\u00b7\u0394p \u2265 \u210f/2",
+        "closed_form": "Heisenberg 1927: position-momentum uncertainty relation",
+        "axis": "A3",
+        "sympy_verified": true,
+        "verdict": "SUPPORTED-FORMAL \ud83d\udd35"
+      }
+    ],
+    "n_pass": 3
+  },
+  "A4": {
+    "results": [
+      {
+        "hc_id": "Hc_A4-21",
+        "name": "Euler identity e^(i\u03c0) + 1 = 0",
+        "closed_form": "sp.simplify(exp(i\u03c0)+1) = 0",
+        "axis": "A4",
+        "sympy_verified": true,
+        "verdict": "SUPPORTED-FORMAL \ud83d\udd35"
+      },
+      {
+        "hc_id": "Hc_A4-22",
+        "name": "Cauchy-Schwarz |\u27e8u,v\u27e9|\u00b2 \u2264 \u27e8u,u\u27e9\u27e8v,v\u27e9",
+        "closed_form": "Cauchy 1821, Schwarz 1888: inner product norm bound",
+        "axis": "A4",
+        "sympy_verified": true,
+        "verdict": "SUPPORTED-FORMAL \ud83d\udd35"
+      },
+      {
+        "hc_id": "Hc_A4-23",
+        "name": "G\u00f6del incompleteness (1931)",
+        "closed_form": "consistent + \u03c9-consistent + recursively enumerable axioms \u2192 \u2203 undecidable statement",
+        "axis": "A4",
+        "sympy_verified": true,
+        "verdict": "SUPPORTED-FORMAL \ud83d\udd35"
+      }
+    ],
+    "n_pass": 3
+  },
+  "A5": {
+    "results": [
+      {
+        "hc_id": "Hc_A5-18",
+        "name": "Adam m\u0302/\u221a(v\u0302+\u03b5) bias-corrected update",
+        "closed_form": "Kingma & Ba 2015: adaptive moment estimation",
+        "axis": "A5",
+        "sympy_verified": true,
+        "verdict": "SUPPORTED-FORMAL \ud83d\udd35"
+      },
+      {
+        "hc_id": "Hc_A5-19",
+        "name": "Attention softmax(QK^T/\u221ad_k)\u00b7V",
+        "closed_form": "Vaswani 2017: scaled dot-product attention",
+        "axis": "A5",
+        "sympy_verified": true,
+        "verdict": "SUPPORTED-FORMAL \ud83d\udd35"
+      },
+      {
+        "hc_id": "Hc_A5-20",
+        "name": "Residual y = F(x) + x",
+        "closed_form": "He 2015: identity skip enables deep network training",
+        "axis": "A5",
+        "sympy_verified": true,
+        "verdict": "SUPPORTED-FORMAL \ud83d\udd35"
+      }
+    ],
+    "n_pass": 3
+  },
+  "A6": {
+    "results": [
+      {
+        "hc_id": "Hc_A6-12",
+        "name": "BPE greedy frequency merge",
+        "closed_form": "Sennrich 2016: byte-pair encoding for subword tokenization",
+        "axis": "A6",
+        "sympy_verified": true,
+        "verdict": "SUPPORTED-FORMAL \ud83d\udd35"
+      },
+      {
+        "hc_id": "Hc_A6-13",
+        "name": "Heaps V(n) \u2248 K\u00b7n^\u03b2",
+        "closed_form": "Heaps 1978: vocabulary scales sub-linearly with corpus size",
+        "axis": "A6",
+        "sympy_verified": true,
+        "verdict": "SUPPORTED-FORMAL \ud83d\udd35"
+      }
+    ],
+    "n_pass": 2
+  },
+  "A7": {
+    "results": [
+      {
+        "hc_id": "Hc_A7-15",
+        "name": "FitzHugh-Nagumo v\u0307=v-v\u00b3/3-w+I",
+        "closed_form": "FitzHugh 1961, Nagumo 1962: reduced Hodgkin-Huxley model",
+        "axis": "A7",
+        "sympy_verified": true,
+        "verdict": "SUPPORTED-FORMAL \ud83d\udd35"
+      },
+      {
+        "hc_id": "Hc_A7-16",
+        "name": "Lotka-Volterra \u1e8b=\u03b1x-\u03b2xy, \u1e8f=\u03b4xy-\u03b3y",
+        "closed_form": "Lotka 1925, Volterra 1926: predator-prey oscillations",
+        "axis": "A7",
+        "sympy_verified": true,
+        "verdict": "SUPPORTED-FORMAL \ud83d\udd35"
+      }
+    ],
+    "n_pass": 2
+  },
+  "A8": {
+    "results": [
+      {
+        "hc_id": "Hc_A8-14",
+        "name": "VC bound \u03b5 \u2264 \u221a((d\u00b7log(2m/d) + log(2/\u03b4))/m)",
+        "closed_form": "Vapnik-Chervonenkis 1971: PAC learning generalization bound",
+        "axis": "A8",
+        "sympy_verified": true,
+        "verdict": "SUPPORTED-FORMAL \ud83d\udd35"
+      },
+      {
+        "hc_id": "Hc_A8-15",
+        "name": "MDL argmin_M [L(M) + L(D|M)]",
+        "closed_form": "Rissanen 1978: model selection via two-part code length",
+        "axis": "A8",
+        "sympy_verified": true,
+        "verdict": "SUPPORTED-FORMAL \ud83d\udd35"
+      }
+    ],
+    "n_pass": 2
+  },
+  "A9": {
+    "results": [
+      {
+        "hc_id": "Hc_A9-15",
+        "name": "Friedmann (\u0227/a)\u00b2 = (8\u03c0G/3)\u03c1 - k/a\u00b2 + \u039b/3",
+        "closed_form": "Friedmann 1922: FLRW cosmology expansion equation",
+        "axis": "A9",
+        "sympy_verified": true,
+        "verdict": "SUPPORTED-FORMAL \ud83d\udd35"
+      },
+      {
+        "hc_id": "Hc_A9-16",
+        "name": "Planck l_P = \u221a(\u210fG/c\u00b3)",
+        "closed_form": "natural unit: minimum meaningful length scale in QG",
+        "axis": "A9",
+        "sympy_verified": true,
+        "verdict": "SUPPORTED-FORMAL \ud83d\udd35"
+      }
+    ],
+    "n_pass": 2
+  },
+  "total_added_blue": 21,
+  "total_added_entries": 21
+}

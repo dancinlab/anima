@@ -1461,3 +1461,25 @@
   ]
   authority = "CLM.tape §V-CLM-AUDIT (V1-V4 정정) + §V-CLM-FROM-SCRATCH + AXIS expansion + verdict tier blue"
   cross_link = "AGENTS.tape g_verified_axis_anchor + g_verdict_tier_blue + g_clm_from_scratch + PR #62"
+
+# ══════════════════════════════════════════════════════════════════════
+# §AXIS-SCALE-4 + HYPOTHESIS-318-RECONCILE + P1-FRESH (cycle 88, 2026-05-15)
+# ══════════════════════════════════════════════════════════════════════
+
+@D axis_scale_4_landed := "AXIS scale-up #4 +21 🔵 (21/21 PASS, 2026-05-15)" :: governance [d=2026-05-15 active]
+  delta = "각 axis +2-3 추가 (A1 Fano/Cramér-Rao + A2 Jensen/DPI Markov + A3 Schwarzschild/De Broglie/Heisenberg + A4 Euler identity/Cauchy-Schwarz/Gödel + A5 Adam/Attention/Residual + A6 BPE merge/Heaps + A7 FitzHugh-Nagumo/Lotka-Volterra + A8 VC bound/MDL + A9 Friedmann/Planck l_P)"
+  total = "149 entries, 128 🔵 (86% closed)"
+  cross_link = "AXIS.tape §AXIS-SCALE-UP-4 + state/verify_axis_scale4_2026_05_15/axis_scale4_result.json + PR #63"
+
+@D hypothesis_318_reconcile := "HYPOTHESIS 318 inventory full reconcile (cycle 88, 2026-05-15)" :: governance [d=2026-05-15 active]
+  scope = "318 가설 inventory 의 verdict-bearing 부분 9-axis catalog 매핑 정합성 검증"
+  axis_mapped = "128 🔵 SUPPORTED-FORMAL + 10 AT-RISK (V8 B-bio mechanism stubs) + 11 partial/other = 149"
+  legacy_carry = "A 20 audit (5 SUPPORTED + 10 PARTIAL + 5 INSUFFICIENT) + B 30 audit (3 SUPPORTED + 12 PARTIAL) + C 143 W11 sweep pending"
+  closure_recommendation = "(1) AXIS Hc_* ID dedup unify / (2) C batch 143 W11 sweep 별도 dispatch / (3) V8 B-bio AT-RISK root cause = state-space ergodicity architectural redesign / (4) A2 surrogate A2.formal migrate 또는 명시 분리"
+  cross_link = "HYPOTHESIS.tape §hypothesis_318_full_reconcile + PR #63"
+
+@D p1_fresh_foreground_landed := "p1 fresh foreground run post-pkill (cycle 88, 2026-05-15)" :: governance [d=2026-05-15 active]
+  trigger = "prior session 다중 multi-process detached PPID=1 → pkill -9 -f p1_real_run.py cleanup → fresh single foreground"
+  evidence = "p1 truncated 15-gen (1 ckpt × 3 arm × 5 prompt × seed=42) on Phase 1A.4 332M ckpt"
+  result_carry = "arm_means 3.4/4 identical across A/B/C → F-P1-UPGRADE-1 (A≥B×0.95) PASS + F-P1-UPGRADE-3 (C≤A×1.10) PASS"
+  cross_link = "PHILOSOPHY p1_upgrade_path + state/clm_v1_step0_p1_real_2026_05_15/p1_truncated_result.json + PR #63"

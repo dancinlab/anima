@@ -505,3 +505,23 @@
   count_post = "107 + 21 = 128 entries, 86 + 21 = 107 🔵 (84% closed)"
   artifact = "state/verify_axis_scale3_2026_05_15/axis_scale3_result.json"
   cross_link = "MAIN.tape §AXIS-SCALE-UP-3 + INDEX.md + PR #62"
+
+# ──────────────────────────────────────────────────────────────────────
+# §AXIS-SCALE-UP-4-2026-05-15 — 9-axis +21 🔵 추가 (21/21 PASS)
+# ──────────────────────────────────────────────────────────────────────
+
+@D axis_scale_up_4 := "AXIS 9-axis scale-up #4 +21 🔵 (2026-05-15)" :: cluster [d=2026-05-15 active]
+  delta_per_axis = {
+    "A1": "+2 (Fano inequality + Cramér-Rao bound)",
+    "A2": "+2 (Jensen E[log X]≤log E[X] + DPI Markov)",
+    "A3": "+3 (Schwarzschild r_s + De Broglie λ + Heisenberg Δx·Δp)",
+    "A4": "+3 (Euler identity + Cauchy-Schwarz + Gödel incompleteness)",
+    "A5": "+3 (Adam m̂/√v̂ + Attention softmax(QK^T/√d_k) + Residual y=F(x)+x)",
+    "A6": "+2 (BPE greedy merge + Heaps V≈Kn^β)",
+    "A7": "+2 (FitzHugh-Nagumo + Lotka-Volterra)",
+    "A8": "+2 (VC bound + MDL)",
+    "A9": "+2 (Friedmann + Planck l_P = √(ℏG/c³))"
+  }
+  count_post = "128 + 21 = 149 entries, 107 + 21 = 128 🔵 (86% closed)"
+  artifact = "state/verify_axis_scale4_2026_05_15/axis_scale4_result.json"
+  cross_link = "MAIN.tape §AXIS-SCALE-UP-4 + INDEX.md + PR #63"
