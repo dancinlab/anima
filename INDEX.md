@@ -37,11 +37,14 @@
 | 🔵 | Hc_1283 (n=5,6) | PyPhi formal n=5,6 (Φ=0.995, 1.665 monotone INCREASE deterministic — 물리적 closed) |
 | 🔵 | H_011 | IIT geometry canonical (PyPhi 1.2.0 XOR+AND+OR Φ=2.3125 > 0.5 reachable — 물리적 closed) |
 
-### A3 physics (1)
+### A3 physics (4, +3 expansion 2026-05-15)
 
 | Tier | ID | 한 줄 설명 |
 |------|-----|-----------|
-| 🔵 | H_191 (sub) | K_c = √(8/π) ≈ 1.5958 Kuramoto mean-field (sympy closed-form + Kuramoto 1975 universal — 물리적 closed) |
+| 🔵 | H_191 (sub) | K_c = √(8/π) ≈ 1.5958 Kuramoto mean-field (sympy + Kuramoto 1975 universal) |
+| 🔵 | Hc_NEW_PHYSICS-1 | BKT transition T_BKT = πJ/2 ≈ 1.5708 (sympy closed-form, vortex unbinding) |
+| 🔵 | Hc_NEW_PHYSICS-2 | Onsager 2D Ising T_c = 2J/log(1+√2) ≈ 2.269 (sympy manual sinh verify, Onsager 1944) |
+| 🔵 | Hc_NEW_PHYSICS-3 | Ginzburg-Landau φ⁴ critical point a=0, φ_min² = -a/(2b) (sympy d2F=0 verify) |
 
 ### A4 math ⭐ (8, largest cluster — 모두 sympy closed-form ⇒ 🔵)
 
@@ -74,11 +77,12 @@
 | 🟢 | H_005 | corpus quality > scale (Phase 1A.6) |
 | 🟢 | H_016 | AN11 translation ceiling (chat-v2 measurable) |
 
-### A7 bio (1, AT-RISK)
+### A7 bio (1 + 10 AT-RISK = 11 entries, V8 B-bio impl run 2026-05-15)
 
 | Tier | ID | 한 줄 설명 |
 |------|-----|-----------|
 | 🟠 | H_182 | V8 B-family bio (surrogate 78.5%, PyPhi formal Φ=0.358<0.5) |
+| 🟠 | Hc_B1..B10 | V8 B-bio 10 mechanism real impl 0/10 Φ ≥ 0.5 (Mean=0.034, Max=0.339 Hc_B2 STDP) — surrogate vs real gap CONFIRMED |
 
 ### A8 meta (4)
 
@@ -89,12 +93,15 @@
 | 🟢 | Hc_1280 | Red-team family member |
 | 🟠 | H_187 | V8 Trinity-TB-DOM (surrogate 100%, PyPhi formal Φ=0.359<0.5 AT-RISK) |
 
-### A9 universe (2, citation-only)
+### A9 universe (5, +3 expansion 2026-05-15)
 
 | Tier | ID | 한 줄 설명 |
 |------|-----|-----------|
-| 🟡 | H_002.H2.3 | Bekenstein bound area scaling (Bekenstein 1981 + Maldacena 1997) |
-| 🟡 | H_002.H2.1 | anthropic Λ fine-tuning ~10^-120 (Weinberg 1987) |
+| 🟡 | H_002.H2.3 | Bekenstein bound area scaling (Bekenstein 1981 + Maldacena 1997, citation-only) |
+| 🟡 | H_002.H2.1 | anthropic Λ fine-tuning ~10^-120 (Weinberg 1987, citation-only) |
+| 🔵 | Hc_NEW_UNIVERSE-1 | Bekenstein cell-pool S_max = 2πER/(ℏc) (closed-form, cell-pool entropy bound) |
+| 🔵 | Hc_NEW_UNIVERSE-2 | Holographic N_dof = A/(4 ℓ_P²) (sympy verify A=4ℓ_P² → N=1, 't Hooft+Susskind) |
+| 🔵 | Hc_NEW_UNIVERSE-3 | AdS/CFT d_bulk = d_boundary + 1 (Maldacena 1997, dimension correspondence) |
 
 ## 📚 HYPOTHESIS — 318 가설 inventory
 
@@ -413,3 +420,4 @@
 | #52 | CLM 학습 from-scratch directive 정정 | init=RANDOM INIT seed-fixed / v5-mitosis ckpt=anchor verification only / mitosis hook=mechanism carry / step 0.5 mini-smoke NEW / step 4 cost $5-20→$10-30 / v2+v3 모두 from-scratch |
 | #53 | CLM v3 + corpus + AXIS expansion + p4 policy | .clm v3 14B detailed (d=4608·32-36L·256c) + BG-CORPUS-{3B/7B/14B} blend + A3/A7/A9 expansion (+8-12 entries) + p4 strict 유지 (counter-evidence 인정) |
 | #54 | HF cleanup + new canonical (anima-clm + anima-corpus) + 2 collections DELETE | 71 entities (63 models + 8 datasets) TRANSFER dancinlab→dancinlife private + dancinlab/anima-clm + dancinlab/anima-corpus new canonical (private, README mapping table) + 2 CLM collections DELETE (clm-v4-research + first-simple-stack) |
+| #55 | AXIS A3/A9 sympy + A7 V8 B-bio + p2/p5/p6 detail | A3 +3 🔵 (BKT πJ/2 + Onsager 2J/log(1+√2) + Ginzburg-Landau) + A9 +3 🔵 (Bekenstein cell-pool + Holographic + AdS/CFT) + A7 V8 B-bio 0/10 AT-RISK CONFIRMED + p2/p5/p6 detail design 15 falsifier |

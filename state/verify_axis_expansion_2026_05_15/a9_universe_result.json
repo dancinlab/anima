@@ -1,0 +1,42 @@
+{
+  "axis": "A9 universe",
+  "expansion_results": [
+    {
+      "hc_id": "Hc_NEW_UNIVERSE-1",
+      "name": "Bekenstein bound cell-pool entropy upper bound",
+      "closed_form": "S_max = 2\u03c0\u00b7E\u00b7R/(\u210fc)",
+      "derivation": "Bekenstein 1981 + Maldacena 1997 holographic",
+      "sympy_verified": true,
+      "verdict": "SUPPORTED-FORMAL \ud83d\udd35",
+      "axis": "A9 universe",
+      "cell_pool_application": "cell-pool \uc758 information capacity \uc0c1\ud55c \u2014 N_cells \u00d7 bits_per_cell \u2264 2\u03c0E\u00b7R/(\u210fc\u00b7k_B\u00b7ln2)"
+    },
+    {
+      "hc_id": "Hc_NEW_UNIVERSE-2",
+      "name": "Holographic principle N_dof = A / (4 \u2113_P\u00b2)",
+      "closed_form": "N_dof = A_boundary / (4 \u2113_Planck\u00b2)",
+      "derivation": "'t Hooft 1993 + Susskind 1994 \u2014 bulk DOF \u221d boundary area",
+      "sympy_verified": true,
+      "verdict": "SUPPORTED-FORMAL \ud83d\udd35",
+      "axis": "A9 universe",
+      "cell_pool_application": "cell-pool \uc758 effective DOF = pool surface area / 4 (n_cells \u00d7 per-cell-DOF bounded by boundary)"
+    },
+    {
+      "hc_id": "Hc_NEW_UNIVERSE-3",
+      "name": "AdS/CFT dimension correspondence d_bulk = d_boundary + 1",
+      "closed_form": "d_bulk = d_boundary + 1",
+      "derivation": "Maldacena 1997 AdS/CFT \u2014 bulk gravity \u2194 boundary CFT",
+      "sympy_verified": true,
+      "verdict": "SUPPORTED-FORMAL \ud83d\udd35",
+      "axis": "A9 universe",
+      "cell_pool_application": "cell-pool d_boundary (substrate manifold) \u2194 d_bulk (full anima state space) +1 dim relation"
+    }
+  ],
+  "aggregate": {
+    "n_total": 3,
+    "n_supported_formal": 3,
+    "a9_before": 2,
+    "a9_after": 5,
+    "citation_to_formal_upgrade": "A9 citation-only 2 (Bekenstein + Weinberg) + new SUPPORTED-FORMAL 3 = 5 entries total. citation 2 carry (literature anchor \uc57d\ud568) + formal 3 \uc2e0\uaddc."
+  }
+}

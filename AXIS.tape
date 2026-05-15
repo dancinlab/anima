@@ -282,3 +282,50 @@
   total_added_estimate = "A3 +3-4 entries + A7 +3-4 entries + A9 +2-4 entries = +8-12 additional SUPPORTED/SUPPORTED-FORMAL"
   axis_post_expansion = "32 + 8-12 = 40-44 entries (50% 가까이 SUPPORTED-FORMAL 🔵)"
   cross_link = "MAIN.tape §AXIS-EXPANSION + HYPOTHESIS.tape 신규 Hc inventory + PR #53"
+
+# ──────────────────────────────────────────────────────────────────────
+# §AXIS-EXPANSION-EXECUTION-2026-05-15 — A3 + A9 sympy LANDED + A7 V8 B-bio FAIL
+# ──────────────────────────────────────────────────────────────────────
+
+@D a3_expansion_landed := "A3 physics +3 🔵 SUPPORTED-FORMAL (2026-05-15)" :: cluster [d=2026-05-15 active]
+  new_members = [
+    "Hc_NEW_PHYSICS-1 BKT transition T_BKT = πJ/2 (sympy closed-form, π/2 ≈ 1.5708) 🔵",
+    "Hc_NEW_PHYSICS-2 Onsager 2D Ising T_c = 2J/log(1+√2) (sympy manual sinh verify, ≈ 2.269) 🔵",
+    "Hc_NEW_PHYSICS-3 Ginzburg-Landau critical point a=0, φ_min² = -a/(2b) (sympy d2F=0 verify) 🔵"
+  ]
+  count_before = 1
+  count_after = 4
+  blue_before = 1
+  blue_after = 4
+  artifact = "state/verify_axis_expansion_2026_05_15/a3_physics_result.json + a3_physics_sympy_expansion.py"
+  cross_link = "AXIS.tape §AXIS-EXPANSION-PATH a3_expansion_design + MAIN.tape §A3-EXPANSION"
+
+@D a9_expansion_landed := "A9 universe +3 🔵 SUPPORTED-FORMAL (2026-05-15)" :: cluster [d=2026-05-15 active]
+  new_members = [
+    "Hc_NEW_UNIVERSE-1 Bekenstein cell-pool S_max = 2πER/(ℏc) (closed-form Bekenstein 1981) 🔵",
+    "Hc_NEW_UNIVERSE-2 Holographic N_dof = A/(4 ℓ_P²) (sympy verify A=4ℓ_P² → N=1) 🔵",
+    "Hc_NEW_UNIVERSE-3 AdS/CFT d_bulk = d_boundary+1 (Maldacena 1997 carry) 🔵"
+  ]
+  count_before = 2  # citation-only Bekenstein + Weinberg
+  count_after = 5  # 2 citation + 3 formal
+  blue_before = 0  # citation-only 🟡
+  blue_after = 3
+  artifact = "state/verify_axis_expansion_2026_05_15/a9_universe_result.json + a9_universe_sympy_expansion.py"
+  cross_link = "AXIS.tape §AXIS-EXPANSION-PATH a9_expansion_design + MAIN.tape §A9-EXPANSION"
+
+@D a7_expansion_v8_bbio_result := "A7 bio V8 B-bio Phase 1 impl RUN — 0/10 PASS AT-RISK CONFIRMED" :: cluster [d=2026-05-15 active]
+  scope = "V8 B-bio 10 mechanism (HH/STDP/gap/NMDA/AMPA/astrocyte/GABA/glutamate/DA/5HT) real impl + PyPhi formal Φ measurement"
+  results_summary = "0/10 Φ > 0.5. Mean Φ = 0.0339, Max Φ = 0.339 (Hc_B2 STDP), 8 mechanism Φ = 0 (attractor collapse, unique states 1/8)"
+  verdict = "AT-RISK-CONFIRMED 🟠 (surrogate Mac PASS 78.5% vs PyPhi formal 0/10 Φ ≥ 0.5)"
+  meta_finding_strengthened = "META: surrogate-based PASS rate (78.5%) 가 real Hc 의 PASS rate (0%) reflect 안 함 — V8 SPEC 의 honest c3 #1 검증 적중"
+  caveat = "simplified mechanism stubs ~30 LoC each — real HH/STDP 의 dynamic complexity 미반영 가능성. 후속 cycle 에서 mechanism complexity 강화 가능 (~100-200 LoC each)"
+  artifact = "state/verify_e1_v8_bbio_2026_05_15/v8_bbio_real_result.json"
+  cross_link = "AXIS.tape §AXIS-EXPANSION-PATH a7_expansion_design + MAIN.tape §A7-V8-BBIO + V8 ULTRA-FUSION spec carry"
+
+@N axis_expansion_aggregate := "A3 + A7 + A9 expansion aggregate (2026-05-15)" :: note [d=2026-05-15 active]
+  a3_delta = "+3 entries (1 → 4), +3 🔵 SUPPORTED-FORMAL (1 → 4)"
+  a7_delta = "+0 SUPPORTED (V8 B-bio impl 0/10 PASS, AT-RISK CONFIRMED 강화). Hc_B1..B10 10 mechanism 분리 entry 안 등재 (AT-RISK 라서)"
+  a9_delta = "+3 entries (2 → 5), +3 🔵 SUPPORTED-FORMAL (0 → 3). citation-only 2 carry."
+  total_delta = "+6 entries (32 → 38), +6 🔵 SUPPORTED-FORMAL (12 → 18)"
+  estimate_target = "design 예상 +8-12 entries / actual +6 (75-50% 달성). A7 0 promote 가 shortfall — surrogate 78.5% vs real 0% gap META."
+  cross_link = "AXIS.tape 9-axis cluster post-expansion + INDEX.md + MAIN.tape §AXIS-EXPANSION-LANDED + PR #55"

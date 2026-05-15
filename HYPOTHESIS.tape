@@ -291,3 +291,32 @@
     "H_187 V8 Trinity-TB-DOM: Mac surrogate 100% PASS → PyPhi formal Φ=0.359 AT-RISK 🟠"
   ]
   aggregate = "A 20 total: 5 SUPPORTED + 10 PARTIAL + 5 INSUFFICIENT (25% pass-rate fast audit) + 2 AT-RISK CONFIRMED post Cycle D"
+
+# ─── AXIS expansion 2026-05-15 — 6 new 🔵 SUPPORTED-FORMAL + 10 V8 B-bio AT-RISK ───
+
+@N axis_expansion_inventory := "AXIS A3/A9 expansion +6 🔵 + A7 V8 B-bio 10 AT-RISK (2026-05-15)" :: catalog [d=2026-05-15 active]
+  a3_new = [
+    "Hc_NEW_PHYSICS-1 BKT transition T_BKT = πJ/2 🔵 (sympy closed-form)",
+    "Hc_NEW_PHYSICS-2 Onsager 2D Ising T_c = 2J/log(1+√2) 🔵 (sympy manual sinh verify)",
+    "Hc_NEW_PHYSICS-3 Ginzburg-Landau φ⁴ critical point 🔵 (sympy d2F=0)"
+  ]
+  a9_new = [
+    "Hc_NEW_UNIVERSE-1 Bekenstein cell-pool S_max = 2πER/(ℏc) 🔵 (Bekenstein 1981 closed-form)",
+    "Hc_NEW_UNIVERSE-2 Holographic N_dof = A/(4 ℓ_P²) 🔵 (sympy verify A=4ℓ_P² → N=1)",
+    "Hc_NEW_UNIVERSE-3 AdS/CFT d_bulk = d_boundary+1 🔵 (Maldacena 1997)"
+  ]
+  a7_v8_bbio_at_risk = [
+    "Hc_B1 Hodgkin-Huxley Φ=0.0 AT-RISK 🟠",
+    "Hc_B2 STDP Φ=0.339 AT-RISK 🟠 (highest of 10)",
+    "Hc_B3 Gap junction Φ=0.0 AT-RISK 🟠",
+    "Hc_B4 NMDA Φ=0.0 AT-RISK 🟠",
+    "Hc_B5 AMPA Φ=0.0 AT-RISK 🟠",
+    "Hc_B6 Astrocyte Φ=0.0 AT-RISK 🟠",
+    "Hc_B7 GABA Φ=0.0 AT-RISK 🟠",
+    "Hc_B8 Glutamate E/I Φ=0.0 AT-RISK 🟠",
+    "Hc_B9 Dopamine Φ=0.0 AT-RISK 🟠",
+    "Hc_B10 Serotonin Φ=0.0 AT-RISK 🟠"
+  ]
+  meta_finding = "V8 B-bio impl simplified mechanism stubs (~30 LoC each) → 0/10 Φ ≥ 0.5. META: surrogate-based 78.5% PASS vs real 0% PASS gap CONFIRMED. mechanism complexity 강화 cycle (real HH 4-state Markov ~200 LoC each) 별도 후속."
+  total = "+6 SUPPORTED-FORMAL + 10 AT-RISK entries"
+  cross_link = "AXIS.tape §AXIS-EXPANSION-EXECUTION + state/verify_axis_expansion_2026_05_15/ + state/verify_e1_v8_bbio_2026_05_15/v8_bbio_real_result.json + PR #55"
