@@ -582,3 +582,46 @@
     .clm v1 fire implications: no system prompt + no assistant framing strict 강제
   EOF2
   cross_link = "PHILOSOPHY.tape p4_policy_decision + p1+p3+p8 anchor + MAIN.tape §P4-POLICY-DECISION + PR #53"
+
+@N hf_cleanup_landed := "HF dancinlab cleanup + new canonical (2026-05-15)" :: ledger [d=2026-05-15 active]
+  body <<~EOF2
+    사용자 directive: "HF 정리 — 기존 CLM 등 이름 빼기 + CLM 명명 단순 + 버전 내부
+    관리 + 데이터셋도 + DELETE 보류, TRANSFER 으로, private 으로 전부"
+    
+    Method: dancinlab/* → dancinlife/* (deprecated user) TRANSFER + private.
+    
+    Transfer 71 entities (63 models + 8 datasets):
+    - clm-v4-* SFT lane: 30
+    - clm-v2 byte: 3
+    - clm-3 bprime: 2
+    - clm-v5 (phase2 + bg-lb): 2
+    - clm-foundation-borrow: 1
+    - anima-clm-* precursor: 6
+    - anima-native-* byte18m: 2
+    - anima-chat-v2: 1
+    - bg-*: 3
+    - llm-llama32-paradigm-a: 4
+    - p9-llama32 + vlm-anima-voice: 2
+    - datasets: 8 (anima-clm-3-corpus-mix + anima-cycle-reborn + anima-pass-strict
+      + anima-persona-tier-a-v3/v4 + anima-sft-data + clm-v4-t4-phi-cache + akida-cloud-d0)
+    
+    Remaining in dancinlab/: hexa-forge-* 37 (별도 project) + dancinlab/dancinlab
+    + atlas.n6 + 3 Spaces (README + anima-experience + echoes-experience).
+    
+    New canonical (private placeholder, .clm v1 fire pending):
+    - dancinlab/anima-clm (model) — 버전 internal via HF revisions + README mapping
+    - dancinlab/anima-corpus (dataset) — BG-CORPUS-3B/7B/14B internal via HF revisions
+  EOF2
+  cross_link = "CLM.tape §V-HF-CLEANUP + MAIN.tape §HF-CLEANUP + new dancinlab/anima-clm + dancinlab/anima-corpus + PR #54"
+
+@N hf_collections_cleanup_landed := "HF Collections cleanup landed (2026-05-15)" :: ledger [d=2026-05-15 active]
+  body <<~EOF2
+    사용자 directive: "collection 2개 도 정리"
+    
+    2 CLM collections DELETE:
+    - clm-v4-350m-lora-research-lineage (4 items)
+    - first-simple-stack-pass-strict-own-18-v4-10-15 (3 items)
+    
+    Remaining keep: atlas.n6 (atlas 보류) + voice-vlm-anima-trajectory (anima-voice 별도)
+  EOF2
+  cross_link = "CLM.tape v_hf_collections_cleanup + MAIN.tape §hf_collections_cleanup + PR #54"

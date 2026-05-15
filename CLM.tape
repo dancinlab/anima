@@ -1712,3 +1712,58 @@
         tier (substrate-native corpus). blend weight 결정 cycle.
   EOF
   cross_link = "future cycles: BG-LB 350M proxy + corpus filter pipeline + 14B infra"
+
+# ══════════════════════════════════════════════════════════════════════
+# §V-HF-CLEANUP-2026-05-15 — HF dancinlab/ cleanup + 새 canonical repo
+# ══════════════════════════════════════════════════════════════════════
+# Trigger: 사용자 directive 2026-05-15
+#   "HF 먼저 정리하자 기존 CLM 올라간것들 이름 싹다 바꾸고 학습데이터셋도"
+#   "CLM 은 명명 그냥 단순하게 하고 버전은 내부적으로 관리"
+#   "DELETE 보류 — TRANSFER 으로 변경" "private 으로 전부 transfer"
+# Method: TRANSFER dancinlab/* → dancinlife/* (deprecated user, private)
+
+@D v_hf_cleanup_transfer := "HF dancinlab cleanup — TRANSFER + private (2026-05-15)" :: governance [d=2026-05-15 active]
+  scope = "anima cleanup 대상 (precursor models + legacy datasets) 71 entities dancinlab/* → dancinlife/* TRANSFER + private"
+  transferred_models = 63
+  transferred_datasets = 8
+  transferred_total = 71
+  keep_in_dancinlab = "hexa-forge-* 37 (별도 project) + dancinlab/dancinlab org card + atlas.n6 (atlas 보류 status) + Spaces 3 (README + anima-experience + echoes-experience)"
+  method = "huggingface_hub.move_repo() + huggingface_hub.update_repo_settings(private=True)"
+  artifact = "/tmp/hf_transfer_log_<timestamp>.log (Mac local audit trail)"
+  cross_link = "PR #54 + memory MEMORY.md (HF reference URLs) + .clm v1/v2/v3 design fire 시 → dancinlab/anima-clm new repo"
+
+@D v_hf_new_canonical_repo := "HF new canonical repo — anima-clm + anima-corpus" :: governance [d=2026-05-15 active]
+  models = "dancinlab/anima-clm (private, model) — .clm v1/v2/v3 internal version via HF revisions/branches/tags + README mapping table"
+  datasets = "dancinlab/anima-corpus (private, dataset) — BG-CORPUS-3B/7B/14B internal version via HF revisions + README component table"
+  naming_directive = "CLM 명명 단순, 버전 내부 관리 — single canonical repo name 'anima-clm' + 'anima-corpus' 사용"
+  current_status = "placeholder repo + README LANDED 2026-05-15. .clm v1 fire 후 weights upload + revisions/branches 으로 version tag."
+  cross_link = "https://huggingface.co/dancinlab/anima-clm + https://huggingface.co/datasets/dancinlab/anima-corpus + CLM.tape §V-CLM-DESIGN/AUDIT/FROM-SCRATCH + PR #54"
+
+@N v_hf_cleanup_transferred_list := "71 transferred entities list" :: catalog [d=2026-05-15 active]
+  models_clm_v4_sft = "30 (clm-v4-sft-{stage1, final, step-5k/10k/25k/50k, 1-5/1-6/1-7-y1/1-8 variants} + paradigm-j + base-mirror + mk2-v1)"
+  models_clm_v2 = "3 (byte-18m-base + convo-5k + ft-recovery)"
+  models_clm_3 = "2 (bprime-s1-ubu1/ubu2)"
+  models_clm_v5 = "2 (bg-lb-350m-pretrain + phase2-cotrain-engine-ag)"
+  models_clm_foundation = "1 (foundation-borrow-llama-3.2-3b-anima-lora)"
+  models_anima_clm_precursor = "6 (bprime-prime + phase1a-multi-turn + phase1a1-color + phase1a4-lr5e6-strict + v5-la-cotrain + v5-mitosis-cotrain)"
+  models_anima_native_byte18m = "2 (ko-chat-template-failed + ko-small)"
+  models_anima_chat_v2 = "1 (chat-v2-2026-05-15)"
+  models_bg = "3 (ja-ext-polyglot + km-llama3b + km-qwen-7b)"
+  models_llm_llama32 = "4 (paradigm-a-prime base + r16 + s43 + s44)"
+  models_p9_vlm = "2 (p9-llama32-lora + vlm-anima-voice-paradigm)"
+  models_total = "63"
+  datasets = "8 (anima-clm-3-corpus-mix + anima-cycle-reborn + anima-pass-strict + anima-persona-tier-a-v3/v4 + anima-sft-data + clm-v4-t4-phi-cache + akida-cloud-d0)"
+  total = "71"
+
+@D v_hf_collections_cleanup := "HF Collections cleanup — 2 CLM collections DELETE (2026-05-15)" :: governance [d=2026-05-15 active]
+  scope = "anima cleanup carry — Collections 도 정리"
+  deleted_collections = [
+    "clm-v4-350m-lora-research-lineage (4 items, all CLM precursor — items 이미 dancinlife/* 로 transferred, references broken)",
+    "first-simple-stack-pass-strict-own-18-v4-10-15 (3 items, CLM precursor own 18 V4 SIMPLE_STACK_PASS_STRICT reference, items broken)"
+  ]
+  remaining_collections = [
+    "atlas.n6 — n=6 arithmetic design framework (1 item, atlas 보류 status keep)",
+    "voice-vlm-anima-trajectory (1 item, vlm-anima-voice carry, anima-voice lane 별도 keep)"
+  ]
+  method = "huggingface_hub.delete_collection()"
+  cross_link = "CLM.tape §V-HF-CLEANUP + PR #54"
