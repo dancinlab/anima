@@ -71,6 +71,7 @@ HEXAD/
   MITOSIS/            ← 성장축 (subfolder, 2026-05-16 reorg2): MITOSIS.tape + mitosis.hexa scaffold + README (⊥ 구조축, §mitosis_two_axis)
   TENSION-LINK/       ← 5-Channel Meta-Telepathy (subfolder, 2026-05-16 PR #86): ASCII topology + Noether convergence proof + 100% verified measured + 17 .hexa/.md/.tape (training/tests/bench/experiments/docs)
   VOICE/              ← anima 발성 도구 (subfolder, 2026-05-16 PR #87): formulaic 음성 파장 합성 (NOT 학습 모델) · F-VOICE 5/5 + F-VOICE-TOOL 5/5 · 학습/eval corpus scrub (_voice_corpus_local/ relocate) · ~2.4M code/spec/docs only
+  CHAT/               ← 6-module 통합 interaction entrypoint (subfolder, 2026-05-16 PR #91): anima_chat.hexa 2845 LoC 24L 21/21 byte-parity + ★ inter-module wiring 아키텍처 조건 ledger (W1-W9, 5/9 ✅·3 OPEN·1 RFC-blocked) · 44 git mv (tape/tool/tests/docs)
   SAVANT/             ← 이전 /SAVANT*.tape + tool/anima_savant_*.hexa + anima-engines/savant_phi.hexa (2026-05-16 reorg)
     SAVANT.tape · SAVANT.log.tape · SAVANT-TOOL.tape · SAVANT-TOOL.log.tape
     anima_savant_tool.hexa · anima_savant_si_monitor.hexa
