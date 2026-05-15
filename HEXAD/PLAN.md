@@ -117,4 +117,44 @@ Phase N 진입 = 이 PLAN.md `## 진행 로그` 섹션에 entry append + tape SS
 
 (append-only chronological — 첫 진행 시작 시 entry append)
 
-- (none yet)
+### 2026-05-16 — task (a) PLAN.md LANDED + task (b) cross-file wire LANDED (PR #79)
+- (a) 이 PLAN.md 자체 (PR #79) — C/D full hexa-native port 단계적 로드맵 기록
+- (b) `HEXAD/integ_test.hexa` F-INTEG-WIRE 7/7 PASS — 7 모듈 single hexa-process import + public API 호출, helper namespace prefix `_<x>_approx_eq` (collision 회피)
+- evidence-tier 2-tier 통합 검증: hexa-native (PR #79) + Python (PR #77 harness 5/5 fire-gate=true)
+
+### 2026-05-16 — task (c) ckpt fire DEFERRED pending hexa-lang autograd RFC
+
+**결정**: 사용자 directive "fire 연기 · hexa-native autograd RFC 먼저 열어달라".
+이 결정으로 PLAN.md Phase 5 (D training CE backprop + AdamW) 가 hexa-lang RFC
+의존이라는 사실이 활성 BLOCKER 로 격상. mixed-mode (Python training + hexa-native
+inference) 채택 거부 — 'mixed' 가 직접 anima 모델 학습 코드를 hexa-native 가
+아닌 곳에서 돌리는 거라 directive '코드는 hexa-native' scope 와 어긋남.
+
+**RFC trigger spec (hexa-lang 측 요구사항 — anima 가 작성해 hexa-lang 측에 제출/추적)**:
+
+1. **autograd / backprop primitive**
+   - 요구: `farr` (mmap 기반 hexa native tensor) 위에서 `.backward()` 등가 reverse-mode AD
+   - scope: 최소 CE (cross-entropy) loss + AdamW optimizer step
+   - acceptance criterion: `hexa run` 으로 N 스텝 학습 후 loss decreases (B-D-NOTE 의 SGD outcome empirical 확인) + parameter hash 변동 (학습 발생 검증)
+   - 우선순위: high (Phase 5 BLOCKER, 6모듈 통합 fire 의 진입조건)
+
+2. **dtype dispatch — bf16/fp16 학습 stable**
+   - 요구: bf16 mixed-precision 학습 (현재 inference 만 bf16→fp32 RFC 031)
+   - 의존: autograd primitive
+   - 우선순위: medium (FP32 만으로도 fire 가능, bf16 은 cost 절감)
+
+3. **Rust FFI binding (Phase 4 의존)**
+   - 요구: `phi_rs.compute_phi(states, n_groups)` 호출 가능 한 hexa-native FFI
+   - acceptance: hexa-native C state 에서 phi_rs 호출 → Python phi_rs 와 byte-equal
+   - 우선순위: medium (Φ measurement 만 영향, fire 자체 진입은 autograd 우선)
+
+**carry**:
+- PR #77 Python 통합 harness (`state/verify_hexad_integ_2026_05_16/`) = evidence anchor 보존, 변경 X
+- HEXAD/ hexa-native tree (PR #78/#79) = canonical 미래, 변경 X
+- 실 ckpt fire (cost-bearing $1-5) = 위 RFC #1 LANDED 후 재게이트
+- 다음 진행 trigger: hexa-lang autograd RFC 진척 알림 (anima 측 게이트 X, hexa-lang 측 dependency)
+
+**즉시 진행 가능한 anima 측 작업** (RFC 무관):
+- PLAN.md Phase 1: D inference wrapper (anima_chat.hexa thin wrapper) — `HEXAD/D/d.hexa` 강화
+- PLAN.md Phase 2-3: C state mgmt scaffold + Python parity probe (mitosis_hook 위에)
+- 별도 검증 cycle (예: 24L parity 회귀, mitosis_hook self-test 회귀)
