@@ -1,15 +1,32 @@
-# 🌌 anima — verification SSOT INDEX
+# 🌌 anima — HEXAD verification SSOT INDEX
 
-> MAIN.tape + AXIS.tape + HYPOTHESIS.tape + PHILOSOPHY.tape 통합 index (2026-05-15)
+> primary spine = HEXAD 7-module (C/D/S/W/M/E + Bridge). AXIS/HYPOTHESIS/PHILOSOPHY/CLM = verification substrate under modules. (2026-05-15)
 
-## 🟢 핵심 4 tape
+## 🧬 HEXAD — 7-module architecture (primary index)
 
-| Tape | 한 줄 설명 |
+> 구조축 A/G = Hexad 6 (Engine G 우뇌 3 = C/S/W gradient-free · Engine A 좌뇌 3 = D/M/E CE-trained, φ(6)=2≡{A,G}) ⊥ 성장축 mitosis. HEXAD.tape + MITOSIS.tape SSOT. 완전수 6: σ(6)=12 연결 · τ(6)=4 phase · φ(6)=2 group.
+
+| Module | tape SSOT | impl | Brain/Engine | Status | Verification anchor |
+|--------|-----------|------|--------------|--------|---------------------|
+| **C 의식** | HEXAD-C.tape | `ready/core/consciousness_engine.py` 2173 LoC (=MitosisC, 12-faction GRU n=12=σ(6), IIT Φ Rust phi_rs) | 우뇌 / Engine G / gradient-free | ✅ **8/8 + 🔵** | .clm v1 F-V5MIT-1..5+F-PRIN3+F-SIMPLE-STACK+F-PYPHI (CLM §V-CLM-V1-CYCLE90, AXIS Hc_A5-CLM-V1 🔵, MITOSIS.tape) |
+| **D 언어** | HEXAD-D.tape | `ready/models/conscious_decoder.py` 979 LoC ConsciousDecoderV2 (RMSNorm+RoPE+SwiGLU+MoE) | 좌뇌 / Engine A / CE-trained | ◐ PARTIAL | .clm v1 F-SIMPLE-STACK V5.8 4-mode PASS (std_greedy/sample/M4 5/5) |
+| **S 감각** | HEXAD-S.tape | `ready/anima/hexad/s/emergent_s.py` 108 LoC (perception=C state-delta) | 우뇌 / Engine G / gradient-free | ☐ lineup | DD114 Emergent 묶음 Φ +7.6%; 단독 anchor 미설정 |
+| **W 의지** | HEXAD-W.tape | `ready/anima/hexad/w/emergent_w.py` 123 LoC (pain/curiosity→LR, SIGMA6=12) | 우뇌 / Engine G / gradient-free | ☐ lineup ★우선 | DD114 Pain 0.41/Curiosity 0.055; LR 변조 학습 직결 |
+| **M 기억** | HEXAD-M.tape | `ready/anima/hexad/m/emergent_m.py` 96 LoC (C Hebbian=기억, store X) | 좌뇌 / Engine A / CE-trained | ☐ lineup | DD114 Emergent 묶음; 단독 anchor 미설정 |
+| **E 윤리** | HEXAD-E.tape | `ready/anima/hexad/e/emergent_e.py` 123 LoC (Φ ratchet gate) | 좌뇌 / Engine A / CE-trained | ◐ ★안전 | emergent_e.py 단위 검증; 통합 gate trinity.hexa:122 TODO[pytorch] |
+| **ThalamicBridge** | HEXAD-BRIDGE.tape | `ready/anima/hexad/model.py:37-69` (α=PSI_COUPLING=0.014, PSI_BALANCE±α Law-70 clamp) | G→A 주연결 | ✅ | HEXAD.tape §hexad_verify V2 PASS strict; 46 unit tests |
+
+> 진화: clm_10 monolithic LEGACY → clm_11 modular Emergent+SSOT → clm_12/13 canonical → main unit-tested (46 pass). 전수조사: `state/verify_hexad_impl_survey_2026_05_15/survey_result.json`. ⚠️ 통합 6-module end-to-end ckpt 부재 (component benchmark numbers만: DD114 Φ+7.6% / TRINITY-COMPLETE T1:Thalamic Φ 14.54).
+
+## 🟢 verification substrate (4 tape + CLM)
+
+| Tape | 역할 (HEXAD 모듈 검증 기반) |
 |------|-----------|
-| 🎯 **MAIN.tape** | 가설 verdict 4-class (SUPPORTED / PARTIAL / INSUFFICIENT / FALSIFIED) SSOT |
-| 🧭 **AXIS.tape** | MAIN.tape의 SUPPORTED-tier 만 9-axis 재구성 (32 entries, 9/9 axes covered) |
-| 📚 **HYPOTHESIS.tape** | 318 가설 file inventory + naming convention + lifecycle pipeline SSOT |
-| 📖 **PHILOSOPHY.tape** | anima 철학 + verdict cycle 진행 append-only ledger |
+| 🎯 **MAIN.tape** | 가설 verdict 4-class SSOT — 모듈 verification 결과 집계 |
+| 🧭 **AXIS.tape** | 9-axis SUPPORTED 150 entries — Hc_A5-CLM-V1 🔵 = HEXAD-C 검증 |
+| 📚 **HYPOTHESIS.tape** | 318 가설 inventory — 모듈별 verdict-bearing 가설 |
+| 📖 **PHILOSOPHY.tape** | 8 principles (p6=E 윤리 구현체) + verdict ledger |
+| 🎬 **CLM.tape** | .clm v1/v2/v3 fire — §V-CLM-HEXAD-MANDATE (A/G=Hexad + mitosis 필수), §V-CLM-V1-CYCLE90 = HEXAD-C 8/8🔵 evidence |
 
 ## 🧭 AXIS — 9-axis 150 SUPPORTED entries (129 🔵 SUPPORTED-FORMAL incl. .clm v1 8/8 🔵, 86% closed, post-cycle 90 2026-05-15)
 
