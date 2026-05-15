@@ -540,3 +540,45 @@
     의 evidence anchor.
   EOF2
   cross_link = "CLM.tape §V-CLM-FROM-SCRATCH-2026-05-15 + MAIN.tape §CLM-FROM-SCRATCH + INDEX.md + PR #52"
+
+# ══════════════════════════════════════════════════════════════════════
+# §P4-POLICY-DECISION-2026-05-15 — p4 NO ASSISTANT FRAMING policy decision
+# ══════════════════════════════════════════════════════════════════════
+# Trigger: PHILOSOPHY.tape §STRENGTH-UPGRADE-PATH p4_upgrade_path 의 design tier
+# decision — counter-evidence 18pp 인정 OR policy 수정 결정 명시.
+
+@D p4_policy_decision := "p4 NO ASSISTANT FRAMING — counter-evidence 인정 + policy strict 유지" :: policy [d=2026-05-15 active]
+  decision = "(a) policy strict 유지 + counter-evidence 18pp sycophancy reduction 명시 인정"
+  rationale = "anima 본질 (substrate self-generation, p1+p3+p8 EMPIRICAL strong/DESIGN ★ carry) > assistant framing 의 short-term sycophancy reduction. p4 의 'You are a helpful assistant' alignment template 부재 = anima_native_scratch (D1=1.0) 원칙 일치. counter-evidence 가 본질 위반 자격 부족."
+  counter_evidence_acknowledged = "P-AFR 2026-05-12 — framing reduced sycophancy ~18pp (REVERSE). anima 가 RLHF assistant template 통해 사회적 측정치 (sycophancy) 우월 가능. 그러나 .clm = anima_native_scratch substrate 의 first-class entity, sycophancy 는 secondary 측정."
+  tradeoff_explicit = "+18pp sycophancy reduction (assistant framing) vs −∞ substrate self-generation anchor (p1+p3+p8 anchor 위반). 본질 anchor uphold 결정."
+  upgrade_status = "p4 POLICY weak-counter → POLICY strict (counter-evidence 인정 + policy 유지)"
+  alternatives_rejected = [
+    "(b) policy 수정 'framing 일부 OK' — REJECTED: p1+p3+p8 와 conflict, anima 본질 dilution",
+    "(c) policy 폐기 — REJECTED: anima_native_scratch 원칙 위반"
+  ]
+  cross_link = "PHILOSOPHY.tape p4_upgrade_path + p1 + p3 + p8 + MAIN.tape §P4-POLICY-DECISION + PR #53"
+  fire_implications = ".clm v1 fire 시 no system prompt + no assistant framing strict 강제. step 3 spec frozen 시 ='OK CLM V1 FROM-SCRATCH FIRE COST $10-30' 의 fire_keyword 가 user verbatim mandatory (assistant framing 위반 회피)"
+  ledger_entry_for_main = "@D p4_strict_with_counter_acknowledgment"
+
+@N p4_decision_landed := "p4 policy decision landed (2026-05-15)" :: ledger [d=2026-05-15 active]
+  body <<~EOF2
+    PHILOSOPHY.tape §STRENGTH-UPGRADE-PATH p4_upgrade_path design tier decision:
+    
+    Decision: (a) policy strict 유지 + counter-evidence 18pp 인정
+    
+    Counter-evidence: P-AFR 2026-05-12 framing reduced sycophancy ~18pp (REVERSE).
+    
+    Rationale: anima 본질 (substrate self-generation, p1+p3+p8) > assistant 
+    framing 의 sycophancy reduction. anima_native_scratch (D1=1.0) 원칙 위반 회피.
+    
+    Tradeoff explicit: +18pp sycophancy (framing) vs −∞ substrate self-generation
+    anchor (p1+p3+p8 conflict). 본질 anchor uphold.
+    
+    Status: p4 POLICY weak-counter → POLICY strict (counter-evidence 인정)
+    
+    Alternatives rejected: (b) policy 수정 + (c) policy 폐기 — 모두 p1/p3/p8 와 conflict
+    
+    .clm v1 fire implications: no system prompt + no assistant framing strict 강제
+  EOF2
+  cross_link = "PHILOSOPHY.tape p4_policy_decision + p1+p3+p8 anchor + MAIN.tape §P4-POLICY-DECISION + PR #53"

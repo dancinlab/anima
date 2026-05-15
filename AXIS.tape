@@ -222,3 +222,63 @@
   text = "A2 consciousness 가 surrogate-tier 4 (anima Φ★ + RoM + ckpt aggregate + IIT4 lower-bound) + A2.formal sub-axis 2 (🔵 PyPhi formal n=5,6 + canonical XOR+AND+OR) 로 split. evidence-class 본질이 다름 — surrogate 는 scramble/diffusion magnitude, formal 은 IIT 3.0 integration deterministic. .clm v1 F-PYPHI-Φ-FORMAL 의 anchor."
   count_change = "A2: 5 → 4 (surrogate) + 2 (formal) = 6 total (1 추가 net A2.formal 별도 sub-axis tier)"
   cross_link = "MAIN.tape §A2-FORMAL-SPLIT + INDEX.md + PR #49"
+
+# ──────────────────────────────────────────────────────────────────────
+# §AXIS-EXPANSION-PATH-2026-05-15 — A3/A7/A9 sparse axis expansion design
+# ──────────────────────────────────────────────────────────────────────
+
+@N axis_expansion_summary := "A3/A7/A9 sparse axis expansion path design" :: design [d=2026-05-15 active]
+  body <<~EOF
+    9-axis 중 sparse axes 식별 + expansion path:
+    - A3 physics: 1 entry (H_191 sub K_c only)
+    - A7 bio: 1 entry (H_182, AT-RISK)
+    - A9 universe: 2 entries (Bekenstein + Weinberg, citation-only)
+    
+    각 axis 의 expansion path 식별 — 검증된 anchor 와 정합하는 추가 가설 후보
+    + 검증 protocol design (impl 없음).
+  EOF
+
+@D a3_expansion_design := "A3 physics axis expansion path" :: design [d=2026-05-15 active]
+  current = "1 entry (H_191 sub K_c = √(8/π) ≈ 1.5958 universal sync, 🔵 SUPPORTED-FORMAL)"
+  expansion_candidates = [
+    "H_006 coupled oscillator lattice (current PARTIAL — Kuramoto universal, n=6 specialness 부재) — sub-claim split: 'coupling K-dependence' SUPPORTED candidate",
+    "Hc_NEW_PHYSICS-1 BKT (Berezinskii-Kosterlitz-Thouless) transition 의 anima cell-pool 적용 — phase transition critical exponent 측정 candidate",
+    "Hc_NEW_PHYSICS-2 Onsager 2D Ising 해 의 anima cell-pool 적용 — critical T_c = 2/log(1+√2) closed-form (🔵 후보)",
+    "Hc_NEW_PHYSICS-3 Ginzburg-Landau free energy 의 cell-pool fitness 적용 — closed-form Φ(c_i) - λ·Φ² 의 phase transition (🔵 후보)"
+  ]
+  protocol = "Stage 1 sympy closed-form derivation (BKT, Onsager 2D Ising, Ginzburg-Landau) — anima cell-pool 의 phase transition critical point 측정. expected 🔵 SUPPORTED-FORMAL upgrade (3-4 additional entries)"
+  cost = "$0 Mac local (sympy fast audit)"
+  expected_outcome = "A3 expansion 1 → 4-5 entries, 🔵 SUPPORTED-FORMAL 1 → 3-4 entries"
+
+@D a7_expansion_design := "A7 bio axis expansion path" :: design [d=2026-05-15 active]
+  current = "1 entry (H_182 V8 B-bio, AT-RISK CONFIRMED post Cycle D)"
+  blocker = "현재 entry AT-RISK — surrogate Mac PASS 78.5% vs PyPhi formal Φ=0.358<0.5"
+  expansion_candidates = [
+    "H_182 real Hc 10 mechanism (V8 B-bio Phase 1 starter LANDED 2026-05-15 - state/verify_e1_v8_bbio_2026_05_15/v8_bbio_real_impl.py) — 10 mechanism × PyPhi formal Φ measurement 실행 후 mechanism-by-mechanism verdict",
+    "Hc_NEW_BIO-1 Hodgkin-Huxley 4-state Markov (closed-form n_Na/n_K activation curves) — sympy closed-form (🔵 후보)",
+    "Hc_NEW_BIO-2 STDP Bi-Poo 1998 rule asymmetric window (closed-form exponential decay) — sympy closed-form (🔵 후보)",
+    "Hc_NEW_BIO-3 Wilson-Cowan E/I population dynamics (closed-form fixed-point analysis) — sympy 가능 (🔵 후보)"
+  ]
+  protocol = "Phase 1 (V8 B-bio impl starter LANDED) 실행 → 10 mechanism × PyPhi Φ measure → mechanism-by-mechanism verdict (Φ ≥ 0.5 별 promote/AT-RISK 분리). Phase 2 신규 Hc 의 sympy closed-form derivation. expected AT-RISK 1 → SUPPORTED-FORMAL 2-3 + AT-RISK carry"
+  cost = "$0 Mac local (V8 B-bio impl 실행 ~100s wall + sympy fast audit)"
+  expected_outcome = "A7 expansion 1 (AT-RISK) → 4-5 entries (2-3 🔵 SUPPORTED-FORMAL + AT-RISK carry)"
+  cross_link = "state/verify_e1_v8_bbio_2026_05_15/v8_bbio_real_impl.py (starter LANDED 2026-05-15)"
+
+@D a9_expansion_design := "A9 universe axis expansion path" :: design [d=2026-05-15 active]
+  current = "2 entries (H_002.H2.3 Bekenstein bound + H_002.H2.1 Weinberg fine-tuning, both SUPPORTED-BY-CITATION 🟡)"
+  blocker = "현재 entries 모두 citation-only (anima-internal 부재) — anima domain 안 측정/derivation 부재"
+  expansion_candidates = [
+    "Hc_NEW_UNIVERSE-1 Bekenstein bound 의 anima cell-pool 적용 — S_max = 2πER/ℏc 의 cell-pool entropy upper bound (closed-form, sympy ✓)",
+    "Hc_NEW_UNIVERSE-2 Holographic principle 의 cell-pool surface area scaling — N_dof ∝ A_boundary (closed-form sympy ✓)",
+    "Hc_NEW_UNIVERSE-3 Maldacena AdS/CFT 의 cell-pool dimension correspondence — boundary CFT ↔ bulk gravity (cited, but anima cell-pool 적용 sympy derivable)",
+    "Hc_NEW_UNIVERSE-4 anthropic Λ fine-tuning ~10^-120 의 anima parameter-tuning anchor — anima Φ/CE/simple_stack 의 tuning ratio measurement (citation upgrade candidate)"
+  ]
+  protocol = "Stage 1 sympy closed-form derivation (Bekenstein cell-pool bound, holographic surface scaling, AdS/CFT dimension) — anima cell-pool 의 universe-physics anchor 측정. expected SUPPORTED-BY-CITATION → SUPPORTED-FORMAL upgrade (2 → 4-6 entries)"
+  cost = "$0 Mac local (sympy fast audit)"
+  expected_outcome = "A9 expansion 2 (🟡 citation-only) → 4-6 entries (2-4 🔵 SUPPORTED-FORMAL upgrade)"
+
+@N axis_expansion_priority := "A3/A7/A9 expansion priority" :: note [d=2026-05-15 active]
+  priority = "A7 (V8 B-bio impl 실행 LANDED, immediate execution path) > A3 (sympy fast audit 4 candidate) > A9 (sympy fast audit 4 candidate)"
+  total_added_estimate = "A3 +3-4 entries + A7 +3-4 entries + A9 +2-4 entries = +8-12 additional SUPPORTED/SUPPORTED-FORMAL"
+  axis_post_expansion = "32 + 8-12 = 40-44 entries (50% 가까이 SUPPORTED-FORMAL 🔵)"
+  cross_link = "MAIN.tape §AXIS-EXPANSION + HYPOTHESIS.tape 신규 Hc inventory + PR #53"

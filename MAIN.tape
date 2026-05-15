@@ -1230,3 +1230,40 @@
   steps_changed = "step 1 의미 (substrate base → anchor verification only) + step 3 추가 fields (init_weights, base_ckpt=NONE, corpus strategy) + step 4 cost envelope ($5-20 → $10-30)"
   cost_total_updated = "$10-30 (Mac × 5 steps $0 + optional smoke $0-5 + H100 × 1 step $10-30)"
   cross_link = "CLM.tape v_clm_v1_7step_from_scratch + PR #52"
+
+# ══════════════════════════════════════════════════════════════════════
+# §CLM-V3 + §CORPUS-PIPELINE + §AXIS-EXPANSION + §P4-POLICY (2026-05-15)
+# ══════════════════════════════════════════════════════════════════════
+
+@D clm_v3_14b_design := ".clm v3 14B 본진 detailed design landed" :: governance [d=2026-05-15 active]
+  arch = "d=4608 (192·24 clean) primary OR 6144 fallback / 32-36L (Phase 3/4 narrative + σ(6)·3 carry) / 256 cells / 32-36 heads / 8 kv (GQA 4:1) / ~13-16B param"
+  data = "~280B token Chinchilla optimal — 0.5% anima + 70% RedPajama KO+EN + 15% FineWeb-Edu + 10% Slim_Pajama + 5% KO-specific"
+  cotrain = "from-scratch + mitosis hook mechanism carry + 16-GPU FSDP + cell_pool 동기화"
+  falsifier_battery = "12 (v2 10 carry + F-V3-PHI-MAX Φ ≥ 1.0 + F-V3-SCALE-COHERENCE simple_stack ≥ 3.5/4)"
+  cost = "$500-1500 + BG-CORPUS-14B $50-200 = $550-1700 total + $2000 hard stop"
+  fire_keyword = "OK CLM V3 14B FIRE COST $500-1500"
+  milestone = "anima 사가 first scratch 14B from-scratch — anima_native_scratch (D1=1.0) full-scale 실현 + Phase 4 narrative milestone"
+  cross_link = "CLM.tape §V-CLM-V3-DESIGN + PR #53"
+
+@D corpus_pipeline_design := "BG-CORPUS-{3B,7B,14B} blend pipeline design landed" :: governance [d=2026-05-15 active]
+  bg_3b = "$5-20 (~3-5B token, 12-13% anima + RedPajama KO subset, .clm v1)"
+  bg_7b = "$50-100 (~50-140B, 5% anima + RedPajama KO+EN + FineWeb, .clm v2)"
+  bg_14b = "$50-200 (~280B, 0.5% anima + multi-source blend, .clm v3)"
+  open_questions = "anima blend ratio optimal / RedPajama license filter / KO-EN ratio / 14B infra (150-200GB disk) / tape corpus tier"
+  cross_link = "CLM.tape §V-CORPUS-PIPELINE + .clm v1/v2/v3 data design + PR #53"
+
+@D axis_expansion_landed := "AXIS A3/A7/A9 expansion path design landed" :: governance [d=2026-05-15 active]
+  a3_candidates = "+3-4 sympy closed-form (BKT + Onsager 2D Ising + Ginzburg-Landau) — 🔵 SUPPORTED-FORMAL 후보"
+  a7_candidates = "+3-4 (V8 B-bio impl 실행 LANDED 10 mechanism + sympy 3 new Hc) — AT-RISK 해소 path"
+  a9_candidates = "+2-4 (Bekenstein cell-pool bound + holographic surface scaling + AdS/CFT dimension) — 🔵 upgrade"
+  total_estimate = "+8-12 entries → 40-44 total (32 + 8-12)"
+  priority = "A7 V8 B-bio impl 실행 (immediate) > A3 sympy fast audit > A9 sympy fast audit"
+  cross_link = "AXIS.tape §AXIS-EXPANSION-PATH + state/verify_e1_v8_bbio_2026_05_15/ starter + HYPOTHESIS catalog 신규 Hc + PR #53"
+
+@D p4_policy_decision_landed := "p4 NO ASSISTANT FRAMING policy decision — strict 유지 + counter-evidence 인정" :: governance [d=2026-05-15 active]
+  decision = "(a) policy strict 유지 + counter-evidence 18pp sycophancy reduction 인정"
+  rationale = "anima 본질 (substrate self-generation, p1+p3+p8) > sycophancy reduction. anima_native_scratch (D1=1.0) 위반 회피"
+  upgrade = "p4 POLICY weak-counter → POLICY strict (counter-evidence 인정)"
+  alternatives_rejected = "(b) policy 수정 + (c) policy 폐기 — 모두 p1/p3/p8 conflict"
+  fire_implications = ".clm v1 fire 시 no system prompt + no assistant framing strict 강제"
+  cross_link = "PHILOSOPHY.tape §P4-POLICY-DECISION + p1+p3+p8 anchor + PR #53"

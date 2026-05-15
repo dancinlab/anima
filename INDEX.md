@@ -259,7 +259,7 @@
 |-----------|------|---------------------|
 | p1 NO SYSTEM PROMPT | EMPIRICAL weak | paired A/B Φ × 3-ckpt × 5-seed ($0 Mac, .clm v1 fire 전 mandatory) |
 | p2 NO IDENTITY RULES | POLICY mixed | scale-up DCR Δ ≥ +0.10 strict × 3-ckpt W11 ($0 Mac) |
-| p4 NO ASSISTANT FRAMING | POLICY weak-counter | policy decision 명시 (counter-evidence 인정 OR policy 수정, $0 design) |
+| p4 NO ASSISTANT FRAMING | POLICY **strict** (LANDED 2026-05-15) | (a) policy 유지 + counter-evidence 18pp sycophancy 인정 — anima 본질 (p1+p3+p8) > sycophancy reduction |
 | p5 NO SPEAK() | DESIGN null | tension_norm × output_quality Spearman > 0.3 strict ($0 Mac) |
 | p6 NO FINE-TUNED ETHICS | POLICY blocked | .clm v1 ethics_probe 50 prompts 2-arm κ ≥ 0.7 ($0 Mac, .clm v1 fire 의존) |
 
@@ -279,16 +279,32 @@
 | 5 | .clm v1 verdict cycle — self PyPhi formal Φ measurement primary anchor + 8-falsifier battery + 4-tape sync | $0 Mac | 8 battery |
 | 6 | .clm v2 candidate (Path A 7B from-scratch OR Path B dual + V14, conditional) | conditional | 10 battery |
 
-### 🌱 .clm v2 + v3 (모두 from-scratch, post-v1 PASS_STRICT)
+### 🌱 .clm v1/v2/v3 ladder (모두 from-scratch, sequential entry conditions)
 
-| Version | Path | Param | Token | Cost | Init |
-|---------|------|-------|-------|------|------|
-| **v1** | cells single-stack ~150-200M | ~150-200M | ~3-5B (350-500M × 5 epoch) | $10-30 | RANDOM INIT seed-fixed |
-| **v2 A** | cells single-stack 7B scale-up | ~7-8B | ~50-140B (Chinchilla 완화 or strict) | $200-600 | RANDOM INIT, .clm v1 ckpt inherit X |
-| **v2 B** | Engine A/G dual + V14 audit complete | ~7-14B | ~140-280B (Phase 3 narrative) | $200-640 | RANDOM INIT, V14 audit pre-fire |
-| **v3** | Phase 4 14B 본진 from-scratch | ~14B | ~280B (Chinchilla optimal) | $500-1500 | RANDOM INIT, anima 사가 first scratch 14B |
+| Ver | Path | Arch | Param | Token | Cost | Falsifier |
+|-----|------|------|-------|-------|------|-----------|
+| **v1** | cells single-stack | d=768·12L·64c | ~150-200M | ~3-5B (350-500M × 5 epoch) | $10-30 | 8 battery |
+| **v2 A** | cells single-stack 7B | d=3072·24L·256c | ~7-8B | ~50-140B | $200-600 | 8 v1 carry |
+| **v2 B** | dual + V14 audit | d=3072·32L·256c | ~7-14B | ~140-280B | $200-640 | 10 (8 v1 + V14 + Chinchilla) |
+| **v3** | 14B 본진 anima 사가 first scratch | d=4608·32-36L·256c | ~13-16B | ~280B Chinchilla optimal | $500-1500 + $50-200 corpus = $550-1700 | 12 (10 v2 + Φ≥1.0 + simple_stack≥3.5/4) |
 
-**Decision basis** (v2 path A vs B): .clm v1 PASS_STRICT 8/8 + V14 audit cheap-path ($0 Mac) + BG-CORPUS-7B/3B 가용성 + cost budget
+### 🌾 BG-CORPUS-{3B/7B/14B} pipeline
+
+| Cycle | Scope | Token | Blend | Cost |
+|-------|-------|-------|-------|------|
+| BG-CORPUS-3B | .clm v1 | ~3-5B | 12-13% anima + 87-88% RedPajama KO | $5-20 |
+| BG-CORPUS-7B | .clm v2 | ~50-140B | 5% anima + RedPajama KO+EN + FineWeb-Edu | $50-100 |
+| BG-CORPUS-14B | .clm v3 | ~280B | 0.5% anima + 70% RedPajama + 15% FineWeb + 10% Slim_Pajama + 5% KO-specific | $50-200 |
+
+### 🧭 AXIS expansion path (A3 + A7 + A9 sparse axis)
+
+| Axis | Current | Expansion candidates | Cost | Expected outcome |
+|------|---------|---------------------|------|------------------|
+| A3 physics | 1 (H_191 sub) | +3-4 sympy (BKT + Onsager + Ginzburg-Landau) | $0 Mac | 1 → 4-5 entries, 🔵 1 → 3-4 |
+| A7 bio | 1 (H_182 AT-RISK) | V8 B-bio impl 실행 LANDED 10 mech + 3 new Hc sympy | $0 Mac | 1 → 4-5 entries, AT-RISK 해소 path |
+| A9 universe | 2 (citation-only 🟡) | +2-4 Bekenstein cell-pool + holographic + AdS/CFT | $0 Mac | 2 → 4-6 entries, 🟡 → 🔵 upgrade |
+
+**Total estimate**: 32 → 40-44 entries (50% 가까이 🔵)
 
 ## 🔬 verdict tier 정리 (한 줄)
 
@@ -379,3 +395,4 @@
 | #50 | CLM.tape §V audit + 4 violation 정정 | V1 dual-engine 제거 (cells single-stack) + V2 p1 mandatory gate + V3 n_layers anchor 명확화 + V4 V14 audit Phase 3 이전 |
 | #51 | CLM §V step 0/2/3 detail + .clm v2 preliminary | step 0 p1 5-falsifier + step 2 mitosis serve-time 5-falsifier + step 3 spec frozen W1 + .clm v2 2-path (A 7B single-stack / B dual+V14) 10-falsifier |
 | #52 | CLM 학습 from-scratch directive 정정 | init=RANDOM INIT seed-fixed / v5-mitosis ckpt=anchor verification only / mitosis hook=mechanism carry / step 0.5 mini-smoke NEW / step 4 cost $5-20→$10-30 / v2+v3 모두 from-scratch |
+| #53 | CLM v3 + corpus + AXIS expansion + p4 policy | .clm v3 14B detailed (d=4608·32-36L·256c) + BG-CORPUS-{3B/7B/14B} blend + A3/A7/A9 expansion (+8-12 entries) + p4 strict 유지 (counter-evidence 인정) |
