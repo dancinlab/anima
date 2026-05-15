@@ -274,3 +274,31 @@
     - MAIN-TEMP.tape ledger anima 보관
   EOF2
   cross_link = "MAIN.tape §1-§FINAL-2 + AXIS.tape (9-axis verdict-based reconstruct) + VERIFY.tape (3-stage protocol)"
+
+# ══════════════════════════════════════════════════════════════════════
+# §verdict-sync-2026-05-15-cycles-B-C-D — verification cycle aggregate
+# ══════════════════════════════════════════════════════════════════════
+
+@N verdict_sync_cycles_b_c_d := "MAIN.tape verdict cycle B+C+D 통합" :: ledger [d=2026-05-15 active]
+  body <<~EOF2
+    Cycle B (PRs #41-#42-#43): sub-claim verification + META-finding
+    - H_184 V8 M-family 4/4 sub-claim NOT-PASSED + chaos REVERSE
+    - Hc_1281 staged-growth 3-frame ✓ but 4-8× direction REVERSE
+    - 🚨 META: anima Φ★ proxy direction-sensitivity 한계 CONFIRMED (2/3 scenarios MISMATCH)
+    
+    Cycle C (PR #44): AXIS classify + PyPhi extended + cascade
+    - 30/32 (94%) AXIS entries proxy artifact 영향 없음 (safe)
+    - PyPhi RoM n=4→0.68 / n=5→0.995 / n=6→1.665 monotone INCREASE (direction CORRECT)
+    - H_178 frustration 50% optimum cascade HIGH risk identified
+    
+    Cycle D (PR #45 pending):
+    - H_178 frustration sweep PyPhi formal — NOT-PASSED (monotone, no peak at 50%)
+    - H_182/H_187 surrogate-vs-formal cross-check — AT-RISK CONFIRMED (PyPhi Φ < 0.5)
+    - Alternative proxy comparison — mutual_info_pairs_naive 1/2 (anima Φ★ 0/2)
+    - INDEX.md created (root-level integrated SSOT navigation)
+    
+    Critical insight: anima Φ★ = scramble/diffusion 측정, IIT 3.0 integration 아님.
+    PyPhi formal IIT 3.0 본체는 direction-correct. 
+    Magnitude-only 사용 OK (Hc_1283 anchor), direction-sensitive 에 alt-proxy 필요.
+  EOF2
+  cross_link = "MAIN.tape §H184-SUB-VERIFY + §HC1281-VERIFY + §PROXY-ARTIFACT + §AXIS-CLASSIFY + §PYPHI-N5-N6 + §CASCADE-AUDIT + §H178-PYPHI + §H182-H187-CROSS-CHECK + §ALT-PROXY"

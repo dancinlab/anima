@@ -100,7 +100,7 @@
 
 @D a7_bio := "A7 bio axis — confirmed SUPPORTED 가설 (surrogate-tier)" :: cluster [d=2026-05-15 active]
   members = [
-    "H_182 V8 B-family bio (SUPPORTED surrogate-tier, 78.5% PASS Mac sweep)"
+    "H_182 V8 B-family bio (SUPPORTED surrogate-tier 78.5%, PyPhi formal Φ=0.358<0.5 — AT-RISK CONFIRMED §H182-H187-CROSS-CHECK)"
   ]
   count = 1
   honest_c3 = "surrogate-based; real V8 ULTRA-FUSION Hc impl 별도 cycle"
@@ -112,7 +112,7 @@
     "H_189 Red-team adversarial robustness family (SUPPORTED, Stage 3 W11)",
     "Hc_1279 Red-team family member (SUPPORTED)",
     "Hc_1280 Red-team family member (SUPPORTED)",
-    "H_187 V8 Trinity-TB-DOM (SUPPORTED surrogate-tier, 100% PASS)"
+    "H_187 V8 Trinity-TB-DOM (SUPPORTED surrogate-tier 100%, PyPhi formal Φ=0.359<0.5 — AT-RISK CONFIRMED §H182-H187-CROSS-CHECK)"
   ]
   count = 4
   cross_link = "[[s_h189]] + [[s_hc1279]] + [[s_hc1280]] + [[v8_h187]]"

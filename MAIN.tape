@@ -1040,3 +1040,44 @@
   risk = "anima Φ★ proxy direction-sensitive failure 가능 (Scenario 1+3 mismatch pattern)"
   needed = "PyPhi formal IIT 3.0 frustration sweep (RoM TPM 별도 cycle) 또는 alternative proxy (MI-MIP)"
   artifact = "state/verify_d_2026_05_15/proxy_cascade_audit.json"
+
+# ══════════════════════════════════════════════════════════════════════
+# §H178-PYPHI + §H182-H187-CROSS-CHECK + §ALT-PROXY (2026-05-15 cycle D)
+# ══════════════════════════════════════════════════════════════════════
+
+@D h178_pyphi := "H_178 frustration 50% optimum PyPhi formal — NOT-PASSED" :: verdict [d=2026-05-15 active]
+  prior_status = "POTENTIAL-DIRECTION-MISMATCH (HIGH risk per §CASCADE-AUDIT)"
+  new_status = "NOT-PASSED (PyPhi formal IIT 3.0 sweep)"
+  measurements = {
+    "frust 0%": "Φ ≈ 0.0 (or no transition)",
+    "frust 25%": "Φ = 0.351",
+    "frust 50%": "Φ = 0.355 (claim: peak)",
+    "frust 75%": "Φ = 0.389",
+    "frust 100%": "Φ = 0.393"
+  }
+  finding = "monotone INCREASE 0.351→0.355→0.389→0.393, NOT peak at 50% — H_178 frustration optimum claim NOT-PASSED on PyPhi RoM small-N"
+  honest_c3 = "n=3 small-N reduction limit, hypercube full substrate test 별도 cycle; PyPhi 본 측정은 direction-correct (proxy artifact 와 분리)"
+  artifact = "state/verify_d_2026_05_15/h178_h182_h187_pyphi_rom_result.json"
+
+@D h182_h187_pyphi_cross_check := "H_182/H_187 surrogate AT-RISK PyPhi formal cross-check — CONFIRMED AT-RISK" :: verdict [d=2026-05-15 active]
+  prior_status = "surrogate-tier SUPPORTED 78.5/100% (AXIS A7/A8 surrogate-tier)"
+  pyphi_cross_check = {
+    "H_182 B-bio Φ mean (3 mechanism)": 0.358,
+    "H_187 Trinity-TB-DOM Φ mean (3 mechanism)": 0.359
+  }
+  threshold = "Hc_1283 ≥ 0.5"
+  cross_check_verdict = "AT-RISK CONFIRMED — surrogate PASS (78.5/100%) 였으나 PyPhi formal Φ < 0.5 (0.358, 0.359). Surrogate-vs-formal mismatch evident."
+  recommendation = "AXIS A7 (H_182) + A8 (H_187) surrogate-tier 등재 caveat 강화 — magnitude threshold 미달성"
+  artifact = "state/verify_d_2026_05_15/h178_h182_h187_pyphi_rom_result.json"
+
+@D alt_proxy_compare := "Alternative proxy comparison — mutual_info / predictive_integrated_info 1/2 (anima Φ★ 0/2)" :: meta-verdict [d=2026-05-15 active]
+  scenarios_tested = 2
+  proxy_scores = {
+    "anima_phi_star (current)": "0/2 (worst)",
+    "mi_mip_canonical": "0/2",
+    "mutual_info_pairs_naive": "1/2 (best, captures Scenario 3 correlated > independent ✓)",
+    "predictive_integrated_info_pc1_var": "1/2 (best, PC1 variance ratio)"
+  }
+  recommendation = "mutual_info_pairs_naive 가 direction-sensitive sub-claim 검증 시 anima Φ★ 보다 우수 — anima 측 future verification cycle 에 채택 권장"
+  honest_c3 = "Scenario 1 (random vs structured) 모든 proxy FAIL — structured surrogate 가 orthogonal/sparse 라 실제 IIT integration 아닐 가능성. Scenario 3 (correlated > independent) 만 valid test."
+  artifact = "state/verify_d_2026_05_15/alt_proxy_compare.json"
