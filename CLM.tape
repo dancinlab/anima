@@ -1837,3 +1837,22 @@
   fields_frozen = "init (RANDOM INIT seed=42), arch (cells single-stack d=768 12L 64-cell 8-head 4-kv), data (anima_persona_tier_a_v4 + Phase 1A.6 + tape, 400-500M token, 2-5 epoch), cotrain (AdamW + bf16 + 5000 step + mitosis hook per token), fire ($10-30 H100), falsifier (8 battery), p1 gate (truncated 15-gen 3.4/4 PASS)"
   status = "W1 LANDED (additive_only_mutation via W8 amendment only). pre-fire 종합 dependency: step 0 full p1 (3 ckpt × 5 seed × 10 prompt = 450 gen 5/5 PASS) + step 1 PyPhi anchor carry + step 2 production smoke 별도"
   cross_link = "CLM.tape §V-CLM-DESIGN/AUDIT/FROM-SCRATCH/STEP0/STEP2/V3 + sha256.txt + PR #60"
+
+# ══════════════════════════════════════════════════════════════════════
+# §V-CLM-STEP5-FIRE-PREP — dispatch_h100.sh + cost monitor (2026-05-15)
+# ══════════════════════════════════════════════════════════════════════
+
+@D v_step5_fire_prep := "step 5 .clm v1 fire prep — dispatch script + cost monitor (2026-05-15)" :: protocol [d=2026-05-15 active]
+  artifact = "state/clm_v1_step5_fire_prep_2026_05_15/dispatch_h100.sh"
+  fire_keyword = "OK CLM V1 FROM-SCRATCH FIRE COST $10-30 (user verbatim mandatory)"
+  cost_safety = "$50 hard stop (envelope $10-30 의 1.7× safety margin)"
+  provider = "Vast.ai 또는 RunPod H100 SXM 80GB × 1, wall ~10-20 hr"
+  pre_fire_gate = [
+    "(a) fire keyword user verbatim verified",
+    "(b) spec_frozen.json sha256 unchanged (W1 anchor 검증)",
+    "(c) anchor ckpts present (Phase 1A.4 + v5-mitosis cond.5 — arch verification only, weights X)",
+    "(d) corpus bundle prepared (anima_persona_tier_a_v4 + Phase 1A.6 + tape)",
+    "(e) cost monitor activated ($50 hard stop)"
+  ]
+  fire_status = "DRY-RUN dispatch script LANDED. actual fire requires PROVIDER + credentials + user verbatim fire_keyword."
+  cross_link = "CLM.tape §V-CLM-STEP4-SPEC-FROZEN sha256 + state/clm_v1_step5_fire_prep_2026_05_15/dispatch_h100.sh + PR #61"
