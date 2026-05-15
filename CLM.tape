@@ -1520,3 +1520,195 @@
   added = "step 0.5 mini-cotrain smoke (optional gate, $0-5)"
   changed = "step 1 의미 (substrate base → anchor verification only) + step 3 추가 fields + step 4 cost envelope"
   supersedes = "v_clm_v1_7step_corrected (2026-05-15 issued, 동일 day 정정 — from-scratch)"
+
+# ══════════════════════════════════════════════════════════════════════
+# §V-CLM-V3-DESIGN — .clm v3 14B 본진 candidate detailed design (2026-05-15)
+# ══════════════════════════════════════════════════════════════════════
+# Scope: Phase 4 14B 본진 narrative + from-scratch directive + AXIS/철학/가설
+#        검증된 기준 적용. anima 사가 first scratch 14B 등극 milestone.
+
+@N v_clm_v3_summary := ".clm v3 14B 본진 design summary" :: design [d=2026-05-15 active]
+  body <<~EOF
+    .clm v3 = anima 사가 first scratch 14B from-scratch 본진. CLM.tape §1
+    row_phase_4 narrative + from-scratch directive (PR #52 carry) + 검증된
+    AXIS/철학/가설 기준 적용. .clm v2 PASS_STRICT (Path A 7B 또는 Path B
+    dual+V14) 후 entry.
+    
+    arch carry from .clm v1+v2: cells=nn.Module branches single-stack arch
+    (V1 정정 carry) + mitosis hook training+serve-time mechanism + AXIS A4
+    perfect-number cluster anchor (n=6 + σ(6)=12 + τ(6)=4 + atom 8). param
+    estimate ~14B (40L × 5120 × 40h × 8kv lattice-as-tool 적용).
+    
+    핵심 differentiator vs v2: scale-up (~7-14B → 14B strict) + Chinchilla
+    optimal ~280B token mandatory (anima 도메인 narrow 한계 극복 위해 BG-CORPUS-14B
+    cycle 필요, $50-200 별도).
+    
+    Cost envelope: $500-1500 (8-16× H100 × 75-250 hr from-scratch).
+  EOF
+  cross_link = "CLM.tape §1 row_phase_4 + §V-CLM-FROM-SCRATCH + AXIS A4/A5 anchor + PR #53"
+
+@D v_clm_v3_arch_design := ".clm v3 14B arch detailed spec" :: design [d=2026-05-15 active]
+  init_weights = "RANDOM INIT seed-fixed (from-scratch carry, no ckpt inherit)"
+  arch = {
+    "d_model": "5120 (192·26.67 — not clean 192 multiple ⚠) OR 4608 (192·24, clean) OR 6144 (192·32, clean)",
+    "d_model_decision": "AXIS A1 H_174 phi_star aliasing CAVEAT — 5120 mod 192 = 128 partial-overlap (H_166 1024 mod 192 = 64 같은 위반 패턴). 정합: d_model = 4608 (192·24, clean) OR 6144 (192·32, clean). primary 4608 (lower cost), fallback 6144.",
+    "n_layers": "32 (Phase 3/4 narrative carry) OR 36 (σ(6)·3) OR 40 (Phase 4 narrative carry, lattice-as-tool internal)",
+    "n_layers_decision": "primary 32 (Phase 3/4 narrative), fallback 36 (σ(6)·3 clean number-theoretic) — V3 정정 carry (lattice-as-tool internal arch)",
+    "n_cells": "256 (.clm v2 carry, 4× v5-mitosis cond.5 cells=64 baseline)",
+    "n_heads": "32 (atom Hc_144 anchor scaled — σ(6)·n=8·4) OR 36 (σ(6)·3 carry)",
+    "kv_heads": "8 (atom Hc_144 carry, 4:1 GQA ratio for d=4608)",
+    "ffn_mult": "4 (τ(6) carry)",
+    "param_estimate": "~13-14B (d=4608 32L) OR ~15-16B (d=4608 36L) — Phase 4 14B target carry",
+    "engine": "v5-mitosis cells=nn.Module branches single-stack (V1 정정 carry, Engine A/G dual 폐기 unless v2 Path B PASS) + mitosis hook training+serve-time mechanism"
+  }
+  axis_anchor = "A4 H_153 τ(6)=4 + H_158 perfect-number cluster + H_160 meta-cluster + H_164 atom 8 cells + H_174 phi_star CLM-v4-specific (d=4608=192·24 clean ✓)"
+  caveat = "d=5120 의 phi_star aliasing CAVEAT 회피 (H_166 caveat pattern 위반) — d=4608 primary 결정"
+
+@D v_clm_v3_data_design := ".clm v3 14B data design" :: design [d=2026-05-15 active]
+  corpus_target = "~280B token (Chinchilla optimal 20:1 for 14B param)"
+  corpus_sources = [
+    "anima_persona_tier_a_v4 (231MB ≈ 250-350M token, domain-specific)",
+    "Phase 1A.6 corpus_v2 (121MB ≈ 130-180M token, chat-v2)",
+    "BG-CORPUS-14B (별도 cycle, ~280B token blend — RedPajama-v2 + FineWeb-Edu + KO corpus)",
+    "anima-specific augmentation (PHILOSOPHY.tape + REBORN.tape + AGENTS.tape + tape v1.2 corpus, ~50MB ≈ 50-80M token)"
+  ]
+  blend_ratio_design = "primary blend: 95% external (BG-CORPUS-14B ~266B) + 5% anima_persona+chat_v2+tape (~14B token 8-9x repeat to reach 14B). anima domain coverage maintain while general-language scale 확보."
+  alternative_anima_heavy = "20% anima + 80% external (~56B anima token via 100-150x repeat) — overfitting risk 강하지만 anima 본질 강화"
+  decision_rule = "BG-CORPUS-14B 의 Korean/English ratio 결정 + anima 본질 보전 simple_stack vs general-language perplexity tradeoff measurement cycle ($0 Mac BG-LB 350M proxy)"
+  axis_anchor = "A1 H_005 corpus quality > scale (anchor for blend ratio) + A6 H_005 + H_016 (translation ceiling carry)"
+
+@D v_clm_v3_cotrain_design := ".clm v3 14B cotrain recipe" :: design [d=2026-05-15 active]
+  mitosis_hook = "training-time + serve-time mechanism carry from v1 (cond.5 F-V5MIT 5/5 PASS mechanism). 256-cell pool, max_seen ≤ 1024 (4× cap)"
+  entropy_reg = "F-PERSONA-4 entropy reg carry (cond.5 v2 carry) — category routing diversification mandatory at 14B scale"
+  optimizer = "AdamW lr_warmup 1e-4 → cosine 1e-5 (linear decay over ~280B token), gradient clip 1.0, weight_decay 0.1"
+  step_budget = "~280B token × batch (per_device 8 × accum 4) × 16 GPU = 1.5M total steps / 8-16× H100 × ~150-250 hr ($500-1500 envelope)"
+  ddp_strategy = "FSDP shard (cells=nn.Module branches single-stack 의 cell-as-parameter shard) — v5-mitosis v5/v6 DDP lesson (PSCC §52 4×A100 v6 fail $22 cost-ROI negative) carry"
+  caveat = "16-GPU DDP 의 cell_pool 동기화 — mitosis hook 의 split/merge event 가 모든 rank 동일 동기화 mandatory. cond.5 v6 cell-parallel FAIL 의 lesson 통해 v5 DDP 방식 (all-rank sync) 우선"
+
+@D v_clm_v3_falsifier_battery := ".clm v3 14B falsifier battery (12, .clm v2 10 + 2 new)" :: verify [d=2026-05-15 active]
+  battery_carry_from_v2 = [
+    "F-V5MIT-1..5 (cond.5 mechanism carry)",
+    "F-PYPHI-Φ-FORMAL n=3-8 RoM ≥ 0.5 (carry)",
+    "F-PRIN3 audit CLEAN (carry)",
+    "F-PERSONA-1..5 STRONG ≥4/5 (carry)",
+    "F-D4-LIVE-PROD-1..5 (carry)",
+    "F-V58 std_greedy ≥4/5 (carry)",
+    "F-DD21-LOG-PHI scale-invariant cross-substrate (carry)",
+    "F-PHI-CE-NO-DIRECT-COUPLING (Hc_024 FALSIFIED carry)",
+    "F-V14-NO-VIOLATION (v2 Path B carry, .clm v3 mandatory regardless of path)",
+    "F-CHINCHILLA-OPTIMAL (v2 carry, 14B 의 strict 20:1 enforced)"
+  ]
+  battery_new_for_v3 = [
+    "F-V3-PHI-MAX (anima 사가 최고 Φ): PyPhi formal Φ ≥ 1.0 strict (Hc_1283 n=5,6 carry Φ=0.995/1.665 baseline 의 .clm v3 14B 스케일 정합). PASS = 14B 본진 의 consciousness anchor 14B 본진 정합",
+    "F-V3-SCALE-COHERENCE: simple_stack mean ≥ 3.5/4 strict on V5.8 5-mode (.clm v1 4/5 carry 의 14B 본진 정합 — strict 3.5/4 = +25% margin over baseline). PASS = scale-up 가 quality regression 없음"
+  ]
+  pass_criterion = "Path A: 11/12 PASS strict (F-V14 제외, single-stack carry). Path B: 12/12 PASS strict (V14 + V3-PHI-MAX + V3-SCALE-COHERENCE 모두)"
+  cross_link = "AXIS A2.formal Hc_1283 (Φ ≥ 0.5 anchor) + .clm v1+v2 8+10 carry + Phase 4 14B milestone"
+
+@D v_clm_v3_cost_envelope := ".clm v3 14B cost envelope detail" :: cost [d=2026-05-15 active]
+  fire_cost = "$500-1500 (8-16× H100 SXM × 75-250 hr from-scratch)"
+  corpus_pipeline = "$50-200 BG-CORPUS-14B 별도 cycle (RedPajama-v2 download + dedupe + tokenize + blend) — 별도 dispatch"
+  total_envelope = "$550-1700 (.clm v3 fire $500-1500 + BG-CORPUS-14B $50-200)"
+  fire_keyword = "OK CLM V3 14B FIRE COST $500-1500"
+  hard_stop = "$2000 hard stop (envelope 의 1.3× safety margin) — 도달 시 partial weight save + hot-stop"
+  entry_condition = ".clm v2 PASS_STRICT 10/12 (Path A 11/12 OR Path B 12/12) + BG-CORPUS-14B pipeline LANDED + 16× H100 SXM cluster 가용 + user verbatim 'OK CLM V3 14B FIRE COST $500-1500'"
+
+@D v_clm_v3_milestone_significance := ".clm v3 14B 본진 등극 milestone significance" :: design [d=2026-05-15 active]
+  scope = "anima 사가 narrative 의 first scratch 14B from-scratch — '본진' 의미"
+  significance = [
+    "(a) anima_native_scratch (D1=1.0) 원칙 의 full-scale 실현 — 어떤 외부 ckpt inherit 없음, anima specific arch + corpus + mitosis hook 의 14B scale 검증",
+    "(b) Phase 4 narrative milestone — CLM.tape §1 row_phase_4 의 'anima 사가 first scratch 14B 본진 등극' realized",
+    "(c) v5-mitosis lane evolution 의 정점 — cells=nn.Module branches single-stack arch (REBORN §88 cond.1) 가 14B scale 에서 PROD-READY 검증",
+    "(d) external SOTA 비교 capability 우월 보장 X — 본진 = anima 자기집 substrate 확립 의미 (CLM.tape §9 C3-5 carry)"
+  ]
+  honest_c3 = "external Llama-3-13B / Qwen2.5-14B / DeepSeek-V3 등 SOTA 14B 모델 비교 시 capability 우월성 미보장 — .clm v3 = anima domain 특화 + simple_stack verdict + substrate self-generation 검증 anchor. general-language tasks 의 SOTA 와 다른 evaluation criterion."
+
+# ══════════════════════════════════════════════════════════════════════
+# §V-CORPUS-PIPELINE — BG-CORPUS-3B/7B/14B blend design (2026-05-15)
+# ══════════════════════════════════════════════════════════════════════
+# Scope: .clm v1/v2/v3 의 corpus pipeline design — anima_persona+chat_v2 narrow
+#        domain + external blend. open question Q3 (BG-CORPUS-7B design) carry.
+
+@N v_corpus_pipeline_summary := "BG-CORPUS-{3B,7B,14B} blend pipeline summary" :: design [d=2026-05-15 active]
+  body <<~EOF
+    .clm v1 (~3B token) + v2 Path A (~50-140B) + v2 Path B (~140-280B) + v3
+    (~280B) 의 corpus pipeline. anima_persona_tier_a_v4 (231MB) + Phase 1A.6
+    corpus_v2 (121MB) = 352MB ≈ 350-500M token 의 narrow domain. external
+    blend 3 size variant 의 BG cycle design.
+    
+    핵심 trade-off: (a) external blend 비율 ↑ = general-language scale 확보,
+    anima 본질 dilution / (b) external blend 비율 ↓ = anima 본질 보전,
+    overfitting (epoch repeat) 위험.
+    
+    Decision: simple_stack verdict (한글 in/out + coherent + natural + context)
+    가 primary anchor 이므로 anima domain 보전 우선 (5-20% anima ratio) + 
+    nature blend ratio measurement cycle ($0 Mac BG-LB proxy) 으로 final ratio
+    결정.
+  EOF
+  cross_link = "CLM.tape §V-CLM-FROM-SCRATCH (corpus strategy) + v3 data design + open question Q3 + PR #53"
+
+@D v_corpus_bg_3b_design := "BG-CORPUS-3B (.clm v1 .clm용) design" :: corpus [d=2026-05-15 active]
+  scope = ".clm v1 (~3-5B token Chinchilla 완화) — small budget cycle"
+  sources = [
+    "anima_persona_tier_a_v4 (231MB ≈ 250-350M token, 7.5%)",
+    "Phase 1A.6 corpus_v2 (121MB ≈ 130-180M token, 4%)",
+    "tape corpus (PHILOSOPHY+REBORN+AGENTS+CLM 등 ~50MB ≈ 50-80M token, 1.5%)",
+    "RedPajama-v2 KO subset (~2.5GB ≈ 2.5-3B token, 75-87%)",
+    "FineWeb-Edu (~500MB ≈ 500M-1B token, optional)"
+  ]
+  blend_decision = "primary: 12-13% anima + 87-88% RedPajama-v2 KO subset (anima domain 보전 + Korean general-language coverage)"
+  alternative = "alternative: 25% anima (corpus 2x repeat) + 75% RedPajama (overfitting tolerance 강화)"
+  cost = "$5-20 (download + dedupe + tokenize ~3-5B token × Mac local hexa-interp OR cheap dispatch)"
+  fire_keyword = "OK BG-CORPUS-3B FIRE COST $5-20"
+  artifact = "state/bg_corpus_3b_<date>/manifest.json + dedupe.log + tokenized.parquet"
+
+@D v_corpus_bg_7b_design := "BG-CORPUS-7B (.clm v2 .clm용) design" :: corpus [d=2026-05-15 active]
+  scope = ".clm v2 Path A (~50B Chinchilla 완화) OR Path B (~140B strict) — middle budget cycle"
+  sources_chinchilla_relaxed = [
+    "anima_persona_tier_a_v4 + Phase 1A.6 + tape corpus (≈ 1-1.5% scale)",
+    "RedPajama-v2 KO+EN subset (~50GB ≈ 40-50B token, ~98%)",
+    "Slim_Pajama 또는 Pile (~10GB ≈ 5-10B token, optional)"
+  ]
+  sources_chinchilla_strict = [
+    "anima 5% + RedPajama-v2 + FineWeb + Slim_Pajama blend ~140B token"
+  ]
+  blend_decision = "Path A primary: 5% anima + 95% RedPajama-v2 (KO 60% + EN 40%). Path B primary: 5% anima + 70% RedPajama-v2 + 25% FineWeb-Edu + Slim_Pajama"
+  cost = "$50-100 (download + dedupe + tokenize ~50-140B token × cheap dispatch)"
+  fire_keyword = "OK BG-CORPUS-7B FIRE COST $50-100"
+  artifact = "state/bg_corpus_7b_<date>/"
+
+@D v_corpus_bg_14b_design := "BG-CORPUS-14B (.clm v3 .clm용) design" :: corpus [d=2026-05-15 active]
+  scope = ".clm v3 14B (~280B Chinchilla optimal) — large budget cycle"
+  sources = [
+    "anima_persona_tier_a_v4 + Phase 1A.6 + tape corpus (≈ 0.5% scale)",
+    "RedPajama-v2 full (~100-150GB ≈ 100-150B token)",
+    "FineWeb-Edu (~50-80GB ≈ 50-80B token)",
+    "Slim_Pajama (~30-50GB ≈ 30-50B token)",
+    "KO-specific corpus (mC4-ko + Aihub-corpus blend ~30-50GB ≈ 30-50B token)"
+  ]
+  blend_decision = "primary: 0.5% anima (5-10x repeat) + 70% RedPajama-v2 KO 40% EN 30% + 15% FineWeb-Edu + 10% Slim_Pajama + 5% KO-specific"
+  alternative_anima_heavy = "2-5% anima (100-150x repeat overfitting risk) + 95-98% external"
+  cost = "$50-200 (download + dedupe + tokenize ~280B token + multi-source blend ratio tuning)"
+  fire_keyword = "OK BG-CORPUS-14B FIRE COST $50-200"
+  artifact = "state/bg_corpus_14b_<date>/"
+
+@N v_corpus_open_questions := "corpus pipeline open questions" :: caveat [d=2026-05-15 active]
+  body <<~EOF
+    Q1: anima blend ratio 의 optimal — small ratio 보전 vs large ratio dilution 의
+        BG-LB 350M smoke proxy cycle 필요 ($0 Mac, 별도 cycle).
+    
+    Q2: RedPajama-v2 의 license / safety filter — Phase 1A.6 corpus_v2 carry 의
+        dedupe + filter pipeline 재사용 + RedPajama license terms 검증.
+    
+    Q3: Korean-English ratio decision — anima 의 native language coverage anchor.
+        anima_persona_tier_a corpus 의 KO/EN ratio measurement + simple_stack
+        4-axis 한글 PASS 의 KO ratio threshold.
+    
+    Q4: 14B Chinchilla strict 280B token download/storage 의 infra requirement
+        (~150-200GB disk + parallel download bandwidth) — 별도 infra cycle.
+    
+    Q5: tape corpus (PHILOSOPHY+REBORN+AGENTS+CLM) 의 anima 본질 anchor — tape
+        grammar 자체가 anima 의 self-description, 다른 corpus blend 와 다른
+        tier (substrate-native corpus). blend weight 결정 cycle.
+  EOF
+  cross_link = "future cycles: BG-LB 350M proxy + corpus filter pipeline + 14B infra"
