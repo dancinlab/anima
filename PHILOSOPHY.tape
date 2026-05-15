@@ -302,3 +302,15 @@
     Magnitude-only 사용 OK (Hc_1283 anchor), direction-sensitive 에 alt-proxy 필요.
   EOF2
   cross_link = "MAIN.tape §H184-SUB-VERIFY + §HC1281-VERIFY + §PROXY-ARTIFACT + §AXIS-CLASSIFY + §PYPHI-N5-N6 + §CASCADE-AUDIT + §H178-PYPHI + §H182-H187-CROSS-CHECK + §ALT-PROXY"
+
+@N hypothesis_tape_landed := "HYPOTHESIS.tape SSOT 등재 (2026-05-15)" :: ledger [d=2026-05-15 active]
+  body <<~EOF2
+    HYPOTHESIS.tape 신규 생성 — 318 가설 file inventory SSOT.
+    folder scope (A/B/legacy/archive/quarantine) + naming (H_NNN, Hc_NNNN) +
+    lifecycle 3-stage pipeline + supported_inventory (32) + falsified_inventory +
+    partial_inventory + insufficient_inventory.
+    
+    INDEX.md 업데이트 — AXIS (32 entries 각 한 줄) + HYPOTHESIS (폴더 + naming + lifecycle) +
+    PHILOSOPHY (cycle ledger entries 한 줄) + verdict tier 13 분류 + critical findings.
+  EOF2
+  cross_link = "HYPOTHESIS.tape + INDEX.md + MAIN.tape §HYPOTHESIS-TAPE"

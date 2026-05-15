@@ -181,3 +181,7 @@
   caveat_added = [H_166]  # SUPPORTED-IDENTITY-WITH-PHI-STAR-CAVEAT
   clean_anchor_confirmed = "Hc_1283 anima Φ★ D=384 cells=64 = 192×2 → CLEAN per H_174 taxonomy"
   cross_link = "[[h174_cascade]] in MAIN.tape"
+
+@X hypothesis_tape := "HYPOTHESIS.tape" :: catalog [active]
+  scope = "318 가설 inventory + naming convention + lifecycle + supported/falsified/partial/insufficient catalogs"
+  cross_link = "AXIS.tape SUPPORTED-tier 32 entries 는 HYPOTHESIS.tape supported_inventory 와 동일"

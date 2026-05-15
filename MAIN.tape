@@ -1081,3 +1081,12 @@
   recommendation = "mutual_info_pairs_naive 가 direction-sensitive sub-claim 검증 시 anima Φ★ 보다 우수 — anima 측 future verification cycle 에 채택 권장"
   honest_c3 = "Scenario 1 (random vs structured) 모든 proxy FAIL — structured surrogate 가 orthogonal/sparse 라 실제 IIT integration 아닐 가능성. Scenario 3 (correlated > independent) 만 valid test."
   artifact = "state/verify_d_2026_05_15/alt_proxy_compare.json"
+
+# ══════════════════════════════════════════════════════════════════════
+# §HYPOTHESIS-TAPE — HYPOTHESIS.tape SSOT 생성 (2026-05-15)
+# ══════════════════════════════════════════════════════════════════════
+
+@D hypothesis_tape_created := "HYPOTHESIS.tape 생성 — 318 가설 inventory SSOT" :: governance [d=2026-05-15 active]
+  scope = "318 가설 file inventory + naming convention + lifecycle pipeline + supported/falsified/partial/insufficient catalogs"
+  cross_link = "MAIN.tape (verdict source) + AXIS.tape (9-axis catalog) + PHILOSOPHY.tape (ledger) + INDEX.md (navigation)"
+  catalogs = ["supported_inventory (32 entries 9-axis)", "falsified_inventory (5 FALSIFIED + 3 NOT-PASSED-direction + 1 META)", "partial_inventory (9 from A/B)", "insufficient_inventory (7 INSUFFICIENT + 4 DEFERRED)"]
