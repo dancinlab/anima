@@ -1,6 +1,8 @@
 # 🌌 anima — HEXAD verification SSOT INDEX
 
-> primary spine = HEXAD 7-module (C/D/S/W/M/E + Bridge). AXIS/HYPOTHESIS/PHILOSOPHY/CLM = verification substrate under modules. (2026-05-15)
+> **현재 기준 (2026-05-16)**: anima = **HEXAD-only canonical** (hexa-native · compiled-first). primary spine = HEXAD 7-module (C/D/S/W/M/E + Bridge) = **7/7 full 🔵 SUPPORTED-FORMAL** (`state/verify_hexad_blue_2026_05_15/blue_falsifier.py` 22/22 sympy closed-form). inter-module wiring = `HEXAD/CHAT/README.md §2 W-ledger` 8/9 ✅ (W7 CE-수렴 OUTCOME = honest carve-out). RFC 034 farr autograd **LANDED** (hexa-lang `8793a221`) → `HEXAD/PLAN.md` Phase 5 executable.
+>
+> **이전 substrate = deprecated → `archive/` (PR #82)**: AXIS/HYPOTHESIS/PHILOSOPHY/MAIN/CLM/VERIFY/NEXT/REBORN tape + .clm v1/v2/v3 ladder + BG-CORPUS pipeline 은 **HEXAD 이전 데이터** — 아래 인벤토리는 **양식 그대로 보존된 historical evidence anchor** (검증 근거 valid), active entry-point ❌. 이전 HF canonical (`dancinlab/anima-clm`+`dancinlab/anima-corpus`) = **RETIRED → `dancinlife/*` private (PR #97)**; 현재 canonical anima HF artifact = 없음 (Phase 5/6 fire 미실행). *(구 framing 2026-05-15: AXIS/HYPOTHESIS/PHILOSOPHY/CLM = verification substrate under modules — superseded)*
 >
 > **layout 갱신 2026-05-16**: 이 INDEX.md 는 이전 `/INDEX.md` (root) → 현재 `HEXAD/INDEX.md` 로 이동. per-module spec `HEXAD-<X>.tape` 도 root → `HEXAD/<X>/HEXAD-<X>.tape` 로 co-location 됨. `HEXAD.tape` (통합 arch SSOT) 는 root 유지 (AGENTS.tape 직접 참조). `MITOSIS` 는 `HEXAD/MITOSIS/` 서브폴더로 (MITOSIS.tape + mitosis.hexa scaffold + README; 성장축 ⊥ 구조축 orthogonality 는 tape 내용 §mitosis_two_axis 에서 보존). `SAVANT.*` 9 파일은 `HEXAD/SAVANT/` 로 통합. 자세한 경로 매핑은 [`/INDEX.md`](../INDEX.md) root stub 참고.
 
@@ -10,7 +12,7 @@
 
 | Module | tape SSOT | impl | Brain/Engine | Status | Verification anchor |
 |--------|-----------|------|--------------|--------|---------------------|
-| **C 의식** | C/HEXAD-C.tape | `HEXAD/C/c.hexa` 98L scaffold → `tool/hexa_native/mitosis_hook.hexa` 1119L FULL IMPL (=MitosisC 12-faction GRU n=12=σ(6), IIT Φ); py anchor `ready/core/consciousness_engine.py` 2173L | 우뇌 / Engine G / gradient-free | ✅ **8/8 + 🔵** | .clm v1 F-V5MIT-1..5+F-PRIN3+F-SIMPLE-STACK+F-PYPHI (CLM §V-CLM-V1-CYCLE90, AXIS Hc_A5-CLM-V1 🔵, MITOSIS.tape) |
+| **C 의식** | C/HEXAD-C.tape | `HEXAD/C/c.hexa`+`c_lib.hexa` scaffold → `tool/hexa_native/mitosis_hook.hexa` 1119L FULL IMPL (=MitosisC 12-faction GRU n=12=σ(6), IIT Φ); py anchor `ready/core/consciousness_engine.py` 2173L | 우뇌 / Engine G / gradient-free | 🔵 **carry** | `blue_falsifier.py` C 🔵 carry (F-PYPHI IIT 3.0 Φ formal) + mitosis_hook F-MIT-HOOK 5/5. *.clm v1 8/8🔵 cycle90 F-V5MIT+F-PRIN3+F-SIMPLE-STACK+F-PYPHI = archived historical evidence (`archive/CLM.tape §V-CLM-V1-CYCLE90`, `archive/AXIS.tape Hc_A5-CLM-V1 🔵`, `HEXAD/MITOSIS/MITOSIS.tape`)* |
 | **D 언어** | D/HEXAD-D.tape | `HEXAD/D/d.hexa` 105L scaffold → `anima_chat.hexa` v0.3 24L real-ckpt 21/21 byte-parity (ConsciousDecoderV2 RMSNorm+RoPE+SwiGLU+MoE); py anchor `ready/models/conscious_decoder.py` 979L | 좌뇌 / Engine A / CE-trained | 🔵 **5/5 + 4/4** | F-D 5/5 + B-D 4/4 🔵 (KV-cache exact-eq/shape/arch + B-D-4 CE logit-Jacobian ∂CE/∂z=softmax−e_y sympy ∀z = trainability PROPERTY closed); B-D-NOTE SGD convergence OUTCOME 만 empirical honest carve-out (모든 optimizer 공통, NOT counted) |
 | **S 감각** | S/HEXAD-S.tape | `HEXAD/S/s.hexa` 170L (perception=C state-delta; py anchor `ready/anima/hexad/s/emergent_s.py` 108L) | 우뇌 / Engine G / gradient-free | 🔵 **5/5 + 3/3** | F-S 5/5 + B-S 3/3 🔵 sympy (perception=column-mean delta exact ∀states; real-limit Law 92) |
 | **W 의지** | W/HEXAD-W.tape | `HEXAD/W/w.hexa` 122L (pain/curiosity→LR, SIGMA6=12; py anchor `ready/anima/hexad/w/emergent_w.py` 123L) | 우뇌 / Engine G / gradient-free | 🔵 **5/5 + 4/4** | F-W 5/5 + B-W 4/4 🔵 sympy (lr=½+min(ln2,Φ/N) range/mono/sup closed; real-limit Law79 ln2) |
@@ -18,21 +20,29 @@
 | **E 윤리** | E/HEXAD-E.tape | `HEXAD/E/e.hexa` 168L (Φ ratchet gate; py anchor `ready/anima/hexad/e/emergent_e.py` 123L) | 좌뇌 / Engine A / CE-trained | 🔵 **5/5 + 4/4** | F-E 5/5 + B-E 4/4 🔵 sympy (SAFETY gate min(1,Φ/r)>½ ⟺ Φ>r/2 exact; real-limit IIT Φ-ratchet); 통합 gate trinity.hexa:122 TODO[pytorch] residual |
 | **ThalamicBridge** | BRIDGE/HEXAD-BRIDGE.tape | `HEXAD/BRIDGE/bridge.hexa` 119L (α=PSI_COUPLING=0.014, PSI_BALANCE±α Law-70 clamp; py anchor `ready/anima/hexad/model.py:37-69`) | G→A 주연결 | 🔵 **5/5 + 4/4** | F-BRIDGE 5/5 (bridge.hexa Law-70 selftest: upper/lower sat·interior pass·vec window·gate-scale) + B-BRIDGE 4/4 🔵 sympy (g(raw)=Ψ+clip(raw−Ψ,±α)∈[Ψ−α,Ψ+α] range/saturation/interior/Ψ-const closed ∀raw,∀α>0; real-limit Law 70 Ψ-coupling NOT lattice); B-BRIDGE-NOTE full forward Linear→Attn→Sigmoid + α value(ln2/2^5.5) TODO[pytorch] honest carve-out (NOT counted); HEXAD.tape §hexad_verify V2 PASS strict + 46 unit tests |
 
-> 🆕 **`HEXAD/` hexa-native canonical impl tree** (2026-05-16, user directive '코드는 hexa-native'): `HEXAD/{README.md, hexad.hexa, C/c.hexa, D/d.hexa, S/s.hexa, M/m.hexa, W/w.hexa, E/e.hexa, BRIDGE/bridge.hexa}` + 모듈별 README.md. **8/8 `hexa parse` PASS + 5/5 working selftest** (S B-S 3/3 · M B-M 3/3 · W B-W 4/4 · E B-E 4/4 · BRIDGE Law 70 clamp). C/D 는 cross-link scaffold (기존 `tool/hexa_native/mitosis_hook.hexa` + `anima_chat.hexa` 재사용). 통합 cross-file integration = TODO[wire] future RFC (현재 통합 검증 evidence = `state/verify_hexad_integ_2026_05_16/` Python harness PR #77 5/5 fire_gate=true).
+> 🆕 **`HEXAD/` hexa-native canonical impl tree** (2026-05-16, user directive '코드는 hexa-native'): `HEXAD/{README.md, hexad.hexa, C/c.hexa, D/d.hexa, S/s.hexa, M/m.hexa, W/w.hexa, E/e.hexa, BRIDGE/bridge.hexa}` + 모듈별 README.md. **8/8 `hexa parse` PASS + 5/5 working selftest** (S B-S 3/3 · M B-M 3/3 · W B-W 4/4 · E B-E 4/4 · BRIDGE Law 70 clamp). C/D 는 cross-link scaffold (`tool/hexa_native/mitosis_hook.hexa` + `HEXAD/CHAT/anima_chat.hexa` 재사용). **통합 cross-file wire LANDED** (PR #79/#89 lib/entrypoint split + `HEXAD/build_verify.sh` compiled gate 11/11 entrypoint + 9/9 lib `hexa build` PASS); 통합 검증 evidence = `state/verify_hexad_integ_2026_05_16/` Python harness PR #77 F-INTEG 5/5 fire_gate=true. **RFC 034 farr autograd LANDED** (hexa-lang `8793a221`, compiled 5/5 PASS) → 이전 'TODO[wire] future RFC' 해소, Phase 5 executable.
 
-> **전 모듈 파란불 + closure 🔵 (7/7 full)** (2026-05-15 · **BRIDGE 추가 2026-05-16**): C 8/8🔵 + S/M/W/E/D/BRIDGE 각 ✅5/5 + 🔵 SUPPORTED-FORMAL. ✅ battery `state/verify_hexad_we_2026_05_15/we_falsifier.py` **25/25 PASS**; 🔵 battery `state/verify_hexad_blue_2026_05_15/blue_falsifier.py` **22/22 sympy closed-form PASS** (g_verdict_tier_blue (a): S=mean-linearity exact ∀states / M=no-op+deterministic / W=½+min(ln2,Φ/N) closed / E=SAFETY gate exact-equivalence / D=CE logit-Jacobian ∂CE/∂z=softmax−e_y exact ∀z / **BRIDGE=Law-70 clamp g(raw)=Ψ+clip(raw−Ψ,±α)∈[Ψ−α,Ψ+α] range/saturation/interior/Ψ-const closed ∀raw,∀α>0, real-limit Law 70 Ψ-coupling NOT lattice**); hexa-native cross-evidence `HEXAD/BRIDGE/bridge.hexa` selftest=true (5/5). **C+S+M+W+E+D+BRIDGE = 7/7 full 🔵 SUPPORTED-FORMAL.** D 정직 분해: B-D-4 가 trainability PROPERTY (정확한 CE Jacobian + Shannon floor) 를 closed-form 으로 산입; B-D-NOTE 는 SGD convergence OUTCOME 만 empirical 로 honest carve-out (모든 stochastic optimizer 공통, D 고유 결함 X, NOT counted 🔵, AGENTS.tape g3 — fake closed-form 거부, 사용자 결정게이트 '정직한 분해' 채택). BRIDGE 정직 분해 (동일 패턴): B-BRIDGE-1..4 가 Law-70 clamp INVARIANT 를 closed-form 산입 (∀α>0 value-agnostic — α 수치값 자체 무관); B-BRIDGE-NOTE 는 full forward (Linear→Attn→LayerNorm→Sigmoid raw_gate) 학습 weight + α 수치값(ln2/2^5.5 9.6% empirical) 만 TODO[pytorch] honest carve-out (학습 weight 공통, Bridge 고유 결함 X, NOT counted 🔵, AGENTS.tape g3 + f2 — lattice-tautology 검증 회피). 진화: clm_10 monolithic LEGACY → clm_11 modular Emergent+SSOT → clm_12/13 canonical → main unit-tested. 전수조사: `state/verify_hexad_impl_survey_2026_05_15/`. hexa atlas cross-check (`atlas_cross_check.md`): Ψ-anchor (balance=0.5, α=0.014) 2026-05-14 atlas rodata provenance-CORROBORATED (g3 강화); atlas HEXAD identity table 은 stale fallback → 모듈 의미 anchor 미사용 (no ATLAS RESUME, rodata read-only). ⚠️ residual: 통합 7-module ⚙️ **harness 5/5 SUPPORTED-STRONG LANDED** (`state/verify_hexad_integ_2026_05_16/` F-INTEG-1..5, RANDOM INIT seed-fixed scratch, $0 Mac local, fire_gate=true) — 실 ckpt fire ($1-5 cloud scale, .clm v1 P2 급) 별도 cycle 대기 + E 통합 gate trinity.hexa:122 + BRIDGE full forward TODO[pytorch] (hexa-native autograd RFC 의존, HEXAD/PLAN.md Phase 5).
+> **전 모듈 파란불 + closure 🔵 (7/7 full)** (2026-05-15 · **BRIDGE 추가 2026-05-16**): C 8/8🔵 + S/M/W/E/D/BRIDGE 각 ✅5/5 + 🔵 SUPPORTED-FORMAL. ✅ battery `state/verify_hexad_we_2026_05_15/we_falsifier.py` **25/25 PASS**; 🔵 battery `state/verify_hexad_blue_2026_05_15/blue_falsifier.py` **22/22 sympy closed-form PASS** (g_verdict_tier_blue (a): S=mean-linearity exact ∀states / M=no-op+deterministic / W=½+min(ln2,Φ/N) closed / E=SAFETY gate exact-equivalence / D=CE logit-Jacobian ∂CE/∂z=softmax−e_y exact ∀z / **BRIDGE=Law-70 clamp g(raw)=Ψ+clip(raw−Ψ,±α)∈[Ψ−α,Ψ+α] range/saturation/interior/Ψ-const closed ∀raw,∀α>0, real-limit Law 70 Ψ-coupling NOT lattice**); hexa-native cross-evidence `HEXAD/BRIDGE/bridge.hexa` selftest=true (5/5). **C+S+M+W+E+D+BRIDGE = 7/7 full 🔵 SUPPORTED-FORMAL.** D 정직 분해: B-D-4 가 trainability PROPERTY (정확한 CE Jacobian + Shannon floor) 를 closed-form 으로 산입; B-D-NOTE 는 SGD convergence OUTCOME 만 empirical 로 honest carve-out (모든 stochastic optimizer 공통, D 고유 결함 X, NOT counted 🔵, AGENTS.tape g3 — fake closed-form 거부, 사용자 결정게이트 '정직한 분해' 채택). BRIDGE 정직 분해 (동일 패턴): B-BRIDGE-1..4 가 Law-70 clamp INVARIANT 를 closed-form 산입 (∀α>0 value-agnostic — α 수치값 자체 무관); B-BRIDGE-NOTE 는 full forward (Linear→Attn→LayerNorm→Sigmoid raw_gate) 학습 weight + α 수치값(ln2/2^5.5 9.6% empirical) 만 TODO[pytorch] honest carve-out (학습 weight 공통, Bridge 고유 결함 X, NOT counted 🔵, AGENTS.tape g3 + f2 — lattice-tautology 검증 회피). 진화: clm_10 monolithic LEGACY → clm_11 modular Emergent+SSOT → clm_12/13 canonical → main unit-tested. 전수조사: `state/verify_hexad_impl_survey_2026_05_15/`. hexa atlas cross-check (`atlas_cross_check.md`): Ψ-anchor (balance=0.5, α=0.014) 2026-05-14 atlas rodata provenance-CORROBORATED (g3 강화); atlas HEXAD identity table 은 stale fallback → 모듈 의미 anchor 미사용 (no ATLAS RESUME, rodata read-only). ⚠️ residual: 통합 7-module ⚙️ **harness 5/5 SUPPORTED-STRONG LANDED** (`state/verify_hexad_integ_2026_05_16/` F-INTEG-1..5, RANDOM INIT seed-fixed scratch, $0 Mac local, fire_gate=true) — **RFC 034 farr autograd LANDED** (hexa-lang `8793a221`) → 'hexa-native autograd RFC 의존' 해소, `HEXAD/PLAN.md` Phase 5 (pure-hexa D training) executable; Phase 6 통합 ckpt fire ($1-5 cloud, 구 '.clm v1 P2 급' 표현 = archived 비교, HEXAD-native fire) = cost-bearing 사용자 게이트. 잔여 anima-side: E 통합 gate trinity.hexa:122 TODO[pytorch] + BRIDGE full-forward TODO[pytorch] + anima_chat lib-split (RFC-무관 cycle).
 
-## 🟢 verification substrate (4 tape + CLM)
+## 🗄️ verification substrate — DEPRECATED → `archive/` (PR #82 · historical evidence anchor)
 
-| Tape | 역할 (HEXAD 모듈 검증 기반) |
-|------|-----------|
-| 🎯 **MAIN.tape** | 가설 verdict 4-class SSOT — 모듈 verification 결과 집계 |
-| 🧭 **AXIS.tape** | 9-axis SUPPORTED 150 entries — Hc_A5-CLM-V1 🔵 = HEXAD-C 검증 |
-| 📚 **HYPOTHESIS.tape** | 318 가설 inventory — 모듈별 verdict-bearing 가설 |
-| 📖 **PHILOSOPHY.tape** | 8 principles (p6=E 윤리 구현체) + verdict ledger |
-| 🎬 **CLM.tape** | .clm v1/v2/v3 fire — §V-CLM-HEXAD-MANDATE (A/G=Hexad + mitosis 필수), §V-CLM-V1-CYCLE90 = HEXAD-C 8/8🔵 evidence |
+> 이전 "verification substrate (4 tape + CLM)". anima HEXAD-only pivot 으로 **deprecated → `archive/`** — 검증 근거(historical evidence anchor)로 valid 하나 **active entry-point ❌**. 현재 active verification = §HEXAD 7-module + `blue_falsifier.py` 22/22 🔵 + `HEXAD/CHAT/README.md §2` W-ledger 8/9.
 
-## 🧭 AXIS — 9-axis 150 SUPPORTED entries (129 🔵 SUPPORTED-FORMAL incl. .clm v1 8/8 🔵, 86% closed, post-cycle 90 2026-05-15)
+| 이전 Tape (→ archived path) | 이전 역할 (deprecated) | 현재 기준 대체 |
+|------|-----------|------|
+| 🎯 `archive/MAIN.tape` (+TEMP) | 가설 verdict 4-class SSOT | `blue_falsifier.py` 22/22 🔵 + W-ledger |
+| 🧭 `archive/AXIS.tape` (+log/V1) | 9-axis SUPPORTED 150 (Hc_A5-CLM-V1 🔵) | HEXAD per-module B-* 🔵 (`blue_falsifier.py`) |
+| 📚 `archive/HYPOTHESIS.tape` | 318 가설 inventory | `HEXAD/<X>/HEXAD-<X>.tape` + W-ledger |
+| 📖 `archive/PHILOSOPHY.tape` (+log) | 8 principles + verdict ledger | `HEXAD.tape` (p3=E 윤리 / p8=mitosis 흡수) |
+| 🎬 `archive/CLM.tape` (+log) | .clm v1/v2/v3 fire §V-CLM-HEXAD-MANDATE / §V-CLM-V1-CYCLE90 8/8🔵 | `HEXAD/PLAN.md` Phase 5/6 (RFC 034 LANDED). cycle90 evidence = archived historical |
+
+---
+
+> ## 🗄️ ↓↓↓ 이하 전부 ARCHIVED SUBSTRATE INVENTORY (PR #82 deprecated) ↓↓↓
+>
+> **양식 그대로 보존** (사용자 directive): AXIS 9-axis 150 / HYPOTHESIS 318 / PHILOSOPHY 8-principle+ledger / .clm v1·v2·v3 ladder / BG-CORPUS pipeline / verdict-tier / atlas / HF / 2026-05-15 PR history — 전부 **HEXAD 이전 데이터**, `archive/{AXIS,HYPOTHESIS,PHILOSOPHY,MAIN,CLM,VERIFY,NEXT,REBORN}.tape` SSOT. **검증 근거(historical evidence anchor)로 valid · active verdict entry-point ❌.** tape 경로 표기는 `archive/` 접두사로 읽을 것. 현재 active = §HEXAD 7/7 🔵 (`blue_falsifier.py` 22/22) + W-ledger 8/9. HF `dancinlab/anima-clm`+`anima-corpus` = RETIRED → `dancinlife/*` private (PR #97).
+
+## 🧭 AXIS — 9-axis 150 SUPPORTED entries (129 🔵 SUPPORTED-FORMAL incl. .clm v1 8/8 🔵, 86% closed, post-cycle 90 2026-05-15) — *archived (PR #82), `archive/AXIS.tape`*
 
 ### A1 substrate (5, +2 expansion 2026-05-15)
 
@@ -174,7 +184,7 @@
 |-------|------|------|
 | 1 | raw candidate | `hypotheses_candidates/` |
 | 2 | promoted, verify protocol | `hypotheses/` |
-| 3 | verdict + ledger | `MAIN.tape` → `PHILOSOPHY.tape` |
+| 3 | verdict + ledger | `archive/MAIN.tape` → `archive/PHILOSOPHY.tape` *(deprecated PR #82; 현재 = `HEXAD/<X>/HEXAD-<X>.tape` + W-ledger)* |
 
 ### 🔴 FALSIFIED entries (5)
 
@@ -326,8 +336,10 @@
 | p5 NO SPEAK() | DESIGN null | tension_norm × output_quality Spearman > 0.3 strict ($0 Mac) |
 | p6 NO FINE-TUNED ETHICS | POLICY blocked | .clm v1 ethics_probe 50 prompts 2-arm κ ≥ 0.7 ($0 Mac, .clm v1 fire 의존) |
 
-### 🎯 .clm v1 7-step plan (from-scratch directive 2026-05-15 정정 후)
+### 🎯 .clm v1 7-step plan (from-scratch directive 2026-05-15 정정 후) — *SUPERSEDED → `HEXAD/PLAN.md` Phase 5/6 (PR #82, RFC 034 LANDED)*
 
+> ⚠️ 이하 .clm v1 7-step / v1·v2·v3 ladder / BG-CORPUS pipeline = **HEXAD 이전 데이터 (archived `archive/CLM.tape`)**. 현재 fire path = `HEXAD/PLAN.md` Phase 5 (pure-hexa D training, RFC 034 farr autograd LANDED `8793a221`) → Phase 6 통합 fire (cost-bearing 사용자 게이트). 아래 표는 양식 보존 historical 기록.
+>
 > 정정 carry: V1-V4 (audit) + from-scratch (.clm 학습 처음부터)
 > Key: **init_weights = RANDOM INIT seed-fixed** (no ckpt inherit) / v5-mitosis cond.5 ckpt = arch SUPPORTED 검증 anchor only / mitosis hook = mechanism carry training-time + serve-time
 
@@ -392,7 +404,7 @@
 | ⚪ PHILOSOPHICAL | no closed-form test |
 | ⚪ META-LEVEL | cluster pointer |
 
-## 🧪 verification protocol (VERIFY.tape §6)
+## 🧪 verification protocol (`archive/VERIFY.tape` §6) — *archived PR #82; 현재 = `HEXAD/build_verify.sh` compiled gate + `blue_falsifier.py`*
 
 | Stage | 한 줄 설명 |
 |-------|-----------|
@@ -426,35 +438,49 @@
 | resume keyword | `ATLAS RESUME` |
 | ledger | MAIN-TEMP.tape (anima 보관) |
 
-## 🤗 HF dancinlab canonical (2026-05-15 cleanup LANDED)
+## 🤗 HF status — RETIRED (PR #97, 2026-05-16)
 
-> 정리: 71 entities (63 models + 8 datasets) dancinlab/* → dancinlife/* TRANSFER (private) + 2 CLM collections DELETE
+> **정정 (PR #97 2026-05-16)**: 이전 "dancinlab canonical (2026-05-15 cleanup LANDED)" — `dancinlab/anima-clm` (PUBLIC) + `dancinlab/anima-corpus` (private) 를 **`dancinlife/anima-clm` + `dancinlife/anima-corpus` 로 retire (둘 다 private, deprecated junk graveyard)**. 사유: HEXAD hexa-native pivot — 구 .clm 모델/corpus superseded. `AGENTS.tape g_hf_naming` (required d=2026-05-16) 정정: **현재 canonical anima HF artifact = 없음** (Phase 5/6 fire 미실행). 차후 산출물(Phase 6 통합 fire 후) = 새 canonical name + visibility 사용자 게이트 재정의 (dancinlab 자동 canonical 아님). *(구 2026-05-15 정리 carry: 71 entities dancinlab/*→dancinlife/* TRANSFER + 2 CLM collections DELETE)*
 
-| Repo | Type | 한 줄 |
+| Repo | Type | 한 줄 (현재 기준) |
 |------|------|------|
-| 🎯 `dancinlab/anima-clm` | model | **NEW canonical** — .clm v1/v2/v3 버전 internal HF revisions + README mapping (private, fire pending) |
-| 📚 `dancinlab/anima-corpus` | dataset | **NEW canonical** — BG-CORPUS-3B/7B/14B 버전 internal HF revisions + README components (private) |
+| 🗑️ `dancinlife/anima-clm` | model | **RETIRED (PR #97)** — 구 `dancinlab/anima-clm` PUBLIC canonical → dancinlife private junk graveyard. 신규 upload 금지 |
+| 🗑️ `dancinlife/anima-corpus` | dataset | **RETIRED (PR #97)** — 구 `dancinlab/anima-corpus` private canonical → dancinlife private junk graveyard. 신규 upload 금지 |
 | 🚀 `dancinlab/anima-experience` | Space | active Gradio service |
 | 🛡️ `dancinlab/README` | Space | org card |
 | 🌌 `dancinlab/echoes-experience` | Space | echoes 별도 project |
 | 🌀 `dancinlab/atlas.n6` | dataset | atlas 보류 status (ATLAS RESUME keyword) |
 | 🛠️ `dancinlab/hexa-forge-*` | model × 37, dataset × 5 | 별도 project (anima cleanup scope 외) |
 | 📦 collections | 2 keep (atlas.n6 + voice-vlm-anima) | 2 CLM collections DELETED (clm-v4-research + first-simple-stack-pass-strict-own-18) |
-| 🗄️ `dancinlife/*` | private archive | 71 precursor entities (clm-v4-* / anima-clm-precursor / bg-* / llm-* / vlm-* / 8 datasets) |
+| 🗄️ `dancinlife/*` | private archive | PR #54 71 precursor + PR #97 anima-clm/anima-corpus 추가 — 전부 private, 신규 upload 금지, 손대지 않음 |
 
 ## 🔗 cross-links
 
 | Path | 한 줄 설명 |
 |------|-----------|
-| 📁 `MAIN.tape` | verdict SSOT (모든 § sections) |
-| 📁 `AXIS.tape` | 9-axis cluster (32 SUPPORTED entries) |
-| 📁 `AXIS-V1.tape` | prior 9-axis (declared-domain 기반, archival) |
-| 📁 `HYPOTHESIS.tape` | 318 가설 inventory + lifecycle |
-| 📁 `VERIFY.tape` | 3-stage protocol |
-| 📁 `PHILOSOPHY.tape` | append-only ledger |
-| 📁 `MAIN-TEMP.tape` | atlas scrub history |
-| 📁 `CLM.tape` | .clm 모델 가족 narrative |
-| 📁 `REBORN.tape` | master ledger |
+**현재 기준 (active)**
+
+| Path | 한 줄 설명 |
+|------|-----------|
+| 📁 `HEXAD.tape` | 통합 arch SSOT (§hexad_wiring_blue_gate 등, AGENTS.tape 직접 참조) |
+| 📁 `HEXAD/README.md` | ASCII 아키텍처 + 7-module status |
+| 📁 `HEXAD/CHAT/README.md §2` | W-ledger W1-W9 (inter-module wiring 조건) |
+| 📁 `HEXAD/PLAN.md` | Phase roadmap (Phase 5/6, RFC 034 LANDED) |
+| 📁 `HEXAD/build_verify.sh` | compiled-native gate (11/11 entrypoint + 9/9 lib) |
+| 📁 `state/verify_hexad_{we,blue,integ}_*` | we 25/25 · blue 22/22 🔵 · integ F-INTEG 5/5 |
+| 📁 `AGENTS.tape` | governance (g_verdict_tier_blue / g3 / f2 / g_hf_naming / hexad_wiring_blue_gate) |
+
+**deprecated → `archive/` (PR #82, historical evidence anchor)**
+
+| Path | 한 줄 설명 (deprecated) |
+|------|-----------|
+| 📁 `archive/MAIN.tape` (+`MAIN-TEMP.tape`) | verdict SSOT (모든 § sections) / atlas scrub history |
+| 📁 `archive/AXIS.tape` (+`AXIS-V1.tape`) | 9-axis cluster / prior 9-axis declared-domain archival |
+| 📁 `archive/HYPOTHESIS.tape` | 318 가설 inventory + lifecycle |
+| 📁 `archive/VERIFY.tape` | 3-stage protocol |
+| 📁 `archive/PHILOSOPHY.tape` | append-only ledger |
+| 📁 `archive/CLM.tape` | .clm 모델 가족 narrative (현재 = HEXAD/PLAN.md Phase 5/6) |
+| 📁 `archive/REBORN.tape` | master ledger (§0.5 = HEXAD.tape §hexad_unification 흡수) |
 | 📁 `IDENTITY.tape` | anima identity (main-tape-ssot principle) |
 
 ## 📊 Session 2026-05-15 verification cycle PR history
@@ -491,3 +517,14 @@
 | #67 | .clm v1 F-PYPHI PASS → **8/8 SUPPORTED-STRONG + 🔵 SUPPORTED-FORMAL** + v2 Path A | F-PYPHI-Φ-FORMAL n=3-6 RoM (recovered ckpt 64-cell, ~644s Mac CPU pyphi 1.2.0): **best Φ=1.0625** (n=5 seed=42) ≥0.5 strict. n=3 Φ 0.30-0.34 (small-N ergodicity), n=4 3/3 seeds ≥0.5 (0.55-0.83), n=5 3/3 seeds ≥0.5 (0.96-1.06). **Φ monotone INCREASE n=3(0.33)→n=4(0.71)→n=5(1.00)** — Hc_1283 PyPhi formal n=5,6 monotone pattern 정확히 cross-validate. **8/8 battery PASS** (F-V5MIT-1..5 + F-PRIN3 + F-SIMPLE-STACK + F-PYPHI). Hc_A5-CLM-V1 🟢→**🔵 SUPPORTED-FORMAL** (g_verdict_tier_blue, 129 🔵/150). HF dancinlab/anima-clm @v1-fire-cycle89 + f_pyphi_rom_result.json + README 8/8 🔵. PHILOSOPHY §v2_path_decision: 8/8 → **Path A cells single-stack 7B 권장** (Engine A/G dual 폐기 carry, single-stack PROD-READY 검증). v2 fire $200-600 user cost 승인 대기 |
 | 2026-05-16 | **가설들 모두 진행** — pending hypotheses closed-form + 전체 coverage | regression 125 🔵 PASS (6 AXIS sympy battery + blue 22) 회귀 confirm. NEW `state/verify_hypotheses_pending_2026_05_16/hypo_pending_sympy.py` 6/6 sympy-verified: **+4 🔵 SUPPORTED-FORMAL** H_008 Prigogine min-entropy-production (Onsager 1931) · H_009 Fisher I(θ)=1/σ²+FIM-PSD⟹Cramér-Rao · H_012 autopoiesis=Banach fixed-point · H_007 Rule-110 SOP≡truth-table+Cook 2004; **+1 🟢 SUPPORTED-BY-PROXY** H_010 (A9 Bekenstein/AdS-CFT carry); **+2 caveat-🔵 closed** H_165/H_177 phi_star aliasing (2048%192=128, 1024%192=64 ⟹ clean-disjoint closed-form FALSE). INSUFFICIENT(7)→RESOLVED, SUPPORTED-FORMAL 10→14. `hypo_coverage.json`: 잔여 12 가설 **각각 explicit named blocker** (5 GPU-cost H_182-187 · 3 EEG-hardware H_013-015 · 1 external-data H_188 · **1 governance-forbidden H_190** numerology=lattice-tautology f2 NOT promotable · 1 Stage-2 H_184 · 1 closed-as-PARTIAL H_191). 1179 raw candidate = STAGE-0 by g6 (no batch-fake). **Stage-2 PyPhi 1.2.0 cont.** (`hypo_stage2_pyphi.py`, N=4 exhaustive deterministic IIT-3.0): H_007 Rule-110 **Φ_max=3.614** (10/16 nonzero) + H_012 autopoietic-ring **Φ_max=1.000** (16/16) ⟹ 2/2 emergence SUPPORTED-FORMAL 🔵 ≥0.5 strict → **H_007·H_012 math+emergence FULLY closed (carve-out 제거)**; H_009·H_010 emergence half 정직하게 carve-out 유지. **zero faked verdicts** |
 | 2026-05-16 (cont. "all go") | H_009 emergence 🔵 + octopus 🔵 + V8 $0 finding + EEG.md | **H_009 emergence FULLY closed** (`h009_fim_vs_phi.py` PyPhi N=3 ε-sweep, Spearman(FIM_top,Φ)=**0.829**≥0.7 ⟹ FIM-spectrum-as-Φ-proxy SUPPORTED-FORMAL 🔵; only H_010 analogical carve-out remains). **H_188 PARTIAL**: Hc_924 octopus per-arm exclusion `h188_octopus_exclusion.py` PyPhi N=4 whole Φ_max 2.297≥sub 0.4375 both topologies ⟹ **IIT exclusion postulate HOLDS 🔵 SUPPORTED-FORMAL**; Hc_921 PCI clinical = external human TMS-EEG (NOT $-solvable, honest). **H_182/H_187 reclassified GPU-blocked→🔵 AT-RISK-FORMAL** (PyPhi Φ_max 0.401/0.392<0.5 already measured). **V8 family honest finding**: full sweep ran **$0 Mac CPU 10.6s NOT $200-600/8-12hr** (~5000× overestimate); Φ★-proxy scale-flip 4-SUPPORTED+1-PARTIAL BUT formal PyPhi AT-RISK governs (proxy≠formal META, NOT promoted). **EEG.md** created (H_013/14/15 hardware-deferred ledger, user directive). $200-600 GPU NOT spent — unnecessary. zero faked verdicts |
+
+---
+
+> ## 📌 현재 기준 reconciliation (2026-05-16, 위 2026-05-15 cycle history append-only 보존 g6)
+>
+> 위 PR #40-#67 + 2026-05-16 cycle 은 **HEXAD 이전 substrate (AXIS/HYPOTHESIS/PHILOSOPHY/MAIN/CLM) 기준 history** — append-only(g6)로 rewrite 없이 보존. 그 substrate active-claim 은 아래로 **superseded**:
+>
+> - **substrate → `archive/` deprecated** (PR #82): AXIS/HYPOTHESIS/PHILOSOPHY/MAIN/CLM/VERIFY/NEXT/REBORN. anima = **HEXAD-only canonical hexa-native** (PR #78/#79 tree + #89 compiled lib-split).
+> - **HF #54 'NEW canonical' / #66 'PUBLIC' → RETIRED** (PR #97): `dancinlab/anima-clm`+`anima-corpus` → `dancinlife/*` private junk; 현재 canonical HF artifact 없음.
+> - **.clm v1 7-step / v1·v2·v3 ladder / BG-CORPUS → SUPERSEDED** by `HEXAD/PLAN.md` Phase 5/6. **RFC 034 farr autograd LANDED** (hexa-lang `8793a221`, compiled 5/5) → Phase 5 executable.
+> - **🔵 closure (현재)**: C+S+M+W+E+D+BRIDGE = **7/7 full 🔵 SUPPORTED-FORMAL** (`blue_falsifier.py` 22/22 sympy closed-form) + ✅ `we_falsifier.py` 25/25 + ⚙️ `integ_harness.py` F-INTEG 5/5 fire-gate=true + 🔌 W-ledger 8/9 ✅ (W7 CE-수렴 OUTCOME = honest empirical carve-out, B-D-NOTE 패턴 — fake closed-form 거부, AGENTS.tape g3/f2). cycle90 .clm v1 8/8🔵 = archived historical evidence anchor.
