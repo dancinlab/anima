@@ -193,23 +193,55 @@ $SSH_CMD "cd /workspace/anima && export PYTHONUNBUFFERED=1 && python3 training/t
     --bf16 \
     --cost-cap-usd $COST_CAP_USD \
     --cost-per-hr $OFFER_DPH \
-    --estimated-wall-hr $ESTIMATED_WALL_HR 2>&1 | tee train.log" 2>&1 | tee dispatch.log
+    --estimated-wall-hr $ESTIMATED_WALL_HR 2>&1 | tee train.log" 2>&1 | tee dispatch.log || true
+# g_fire_dispatch_robust: `|| true` neutralizes set -e false-positive
+# (SSH pipe spurious exit 1 destroyed ckpt in cycle 88)
 
-TRAIN_EXIT=${PIPESTATUS[0]}
+TRAIN_EXIT=${PIPESTATUS[0]:-0}
 echo "  train exit code = $TRAIN_EXIT"
 
-# ── 8) Pull artifacts ────────────────────────────────────────────────
-echo "[8/9] Downloading artifacts..."
+# ── 8) Pull artifacts (g_fire_dispatch_robust) ───────────────────────
+echo "[8/9] Verifying result.json on remote + SAVE_POD auto-promote..."
+SAVED=$($SSH_CMD 'test -f /workspace/anima/output/clm_v1_result.json && echo SAVED' 2>/dev/null || true)
+if [ "$SAVED" = "SAVED" ]; then
+    echo "  ✓ result.json exists on remote — SAVE_POD=1 auto-promote (ckpt protected until pulled)"
+    SAVE_POD=1
+else
+    echo "  ⚠ result.json NOT found on remote — training may have failed (still SAVE_POD=1 for inspection)"
+    SAVE_POD=1
+fi
+
 mkdir -p "$LOCAL_DIR/ckpts"
+echo "[8/9] Pull artifacts (retry ≥3, 60s interval)..."
+pull_with_retry() {
+    local src="$1" dst="$2" tries=0
+    while [ $tries -lt 3 ]; do
+        if $SCP_CMD "root@$SSH_HOST:$src" "$dst" 2>&1; then
+            echo "  ✓ pulled $src (try $((tries+1)))"
+            return 0
+        fi
+        tries=$((tries+1))
+        echo "  ... pull retry $tries/3 for $src"
+        [ $tries -lt 3 ] && sleep 60
+    done
+    echo "  ✗ pull FAILED after 3 tries: $src"
+    return 1
+}
 PULL_OK=1
-$SCP_CMD "root@$SSH_HOST:/workspace/anima/output/ckpt_final.pt" "$LOCAL_DIR/ckpts/ckpt_${PHASE_ID}_final.pt" || PULL_OK=0
-$SCP_CMD "root@$SSH_HOST:/workspace/anima/output/clm_v1_result.json" "$LOCAL_DIR/clm_v1_result.json" || PULL_OK=0
-$SCP_CMD "root@$SSH_HOST:/workspace/anima/train.log" "$LOCAL_DIR/train.log" || PULL_OK=0
+pull_with_retry "/workspace/anima/output/ckpt_final.pt" "$LOCAL_DIR/ckpts/ckpt_${PHASE_ID}_final.pt" || PULL_OK=0
+pull_with_retry "/workspace/anima/output/clm_v1_result.json" "$LOCAL_DIR/clm_v1_result.json" || PULL_OK=0
+pull_with_retry "/workspace/anima/train.log" "$LOCAL_DIR/train.log" || PULL_OK=0
 $SCP_CMD "root@$SSH_HOST:/workspace/anima/output/ckpt_step_5000.pt" "$LOCAL_DIR/ckpts/" 2>/dev/null || true
 
 if [ $PULL_OK -eq 0 ]; then
-    echo "[WARN] artifact pull partial fail — retaining pod"
+    echo "[WARN] artifact pull partial fail — pod RETAINED (SAVE_POD=1)"
+    echo "[WARN] manual recovery: ssh -i $VAST_SSH_KEY -p $SSH_PORT root@$SSH_HOST"
+    echo "[WARN] then scp /workspace/anima/output/ckpt_final.pt locally + destroy instance $INSTANCE_ID"
     SAVE_POD=1
+else
+    echo "[OK] all artifacts pulled — destroying instance now (explicit, pre-trap)"
+    $VASTAI destroy instance "$INSTANCE_ID" 2>&1 | head -3 || true
+    SAVE_POD=1  # trap skip (already destroyed explicitly above)
 fi
 
 # ── 9) Summary ───────────────────────────────────────────────────────

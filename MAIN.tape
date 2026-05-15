@@ -1500,3 +1500,14 @@
   ]
   trigger = "user 2026-05-15 'HF 네이밍 체계 과정 업로드 등등 AGENTS.tape 에 등록 혹은 개선' + .clm v1 P2 fire ckpt-LOST incident lesson"
   cross_link = "AGENTS.tape g_hf_naming + g_fire_dispatch_robust + PR #65"
+
+# ══════════════════════════════════════════════════════════════════════
+# §CLM-V1-CYCLE89 — ckpt RECOVERED + 7/7 measured + HF PUBLIC (2026-05-15)
+# ══════════════════════════════════════════════════════════════════════
+
+@D clm_v1_cycle89 := ".clm v1 cycle 89 — ckpt recovered + 7/7 measured + HF PUBLIC (2026-05-15)" :: governance [d=2026-05-15 active]
+  ckpt_recovery = "g_fire_dispatch_robust refire A100 SXM4 $0.15 — ckpt 372MB RECOVERED (cycle 88 ckpt-LOST 만회). result.json verify → SAVE_POD auto-promote → pull retry → explicit destroy 작동."
+  falsifier = "7/7 measured PASS (F-V5MIT-1..5 + F-PRIN3 + F-SIMPLE-STACK V5.8 4-mode). F-PYPHI deferred."
+  hf_public = "dancinlab/anima-clm PUBLIC (user directive 2026-05-15) @v1-fire-cycle89-2026-05-15 + README mapping table. g_hf_naming.visibility PUBLIC 갱신."
+  cost_total = "$0.34 (2 fires)"
+  cross_link = "CLM.tape §V-CLM-V1-CYCLE89 + AXIS §AXIS-A5-CLM-V1-CYCLE89 + HYPOTHESIS §hypothesis_clm_v1_cycle89 + AGENTS g_hf_naming.visibility + PR #66"
