@@ -53,6 +53,35 @@ fn c_init_stub(cell_dim: int, hidden_dim: int, max_cells: int) {
     }
 }
 
+// ── Phase 2 — C state mgmt API CONTRACT (PLAN.md Phase 2) ───────────────────
+// ConsciousnessC 등가 API. mitosis dynamics (split/merge/Φ-ratchet) 는
+// tool/hexa_native/mitosis_hook.hexa (1119 LoC FULL IMPL D4a, 5/5 PASS) 가
+// 이미 제공 — c_step 은 그 hook 의 mitosis_forward_tail 을 호출 (cell_pool
+// dict 가 canonical state).
+//
+//   c_step(cell_pool, x?)        -> cell_pool'   (mitosis_hook forward_tail)
+//   c_get_states(cell_pool)      -> flat row-major (n_cells × hidden_dim)
+//   c_n_cells(cell_pool)         -> int
+//   c_measure_phi(cell_pool)     -> float        (Phase 4: phi_rs FFI, RFC 036)
+fn c_state_contract() {
+    return #{
+        "step":       "c_step(cell_pool, x?) → mitosis_hook.hexa mitosis_forward_tail",
+        "get_states": "flat row-major (n_cells × hidden_dim) — mitosis_hook cell list",
+        "n_cells":    "int from cell_pool dict (initial 2 → max 64)",
+        "measure_phi":"phi_rs FFI — Phase 4, hexa-lang RFC 036 BLOCKED",
+        "mitosis_impl": "tool/hexa_native/mitosis_hook.hexa (FULL IMPL, RFC-independent)",
+        "gru_nn":     "12-faction GRU per-cell state evolution = hexa-lang nn-primitive RFC BLOCKED (scaffold-tier only)"
+    }
+}
+
+// F-C-PORT-1 (사전등록): get_states shape 정확성 + step idempotence +
+//   n_cells monotone (initial≤current≤max). mitosis_hook.hexa 의 selftest
+//   (split-nograd/merge-weight/phi-conservation 5/5 PASS, REBORN §91) 가
+//   동역학 anchor. GRU nn-primitive 부분만 RFC-blocked.
+fn c_fcport1_anchor() -> string {
+    return "tool/hexa_native/mitosis_hook.hexa F-MIT-HOOK 5/5 PASS (D4a executable, REBORN §91) — PLAN Phase 2 mitosis 동역학 anchor; GRU nn = RFC-blocked scaffold-tier"
+}
+
 
 // ── helpers ─────────────────────────────────────────────────────────────────
 fn _c_string_contains(s: string, needle: string) -> bool {

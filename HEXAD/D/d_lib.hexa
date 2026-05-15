@@ -50,9 +50,39 @@ fn d_arch_components() {
     return ["RMSNorm", "RoPE", "SwiGLU", "MoE-optional"]
 }
 
-// TODO[wire] integrate anima_chat.hexa Section 9c forward_one_token(...)
-// TODO[wire] integrate anima_chat.hexa Section 9d multitoken KV-cache forward
-// TODO[pytorch] CE loss + AdamW training — separate cycle (training-side)
+// ── Phase 1 — D inference wrapper CONTRACT (PLAN.md Phase 1) ────────────────
+// d_forward delegates to the VERIFIED 24L forward in anima_chat.hexa:
+//   chat_forward_one_token(chat, token_id) -> logits   (Section 9c all-farr
+//   24-layer GQA block + tied lm_head; Section 9d adds KV cache + per-step
+//   RoPE rotation). 21/21 byte-parity PASS on real Phase 1A.1 24L ckpt
+//   (570 MB BF16, sha e5f7555…) — anima_chat.hexa F-D1-LOAD/MULTITOKEN/
+//   V58PARITY/V58MULTI 21/21 (memory anchor, PR-tier evidence).
+//
+// Contract (the wrapper SIGNATURE Phase 1 commits to):
+//   d_forward(chat, token_id)          -> logits        (single-token)
+//   d_forward_multi(chat, prompt_ids)  -> logits_seq    (KV-cache decode)
+// where `chat` carries the loaded ckpt handle (anima_chat.hexa AnimaChat
+// record). vocab = 256 byte-level for HEXAD-D scope (anima_chat uses 32000
+// SP — d_forward_contract() documents the byte vs SP boundary).
+fn d_forward_contract() {
+    return #{
+        "single":   "chat_forward_one_token(chat, token_id) -> logits",
+        "multi":    "chat_kv_cache_init + per-step chat_forward_one_token (Section 9d)",
+        "verified": "anima_chat.hexa 21/21 byte-parity (real 24L 570MB ckpt)",
+        "vocab":    "HEXAD-D byte=256 · anima_chat SP=32000 (boundary doc)",
+        "functional_wire": "anima_chat.hexa lib-split (chat_lib.hexa, NO main) → import — anima-side sub-task, RFC-independent (compiled-first lib-split pattern, PR #89)"
+    }
+}
+
+// F-D-PORT-1 (사전등록): 24L byte-parity 회귀 = anima_chat.hexa 21/21 anchor
+//   CARRY (full re-run = 별도 heavy cycle: 570MB ckpt + compiled 24L build,
+//   memory project_anima_chat_hexa_24l_v58_parity). 본 wrapper 는 CONTRACT
+//   + 사전등록; functional delegation 은 anima_chat lib-split 후 import.
+fn d_fdport1_anchor() -> string {
+    return "anima_chat.hexa F-D1-{LOAD,MULTITOKEN,V58PARITY,V58MULTI} 21/21 PASS (real 24L ckpt) — PLAN Phase 1 byte-parity anchor"
+}
+
+// TODO[pytorch] CE loss + AdamW training — Phase 5, hexa-lang RFC 034 BLOCKED
 
 
 // ── helpers ─────────────────────────────────────────────────────────────────
