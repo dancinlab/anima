@@ -1,0 +1,68 @@
+// HEXAD/BRIDGE/bridge_lib.hexa — pure fns (NO main/_selftest) — compiled-first lib split (interp deprecating)
+//  HEXAD/BRIDGE/bridge.hexa — ThalamicBridge hexa-native entry
+//
+//  PURPOSE
+//    Closed-form portion of ThalamicBridge (Law 53 + Law 70):
+//      bridge_clamp(raw) = PSI_BALANCE + clamp(raw − PSI_BALANCE, ±PSI_COUPLING)
+//
+//    Full forward (Linear → Attention → Norm → expand → gate) is TODO[pytorch]
+//    pending hexa-native RFC port. anima_chat.hexa Section 9c 의 farr_matmul
+//    기반으로 통합 단계에서 wire.
+//
+//  STATUS
+//    closed-form clamp 부분만 working — 통합 forward 는 TODO[pytorch].
+//
+//  PYTHON ANCHOR
+//    ready/anima/hexad/model.py :: ThalamicBridge
+//    ready/models/trinity.py    :: ThalamicBridge (re-export)
+//
+//  COMPLIANCE
+//    raw#11 snake_case · raw#15 no-hardcode (Ψ-constants from json)
+// ════════════════════════════════════════════════════════════════════════════
+
+
+// ── constants (Law 70 anchor — consciousness_laws.json mirror) ──────────────
+fn psi_balance()  -> float { return 0.5 }
+fn psi_coupling() -> float { return 0.014 }
+fn gate_train()   -> float { return 1.0 }
+fn gate_infer()   -> float { return 0.6 }
+
+
+// ── core: closed-form clamp (Law 70 invariant) ──────────────────────────────
+fn bridge_clamp(raw_gate: float) -> float {
+    let centered = raw_gate - psi_balance()
+    let lo = 0.0 - psi_coupling()
+    let hi = psi_coupling()
+    if centered < lo { centered = lo }
+    if centered > hi { centered = hi }
+    return psi_balance() + centered
+}
+
+
+// ── vectorized clamp on a list ──────────────────────────────────────────────
+fn bridge_clamp_vec(raw_gates) {
+    let out = []
+    let i = 0
+    while i < len(raw_gates) {
+        out = out + [bridge_clamp(raw_gates[i])]
+        i = i + 1
+    }
+    return out
+}
+
+
+// ── gate scale (Law 81: "learn hard, express soft") ─────────────────────────
+fn bridge_gate_scale(inference: bool) -> float {
+    if inference { return gate_infer() }
+    return gate_train()
+}
+
+
+// ── helpers ─────────────────────────────────────────────────────────────────
+fn _b_approx_eq(a: float, b: float, tol: float) -> bool {
+    let d = a - b
+    if d < 0.0 { d = 0.0 - d }
+    return d <= tol
+}
+
+
