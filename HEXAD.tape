@@ -205,8 +205,9 @@
     HEXAD/E/HEXAD-E.tape       — E 윤리 (emergent_e.py 123 LoC EmergentE, 좌뇌, ✅ F-E 5/5, 통합 gate TODO[pytorch] residual)
     HEXAD/BRIDGE/HEXAD-BRIDGE.tape — ThalamicBridge (model.py:37-69, α=PSI_COUPLING=0.014, Law 70 clamp)
     HEXAD/MITOSIS/             — 성장축 (subfolder, 2026-05-16 reorg2): MITOSIS.tape + mitosis.hexa scaffold + README (orthogonal 구조축 보존, §mitosis_two_axis)
+    HEXAD/TENSION-LINK/        — 5-Channel Meta-Telepathy (subfolder, 2026-05-16 PR #86): ASCII topology + Noether convergence proof + 100% verified measured + 17 git mv (training/tests/bench/experiments/docs)
     HEXAD/INDEX.md             — anima verification SSOT INDEX (이전 /INDEX.md)
-    HEXAD/SAVANT/              — SAVANT tool/engine 통합 (4 .tape + 5 .hexa)
+    HEXAD/SAVANT/              — SAVANT tool/engine 통합 (4 .tape + 5 .hexa + COMPENDIUM 783L + Π 증명 + H359 PR #85)
   EOF
   survey = "state/verify_hexad_impl_survey_2026_05_15/survey_result.json — 전수조사 (~/core/anima* worktree exhaustive, 3 parallel agents)"
   evolution = "clm_10 monolithic legacy → clm_11 modular Emergent+SSOT → clm_12/13 canonical → main unit-tested (46 pass)"
