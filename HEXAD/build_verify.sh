@@ -17,7 +17,9 @@
 # Heavy build 는 ubu 권장: ssh ubu 'cd ~/Dev/anima && hexa build ...'.
 #
 # Usage:  bash HEXAD/build_verify.sh        # build+run all, assert PASS
-# Exit 0 iff 10/10 entrypoints PASS + 8/8 libs build clean.
+# Exit 0 iff 11/11 entrypoints PASS + 9/9 libs build clean.
+# (11th entrypoint / 9th lib = HEXAD/CHAT/wiring_verify — inter-module
+#  wiring 조건 W5/W6/W8 F-WIRE battery, 2026-05-16 closure.)
 
 set -u
 cd "$(dirname "$0")/.." || exit 2
@@ -31,12 +33,14 @@ ENTRYPOINTS=(
   "HEXAD/C/c.hexa"          "HEXAD/D/d.hexa"
   "HEXAD/MITOSIS/mitosis.hexa"
   "HEXAD/hexad.hexa"        "HEXAD/integ_test.hexa"
+  "HEXAD/CHAT/wiring_verify.hexa"
 )
 LIBS=(
   "HEXAD/S/s_lib.hexa"      "HEXAD/M/m_lib.hexa"    "HEXAD/W/w_lib.hexa"
   "HEXAD/E/e_lib.hexa"      "HEXAD/BRIDGE/bridge_lib.hexa"
   "HEXAD/C/c_lib.hexa"      "HEXAD/D/d_lib.hexa"
   "HEXAD/MITOSIS/mitosis_lib.hexa"
+  "HEXAD/CHAT/wiring_verify_lib.hexa"
 )
 PASS_MARKER='selftest: true|7/7 cross-file|spec invariants: true|scaffold check: true'
 
