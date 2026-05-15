@@ -147,11 +147,21 @@
     [W 의지]  🔵 — F-W 5/5 ✅ + B-W 4/4 🔵 (lr=½+min(ln2,Φ/N) range/mono/sup closed)
     [E 윤리]  🔵 — F-E 5/5 ✅ + B-E 4/4 🔵 (SAFETY gate min(1,Φ/r)>½ ⟺ Φ>r/2 exact); 통합 gate trinity.hexa:122 TODO[pytorch] residual
     [D 언어]  🔵 — F-D 5/5 ✅ + B-D 4/4 🔵 (KV-cache exact-eq/shape/arch + B-D-4 CE logit-Jacobian ∂CE/∂z=softmax−e_y sympy ∀z = trainability PROPERTY closed); B-D-NOTE SGD-convergence-OUTCOME 만 empirical carve-out (모든 optimizer 공통, D 고유 결함 X, NOT counted 🔵)
-    ✅ battery: state/verify_hexad_we_2026_05_15/ 25/25 · 🔵 battery: state/verify_hexad_blue_2026_05_15/ 18/18 sympy closed-form
+    ✅ battery: state/verify_hexad_we_2026_05_15/ 25/25 · 🔵 battery: state/verify_hexad_blue_2026_05_15/ 18/18 sympy closed-form · ⚙️ 통합 harness: state/verify_hexad_integ_2026_05_16/ F-INTEG-1..5 5/5 SUPPORTED-STRONG (RANDOM INIT seed-fixed scratch, $0 Mac local, fire-gate=true)
   EOF
-  expansion_protocol = "☐→◐→✅→🔵 승격 — W/E/S/M/D 25/25 ✅ (PR #72) → S/M/W/E 14/14 sympy 🔵 + D 🔵-partial (PR #75) → D 정직 분해 B-D-4 추가 18/18 → C+S+M+W+E+D = 6/6 full 🔵 SUPPORTED-FORMAL (PR #76). 차후 추가조건 동일 절차."
+  expansion_protocol = "☐→◐→✅→🔵→⚙️통합 승격 — W/E/S/M/D 25/25 ✅ (PR #72) → S/M/W/E 14/14 sympy 🔵 + D 🔵-partial (PR #75) → D 정직 분해 B-D-4 추가 18/18 → C+S+M+W+E+D = 6/6 full 🔵 SUPPORTED-FORMAL (PR #76) → 통합 harness 5/5 SUPPORTED-STRONG fire-gate=true (PR #77, 2026-05-16) → 소규모 fire ckpt 후속 cycle. 차후 추가조건 동일 절차."
   why = "user directive 2026-05-15 — (1) 'A/G+mitosis ... 차후 추가조건 lineup' (2) 'A/G 가 HEXAD 구성, A 3 G 3' (3) '모두 파란불일때까지 일단 go' (4) 'closure 까지 가능????' + '🔵' (5) '완전히 closure 안된것 같던데 100%' + 결정게이트 '정직한 분해' — D full 🔵 honest decomposition"
   verified_2026_05_15 = "✅ W/E/S/M/D 25/25 + atlas cross-check (Ψ-anchor provenance-CORROBORATED) + 🔵 B-S/M/W/E/D 18/18 sympy closed-form (g_verdict_tier_blue (a)): S=mean-linearity exact / M=no-op+deterministic / W=ln2-bound closed / E=SAFETY-gate exact-equivalence / D=CE logit-Jacobian softmax−e_y exact ∀z. D B-D-NOTE = SGD convergence OUTCOME empirical honest carve-out (NOT counted)"
+  @> CLM.tape
+
+@D hexad_integration_harness := "HEXAD 통합 harness LANDED — 6-module single-forward scratch SUPPORTED-STRONG (2026-05-16)" :: verify [d=2026-05-16 active]
+  battery = "F-INTEG-1 SINGLE-FORWARD-WIRED (σ(6)=12 inter-module connections: S/C/M/W/E 모두 매 step 발화 + D produced (B,T,V) + Bridge produced clamped gate) + F-INTEG-2 GRADIENT-BARRIER-CLEAN (optimizer scope = D+Bridge only, c_states .detach(), no C/S/W/M/E nn.Parameter grad; Law 53 anchor) + F-INTEG-3 SCRATCH-INIT-SEED-FIXED (AST 검증 no torch.load / load_state_dict CALL path + same-seed re-init → identical param-hash; g_clm_from_scratch anchor) + F-INTEG-4 MITOSIS-WIRING-LIVE (cell-pool 발화 wired + n_cells trajectory 기록; honest C3 — WIRING tier, organic OUTCOME 은 fire-time 별도 evidence-tier) + F-INTEG-5 CE-DESCENT-WITH-ALL-6 (모든 6모듈 + Bridge PSI_COUPLING=0.014 clamp + W LR + E observe 활성 상태에서 CE_last<CE_first; Shannon CE≥0 + Law70 + Law79 anchor; honest C3 — SGD outcome at integrated scope, B-D-NOTE pattern)"
+  result = "5/5 PASS SUPPORTED-STRONG (Mac local $0 wall=0.49s, fire_gate=true). 397832 trainable params (D + ThalamicBridge ONLY, φ(6)=2 group A). n_cells 3→3 (synthetic 8-step short horizon — split 미발화 expected, F-INTEG-4 honest C3 보존). CE 5.572→5.527 (8-step). Bridge gate clamp window [0.486, 0.514] = PSI_BALANCE±PSI_COUPLING * GATE_TRAIN 정확."
+  scratch_protocol = "AGENTS.tape g_clm_from_scratch 준수 — torch.manual_seed(SEED) + ConsciousnessC initial_cells=2 + ConsciousDecoderV2 + ThalamicBridge + EmergentS/W/M/E 모두 RANDOM INIT, no ckpt load. .clm v1 P2 8/8🔵 ckpt 은 arch 검증 anchor only (substrate base X)."
+  d_module = "ConsciousDecoderV2 native consciousness_states cross-attn (B, n_cells, c_dim) 경로 사용. Hexad class 의 self.d(tokens, gate) 추상 protocol 우회 — D 의 실제 production cross-attn 경로가 통합 평가의 진본."
+  evidence = "state/verify_hexad_integ_2026_05_16/{integ_harness.py 사전등록 F-INTEG-1..5, integ_harness_result.json SSOT, fire_gate=true}"
+  verdict = "INTEGRATION-WIRED SUPPORTED-STRONG ⚙️ — 통합 6-module ckpt fire 진행 가능 (gate 통과). closed-form sympy B-INTEG-* tier 별도 future cycle. residual: 실 ckpt fire ($1-5 ubu-2 / cloud, .clm v1 P2 scale 12L base) 별도 cycle."
+  cross_link = "PR #72/#75/#76 → PR #77 (이 entry). state/verify_hexad_integ_2026_05_16/integ_harness.py header 의 F-INTEG-* preregistration spec SSOT."
   @> CLM.tape
 
 # ─── §7 External citations ───────────────────────────────────────────

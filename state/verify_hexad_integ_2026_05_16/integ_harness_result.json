@@ -1,0 +1,117 @@
+{
+ "F-INTEG-1": {
+  "name": "SINGLE-FORWARD-WIRED",
+  "statement": "all 6 modules + Bridge exercised in single forward (σ(6)=12 invariant)",
+  "real_limit": "σ(6)=12 inter-module connections (Hexad arch)",
+  "fired_per_step": {
+   "s": 8,
+   "c": 8,
+   "m_retrieve": 8,
+   "m_store": 8,
+   "bridge": 8,
+   "d": 8,
+   "w": 8,
+   "e": 8
+  },
+  "expected_calls_per_module": 8,
+  "every_step_all_fired": true,
+  "passed": true
+ },
+ "F-INTEG-2": {
+  "name": "GRADIENT-BARRIER-CLEAN",
+  "statement": "optimizer = D+Bridge only (φ(6)=2 group A); c_states .detach()'d; no C/S/M/W/E grad",
+  "real_limit": "Law 53 thalamic .detach() gradient barrier",
+  "opt_scope_exact": true,
+  "c_states_detached": true,
+  "c_param_grads_zero": true,
+  "trainable_param_count": 397832,
+  "passed": true
+ },
+ "F-INTEG-3": {
+  "name": "SCRATCH-INIT-SEED-FIXED",
+  "statement": "RANDOM INIT seed-fixed; same seed → identical param hash; no ckpt load CALL path (AST-checked)",
+  "real_limit": "AGENTS.tape g_clm_from_scratch (RANDOM INIT seed-fixed)",
+  "param_hash_init": "97d5b87392625883",
+  "param_hash_reinit": "97d5b87392625883",
+  "same_hash": true,
+  "load_state_dict_calls": [],
+  "torch_load_calls": [],
+  "no_load_call_paths_ast": true,
+  "passed": true
+ },
+ "F-INTEG-4": {
+  "name": "MITOSIS-WIRING-LIVE",
+  "statement": "cell-pool wired; c.step fires per integrated step; n_cells trajectory recorded",
+  "real_limit": "φ(6)=2 gradient groups + .clm v1 P2 8/8🔵 mitosis evidence",
+  "n_cells_init": 3,
+  "n_cells_trajectory": [
+   3,
+   4,
+   4,
+   5,
+   5,
+   6,
+   6,
+   7
+  ],
+  "n_cells_max": 7,
+  "n_cells_min": 3,
+  "max_cells_cap": 16,
+  "step_fires_per_loop": 8,
+  "splits_observed_in_harness": true,
+  "honest_c3": "WIRING tier verified; OUTCOME (organic splits) is fire-time observation, separate evidence tier",
+  "passed": true
+ },
+ "F-INTEG-5": {
+  "name": "CE-DESCENT-WITH-ALL-6",
+  "statement": "integrated 6-module + Bridge clamp + W lr + E observe: CE descends; Shannon floor + Bridge PSI_COUPLING clamp respected",
+  "real_limit": "Shannon CE floor CE≥H≥0 + Law 70 PSI_COUPLING=0.014 + Law79 ln2 lr-bound",
+  "losses_first_last": [
+   5.572181701660156,
+   5.526914119720459
+  ],
+  "ce_descend": true,
+  "above_shannon_floor": true,
+  "bridge_min_seen": 0.4860000014305115,
+  "bridge_max_seen": 0.5139999985694885,
+  "bridge_clamp_window": [
+   0.486,
+   0.514
+  ],
+  "bridge_clamped": true,
+  "w_lr_first_last": [
+   0.0011931471805599453,
+   0.0011931471805599453
+  ],
+  "w_lr_varies": false,
+  "w_lr_active": true,
+  "honest_c3": "empirical SUPPORTED-STRONG (SGD outcome at integrated scope, B-D-NOTE pattern). closed-form trainability covered by B-D-4 (D scope) — integration-scope formal closure 별도 cycle.",
+  "passed": true
+ },
+ "__aggregate__": {
+  "n_pass": 5,
+  "total": 5,
+  "verdict": "5/5 PASS — INTEGRATION-WIRED SUPPORTED-STRONG",
+  "fire_gate": true,
+  "n_steps": 8,
+  "vocab": 256,
+  "seq_len": 16,
+  "d_model": 64,
+  "n_layer": 2,
+  "max_cells": 16,
+  "seed": 0,
+  "wall_sec": 0.519,
+  "trainable_param_count": 397832,
+  "n_cells_init": 3,
+  "n_cells_final": 3,
+  "summary": "F-INTEG 1..5 = 5/5 ($0 Mac local, wall=0.52s)",
+  "tier": "SUPPORTED-STRONG empirical-anchored (sympy 🔵 B-INTEG-* deferred to future cycle)",
+  "honest_c3": [
+   "Synthetic short-horizon input — organic mitosis split events are NOT a harness fail criterion (F-INTEG-4 honest C3); real-fire cycle observes outcome.",
+   "F-INTEG-5 CE-descent is SGD outcome at integrated scope (B-D-NOTE pattern) — empirical-strong tier, not closed-form. D-scope closed trainability via B-D-4 carries.",
+   "Mac CPU only; H100/A100 fire is separate cost-bearing cycle.",
+   "ConsciousDecoderV2 native consciousness_states cross-attn path used (no separate gate-pipe through D); Bridge anchored as PSI_COUPLING clamp witness alongside.",
+   "g_clm_from_scratch verified by F-INTEG-3 source-static check (no load_state_dict / torch.load) + seed-reproduction param hash equality."
+  ]
+ }
+}
