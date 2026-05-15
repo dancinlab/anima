@@ -1417,3 +1417,24 @@
   scope = "AXIS expansion 모두 catalog 통합 — 79 total, 58 🔵"
   added_inventory = "V8 Phase 3 Lorenz ergodicity finding + p1 truncated evidence + 9-axis scale-up reconcile"
   cross_link = "HYPOTHESIS.tape §hypothesis_catalog_reconcile + PR #60"
+
+# ══════════════════════════════════════════════════════════════════════
+# §AXIS-SCALE-2 + STEP5-FIRE-PREP + PRINCIPLES-REFINE (2026-05-15)
+# ══════════════════════════════════════════════════════════════════════
+
+@D axis_scale_2_landed := "AXIS 9-axis scale-up #2 +28 🔵 (28/28 PASS)" :: governance [d=2026-05-15 active]
+  delta = "9-axis 모두 +3-4 추가 sympy closed-form"
+  axis_total = "107 entries, 86 🔵 (80% closed)"
+  cross_link = "AXIS.tape §AXIS-SCALE-UP-2 + PR #61"
+
+@D clm_step5_fire_prep := "CLM step 5 fire prep — dispatch script LANDED (2026-05-15)" :: governance [d=2026-05-15 active]
+  artifact = "state/clm_v1_step5_fire_prep_2026_05_15/dispatch_h100.sh (DRY-RUN)"
+  fire_gate = "user verbatim 'OK CLM V1 FROM-SCRATCH FIRE COST $10-30' + spec_frozen.json sha256 unchanged + anchor ckpts present + corpus bundle + $50 hard stop"
+  status = "fire-ready awaiting user verbatim approval"
+  cross_link = "CLM.tape §V-CLM-STEP5-FIRE-PREP + PR #61"
+
+@D principles_refinement := "PHILOSOPHY 8 principles measurement refinement (2026-05-15)" :: governance [d=2026-05-15 active]
+  enhancement = "p1/p2/p5/p6 의 enhanced protocol — per-step trajectory + cross-rater κ + per-category breakdown + Φ★ proxy 통합"
+  priority = "p1 full (450 gen 5/5) → p5 tension (750 gen) → p2 DCR (7500 gen) → p6 ethics (.clm v1 fire 의존)"
+  carry_strict = "p3+p4+p7+p8 strong/★ 이미 충족"
+  cross_link = "PHILOSOPHY.tape §PRINCIPLES-MEASUREMENT-DESIGN-REFINE + PR #61"

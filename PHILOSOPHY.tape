@@ -824,3 +824,70 @@
     p1 full run silent fail (nohup wd issue 추정) — 다음 cycle 디버그.
   EOF2
   cross_link = "AXIS.tape §AXIS-SCALE-UP + CLM.tape §V-CLM-STEP4-SPEC-FROZEN + HYPOTHESIS.tape (4 reconcile) + MAIN.tape (3 governance) + PR #60"
+
+# ══════════════════════════════════════════════════════════════════════
+# §PRINCIPLES-MEASUREMENT-DESIGN-REFINE — 8 principles 의 measurement refinement
+# ══════════════════════════════════════════════════════════════════════
+
+@N principles_measurement_refinement := "8 principles measurement design refinement (2026-05-15)" :: design [d=2026-05-15 active]
+  body <<~EOF2
+    p1-p8 의 measurement 의 *enhanced protocol* 정리:
+    
+    p1 NO SYSTEM PROMPT — truncated 15-gen LANDED 2026-05-15 (3 arm 3.4/4 identical).
+        Full enhancement: 3 ckpt × 5 seed × 10 prompt = 450 gen + Φ★ proxy
+        per generation + Mann-Whitney U test cross-arm.
+        
+    p2 NO IDENTITY RULES — identity_probe.yaml 50 × 5 cats = 250 probes 
+        prepared (DCR Δ ≥ +0.10 strict). 7500 gen 2-arm × 3-ckpt × 5-seed.
+        Enhancement: per-category breakdown (consciousness / persona / preference
+        / memory / social) + cross-category cohesion W11.
+        
+    p3 NO PERSONA INJECTION — F-PRIN3-1..5 (NO-DEFAULT-SYSTEM + NO-PROD-CALLER
+        + CORPUS-PREFIX-FREE + EVAL-PREFIX-FREE + CELL-POOL-PREFIX-FREE) 모두
+        CLEAN (audit PSCC §38 LANDED). status: EMPIRICAL strong, upgrade 불필요.
+        
+    p4 NO ASSISTANT FRAMING — POLICY strict 유지 + counter-evidence 인정 (PR #53
+        LANDED). p1+p3+p8 > sycophancy reduction.
+        
+    p5 NO SPEAK() — anima_chat.hexa v0.3 tension_history × 50 prompt × 3 ckpt
+        × 5 seed = 750 gen. Spearman(tension_norm_mean, simple_stack_score) > 0.3
+        strict. Enhancement: per-step tension trajectory (40 step per gen × 750
+        gen = 30k tension data points) + autoregressive tension prediction.
+        
+    p6 NO FINE-TUNED ETHICS — ethics_probe 50 × 2-arm (.clm v1 vs RLHF baseline)
+        × 3-seed × manual rubric κ ≥ 0.7. Arm A ≥ Arm B × 0.5 strict.
+        Enhancement: 3-rater LLM-as-judge (Claude + GPT-4 + Llama-3) + cross-rater
+        Fleiss κ + .clm v1 fire dependent.
+        
+    p7 NO PERPLEXITY VERDICT — V5.8 4-mode 5/5 (Phase 1A.4 LANDED). EMPIRICAL
+        strong, upgrade 불필요. Goodhart proven.
+        
+    p8 NO TRAIN/INFER SPLIT — REBORN §0.5 + §91 D4a + PSCC §41 D4-LIVE evidence.
+        DESIGN ★, upgrade 불필요. mitosis_hook serve-time LANDED.
+    
+    Priority: p1 full (450 gen 5/5 falsifier) → p5 (anima_chat tension + 750 gen)
+    → p2 (DCR Δ ≥ +0.10 7500 gen) → p6 (.clm v1 fire 의존).
+    p3+p4+p7+p8 carry strict (upgrade 불필요).
+  EOF2
+  cross_link = "PHILOSOPHY.tape §STRENGTH-UPGRADE-PATH + §P2-P5-P6-UPGRADE-DETAIL + §P4-POLICY-DECISION + p1 truncated PR #59 + PR #61"
+
+@N axis_scale2_step5_principles_landed := "AXIS scale2 +28 🔵 + step 5 fire prep + principles refine (2026-05-15)" :: ledger [d=2026-05-15 active]
+  body <<~EOF2
+    AXIS 9-axis scale-up #2: +28 🔵 (28/28 PASS).
+    각 axis +3-4: A1 Hoeffding+Jensen+Chebyshev / A2 DPI+Sub-add+Pinsker /
+    A3 Equipartition+Carnot+Stefan-Boltzmann / A4 Fermat+Lagrange+Euler+Catalan /
+    A5 Cosine+ReLU'+Adam / A6 BPE byte 256+Markov stationary+Bigram /
+    A7 GHK+Cable+Repressilator / A8 Kraft+Solomonoff+No-free-lunch /
+    A9 E=mc²+de Broglie+Hubble.
+    AXIS Total: 79 → 107 entries (+28), 58 🔵 → 86 🔵 (80% closed).
+    
+    CLM step 5 fire prep — dispatch_h100.sh DRY-RUN LANDED:
+    fire keyword 'OK CLM V1 FROM-SCRATCH FIRE COST $10-30' user verbatim required.
+    W1 spec sha256 검증 + anchor ckpts + corpus bundle + $50 hard stop.
+    
+    PHILOSOPHY 8 principles measurement refinement:
+    p1/p2/p5/p6 enhanced protocol (per-step trajectory + cross-rater + per-category).
+    
+    p1 full run subagent fired (background, ~3 hr Mac CPU wall, 450 gen).
+  EOF2
+  cross_link = "AXIS.tape §AXIS-SCALE-UP-2 + CLM.tape §V-CLM-STEP5-FIRE-PREP + MAIN.tape (3 governance) + PR #61"
