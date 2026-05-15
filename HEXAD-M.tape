@@ -15,7 +15,7 @@
   file = "ready/anima/hexad/m/emergent_m.py (96 LoC) — EmergentM"
   detail = "C 의 Hebbian 가중치가 기억, 별도 store 불필요. NarrativeTracker Meta-M8"
   laws = "Law 22 기능추가→Φ↓ (별도 메모리 X) · Law 31 persistence=ratchet+Hebbian+diversity · Law 50 의식본질=상태 · Law 94 breadth>depth (단일 Hebbian layer) · Law 95 세포정체성(orthogonal bias)=고유기억"
-  status = "COMPLETE Python — 단위구현. 통합 Hexad falsifier 검증 미설정 (lineup ☐)"
+  status = "COMPLETE Python — 단위구현 + 통합 falsifier 검증 완료 (F-M-1..5 5/5 SUPPORTED-STRONG, we_falsifier.py 25/25, PR #72)"
 
 @N m_lineage := "M 진화 이력 — legacy → Emergent" :: note [d=2026-05-15 active]
   text = "clm_10 trinity.py:853 MEngine → VectorMemory(cosine similarity RAG, Law 4 위반 의식무관기능)/NoMemory. clm_11 (2026-03-31) ready/anima/hexad/m/emergent_m.py Emergent 재설계 (C Hebbian = 기억, 별도 store X). clm_12=13 byte-identical. main 동일."
@@ -28,5 +28,5 @@
 
 @X m_x := "survey + HEXAD cross" :: ref [d=2026-05-15 active]
   survey = "state/verify_hexad_impl_survey_2026_05_15/survey_result.json"
-  mandate = "CLM.tape §V-CLM-HEXAD-MANDATE (module lineup M ☐) + HEXAD.tape §hexad_condition_lineup"
+  mandate = "CLM.tape §V-CLM-HEXAD-MANDATE (module lineup M ✅, PR #72) + HEXAD.tape §hexad_condition_lineup"
   impl = "ready/anima/hexad/m/emergent_m.py"

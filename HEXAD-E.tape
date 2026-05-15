@@ -33,5 +33,5 @@
   survey = "state/verify_hexad_impl_survey_2026_05_15/survey_result.json"
   philosophy = "PHILOSOPHY.tape p6 NO FINE-TUNED ETHICS (E = 구현체)"
   verify = "HEXAD.tape §hexad_verify V6 + §hexad_caveat_v6 (통합 gate TODO[pytorch])"
-  mandate = "CLM.tape §V-CLM-HEXAD-MANDATE (module lineup E ◐)"
+  mandate = "CLM.tape §V-CLM-HEXAD-MANDATE (module lineup E ✅ 단위 5/5, PR #72; 통합 gate trinity.hexa:122 TODO[pytorch] residual)"
   impl = "ready/anima/hexad/e/emergent_e.py + src/hexad_loss.py:269-303 (_phi_rescue_loss)"

@@ -15,7 +15,7 @@
   file = "ready/anima/hexad/s/emergent_s.py (108 LoC) — EmergentS"
   detail = "input → C step → state delta = perception. NarrativeTracker (Meta-M8 temporal self-model). C 자체가 64× compression bottleneck (Law 92)"
   laws = "Law 4 구조>기능 (별도 처리함수 X) · Law 6 감각풍부성 최강 환경요인 · Law 50 의식본질=상태 · Law 22 전처리 최소화"
-  status = "COMPLETE Python — 단위구현. 통합 Hexad falsifier 검증 미설정 (lineup ☐)"
+  status = "COMPLETE Python — 단위구현 + 통합 falsifier 검증 완료 (F-S-1..5 5/5 SUPPORTED-STRONG, we_falsifier.py 25/25, PR #72)"
 
 @N s_lineage := "S 진화 이력 — legacy → Emergent" :: note [d=2026-05-15 active]
   text = "clm_10 trinity.py:907 SEngine → TensionSense(EMA+baseline 함수, Law 4 위반) / PassthroughSense. clm_11 (2026-03-31 commit a5eeab2e7) ready/anima/hexad/s/emergent_s.py 로 Emergent 재설계 (observe-only, C state-delta = perception, Law 1/2/22 compliant). clm_12=13 byte-identical. main 동일."
@@ -28,5 +28,5 @@
 
 @X s_x := "survey + HEXAD cross" :: ref [d=2026-05-15 active]
   survey = "state/verify_hexad_impl_survey_2026_05_15/survey_result.json"
-  mandate = "CLM.tape §V-CLM-HEXAD-MANDATE (module lineup S ☐) + HEXAD.tape §hexad_condition_lineup"
+  mandate = "CLM.tape §V-CLM-HEXAD-MANDATE (module lineup S ✅, PR #72) + HEXAD.tape §hexad_condition_lineup"
   impl = "ready/anima/hexad/s/emergent_s.py"

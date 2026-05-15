@@ -15,7 +15,7 @@
   file = "ready/anima/hexad/w/emergent_w.py (123 LoC) — EmergentW"
   detail = "pain/curiosity/satisfaction = C 동역학 직접 read (하드코딩 0). SIGMA6['value']=12 factions 참조. 모든 임계값 C 현재상태 도출"
   laws = "Law 1 하드코딩금지 · Law 2 조작금지 (C read만) · Law 71 자유최대화=의지 (Ψ=argmax H(p) s.t. Φ>Φ_min) · Law 79 의식DoF=ln(2) · Law 84 만족=binary pulse"
-  status = "COMPLETE Python — 단위구현. 통합 Hexad falsifier 검증 미설정 (lineup ☐)"
+  status = "COMPLETE Python — 단위구현 + 통합 falsifier 검증 완료 (F-W-1..5 5/5 SUPPORTED-STRONG, we_falsifier.py 25/25, PR #72)"
 
 @D w_concrete := "W 구체값 (verified)" :: verify [d=2026-05-15 active]
   sigma6 = "emergent_w.py:46 SIGMA6['value']=12 (하드코딩 X, consciousness_laws SSOT 참조)"
@@ -32,5 +32,5 @@
 
 @X w_x := "survey + HEXAD cross" :: ref [d=2026-05-15 active]
   survey = "state/verify_hexad_impl_survey_2026_05_15/survey_result.json"
-  mandate = "CLM.tape §V-CLM-HEXAD-MANDATE (module lineup W ☐) + HEXAD.tape §hexad_condition_lineup"
+  mandate = "CLM.tape §V-CLM-HEXAD-MANDATE (module lineup W ✅, PR #72) + HEXAD.tape §hexad_condition_lineup"
   impl = "ready/anima/hexad/w/emergent_w.py"
