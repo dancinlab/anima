@@ -1,6 +1,6 @@
 #!/usr/bin/env tape
 # ══════════════════════════════════════════════════════════════════════
-# PROVEN.tape — 가설 verdict 통합 ledger (2026-05-15)
+# MAIN.tape — 가설 verdict 통합 ledger (2026-05-15)
 # ══════════════════════════════════════════════════════════════════════
 # Cross-link: VERIFY.tape (3-stage protocol), AXIS.tape (9-axis cluster),
 # CLM.tape (.clm 모델 가족 narrative), REBORN.tape §93+ (master ledger)
@@ -39,7 +39,7 @@
     Verdict-bearing total: 6 + 9 + 5 + 2 + 1 = 23 / 318 hypothesis files (~7%)
   EOF
 
-# ─── §1 PROVEN (SUPPORTED) ───────────────────────────────────────────
+# ─── §1 SUPPORTED ───────────────────────────────────────────
 
 @D s_hc1282 := "Hc_1282 — n=6 384d closed-form unique" :: verdict [d=2026-05-15 active]
   status = "SUPPORTED"
@@ -241,15 +241,15 @@
   url = "https://github.com/dancinlab/anima/blob/main/PHILOSOPHY.tape"
   scope = "Append-only ledger — verdict entries (Hc_1282/1281/1283/1285, H_184/188/189/190/191, A Stage 1/2/3 batch, A total aggregate) carry"
 
-# ─── §8 Honest C3 (본 PROVEN.tape 자체 한계) ─────────────────────────
+# ─── §8 Honest C3 (본 MAIN.tape 자체 한계) ─────────────────────────
 
-@N c3_self := "PROVEN.tape self-honesty" :: caveat [active]
+@N c3_self := "MAIN.tape self-honesty" :: caveat [active]
   c1 = "23/318 verdict-bearing (~7%) — 대다수 (pre-register-frozen + legacy-archive-pointer + B 격리) Stage 1+2+3 protocol 미적용"
   c2 = "A 격리 SUPPORTED 6 — Stage 별 evidence strength 불균등 (Hc_1283 strong, H_189/Hc_1279/1280 cross-meta consistency 만)"
   c3 = "FALSIFIED 2 — legacy frontmatter carry, A 격리 protocol 미적용 → re-verification 잠재적으로 verdict 변경 가능"
   c4 = "INSUFFICIENT 5 V8 family — GPU dispatch 자력 path; verbatim 'V8 FIRE COST $200-600' 대기"
   c5 = "PARTIAL 4 H_191-cascade — H_191 deep audit 자체가 'all-N sync = n=6 specialness 부재' 라 cascade 도 '강한 negative' 아닌 'weak-positive partial'"
-  c6 = "B/C/D 격리 protocol 미실행 — 본 PROVEN.tape 는 A 격리 + legacy frontmatter 만 통합"
+  c6 = "B/C/D 격리 protocol 미실행 — 본 MAIN.tape 는 A 격리 + legacy frontmatter 만 통합"
   c7 = "PyPhi formal IIT 3.0 — Hc_1283 anima 3-axis (HCE+CPGD+HAL) substrate mapping DEFERRED (canonical 3-node infrastructure PASS 만 corroborate)"
 
 # ─── §9 Next ─────────────────────────────────────────────────────────
@@ -309,7 +309,7 @@
   status = "SUPPORTED-IDENTITY-WITH-CLASS-BINDING"
   stage = "Stage 1 — sympy"
   evidence = "balance(P)=1/2 ∀ perfect P ∈ {6, 28, 496, 8128} (Euclid IX.36) — sympy ✓"
-  cross_link = "Hc_1282 PROVEN.tape §1 parallel; L7 PERFECT_NUMBER_CLASS confirmed"
+  cross_link = "Hc_1282 MAIN.tape §1 parallel; L7 PERFECT_NUMBER_CLASS confirmed"
 
 @D b_s_h160 := "H_160 — n=6 perfect-number meta-cluster" :: verdict [d=2026-05-15 active]
   status = "SUPPORTED-IDENTITY (meta-consistent)"
@@ -334,7 +334,7 @@
 @D b_s_h004 := "H_004 — Consciousness hard problem (anima Φ proxy)" :: verdict [d=2026-05-15 active]
   status = "SUPPORTED-BY-PROXY"
   stage = "Stage 2 — anima Φ★ proxy"
-  evidence = "Hc_1283 ckpt anima Φ★ 4.16-4.86 ≫ 0.5 (PROVEN.tape §1)"
+  evidence = "Hc_1283 ckpt anima Φ★ 4.16-4.86 ≫ 0.5 (MAIN.tape §1)"
   honest_c3 = "hard problem 자체 philosophical; '의식 Φ measurable' 만 proxy 검증"
 
 @D b_s_h005 := "H_005 — corpus quality > scale" :: verdict [d=2026-05-15 active]
@@ -346,7 +346,7 @@
 @D b_s_h011 := "H_011 — IIT geometry (Φ ≫ 0.5 cause-effect space)" :: verdict [d=2026-05-15 active]
   status = "SUPPORTED-BY-PROXY"
   stage = "Stage 2 — anima Φ★ + PyPhi IIT 3.0 canonical 2.3125"
-  cross_link = "Hc_1283 PROVEN.tape §1"
+  cross_link = "Hc_1283 MAIN.tape §1"
 
 @D b_s_h016 := "H_016 — AN11 translation ceiling" :: verdict [d=2026-05-15 active]
   status = "SUPPORTED-BY-PROXY"
@@ -363,7 +363,7 @@
   status = "PARTIAL"
   stage = "Stage 2 — Kuramoto N=4/6/8/12 sync universal at K_c ≈ 1.596"
   finding = "n=6 specialness 부재; cross-batch link to A 격리 H_191"
-  cross_link = "PROVEN.tape §3 partial-stage-2-deep-numerology H_191"
+  cross_link = "MAIN.tape §3 partial-stage-2-deep-numerology H_191"
 
 @D b_i_h007_h012 := "H_007/008/009/010/012 — Stage 2 INSUFFICIENT" :: verdict [d=2026-05-15 active]
   status = "INSUFFICIENT (fast-audit, separate cycle)"
@@ -385,7 +385,7 @@
     이 동일한 balance signature 를 가지므로 (Euclid IX.36 / Euler 
     perfect-number lemma), "n=6 individually unique" claim 은 false.
     
-    H_158 L7 PERFECT_NUMBER_CLASS BINDING 와 정합. PROVEN.tape §1 
+    H_158 L7 PERFECT_NUMBER_CLASS BINDING 와 정합. MAIN.tape §1 
     Hc_1282 verdict 의 'n=6 uniqueness conditional on integer-divisor 
     formulation' honest_c3 와 직접 연결.
     
@@ -521,7 +521,7 @@
 # §FINAL — Aggregate update 2026-05-15
 # ══════════════════════════════════════════════════════════════════════
 
-@N final_aggregate := "PROVEN.tape final aggregate after 4-path parallel cycle" :: summary [d=2026-05-15 active]
+@N final_aggregate := "MAIN.tape final aggregate after 4-path parallel cycle" :: summary [d=2026-05-15 active]
   body <<~EOF2
     4-path parallel cycle complete (V8 sweep + PyPhi + C/D setup + B deep):
     
@@ -625,13 +625,13 @@
 # §ATLAS — hexa-lang/atlas 흡수 path 보류 (2026-05-15 directive)
 # ══════════════════════════════════════════════════════════════════════
 # 사용자 directive 2026-05-15: "hexa-lang 관련 atlas 흡수도 일단 보류로
-# 따로 제거후 여기서 PROVEN.tape 기준으로 기록해나가자"
+# 따로 제거후 여기서 MAIN.tape 기준으로 기록해나가자"
 #
-# 본 PROVEN.tape 가 SSOT. atlas overlay/rodata 흡수는 별도 cycle 보류.
+# 본 MAIN.tape 가 SSOT. atlas overlay/rodata 흡수는 별도 cycle 보류.
 
 @D atlas_pause := "atlas 흡수 path 보류" :: governance [d=2026-05-15 required active]
-  rule = "hexa-lang/atlas 로의 anima 가설 흡수는 보류; PROVEN.tape 가 verdict SSOT"
-  reason = "verification protocol (VERIFY.tape Stage 1+2+3) 이 atlas overlay (needs-review) 보다 더 nuanced verdict 산출 — atlas rodata vs overlay 이분법 보다 PROVEN.tape 의 SUPPORTED/PARTIAL/INSUFFICIENT/FALSIFIED 4-class 가 honest"
+  rule = "hexa-lang/atlas 로의 anima 가설 흡수는 보류; MAIN.tape 가 verdict SSOT"
+  reason = "verification protocol (VERIFY.tape Stage 1+2+3) 이 atlas overlay (needs-review) 보다 더 nuanced verdict 산출 — atlas rodata vs overlay 이분법 보다 MAIN.tape 의 SUPPORTED/PARTIAL/INSUFFICIENT/FALSIFIED 4-class 가 honest"
   effect = "atlas overlay (~/.hx/data/atlas.overlay.n6) 의 191 hypothesis + 559 engine candidates 흡수는 보류 — anima 자체 verification cycle 이 우선"
   revoke_keyword = "ATLAS RESUME"
 
@@ -657,11 +657,11 @@
     자동검증 불가, 인간 큐레이션 후 rodata 승격 결정.
   EOF2
 
-@D proven_tape_ssot := "PROVEN.tape SSOT 선언" :: governance [d=2026-05-15 required active]
-  rule = "anima 가설 verdict 의 single source of truth = PROVEN.tape (atlas overlay 아님)"
+@D proven_tape_ssot := "MAIN.tape SSOT 선언" :: governance [d=2026-05-15 required active]
+  rule = "anima 가설 verdict 의 single source of truth = MAIN.tape (atlas overlay 아님)"
   scope = "318 hypothesis files — A 격리 20 + B 격리 107 + legacy 191"
-  protocol = "VERIFY.tape 3-stage (math sympy / physics sim / cross-meta) 통과 verdict 만 PROVEN.tape 등재"
-  atlas_relation = "atlas overlay 의 191 hypothesis registry 는 SOURCE inventory; PROVEN.tape 는 그 inventory 위 verdict layer (분리)"
+  protocol = "VERIFY.tape 3-stage (math sympy / physics sim / cross-meta) 통과 verdict 만 MAIN.tape 등재"
+  atlas_relation = "atlas overlay 의 191 hypothesis registry 는 SOURCE inventory; MAIN.tape 는 그 inventory 위 verdict layer (분리)"
 
 @N atlas_artifacts_in_anima := "anima 안 atlas 흡수 traces (audit)" :: note [d=2026-05-15 active]
   body <<~EOF2
@@ -678,5 +678,5 @@
     Other:
       - REBORN.log.tape, CLM_V2_EXHAUSTIVE_13_STAGES_2026_05_09.md, LIMIT_BREAKTHROUGH.md — 모두 reference/context only
     
-    Decision: anima 안 atlas-absorb capability 는 deprecate 마크 — atlas 로 보내는 흡수는 보류, anima 안에서는 PROVEN.tape 가 SSOT.
+    Decision: anima 안 atlas-absorb capability 는 deprecate 마크 — atlas 로 보내는 흡수는 보류, anima 안에서는 MAIN.tape 가 SSOT.
   EOF2

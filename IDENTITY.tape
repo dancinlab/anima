@@ -63,8 +63,8 @@
 
 @I principle :: identity [d=2026-05-15 ok]
   <- anima
-  principles = ["honesty-triad-C3","Ψ-half-convergence","proven-tape-ssot","raw-rule-promote-or-PR","cross-repo-propagation"]
-  ssot = "PROVEN.tape (verdict SSOT) + .raw-audit/ + state/convergence/"
+  principles = ["honesty-triad-C3","Ψ-half-convergence","main-tape-ssot","raw-rule-promote-or-PR","cross-repo-propagation"]
+  ssot = "MAIN.tape (verdict SSOT) + .raw-audit/ + state/convergence/"
 
 @I version :: identity [d=2026-05-14 ok]
   <- anima
