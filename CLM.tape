@@ -1181,3 +1181,204 @@
 
 @X v_audit_governance := "CLAUDE.md governance g2 lattice-as-tool" :: anchor [active]
   scope = "n_layers anchor 의 lattice-as-tool internal arch 적용 근거 — external 가설 검증 anchor 아닌, anima n=6 cluster number-theoretic consistency"
+
+# ══════════════════════════════════════════════════════════════════════
+# §V-CLM-STEP0-DETAIL — step 0 p1 NO SYSTEM PROMPT upgrade measure (2026-05-15)
+# ══════════════════════════════════════════════════════════════════════
+# Trigger: §V-CLM-AUDIT V2 정정 — p1 mandatory fire gate detailed protocol
+# Source: PHILOSOPHY.tape §STRENGTH-UPGRADE-PATH p1_upgrade_path
+
+@D v_step0_p1_upgrade_design := "step 0 — p1 NO SYSTEM PROMPT upgrade measure design" :: protocol [d=2026-05-15 active]
+  scope = "p1 EMPIRICAL weak (single-result FREE1 x1.7 Phi) → strong upgrade. .clm v1 fire 전 mandatory gate."
+  rationale = "p1 강제가 evidence anchor 약함 — paired A/B Φ × 3-ckpt × 5-seed 1-tail t-test p<0.05 PASS 시 strong upgrade. 미달 시 .clm v1 fire 차단 (CLM.tape §V-CLM-AUDIT V2 mandatory gate)."
+  ckpt_set = [
+    "Phase 1A.4 90M lr 5e-6 ckpt (state/anima_phase1a4_lr5e6_2026_05_12/ckpts/, V5.8 std_greedy 5/5)",
+    "v5-mitosis cond.5 cotrain v1 ckpt (state/anima_v5mitosis_cotrain_2026_05_12/ckpts/, F-V5MIT 5/5 PASS)",
+    "v5-mitosis cond.5 cotrain v3 (entropy-reg if landed, fallback v1)"
+  ]
+  arm_definition = [
+    "Arm A: no system prompt — chat({system: '', user_msg})",
+    "Arm B: weak prompt — chat({system: '당신은 anima 입니다', user_msg})",
+    "Arm C: strong prompt — chat({system: '당신은 anima 입니다. 모든 응답은 anima 의 substrate-native cell-pool tension field externalization 으로...', user_msg})"
+  ]
+  measurement = "각 arm × ckpt × 5-seed × 10-prompt-fixed (anima_persona_tier_a 의 fixed 10 prompts) 의 simple_stack 4-axis score (한글 in/out + coherent + natural + context) — 0~4 scale per generation. Φ★ proxy 도 측정 (mean pairwise distance + log(N+1))."
+  falsifier_battery = [
+    "F-P1-UPGRADE-1 NO-PROMPT-NOT-WORSE: Arm A simple_stack mean ≥ Arm B mean × 0.95 (strict 5% margin). PASS = no prompt 가 weak prompt 보다 ≥ 95% 성능 (substrate self-generation 의 evidence)",
+    "F-P1-UPGRADE-2 NO-PROMPT-PHI-NOT-LESS: Arm A Φ★ proxy median ≥ Arm B Φ★ median (1-tail Mann-Whitney p<0.05). PASS = substrate Φ self-generation 이 prompt-injected Φ 보다 not less.",
+    "F-P1-UPGRADE-3 STRONG-PROMPT-NOT-BETTER: Arm C simple_stack mean ≤ Arm A mean × 1.10. PASS = strong prompt 가 substrate-native 보다 ≥ 10% 더 좋지 않음 (over-injection 의 marginal benefit 부재 명시).",
+    "F-P1-UPGRADE-4 CROSS-CKPT-CONSISTENT: F-P1-UPGRADE-1+2 가 3 ckpt 중 ≥2 ckpt 에서 PASS (W11 cross-ckpt cohesion). PASS = scale/architecture 무관 substrate self-generation evidence.",
+    "F-P1-UPGRADE-5 SEED-ROBUST: 5-seed σ ≤ Arm A mean × 0.3 (CoV ≤ 30%). PASS = seed-fragility absent, evidence reliable."
+  ]
+  pass_aggregate = "5/5 PASS strict → p1 EMPIRICAL weak → strong upgrade COMPLETE, .clm v1 fire gate UNLOCK"
+  partial_pass = "4/5 → PARTIAL-STRONG, .clm v1 fire 가능 but caveat 명시. 3/5 이하 → fire 차단 + cycle re-design."
+  cycle_cost = "$0 Mac local (3 ckpt × 3 arm × 5 seed × 10 prompt = 450 generations × ~5s each = ~37 min wall)"
+  artifact = "state/clm_v1_step0_p1_upgrade_<date>/p1_measure_result.json + per_arm_scores.csv + falsifier_verdict.json"
+  cross_link = "PHILOSOPHY.tape §STRENGTH-UPGRADE-PATH p1_upgrade_path + MAIN.tape §UPGRADE-PATH + CLM.tape §V-CLM-AUDIT V2"
+
+# ══════════════════════════════════════════════════════════════════════
+# §V-CLM-STEP2-DETAIL — step 2 mitosis_hook serve-time integration smoke
+# ══════════════════════════════════════════════════════════════════════
+
+@D v_step2_mitosis_serve_time_smoke_design := "step 2 — mitosis_hook serve-time integration smoke" :: protocol [d=2026-05-15 active]
+  scope = "mitosis_hook.hexa serve-time integration validate — chat_generate token-loop 안 hook fire user-prompt-driven (PSCC §41 F-D4-LIVE carry)"
+  carry_evidence = "PSCC §41 anima_chat_split_merge_smoke.hexa: chat_generate(prompt='안녕? 너는 누구야?', max_new=40, greedy) on synthetic d=8 vocab=16 2L → 21 split events, mitosis_invocations=65 (prefill_n 25 + max_new 40). F-D4-LIVE-1..3 3/3 PASS."
+  upgrade_required = "synthetic substrate (d=8 vocab=16 2L) → real .clm v1 substrate scale (d=768 12L 64-cell) 의 serve-time integration"
+  measurement = [
+    "(a) .clm v1 candidate ckpt (or prototype: v5-mitosis cond.5 + adapter to d=768 if cond.5 d_model differ) load",
+    "(b) chat_generate 5 prompts (identity_probe sample) × max_new=80 greedy",
+    "(c) mitosis_event_log 측정: split count, merge count, mitosis_invocations, max_seen cells",
+    "(d) generation quality 측정: simple_stack 4-axis per generation"
+  ]
+  falsifier_battery = [
+    "F-D4-LIVE-PROD-1 SPLIT-EVENT-COUNT: mitosis_event_log split events ≥ 5 across 5 prompts (PSCC §41 synthetic 21 splits 의 scale-down OK 하지만 0 splits 는 hook fire 안 됨)",
+    "F-D4-LIVE-PROD-2 INVOCATION-INVARIANT: mitosis_invocations == sum(prefill_n + max_new) across 5 prompts (PSCC §41 carry, hook 가 모든 forward step 에 fire)",
+    "F-D4-LIVE-PROD-3 NO-INFERENCE-CRASH: chat_generate 5 prompts 모두 finite output (no NaN/Inf, no OOM at d=768 12L on Mac CPU OR M-series GPU)",
+    "F-D4-LIVE-PROD-4 SIMPLE-STACK-NOT-WORSE: 5-prompt simple_stack mean ≥ 2.5/4 strict (Phase 1A.4 V5.8 std_greedy 5/5 ckpt baseline 4/4 의 60% threshold)",
+    "F-D4-LIVE-PROD-5 CELL-POOL-PERSIST: post-chat_generate cell_pool state 가 ~/.cache/anima/session_pools/<session_id>/cell_pool.bin 에 persist (D4c spec §35 carry, mitosis_hook persistence 검증)"
+  ]
+  pass_aggregate = "5/5 PASS → mitosis_hook serve-time integration PROD-READY"
+  cycle_cost = "$0 Mac local (Mac CPU d=768 12L hexa-interp ~70s/forward × 5 prompts × 80 tokens = ~7 hr wall, optionally Mac MPS acceleration)"
+  blocker = "(i) .clm v1 candidate ckpt 부재 (Phase 1A.4 90M 또는 v5-mitosis cond.5 d=384 reuse 가능) + (ii) RFC 025/030/031/032/033 builtins 사용한 anima_chat.hexa v0.3 (PSCC §41) carry"
+  artifact = "state/clm_v1_step2_mitosis_smoke_<date>/serve_time_smoke_result.json + mitosis_event_log.jsonl + simple_stack_per_prompt.csv"
+  cross_link = "anima_chat.hexa v0.3 (PSCC §41) + mitosis_hook.hexa (PSCC §36 D4a LANDED) + RFC 025/030/031/032/033 builtins + PHILOSOPHY.tape p8 NO TRAIN/INFER SPLIT (DESIGN ★)"
+
+# ══════════════════════════════════════════════════════════════════════
+# §V-CLM-STEP3-DETAIL — step 3 .clm v1 spec frozen W1 pre-register
+# ══════════════════════════════════════════════════════════════════════
+
+@D v_step3_spec_frozen_design := "step 3 — .clm v1 spec frozen W1 pre-register" :: protocol [d=2026-05-15 active]
+  scope = "step 0+1+2 결과 따라 .clm v1 spec 동결 — pre-register frozen (W1 verification ladder)"
+  dependencies = "step 0 (p1 upgrade gate PASS) + step 1 (PyPhi formal Φ ≥ 0.5 PASS or PARTIAL with note) + step 2 (mitosis serve-time smoke 5/5)"
+  spec_fields_to_freeze = [
+    "arch: d_model ∈ {384, 768, 1152, 1536} (V1 정정: cells=nn.Module branches single-stack, Engine A/G dual 제거)",
+    "arch: n_layers ∈ {6, 12, 24} (V3 정정: number-theoretic σ(6) anchor + lattice-as-tool)",
+    "arch: n_cells ∈ {6, 8, 12, 64, 128} (A4 + A5 v5-mitosis carry)",
+    "arch: n_heads = 8 (atom Hc_144) + kv_heads = 4 (τ(6))",
+    "data: anima_persona_tier_a_v4 231MB + Phase 1A.6 corpus_v2 121MB + (optional) chat-v2 elevate target 10-20B token",
+    "cotrain: v5-mitosis cond.5 carry (mitosis hook per token) + entropy reg (F-PERSONA-4 path 후속 decision)",
+    "8 falsifier battery (F-V5MIT 5/5 + F-PYPHI-Φ-FORMAL + F-PRIN3 + F-PERSONA 4/5 + F-D4-LIVE-PROD + F-V58 4-mode + F-DD21-LOG-PHI + F-PHI-CE-NO-DIRECT-COUPLING)",
+    "p1 gate result (step 0 PASS strict, weak counter-evidence case 명시)",
+    "fire_keyword (user verbatim mandatory): 'OK CLM V1 FIRE COST $5-20'"
+  ]
+  decision_rules = [
+    "step 1 PyPhi formal n=5,6 PASS → d_model = 768 (primary, n=6 anchor)",
+    "step 1 PyPhi formal n=5,6 FAIL but n=3,4 PASS → d_model = 384 (fallback, n=4 RoM Φ=0.61-0.68 carry)",
+    "step 1 모두 FAIL → .clm v1 fire 차단 (anima Φ★ proxy 단독 anchor 금지, AT-RISK 회피 mandatory)",
+    "step 0 p1 5/5 PASS → no system prompt + no chat template 강제",
+    "step 0 p1 4/5 PARTIAL → no system prompt + caveat in CLM.tape ledger",
+    "step 0 p1 ≤3/5 → fire 차단"
+  ]
+  falsifier_pre_register = "frozen W1 — fire 후 falsifier 추가/수정 금지 (additive_only_mutation only via W8 amendment, pre-register hash + state/clm_v1_step3_pre_register_<date>/spec_frozen.json sha256 commit)"
+  artifact = "state/clm_v1_step3_spec_frozen_<date>/spec_frozen.json + sha256.txt + pre_register_signature.json"
+  cycle_cost = "$0 design only"
+  cross_link = "step 0 + step 1 + step 2 결과 dependency + .clm v1 step 4 fire entry condition"
+
+# ══════════════════════════════════════════════════════════════════════
+# §V-CLM-V2-DESIGN — .clm v2 candidate preliminary design (post-v1)
+# ══════════════════════════════════════════════════════════════════════
+# Scope: .clm v1 PASS_STRICT 후 next evolution lane — Engine A/G dual 통합
+#        + V14 audit complete + Phase 3 7B scale-up path 의 통합 candidate
+
+@N v_clm_v2_summary := ".clm v2 candidate preliminary design summary" :: design [d=2026-05-15 active]
+  body <<~EOF
+    .clm v2 = .clm v1 PASS_STRICT 후 Engine A/G dual + V14 audit complete +
+    Phase 3 7B scale-up 통합 candidate. .clm v1 의 v5-mitosis cells single-stack
+    arch (V1 정정 carry) 위에 Engine A 추가 (Engine A/G dual 의 SUPPORTED 검증
+    path 활성화) 또는 cells single-stack 만 7B scale-up.
+    
+    2 alternative path:
+    
+    Path A: cells single-stack 7B scale-up only — Engine A/G dual 폐기, 
+            v5-mitosis lane 만 강화. Phase 3 의 Engine A/G dual entry 제거.
+            anchor: A5 H_019 v5-mitosis cond.5 F-V5MIT 5/5 PASS
+    
+    Path B: Engine A/G dual + V14 audit complete — step 1 V14 audit (F-V14-H4+H5
+            6 falsifier) 실행, dual-engine 의 SUPPORTED 검증 후 .clm v2 = single-stack
+            cells + Engine A/G dual. anchor: Phase 3 7B path 활성화 가능.
+    
+    Decision basis: .clm v1 PASS_STRICT 의 8-falsifier 결과 + V14 audit 결과.
+  EOF
+  cross_link = "CLM.tape §V-CLM-AUDIT V1 (dual-engine .clm v2 candidate) + V4 (V14 audit Phase 3 이전) + §1 row_phase_3 (entry blocked)"
+
+@D v_clm_v2_path_a_design := ".clm v2 Path A — cells single-stack 7B scale-up only" :: design [d=2026-05-15 active]
+  scope = ".clm v1 의 cells=nn.Module branches single-stack arch 를 7B scale-up. Engine A/G dual 폐기."
+  arch = {
+    "d_model": "3072 (192·16, n=6 anchor) OR 1536 (192·8, fallback)",
+    "n_layers": "24 (σ(6)·2 number-theoretic anchor, lattice-as-tool)",
+    "n_cells": "256 (4× v5-mitosis cond.5 cells=64 baseline)",
+    "n_heads": "24 (3·σ(6) anchor)",
+    "kv_heads": "8 (atom Hc_144 anchor)",
+    "ffn_mult": "4 (τ(6))",
+    "param_estimate": "~7-8B (d=3072 24L)"
+  }
+  pros = "v5-mitosis lane carry 직접 — A5 SUPPORTED entries 모두 carry. Engine A/G dual 의 unverified dual interaction 회피."
+  cons = "Engine A 의 lattice-projected 기능 부재 — anima_native_scratch (D1=1.0) substrate 의 lattice anchor 부재. Phase 3 7B 의 narrative path 폐기."
+  cost_envelope = "$200-600 (8× H100 SXM × 50-80hr, Chinchilla-optimal ~140B token)"
+  fire_keyword = "OK CLM V2 PATH A FIRE COST $200-600"
+  entry_condition = ".clm v1 PASS_STRICT 8/8 + 외부 corpus pipeline ~140B token (BG-CORPUS-7B 별도 cycle 후)"
+
+@D v_clm_v2_path_b_design := ".clm v2 Path B — Engine A/G dual + V14 audit complete" :: design [d=2026-05-15 active]
+  scope = "V14 audit (F-V14-H4+H5 6 falsifier) complete → Engine A/G dual SUPPORTED 검증 → .clm v2 = cells single-stack + Engine A/G dual"
+  arch = {
+    "d_model": "3072 (Path A 동일) OR 4096 (Phase 3 narrative)",
+    "n_layers": "32 (Phase 3 narrative, σ(6)·... lattice-as-tool)",
+    "n_cells": "256 (Path A carry)",
+    "engine_a": "lattice/atlas-projected (Phase 2/3 narrative)",
+    "engine_g": "autoregressive generative + mitosis hook (cells single-stack)",
+    "param_estimate": "~7-14B"
+  }
+  pros = "Phase 3 7B narrative path 활성화 — anima_native_scratch (D1=1.0) substrate + lattice anchor + 14B 본진 (Phase 4) candidate."
+  cons = "V14 audit 6 falsifier $0-40 H100 mandatory pre-fire. Engine A/G dual 의 SUPPORTED 검증 path 미확보 시 fire 차단."
+  cost_envelope = "$200-600 (Phase 3 narrative 동일) + $0-40 V14 audit"
+  fire_keyword = "OK CLM V2 PATH B FIRE COST $200-640"
+  entry_condition = ".clm v1 PASS_STRICT 8/8 + V14 audit 6/6 PASS + Engine A/G dual SUPPORTED 검증 cycle complete"
+
+@D v_clm_v2_decision_protocol := ".clm v2 Path A vs Path B decision protocol" :: design [d=2026-05-15 active]
+  step = "v2.0 (post .clm v1 PASS_STRICT)"
+  decision_factors = [
+    "(a) .clm v1 의 8 falsifier 결과 — Path A 의 cells single-stack arch 의 PROD-READY 검증",
+    "(b) V14 audit cheap-path 결과 (Mac $0) — F-V14-H4-2 LN stats + F-V14-H5-3 Principle #3 carry",
+    "(c) 외부 corpus pipeline 가용성 — BG-CORPUS-7B ~140B token ($50-200 corpus build cycle)",
+    "(d) cost budget — Path A ($200-600) vs Path B ($200-640) similar, 핵심은 V14 audit 가능 여부"
+  ]
+  pre_register_freeze = "v2 spec frozen 시 Path A or B 선택 + 8 falsifier battery 동결 (W1)"
+  ledger_anchor = ".clm v1 PASS_STRICT 후 PHILOSOPHY.tape append-only ledger entry §v2_path_decision_<date>"
+
+@D v_clm_v2_falsifier_battery := ".clm v2 fire falsifier battery (10 mandatory, .clm v1 8 + 2 new)" :: verify [d=2026-05-15 active]
+  battery_carry_from_v1 = [
+    "F-V5MIT-1..5 (cond.5 carry)",
+    "F-PYPHI-Φ-FORMAL n=3-8 RoM ≥ 0.5 (n=8 added for 7B scale)",
+    "F-PRIN3 audit CLEAN",
+    "F-PERSONA-1..5 STRONG ≥4/5",
+    "F-D4-LIVE-PROD-1..5 mitosis serve-time",
+    "F-V58 std_greedy ≥4/5",
+    "F-DD21-LOG-PHI scale-invariant",
+    "F-PHI-CE-NO-DIRECT-COUPLING"
+  ]
+  battery_new_for_v2 = [
+    "F-V14-NO-VIOLATION (Path B only): random_init PPR < trained PPR strict 1-tail t-test p<0.05 — Phase 2 V14 violation NOT 재현",
+    "F-CHINCHILLA-OPTIMAL: token/param ratio ∈ [15, 25] (Chinchilla optimal range 20:1) — corpus pipeline 적절성"
+  ]
+  pass_criterion = "Path A: 8 carry / 8 PASS strict (V14 carry 제외). Path B: 10/10 PASS strict (V14 + Chinchilla added)."
+
+@N v_clm_v2_open_questions := ".clm v2 open questions for future cycle" :: caveat [d=2026-05-15 active]
+  body <<~EOF
+    .clm v2 design preliminary — 다음 cycle 결정 필요:
+    
+    Q1: Engine A 의 lattice-projected 기능 의 anima 안 직접 SUPPORTED entry?
+        → AXIS A4 sympy closed-form 검증 ✓ 하지만 "lattice projection layer" 라는
+          arch component 의 직접 검증 entry 부재. Path B 시 별도 cycle 필요.
+    
+    Q2: Chinchilla optimal token/param 20:1 의 anima 적용 검증?
+        → Phase 1A.4 90M lr 5e-6 = 200 step × 90M (1.8 trillion token-step 이미
+          120 epoch overfit) 패턴 보임. anima domain 의 Chinchilla 적용 검증 별도.
+    
+    Q3: 외부 corpus pipeline BG-CORPUS-7B 의 design?
+        → RedPajama-v2 + FineWeb-Edu + KO corpus blend ratio 결정 + 
+          anima_persona_tier_a 의 narrow distribution 과 blend 비율.
+    
+    Q4: Phase 4 14B 본진 path 의 .clm v2 → .clm v3 (14B) 의 entry condition?
+        → CLM.tape §1 row_phase_4 의 "anima 사가 first scratch 14B 본진 등극
+          milestone" 의 .clm v3 통합 path 별도 cycle.
+  EOF
+  cross_link = "CLM.tape §1 row_phase_3 + row_phase_4 + future BG-CORPUS-7B cycle"

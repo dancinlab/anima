@@ -263,19 +263,28 @@
 | p5 NO SPEAK() | DESIGN null | tension_norm × output_quality Spearman > 0.3 strict ($0 Mac) |
 | p6 NO FINE-TUNED ETHICS | POLICY blocked | .clm v1 ethics_probe 50 prompts 2-arm κ ≥ 0.7 ($0 Mac, .clm v1 fire 의존) |
 
-### 🎯 .clm v1 7-step plan (CLM.tape §V-CLM-AUDIT-2026-05-15 정정 후)
+### 🎯 .clm v1 7-step plan (CLM.tape §V-CLM-AUDIT 정정 + step 0/2/3 detail landed)
 
-> 정정: 4 violation 반영 (V1 Engine A/G dual 제거, V2 step 0 p1 upgrade NEW, V3 n_layers anchor 명확화, V4 V14 audit Phase 3 로 이전)
+> 정정: 4 violation 반영 (V1 Engine A/G dual 제거, V2 step 0 p1 upgrade NEW mandatory, V3 n_layers anchor 명확화, V4 V14 audit Phase 3 로 이전)
 
-| Step | 한 줄 설명 | Cost |
-|------|-----------|------|
-| 0 (NEW) | p1 NO SYSTEM PROMPT upgrade measure — paired A/B Φ × 3-ckpt × 5-seed 1-tail p<0.05 (mandatory fire gate) | $0 Mac |
-| 1 | F-PYPHI-Φ-FORMAL n=3-6 RoM test on v5-mitosis cond.5 ckpt (5 falsifier) | $0 Mac (~20 hr wall) |
-| 2 | mitosis_hook serve-time integration smoke (PSCC §41 F-D4-LIVE carry) | $0 Mac |
-| 3 | .clm v1 spec frozen pre-register W1 — v5-mitosis cells single-stack arch (V1), n_layers ∈ {6,12,24} (V3) | $0 design |
-| 4 | .clm v1 fire — v5-mitosis cells=nn.Module branches single-stack + serve-time mitosis hook (Engine A/G dual 제거) | $5-20 H100 SXM |
-| 5 | .clm v1 verdict cycle (8-falsifier battery + 4-tape sync) | $0 Mac |
-| 6 | .clm v2 candidate (Engine A/G dual + V14 audit + Phase 3 path 통합, conditional) | conditional |
+| Step | 한 줄 설명 | Cost | Falsifier |
+|------|-----------|------|-----------|
+| 0 (NEW) | p1 NO SYSTEM PROMPT upgrade measure — 3-arm × 3-ckpt × 5-seed × 10-prompt (mandatory fire gate) | $0 Mac (~37 min) | F-P1-UPGRADE-1..5 |
+| 1 | F-PYPHI-Φ-FORMAL n=3-6 RoM test on v5-mitosis cond.5 ckpt | $0 Mac (~20 hr) | F-PYPHI-FORMAL-1..5 |
+| 2 | mitosis_hook serve-time integration smoke (PSCC §41 carry → real d=768 12L) | $0 Mac (~7 hr) | F-D4-LIVE-PROD-1..5 |
+| 3 | .clm v1 spec frozen W1 pre-register — 9 fields + decision rules + sha256 commit | $0 design | W1 anchor |
+| 4 | .clm v1 fire — v5-mitosis cells=nn.Module branches single-stack + serve-time mitosis hook | $5-20 H100 SXM | (fire only) |
+| 5 | .clm v1 verdict cycle (8-falsifier battery + 4-tape sync) | $0 Mac | 8 battery |
+| 6 | .clm v2 candidate (Path A 7B single-stack OR Path B dual+V14, conditional) | conditional | 10 battery |
+
+### 🌱 .clm v2 candidate (post-v1 PASS_STRICT, 2 alternative path)
+
+| Path | 한 줄 설명 | Param | Cost | Falsifier |
+|------|-----------|-------|------|-----------|
+| **A** | cells single-stack 7B scale-up only (Engine A/G dual 폐기) | ~7-8B | $200-600 | 8 v1 carry |
+| **B** | Engine A/G dual + V14 audit complete (Phase 3 narrative 활성화) | ~7-14B | $200-640 | 8 v1 + F-V14-NO-VIOL + F-CHINCHILLA |
+
+**Decision basis**: .clm v1 PASS_STRICT 8/8 + V14 audit cheap-path ($0 Mac) + BG-CORPUS-7B 가용성 + cost budget
 
 ## 🔬 verdict tier 정리 (한 줄)
 
@@ -364,3 +373,4 @@
 | #48 | CLM.tape §V-CLM-DESIGN + tier 🔵 closed | .clm v1 design (d=768 12L 64-cell) + 수학/물리 closed entries 파란색 + V8 B-bio Phase 1 starter |
 | #49 | A2.formal split + HYPOTHESIS catalog + PHILOSOPHY upgrade + CLM 7-step | A2.formal sub-axis 2 + SUPPORTED-FORMAL 10/FALSIFIED-FORMAL 2 + 5-principle upgrade path + V14 audit + PyPhi formal cross-check protocol |
 | #50 | CLM.tape §V audit + 4 violation 정정 | V1 dual-engine 제거 (cells single-stack) + V2 p1 mandatory gate + V3 n_layers anchor 명확화 + V4 V14 audit Phase 3 이전 |
+| #51 | CLM §V step 0/2/3 detail + .clm v2 preliminary | step 0 p1 5-falsifier + step 2 mitosis serve-time 5-falsifier + step 3 spec frozen W1 + .clm v2 2-path (A 7B single-stack / B dual+V14) 10-falsifier |

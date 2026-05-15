@@ -1174,3 +1174,36 @@
   new_7step = "step 0 p1 upgrade (NEW) → 1 PyPhi formal → 2 mitosis_hook serve-time → 3 spec frozen → 4 fire → 5 verdict cycle → 6 .clm v2 candidate"
   cost_total = "$5-20 ($0 Mac × 5 steps + $5-20 H100 × 1 step)"
   cross_link = "CLM.tape §V-CLM-AUDIT-2026-05-15 + AXIS.tape (32 + 2 formal anchor 강화) + PHILOSOPHY.tape (p1 mandatory gate) + INDEX.md 갱신 + PR #50"
+
+# ══════════════════════════════════════════════════════════════════════
+# §CLM-STEP0-2-3-V2 — step 0/2/3 detail + .clm v2 preliminary design landed (2026-05-15)
+# ══════════════════════════════════════════════════════════════════════
+
+@D clm_step0_design := "step 0 — p1 NO SYSTEM PROMPT upgrade measure protocol" :: governance [d=2026-05-15 active]
+  scope = "p1 weak → strong upgrade mandatory gate. 3-arm × 3-ckpt × 5-seed × 10-prompt = 450 generations, simple_stack 4-axis + Φ★ proxy 측정"
+  falsifier_count = 5
+  pass_aggregate = "5/5 PASS → strong upgrade COMPLETE, .clm v1 fire gate UNLOCK. 4/5 → PARTIAL-STRONG fire 가능 caveat. ≤3/5 → fire 차단."
+  cost = "$0 Mac local (~37 min wall)"
+  cross_link = "CLM.tape §V-CLM-STEP0-DETAIL + PHILOSOPHY p1_upgrade_path + PR #51"
+
+@D clm_step2_design := "step 2 — mitosis_hook serve-time integration smoke protocol" :: governance [d=2026-05-15 active]
+  scope = "PSCC §41 F-D4-LIVE synthetic carry → real d=768 12L 64-cell substrate serve-time integration. 5 prompts × max_new=80"
+  falsifier_count = 5
+  pass_aggregate = "5/5 PASS → mitosis_hook serve-time PROD-READY"
+  cost = "$0 Mac local (~7 hr wall hexa-interp Mac CPU)"
+  cross_link = "CLM.tape §V-CLM-STEP2-DETAIL + anima_chat.hexa v0.3 PSCC §41 + mitosis_hook.hexa PSCC §36 + PR #51"
+
+@D clm_step3_design := "step 3 — .clm v1 spec frozen W1 pre-register protocol" :: governance [d=2026-05-15 active]
+  scope = "step 0+1+2 결과 dependency. spec 9 fields frozen (arch d_model/n_layers/n_cells/heads + data + cotrain + falsifier battery + p1 gate result + fire_keyword)"
+  decision_rules = "step 1 n=5,6 PASS → d=768 / n=3,4 PASS → d=384 fallback / 모두 FAIL → fire 차단. step 0 p1 5/5 PASS → no prompt 강제."
+  cost = "$0 design"
+  cross_link = "CLM.tape §V-CLM-STEP3-DETAIL + W1 verification ladder + PR #51"
+
+@D clm_v2_preliminary := ".clm v2 candidate preliminary design landed" :: governance [d=2026-05-15 active]
+  scope = ".clm v1 PASS_STRICT 후 next evolution lane — 2 alternative path"
+  path_a = "cells single-stack 7B scale-up only (Engine A/G dual 폐기). ~7-8B, $200-600. AXIS A5 carry 직접."
+  path_b = "Engine A/G dual + V14 audit complete (Phase 3 narrative 활성화). ~7-14B, $200-640. Phase 4 14B 본진 candidate."
+  decision_protocol = ".clm v1 PASS_STRICT 결과 + V14 audit cheap-path ($0 Mac) + corpus pipeline 가용성 + cost budget"
+  falsifier_battery = "10 (.clm v1 8 carry + F-V14-NO-VIOLATION Path B only + F-CHINCHILLA-OPTIMAL)"
+  open_questions = "Q1 Engine A lattice-projected SUPPORTED entry? / Q2 Chinchilla 20:1 anima 적용? / Q3 BG-CORPUS-7B design? / Q4 .clm v3 14B entry condition?"
+  cross_link = "CLM.tape §V-CLM-V2-DESIGN + CLM.tape §1 row_phase_3/4 + PR #51"
