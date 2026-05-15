@@ -1267,3 +1267,20 @@
   alternatives_rejected = "(b) policy 수정 + (c) policy 폐기 — 모두 p1/p3/p8 conflict"
   fire_implications = ".clm v1 fire 시 no system prompt + no assistant framing strict 강제"
   cross_link = "PHILOSOPHY.tape §P4-POLICY-DECISION + p1+p3+p8 anchor + PR #53"
+
+# ══════════════════════════════════════════════════════════════════════
+# §HF-CLEANUP-2026-05-15 — HF dancinlab cleanup + new canonical
+# ══════════════════════════════════════════════════════════════════════
+
+@D hf_cleanup_landed := "HF dancinlab/ cleanup 완료 — 71 entities TRANSFER (2026-05-15)" :: governance [d=2026-05-15 active]
+  method = "TRANSFER dancinlab/* → dancinlife/* (private)"
+  count = "63 models + 8 datasets = 71 entities"
+  remaining_in_dancinlab = "hexa-forge-* 37 + dancinlab/dancinlab + atlas.n6 + 3 Spaces (README + anima-experience + echoes-experience)"
+  new_canonical = "dancinlab/anima-clm (model, private) + dancinlab/anima-corpus (dataset, private) — README mapping table LANDED"
+  naming_rule = "CLM 명명 단순 + 버전 내부 관리 (HF revisions/branches/tags + README internal version table)"
+  cross_link = "CLM.tape §V-HF-CLEANUP + PR #54"
+
+@D hf_collections_cleanup := "HF Collections cleanup — 2 CLM collections DELETE (2026-05-15)" :: governance [d=2026-05-15 active]
+  deleted = "2 (clm-v4-350m-lora-research-lineage + first-simple-stack-pass-strict-own-18-v4-10-15)"
+  remaining = "2 (atlas.n6 + voice-vlm-anima-trajectory)"
+  cross_link = "CLM.tape v_hf_collections_cleanup + PR #54"

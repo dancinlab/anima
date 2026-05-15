@@ -363,6 +363,22 @@
 | resume keyword | `ATLAS RESUME` |
 | ledger | MAIN-TEMP.tape (anima 보관) |
 
+## 🤗 HF dancinlab canonical (2026-05-15 cleanup LANDED)
+
+> 정리: 71 entities (63 models + 8 datasets) dancinlab/* → dancinlife/* TRANSFER (private) + 2 CLM collections DELETE
+
+| Repo | Type | 한 줄 |
+|------|------|------|
+| 🎯 `dancinlab/anima-clm` | model | **NEW canonical** — .clm v1/v2/v3 버전 internal HF revisions + README mapping (private, fire pending) |
+| 📚 `dancinlab/anima-corpus` | dataset | **NEW canonical** — BG-CORPUS-3B/7B/14B 버전 internal HF revisions + README components (private) |
+| 🚀 `dancinlab/anima-experience` | Space | active Gradio service |
+| 🛡️ `dancinlab/README` | Space | org card |
+| 🌌 `dancinlab/echoes-experience` | Space | echoes 별도 project |
+| 🌀 `dancinlab/atlas.n6` | dataset | atlas 보류 status (ATLAS RESUME keyword) |
+| 🛠️ `dancinlab/hexa-forge-*` | model × 37, dataset × 5 | 별도 project (anima cleanup scope 외) |
+| 📦 collections | 2 keep (atlas.n6 + voice-vlm-anima) | 2 CLM collections DELETED (clm-v4-research + first-simple-stack-pass-strict-own-18) |
+| 🗄️ `dancinlife/*` | private archive | 71 precursor entities (clm-v4-* / anima-clm-precursor / bg-* / llm-* / vlm-* / 8 datasets) |
+
 ## 🔗 cross-links
 
 | Path | 한 줄 설명 |
@@ -396,3 +412,4 @@
 | #51 | CLM §V step 0/2/3 detail + .clm v2 preliminary | step 0 p1 5-falsifier + step 2 mitosis serve-time 5-falsifier + step 3 spec frozen W1 + .clm v2 2-path (A 7B single-stack / B dual+V14) 10-falsifier |
 | #52 | CLM 학습 from-scratch directive 정정 | init=RANDOM INIT seed-fixed / v5-mitosis ckpt=anchor verification only / mitosis hook=mechanism carry / step 0.5 mini-smoke NEW / step 4 cost $5-20→$10-30 / v2+v3 모두 from-scratch |
 | #53 | CLM v3 + corpus + AXIS expansion + p4 policy | .clm v3 14B detailed (d=4608·32-36L·256c) + BG-CORPUS-{3B/7B/14B} blend + A3/A7/A9 expansion (+8-12 entries) + p4 strict 유지 (counter-evidence 인정) |
+| #54 | HF cleanup + new canonical (anima-clm + anima-corpus) + 2 collections DELETE | 71 entities (63 models + 8 datasets) TRANSFER dancinlab→dancinlife private + dancinlab/anima-clm + dancinlab/anima-corpus new canonical (private, README mapping table) + 2 CLM collections DELETE (clm-v4-research + first-simple-stack) |
