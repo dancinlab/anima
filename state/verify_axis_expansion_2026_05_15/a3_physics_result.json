@@ -1,0 +1,42 @@
+{
+  "axis": "A3 physics",
+  "expansion_results": [
+    {
+      "hc_id": "Hc_NEW_PHYSICS-1",
+      "name": "BKT transition T_BKT = \u03c0J/2",
+      "closed_form": "T_BKT = \u03c0\u00b7J/2",
+      "numerical": 1.5707963267948966,
+      "derivation": "F = (\u03c0J - 2T)\u00b7log(L/a) \u2192 vortex unbinding at T = \u03c0J/2",
+      "sympy_verified": true,
+      "verdict": "SUPPORTED-FORMAL \ud83d\udd35",
+      "axis": "A3 physics"
+    },
+    {
+      "hc_id": "Hc_NEW_PHYSICS-2",
+      "name": "Onsager 2D Ising T_c = 2J/log(1+\u221a2)",
+      "closed_form": "T_c = 2J / log(1 + \u221a2)",
+      "numerical": 2.269185314213022,
+      "derivation": "Onsager 1944 exact 2D Ising solution \u2014 sinh(2J/kT_c) = 1",
+      "sympy_verified": true,
+      "verdict": "SUPPORTED-FORMAL \ud83d\udd35",
+      "axis": "A3 physics"
+    },
+    {
+      "hc_id": "Hc_NEW_PHYSICS-3",
+      "name": "Ginzburg-Landau critical point a=0",
+      "closed_form": "F = a\u00b7\u03c6\u00b2 + b\u00b7\u03c6\u2074, critical at a=0, \u03c6_min\u00b2 = -a/(2b) for a<0",
+      "derivation": "symmetry-breaking 2nd-order transition \u03c6\u2074 theory",
+      "sympy_verified": true,
+      "verdict": "SUPPORTED-FORMAL \ud83d\udd35",
+      "axis": "A3 physics"
+    }
+  ],
+  "aggregate": {
+    "n_total": 3,
+    "n_supported_formal": 3,
+    "a3_before": 1,
+    "a3_after": 4,
+    "blue_before": 1,
+    "blue_after": 4
+  }
+}

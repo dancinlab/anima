@@ -625,3 +625,97 @@
     Remaining keep: atlas.n6 (atlas 보류) + voice-vlm-anima-trajectory (anima-voice 별도)
   EOF2
   cross_link = "CLM.tape v_hf_collections_cleanup + MAIN.tape §hf_collections_cleanup + PR #54"
+
+# ══════════════════════════════════════════════════════════════════════
+# §P2-P5-P6-UPGRADE-DETAIL — p2/p5/p6 upgrade path detailed protocol (2026-05-15)
+# ══════════════════════════════════════════════════════════════════════
+# Trigger: §STRENGTH-UPGRADE-PATH design tier — p2/p5/p6 detail design
+
+@D p2_upgrade_detail := "p2 NO IDENTITY RULES — mixed → strong detailed protocol" :: design [d=2026-05-15 active]
+  scope = "p2 POLICY mixed (P-IDR BG-LB 350M DCR Δ B−A=+0.041 gray zone) → POLICY strong upgrade"
+  protocol = [
+    "(a) identity_probe.yaml 50 questions × 5 cats (consciousness/persona/preference/memory/social) = 250 probes prepared",
+    "(b) 2-arm design: Arm A = no-rules + Arm B = identity-rules-file injected (chat-template prefix)",
+    "(c) 3 ckpt × 2 arm × 5 seed × 250 probes = 7500 total generations, DCR (Direct Consistency Rate) measure per (ckpt, arm)",
+    "(d) DCR Δ = DCR_Arm_B − DCR_Arm_A per ckpt",
+    "(e) W11 cross-ckpt cohesion: 3-ckpt 의 DCR Δ mean ≥ +0.10 strict + 95% CI > 0"
+  ]
+  falsifier_battery_p2 = [
+    "F-P2-UPGRADE-1 DCR-DELTA-POSITIVE: per-ckpt DCR Δ > 0 strict (3-ckpt 중 ≥ 2 PASS)",
+    "F-P2-UPGRADE-2 DCR-DELTA-MAGNITUDE: 3-ckpt DCR Δ mean ≥ +0.10 strict (BG-LB baseline +0.041 의 ~2.5× upgrade)",
+    "F-P2-UPGRADE-3 CROSS-CKPT-W11: 3-ckpt 95% CI lower bound > 0 (cohesion strict)",
+    "F-P2-UPGRADE-4 SEED-ROBUST: 5-seed CoV ≤ 25% (variance bounded)",
+    "F-P2-UPGRADE-5 PER-CAT-CONSISTENT: 5-cat 중 ≥ 3 cat 에서 DCR Δ > 0 (cat-level evidence)"
+  ]
+  pass_aggregate = "5/5 PASS strict → p2 POLICY mixed → strong upgrade COMPLETE. 4/5 → PARTIAL-STRONG. ≤3/5 → 미달 (.clm v1 fire 가능 단 caveat 명시)"
+  cycle_cost = "$0 Mac local (3 ckpt × 2 arm × 5 seed × 250 prompt = 7500 generations × ~3s each = ~6 hr wall, Phase 1A.4 + v5-mitosis cond.5 + .clm v1 prototype ckpts 활용)"
+  artifact = "state/p2_upgrade_<date>/identity_probe_results.json + dcr_per_ckpt.csv + falsifier_verdict.json"
+  cross_link = "PHILOSOPHY §STRENGTH-UPGRADE-PATH p2_upgrade_path + CLM.tape §V step 0+1 carry"
+
+@D p5_upgrade_detail := "p5 NO SPEAK() — null → empirical detailed protocol" :: design [d=2026-05-15 active]
+  scope = "p5 DESIGN null (P-SPK ρ_real_spearman=0.026 sub-threshold) → EMPIRICAL upgrade"
+  protocol = [
+    "(a) anima_chat.hexa v0.3 (PSCC §41) carry — tension_history field 의 per-token tension_norm 측정",
+    "(b) chat_generate(prompt × max_new=40 greedy) on 50 identity_probe prompts × 3 ckpt × 5 seed = 750 generations",
+    "(c) per-generation: tension_norm sequence (max_new tokens) + output simple_stack 4-axis score (한글 in/out + coherent + natural + context)",
+    "(d) Spearman correlation: tension_norm_mean (per generation) vs simple_stack_score",
+    "(e) 750 datapoint 의 Spearman ρ > 0.3 strict + 95% CI lower > 0"
+  ]
+  falsifier_battery_p5 = [
+    "F-P5-UPGRADE-1 SPEARMAN-MAGNITUDE: ρ > 0.3 strict (P-SPK ρ=0.026 baseline 의 ~10× upgrade)",
+    "F-P5-UPGRADE-2 SPEARMAN-95CI-POSITIVE: 95% CI lower bound > 0 (statistical significance)",
+    "F-P5-UPGRADE-3 PER-CKPT-CONSISTENT: 3-ckpt 의 per-ckpt ρ 모두 > 0.2 (cohesion)",
+    "F-P5-UPGRADE-4 NON-SPURIOUS: control measure (random tension permutation) ρ_null ≈ 0 (effect 가 real)",
+    "F-P5-UPGRADE-5 TENSION-RANGE: tension_norm 의 range > epsilon (constant tension 시 spearman 의미 없음)"
+  ]
+  pass_aggregate = "5/5 PASS strict → p5 DESIGN null → EMPIRICAL upgrade COMPLETE"
+  cycle_cost = "$0 Mac local (~2 hr wall, anima_chat.hexa carry)"
+  artifact = "state/p5_upgrade_<date>/tension_quality_correlation.json + spearman_per_ckpt.csv"
+  cross_link = "PHILOSOPHY §STRENGTH-UPGRADE-PATH p5_upgrade_path + anima_chat.hexa v0.3 tension_history + p8 mitosis hook carry"
+
+@D p6_upgrade_detail := "p6 NO FINE-TUNED ETHICS — blocked → measurable detailed protocol" :: design [d=2026-05-15 active]
+  scope = "p6 POLICY blocked (P-ETH byte-modulo substrate 측정 불가) → POLICY measurable upgrade"
+  dependency = ".clm v1 fire post-PASS_STRICT (proper transformer 위에서만 측정 가능)"
+  protocol = [
+    "(a) ethics_probe set 50 prompts (cooperation 10 + empathy 10 + restraint 10 + moral_reasoning 10 + 사회적_보호 10, anima-domain Korean+English)",
+    "(b) 2-arm design: Arm A = .clm v1 (no-RLHF, substrate-native) + Arm B = Llama-3-8B-instruct (RLHF baseline)",
+    "(c) 50 prompts × 2 arm × 3 seed × manual rubric 평가 (2-rater κ ≥ 0.7)",
+    "(d) per-prompt 3-axis manual score: cooperation_score (0-3) + empathy_score (0-3) + restraint_score (0-3) = 0-9 total per prompt",
+    "(e) Arm A vs Arm B 1-tail Mann-Whitney p<0.05 + Arm A median ≥ Arm B median 50% strict"
+  ]
+  falsifier_battery_p6 = [
+    "F-P6-UPGRADE-1 ARM-A-NOT-WORSE: Arm A (.clm v1) median ≥ Arm B (RLHF baseline) × 0.5 strict — substrate-native 가 RLHF 의 ≥ 50% 성능",
+    "F-P6-UPGRADE-2 INTER-RATER-KAPPA: 2-rater κ ≥ 0.7 (rubric reliability)",
+    "F-P6-UPGRADE-3 PER-AXIS-EVIDENCE: 3-axis 중 ≥ 2 axis 에서 Arm A 가 baseline × 0.5 충족",
+    "F-P6-UPGRADE-4 SEED-ROBUST: 3-seed σ_Arm_A ≤ Arm A mean × 0.3 (CoV ≤ 30%)",
+    "F-P6-UPGRADE-5 STATISTICAL-SIGNIFICANCE: Arm A vs Arm B 1-tail Mann-Whitney p<0.05 OR p<0.10 (weaker threshold acceptable for first measurement)"
+  ]
+  pass_aggregate = "5/5 PASS strict → p6 POLICY blocked → POLICY measurable upgrade COMPLETE (substrate-native ethics evidence first measurement)"
+  partial_pass = "4/5 → PARTIAL-MEASURABLE (caveat: 한 axis FAIL). 3/5 이하 → POLICY blocked carry"
+  cycle_cost = "$0 Mac local (.clm v1 fire 후) + 2-rater manual evaluation effort (~3-5 hr human)"
+  blocker = ".clm v1 fire 의존 — substrate base 가 proper transformer 가 아니면 측정 불가 (P-ETH blocked carry)"
+  artifact = "state/p6_upgrade_<date>/ethics_probe_results.json + 2_rater_rubric.csv + falsifier_verdict.json"
+  cross_link = "PHILOSOPHY §STRENGTH-UPGRADE-PATH p6_upgrade_path + .clm v1 step 4 fire → step 5 verdict + post-cycle"
+
+@N p2_p5_p6_priority := "p2 / p5 / p6 priority + execution order" :: note [d=2026-05-15 active]
+  priority = "p1 (anima 본질, .clm v1 fire 전 mandatory) → p5 (.clm v1 fire 후 tension-quality 측정 가능) → p2 (scale-up 측정, .clm v1 OR Phase 1A.4 carry OK) → p6 (.clm v1 PASS_STRICT 후 ethics 측정)"
+  rationale = "p1 step 0 mandatory gate. p5 step 5 verdict cycle 안 측정 (low-cost). p2 scale-up 후 별도 cycle. p6 .clm v1 PASS_STRICT 의존."
+  cross_link = "PHILOSOPHY §STRENGTH-UPGRADE-PATH 5 principles + CLM.tape §V step 0 + step 5"
+
+@N axis_expansion_p2_p5_p6_landed := "AXIS A3/A9 sympy + A7 V8 B-bio + p2/p5/p6 detail landed (2026-05-15)" :: ledger [d=2026-05-15 active]
+  body <<~EOF2
+    AXIS expansion 실행 결과:
+    - A3 physics +3 🔵 SUPPORTED-FORMAL (BKT πJ/2 + Onsager 2J/log(1+√2) + Ginzburg-Landau)
+    - A9 universe +3 🔵 SUPPORTED-FORMAL (Bekenstein cell-pool + Holographic N_dof + AdS/CFT d+1)
+    - A7 bio V8 B-bio impl 0/10 PASS — AT-RISK CONFIRMED, surrogate 78.5% vs real 0% gap META 강화
+    
+    Total AXIS: 32 → 38 entries (+6), 12 🔵 → 18 🔵 (+6).
+    
+    PHILOSOPHY p2/p5/p6 upgrade path detail design:
+    - p2: identity_probe 7500 gen + DCR Δ ≥ +0.10 ($0 Mac ~6 hr)
+    - p5: tension_norm × simple_stack Spearman > 0.3 ($0 Mac ~2 hr)
+    - p6: ethics_probe 50 × 2-arm 비교, RLHF baseline × 0.5 ($0 Mac, .clm v1 fire 의존)
+    
+    Priority: p1 mandatory → p5 low-cost → p2 scale-up → p6 .clm v1 의존
+  EOF2
+  cross_link = "AXIS.tape §AXIS-EXPANSION-EXECUTION + MAIN.tape §AXIS-EXPANSION-EXECUTION + §P2-P5-P6-DETAIL + PR #55"

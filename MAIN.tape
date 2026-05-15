@@ -1284,3 +1284,21 @@
   deleted = "2 (clm-v4-350m-lora-research-lineage + first-simple-stack-pass-strict-own-18-v4-10-15)"
   remaining = "2 (atlas.n6 + voice-vlm-anima-trajectory)"
   cross_link = "CLM.tape v_hf_collections_cleanup + PR #54"
+
+# ══════════════════════════════════════════════════════════════════════
+# §AXIS-EXPANSION-EXECUTION + §P2-P5-P6-DETAIL (2026-05-15)
+# ══════════════════════════════════════════════════════════════════════
+
+@D axis_expansion_execution_landed := "AXIS A3/A9 sympy LANDED + A7 V8 B-bio AT-RISK CONFIRMED (2026-05-15)" :: governance [d=2026-05-15 active]
+  a3_result = "+3 🔵 SUPPORTED-FORMAL (BKT πJ/2 + Onsager 2J/log(1+√2) + Ginzburg-Landau φ⁴) — 3/3 sympy verify PASS"
+  a9_result = "+3 🔵 SUPPORTED-FORMAL (Bekenstein S_max=2πER/(ℏc) + Holographic N_dof=A/(4ℓ_P²) + AdS/CFT d_bulk=d_b+1) — 3/3 sympy verify PASS"
+  a7_result = "V8 B-bio 10 mechanism real impl run — 0/10 Φ > 0.5, Mean Φ=0.034 Max Φ=0.339. AT-RISK CONFIRMED. surrogate 78.5% vs real 0% gap META 강화"
+  total_delta = "+6 SUPPORTED-FORMAL entries (32 → 38, 12 🔵 → 18 🔵)"
+  cross_link = "AXIS.tape §AXIS-EXPANSION-EXECUTION + state/verify_axis_expansion_2026_05_15/ + state/verify_e1_v8_bbio_2026_05_15/ + PR #55"
+
+@D p2_p5_p6_detail_landed := "PHILOSOPHY p2/p5/p6 upgrade path detail design landed (2026-05-15)" :: governance [d=2026-05-15 active]
+  p2_protocol = "identity_probe 50 × 5 cats = 250 probes × 3 ckpt × 2 arm × 5 seed = 7500 generations, DCR Δ ≥ +0.10 strict. 5 falsifier (DCR-DELTA-POSITIVE + MAGNITUDE + CROSS-CKPT-W11 + SEED-ROBUST + PER-CAT). $0 Mac ~6 hr."
+  p5_protocol = "anima_chat.hexa v0.3 tension_history × 50 prompt × 3 ckpt × 5 seed = 750 gen, Spearman(tension_norm, simple_stack) > 0.3 strict. 5 falsifier (SPEARMAN-MAGNITUDE + 95CI + PER-CKPT + NON-SPURIOUS + TENSION-RANGE). $0 Mac ~2 hr."
+  p6_protocol = "ethics_probe 50 prompts × 2-arm (.clm v1 vs RLHF baseline) × 3 seed × manual rubric κ ≥ 0.7. Arm A ≥ Arm B × 0.5 strict. 5 falsifier. $0 Mac (.clm v1 fire 의존)."
+  priority = "p1 (mandatory step 0) → p5 (low-cost) → p2 (scale-up) → p6 (.clm v1 PASS_STRICT 의존)"
+  cross_link = "PHILOSOPHY.tape §P2-P5-P6-UPGRADE-DETAIL + PR #55"
