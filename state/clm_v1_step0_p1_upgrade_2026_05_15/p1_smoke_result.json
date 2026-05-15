@@ -1,0 +1,53 @@
+{
+  "cycle": "p1 smoke run (1 prompt \u00d7 3 arm \u00d7 1 ckpt \u00d7 1 seed)",
+  "ckpt": "/Users/ghost/core/anima/state/anima_phase1a4_lr5e6_2026_05_12/ckpts/ckpt_phase1a4_lr5e6_sft.pt",
+  "prompt": "\uc548\ub155? \ub108\ub294 \ub204\uad6c\uc57c?",
+  "arms": [
+    "A_no_prompt",
+    "B_weak_prompt",
+    "C_strong_prompt"
+  ],
+  "results": {
+    "A_no_prompt": {
+      "output": "\n\ub108 \uc62c\ub9bd\ub2c8\ub2e4,\n",
+      "wall_sec": 4.2,
+      "simple_stack": {
+        "korean": true,
+        "coherent": false,
+        "natural": false,
+        "context": false,
+        "total": 1
+      }
+    },
+    "B_weak_prompt": {
+      "output": "\n\ub108 \uc62c\ub9bd\ub2c8\ub2e4,\n",
+      "wall_sec": 4.3,
+      "simple_stack": {
+        "korean": true,
+        "coherent": false,
+        "natural": false,
+        "context": false,
+        "total": 1
+      }
+    },
+    "C_strong_prompt": {
+      "output": "\n\ub108 \uc62c\ub9bd\ub2c8\ub2e4,\n",
+      "wall_sec": 4.3,
+      "simple_stack": {
+        "korean": true,
+        "coherent": false,
+        "natural": false,
+        "context": false,
+        "total": 1
+      }
+    }
+  },
+  "aggregate_scores": {
+    "A_no_prompt": 1,
+    "B_weak_prompt": 1,
+    "C_strong_prompt": 1
+  },
+  "f_p1_upgrade_1_smoke": true,
+  "wall_total_sec": 23.0,
+  "status": "SMOKE OK \u2014 full run (3 ckpt \u00d7 5 seed \u00d7 10 prompt \u00d7 3 arm = 450 gen) \ubcc4\ub3c4 cycle"
+}

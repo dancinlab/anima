@@ -13,13 +13,15 @@
 
 ## 🧭 AXIS — 9-axis 32 SUPPORTED entries
 
-### A1 substrate (3)
+### A1 substrate (5, +2 expansion 2026-05-15)
 
 | Tier | ID | 한 줄 설명 |
 |------|-----|-----------|
 | 🟢 | H_005 | corpus quality > scale (Phase 1A.6 121MB CLEAN, V5.8 std_greedy 4/5) |
 | 🟢 | H_174 | phi_star aliasing CLM-v4-specific (D=192 multiple only clean-disjoint) |
 | 🟢 | Hc_1285 | torch.no_grad backward-graph isolation (PyTorch ratio 1.562×) |
+| 🔵 | Hc_A1-4 | phi_star aliasing closed-form D=192·k clean (sympy mod=0 verify) |
+| 🟢 | Hc_A1-5 | Chinchilla token/param = 20 (Hoffmann 2022 empirical, sympy 14B→280B identity check) |
 
 ### A2 consciousness — surrogate-tier (4, anima Φ★ proxy + ckpt aggregate + numerical RoM)
 
@@ -63,7 +65,7 @@
 | 🔵 | H_164 | Hc_144 atom 8 cells (144 = σ(6)² = 12² — 수학적 closed) |
 | 🔵 | H_181 | psiformer 4ψ-constants zero-freedom (Ψ-cluster carry — 수학적 closed) |
 
-### A5 architecture (6)
+### A5 architecture (9, +3 expansion 2026-05-15)
 
 | Tier | ID | 한 줄 설명 |
 |------|-----|-----------|
@@ -73,13 +75,18 @@
 | 🟢 | H_174 | phi_star aliasing CLM-v4-specific (cross-substrate Spearman 0.31) |
 | 🟢 | H_191 (sub) | TRAINING CPGD 0.95 (cond.5 cotrain 220× CE reduction) |
 | 🟢 | Hc_1276 | train-vs-infer cotrain ablation (cascade-from-CPGD) |
+| 🔵 | Hc_A5-7 | Transformer attention O(n²d) (Vaswani 2017, sympy doubling check) |
+| 🔵 | Hc_A5-8 | RoPE rotation R(θ) orthogonal (det=1, R·R^T=I sympy verify) |
+| 🔵 | Hc_A5-9 | GQA kv_heads = n_heads/group_size (anima τ(6)=4 anchor) |
 
-### A6 corpus (2)
+### A6 corpus (4, +2 expansion 2026-05-15)
 
 | Tier | ID | 한 줄 설명 |
 |------|-----|-----------|
 | 🟢 | H_005 | corpus quality > scale (Phase 1A.6) |
 | 🟢 | H_016 | AN11 translation ceiling (chat-v2 measurable) |
+| 🔵 | Hc_A6-3 | Zipf law f(r) ∝ 1/r (sympy α=1 verify ratio=1/2) |
+| 🔵 | Hc_A6-4 | Heaps law vocab(n) = K·n^β (sympy β=0.5 verify ratio=2) |
 
 ### A7 bio (1 + 10 AT-RISK = 11 entries, V8 B-bio impl run 2026-05-15)
 
@@ -430,3 +437,4 @@
 | #54 | HF cleanup + new canonical (anima-clm + anima-corpus) + 2 collections DELETE | 71 entities (63 models + 8 datasets) TRANSFER dancinlab→dancinlife private + dancinlab/anima-clm + dancinlab/anima-corpus new canonical (private, README mapping table) + 2 CLM collections DELETE (clm-v4-research + first-simple-stack) |
 | #55 | AXIS A3/A9 sympy + A7 V8 B-bio + p2/p5/p6 detail | A3 +3 🔵 (BKT πJ/2 + Onsager 2J/log(1+√2) + Ginzburg-Landau) + A9 +3 🔵 (Bekenstein cell-pool + Holographic + AdS/CFT) + A7 V8 B-bio 0/10 AT-RISK CONFIRMED + p2/p5/p6 detail design 15 falsifier |
 | #56 | AXIS extra +8 🔵 + V8 Phase 2 0/5 + p1 design+ckpt verify | A3 +4 (Hopf + Lotka-Volterra + RG Wilson-Fisher + QHO) + A9 +4 (Planck + Heisenberg + Hawking + Schwarzschild) + V8 phase 2 dense 0/5 (AT-RISK fundamental, state-space ergodicity issue) + p1 design + 4 ckpt access OK (332M+581MB×2) |
+| #57 | AXIS A1+A5+A6 +6 🔵 + V8 Phase 3 1/5 PASS + p1 smoke + CLM step 1 carry | A1 +1 🔵 (phi_star closed-form) + A5 +3 🔵 (Attn O(n²d) + RoPE + GQA) + A6 +2 🔵 (Zipf + Heaps) + V8 Phase 3 Lorenz Φ=0.636 PASS (ergodicity issue CONFIRMED) + p1 smoke end-to-end OK + CLM step 1 PyPhi formal cond.5 v1 n=4 Φ=0.676 PASS carry. AXIS 46→52, 26🔵→32🔵 (62% closed) |
