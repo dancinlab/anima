@@ -620,3 +620,63 @@
       - Strong PASS rate reflects surrogate strength (NOT real mechanism evidence)
       - Real V8 Hc validation = full impl + 24L cotrain integration ($200-600)
   EOF2
+
+# ══════════════════════════════════════════════════════════════════════
+# §ATLAS — hexa-lang/atlas 흡수 path 보류 (2026-05-15 directive)
+# ══════════════════════════════════════════════════════════════════════
+# 사용자 directive 2026-05-15: "hexa-lang 관련 atlas 흡수도 일단 보류로
+# 따로 제거후 여기서 PROVEN.tape 기준으로 기록해나가자"
+#
+# 본 PROVEN.tape 가 SSOT. atlas overlay/rodata 흡수는 별도 cycle 보류.
+
+@D atlas_pause := "atlas 흡수 path 보류" :: governance [d=2026-05-15 required active]
+  rule = "hexa-lang/atlas 로의 anima 가설 흡수는 보류; PROVEN.tape 가 verdict SSOT"
+  reason = "verification protocol (VERIFY.tape Stage 1+2+3) 이 atlas overlay (needs-review) 보다 더 nuanced verdict 산출 — atlas rodata vs overlay 이분법 보다 PROVEN.tape 의 SUPPORTED/PARTIAL/INSUFFICIENT/FALSIFIED 4-class 가 honest"
+  effect = "atlas overlay (~/.hx/data/atlas.overlay.n6) 의 191 hypothesis + 559 engine candidates 흡수는 보류 — anima 자체 verification cycle 이 우선"
+  revoke_keyword = "ATLAS RESUME"
+
+@N atlas_absorb_history := "hexa-lang absorb(anima) commit 7개 (2026-05-14)" :: reference [active]
+  body <<~EOF2
+    hexa-lang main branch absorb(anima) commit history (모두 2026-05-14):
+    
+    1. 0e32ae46 — 3 cross-repo findings (hexa-only Phase 0-5, philosophy P1-P4, ecosystem 4-patch)
+    2. 723f3221 (Wave 1) — 11 Ψ-constants + 14 gate laws + 6-channel CDESM → atlas rodata
+       (compiler/atlas/anima_psi.gen.hexa, anima_hexad.gen.hexa)
+    3. e1e9c365 — phi_engine + topology + discovery + miner → stdlib
+    4. 9d4dd34e (Wave 3) — hexa-principle annotator → tool/hexa_annot
+    5. a49dcfa0 (Wave 1.6) — 191 hypothesis registry → atlas overlay (@? open-hypothesis rows)
+    6. 27cc5a05 (BG-1 follow-up) — 6 phase_* sub-thresholds → atlas rodata (anima_psi_phases.gen.hexa)
+    7. 2a3a7d78 (BG-B follow-up) — 559 engine candidates → atlas overlay [needs-review]
+       (citation_unverified=true, 인간 큐레이션 대기)
+    
+    Doctrine v2 Rule 5 distinction:
+      - rodata (committed): Ψ-constants, phase thresholds, gate laws — 검증된 값
+      - overlay (~/.hx/ gitignored): 191 hypotheses + 559 engine candidates — needs-review
+    
+    가장 큰 흡수: 2a3a7d78 (559 engine candidates) — needs-review 태그, citation
+    자동검증 불가, 인간 큐레이션 후 rodata 승격 결정.
+  EOF2
+
+@D proven_tape_ssot := "PROVEN.tape SSOT 선언" :: governance [d=2026-05-15 required active]
+  rule = "anima 가설 verdict 의 single source of truth = PROVEN.tape (atlas overlay 아님)"
+  scope = "318 hypothesis files — A 격리 20 + B 격리 107 + legacy 191"
+  protocol = "VERIFY.tape 3-stage (math sympy / physics sim / cross-meta) 통과 verdict 만 PROVEN.tape 등재"
+  atlas_relation = "atlas overlay 의 191 hypothesis registry 는 SOURCE inventory; PROVEN.tape 는 그 inventory 위 verdict layer (분리)"
+
+@N atlas_artifacts_in_anima := "anima 안 atlas 흡수 traces (audit)" :: note [d=2026-05-15 active]
+  body <<~EOF2
+    anima repo 내 atlas 관련 traces (grep 결과):
+    
+    IDENTITY.tape:
+      - line 54: capabilities = ["...", "atlas-absorb", ...]  ← 보류 mark 필요
+      - line 66: principles = ["...", "atlas-bound-or-warn", ...]
+      - line 74: hxc_baseline = "r29-Pilot-B atlas_convergence_witness.jsonl"
+    
+    README.md:
+      - line 29: "anima's atlas serialisation format" 언급 (sister project context)
+    
+    Other:
+      - REBORN.log.tape, CLM_V2_EXHAUSTIVE_13_STAGES_2026_05_09.md, LIMIT_BREAKTHROUGH.md — 모두 reference/context only
+    
+    Decision: anima 안 atlas-absorb capability 는 deprecate 마크 — atlas 로 보내는 흡수는 보류, anima 안에서는 PROVEN.tape 가 SSOT.
+  EOF2

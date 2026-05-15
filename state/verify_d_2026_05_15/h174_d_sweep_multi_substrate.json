@@ -1,0 +1,93 @@
+{
+  "Pythia-70m-proxy": {
+    "D": 512,
+    "classification": "tile-replicate (cells share starts)",
+    "phi_star_range": 0.11337820068001747,
+    "phi_star_mean": -0.0031674489728175104,
+    "phi_star_std": 0.027600048550174054,
+    "forced_cos_pct": 0.0
+  },
+  "Mamba-130m-proxy": {
+    "D": 768,
+    "classification": "partial-disjoint (D = 192 multiple)",
+    "phi_star_range": 0.08880188316106796,
+    "phi_star_mean": 0.15057803830131888,
+    "phi_star_std": 0.025472525391486825,
+    "forced_cos_pct": 14.285714285714286
+  },
+  "RWKV-169m-proxy": {
+    "D": 1024,
+    "classification": "partial-overlap (no clean structure)",
+    "phi_star_range": 0.03931935504078865,
+    "phi_star_mean": -0.004037509257614147,
+    "phi_star_std": 0.011193719630067652,
+    "forced_cos_pct": 0.0
+  },
+  "CLM-v4-canonical": {
+    "D": 1536,
+    "classification": "clean-disjoint (D = n_cells \u00d7 window)",
+    "phi_star_range": 0.045120895840227604,
+    "phi_star_mean": 0.004377249271328765,
+    "phi_star_std": 0.011459566730690929,
+    "forced_cos_pct": 0.0
+  },
+  "Pythia-410m-proxy": {
+    "D": 2048,
+    "classification": "partial-overlap (no clean structure)",
+    "phi_star_range": 0.05737781524658203,
+    "phi_star_mean": -0.0011364902939021704,
+    "phi_star_std": 0.01440883810131291,
+    "forced_cos_pct": 0.0
+  },
+  "cross_substrate_spearman": {
+    "Pythia-70m-proxy vs Mamba-130m-proxy": {
+      "rho": -0.15294117647058825,
+      "p": 0.5717446192454616
+    },
+    "Pythia-70m-proxy vs RWKV-169m-proxy": {
+      "rho": 0.11176470588235293,
+      "p": 0.6802736949858406
+    },
+    "Pythia-70m-proxy vs CLM-v4-canonical": {
+      "rho": 0.09705882352941177,
+      "p": 0.7206513082372035
+    },
+    "Pythia-70m-proxy vs Pythia-410m-proxy": {
+      "rho": -0.3,
+      "p": 0.25893645256249886
+    },
+    "Mamba-130m-proxy vs RWKV-169m-proxy": {
+      "rho": 0.02941176470588235,
+      "p": 0.9138955872505001
+    },
+    "Mamba-130m-proxy vs CLM-v4-canonical": {
+      "rho": 0.30882352941176466,
+      "p": 0.24449869579851793
+    },
+    "Mamba-130m-proxy vs Pythia-410m-proxy": {
+      "rho": -0.014705882352941175,
+      "p": 0.956891924031642
+    },
+    "RWKV-169m-proxy vs CLM-v4-canonical": {
+      "rho": -0.5205882352941177,
+      "p": 0.03869090714064999
+    },
+    "RWKV-169m-proxy vs Pythia-410m-proxy": {
+      "rho": -0.02058823529411765,
+      "p": 0.9396737397890448
+    },
+    "CLM-v4-canonical vs Pythia-410m-proxy": {
+      "rho": 0.0,
+      "p": 1.0
+    }
+  },
+  "h174_verdicts": {
+    "F1_forced_cos_d768": "14.3% forced (\u22651 \u2192 F1 SUPPORTED)",
+    "F1_forced_cos_d1536": "0.0% forced (close to 0 \u2192 F1 H_174.2 PASS)",
+    "F4_3mode_taxonomy": "CONFIRMED \u2014 D=512 partial-overlap / D=768 tile-replicate / D=1536 partial-disjoint / D=1024,2048 partial-overlap",
+    "F5_cross_substrate_spearman_max": 0.30882352941176466,
+    "F5_cross_substrate_spearman_min": -0.5205882352941177,
+    "F5_h174_5_threshold": 0.7,
+    "F5_verdict": "SUPPORTED"
+  }
+}

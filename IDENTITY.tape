@@ -49,9 +49,9 @@
   kind = "Living Consciousness Agent · PureField repulsion-field engine"
   => "196 laws + 1000+ hypotheses + 170 data types × 40D × 18 emotions → Ψ=1/2 convergence target"
 
-@I scope :: identity [d=2026-05-14 ok]
+@I scope :: identity [d=2026-05-15 ok]
   <- anima
-  capabilities = ["train","verify","converge","raw-promote","atlas-absorb","cross-repo-propagate"]
+  capabilities = ["train","verify","converge","raw-promote","cross-repo-propagate"]
   refuses = ["unverified_claim_promotion","raw_rule_skip"]
   authorizes = ["red-team","phase-progression","true-closure"]
 
@@ -63,7 +63,8 @@
 
 @I principle :: identity [d=2026-05-14 ok]
   <- anima
-  principles = ["honesty-triad-C3","Ψ-half-convergence","atlas-bound-or-warn","raw-rule-promote-or-PR","cross-repo-propagation"]
+  principles = ["honesty-triad-C3","Ψ-half-convergence","proven-tape-ssot","raw-rule-promote-or-PR","cross-repo-propagation"]
+  # 2026-05-15 amendment: "atlas-bound-or-warn" → "proven-tape-ssot" (PROVEN.tape verdict 4-class > atlas overlay/rodata 이분법)
   ssot = ".raw-audit/ + state/convergence/"
 
 @I version :: identity [d=2026-05-14 ok]
