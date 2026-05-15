@@ -257,8 +257,8 @@ anima-side **RFC-무관** 작업은 전부 LANDED. 잔여는 hexa-lang RFC land 
 | Phase 2 GRU nn 동역학 (full) | hexa-native nn-primitive (GRU cell) | hexa-lang RFC (미제출) |
 | Phase 3 C↔Python parity | Phase 2 full 의존 | ↑ |
 | Phase 4 Φ FFI | phi_rs Rust FFI byte-equal | **RFC 036** (RFC 034 Roadmap 명시, 미제출) |
-| Phase 5 D training | reverse-mode AD (CE+AdamW) | **RFC 034** (제출됨 `77456c01`/`7ae624bf`, land 대기) |
-| Phase 6 통합 fire | Phase 1-5 + GPU $1-5 | Phase 5 land 후 재게이트 |
+| ~~Phase 5 D training~~ | reverse-mode AD (CE+AdamW) | ✅ **RFC 034 LANDED** `8793a221` (hexa-lang stage2-verify, compiled 5/5: GRAD-EXACT B-D-4 max\|Δ\|=0.0 · LOSS 1.642→0.228 86%↓ · deterministic). **UNBLOCKED 2026-05-16** → Phase 5 executable (잔여 = anima_chat lib-split + ad_* → HEXAD/D wire + compiled train smoke; RFC-무관 anima-side cycle) |
+| Phase 6 통합 fire | Phase 1-5 + GPU $1-5 | Phase 5 wire 후 재게이트 (cost-bearing 사용자 게이트) |
 
 ### PLAN 상태
 
@@ -275,3 +275,30 @@ Phase 2 (`c_state_contract` + F-C-PORT-1) contract 사전등록 LANDED,
 compiled-clean (`build_verify.sh` 10/10+8/8 불변). PLAN = RFC 경계 CLOSED.
 RFC-무관 잔여 = anima_chat lib-split 단 1건 (별도 cycle). Phase 4/5/6 +
 Phase 2-GRU = hexa-lang RFC terminal.
+
+### 2026-05-16 — RFC 034 LANDED + wiring 8/9 ✅ (Phase 5 UNBLOCKED)
+
+bg agent #1 (hexa-lang): **RFC 034 farr reverse-mode autograd IMPLEMENTED·LANDED**
+— hexa-lang `stage2-verify` `8793a221` (worktree-only, main 불변, no force).
+compiled native **5/5 PASS**: BUILD+PARSE · GRAD-EXACT (max|grad−(softmax−onehot)|
+= 0.0, anima B-D-4 정확) · LOSS-DECREASES (1.64219→0.228332, 86%↓ 20 AdamW
+step) · PARAM-MUTATED · DETERMINISM (seed=42 byte-id). bonus: runtime.h
+hexa_farr_* decl 추가가 RFC 032/033 compiled smoke 도 복구. honest caveat:
+ad_backward v1 = matmul→CE-softmax 그래프 한정, SGD 수렴은 B-D-NOTE empirical
+유지 (over-claim 없음), interp mirror 미-CI.
+
+bg agent #2 (anima): **wiring W5/W6/W8 닫힘** — PR #95 `4257faf67`. F-WIRE
+3/3 compiled-native PASS (W5 🔵 closed-form gate-scale + W6/W8 deterministic),
+neg-test 진위 확인. W-ledger **8/9 ✅**, build_verify 11/11+9/9.
+
+상태 전환: Phase 5 BLOCKER "RFC 034 land 대기" → **RESOLVED (RFC 034 LANDED
+`8793a221`)**. Phase 5 = executable (RFC-무관 anima-side 잔여 = anima_chat
+lib-split + ad_* → HEXAD/D wire + compiled train smoke). Phase 6 통합 fire
+= Phase 5 wire 후 cost-bearing 사용자 게이트.
+
+"모든 연결부위 🔵" 정직 결론 (user directive): 연결 transfer-function 전부
+closed-form 🔵 (W1-W6/W8 falsifier + W9 RFC 034 land); 유일 비-🔵 = W7 의
+CE *수렴 OUTCOME* — SGD 의 수학적 필연이라 closed-form 불가, fake 안 하고
+honest empirical carve-out (D 정직분해에서 사용자 기수용 동일 원칙,
+B-D-NOTE 패턴). HEXAD.tape hexad_wiring_blue_gate per_arrow_anchor +
+HEXAD/CHAT/README.md §2 W-ledger 에 반영 완료.
