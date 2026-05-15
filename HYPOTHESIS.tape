@@ -389,3 +389,11 @@
     "(4) A2 surrogate 4 entries A2.formal로 migrate 또는 Φ★ surrogate sub-axis 명시 분리"
   ]
   cross_link = "AXIS.tape §AXIS-SCALE-UP-4 + MAIN.tape §AGENTS-GOVERNANCE + INDEX.md + PR #63"
+
+# ─── HYPOTHESIS cycle 88 .clm v1 P2 fire verdict — 5/5 SUPPORTED-STRONG ───
+
+@N hypothesis_clm_v1_p2_fire_verdict := ".clm v1 P2 fire 5/5 SUPPORTED-STRONG verdict (cycle 88, 2026-05-15)" :: catalog [d=2026-05-15 active]
+  finding = "ClmV1Model 12L base + 64-cell mitosis branch from-scratch on Phase 1A.6 corpus 121MB byte-level: F-V5MIT-1..5 모두 PASS (5/5 SUPPORTED-STRONG). loss 467.97 → 1.22 (137.6× reduction), cells 2 → 64 saturated step 250, phi 4.34 stable, wall 734.7s cost $0.19 A100 SXM4."
+  evidence_caveat = "ckpt LOST (instance destroyed pre-pull, exit 1 trap cleanup). evidence-only carry from dispatch_train.log. F-PRIN3 + F-SIMPLE-STACK V5.8 4-mode + F-PYPHI-Φ-FORMAL (3 deferred falsifier) 모두 BLOCKED by ckpt-lost — cycle 89 refire 필요."
+  status = "P2 (.clm v1 from-scratch) verdict tier 🟢 SUPPORTED-STRONG empirical, 🔵 미달 (formal closed-form 또는 PyPhi IIT formal 미만)"
+  cross_link = "CLM.tape §V-CLM-V1-FIRE-VERDICT + state/clm_v1_fire_2026_05_15/clm_v1_result_reconstructed.json + PR #65"

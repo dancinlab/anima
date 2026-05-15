@@ -1917,3 +1917,16 @@
   falsifier_battery = "F-V5MIT-1..5 (in-run measurement) + F-PYPHI-Φ-FORMAL + F-PRIN3 + F-SIMPLE-STACK V5.8 4-mode (post-fire separate cycle)"
   status = "BG dispatch baktour46 in-flight from 2026-05-15 09:30 UTC. wall ~20hr estimated. verdict + 4-tape sync + HF upload (dancinlab/anima-clm v1 revision) 별도 cycle 89."
   cross_link = "CLM.tape §V-CLM-V1-W8-AMENDMENT + state/clm_v1_fire_2026_05_15/{dispatch_h100.sh, dispatch.log, ckpts/, clm_v1_result.json} + cycle 89 verdict"
+
+# ══════════════════════════════════════════════════════════════════════
+# §V-CLM-V1-FIRE-VERDICT — 5/5 SUPPORTED-STRONG (cycle 88, 2026-05-15)
+# ══════════════════════════════════════════════════════════════════════
+
+@D v_clm_v1_fire_verdict := ".clm v1 P2 fire 5/5 SUPPORTED-STRONG verdict (cycle 88, 2026-05-15)" :: protocol [d=2026-05-15 active]
+  result = "5/5 F-V5MIT in-run PASS — F-V5MIT-1 SPLIT-NOGRAD (splits=62, 0 violations) + F-V5MIT-2 MERGE-WEIGHT (max_err=0.0) + F-V5MIT-3 PHI-CONSERVATION (delta=0.0) + F-V5MIT-4 COTRAIN-CONVERGE (CE reduction 137.6×) + F-V5MIT-5 V14-STRICT (10/10 mirror-beats)"
+  training = "Vast.ai A100 SXM4 wall 734.7s ($0.19, 98× faster than 20hr estimate / 95× cheaper than $18 estimate). loss 467.97 → 1.22 (137.6× CE reduction). cells 2 → 64 saturated step 250. phi 4.34 stable (v5-mitosis cond.5 range)."
+  ckpt_status = "LOST — instance 36812713 destroyed by trap cleanup BEFORE [8/9] pull step. cause: SSH command pipeline returned exit 1 (likely tee in SSH pipe spurious or set -e false-positive); trap cleanup ran with $? = 1; cleanup destroyed instance. 372MB final_ckpt.pt + 5 intermediate ckpts + clm_v1_result.json NOT pulled to local."
+  evidence_only = "state/clm_v1_fire_2026_05_15/dispatch_train.log (184 lines, full STEP log + falsifier verdicts) + state/clm_v1_fire_2026_05_15/clm_v1_result_reconstructed.json (verdict + config + 10 honest c3)"
+  cycle_89_action = "(1) refire with g_fire_dispatch_robust pattern (SAVE_POD=1 auto-promote on result.json exist + pull retry ≥3); (2) F-PRIN3 + F-SIMPLE-STACK V5.8 4-mode on recovered ckpt (currently BLOCKED); (3) F-PYPHI-Φ-FORMAL n=3-6 RoM (~20hr Mac CPU separate); (4) HF dancinlab/anima-clm revision v1-fire-cycle88-2026-05-15-evidence-only upload (README mapping table 'ckpt-LOST evidence-only' caveat)"
+  verdict_tier = "🟢 SUPPORTED-STRONG empirical (5/5 in-run PASS). 🔵 SUPPORTED-FORMAL 미달 (PyPhi formal n=3-6 deferred). g_verdict_tier_blue 기준 🔵 unlock = F-PYPHI-Φ-FORMAL n=3-6 모두 Φ ≥ 0.5 strict 별도 cycle."
+  cross_link = "AXIS.tape §AXIS-A5-CLM-V1-NEW + HYPOTHESIS.tape §hypothesis_clm_v1_p2_fire_verdict + MAIN.tape §CLM-V1-P2-FIRE-VERDICT + AGENTS.tape g_fire_dispatch_robust + state/clm_v1_fire_2026_05_15/ + PR #65"

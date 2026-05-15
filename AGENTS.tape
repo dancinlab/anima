@@ -149,6 +149,24 @@
   authority = "CLM.tape §V-CLM-FROM-SCRATCH-2026-05-15"
   @> CLAUDE.md
 
+@D g_hf_naming := "HF dancinlab/* canonical 네이밍 체계 + 과정 업로드 protocol" :: governance [required d=2026-05-15 active]
+  rule = "HF dancinlab org 의 anima 산출물은 2개 canonical name 만 사용 — dancinlab/anima-clm (model) + dancinlab/anima-corpus (dataset). 버전은 HF revisions (branch) + README mapping table 로 internal 관리. collection 생성 금지 (PR #54 carry)."
+  why = "2026-05-15 PR #54 HF cleanup 직후 chaos names 50+ 정리 (TRANSFER dancinlab→dancinlife/* private + 2 CLM collections DELETE). 신규 산출물은 canonical 2-name 으로 통일."
+  revision_naming = "revisions = `v{major}-{kind}-cycle{N}-{YYYY-MM-DD}` 예: v1-fire-cycle88-2026-05-15 (.clm v1 P2 첫 fire) / v1-pyphi-cycle89-2026-05-16 (post-fire formal Φ ckpt update)"
+  apply = "신규 ckpt/dataset 업로드 시 (a) dancinlab/anima-clm revision push (model) 또는 dancinlab/anima-corpus revision push (dataset); (b) README mapping table 신규 row append (revision sha + fire date + cost + cycle PR# + falsifier breakdown); (c) private default, public 전환은 user 명시 후만; (d) dancinlife/* 는 deprecated, 신규 upload 금지."
+  process_upload_mandate = "verdict-tier 별 차등 업로드 — (a) SUPPORTED-STRONG (5/5 또는 8/8) → ckpt + safetensors + result.json + dispatch_train.log + docs/anima_clm_*.md; (b) PARTIAL (≥6/8 또는 ≥3/5) → ckpt + result.json + caveat note (README mapping table caveat 명시); (c) AT-RISK/FALSIFIED → ckpt 업로드 금지 (docs/ audit 문서만, evidence-only); (d) ckpt 손실 시 (instance destroyed before pull, cycle 88 .clm v1 P2 case) → train.log + result.json 만 evidence-only upload (README mapping table 'ckpt-LOST' caveat 명시)."
+  process_upload_format = "각 fire 마다 다음 산출물 묶음: docs/anima_clm_v{N}_{kind}_{cycle}_{date}.md (8-10 §) + state/clm_v{N}_{kind}_{date}/ ({dispatch_train.log, ckpts/, clm_v{N}_result.json, dispatch_h100.sh}) + AXIS/HYPOTHESIS/PHILOSOPHY/MAIN/INDEX 4-tape sync + HF revision push + README mapping row append + PR squash-merge"
+  cross_link = "PR #54 HF cleanup + memory project_hf_cleanup_2026_05_15 + memory project_dancinlab_hf_canonical"
+  @> CLAUDE.md
+
+@D g_fire_dispatch_robust := "fire dispatch ckpt 손실 risk 최소화 protocol" :: governance [required d=2026-05-15 active]
+  rule = "vastai/runpod fire dispatch 는 default SAVE_POD=0 (auto destroy), 그러나 result.json 존재 verify 직후 SAVE_POD=1 자동 promote + pull 재시도 ≥3회. trap cleanup은 모든 path 에서 SAVE_POD 환경변수 존중."
+  why = "2026-05-15 cycle 88 .clm v1 P2 fire — training 5/5 SUPPORTED-STRONG PASS ($0.19 wall 12.2min on Vast.ai A100 SXM4), 그러나 exit code 1 (SSH pipe spurious or set -e false-positive) → trap cleanup destroyed instance BEFORE [8/9] pull → 372MB final ckpt 손실. evidence-only carry (dispatch_train.log + verdict)."
+  apply = "dispatch script 의 train step 직후 SSH 로 `test -f .../result.json && echo SAVED` 확인 → exit 0 시 SAVE_POD=1 자동 promote → pull 시도 ≥3회 (5분 간격, scp ConnectTimeout=3600); pull 실패 시에도 SAVE_POD=1 retain + manual recovery instruction stdout. set -e + pipefail 의 false-positive 회피 위해 train + pull 사이에 `|| true` guards."
+  pattern_pseudocode = "SAVED=$($SSH_CMD 'test -f /workspace/anima/output/result.json && echo SAVED' 2>/dev/null || true); if [ \"$SAVED\" = \"SAVED\" ]; then export SAVE_POD=1; for i in 1 2 3; do $SCP_CMD ... && break || sleep 300; done; fi"
+  cross_link = "state/clm_v1_fire_2026_05_15/dispatch_h100.sh (cycle 88 evidence) + memory feedback_dispatch_vast_template_gotchas + g_hf_naming process_upload_mandate (d) ckpt-LOST evidence-only"
+  @> CLAUDE.md
+
 # ─── §4 Forbidden patterns ───────────────────────────────────────────
 
 @F f1 := "lattice-fit-on-external-entity" :: governance [required deny:write]

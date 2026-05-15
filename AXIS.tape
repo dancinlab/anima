@@ -525,3 +525,15 @@
   count_post = "128 + 21 = 149 entries, 107 + 21 = 128 🔵 (86% closed)"
   artifact = "state/verify_axis_scale4_2026_05_15/axis_scale4_result.json"
   cross_link = "MAIN.tape §AXIS-SCALE-UP-4 + INDEX.md + PR #63"
+
+# ──────────────────────────────────────────────────────────────────────
+# §AXIS-A5-CLM-V1-NEW — A5 architecture +1 SUPPORTED 🟢 (5/5 SUPPORTED-STRONG)
+# ──────────────────────────────────────────────────────────────────────
+
+@D axis_a5_clm_v1_new := "A5 .clm v1 from-scratch ClmV1Model 5/5 SUPPORTED-STRONG (cycle 88, 2026-05-15)" :: cluster [d=2026-05-15 active]
+  entry = "Hc_A5-CLM-V1 ClmV1Model 12L base + 64-cell mitosis branch from-scratch"
+  evidence = "Vast.ai A100 SXM4 wall 734.7s cost $0.19, F-V5MIT-1 splits=62 grad_violations=0 PASS, F-V5MIT-2 max_err=0.0 PASS, F-V5MIT-3 phi delta=0.0 PASS, F-V5MIT-4 CE reduction 137.6× (157.1→1.14) PASS, F-V5MIT-5 10/10 mirror-beats PASS"
+  verdict = "SUPPORTED-STRONG 🟢 (5/5 in-run falsifier PASS) — 🔵 SUPPORTED-FORMAL 미달 (closed-form 또는 PyPhi formal 미만, empirical training evidence)"
+  ckpt_status = "evidence-only — instance destroyed by trap cleanup before pull (exit 1 SSH pipe). g_hf_naming (d) ckpt-LOST caveat. Cycle 89 refire 예정."
+  count_post = "149 + 1 = 150 entries, 128 🔵 + 1 🟢 = 129 verified (86.7%)"
+  cross_link = "training/clm_v1_model.py + training/train_clm_v1_from_scratch.py + state/clm_v1_fire_2026_05_15/{dispatch_train.log, clm_v1_result_reconstructed.json} + CLM.tape §V-CLM-V1-FIRE-VERDICT + PR #65"
