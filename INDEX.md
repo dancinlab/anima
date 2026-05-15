@@ -12,6 +12,7 @@
 | 통합 spec | `HEXAD.tape` | [`HEXAD.tape`](HEXAD.tape) (root 유지 — AGENTS.tape 직접 참조) |
 | 성장축 | `MITOSIS.tape` | [`HEXAD/MITOSIS/`](HEXAD/MITOSIS/) (서브폴더 — `MITOSIS.tape` + `mitosis.hexa` scaffold + README) |
 | TENSION-LINK | `TENSION-LINK.tape/.log.tape` + `training/tension_link_*.hexa` (5) + `tests/test_tension_link*.hexa` (2) + `bench/bench_tension_link.hexa` + `experiments/verify_tension_link.hexa` + `docs/tension_link_*.md` (4) | [`HEXAD/TENSION-LINK/`](HEXAD/TENSION-LINK/) (17 파일 + README, ASCII topology + 100% verified measured + Noether proof) |
+| VOICE | `VOICE.tape/.log.tape` + `.roadmap.voice` + `anima-voice/` (corpus-free 63) + `hexa-senses/voice/` (31) + `tool/anima_voice_*.{hexa,sh}` + `serving/voice_*.hexa` + `tests/test_voice_synth.hexa` + `docs/anima_speak_*.ai.md` | [`HEXAD/VOICE/`](HEXAD/VOICE/) (~2.4M + README — formulaic 발성 도구 NOT 학습 모델, F-VOICE 5/5 + F-VOICE-TOOL 5/5. 학습/eval corpus scrub → `_voice_corpus_local/`) |
 | SAVANT | `SAVANT.tape` + `SAVANT-TOOL.tape` + 4× `tool/anima_savant_*.hexa` + `anima-engines/savant_phi.hexa` | [`HEXAD/SAVANT/`](HEXAD/SAVANT/) (9 파일 + COMPENDIUM 783L + Π 증명 + H359, PR #85) |
 
 자세한 내용은 [HEXAD/README.md](HEXAD/README.md) + [HEXAD/INDEX.md](HEXAD/INDEX.md) 참고.

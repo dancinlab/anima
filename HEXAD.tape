@@ -206,6 +206,7 @@
     HEXAD/BRIDGE/HEXAD-BRIDGE.tape — ThalamicBridge (model.py:37-69, α=PSI_COUPLING=0.014, Law 70 clamp)
     HEXAD/MITOSIS/             — 성장축 (subfolder, 2026-05-16 reorg2): MITOSIS.tape + mitosis.hexa scaffold + README (orthogonal 구조축 보존, §mitosis_two_axis)
     HEXAD/TENSION-LINK/        — 5-Channel Meta-Telepathy (subfolder, 2026-05-16 PR #86): ASCII topology + Noether convergence proof + 100% verified measured + 17 git mv (training/tests/bench/experiments/docs)
+    HEXAD/VOICE/               — anima 발성 도구 (subfolder, 2026-05-16 PR #87): formulaic 음성 파장 합성 (NOT 학습 모델, hexa-voice.md learned-models-FORBIDDEN) · F-VOICE-1..5 5/5 + F-VOICE-TOOL-1..5 5/5 · 학습/eval corpus scrub (user "학습관련 합치면 안돼" → _voice_corpus_local/ git-untrack relocate) · ~2.4M code/spec/docs only
     HEXAD/INDEX.md             — anima verification SSOT INDEX (이전 /INDEX.md)
     HEXAD/SAVANT/              — SAVANT tool/engine 통합 (4 .tape + 5 .hexa + COMPENDIUM 783L + Π 증명 + H359 PR #85)
   EOF
