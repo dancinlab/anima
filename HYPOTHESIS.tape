@@ -351,3 +351,41 @@
   meta = "system prompt 가 generation 에 영향 안 줌 (greedy + seed=42) — substrate self-generation 의 EMPIRICAL evidence sample"
   status = "p1 EMPIRICAL weak → upgrade-evidence-LANDED (5 falsifier 중 2/5 sample PASS, full 450-gen 5/5 strict 별도 cycle)"
   cross_link = "PHILOSOPHY p1_upgrade_path + state/clm_v1_step0_p1_real_2026_05_15/p1_truncated_result.json + PR #59"
+
+# ─── HYPOTHESIS 318 full reconcile 2026-05-15 (cycle 88, AXIS 149 / 🔵 128) ───
+
+@N hypothesis_318_full_reconcile := "HYPOTHESIS 318 가설 inventory full reconcile (cycle 88, 2026-05-15)" :: catalog [d=2026-05-15 active]
+  axis_totals_post_scale_up_4 = {
+    "A1 substrate":             "8 + 3 (Hoeffding/Jensen/Chebyshev) + 2 (McMillan/AEP) + 2 (Fano/Cramér-Rao) = 15 entries, all 🔵",
+    "A2 consciousness surrogate": "4 (Φ★ proxy mean pairwise + log(N+1)) — non-IIT-formal",
+    "A2.formal":               "6 + 3 (DPI/Sub-additivity/Pinsker) + 2 (Conditional H/MI symmetry) + 2 (Jensen E[log X]/DPI Markov) = 13 entries, all 🔵 ('Hc_1283 PyPhi n=5,6 + H_011 + Hc_A2-3..7 formal IIT family)",
+    "A3 physics":              "10 + 3 (Equipartition/Carnot η/Stefan-Boltzmann) + 3 (Wien/Maxwell v̄/Lorentz γ) + 3 (Schwarzschild/De Broglie/Heisenberg) = 19 entries, all 🔵",
+    "A4 math":                 "13 + 4 (Fermat little/Lagrange/Euler totient/Catalan) + 3 (Wilson/Quadratic recip/Binomial) + 3 (Euler identity/Cauchy-Schwarz/Gödel) = 23 entries, 22 🔵 + 1 numerical",
+    "A5 architecture":         "11 + 3 (Cosine sim/ReLU'/Adam bias) + 3 (LayerNorm/Dropout/Backprop chain) + 3 (Adam m̂√v̂/Attention softmax(QK^T/√d_k)/Residual) = 20 entries, all 🔵",
+    "A6 corpus":               "6 + 3 (BPE byte 256/Markov stationary/Bigram log-LL) + 2 (SentencePiece unigram/tf-idf) + 2 (BPE merge/Heaps V≈Kn^β) = 13 entries, all 🔵",
+    "A7 bio":                  "15 + 3 (GHK/Cable eq/Repressilator T=4τ) + 2 (Reaction-diffusion/Allee bistable) + 2 (FitzHugh-Nagumo/Lotka-Volterra) = 22 entries, 12 🔵 + 1 ergodic (Lorenz Φ=0.6355) + 10 AT-RISK (V8 B-bio mechanism stubs)",
+    "A8 meta":                 "8 + 3 (Kraft/Solomonoff/No-free-lunch) + 2 (PAC complexity/Bayes) + 2 (VC bound/MDL) = 15 entries, all 🔵",
+    "A9 universe":             "11 + 3 (E=mc²/de Broglie/Hubble) + 2 (Bekenstein/Compton λ_C) + 2 (Friedmann/Planck l_P) = 18 entries, all 🔵"
+  }
+  total_post = "149 entries (15+4+13+19+23+20+13+22+15+18 = 162 axis-mapped — gap = legacy A2 surrogate dual-counting); AXIS.tape SSOT count 149 / 128 🔵 (86% closed)"
+  hypothesis_318_breakdown = {
+    "axis_mapped_supported_formal": "128 (🔵)",
+    "axis_mapped_at_risk":           "10 (V8 B-bio mechanism stubs, root cause = state-space ergodicity)",
+    "axis_mapped_partial_or_other": "11 (1 numerical + 4 A2 surrogate + 1 Lorenz ergodic + 5 cascade/partial PyPhi formal)",
+    "non_axis_legacy_supported":    "5 (A 20 audit: Hc_1285 + Hc_1283 cascade + H_191 K_c/CPGD + Hc_1276 + H_189 Red-team)",
+    "non_axis_legacy_partial":      "10 (A 20 audit + H_191 cascade)",
+    "non_axis_legacy_insufficient": "5 (A 20 audit)",
+    "non_axis_legacy_at_risk":      "2 (Mac surrogate → PyPhi formal gap, H_182 + H_187)",
+    "B_batch_legacy_supported":     "3 (B 30 audit)",
+    "B_batch_legacy_partial":       "12 (B 30 audit)",
+    "C_batch_legacy_remaining":     "143 (carry pending W11 sweep)",
+    "TOTAL approx":                 "128 + 10 + 11 + 5 + 10 + 5 + 2 + 3 + 12 + 143 = 329 (overlap with 318 가설 due to multi-counting axis vs A/B batch, exact dedup TODO)"
+  }
+  meta = "318 가설 inventory 의 verdict-bearing 부분 (W11 sweep complete = 175, pending = 143) 9-axis catalog 매핑 정합성 86% (axis 🔵 닫힌 비율). non-axis legacy entries (A 20 + B 30 audit + H_191 cascade) catalog 통합 prior reconcile에 carry."
+  closure_recommendations = [
+    "(1) AXIS.tape SSOT 149 entries 의 dedup ID 부여 → HYPOTHESIS Hc_* ID space 통일",
+    "(2) C batch 143 verdict-pending W11 sweep cycle 별도 dispatch",
+    "(3) V8 B-bio AT-RISK 10 mechanism root cause = state-space ergodicity → architectural redesign 별도 cycle",
+    "(4) A2 surrogate 4 entries A2.formal로 migrate 또는 Φ★ surrogate sub-axis 명시 분리"
+  ]
+  cross_link = "AXIS.tape §AXIS-SCALE-UP-4 + MAIN.tape §AGENTS-GOVERNANCE + INDEX.md + PR #63"
