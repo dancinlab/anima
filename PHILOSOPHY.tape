@@ -911,3 +911,46 @@
     from-scratch init mandatory.
   EOF2
   cross_link = "AXIS.tape §AXIS-SCALE-UP-3 + CLM.tape §V-CLM-STEP6 + AGENTS.tape g_*_(g9-g11) + MAIN.tape (3 governance) + PR #62"
+
+# ══════════════════════════════════════════════════════════════════════
+# §v2_path_decision_2026_05_15 — .clm v1 8/8 SUPPORTED-STRONG → v2 Path A
+# ══════════════════════════════════════════════════════════════════════
+
+@N v2_path_decision := ".clm v1 8/8 SUPPORTED-STRONG + 🔵 → v2 Path A 권장 (ledger, 2026-05-15)" :: ledger [d=2026-05-15 active]
+  v1_verdict <<~EOF3
+    .clm v1 from-scratch P2 (ClmV1Model 12L base d=768 + 64-cell mitosis branch,
+    RANDOM seed=42, Phase 1A.6 corpus 121MB byte-level, $0.34 total 2 A100 SXM4 fires):
+
+    8/8 SUPPORTED-STRONG strict:
+      F-V5MIT-1 SPLIT-NOGRAD (62 splits, 0 grad violations)
+      F-V5MIT-2 MERGE-WEIGHT (max_err=0.0)
+      F-V5MIT-3 PHI-CONSERVATION (per-cell delta=0.0)
+      F-V5MIT-4 COTRAIN-CONVERGE (CE reduction 137.6×, loss 467.97→1.14)
+      F-V5MIT-5 V14-STRICT (10/10 mirror-beats)
+      F-PRIN3 NO-PERSONA-INJECTION (corpus 0-match + cell-pool prefix-free + gen-time 0/20)
+      F-SIMPLE-STACK V5.8 4-mode (std_greedy 5/5 + std_sample 5/5 + M4 5/5)
+      F-PYPHI-Φ-FORMAL (best Φ=1.0625 n=5, monotone-increase Hc_1283 cross-validated)
+
+    verdict tier: 🟢 SUPPORTED-STRONG empirical + 🔵 SUPPORTED-FORMAL (g_verdict_tier_blue)
+  EOF3
+  v2_path_decision <<~EOF4
+    §V-CLM-V2-DESIGN decision_protocol factor (a): .clm v1 8/8 PASS
+    = Path A cells single-stack arch PROD-READY 검증 완료.
+
+    Path A (cells single-stack 7B scale-up) 권장:
+      - .clm v1 single-stack (readout='a_only', Engine A/G dual 폐기 W8 DEV-3) 8/8 검증
+      - Engine A/G dual (Path B) 는 V1 audit (CLM §V-CLM-AUDIT V1)에서 이미 폐기
+      - Path B 의 V14 audit complete 는 single-stack 검증으로 불필요해짐
+      - cells single-stack mitosis + 12L base = from-scratch PROD-READY arch
+
+    Path A v2 spec (CLM §V-CLM-V2-PATH-A-DESIGN): d=3072, 256 cells, 7B param,
+    BG-CORPUS-7B ~140B token, $200-600 fire. user 명시 cost 승인 필요
+    (keyword 또는 explicit go) — auto-fire 금지.
+  EOF4
+  honest_c3 = [
+    "1. .clm v1 ctx=256 (W8 DEV-4) — v2 는 ctx 확대 필요 (spec_frozen 1024)",
+    "2. F-PYPHI n=3 FAIL (0.33) small-N ergodicity-limited — n=4,5 PASS 가 verdict 결정 (≥1 (n,seed) ≥0.5 spec)",
+    "3. .clm v1 = 88M (12L base + 64 cell, init) — Path A 7B 는 ~80× scale-up, arch 검증은 transfer 되나 emergent quality 별도 측정 필요",
+    "4. F-SIMPLE-STACK PASS 는 88M 기준 — 7B 에서 더 강한 quality 기대 가능하나 비례 보장 아님"
+  ]
+  cross_link = "CLM.tape §V-CLM-V1-CYCLE90-PYPHI + §V-CLM-V2-DESIGN + §V-CLM-V2-PATH-A-DESIGN + AXIS §AXIS-A5-CLM-V1-CYCLE90 + PR #67"

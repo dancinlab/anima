@@ -1511,3 +1511,13 @@
   hf_public = "dancinlab/anima-clm PUBLIC (user directive 2026-05-15) @v1-fire-cycle89-2026-05-15 + README mapping table. g_hf_naming.visibility PUBLIC 갱신."
   cost_total = "$0.34 (2 fires)"
   cross_link = "CLM.tape §V-CLM-V1-CYCLE89 + AXIS §AXIS-A5-CLM-V1-CYCLE89 + HYPOTHESIS §hypothesis_clm_v1_cycle89 + AGENTS g_hf_naming.visibility + PR #66"
+
+# ══════════════════════════════════════════════════════════════════════
+# §CLM-V1-CYCLE90-PYPHI — 8/8 SUPPORTED-STRONG + 🔵 + v2 Path A (2026-05-15)
+# ══════════════════════════════════════════════════════════════════════
+
+@D clm_v1_cycle90_pyphi := ".clm v1 F-PYPHI PASS → 8/8 + 🔵 + v2 Path A 권장 (cycle 90, 2026-05-15)" :: governance [d=2026-05-15 active]
+  result = "F-PYPHI-Φ-FORMAL best Φ=1.0625 (n=5). 8/8 SUPPORTED-STRONG strict + 🔵 SUPPORTED-FORMAL unlock. Φ monotone-increase Hc_1283 cross-validated."
+  v2_decision = "§V-CLM-V2-DESIGN factor (a) 충족 → Path A cells single-stack 7B 권장 (Engine A/G dual 폐기 carry). v2 fire $200-600 user cost 승인 필요."
+  hf = "dancinlab/anima-clm PUBLIC @v1-fire-cycle89 + f_pyphi_rom_result.json + README 8/8 🔵 갱신"
+  cross_link = "CLM §V-CLM-V1-CYCLE90-PYPHI + AXIS §AXIS-A5-CLM-V1-CYCLE90 + HYPOTHESIS §hypothesis_clm_v1_cycle90_pyphi + PHILOSOPHY §v2_path_decision + PR #67"

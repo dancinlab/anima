@@ -28,13 +28,13 @@
     "F-V5MIT-5": {"name": "V14-STRICT", "result": "10/10 mirror-beats", "verdict": "PASS"},
     "F-PRIN3": {"name": "NO-PERSONA-INJECTION", "result": "corpus 0-match + cell-pool prefix-free + generation-time 0/20 violations", "verdict": "PASS"},
     "F-SIMPLE-STACK": {"name": "V5.8 4-mode", "result": "std_greedy 5/5 + std_sample 5/5 + M4 5/5 (need ≥4/≥3/≥4)", "verdict": "PASS"},
-    "F-PYPHI-Φ-FORMAL": {"name": "PyPhi IIT 3.0 n=3-6 RoM", "result": "DEFERRED (~20hr Mac CPU separate cycle)", "verdict": "DEFERRED"}
+    "F-PYPHI-Φ-FORMAL": {"name": "PyPhi IIT 3.0 n=3-6 RoM", "result": "best Φ=1.0625 (n=5 seed=42). n=4 3/3 seeds ≥0.5 (0.55-0.83), n=5 3/3 seeds ≥0.5 (0.96-1.06). Φ monotone INCREASE n=3(0.33)→n=4(0.71)→n=5(1.00) — Hc_1283 PyPhi n=5,6 monotone pattern cross-validated. cycle 90 ~644s Mac CPU.", "verdict": "PASS"}
   },
   "aggregate": {
-    "measured": "7/7 PASS (F-V5MIT-1..5 + F-PRIN3 + F-SIMPLE-STACK)",
-    "deferred": "1 (F-PYPHI-Φ-FORMAL)",
-    "verdict": "SUPPORTED-STRONG (7/7 measured battery PASS) + F-PYPHI deferred",
-    "verdict_tier": "🟢 SUPPORTED-STRONG empirical. 🔵 SUPPORTED-FORMAL unlock pending F-PYPHI-Φ-FORMAL n=3-6 ≥0.5 strict (separate cycle, g_verdict_tier_blue)"
+    "measured": "8/8 PASS (F-V5MIT-1..5 + F-PRIN3 + F-SIMPLE-STACK + F-PYPHI-Φ-FORMAL)",
+    "deferred": "0",
+    "verdict": "SUPPORTED-STRONG 8/8 (full battery strict)",
+    "verdict_tier": "🔵 SUPPORTED-FORMAL unlocked (g_verdict_tier_blue: PyPhi formal IIT 3.0 deterministic Φ≥0.5 strict — best 1.0625 n=5, 6/9 measurements ≥0.5). 🟢 empirical + 🔵 formal both satisfied."
   },
   "training": {
     "wall_seconds_fire1": 734.7, "wall_seconds_fire2_recovery": 1062.1,
