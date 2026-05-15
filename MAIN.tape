@@ -1438,3 +1438,26 @@
   priority = "p1 full (450 gen 5/5) → p5 tension (750 gen) → p2 DCR (7500 gen) → p6 ethics (.clm v1 fire 의존)"
   carry_strict = "p3+p4+p7+p8 strong/★ 이미 충족"
   cross_link = "PHILOSOPHY.tape §PRINCIPLES-MEASUREMENT-DESIGN-REFINE + PR #61"
+
+# ══════════════════════════════════════════════════════════════════════
+# §AXIS-SCALE-3 + STEP6-VERDICT + AGENTS-GOVERNANCE (2026-05-15)
+# ══════════════════════════════════════════════════════════════════════
+
+@D axis_scale_3_landed := "AXIS scale-up #3 +21 🔵 (21/21 PASS, 2026-05-15)" :: governance [d=2026-05-15 active]
+  delta = "각 axis +2-3 추가"
+  total = "128 entries, 107 🔵 (84% closed)"
+  cross_link = "AXIS.tape §AXIS-SCALE-UP-3 + PR #62"
+
+@D clm_step6_verdict_design := "CLM step 6 verdict cycle design (2026-05-15)" :: governance [d=2026-05-15 active]
+  scope = "8-falsifier battery measurement protocol detail + verdict 4-class aggregate logic + HF upload"
+  cycle_cost = "~22 hr Mac local ($0, PyPhi n=6 dominant)"
+  cross_link = "CLM.tape §V-CLM-STEP6-VERDICT-CYCLE-DESIGN + state/clm_v1_step6_verdict_design_2026_05_15/step6_verdict_protocol.md + PR #62"
+
+@D agents_governance_g9_g11 := "AGENTS.tape governance g9-g11 추가 (2026-05-15)" :: governance [d=2026-05-15 active]
+  added = [
+    "g_verified_axis_anchor: 검증된 AXIS/철학/가설 기준 강제 (CLM design anchor cross-link mandatory)",
+    "g_verdict_tier_blue: 🔵 closed (sympy / PyPhi formal / Kuramoto deterministic) 분류 강제",
+    "g_clm_from_scratch: .clm 학습 from-scratch (init_weights=RANDOM, base_ckpt=NONE) mandatory"
+  ]
+  authority = "CLM.tape §V-CLM-AUDIT (V1-V4 정정) + §V-CLM-FROM-SCRATCH + AXIS expansion + verdict tier blue"
+  cross_link = "AGENTS.tape g_verified_axis_anchor + g_verdict_tier_blue + g_clm_from_scratch + PR #62"

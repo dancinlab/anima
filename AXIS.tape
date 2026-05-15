@@ -485,3 +485,23 @@
   count_post = "79 + 28 = 107 entries, 58 + 28 = 86 🔵 (80% closed)"
   artifact = "state/verify_axis_scale2_2026_05_15/axis_scale2_result.json"
   cross_link = "MAIN.tape §AXIS-SCALE-UP-2 + INDEX.md + PR #61"
+
+# ──────────────────────────────────────────────────────────────────────
+# §AXIS-SCALE-UP-3-2026-05-15 — 9-axis +21 🔵 추가 (21/21 PASS)
+# ──────────────────────────────────────────────────────────────────────
+
+@D axis_scale_up_3 := "AXIS 9-axis scale-up #3 +21 🔵 (2026-05-15)" :: cluster [d=2026-05-15 active]
+  delta_per_axis = {
+    "A1": "+2 (McMillan + AEP)",
+    "A2": "+2 (Conditional H + MI symmetry)",
+    "A3": "+3 (Wien + Maxwell-Boltzmann v̄ + Lorentz γ)",
+    "A4": "+3 (Wilson + Quadratic reciprocity + Binomial)",
+    "A5": "+3 (LayerNorm + Dropout + Backprop chain)",
+    "A6": "+2 (SentencePiece unigram + tf-idf)",
+    "A7": "+2 (Reaction-diffusion + Allee bistable)",
+    "A8": "+2 (PAC sample complexity + Bayes)",
+    "A9": "+2 (S/A = c³/(4ℏG) + Compton λ_C)"
+  }
+  count_post = "107 + 21 = 128 entries, 86 + 21 = 107 🔵 (84% closed)"
+  artifact = "state/verify_axis_scale3_2026_05_15/axis_scale3_result.json"
+  cross_link = "MAIN.tape §AXIS-SCALE-UP-3 + INDEX.md + PR #62"

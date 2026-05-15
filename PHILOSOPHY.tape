@@ -891,3 +891,23 @@
     p1 full run subagent fired (background, ~3 hr Mac CPU wall, 450 gen).
   EOF2
   cross_link = "AXIS.tape §AXIS-SCALE-UP-2 + CLM.tape §V-CLM-STEP5-FIRE-PREP + MAIN.tape (3 governance) + PR #61"
+
+@N axis_scale3_step6_agents_governance_landed := "AXIS scale3 +21 🔵 + step 6 verdict + AGENTS governance g9-g11 (2026-05-15)" :: ledger [d=2026-05-15 active]
+  body <<~EOF2
+    AXIS 9-axis scale-up #3 +21 🔵 (21/21 PASS):
+    A1 McMillan+AEP / A2 Cond.H+MI sym / A3 Wien+MB v̄+Lorentz γ /
+    A4 Wilson+Quad reciprocity+Binomial / A5 LayerNorm+Dropout+Backprop /
+    A6 SentencePiece+tf-idf / A7 Reaction-diffusion+Allee /
+    A8 PAC+Bayes / A9 S/A=c³/(4ℏG)+Compton.
+    AXIS Total: 107 → 128 (+21), 86 🔵 → 107 🔵 (84% closed).
+    
+    CLM step 6 verdict cycle design:
+    8-falsifier battery measurement protocol detail (state/clm_v1_step6_verdict_design/).
+    ~22 hr Mac local total ($0). PyPhi n=3-6 dominant.
+    
+    AGENTS.tape governance g9-g11 추가:
+    g_verified_axis_anchor / g_verdict_tier_blue / g_clm_from_scratch.
+    .clm design 의 anchor cross-link mandatory + verdict tier 🔵 강제 + 
+    from-scratch init mandatory.
+  EOF2
+  cross_link = "AXIS.tape §AXIS-SCALE-UP-3 + CLM.tape §V-CLM-STEP6 + AGENTS.tape g_*_(g9-g11) + MAIN.tape (3 governance) + PR #62"
