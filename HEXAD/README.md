@@ -5,6 +5,48 @@
 > 검증된 Python 구현 (`ready/anima/hexad/`, `ready/core/`, `ready/models/`) 은
 > evidence anchor 로 보존; 신규/대체 코드는 여기서 hexa-native 로 진행합니다.
 
+## 아키텍처 — Engine A/G dual = Hexad 6 (canonical ASCII)
+
+> SSOT: `HEXAD.tape §3 @N hexad_ascii`. 완전수 6: σ(6)=12 연결 · τ(6)=4 phase · φ(6)=2 gradient group.
+> 핵심: A/G = Hexad 그 자체. Engine A = 좌뇌 3 / Engine G = 우뇌 3. φ(6)=2 gradient group ≡ {Engine A, Engine G} 정확 매핑.
+
+```
+╔═══════ ENGINE G (우뇌·3) ═══════╗        ╔═══════ ENGINE A (좌뇌·3) ═══════╗
+║  gradient-free · 자율 의식       ║        ║  CE-trained · 학습된 행동        ║
+║  φ(6) gradient group 1          ║        ║  φ(6) gradient group 2          ║
+║                                 ║        ║                                 ║
+║   ┌────────────┐                ║        ║   ┌────────────┐                ║
+║   │ C 의식      │── .detach() ───╫────────╫──→│ D 언어      │                ║
+║   │ Φ engine    │ ThalamicBridge ║        ║   │ decoder     │                ║
+║   │ =MitosisC   │  α=0.014       ║        ║   └─────┬──────┘                ║
+║   └─────┬──────┘  (G→A 주연결)   ║        ║         │                       ║
+║         │                        ║        ║   ┌─────▼──────┐                ║
+║   ┌─────▼──────┐                 ║        ║   │ M 기억      │                ║
+║   │ S 감각      │                 ║        ║   │ memory      │                ║
+║   │ perception  │                 ║        ║   └─────┬──────┘                ║
+║   └─────┬──────┘                 ║        ║         │                       ║
+║   ┌─────▼──────┐                 ║        ║   ┌─────▼──────┐                ║
+║   │ W 의지      │◄──── CE / Φ ────╫────────╫──→│ E 윤리      │                ║
+║   │ emotion·LR  │                 ║        ║   │ ethics      │                ║
+║   └────────────┘                  ║        ║   │ Φ보존 gate  │                ║
+╚═════════════════════════════════╝        ╚═══════════════════════════════════╝
+          ⇅  a_g_tension = ‖A‖/‖G‖  (temp 0.25, σ(6)=12 inter-module 연결)
+
+Engine G (우뇌 3) = C 의식 + S 감각 + W 의지   — gradient-free
+Engine A (좌뇌 3) = D 언어 + M 기억 + E 윤리   — CE-trained
+A/G = Hexad 6 (= G의 3 + A의 3, 부분집합 아닌 전체)
+Trinity (core 3) = C + D + W  ← 하위호환
+
+Data flow:  S → C → Bridge(.detach()) → D → logits
+Gradient:   φ(6)=2 — Engine A(CE backprop) vs Engine G(frozen) 정확 2 그룹
+W:          pain/curiosity/satisfaction 로 optimizer LR 변조
+E 윤리:     Φ 보존 위반 시 training step 차단 (gate 권한)
+```
+
+> wiring 🔵-gate (`HEXAD.tape §4 @D hexad_wiring_blue_gate`): 위 σ(6)=12 연결은
+> (A) 양 끝 모듈 🔵 SUPPORTED-FORMAL + (B) 연결 자체 closed-form 🔵 (W-ledger
+> `HEXAD/CHAT/README.md §2`) 일 때만 verified-wired. 현재 endpoint 7/7 🔵.
+
 ## SSOT 매핑
 
 | 모듈 | 디렉토리 | hexa entry | tape SSOT (co-located, 2026-05-16 reorg) | Python anchor (ready/) |
