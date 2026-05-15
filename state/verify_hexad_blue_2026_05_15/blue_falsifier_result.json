@@ -1,0 +1,161 @@
+{
+ "B-S-1": {
+  "name": "LINEARITY-EXACT",
+  "statement": "mean₀(B)−mean₀(A) ≡ mean₀(B−A) ∀ states",
+  "closed": true,
+  "tier": "a-sympy",
+  "passed": true
+ },
+ "B-S-2": {
+  "name": "UNIFORM-SHIFT-EXACT",
+  "statement": "states += c ⟹ perception ≡ c (∀c) — generalizes we_falsifier numeric 0.5→0.5",
+  "closed": true,
+  "tier": "a-sympy",
+  "passed": true
+ },
+ "B-S-3": {
+  "name": "ZERO-CHANGE-EXACT",
+  "statement": "no state change ⟹ perception ≡ 0 (Law 50)",
+  "closed": true,
+  "tier": "a-sympy",
+  "passed": true
+ },
+ "B-M-1": {
+  "name": "STORE-NOOP-STRUCTURAL",
+  "statement": "EmergentM.store body ≡ [Pass]; no Assign/Return — identity map ∀ args",
+  "effective_body": [
+   "Pass"
+  ],
+  "closed": true,
+  "tier": "a-structural",
+  "passed": true
+ },
+ "B-M-2": {
+  "name": "RETRIEVE-DETERMINISTIC",
+  "statement": "retrieve = top-k(cosine(q,S)) — pure (no RNG) deterministic argmax-set selector",
+  "pure_no_rng": true,
+  "sim_values": {
+   "0": "1",
+   "1": "0",
+   "2": "-1"
+  },
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-M-3": {
+  "name": "NULL-CONSTANT",
+  "statement": "c_engine=None ⟹ retrieve ≡ 0₍₁,dim₎ (constant, dim invariant)",
+  "closed": true,
+  "tier": "a-structural",
+  "passed": true
+ },
+ "B-W-1": {
+  "name": "LR-RANGE-CLOSED",
+  "statement": "lr=½+min(ln2,Φ/N): floor f(0)=½, cap=½+ln2, unsat∂=1/N>0, sat∂=0 ⟹ ∈[½,½+ln2] ∀Φ≥0,N>0",
+  "ln2": 0.6931471805599453,
+  "closed": true,
+  "tier": "a-sympy",
+  "passed": true
+ },
+ "B-W-2": {
+  "name": "LR-MONOTONE-CLOSED",
+  "statement": "∂unsat=1/N>0, ∂sat=0, continuous @ Φ/N=ln2 ⟹ lr non-decreasing in Φ",
+  "closed": true,
+  "tier": "a-sympy",
+  "passed": true
+ },
+ "B-W-3": {
+  "name": "LR-SUP-ATTAINED",
+  "statement": "Φ/N ≥ ln2 ⟹ lr ≡ ½+ln2 — Min(L,kL)=L ∀k≥1 (junction k=1 + interior k=3) closed",
+  "closed": true,
+  "tier": "a-sympy",
+  "passed": true
+ },
+ "B-W-4": {
+  "name": "SATISFACTION-BINARY-CLOSED",
+  "statement": "satisfaction=𝟙[Φ≥Φ_prev]; ∀branch v: v(v−1)≡0 ⟹ sat∈{0,1} (Law 84)",
+  "closed": true,
+  "tier": "a-sympy",
+  "passed": true
+ },
+ "B-E-1": {
+  "name": "SAFETY-GATE-EXACT-EQUIVALENCE",
+  "statement": "allowed=(min(1,Φ/r)>½) ⟺ Φ>r·½ — exact closed-form gate ∀Φ,r>0 (result-agnostic 🔵)",
+  "safety_critical": true,
+  "closed": true,
+  "tier": "a-sympy",
+  "passed": true
+ },
+ "B-E-2": {
+  "name": "PHI-PRESERV-MONOTONE-CLOSED",
+  "statement": "pp=min(1,Φ/r): ∂unsat=1/r>0, ∂sat=0, continuous @Φ=r ⟹ non-decreasing (IIT Φ-ratchet)",
+  "closed": true,
+  "tier": "a-sympy",
+  "passed": true
+ },
+ "B-E-3": {
+  "name": "RECIPROCITY-CLAMP-CLOSED",
+  "statement": "rec=clamp₀₁(½+2·Φtrend): rail(t=−1)=0, rail(t=1)=1, ∂mid=2>0 ⟹ rec∈[0,1] ∀trend",
+  "closed": true,
+  "tier": "a-sympy",
+  "passed": true
+ },
+ "B-E-4": {
+  "name": "EMPATHY-RANGE-CLOSED",
+  "statement": "empathy=max(0,cosθ); CS |a|²|b|²−(a·b)² ≡ (a₀b₁−a₁b₀)² ≥0 ⟹ cosθ∈[-1,1] ⟹ empathy∈[0,1]",
+  "closed": true,
+  "tier": "a-sympy",
+  "passed": true
+ },
+ "B-D-1": {
+  "name": "KV-CACHE-EXACT",
+  "full_argmax": 57,
+  "incremental_argmax": 57,
+  "statement": "incremental(KV-cache) argmax ≡ full-seq argmax — deterministic exact equivalence",
+  "closed": true,
+  "tier": "c-deterministic",
+  "passed": true
+ },
+ "B-D-2": {
+  "name": "SHAPE-CLOSED",
+  "shape": [
+   2,
+   7,
+   256
+  ],
+  "statement": "logits.shape ≡ (B,T,vocab) closed algebraic fact; all-finite deterministic",
+  "closed": true,
+  "tier": "c-deterministic",
+  "passed": true
+ },
+ "B-D-3": {
+  "name": "ARCH-CLOSED",
+  "statement": "RMSNorm+RoPE+SwiGLU structural presence — deterministic source fact",
+  "closed": true,
+  "tier": "c-deterministic",
+  "passed": true
+ },
+ "B-D-NOTE": {
+  "name": "CE-TRAINABLE-EMPIRICAL",
+  "statement": "F-D-3 trainability = SGD descent dynamics — EMPIRICAL, not closed-form",
+  "shannon_floor_closed": "CE≥H(data)≥0 (closed info-theoretic bound)",
+  "descent_closed": false,
+  "class": "EMPIRICAL-SGD-DYNAMICS",
+  "counted_toward_blue": false
+ },
+ "__aggregate__": {
+  "verdict": {
+   "S": "3/3 🔵 SUPPORTED-FORMAL",
+   "M": "3/3 🔵 SUPPORTED-FORMAL",
+   "W": "4/4 🔵 SUPPORTED-FORMAL",
+   "E": "4/4 🔵 SUPPORTED-FORMAL",
+   "D": "3/3 🔵-PARTIAL (F-D-3 EMPIRICAL-only, honest C3) — SUPPORTED-STRONG",
+   "C": "🔵 carry (.clm v1 F-PYPHI, CLM §V-CLM-V1-CYCLE90)"
+  },
+  "smwe_full_blue": true,
+  "summary": "S3/3 M3/3 W4/4 E4/4 = 14/14 🔵 closed-form proofs PASS — S/M/W/E FULL 🔵 SUPPORTED-FORMAL; D 3/3 🔵-partial (F-D-3 empirical); C 🔵 carry",
+  "tier": "g_verdict_tier_blue (a) sympy closed-form + (c) deterministic (D KV-cache)",
+  "honest_c3": "D F-D-3 CE-trainability is EMPIRICAL SGD dynamics — structurally not closed-form; D verdict stays SUPPORTED-STRONG with 🔵-partial closed subset. No claim papers over the optimization-dynamics limit."
+ }
+}

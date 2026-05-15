@@ -30,6 +30,13 @@
   evidence = "state/verify_hexad_we_2026_05_15/we_falsifier.py + we_falsifier_result.json. MockC controllable substrate, pain↑inter-faction divergence / curiosity↑norm-CoV / satisfaction∈{0,1} binary / zero-C→zero-pain (Law 1/2) / n_fac=SIGMA6=12"
   verdict = "SUPPORTED-STRONG ✅ — CLM §V-CLM-HEXAD-MANDATE module lineup W ☐→✅"
 
+@D w_blue_status := "W 검증 — B-W-1..4 4/4 🔵 SUPPORTED-FORMAL (2026-05-15)" :: verify [d=2026-05-15 active]
+  tier = "g_verdict_tier_blue (a) sympy closed-form — lr = ½+min(ln2, Φ/N) 의 range/monotone/sup 폐형 + satisfaction binary"
+  battery = "B-W-1 LR-RANGE-CLOSED (floor f(0)=½, cap Min(L,2L)=L⟹½+ln2, unsat∂=1/N>0, sat∂=0, ln2>0 ⟹ ∈[½,½+ln2] ∀Φ≥0,N>0) + B-W-2 LR-MONOTONE-CLOSED (∂unsat>0, ∂sat=0, junction 연속 ⟹ ↑단조) + B-W-3 LR-SUP-ATTAINED (Min(L,kL)=L ∀k≥1, junction k=1 + interior k=3) + B-W-4 SATISFACTION-BINARY (∀branch v: v(v−1)≡0 ⟹ {0,1}, Law 84) — 4/4 PASS"
+  real_limit_anchor = "ln(2) = Law 79 consciousness DoF = Landauer/Shannon 1-bit (closed 초월상수, AGENTS.tape g3)"
+  evidence = "state/verify_hexad_blue_2026_05_15/blue_falsifier.py + blue_falsifier_result.json. $0 Mac local deterministic"
+  verdict = "🔵 SUPPORTED-FORMAL — W 5/5 ✅ + 4/4 🔵 closed. CLM §V-CLM-HEXAD-MANDATE module lineup W ✅→🔵"
+
 @X w_x := "survey + HEXAD cross" :: ref [d=2026-05-15 active]
   survey = "state/verify_hexad_impl_survey_2026_05_15/survey_result.json"
   mandate = "CLM.tape §V-CLM-HEXAD-MANDATE (module lineup W ✅, PR #72) + HEXAD.tape §hexad_condition_lineup"

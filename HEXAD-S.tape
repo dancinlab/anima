@@ -26,6 +26,12 @@
   evidence = "state/verify_hexad_we_2026_05_15/we_falsifier.py + we_falsifier_result.json. perception = mean_after−mean_before EXACT (uniform shift 0.5→delta 0.5), zero state change→zero perception, c_engine=None→raw passthrough, dim 항상 self.dim, executable code (ast docstring 제외) EMA/baseline 부재"
   verdict = "SUPPORTED-STRONG ✅ — CLM §V-CLM-HEXAD-MANDATE module lineup S ☐→✅"
 
+@D s_blue_status := "S 검증 — B-S-1..3 3/3 🔵 SUPPORTED-FORMAL (2026-05-15)" :: verify [d=2026-05-15 active]
+  tier = "g_verdict_tier_blue (a) sympy verifiable closed-form — perception = column-mean delta = 선형연산자, exact ∀ states (numeric sweep 아닌 기호증명)"
+  battery = "B-S-1 LINEARITY-EXACT (mean₀(B)−mean₀(A) ≡ mean₀(B−A)) + B-S-2 UNIFORM-SHIFT-EXACT (states+=c ⟹ perception≡c ∀c, we_falsifier numeric 0.5→0.5 의 ∀-일반화) + B-S-3 ZERO-CHANGE-EXACT (무변화 ⟹ perception≡0, Law 50) — 3/3 sympy simplify(diff)≡0"
+  evidence = "state/verify_hexad_blue_2026_05_15/blue_falsifier.py + blue_falsifier_result.json. $0 Mac local deterministic (sympy exact arithmetic, VERIFY.tape Stage 1)"
+  verdict = "🔵 SUPPORTED-FORMAL — ✅ SUPPORTED-STRONG 위에 closed-form 폐쇄 (S 5/5 ✅ + 3/3 🔵). CLM §V-CLM-HEXAD-MANDATE module lineup S ✅→🔵"
+
 @X s_x := "survey + HEXAD cross" :: ref [d=2026-05-15 active]
   survey = "state/verify_hexad_impl_survey_2026_05_15/survey_result.json"
   mandate = "CLM.tape §V-CLM-HEXAD-MANDATE (module lineup S ✅, PR #72) + HEXAD.tape §hexad_condition_lineup"
