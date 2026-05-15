@@ -444,3 +444,24 @@
   axis_post = "52 + 8 = 60 entries, 32 + 7 = 39 🔵 (65% closed)"
   remaining = "Hc_A8-5 sympy edge case 수동 PASS (counted as 🟢-pseudo)"
   cross_link = "MAIN.tape §AXIS-A2-A4-A7-A8 + INDEX.md + PR #58"
+
+# ──────────────────────────────────────────────────────────────────────
+# §AXIS-SCALE-UP-2026-05-15 — 9-axis +19 🔵 SUPPORTED-FORMAL (19/19 PASS)
+# ──────────────────────────────────────────────────────────────────────
+
+@D axis_scale_up_landed := "AXIS 9-axis scale-up +19 🔵 (2026-05-15)" :: cluster [d=2026-05-15 active]
+  scope = "각 axis +2-3 closed-form 추가, 19/19 sympy verify PASS"
+  delta_per_axis = {
+    "A1": "+3 (Fisher info + KL divergence + Cross-entropy)",
+    "A2": "+2 (Shannon-Hartley capacity + Channel coding theorem)",
+    "A3": "+2 (Liouville theorem + Boltzmann H-theorem)",
+    "A4": "+2 (Möbius inversion + Dirichlet ζ(2)=π²/6 Basel)",
+    "A5": "+2 (Softmax shift invariance + LeCun init Var=1/n_in)",
+    "A6": "+2 (N-gram entropy rate + Perplexity 2^H)",
+    "A7": "+2 (Hodgkin firing threshold + Lotka-Volterra neutral stability)",
+    "A8": "+2 (Cramer-Rao bound + Fano inequality)",
+    "A9": "+2 (Friedmann + Pauli exclusion)"
+  }
+  count_post = "60 + 19 = 79 entries, 39 🔵 + 19 🔵 = 58 🔵 (73% closed)"
+  artifact = "state/verify_axis_scale_2026_05_15/axis_scale_result.json"
+  cross_link = "MAIN.tape §AXIS-SCALE-UP + INDEX.md + PR #60"

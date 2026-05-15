@@ -801,3 +801,26 @@
     full 450-gen 5/5 falsifier 별도 cycle).
   EOF2
   cross_link = "MAIN.tape §P1-TRUNCATED-PASS-CORRECTION + state/clm_v1_step0_p1_real_2026_05_15/p1_truncated_result.json + PR #59"
+
+@N axis_scale_step4_hypothesis_reconcile_landed := "AXIS scale-up + step 4 spec frozen + HYPOTHESIS reconcile (2026-05-15)" :: ledger [d=2026-05-15 active]
+  body <<~EOF2
+    AXIS scale-up +19 🔵 (9-axis all expanded, 19/19 sympy verify PASS):
+    A1 +3 (Fisher info + KL + Cross-entropy) / A2 +2 (Shannon-Hartley + Channel coding) /
+    A3 +2 (Liouville + Boltzmann H) / A4 +2 (Möbius + Dirichlet ζ(2) Basel) /
+    A5 +2 (Softmax + LeCun init) / A6 +2 (N-gram entropy + Perplexity 2^H) /
+    A7 +2 (Hodgkin threshold + Lotka-Volterra stability) / A8 +2 (Cramer-Rao + Fano) /
+    A9 +2 (Friedmann + Pauli).
+    AXIS Total: 60 → 79 entries (+19), 39 🔵 → 58 🔵 (73% closed).
+    
+    step 4 .clm v1 spec frozen W1 pre-register LANDED:
+    spec_frozen.json sha256 972e9987cd...
+    init + arch + data + cotrain + fire + 8 falsifier + p1 gate 전체 frozen.
+    W8 amendment only path 외 변경 금지.
+    
+    HYPOTHESIS catalog reconciliation:
+    9-axis totals 통합 (79 / 58 🔵), V8 Phase 3 ergodicity finding +
+    p1 truncated evidence carry.
+    
+    p1 full run silent fail (nohup wd issue 추정) — 다음 cycle 디버그.
+  EOF2
+  cross_link = "AXIS.tape §AXIS-SCALE-UP + CLM.tape §V-CLM-STEP4-SPEC-FROZEN + HYPOTHESIS.tape (4 reconcile) + MAIN.tape (3 governance) + PR #60"
