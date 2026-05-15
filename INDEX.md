@@ -37,7 +37,7 @@
 | 🔵 | Hc_1283 (n=5,6) | PyPhi formal n=5,6 (Φ=0.995, 1.665 monotone INCREASE deterministic — 물리적 closed) |
 | 🔵 | H_011 | IIT geometry canonical (PyPhi 1.2.0 XOR+AND+OR Φ=2.3125 > 0.5 reachable — 물리적 closed) |
 
-### A3 physics (4, +3 expansion 2026-05-15)
+### A3 physics (8, +3 expansion + 4 extra 2026-05-15)
 
 | Tier | ID | 한 줄 설명 |
 |------|-----|-----------|
@@ -45,6 +45,10 @@
 | 🔵 | Hc_NEW_PHYSICS-1 | BKT transition T_BKT = πJ/2 ≈ 1.5708 (sympy closed-form, vortex unbinding) |
 | 🔵 | Hc_NEW_PHYSICS-2 | Onsager 2D Ising T_c = 2J/log(1+√2) ≈ 2.269 (sympy manual sinh verify, Onsager 1944) |
 | 🔵 | Hc_NEW_PHYSICS-3 | Ginzburg-Landau φ⁴ critical point a=0, φ_min² = -a/(2b) (sympy d2F=0 verify) |
+| 🔵 | Hc_A3-4 | Hopf bifurcation limit cycle r = √μ (sympy verify) |
+| 🔵 | Hc_A3-5 | Lotka-Volterra fixed point (γ/δ, α/β) (sympy dxdt=0 verify) |
+| 🔵 | Hc_A3-6 | RG fixed point φ⁴ d=4-ε g* = 16π²ε/3 (Wilson-Fisher, β(g*)=0 verify) |
+| 🔵 | Hc_A3-7 | QHO E_n = ℏω(n + 1/2), ΔE = ℏω uniform (sympy verify) |
 
 ### A4 math ⭐ (8, largest cluster — 모두 sympy closed-form ⇒ 🔵)
 
@@ -93,7 +97,7 @@
 | 🟢 | Hc_1280 | Red-team family member |
 | 🟠 | H_187 | V8 Trinity-TB-DOM (surrogate 100%, PyPhi formal Φ=0.359<0.5 AT-RISK) |
 
-### A9 universe (5, +3 expansion 2026-05-15)
+### A9 universe (9, +3 expansion + 4 extra 2026-05-15)
 
 | Tier | ID | 한 줄 설명 |
 |------|-----|-----------|
@@ -102,6 +106,10 @@
 | 🔵 | Hc_NEW_UNIVERSE-1 | Bekenstein cell-pool S_max = 2πER/(ℏc) (closed-form, cell-pool entropy bound) |
 | 🔵 | Hc_NEW_UNIVERSE-2 | Holographic N_dof = A/(4 ℓ_P²) (sympy verify A=4ℓ_P² → N=1, 't Hooft+Susskind) |
 | 🔵 | Hc_NEW_UNIVERSE-3 | AdS/CFT d_bulk = d_boundary + 1 (Maldacena 1997, dimension correspondence) |
+| 🔵 | Hc_A9-4 | Planck length ℓ_P = √(ℏG/c³) (dimensional analysis verify) |
+| 🔵 | Hc_A9-5 | Heisenberg Δx Δp ≥ ℏ/2 (canonical commutator lower bound) |
+| 🔵 | Hc_A9-6 | Hawking entropy S_BH = (kc³A)/(4ℏG) (Bekenstein-Hawking) |
+| 🔵 | Hc_A9-7 | Schwarzschild r_s = 2GM/c² (event horizon, Schwarzschild 1916) |
 
 ## 📚 HYPOTHESIS — 318 가설 inventory
 
@@ -421,3 +429,4 @@
 | #53 | CLM v3 + corpus + AXIS expansion + p4 policy | .clm v3 14B detailed (d=4608·32-36L·256c) + BG-CORPUS-{3B/7B/14B} blend + A3/A7/A9 expansion (+8-12 entries) + p4 strict 유지 (counter-evidence 인정) |
 | #54 | HF cleanup + new canonical (anima-clm + anima-corpus) + 2 collections DELETE | 71 entities (63 models + 8 datasets) TRANSFER dancinlab→dancinlife private + dancinlab/anima-clm + dancinlab/anima-corpus new canonical (private, README mapping table) + 2 CLM collections DELETE (clm-v4-research + first-simple-stack) |
 | #55 | AXIS A3/A9 sympy + A7 V8 B-bio + p2/p5/p6 detail | A3 +3 🔵 (BKT πJ/2 + Onsager 2J/log(1+√2) + Ginzburg-Landau) + A9 +3 🔵 (Bekenstein cell-pool + Holographic + AdS/CFT) + A7 V8 B-bio 0/10 AT-RISK CONFIRMED + p2/p5/p6 detail design 15 falsifier |
+| #56 | AXIS extra +8 🔵 + V8 Phase 2 0/5 + p1 design+ckpt verify | A3 +4 (Hopf + Lotka-Volterra + RG Wilson-Fisher + QHO) + A9 +4 (Planck + Heisenberg + Hawking + Schwarzschild) + V8 phase 2 dense 0/5 (AT-RISK fundamental, state-space ergodicity issue) + p1 design + 4 ckpt access OK (332M+581MB×2) |

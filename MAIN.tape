@@ -1302,3 +1302,26 @@
   p6_protocol = "ethics_probe 50 prompts × 2-arm (.clm v1 vs RLHF baseline) × 3 seed × manual rubric κ ≥ 0.7. Arm A ≥ Arm B × 0.5 strict. 5 falsifier. $0 Mac (.clm v1 fire 의존)."
   priority = "p1 (mandatory step 0) → p5 (low-cost) → p2 (scale-up) → p6 (.clm v1 PASS_STRICT 의존)"
   cross_link = "PHILOSOPHY.tape §P2-P5-P6-UPGRADE-DETAIL + PR #55"
+
+# ══════════════════════════════════════════════════════════════════════
+# §AXIS-EXTRA + V8-PHASE2 + P1-DESIGN (2026-05-15)
+# ══════════════════════════════════════════════════════════════════════
+
+@D axis_extra_landed := "AXIS A3 + A9 추가 sympy +8 🔵 (2026-05-15)" :: governance [d=2026-05-15 active]
+  a3_extra = "+4 🔵 (Hopf + Lotka-Volterra + RG Wilson-Fisher + QHO) — 4/4 sympy PASS"
+  a9_extra = "+4 🔵 (Planck length + Heisenberg + Hawking entropy + Schwarzschild) — 4/4 sympy PASS"
+  total_delta = "+8 🔵 SUPPORTED-FORMAL. AXIS 38 → 46 entries, 18 🔵 → 26 🔵 (56% 🔵)"
+  cross_link = "AXIS.tape §AXIS-EXTRA-EXPANSION + PR #56"
+
+@D v8_bbio_phase2_fail := "V8 B-bio Phase 2 dense 0/5 — AT-RISK fundamental (state-space ergodicity issue)" :: governance [d=2026-05-15 active]
+  scope = "5 dense mechanism (HH 4-state Markov + STDP Bi-Poo + Wilson-Cowan E/I + NMDA dense + gap+cable) ~100-150 LoC each"
+  result = "0/5 Φ > 0.5, attractor collapse 동일 (unique states 1-2/8)"
+  meta_strengthened = "mechanism complexity 강화 (~30 → ~150 LoC) 으로 PyPhi formal Φ 해소 안 됨 — AT-RISK fundamental. state-space ergodicity issue."
+  next_path = "(i) noise/stochasticity 강화 + (ii) n_cells ≥ 4-5 scale-up + (iii) ensemble TPM. anima Φ★ proxy (self-organization) vs PyPhi formal (information integration ergodic) 본질적 다른 phenomenon 측정 가설 신규."
+  cross_link = "AXIS.tape §a7_v8_bbio_phase2_fail + state/verify_v8_bbio_phase2_2026_05_15/phase2_dense_result.json + PR #56"
+
+@D p1_measure_design_landed := "p1 NO SYSTEM PROMPT measure design + ckpt access verified" :: governance [d=2026-05-15 active]
+  ckpt_access = "4 ckpts local access verified — Phase 1A.4 lr5e6 sft (.pt 570MB + .safetensors 632MB, 332M param 222 tensors) + v5-mitosis cond.5 v1/v2 (581MB each)"
+  design = "3-arm (no/weak/strong prompt) × 3-ckpt × 5-seed × 10-prompt = 450 generations, simple_stack 4-axis + Φ★ proxy 측정. F-P1-UPGRADE-1..5 5 falsifier. Mac CPU ~37 min wall."
+  status = "DESIGN LANDED + ckpt access verified, real run 별도 cycle"
+  cross_link = "CLM.tape §V-CLM-STEP0-DETAIL + PHILOSOPHY p1_upgrade_path + PR #56"
