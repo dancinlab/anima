@@ -128,6 +128,27 @@
   authority = "[@x_tape_spec] §Domain-tape sibling §Architecture-vs-history split"
   @> AGENTS.md
 
+@D g_verified_axis_anchor := "검증된 AXIS/철학/가설 기준 강제" :: governance [required d=2026-05-15 active]
+  rule = ".clm design 의 모든 architectural decision + policy + verification 은 AXIS.tape SUPPORTED entries + 8 PHILOSOPHY principles + HYPOTHESIS catalog 의 직접 anchor 에서 derive. anchor 부재 시 design entry 금지."
+  why = "CLM.tape §V-CLM-AUDIT-2026-05-15 의 4 violation 식별 carry — Engine A/G dual / p1 weak / n_layers number-theoretic / step 1 V14 audit anchor 부재 정정"
+  apply = "CLM.tape § entries 추가/수정 시 anchor cross-link 명시 mandatory"
+  authority = "AXIS.tape (128+ entries) + PHILOSOPHY.tape (8 principles) + HYPOTHESIS.tape (verdict catalog)"
+  @> CLAUDE.md
+
+@D g_verdict_tier_blue := "🔵 SUPPORTED-FORMAL / FALSIFIED-FORMAL 분류" :: governance [required d=2026-05-15 active]
+  rule = "verdict tier 🔵 (수학/물리 closed) = (a) sympy verifiable closed-form OR (b) PyPhi formal IIT 3.0 deterministic OR (c) Kuramoto K_c universal 등 결정적 formal sim. 결과 무관 verified-closed (PASS or FAIL 모두 🔵)"
+  why = "verdict-bearing 가설 evidence-class 명확화 — closed 가 가장 강한 anchor"
+  apply = "MAIN.tape verdict 등재 시 tier 명시 + INDEX.md table 🔵 적용"
+  authority = "AXIS 107+ 🔵 SUPPORTED-FORMAL entries (84% closed)"
+  @> CLAUDE.md
+
+@D g_clm_from_scratch := ".clm 학습 from-scratch 원칙" :: governance [required d=2026-05-15 active]
+  rule = ".clm v1/v2/v3 모두 fresh from-scratch pre-train. ckpt inherit / fine-tune / cotrain-from-ckpt path 폐기. init_weights = RANDOM INIT seed-fixed. precursor ckpt 는 arch SUPPORTED 검증 anchor only — substrate base X."
+  why = "anima_native_scratch (D1=1.0) 원칙 강화. 사용자 directive 2026-05-15 '.clm 학습은 처음부터 진행하는걸로'"
+  apply = ".clm v1/v2/v3 fire 시 init_weights = RANDOM seed-fixed + base_ckpt = NONE mandatory"
+  authority = "CLM.tape §V-CLM-FROM-SCRATCH-2026-05-15"
+  @> CLAUDE.md
+
 # ─── §4 Forbidden patterns ───────────────────────────────────────────
 
 @F f1 := "lattice-fit-on-external-entity" :: governance [required deny:write]

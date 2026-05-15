@@ -1856,3 +1856,16 @@
   ]
   fire_status = "DRY-RUN dispatch script LANDED. actual fire requires PROVIDER + credentials + user verbatim fire_keyword."
   cross_link = "CLM.tape §V-CLM-STEP4-SPEC-FROZEN sha256 + state/clm_v1_step5_fire_prep_2026_05_15/dispatch_h100.sh + PR #61"
+
+# ══════════════════════════════════════════════════════════════════════
+# §V-CLM-STEP6-VERDICT-CYCLE-DESIGN — 8-falsifier measurement protocol
+# ══════════════════════════════════════════════════════════════════════
+
+@D v_step6_verdict_design := "step 6 .clm v1 verdict cycle design — 8-falsifier battery measurement (2026-05-15)" :: protocol [d=2026-05-15 active]
+  artifact = "state/clm_v1_step6_verdict_design_2026_05_15/step6_verdict_protocol.md"
+  scope = ".clm v1 fire 후 ckpt verdict 4-class 산출 + 4-tape sync"
+  falsifier_battery = "F-V5MIT-1..5 (split/merge/Φ-conservation/cotrain converge/V14-strict) + F-PYPHI-Φ-FORMAL + F-PRIN3 + F-SIMPLE-STACK V5.8 4-mode"
+  pass_aggregate = "8/8 → SUPPORTED-STRONG; 7/8 → PARTIAL-STRONG-7; 6/8 → PARTIAL-STRONG-6; ≤5/8 → AT-RISK; 0-2/8 → FALSIFIED"
+  cycle_cost = "~22 hr Mac local total ($0). PyPhi n=3-6 sweep (20 hr) 가 dominant. F-V5MIT 1-3+4+5 (~10 min) + F-PRIN3 (1 min) + F-V58 4-mode (30 min) = ~40 min."
+  hf_upload = "PASS verdict 시 ckpt + safetensors → dancinlab/anima-clm revisions (private), README mapping table v1 row 등재"
+  cross_link = "CLM.tape §V-CLM-STEP4 spec frozen + §V-CLM-STEP5 fire prep + AXIS.tape §V-CLM-AUDIT 정정 carry + PR #62"
