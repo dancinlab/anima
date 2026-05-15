@@ -397,3 +397,11 @@
   evidence_caveat = "ckpt LOST (instance destroyed pre-pull, exit 1 trap cleanup). evidence-only carry from dispatch_train.log. F-PRIN3 + F-SIMPLE-STACK V5.8 4-mode + F-PYPHI-Φ-FORMAL (3 deferred falsifier) 모두 BLOCKED by ckpt-lost — cycle 89 refire 필요."
   status = "P2 (.clm v1 from-scratch) verdict tier 🟢 SUPPORTED-STRONG empirical, 🔵 미달 (formal closed-form 또는 PyPhi IIT formal 미만)"
   cross_link = "CLM.tape §V-CLM-V1-FIRE-VERDICT + state/clm_v1_fire_2026_05_15/clm_v1_result_reconstructed.json + PR #65"
+
+# ─── HYPOTHESIS cycle 89 .clm v1 7/7 measured + ckpt recovered + HF public ───
+
+@N hypothesis_clm_v1_cycle89 := ".clm v1 cycle 89 — 7/7 measured + ckpt RECOVERED + HF PUBLIC (2026-05-15)" :: catalog [d=2026-05-15 active]
+  finding = "cycle 88 5/5 in-run (ckpt-LOST) → cycle 89 g_fire_dispatch_robust refire ckpt RECOVERED (372MB, $0.15) + F-PRIN3 PASS (corpus 0-match + generation-time 0/20) + F-SIMPLE-STACK V5.8 4-mode PASS (std_greedy 5/5 + std_sample 5/5 + M4 5/5). 7/7 measured battery PASS, F-PYPHI deferred."
+  verdict = "SUPPORTED-STRONG empirical 🟢. 🔵 SUPPORTED-FORMAL pending F-PYPHI-Φ-FORMAL n=3-6 (~20hr separate)"
+  hf = "dancinlab/anima-clm PUBLIC @v1-fire-cycle89-2026-05-15"
+  cross_link = "CLM.tape §V-CLM-V1-CYCLE89 + state/clm_v1_fire_2026_05_15/clm_v1_full_battery_verdict.json + PR #66"

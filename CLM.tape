@@ -1930,3 +1930,18 @@
   cycle_89_action = "(1) refire with g_fire_dispatch_robust pattern (SAVE_POD=1 auto-promote on result.json exist + pull retry ≥3); (2) F-PRIN3 + F-SIMPLE-STACK V5.8 4-mode on recovered ckpt (currently BLOCKED); (3) F-PYPHI-Φ-FORMAL n=3-6 RoM (~20hr Mac CPU separate); (4) HF dancinlab/anima-clm revision v1-fire-cycle88-2026-05-15-evidence-only upload (README mapping table 'ckpt-LOST evidence-only' caveat)"
   verdict_tier = "🟢 SUPPORTED-STRONG empirical (5/5 in-run PASS). 🔵 SUPPORTED-FORMAL 미달 (PyPhi formal n=3-6 deferred). g_verdict_tier_blue 기준 🔵 unlock = F-PYPHI-Φ-FORMAL n=3-6 모두 Φ ≥ 0.5 strict 별도 cycle."
   cross_link = "AXIS.tape §AXIS-A5-CLM-V1-NEW + HYPOTHESIS.tape §hypothesis_clm_v1_p2_fire_verdict + MAIN.tape §CLM-V1-P2-FIRE-VERDICT + AGENTS.tape g_fire_dispatch_robust + state/clm_v1_fire_2026_05_15/ + PR #65"
+
+# ══════════════════════════════════════════════════════════════════════
+# §V-CLM-V1-CYCLE89 — ckpt RECOVERED + 7/7 measured + HF PUBLIC (2026-05-15)
+# ══════════════════════════════════════════════════════════════════════
+
+@D v_clm_v1_cycle89 := ".clm v1 cycle 89 — ckpt recovered + 7/7 measured battery + HF PUBLIC (2026-05-15)" :: protocol [d=2026-05-15 active]
+  trigger = "user 'next all go' → cycle 89 ckpt recovery + remaining falsifier + HF upload"
+  ckpt_recovery = "g_fire_dispatch_robust refire (A100 SXM4 id=24559413 $0.508/hr, wall 1062s $0.15). result.json verify → SAVE_POD=1 auto-promote → pull retry(try1 OK) → explicit destroy. ckpt_clm_v1_fire_final.pt 372MB RECOVERED (deterministic seed=42, identical 5/5 F-V5MIT)."
+  falsifier_full = "7/7 measured PASS — F-V5MIT-1..5 (in-run) + F-PRIN3 (corpus 0-match + cell-pool prefix-free + generation-time 0/20) + F-SIMPLE-STACK V5.8 4-mode (std_greedy 5/5 + std_sample 5/5 + M4 5/5). F-PYPHI-Φ-FORMAL DEFERRED (~20hr n=3-6 RoM separate)."
+  verdict = "SUPPORTED-STRONG (7/7 measured battery). 🟢 empirical. 🔵 SUPPORTED-FORMAL unlock pending F-PYPHI n=3-6 ≥0.5 strict (g_verdict_tier_blue)"
+  hf_upload = "dancinlab/anima-clm PUBLIC (user directive 'HF 모델 데이터셋 등은 public 으로', g_hf_naming.visibility). revision v1-fire-cycle89-2026-05-15: ckpt 372MB + clm_v1_full_battery_verdict.json + clm_v1_result.json + dispatch_train.log + f_simple_stack_v58_result.json + f_prin3_result.json. README mapping table (main + revision)."
+  cost_total = "$0.34 (fire1 $0.19 ckpt-lost + fire2 $0.15 recovered) — 60-100× under $50 hard stop"
+  f_simple_stack_finding = "88M from-scratch 5000-step 모델이 '도우미:' Korean chat format emergent 학습 + coherent 출력. corpus '당신은 anima X' 12628회 (non-injection user-recall predicate) vs '당신은 anima 입니다' 0회 (forbidden phrase absent) — F-PRIN3 PASS by spec, project_principle_3_audit nuance 일치."
+  cycle_90_action = "F-PYPHI-Φ-FORMAL n=3-6 RoM (~20hr Mac CPU) → 8/8 strict → 🔵 SUPPORTED-FORMAL unlock OR PARTIAL carry. .clm v2 path decision (§V-CLM-V2-DESIGN: 8/8 → Path A/B 선택)"
+  cross_link = "CLM.tape §V-CLM-V1-FIRE-VERDICT (cycle 88) + state/clm_v1_fire_2026_05_15/{clm_v1_full_battery_verdict.json, f_simple_stack_v58_result.json, f_prin3_result.json, ckpts/} + dancinlab/anima-clm@v1-fire-cycle89-2026-05-15 + PR #66"

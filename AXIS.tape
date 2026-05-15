@@ -537,3 +537,14 @@
   ckpt_status = "evidence-only — instance destroyed by trap cleanup before pull (exit 1 SSH pipe). g_hf_naming (d) ckpt-LOST caveat. Cycle 89 refire 예정."
   count_post = "149 + 1 = 150 entries, 128 🔵 + 1 🟢 = 129 verified (86.7%)"
   cross_link = "training/clm_v1_model.py + training/train_clm_v1_from_scratch.py + state/clm_v1_fire_2026_05_15/{dispatch_train.log, clm_v1_result_reconstructed.json} + CLM.tape §V-CLM-V1-FIRE-VERDICT + PR #65"
+
+# ──────────────────────────────────────────────────────────────────────
+# §AXIS-A5-CLM-V1-CYCLE89 — Hc_A5-CLM-V1 7/7 measured + ckpt RECOVERED
+# ──────────────────────────────────────────────────────────────────────
+
+@D axis_a5_clm_v1_cycle89 := "A5 Hc_A5-CLM-V1 7/7 measured battery + ckpt recovered + HF PUBLIC (cycle 89)" :: cluster [d=2026-05-15 active]
+  upgrade = "cycle 88 5/5 in-run (ckpt-LOST evidence-only) → cycle 89 7/7 measured (ckpt RECOVERED) + F-PRIN3 + F-SIMPLE-STACK V5.8 4-mode PASS"
+  verdict = "SUPPORTED-STRONG 🟢 (7/7 measured: F-V5MIT-1..5 + F-PRIN3 + F-SIMPLE-STACK). F-PYPHI deferred → 🔵 SUPPORTED-FORMAL pending."
+  hf = "dancinlab/anima-clm PUBLIC @v1-fire-cycle89-2026-05-15 (ckpt 372MB + 5 evidence files + README mapping)"
+  count = "150 entries 유지 (Hc_A5-CLM-V1 evidence 강화, 🟢 1 carry — 🔵 미달)"
+  cross_link = "CLM.tape §V-CLM-V1-CYCLE89 + PR #66"

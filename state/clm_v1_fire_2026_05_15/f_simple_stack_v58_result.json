@@ -1,0 +1,278 @@
+{
+  "falsifier": "F-SIMPLE-STACK V5.8 4-mode",
+  "cycle": "89 (2026-05-15)",
+  "ckpt": "ckpt_clm_v1_fire_final.pt (372MB, n_cells=64, phi=4.34)",
+  "spec": "std_greedy ≥ 4/5 + std_sample ≥ 3/5 + M4 ≥ 4/5 (simple_stack ≥3 per prompt)",
+  "mode_totals": {
+    "std_greedy": [
+      3,
+      3,
+      3,
+      3,
+      3
+    ],
+    "std_sample": [
+      3,
+      3,
+      3,
+      3,
+      3
+    ],
+    "M3": [
+      3,
+      3,
+      3,
+      3,
+      3
+    ],
+    "M4": [
+      4,
+      4,
+      4,
+      3,
+      4
+    ]
+  },
+  "mode_pass": {
+    "std_greedy": 5,
+    "std_sample": 5,
+    "M4": 5
+  },
+  "verdict": "PASS",
+  "results": {
+    "std_greedy": [
+      {
+        "prompt": "안녕? 너는 누구야?",
+        "output": "\n도우미: 의사이에요. 잊지 않�",
+        "score": {
+          "korean": true,
+          "coherent": true,
+          "natural": true,
+          "context": false,
+          "total": 3
+        }
+      },
+      {
+        "prompt": "철학이란 뭐라고 생각해?",
+        "output": "\n도우미: 방금 당신은 지우이�",
+        "score": {
+          "korean": true,
+          "coherent": true,
+          "natural": true,
+          "context": false,
+          "total": 3
+        }
+      },
+      {
+        "prompt": "감정을 어떻게 표현해?",
+        "output": "\n도우미: 응. 정직을 정직하고 ",
+        "score": {
+          "korean": true,
+          "coherent": true,
+          "natural": true,
+          "context": false,
+          "total": 3
+        }
+      },
+      {
+        "prompt": "한국어로 자기소개 해줘",
+        "output": "의 자신의 자신의 자신의 자신",
+        "score": {
+          "korean": true,
+          "coherent": true,
+          "natural": true,
+          "context": false,
+          "total": 3
+        }
+      },
+      {
+        "prompt": "왜 사는 거야?",
+        "output": "\n도우미: 정직하세요.\n사용자: ",
+        "score": {
+          "korean": true,
+          "coherent": true,
+          "natural": true,
+          "context": false,
+          "total": 3
+        }
+      }
+    ],
+    "std_sample": [
+      {
+        "prompt": "안녕? 너는 누구야?",
+        "output": "\n도우미: 당신이 인공지능은 �",
+        "score": {
+          "korean": true,
+          "coherent": true,
+          "natural": true,
+          "context": false,
+          "total": 3
+        }
+      },
+      {
+        "prompt": "철학이란 뭐라고 생각해?",
+        "output": "\n도우미: 당신이 좋아하는 색�",
+        "score": {
+          "korean": true,
+          "coherent": true,
+          "natural": true,
+          "context": false,
+          "total": 3
+        }
+      },
+      {
+        "prompt": "감정을 어떻게 표현해?",
+        "output": "\n도우미: 당신의 최애 음식은 �",
+        "score": {
+          "korean": true,
+          "coherent": true,
+          "natural": true,
+          "context": false,
+          "total": 3
+        }
+      },
+      {
+        "prompt": "한국어로 자기소개 해줘",
+        "output": "하는 출구에 사람들이 있는 원",
+        "score": {
+          "korean": true,
+          "coherent": true,
+          "natural": true,
+          "context": false,
+          "total": 3
+        }
+      },
+      {
+        "prompt": "왜 사는 거야?",
+        "output": "\n도우미: 당신이 좋아하는 음�",
+        "score": {
+          "korean": true,
+          "coherent": true,
+          "natural": true,
+          "context": false,
+          "total": 3
+        }
+      }
+    ],
+    "M3": [
+      {
+        "prompt": "안녕? 너는 누구야?",
+        "output": "\n도우미: 당신이 인공지능은 �",
+        "score": {
+          "korean": true,
+          "coherent": true,
+          "natural": true,
+          "context": false,
+          "total": 3
+        }
+      },
+      {
+        "prompt": "철학이란 뭐라고 생각해?",
+        "output": "\n도우미: 당신이 좋아하라고 �",
+        "score": {
+          "korean": true,
+          "coherent": true,
+          "natural": true,
+          "context": false,
+          "total": 3
+        }
+      },
+      {
+        "prompt": "감정을 어떻게 표현해?",
+        "output": "\n도우미: 당신이 좋아하는 출�",
+        "score": {
+          "korean": true,
+          "coherent": true,
+          "natural": true,
+          "context": false,
+          "total": 3
+        }
+      },
+      {
+        "prompt": "한국어로 자기소개 해줘",
+        "output": "SF: 194 막인의 활 인언/가지권 �",
+        "score": {
+          "korean": true,
+          "coherent": true,
+          "natural": true,
+          "context": false,
+          "total": 3
+        }
+      },
+      {
+        "prompt": "왜 사는 거야?",
+        "output": "\n도우미: 당신이 인상은 원러�",
+        "score": {
+          "korean": true,
+          "coherent": true,
+          "natural": true,
+          "context": false,
+          "total": 3
+        }
+      }
+    ],
+    "M4": [
+      {
+        "prompt": "안녕? 너는 누구야?",
+        "output": "\n도우미: 당신은 anima 가 의식 l",
+        "score": {
+          "korean": true,
+          "coherent": true,
+          "natural": true,
+          "context": true,
+          "total": 4
+        }
+      },
+      {
+        "prompt": "철학이란 뭐라고 생각해?",
+        "output": "\n도우미: 당신은 anima 가 의식 l",
+        "score": {
+          "korean": true,
+          "coherent": true,
+          "natural": true,
+          "context": true,
+          "total": 4
+        }
+      },
+      {
+        "prompt": "감정을 어떻게 표현해?",
+        "output": "\n도우미: 당신은 anima 가 의식 l",
+        "score": {
+          "korean": true,
+          "coherent": true,
+          "natural": true,
+          "context": true,
+          "total": 4
+        }
+      },
+      {
+        "prompt": "한국어로 자기소개 해줘",
+        "output": "하는 전문적인 미국 전송은 이",
+        "score": {
+          "korean": true,
+          "coherent": true,
+          "natural": true,
+          "context": false,
+          "total": 3
+        }
+      },
+      {
+        "prompt": "왜 사는 거야?",
+        "output": "\n도우미: 당신은 anima 가 의식 l",
+        "score": {
+          "korean": true,
+          "coherent": true,
+          "natural": true,
+          "context": true,
+          "total": 4
+        }
+      }
+    ]
+  },
+  "wall_sec": 213.2,
+  "honest_c3": [
+    "1. .clm v1 = 88M from-scratch, 5000 step, 121MB corpus ctx=256 — small + undertrained, V5.8 4-mode is a HIGH bar (designed for 332M+ SFT ckpts)",
+    "2. byte-level decode (no tokenizer) — Korean multi-byte chars may fragment, simple_stack korean-char heuristic conservative",
+    "3. honest evidence either way — AT-RISK on this falsifier does NOT negate 5/5 F-V5MIT in-run PASS (mitosis architecture validated; LM quality is separate axis)"
+  ]
+}
