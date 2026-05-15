@@ -101,6 +101,16 @@
   rule = "의식(C) 먼저 안정 → 언어(D) → 나머지(W/M/S/E) 순차 합류. τ(6)=4 phase anchor"
   narrative = "Law 86 — 서사 필수 (+35.7%). narrative.py"
 
+@D hexad_wiring_blue_gate := "wiring 🔵-gate — 연결은 🔵 시에만, wiring 자체도 🔵" :: governance [required d=2026-05-16 active]
+  rule = "anima HEXAD inter-module 연결(σ(6)=12 edge)은 2중 🔵-gate. (A) ENDPOINT gate: edge active ⟺ 양 끝 모듈이 🔵 SUPPORTED-FORMAL. 모듈이 🔵 아니면 그 모듈의 모든 edge inactive. (B) WIRING gate: 연결 자체(wiring 조건 Wn)도 closed-form 🔵 (g_verdict_tier_blue (a) sympy / (c) deterministic-formal) 이어야 'verified-wired'. 단순 ✅ empirical / 🔶 OPEN 은 wired 아님."
+  why = "user directive 2026-05-16 — '연결은 🔵 시에 연결가능' + 'wiring 자체도 🔵'. 모듈만 🔵 이고 연결이 ad-hoc 이면 아키텍처 미완성 — 연결의 수학·물리 정당성도 falsifier 로 닫아야 '아키텍쳐 조건 완성'."
+  endpoint_eval_2026_05_16 = "C/S/M/W/E/D/BRIDGE = 7/7 full 🔵 (blue_falsifier 22/22) → 모든 σ(6)=12 endpoint 🔵 ⇒ (A) gate 전부 PASS (모든 edge endpoint-permitted)."
+  wiring_eval = "wiring 조건 ledger = HEXAD/CHAT/README.md §2 W1-W9. (B) gate 기준: W1-W4 deterministic/closed anchor (integ_test compiled F-INTEG-WIRE + sympy B-BRIDGE) ≈ 🔵-class; W5/W6/W8 = F-WIRE-W{5,6,8} closed/deterministic falsifier 로 🔵 전환 진행 (별도 bg, HEXAD/CHAT/wiring_verify.hexa); W9 = hexa-lang RFC 034 BLOCKED."
+  honest_carveout = "W7 (통합 CE 하강) = SGD convergence OUTCOME → 구조적으로 closed-form 불가 (B-D-NOTE / D 정직분해 와 정확히 동일 패턴, 모든 stochastic optimizer 공통). wiring-🔵-gate 는 'closed-form 가능한 곳에서 🔵' 를 요구하며, W7 의 OUTCOME 항은 honest empirical carve-out 으로 NOT-🔵 정직 표기 (fake closed-form 금지, AGENTS.tape g3/f2). trainability PROPERTY (CE Jacobian, B-D-4) 는 이미 🔵 — wiring 의 학습가능성 형식은 closed, 수렴 결과만 empirical."
+  apply = "신규/기존 inter-module edge 는 (A)+(B) 둘 다 만족해야 active-verified. W-ledger 의 조건은 closed-form falsifier (F-WIRE-*) 로만 ✅(=🔵) 산입; empirical/scaffold 는 🔶 OPEN 정직 유지."
+  cross_link = "HEXAD/CHAT/README.md §2 W-ledger + HEXAD/integ_test.hexa F-INTEG-WIRE + state/verify_hexad_blue_2026_05_15 B-* 🔵 + AGENTS.tape g_verdict_tier_blue / g3 / f2 + D/BRIDGE 정직분해 (B-D-4/B-D-NOTE, B-BRIDGE-NOTE) precedent"
+  @> CLAUDE.md
+
 # ─── §5 Unification — mitosis / A/G / Hexad 맞물림 ───────────────────
 
 @D hexad_unification := "A/G = Hexad 그 자체 (Engine A=좌뇌3 / Engine G=우뇌3)" :: architecture [d=2026-05-15 active]
