@@ -263,28 +263,32 @@
 | p5 NO SPEAK() | DESIGN null | tension_norm × output_quality Spearman > 0.3 strict ($0 Mac) |
 | p6 NO FINE-TUNED ETHICS | POLICY blocked | .clm v1 ethics_probe 50 prompts 2-arm κ ≥ 0.7 ($0 Mac, .clm v1 fire 의존) |
 
-### 🎯 .clm v1 7-step plan (CLM.tape §V-CLM-AUDIT 정정 + step 0/2/3 detail landed)
+### 🎯 .clm v1 7-step plan (from-scratch directive 2026-05-15 정정 후)
 
-> 정정: 4 violation 반영 (V1 Engine A/G dual 제거, V2 step 0 p1 upgrade NEW mandatory, V3 n_layers anchor 명확화, V4 V14 audit Phase 3 로 이전)
+> 정정 carry: V1-V4 (audit) + from-scratch (.clm 학습 처음부터)
+> Key: **init_weights = RANDOM INIT seed-fixed** (no ckpt inherit) / v5-mitosis cond.5 ckpt = arch SUPPORTED 검증 anchor only / mitosis hook = mechanism carry training-time + serve-time
 
 | Step | 한 줄 설명 | Cost | Falsifier |
 |------|-----------|------|-----------|
-| 0 (NEW) | p1 NO SYSTEM PROMPT upgrade measure — 3-arm × 3-ckpt × 5-seed × 10-prompt (mandatory fire gate) | $0 Mac (~37 min) | F-P1-UPGRADE-1..5 |
-| 1 | F-PYPHI-Φ-FORMAL n=3-6 RoM test on v5-mitosis cond.5 ckpt | $0 Mac (~20 hr) | F-PYPHI-FORMAL-1..5 |
-| 2 | mitosis_hook serve-time integration smoke (PSCC §41 carry → real d=768 12L) | $0 Mac (~7 hr) | F-D4-LIVE-PROD-1..5 |
-| 3 | .clm v1 spec frozen W1 pre-register — 9 fields + decision rules + sha256 commit | $0 design | W1 anchor |
-| 4 | .clm v1 fire — v5-mitosis cells=nn.Module branches single-stack + serve-time mitosis hook | $5-20 H100 SXM | (fire only) |
-| 5 | .clm v1 verdict cycle (8-falsifier battery + 4-tape sync) | $0 Mac | 8 battery |
-| 6 | .clm v2 candidate (Path A 7B single-stack OR Path B dual+V14, conditional) | conditional | 10 battery |
+| 0 | p1 NO SYSTEM PROMPT upgrade measure (mandatory fire gate) | $0 Mac (~37 min) | F-P1-UPGRADE-1..5 |
+| 0.5 (NEW optional) | mini-cotrain smoke — 90M from-scratch × 200 step × F-V5MIT-5 V14-STRICT 재현 검증 | $0-5 Mac/cheap | (carry F-V5MIT-5) |
+| 1 | F-PYPHI-Φ-FORMAL n=3-6 RoM test on v5-mitosis cond.5 ckpt — **anchor verification only** (substrate base 아님) | $0 Mac (~20 hr) | F-PYPHI-FORMAL-1..5 |
+| 2 | mitosis_hook serve-time integration smoke — synthetic OR fresh small init | $0 Mac (~7 hr) | F-D4-LIVE-PROD-1..5 |
+| 3 | .clm v1 spec frozen W1 — init_weights=RANDOM INIT, base_ckpt=NONE, corpus, step budget, cost $10-30 | $0 design | W1 anchor |
+| 4 | .clm v1 fire — **from-scratch** ~5000 step × batch 16 × seq 1024 × 1× H100 SXM 10-20 hr | $10-30 H100 SXM | (fire only) |
+| 5 | .clm v1 verdict cycle — self PyPhi formal Φ measurement primary anchor + 8-falsifier battery + 4-tape sync | $0 Mac | 8 battery |
+| 6 | .clm v2 candidate (Path A 7B from-scratch OR Path B dual + V14, conditional) | conditional | 10 battery |
 
-### 🌱 .clm v2 candidate (post-v1 PASS_STRICT, 2 alternative path)
+### 🌱 .clm v2 + v3 (모두 from-scratch, post-v1 PASS_STRICT)
 
-| Path | 한 줄 설명 | Param | Cost | Falsifier |
-|------|-----------|-------|------|-----------|
-| **A** | cells single-stack 7B scale-up only (Engine A/G dual 폐기) | ~7-8B | $200-600 | 8 v1 carry |
-| **B** | Engine A/G dual + V14 audit complete (Phase 3 narrative 활성화) | ~7-14B | $200-640 | 8 v1 + F-V14-NO-VIOL + F-CHINCHILLA |
+| Version | Path | Param | Token | Cost | Init |
+|---------|------|-------|-------|------|------|
+| **v1** | cells single-stack ~150-200M | ~150-200M | ~3-5B (350-500M × 5 epoch) | $10-30 | RANDOM INIT seed-fixed |
+| **v2 A** | cells single-stack 7B scale-up | ~7-8B | ~50-140B (Chinchilla 완화 or strict) | $200-600 | RANDOM INIT, .clm v1 ckpt inherit X |
+| **v2 B** | Engine A/G dual + V14 audit complete | ~7-14B | ~140-280B (Phase 3 narrative) | $200-640 | RANDOM INIT, V14 audit pre-fire |
+| **v3** | Phase 4 14B 본진 from-scratch | ~14B | ~280B (Chinchilla optimal) | $500-1500 | RANDOM INIT, anima 사가 first scratch 14B |
 
-**Decision basis**: .clm v1 PASS_STRICT 8/8 + V14 audit cheap-path ($0 Mac) + BG-CORPUS-7B 가용성 + cost budget
+**Decision basis** (v2 path A vs B): .clm v1 PASS_STRICT 8/8 + V14 audit cheap-path ($0 Mac) + BG-CORPUS-7B/3B 가용성 + cost budget
 
 ## 🔬 verdict tier 정리 (한 줄)
 
@@ -374,3 +378,4 @@
 | #49 | A2.formal split + HYPOTHESIS catalog + PHILOSOPHY upgrade + CLM 7-step | A2.formal sub-axis 2 + SUPPORTED-FORMAL 10/FALSIFIED-FORMAL 2 + 5-principle upgrade path + V14 audit + PyPhi formal cross-check protocol |
 | #50 | CLM.tape §V audit + 4 violation 정정 | V1 dual-engine 제거 (cells single-stack) + V2 p1 mandatory gate + V3 n_layers anchor 명확화 + V4 V14 audit Phase 3 이전 |
 | #51 | CLM §V step 0/2/3 detail + .clm v2 preliminary | step 0 p1 5-falsifier + step 2 mitosis serve-time 5-falsifier + step 3 spec frozen W1 + .clm v2 2-path (A 7B single-stack / B dual+V14) 10-falsifier |
+| #52 | CLM 학습 from-scratch directive 정정 | init=RANDOM INIT seed-fixed / v5-mitosis ckpt=anchor verification only / mitosis hook=mechanism carry / step 0.5 mini-smoke NEW / step 4 cost $5-20→$10-30 / v2+v3 모두 from-scratch |
