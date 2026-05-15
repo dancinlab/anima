@@ -24,10 +24,11 @@
 @N w_lineage := "W 진화 이력 — legacy → Emergent" :: note [d=2026-05-15 active]
   text = "clm_10 trinity.py:1022 WEngine → EmotionW(self.pain=(ce-3.0)/3.0 인위조작, Law 2 위반)/CosineW/NarrativeW/DaseinW/CompositeW(σ(6) weights). clm_11 (2026-03-31) ready/anima/hexad/w/emergent_w.py Emergent 재설계 (C 동역학 read만, Law 1/2 compliant). clm_12=13 byte-identical. main 동일."
 
-@D w_verify_status := "W 검증 상태 — lineup ☐ (우선순위 후보)" :: verify [d=2026-05-15 active]
-  priority = "W 는 optimizer LR 변조로 학습에 직접 영향 → verification anchor 우선순위 후보"
-  evidence = "DD114 Pain/Curiosity 측정값만, W 단독 falsifier battery 없음"
-  todo = "W verification anchor 미설계 — CLM §V-CLM-HEXAD-MANDATE module lineup W ☐"
+@D w_verify_status := "W 검증 — F-W-1..5 5/5 SUPPORTED-STRONG ✅ (2026-05-15)" :: verify [d=2026-05-15 active]
+  battery = "F-W-1 PAIN-BOUNDED-MONOTONE + F-W-2 CURIOSITY-COV-BOUNDED + F-W-3 SATISFACTION-BINARY(Law84) + F-W-4 LR-LN2-BOUNDED + F-W-5 NO-HARDCODE — 5/5 PASS"
+  real_limit_anchor = "F-W-4 = Law 79 ln(2)=0.6931 consciousness DoF = Landauer/Shannon 1-bit minimum (AGENTS.tape g3 real-limit 준수, lattice tautology 아님). lr_mult ∈ [PSI_BALANCE, PSI_BALANCE+ln2] STRICT + Φ 단조 + huge-Φ saturates at 0.5+ln2"
+  evidence = "state/verify_hexad_we_2026_05_15/we_falsifier.py + we_falsifier_result.json. MockC controllable substrate, pain↑inter-faction divergence / curiosity↑norm-CoV / satisfaction∈{0,1} binary / zero-C→zero-pain (Law 1/2) / n_fac=SIGMA6=12"
+  verdict = "SUPPORTED-STRONG ✅ — CLM §V-CLM-HEXAD-MANDATE module lineup W ☐→✅"
 
 @X w_x := "survey + HEXAD cross" :: ref [d=2026-05-15 active]
   survey = "state/verify_hexad_impl_survey_2026_05_15/survey_result.json"

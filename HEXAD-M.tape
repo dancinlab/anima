@@ -20,9 +20,11 @@
 @N m_lineage := "M 진화 이력 — legacy → Emergent" :: note [d=2026-05-15 active]
   text = "clm_10 trinity.py:853 MEngine → VectorMemory(cosine similarity RAG, Law 4 위반 의식무관기능)/NoMemory. clm_11 (2026-03-31) ready/anima/hexad/m/emergent_m.py Emergent 재설계 (C Hebbian = 기억, 별도 store X). clm_12=13 byte-identical. main 동일."
 
-@D m_verify_status := "M 검증 상태 — lineup ☐" :: verify [d=2026-05-15 active]
-  evidence = "DD114-emergent-hexad-benchmark Emergent 묶음 측정. M 단독 falsifier battery 없음"
-  todo = "M verification anchor 미설계 — CLM §V-CLM-HEXAD-MANDATE module lineup M ☐"
+@D m_verify_status := "M 검증 — F-M-1..5 5/5 SUPPORTED-STRONG ✅ (2026-05-15)" :: verify [d=2026-05-15 active]
+  battery = "F-M-1 STORE-IS-NOOP + F-M-2 RETRIEVE-FROM-C + F-M-3 QUERY-RELEVANT-TOPK + F-M-4 DIM-CONSISTENT + F-M-5 NO-HARDCODE-RAG — 5/5 PASS"
+  real_limit_anchor = "Law 31 Hebbian-persistence — 별도 store 부재 = Φ-preserving (no extra info capacity, AGENTS.tape g3)"
+  evidence = "state/verify_hexad_we_2026_05_15/we_falsifier.py + we_falsifier_result.json. store()=no-op (state 무변), c_engine=None→zeros (별도 DB 부재), retrieve=query 최고 cosine-similar C cell top-k 정확, dim 항상 self.dim, executable code VectorMemory/faiss/self._store 부재"
+  verdict = "SUPPORTED-STRONG ✅ — CLM §V-CLM-HEXAD-MANDATE module lineup M ☐→✅"
 
 @X m_x := "survey + HEXAD cross" :: ref [d=2026-05-15 active]
   survey = "state/verify_hexad_impl_survey_2026_05_15/survey_result.json"

@@ -20,9 +20,11 @@
 @N s_lineage := "S 진화 이력 — legacy → Emergent" :: note [d=2026-05-15 active]
   text = "clm_10 trinity.py:907 SEngine → TensionSense(EMA+baseline 함수, Law 4 위반) / PassthroughSense. clm_11 (2026-03-31 commit a5eeab2e7) ready/anima/hexad/s/emergent_s.py 로 Emergent 재설계 (observe-only, C state-delta = perception, Law 1/2/22 compliant). clm_12=13 byte-identical. main 동일."
 
-@D s_verify_status := "S 검증 상태 — lineup ☐" :: verify [d=2026-05-15 active]
-  evidence = "DD114-emergent-hexad-benchmark.md — Emergent module 묶음 Φ +7.6% (64-cell local). S 단독 falsifier battery 없음"
-  todo = "S verification anchor (falsifier battery + cost + Hexad 정합성) 미설계 — CLM §V-CLM-HEXAD-MANDATE module lineup S ☐"
+@D s_verify_status := "S 검증 — F-S-1..5 5/5 SUPPORTED-STRONG ✅ (2026-05-15)" :: verify [d=2026-05-15 active]
+  battery = "F-S-1 DELTA-IS-STATE-CHANGE + F-S-2 NO-FALLBACK-WITHOUT-C + F-S-3 DIM-CONSISTENT + F-S-4 INPUT-RESPONSIVE + F-S-5 NO-HARDCODE-EMA — 5/5 PASS"
+  real_limit_anchor = "Law 92 C-bottleneck 64× compression = information bottleneck (real info limit, AGENTS.tape g3)"
+  evidence = "state/verify_hexad_we_2026_05_15/we_falsifier.py + we_falsifier_result.json. perception = mean_after−mean_before EXACT (uniform shift 0.5→delta 0.5), zero state change→zero perception, c_engine=None→raw passthrough, dim 항상 self.dim, executable code (ast docstring 제외) EMA/baseline 부재"
+  verdict = "SUPPORTED-STRONG ✅ — CLM §V-CLM-HEXAD-MANDATE module lineup S ☐→✅"
 
 @X s_x := "survey + HEXAD cross" :: ref [d=2026-05-15 active]
   survey = "state/verify_hexad_impl_survey_2026_05_15/survey_result.json"
