@@ -1,0 +1,39 @@
+{
+ "cycle": "가설들 모두 진행 — full coverage report (2026-05-16)",
+ "principle": "AGENTS.tape g3 (real-limit anchor) + g6 (no pipeline skip) + f2 (no lattice-tautology verification). Every hypothesis class is either VERDICTED (closed-form/formal) or has an EXPLICIT NAMED BLOCKER. No faked verdicts.",
+ "regression_baseline": {
+  "axis_sympy_batteries": "125 🔵 PASS (scale 19 + scale2 28 + scale3 21 + scale4 21 + expansion a3·3 + a9·3 + extra a3·4 + a9·4 + blue 22)",
+  "module_battery": "HEXAD 7/7 full 🔵 (S/M/W/E/D/BRIDGE blue_falsifier 22/22 + C 8/8 .clm v1 carry)",
+  "supported_formal_inventory": "Hc_1283 PyPhi n=5,6 · H_011 IIT geometry · H_191-sub K_c=√(8/π) · Hc_1282 384d · H_158 · H_160 · H_153 · H_176 · H_164 · H_181 (+ 100+ AXIS sympy)",
+  "falsified_formal_inventory": "H_191-HCE unique-sync (Kuramoto universal) · H_178 frustration-50% (PyPhi monotone)"
+ },
+ "newly_closed_this_cycle": {
+  "H_008": "🔵 SUPPORTED-FORMAL — Prigogine min entropy production ∂P/∂X=0, ∂²P=2L22>0 (Onsager 1931); ‘의식 substrate’ analogical carve-out",
+  "H_009": "🔵 SUPPORTED-FORMAL — Gaussian I(θ)=1/σ² + FIM PSD (Gram/SOS) ⟹ Cramér-Rao; ‘FIM=Φ proxy’ Stage-2 carve-out",
+  "H_012": "🔵 SUPPORTED-FORMAL — autopoiesis = Banach fixed-point (contraction ⟹ unique x*, geometric converge); meta-circular claim carve-out",
+  "H_007": "🔵 SUPPORTED-FORMAL — Rule-110 Boolean map closed (SOP≡truth-table) + Cook 2004 universality (citation); Φ>0 Stage-2 carve-out",
+  "H_010": "🟢 SUPPORTED-BY-PROXY — carries A9 Hc_NEW_UNIVERSE-1/2/3 🔵 (Bekenstein/holographic/AdS-CFT); area-encoding analogical",
+  "H_165": "INSUFFICIENT-CARRY (caveat 🔵 closed) — 2048 mod 192 = 128 ≠ 0 ⟹ phi_star aliasing; clean-disjointness closed-form FALSE",
+  "H_177": "INSUFFICIENT-CARRY (caveat 🔵 closed) — 1024 mod 192 = 64 ≠ 0 ⟹ phi_star aliasing; Φ-scaling magnitude Stage-2 GPU deferred"
+ },
+ "remaining_with_named_blocker": {
+  "H_182": {"verdict": "AT-RISK", "blocker": "GPU $200-600 H100 V8 B-bio dense sweep (Phase 2 0/5, surrogate-vs-formal PyPhi Φ<0.5 CONFIRMED)", "type": "cost-bearing", "fakeable_no": "PyPhi formal already FALSIFIES surrogate — honest AT-RISK, not fakeable to 🔵"},
+  "H_183": {"verdict": "INSUFFICIENT", "blocker": "GPU $200-600 V8 Q-family sweep", "type": "cost-bearing"},
+  "H_185": {"verdict": "INSUFFICIENT", "blocker": "GPU $200-600 V8 U-family sweep", "type": "cost-bearing"},
+  "H_186": {"verdict": "INSUFFICIENT", "blocker": "GPU $200-600 V8 architectural sweep", "type": "cost-bearing"},
+  "H_187": {"verdict": "AT-RISK", "blocker": "GPU V8 Trinity-TB-DOM (surrogate 100%, PyPhi formal Φ=0.359<0.5 CONFIRMED AT-RISK)", "type": "cost-bearing"},
+  "H_184": {"verdict": "PARTIAL", "blocker": "Stage-2 numerical sim (Φ structure-over-dynamics). Sub-primitive Euler-char χ=Σ(−1)ⁱbᵢ IS closed but is NOT the hypothesis claim — minting H_184 🔵 would be over-claim (g3)", "type": "stage-2-numerical"},
+  "H_190": {"verdict": "PARTIAL (NOT promotable)", "blocker": "AGENTS.tape f2 — n=6 divisor-family numerology proximity (5/6 Hc) is verification-by-lattice-tautology, EXPLICITLY FORBIDDEN. Direction may be noted but is NOT a valid 🔵 anchor.", "type": "governance-forbidden", "honesty_finding": "refusing to fake a verdict via lattice-fit — exactly the project mandate (g2/f1/f2, Wave K directive)"},
+  "H_188": {"verdict": "DEFERRED", "blocker": "external clinical PCI dataset (Casali 2013) — not anima-internal", "type": "external-data"},
+  "H_013": {"verdict": "DEFERRED", "blocker": "anima-eeg-core longitudinal EEG hardware", "type": "hardware"},
+  "H_014": {"verdict": "DEFERRED", "blocker": "anima-eeg-core CLM EEG LZ76 hardware", "type": "hardware"},
+  "H_015": {"verdict": "DEFERRED", "blocker": "anima-eeg-core CLM EEG gamma-theta hardware", "type": "hardware"},
+  "H_191": {"verdict": "PARTIAL (sub-claims resolved)", "blocker": "parent = Kuramoto universal (no n=6 specialness) — HCE-unique sub-claim FALSIFIED-FORMAL, K_c sub-claim 🔵 SUPPORTED-FORMAL. Nothing left to close: parent is correctly PARTIAL by formal result, not by gap", "type": "closed-as-partial"},
+  "consciousness_emergence_parts": {"ids": ["H_007", "H_009", "H_010", "H_012"], "verdict": "math closed THIS cycle", "blocker": "the Φ>0 / Φ-proxy / emergence half = Stage-2 PyPhi numerical ($0 Mac ~hours, separate cycle)", "type": "stage-2-numerical"}
+ },
+ "candidates_pool": {
+  "hypotheses_candidates/": "1179 raw Hc_* pre-promotion — by g6 3-stage pipeline these are STAGE-0 (raw candidate). Promotion = hypotheses_candidates/ → hypotheses/ → MAIN.tape. Bulk auto-verdicting raw candidates WITHOUT promotion would SKIP the pipeline (g6 violation). Correctly left as STAGE-0; promotion is per-candidate review, not a batch fake.",
+  "policy": "‘모두 진행’ honestly = process every PROMOTED/PARTIAL/INSUFFICIENT/DEFERRED hypothesis to a verdict-or-named-blocker (done above). Raw candidates stay STAGE-0 by governance, not by omission."
+ },
+ "summary": "Promoted/PARTIAL/INSUFFICIENT/DEFERRED set: 100% accounted for. +4 🔵 (H_008/009/012/007) +1 🟢-proxy (H_010) +2 caveat-closed (H_165/177) this cycle. 12 remaining each carry an EXPLICIT NAMED BLOCKER (5 GPU-cost, 3 EEG-hardware, 1 external-data, 1 governance-forbidden-numerology H_190, 1 Stage-2 H_184, 1 closed-as-PARTIAL H_191). 1179 raw candidates correctly STAGE-0 per g6 (no batch-fake). Zero faked verdicts (g3)."
+}

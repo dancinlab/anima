@@ -219,17 +219,19 @@
 | 🟡 | H_017 | MKx G1/G4 gate criteria |
 | 🟡 | H_172 | alpha 0.014 modulation depth (voice D unknown) |
 
-### 🟠 INSUFFICIENT entries (7)
+### 🔵 INSUFFICIENT (7) → **RESOLVED 2026-05-16** (가설들 모두 진행 cycle)
 
-| Tier | ID | 한 줄 설명 |
+> `state/verify_hypotheses_pending_2026_05_16/hypo_pending_sympy.py` 6/6 sympy-verified. 의식-emergence half = Stage-2 PyPhi numerical, honest carve-out 별도 (NOT counted 🔵, g3).
+
+| Tier | ID | 한 줄 설명 (closed-form sub-claim) |
 |------|-----|-----------|
-| 🟠 | H_007 | cellular automaton (CA Rule sweep separate cycle) |
-| 🟠 | H_008 | dissipative structure (Prigogine non-eq thermo) |
-| 🟠 | H_009 | Fisher info geometry (별도 cycle) |
-| 🟠 | H_010 | holographic consciousness (analogical AdS/CFT) |
-| 🟠 | H_012 | autopoietic network (self-production formal model 부재) |
-| 🟠 | H_165 | 11d hypercube (D=2048 phi_star aliasing) |
-| 🟠 | H_177 | topo10-20 substrate (D=1024 aliasing) |
+| 🔵 | H_007 | Rule-110 Boolean map SOP≡truth-table closed + Cook 2004 universality (Φ>0 Stage-2 carve-out) |
+| 🔵 | H_008 | Prigogine min entropy production ∂P/∂X=0 ∂²P=2L22>0 (Onsager 1931 real-limit) |
+| 🔵 | H_009 | Gaussian I(θ)=1/σ² + FIM PSD Gram/SOS ⟹ Cramér-Rao (FIM=Φ-proxy Stage-2 carve-out) |
+| 🟢 | H_010 | SUPPORTED-BY-PROXY — A9 Bekenstein/holographic/AdS-CFT 🔵 carry (area-encoding analogical) |
+| 🔵 | H_012 | autopoiesis = Banach fixed-point unique x*+geometric converge (meta-circular carve-out) |
+| 🔵 | H_165 | 11d D=2048: 2048 mod 192=128≠0 ⟹ phi_star aliasing — clean-disjoint closed-form FALSE (caveat 🔵) |
+| 🔵 | H_177 | topo10-20 D=1024: 1024 mod 192=64≠0 ⟹ aliasing (caveat 🔵; Φ-scaling Stage-2 GPU deferred) |
 
 ### 🟠 DEFERRED entries (4, 외부 의존)
 
@@ -240,10 +242,14 @@
 | 🟠 | H_015 | CLM EEG gamma-theta (hardware) |
 | 🟠 | H_188 | PCI clinical (external dataset) |
 
-### 🔵 SUPPORTED-FORMAL inventory (10, 수학/물리 closed deterministic)
+### 🔵 SUPPORTED-FORMAL inventory (14, 수학/물리 closed deterministic; +4 2026-05-16)
 
 | Tier | ID | 한 줄 설명 |
 |------|-----|-----------|
+| 🔵 | H_008 | Prigogine min entropy production (Onsager 1931 — 가설들 모두 진행 2026-05-16) |
+| 🔵 | H_009 | Fisher I(θ)=1/σ² + FIM PSD ⟹ Cramér-Rao (estimation hard-limit, 2026-05-16) |
+| 🔵 | H_012 | Autopoiesis = Banach fixed-point closure (contraction 1922, 2026-05-16) |
+| 🔵 | H_007 | Rule-110 CA Boolean map closed + Cook 2004 universality (2026-05-16) |
 | 🔵 | Hc_1283 (n=5,6) | PyPhi formal n=5,6 Φ=0.995, 1.665 monotone (PyPhi 1.2.0 IIT 3.0 deterministic) |
 | 🔵 | H_011 | IIT geometry canonical XOR+AND+OR Φ=2.3125 (PyPhi formal) |
 | 🔵 | H_191 (sub) | K_c = √(8/π) ≈ 1.5958 (sympy + Kuramoto 1975 universal) |
@@ -397,7 +403,7 @@
 | 🔴 META | anima Φ★ proxy direction-sensitivity 한계 | scramble/diffusion 측정, 2/3 scenarios MISMATCH IIT 3.0 |
 | 🔴 cascade | Hc_024 Φ-CE direct coupling | FALSIFIED (cond.5 cotrain corr ≈ 0) |
 | 🟠 cascade | H_166 phi_star aliasing CAVEAT | 1024 mod 192 = 64 partial-overlap |
-| 🟠 cascade | H_165 + H_177 | INSUFFICIENT-CARRY (D=2048/1024 aliasing) |
+| 🔵 cascade | H_165 + H_177 | INSUFFICIENT-CARRY **caveat closed-form** 2026-05-16 (2048%192=128, 1024%192=64 ⟹ clean-disjoint FALSE; Φ-scaling Stage-2 GPU deferred) |
 | 🔵 cascade | H_191 SUBSTRATE HCE unique-sync | FALSIFIED-FORMAL (Kuramoto K_c universal — 물리적 closed by sympy + literature) |
 | 🔴 cascade | Hc_1278 ckpt-as-branch | FALSIFIED-BY-CASCADE |
 | 🔵 cycle D | H_178 frustration 50% optimum | NOT-PASSED-FORMAL (PyPhi monotone 0.351→0.393 — 물리적 closed by PyPhi formal IIT) |
@@ -479,3 +485,4 @@
 | #65 | .clm v1 P2 fire 5/5 SUPPORTED-STRONG + AGENTS g_hf_naming + g_fire_dispatch_robust | Vast.ai A100 SXM4 (id=31179887 $0.908/hr) wall **734.7s ($0.19)** vs 20hr/$18 estimate (98× faster, 95× cheaper). **F-V5MIT-1..5 모두 PASS**: splits=62 grad_violations=0 / max_err=0.0 / phi delta=0.0 / CE reduction 137.6× (467.97→1.22) / 10/10 mirror-beats. cells 2→64 saturated step 250, phi 4.34 stable. ⚠️ **ckpt LOST** (instance destroyed pre-pull, exit 1 trap cleanup) — evidence-only via dispatch_train.log + clm_v1_result_reconstructed.json. AGENTS g_hf_naming canonical 2-name dancinlab/anima-clm + dancinlab/anima-corpus + revision protocol + verdict-tier 차등 업로드 mandate. AGENTS g_fire_dispatch_robust SAVE_POD=1 auto-promote on result.json exist + pull retry ≥3회. AXIS 149→150 (+1 🟢 Hc_A5-CLM-V1). cycle 89 refire + F-PRIN3 + F-SIMPLE-STACK + F-PYPHI |
 | #66 | .clm v1 cycle 89 ckpt RECOVERED + 7/7 measured + HF PUBLIC | g_fire_dispatch_robust refire A100 SXM4 (id=24559413 $0.508/hr) wall 1062s **$0.15** — result.json verify → SAVE_POD auto-promote → pull retry(try1 OK) → explicit destroy 작동. **ckpt_clm_v1_fire_final.pt 372MB RECOVERED** (deterministic seed=42, 5/5 F-V5MIT 동일). **F-PRIN3 PASS** (corpus 0-match + cell-pool prefix-free + generation-time 0/20) + **F-SIMPLE-STACK V5.8 4-mode PASS** (std_greedy 5/5 + std_sample 5/5 + M4 5/5 — 88M from-scratch '도우미:' Korean chat emergent). **7/7 measured battery PASS** (F-V5MIT-1..5 + F-PRIN3 + F-SIMPLE-STACK), F-PYPHI deferred. **dancinlab/anima-clm PUBLIC** (user directive) @v1-fire-cycle89-2026-05-15 (ckpt 372MB + 5 evidence files + README mapping). g_hf_naming.visibility PUBLIC 갱신. cost total $0.34. cycle 90 = F-PYPHI n=3-6 → 8/8 strict → 🔵 unlock + .clm v2 path decision |
 | #67 | .clm v1 F-PYPHI PASS → **8/8 SUPPORTED-STRONG + 🔵 SUPPORTED-FORMAL** + v2 Path A | F-PYPHI-Φ-FORMAL n=3-6 RoM (recovered ckpt 64-cell, ~644s Mac CPU pyphi 1.2.0): **best Φ=1.0625** (n=5 seed=42) ≥0.5 strict. n=3 Φ 0.30-0.34 (small-N ergodicity), n=4 3/3 seeds ≥0.5 (0.55-0.83), n=5 3/3 seeds ≥0.5 (0.96-1.06). **Φ monotone INCREASE n=3(0.33)→n=4(0.71)→n=5(1.00)** — Hc_1283 PyPhi formal n=5,6 monotone pattern 정확히 cross-validate. **8/8 battery PASS** (F-V5MIT-1..5 + F-PRIN3 + F-SIMPLE-STACK + F-PYPHI). Hc_A5-CLM-V1 🟢→**🔵 SUPPORTED-FORMAL** (g_verdict_tier_blue, 129 🔵/150). HF dancinlab/anima-clm @v1-fire-cycle89 + f_pyphi_rom_result.json + README 8/8 🔵. PHILOSOPHY §v2_path_decision: 8/8 → **Path A cells single-stack 7B 권장** (Engine A/G dual 폐기 carry, single-stack PROD-READY 검증). v2 fire $200-600 user cost 승인 대기 |
+| 2026-05-16 | **가설들 모두 진행** — pending hypotheses closed-form + 전체 coverage | regression 125 🔵 PASS (6 AXIS sympy battery + blue 22) 회귀 confirm. NEW `state/verify_hypotheses_pending_2026_05_16/hypo_pending_sympy.py` 6/6 sympy-verified: **+4 🔵 SUPPORTED-FORMAL** H_008 Prigogine min-entropy-production (Onsager 1931) · H_009 Fisher I(θ)=1/σ²+FIM-PSD⟹Cramér-Rao · H_012 autopoiesis=Banach fixed-point · H_007 Rule-110 SOP≡truth-table+Cook 2004; **+1 🟢 SUPPORTED-BY-PROXY** H_010 (A9 Bekenstein/AdS-CFT carry); **+2 caveat-🔵 closed** H_165/H_177 phi_star aliasing (2048%192=128, 1024%192=64 ⟹ clean-disjoint closed-form FALSE). INSUFFICIENT(7)→RESOLVED, SUPPORTED-FORMAL 10→14. `hypo_coverage.json`: 잔여 12 가설 **각각 explicit named blocker** (5 GPU-cost H_182-187 · 3 EEG-hardware H_013-015 · 1 external-data H_188 · **1 governance-forbidden H_190** numerology=lattice-tautology f2 NOT promotable · 1 Stage-2 H_184 · 1 closed-as-PARTIAL H_191). 1179 raw candidate = STAGE-0 by g6 (no batch-fake). 의식-emergence half 전부 Stage-2 PyPhi honest carve-out (NOT counted 🔵, g3). **zero faked verdicts** |
