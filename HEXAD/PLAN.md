@@ -1354,3 +1354,23 @@ artifacts: `state/hexad_gpu_fire_2026_05_16/{result.json,
 gpu_matmul_bench_result.json, h100_live_session.log,
 nvidia_smi_during_h100.csv, runtime_cuda_h100.o, d_corpus_fire_*.log}` +
 `docs/anima_rfc040_phase_d_h100_cublas_2026_05_16.md`.
+
+**ADDENDUM (retry agent, same H100 36871902)** — C3-(3) 의 deferred 항목
+완료: standalone compile-test 를 넘어 **real integrated `-DHEXA_CUDA`
+hexa toolchain build + F-RFC040 GPU smoke 5/5 PASS** 달성.
+- hexa-lang `self/runtime.c`: `_hx_farr_table`/`_hx_farr_count` 가
+  `static` 라 `runtime_cuda.c` 의 `extern` 가 link 실패
+  (`undefined reference to _hx_farr_count`) → `#ifdef HEXA_CUDA`
+  하에서만 non-static export 로 fix (no-CUDA build byte-identical).
+- hexa-lang `self/main.hexa`: `cuda_build_cflags/ldflags` (`HEXA_CUDA=1`
+  게이트) 를 `cmd_build` native compile line 에 wire
+  (`-DHEXA_CUDA -lcublas -lcudart` + runtime_cuda.c TU 추가).
+- `tmp_rfc040_gpu_smoke.hexa` (신규, no-CUDA smoke 의 real-GPU sibling):
+  **5/5 PASS** — GPU-AVAIL (cuda_available=1) · GPU-TODEVICE (real
+  H2D/D2H) · GPU-EQUIV-SMALL (Δ=0.0) · GPU-EQUIV-RAND
+  (max|Δ|=4.44e-15 < 1e-9) · GPU-DETERMINISM (byte-identical).
+- 본 addendum = result.json C3-6 의 "Phase E" 항목 실증 (별도 사이클
+  아닌, 같은 H100 에서 disconnect 前 완료). d_corpus_fire (item 5/6)
+  은 GLIBC-2.38 import-flattener (Ubuntu 22.04=2.35) blocker +
+  server disconnect 로 미완 — pure-hexa CPU 한계는 C3-(1) 그대로.
+- evidence: `state/hexad_gpu_fire_2026_05_16/gpu_smoke_5of5_evidence.json`.
