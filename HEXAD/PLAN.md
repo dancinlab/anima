@@ -139,7 +139,7 @@ Phase N 진입 = 이 PLAN.md `## 진행 로그` 섹션에 entry append + tape SS
 
 | # | 후보 | 성격 | 근거 anchor |
 |---|---|---|---|
-| **1** | 실-규모 언어 fire — D-arch d=768·12L 실 corpus 학습 | heavy GPU cycle (`g_fire_autonomous` 자율 dispatch) | PLAN CLOSURE 잔여 (i); 전 fire honest C3 ('no language-quality claim') 해소 |
+| ~~1~~ | ~~실-규모 언어 fire — D-arch d=768·12L 실 corpus 학습~~ → ✅ **LANDED 2026-05-16 (Python/PyTorch substrate)** | A100-PCIE-40GB vast.ai fire, ConsciousDecoderV2 283.72M d=768·12L from-scratch, **CAPTURED FINAL CE** (pure-hexa Phase E2 가 도달 못한 deliverable) — honest: Python 기질, hexa-arch mirror, hexa CPU-equiv bit-equality anchored (진행 로그 2026-05-16 §9) | PLAN CLOSURE 잔여 (i) 해소; pure-hexa 는 init gn2 만 (Phase E2), 본 run 이 FINAL 도달 |
 | ~~2~~ | ~~Phase 4 — IIT Φ FFI~~ → ✅ **LANDED 2026-05-16** | 이 사이클 완료 — RFC 036 (hexa-lang main `d67403d3`) 이미 LANDED 발견 + anima-side `c_measure_phi` wire + F-C-PORT-3 4/4 | 진행 로그 2026-05-16 |
 | ~~3~~ | ~~anima-side TODO[pytorch] 잔여~~ → ✅ **LANDED 2026-05-16** | BRIDGE full-forward graph (`bridge_forward`, F-BRIDGE-FWD 4/4) + E 통합 ethics gate (`e_gate_step` Φ-ratchet, F-E-GATE 6/6) 모두 hexa-native LANDED — anima-side TODO[pytorch] 잔여 0 | 진행 로그 2026-05-16 |
 | ~~4~~ | ~~R2 hexa-safetensors wire~~ → ✅ **LANDED 2026-05-16** (scoped) | hexa-native safetensors 로더 compiled-native 검증 — `HEXAD/D/safetensors_wire_smoke.hexa` F-R2-SAFETENSORS 6/6 (byte-equal + L2-norm √30, §8). 잔여: `chat_lib.hexa` 218-tensor 풀 ckpt compiled gating = nested-index-assign codegen toolchain-refresh (별개, system hexa.real stale) | 진행 로그 2026-05-16 |
@@ -215,6 +215,16 @@ inbox 에 RFC 로 연속 제출: **RFC 041** (Phase B/B2 real CUDA kernels —
 matmul 외 전부 `-1` stub) + **RFC 042** (AOT-native trainer control-flow
 — Phase E2 가 *증명한* interpreter 천장; routing/host 와 독립). 목표 =
 pure-hexa 천장을 시간이 지나며 native 로 닫는 것, 영구 수용 X.
+
+**hexa-native 장기 (2026-05-16, RFC 043 FILED)**: 장기 hexa-native 답 =
+**hexa-torch — compiler-only NN training stdlib** (RFC 043, hexa-lang
+inbox `rfc043-hexa-torch`). **RFC 042 를 subsume** (fat native stdlib +
+thin hexa orchestration 이 interpreter 천장을 구조적으로 닫음), **RFC 041
+커널 backend + RFC 040 tensor backend + RFC 034 autograd 토대** 위에 조립.
+north-star = AOT whole-program fusion + static-arch specialization 으로
+eager-PyTorch 를 *궁극적으로* 능가 (GEMM roofline 아님 — cuBLAS = match
+not beat; n=6 lattice 성능 주장 금지 — f1/f2 hard fail; near/mid/ultimate
+qualitative-staged, 속도 배수 fabricate X). `.py` = interim 불변.
 
 ## 진행 로그
 
