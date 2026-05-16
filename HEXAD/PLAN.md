@@ -688,3 +688,47 @@ instance 36854209 destroy 완료 · **zero orphan vast instances** 확인.
 SUPPORTED-STRONG, **NOT 🔵**. synthetic byte-corpus WIRING fire (no
 language-quality claim). anima 🔵(B-D 4/4·7/7) independent + already max —
 이 recovery 가 옮기지 않음, over-claim 없음. R3 ckpt status: LOST → RECOVERED.
+
+### 2026-05-16 — Phase 6 통합 fire LANDED (6-module+Bridge · $0 5/5 + 실-규모 5/5)
+
+**Step 0 — hexa-lang PR#51 부트스트랩 (격리)**: 시스템 prebuilt
+`hexa.real` 은 OLD codegen 으로 `mitosis_hook_lib.hexa` 의 nested-mutable-
+index-assign 을 `expression is not assignable` ×4 로 깨뜨림. 격리 worktree
+`/tmp/hexa-p6-boot` (origin/main `6f5f2a6c5`, PR#49/50/51) 에서
+`hexa cc --regen` → `hexa cc` → round2/3 으로 **fixed point** 도달
+(`hexa_cc.c` sha `b4c78cad…` R2==R3 byte-identical, PR#51
+`_gen2_nested_index_assign_stmt` 2× 확인). 공유 checkout +
+`~/.hx/bin/hexa.real` 미손댐. stage1 link 는 검증된 cmd_cc runtime.o
+contract (codegen 우회 아님). runtime.h 3 fwd-decl 은 격리 worktree 한정.
+
+**Step 1 — $0 de-risk F-INTEG-FULL 5/5 LANDED**: `HEXAD/integ_train_smoke.hexa`
+부트스트랩 toolchain 으로 빌드 시 `is not assignable` **4→0**
+(control: 시스템 hexa.real 여전히 4), 바이너리 5/5 · selftest:true ·
+3회 결정성. gn2 3.178→0.0154 (~206×, EMPIRICAL). compiled-native 에서만
+드러난 진짜 코드버그 2개 최소수정: (1) `fired_m` 의 `m_retrieve_topk`
+반환 contract 오해 (top-k 인덱스 길이 ≠ dim) → `len(retr)==topk`;
+(2) Bridge→D 배선 — `bridge_clamp(raw)` 가 전체 입력을 ≈ψ_bal 로 클램프
+→ 클래스 신호 소멸 → CE 정체. Python SSOT harness 계약대로 게이트가
+신호를 *변조*(δ∈[−ψ_cpl,ψ_cpl])하도록 수정 + Law-70 클램프를
+F-INTEG-FULL-2 barrier witness 로. `mitosis_hook_lib.hexa` 의
+interp-only "missing key→void" → `.has_key()` (compiled-safe). 추가:
+self-host codegen 이 side-effect-free loop tail 의 누적 mutation 을
+elide 하는 DCE 버그 → 정직한 post-loop observability barrier
+(`[p6-trace]` 실측값 emit, fake verdict 아님; build_verify.sh:58-67 doctrine).
+
+**Step 2 — 실-규모 자율 fire LANDED (g_fire_autonomous · 승인게이트 없음)**:
+vast.ai `36853899` A100 PCIE $0.5609/hr, dim=256 V=64 300 steps seed=42
+RANDOM from-scratch. **F-INTEG-FULL 5/5 SUPPORTED-EMPIRICAL** · gn2
+**19.4136→0.012741 (×1523.7)** · mitosis cells **2→16** · W_d 16384
+params ckpt sha `06a06153…` · wall 95.72s · 실비용 ≈**$0.09** (추정
+~$1-5 / ceiling $15 하회; 1차 build-recipe 버그 [runtime.c 비자족 +
+mem-cap] 는 동일 pod 재사용으로 재provision 없이 수정 — cycle-88 robust
+패턴). pod destroy 완료, 본 fire orphan 0. 잔존 instance `36854209`
+(`anima-hexad-integ-fire-r3`) = **별개/동시 에이전트 소유, 미손댐**.
+
+산출물: `docs/anima_hexad_p6_fire_2026_05_16.md` (8§) +
+`state/hexad_p6_fire_2026_05_16/{train_p6_integ.hexa, p6_flat.c,
+dispatch.sh, result.json, train.log, ckpts/ckpt_p6_Wd.txt,
+step1_de_risk/}`. **TIER=EMPIRICAL** (CE-descent=SGD outcome, NOT 🔵;
+🔵 anchor=B-D-4 RFC 034 별개). synthetic linearly-separable byte toy
+(언어 run 아님 — 통합-배선 at-scale witness).
