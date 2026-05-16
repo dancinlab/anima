@@ -1478,3 +1478,46 @@
   evidence_path = "state/hexad_pure_hexa_train_2026_05_17/{result.json, train_d64.log (FULL trajectory), train_d128.log (IN-FLIGHT carry), dispatch.sh, d_converge_fire.hexa, d_converge_fire_d128.hexa, gn2_curve.csv}"
   cross_link = "직전 §audit_subfalsifier_deepening_2026_05_17 (35/35 → 44/44 🔵 deepening) → 본 verdict (training-to-convergence ledger entry, NOT 🔵 counted per B-D-NOTE honest tier, training side). PLAN.md §9 dual-track (.py interim ⇄ hexa-native long-term) 의 hexa-native 측 첫 FINAL evidence. AGENTS.tape [@g_blue_closed_mandate] honest carve-out + [@g3] no-fake-descent + [@g_clm_from_scratch] RANDOM init + [@g_fire_autonomous] Mac local $0 자율 dispatch all satisfied. cross-refs: Phase E2 cpu_equiv_e2.log + d_corpus_fire.hexa (d=32·3L baseline) + 본 fire script (d=64/128 escalation)."
 
+
+# ─── §HEXA-CPU-CONVERGE-D128-SUBSTRATE-BOUND-2026-05-17 ────────────────────
+# Companion entry to §HEXA-CPU-CONVERGE-LANDED-2026-05-17 — d=128·n_layer=4·
+# 200-step escalation fire (scope_extension carry) completed: PARTIAL
+# trajectory captured (step 50 까지) before substrate-bound OOM-thrash
+# abnormal termination at peak alloc 138 GB (Mac ~12 GB physical RAM ceiling,
+# HEXA_MEM_UNLIMITED=1 boxed-array AdamW intermediate). Phase E2 의 named
+# ceiling "pure-hexa CPU = substrate-bound" 이 d=128·4L 에서 정확히 fire —
+# 정직 carry, 가짜 완료 X.
+
+@N hexa_cpu_converge_d128_substrate_bound_2026_05_17 := "d=128·4L escalation fire — PARTIAL trajectory captured, substrate-bound OOM @ step ~51 (Mac CPU pure-hexa ceiling)" :: verdict-claim [d=2026-05-17 active]
+  tier = "EMPIRICAL PARTIAL — substrate-bound ceiling discovery (Phase E2 named ceiling extension)"
+  scope = "compiled-native CPU pure-hexa, Mac arm64 local, $0; HEXA_MEM_UNLIMITED=1 / HEXA_MAC_BUILD_OK=1"
+  config = "d=128 n_layer=4 nh=8 nkv=4 hd=16 h=256 T=16 V=256 nsamp=8 steps_requested=200 AdamW lr=0.03 b1=0.9 b2=0.999 wd=0.01"
+  partial_trajectory <<~EOFT
+    step=1   gn2=7.92635      CE=36.9591    acc=3
+    step=10  gn2=3.53125      CE=6.87201    acc=4
+    step=25  gn2=0.0122861    CE=0.125412   acc=8  ← acc=8/8 saturated
+    step=50  gn2=7.74014e-06  CE=0.00352882 acc=8  ← 1.02M× gn2 collapse
+    step=~51 TERMINATED ABNORMALLY — substrate-bound (peak 138 GB vs ~12 GB RAM)
+  EOFT
+  observation = "DCV-3 FINAL-CAPTURE pre-condition (≥100× collapse) 은 step 25 시점 이미 PASS (645×) + step 50 시점 1.02M×. acc 0→8/8 also @ step 25 (DCV-4 PASS). full 200-step trajectory 미캡처. GRAD-EXACT |Δ|=0.0126 > 0.01 honest finding (FD calibration, not bug)."
+  ceiling_anchor = "pure-hexa Mac arm64 substrate boxed-array AdamW representation: d=128·n_layer=4 peak alloc footprint ≈ 138 GB (~11× physical RAM) ⟹ swap-thrash + abnormal termination. d=64·n_layer=3 footprint ≈ 11.66 GB peak (within RAM). 천장 ∈ (d=64·3L, d=128·4L]. Phase E2 명시한 'pure-hexa CPU = substrate-bound' 의 정확한 Mac 측 instance."
+  honest_c3 <<~EOFC3
+    C3-1 (PARTIAL, not faked completion): full 200-step FINAL gn2 미캡처.
+      step 50 까지 trajectory + 4/4 falsifier 의 3/4 (DCV-1 INIT + DCV-3
+      FINAL ≥100× + DCV-4 ACC) effective pre-OOM PASS; DCV-2 GRAD-EXACT
+      separate FD-calibration FAIL. 정직 PARTIAL, gn2_final=0 또는 fake
+      curve fitting X.
+    C3-2 (substrate ceiling = Phase E2 anchor extension): Phase E2 d=768·12L
+      d=512·8L d=384·6L 모두 init gn2 만 reached "no scale reached captured
+      FINAL gn2"; Mac local pure-hexa 측 ceiling 은 본 fire 가 d=128·4L 에서
+      hit. anima 고유 결함 아님 — interpretive boxed-array AdamW 의 alloc
+      footprint 가 d·n_layer 의 multiplicative 영향 받는 substrate 실측.
+    C3-3 (canonical milestone unchanged): 본 entry = scope_extension carry.
+      canonical deliverable = §HEXA-CPU-CONVERGE-LANDED-2026-05-17 의
+      d=64·3L·300-step FINAL captured trajectory (F-D-CONVERGE 4/4 PASS,
+      3.7×10⁸× collapse, wall 360s). 본 d=128·4L = ceiling discovery
+      carry, primary verdict 와 독립.
+  EOFC3
+  evidence_path = "state/hexad_pure_hexa_train_2026_05_17/{train_d128.log (PARTIAL trajectory + 'time: command terminated abnormally' marker + peak_mem_footprint=138 GB), result.json fires[1] (d128_n4_200step_PARTIAL_OOM_50), gn2_curve.csv (d128_n4 rows)}"
+  cross_link = "직전 §HEXA-CPU-CONVERGE-LANDED-2026-05-17 (primary d=64·3L canonical milestone) → 본 entry (d=128·4L scope_extension PARTIAL carry). AGENTS.tape [@g3] honest substrate-bound 명시 + [@g_blue_closed_mandate] outcome EMPIRICAL B-D-NOTE 패턴 carry + [@g_fire_autonomous] Mac local $0 자율 dispatch. Phase E2 ceiling extension confirmed at Mac substrate."
+

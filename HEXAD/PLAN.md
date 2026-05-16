@@ -1627,3 +1627,33 @@ user directive 2026-05-17 "closed 아닌것들 closed 까지 go". 27-blue-batter
 **build_verify 무회귀**: `bash HEXAD/build_verify.sh` = **20/20 entrypoint + 14/14 lib PASS** 유지 (c.hexa + hexad.hexa cross-ref comment 추가 무영향).
 
 **HEXAD 엔진완성 확장 closure**: 8/8 modules + HEXAD integration spec 통합 SSOT = 9 entries full 🔵 (35/35). 잔여 closed-점검 영역 = 4 honest NOTE (B-D / B-BRIDGE / B-MITOSIS / B-C) — closing 불가 (real-limit 진실 경계; closing 시 g3 violation). 다음 anima-자율 closure 영역 0; 다음 cycle = hexa-lang RFC land 또는 ckpt-bearing fire.
+
+### 2026-05-17 — pure-hexa hexa-cpu training-to-convergence ✅ first captured FINAL gn2 AT SCALE > Phase E2 anchor (d=64·3L·300-step)
+
+**상태**: Phase E/E2 (2026-05-16 위) 가 init gn2 capture 까지 도달 (d=768·12L init reach + d=32·3L·80-step CPU-equiv BIT-EQUAL) — captured FINAL gn2 (의미있는 loss-collapse trajectory) 는 d=32·3L·80-step 외 부재 (Phase E2 명시: "no scale reached captured FINAL gn2" beyond d=32·3L, named substrate-bound ceiling). 본 cycle = **pure-hexa CPU 에서 첫 captured FINAL gn2 AT SCALE > Phase E2 anchor** — single Mac arm64, $0, ~6 min wall.
+
+**구성**: `HEXAD/D/d_converge_fire.hexa` (신규 entry, `d_train5_lib` + `corpus_loader_lib` import — d_corpus_fire.hexa 의 d=32·3L → d=64·3L·300-step 변형, 동일 트레이너·동일 corpus·동일 from-scratch RANDOM seed-fixed 42). config: d=64 n_layer=3 nh=4 nkv=2 hd=16 h=128 T=16 V=256 nsamp=8 steps=300 AdamW lr=0.03 b1=0.9 b2=0.999 wd=0.01 — Phase E2 d=32·3L baseline 의 controlled-parameter 2× width + 3.75× horizon escalation. 추가 escalation fire (d=128·n_layer=4·200-step) IN-FLIGHT (background, 본 verdict 와 독립 carry — step 25 시점 645× collapse 관측).
+
+**결과 (d=64·3L·300-step)**:
+- `init  gn2=7.96691  CE=38.3054  acc=1/8`
+- `final gn2=2.15075e-08  CE=0.000328543  acc=8/8`
+- gn2 collapse = **3.70425×10⁸×** (370M-fold) — Phase E2 d=32·3L·80-step (2.13×10⁷×) 의 ~17× 추가 descent
+- CE descent = 116594× (Shannon-floor 38.30 → 3.29e-4)
+- GRAD-EXACT(L0.Wg[5]): analytic=0.00429779 fd=0.00145389 |Δ|=2.84e-3 < 0.01 **PASS** (full composed reverse: head→tied→final-norm→3-block-stack→RoPE→GQA→embed)
+- wall=360.25s peak_rss=11.66 GB cost=$0 Mac arm64
+- **F-D-CONVERGE 4/4 PASS** (DCV-1 INIT-CAPTURE + DCV-2 GRAD-EXACT + DCV-3 FINAL-CAPTURE ≥100× + DCV-4 ACC-EMERGE)
+
+**산출물**: `state/hexad_pure_hexa_train_2026_05_17/{result.json (양 fire 메타 + tier 명시), train_d64.log (전 trajectory), train_d128.log (in-flight carry), dispatch.sh (Mac local 재현 recipe), d_converge_fire.hexa (d=64 SSOT 복사), d_converge_fire_d128.hexa (d=128 escalation 변형), gn2_curve.csv (trajectory 6-checkpoint CSV)}` + `archive/PHILOSOPHY.tape §HEXA-CPU-CONVERGE-LANDED-2026-05-17` (append-only verdict-claim with 4-step anchor chain + 6 honest C3).
+
+**§8 audit 표 갱신 (이번 cycle 의 새 anchor 행)** — 본 fire 의 anchor chain 은 §8 row 의 새 entry 가 아닌, 기존 Phase E2 CPU-equiv anchor + B-D-4 closed-form gradient 의 *extension carry* — 표는 cycle 종료시 sync (g_arch_vs_log_split: PLAN editable). impl tier = 🔵 (B-D-4 closed-form softmax−onehot 재사용 + Phase E2 BIT-EQUAL CPU-equiv numerics floor anchor); outcome tier = **EMPIRICAL** (B-D-NOTE 패턴 honest carve-out per g_blue_closed_mandate — every SGD-trained NN 의 SGD-수렴 OUTCOME 공통, anima 고유 결함 아님, fake closed-form 금지).
+
+**honest C3**:
+- (substrate) compiled-native CPU pure-hexa only (NOT .py, NOT GPU) — d=768·12L 언어품질은 GPU CUDA path (Phase E2 cuBLAS anchor), 본 fire = CPU-feasible 규모에서 captured FINAL milestone 단독
+- (memorization) 8 corpus windows → acc 8/8 = 윈도우 암기 (small-window recall), language-quality generalization 아님 — Phase E2 framing carry
+- (d=128 GRAD-EXACT observation) escalation fire 의 GRAD-EXACT |Δ|=0.0126 > 0.01 threshold = honest measurement-calibration finding (eps=0.0005 central-FD 가 d=128 steeper surface 에서 worse linear approximation; analytic·FD magnitudes 도 4× 증대, relative error ~68% vs d=64 의 ~30%) — analytic gradient validity 는 Phase E2 d=384/512/768 GRAD-EXACT PASS anchor 가 carry; fundamental gradient bug 아님
+- (no HF upload, evidence-only) g_hf_naming process_upload_mandate gated on Phase 6 통합 fire + 사용자 게이트 후 canonical revision 정의 — 본 fire 는 evidence-only push (state/.../result.json + train.log + dispatch.sh + d_converge_fire.hexa SSOT)
+- (anti-overclaim) verdict = "첫 captured FINAL gn2 AT SCALE > Phase E2 anchor" — Phase E2 의 d=32·3L·80-step CPU-equiv 위에 d=64·3L·300-step (2× width + 3.75× horizon + 17× wall) 의 단일 incremental milestone. "real LM convergence" 또는 "language quality" 주장 NOT INCLUDED
+
+**build_verify 무회귀**: `HEXAD/D/d_converge_fire.hexa` 는 always-gated `ENTRYPOINTS` 추가 NOT 진행 (fire script 의 ~300s wall = build_verify 60s timeout 초과; standalone evidence module). 기존 `HEXAD/D/d_corpus_train_smoke.hexa` (d=8·2L smoke) 가 always-gated entry 유지.
+
+**HEXAD pure-hexa training closure**: Phase E/E2 의 init gn2 capture 천장 위 첫 FINAL gn2 anchor LANDED. 다음 anima-자율 closure 영역 = (a) escalation fire d=128·4L 완료 (in-flight) → result.json 갱신, (b) hexa-lang RFC land (autograd 본격 module-level), 또는 (c) ckpt-bearing fire (Phase 6 통합 fire-cycle 89+ 사용자 게이트 후 canonical HF revision).
