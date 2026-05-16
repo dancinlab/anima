@@ -379,3 +379,15 @@ state/hexad_integ_fire_2026_05_16/ckpts/*.pt
 
 # PyPhi runtime log — accumulates, not source of truth
 pyphi.log
+
+# Fire-instance transients (PIDs, vast IDs, ssh endpoints — already-destroyed instances, no durable evidence)
+state/**/.dispatch_pid
+state/**/offer_id.txt
+state/**/vast_instance_id.txt
+state/**/vast_ssh.txt
+
+# Transpiled hexa single-translation-unit C (1.5MB+, regeneratable from .hexa source)
+state/**/hexa_full_singletu.c
+
+# HEXAD module transient state (per-module runtime markers, not architecture)
+HEXAD/*/state/
