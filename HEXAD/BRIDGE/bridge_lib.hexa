@@ -2,15 +2,19 @@
 //  HEXAD/BRIDGE/bridge.hexa — ThalamicBridge hexa-native entry
 //
 //  PURPOSE
-//    Closed-form portion of ThalamicBridge (Law 53 + Law 70):
-//      bridge_clamp(raw) = PSI_BALANCE + clamp(raw − PSI_BALANCE, ±PSI_COUPLING)
-//
-//    Full forward (Linear → Attention → Norm → expand → gate) is TODO[pytorch]
-//    pending hexa-native RFC port. anima_chat.hexa Section 9c 의 farr_matmul
-//    기반으로 통합 단계에서 wire.
+//    ThalamicBridge (Law 53 + Law 70) hexa-native:
+//      - bridge_clamp(raw) = PSI_BALANCE + clamp(raw − PSI_BALANCE, ±PSI_COUPLING)
+//        — closed-form Law-70 invariant (B-BRIDGE 4/4 🔵)
+//      - bridge_forward — full-forward backbone (compress → mean-pool →
+//        expand[Linear→GELU→Linear] → gate[Linear→Sigmoid] → Law-70 clamp),
+//        all-farr (RFC 032 farr_matmul). seed-fixed from-scratch weights.
 //
 //  STATUS
-//    closed-form clamp 부분만 working — 통합 forward 는 TODO[pytorch].
+//    closed-form clamp = 🔵 · forward backbone = LANDED (structural hexa-
+//    native, F-BRIDGE-FWD). NAMED residual (honest carve-out, g3): 1-head
+//    hub self-attention + LayerNorm sublayer (mean-pool over the cell hub is
+//    the v1 reduction) + trained-weight values — structural graph ≠ trained
+//    quality. Law-70 clamp invariant is the closed-form 🔵 part.
 //
 //  PYTHON ANCHOR
 //    ready/anima/hexad/model.py :: ThalamicBridge
@@ -55,6 +59,115 @@ fn bridge_clamp_vec(raw_gates) {
 fn bridge_gate_scale(inference: bool) -> float {
     if inference { return gate_infer() }
     return gate_train()
+}
+
+
+// ── Phase §7 #3 — ThalamicBridge full-forward backbone (all-farr) ───────────
+// Python anchor ready/anima/hexad/model.py ThalamicBridge.forward:
+//   compress(Linear c_dim→hub) → [hub self-attn + LayerNorm] → mean-pool →
+//   expand(Linear hub→d_model → GELU → Linear d_model→d_model) →
+//   gate(Linear d_model→d_model → Sigmoid) → Law-70 clamp.
+// bridge_forward 는 backbone (compress→mean-pool→expand→gate→clamp) 을 hexa-
+// native farr 로 구현. HONEST CARVE-OUT (g3): (1) weights = seed-fixed
+// from-scratch LCG fill (g_clm_from_scratch RANDOM INIT, NO ckpt) —
+// 구조 graph 검증이지 trained quality 아님; (2) 1-head hub self-attn +
+// LayerNorm sublayer 는 NAMED residual (mean-pool 이 v1 reduction). Law-70
+// clamp invariant 만 closed-form 🔵.
+
+// deterministic seed-fixed weight fill — LCG → [-0.1, 0.1)
+fn _bridge_lcg_fill(h: int, n: int, seed: int) -> int {
+    let mut s = seed + 1
+    let mut i = 0
+    while i < n {
+        s = (s * 1103515245 + 12345) % 2147483648
+        let f = (s * 1.0) / 2147483648.0
+        farr_set(h, i, f * 0.2 - 0.1)
+        i = i + 1
+    }
+    return 1
+}
+
+// GELU — sigmoid approximation GELU(x) ≈ x · σ(1.702 x)
+fn _bridge_gelu(x: float) -> float {
+    return x * (1.0 / (1.0 + exp(0.0 - 1.702 * x)))
+}
+
+fn _bridge_sigmoid(x: float) -> float {
+    return 1.0 / (1.0 + exp(0.0 - x))
+}
+
+// matvec: W (out×in row-major farr) @ x (in farr) → y (out farr) — RFC 032.
+fn _bridge_matvec(w: int, x: int, out_dim: int, in_dim: int) -> int {
+    return farr_matmul(w, out_dim, in_dim, x, 1)
+}
+
+// bridge_forward — c_states flat (n_cells × c_dim) farr → gate signal
+// (d_model farr), every element Law-70 clamped to [Ψ−α, Ψ+α].
+fn bridge_forward(c_states: int, n_cells: int, c_dim: int,
+                  hub_dim: int, d_model: int, seed: int) -> int {
+    // seed-fixed from-scratch weights
+    let w_compress = farr_zeros(hub_dim * c_dim)
+    let w_e1       = farr_zeros(d_model * hub_dim)
+    let w_e2       = farr_zeros(d_model * d_model)
+    let w_gate     = farr_zeros(d_model * d_model)
+    let _c = _bridge_lcg_fill(w_compress, hub_dim * c_dim,    seed + 1)
+    let _1 = _bridge_lcg_fill(w_e1,       d_model * hub_dim,  seed + 2)
+    let _2 = _bridge_lcg_fill(w_e2,       d_model * d_model,  seed + 3)
+    let _g = _bridge_lcg_fill(w_gate,     d_model * d_model,  seed + 4)
+
+    // 1. compress each cell (Linear c_dim→hub) + mean-pool over cells
+    let hub = farr_zeros(hub_dim)
+    let mut ci = 0
+    while ci < n_cells {
+        let cell = farr_zeros(c_dim)
+        let mut j = 0
+        while j < c_dim {
+            farr_set(cell, j, farr_get(c_states, ci * c_dim + j))
+            j = j + 1
+        }
+        let comp = _bridge_matvec(w_compress, cell, hub_dim, c_dim)
+        let mut k = 0
+        while k < hub_dim {
+            farr_set(hub, k, farr_get(hub, k) + farr_get(comp, k))
+            k = k + 1
+        }
+        farr_free(cell)
+        farr_free(comp)
+        ci = ci + 1
+    }
+    let mut m = 0
+    while m < hub_dim {
+        farr_set(hub, m, farr_get(hub, m) / (n_cells * 1.0))
+        m = m + 1
+    }
+
+    // 2. expand: Linear(hub→d_model) → GELU → Linear(d_model→d_model)
+    let e1 = _bridge_matvec(w_e1, hub, d_model, hub_dim)
+    let mut g = 0
+    while g < d_model {
+        farr_set(e1, g, _bridge_gelu(farr_get(e1, g)))
+        g = g + 1
+    }
+    let e2 = _bridge_matvec(w_e2, e1, d_model, d_model)
+
+    // 3. gate: Linear(d_model→d_model) → Sigmoid → Law-70 clamp
+    let gat = _bridge_matvec(w_gate, e2, d_model, d_model)
+    let out = farr_zeros(d_model)
+    let mut o = 0
+    while o < d_model {
+        farr_set(out, o, bridge_clamp(_bridge_sigmoid(farr_get(gat, o))))
+        o = o + 1
+    }
+
+    farr_free(w_compress)
+    farr_free(w_e1)
+    farr_free(w_e2)
+    farr_free(w_gate)
+    farr_free(hub)
+    farr_free(e1)
+    farr_free(e2)
+    farr_free(gat)
+    return out
 }
 
 

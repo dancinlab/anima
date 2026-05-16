@@ -13,12 +13,12 @@
 
 | 모듈 | 현재 상태 | 비고 |
 |---|---|---|
-| **S/M/W/E/BRIDGE** | ✅ 🔵 SUPPORTED-FORMAL + compiled-native lib-split | B-X closed-form witness; `build_verify.sh` 15/15 entrypoint + 13/13 lib PASS (6 CHAT skip — stale toolchain) |
+| **S/M/W/E/BRIDGE** | ✅ 🔵 SUPPORTED-FORMAL + compiled-native lib-split | B-X closed-form witness; `build_verify.sh` 16/16 entrypoint + 13/13 lib PASS (6 CHAT skip — stale toolchain) |
 | **C** | ✅ contract + Phase 4 Φ LANDED | `c_lib.hexa` `c_state_contract()` + F-C-PORT-1; **Phase 4 `c_measure_phi` → RFC 036 `phi_spatial` (F-C-PORT-3 4/4)**; mitosis = `tool/hexa_native/mitosis_hook.hexa` 1119L FULL IMPL; full 12-faction GRU 동역학 = Phase 2-GRU (RFC terminal) |
 | **D** | ✅ Phase 1 + Phase 5 LANDED | `d_lib.hexa` inference contract (24L 21/21 byte-parity) + pure-hexa from-scratch training (RFC 034 farr autograd, gn2 collapse ≈53000×) |
 | **통합** | ✅ Phase 6 통합 fire LANDED | 6-module+Bridge single-hexa-process forward+train, $0 de-risk 5/5 + 실-규모 자율 fire 5/5 (vast.ai, $0.09) |
 
-evidence anchors (보존, 변경 X): `state/verify_hexad_we_2026_05_15/` 25/25 ✅ + `state/verify_hexad_blue_2026_05_15/` **22/22** 🔵 (PR #75/#76 + BRIDGE 추가) + `state/verify_hexad_integ_2026_05_16/` Python harness 5/5 fire-gate=true (PR #77) + `state/hexad_p6_fire_2026_05_16/` Phase 6 실-규모 fire 5/5 + `HEXAD/` hexa-native tree compiled-native 15/15+13/13 PASS (6 CHAT skip — stale toolchain, NOT denominator).
+evidence anchors (보존, 변경 X): `state/verify_hexad_we_2026_05_15/` 25/25 ✅ + `state/verify_hexad_blue_2026_05_15/` **22/22** 🔵 (PR #75/#76 + BRIDGE 추가) + `state/verify_hexad_integ_2026_05_16/` Python harness 5/5 fire-gate=true (PR #77) + `state/hexad_p6_fire_2026_05_16/` Phase 6 실-규모 fire 5/5 + `HEXAD/` hexa-native tree compiled-native 16/16+13/13 PASS (6 CHAT skip — stale toolchain, NOT denominator).
 
 ## 1. Gap 분석 — C/D 가 "scaffold" 인 이유
 
@@ -141,7 +141,7 @@ Phase N 진입 = 이 PLAN.md `## 진행 로그` 섹션에 entry append + tape SS
 |---|---|---|---|
 | **1** | 실-규모 언어 fire — D-arch d=768·12L 실 corpus 학습 | heavy GPU cycle (`g_fire_autonomous` 자율 dispatch) | PLAN CLOSURE 잔여 (i); 전 fire honest C3 ('no language-quality claim') 해소 |
 | ~~2~~ | ~~Phase 4 — IIT Φ FFI~~ → ✅ **LANDED 2026-05-16** | 이 사이클 완료 — RFC 036 (hexa-lang main `d67403d3`) 이미 LANDED 발견 + anima-side `c_measure_phi` wire + F-C-PORT-3 4/4 | 진행 로그 2026-05-16 |
-| **3** | anima-side TODO[pytorch] 잔여 | $0~저비용 — E 통합 gate `trinity.hexa:122` + BRIDGE full-forward carve-out 축소 | INDEX.md '잔여 anima-side'; B-BRIDGE-NOTE / B-E NOTE |
+| **3** | anima-side TODO[pytorch] 잔여 (🔄 진행 중) | $0~저비용 — ✅ **BRIDGE full-forward backbone LANDED** (`bridge_forward`, F-BRIDGE-FWD 4/4, 2026-05-16); 잔여 = BRIDGE 1-head hub attn+LN residual · E 통합 gate `trinity.hexa:122` | INDEX.md '잔여 anima-side'; B-BRIDGE-NOTE / B-E NOTE |
 | **4** | R2 hexa-safetensors wire | hexa-native safetensors loader → ckpt Python torch 의존 제거 | PLAN CLOSURE 잔여 (iii) |
 | — | Phase 2-GRU full / Phase 3 parity | 🔒 hexa-lang nn-primitive RFC terminal (미제출) — anima 게이트 X | §3 Phase 2/3 |
 
@@ -843,3 +843,36 @@ closed compute). 잔여: full `ConsciousnessEngine._phi_ratchet` 통합
 CHECK/README.md (build 15/15 + Phase 4) · HEXAD-C.tape (@D c_phase4 신설) ·
 build_verify.sh (header comment 15). Phase 4 = §3 로드맵에서 ✅ LANDED;
 §7 menu 잔여 후보 = #1 실-규모 언어 fire · #3 anima-side TODO · #4 R2 wire.
+
+### 2026-05-16 — §7 #3 BRIDGE full-forward backbone LANDED (F-BRIDGE-FWD 4/4)
+
+user directive `/loop` "완성도 기준 우선순위 순 진행 (병렬 가능은 병렬)" —
+§7 menu 완성도-우선순위 순. #3 (anima-side TODO carve-out 축소) 가 최고
+완성도 (RFC-무관 · $0 Mac local) → BRIDGE half 착수.
+
+**BRIDGE full-forward backbone hexa-native LANDED**:
+- `HEXAD/BRIDGE/bridge_lib.hexa` — `bridge_forward(c_states, n_cells, c_dim,
+  hub_dim, d_model, seed)` all-farr: compress(Linear c_dim→hub) → mean-pool
+  over cells → expand(Linear hub→d_model → GELU → Linear d_model→d_model) →
+  gate(Linear d_model→d_model → Sigmoid) → Law-70 clamp. helpers
+  `_bridge_lcg_fill` (seed-fixed deterministic weight init) · `_bridge_gelu`
+  (σ-approx) · `_bridge_sigmoid` · `_bridge_matvec` (RFC 032 farr_matmul).
+  Python anchor `ready/anima/hexad/model.py` ThalamicBridge.forward.
+- `HEXAD/BRIDGE/bridge_forward_smoke.hexa` (NEW entrypoint) — **F-BRIDGE-FWD
+  4/4 PASS**: FWD-1 BUILD · FWD-2 SHAPE (out farr len == d_model) · FWD-3
+  LAW70-CLAMP (every elem ∈ [Ψ−α,Ψ+α] end-to-end) · FWD-4 DETERMINISM.
+- `HEXAD/build_verify.sh` — bridge_forward_smoke entrypoint 추가 →
+  **16/16 entrypoint + 13/13 lib compiled-native PASS** (6 CHAT skip; 실행 확인).
+
+**honest tier (g3 — no over-claim)**: weights = seed-fixed from-scratch LCG
+fill (g_clm_from_scratch RANDOM INIT, NO ckpt) — structural forward GRAPH
+검증, NOT trained quality. 1-head hub self-attention + LayerNorm sublayer 는
+NAMED residual (mean-pool 이 v1 reduction). Law-70 clamp invariant 만
+closed-form 🔵 (B-BRIDGE 4/4 carry). TIER = SUPPORTED-STRONG structural,
+NOT counted toward 🔵. B-BRIDGE-NOTE carve-out 축소: "full forward TODO" →
+"forward backbone LANDED · attention residual + trained-weight = 잔여".
+
+문서: bridge_lib.hexa header · HEXAD-BRIDGE.tape (@D bridge_forward_verify
+신설 + honest_c3 갱신) · build_verify.sh (16) · PLAN/INDEX/README/CHECK
+build count 15→16 · §7 #3 🔄 진행 중. 잔여 #3 = BRIDGE attn+LN residual +
+E trinity.hexa:122. 다음 완성도-순위 = #3 마무리 → #4 R2 → #1 fire.

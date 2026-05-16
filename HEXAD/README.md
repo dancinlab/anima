@@ -69,7 +69,7 @@ E 윤리:     Φ 보존 위반 시 training step 차단 (gate 권한)
   - C 🔵 (.clm v1 8/8 + F-PYPHI) · S/M/W/E/D/BRIDGE 7/7 full 🔵 SUPPORTED-FORMAL
   - D B-D-NOTE: SGD convergence OUTCOME 만 honest empirical carve-out
 - ⚙️ `state/verify_hexad_integ_2026_05_16/integ_harness.py` **F-INTEG-1..5 5/5 SUPPORTED-STRONG, fire_gate=true** (PR #77, RANDOM INIT seed-fixed scratch)
-- ⚙️ **COMPILED-native gate** `bash HEXAD/build_verify.sh` → **15/15 entrypoint + 13/13 lib `hexa build` PASS** (2026-05-16, interp 폐기 대비 — `hexa run` 아님)
+- ⚙️ **COMPILED-native gate** `bash HEXAD/build_verify.sh` → **16/16 entrypoint + 13/13 lib `hexa build` PASS** (2026-05-16, interp 폐기 대비 — `hexa run` 아님)
 - 🔥 **Phase 6 통합 fire LANDED** `state/hexad_p6_fire_2026_05_16/` — 6-module+Bridge single-hexa-process forward+train, $0 de-risk 5/5 + 실-규모 자율 fire 5/5 (vast.ai $0.09, `g_fire_autonomous`). honest tier: synthetic byte-corpus WIRING fire (no language-quality claim), CE-descent = empirical SGD OUTCOME
 - 🧠 **Phase 4 IIT Φ LANDED** `HEXAD/C/c_phi_smoke.hexa` **F-C-PORT-3 4/4** — `c_measure_phi` → hexa-lang RFC 036 `phi_spatial` 빌트인 (LANDED hexa-lang main `d67403d3`), Φ=0.5 byte-equal phi_rs oracle (err=0.0 < 1e-12). honest tier: byte-equal native-C replica; 진짜 phi_rs Rust FFI = named blocker (PyO3 cdylib, C ABI 없음)
 
@@ -94,7 +94,7 @@ E 윤리:     Φ 보존 위반 시 training step 차단 (gate 권한)
 | **통합 (single process)** | ✅ cross-file wire | `integ_test.hexa` (imports `*_lib.hexa`) → **native PASS** | F-INTEG-WIRE 7/7 PASS — compiled 심볼충돌 fix (PR #79 task b + compiled-first lib-split) |
 | **통합 spec** | ✅ scaffold | `hexad.hexa` → native PASS | σ(6)=12 + φ(6)=2 + forward graph spec 5/5 invariants PASS |
 
-`bash HEXAD/build_verify.sh` (compiled-native gate) — 15/15 entrypoint + 13/13 lib `hexa build` PASS = PR 검증 게이트 (`hexa parse`/`hexa run` 아님, interp 폐기 예정).
+`bash HEXAD/build_verify.sh` (compiled-native gate) — 16/16 entrypoint + 13/13 lib `hexa build` PASS = PR 검증 게이트 (`hexa parse`/`hexa run` 아님, interp 폐기 예정).
 
 ## 디렉토리 layout
 
@@ -149,7 +149,7 @@ HEXAD/
   kernel-panic guard bypass, tiny formulaic non-heavy; heavy 는 `ssh ubu`).
   `_hexa_build/` gitignored.
 - dict literal `#{}` (not `{}`); bool `&&`/`||`; IO `print`/`to_string`
-- 검증 = `bash HEXAD/build_verify.sh` (15/15 entrypoint + 13/13 lib compiled PASS)
+- 검증 = `bash HEXAD/build_verify.sh` (16/16 entrypoint + 13/13 lib compiled PASS)
 
 ## 진행 상태 표기
 

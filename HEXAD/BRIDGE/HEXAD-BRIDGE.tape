@@ -27,9 +27,17 @@
   checks = "B-BRIDGE-1 range (rail-eq + branch-deriv) · B-BRIDGE-2 saturation (Min(α,kα)=α ∀k≥1) · B-BRIDGE-3 interior-identity (window transparent) · B-BRIDGE-4 Ψ-const (Ψ=½ json EXACT + α from consciousness_laws.json SSOT, model.py no-hardcode raw#15)"
   real_limit_anchor = "Law 70 Ψ-coupling — C 가 D gate signal 의 ≤ α 만 영향 (architectural info-flow bound, NOT lattice tautology — AGENTS.tape g3 satisfied, f2 회피)"
   hexa_cross = "HEXAD/BRIDGE/bridge.hexa selftest=true (5/5: upper/lower sat · interior pass · vec window · gate-scale) — hexa-native cross-evidence"
-  honest_c3 = "B-BRIDGE-NOTE: full forward (Linear→Attn→LayerNorm→Sigmoid raw_gate) 학습 weight + α 수치값(ln2/2^5.5, 9.6% empirical) = TODO[pytorch] honest carve-out, NOT counted 🔵 (B-D-NOTE 동일 패턴, AGENTS.tape g3 — α invariant 는 ∀α>0 value-agnostic 라 수치값 무관). HEXAD/PLAN.md Phase 5 (hexa-native autograd RFC) 의존."
+  honest_c3 = "B-BRIDGE-NOTE: forward backbone (compress→mean-pool→expand[Linear→GELU→Linear]→gate[Linear→Sigmoid]→Law-70 clamp) 은 hexa-native LANDED (bridge_forward, F-BRIDGE-FWD 4/4 — bridge_forward_verify 참조). 잔여 carve-out: (1) 1-head hub self-attention + LayerNorm sublayer = NAMED residual (mean-pool 이 v1 reduction), (2) trained-weight values (현재 seed-fixed from-scratch LCG, 구조 graph ≠ trained quality) + α 수치값(ln2/2^5.5) = honest carve-out, NOT counted 🔵 (B-D-NOTE 동일 패턴, AGENTS.tape g3 — α invariant 는 ∀α>0 value-agnostic 라 수치값 무관)."
   status = "✅ → 🔵 5/5 + 4/4 (INDEX.md ThalamicBridge row 동기화, 7/7 full 🔵 SUPPORTED-FORMAL)"
   |> bridge_concrete
+
+@D bridge_forward_verify := "Bridge full-forward backbone — hexa-native LANDED" :: verify [d=2026-05-16 active]
+  rule = "HEXAD/BRIDGE/bridge_lib.hexa bridge_forward — ThalamicBridge.forward backbone all-farr (RFC 032 farr_matmul): compress(Linear c_dim→hub) → mean-pool over cells → expand(Linear hub→d_model → GELU → Linear d_model→d_model) → gate(Linear d_model→d_model → Sigmoid) → Law-70 clamp. PLAN.md §7 #3 (anima-side TODO carve-out 축소)."
+  falsifier = "F-BRIDGE-FWD 4/4 PASS (HEXAD/BRIDGE/bridge_forward_smoke.hexa) — FWD-1 BUILD + FWD-2 SHAPE (out farr len == d_model) + FWD-3 LAW70-CLAMP (every elem ∈ [Ψ−α,Ψ+α] end-to-end, not just bridge_clamp 단독) + FWD-4 DETERMINISM. build_verify.sh 16/16 entrypoint gate."
+  honest_c3 = "weights = seed-fixed from-scratch LCG fill (g_clm_from_scratch RANDOM INIT, NO ckpt) — structural forward graph 검증, NOT trained quality. 1-head hub self-attention + LayerNorm sublayer = NAMED residual (mean-pool = v1 reduction). Law-70 clamp invariant 만 closed-form 🔵 (B-BRIDGE 4/4 carry)."
+  tier = "SUPPORTED-STRONG structural (deterministic) — NOT counted toward 🔵 (trained-weight + attention residual carve-out, AGENTS.tape g3 no over-claim)"
+  evidence = "HEXAD/BRIDGE/bridge_forward_smoke.hexa F-BRIDGE-FWD 4/4 + build_verify.sh 16/16 entrypoint gate"
+  @> HEXAD/PLAN.md
 
 @N bridge_lineage := "Bridge 진화 이력 — raw → Law-70 clamp" :: note [d=2026-05-15 active]
   text = "clm_10 trinity.py:390 ThalamicBridge.forward(L424-447) = raw sigmoid gate, NO PSI clamp (Law 70 미구현). clm_11 (2026-03-31) PSI_BALANCE±0.014 clamp 추가 (consciousness_laws.json SSOT 도입과 동반). clm_12=13 byte-identical. main 동일 + TensionBridge(5-channel sopfr(6)=5) 병존."
