@@ -167,6 +167,96 @@ fn d5_proj_batch_g(W, Xb, T: int, rows: int, cols: int) {
     return Yb
 }
 
+// ════════════════════════════════════════════════════════════════════════════
+//  RFC 040 Phase E2 — d_train5 GPU-routed BACKWARD layer (2026-05-16)
+// ────────────────────────────────────────────────────────────────────────────
+//  The backward dominant FLOPs are (a) weight-grad outer products
+//  `c3_outer(u,v,R,C)` (dWq/dWk/dWv/dWo/dWg/dWu/dWd/dtemb) and (b)
+//  input-grad transpose-matvecs `c3_matvec_t(M,u,R,C)` (dX / dr / dzT).
+//
+//  HONEST SCOPE (g3 — no over-claim): the de-risked CUDA TU on hexa-lang
+//  `rfc040-phaseB2-complete` (017b988f) implements exactly ONE real GPU
+//  kernel: `_hx_cuda_farr_matmul_gpu` (cuBLAS Dgemm). The B2 ops
+//  `farr_matmul_t_gpu` / `farr_outer_gpu` are CPU-verified but their
+//  HEXA_CUDA bodies are TODO[cuda] stubs that return -1 (hard-fail, no
+//  kernel — verified by reading self/runtime.c §11145-11176). So Phase
+//  E2 routes BACKWARD through the SAME proven `farr_matmul_gpu` cuBLAS
+//  Dgemm as the forward path, via two exact GEMM reshapes:
+//
+//   c3_outer(u,v,R,C)  = u⊗v  ≡ GEMM A[R·1](u) · B[1·C](v)  → [R·C]
+//                        out[r·C+c] = Σ_{k<1} u[r]·v[c] = u[r]·v[c]
+//                        (single term — BIT-identical to c3_outer)
+//   c3_matvec_t(M,u,R,C) = Mᵀ·u ≡ GEMM A[1·R](u) · B[R·C](M) → [1·C]
+//                        out[c] = Σ_{k<R} u[k]·M[k·C+c]
+//                        (reduction k=0..R-1 — SAME order as c3_matvec_t,
+//                         BIT-identical on no-CUDA; cuBLAS on GPU)
+//
+//  This is strictly better than the B2 stubs (which would -1-hard-fail
+//  under HEXA_CUDA): it reuses the ONE numerically-verified cuBLAS path
+//  (Phase D 51-TFLOPS Dgemm, max|Δ|=4.44e-15 vs CPU) for the backward
+//  weight-grad / input-grad FLOPs. SwiGLU-grad / RMSNorm-bwd / AdamW
+//  stay boxed (small elementwise — not GEMM-dominant; same C3-2 honest
+//  partial framing as Phase E's forward note).
+// ════════════════════════════════════════════════════════════════════════════
+
+// GPU-routed outer product : u[R] ⊗ v[C] → [R·C]  (drop-in for c3_outer).
+// GEMM A=[R·1]=u, B=[1·C]=v ⟹ C[r·C+c]=u[r]·v[c]. Single-term reduction
+// ⟹ BIT-equal to c3_outer on no-CUDA; cuBLAS Dgemm on HEXA_CUDA.
+fn d5_outer_g(uo, vi, rows: int, cols: int) {
+    let uf = d5_to_farr(uo, rows)
+    let vf = d5_to_farr(vi, cols)
+    let cf = farr_matmul_gpu(uf, rows, 1, vf, cols)
+    let out = d5_from_farr(cf, rows * cols)
+    let _f1 = farr_free(uf)
+    let _f2 = farr_free(vf)
+    let _f3 = farr_free(cf)
+    return out
+}
+
+// GPU-routed transpose-matvec : Mᵀ·u  (M[R·C], u[R] → [C]).
+// GEMM A=[1·R]=u, B=[R·C]=M ⟹ out[c]=Σ_{k<R} u[k]·M[k·C+c]. The
+// reduction is k=0..R-1, the SAME order c3_matvec_t accumulates ⟹
+// BIT-equal on no-CUDA; cuBLAS Dgemm on HEXA_CUDA. Drop-in for
+// c3_matvec_t(M,u,rows,cols).
+fn d5_matvec_t_g(M, u, rows: int, cols: int) {
+    let mf = d5_to_farr(M, rows * cols)
+    let uf = d5_to_farr(u, rows)
+    let cf = farr_matmul_gpu(uf, 1, rows, mf, cols)
+    let out = d5_from_farr(cf, cols)
+    let _f1 = farr_free(mf)
+    let _f2 = farr_free(uf)
+    let _f3 = farr_free(cf)
+    return out
+}
+
+// GPU-routed SwiGLU backward — mirror of c3_swiglu_bwd (d_train3_lib §154)
+// with the 4 GEMM-dominant sites (dWd/ds/dWg/dWu + dr1/dr2 = 6 GEMVs:
+// 3 c3_outer + 3 c3_matvec_t) routed through farr_matmul_gpu. The
+// elementwise silu-grad core stays boxed (h-vector, not GEMM). Same
+// reduction order as c3_swiglu_bwd ⟹ BIT-equal on no-CUDA; cuBLAS on
+// HEXA_CUDA. Drop-in for c3_swiglu_bwd in d5_block_bwd.
+fn d5_swiglu_bwd_g(r, Wg, Wu, Wd, a, b, s, dout, d: int, h: int) {
+    let dWd = d5_outer_g(dout, s, d, h)            // o = Wd·s
+    let ds = d5_matvec_t_g(Wd, dout, d, h)         // ds = Wdᵀ·do
+    let mut da = []
+    let mut db = []
+    let mut k = 0
+    while k < h {
+        let sg = c3_silu_grad(a[k])
+        da.push(ds[k] * b[k] * sg)                 // s=silu(a)·b
+        db.push(ds[k] * c3_silu(a[k]))
+        k = k + 1
+    }
+    let dWg = d5_outer_g(da, r, h, d)
+    let dWu = d5_outer_g(db, r, h, d)
+    let dr1 = d5_matvec_t_g(Wg, da, h, d)
+    let dr2 = d5_matvec_t_g(Wu, db, h, d)
+    let mut dr = []
+    let mut i = 0
+    while i < d { dr.push(dr1[i] + dr2[i]); i = i + 1 }
+    return [dr, dWg, dWu, dWd]
+}
+
 
 // ── trig (range-reduced Taylor; period 2π) for RoPE ────────────────────────
 fn d5_two_pi() -> float { return 6.283185307179586 }
@@ -402,10 +492,10 @@ fn d5_attn_bwd(X, Wq, Wk, Wv, Wo, cache, cos, sin, dout,
             ctxi.push(ctx[i*d + c])
             c = c + 1
         }
-        let go = c3_outer(douti, ctxi, d, d)
+        let go = d5_outer_g(douti, ctxi, d, d)        // RFC 040 E2: GPU-routed
         let mut q = 0
         while q < d*d { dWo[q] = dWo[q] + go[q]; q = q + 1 }
-        let dci = c3_matvec_t(Wo, douti, d, d)
+        let dci = d5_matvec_t_g(Wo, douti, d, d)       // RFC 040 E2: GPU-routed
         c = 0
         while c < d { dctx[i*d + c] = dci[c]; c = c + 1 }
         i = i + 1
@@ -504,17 +594,17 @@ fn d5_attn_bwd(X, Wq, Wk, Wv, Wo, cache, cos, sin, dout,
         let mut c = 0
         while c < d { xi.push(X[tt*d + c]); c = c + 1 }
         // dWq += dqrow ⊗ xi  (Wq:[d·d]) ; dWk/dWv += d{k,v}row ⊗ xi (Wk:[kvd·d])
-        let gq = c3_outer(dqrow, xi, d, d)
-        let gk = c3_outer(dkrow, xi, kvd, d)
-        let gv = c3_outer(dvrow, xi, kvd, d)
+        let gq = d5_outer_g(dqrow, xi, d, d)           // RFC 040 E2: GPU-routed
+        let gk = d5_outer_g(dkrow, xi, kvd, d)         // RFC 040 E2: GPU-routed
+        let gv = d5_outer_g(dvrow, xi, kvd, d)         // RFC 040 E2: GPU-routed
         let mut q = 0
         while q < d*d { dWq[q] = dWq[q] + gq[q]; q = q + 1 }
         q = 0
         while q < kvd*d { dWk[q] = dWk[q] + gk[q]; dWv[q] = dWv[q] + gv[q]; q = q + 1 }
         // dX += Wqᵀ·dqrow + Wkᵀ·dkrow + Wvᵀ·dvrow
-        let dxq = c3_matvec_t(Wq, dqrow, d, d)
-        let dxk = c3_matvec_t(Wk, dkrow, kvd, d)
-        let dxv = c3_matvec_t(Wv, dvrow, kvd, d)
+        let dxq = d5_matvec_t_g(Wq, dqrow, d, d)       // RFC 040 E2: GPU-routed
+        let dxk = d5_matvec_t_g(Wk, dkrow, kvd, d)     // RFC 040 E2: GPU-routed
+        let dxv = d5_matvec_t_g(Wv, dvrow, kvd, d)     // RFC 040 E2: GPU-routed
         c = 0
         while c < d { dX[tt*d + c] = dX[tt*d + c] + dxq[c] + dxk[c] + dxv[c]; c = c + 1 }
         tt = tt + 1
@@ -633,8 +723,8 @@ fn d5_block_bwd(X, Bp, fc, cos, sin, dXout,
             a.push(fc["sw_a"][i*h + c]); b.push(fc["sw_b"][i*h + c])
             s.push(fc["sw_s"][i*h + c]); c = c + 1
         }
-        let swb = c3_swiglu_bwd(rr, Bp["Wg"], Bp["Wu"], Bp["Wd"],
-                                a, b, s, dso, d, h)   // [dr,dWg,dWu,dWd]
+        let swb = d5_swiglu_bwd_g(rr, Bp["Wg"], Bp["Wu"], Bp["Wd"],
+                                a, b, s, dso, d, h)   // RFC 040 E2: GPU-routed [dr,dWg,dWu,dWd]
         let dr = swb[0]
         let mut q = 0
         while q < h*d { dWg[q] = dWg[q] + swb[1][q]; dWu[q] = dWu[q] + swb[2][q]; q = q + 1 }
@@ -739,8 +829,8 @@ fn d5_grad(ids, M, t: int, cos, sin, T: int, d: int, nh: int, nkv: int,
     let mut k = 0
     while k < V { dl.push(p[k] - (if k == t { 1.0 } else { 0.0 })); k = k + 1 }  // B-D-4 🔵
     // tied head : logits = temb·zT ⟹ (a) d_temb += dl⊗zT ; dzT = tembᵀ·dl
-    let mut dtemb = c3_outer(dl, f["zT"], V, d)       // (a) head term
-    let dzT = c3_matvec_t(temb, dl, V, d)
+    let mut dtemb = d5_outer_g(dl, f["zT"], V, d)     // RFC 040 E2: GPU-routed (a) head term
+    let dzT = d5_matvec_t_g(temb, dl, V, d)            // RFC 040 E2: GPU-routed
     // final RMSNorm bwd : dzT → [dzr, dgF]
     let rmb = c3_rmsnorm_bwd(f["zr"], M["gF"], f["zT_xn"], f["zT_inv"], dzT, d)
     let dgF = rmb[1]

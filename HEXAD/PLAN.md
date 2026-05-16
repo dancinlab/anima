@@ -1422,3 +1422,51 @@ Phase D result.json C3-4 와 동일, 측정된 named limit (희망으로 넓히�
 - evidence: `state/hexad_gpu_fire_phaseE_2026_05_16/{result.json,
   dcf_384s.log, dmon_384s.txt, gpu_smoke_phaseE.log, *_flattened.c,
   dispatch_phaseE.sh}` + `docs/anima_rfc040_phase_e_d_train5_gpu_routed_2026_05_16.md`
+
+### 2026-05-16 — §7 #1 후속 Phase E2 ✅ BACKWARD GPU-routed + FAT-HOST d=768·12L fire
+
+RFC 040 **Phase E2** — Phase E 의 두 honest residual 해소: (1) BACKWARD
+미라우팅 (17 boxed `c3_outer`/`c3_matvec_t`), (2) THIN-HOST (2GB/1vCPU)
+가 d=768·12L kill. E2 = 둘 다 fix.
+
+**(1) BACKWARD 라우팅**: `HEXAD/D/d_train5_lib.hexa` 에 GPU-routed
+backward layer 추가. hexa-lang `017b988f` 의 B2 ops (`farr_matmul_t_gpu`
+/`farr_outer_gpu`) 는 CPU-verified 이나 **HEXA_CUDA body 가 TODO[cuda]
+stub `return -1`** (self/runtime.c §11145-11176 직접 확인) — hard-fail.
+따라서 E2 는 backward 를 forward 와 **동일한 검증된 `farr_matmul_gpu`
+cuBLAS Dgemm** 으로 라우팅 (Phase D 51-TFLOPS, max|Δ|=4.44e-15):
+`c3_outer(u,v,R,C)` ≡ GEMM A[R·1]·B[1·C] (단일항, bit-identical),
+`c3_matvec_t(M,u,R,C)` ≡ GEMM A[1·R]·B[R·C] (reduction k=0..R-1,
+c3_matvec_t 와 동일 순서, bit-identical). 3 helper (`d5_outer_g`,
+`d5_matvec_t_g`, `d5_swiglu_bwd_g`) + 8 backward call site swap
+(d5_attn_bwd dWo/dctx/dWq/dWk/dWv/dX, d5_block_bwd SwiGLU-grad,
+d5_grad dtemb/dzT). SwiGLU-grad/RMSNorm-bwd/AdamW elementwise core =
+boxed 유지 (GEMM-dominant 아님 — C3-2 honest partial 동일 framing).
+
+**CPU-equiv GATE (Mac no-CUDA, compiled-native, GPU spend 선결) ✅**:
+d=32·3L·80-step seed=42 corpus_consciousness_v1.jsonl —
+`init gn2=7.97116 acc=0/8 → final gn2=3.73374e-07 acc=8/8` =
+**BIT-EQUAL to Phase E boxed baseline** (단순 fp-noise 아님 — 동일 Σ
+순서). backward 라우팅 = CPU 수치 no-op. GPU spend authorized.
+
+**(2) FAT-HOST fire (real A100-SXM4, 128 vCPU / 251 GB RAM, $0.60/hr,
+multi-host SSH-retry)**: GPU smoke **5/5 PASS** (max|Δ|=4.44e-15).
+d_corpus_fire ladder forward+backward GPU-routed, CAPTURED (g3):
+**d=768·12L init gn2=7.98162** (← Phase E blocker BROKEN: Phase E
+killed d=768·12L *in* init by 2GB host; fat host let init COMPLETE —
+first-ever d=768·12L scalar), **d=512·8L init gn2=7.96517**,
+**d=384·6L init gn2=7.97898 + GRAD-EXACT PASS** (GPU-routed backward
+numerically EXACT on real HW, full composed 6L reverse). In-loop
+cuBLAS fwd+bwd CONFIRMED (57-59W + 443-451MiB held by trainer's own
+Dgemm, 477-908 nvsmi samples = 100% wall; SM-util ≤2% = documented
+µs-GEMM physical limit). **No scale reached captured FINAL gn2** —
+pure-hexa GRAD-EXACT + 80-step AdamW is substrate-bound beyond the
+75-min watchdog at d≥384 (GRAD-EXACT alone >5min at d≥512). Honest
+named ceiling, NO fake final. Full gn2-descent correctness carried by
+the CPU-equiv bit-equality (§3, exact, $0). Zero cost bleed (every
+instance transition verified LIVE=0).
+
+- evidence: `state/hexad_gpu_fire_phaseE2_2026_05_16/{result.json,
+  cpu_equiv_e2.log, dcf*.log, nvsmi_dcf*.csv, gpu_smoke_phaseE2.log,
+  _e2_*_flat.c, dispatch_phaseE2.sh}` +
+  `docs/anima_rfc040_phase_e2_backward_fathost_2026_05_16.md`
