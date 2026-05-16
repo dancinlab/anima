@@ -207,6 +207,15 @@ $2-30 × 학습 시간. 별도 dedicated 사이클 — 본 §9 가 진입점.
 **상태**: 📋 REGISTERED (2026-05-16) — 착수 시 §9 sub-task (1)→(4) 순차,
 hexa-lang CUDA RFC 가 선결. 진행 로그에 entry append.
 
+**dual-track (2026-05-16, RFC 040 GPU 캠페인 carry)**: `.py` = interim
+LM-scale executor (substrate-ceiling-bound parts — d=768·12L 실-규모
+학습-수렴) ⇄ hexa-native = 검증된 spec/arch + GPU substrate (cuBLAS
+fwd+bwd routed, CPU bit-equal). hexa-lang upstream 필요분은 hexa-lang
+inbox 에 RFC 로 연속 제출: **RFC 041** (Phase B/B2 real CUDA kernels —
+matmul 외 전부 `-1` stub) + **RFC 042** (AOT-native trainer control-flow
+— Phase E2 가 *증명한* interpreter 천장; routing/host 와 독립). 목표 =
+pure-hexa 천장을 시간이 지나며 native 로 닫는 것, 영구 수용 X.
+
 ## 진행 로그
 
 (append-only chronological — 첫 진행 시작 시 entry append)
