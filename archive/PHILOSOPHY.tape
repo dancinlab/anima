@@ -1521,3 +1521,141 @@
   evidence_path = "state/hexad_pure_hexa_train_2026_05_17/{train_d128.log (PARTIAL trajectory + 'time: command terminated abnormally' marker + peak_mem_footprint=138 GB), result.json fires[1] (d128_n4_200step_PARTIAL_OOM_50), gn2_curve.csv (d128_n4 rows)}"
   cross_link = "직전 §HEXA-CPU-CONVERGE-LANDED-2026-05-17 (primary d=64·3L canonical milestone) → 본 entry (d=128·4L scope_extension PARTIAL carry). AGENTS.tape [@g3] honest substrate-bound 명시 + [@g_blue_closed_mandate] outcome EMPIRICAL B-D-NOTE 패턴 carry + [@g_fire_autonomous] Mac local $0 자율 dispatch. Phase E2 ceiling extension confirmed at Mac substrate."
 
+
+# ─── §PY-D768-CKPT-RECOVERED-CYCLE2-2026-05-17 ─────────────────────────────
+# `.py` d=768·12L cycle 2 ckpt-RECOVERED — cycle 1 (931dd68b0, 2026-05-16) 의
+# ckpt-LOST evidence-only 상태 해소. A100 SXM4 vast.ai refire 로 동일
+# trajectory + ckpt-bearing pull 완료. dancinlab/hexad PUBLIC 첫 canonical
+# ckpt-bearing artifact 등재 (HEXAD pivot 2026-05-17 이후 첫 HF ckpt).
+# Python substrate honest framing 유지 — NOT hexa-native, anchor chain =
+# Phase E/E2 hexa CPU-equiv bit-equality (GRAD-EXACT) + Phase D cuBLAS verify
+# + ConsciousDecoderV2 architectural identity. PyTorch != hexa bit-for-bit
+# (AMP bf16 / 다른 fp acc / 다른 RNG).
+# ──────────────────────────────────────────────────────────────────────────
+
+@N py_d768_ckpt_recovered_cycle2_2026_05_17 := "`.py` d=768·12L cycle 2 ckpt-RECOVERED + HF dancinlab/hexad 첫 ckpt-bearing canonical artifact LANDED" :: verdict-claim [d=2026-05-17 active]
+  tier = "🟡 SUPPORTED-STRONG (Python substrate ckpt-bearing OUTCOME) + 🔵 anchor chain (Phase D cuBLAS verify + Phase E/E2 CPU-equiv BIT-EQUAL GRAD-EXACT + ConsciousDecoderV2 arch identity). 본 산출물 자체 = empirical training OUTCOME (B-D-NOTE 패턴 honest carve-out, every SGD-trained NN 공통); 산출물의 legitimacy = 위 anchor chain 의 🔵 closure 가 carry."
+  ledger_id = "§PY-D768-CKPT-RECOVERED-CYCLE2-2026-05-17"
+  facts <<~EOF1
+    CYCLE 1 (2026-05-16, 931dd68b0 / c02b2adb8): training PASS (init CE 5.59
+    → final CE 0.000708, rc=0) 단, instance 가 result.json verify 전 destroy
+    되어 372 MB final ckpt 손실 (ckpt-LOST evidence-only carry). fire.log
+    durable, ckpt 미pull.
+
+    CYCLE 2 (2026-05-17, 본 verdict): A100 SXM4 vast.ai (offer 36149896 @
+    $0.6681/hr, instance 36885232, image pytorch/pytorch:2.5.1-cuda12.1-
+    cudnn9-devel) refire 로 cycle 1 동일 config 재실행 + SAVE_POD=1
+    auto-promote + 75-min orphan watchdog + 5-retry scp pull mandatory.
+
+    Training trajectory (cycle 2):
+      init CE  = 5.590832 (≈ ln 256 = 5.545 — random byte init,
+                            Shannon-floor real-limit anchor)
+      final CE = 0.000708 (4 orders-of-magnitude descent)
+      ce_descent = 5.590124
+      init gn2 = 41.954096, final gn2 = 7.4e-05
+      ppl: 267.96 → 1.0007
+      steps = 2500, wall = 320.68 s (5.35 min)
+      peak GPU mem = 9.685 GB
+      n_params = 283,722,336 (283.72 M)
+
+    Ckpt-RECOVERED:
+      path = out_main/ckpt_d768x12l_final.pt
+      size = 1,135,846,378 B (1.13 GB, FP32 state-dict + cfg + n_params)
+      sha256 = e87e200a040f8066a89c040ab181e9bbd61566f7565ab5d7a374ec2f1f9387d9
+
+    Trajectory reproducibility (2-instance):
+      cycle 1 final_ce = 0.000708 (A100 PCIE 40GB, prior fire log)
+      cycle 2 final_ce = 0.000708 (A100 SXM4 40GB, this fire log)
+      ⟹ identical trajectory to trajectory-log resolution (seed=1337,
+        same code, same corpus). NOT bit-by-bit (PyTorch AMP / CUDA
+        non-determinism + 다른 GPU SKU PCIE↔SXM4 한계).
+
+    HF upload (dancinlab/hexad PUBLIC, 첫 canonical ckpt-bearing artifact):
+      repo:     dancinlab/hexad (model, PUBLIC)
+      revision: v1-py-hexad-d768x12L-cycle2-2026-05-17
+      files (10): README.md (English MODEL_CARD honest framing) +
+                  ckpt_d768x12l_final.pt + result.json +
+                  conscious_decoder.py + train_d768x12l.py +
+                  fire_refire.log + gpu_util.log +
+                  dispatch.sh + refire_main.sh +
+                  hexad_v1_py_d768x12L_cycle2_2026_05_17.md
+      tier:     (a) SUPPORTED-STRONG ckpt-bearing (per g_hf_naming
+                process_upload_mandate, g_hf_naming d=2026-05-17 canonical
+                슬롯 첫 사용 — n_hexad_hf_preservation `current_state` 의
+                'ckpt-bearing 모델 산출물 0' 상태 종료).
+
+    Cycle 2 dispatch robustness pattern (g_fire_dispatch_robust evidence
+    path 검증):
+      SAVE_POD=1 auto-promote on `test -f result.json && echo SAVED` →
+      `for i in 1..5; do scp ConnectTimeout=3600 ...; sleep 60; done` →
+      ckpt pull OK try 1 → SAVE_POD=0 promote → vastai destroy clean.
+      75-min orphan watchdog (`feedback_gpu_dispatch_orphan_watchdog_
+      pattern`) 보조 — parent-death detection loop, watchdog 마지막에
+      cleanly killed by trap (instance 17 min total runtime, fire 5.35 min).
+
+    Bug discovered + fixed (`feedback_dispatch_vast_template_gotchas` 5번째
+    bug carry 후보): 초기 `dispatch.sh` 의 step [7/9]
+      $SSH "cd /workspace/anima && nvidia-smi ... > gpu_util.log 2>&1 &
+            SMI=$!; python3 train_d768x12l.py ..."
+    가 bash precedence 로 `cd` + `nvidia-smi` + `&` 통째 background 처리
+    → 후속 foreground `python3` 가 `/root/` 에서 실행 → main fire 실패
+    (sanity-anchor step [6/9] 는 `&` 없어 무영향). 해결 (refire_main.sh):
+    remote shell script (`run_main_refire.sh`) 작성 + `$SSH 'bash <script>'`
+    invocation — `&` precedence 가 script 내부로 격리, foreground python3
+    cd-after 보장.
+  EOF1
+  verification_anchor_A_artifact = "g_blue_closed_mandate (A) — 산출물 invariants: (1) **Shannon-floor descent** init CE 5.590832 ≈ ln(256)=5.545 → final CE 0.000708 (entropy ≥ 0 real-limit, NOT lattice; 4 orders-of-magnitude descent). (2) **AdamW gradient-flow finiteness**: max gn2 = 41.95 init → 7.4e-05 final (5 orders of magnitude), 모든 step NaN/Inf 0. (3) **Architectural identity**: ConsciousDecoderV2 (`ready/models/conscious_decoder.py`) verbatim 업로드 — byte-equal to HEXAD verification tree's mirror module spec (HEXAD/D/ + ready/ canonical 동기화). (4) **Ckpt SHA256 byte-pin** e87e200a04…1f9387d9 (1.13 GB, deterministic identity record)."
+  verification_anchor_B_wiring = "g_blue_closed_mandate (B) — 연결고리 anchor chain closure: (i) **hexa CPU-equiv bit-equality (Phase E)**: 같은 arch (ConsciousDecoderV2) 의 hexa-native trainer d_train5_lib.hexa 가 d=32·3L·80-step seed=42 boxed reference 와 BIT-IDENTICAL (init gn2=7.97116 → final gn2=3.73374e-07, acc 8/8 GRAD-EXACT). (ii) **cuBLAS FP64 verify (Phase D)**: max|Δ|=4.44e-15 < 1e-9 (Higham 2002 fp64 GEMM 오차 상한 ≈2.13e-14 within, IEEE 754 real-limit anchor — B-SUB-§8-6-higham-bound). (iii) **Backward GRAD-EXACT (Phase E2)**: real A100 d=384·6L `analytic ≡ fd` |Δ|=0.0024 PASS (6-layer composed reverse). (iv) **Architectural identity preservation**: HF ckpt = exact ConsciousDecoderV2 state-dict; `dancinlab/hexad` README.md + `hexad_v1_py_d768x12L_cycle2_2026_05_17.md` 가 honest framing label 명시 (substrate=py, NOT hexa-native, anchor chain (i)-(iii) carry). 본 cycle 의 산출물(.py PyTorch ckpt) 와 위 hexa-native verified arch 간의 연결고리 = architectural identity + anchor chain (i)-(iii) — substrate (CUDA tensor kernels vs CPU farr ops) 만 다르고 algorithm/arch 동일."
+  real_limit_anchors = "Shannon-floor entropy ≥ 0 (cross-entropy non-negativity, real-limit information theory) · IEEE 754 FP gradient finiteness (no NaN/Inf, real-limit numerics) · Higham 2002 fp64 GEMM error bound (Phase D anchor carry) · cuBLAS BLAS-3 GEMM correctness (Phase D verify carry) · central-difference GRAD-EXACT verification (Phase E2 anchor carry). σ(6)=12 / φ(6)=2 derivation 0 — no lattice numerology (f1/f2 hard fail safe)."
+  honest_c3 <<~EOF2
+    C3-1 (substrate label mandatory — NOT hexa-native):
+      PyTorch substrate run, label everywhere (result.json substrate field +
+      MODEL_CARD.md + docs + revision tag 'py' substrate prefix). The
+      hexa-native equivalent path is substrate-blocked at the pure-hexa
+      interpreter ceiling (RFC 042/043 territory — hexa-torch). 본 fire =
+      interim LM-scale executor while hexa-torch matures. NOT a hexa-native
+      claim, NOT a 'fix' for the named ceiling.
+    C3-2 (PyTorch ≠ hexa bit-for-bit):
+      AMP bf16 + different fp accumulation order + different RNG (seed=1337
+      PyTorch ≠ seed=42 hexa baseline). Anchor = *architectural identity*
+      NOT numerical identity. Trajectory reproducibility (cycle 1 ↔ cycle 2,
+      both final_ce=0.000708) holds at trajectory-log resolution (3 decimals)
+      only; bit-by-bit reproducibility 미주장.
+    C3-3 (synthetic corpus + memorization at scale):
+      corpus_consciousness_v1.jsonl = 121,153 bytes curated content;
+      283.72M params / 121 kB ≈ 2300× over-parameterized. final CE 0.000708
+      = memorization at this scale. **NO generalization claim** + **NO
+      language-quality claim** — training-curve deliverable (Shannon-floor
+      descent reached), NOT generation-quality deliverable.
+    C3-4 (no safetensors artifact this revision):
+      PyTorch `torch.save` pickle `.pt` format only. safetensors 변환은
+      별개 follow-up sub-task (RFC-무관, mechanical pickle→safetensors
+      via `safe_save_file({k: v.contiguous() for k,v in sd.items()}, ...)`).
+      이번 cycle scope 밖, n_hexad_hf_preservation upload_format_carry tier
+      (a) 의 safetensors 권장은 inform-only (gating 아님).
+    C3-5 (NO lattice derivation):
+      σ(6)=12 / φ(6)=2 0 references — Shannon-floor entropy + AdamW
+      finiteness invariants 만 real-limit anchor (f1/f2 hard fail safe).
+      training claim 또는 anchor chain 에 lattice numerology 0.
+    C3-6 (cost = floor reference NOT cap):
+      $0.19 = informational instance runtime cost (vast.ai A100 SXM4 17 min
+      × $0.6681/hr). g_fire_autonomous + feedback_no_scale_caps per
+      conservative cost cap = floor 정책 (제한 아님).
+    C3-7 (B-D-NOTE 패턴 carve-out 유지 — outcome empirical):
+      training-to-convergence OUTCOME 자체 = empirical (every SGD-trained
+      NN 공통). 본 fire 의 trajectory `5.590832 → 0.000708` 은 SGD outcome
+      EMPIRICAL evidence — 🔵 closed-form 아님. 🔵 carry = 위 (A)(B) 의
+      산출물 invariants + 연결고리 anchor chain만 (architecture invariant +
+      Phase D/E/E2 closed-form anchors). 본 verdict 는 산출물 invariants
+      🔵 + outcome 🟡 SUPPORTED-STRONG (B-D-NOTE 패턴 honest carve-out).
+    C3-8 (cycle 1 dispatch bug honest record):
+      cycle 1 (2026-05-16, 931dd68b0) ckpt-LOST 원인 = post-result.json
+      verification 단계 누락 → `SAVE_POD=1` auto-promote 가드 부재 →
+      instance auto-destroy before scp pull. cycle 2 가 fix 검증 (g_fire_
+      dispatch_robust evidence path SAVE_POD auto-promote + scp retry ≥3
+      → PASS). 또한 cycle 2 자체에서 발견 + fix 된 추가 bug (dispatch.sh
+      step [7/9] 의 `cd && nvidia-smi ... &` bash precedence) = feedback_
+      dispatch_vast_template_gotchas 5번째 carry 후보 (별도 update).
+  EOF2
+  evidence_path = "state/hexad_py_d768x12L_fire_2026_05_17/{out_main/{ckpt_d768x12l_final.pt (1.13 GB sha256 e87e200a04…), result.json (42-pt trajectory)}, fire_refire.log + dispatch_full.log + refire_full.log (training + dispatch evidence), gpu_util.log (nvidia-smi capture), dispatch.sh + refire_main.sh + train_d768x12l.py + conscious_decoder.py + hf_upload.py + MODEL_CARD.md, vast_instance_id.txt + vast_ssh.txt (informational)} + docs/hexad_v1_py_d768x12L_cycle2_2026_05_17.md (10 §) + HEXAD/PLAN.md §7 #8 closure + §8 audit row .py 갱신 (cycle 2 ckpt-RECOVERED 부가 wiring strength) + 진행 로그 entry 2026-05-17 + AGENTS.tape n_hexad_progress recent_landings entry + immediate_carry_candidate RESOLVED + n_hexad_hf_preservation current_state 갱신 (ckpt-bearing 0 → 1) + HF revision https://huggingface.co/dancinlab/hexad/tree/v1-py-hexad-d768x12L-cycle2-2026-05-17 (10 files, PUBLIC)"
+  cross_link = "직전 §HEXA-CPU-CONVERGE-D128-SUBSTRATE-BOUND-2026-05-17 (pure-hexa hexa-cpu d=128 PARTIAL substrate-bound) → 본 verdict (.py d=768·12L cycle 2 ckpt-RECOVERED HF canonical first artifact). PLAN.md §9 dual-track (.py interim ⇄ hexa-native long-term) 의 `.py` 측 cycle 1 evidence-only → cycle 2 ckpt-bearing canonical 완성. AGENTS.tape [@g_blue_closed_mandate] (A) + (B) anchor chain closure + [@g3] honest framing (NOT hexa-native, substrate label mandatory) + [@g_clm_from_scratch] RANDOM init seed-fixed + [@g_fire_autonomous] 자율 dispatch + [@g_fire_dispatch_robust] SAVE_POD auto-promote evidence + [@g_hf_naming] canonical revision template v1-py-hexad-d768x12L-cycle2-2026-05-17 첫 사용 + [@f1] [@f2] no-lattice all satisfied. cross-refs: 직전 cycle 1 (931dd68b0) ckpt-LOST evidence-only + Phase D cuBLAS verify (RFC 040 anchor) + Phase E/E2 GRAD-EXACT (RFC 040 anchor) + ConsciousDecoderV2 (ready/models/conscious_decoder.py) + HEXAD verification tree mirror."

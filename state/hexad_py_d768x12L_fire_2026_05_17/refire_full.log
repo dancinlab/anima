@@ -1,0 +1,103 @@
+  orphan-watchdog pid=10920 cap=60min
+=== refire MAIN on retained pod 36885232 ===
+Sat May 16 15:47:42 UTC 2026
+[a] verifying files present on pod...
+Warning: Permanently added '[ssh9.vast.ai]:15232' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+total 212
+drwxr-xr-x 4 root root    171 May 16 15:46 .
+drwxr-xr-x 1 root root     54 May 16 15:46 ..
+drwxr-xr-x 2 root root     47 May 16 15:46 __pycache__
+-rw-r--r-- 1 root root  40027 May 16 15:46 conscious_decoder.py
+-rw-r--r-- 1 root root 151943 May 16 15:46 corpus_consciousness_v1.jsonl
+-rw-r--r-- 1 root root     72 May 16 15:47 gpu_util.log
+drwxr-xr-x 2 root root     55 May 16 15:46 out_sanity
+-rw-r--r-- 1 root root   2799 May 16 15:46 sanity.log
+-rw-r--r-- 1 root root   8845 May 16 15:46 train_d768x12l.py
+[b] MAIN fire: d=768 n_layer=12, 2500 steps (writing a remote script then bash it — avoid && precedence parse issue)...
+Warning: Permanently added '[ssh9.vast.ai]:15232' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+-rwxr-xr-x 1 root root 365 May 16 15:47 /workspace/anima/run_main_refire.sh
+Warning: Permanently added '[ssh9.vast.ai]:15232' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+/workspace/anima/train_d768x12l.py:103: FutureWarning: `torch.cuda.amp.GradScaler(args...)` is deprecated. Please use `torch.amp.GradScaler('cuda', args...)` instead.
+  scaler = torch.cuda.amp.GradScaler(enabled=use_amp)
+{"step": 1, "ce": 5.590832, "gn2": 41.954096, "ppl": 267.9584, "lr": 2.4e-06, "wall_s": 0.62, "gpu_mem_gb": 7.455}
+{"step": 62, "ce": 1.206865, "gn2": 13.164413, "ppl": 3.343, "lr": 0.0001488, "wall_s": 8.45, "gpu_mem_gb": 9.685}
+{"step": 124, "ce": 0.341785, "gn2": 2.146192, "ppl": 1.4075, "lr": 0.0002976, "wall_s": 16.4, "gpu_mem_gb": 9.685}
+{"step": 186, "ce": 0.173157, "gn2": 1.524981, "ppl": 1.1891, "lr": 0.00029958, "wall_s": 24.33, "gpu_mem_gb": 9.685}
+{"step": 248, "ce": 0.097841, "gn2": 1.413775, "ppl": 1.1028, "lr": 0.00029825, "wall_s": 32.27, "gpu_mem_gb": 9.685}
+{"step": 310, "ce": 0.030892, "gn2": 0.422803, "ppl": 1.0314, "lr": 0.00029602, "wall_s": 40.21, "gpu_mem_gb": 9.685}
+{"step": 372, "ce": 0.041255, "gn2": 0.450662, "ppl": 1.0421, "lr": 0.00029292, "wall_s": 48.15, "gpu_mem_gb": 9.685}
+{"step": 434, "ce": 0.033906, "gn2": 0.223471, "ppl": 1.0345, "lr": 0.00028895, "wall_s": 56.1, "gpu_mem_gb": 9.685}
+{"step": 496, "ce": 0.047695, "gn2": 0.353457, "ppl": 1.0489, "lr": 0.00028415, "wall_s": 64.1, "gpu_mem_gb": 9.685}
+{"step": 558, "ce": 0.020114, "gn2": 0.172884, "ppl": 1.0203, "lr": 0.00027855, "wall_s": 72.06, "gpu_mem_gb": 9.685}
+{"step": 620, "ce": 0.014566, "gn2": 0.058952, "ppl": 1.0147, "lr": 0.00027219, "wall_s": 79.98, "gpu_mem_gb": 9.685}
+{"step": 682, "ce": 0.025661, "gn2": 0.15848, "ppl": 1.026, "lr": 0.00026511, "wall_s": 87.93, "gpu_mem_gb": 9.685}
+{"step": 744, "ce": 0.023868, "gn2": 0.264488, "ppl": 1.0242, "lr": 0.00025735, "wall_s": 95.87, "gpu_mem_gb": 9.685}
+{"step": 806, "ce": 0.007451, "gn2": 0.026058, "ppl": 1.0075, "lr": 0.00024897, "wall_s": 103.82, "gpu_mem_gb": 9.685}
+{"step": 868, "ce": 0.017099, "gn2": 0.261958, "ppl": 1.0172, "lr": 0.00024003, "wall_s": 111.76, "gpu_mem_gb": 9.685}
+{"step": 930, "ce": 0.012973, "gn2": 0.07323, "ppl": 1.0131, "lr": 0.00023058, "wall_s": 119.7, "gpu_mem_gb": 9.685}
+{"step": 992, "ce": 0.006344, "gn2": 0.021325, "ppl": 1.0064, "lr": 0.0002207, "wall_s": 127.68, "gpu_mem_gb": 9.685}
+{"step": 1054, "ce": 0.006736, "gn2": 0.034547, "ppl": 1.0068, "lr": 0.00021044, "wall_s": 135.64, "gpu_mem_gb": 9.685}
+{"step": 1116, "ce": 0.006654, "gn2": 0.031643, "ppl": 1.0067, "lr": 0.00019987, "wall_s": 143.59, "gpu_mem_gb": 9.685}
+{"step": 1178, "ce": 0.009668, "gn2": 0.159971, "ppl": 1.0097, "lr": 0.00018907, "wall_s": 151.52, "gpu_mem_gb": 9.685}
+{"step": 1240, "ce": 0.005288, "gn2": 0.015167, "ppl": 1.0053, "lr": 0.0001781, "wall_s": 159.45, "gpu_mem_gb": 9.685}
+{"step": 1302, "ce": 0.009415, "gn2": 0.111453, "ppl": 1.0095, "lr": 0.00016705, "wall_s": 167.37, "gpu_mem_gb": 9.685}
+{"step": 1364, "ce": 0.006533, "gn2": 0.012544, "ppl": 1.0066, "lr": 0.00015599, "wall_s": 175.29, "gpu_mem_gb": 9.685}
+{"step": 1426, "ce": 0.003152, "gn2": 0.001513, "ppl": 1.0032, "lr": 0.00014498, "wall_s": 183.22, "gpu_mem_gb": 9.685}
+{"step": 1488, "ce": 0.003501, "gn2": 0.023404, "ppl": 1.0035, "lr": 0.00013411, "wall_s": 191.2, "gpu_mem_gb": 9.685}
+{"step": 1550, "ce": 0.004571, "gn2": 0.005108, "ppl": 1.0046, "lr": 0.00012345, "wall_s": 199.12, "gpu_mem_gb": 9.685}
+{"step": 1612, "ce": 0.00573, "gn2": 0.038875, "ppl": 1.0057, "lr": 0.00011307, "wall_s": 207.05, "gpu_mem_gb": 9.685}
+{"step": 1674, "ce": 0.002691, "gn2": 0.058011, "ppl": 1.0027, "lr": 0.00010304, "wall_s": 214.99, "gpu_mem_gb": 9.685}
+{"step": 1736, "ce": 0.000825, "gn2": 0.0008, "ppl": 1.0008, "lr": 9.342e-05, "wall_s": 222.91, "gpu_mem_gb": 9.685}
+{"step": 1798, "ce": 0.006549, "gn2": 0.002675, "ppl": 1.0066, "lr": 8.428e-05, "wall_s": 230.83, "gpu_mem_gb": 9.685}
+{"step": 1860, "ce": 0.002613, "gn2": 0.007093, "ppl": 1.0026, "lr": 7.569e-05, "wall_s": 238.75, "gpu_mem_gb": 9.685}
+{"step": 1922, "ce": 0.001227, "gn2": 0.000148, "ppl": 1.0012, "lr": 6.77e-05, "wall_s": 246.7, "gpu_mem_gb": 9.685}
+{"step": 1984, "ce": 0.002414, "gn2": 0.067402, "ppl": 1.0024, "lr": 6.036e-05, "wall_s": 254.62, "gpu_mem_gb": 9.685}
+{"step": 2046, "ce": 0.000306, "gn2": 0.000319, "ppl": 1.0003, "lr": 5.372e-05, "wall_s": 262.54, "gpu_mem_gb": 9.685}
+{"step": 2108, "ce": 0.001254, "gn2": 8.5e-05, "ppl": 1.0013, "lr": 4.783e-05, "wall_s": 270.47, "gpu_mem_gb": 9.685}
+{"step": 2170, "ce": 0.005212, "gn2": 0.001162, "ppl": 1.0052, "lr": 4.273e-05, "wall_s": 278.39, "gpu_mem_gb": 9.685}
+{"step": 2232, "ce": 0.002163, "gn2": 0.000556, "ppl": 1.0022, "lr": 3.846e-05, "wall_s": 286.33, "gpu_mem_gb": 9.685}
+{"step": 2294, "ce": 0.00385, "gn2": 0.004962, "ppl": 1.0039, "lr": 3.503e-05, "wall_s": 294.26, "gpu_mem_gb": 9.685}
+{"step": 2356, "ce": 0.001163, "gn2": 0.000136, "ppl": 1.0012, "lr": 3.248e-05, "wall_s": 302.21, "gpu_mem_gb": 9.685}
+{"step": 2418, "ce": 0.001497, "gn2": 0.000111, "ppl": 1.0015, "lr": 3.081e-05, "wall_s": 310.14, "gpu_mem_gb": 9.685}
+{"step": 2480, "ce": 0.001133, "gn2": 0.000384, "ppl": 1.0011, "lr": 3.005e-05, "wall_s": 318.12, "gpu_mem_gb": 9.685}
+{"step": 2500, "ce": 0.000708, "gn2": 7.4e-05, "ppl": 1.0007, "lr": 3e-05, "wall_s": 320.68, "gpu_mem_gb": 9.685}
+RESULT_JSON_WRITTEN
+{"init_ce": 5.590832, "final_ce": 0.000708, "ce_descent": 5.590124, "wall_s": 320.68, "n_params_M": 283.72}
+DONE_MARKER rc=0
+[c] Verify result.json then SAVE_POD auto-promote + pull retry >=5...
+  result.json present -> SAVE_POD=1 auto-promote
+  pull attempt 1/5...
+Warning: Permanently added '[ssh9.vast.ai]:15232' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+Warning: Permanently added '[ssh9.vast.ai]:15232' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+Warning: Permanently added '[ssh9.vast.ai]:15232' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+  ckpt pull OK (try 1)
+  ckpt sha256: e87e200a040f8066a89c040ab181e9bbd61566f7565ab5d7a374ec2f1f9387d9
+  ckpt size: 1135846378 bytes
+  PULL SUCCESS -> safe to destroy
+[d] Done. teardown via trap (SAVE_POD=0).
+Sat May 16 15:58:14 UTC 2026
+total 2228752
+drwxr-xr-x@  4 ghost  staff         128 May 17 00:53 .
+drwxr-xr-x@ 16 ghost  staff         512 May 17 00:53 ..
+-rw-r--r--@  1 ghost  staff  1135846378 May 17 00:58 ckpt_d768x12l_final.pt
+-rw-r--r--@  1 ghost  staff        8642 May 17 00:53 result.json
+[cleanup] destroying 36885232
+destroying instance 36885232.
+refire_main.sh: line 35: 10920 Terminated: 15          ( PARENT_PID=$$; for _ in $(seq 1 $WATCHDOG_MIN);
+do
+    sleep 60; if ! kill -0 $PARENT_PID 2> /dev/null; then
+        echo "[watchdog] parent died, destroying $IID" >> "$LOCAL_DIR/watchdog_refire.log"; $VASTAI destroy instance "$IID" >> "$LOCAL_DIR/watchdog_refire.log" 2>&1; exit 0;
+    fi;
+done; echo "[watchdog] ${WATCHDOG_MIN}min cap hit, force-destroying $IID" >> "$LOCAL_DIR/watchdog_refire.log"; $VASTAI destroy instance "$IID" >> "$LOCAL_DIR/watchdog_refire.log" 2>&1 )
