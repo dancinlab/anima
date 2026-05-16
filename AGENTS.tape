@@ -47,7 +47,16 @@
 @V v1 := "tape" :: spec [active]
   version = "1.2"
 
-# ─── §0 검증 최상위 표준 — TOP MANDATE ────────────────────────────────
+# ─── §0 TOP MANDATE — 자원 사용 + 검증 ────────────────────────────────
+
+@D g_resource_active_parallel := "자원 사용 최상위 — runpod 적극 활용 · 병렬 우선 · wall time first" :: governance [required d=2026-05-16 active]
+  rule = "cost-bearing GPU/cloud fire 에서 **wall time 단축은 mission outcome 의 핵심** — 자원 활용은 적극(active), 가능하면 **병렬(parallel) 우선**. 단일 인스턴스 직렬 대기는 default 거부. 직렬 줄세움이 가장 비싼 옵션."
+  providers = "vast.ai + **runpod 적극 활용** (RTX 4090 · A100 · H100 즉시 가용·가격 경쟁). 한 provider 가 슬롯/가격/리전 차원에서 막히면 **즉시 다른 provider 시도** — 둘 다 동등하게 적극 사용 (single-provider lock-in 거부)."
+  parallel_priority = "병렬 fire 우선 — 다른 scale/seed/GPU 조합 **동시 dispatch** (independent trajectory · safety net · wall time hide). 작은 fire 가 중간에 baseline 확보 ↔ 큰 fire 가 honest-gap 직격. 두 fire 의 wall time 은 max(t₁,t₂) 이지 t₁+t₂ 아님."
+  wall_time_first = "추정 cost head 투명 명시 (g_fire_autonomous carry, 정보 제공이지 게이트 아님). conservative cost cap = floor (제한 아님, feedback_no_scale_caps). cost 보다 **wall time 손실**이 더 비싼 자원 — '돈 아끼려 직렬 대기' = anti-pattern."
+  why = "user directive 2026-05-16 'wall time 단축을 위해서 runpod 적극 활용 · 병렬 우선' + 반복된 '병렬 가능은 병렬' · 'fire fire fire' · '병렬GPU 허용'."
+  cross_link = "g_fire_autonomous (§3) — 자율 dispatch 근거 · g_fire_dispatch_robust — SAVE_POD/scp retry 안전장치 · feedback_active_resource_utilization · feedback_no_scale_caps"
+  @> CLAUDE.md
 
 @D g_blue_closed_mandate := "모든 산출물 + 연결부위 🔵 closed 검증 기준" :: governance [required d=2026-05-16 active]
   rule = "anima HEXAD 의 모든 산출물(impl·verification)과 **기존 HEXAD 와의 연결부위(connection point / wiring)** 는 🔵 SUPPORTED-FORMAL closed-form 기준으로 검증·통과되어야 한다. 구조(structural)·empirical 검증만으로는 불충분 — 각 산출물·연결의 수학·물리 invariant 가 closed-form 으로 증명(g_verdict_tier_blue)되고 그 falsifier 가 PASS 여야 한다."
