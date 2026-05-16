@@ -338,3 +338,49 @@ safetensors-mmap compiled decl 추가 (RFC-034-class trivial). RFC 035/036
 상태: R1 split = **structural LANDED** (chat_lib NO-main pure lib 존재·parse
 clean, R2 구조적 prerequisite 충족). R2 compiled = hexa-lang
 `hexa_safetensors_mmap_data_offset` decl land 대기 (named blocker).
+
+### 2026-05-16 — Phase 5 pure-hexa from-scratch D TRAINING LANDED (compiled-native)
+
+사용자 게이트 "(a) Phase 5". **핵심 insight**: Phase 5 = D training
+**from-scratch** (AGENTS.tape `g_clm_from_scratch`: init=RANDOM seed-fixed,
+base_ckpt=NONE) ⟹ ckpt load 不要 ⟹ R2 의 `hexa_safetensors_mmap` named
+blocker 가 **구조적으로 무관** (그건 inference-parity wire 의 blocker, training
+아님). 즉 Phase 5 는 R2 blocker 와 독립적으로 executable.
+
+RFC 034 (hexa-lang reverse-mode AD) = **pure-hexa Wengert tape**
+(`self/test_autograd.hexa` leaf/add/mul/backward) — C intrinsic 아님 ⟹
+compiled-native 안전, inline 가능 (sanctioned "codegen import 없이 검증"
+패턴). safetensors blocker 와 무관 class.
+
+**LANDED 산출물** (compiled-first lib-split):
+- `HEXAD/D/d_train_lib.hexa` — pure: RFC 034 tape inlined (dt_mk_tape/leaf/
+  add/mul/backward) + range-reduced dt_exp (stable softmax) + dt_softmax2/
+  dt_ce2 + **B-D-4 closed d/d_logit = softmax−onehot** (재사용, 재증명 X) +
+  dt_grad_W (chain: B-D-4 × tape reverse) + dt_epoch_{ce,gn2,acc} (top-level;
+  compiled codegen 은 nested FnDecl 거부 → 명시적 XS/YS param, no closure).
+- `HEXAD/D/d_train_smoke.hexa` — entry: RANDOM seed-fixed LCG init (4-weight
+  2→2 linear D head, base_ckpt=NONE) → 60-step AdamW(decoupled wd) on
+  deterministic separable toy.
+
+**F-D-PORT-2 TRAINABILITY-EMPIRICAL** (PLAN Phase 5 pre-reg) — compiled
+binary: gn2(‖softmax−onehot‖²) **1.01783 → 1.89532e-05 (≈53000× collapse)**,
+acc 4/4, F-D-PORT-2b GRAD-EXACT (tape dy/da=b=4·dy/db=a=3 exact, RFC 034
+self/test_autograd 5/5 mirror) ✅ → **selftest: true**. TIER=**EMPIRICAL**
+(B-D-NOTE 패턴 — SGD 수렴 OUTCOME, NOT closed-form, NOT 🔵). trainability
+PROPERTY 은 B-D-4 🔵 (별개, blue_falsifier). honest C3: Taylor-CE 절대값
+numerically noisy(초기 음수 관측) → criterion 에서 제외, robust gn2-collapse+
+argmax-acc 로 판정 (softmax=range-reduced exp ratio, no ln). 사용자 'acc 개선
+필수' 아님 — seed init 이 우연히 argmax-correct 가능, LEARNING 은 margin/
+confidence ⟹ gn2→0.
+
+**build_verify gate**: ENTRYPOINTS 11→12 (+d_train_smoke) · LIBS 9→10
+(+d_train_lib) → **12/12 + 10/10 compiled-native PASS** ("ALL COMPILED-NATIVE
+PASS — interp-deprecation safe"). Python batteries(blue 22/22 · we 25/25 ·
+integ 5/5) = hexa-only additive 라 영향 없음 (anchor 불변).
+
+상태: **Phase 5 (pure-hexa from-scratch D training) LANDED** — compiled-native,
+$0 Mac, deterministic, R2 safetensors blocker 와 독립. 잔여: (i) toy 4-weight
+→ 실 D arch(d=768·12L) scale-up = 별도 heavy cycle(ubu/GPU); (ii) Phase 6
+6-module 통합 fire = cost-bearing 사용자 게이트; (iii) R2 inference-parity
+wire = 여전히 hexa-lang `hexa_safetensors_mmap` decl 대기(별개 named item,
+Phase 5 와 무관).
