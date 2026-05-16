@@ -1,0 +1,15 @@
+================================================================
+integ_train_smoke — Phase 6 6-module+Bridge forward+train (F-INTEG-FULL)
+================================================================
+[p6-trace] steps=60 fired_all=true mito_live=true min_cells=2 gn2_0=3.20471 gn2_1=0.0160179
+  F-INTEG-FULL-1 SINGLE-FORWARD-WIRED  : true
+  F-INTEG-FULL-2 GRADIENT-BARRIER-CLEAN: true  (Ψ/coupling/d_model const, only W_d mutated)
+  F-INTEG-FULL-3 SCRATCH-INIT-SEED-FIXED: true
+  F-INTEG-FULL-4 MITOSIS-WIRING-LIVE   : true  (min n_cells=2 ≥ 2)
+  F-INTEG-FULL-5 CE-DESCENT            : true  (gn2 3.20471 → 0.0160179)
+----------------------------------------------------------------
+  F-INTEG-FULL 5/5  (TIER=EMPIRICAL — B-D-NOTE:
+  CE-descent = SGD OUTCOME, NOT 🔵; trainability=B-D-4 🔵 별개)
+  fire-gate (real-scale GPU = autonomous, g_fire_autonomous): true
+  selftest: true
+================================================================

@@ -90,8 +90,60 @@ for lib in "${LIBS[@]}"; do
   fi
 done
 
+# ── Phase 6 integ_train_smoke — TWO-TIER (needs ≥PR#51 codegen) ─────────────
+# integ_train_smoke.hexa parses clean but its mitosis_hook_lib cell_pool
+# deep-nested mutation requires hexa-lang PR#51
+# (_gen2_nested_index_assign_stmt). The system prebuilt hexa.real has the
+# OLD codegen → 4× "expression is not assignable". Gating it into the
+# default loop would make the gate red for unrelated work (same situation
+# build_verify documents for chat_lib R2). So: SKIP-WITH-WARNING by
+# default; only enforced under HEXA_P6_BOOT=<bootstrap-hexa-shim-dir>
+# (a /tmp PR#51-bootstrapped toolchain — see
+# docs/anima_hexad_p6_fire_2026_05_16.md §2). Never silently green.
+# Honest decomposition (doc §2): bare `hexa build` cannot flatten the
+# HEXAD import graph (module_loader needs an interpreter; the bootstrap
+# worktree's regenerated hexa_full has separate runtime drift). So:
+#   (1) FLATTEN imports → single .hexa via the SHARED interpreter
+#       ($HEXA_P6_INTERP, no codegen involved) + bootstrap module_loader
+#   (2) CODEGEN single .hexa → C via the PR#51 bootstrap hexa_v2
+#   (3) clang + the bootstrap worktree's runtime.o
+# This isolates the PR#51 fix to exactly the codegen step.
+P6_SMOKE="HEXAD/integ_train_smoke.hexa"
+P6_BOOT="${HEXA_P6_BOOT:-}"
+P6_INTERP="${HEXA_P6_INTERP:-/Users/ghost/core/hexa-lang/build/hexa_interp.real}"
+if [ -n "$P6_BOOT" ] && [ -x "$P6_BOOT/self/native/hexa_v2" ] \
+   && [ -f "$P6_BOOT/self/runtime.o" ] && [ -x "$P6_INTERP" ] \
+   && [ -f "$P6_BOOT/self/module_loader.hexa" ]; then
+  echo "=== Phase 6 integ_train_smoke (HEXA_P6_BOOT=$P6_BOOT) ==="
+  P6_FLAT="/tmp/p6_bv_flat.hexa"; P6_C="/tmp/p6_bv_flat.c"
+  P6_BIN="$BUILD_DIR/p6_integ_train_smoke"
+  {  HEXA_LANG="$P6_BOOT" "$P6_INTERP" "$P6_BOOT/self/module_loader.hexa" \
+        "$(pwd)/$P6_SMOKE" "$P6_FLAT" \
+     && "$P6_BOOT/self/native/hexa_v2" "$P6_FLAT" "$P6_C" \
+     && clang -O2 -fno-strict-aliasing -std=c11 -Wno-trigraphs \
+          -I "$P6_BOOT/self" "$P6_C" "$P6_BOOT/self/runtime.o" \
+          -o "$P6_BIN" -Wl,-stack_size,0x4000000 \
+     && codesign --force --sign - "$P6_BIN" ; } >/tmp/hexad_p6.log 2>&1
+  if [ -x "$P6_BIN" ] \
+     && timeout 120 "$P6_BIN" >/tmp/hexad_p6_run.log 2>&1 \
+     && grep -qE "F-INTEG-FULL 5/5|selftest: true" /tmp/hexad_p6_run.log \
+     && ! grep -q "is not assignable" /tmp/hexad_p6.log; then
+    echo "  ✅ $P6_SMOKE (F-INTEG-FULL 5/5, PR#51 codegen — 0 'is not assignable')"
+  else
+    echo "  ❌ $P6_SMOKE (HEXA_P6_BOOT enforced — see /tmp/hexad_p6*.log)"
+    grep -iE 'error:|not assignable|F-INTEG-FULL [0-4]/5' /tmp/hexad_p6.log /tmp/hexad_p6_run.log 2>/dev/null | head -3
+    failed="$failed $P6_SMOKE"
+  fi
+else
+  echo "=== Phase 6 integ_train_smoke: SKIPPED (needs ≥PR#51 codegen) ==="
+  echo "  ⚠ system hexa.real has stale codegen (4× 'is not assignable')."
+  echo "  ⚠ NOT a regression — set HEXA_P6_BOOT=<bootstrap-hexa-dir> to enforce."
+  echo "  ⚠ evidence: docs/anima_hexad_p6_fire_2026_05_16.md §3 ($0 5/5 LANDED)"
+fi
+
 echo "=== compiled: entrypoint ${ep_pass}/${#ENTRYPOINTS[@]} PASS · lib ${lib_ok}/${#LIBS[@]} build OK ==="
-if [ "$ep_pass" -eq "${#ENTRYPOINTS[@]}" ] && [ "$lib_ok" -eq "${#LIBS[@]}" ]; then
+if [ "$ep_pass" -eq "${#ENTRYPOINTS[@]}" ] && [ "$lib_ok" -eq "${#LIBS[@]}" ] \
+   && [ -z "${failed# }" ]; then
   echo "ALL COMPILED-NATIVE PASS — interp-deprecation safe."
   exit 0
 fi

@@ -895,10 +895,13 @@ fn mitosis_forward_tail(x_in, cell_pool, step: int) {
             let rep_b = cell_results[b]["repulsion"]
             let ict = _mit_inter_tension(rep_a, rep_b)
             let key = _mit_pair_key(id_a, id_b)
-            // void-safe lookup: hexa returns void for missing dict keys; "void"
-            // string-stringify is the cheapest existence check available.
-            let existing = cell_pool["inter_tension_history"][key]
-            let mut hist = if to_string(existing) == "void" { [] } else { existing }
+            // compiled-native-safe existence check: the interpreter returns
+            // `void` for a missing dict key, but the compiled runtime aborts
+            // with "map key '<k>' not found" (runtime.c:2333). Use .has_key()
+            // (→ hexa_map_contains_key) which is identical under both backends.
+            let mut hist = if cell_pool["inter_tension_history"].has_key(key) {
+                cell_pool["inter_tension_history"][key]
+            } else { [] }
             hist.push(ict)
             if len(hist) > 30 {
                 let mut keep3 = []
