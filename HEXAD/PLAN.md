@@ -13,12 +13,12 @@
 
 | 모듈 | 현재 상태 | 비고 |
 |---|---|---|
-| **S/M/W/E/BRIDGE** | ✅ 🔵 SUPPORTED-FORMAL + compiled-native lib-split | B-X closed-form witness; `build_verify.sh` 16/16 entrypoint + 13/13 lib PASS (6 CHAT skip — stale toolchain) |
+| **S/M/W/E/BRIDGE** | ✅ 🔵 SUPPORTED-FORMAL + compiled-native lib-split | B-X closed-form witness; `build_verify.sh` 17/17 entrypoint + 13/13 lib PASS (6 CHAT skip — stale toolchain) |
 | **C** | ✅ contract + Phase 4 Φ LANDED | `c_lib.hexa` `c_state_contract()` + F-C-PORT-1; **Phase 4 `c_measure_phi` → RFC 036 `phi_spatial` (F-C-PORT-3 4/4)**; mitosis = `tool/hexa_native/mitosis_hook.hexa` 1119L FULL IMPL; full 12-faction GRU 동역학 = Phase 2-GRU (RFC terminal) |
 | **D** | ✅ Phase 1 + Phase 5 LANDED | `d_lib.hexa` inference contract (24L 21/21 byte-parity) + pure-hexa from-scratch training (RFC 034 farr autograd, gn2 collapse ≈53000×) |
 | **통합** | ✅ Phase 6 통합 fire LANDED | 6-module+Bridge single-hexa-process forward+train, $0 de-risk 5/5 + 실-규모 자율 fire 5/5 (vast.ai, $0.09) |
 
-evidence anchors (보존, 변경 X): `state/verify_hexad_we_2026_05_15/` 25/25 ✅ + `state/verify_hexad_blue_2026_05_15/` **22/22** 🔵 (PR #75/#76 + BRIDGE 추가) + `state/verify_hexad_integ_2026_05_16/` Python harness 5/5 fire-gate=true (PR #77) + `state/hexad_p6_fire_2026_05_16/` Phase 6 실-규모 fire 5/5 + `HEXAD/` hexa-native tree compiled-native 16/16+13/13 PASS (6 CHAT skip — stale toolchain, NOT denominator).
+evidence anchors (보존, 변경 X): `state/verify_hexad_we_2026_05_15/` 25/25 ✅ + `state/verify_hexad_blue_2026_05_15/` **22/22** 🔵 (PR #75/#76 + BRIDGE 추가) + `state/verify_hexad_integ_2026_05_16/` Python harness 5/5 fire-gate=true (PR #77) + `state/hexad_p6_fire_2026_05_16/` Phase 6 실-규모 fire 5/5 + `HEXAD/` hexa-native tree compiled-native 17/17+13/13 PASS (6 CHAT skip — stale toolchain, NOT denominator).
 
 ## 1. Gap 분석 — C/D 가 "scaffold" 인 이유
 
@@ -141,15 +141,15 @@ Phase N 진입 = 이 PLAN.md `## 진행 로그` 섹션에 entry append + tape SS
 |---|---|---|---|
 | **1** | 실-규모 언어 fire — D-arch d=768·12L 실 corpus 학습 | heavy GPU cycle (`g_fire_autonomous` 자율 dispatch) | PLAN CLOSURE 잔여 (i); 전 fire honest C3 ('no language-quality claim') 해소 |
 | ~~2~~ | ~~Phase 4 — IIT Φ FFI~~ → ✅ **LANDED 2026-05-16** | 이 사이클 완료 — RFC 036 (hexa-lang main `d67403d3`) 이미 LANDED 발견 + anima-side `c_measure_phi` wire + F-C-PORT-3 4/4 | 진행 로그 2026-05-16 |
-| **3** | anima-side TODO[pytorch] 잔여 (🔄 진행 중) | $0~저비용 — ✅ **BRIDGE full-forward graph COMPLETE** (`bridge_forward` compress→attn+LN→pool→expand→gate→clamp, F-BRIDGE-FWD 4/4, 2026-05-16; trained-weight carve-out만 잔존); 잔여 = E 통합 gate `trinity.hexa:122` | INDEX.md '잔여 anima-side'; B-BRIDGE-NOTE / B-E NOTE |
+| ~~3~~ | ~~anima-side TODO[pytorch] 잔여~~ → ✅ **LANDED 2026-05-16** | BRIDGE full-forward graph (`bridge_forward`, F-BRIDGE-FWD 4/4) + E 통합 ethics gate (`e_gate_step` Φ-ratchet, F-E-GATE 6/6) 모두 hexa-native LANDED — anima-side TODO[pytorch] 잔여 0 | 진행 로그 2026-05-16 |
 | **4** | R2 hexa-safetensors wire | hexa-native safetensors loader → ckpt Python torch 의존 제거 | PLAN CLOSURE 잔여 (iii) |
 | **5** | `.sh` bash → hexa 포팅 | $0 — `HEXAD/build_verify.sh` (245 L, PR 검증 게이트) + `CHAT/tool/anima_chat_optimal.sh` + `VOICE/tool/anima_voice_play.sh` → hexa-native (process spawn / popen). user directive 2026-05-16 ".sh bash 도 hexa 포팅" — '코드는 hexa-native' + '인터프리터 폐기중' 일관 | user directive 2026-05-16 |
 | — | Phase 2-GRU full / Phase 3 parity | 🔒 hexa-lang nn-primitive RFC terminal (미제출) — anima 게이트 X | §3 Phase 2/3 |
 
 honest C3: 위 menu 의 우선순위는 미고정 — 사용자 선택 게이트. 후보 1 이
-honest-gap 직격이나 heavy; 후보 3 은 저비용 carve-out 축소; 후보 5 (.sh→hexa)
+honest-gap 직격이나 heavy; 후보 3 은 ✅ 완료 (2026-05-16); 후보 5 (.sh→hexa)
 는 $0 tooling — build_verify.hexa 는 자기 자신을 build 하는 부트스트랩 순서
-주의 (canonical gate 는 전환 완료까지 .sh 병존).
+주의 (canonical gate 는 전환 완료까지 .sh 병존). /loop 잔여 = #5 → #4 → #1.
 
 ## 진행 로그
 
@@ -912,3 +912,35 @@ E trinity.hexa:122. 다음 완성도-순위 = #3 마무리 → #4 R2 → #1 fire
 문서: bridge_lib.hexa header · bridge_forward_smoke honest line ·
 HEXAD-BRIDGE.tape (bridge_forward_verify + B-BRIDGE-NOTE — "named residual"
 → graph COMPLETE) · §7 #3 row. 다음 완성도-순위: #3 E trinity → #4 R2 → #1 fire.
+
+### 2026-05-16 — §7 #3 COMPLETE: E 통합 ethics gate LANDED + hexa-lang fix → main
+
+`/loop` iteration 3 — §7 #3 마무리. E 통합 ethics gate enforcement (trinity.
+hexa:122 TODO[pytorch]) 구현 → §7 #3 anima-side TODO[pytorch] 잔여 **0**.
+
+**E 통합 ethics gate hexa-native LANDED** (`e_lib.hexa`):
+- `e_ratchet_tier(phi,ratchet)` — Φ-ratchet decline tier 0..4 (Python
+  `_phi_ratchet_check` Law 31 분기 미러: NEW_BEST/NEAR_BEST/HEALTHY/
+  MODERATE/SEVERE) · `e_gate_step(phi,ratchet)` — train-step block
+  (ALLOW ⟺ NOT SEVERE collapse) · `e_ratchet_update` — floor 단조 비감소.
+- `HEXAD/E/e_gate_smoke.hexa` (NEW entrypoint) — **F-E-GATE 6/6 PASS**:
+  BUILD · ALLOW-HEALTHY · BLOCK-SEVERE · RATCHET-MONO · TIER-EXACT ·
+  GATE≡B-E-1 (80-point sweep).
+- 핵심 insight: e_gate_step 의 BLOCK 경계 `phi < ratchet/2` 가 B-E-1
+  SAFETY gate (sympy closed-form 🔵) 와 **정확 동치** — 통합 gate 가
+  closed-form 🔵 anchor 상속 (trained weight 없음, 순수 logic).
+- build_verify **17/17 entrypoint + 13/13 lib PASS**.
+
+**hexa-lang farr-table realloc 버그 — main 머지** (iteration 2 carry):
+iteration 2 의 fix 는 branch `fix/farr-table-realloc-dangling-ptr` 에만
+있었고, hexa-lang working tree 가 동시 에이전트에 의해 `main` 으로 전환 →
+`hexa build` 가 buggy runtime 사용 → bridge_forward_smoke 재-segfault 발견.
+fix 를 hexa-lang `main` 에 cherry-pick (`e74852cc`) + push (rebase 후) —
+working tree 가 main 이므로 영구 반영. bridge_forward_smoke 5/5 안정 확인.
+교훈: hexa-lang working tree 는 main 이 canonical — 수정은 main 에.
+
+문서: e_lib.hexa header + e_gate_step/tier/update · HEXAD-E.tape (@D
+e_gate_verify 신설 + status/residual/mandate TODO→LANDED) · INDEX.md
+(E row + 전모듈 para — E·BRIDGE TODO 해소) · README.md (§검증 🌉 BRIDGE
++ ⚖️ E gate) · build count 16→17 · §7 #3 ~~3~~ DONE. /loop 잔여 완성도-순위
+= #5 (.sh→hexa) → #4 (R2 wire) → #1 (실-규모 fire).

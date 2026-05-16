@@ -18,7 +18,7 @@
 #
 # Usage:  bash HEXAD/build_verify.sh        # build+run all, assert PASS
 # Two tiers (honest, see TOOLCHAIN below):
-#   • always-gated (stale-toolchain-clean): 16 entrypoints + 13 libs.
+#   • always-gated (stale-toolchain-clean): 17 entrypoints + 13 libs.
 #     Exit 0 requires all of these PASS — unrelated work never blocked.
 #   • bootstrapped-toolchain-gated (chat_lib in import closure): the
 #     CHAT/D-R2 set {chat_lib, anima_chat, d_lib, d, integ_test}. These
@@ -52,7 +52,7 @@
 #
 # Without HEXA_BOOT the gate probes the system `hexa` for the codegen fix;
 # if absent, the 2 CHAT targets are reported `⏭  SKIP (stale toolchain …)`
-# and EXCLUDED from the pass-count denominator. The other 16/13 still gate
+# and EXCLUDED from the pass-count denominator. The other 17/13 still gate
 # normally, so unrelated work is never blocked or falsely greened.
 
 set -u
@@ -104,6 +104,7 @@ fi
 ENTRYPOINTS=(
   "HEXAD/S/s.hexa"          "HEXAD/M/m.hexa"        "HEXAD/W/w.hexa"
   "HEXAD/E/e.hexa"          "HEXAD/BRIDGE/bridge.hexa"
+  "HEXAD/E/e_gate_smoke.hexa"
   "HEXAD/BRIDGE/bridge_forward_smoke.hexa"
   "HEXAD/C/c.hexa"
   "HEXAD/C/c_phi_smoke.hexa"
