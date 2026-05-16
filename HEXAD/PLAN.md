@@ -456,3 +456,46 @@ cross-attn / 멀티블록 깊이 = 본 milestone **제외** — C 는 비선형 
 코어의 pure-hexa analytic backprop 을 d_model-generic 으로 입증. 전 12L
 ConsciousDecoderV2 + attention vjp registry = #45 (B) RFC급 cycle (C→B
 bridge 명시). 상태: **Phase 5 (1) C LANDED**.
+
+### 2026-05-16 — Phase 5 (1) B-milestone: causal softmax-attention exact vjp LANDED + B-closure (정직)
+
+"모두 시도" B. C(#44) 가 linear/RMSNorm/SwiGLU/residual/B-D-4-head vjp 입증
+완료 ⟹ 풀 ConsciousDecoderV2 의 **유일 미입증 backward primitive = causal
+scaled-dot softmax SELF-ATTENTION vjp**. 이 milestone 이 그것을 입증.
+
+**산출** (compiled-first lib-split, branch feat/phase5-b-attn-vjp-…):
+- `HEXAD/D/d_train4_lib.hexa` — pure: c4_softmax_row, c4_forward (Q/K/V=
+  X·Wᵀ, S=QKᵀ/√d, causal mask, row-softmax, ctx=ΣPV, out=ctx·Woᵀ, last-pos
+  B-D-4 head), **c4_grad = EXACT 전체 reverse**: head(B-D-4 closed 🔵) →
+  Wo linear vjp → ctx (dP=dctx·V, dV+=ΣP·dctx) → **softmax row Jacobian
+  dS=P·(dP−ΣP·dP)** (the new primitive, diag(P)−PPᵀ) → scores (dQ+=ΣdS·K/√d,
+  dK+=ΣdS·Q/√d) → Wq/Wk/Wv linear vjp. d_train3_lib import 재사용(DRY).
+- `HEXAD/D/d_train4_smoke.hexa` — entry, dim-generic, TINY T=3·d=4·V=4.
+
+**F-D-PORT-4 (compiled binary)**: gn2 **5.99976 → 6.87e-15** (전 attention
+analytic chain 150 AdamW), acc **2/8 → 8/8**, **F-D-PORT-4b GRAD-EXACT
+Wq[5] analytic vs 중심차분 |Δ|=5.0e-13** (손유도 softmax-attention vjp =
+machine precision) → **selftest: true**. TIER = **EMPIRICAL** (B-D-NOTE;
+NOT 🔵 — g3).
+
+**build_verify**: ENTRYPOINTS 14→15 · LIBS 12→13 → **15/15 + 13/13
+compiled-native PASS**.
+
+**B-closure (정직, D 흡수 — over-claim 0, g3)**: ConsciousDecoderV2 의 **전
+backward primitive 클래스가 이제 개별적으로 pure-hexa compiled-native exact
+입증됨** — linear (A #43 + C #44), RMSNorm·SwiGLU·residual·B-D-4-head
+(C #44), causal softmax-attention (B-milestone #45); embedding = trivial
+scatter-add, RoPE = orthogonal-rotation (vjp = 역회전, trivial closed).
+**남은 것은 새 수학이 아니라 mechanical 조립**: 12-layer 깊이 chaining +
+GQA/cross-attn linear-vjp bookkeeping + tokenized-seq CE + 실 d=768·12L
+규모 학습 = **named heavy cycle** (ubu `ssh ubu 'cd ~/Dev/anima && hexa
+build'` 또는 GPU dispatch; Mac=tiny formulaic 한정). 이 cycle 은 fake
+하지 않고 명시 — "전 primitive 입증, 풀 조립 = 별도 mechanical cycle"
+(NOT "12L trains"). 모든 tier = EMPIRICAL (B-D-NOTE); trainability
+PROPERTY = B-D-4 🔵 별개 (blue_falsifier, 불변).
+
+**Phase 5 (1) "모두 시도" 종합**: A(#43 실-d_model head)·C(#44 비선형
+블록)·B-milestone(#45 attention vjp) **3/3 LANDED compiled-native $0 Mac**,
+전 vjp 클래스 입증. 풀 12L 실-규모 = 명시 ubu/GPU cycle. (2) Phase 6
+6-module 통합 fire = cost-bearing 사용자 게이트(#46, 별도). R2 PR #102
+별개(미손댐).
