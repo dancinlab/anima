@@ -258,7 +258,7 @@ anima-side **RFC-무관** 작업은 전부 LANDED. 잔여는 hexa-lang RFC land 
 | Phase 3 C↔Python parity | Phase 2 full 의존 | ↑ |
 | Phase 4 Φ FFI | phi_rs Rust FFI byte-equal | **RFC 036** (RFC 034 Roadmap 명시, 미제출) |
 | ~~Phase 5 D training~~ | reverse-mode AD (CE+AdamW) | ✅ **RFC 034 LANDED** `8793a221` (hexa-lang stage2-verify, compiled 5/5: GRAD-EXACT B-D-4 max\|Δ\|=0.0 · LOSS 1.642→0.228 86%↓ · deterministic). **UNBLOCKED 2026-05-16** → Phase 5 executable (잔여 = anima_chat lib-split + ad_* → HEXAD/D wire + compiled train smoke; RFC-무관 anima-side cycle) |
-| Phase 6 통합 fire | Phase 1-5 + GPU $1-5 | Phase 5 wire 후 재게이트 (cost-bearing 사용자 게이트) |
+| Phase 6 통합 fire | Phase 1-5 + GPU $1-5 | **병렬 허용 (parallel-allowed, autonomous; AGENTS.tape `g_fire_parallel_allowed` 2026-05-16)** — per-fire verbatim 게이트 폐기, 추정비용 명시 후 dispatch. robustness = `g_fire_dispatch_robust` mandatory |
 
 ### PLAN 상태
 
@@ -499,3 +499,19 @@ PROPERTY = B-D-4 🔵 별개 (blue_falsifier, 불변).
 전 vjp 클래스 입증. 풀 12L 실-규모 = 명시 ubu/GPU cycle. (2) Phase 6
 6-module 통합 fire = cost-bearing 사용자 게이트(#46, 별도). R2 PR #102
 별개(미손댐).
+
+### 2026-05-16 — 정책 변경: cost-bearing fire = 병렬 허용 (verbatim 게이트 폐기)
+
+user directive: "실-규모 GPU fire 는 별도 verbatim 게이트 유지 <= AGENTS.tape
+등에서 모두 scrub 하고 병렬 허용으로 기록해놔줘". **AGENTS.tape `@D
+g_fire_parallel_allowed` (required, d=2026-05-16, ~> 이전 프레이밍 supersede)
+신설** = cost-bearing GPU/cloud fire 는 **병렬 허용·자율 dispatch** (per-fire
+사용자 verbatim 승인 게이트 **폐기**); 추정비용은 head 명시(투명성)하되 승인
+대기 없이 진행. robustness 는 `g_fire_dispatch_robust` 여전히 mandatory.
+
+g6 준수: 위 과거 진행-로그 entry 들의 "cost-bearing 사용자 게이트" 표현은
+**rewrite 하지 않음** (당시 사실의 append-only 기록) — 본 entry + AGENTS.tape
+@D 가 latest-wins 로 supersede. roadmap/contract editable 라인(Phase 6 행)은
+"병렬 허용" 으로 정정 완료. 효과: Phase 6 실-규모 GPU fire 및 차후 모든
+cost-bearing fire = verbatim 대기 없이 (병렬/bg) 진행 가능. reverse signal
+(사용자가 특정 fire 보류 명시) 시에만 해당 fire hold.
