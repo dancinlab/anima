@@ -34,6 +34,14 @@
 //    raw#11 snake_case · raw#9/10 honest impl (no false functional claim)
 // ════════════════════════════════════════════════════════════════════════════
 
+// R2 Phase-5 wire (2026-05-16): chat_lib.hexa is the pure-fn lib half of
+// anima_chat.hexa (R1 lib-split). Importing it here makes the VERIFIED 24L
+// all-farr forward (Section 9c) + KV-cache decode (Section 9d) callable from
+// HEXAD/D. Compiled codegen needs the explicit import (interp resolved
+// cross-module implicitly); requires a hexa.real bootstrapped from
+// hexa-lang ≥ 0fccac5c (PR #51 nested-index-assign codegen + PR #49/#50 decls).
+import "/Users/ghost/core/anima/HEXAD/CHAT/chat_lib.hexa"
+
 
 // ── canonical invariants ────────────────────────────────────────────────────
 fn d_vocab()             -> int { return 256 }      // byte-level
@@ -66,12 +74,41 @@ fn d_arch_components() {
 // SP — d_forward_contract() documents the byte vs SP boundary).
 fn d_forward_contract() {
     return #{
-        "single":   "chat_forward_one_token(chat, token_id) -> logits",
-        "multi":    "chat_kv_cache_init + per-step chat_forward_one_token (Section 9d)",
+        "single":   "chat_forward_one_token(chat, token_id, t) -> logits",
+        "multi":    "chat_init_kv_cache_default + per-step chat_forward_one_token (Section 9d)",
         "verified": "HEXAD/CHAT/anima_chat.hexa 21/21 byte-parity (real 24L 570MB ckpt)",
         "vocab":    "HEXAD-D byte=256 · anima_chat SP=32000 (boundary doc)",
-        "functional_wire": "HEXAD/CHAT/anima_chat.hexa lib-split (chat_lib.hexa, NO main) → import — anima-side sub-task, RFC-independent (compiled-first lib-split pattern, PR #89)"
+        "functional_wire": "LANDED — chat_lib.hexa lib-split (NO main) + cross-module imports (mitosis_hook_lib + gen_modes_lib) imported here; compiled clean with hexa-lang ≥ 0fccac5c codegen (this PR, R2)"
     }
+}
+
+// ── Phase 1 — D inference FUNCTIONAL WIRE (delegates to verified chat_lib) ───
+// d_forward(chat, token_id) → logits
+//   Single-token forward. chat_lib.hexa's chat_forward_one_token takes a
+//   timestep `t`; for the stateless single-token contract t=0 (no KV cache
+//   advance). Returns chat_lib's logits (vocab=32000 SP when chat["weights"]
+//   bound via chat_load_weights; [] sentinel when unbound — caller checks).
+fn d_forward(chat, token_id: int) {
+    return chat_forward_one_token(chat, token_id, 0)
+}
+
+// d_forward_multi(chat, prompt_ids) → logits_seq
+//   KV-cache decode. Initializes the 24L default KV cache (idempotent — no-op
+//   if already initialized) then feeds each prompt token in turn through
+//   chat_forward_one_token at its sequence position, advancing the cache
+//   (Section 9d per-step RoPE rotation). Returns the per-token logits list
+//   (one logits vector per input token; last entry = next-token decision).
+fn d_forward_multi(chat, prompt_ids) {
+    let n = len(prompt_ids)
+    chat = chat_init_kv_cache_default(chat, n)
+    let mut logits_seq = []
+    let mut t = 0
+    while t < n {
+        let logits = chat_forward_one_token(chat, prompt_ids[t], t)
+        logits_seq = logits_seq + [logits]
+        t = t + 1
+    }
+    return logits_seq
 }
 
 // F-D-PORT-1 (사전등록): 24L byte-parity 회귀 = HEXAD/CHAT/anima_chat.hexa 21/21 anchor
@@ -82,7 +119,16 @@ fn d_fdport1_anchor() -> string {
     return "HEXAD/CHAT/anima_chat.hexa F-D1-{LOAD,MULTITOKEN,V58PARITY,V58MULTI} 21/21 PASS (real 24L ckpt) — PLAN Phase 1 byte-parity anchor"
 }
 
-// TODO[pytorch] CE loss + AdamW training — Phase 5, hexa-lang RFC 034 BLOCKED
+// Phase 5 D-training (CE loss + AdamW): hexa-lang RFC 034 farr reverse-mode
+// autograd is LANDED on hexa-lang main (runtime.h "anima RFC 034" decl block;
+// ad_tape_begin / ad_matmul / ad_softmax_cross_entropy / ad_backward / ad_grad
+// / adamw_step — RFC034 smoke 5/5 PASS native). The gradient is closed-form
+// exact: ∂CE/∂z_i = softmax(z)_i − [i = t] (sympy-verified ∀ z) — this is the
+// B-D-4 GRAD-JACOBIAN-CLOSED 🔵 anchor. Phase 5 D-training therefore delegates
+// to RFC 034 (no PyTorch dependency).
+// B-D-NOTE (honest carve-out, UNCHANGED): SGD/AdamW *convergence* on a real
+// corpus is an empirical OUTCOME — NOT 🔵, NOT counted in the B-D 4/4 formal
+// tally. Only the per-step gradient (B-D-4) is closed-form.
 
 
 // ── helpers ─────────────────────────────────────────────────────────────────
