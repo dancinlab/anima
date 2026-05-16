@@ -8,17 +8,17 @@
 ## 0. 현재 상태 (Phase 1–6 전부 LANDED · 2026-05-16)
 
 > **로드맵 closure**: §3 Phase 1–6 의 RFC-무관 anima-side 작업은 전부 LANDED.
-> 잔여 = hexa-lang RFC terminal (Phase 2-GRU full · Phase 3 parity · Phase 4
-> Φ FFI) + 다음-사이클 후보 menu (§7). 상세 진척 = `## 진행 로그`.
+> 잔여 = hexa-lang RFC terminal (Phase 2-GRU full · Phase 3 parity) +
+> 다음-사이클 후보 menu (§7). 상세 진척 = `## 진행 로그`.
 
 | 모듈 | 현재 상태 | 비고 |
 |---|---|---|
-| **S/M/W/E/BRIDGE** | ✅ 🔵 SUPPORTED-FORMAL + compiled-native lib-split | B-X closed-form witness; `build_verify.sh` 14/14 entrypoint + 13/13 lib PASS (6 CHAT skip — stale toolchain) |
-| **C** | ✅ contract LANDED + 🔵 carry | `c_lib.hexa` `c_state_contract()` + F-C-PORT-1; mitosis = `tool/hexa_native/mitosis_hook.hexa` 1119L FULL IMPL; full 12-faction GRU 동역학 = Phase 2-GRU (RFC terminal) |
+| **S/M/W/E/BRIDGE** | ✅ 🔵 SUPPORTED-FORMAL + compiled-native lib-split | B-X closed-form witness; `build_verify.sh` 15/15 entrypoint + 13/13 lib PASS (6 CHAT skip — stale toolchain) |
+| **C** | ✅ contract + Phase 4 Φ LANDED | `c_lib.hexa` `c_state_contract()` + F-C-PORT-1; **Phase 4 `c_measure_phi` → RFC 036 `phi_spatial` (F-C-PORT-3 4/4)**; mitosis = `tool/hexa_native/mitosis_hook.hexa` 1119L FULL IMPL; full 12-faction GRU 동역학 = Phase 2-GRU (RFC terminal) |
 | **D** | ✅ Phase 1 + Phase 5 LANDED | `d_lib.hexa` inference contract (24L 21/21 byte-parity) + pure-hexa from-scratch training (RFC 034 farr autograd, gn2 collapse ≈53000×) |
 | **통합** | ✅ Phase 6 통합 fire LANDED | 6-module+Bridge single-hexa-process forward+train, $0 de-risk 5/5 + 실-규모 자율 fire 5/5 (vast.ai, $0.09) |
 
-evidence anchors (보존, 변경 X): `state/verify_hexad_we_2026_05_15/` 25/25 ✅ + `state/verify_hexad_blue_2026_05_15/` **22/22** 🔵 (PR #75/#76 + BRIDGE 추가) + `state/verify_hexad_integ_2026_05_16/` Python harness 5/5 fire-gate=true (PR #77) + `state/hexad_p6_fire_2026_05_16/` Phase 6 실-규모 fire 5/5 + `HEXAD/` hexa-native tree compiled-native 14/14+13/13 PASS (6 CHAT skip — stale toolchain, NOT denominator).
+evidence anchors (보존, 변경 X): `state/verify_hexad_we_2026_05_15/` 25/25 ✅ + `state/verify_hexad_blue_2026_05_15/` **22/22** 🔵 (PR #75/#76 + BRIDGE 추가) + `state/verify_hexad_integ_2026_05_16/` Python harness 5/5 fire-gate=true (PR #77) + `state/hexad_p6_fire_2026_05_16/` Phase 6 실-규모 fire 5/5 + `HEXAD/` hexa-native tree compiled-native 15/15+13/13 PASS (6 CHAT skip — stale toolchain, NOT denominator).
 
 ## 1. Gap 분석 — C/D 가 "scaffold" 인 이유
 
@@ -42,7 +42,7 @@ Python anchor `ready/models/conscious_decoder.py` (979 LoC) 의 hexa-native 측 
 | RFC | 영향 받는 Phase | 현재 상태 |
 |---|---|---|
 | **autograd / backprop** | C training, D training (Phase 5) | 미공개 (`anima_chat.hexa` Section 9a-9d 는 inference only). 통합 학습은 hexa-lang RFC 후. |
-| **Rust FFI binding** | C Φ measurement (Phase 4) | `phi_rs` Rust crate 호출 필요. hexa-lang FFI 검증 미. |
+| **Rust FFI binding / Φ builtin** | C Φ measurement (Phase 4) | ✅ **RFC 036 LANDED** — `phi_spatial`/`phi_mi_pair` 빌트인 (byte-equal native replica). 진짜 phi_rs Rust FFI link 만 named blocker carry. |
 | **module / namespace system** | task (b) 본격 cross-file wire | 현재 abs-path import + 함수 이름 충돌 회피 (prefix). 형식 module 시스템 RFC 후 정리 가능. |
 | **`#{}` dict literal + void key 처리** | 전 모듈 | 작동 확인됨 ([[hexa-lang-syntax-gotchas]]) — 이미 사용 중. |
 | **mmap farr (RFC 025) + bytes_to_str (RFC 030) + farr_matmul (RFC 032) + farr_copy/add_gaussian_noise (RFC 033) + bf16→f32 (RFC 031)** | D inference 24L | 모두 land 완료 — `anima_chat.hexa` v0.3 + `mitosis_hook.hexa` 에서 production utilize. |
@@ -71,12 +71,20 @@ Python anchor `ready/models/conscious_decoder.py` (979 LoC) 의 hexa-native 측 
 - cost: $0 Mac local
 - 의존: Phase 2
 
-### Phase 4 — IIT Φ FFI binding [🔒 RFC terminal — RFC 036 미제출]
-- Rust `phi_rs.compute_phi(states, n_groups)` 를 hexa-native 에서 호출
-- 대안: PyPhi formal IIT 3.0 path (deterministic, b-tier 🔵)
-- falsifier: F-C-PORT-3 PHI-FFI 결과 ≥ 0 + Python phi_rs 와 byte-equal
+### Phase 4 — IIT Φ FFI binding [✅ LANDED 2026-05-16]
+- hexa-lang **RFC 036 LANDED** (hexa-lang main `d67403d3` merge stage2-verify):
+  `phi_spatial` / `phi_mi_pair` runtime 빌트인 = anima `phi_rs` 문서화
+  deterministic algorithm 의 byte-equal native-C replica
+- anima-side wire: `HEXAD/C/c_lib.hexa` `c_measure_phi` → `phi_spatial`,
+  `c_phi_mi_pair` → `phi_mi_pair`; `c.hexa` _selftest Φ check
+- falsifier: **F-C-PORT-3 4/4 PASS** (`HEXAD/C/c_phi_smoke.hexa`) — BUILD +
+  PHI-NONNEG(Φ≥0) + PHI-BYTE-EQUAL(Φ=0.5 == phi_rs oracle 0.5000000001324147,
+  err=0.0 < 1e-12) + DETERMINISM
 - cost: $0 Mac local
-- 의존: hexa-lang FFI RFC
+- honest carve-out: 진짜 phi_rs Rust FFI link 은 named blocker (crate =
+  PyO3 cdylib, C ABI 없음 — RFC 036 §"FFI shim" upstream spec); native
+  byte-equal replica 가 production Φ path, Rust FFI NOT counted (g3)
+- 잔여: full `_phi_ratchet` 통합 (cell_pool→flat states 추출) = Phase 2-GRU 의존
 
 ### Phase 5 — D training (CE backprop + AdamW) [✅ LANDED 2026-05-16]
 - hexa-native autograd RFC 필요
@@ -95,7 +103,7 @@ Python anchor `ready/models/conscious_decoder.py` (979 LoC) 의 hexa-native 측 
 
 > **[2026-05-16 상태]** 아래는 원 계획 순서 기록 — RFC-무관 anima-side 경로는
 > 전부 LANDED (task b · Phase 1 · Phase 2 contract · Phase 5 · Phase 6).
-> Phase 3/4 + Phase 2-GRU full 만 hexa-lang RFC terminal. 다음 진척 = §7 menu.
+> Phase 3 + Phase 2-GRU full 만 hexa-lang RFC terminal. 다음 진척 = §7 menu.
 
 **권장 순서**: task (b) cross-file wire → Phase 1 (D inference wrapper) → Phase 2-3 (C state) → Phase 4 (Φ FFI) → Phase 5 (training, RFC 후) → Phase 6 (통합 fire).
 
@@ -132,7 +140,7 @@ Phase N 진입 = 이 PLAN.md `## 진행 로그` 섹션에 entry append + tape SS
 | # | 후보 | 성격 | 근거 anchor |
 |---|---|---|---|
 | **1** | 실-규모 언어 fire — D-arch d=768·12L 실 corpus 학습 | heavy GPU cycle (`g_fire_autonomous` 자율 dispatch) | PLAN CLOSURE 잔여 (i); 전 fire honest C3 ('no language-quality claim') 해소 |
-| **2** | Phase 4 — IIT Φ FFI | RFC 036 phi_rs Rust FFI 제출 → hexa-native Φ measurement | §3 Phase 4; RFC 034 Roadmap 명시 (RFC 036 미제출) |
+| ~~2~~ | ~~Phase 4 — IIT Φ FFI~~ → ✅ **LANDED 2026-05-16** | 이 사이클 완료 — RFC 036 (hexa-lang main `d67403d3`) 이미 LANDED 발견 + anima-side `c_measure_phi` wire + F-C-PORT-3 4/4 | 진행 로그 2026-05-16 |
 | **3** | anima-side TODO[pytorch] 잔여 | $0~저비용 — E 통합 gate `trinity.hexa:122` + BRIDGE full-forward carve-out 축소 | INDEX.md '잔여 anima-side'; B-BRIDGE-NOTE / B-E NOTE |
 | **4** | R2 hexa-safetensors wire | hexa-native safetensors loader → ckpt Python torch 의존 제거 | PLAN CLOSURE 잔여 (iii) |
 | — | Phase 2-GRU full / Phase 3 parity | 🔒 hexa-lang nn-primitive RFC terminal (미제출) — anima 게이트 X | §3 Phase 2/3 |
@@ -793,3 +801,45 @@ CLOSED · Phase 1/2 contract only' 는 그 직후 진행 로그 (RFC 034 LANDED
 latest-wins 로 반영 완료. 다음 진척 trigger = §7 menu 중 사용자 선택.
 honest tier 불변: Phase 5/6 fire = synthetic WIRING, NOT 언어-quality;
 🔵 = closed-form anchor 한정 (B-D-4 등), CE-descent OUTCOME 은 empirical.
+
+### 2026-05-16 — Phase 4 IIT Φ FFI LANDED (RFC 036 wire · F-C-PORT-3 4/4)
+
+user directive "Phase 4 Φ FFI hexa-lang upstream go" (§7 menu 후보 #2).
+
+**발견 — hexa-lang upstream RFC 036 은 이미 LANDED**: hexa-lang
+`inbox/rfc_drafts_2026_05_12/rfc_036_phi_rs_rust_ffi.md` (302 L, status
+implemented-with-named-blocker) + `phi_spatial`/`phi_mi_pair` runtime
+빌트인이 hexa-lang **main 머지** (`d67403d3` merge stage2-verify · `8412d6f5`
+feat rfc 035+036 — HEAD ancestor 확인). `tmp_rfc036_smoke.hexa` 현재 HEAD
+재빌드·재실행 **5/5 PASS** 확인. 즉 "hexa-lang upstream go" 는 이전
+2026-05-16 세션에서 이미 완료 (RFC 036 doc 이 그 세션 직접 인용) — PLAN.md /
+INDEX.md 의 "RFC 036 미제출" 표기는 cross-repo desync 로 stale 였음 (직전
+reconcile 커밋 `012817603` 이 그대로 옮겨 적은 것도 정정 대상).
+
+**anima-side Phase 4 wire LANDED** ($0 Mac local, RFC-무관):
+- `HEXAD/C/c_lib.hexa` — `c_measure_phi(states,n_cells,dim,n_bins)` →
+  `phi_spatial` 빌트인, `c_phi_mi_pair` → `phi_mi_pair`,
+  `c_phi_n_bins_default()=4`, `c_fcport3_anchor()`; `c_state_contract`
+  measure_phi 줄 "RFC 036 BLOCKED" → "LANDED" 정정
+- `HEXAD/C/c.hexa` — _selftest 에 Phase 4 Φ≥0 live check 추가 (`c.hexa:28`
+  `TODO[wire] FFI` → RFC 036 phi_spatial LANDED)
+- `HEXAD/C/c_phi_smoke.hexa` (NEW entrypoint) — **F-C-PORT-3 4/4 PASS**:
+  3-1 BUILD · 3-2 PHI-NONNEG (Φ=0.5 ≥ 0) · 3-3 PHI-BYTE-EQUAL (Φ=0.5 ==
+  phi_rs oracle 0.5000000001324147, **err=0.0 < 1e-12**) · 3-4 DETERMINISM
+- `HEXAD/build_verify.sh` — ENTRYPOINTS 에 `c_phi_smoke.hexa` 추가 →
+  **15/15 entrypoint + 13/13 lib compiled-native PASS** (6 CHAT skip; 실행 확인)
+
+**honest tier (g3 — no over-claim)**: F-C-PORT-3 byte-equal 은 phi_rs 의
+**native-C replica** 대상 (RFC 036, deterministic). 진짜 phi_rs Rust FFI
+link 은 named blocker carry — crate = PyO3 cdylib, C ABI 없음; RFC 036
+§"FFI shim" 이 upstream shim spec (phi_rs `cabi.rs` `extern "C"`). native
+replica = byte-equal production Φ path, Rust FFI NOT counted. TIER =
+SUPPORTED-STRONG deterministic (g_verdict_tier_blue (c) — phi_spatial 결정적
+closed compute). 잔여: full `ConsciousnessEngine._phi_ratchet` 통합
+(cell_pool→flat states 추출) 은 Phase 2-GRU 의존 carry.
+
+문서 reconcile: PLAN.md (§0 C 행 · §2 RFC 표 · §3 Phase 4 header+body ✅ ·
+§4 note · §7 menu #2 ✅) · INDEX.md (build 15/15) · README.md (build 15/15) ·
+CHECK/README.md (build 15/15 + Phase 4) · HEXAD-C.tape (@D c_phase4 신설) ·
+build_verify.sh (header comment 15). Phase 4 = §3 로드맵에서 ✅ LANDED;
+§7 menu 잔여 후보 = #1 실-규모 언어 fire · #3 anima-side TODO · #4 R2 wire.

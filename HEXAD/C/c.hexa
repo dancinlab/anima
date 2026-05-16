@@ -21,11 +21,18 @@ fn _selftest() {
                    && to_string(r["_TODO"]) != "void"
     print("  scaffold dict + TODO present : " + to_string(init_ok))
 
-    let all_ok = nf_ok && cb1_ok && max_ok && init_ok
+    // Phase 4 — IIT Φ measurement live (RFC 036 phi_spatial builtin wired)
+    let phi_st = farr_zeros(16)
+    let phi_v = c_measure_phi(phi_st, 2, 8, c_phi_n_bins_default())
+    let phi_ok = phi_v >= 0.0
+    let _ = farr_free(phi_st)
+    print("  Phase 4 Φ measure >= 0       : " + to_string(phi_ok))
+
+    let all_ok = nf_ok && cb1_ok && max_ok && init_ok && phi_ok
     print("=== HEXAD/C scaffold check: " + to_string(all_ok) + " ===")
     print("    cell-pool dynamics  : tool/hexa_native/mitosis_hook.hexa (FULL IMPL)")
     print("    per-token forward   : tool/hexa_native/phase5_forward_smoke.hexa")
-    print("    IIT Φ measurement   : ready/core via Rust phi_rs (TODO[wire] FFI)")
+    print("    IIT Φ measurement   : c_measure_phi → RFC 036 phi_spatial (LANDED, byte-equal phi_rs)")
 }
 
 

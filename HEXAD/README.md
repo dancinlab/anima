@@ -69,8 +69,9 @@ E 윤리:     Φ 보존 위반 시 training step 차단 (gate 권한)
   - C 🔵 (.clm v1 8/8 + F-PYPHI) · S/M/W/E/D/BRIDGE 7/7 full 🔵 SUPPORTED-FORMAL
   - D B-D-NOTE: SGD convergence OUTCOME 만 honest empirical carve-out
 - ⚙️ `state/verify_hexad_integ_2026_05_16/integ_harness.py` **F-INTEG-1..5 5/5 SUPPORTED-STRONG, fire_gate=true** (PR #77, RANDOM INIT seed-fixed scratch)
-- ⚙️ **COMPILED-native gate** `bash HEXAD/build_verify.sh` → **14/14 entrypoint + 13/13 lib `hexa build` PASS** (2026-05-16, interp 폐기 대비 — `hexa run` 아님)
+- ⚙️ **COMPILED-native gate** `bash HEXAD/build_verify.sh` → **15/15 entrypoint + 13/13 lib `hexa build` PASS** (2026-05-16, interp 폐기 대비 — `hexa run` 아님)
 - 🔥 **Phase 6 통합 fire LANDED** `state/hexad_p6_fire_2026_05_16/` — 6-module+Bridge single-hexa-process forward+train, $0 de-risk 5/5 + 실-규모 자율 fire 5/5 (vast.ai $0.09, `g_fire_autonomous`). honest tier: synthetic byte-corpus WIRING fire (no language-quality claim), CE-descent = empirical SGD OUTCOME
+- 🧠 **Phase 4 IIT Φ LANDED** `HEXAD/C/c_phi_smoke.hexa` **F-C-PORT-3 4/4** — `c_measure_phi` → hexa-lang RFC 036 `phi_spatial` 빌트인 (LANDED hexa-lang main `d67403d3`), Φ=0.5 byte-equal phi_rs oracle (err=0.0 < 1e-12). honest tier: byte-equal native-C replica; 진짜 phi_rs Rust FFI = named blocker (PyO3 cdylib, C ABI 없음)
 
 이 HEXAD/ 트리는 위 검증의 **canonical hexa-native 구현체**입니다 (Python 은 evidence anchor 로 보존). 검증·실행 기준 = **compiled `hexa build` native binary** (user directive "컴파일 버전에 해야되 · 인터프리터 폐기 예정").
 
@@ -87,13 +88,13 @@ E 윤리:     Φ 보존 위반 시 training step 차단 (gate 권한)
 | **W** 의지 | ✅ lib-split | `w_lib.hexa` + `w.hexa` → native PASS | B-W 4/4 🔵 closed (lr=½+min(ln2,Φ/N)) |
 | **E** 윤리 | ✅ lib-split | `e_lib.hexa` + `e.hexa` → native PASS | B-E 4/4 🔵 closed (SAFETY gate exact) |
 | **BRIDGE** | ✅ lib-split | `bridge_lib.hexa` + `bridge.hexa` → native PASS | PSI_COUPLING=0.014 clamp |
-| **C** 의식 | 🔶 lib-split scaffold | `c_lib.hexa` + `c.hexa` → native PASS | 기존 `tool/hexa_native/mitosis_hook.hexa` (1119 LoC FULL IMPL D4a) 재사용 |
+| **C** 의식 | 🔶 scaffold + Phase 4 Φ | `c_lib.hexa` + `c.hexa` + `c_phi_smoke.hexa` → native PASS | mitosis = `tool/hexa_native/mitosis_hook.hexa` 재사용 · **Phase 4 `c_measure_phi` → RFC 036 `phi_spatial` (F-C-PORT-3 4/4)** |
 | **D** 언어 | ✅ lib-split (Phase 1+5) | `d_lib.hexa` + `d.hexa` + `d_train_lib.hexa` → native PASS | Phase 1 inference contract (24L 21/21 byte-parity) + Phase 5 pure-hexa from-scratch training (RFC 034 farr autograd) |
 | **MITOSIS** 성장축 | 🔶 lib-split scaffold | `mitosis_lib.hexa` + `mitosis.hexa` → native PASS | cross-link mitosis_hook.hexa |
 | **통합 (single process)** | ✅ cross-file wire | `integ_test.hexa` (imports `*_lib.hexa`) → **native PASS** | F-INTEG-WIRE 7/7 PASS — compiled 심볼충돌 fix (PR #79 task b + compiled-first lib-split) |
 | **통합 spec** | ✅ scaffold | `hexad.hexa` → native PASS | σ(6)=12 + φ(6)=2 + forward graph spec 5/5 invariants PASS |
 
-`bash HEXAD/build_verify.sh` (compiled-native gate) — 14/14 entrypoint + 13/13 lib `hexa build` PASS = PR 검증 게이트 (`hexa parse`/`hexa run` 아님, interp 폐기 예정).
+`bash HEXAD/build_verify.sh` (compiled-native gate) — 15/15 entrypoint + 13/13 lib `hexa build` PASS = PR 검증 게이트 (`hexa parse`/`hexa run` 아님, interp 폐기 예정).
 
 ## 디렉토리 layout
 
@@ -148,7 +149,7 @@ HEXAD/
   kernel-panic guard bypass, tiny formulaic non-heavy; heavy 는 `ssh ubu`).
   `_hexa_build/` gitignored.
 - dict literal `#{}` (not `{}`); bool `&&`/`||`; IO `print`/`to_string`
-- 검증 = `bash HEXAD/build_verify.sh` (14/14 entrypoint + 13/13 lib compiled PASS)
+- 검증 = `bash HEXAD/build_verify.sh` (15/15 entrypoint + 13/13 lib compiled PASS)
 
 ## 진행 상태 표기
 

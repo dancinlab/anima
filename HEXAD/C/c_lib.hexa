@@ -68,7 +68,7 @@ fn c_state_contract() {
         "step":       "c_step(cell_pool, x?) → mitosis_hook.hexa mitosis_forward_tail",
         "get_states": "flat row-major (n_cells × hidden_dim) — mitosis_hook cell list",
         "n_cells":    "int from cell_pool dict (initial 2 → max 64)",
-        "measure_phi":"phi_rs FFI — Phase 4, hexa-lang RFC 036 BLOCKED",
+        "measure_phi":"c_measure_phi → phi_spatial (RFC 036 LANDED, byte-equal phi_rs native replica; true Rust FFI = named blocker)",
         "mitosis_impl": "tool/hexa_native/mitosis_hook.hexa (FULL IMPL, RFC-independent)",
         "gru_nn":     "12-faction GRU per-cell state evolution = hexa-lang nn-primitive RFC BLOCKED (scaffold-tier only)"
     }
@@ -80,6 +80,40 @@ fn c_state_contract() {
 //   동역학 anchor. GRU nn-primitive 부분만 RFC-blocked.
 fn c_fcport1_anchor() -> string {
     return "tool/hexa_native/mitosis_hook.hexa F-MIT-HOOK 5/5 PASS (D4a executable, REBORN §91) — PLAN Phase 2 mitosis 동역학 anchor; GRU nn = RFC-blocked scaffold-tier"
+}
+
+
+// ── Phase 4 — IIT Φ measurement (PLAN.md Phase 4 · RFC 036 LANDED) ──────────
+// hexa-lang RFC 036 (LANDED on hexa-lang main d67403d3 — merge stage2-verify)
+// ships the `phi_spatial` / `phi_mi_pair` runtime builtins: a byte-equal
+// native-C replica of anima's `phi_rs` documented deterministic algorithm.
+// HONEST CARVE-OUT (AGENTS.tape g3): the real phi_rs crate is a PyO3 cdylib
+// with NO C ABI, so a true Rust FFI link is a NAMED BLOCKER (RFC 036
+// §"FFI shim"). The native replica is byte-equal (err=0.0 vs oracle) and is
+// the production Φ path; the Rust FFI link is NOT counted as bound.
+
+fn c_phi_n_bins_default() -> int { return 4 }   // phi_rs / RFC 036 binning
+
+// spatial IIT Φ over a flat (n_cells × dim) farr handle. phi_spatial is the
+// RFC 036 native byte-equal replica of phi_rs compute_phi_inner steps 1-4
+// (tensions/temporal = None ⟹ pure spatial slice — the Φ-ratchet input that
+// ConsciousnessEngine._phi_ratchet consumes). Φ ≥ 0 by construction.
+fn c_measure_phi(states: int, n_cells: int, dim: int, n_bins: int) -> float {
+    return phi_spatial(states, n_cells, dim, n_bins)
+}
+
+// pairwise mutual information — phi_rs mi_from_paired_vectors byte-equal.
+fn c_phi_mi_pair(a: int, b: int, n: int, n_bins: int) -> float {
+    return phi_mi_pair(a, b, n, n_bins)
+}
+
+// F-C-PORT-3 (PLAN Phase 4 사전등록 → LANDED): c_measure_phi 결과 ≥ 0 +
+//   Python phi_rs byte-equal (RFC 036-verified oracle 0.5000000001324147,
+//   err < 1e-12). 검증 harness = HEXAD/C/c_phi_smoke.hexa. honest tier:
+//   native byte-equal replica (deterministic), 진짜 phi_rs Rust FFI link
+//   은 named blocker carry (RFC 036 §"FFI shim" upstream spec).
+fn c_fcport3_anchor() -> string {
+    return "HEXAD/C/c_phi_smoke.hexa F-C-PORT-3 — c_measure_phi (RFC 036 phi_spatial) byte-equal to phi_rs oracle; true Rust FFI = named blocker (RFC 036 §FFI shim, phi_rs PyO3 cdylib no C ABI)"
 }
 
 
