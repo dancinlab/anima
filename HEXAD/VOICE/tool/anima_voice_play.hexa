@@ -1,0 +1,70 @@
+// HEXAD/VOICE/tool/anima_voice_play.hexa — VOICE Phase 2 CoreAudio wrapper.
+//
+//   hexa-native port of anima_voice_play.sh (user directive 2026-05-16
+//   ".sh bash 도 hexa 포팅"; PLAN.md §7 #5). '코드는 hexa-native' +
+//   '인터프리터 폐기중' directive 일관 — bash → hexa-native.
+//
+//   Runs anima_voice_smoke.hexa (F-VOICE-1..5), verifies the two emitted
+//   WAV files, then plays both via Mac CoreAudio (afplay).
+//
+//   USAGE   hexa build .../anima_voice_play.hexa -o anima_voice_play
+//           ./anima_voice_play              # verify + play
+//           ./anima_voice_play --no-play    # verify only (CI)
+//
+//   hexa builtins used: argv / exec (shell run, stdout capture) /
+//   file_exists / file_size / exit / println — no imports.
+//   NOTE: compiled argv() = [prog, prog, ...real-args] (argv[0] doubled) —
+//   real user args start at index 2.
+// ════════════════════════════════════════════════════════════════════════
+
+fn main() {
+    let voice_dir = "/Users/ghost/core/anima/HEXAD/VOICE"
+
+    // ── args: --no-play (verify only) ──
+    let av = argv()
+    let mut no_play = 0
+    let mut i = 2
+    while i < len(av) {
+        let a = av[i]
+        if a == "--no-play" {
+            no_play = 1
+        } else {
+            println("unknown arg: " + a)
+            exit(2)
+        }
+        i = i + 1
+    }
+
+    // ── [1/3] hexa smoke + WAV emit ──
+    println("[1/3] hexa smoke + WAV emit ...")
+    let smoke = exec("cd " + voice_dir + " && RESOURCE_LOCAL_HEXA=1 hexa run tool/anima_voice_smoke.hexa | tail -25")
+    println(smoke)
+
+    // ── [2/3] verify WAV files emitted ──
+    println("")
+    println("[2/3] verify WAV files emitted ...")
+    let wavs = ["/tmp/anima_voice_demo_loud.wav", "/tmp/anima_voice_demo_silent.wav"]
+    let mut w = 0
+    while w < len(wavs) {
+        let f = wavs[w]
+        if !file_exists(f) {
+            println("  MISSING: " + f)
+            exit(1)
+        }
+        println("  " + f + "  (" + to_string(file_size(f)) + " bytes)")
+        w = w + 1
+    }
+
+    // ── [3/3] afplay (loud → silent) ──
+    if no_play == 1 {
+        println("")
+        println("[3/3] --no-play set, skipping afplay")
+        exit(0)
+    }
+    println("")
+    println("[3/3] afplay (loud → silent) ...")
+    let _p1 = exec("afplay /tmp/anima_voice_demo_loud.wav")
+    let _p2 = exec("afplay /tmp/anima_voice_demo_silent.wav")
+    println("")
+    println("DONE.")
+}

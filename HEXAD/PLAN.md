@@ -143,7 +143,7 @@ Phase N 진입 = 이 PLAN.md `## 진행 로그` 섹션에 entry append + tape SS
 | ~~2~~ | ~~Phase 4 — IIT Φ FFI~~ → ✅ **LANDED 2026-05-16** | 이 사이클 완료 — RFC 036 (hexa-lang main `d67403d3`) 이미 LANDED 발견 + anima-side `c_measure_phi` wire + F-C-PORT-3 4/4 | 진행 로그 2026-05-16 |
 | ~~3~~ | ~~anima-side TODO[pytorch] 잔여~~ → ✅ **LANDED 2026-05-16** | BRIDGE full-forward graph (`bridge_forward`, F-BRIDGE-FWD 4/4) + E 통합 ethics gate (`e_gate_step` Φ-ratchet, F-E-GATE 6/6) 모두 hexa-native LANDED — anima-side TODO[pytorch] 잔여 0 | 진행 로그 2026-05-16 |
 | **4** | R2 hexa-safetensors wire | hexa-native safetensors loader → ckpt Python torch 의존 제거 | PLAN CLOSURE 잔여 (iii) |
-| **5** | `.sh` bash → hexa 포팅 | $0 — `HEXAD/build_verify.sh` (245 L, PR 검증 게이트) + `CHAT/tool/anima_chat_optimal.sh` + `VOICE/tool/anima_voice_play.sh` → hexa-native (process spawn / popen). user directive 2026-05-16 ".sh bash 도 hexa 포팅" — '코드는 hexa-native' + '인터프리터 폐기중' 일관 | user directive 2026-05-16 |
+| **5** | `.sh` bash → hexa 포팅 (🔄 진행 중) | $0 — ✅ `VOICE/tool/anima_voice_play.hexa` 포팅 완료 (F-VOICE smoke + WAV verify + afplay, 빌드·실행 검증); `CHAT/tool/anima_chat_optimal.sh` = **죽은 런처** (anima_chat.py HEXAD pivot 으로 제거됨) → retire 대상, 포팅 X; 잔여 = `HEXAD/build_verify.sh` (246 L PR 게이트, 부트스트랩 주의) | user directive 2026-05-16 ".sh bash 도 hexa 포팅" |
 | — | Phase 2-GRU full / Phase 3 parity | 🔒 hexa-lang nn-primitive RFC terminal (미제출) — anima 게이트 X | §3 Phase 2/3 |
 
 honest C3: 위 menu 의 우선순위는 미고정 — 사용자 선택 게이트. 후보 1 이
@@ -944,3 +944,25 @@ e_gate_verify 신설 + status/residual/mandate TODO→LANDED) · INDEX.md
 (E row + 전모듈 para — E·BRIDGE TODO 해소) · README.md (§검증 🌉 BRIDGE
 + ⚖️ E gate) · build count 16→17 · §7 #3 ~~3~~ DONE. /loop 잔여 완성도-순위
 = #5 (.sh→hexa) → #4 (R2 wire) → #1 (실-규모 fire).
+
+### 2026-05-16 — §7 #5 진행: anima_voice_play.sh → hexa-native 포팅
+
+`/loop` iteration 4 — §7 #5 (.sh → hexa-native). 3 .sh 중 1 완료:
+
+- ✅ **`HEXAD/VOICE/tool/anima_voice_play.hexa`** — `anima_voice_play.sh`
+  (54 L) hexa-native 포팅. `argv` / `exec` (shell run + stdout capture) /
+  `file_exists` / `file_size` / `exit` 빌트인 — no imports. F-VOICE smoke
+  실행 → 2 WAV verify → afplay. 빌드 + `--no-play` 실행 검증 (smoke 통과,
+  WAV 48044 B ×2 확인, exit 0). 원본 .sh 병존 (전환기).
+- ⚠️ **`CHAT/tool/anima_chat_optimal.sh` = 죽은 런처** — `anima_chat.py`
+  가 HEXAD hexa-native pivot 으로 제거됨 (`HEXAD/CHAT/anima_chat.hexa`
+  대체). 죽은 스크립트 포팅은 무의미 → **retire 대상**, 포팅 X (honest:
+  corpse 를 포팅하지 않음). 사용자 결정 시 삭제/anima_chat.hexa 재지향.
+- 잔여 #5: `HEXAD/build_verify.sh` (246 L PR 게이트) — iteration 5.
+  부트스트랩 주의 (build_verify.hexa 가 자신 + 17 entrypoint build).
+
+발견 (carry, hexa-lang quirk): 컴파일 `argv()` = [prog, prog, ...real-args]
+— argv[0] 중복. anima_voice_play.hexa 는 index 2 부터 read 로 우회.
+hexa-lang 잠재 버그 (별도, 비차단).
+
+문서: PLAN §7 #5 🔄. 다음: #5 build_verify.sh → #4 R2 → #1 fire.
