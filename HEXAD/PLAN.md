@@ -143,10 +143,13 @@ Phase N 진입 = 이 PLAN.md `## 진행 로그` 섹션에 entry append + tape SS
 | ~~2~~ | ~~Phase 4 — IIT Φ FFI~~ → ✅ **LANDED 2026-05-16** | 이 사이클 완료 — RFC 036 (hexa-lang main `d67403d3`) 이미 LANDED 발견 + anima-side `c_measure_phi` wire + F-C-PORT-3 4/4 | 진행 로그 2026-05-16 |
 | **3** | anima-side TODO[pytorch] 잔여 (🔄 진행 중) | $0~저비용 — ✅ **BRIDGE full-forward graph COMPLETE** (`bridge_forward` compress→attn+LN→pool→expand→gate→clamp, F-BRIDGE-FWD 4/4, 2026-05-16; trained-weight carve-out만 잔존); 잔여 = E 통합 gate `trinity.hexa:122` | INDEX.md '잔여 anima-side'; B-BRIDGE-NOTE / B-E NOTE |
 | **4** | R2 hexa-safetensors wire | hexa-native safetensors loader → ckpt Python torch 의존 제거 | PLAN CLOSURE 잔여 (iii) |
+| **5** | `.sh` bash → hexa 포팅 | $0 — `HEXAD/build_verify.sh` (245 L, PR 검증 게이트) + `CHAT/tool/anima_chat_optimal.sh` + `VOICE/tool/anima_voice_play.sh` → hexa-native (process spawn / popen). user directive 2026-05-16 ".sh bash 도 hexa 포팅" — '코드는 hexa-native' + '인터프리터 폐기중' 일관 | user directive 2026-05-16 |
 | — | Phase 2-GRU full / Phase 3 parity | 🔒 hexa-lang nn-primitive RFC terminal (미제출) — anima 게이트 X | §3 Phase 2/3 |
 
 honest C3: 위 menu 의 우선순위는 미고정 — 사용자 선택 게이트. 후보 1 이
-honest-gap 직격이나 heavy; 후보 3 은 저비용 carve-out 축소.
+honest-gap 직격이나 heavy; 후보 3 은 저비용 carve-out 축소; 후보 5 (.sh→hexa)
+는 $0 tooling — build_verify.hexa 는 자기 자신을 build 하는 부트스트랩 순서
+주의 (canonical gate 는 전환 완료까지 .sh 병존).
 
 ## 진행 로그
 
