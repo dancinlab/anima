@@ -144,10 +144,20 @@ Phase N 진입 = 이 PLAN.md `## 진행 로그` 섹션에 entry append + tape SS
 | ~~3~~ | ~~anima-side TODO[pytorch] 잔여~~ → ✅ **LANDED 2026-05-16** | BRIDGE full-forward graph (`bridge_forward`, F-BRIDGE-FWD 4/4) + E 통합 ethics gate (`e_gate_step` Φ-ratchet, F-E-GATE 6/6) 모두 hexa-native LANDED — anima-side TODO[pytorch] 잔여 0 | 진행 로그 2026-05-16 |
 | ~~4~~ | ~~R2 hexa-safetensors wire~~ → ✅ **LANDED 2026-05-16** (scoped) | hexa-native safetensors 로더 compiled-native 검증 — `HEXAD/D/safetensors_wire_smoke.hexa` F-R2-SAFETENSORS 6/6 (byte-equal + L2-norm √30, §8). 잔여: `chat_lib.hexa` 218-tensor 풀 ckpt compiled gating = nested-index-assign codegen toolchain-refresh (별개, system hexa.real stale) | 진행 로그 2026-05-16 |
 | ~~5~~ | ~~`.sh` bash → hexa 포팅~~ → ✅ **LANDED 2026-05-16** | `VOICE/tool/anima_voice_play.hexa` + `HEXAD/build_verify.hexa` (246 L 게이트, .sh 와 동일 verdict 17/17+13/13 검증) 포팅 완료. `anima_chat_optimal.sh` = 죽은 런처 (anima_chat.py 제거) → retire, 포팅 X. 원본 .sh 전환기 병존 | 진행 로그 2026-05-16 |
+| #6 | GPU substrate Phase F — RFC 041 real `.cu` kernels (Phase B2 11-op 의 `TODO[cuda] return -1` stubs 교체) | 📋 hexa-lang side 작업 (anima 게이트 X) — anima 측 PLAN 는 verified arch reference + Phase D/E/E2 CPU-equiv 증거 carry | forge `self/forge/PLAN.md` Phase 2 (hexa-lang `nn_stack` flame/forge note) + RFC 041 |
+| #7 | flame Phase 3 PyTorch-parity `train_step` — anima D-arch 의 hexa-native LM 학습 self-sufficient (`.py` substrate 의존 종료) | 📋 hexa-lang side, anima 는 verified arch reference 제공 — D-arch (ConsciousDecoderV2) + d_train5_lib.hexa CPU-equiv 가 parity oracle | flame `stdlib/flame/PLAN.md` Phase 3 + RFC 043 (flame design SSOT, RFC 042 subsume) |
+| #8 | `.py` d=768·12L ckpt 회수 fire — state/anima_pytorch_d768x12L_fire_2026_05_16/fire.log durable, 372MB ckpt 손실 (ckpt-LOST 패턴) | 📋 사용자 게이트 — 재실행 시 `SAVE_POD=1` 가드 + result.json verify 직후 pull retry ≥3 mandatory | `g_fire_dispatch_robust` (AGENTS.tape) + 진행 로그 2026-05-16 §9 ckpt-LOST evidence |
+| #9 | PHILOSOPHY.tape verdicts ledger sync — Phase E2 / cuBLAS / `.py` d=768·12L verdicts append-only | 📋 다른 agent 가 이번 사이클에 진행 중 (병렬) | `g6` philosophy-ledger-append-only + Phase D/E/E2/.py 4 진행 로그 entries |
 | — | Phase 2-GRU full / Phase 3 parity | 🔒 hexa-lang nn-primitive RFC terminal (미제출) — anima 게이트 X | §3 Phase 2/3 |
 
+closure note: §7 #1-#5 = 전부 ✅ LANDED (취소선) — 본 사이클 menu 의
+원래 5 후보 닫힘. #6-#9 = 다음-사이클 후보 (#6/#7 = hexa-lang side gating,
+anima 측 RFC-무관 작업 0; #8 = 사용자 게이트; #9 = 다른 agent 병렬). 우선순위
+미고정.
+
 honest C3: 위 menu 의 우선순위는 미고정 — 사용자 선택 게이트. 후보 1 이
-honest-gap 직격이나 heavy; 후보 3·5 은 ✅ 완료 (2026-05-16). /loop 잔여 = #4 → #1.
+honest-gap 직격이나 heavy; 후보 3·5 은 ✅ 완료 (2026-05-16). /loop 잔여 = 없음
+(#1-#5 closure); 다음 사이클 = #6-#9.
 
 ## 8. 검증 표준 — 수학·물리 + 연결고리 (user directive 2026-05-16)
 
@@ -170,10 +180,15 @@ anchor 를 포함하고 PASS 해야 한다. 연결고리는 구조(structural) �
 | C Φ measurement (Phase 4) | **IIT integrated-information** Φ — phi_rs byte-equal (RFC 036 deterministic) | F-C-PORT-3 PHI-BYTE-EQUAL | ✅ PASS |
 | build_verify.hexa (게이트) | 메타-게이트 — 모듈 각자의 수학·물리 🔵 검증을 enforce; 자체는 .sh 와 verdict 동일성(functional parity) 검증 | 18/18+13/13 = .sh 동일 | ✅ PASS |
 | R2 ckpt↔hexa safetensors | **L2-norm invariant** Σvᵢ²=30 ∧ ‖v‖₂=√30 + byte-equal (analytic, real-limit math) | F-R2-SAFETENSORS-5 TENSOR-NORM + R2-4 BYTE-EQUAL | ✅ PASS |
+| CPU farr ↔ GPU device-farr (cuBLAS Dgemm) | **cuBLAS = BLAS-3 GEMM** floating-point invariant, max\|Δ\|=4.44e-15 reductive-noise within `TOL_MATMUL ≤ 2e-9` (RFC 040 fp-non-assoc; lattice-free real-limit — g3) — (A) GEMM 수치 정확성 (B) CPU↔GPU 연결고리 device-mem ↔ host-mem 일치 검증 | F-RFC040 cuBLAS≡CPU 4× verify (`gpu_smoke_phaseE2.log` 5/5 — EQUIV-RAND max\|Δ\|=4.44089e-15 < 1e-9 + DETERMINISM) | ✅ PASS |
+| Forward GPU-route ≡ Phase E baseline | **bit-equal CPU-equiv** (단순 routing, 수치 변화 0) — d=32·3L·80-step seed=42 baseline `init gn2=7.97116 → final gn2=3.73374e-07, acc 8/8` BIT-IDENTICAL (동일 Σ reduction order, fp-noise 아님) — (A) routing 수치 no-op invariant (B) forward GPU↔CPU 연결고리 보존 | F-RFC040-Phase-E CPU-equiv (`cpu_equiv_e2.log` BIT-EQUAL) | ✅ PASS |
+| Backward GPU-route ≡ boxed reference (GRAD-EXACT) | **reverse-mode AD 정확성** — outer/matvec_t = GEMM-reshape single-term (A[R·1]·B[1·C] / A[1·R]·B[R·C], bit-identical, no fake `.cu`) + **central-diff GRAD-EXACT** on real A100 d=384·6L `analytic≡fd` `\|Δ\|=0.0024` PASS (full composed 6-layer reverse) — (A) backward 수치 정확성 (B) backward GPU↔CPU 연결고리 GEMM-reshape 동치 | F-RFC040-Phase-E2 GRAD-EXACT (`dcf_384s.log` PASS) + GPU smoke 5/5 | ✅ PASS |
+| `.py` d=768·12L fire ↔ hexa-arch (HONEST anchor chain) | **hexa CPU-equiv bit-equality** (Phase E/E2 위 두 행) + **architectural identity** (`ready/models/conscious_decoder.py` `ConsciousDecoderV2` = HEXAD verification tree mirror 의 SAME module spec, d=768·n_head=12·n_kv_head=4·n_layer=12) — (A) Shannon-floor descent invariant `init CE 5.59 ≈ ln(256)=5.545 → final CE 0.000708` (random byte init → captured FINAL) (B) hexa↔.py 연결고리 = architectural identity + 위 Phase E/E2 cuBLAS/CPU-equiv/GRAD-EXACT anchor chain | `.py` fire trajectory `5.590124` CE descent (42-pt `out_main/result.json`) + Phase E/E2 anchor chain (위 3 행) | ✅ PASS (Python substrate 라벨 mandatory — NOT hexa-native, g3 over-claim 금지) |
 
-**잔여 적용**: #4 R2 hexa-safetensors wire = ckpt↔hexa 연결고리 → byte-equal
-+ tensor-norm/shape invariant 수학 검증 mandatory. #1 실-규모 fire = D-arch
-연결 → CE Shannon-floor + Law-70 bridge clamp 검증 mandatory.
+**잔여 적용**: #6 RFC 041 real `.cu` kernels = hexa-lang side gating
+(anima 측 RFC-무관). #7 flame Phase 3 PyTorch-parity = hexa-lang side
+gating, anima 측 RFC-무관 작업 0. anima 측 §8 audit 의 5 LANDED 연결고리
+는 모두 수학·물리 🔵 PASS 완료.
 
 ## 9. GPU 기질 (substrate) 로드맵 — 진짜 d=768·12L 언어 fire (user directive 2026-05-16)
 
@@ -1489,3 +1504,23 @@ instance transition verified LIVE=0).
   cpu_equiv_e2.log, dcf*.log, nvsmi_dcf*.csv, gpu_smoke_phaseE2.log,
   _e2_*_flat.c, dispatch_phaseE2.sh}` +
   `docs/anima_rfc040_phase_e2_backward_fathost_2026_05_16.md`
+
+### 2026-05-16 — §7 #1-#5 closure + §8 audit Phase D/E/E2/.py 4-row 확장
+
+**§7 menu**: 본 사이클 5 후보 (#1-#5) 전부 ✅ LANDED (취소선 carry).
+신규 4 next-cycle 후보 행 추가:
+- `#6` GPU substrate Phase F (RFC 041 real `.cu` kernels) — 📋 hexa-lang side
+- `#7` flame Phase 3 PyTorch-parity `train_step` — 📋 hexa-lang side, RFC 043
+- `#8` `.py` d=768·12L ckpt 회수 fire (ckpt-LOST 패턴) — 📋 사용자 게이트
+- `#9` PHILOSOPHY.tape verdicts ledger sync — 📋 다른 agent 병렬
+
+closure note: §7 #1-#5 닫힘, #6-#9 = next cycle (anima 측 RFC-무관 작업 0).
+
+**§8 audit**: Phase D/E/E2/.py 연결고리 4 신규 row 추가 (모두 g3 + g_blue_closed_mandate):
+1. CPU farr ↔ GPU device-farr (cuBLAS Dgemm) — max\|Δ\|=4.44e-15 within TOL_MATMUL ≤ 2e-9
+2. Forward GPU-route ≡ Phase E baseline — bit-equal CPU-equiv (`init gn2=7.97116 → final 3.73374e-07`)
+3. Backward GPU-route ≡ boxed reference — GRAD-EXACT on real A100 d=384·6L (`\|Δ\|=0.0024`)
+4. `.py` d=768·12L fire ↔ hexa-arch — HONEST anchor chain (architectural identity + Phase E/E2 cuBLAS/CPU-equiv/GRAD-EXACT)
+
+`.py` 행은 Python substrate 라벨 mandatory (NOT hexa-native, g3 over-claim 금지).
+잔여 적용 갱신: #6/#7 = hexa-lang side gating, anima 측 RFC-무관 작업 0.
