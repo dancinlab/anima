@@ -47,8 +47,8 @@ SSOT 집계 = `state/verify_hypotheses_pending_2026_05_16/hypo_coverage.json` (1
 
 ## 5. 다음 게이트 (택1)
 
-- **(c) HEXAD Phase 5 — ✅ LANDED 2026-05-16** (사용자 게이트 'a' 선택): `HEXAD/D/d_train_{lib,smoke}.hexa` pure-hexa from-scratch D training (RFC 034 inlined Wengert tape + B-D-4 closed grad + AdamW). **F-D-PORT-2 compiled-native: gn2 1.018→1.9e-5 (≈53000× collapse) · acc 4/4 · GRAD-EXACT** ✅. TIER=EMPIRICAL (B-D-NOTE — SGD OUTCOME, NOT 🔵; trainability PROPERTY=B-D-4 🔵 별개). build_verify **12/12+10/10 compiled-native PASS**. from-scratch(g_clm_from_scratch, base_ckpt=NONE) ⟹ R2 `hexa_safetensors_mmap` blocker 와 구조적 독립. honest C3: Taylor-CE 절대값 noisy → robust gn2-collapse 판정. cross-ref `HEXAD/PLAN.md` 진행 로그 2026-05-16.
-- 잔여 게이트: (a) roadmap 도메인 $0 spec/feasibility · (b) cost-bearing outreach (galea $5K / cortical_labs / n24 octopus 부경대·KIOST / ionq) · Phase 5 실 D-arch(d=768·12L) scale-up = heavy cycle (ubu/GPU) · **Phase 6 6-module 통합 fire = cost-bearing 사용자 게이트**
+- **(c) HEXAD Phase 5 — ✅ LANDED 2026-05-16** (사용자 게이트 'a' 선택): `HEXAD/D/d_train_{lib,smoke}.hexa` pure-hexa from-scratch D training (RFC 034 inlined Wengert tape + B-D-4 closed grad + AdamW). **F-D-PORT-2 compiled-native: gn2 1.018→1.9e-5 (≈53000× collapse) · acc 4/4 · GRAD-EXACT** ✅. TIER=EMPIRICAL (B-D-NOTE — SGD OUTCOME, NOT 🔵; trainability PROPERTY=B-D-4 🔵 별개). build_verify **14/14 entrypoint + 13/13 lib compiled-native PASS** (실측 2026-05-16, 6 CHAT skip — stale toolchain; Phase 5 sub-cycle d_train2-5 추가 반영). from-scratch(g_clm_from_scratch, base_ckpt=NONE) ⟹ R2 `hexa_safetensors_mmap` blocker 와 구조적 독립. honest C3: Taylor-CE 절대값 noisy → robust gn2-collapse 판정. cross-ref `HEXAD/PLAN.md` 진행 로그 2026-05-16.
+- 잔여 게이트: (a) roadmap 도메인 $0 spec/feasibility · (b) cost-bearing outreach (galea $5K / cortical_labs / n24 octopus 부경대·KIOST / ionq) · Phase 5 실 D-arch(d=768·12L) scale-up = heavy cycle (ubu/GPU, 다음-사이클 후보 1 `HEXAD/PLAN.md §7`) · **Phase 6 6-module 통합 fire = ✅ LANDED 2026-05-16** ($0 de-risk 5/5 + 실-규모 자율 fire 5/5 vast.ai $0.09, `g_fire_autonomous`)
 
 ## cross-link
 

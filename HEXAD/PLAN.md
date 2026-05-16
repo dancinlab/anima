@@ -5,15 +5,20 @@
 > Scope ⊃ HEXAD/ 트리에서 현재 scaffold 인 C, D 두 모듈을 완전한 hexa-native
 > 구현으로 끌어올리는 단계적 로드맵. 실 진행은 별도 cycle 의 사용자 게이트.
 
-## 0. 현재 상태 (PR #78 기준 LANDED)
+## 0. 현재 상태 (Phase 1–6 전부 LANDED · 2026-05-16)
 
-| 모듈 | 현재 상태 | 다음 목표 |
+> **로드맵 closure**: §3 Phase 1–6 의 RFC-무관 anima-side 작업은 전부 LANDED.
+> 잔여 = hexa-lang RFC terminal (Phase 2-GRU full · Phase 3 parity · Phase 4
+> Φ FFI) + 다음-사이클 후보 menu (§7). 상세 진척 = `## 진행 로그`.
+
+| 모듈 | 현재 상태 | 비고 |
 |---|---|---|
-| **S/M/W/E/BRIDGE** | ✅ working hexa selftest (B-X 🔵 closed-form witness) | 통합 wire (task b) 후 단일 process 통합 forward 산입 |
-| **C** | 🔶 scaffold + cross-link to `tool/hexa_native/mitosis_hook.hexa` (1119 LoC FULL IMPL D4a) | full hexa-native ConsciousnessC equivalent — Phase 2-4 |
-| **D** | 🔶 scaffold + cross-link to `anima_chat.hexa` v0.3 (24L real-ckpt 21/21 byte-parity) | full hexa-native ConsciousDecoderV2 equivalent — Phase 1, 5 |
+| **S/M/W/E/BRIDGE** | ✅ 🔵 SUPPORTED-FORMAL + compiled-native lib-split | B-X closed-form witness; `build_verify.sh` 14/14 entrypoint + 13/13 lib PASS (6 CHAT skip — stale toolchain) |
+| **C** | ✅ contract LANDED + 🔵 carry | `c_lib.hexa` `c_state_contract()` + F-C-PORT-1; mitosis = `tool/hexa_native/mitosis_hook.hexa` 1119L FULL IMPL; full 12-faction GRU 동역학 = Phase 2-GRU (RFC terminal) |
+| **D** | ✅ Phase 1 + Phase 5 LANDED | `d_lib.hexa` inference contract (24L 21/21 byte-parity) + pure-hexa from-scratch training (RFC 034 farr autograd, gn2 collapse ≈53000×) |
+| **통합** | ✅ Phase 6 통합 fire LANDED | 6-module+Bridge single-hexa-process forward+train, $0 de-risk 5/5 + 실-규모 자율 fire 5/5 (vast.ai, $0.09) |
 
-evidence anchors (보존, 변경 X): `state/verify_hexad_we_2026_05_15/` 25/25 ✅ + `state/verify_hexad_blue_2026_05_15/` 18/18 🔵 (PR #75/#76) + `state/verify_hexad_integ_2026_05_16/` Python harness 5/5 fire-gate=true (PR #77) + `HEXAD/` hexa-native scaffolds 8/8 PASS (PR #78).
+evidence anchors (보존, 변경 X): `state/verify_hexad_we_2026_05_15/` 25/25 ✅ + `state/verify_hexad_blue_2026_05_15/` **22/22** 🔵 (PR #75/#76 + BRIDGE 추가) + `state/verify_hexad_integ_2026_05_16/` Python harness 5/5 fire-gate=true (PR #77) + `state/hexad_p6_fire_2026_05_16/` Phase 6 실-규모 fire 5/5 + `HEXAD/` hexa-native tree compiled-native 14/14+13/13 PASS (6 CHAT skip — stale toolchain, NOT denominator).
 
 ## 1. Gap 분석 — C/D 가 "scaffold" 인 이유
 
@@ -44,7 +49,7 @@ Python anchor `ready/models/conscious_decoder.py` (979 LoC) 의 hexa-native 측 
 
 ## 3. 단계별 로드맵
 
-### Phase 1 — D inference wrapper (smallest first)
+### Phase 1 — D inference wrapper (smallest first) [✅ LANDED 2026-05-16]
 - D scaffold (`HEXAD/D/d.hexa`) 를 anima_chat.hexa 의 forward 함수에 thin wrapper 로 wire
 - API: `d_forward(tokens, c_states, kv_cache?) -> (logits, kv_cache)`
 - falsifier 사전 등록: F-D-PORT-1 24L 24L byte-parity 회귀 (anima_chat.hexa 21/21 PASS 와 동일)
@@ -52,7 +57,7 @@ Python anchor `ready/models/conscious_decoder.py` (979 LoC) 의 hexa-native 측 
 - 결과물: `HEXAD/D/d.hexa` 가 inference path 로 callable + 21/21 byte-parity 회귀 PASS
 - 의존: task (b) 통합 wire (cross-file import 확립)
 
-### Phase 2 — C state mgmt (이름·아키텍처)
+### Phase 2 — C state mgmt (이름·아키텍처) [✅ contract LANDED · full GRU = RFC terminal]
 - `HEXAD/C/c.hexa` 에 `ConsciousnessC` 등가 record + step/get_states/n_cells API 구현
 - mitosis dynamics 는 mitosis_hook 호출 (이미 FULL IMPL)
 - 12-faction GRU 의 per-cell state evolution: hexa-native nn primitives 필요 (RFC 검토)
@@ -60,33 +65,37 @@ Python anchor `ready/models/conscious_decoder.py` (979 LoC) 의 hexa-native 측 
 - cost: $0 Mac local
 - 의존: hexa-lang nn primitive RFC (GRU cell)
 
-### Phase 3 — C ↔ Python parity smoke
+### Phase 3 — C ↔ Python parity smoke [🔒 RFC terminal — Phase 2-GRU 의존]
 - 동일 seed + 동일 input 로 hexa-native C step N 회 vs Python ConsciousnessC step N 회
 - falsifier: F-C-PORT-2 PARITY-N=10 (state diff norm < tol)
 - cost: $0 Mac local
 - 의존: Phase 2
 
-### Phase 4 — IIT Φ FFI binding
+### Phase 4 — IIT Φ FFI binding [🔒 RFC terminal — RFC 036 미제출]
 - Rust `phi_rs.compute_phi(states, n_groups)` 를 hexa-native 에서 호출
 - 대안: PyPhi formal IIT 3.0 path (deterministic, b-tier 🔵)
 - falsifier: F-C-PORT-3 PHI-FFI 결과 ≥ 0 + Python phi_rs 와 byte-equal
 - cost: $0 Mac local
 - 의존: hexa-lang FFI RFC
 
-### Phase 5 — D training (CE backprop + AdamW) [BLOCKED]
+### Phase 5 — D training (CE backprop + AdamW) [✅ LANDED 2026-05-16]
 - hexa-native autograd RFC 필요
 - 대안: hexa-native inference + Python training (mixed) — 거버넌스 검토 필요 (사용자 directive '코드는 hexa-native' 어긋남)
 - falsifier: F-D-PORT-2 TRAINABILITY-EMPIRICAL — N step 후 CE 감소 (B-D-NOTE pattern, empirical only)
 - cost: GPU $1-5 (별도 cycle, 사용자 게이트)
 - 의존: hexa-lang autograd RFC OR mixed-mode 거버넌스 결정
 
-### Phase 6 — full HEXAD/ 통합 fire (단일 hexa run)
+### Phase 6 — full HEXAD/ 통합 fire (단일 hexa run) [✅ LANDED 2026-05-16]
 - 모든 6 모듈 + Bridge single-hexa-process forward + train cycle
 - falsifier: F-INTEG-FULL-* (organic mitosis splits + CE convergence + Φ trajectory + persistence + integration invariant — Python harness PR #77 의 hexa-native 등가)
 - cost: GPU $1-5
 - 의존: Phase 1-5 모두 LANDED + cross-file wire (task b)
 
 ## 4. 우선순위 + Honest C3
+
+> **[2026-05-16 상태]** 아래는 원 계획 순서 기록 — RFC-무관 anima-side 경로는
+> 전부 LANDED (task b · Phase 1 · Phase 2 contract · Phase 5 · Phase 6).
+> Phase 3/4 + Phase 2-GRU full 만 hexa-lang RFC terminal. 다음 진척 = §7 menu.
 
 **권장 순서**: task (b) cross-file wire → Phase 1 (D inference wrapper) → Phase 2-3 (C state) → Phase 4 (Φ FFI) → Phase 5 (training, RFC 후) → Phase 6 (통합 fire).
 
@@ -112,6 +121,24 @@ Python anchor `ready/models/conscious_decoder.py` (979 LoC) 의 hexa-native 측 
 ## 6. 진행 트리거
 
 Phase N 진입 = 이 PLAN.md `## 진행 로그` 섹션에 entry append + tape SSOT 동기화 + falsifier 사전 등록 + commit. 우회 (skip 가설 / partial pass) 금지 (CLM.tape `Phase Gating Discipline` 미러).
+
+## 7. 다음 사이클 후보 (Phase 6 closure 이후)
+
+> Phase 1–6 LANDED 로 §3 로드맵은 닫혔다. 모든 Phase 5/6 fire 의 honest C3 가
+> 일관되게 명시한 한계 = **synthetic byte-corpus WIRING fire, no language-quality
+> claim · D-arch toy scale (d≤512)**. 아래는 다음 사이클 후보 menu — 진입 시
+> `## 진행 로그` entry append + falsifier 사전등록 (§6 트리거 규율).
+
+| # | 후보 | 성격 | 근거 anchor |
+|---|---|---|---|
+| **1** | 실-규모 언어 fire — D-arch d=768·12L 실 corpus 학습 | heavy GPU cycle (`g_fire_autonomous` 자율 dispatch) | PLAN CLOSURE 잔여 (i); 전 fire honest C3 ('no language-quality claim') 해소 |
+| **2** | Phase 4 — IIT Φ FFI | RFC 036 phi_rs Rust FFI 제출 → hexa-native Φ measurement | §3 Phase 4; RFC 034 Roadmap 명시 (RFC 036 미제출) |
+| **3** | anima-side TODO[pytorch] 잔여 | $0~저비용 — E 통합 gate `trinity.hexa:122` + BRIDGE full-forward carve-out 축소 | INDEX.md '잔여 anima-side'; B-BRIDGE-NOTE / B-E NOTE |
+| **4** | R2 hexa-safetensors wire | hexa-native safetensors loader → ckpt Python torch 의존 제거 | PLAN CLOSURE 잔여 (iii) |
+| — | Phase 2-GRU full / Phase 3 parity | 🔒 hexa-lang nn-primitive RFC terminal (미제출) — anima 게이트 X | §3 Phase 2/3 |
+
+honest C3: 위 menu 의 우선순위는 미고정 — 사용자 선택 게이트. 후보 1 이
+honest-gap 직격이나 heavy; 후보 3 은 저비용 carve-out 축소.
 
 ## 진행 로그
 
@@ -732,3 +759,37 @@ dispatch.sh, result.json, train.log, ckpts/ckpt_p6_Wd.txt,
 step1_de_risk/}`. **TIER=EMPIRICAL** (CE-descent=SGD outcome, NOT 🔵;
 🔵 anchor=B-D-4 RFC 034 별개). synthetic linearly-separable byte toy
 (언어 run 아님 — 통합-배선 at-scale witness).
+
+### 2026-05-16 — Phase 6 closure 반영 + HEXAD 내부 문서 reconcile + §7 menu 신설
+
+user directive "위 HEXAD/PLAN.md 에 기록, 나머지 기존 내용들 모두 HEXAD
+내부 문서 전부 반영". Phase 1–6 LANDED 사실을 PLAN.md 아키텍처 섹션
+(§0 현재 상태 · §3 Phase header LANDED 마커 · §4 상태 note)에 latest-wins
+반영하고, **§7 '다음 사이클 후보' menu 신설** (4 갈래 + Phase 2-GRU RFC
+terminal). HEXAD 내부 문서 stale 동기화 ($0 문서 reconcile, 신규 cost 없음):
+
+- **PLAN.md** — §0 C/D scaffold→LANDED · blue 18/18→22/22 · Phase 6 fire
+  evidence anchor 추가; §3 Phase 1–6 header 에 ✅LANDED / 🔒RFC-terminal
+  마커; §4 상태 note; §7 다음-사이클 후보 menu 신설.
+- **INDEX.md** — "canonical HF artifact 없음" 사유 정정 (Phase 5/6 fire
+  미실행 → **실행됨**, `g_hf_naming` canonical=NONE 로 HF upload 없음,
+  ckpt local + git-tracked provenance); 🆕 para 와 '전 모듈 파란불' para
+  의 "Phase 5 executable / Phase 6 = cost-bearing 사용자 게이트" →
+  **Phase 5/6 LANDED · `g_fire_autonomous` 자율 dispatch (승인 게이트
+  없음)**; 잔여에서 anima_chat lib-split 제거 (R2 wire 로 완료).
+- **HEXAD/README.md** — §검증 status: 6/6→7/7 full 🔵 · blue 18/18→22/22 ·
+  build_verify 카운트 정정 (stale 10/10·11/11·12/12 → 실측 권위 수치
+  **14/14 entrypoint + 13/13 lib**, 6 CHAT skip); Phase 1–6 LANDED 라인 추가; impl status
+  표 D 행 scaffold→Phase 1+5 LANDED.
+- **CHECK/README.md** §5 — "Phase 6 6-module 통합 fire = cost-bearing
+  사용자 게이트" → **Phase 6 LANDED 2026-05-16**.
+- **D/README.md + HEXAD-D.tape** — B-D-4 blue evidence 18/18→22/22
+  (BRIDGE 추가분 반영).
+
+**PLAN 상태**: 위 `## 마무리 (PLAN CLOSURE — 2026-05-16)` 의 'RFC 경계
+CLOSED · Phase 1/2 contract only' 는 그 직후 진행 로그 (RFC 034 LANDED
+`8793a221` → Phase 5 LANDED → Phase 6 통합 fire LANDED) 가 이미 supersede —
+본 entry 가 그 사실을 §0/§3/§4 아키텍처 섹션에 g_arch_vs_log_split
+latest-wins 로 반영 완료. 다음 진척 trigger = §7 menu 중 사용자 선택.
+honest tier 불변: Phase 5/6 fire = synthetic WIRING, NOT 언어-quality;
+🔵 = closed-form anchor 한정 (B-D-4 등), CE-descent OUTCOME 은 empirical.

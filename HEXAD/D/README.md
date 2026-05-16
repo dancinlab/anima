@@ -40,7 +40,7 @@ D 모듈은 5/6 lineup 에서 유일한 🔵-partial 이었으나 PR #76 에서 
 - **B-D-4** GRAD-JACOBIAN-CLOSED — `∂CE/∂z_i = softmax(z)_i − [i=t]` (sympy ∀ z, trainability PROPERTY closed)
 - **B-D-NOTE** — SGD convergence OUTCOME 만 empirical honest carve-out (모든 optimizer 공통, D 고유 결함 X, NOT counted 🔵)
 
-evidence: `state/verify_hexad_blue_2026_05_15/blue_falsifier.py` (18/18 PASS) + PR #76.
+evidence: `state/verify_hexad_blue_2026_05_15/blue_falsifier.py` (22/22 PASS, BRIDGE 추가 후) + PR #76.
 
 ## real-limit anchor
 
