@@ -18,7 +18,7 @@
 #
 # Usage:  bash HEXAD/build_verify.sh        # build+run all, assert PASS
 # Two tiers (honest, see TOOLCHAIN below):
-#   • always-gated (stale-toolchain-clean): 18 entrypoints + 13 libs.
+#   • always-gated (stale-toolchain-clean): 19 entrypoints + 14 libs.
 #     Exit 0 requires all of these PASS — unrelated work never blocked.
 #   • bootstrapped-toolchain-gated (chat_lib in import closure): the
 #     CHAT/D-R2 set {chat_lib, anima_chat, d_lib, d, integ_test}. These
@@ -52,7 +52,7 @@
 #
 # Without HEXA_BOOT the gate probes the system `hexa` for the codegen fix;
 # if absent, the 2 CHAT targets are reported `⏭  SKIP (stale toolchain …)`
-# and EXCLUDED from the pass-count denominator. The other 18/13 still gate
+# and EXCLUDED from the pass-count denominator. The other 19/14 still gate
 # normally, so unrelated work is never blocked or falsely greened.
 
 set -u
@@ -109,6 +109,7 @@ ENTRYPOINTS=(
   "HEXAD/C/c.hexa"
   "HEXAD/C/c_phi_smoke.hexa"
   "HEXAD/D/safetensors_wire_smoke.hexa"
+  "HEXAD/D/corpus_loader_smoke.hexa"
   "HEXAD/D/d_train_smoke.hexa"
   "HEXAD/D/d_train2_smoke.hexa"
   "HEXAD/D/d_train3_smoke.hexa"
@@ -122,6 +123,7 @@ LIBS=(
   "HEXAD/S/s_lib.hexa"      "HEXAD/M/m_lib.hexa"    "HEXAD/W/w_lib.hexa"
   "HEXAD/E/e_lib.hexa"      "HEXAD/BRIDGE/bridge_lib.hexa"
   "HEXAD/C/c_lib.hexa"
+  "HEXAD/D/corpus_loader_lib.hexa"
   "HEXAD/D/d_train_lib.hexa"
   "HEXAD/D/d_train2_lib.hexa"
   "HEXAD/D/d_train3_lib.hexa"

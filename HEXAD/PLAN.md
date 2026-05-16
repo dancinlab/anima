@@ -1081,3 +1081,29 @@ matched 시 ~$0.1-1, 풀 d=768·12L real-corpus 시 ~$5-30 (g_fire_autonomous
 **상태**: §7 #2·#3·#4·#5 = ✅ 전부 LANDED (/loop iteration 2-6). #1 =
 선결 corpus-loader 빌드아웃 필요 — 별도 dedicated 사이클. /loop 으로 #2-5
 완수, #1 은 milestone 으로 carry.
+
+### 2026-05-16 — §7 #1 선결 (1/3): real-corpus 로더 LANDED — F-CORPUS 5/5
+
+`/loop` iteration 8 — §7 #1 선결조건 빌드 착수 (user "scratch run").
+
+**real-corpus byte-level 로더 LANDED**:
+- `HEXAD/D/corpus_loader_lib.hexa` — `corpus_load_bytes(path)` (byte-level
+  tokenize, vocab 256, lossless) · `corpus_n_windows` · `corpus_window`.
+  바이트 추출 = `od -An -v -tu1` shell-out (RFC 001 exec) — hexa string-byte
+  API 우회, Python torch/tokenizer 의존 0.
+- `HEXAD/D/corpus_loader_smoke.hexa` (NEW entrypoint) — **F-CORPUS 5/5 PASS**
+  on `training/corpus_consciousness_v1.jsonl`: LOAD (151943 tokens) ·
+  **LOSSLESS** (n == file_size 151943, §8 exact closed) · **BYTE-RANGE**
+  (∀ token ∈ [0,256), §8 Shannon 8-bit alphabet closed) · WINDOW (151879
+  windows @ T=64) · DETERMINISM.
+- build_verify.sh + .hexa — corpus_loader entrypoint+lib 추가 → **19/19
+  entrypoint + 14/14 lib PASS** (양쪽 동일).
+
+**§8 / g_blue_closed_mandate 준수**: corpus↔trainer 연결고리 = LOSSLESS
+(token count == file byte count, exact) + BYTE-ALPHABET (∀ token ∈ [0,256),
+Shannon 8-bit bound) — 둘 다 closed-form 수학 invariant PASS.
+
+**§7 #1 선결 진척 (3 중 1)**: ✅ (1) real-corpus 로더 — 잔여 (2) d_train5
+real-corpus wire (synthetic toy 입력 → corpus_window) + 실-scale config,
+(3) flatten-bootstrap + vast.ai 자율 dispatch (g_fire_autonomous). 다음 tick
+= (2) d_train5 ↔ corpus_loader wire.
