@@ -17,9 +17,10 @@
 # Heavy build 는 ubu 권장: ssh ubu 'cd ~/Dev/anima && hexa build ...'.
 #
 # Usage:  bash HEXAD/build_verify.sh        # build+run all, assert PASS
-# Exit 0 iff 11/11 entrypoints PASS + 9/9 libs build clean.
-# (11th entrypoint / 9th lib = HEXAD/CHAT/wiring_verify — inter-module
-#  wiring 조건 W5/W6/W8 F-WIRE battery, 2026-05-16 closure.)
+# Exit 0 iff 16/16 entrypoints PASS + 14/14 libs build clean.
+# (HEXAD/CHAT/wiring_verify — inter-module wiring 조건 W5/W6/W8 F-WIRE
+#  battery, 2026-05-16 closure. d_train5 = T2 full n_layer decoder-LM-core
+#  composed reverse, tiny config so Mac-compilable, 2026-05-16.)
 
 set -u
 cd "$(dirname "$0")/.." || exit 2
@@ -35,6 +36,7 @@ ENTRYPOINTS=(
   "HEXAD/D/d_train2_smoke.hexa"
   "HEXAD/D/d_train3_smoke.hexa"
   "HEXAD/D/d_train4_smoke.hexa"
+  "HEXAD/D/d_train5_smoke.hexa"
   "HEXAD/MITOSIS/mitosis.hexa"
   "HEXAD/hexad.hexa"        "HEXAD/integ_test.hexa"
   "HEXAD/CHAT/wiring_verify.hexa"
@@ -47,6 +49,7 @@ LIBS=(
   "HEXAD/D/d_train2_lib.hexa"
   "HEXAD/D/d_train3_lib.hexa"
   "HEXAD/D/d_train4_lib.hexa"
+  "HEXAD/D/d_train5_lib.hexa"
   "HEXAD/MITOSIS/mitosis_lib.hexa"
   "HEXAD/CHAT/wiring_verify_lib.hexa"
 )

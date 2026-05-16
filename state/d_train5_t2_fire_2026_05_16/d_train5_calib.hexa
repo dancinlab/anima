@@ -1,0 +1,29 @@
+// d_train5_calib.hexa — single fwd+grad timing calibration at real d=768.
+import "__LIBPATH__/d_train5_lib.hexa"
+
+fn selftest() {
+    let d = 768
+    let nh = 4
+    let nkv = 2
+    let h = 2048
+    let V = 256
+    let nL = 1               // per-layer cost probe (scale linearly ×nL)
+    let T = 8
+    let hd = d / nh
+    let rt = d5_rope_tables(T, hd)
+    let cos = rt[0]
+    let sin = rt[1]
+    let mut ids = []
+    let mut p = 0
+    while p < T { ids.push(p % V); p = p + 1 }
+    let M = d5_init(7, d, nh, nkv, h, V, nL)
+    println("calib: d=768 nL=1 T=8 — single forward...")
+    let f = d5_forward(ids, M, cos, sin, T, d, nh, nkv, h, V, nL)
+    println("  logits[0]=" + to_string(f["logits"][0]) + " (forward OK)")
+    println("calib: single grad (full reverse)...")
+    let g = d5_grad(ids, M, 3, cos, sin, T, d, nh, nkv, h, V, nL)
+    println("  dgF[0]=" + to_string(g["dgF"][0]) + " (grad OK)")
+    println("selftest: true")
+    return 0
+}
+selftest()
