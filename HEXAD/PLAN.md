@@ -1321,3 +1321,36 @@ user "1 ok 불요하면 좋음 / 2 ok go" — toolchain promote + GPU Phase B/C/
 **Phase D (실 GPU fire)**: CUDA-box dedicated 사이클 — Mac 환경에서 불가.
 별도 vast.ai dispatch + RFC 040 §"Phase D" 명세대로 (d=768·12L 진짜 실-규모
 fire). 본 /loop 범위 밖.
+
+### 2026-05-16 — Phase D 실행 ✅ real H100 cuBLAS FP64 Dgemm LANDED
+
+user directive **"3090 중단 → H100 재dispatch"** (H100 FP64 명시).
+
+**LANDED**: real **NVIDIA H100 80GB HBM3 (SXM, cc 9.0)** 에서 RFC 040
+Phase A cuBLAS `Dgemm` bench + `runtime_cuda.c` clean compile.
+- **peak 51.24 TFLOPS FP64** @1024³ (H100 SXM ~67 TFLOPS 의 76%, stock
+  cuBLAS Dgemm) · CPU `ikj` oracle 대비 ~13,000× · 7-shape sweep.
+- **TOL_MATMUL 측정-교정**: 6/7 shape ≤ 제안치 1e-9 rel; reduction-heavy
+  768×768×3072 = 1.905e-9 → measurement-calibrated bound **≈ 2e-9 rel**
+  (RFC 040 §"Honest caveats" 의 'measure & honestly widen' 준수 — fp
+  non-associativity, K-reduction 깊을수록 ↑, RFC 예측 적중). bit-equality
+  주장 안 함.
+- `runtime_cuda.c`: v1 (NVL, gcc) `OBJ_RC=0` unmangled C 심볼 + live
+  (SXM, nvcc) `RUNTIME_CUDA_RC=0` — devel image
+  (`nvidia/cuda:12.4.1-cudnn-devel-ubuntu22.04`) 가 3090 의 header-부재
+  failure 를 결정적으로 해소 (cublas_v2.h/cuda_runtime.h 즉시 PRESENT).
+- cost ~$0.38 (H100 SXM $5.91/hr × ~3.9min, ≤$10 envelope).
+
+**Honest C3**: (1) d_train5/d_corpus_fire = pure-hexa CPU list-math,
+`farr_matmul` 미사용 → GPU-routed d=768·12L train 은 **RFC 040 Phase E**
+(d5_*→farr_matmul_gpu 재작성, 별도 사이클). 본 Phase D = real-H100-FP64
+cuBLAS 증명 + cross-platform Linux-x86_64 d_corpus_fire (native+scaled).
+(2) GPU util 0-2% = idle 아님 — Dgemm 이 µs 단위 완료, 1Hz sampler 미포착;
+real-GPU 증거 = 529 MiB device mem + 65W→114W + 51 TFLOPS 실측.
+(3) hexa-lang runtime.c 미커밋 (병렬 Phase B/C bg agent 소유, 미손댐);
+runtime_cuda.c 독립 컴파일 = Phase D 통합 증명.
+
+artifacts: `state/hexad_gpu_fire_2026_05_16/{result.json,
+gpu_matmul_bench_result.json, h100_live_session.log,
+nvidia_smi_during_h100.csv, runtime_cuda_h100.o, d_corpus_fire_*.log}` +
+`docs/anima_rfc040_phase_d_h100_cublas_2026_05_16.md`.
