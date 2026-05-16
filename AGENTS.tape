@@ -170,6 +170,15 @@
   cross_link = "state/clm_v1_fire_2026_05_15/dispatch_h100.sh (cycle 88 evidence) + memory feedback_dispatch_vast_template_gotchas + g_hf_naming process_upload_mandate (d) ckpt-LOST evidence-only"
   @> CLAUDE.md
 
+@D g_fire_parallel_allowed := "cost-bearing fire = 병렬 허용 (per-fire verbatim 게이트 폐기)" :: governance [required d=2026-05-16 active]
+  ~> "이전 'cost-bearing → 자동 발사 금지 · 사용자 verbatim 게이트 대기 (.clm fire / V8 FIRE COST 패턴)' 프레이밍 supersede. user directive 2026-05-16 '실-규모 GPU fire 는 별도 verbatim 게이트 유지 <= AGENTS.tape 등에서 모두 scrub 하고 병렬 허용으로 기록'."
+  rule = "cost-bearing GPU/cloud fire (vastai/runpod/H100/A100, $1-N 급) 는 **병렬 허용 (parallel-allowed) · 자율 dispatch 가능** — per-fire 사용자 verbatim 승인 게이트 **불요**. 추정 비용은 head 에 명시(투명성)하되 승인 대기 없이 진행. $0 집착 금지 (memory feedback_no_scale_caps + feedback_active_resource_utilization 강화)."
+  why = "mission outcome 우선 · cost-bearing BG 적극 활용이 사용자 durable preference. per-fire verbatim 게이트는 momentum 저해 + 사용자 의도 역행. conservative cost cap = floor (제한 아님)."
+  apply = "Phase 6 통합 fire 포함 모든 cost-bearing fire = 추정비용 명시 후 verbatim 대기 없이 dispatch (병렬/bg 가능). robustness 는 [@g_fire_dispatch_robust] 여전히 mandatory (SAVE_POD auto-promote + pull retry ≥3). reverse signal (사용자가 특정 fire 보류 명시) 시에만 해당 fire hold."
+  scrubbed = "PLAN.md 'cost-bearing 사용자 게이트' / '재게이트' / '자동 발사 금지' 표현 = 이 entry 로 supersede (과거 append-only 로그 entry 는 g6 불변 — 신규 로그 + 본 @D 가 latest-wins). roadmap/contract editable 라인은 '병렬 허용' 으로 정정."
+  cross_link = "memory feedback_no_scale_caps + feedback_active_resource_utilization + g_fire_dispatch_robust (robustness) + HEXAD/PLAN.md Phase 6"
+  @> CLAUDE.md
+
 # ─── §4 Forbidden patterns ───────────────────────────────────────────
 
 @F f1 := "lattice-fit-on-external-entity" :: governance [required deny:write]
