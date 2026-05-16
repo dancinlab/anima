@@ -148,6 +148,16 @@
   authority = "[@x_tape_spec] §Domain-tape sibling §Architecture-vs-history split"
   @> AGENTS.md
 
+@D g_hexad_readme_sync := "HEXAD/README.md sync mandate — PLAN/INDEX/tape 갱신 시 함께 갱신" :: governance [required d=2026-05-17 active]
+  rule = "**HEXAD/PLAN.md / HEXAD/INDEX.md / HEXAD/<X>/MITOSIS.tape (또는 HEXAD-<X>.tape) 등 HEXAD 상태/카운트 변경을 동반하는 갱신** 시, **HEXAD/README.md 의 해당 stale 표기도 동일 커밋에서 함께 sync** 필수. PLAN/INDEX 만 갱신하고 README 누락 금지 (drift 발생, g3 violation)."
+  why = "user directive 2026-05-17 'PLAN.md 등 업데이트 할때에 /HEXAD/README.md 도 함께 업데이트 하도록 .tape 기록'. 발견 사례: B-MITOSIS battery LANDED (commit 303db258d) 직후 PLAN/INDEX/MITOSIS.tape sync OK, README 6개 spot stale (7/7→8/8, 22/22→27/27, 17/17→20/20, 13/13→14/14, MITOSIS 🔶→✅, etc.). 본 entry 이전엔 명시 규칙 부재."
+  scope_fields = "HEXAD/README.md 에서 주기적으로 drift 발생하는 fields (sync 체크리스트): (a) wiring blue-gate endpoint count (현 8/8); (b) 검증 status full 🔵 module count (8/8); (c) blue_falsifier.py battery count (27/27); (d) build_verify.sh entrypoint/lib count (20/20 + 14/14, ALSO line ~99 + line ~154 두 군데); (e) per-module status table row (특히 status 변경된 모듈 = 🔶 → ✅); (f) 검증 status `-` bulleted recent landings list (신규 milestone 추가)."
+  enforcement_pattern = "PR 또는 커밋 작업 흐름: HEXAD/PLAN.md/INDEX.md/<X>.tape 편집 → **HEXAD/README.md `git diff` 검토 + 6 stale field 확인** → 동일 커밋에 README 변경분 포함 → push. README 누락 시 후속 커밋으로 sync (g3 drift-avoidance) — 단 동일 커밋 권장 (atomic)."
+  apply = "(a) HEXAD/PLAN.md §0 module status table 또는 진행 로그 entry 추가 → README 검증 status 섹션 sync; (b) HEXAD/INDEX.md module row 갱신 또는 summary line 갱신 → README 동일 사실 sync; (c) blue_falsifier.py 갯수 변화 (B-X-N 추가) → README 22→27 등 sync; (d) build_verify.sh ENTRYPOINTS/LIBS 배열 갱신 → README 전 2 spot sync."
+  scope_exclusion = "본 규칙은 **HEXAD/ 디렉토리 안의 README + PLAN + INDEX + tape 동기** 관련. 다른 디렉토리 (root README · CHAT/README · MITOSIS/README · per-module READMEs) 는 자체 sync 책임 (각 모듈 owner). HEXAD/README.md = HEXAD 전체 overview 의 SSOT face → 핵심 sync target."
+  cross_link = "[@g_arch_vs_log_split] (v1.2 split 와 보완) · [@n_hexad_progress_2026_05_16] · commit 303db258d (B-MITOSIS) + 후속 sync commit (본 규칙 도입 트리거)"
+  @> AGENTS.md
+
 @D g_verified_axis_anchor := "검증된 AXIS/철학/가설 기준 강제" :: governance [required d=2026-05-15 active]
   rule = ".clm design 의 모든 architectural decision + policy + verification 은 AXIS.tape SUPPORTED entries + 8 PHILOSOPHY principles + HYPOTHESIS catalog 의 직접 anchor 에서 derive. anchor 부재 시 design entry 금지."
   why = "CLM.tape §V-CLM-AUDIT-2026-05-15 의 4 violation 식별 carry — Engine A/G dual / p1 weak / n_layers number-theoretic / step 1 V14 audit anchor 부재 정정"
