@@ -67,12 +67,12 @@ fn bridge_gate_scale(inference: bool) -> float {
 //   compress(Linear c_dim→hub) → [hub self-attn + LayerNorm] → mean-pool →
 //   expand(Linear hub→d_model → GELU → Linear d_model→d_model) →
 //   gate(Linear d_model→d_model → Sigmoid) → Law-70 clamp.
-// bridge_forward 는 backbone (compress→mean-pool→expand→gate→clamp) 을 hexa-
-// native farr 로 구현. HONEST CARVE-OUT (g3): (1) weights = seed-fixed
-// from-scratch LCG fill (g_clm_from_scratch RANDOM INIT, NO ckpt) —
-// 구조 graph 검증이지 trained quality 아님; (2) 1-head hub self-attn +
-// LayerNorm sublayer 는 NAMED residual (mean-pool 이 v1 reduction). Law-70
-// clamp invariant 만 closed-form 🔵.
+// bridge_forward 는 full forward (compress → 1-head hub self-attn +
+// LayerNorm residual → mean-pool → expand → gate → clamp) 을 hexa-native
+// farr 로 구현 — Python anchor 와 구조적 등가 (graph complete). HONEST
+// CARVE-OUT (g3): weights = seed-fixed from-scratch LCG fill
+// (g_clm_from_scratch RANDOM INIT, NO ckpt) — 구조 graph 검증이지 trained
+// quality 아님 (B-D-NOTE 동일 패턴). Law-70 clamp invariant 만 closed-form 🔵.
 
 // deterministic seed-fixed weight fill — LCG → [-0.1, 0.1)
 fn _bridge_lcg_fill(h: int, n: int, seed: int) -> int {
@@ -101,6 +101,158 @@ fn _bridge_matvec(w: int, x: int, out_dim: int, in_dim: int) -> int {
     return farr_matmul(w, out_dim, in_dim, x, 1)
 }
 
+// softmax in-place over farr region [off, off+n) — numerically stable.
+fn _bridge_softmax(s: int, off: int, n: int) -> int {
+    let mut mx = farr_get(s, off)
+    let mut i = 1
+    while i < n {
+        let v = farr_get(s, off + i)
+        if v > mx { mx = v }
+        i = i + 1
+    }
+    let mut sum = 0.0
+    i = 0
+    while i < n {
+        let e = exp(farr_get(s, off + i) - mx)
+        farr_set(s, off + i, e)
+        sum = sum + e
+        i = i + 1
+    }
+    i = 0
+    while i < n {
+        farr_set(s, off + i, farr_get(s, off + i) / sum)
+        i = i + 1
+    }
+    return 1
+}
+
+// LayerNorm in-place over farr region [off, off+d) — identity γ=1/β=0
+// (learned γ/β = trained-weight carve-out, same tier as the Linears).
+fn _bridge_layernorm(x: int, off: int, d: int) -> int {
+    let mut mean = 0.0
+    let mut i = 0
+    while i < d {
+        mean = mean + farr_get(x, off + i)
+        i = i + 1
+    }
+    mean = mean / (d * 1.0)
+    let mut var = 0.0
+    i = 0
+    while i < d {
+        let c = farr_get(x, off + i) - mean
+        var = var + c * c
+        i = i + 1
+    }
+    var = var / (d * 1.0)
+    let scale = 1.0 / sqrt(var + 0.00001)
+    i = 0
+    while i < d {
+        farr_set(x, off + i, (farr_get(x, off + i) - mean) * scale)
+        i = i + 1
+    }
+    return 1
+}
+
+// 1-head hub self-attention + LayerNorm residual, in-place on comp_all
+// (n_cells × hub_dim row-major). Mirrors nn.MultiheadAttention(heads=1) +
+// hub_norm(x + attn_out): Q/K/V/out_proj seed-fixed from-scratch (hub×hub).
+fn _bridge_hub_attention(comp_all: int, n_cells: int, hub_dim: int, seed: int) -> int {
+    let wq = farr_zeros(hub_dim * hub_dim)
+    let wk = farr_zeros(hub_dim * hub_dim)
+    let wv = farr_zeros(hub_dim * hub_dim)
+    let wo = farr_zeros(hub_dim * hub_dim)
+    let _q = _bridge_lcg_fill(wq, hub_dim * hub_dim, seed + 11)
+    let _k = _bridge_lcg_fill(wk, hub_dim * hub_dim, seed + 12)
+    let _v = _bridge_lcg_fill(wv, hub_dim * hub_dim, seed + 13)
+    let _o = _bridge_lcg_fill(wo, hub_dim * hub_dim, seed + 14)
+
+    // Q, K, V projections — n_cells × hub_dim
+    let q = farr_zeros(n_cells * hub_dim)
+    let k = farr_zeros(n_cells * hub_dim)
+    let v = farr_zeros(n_cells * hub_dim)
+    let mut r = 0
+    while r < n_cells {
+        let row = farr_zeros(hub_dim)
+        let mut j = 0
+        while j < hub_dim {
+            farr_set(row, j, farr_get(comp_all, r * hub_dim + j))
+            j = j + 1
+        }
+        let qr = _bridge_matvec(wq, row, hub_dim, hub_dim)
+        let kr = _bridge_matvec(wk, row, hub_dim, hub_dim)
+        let vr = _bridge_matvec(wv, row, hub_dim, hub_dim)
+        j = 0
+        while j < hub_dim {
+            farr_set(q, r * hub_dim + j, farr_get(qr, j))
+            farr_set(k, r * hub_dim + j, farr_get(kr, j))
+            farr_set(v, r * hub_dim + j, farr_get(vr, j))
+            j = j + 1
+        }
+        farr_free(row)
+        farr_free(qr)
+        farr_free(kr)
+        farr_free(vr)
+        r = r + 1
+    }
+
+    // scores = Q·Kᵀ / √hub_dim — n_cells × n_cells, softmax per row
+    let scale = 1.0 / sqrt(hub_dim * 1.0)
+    let scores = farr_zeros(n_cells * n_cells)
+    r = 0
+    while r < n_cells {
+        let mut c = 0
+        while c < n_cells {
+            let mut dot = 0.0
+            let mut j = 0
+            while j < hub_dim {
+                dot = dot + farr_get(q, r * hub_dim + j) * farr_get(k, c * hub_dim + j)
+                j = j + 1
+            }
+            farr_set(scores, r * n_cells + c, dot * scale)
+            c = c + 1
+        }
+        let _sm = _bridge_softmax(scores, r * n_cells, n_cells)
+        r = r + 1
+    }
+
+    // attn_out = softmax(scores)·V → out_proj → residual + LayerNorm (in-place)
+    r = 0
+    while r < n_cells {
+        let ao = farr_zeros(hub_dim)
+        let mut j = 0
+        while j < hub_dim {
+            let mut acc = 0.0
+            let mut c = 0
+            while c < n_cells {
+                acc = acc + farr_get(scores, r * n_cells + c) * farr_get(v, c * hub_dim + j)
+                c = c + 1
+            }
+            farr_set(ao, j, acc)
+            j = j + 1
+        }
+        let proj = _bridge_matvec(wo, ao, hub_dim, hub_dim)
+        j = 0
+        while j < hub_dim {
+            farr_set(comp_all, r * hub_dim + j,
+                     farr_get(comp_all, r * hub_dim + j) + farr_get(proj, j))
+            j = j + 1
+        }
+        let _ln = _bridge_layernorm(comp_all, r * hub_dim, hub_dim)
+        farr_free(ao)
+        farr_free(proj)
+        r = r + 1
+    }
+    farr_free(wq)
+    farr_free(wk)
+    farr_free(wv)
+    farr_free(wo)
+    farr_free(q)
+    farr_free(k)
+    farr_free(v)
+    farr_free(scores)
+    return 1
+}
+
 // bridge_forward — c_states flat (n_cells × c_dim) farr → gate signal
 // (d_model farr), every element Law-70 clamped to [Ψ−α, Ψ+α].
 fn bridge_forward(c_states: int, n_cells: int, c_dim: int,
@@ -115,8 +267,8 @@ fn bridge_forward(c_states: int, n_cells: int, c_dim: int,
     let _2 = _bridge_lcg_fill(w_e2,       d_model * d_model,  seed + 3)
     let _g = _bridge_lcg_fill(w_gate,     d_model * d_model,  seed + 4)
 
-    // 1. compress each cell (Linear c_dim→hub) + mean-pool over cells
-    let hub = farr_zeros(hub_dim)
+    // 1. compress each cell (Linear c_dim→hub) → comp_all (n_cells × hub_dim)
+    let comp_all = farr_zeros(n_cells * hub_dim)
     let mut ci = 0
     while ci < n_cells {
         let cell = farr_zeros(c_dim)
@@ -128,18 +280,31 @@ fn bridge_forward(c_states: int, n_cells: int, c_dim: int,
         let comp = _bridge_matvec(w_compress, cell, hub_dim, c_dim)
         let mut k = 0
         while k < hub_dim {
-            farr_set(hub, k, farr_get(hub, k) + farr_get(comp, k))
+            farr_set(comp_all, ci * hub_dim + k, farr_get(comp, k))
             k = k + 1
         }
         farr_free(cell)
         farr_free(comp)
         ci = ci + 1
     }
+
+    // 1b. 1-head hub self-attention + LayerNorm residual (in-place on comp_all)
+    let _attn = _bridge_hub_attention(comp_all, n_cells, hub_dim, seed)
+
+    // 1c. mean-pool over cells → hub vector [hub_dim]
+    let hub = farr_zeros(hub_dim)
     let mut m = 0
     while m < hub_dim {
-        farr_set(hub, m, farr_get(hub, m) / (n_cells * 1.0))
+        let mut acc = 0.0
+        let mut r = 0
+        while r < n_cells {
+            acc = acc + farr_get(comp_all, r * hub_dim + m)
+            r = r + 1
+        }
+        farr_set(hub, m, acc / (n_cells * 1.0))
         m = m + 1
     }
+    farr_free(comp_all)
 
     // 2. expand: Linear(hub→d_model) → GELU → Linear(d_model→d_model)
     let e1 = _bridge_matvec(w_e1, hub, d_model, hub_dim)

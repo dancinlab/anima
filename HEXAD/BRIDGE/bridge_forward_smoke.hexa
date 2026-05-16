@@ -13,11 +13,13 @@
 //                         whole forward, not just bridge_clamp in isolation).
 //     FWD-4 DETERMINISM — same seed/input → byte-identical output.
 //
-//   HONEST CARVE-OUT (AGENTS.tape g3 — no over-claim): weights = seed-fixed
-//   from-scratch LCG fill (g_clm_from_scratch RANDOM INIT, NO ckpt) — this
-//   verifies the forward GRAPH structurally, NOT trained quality. The 1-head
-//   hub self-attention + LayerNorm sublayer is a NAMED residual (mean-pool is
-//   the v1 reduction). Law-70 clamp invariant is the closed-form 🔵 part.
+//   HONEST CARVE-OUT (AGENTS.tape g3 — no over-claim): the full forward
+//   GRAPH (compress → 1-head hub self-attn + LayerNorm residual → mean-pool
+//   → expand → gate → Law-70 clamp) is structurally complete vs the Python
+//   anchor; weights = seed-fixed from-scratch LCG fill (g_clm_from_scratch
+//   RANDOM INIT, NO ckpt) — verifies the GRAPH, NOT trained quality (only
+//   trained-weight carve-out remains, same tier as B-D). Law-70 clamp
+//   invariant is the closed-form 🔵 part.
 // ════════════════════════════════════════════════════════════════════════
 import "/Users/ghost/core/anima/HEXAD/BRIDGE/bridge_lib.hexa"
 
@@ -74,7 +76,7 @@ fn _selftest() {
     let all_ok = build_ok && shape_ok && clamp_ok && det_ok
     println("  F-BRIDGE-FWD AGGREGATE 4/4   : " + to_string(all_ok))
     println("=== HEXAD/BRIDGE bridge_forward_smoke selftest: " + to_string(all_ok) + " ===")
-    println("    honest: structural forward graph (seed-fixed from-scratch weights); 1-head hub attn+LN = named residual")
+    println("    honest: full forward graph complete (compress→attn+LN→pool→expand→gate→clamp); seed-fixed from-scratch weights — structural ≠ trained quality")
 }
 
 fn main() {

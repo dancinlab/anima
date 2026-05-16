@@ -141,7 +141,7 @@ Phase N 진입 = 이 PLAN.md `## 진행 로그` 섹션에 entry append + tape SS
 |---|---|---|---|
 | **1** | 실-규모 언어 fire — D-arch d=768·12L 실 corpus 학습 | heavy GPU cycle (`g_fire_autonomous` 자율 dispatch) | PLAN CLOSURE 잔여 (i); 전 fire honest C3 ('no language-quality claim') 해소 |
 | ~~2~~ | ~~Phase 4 — IIT Φ FFI~~ → ✅ **LANDED 2026-05-16** | 이 사이클 완료 — RFC 036 (hexa-lang main `d67403d3`) 이미 LANDED 발견 + anima-side `c_measure_phi` wire + F-C-PORT-3 4/4 | 진행 로그 2026-05-16 |
-| **3** | anima-side TODO[pytorch] 잔여 (🔄 진행 중) | $0~저비용 — ✅ **BRIDGE full-forward backbone LANDED** (`bridge_forward`, F-BRIDGE-FWD 4/4, 2026-05-16); 잔여 = BRIDGE 1-head hub attn+LN residual · E 통합 gate `trinity.hexa:122` | INDEX.md '잔여 anima-side'; B-BRIDGE-NOTE / B-E NOTE |
+| **3** | anima-side TODO[pytorch] 잔여 (🔄 진행 중) | $0~저비용 — ✅ **BRIDGE full-forward graph COMPLETE** (`bridge_forward` compress→attn+LN→pool→expand→gate→clamp, F-BRIDGE-FWD 4/4, 2026-05-16; trained-weight carve-out만 잔존); 잔여 = E 통합 gate `trinity.hexa:122` | INDEX.md '잔여 anima-side'; B-BRIDGE-NOTE / B-E NOTE |
 | **4** | R2 hexa-safetensors wire | hexa-native safetensors loader → ckpt Python torch 의존 제거 | PLAN CLOSURE 잔여 (iii) |
 | — | Phase 2-GRU full / Phase 3 parity | 🔒 hexa-lang nn-primitive RFC terminal (미제출) — anima 게이트 X | §3 Phase 2/3 |
 
@@ -876,3 +876,36 @@ NOT counted toward 🔵. B-BRIDGE-NOTE carve-out 축소: "full forward TODO" →
 신설 + honest_c3 갱신) · build_verify.sh (16) · PLAN/INDEX/README/CHECK
 build count 15→16 · §7 #3 🔄 진행 중. 잔여 #3 = BRIDGE attn+LN residual +
 E trinity.hexa:122. 다음 완성도-순위 = #3 마무리 → #4 R2 → #1 fire.
+
+### 2026-05-16 — §7 #3 BRIDGE full-forward graph COMPLETE + hexa-lang farr 버그 수정
+
+`/loop` iteration 2 — §7 #3 계속. BRIDGE full-forward 의 NAMED residual
+(1-head hub self-attention + LayerNorm) 구현 → Python anchor 와 구조적 등가
+완성.
+
+**BRIDGE attention sublayer LANDED** (`bridge_lib.hexa`):
+- `_bridge_softmax` (numerically-stable, in-place) · `_bridge_layernorm`
+  (identity γ/β, in-place) · `_bridge_hub_attention` — 1-head self-attention
+  over n_cells hub vectors: Q/K/V/out_proj seed-fixed weights, scaled-dot
+  scores → softmax → ·V → out_proj → residual + LayerNorm. nn.Multihead-
+  Attention(heads=1) + hub_norm(x+attn_out) 미러.
+- `bridge_forward` 재구성: compress → comp_all (n_cells×hub) → `_bridge_hub_
+  attention` → mean-pool → expand → gate → clamp. F-BRIDGE-FWD 4/4 PASS 유지,
+  build_verify 16/16. §7 #3 BRIDGE half = **graph COMPLETE** (잔여 = trained-
+  weight values 만, B-D-NOTE 동일 tier).
+
+**hexa-lang farr-table realloc 버그 발견 + 수정** (chained matvec segfault):
+- 증상: `bridge_forward` 의 compress→attn→expand→gate chained matvec 가
+  SIGSEGV (각 조각은 단독 PASS, chain 만 crash). 원인 = `hexa_farr_matmul`
+  / `hexa_farr_copy` 가 `HexaFarrEntry*` 를 캡처한 뒤 `hexa_farr_zeros` 로
+  출력 farr 할당 → capacity 증가 시 `realloc(_hx_farr_table)` 가 테이블을
+  이동 → 캡처한 포인터 dangling → freed memory read.
+- 수정: `hexa-lang self/runtime.c` — 할당 후 entry 포인터 id 로 재-fetch.
+  branch `fix/farr-table-realloc-dangling-ptr` (`50b4d10c`),
+  `origin` push 완료 (user "hexa-lang upstream 가능 · 컴파일쪽 개선 ·
+  인터프리터 폐기중"). compiled runtime only. phi_spatial/phi_mi_pair 는
+  farr 스크래치 미사용 → realloc-safe (수정 불요).
+
+문서: bridge_lib.hexa header · bridge_forward_smoke honest line ·
+HEXAD-BRIDGE.tape (bridge_forward_verify + B-BRIDGE-NOTE — "named residual"
+→ graph COMPLETE) · §7 #3 row. 다음 완성도-순위: #3 E trinity → #4 R2 → #1 fire.
