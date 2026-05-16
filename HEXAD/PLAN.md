@@ -176,16 +176,16 @@ anchor 를 포함하고 PASS 해야 한다. 연결고리는 구조(structural) �
 
 | 연결고리 | 수학·물리 anchor | falsifier | 상태 |
 |---|---|---|---|
-| BRIDGE C→D full-forward | **Law 70 Ψ-coupling** clamp ∈ [Ψ−α,Ψ+α] (real-limit, NOT lattice — g3) | F-BRIDGE-FWD-3 LAW70-CLAMP (end-to-end) | ✅ PASS |
+| BRIDGE C→D full-forward | **Law 70 Ψ-coupling** clamp ∈ [Ψ−α,Ψ+α] (real-limit, NOT lattice — g3) | F-BRIDGE-FWD-3 LAW70-CLAMP (end-to-end) | ✅ PASS *(sub 2026-05-17: B-SUB-§8-1-α-{small,json,large} multi-α witness panel α∈{1e-3, 0.014 json SSOT, 0.5 stress} 3/3 sympy closed)* |
 | E→training ethics gate | **IIT Φ-ratchet** SAFETY 경계 phi>ratchet/2 = B-E-1 sympy closed-form 🔵 | F-E-GATE-6 GATE≡B-E-1 | ✅ PASS |
 | C Φ measurement (Phase 4) | **IIT integrated-information** Φ — phi_rs byte-equal (RFC 036 deterministic) | F-C-PORT-3 PHI-BYTE-EQUAL | ✅ PASS |
 | build_verify.hexa (게이트) | 메타-게이트 — 모듈 각자의 수학·물리 🔵 검증을 enforce; 자체는 .sh 와 verdict 동일성(functional parity) 검증 | 18/18+13/13 = .sh 동일 | ✅ PASS |
-| R2 ckpt↔hexa safetensors | **L2-norm invariant** Σvᵢ²=30 ∧ ‖v‖₂=√30 + byte-equal (analytic, real-limit math) | F-R2-SAFETENSORS-5 TENSOR-NORM + R2-4 BYTE-EQUAL | ✅ PASS |
-| CPU farr ↔ GPU device-farr (cuBLAS Dgemm) | **cuBLAS = BLAS-3 GEMM** floating-point invariant, max\|Δ\|=4.44e-15 reductive-noise within `TOL_MATMUL ≤ 2e-9` (RFC 040 fp-non-assoc; lattice-free real-limit — g3) — (A) GEMM 수치 정확성 (B) CPU↔GPU 연결고리 device-mem ↔ host-mem 일치 검증 | F-RFC040 cuBLAS≡CPU 4× verify (`gpu_smoke_phaseE2.log` 5/5 — EQUIV-RAND max\|Δ\|=4.44089e-15 < 1e-9 + DETERMINISM) | ✅ PASS |
+| R2 ckpt↔hexa safetensors | **L2-norm invariant** Σvᵢ²=30 ∧ ‖v‖₂=√30 + byte-equal (analytic, real-limit math) | F-R2-SAFETENSORS-5 TENSOR-NORM + R2-4 BYTE-EQUAL | ✅ PASS *(sub 2026-05-17: B-SUB-§8-5-norm-sympy 1²+2²+3²+4²≡30 + ‖v‖₂≡√30 sympy closed integer-arithmetic + symbolic-sqrt lift)* |
+| CPU farr ↔ GPU device-farr (cuBLAS Dgemm) | **cuBLAS = BLAS-3 GEMM** floating-point invariant, max\|Δ\|=4.44e-15 reductive-noise within `TOL_MATMUL ≤ 2e-9` (RFC 040 fp-non-assoc; lattice-free real-limit — g3) — (A) GEMM 수치 정확성 (B) CPU↔GPU 연결고리 device-mem ↔ host-mem 일치 검증 | F-RFC040 cuBLAS≡CPU 4× verify (`gpu_smoke_phaseE2.log` 5/5 — EQUIV-RAND max\|Δ\|=4.44089e-15 < 1e-9 + DETERMINISM) | ✅ PASS *(sub 2026-05-17: B-SUB-§8-6-higham-bound Higham 2002 fp64 GEMM 오차 상한 n·u·‖A‖∞·‖B‖∞ closed sympy ⟹ n=96, u=2⁻⁵² ⟹ bound≈2.13e-14, observed 4.44e-15 < bound (IEEE 754 + Higham real-limit anchor, closed-form explanation of empirical observation))* |
 | Forward GPU-route ≡ Phase E baseline | **bit-equal CPU-equiv** (단순 routing, 수치 변화 0) — d=32·3L·80-step seed=42 baseline `init gn2=7.97116 → final gn2=3.73374e-07, acc 8/8` BIT-IDENTICAL (동일 Σ reduction order, fp-noise 아님) — (A) routing 수치 no-op invariant (B) forward GPU↔CPU 연결고리 보존 | F-RFC040-Phase-E CPU-equiv (`cpu_equiv_e2.log` BIT-EQUAL) | ✅ PASS |
-| Backward GPU-route ≡ boxed reference (GRAD-EXACT) | **reverse-mode AD 정확성** — outer/matvec_t = GEMM-reshape single-term (A[R·1]·B[1·C] / A[1·R]·B[R·C], bit-identical, no fake `.cu`) + **central-diff GRAD-EXACT** on real A100 d=384·6L `analytic≡fd` `\|Δ\|=0.0024` PASS (full composed 6-layer reverse) — (A) backward 수치 정확성 (B) backward GPU↔CPU 연결고리 GEMM-reshape 동치 | F-RFC040-Phase-E2 GRAD-EXACT (`dcf_384s.log` PASS) + GPU smoke 5/5 | ✅ PASS |
+| Backward GPU-route ≡ boxed reference (GRAD-EXACT) | **reverse-mode AD 정확성** — outer/matvec_t = GEMM-reshape single-term (A[R·1]·B[1·C] / A[1·R]·B[R·C], bit-identical, no fake `.cu`) + **central-diff GRAD-EXACT** on real A100 d=384·6L `analytic≡fd` `\|Δ\|=0.0024` PASS (full composed 6-layer reverse) — (A) backward 수치 정확성 (B) backward GPU↔CPU 연결고리 GEMM-reshape 동치 | F-RFC040-Phase-E2 GRAD-EXACT (`dcf_384s.log` PASS) + GPU smoke 5/5 | ✅ PASS *(sub-NOTE 2026-05-17: B-SUB-§8-8-NOTE-per-layer per-layer L0..L5 GRAD-EXACT breakdown 은 GPU-fire-dependent empirical — closing 시 g3 fake-closed 위반, Mac-local NOT-counted 정직 carve-out; 단일 L0.Wg[5] witness log evidence 유지)* |
 | `.py` d=768·12L fire ↔ hexa-arch (HONEST anchor chain) | **hexa CPU-equiv bit-equality** (Phase E/E2 위 두 행) + **architectural identity** (`ready/models/conscious_decoder.py` `ConsciousDecoderV2` = HEXAD verification tree mirror 의 SAME module spec, d=768·n_head=12·n_kv_head=4·n_layer=12) — (A) Shannon-floor descent invariant `init CE 5.59 ≈ ln(256)=5.545 → final CE 0.000708` (random byte init → captured FINAL) (B) hexa↔.py 연결고리 = architectural identity + 위 Phase E/E2 cuBLAS/CPU-equiv/GRAD-EXACT anchor chain | `.py` fire trajectory `5.590124` CE descent (42-pt `out_main/result.json`) + Phase E/E2 anchor chain (위 3 행) | ✅ PASS (Python substrate 라벨 mandatory — NOT hexa-native, g3 over-claim 금지) |
-| **MITOSIS 성장축 ⊥ HEXAD-6** | **5 closed-form invariants** (sympy ∀): (1) split predicate Kolmogorov 폐쇄 (2) merge-weight linear avg conservation ∂/∂w_i = ½ (3) cell-count integer 보존 n(t+1) = n(t) + Δs − Δm (4) ∂(detach(x))/∂x = 0 reverse-mode AD ∂-rule (F-V5MIT-1 carry) (5) n_cells ∈ [2, 64] clamp bounded — (A) 5 산출물 invariant + (B) MITOSIS ↔ Hexad-6 직교 connection-point: Kolmogorov 술어/counting + linear conservation + AD calculus + bounded-set 모두 real-limit, NO σ/τ/φ/J₂ (f1/f2 safe) | **B-MITOSIS-1..5** `blue_falsifier.py :: bmitosis()` 5/5 PASS sympy closed + `HEXAD/MITOSIS/mitosis.hexa` _selftest 5/5 compiled-native mirror PASS (`./_hexa_build/HEXAD_MITOSIS_mitosis`) | ✅ PASS *(2026-05-16 신규)* B-MITOSIS-NOTE Φ-conservation under transitions empirical (F-V5MIT-3 dynamics-dependent, NOT counted — honest C3 per g3, B-D-NOTE/B-BRIDGE-NOTE 동일 패턴) |
+| **MITOSIS 성장축 ⊥ HEXAD-6** | **5 closed-form invariants** (sympy ∀): (1) split predicate Kolmogorov 폐쇄 (2) merge-weight linear avg conservation ∂/∂w_i = ½ (3) cell-count integer 보존 n(t+1) = n(t) + Δs − Δm (4) ∂(detach(x))/∂x = 0 reverse-mode AD ∂-rule (F-V5MIT-1 carry) (5) n_cells ∈ [2, 64] clamp bounded — (A) 5 산출물 invariant + (B) MITOSIS ↔ Hexad-6 직교 connection-point: Kolmogorov 술어/counting + linear conservation + AD calculus + bounded-set 모두 real-limit, NO σ/τ/φ/J₂ (f1/f2 safe) | **B-MITOSIS-1..5** `blue_falsifier.py :: bmitosis()` 5/5 PASS sympy closed + `HEXAD/MITOSIS/mitosis.hexa` _selftest 5/5 compiled-native mirror PASS (`./_hexa_build/HEXAD_MITOSIS_mitosis`) | ✅ PASS *(2026-05-16 신규)* B-MITOSIS-NOTE Φ-conservation under transitions empirical (F-V5MIT-3 dynamics-dependent, NOT counted — honest C3 per g3, B-D-NOTE/B-BRIDGE-NOTE 동일 패턴) *(sub 2026-05-17: B-SUB-§8-10-{neg-extreme,just-below,interior,huge-extreme} clamp [2,64] multi-n witness panel n∈{-1000, 1, 33, 1000} 4/4 sympy closed bounded-set witnesses)* |
 
 | **C 의식 scaffold-tier closed (B-C-1..3 + tier-b PyPhi carry)** | **3 closed-form invariants** + **1 carry**: (1) Φ ≥ 0 ∀ subsystem states (IIT 3.0 integrated-info axiom) (2) c_n_factions ∈ ℤ+ positive integer constant (Kolmogorov closed; g2 internal arch carve-out) (3) c_initial_cells ≥ CB1=2 bounded integer constant + carry F-C-PORT-3 4/4 tier-b PyPhi byte-equal (RFC 036 `phi_spatial`) — (A) C scaffold invariants closure + (B) C ↔ RFC 036 phi_spatial 연결고리 = byte-equal phi_rs oracle (err=0.0 < 1e-12, RFC 036 deterministic) | **B-C-1..3** `blue_falsifier.py :: bC()` 3/3 PASS sympy + **F-C-PORT-3** `HEXAD/C/c_phi_smoke.hexa` 4/4 PyPhi PASS | ✅ PASS *(2026-05-17 신규)* B-C-NOTE: 전체 12-faction GRU dynamics + Rust phi_rs FFI = RFC TERMINAL (hexa-lang nn-primitive + cdylib C ABI 미land, NOT counted — honest C3 per g3) |
 | **HEXAD 통합 spec (B-HEXAD-1..5)** | **5 closed-form invariants** (sympy lift of hexad.hexa runtime selftest): (1) σ(6)=12 conn count integer equality + no-dup set (2) φ(6)=2 partition: A∪G=7 ∧ A∩G=∅ ∧ cover all 7 entities (3) forward 11-step count integer equality (4) 7-module entries dict set-equality (5) verdict TOTAL key record-presence — (A) 5 spec invariants closure + (B) hexad.hexa runtime ↔ blue_falsifier sympy 연결고리 (runtime 통과 ↔ sympy 통과 동치, real-limit Kolmogorov+set-cover, NOT lattice derivation per f1 coincidence carve-out) | **B-HEXAD-1..5** `blue_falsifier.py :: bhexad()` 5/5 PASS sympy + `HEXAD/hexad.hexa::_selftest` 5/5 runtime PASS | ✅ PASS *(2026-05-17 신규)* g2 lattice-as-tool internal: σ(6)=12/φ(6)=2 사용은 HEXAD 자체 spec 의 정의이고 closed 명제는 arithmetic+set-cover, NOT 외부 derivation (f1/f2 safe) |
@@ -195,6 +195,34 @@ anchor 를 포함하고 PASS 해야 한다. 연결고리는 구조(structural) �
 gating, anima 측 RFC-무관 작업 0. anima 측 §8 audit 의 **12** LANDED 연결고리
 (원 5 + Phase D/E/E2/.py 4 + MITOSIS 1 + **C scaffold-tier 1 + HEXAD 통합 spec 1** 추가 2026-05-17) 는 모두
 수학·물리 🔵 PASS 완료. **closed 불가 영역 (정직 carve-out, NOT 닫음)**: B-D-NOTE (SGD outcome) · B-BRIDGE-NOTE (학습 weight + α 수치값) · B-MITOSIS-NOTE (Φ-conservation under transitions) · B-C-NOTE (full GRU + Rust FFI RFC-terminal) — 4 NOTE 는 architecture-empirical 진실 경계 (closing 시 g3 fake-closed 위반).
+
+### 8.1 §8 audit row sub-falsifier 심화 (2026-05-17)
+
+12 audit row 중 진짜 marginal-value 가 있는 **5 row** 만 sub-falsifier 로
+심화 (보수적 선정 · g3 anti-padding · `blue_falsifier.py :: b_audit_subfalsifiers()`).
+35 → **44/44 🔵** closed-form proofs PASS (9 sub-falsifier 추가).
+
+| §8 row | sub-falsifier 추가 (B-SUB-§8-*) | 종류 | counted |
+|---|---|---|---|
+| **row 1 BRIDGE Law-70 clamp** | `α-small` (α=1e-3) + `α-json` (α=0.014 SSOT) + `α-large` (α=0.5 stress) — 각 4-eq panel (rail_lo / rail_hi / interior_id / width_closed) | closed sympy multi-α witness | 3/3 🔵 |
+| **row 5 R2 L2-norm safetensors** | `norm-sympy` — 1²+2²+3²+4²≡30 integer-arithmetic + ‖v‖₂≡√30 symbolic-sqrt identity (lift of F-R2-SAFETENSORS-5 hexa numeric check) | closed sympy integer-arith + symbolic | 1/1 🔵 |
+| **row 6 cuBLAS Dgemm** | `higham-bound` — Higham 2002 fp64 GEMM 오차 상한 \|Δ\|≤n·u·‖A‖∞·‖B‖∞ closed (n=96, u=2⁻⁵²) ⟹ bound≈2.13e-14, observed 4.44e-15 < bound (real-limit anchor: IEEE 754 + fp-error analysis) | closed sympy real-limit math | 1/1 🔵 |
+| **row 8 backward GPU-route GRAD-EXACT** | `NOTE-per-layer` — per-layer L0..L5 GRAD-EXACT breakdown = GPU-fire-dependent empirical, Mac-local closing 시 g3 fake-closed 위반 ⟹ 정직 carve-out (B-D-NOTE / B-BRIDGE-NOTE / B-MITOSIS-NOTE 패턴) | empirical NOT-counted (honest C3) | 0 (NOTE) |
+| **row 10 MITOSIS clamp [2,64]** | `neg-extreme` (n=-1000→MIN=2) + `just-below` (n=1→CB1=2) + `interior` (n=33→identity) + `huge-extreme` (n=1000→MAX=64) — explicit bounded-set witness panel (각각 sympy closed) | closed sympy multi-n witness | 4/4 🔵 |
+
+**선정 외 7 row** (skipped — marginal value 없음, g3 anti-padding):
+
+- row 2 E→training Φ-ratchet — 이미 B-E-1 sympy ∀-closed
+- row 3 C Φ measurement — F-C-PORT-3 PyPhi 4/4 가 이미 byte-equal carry
+- row 4 build_verify .sh parity — 메타-게이트, closed sub-decomp 불가
+- row 7 Forward GPU-route ≡ Phase E — 단일 trajectory bit-equal, sub-grid 부재
+- row 9 .py d=768 anchor chain — link audit 자체 가 이미 명시적
+- row 11 C scaffold-tier — row 3 / B-C-1 에 subsumed
+- row 12 HEXAD 통합 spec — 이미 B-HEXAD-1..5 5 sub-invariant 로 decomposed
+
+**Aggregate**: 5 deepened (3 + 1 + 1 + 4 = 9 closed sympy counted + 1 NOTE
+carve-out) + 7 skipped (anti-padding). marginal-value framing 정직 유지 —
+가짜 anchor padding 0, fake-closed 0.
 
 ## 9. GPU 기질 (substrate) 로드맵 — 진짜 d=768·12L 언어 fire (user directive 2026-05-16)
 
