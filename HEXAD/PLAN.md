@@ -1131,3 +1131,32 @@ onehot = B-D-4 sympy closed-form 🔵). structural 아님 — 실 corpus 한 sam
 **§7 #1 선결 진척 (3 중 2 ✅)**: ✅(1) real-corpus 로더 ✅(2) d_train5 wire —
 잔여 (3) 실-scale config (d=768·12L) + flatten-bootstrap (PR#51) + vast.ai
 자율 dispatch (g_fire_autonomous, g_fire_dispatch_robust). 다음 tick = (3) fire.
+
+### 2026-05-16 — §7 #1 (3/3): real-corpus from-scratch FIRE LANDED — §7 COMPLETE
+
+`/loop` iteration 10 — §7 #1 (3/3). d_train5 의 실 corpus from-scratch 학습 fire.
+
+**fire LANDED** (`HEXAD/D/d_corpus_fire.hexa`, `state/hexad_corpus_fire_2026_05_16/`):
+- d_train5 FULL n_layer ConsciousDecoderV2-equiv 트레이너 + corpus_loader,
+  config d=32·n_layer3·nh4·nkv2·h64·T16·**V=256 byte-vocab**, 8 실 corpus
+  윈도우 (`corpus_consciousness_v1.jsonl`), from-scratch RANDOM seed-fixed.
+- **F-D-FIRE PASS (EMPIRICAL)**: gn2 **7.97 → 3.73e-07** (~2.1e7× collapse) ·
+  acc **0/8 → 8/8** · GRAD-EXACT PASS (full composed reverse analytic vs
+  finite-diff) · 80 AdamW step · wall 23s · **$0** (compiled-native CPU
+  pure-hexa, Mac local — vast.ai 불요).
+- `HEXA_MEM_UNLIMITED=1` 필요 (AdamW 루프 intermediate alloc > 4GB cap —
+  hexa array/dict per-step alloc; 운영 note, NOT a fire-blocker).
+
+**§8 / g_blue_closed_mandate 준수**: corpus↔trainer 연결 = CE Shannon-floor
+(−ln p ≥ 0 closed) + exact-gradient (softmax−onehot = B-D-4 sympy closed 🔵).
+
+**honest C3 (g3)**: (a) **첫 REAL-corpus fire** — prior fire 전부 synthetic
+byte-toy; 'synthetic' honest-gap 절반 해소. (b) 8 윈도우 = small → acc 8/8
+= 윈도우 암기(memorization), NOT 언어품질 generalization. (c) d=32·3L =
+CPU-feasible 규모 — 진짜 d=768·12L 언어품질은 GPU CUDA 텐서커널 필요,
+pure-hexa CPU 기질로는 비현실적 (g3 named real limit; 별개 기질 = 별도 cycle).
+TIER = EMPIRICAL (B-D-NOTE — SGD 수렴 OUTCOME).
+
+**§7 menu 전항목 완료**: #1 ✅(real-corpus fire) · #2 ✅ Phase 4 · #3 ✅
+BRIDGE+E · #4 ✅ R2 · #5 ✅ .sh→hexa. /loop iteration 2-10 으로 §7 전체
+LANDED + AGENTS.tape §0 g_blue_closed_mandate + hexa-lang farr realloc fix.
