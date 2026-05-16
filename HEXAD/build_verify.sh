@@ -38,7 +38,6 @@ ENTRYPOINTS=(
   "HEXAD/MITOSIS/mitosis.hexa"
   "HEXAD/hexad.hexa"        "HEXAD/integ_test.hexa"
   "HEXAD/CHAT/wiring_verify.hexa"
-  "HEXAD/CHAT/anima_chat.hexa"
 )
 LIBS=(
   "HEXAD/S/s_lib.hexa"      "HEXAD/M/m_lib.hexa"    "HEXAD/W/w_lib.hexa"
@@ -50,21 +49,18 @@ LIBS=(
   "HEXAD/D/d_train4_lib.hexa"
   "HEXAD/MITOSIS/mitosis_lib.hexa"
   "HEXAD/CHAT/wiring_verify_lib.hexa"
-  "HEXAD/CHAT/chat_lib.hexa"
 )
-# ── R2 RESOLVED 2026-05-16 (chat_lib + anima_chat 재편입 완료) ──────────────
-# 이전 "safetensors decl 부재" 진단은 STALE — 그 decl 은 hexa-lang runtime.h
-#   :677-688 + runtime.c:6625+ 에 이미 land (RFC 025/034-era). 실제 R2 blocker
-#   = hexa-lang codegen_c2 `_gen2_nested_index_assign_stmt` 3-level mixed-key
-#   spine-walk 버그: `cell_pool["cells"][i]["k"] = v` 를 invalid C 로 lower
-#   (`hexa_index_get(...)=...` rvalue 좌변 → "expression is not assignable").
-#   최소재현 = /tmp/nidx_repro.hexa (p["a"][0]["b"]=v). codegen 패치는 self-
-#   hosting dual-backend 7k LoC 회귀위험(1/2-level byte-identical 보장) 커서
-#   anima-side 무위험 우회 채택: tool/hexa_native/mitosis_hook_lib.hexa 4-site
-#   (298/619/863/867) → 검증된 defensive _mit_pool_set_cell_field(level-by-
-#   level 1-step, codegen-safe) 로 rewrite. chat_lib + anima_chat 둘 다
-#   compiled-native PASS (anima_chat _ac_smoke_fail 집계 → selftest marker).
-#   상위 hexa-lang named item = codegen_c2 3-level spine-walk fix (별도 RFC).
+# DEFERRED (honest named blocker — NOT in pass-count; hexa parse clean both):
+#   HEXAD/CHAT/chat_lib.hexa  (R1 lib-split, pure-fn lib, NO main)
+#   HEXAD/CHAT/anima_chat.hexa(R1 entrypoint, imports chat_lib)
+# blocker: compiled codegen 에 `hexa_safetensors_mmap_data_offset` (+ ckpt
+#   mmap safetensors intrinsic 일족) C decl 부재 → runtime.h/.c 0 선언.
+#   interp-only builtin (이 파일 과거 `hexa run` 21/21 byte-parity 만 검증,
+#   compiled native 최초 시도라 표면화). RFC 034 가 runtime.h `hexa_farr_*`
+#   decl 추가로 RFC 032/033 compiled smoke 복구한 것과 동일 trivial class.
+#   FIX = hexa-lang upstream: runtime.h 에 safetensors-mmap compiled decl 추가.
+#   R2(Phase5 d_lib→chat_lib compiled wire) 가 이 blocker 를 상속.
+#   decl land 후 위 ENTRYPOINTS 에 anima_chat.hexa / LIBS 에 chat_lib.hexa 재편입.
 PASS_MARKER='selftest: true|7/7 cross-file|spec invariants: true|scaffold check: true'
 
 ep_pass=0; ep_fail=0; lib_ok=0; lib_fail=0; failed=""

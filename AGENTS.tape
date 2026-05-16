@@ -172,7 +172,7 @@
 
 @D g_fire_autonomous := "cost-bearing fire = 완전 자율 (승인 게이트 전면 폐기)" :: governance [required d=2026-05-16 active]
   ~> "모든 fire-승인 게이트 프레이밍 (자동발사금지 / 사용자 게이트 / per-fire 승인 대기 / .clm fire · V8 FIRE COST 패턴) 전면 폐기·SUPERSEDE. user directive 2026-05-16 '게이트 유지 필요없어 / 모두 scrub' (강조·반복)."
-  rule = "cost-bearing GPU/cloud fire (vastai/runpod/H100/A100, $1-N 급) = **완전 자율 dispatch · 병렬 가능 · 승인 게이트 없음 · 대기 없음**. 사전 승인·확인·게이트 일체 불요 (무조건). 추정 비용은 head 에 투명 명시(정보 제공일 뿐, 대기 아님). $0 집착 금지. **GPU-필수 영역(Mac 불가, ubu/GPU 강제: 실-규모 train/build/parity/bootstrap 등)도 동일하게 자율 fire 가능** — 'GPU 필요' 자체가 게이트 사유 아님 (user directive 2026-05-16 'GPU 필요영역도 fire 가능'). 자율 판단으로 ubu(`ssh ubu`) 또는 GPU dispatch 선택."
+  rule = "cost-bearing GPU/cloud fire (vastai/runpod/H100/A100, $1-N 급) = **완전 자율 dispatch · 병렬 가능 · 승인 게이트 없음 · 대기 없음**. 사전 승인·확인·게이트 일체 불요 (무조건). 추정 비용은 head 에 투명 명시(정보 제공일 뿐, 대기 아님). $0 집착 금지."
   why = "mission outcome 우선 · cost-bearing BG 적극 활용이 사용자 durable preference. 승인 게이트는 momentum 저해 + 사용자 의도 명시 역행. conservative cost cap = floor (제한 아님)."
   apply = "Phase 6 통합 fire 포함 모든 cost-bearing fire = 즉시/병렬/bg 자율 dispatch. robustness 는 [@g_fire_dispatch_robust] 만 mandatory (SAVE_POD auto-promote + pull retry ≥3 — 안전장치이지 게이트 아님)."
   scrubbed = "active governance/roadmap 의 fire-승인 게이트 표현 전수 제거 (AGENTS.tape 본 @D + PLAN.md editable roadmap/contract). 과거 append-only 진행-로그 의 당시-사실 기록은 g6 으로 불변하되 본 @D 가 latest-wins 전면 supersede — 잔존 표현은 전부 死문(dead), 효력 없음. 신규 fire-게이트 표현 추가 금지."

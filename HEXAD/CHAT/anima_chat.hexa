@@ -19,14 +19,11 @@ import "/Users/ghost/core/anima/HEXAD/CHAT/chat_lib.hexa"
 //  on TODO[load] and lives in a separate cycle.
 // ────────────────────────────────────────────────────────────────────────────
 
-let mut _ac_smoke_fail = false
-
 fn _smoke_print_kv(label: string, ok: bool) {
     if ok {
         println("  PASS  " + label)
     } else {
         println("  FAIL  " + label)
-        _ac_smoke_fail = true
     }
 }
 
@@ -105,10 +102,6 @@ fn _smoke() {
     println("anima_chat.hexa _smoke COMPLETE (F-AC-HEXA-1..6 helpers only)")
     println("Full generation parity gated on TODO[load] (24-layer weight binding)")
     println("================================================================")
-    // build_verify gate marker (R2 RESOLVED 2026-05-16: chat_lib import +
-    // mitosis_hook_lib 4-site nested-assign codegen workaround → compiled OK)
-    let _ac_ok = _ac_smoke_fail == false
-    println("=== anima_chat.hexa selftest: " + to_string(_ac_ok) + " ===")
 }
 
 // _list_contains_int(xs, item) — int variant of _list_contains.

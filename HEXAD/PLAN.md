@@ -385,51 +385,6 @@ $0 Mac, deterministic, R2 safetensors blocker 와 독립. 잔여: (i) toy 4-weig
 wire = 여전히 hexa-lang `hexa_safetensors_mmap` decl 대기(별개 named item,
 Phase 5 와 무관).
 
-### 2026-05-16 — R3 통합 fire LANDED (PLAN-closure 잔여 (ii) 충족) — 9/9 SUPPORTED-STRONG
-
-User directive verbatim "R3 발사하자 통합 fire" (cost-authorized). PLAN-closure
-잔여 **(ii) Phase 6 6-module 통합 fire = cost-bearing 사용자 게이트** 를 실행 —
-실 cost-bearing GPU(box CPU-coherent) from-scratch 통합 fire. SSOT harness
-`state/verify_hexad_integ_2026_05_16/integ_harness.py` (F-INTEG 5/5 fire_gate=
-true) 를 **fork 없이 verbatim 재사용** + scale 상수 monkey-patch:
-`state/hexad_integ_fire_2026_05_16/train_hexad_integ_from_scratch.py`.
-
-**scale**: d_model 512 · n_layer 8 · max_cells 64 · seq_len 256 · 400 steps ·
-Group-A(D+Bridge) 85,822,840 params · RANDOM-INIT seed=0 (g_clm_from_scratch,
-no load_state_dict/torch.load) · byte-level synthetic corpus (integration
-WIRING fire, NOT language-quality — honest C3).
-
-**$0 Mac scaled-smoke gate**: F-INTEG 5/5 PASS @ scale (gate 통과 → fire 정당).
-
-**fire 결과 (vast.ai inst 36852855 A100-box, CPU-coherent 16t, 2026-05-16)** —
-trainer pre-pull console (authoritative, `dispatch_run.log` L100-137):
-loss(avg100) **5.6425→5.5743** · cells **3→5** (in-run organic split/merge
-3↔10, mitosis live OUTCOME — synthetic harness 가 deferral 했던 fire-time obs)
-· Φ_best **4.4153** · W lr-mod+pain 실측 live(eff_lr 1.19e-3↔5.29e-4, pain
-0↔1) · wall **163.6s (0.045hr)** · cost **$0.03** (envelope $1-5 대비 33-167×
-under) · falsifier **9/9 SUPPORTED-STRONG** = F-INTEG-1..5 5/5 (fire_gate
-carry) + F-V5MIT-1/2/3 + F-PRIN3 4/4.
-
-**honest tier**: F-INTEG-5 CE-descent = SGD OUTCOME (B-D-NOTE 패턴) —
-empirical SUPPORTED-STRONG, **NOT 🔵 closed-form**. anima 🔵(B-D 4/4·7/7)
-independent + already max — 이 fire 가 옮기지 않음, over-claim 없음.
-
-**honest C3 (ckpt-LOST evidence-only)**: 345MB 400-step fire ckpt + on-pod
-result.json = vast.ai proxy 영구 degraded(대용량 proxy 불안정 +
-post-load SSH degradation, `feedback_dispatch_vast_template_gotchas`)로
-pull 실패 → cycle-88 .clm v1 ckpt-LOST 선례와 동일 accepted evidence-only.
-verdict/metric 은 durable console log + reconstructed `result.json` 가
-authoritative (zero fabrication). Mac 4-step smoke ckpt 는 별도 보존 +
-provenance 명시(FIRE 와 conflate 안 함). bring-up 中 4 fail-fast abort +
-1 thrash(전부 trap auto-destroy, no idle bleed) — cycle-88 lesson 작동.
-누적 ~$0.35. pod 36852855 destroyed (post-bleed clean, no orphan).
-
-artifacts: `state/hexad_integ_fire_2026_05_16/{train_hexad_integ_from_scratch.py,
-dispatch.sh, result.json, dispatch_run.log, ckpts/CKPT_LOST_EVIDENCE_ONLY.md+
-MACSMOKE_CKPT_PROVENANCE.json}` + `docs/anima_hexad_integ_fire_2026_05_16.md`
-(8§). PLAN-closure 잔여 (ii) **충족** (잔여 (i) D-arch scale-up + (iii) R2
-hexa-safetensors wire 는 별개·무관 carry).
-
 ### 2026-05-16 — Phase 5 (1) A: 실-d_model LM-HEAD scale-up LANDED (compiled-native)
 
 사용자 게이트 "(1) scale-up … 모두 시도". 설계 분석(이 PLAN entry): toy
@@ -558,36 +513,3 @@ g6: 과거 진행-로그 의 당시-사실 기록은 불변하되 `g_fire_autono
 latest-wins 로 **전면 supersede** — 잔존 fire-게이트 표현은 전부 死문,
 효력 없음. 효과: Phase 6 실-규모 GPU fire 및 차후 모든 cost-bearing fire
 = 즉시/병렬/bg 자율 진행. 조건부 hold 도 폐기 (무조건 자율).
-
-### 2026-05-16 — R2 RESOLVED (chat_lib/anima_chat compiled-native re-integrated)
-
-사용자 "R2 ... fix go". **이전 진단 STALE 정정**: PLAN 의 R2 named blocker
-("hexa_safetensors_mmap_data_offset C decl 부재")는 더 이상 사실 아님 — 그
-decl 은 hexa-lang runtime.h:677-688 + runtime.c:6625+ 에 이미 land(RFC 025/
-034-era). 실제 R2 blocker = **hexa-lang codegen_c2 `_gen2_nested_index_
-assign_stmt` 3-level mixed-key spine-walk 버그**: `cell_pool["cells"][i]["k"]
-= v` 를 `hexa_index_get(...) = hexa_index_set(...)` (좌변이 함수콜 rvalue)
-로 lower → clang "expression is not assignable". 최소재현 `/tmp/nidx_repro.hexa`
-(`p["a"][0]["b"]=v`) 확정.
-
-codegen 패치는 self-hosting dual-backend(build_c.hexa + codegen_c2.hexa,
-7k+ LoC) 회귀위험(주석 "1/2-level byte-identical 보장") 커서 **anima-side
-무위험 우회** 채택 (정직 — 상위 hexa-lang fix 는 별도 named item):
-- `tool/hexa_native/mitosis_hook_lib.hexa`: 검증된 defensive helper
-  `_mit_pool_set_cell_field`(level-by-level 1-step, codegen-safe — h1_repro
-  로 사전검증) 추가 + 4 buggy 3-level site (298 blended / 619 clamped /
-  863 tension_history / 867 process_count+1) rewrite.
-- `HEXAD/CHAT/anima_chat.hexa`: `_ac_smoke_fail` 모듈-mut 집계 → build_verify
-  PASS_MARKER(`selftest: true`) honest aggregate(가짜 marker 아님, 실제
-  F-AC-HEXA FAIL 시 false).
-- `HEXAD/build_verify.sh`: chat_lib.hexa→LIBS · anima_chat.hexa→ENTRYPOINTS
-  재편입 + DEFERRED 주석 → R2 RESOLVED 정정(stale safetensors 진단 교체).
-
-**build_verify gate: 16/16 entrypoint + 14/14 lib = ALL COMPILED-NATIVE PASS**
-(chat_lib + anima_chat 둘 다 compiled-native PASS — R2 codegen blocker 해소).
-chat_lib import 의 mitosis_hook_lib 4-site 가 유일 차단점이었음.
-
-상태: **R2 inference-parity wire compiled = RESOLVED** (anima-side, $0,
-무위험). 잔여 = 상위 hexa-lang codegen_c2 3-level spine-walk fix(별도 RFC
-named item — anima 우회로 unblocked 이라 non-urgent) + 실 ckpt load end-to-end
-inference parity(별도 heavy cycle, 24L 570MB).

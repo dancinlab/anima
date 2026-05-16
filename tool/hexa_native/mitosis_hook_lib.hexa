@@ -55,22 +55,6 @@
 
 
 // ── Constants (mitosis.py L25-31 Ψ-Constants + Law 86 fix params) ────────────
-// Defensive level-by-level cell-field set. WHY: hexa-lang codegen_c2
-// `_gen2_nested_index_assign_stmt` mis-lowers a 3-level mixed-key direct
-// assign `cell_pool["cells"][i]["k"] = v` to invalid C (assigns to a
-// `hexa_index_get(...)` rvalue → "expression is not assignable"). The
-// 1-level steps below are codegen-safe (verified). Mirrors the proven
-// HEXAD/CHAT/anima_chat_aot.hexa::_mit_pool_set_cell_field. Upstream
-// hexa-lang named item filed (codegen_c2 3-level spine-walk bug).
-fn _mit_pool_set_cell_field(pool, idx: int, key: string, val) {
-    let mut cs = pool["cells"]
-    let mut cell = cs[idx]
-    cell[key] = val
-    cs[idx] = cell
-    pool["cells"] = cs
-    return pool
-}
-
 fn _mit_pi() { return 3.14159265358979 }
 fn _mit_lorenz_sigma() { return 10.0 }
 fn _mit_lorenz_rho()   { return 28.0 }
@@ -311,7 +295,7 @@ fn _mit_phi_ratchet(cell_pool, phi: float) {
                     let cur = cs2[i2]["hidden"]
                     let best = bh[i2]
                     let blended = _mit_vec_blend(cur, best, 0.2)
-                    cell_pool = _mit_pool_set_cell_field(cell_pool, i2, "hidden", blended)
+                    cell_pool["cells"][i2]["hidden"] = blended
                     i2 = i2 + 1
                 }
             }
@@ -632,7 +616,7 @@ fn _mit_inject_autonomous_perturbation(cell_pool, step: int) {
 
         // Norm clamp (F-MIT-HOOK-5).
         let clamped = _mit_vec_norm_clamp(new_h, _mit_hidden_clamp())
-        cell_pool = _mit_pool_set_cell_field(cell_pool, i, "hidden", clamped)
+        cell_pool["cells"][i]["hidden"] = clamped
         i = i + 1
     }
     return cell_pool
@@ -876,11 +860,11 @@ fn mitosis_forward_tail(x_in, cell_pool, step: int) {
                 keep.push(th[k])
                 k = k + 1
             }
-            cell_pool = _mit_pool_set_cell_field(cell_pool, i, "tension_history", keep)
+            cell_pool["cells"][i]["tension_history"] = keep
         }
 
         // Update process count.
-        cell_pool = _mit_pool_set_cell_field(cell_pool, i, "process_count", cell_pool["cells"][i]["process_count"] + 1)
+        cell_pool["cells"][i]["process_count"] = cell_pool["cells"][i]["process_count"] + 1
 
         // Append to global tension history (cap 500).
         cell_pool["global_tension_history"].push(t)
