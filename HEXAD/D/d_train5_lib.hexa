@@ -60,6 +60,25 @@ import "/Users/ghost/core/anima/HEXAD/D/d_train4_lib.hexa"
 //  dt2_adamw_step / dt2_zeros / dt2_init_W / dt_sqrt / dt_exp / dt_ln)
 
 
+// ── RFC 040 Phase C demo wire (2026-05-16) ─────────────────────────────────
+// HONEST SCOPE (g3 — no over-claim): d_train5_lib's hot path uses boxed-
+// array c3_matvec/c3_matvec_t (d_train3_lib §"matvec"); the FULL Phase C
+// wire (every c3_matvec→farr_matmul_gpu rewrite) is a follow-on cycle
+// because the packed-double farr representation differs from the boxed-
+// array call sites. THIS function `d5_matmul_gpu_demo` is the ONE
+// representative Phase C wire demo: it routes a farr-input matmul
+// through the RFC 040 `farr_matmul_gpu` dispatcher (Phase A LANDED at
+// hexa-lang 5ae8823f). On the no-CUDA build the dispatcher routes to
+// the RFC 032 CPU `farr_matmul` (identity wire — bit-equal to the CPU
+// oracle). On a HEXA_CUDA build the dispatcher will route to cuBLAS
+// Dgemm (TODO[cuda], next CUDA-box cycle). d_corpus_fire does NOT call
+// this demo (it stays on c3_matvec), so the no-CUDA d_corpus_fire gn2
+// trajectory is unchanged — the wire is no-op at the fire level.
+fn d5_matmul_gpu_demo(A, ar: int, ac: int, B, bc: int) {
+    return farr_matmul_gpu(A, ar, ac, B, bc)
+}
+
+
 // ── trig (range-reduced Taylor; period 2π) for RoPE ────────────────────────
 fn d5_two_pi() -> float { return 6.283185307179586 }
 fn d5_pi() -> float { return 3.141592653589793 }
