@@ -1107,3 +1107,27 @@ Shannon 8-bit bound) — 둘 다 closed-form 수학 invariant PASS.
 real-corpus wire (synthetic toy 입력 → corpus_window) + 실-scale config,
 (3) flatten-bootstrap + vast.ai 자율 dispatch (g_fire_autonomous). 다음 tick
 = (2) d_train5 ↔ corpus_loader wire.
+
+### 2026-05-16 — §7 #1 선결 (2/3): d_train5 ↔ real-corpus wire LANDED — F-D-CORPUS 5/5
+
+`/loop` iteration 9 — §7 #1 선결 (2/3). d_train5 (FULL n_layer 트레이너) 의
+synthetic separable byte-toy 입력 → 실 corpus wire.
+
+**d_train5 ↔ real-corpus wire LANDED**:
+- `HEXAD/D/d_corpus_train_smoke.hexa` (NEW entrypoint) — `d5_corpus_dataset
+  (path, T, nsamp, stride)` = corpus_loader 의 byte token → d5 `[IDS, YS]`
+  shape (T-token 윈도우 + next-token target). corpus_loader_lib + d_train5_lib
+  이중 import. **F-D-CORPUS 5/5 PASS**: BUILD · DATASET (4 실 corpus 윈도우
+  T=8 V=256) · FORWARD (logits 256, all-finite) · **CE-SHANNON** (CE=4.78 ≥ 0,
+  §8 −ln p 정보 floor) · **GRAD-DESCENT** (1 exact-grad SGD step CE 4.78→1.18
+  — 실 corpus sample 이 full stack 通해 trainable).
+- build_verify.sh + .hexa — d_corpus_train_smoke entrypoint → **20/20 + 14/14**.
+
+**§8 / g_blue_closed_mandate 준수**: corpus↔d_train5 연결고리 = CE Shannon-
+floor (CE=−ln p ≥ 0, closed) + exact-gradient descent (gradient = softmax−
+onehot = B-D-4 sympy closed-form 🔵). structural 아님 — 실 corpus 한 sample
+이 1-step 으로 CE 4× 감소 = trainability 실증.
+
+**§7 #1 선결 진척 (3 중 2 ✅)**: ✅(1) real-corpus 로더 ✅(2) d_train5 wire —
+잔여 (3) 실-scale config (d=768·12L) + flatten-bootstrap (PR#51) + vast.ai
+자율 dispatch (g_fire_autonomous, g_fire_dispatch_robust). 다음 tick = (3) fire.
