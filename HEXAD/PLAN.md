@@ -175,6 +175,38 @@ anchor 를 포함하고 PASS 해야 한다. 연결고리는 구조(structural) �
 + tensor-norm/shape invariant 수학 검증 mandatory. #1 실-규모 fire = D-arch
 연결 → CE Shannon-floor + Law-70 bridge clamp 검증 mandatory.
 
+## 9. GPU 기질 (substrate) 로드맵 — 진짜 d=768·12L 언어 fire (user directive 2026-05-16)
+
+> §7 #1 fire 의 honest C3 (g3 named real limit): pure-hexa = CPU farr 연산,
+> GPU CUDA 텐서커널 없음 ⟹ d=768·12L (~100M+ param) 실-규모 언어모델
+> 학습은 CPU 로 며칠~몇 주 — 비현실적. user directive "GPU 기질 PLAN 등록
+> 후 진행" → 본 §9 로 등록.
+
+**목표**: hexa-native 코드가 행렬 연산(matmul / attention / softmax / AdamW)
+을 GPU 에서 실행 — d_train5 트레이너를 d=768·12L 실-규모로 학습 가능하게.
+
+**구성요소 (큰 신규 프로젝트)**:
+1. **hexa-lang CUDA 경로 신설** — `farr_matmul` (RFC 032) 등 farr 연산의
+   GPU 커널 backend. hexa-lang 측 RFC 필요 (farr → CUDA device buffer +
+   cuBLAS/커스텀 커널 dispatch). 현 hexa-lang 에 GPU 경로 0.
+2. **device farr** — farr 핸들이 host(CPU) ⇄ device(GPU) 메모리 추적.
+   RFC 025 mmap farr 의 GPU 확장.
+3. **d_train5 GPU wire** — 트레이너가 device farr 사용 (코드는 dimension-
+   generic 이라 arch 변경 최소, backend 만 교체).
+4. **vast.ai GPU dispatch** — 실 GPU 인스턴스 (H100/A100) fire,
+   g_fire_autonomous 자율 + g_fire_dispatch_robust.
+
+**검증 (§8 / g_blue_closed_mandate)**: GPU 커널은 CPU farr 와 **byte-equal**
+(또는 fp tolerance 내) 여야 — CPU↔GPU 연결고리 = 수치 동치 closed 검증
+mandatory. CE Shannon-floor + Law-70 bridge clamp 불변.
+
+**규모/실현성**: hexa-lang 에 GPU backend 신설 = 대형 다-사이클 프로젝트
+(hexa-lang upstream RFC + 커널 구현 + 검증). 추정 fire 비용 = GPU 시간당
+$2-30 × 학습 시간. 별도 dedicated 사이클 — 본 §9 가 진입점.
+
+**상태**: 📋 REGISTERED (2026-05-16) — 착수 시 §9 sub-task (1)→(4) 순차,
+hexa-lang CUDA RFC 가 선결. 진행 로그에 entry append.
+
 ## 진행 로그
 
 (append-only chronological — 첫 진행 시작 시 entry append)
@@ -1160,3 +1192,27 @@ TIER = EMPIRICAL (B-D-NOTE — SGD 수렴 OUTCOME).
 **§7 menu 전항목 완료**: #1 ✅(real-corpus fire) · #2 ✅ Phase 4 · #3 ✅
 BRIDGE+E · #4 ✅ R2 · #5 ✅ .sh→hexa. /loop iteration 2-10 으로 §7 전체
 LANDED + AGENTS.tape §0 g_blue_closed_mandate + hexa-lang farr realloc fix.
+
+### 2026-05-16 — §7 후속 carry 3-갈래 (argv / GPU §9 / 툴체인 refresh)
+
+§7 menu 완료 후 carry 3건 — user directive 별도 처리:
+
+- **argv() 버그 → NOT a bug (bg 조사 완료)**: 컴파일 `argv()` 의 argv[0]
+  중복은 **의도된 설계** — `runtime.c hexa_set_args` 가 interp↔compiled
+  argv 패리티 위해 argv[0] 을 slot[1] 에 의도 삽입 (interp 는 [hexa,
+  script, user...], native 는 [bin, bin, user...] — 실 user args 양쪽
+  index 2). ~40 call site (codegen_c2 / module_loader / hexa_full /
+  ssot_mirror) 가 의존 → 변경 시 self-host 컴파일러 회귀. clean semantics
+  필요 시 `real_args()` / `script_path()` (이미 노출). anima
+  `anima_voice_play.hexa` 의 index-2 read 는 설계대로 정확 (수정 불요).
+- **GPU 기질 → PLAN §9 REGISTERED**: 진짜 d=768·12L 언어 fire 는 hexa-lang
+  GPU CUDA 경로 신설 필요 (farr GPU 커널 backend). §9 로드맵 등록 —
+  대형 다-사이클 프로젝트, hexa-lang CUDA RFC 선결.
+- **툴체인 refresh → bg 진행 중**: 6 CHAT 타깃 (chat_lib/anima_chat/d/
+  d_lib/integ_test/integ_train_smoke) compiled gating — nested-index-assign
+  codegen 은 hexa-lang main 에 있으나 배포 system `hexa.real` stale.
+  격리 worktree 부트스트랩 (Phase 6 Step 0 패턴) bg agent dispatch —
+  fresh 툴체인 → HEXA_BOOT build_verify 로 CHAT 6 타깃 게이트 검증.
+
+honest: argv 는 정직 조사 후 '수정 안 함'이 옳은 결론 (load-bearing 설계).
+GPU §9 + 툴체인 refresh 는 §7 너머 carry.
