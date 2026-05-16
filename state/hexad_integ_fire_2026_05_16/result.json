@@ -1,0 +1,366 @@
+{
+ "spec_id": "R3 — HEXAD integrated 7-module + mitosis scaled fire (CPU-coherent)",
+ "reconstruction_note": "AUTHORITATIVE result reconstructed from durable trainer console output in dispatch_run.log (L100-137). The on-pod result.json + 345MB ckpt could NOT be pulled — vast.ai proxy permanently degraded for instance 36852855 (documented large-file proxy unreliability + post-load SSH degradation). This mirrors the cycle-88 .clm v1 ckpt-LOST evidence-only precedent (g_fire_dispatch_robust / g_hf_naming process_upload_mandate (d)). Verdict + all metrics are the trainer pre-pull console truth — zero fabrication.",
+ "harness_ssot": "state/verify_hexad_integ_2026_05_16/integ_harness.py (F-INTEG 5/5 fire_gate=true; reused verbatim, not forked)",
+ "scale": {
+  "seed": 0,
+  "vocab": 256,
+  "d_model": 512,
+  "n_layer": 8,
+  "max_cells": 64,
+  "seq_len": 256,
+  "n_steps": 400,
+  "synthetic_corpus": true,
+  "corpus_note": "byte-level synthetic randint(0,256) — integration scratch fire, NOT a language-quality run"
+ },
+ "training": {
+  "steps_actual": 400,
+  "wall_seconds": 163.6,
+  "wall_hours": 0.045,
+  "cost_usd_actual": 0.03,
+  "cost_per_hr": 0.5609,
+  "cost_cap_usd": 8.0,
+  "trainable_param_count": 85822840,
+  "n_cells_init": 3,
+  "n_cells_final": 5,
+  "n_cells_min": 3,
+  "n_cells_max": 10,
+  "loss_first": 6.0194,
+  "loss_last": 5.5795,
+  "loss_initial_avg100": 5.6425,
+  "loss_final_avg100": 5.5743,
+  "ce_reduction_factor": 1.0122,
+  "phi_first": 1.0168,
+  "phi_last": 1.2581,
+  "phi_best": 4.4153,
+  "seed": 0,
+  "device": "cpu",
+  "threads": 16,
+  "phi_backend": "python (no anima_rs on pod)",
+  "ckpt_remote_bytes": 345504632,
+  "ckpt_pulled": false,
+  "ckpt_status": "ckpt-LOST evidence-only (proxy degraded; seed-fixed RANDOM-INIT reproducible)"
+ },
+ "step_trajectory_logged": [
+  {
+   "step": 0,
+   "loss": 6.0194,
+   "phi": 1.0168,
+   "cells": 3,
+   "eff_lr": 0.00119,
+   "pain": 0.0
+  },
+  {
+   "step": 13,
+   "loss": 5.7286,
+   "phi": 2.1086,
+   "cells": 7,
+   "eff_lr": 0.00119,
+   "pain": 0.0
+  },
+  {
+   "step": 26,
+   "loss": 5.642,
+   "phi": 1.7972,
+   "cells": 6,
+   "eff_lr": 0.00119,
+   "pain": 0.0
+  },
+  {
+   "step": 39,
+   "loss": 5.6452,
+   "phi": 2.2929,
+   "cells": 6,
+   "eff_lr": 0.00119,
+   "pain": 0.0
+  },
+  {
+   "step": 52,
+   "loss": 5.6095,
+   "phi": 0.8114,
+   "cells": 5,
+   "eff_lr": 0.00119,
+   "pain": 0.0
+  },
+  {
+   "step": 65,
+   "loss": 5.5726,
+   "phi": 2.3657,
+   "cells": 7,
+   "eff_lr": 0.00119,
+   "pain": 0.0
+  },
+  {
+   "step": 78,
+   "loss": 5.6014,
+   "phi": 1.5149,
+   "cells": 6,
+   "eff_lr": 0.00119,
+   "pain": 0.0
+  },
+  {
+   "step": 91,
+   "loss": 5.6269,
+   "phi": 4.0625,
+   "cells": 9,
+   "eff_lr": 0.00119,
+   "pain": 0.0
+  },
+  {
+   "step": 104,
+   "loss": 5.648,
+   "phi": 0.2167,
+   "cells": 3,
+   "eff_lr": 0.000717,
+   "pain": 0.743
+  },
+  {
+   "step": 117,
+   "loss": 5.5805,
+   "phi": 2.1481,
+   "cells": 6,
+   "eff_lr": 0.00119,
+   "pain": 0.0
+  },
+  {
+   "step": 130,
+   "loss": 5.6099,
+   "phi": 1.7084,
+   "cells": 5,
+   "eff_lr": 0.00119,
+   "pain": 0.001
+  },
+  {
+   "step": 143,
+   "loss": 5.5707,
+   "phi": 2.3755,
+   "cells": 6,
+   "eff_lr": 0.00119,
+   "pain": 0.058
+  },
+  {
+   "step": 156,
+   "loss": 5.5719,
+   "phi": 1.7793,
+   "cells": 7,
+   "eff_lr": 0.00119,
+   "pain": 0.0
+  },
+  {
+   "step": 169,
+   "loss": 5.5934,
+   "phi": 2.2168,
+   "cells": 6,
+   "eff_lr": 0.00119,
+   "pain": 0.0
+  },
+  {
+   "step": 182,
+   "loss": 5.5892,
+   "phi": 1.5747,
+   "cells": 5,
+   "eff_lr": 0.00119,
+   "pain": 0.0
+  },
+  {
+   "step": 195,
+   "loss": 5.6113,
+   "phi": 1.5826,
+   "cells": 6,
+   "eff_lr": 0.00119,
+   "pain": 0.0
+  },
+  {
+   "step": 208,
+   "loss": 5.5635,
+   "phi": 3.5726,
+   "cells": 9,
+   "eff_lr": 0.00119,
+   "pain": 0.0
+  },
+  {
+   "step": 221,
+   "loss": 5.5729,
+   "phi": 3.4747,
+   "cells": 8,
+   "eff_lr": 0.00119,
+   "pain": 0.144
+  },
+  {
+   "step": 234,
+   "loss": 5.5814,
+   "phi": 1.8939,
+   "cells": 6,
+   "eff_lr": 0.00119,
+   "pain": 0.062
+  },
+  {
+   "step": 247,
+   "loss": 5.6053,
+   "phi": 1.5124,
+   "cells": 6,
+   "eff_lr": 0.00119,
+   "pain": 0.0
+  },
+  {
+   "step": 260,
+   "loss": 5.603,
+   "phi": 1.2072,
+   "cells": 5,
+   "eff_lr": 0.00119,
+   "pain": 0.067
+  },
+  {
+   "step": 273,
+   "loss": 5.5898,
+   "phi": 2.5414,
+   "cells": 7,
+   "eff_lr": 0.00119,
+   "pain": 0.0
+  },
+  {
+   "step": 286,
+   "loss": 5.5753,
+   "phi": 0.0291,
+   "cells": 5,
+   "eff_lr": 0.000529,
+   "pain": 0.966
+  },
+  {
+   "step": 299,
+   "loss": 5.5574,
+   "phi": 0.3156,
+   "cells": 10,
+   "eff_lr": 0.000816,
+   "pain": 0.0
+  },
+  {
+   "step": 312,
+   "loss": 5.5668,
+   "phi": 0.7635,
+   "cells": 3,
+   "eff_lr": 0.00119,
+   "pain": 1.0
+  },
+  {
+   "step": 325,
+   "loss": 5.5805,
+   "phi": 3.2193,
+   "cells": 8,
+   "eff_lr": 0.00119,
+   "pain": 0.0
+  },
+  {
+   "step": 338,
+   "loss": 5.5621,
+   "phi": 4.1487,
+   "cells": 9,
+   "eff_lr": 0.00119,
+   "pain": 0.0
+  },
+  {
+   "step": 351,
+   "loss": 5.5701,
+   "phi": 3.491,
+   "cells": 8,
+   "eff_lr": 0.00119,
+   "pain": 0.122
+  },
+  {
+   "step": 364,
+   "loss": 5.5777,
+   "phi": 1.319,
+   "cells": 6,
+   "eff_lr": 0.00119,
+   "pain": 0.0
+  },
+  {
+   "step": 377,
+   "loss": 5.5862,
+   "phi": 1.5506,
+   "cells": 7,
+   "eff_lr": 0.00119,
+   "pain": 0.237
+  },
+  {
+   "step": 390,
+   "loss": 5.5964,
+   "phi": 2.1493,
+   "cells": 6,
+   "eff_lr": 0.00119,
+   "pain": 0.107
+  },
+  {
+   "step": 399,
+   "loss": 5.5795,
+   "phi": 1.2581,
+   "cells": 5,
+   "eff_lr": 0.00119,
+   "pain": 0.0
+  }
+ ],
+ "falsifiers": {
+  "F-INTEG-1": {
+   "name": "SINGLE-FORWARD-WIRED",
+   "passed": true,
+   "source": "trainer console (dispatch_run.log L125-134)"
+  },
+  "F-INTEG-2": {
+   "name": "GRADIENT-BARRIER-CLEAN",
+   "passed": true,
+   "source": "trainer console (dispatch_run.log L125-134)"
+  },
+  "F-INTEG-3": {
+   "name": "SCRATCH-INIT-SEED-FIXED",
+   "passed": true,
+   "source": "trainer console (dispatch_run.log L125-134)"
+  },
+  "F-INTEG-4": {
+   "name": "MITOSIS-WIRING-LIVE",
+   "passed": true,
+   "source": "trainer console (dispatch_run.log L125-134)"
+  },
+  "F-INTEG-5": {
+   "name": "CE-DESCENT-WITH-ALL-6",
+   "passed": true,
+   "source": "trainer console (dispatch_run.log L125-134)"
+  },
+  "F-V5MIT-1": {
+   "name": "SPLIT-NOGRAD",
+   "passed": true,
+   "source": "trainer console (dispatch_run.log L125-134)"
+  },
+  "F-V5MIT-2": {
+   "name": "MERGE-WEIGHT",
+   "passed": true,
+   "source": "trainer console (dispatch_run.log L125-134)"
+  },
+  "F-V5MIT-3": {
+   "name": "PHI-CONSERVATION",
+   "passed": true,
+   "source": "trainer console (dispatch_run.log L125-134)"
+  },
+  "F-PRIN3": {
+   "name": "NO-PERSONA-INJECTION",
+   "passed": true,
+   "source": "trainer console (dispatch_run.log L125-134)"
+  }
+ },
+ "falsifier_aggregate": {
+  "n_pass": 9,
+  "n_total": 9,
+  "f_integ_pass": 5,
+  "f_added_pass": 4,
+  "verdict": "SUPPORTED-STRONG",
+  "fire_gate_carry": true
+ },
+ "honest_c3": [
+  "CE-descent (5.6425→5.5743 avg100) = SGD OUTCOME at integrated scope (B-D-NOTE pattern) — empirical SUPPORTED-STRONG, NOT 🔵 closed-form.",
+  "Synthetic byte-level corpus — integration scratch fire, NOT a language-quality run. No fluency claim.",
+  "C-engine Python Φ fallback on pod (no anima_rs compiled ext); integration WIRING is backend-agnostic.",
+  "CPU-coherent run (harness single-device-by-design); GPU device-split honestly abandoned (cross-device addmm = harness fork).",
+  "Mitosis OUTCOME observed live: cells dynamically 3→10 split + merged back through run (fire-time obs F-INTEG-4 deferred from synthetic harness). W lr-mod + pain signal demonstrably live.",
+  "ckpt + on-pod result.json NOT pulled (vast.ai proxy permanently degraded) — AUTHORITATIVE evidence is trainer pre-pull console (durable in dispatch_run.log). Accepted ckpt-LOST evidence-only (cycle-88 precedent).",
+  "anima verdict 🔵 (B-D 4/4, 7/7) independent + already max — this fire does not move it; no over-claim."
+ ]
+}
