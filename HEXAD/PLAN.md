@@ -384,3 +384,43 @@ $0 Mac, deterministic, R2 safetensors blocker 와 독립. 잔여: (i) toy 4-weig
 6-module 통합 fire = cost-bearing 사용자 게이트; (iii) R2 inference-parity
 wire = 여전히 hexa-lang `hexa_safetensors_mmap` decl 대기(별개 named item,
 Phase 5 와 무관).
+
+### 2026-05-16 — Phase 5 (1) A: 실-d_model LM-HEAD scale-up LANDED (compiled-native)
+
+사용자 게이트 "(1) scale-up … 모두 시도". 설계 분석(이 PLAN entry): toy
+scalar Wengert tape 는 d=768·12L 풀스택에 O(ops²) **구조적 infeasible**.
+**핵심 정직 insight**: linear LM-head `logits[k]=Σ_j W[k][j]·x[j]` 의 CE
+grad 는 tape **불요·closed** — `dL/dW[k][j]=(softmax−onehot)[k]·x[j]` =
+B-D-4 closed logit-Jacobian(이미 🔵 blue_falsifier, 재사용·재증명 X) ⊗ x
+outer product. ⟹ 검증된 Phase 5 메커니즘을 **임의 (d_model, vocab)** 로
+일반화(O(V·d)/step), tape 는 d_train_lib.hexa 의 RFC 034 GRAD-EXACT anchor
+로 그대로 잔존(미변경).
+
+**LANDED 산출물** (compiled-first lib-split, branch feat/phase5-a-…):
+- `HEXAD/D/d_train2_lib.hexa` — pure: K-class stable softmax(max-shift +
+  range-reduced dt_exp 재사용) + `dt2_forward`(V×d flat) + **`dt2_bd4_grad`
+  = (softmax−onehot)⊗x closed, NO tape** + `dt2_gn2`/`dt2_ce`/`dt2_predict`
+  + `dt2_adamw_step`(decoupled wd, Newton √) + epoch reducers(top-level,
+  no closure) + `dt2_init_W`(LCG RANDOM seed-fixed, base_ckpt=NONE). d_train
+  _lib.hexa import 재사용(dt_exp/dt_ln/dt_lcg_next; DRY).
+- `HEXAD/D/d_train2_smoke.hexa` — entry: dimension-generic, TINY config
+  d=8·V=4·N=8 linearly-separable toy, RANDOM seed-fixed init, 80-step AdamW.
+
+**F-D-PORT-2 (real-d_model scope) compiled binary**:
+gn2(Σ‖softmax−onehot‖²) **6.17418 → 3.373e-4 (≈18300× collapse)**, acc
+**0/8 → 8/8**, **F-D-PORT-2b GRAD-EXACT analytic vs 중심차분 |Δ|=6.4e-12**
+(B-D-4 closed grad 구현 정확 = machine precision) → **selftest: true**.
+TIER = **EMPIRICAL** (B-D-NOTE — SGD 수렴 OUTCOME, NOT closed-form, NOT
+🔵; trainability PROPERTY = B-D-4 🔵 별개, blue_falsifier — g3 정직 tier).
+
+**build_verify**: ENTRYPOINTS 12→13(+d_train2_smoke) · LIBS 10→11
+(+d_train2_lib) → **13/13 + 11/11 compiled-native PASS** ("ALL COMPILED-
+NATIVE PASS"). blue 22/22 🔵 불변(hexa-only additive, anchor 무영향).
+
+상태: **Phase 5 (1) A LANDED** — 검증 메커니즘의 dimension-generic 실-
+d_model 일반화, compiled-native $0 Mac deterministic. lib 는 실 d=768·
+vocab=256 동일 코드 실행 가능(Mac=tiny formulaic 한정, 실-규모 run = ubu
+heavy cycle 별도). 잔여 "모두 시도": (C) head + 단일 transformer block
+analytic backprop(#44), (B) 풀 12L tensor-autograd(#45, RFC급 multi-cycle),
+(2) Phase 6 통합 fire(#46, cost-bearing 사용자 게이트). R2 PR #102(d_lib
+wire) = 별개 parent-review item, Phase 5 무관(미손댐).

@@ -32,6 +32,7 @@ ENTRYPOINTS=(
   "HEXAD/E/e.hexa"          "HEXAD/BRIDGE/bridge.hexa"
   "HEXAD/C/c.hexa"          "HEXAD/D/d.hexa"
   "HEXAD/D/d_train_smoke.hexa"
+  "HEXAD/D/d_train2_smoke.hexa"
   "HEXAD/MITOSIS/mitosis.hexa"
   "HEXAD/hexad.hexa"        "HEXAD/integ_test.hexa"
   "HEXAD/CHAT/wiring_verify.hexa"
@@ -41,6 +42,7 @@ LIBS=(
   "HEXAD/E/e_lib.hexa"      "HEXAD/BRIDGE/bridge_lib.hexa"
   "HEXAD/C/c_lib.hexa"      "HEXAD/D/d_lib.hexa"
   "HEXAD/D/d_train_lib.hexa"
+  "HEXAD/D/d_train2_lib.hexa"
   "HEXAD/MITOSIS/mitosis_lib.hexa"
   "HEXAD/CHAT/wiring_verify_lib.hexa"
 )

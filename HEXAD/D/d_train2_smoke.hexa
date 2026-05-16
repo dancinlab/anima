@@ -1,0 +1,138 @@
+// HEXAD/D/d_train2_smoke.hexa — entrypoint (import lib + selftest + top-level call)
+// ════════════════════════════════════════════════════════════════════════════
+//  PHASE 5 (1) — real-d_model K-class LM-HEAD from-scratch trainer SMOKE.
+//
+//  Exercises d_train2_lib.hexa (B-D-4 closed analytic grad, NO tape) at a
+//  TINY-but-GENERAL config (d_model=8, vocab=4) — the LOGIC is dimension-
+//  generic, so the same lib runs at real d_model=768 · vocab=256 on ubu
+//  (Mac HEXA_MAC_BUILD_OK=1 = tiny formulaic only; real-scale = ubu cycle).
+//
+//  F-D-PORT-2  TRAINABILITY-EMPIRICAL : N AdamW steps ⟹ gn2 = Σ‖softmax−
+//    onehot‖² collapses + argmax acc → N. TIER = **EMPIRICAL** (B-D-NOTE —
+//    SGD OUTCOME, NOT closed-form, NOT 🔵).
+//  F-D-PORT-2b GRAD-EXACT : analytic B-D-4 grad vs central finite-difference
+//    of CE — verifies the closed-grad IMPL (the PROPERTY); does NOT upgrade
+//    the OUTCOME tier (honest, g3 / raw#9/10).
+//
+//  from-scratch : W = RANDOM seed-fixed LCG init, base_ckpt = NONE
+//                 (AGENTS.tape g_clm_from_scratch).
+// ════════════════════════════════════════════════════════════════════════════
+
+import "/Users/ghost/core/anima/HEXAD/D/d_train2_lib.hexa"
+
+
+// deterministic linearly-separable K-class toy (top-level; no closure):
+//   class c ∈ [0,V) → x has high mass in dims [c*g .. c*g+g) (g = d/V),
+//   low elsewhere + tiny deterministic per-sample jitter. Linearly
+//   separable ⟹ a linear head CAN drive gn2→0 (learnable, not trivial).
+fn d2_make_dataset(d: int, V: int, reps: int) {
+    let g = d / V
+    let mut XS = []
+    let mut YS = []
+    let mut c = 0
+    while c < V {
+        let mut r = 0
+        while r < reps {
+            let mut x = []
+            let mut j = 0
+            while j < d {
+                let hot = (j >= c * g) && (j < c * g + g)
+                let jit = (to_float((c * 7 + r * 3 + j) % 5) / 50.0)
+                x.push((if hot { 1.0 } else { 0.05 }) + jit)
+                j = j + 1
+            }
+            XS.push(x)
+            YS.push(c)
+            r = r + 1
+        }
+        c = c + 1
+    }
+    return [XS, YS]
+}
+
+
+fn selftest() {
+    println("================================================================")
+    println("d_train2_smoke — Phase 5 (1) real-d_model LM-head (F-D-PORT-2)")
+    println("================================================================")
+
+    let d = 8
+    let V = 4
+    let reps = 2                       // N = V*reps = 8 samples
+    let ds = d2_make_dataset(d, V, reps)
+    let XS = ds[0]
+    let YS = ds[1]
+    let nsamp = len(YS)
+
+    // from-scratch RANDOM seed-fixed init (g_clm_from_scratch, base_ckpt=NONE)
+    let n = V * d
+    let mut W = dt2_init_W(42, d, V, 0.2)
+    let mut m = dt2_zeros(n)
+    let mut v = dt2_zeros(n)
+
+    let gn2_0 = dt2_epoch_gn2(W, XS, YS, d, V)
+    let acc_0 = dt2_epoch_acc(W, XS, YS, d, V)
+    println("  init : gn2=" + to_string(gn2_0) + "  acc=" + to_string(acc_0)
+            + "/" + to_string(nsamp))
+
+    // ── F-D-PORT-2b GRAD-EXACT (central finite-difference vs B-D-4 closed) ──
+    //   check weight index wi on sample 0; eps central diff of dt2_ce.
+    let wi = 5
+    let eps = 0.0005
+    let g_an = dt2_bd4_grad(W, XS[0], YS[0], d, V)
+    let mut Wp = []
+    let mut Wm = []
+    let mut i = 0
+    while i < n {
+        Wp.push(if i == wi { W[i] + eps } else { W[i] })
+        Wm.push(if i == wi { W[i] - eps } else { W[i] })
+        i = i + 1
+    }
+    let cep = dt2_ce(Wp, XS[0], YS[0], d, V)
+    let cem = dt2_ce(Wm, XS[0], YS[0], d, V)
+    let g_fd = (cep - cem) / (2.0 * eps)
+    let gerr = if g_an[wi] - g_fd > 0.0 { g_an[wi] - g_fd } else { g_fd - g_an[wi] }
+    let gradexact = gerr < 0.01
+    println("  GRAD-EXACT: analytic=" + to_string(g_an[wi])
+            + " fd=" + to_string(g_fd) + " |Δ|=" + to_string(gerr)
+            + "  -> " + (if gradexact { "PASS" } else { "FAIL" }))
+
+    // ── from-scratch AdamW training (full-batch B-D-4 closed grad) ──────────
+    let steps = 80
+    let mut st = 1
+    while st <= steps {
+        let g = dt2_epoch_grad(W, XS, YS, d, V)
+        let upd = dt2_adamw_step(W, m, v, g, 0.08, 0.9, 0.999, 0.00000001,
+                                 0.01, st)
+        W = upd[0]
+        m = upd[1]
+        v = upd[2]
+        st = st + 1
+    }
+
+    let gn2_1 = dt2_epoch_gn2(W, XS, YS, d, V)
+    let acc_1 = dt2_epoch_acc(W, XS, YS, d, V)
+    println("  final: gn2=" + to_string(gn2_1) + "  acc=" + to_string(acc_1)
+            + "/" + to_string(nsamp) + "  (after " + to_string(steps)
+            + " AdamW steps)")
+
+    // F-D-PORT-2 robust criterion: gn2 strict collapse (≥10×) + acc full.
+    // (acc-full is reachable since the toy is linearly separable; gn2
+    // collapse is the LEARNING signal — margin/confidence, B-D-NOTE.)
+    let collapsed = (gn2_1 * 10.0) < gn2_0
+    let accfull = acc_1 == nsamp
+    let port2 = collapsed && accfull
+    println("  F-D-PORT-2 : gn2-collapse(≥10x)=" + to_string(collapsed)
+            + " acc-full=" + to_string(accfull)
+            + "  -> " + (if port2 { "PASS (EMPIRICAL)" } else { "FAIL" }))
+
+    let ok = gradexact && port2
+    println("----------------------------------------------------------------")
+    println("  TIER = EMPIRICAL (B-D-NOTE: SGD OUTCOME, NOT 🔵; trainability")
+    println("         PROPERTY = B-D-4 🔵 separate, blue_falsifier)")
+    println("  selftest: " + (if ok { "true" } else { "false" }))
+    println("================================================================")
+    return if ok { 0 } else { 1 }
+}
+
+selftest()
