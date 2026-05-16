@@ -47,6 +47,17 @@
 @V v1 := "tape" :: spec [active]
   version = "1.2"
 
+# ─── §0 검증 최상위 표준 — TOP MANDATE ────────────────────────────────
+
+@D g_blue_closed_mandate := "모든 산출물 + 연결부위 🔵 closed 검증 기준" :: governance [required d=2026-05-16 active]
+  rule = "anima HEXAD 의 모든 산출물(impl·verification)과 **기존 HEXAD 와의 연결부위(connection point / wiring)** 는 🔵 SUPPORTED-FORMAL closed-form 기준으로 검증·통과되어야 한다. 구조(structural)·empirical 검증만으로는 불충분 — 각 산출물·연결의 수학·물리 invariant 가 closed-form 으로 증명(g_verdict_tier_blue)되고 그 falsifier 가 PASS 여야 한다."
+  connection_emphasis = "연결부위 마저도 🔵 — 모듈 간 wiring (σ(6)=12 연결) 은 (A) 양 끝 모듈 🔵 SUPPORTED-FORMAL + (B) 연결 transfer-function / invariant 자체가 closed-form 🔵 일 때만 verified-wired (HEXAD.tape wiring 🔵-gate). 연결을 구조 검증만으로 닫지 말 것."
+  honest_carve_out = "🔵 closed 가 불가능한 유일 부분 = stochastic-optimizer 의 SGD-수렴 OUTCOME (B-D-NOTE / B-BRIDGE-NOTE 패턴 — 모든 NN 공통, anima 고유 결함 아님). 그 경우에도 (a) 연결의 transfer-function / invariant 는 반드시 closed-form 🔵 로 검증하고 (b) 잔여 empirical OUTCOME 만 정직하게 carve-out — fake closed-form 금지 (g3 / f2), over-claim 금지."
+  why = "user directive 2026-05-16 (반복·강조): '수학·물리 검증이 통과되어야 하고 항상 기존 HEXAD 연결고리 부분도 수학·물리 검증 통과' + 'AGENTS.tape 최상단에 기록 — 모든 것들, 연결부위 마저도 🔵 closed 기준'."
+  apply = "신규 HEXAD impl / wire / fire 마다 falsifier 가 ≥1 real-limit 수학·물리 closed-form anchor 를 포함하고 PASS. 연결부위는 별도 명시 검증. PLAN.md §8 검증 표준 + audit 표가 운영 instance."
+  authority = "[@x_lattice_policy] §1.2 real-limits · g3 verification-anchor-real-limit · g_verdict_tier_blue · HEXAD.tape wiring 🔵-gate"
+  @> CLAUDE.md
+
 # ─── §1 Identity ─────────────────────────────────────────────────────
 
 @I id001 := "anima" :: identity-claim [d=2026-05-14 active]
