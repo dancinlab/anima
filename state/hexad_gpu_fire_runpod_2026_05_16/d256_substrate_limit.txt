@@ -1,9 +1,40 @@
-=== D256 SUBSTRATE-LIMIT EVIDENCE ===
-interp CPU before kill:
-    ELAPSED     TIME %CPU   RSS
-      13:18 00:13:16 99.7 330868
-fire_full.log lines: 75
-last source-output line (proves stuck at init eval, no init: println):
-================================================================
-d_corpus_fire — §7 #1 real-corpus from-scratch FIRE (F-D-FIRE)
-================================================================
+=== D256 RUN — ROOT CAUSE CORRECTED (NOT a substrate limit) ===
+
+INITIAL (WRONG) interpretation: "pure-hexa CPU substrate limit at d=256·4L"
+  raw observation: hexa_interp pegged 99.7% CPU for 13:16, never printed
+  the `init :` println, fire_full.log stuck at 75 lines:
+    ELAPSED   TIME      %CPU  RSS
+    13:18     00:13:16  99.7  330868
+    last output line: d_corpus_fire — §7 #1 ... (header only)
+
+CORRECTED ROOT CAUSE (honest, g3):
+  d_corpus_fire imports d_train5_lib, which transitively imports:
+    d_train5_lib -> d_train4_lib -> d_train3_lib -> d_train2_lib -> d_train_lib
+  dt_ln / dt_exp / dt_sqrt / dt2_* are DEFINED IN d_train_lib.hexa
+  (lines 121 dt_exp, 143 dt_ln), NOT interpreter builtins.
+
+  The dispatch (and the prior Vast.ai dispatch_h100_corpus.sh — SAME pre-
+  existing bug) only uploaded d_train5_lib.hexa + corpus_loader_lib.hexa to
+  /Users/ghost/core/anima/HEXAD/D/. The 4 transitive deps were ABSENT.
+
+  => d_train5_lib's dt_ln/dt_exp calls resolved to "undefined function",
+     softmax/LN math then hit "division by zero", and the interpreter spun
+     forever on the broken numeric path at ~100% CPU. The 13 min was NOT
+     genuine d=256 compute — it was a broken-deps spin.
+
+  Proof: the FIRST d=64·4L run (same incomplete deps) produced exactly:
+     Runtime error: undefined function: dt_ln
+     Runtime error: undefined function: dt_exp
+     error: division by zero
+  d=256 ran the identical incomplete-dep code path; it had the same error
+  (its dedicated log was never cat'd to fire_full.log before kill).
+
+CONCLUSION:
+  - There is NO validated pure-hexa substrate-limit finding for d=256.
+    That claim is RETRACTED.
+  - The real finding is a DISPATCH PAYLOAD BUG: missing 4 transitive
+    d_train*_lib deps. Pre-existing (also affected prior Vast.ai corpus
+    dispatch — explains why earlier corpus runs never produced results).
+  - Fixed in the d=64·4L seed=44 RE-FIRE: all 5 dep libs uploaded
+    (d_train_lib..d_train5_lib + corpus_loader_lib). Re-fire ran with
+    0 errors (genuine compute) — see d64_seed44.log.

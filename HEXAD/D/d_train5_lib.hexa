@@ -79,6 +79,95 @@ fn d5_matmul_gpu_demo(A, ar: int, ac: int, B, bc: int) {
 }
 
 
+// ════════════════════════════════════════════════════════════════════════════
+//  RFC 040 Phase E — d_train5 GPU-routed dominant-matmul layer (2026-05-16)
+// ────────────────────────────────────────────────────────────────────────────
+//  HONEST SCOPE (g3): the dominant FLOPs in d5_attn_fwd / d5_attn_bwd /
+//  d5_block_fwd / d5_block_bwd / d5_forward / d5_grad are the per-position
+//  linear projections (Q/K/V/O · SwiGLU gate/up/down) and the tied LM head.
+//  Phase E routes those through `farr_matmul_gpu` (RFC 040 dispatcher):
+//    • no-CUDA build → routes to RFC 032 CPU `farr_matmul` (BIT-EQUAL to the
+//      boxed c3_matvec oracle within fp-noise — the CPU-equivalence gate).
+//    • HEXA_CUDA build → routes to cuBLAS Dgemm on the GPU (the Phase E win;
+//      cuBLAS Dgemm ≡ CPU farr_matmul proven max|Δ|=4.44e-15, F-RFC040 5/5).
+//
+//  THE REAL GPU WIN = BATCHING. The boxed path did T separate matvecs per
+//  projection (rank-1 GEMV, GPU-starved). Phase E batches all T positions
+//  into ONE matmul: W[out·in] · Xᵀ[in·T] → Y[out·T] (a real GEMM, the shape
+//  cuBLAS Dgemm wants). This is what makes nvidia-smi util substantial in
+//  the training loop (vs Phase D's 0-2% with no GPU in-loop at all).
+//
+//  Numerics: farr_matmul (and thus farr_matmul_gpu) computes the SAME
+//  Σ_k A[r·K+k]·B[k·N+c] reduction as c3_matvec; on no-CUDA they are
+//  bit-equal, so the d_corpus_fire gn2/CE/acc trajectory is UNCHANGED
+//  (the CPU-equivalence proof). All farr handles are freed each call to
+//  bound the handle table over the AdamW step loop.
+// ════════════════════════════════════════════════════════════════════════════
+
+// list[n] → fresh farr handle [n]
+fn d5_to_farr(v, n: int) -> int {
+    let h = farr_zeros(n)
+    let mut i = 0
+    while i < n { let _s = farr_set(h, i, v[i]); i = i + 1 }
+    return h
+}
+// farr[n] → list[n]
+fn d5_from_farr(h: int, n: int) {
+    let mut o = []
+    let mut i = 0
+    while i < n { o.push(farr_get(h, i)); i = i + 1 }
+    return o
+}
+
+// GPU-routed matvec : M[rows·cols] (boxed) · v[cols] (boxed) → [rows] (boxed).
+// Routes through farr_matmul_gpu (B is a cols×1 column vector). Bit-equal to
+// c3_matvec on no-CUDA; cuBLAS Dgemm on HEXA_CUDA. Drop-in for c3_matvec.
+fn d5_matvec_g(M, v, rows: int, cols: int) {
+    let mf = d5_to_farr(M, rows * cols)
+    let vf = d5_to_farr(v, cols)
+    let cf = farr_matmul_gpu(mf, rows, cols, vf, 1)
+    let out = d5_from_farr(cf, rows)
+    let _f1 = farr_free(mf)
+    let _f2 = farr_free(vf)
+    let _f3 = farr_free(cf)
+    return out
+}
+
+// GPU-routed BATCHED projection : W[rows·cols] · Xb[T·cols] → Yb[T·rows].
+// THE Phase E win — one GEMM for all T positions instead of T GEMVs.
+// Xb is row-major [T·cols] (position-major, the d_attn X layout). We need
+// W·xᵢ for each row i. Compute G = W[rows·cols] · Xbᵀ[cols·T] → [rows·T],
+// then transpose to position-major [T·rows] so callers index [i*rows+r].
+// Xbt[cols·T] : Xbt[k*T + i] = Xb[i*cols + k]  (the cols×T right operand).
+fn d5_proj_batch_g(W, Xb, T: int, rows: int, cols: int) {
+    let wf = d5_to_farr(W, rows * cols)
+    let xbt = farr_zeros(cols * T)
+    let mut i = 0
+    while i < T {
+        let mut k = 0
+        while k < cols {
+            let _s = farr_set(xbt, k * T + i, Xb[i * cols + k])
+            k = k + 1
+        }
+        i = i + 1
+    }
+    // G[rows·T] = W[rows·cols] · Xbt[cols·T]   (real GEMM, cuBLAS on GPU)
+    let gf = farr_matmul_gpu(wf, rows, cols, xbt, T)
+    // → position-major Yb[T·rows] : Yb[i*rows + r] = G[r*T + i]
+    let mut Yb = dt2_zeros(T * rows)
+    let mut r = 0
+    while r < rows {
+        i = 0
+        while i < T { Yb[i * rows + r] = farr_get(gf, r * T + i); i = i + 1 }
+        r = r + 1
+    }
+    let _f1 = farr_free(wf)
+    let _f2 = farr_free(xbt)
+    let _f3 = farr_free(gf)
+    return Yb
+}
+
+
 // ── trig (range-reduced Taylor; period 2π) for RoPE ────────────────────────
 fn d5_two_pi() -> float { return 6.283185307179586 }
 fn d5_pi() -> float { return 3.141592653589793 }
@@ -206,14 +295,22 @@ fn d5_attn_fwd(X, Wq, Wk, Wv, Wo, cos, sin,
     let mut Q = dt2_zeros(T * nh * hd)
     let mut K = dt2_zeros(T * nkv * hd)
     let mut Vv = dt2_zeros(T * nkv * hd)
+    // RFC 040 Phase E : batched GPU-routed Q/K/V projections (one GEMM each
+    // for all T positions — cuBLAS on HEXA_CUDA, bit-equal CPU on no-CUDA).
+    let Qb = d5_proj_batch_g(Wq, X, T, d, d)        // [T·(nh*hd)]
+    let Kb = d5_proj_batch_g(Wk, X, T, kvd, d)      // [T·(nkv*hd)]
+    let Vb = d5_proj_batch_g(Wv, X, T, kvd, d)      // [T·(nkv*hd)]
     let mut ti = 0
     while ti < T {
-        let mut xrow = []
+        let mut qr = []
         let mut c = 0
-        while c < d { xrow.push(X[ti * d + c]); c = c + 1 }
-        let qr = c3_matvec(Wq, xrow, d, d)        // [nh*hd]
-        let kr = c3_matvec(Wk, xrow, kvd, d)      // [nkv*hd]
-        let vr = c3_matvec(Wv, xrow, kvd, d)
+        while c < d { qr.push(Qb[ti * d + c]); c = c + 1 }
+        let mut kr = []
+        c = 0
+        while c < kvd { kr.push(Kb[ti * kvd + c]); c = c + 1 }
+        let mut vr = []
+        c = 0
+        while c < kvd { vr.push(Vb[ti * kvd + c]); c = c + 1 }
         let mut h = 0
         while h < nh {
             let mut qh = []
@@ -273,17 +370,8 @@ fn d5_attn_fwd(X, Wq, Wk, Wv, Wo, cos, sin,
         }
         hh = hh + 1
     }
-    let mut out = []
-    let mut i2 = 0
-    while i2 < T {
-        let mut crow = []
-        let mut c = 0
-        while c < d { crow.push(ctx[i2*d + c]); c = c + 1 }
-        let orow = c3_matvec(Wo, crow, d, d)
-        c = 0
-        while c < d { out.push(orow[c]); c = c + 1 }
-        i2 = i2 + 1
-    }
+    // RFC 040 Phase E : batched GPU-routed output projection (Wo·ctx, all T).
+    let out = d5_proj_batch_g(Wo, ctx, T, d, d)
     return #{ "Q": Q, "K": K, "Vv": Vv, "P": Pflat,
               "ctx": ctx, "out": out, "scale": scale }
 }
@@ -483,19 +571,32 @@ fn d5_block_fwd(X, Bp, cos, sin, T: int, d: int, nh: int, nkv: int, h: int) {
         c = 0
         while c < d { rin2[i*d + c] = y[c]; rm2xn[i*d + c] = xn[c]; c = c + 1 }
         rm2inv.push(rmf[2])
-        let swf = c3_swiglu_fwd(y, Bp["Wg"], Bp["Wu"], Bp["Wd"], d, h)  // [o,a,b,s]
-        let o = swf[0]
-        c = 0
-        while c < d { sw_o[i*d + c] = o[c]; c = c + 1 }
-        c = 0
+        i = i + 1
+    }
+    // RFC 040 Phase E : batched GPU-routed SwiGLU (a=Wg·r, b=Wu·r over all T;
+    // s=silu(a)⊙b elementwise; o=Wd·s over all T). 3 GEMMs, the SwiGLU
+    // dominant FLOPs. Bit-equal to per-position c3_swiglu_fwd on no-CUDA.
+    let SWa = d5_proj_batch_g(Bp["Wg"], rin2, T, h, d)   // [T·h]
+    let SWb = d5_proj_batch_g(Bp["Wu"], rin2, T, h, d)   // [T·h]
+    i = 0
+    while i < T {
+        let mut c = 0
         while c < h {
-            sw_a[i*h + c] = swf[1][c]
-            sw_b[i*h + c] = swf[2][c]
-            sw_s[i*h + c] = swf[3][c]
+            let av = SWa[i*h + c]
+            let bv = SWb[i*h + c]
+            sw_a[i*h + c] = av
+            sw_b[i*h + c] = bv
+            sw_s[i*h + c] = c3_silu(av) * bv
             c = c + 1
         }
         i = i + 1
     }
+    let mut sw_s_rows = dt2_zeros(T * h)
+    i = 0
+    while i < T*h { sw_s_rows[i] = sw_s[i]; i = i + 1 }
+    let SWo = d5_proj_batch_g(Bp["Wd"], sw_s_rows, T, d, h)   // [T·d]
+    i = 0
+    while i < T*d { sw_o[i] = SWo[i]; i = i + 1 }
     let mut Xout = dt2_zeros(T * d)
     i = 0
     while i < T*d { Xout[i] = hstate[i] + sw_o[i]; i = i + 1 }
@@ -616,8 +717,9 @@ fn d5_forward(ids, M, cos, sin, T: int, d: int, nh: int, nkv: int,
     while c < d { zr.push(Xc[(T-1)*d + c]); c = c + 1 }
     let rmf = c3_rmsnorm_fwd(zr, M["gF"], d)          // [y,xn,inv]
     let zT = rmf[0]
-    // tied LM head : logits[k] = Σ_j tok_emb[k*d+j]·zT[j]
-    let logits = c3_matvec(temb, zT, V, d)
+    // RFC 040 Phase E : tied LM head (the SINGLE largest matmul, V·d) →
+    // GPU-routed. logits[k] = Σ_j tok_emb[k*d+j]·zT[j].
+    let logits = d5_matvec_g(temb, zT, V, d)
     return #{
         "logits": logits, "zT": zT, "zT_xn": rmf[1], "zT_inv": rmf[2],
         "zr": zr, "Xc": Xc, "caches": caches, "X": X, "ids": ids,

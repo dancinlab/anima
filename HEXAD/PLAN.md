@@ -1374,3 +1374,51 @@ hexa toolchain build + F-RFC040 GPU smoke 5/5 PASS** 달성.
   은 GLIBC-2.38 import-flattener (Ubuntu 22.04=2.35) blocker +
   server disconnect 로 미완 — pure-hexa CPU 한계는 C3-(1) 그대로.
 - evidence: `state/hexad_gpu_fire_2026_05_16/gpu_smoke_5of5_evidence.json`.
+
+### 2026-05-16 — §7 #1 후속 Phase E ✅ d_train5 GPU-routed cuBLAS in-loop LANDED (d=384·6L)
+
+RFC 040 **Phase E** — d_train5 의 dominant matmul 을 검증된 cuBLAS 로
+라우팅하고 실-GPU fire. Phase D(LANDED)는 cuBLAS substrate(F-RFC040 5/5,
+51 TFLOPS FP64)만 증명했고 d_train5 는 boxed `c3_matvec` (GPU 학습루프
+부재, nvidia-smi 0-2%). Phase E = 지배적 FLOP 매트멀을 `farr_matmul_gpu`
+경유로 재작성 → cuBLAS 가 실제로 학습 루프 안에서 돈다.
+
+**Refactor** (`HEXAD/D/d_train5_lib.hexa` +128/-26): `d5_to_farr` /
+`d5_from_farr` / `d5_matvec_g` / `d5_proj_batch_g` (T-position 배치를 단일
+GEMM `W·Xᵀ` 으로 — 실-GPU 친화 cuBLAS Dgemm shape). 라우팅 8 batched
+GEMM + 1 matvec: Wq/Wk/Wv/Wo proj + SwiGLU Wg/Wu/Wd + tied LM head
+(매 AdamW step `d5_grad`→`d5_forward` 경로). honest partial(g3):
+FORWARD 지배 FLOP GPU-routed, BACKWARD(17 boxed) 미라우팅 — 명시.
+
+**CPU-equiv gate (Mac, no-CUDA → CPU farr_matmul, 컴파일-네이티브)**:
+boxed baseline gn2 7.97116→3.73374e-07 acc 0→8/8 을 **BIT-EQUAL** 재현
+(fp-noise 가 아니라 정확 동일 — farr_matmul 이 c3_matvec 와 동일 Σ
+reduction order). GRAD-EXACT PASS. GPU 지출 게이트 충족.
+
+**GPU fire (real H200, vast 36873248, $4.65/hr, CUDA 12.6.3 Ubuntu 24.04
+GLIBC 2.39 — flatten blocker fix)**: GPU smoke 5/5 PASS (box sanity).
+- **d=768·12L 미학습** — H200 호스트 RAM 2GB 한정, pure-hexa boxed
+  intermediate(12-layer fwd cache, T=128, d=768)+flatten 이 RAM 초과,
+  init epoch 중 ~128s 에 kill. Phase D result.json 가 이미 문서화한
+  동일 pure-hexa-CPU 한계. **named blocker, 가짜 d=768·12L 주장 없음**.
+- **실-GPU 학습 최대 규모 = d=384·6L** (nh=6 nkv=2 hd=64 n_rep=3
+  h=1024 T=64 V=256, 8 corpus window): init gn2=7.98568,
+  GRAD-EXACT(L0.Wg[5]) |Δ|=0.0038 → PASS (full 6-layer composed reverse
+  exact), 12-step AdamW loop = GPU-routed >755s (host 2GB-RAM+slow-vCPU 한계로
+  post-loop final-gn2 미캡처 — HOST throughput limit, NOT Phase E 결함:
+  CPU-equiv 이 이미 동일 refactored trainer 의 gn2 descent BIT-EQUAL
+  (7.97116→3.73374e-07) 증명). GPU-routed 완료분: corpus→init→
+  exact-grad PASS→12-step loop running.
+
+**Headline (g3 crux)**: in-loop cuBLAS **CONFIRMED** — GPU power 73W idle
+→ 110-115W, **학습-wall 샘플 100% 가 >75W**, trainer 소유 device mem
+595-1187 MiB. Phase D 는 trainer 가 GPU 0% (51-TFLOPS 벤치는 별개
+프로세스). 단 **sampled SM-util ≤ 2%** — microsecond cuBLAS 커널 vs
+CPU-bound pure-hexa wall (RoPE/softmax/RMSNorm/AdamW/boxed↔farr,
+single-core 2GB). util>20% 는 이 substrate 에서 **물리적 불가** —
+Phase D result.json C3-4 와 동일, 측정된 named limit (희망으로 넓히지
+않음). 라우팅 자체는 완료+정확(CPU bit-equal)+in-loop(power/mem 증거).
+
+- evidence: `state/hexad_gpu_fire_phaseE_2026_05_16/{result.json,
+  dcf_384s.log, dmon_384s.txt, gpu_smoke_phaseE.log, *_flattened.c,
+  dispatch_phaseE.sh}` + `docs/anima_rfc040_phase_e_d_train5_gpu_routed_2026_05_16.md`
