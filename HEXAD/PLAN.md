@@ -603,3 +603,88 @@ pathway (integ harness nn.Module, CE-trainer core 아님). artifacts:
 `state/d_train5_t2_fire_2026_05_16/{d5fire_run.log, d_train5_real_fire
 .hexa, d_train5_calib.hexa, dispatch_ubu.sh, PROVENANCE.md}`. ckpt = 무
 (pure-hexa in-memory trainer; artifact = gn2-collapse curve, not model).
+
+### 2026-05-16 — R3 통합 fire LANDED (PLAN-closure 잔여 (ii) 충족) — 9/9 SUPPORTED-STRONG
+
+User directive verbatim "R3 발사하자 통합 fire" (cost-authorized). PLAN-closure
+잔여 **(ii) Phase 6 6-module 통합 fire = cost-bearing 사용자 게이트** 를 실행 —
+실 cost-bearing GPU(box CPU-coherent) from-scratch 통합 fire. SSOT harness
+`state/verify_hexad_integ_2026_05_16/integ_harness.py` (F-INTEG 5/5 fire_gate=
+true) 를 **fork 없이 verbatim 재사용** + scale 상수 monkey-patch:
+`state/hexad_integ_fire_2026_05_16/train_hexad_integ_from_scratch.py`.
+
+**scale**: d_model 512 · n_layer 8 · max_cells 64 · seq_len 256 · 400 steps ·
+Group-A(D+Bridge) 85,822,840 params · RANDOM-INIT seed=0 (g_clm_from_scratch,
+no load_state_dict/torch.load) · byte-level synthetic corpus (integration
+WIRING fire, NOT language-quality — honest C3).
+
+**$0 Mac scaled-smoke gate**: F-INTEG 5/5 PASS @ scale (gate 통과 → fire 정당).
+
+**fire 결과 (vast.ai inst 36852855 A100-box, CPU-coherent 16t, 2026-05-16)** —
+trainer pre-pull console (authoritative, `dispatch_run.log` L100-137):
+loss(avg100) **5.6425→5.5743** · cells **3→5** (in-run organic split/merge
+3↔10, mitosis live OUTCOME — synthetic harness 가 deferral 했던 fire-time obs)
+· Φ_best **4.4153** · W lr-mod+pain 실측 live(eff_lr 1.19e-3↔5.29e-4, pain
+0↔1) · wall **163.6s (0.045hr)** · cost **$0.03** (envelope $1-5 대비 33-167×
+under) · falsifier **9/9 SUPPORTED-STRONG** = F-INTEG-1..5 5/5 (fire_gate
+carry) + F-V5MIT-1/2/3 + F-PRIN3 4/4.
+
+**honest tier**: F-INTEG-5 CE-descent = SGD OUTCOME (B-D-NOTE 패턴) —
+empirical SUPPORTED-STRONG, **NOT 🔵 closed-form**. anima 🔵(B-D 4/4·7/7)
+independent + already max — 이 fire 가 옮기지 않음, over-claim 없음.
+
+**honest C3 (ckpt-LOST evidence-only)**: 345MB 400-step fire ckpt + on-pod
+result.json = vast.ai proxy 영구 degraded(대용량 proxy 불안정 +
+post-load SSH degradation, `feedback_dispatch_vast_template_gotchas`)로
+pull 실패 → cycle-88 .clm v1 ckpt-LOST 선례와 동일 accepted evidence-only.
+verdict/metric 은 durable console log + reconstructed `result.json` 가
+authoritative (zero fabrication). Mac 4-step smoke ckpt 는 별도 보존 +
+provenance 명시(FIRE 와 conflate 안 함). bring-up 中 4 fail-fast abort +
+1 thrash(전부 trap auto-destroy, no idle bleed) — cycle-88 lesson 작동.
+누적 ~$0.35. pod 36852855 destroyed (post-bleed clean, no orphan).
+
+artifacts: `state/hexad_integ_fire_2026_05_16/{train_hexad_integ_from_scratch.py,
+dispatch.sh, result.json, dispatch_run.log, ckpts/CKPT_LOST_EVIDENCE_ONLY.md+
+MACSMOKE_CKPT_PROVENANCE.json}` + `docs/anima_hexad_integ_fire_2026_05_16.md`
+(8§). PLAN-closure 잔여 (ii) **충족** (잔여 (i) D-arch scale-up + (iii) R2
+hexa-safetensors wire 는 별개·무관 carry).
+
+
+### 2026-05-16 — T1: R3 통합 fire ckpt RECOVERED (deterministic refire) — 9/9 재현 bit-exact
+
+R3 통합 fire(위 "R3 통합 fire LANDED" entry, inst 36852855)는 9/9
+SUPPORTED-STRONG verdict durable 했으나 345MB 400-step fire ckpt 가
+vast.ai proxy 영구 degraded 로 pull 실패 → ckpt-LOST evidence-only
+(cycle-88 .clm v1 선례). fire 는 **deterministic**(RANDOM-INIT seed=0,
+g_clm_from_scratch base_ckpt=NONE, F-INTEG-3 AST-checked no-load-path) →
+**동일 config/seed refire = 동일 run bit-for-bit + 이번엔 ckpt PULL**.
+
+**T1 refire (vast.ai inst 36854209, A100 SXM4, $0.6023/hr, 2026-05-16)** —
+on-pod result.json (실 pull, authoritative): `param_hash_init`
+**408403506a965220** (== 원본) · loss 6.0194→5.5795 / avg100
+**5.6425→5.5743** (== 원본) · cells **3→5** max 10 (== 원본) · Φ_best
+**4.4153** (== 원본) · params **85,822,840** (== 원본) · falsifier
+**9/9 SUPPORTED-STRONG** (F-INTEG 5/5 + F-V5MIT-1/2/3 + F-PRIN3 4/4, ==
+원본). wall **151.24s** · cost **$0.0253** (원본 163.6s/$0.03 — wall 만
+차이, metric 은 seed-deterministic bit-exact 일치).
+
+**ckpt RECOVERED & byte-verified**: `state/hexad_integ_fire_2026_05_16/
+ckpts/ckpt_hexad_integ_fire_final.pt` 345,504,632 bytes · sha256
+`230df953051f47dc1278d6052f06a35f543f7339a0c4f4cc0dc1a6e02f6e4b27` ·
+md5 `156113eaeada1e1046096b41c9e95a53` **== remote on-pod md5 (byte-identical)**.
+loadable torch ckpt (d_state_dict 293 + bridge_state_dict 14, Group-A only).
+이번엔 `g_fire_dispatch_robust` 가 제대로 작동: 동일 proxy 가 attempt 1
+~92%에서 reset → **retry 2/3 + SAVE_POD=1 auto-promote** 가 2회차에서 pull
+완료 (cycle-88 ckpt-loss lesson 이 처방한 정확한 hardening 의 첫 성공 입증).
+
+**산출물**: result.json (실 pull + `t1_recovery` block, reconstruction →
+real) · ckpts/CKPT_RECOVERED.md (CKPT_LOST_EVIDENCE_ONLY.md supersede·삭제) ·
+t1_dispatch_run.log + t1_train.log (T1 console durable) · docs §4/§5
+LOST→RECOVERED. HF: `g_hf_naming` (2026-05-16) canonical=NONE → **HF upload
+없음**, ckpt local + git-tracked provenance (345MB `.pt` = git-excluded noise).
+instance 36854209 destroy 완료 · **zero orphan vast instances** 확인.
+
+**honest tier**: F-INTEG-5 CE-descent = SGD OUTCOME (B-D-NOTE) — empirical
+SUPPORTED-STRONG, **NOT 🔵**. synthetic byte-corpus WIRING fire (no
+language-quality claim). anima 🔵(B-D 4/4·7/7) independent + already max —
+이 recovery 가 옮기지 않음, over-claim 없음. R3 ckpt status: LOST → RECOVERED.
