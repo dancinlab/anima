@@ -385,6 +385,51 @@ $0 Mac, deterministic, R2 safetensors blocker 와 독립. 잔여: (i) toy 4-weig
 wire = 여전히 hexa-lang `hexa_safetensors_mmap` decl 대기(별개 named item,
 Phase 5 와 무관).
 
+### 2026-05-16 — R3 통합 fire LANDED (PLAN-closure 잔여 (ii) 충족) — 9/9 SUPPORTED-STRONG
+
+User directive verbatim "R3 발사하자 통합 fire" (cost-authorized). PLAN-closure
+잔여 **(ii) Phase 6 6-module 통합 fire = cost-bearing 사용자 게이트** 를 실행 —
+실 cost-bearing GPU(box CPU-coherent) from-scratch 통합 fire. SSOT harness
+`state/verify_hexad_integ_2026_05_16/integ_harness.py` (F-INTEG 5/5 fire_gate=
+true) 를 **fork 없이 verbatim 재사용** + scale 상수 monkey-patch:
+`state/hexad_integ_fire_2026_05_16/train_hexad_integ_from_scratch.py`.
+
+**scale**: d_model 512 · n_layer 8 · max_cells 64 · seq_len 256 · 400 steps ·
+Group-A(D+Bridge) 85,822,840 params · RANDOM-INIT seed=0 (g_clm_from_scratch,
+no load_state_dict/torch.load) · byte-level synthetic corpus (integration
+WIRING fire, NOT language-quality — honest C3).
+
+**$0 Mac scaled-smoke gate**: F-INTEG 5/5 PASS @ scale (gate 통과 → fire 정당).
+
+**fire 결과 (vast.ai inst 36852855 A100-box, CPU-coherent 16t, 2026-05-16)** —
+trainer pre-pull console (authoritative, `dispatch_run.log` L100-137):
+loss(avg100) **5.6425→5.5743** · cells **3→5** (in-run organic split/merge
+3↔10, mitosis live OUTCOME — synthetic harness 가 deferral 했던 fire-time obs)
+· Φ_best **4.4153** · W lr-mod+pain 실측 live(eff_lr 1.19e-3↔5.29e-4, pain
+0↔1) · wall **163.6s (0.045hr)** · cost **$0.03** (envelope $1-5 대비 33-167×
+under) · falsifier **9/9 SUPPORTED-STRONG** = F-INTEG-1..5 5/5 (fire_gate
+carry) + F-V5MIT-1/2/3 + F-PRIN3 4/4.
+
+**honest tier**: F-INTEG-5 CE-descent = SGD OUTCOME (B-D-NOTE 패턴) —
+empirical SUPPORTED-STRONG, **NOT 🔵 closed-form**. anima 🔵(B-D 4/4·7/7)
+independent + already max — 이 fire 가 옮기지 않음, over-claim 없음.
+
+**honest C3 (ckpt-LOST evidence-only)**: 345MB 400-step fire ckpt + on-pod
+result.json = vast.ai proxy 영구 degraded(대용량 proxy 불안정 +
+post-load SSH degradation, `feedback_dispatch_vast_template_gotchas`)로
+pull 실패 → cycle-88 .clm v1 ckpt-LOST 선례와 동일 accepted evidence-only.
+verdict/metric 은 durable console log + reconstructed `result.json` 가
+authoritative (zero fabrication). Mac 4-step smoke ckpt 는 별도 보존 +
+provenance 명시(FIRE 와 conflate 안 함). bring-up 中 4 fail-fast abort +
+1 thrash(전부 trap auto-destroy, no idle bleed) — cycle-88 lesson 작동.
+누적 ~$0.35. pod 36852855 destroyed (post-bleed clean, no orphan).
+
+artifacts: `state/hexad_integ_fire_2026_05_16/{train_hexad_integ_from_scratch.py,
+dispatch.sh, result.json, dispatch_run.log, ckpts/CKPT_LOST_EVIDENCE_ONLY.md+
+MACSMOKE_CKPT_PROVENANCE.json}` + `docs/anima_hexad_integ_fire_2026_05_16.md`
+(8§). PLAN-closure 잔여 (ii) **충족** (잔여 (i) D-arch scale-up + (iii) R2
+hexa-safetensors wire 는 별개·무관 carry).
+
 ### 2026-05-16 — Phase 5 (1) A: 실-d_model LM-HEAD scale-up LANDED (compiled-native)
 
 사용자 게이트 "(1) scale-up … 모두 시도". 설계 분석(이 PLAN entry): toy
