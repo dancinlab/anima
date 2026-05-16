@@ -513,3 +513,33 @@ g6: 과거 진행-로그 의 당시-사실 기록은 불변하되 `g_fire_autono
 latest-wins 로 **전면 supersede** — 잔존 fire-게이트 표현은 전부 死문,
 효력 없음. 효과: Phase 6 실-규모 GPU fire 및 차후 모든 cost-bearing fire
 = 즉시/병렬/bg 자율 진행. 조건부 hold 도 폐기 (무조건 자율).
+
+### 2026-05-16 — T3: real 24L ckpt parity COMPILED-native (21/21 PASS)
+
+prior interp-only 21/21 (PSCC §43)을 **compiled-native 로 재현**. ubu 자율
+fire ($0 owned host, `g_fire_autonomous`). 격리 hexa.real bootstrap (origin/main
+`6f5f2a6c`, PR#51 `_gen2_nested_index_assign_stmt` codegen; shared `~/.hx/bin`·
+shared `~/core/hexa-lang`·anima main 전부 미손댐, `/tmp/hexa-t3-boot` isolated
+worktree, fixed-point round1==round2 byte-equal). chat_lib.hexa nested-index-
+assign codegen → `hexa build` 양 probe native ELF 컴파일 PASS.
+
+**21/21 PASS hexa-COMPILED-native byte-equal Python SSOT**: F-D1-V58PARITY 6/6
+(BOS argmax=143) + F-D1-V58MULTI 15/15 (chain=[143,131,240,152,159], KV
+0→5). Wall **1.25 s + 3.86 s** (interp 37.65+94.67 → ~25-30× 빠름), peak
+RSS 3.08 GB (interp 7.5-11 GB). 컴파일 per-step logit 값이 interp-only
+doc §4.2 와 **동일** → compiled ≡ interp byte-for-byte (단순 argmax 일치
+아님).
+
+ckpt = ubu `ckpt_phase1a1_sft.safetensors` 597,550,688 B sha `838a0a2e…`
+(Mac worktree 부재; 격리 ubu 만). doc 의 `e5f7555…` sha 는 소실된 source
+`.pt` 추정 — **weight 동등성 empirical 입증**: 본 `.safetensors` 로 Python
+SSOT 가 documented 2026-05-12 값 정확 재현. SSOT lane `.pt`→`.safetensors`
+변경 (양 lane 동일 bytes 공유, tighter).
+
+honest: **parity = EMPIRICAL strong anchor, NOT 🔵 closed-form (g3)**. 격리
+`runtime.c` bootstrap patch 1건 (clang 18.1.3 Linux execinfo, getenv-gated
+behavior-neutral, isolated-only, 실 upstream portability gap = candidate
+PR). artifacts: `state/anima_d1_v58_compiled_parity_2026_05_16/{result.json,
+python_ssot.json, python_safetensors_ssot_probe.py}` +
+`HEXAD/CHAT/docs/anima_chat_hexa_24l_compiled_parity_2026_05_16.md`. branch
+`t3-compiled-24l-parity` (unmerged — parent reconciles).
