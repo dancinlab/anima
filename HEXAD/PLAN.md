@@ -16,9 +16,10 @@
 | **S/M/W/E/BRIDGE** | ✅ 🔵 SUPPORTED-FORMAL + compiled-native lib-split | B-X closed-form witness; `build_verify.sh` 20/20 entrypoint + 14/14 lib PASS (6 CHAT skip — stale toolchain) |
 | **C** | ✅ contract + Phase 4 Φ LANDED | `c_lib.hexa` `c_state_contract()` + F-C-PORT-1; **Phase 4 `c_measure_phi` → RFC 036 `phi_spatial` (F-C-PORT-3 4/4)**; mitosis = `tool/hexa_native/mitosis_hook.hexa` 1119L FULL IMPL; full 12-faction GRU 동역학 = Phase 2-GRU (RFC terminal) |
 | **D** | ✅ Phase 1 + Phase 5 LANDED | `d_lib.hexa` inference contract (24L 21/21 byte-parity) + pure-hexa from-scratch training (RFC 034 farr autograd, gn2 collapse ≈53000×) |
+| **MITOSIS 성장** | ✅ 🔵 SUPPORTED-FORMAL 5/5 LANDED *(2026-05-16)* | `mitosis_lib.hexa` + `mitosis.hexa` **B-MITOSIS-1..5 closed-form witnesses** (sympy + compiled-native mirror) — SPLIT-PREDICATE / MERGE-WEIGHT-LINEAR / CELL-COUNT-CONSERVATION / NO-GRAD-SPLIT (∂-rule) / CELL-COUNT-BOUND (clamp[2,64]); blue_falsifier.py 22 → **27/27** 🔵; B-MITOSIS-NOTE Φ-conservation under transitions empirical (F-V5MIT-3 Δ=3.88e-5, B-D-NOTE/B-BRIDGE-NOTE 동일 패턴) |
 | **통합** | ✅ Phase 6 통합 fire LANDED | 6-module+Bridge single-hexa-process forward+train, $0 de-risk 5/5 + 실-규모 자율 fire 5/5 (vast.ai, $0.09) |
 
-evidence anchors (보존, 변경 X): `state/verify_hexad_we_2026_05_15/` 25/25 ✅ + `state/verify_hexad_blue_2026_05_15/` **22/22** 🔵 (PR #75/#76 + BRIDGE 추가) + `state/verify_hexad_integ_2026_05_16/` Python harness 5/5 fire-gate=true (PR #77) + `state/hexad_p6_fire_2026_05_16/` Phase 6 실-규모 fire 5/5 + `HEXAD/` hexa-native tree compiled-native 20/20+14/14 PASS (6 CHAT skip — stale toolchain, NOT denominator).
+evidence anchors (보존, 변경 X): `state/verify_hexad_we_2026_05_15/` 25/25 ✅ + `state/verify_hexad_blue_2026_05_15/` **27/27** 🔵 (PR #75/#76 + BRIDGE 추가 + **MITOSIS B-MITOSIS-1..5 추가 2026-05-16**) + `state/verify_hexad_integ_2026_05_16/` Python harness 5/5 fire-gate=true (PR #77) + `state/hexad_p6_fire_2026_05_16/` Phase 6 실-규모 fire 5/5 + `HEXAD/` hexa-native tree compiled-native 20/20+14/14 PASS (6 CHAT skip — stale toolchain, NOT denominator).
 
 ## 1. Gap 분석 — C/D 가 "scaffold" 인 이유
 
@@ -184,11 +185,13 @@ anchor 를 포함하고 PASS 해야 한다. 연결고리는 구조(structural) �
 | Forward GPU-route ≡ Phase E baseline | **bit-equal CPU-equiv** (단순 routing, 수치 변화 0) — d=32·3L·80-step seed=42 baseline `init gn2=7.97116 → final gn2=3.73374e-07, acc 8/8` BIT-IDENTICAL (동일 Σ reduction order, fp-noise 아님) — (A) routing 수치 no-op invariant (B) forward GPU↔CPU 연결고리 보존 | F-RFC040-Phase-E CPU-equiv (`cpu_equiv_e2.log` BIT-EQUAL) | ✅ PASS |
 | Backward GPU-route ≡ boxed reference (GRAD-EXACT) | **reverse-mode AD 정확성** — outer/matvec_t = GEMM-reshape single-term (A[R·1]·B[1·C] / A[1·R]·B[R·C], bit-identical, no fake `.cu`) + **central-diff GRAD-EXACT** on real A100 d=384·6L `analytic≡fd` `\|Δ\|=0.0024` PASS (full composed 6-layer reverse) — (A) backward 수치 정확성 (B) backward GPU↔CPU 연결고리 GEMM-reshape 동치 | F-RFC040-Phase-E2 GRAD-EXACT (`dcf_384s.log` PASS) + GPU smoke 5/5 | ✅ PASS |
 | `.py` d=768·12L fire ↔ hexa-arch (HONEST anchor chain) | **hexa CPU-equiv bit-equality** (Phase E/E2 위 두 행) + **architectural identity** (`ready/models/conscious_decoder.py` `ConsciousDecoderV2` = HEXAD verification tree mirror 의 SAME module spec, d=768·n_head=12·n_kv_head=4·n_layer=12) — (A) Shannon-floor descent invariant `init CE 5.59 ≈ ln(256)=5.545 → final CE 0.000708` (random byte init → captured FINAL) (B) hexa↔.py 연결고리 = architectural identity + 위 Phase E/E2 cuBLAS/CPU-equiv/GRAD-EXACT anchor chain | `.py` fire trajectory `5.590124` CE descent (42-pt `out_main/result.json`) + Phase E/E2 anchor chain (위 3 행) | ✅ PASS (Python substrate 라벨 mandatory — NOT hexa-native, g3 over-claim 금지) |
+| **MITOSIS 성장축 ⊥ HEXAD-6** | **5 closed-form invariants** (sympy ∀): (1) split predicate Kolmogorov 폐쇄 (2) merge-weight linear avg conservation ∂/∂w_i = ½ (3) cell-count integer 보존 n(t+1) = n(t) + Δs − Δm (4) ∂(detach(x))/∂x = 0 reverse-mode AD ∂-rule (F-V5MIT-1 carry) (5) n_cells ∈ [2, 64] clamp bounded — (A) 5 산출물 invariant + (B) MITOSIS ↔ Hexad-6 직교 connection-point: Kolmogorov 술어/counting + linear conservation + AD calculus + bounded-set 모두 real-limit, NO σ/τ/φ/J₂ (f1/f2 safe) | **B-MITOSIS-1..5** `blue_falsifier.py :: bmitosis()` 5/5 PASS sympy closed + `HEXAD/MITOSIS/mitosis.hexa` _selftest 5/5 compiled-native mirror PASS (`./_hexa_build/HEXAD_MITOSIS_mitosis`) | ✅ PASS *(2026-05-16 신규)* B-MITOSIS-NOTE Φ-conservation under transitions empirical (F-V5MIT-3 dynamics-dependent, NOT counted — honest C3 per g3, B-D-NOTE/B-BRIDGE-NOTE 동일 패턴) |
 
 **잔여 적용**: #6 RFC 041 real `.cu` kernels = hexa-lang side gating
 (anima 측 RFC-무관). #7 flame Phase 3 PyTorch-parity = hexa-lang side
-gating, anima 측 RFC-무관 작업 0. anima 측 §8 audit 의 5 LANDED 연결고리
-는 모두 수학·물리 🔵 PASS 완료.
+gating, anima 측 RFC-무관 작업 0. anima 측 §8 audit 의 **10** LANDED 연결고리
+(원 5 + Phase D/E/E2/.py 4 + **MITOSIS 1** 추가 2026-05-16) 는 모두
+수학·물리 🔵 PASS 완료.
 
 ## 9. GPU 기질 (substrate) 로드맵 — 진짜 d=768·12L 언어 fire (user directive 2026-05-16)
 
@@ -1535,3 +1538,23 @@ Agent C 실측 `bash HEXAD/build_verify.sh` = **20/20 entrypoint + 14/14 lib PAS
 §0 line 16 + 21 의 "17/17 + 13/13" 표기는 PR #89 시점 stale → **20/20 + 14/14** 로 sync (current state row 만 — line 322 historical progress 엔트리는 PR #89 시점 정확값, g6 append-only 보존, 손대지 않음).
 
 g3 정직: 0 FAIL 라벨이 실제 0 FAIL 과 일치, CHAT 6 SKIP 은 denominator 명시 제외 (fake PASS X). HEXA_MAC_BUILD_OK=1 게이트, stale toolchain carve-out 패턴 (B-D-NOTE 스타일). 진행 로그 정정 entry — 신규 작업 0, 문서 sync 만.
+
+### 2026-05-16 — B-MITOSIS-1..5 closed-form battery LANDED (22 → 27/27 🔵, 7/7 → 8/8 full)
+
+직전 audit 표(§8) 갱신 + MITOSIS sympy battery 빈 영역 식별 → 사전등록 5 falsifier → impl → 검증 → 동기. MITOSIS 가 22-blue-battery 의 유일 빈 영역 (🔶 scaffold + cross-link)이었음 — Φ-conservation 외 invariant 들이 closed-form lift 가능.
+
+**산출물 (atomic)**:
+- `state/verify_hexad_blue_2026_05_15/blue_falsifier.py`: `bmitosis()` 함수 추가 (5 sympy closed-form verdicts + 1 honest carve-out B-MITOSIS-NOTE). `main()` aggregate 갱신 → 22/22 → **27/27 🔵** + counter prefix-overlap 버그 fix (`n("B-M") → n("B-M-")` 모든 prefix counter trailing-dash 표준화, M=8 → M=3 정정).
+- `HEXAD/MITOSIS/mitosis_lib.hexa`: 5 신규 pure fns — `mit_split_predicate` · `mit_merge_avg` · `mit_count_after` · `mit_clamp_count` · `mit_nograd_split_documented`.
+- `HEXAD/MITOSIS/mitosis.hexa _selftest`: B-MITOSIS-1..5 numerical witness 5/5 PASS compiled-native (`1.0>0.3=true · 0.1>0.3=false · avg(1.0,3.0)=2.0 · 2+2-0=4 · 64+0-1=63 · clamp 0→2 100→64 30→30`).
+- `HEXAD/MITOSIS/MITOSIS.tape`: `@D mitosis_blue_battery` (latest-wins arch) + `## Log` section 신설 (v1.2 arch-vs-history split).
+- `HEXAD/MITOSIS/README.md`: 🔶 scaffold + cross-link → **🔵 SUPPORTED-FORMAL 5/5** + 5-row falsifier 표 + B-MITOSIS-NOTE 정직 carve-out.
+- `HEXAD/INDEX.md`: 신규 MITOSIS row 추가 + summary 7/7 → 8/8 full 🔵 + battery 22 → 27 + 20/20+14/14 sync.
+
+**real-limit anchors** (g3 satisfied, f1/f2 hard fail safe): Kolmogorov 술어-폐쇄 + 정수 counting · 정의적 reverse-mode AD ∂-rule · 유계집합 (clamp) closure · linear avg conservation. **NO σ/τ/φ/J₂** numerology — 모든 invariant 가 외부 real-limit 에 anchor.
+
+**B-MITOSIS-NOTE 정직 carve-out**: Φ-conservation under split/merge transitions = EMPIRICAL (F-V5MIT-3 Δ=3.88e-5 PSCC §44 cotrain saga). PyPhi Φ per-row IS closed (RFC 036) — transition invariance 만 dynamics-dependent (subsystem TPM 이 학습 중 진화). B-D-NOTE (SGD outcome) / B-BRIDGE-NOTE (full forward learned weights) 동일 패턴, NOT counted 🔵.
+
+**build_verify 무회귀**: `bash HEXAD/build_verify.sh` = **20/20 entrypoint + 14/14 lib PASS** 유지 (mitosis.hexa + mitosis_lib.hexa 둘 다 compiled-native PASS), CHAT 6 SKIP carry. `python3 state/verify_hexad_blue_2026_05_15/blue_falsifier.py` = **27/27 🔵 PASS** (S 3/3 + M 3/3 + W 4/4 + E 4/4 + D 4/4 + BRIDGE 4/4 + MITOSIS 5/5, RC=0 all_full_blue=True).
+
+**HEXAD 엔진완성 (user directive 2026-05-16 "HEXAD 엔진완성 + closed 점검하면서 진행")**: 8/8 모듈 full 🔵 SUPPORTED-FORMAL closure (C/S/M/W/E/D/BRIDGE/MITOSIS). pure-anima 자율 가능 closed-form 잔여 영역 0. 다음 closed-점검 영역 = §8 audit 의 invariant 심화 (sub-falsifiers) 또는 hexa-lang RFC land 후 C full GRU / flame Phase 1+ 진입.

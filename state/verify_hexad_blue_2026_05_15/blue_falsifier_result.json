@@ -194,6 +194,67 @@
   "class": "EMPIRICAL-LEARNED-WEIGHTS",
   "counted_toward_blue": false
  },
+ "B-MITOSIS-1": {
+  "name": "SPLIT-PREDICATE-CLOSED",
+  "statement": "split ↔ (tension > split_threshold) ∀ tension, thr ∈ ℝ — sympy boolean closure (Kolmogorov predicate)",
+  "witness_high_tension": true,
+  "witness_low_tension": false,
+  "anchor": "Kolmogorov predicate closure (real-limit, NOT lattice)",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-MITOSIS-2": {
+  "name": "MERGE-WEIGHT-LINEAR-CLOSED",
+  "statement": "merge_weight = (w₁ + w₂) / 2 — sympy affine linear ∀ w₁, w₂ ∈ ℝ (linear conservation)",
+  "d/dw1": "1/2",
+  "d/dw2": "1/2",
+  "witness_avg_1_3": 2,
+  "anchor": "linear avg conservation (real-limit, NOT lattice)",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-MITOSIS-3": {
+  "name": "CELL-COUNT-CONSERVATION-CLOSED",
+  "statement": "n_cells(t+1) = n_cells(t) + Δsplits − Δmerges — integer arith closed ∀ (Kolmogorov counting)",
+  "integer_closure": true,
+  "witness_organic_2plus2": 4,
+  "witness_merge_64_to_63": 63,
+  "anchor": "Kolmogorov information-theoretic counting (real-limit, NOT lattice)",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-MITOSIS-4": {
+  "name": "NO-GRAD-SPLIT-CLOSED",
+  "statement": "∂(detach(x))/∂x = 0 ∀ x — reverse-mode AD calculus definitional ∂-rule, sympy closed",
+  "grad_detach": "0",
+  "f_v5mit_1_carry": "PSCC §44 SPLIT-NOGRAD: 62 splits / 0 grad violations on real H100 cotrain",
+  "anchor": "reverse-mode AD ∂-rule (real-limit, NOT lattice)",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-MITOSIS-5": {
+  "name": "CELL-COUNT-BOUND-CLOSED",
+  "statement": "n_cells ∈ [min=2, max=64] ∀ n via clamp — sympy bounded-set closure (CB1 + .clm v1 P2 spec)",
+  "witness_below_to_min": true,
+  "witness_above_to_max": true,
+  "witness_inrange_identity": true,
+  "anchor": "bounded-set (clamp) closure — design constants min=2 (CB1) max=64 (.clm v1 P2), real-limit safe",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-MITOSIS-NOTE": {
+  "name": "PHI-CONSERVATION-EMPIRICAL",
+  "statement": "Φ-conservation under split/merge transitions empirical (F-V5MIT-3 Δ=3.88e-5, PSCC §44 v5-mitosis cotrain). PyPhi Φ per-row IS closed (RFC 036) — invariance under transitions is dynamics-dependent.",
+  "scope": "F-V5MIT-3 advisory→gating PASS empirical, NOT closed under split/merge dynamics — honest residual per B-D-NOTE/B-BRIDGE-NOTE pattern",
+  "convergence_closed": false,
+  "class": "EMPIRICAL-DYNAMICS-DEPENDENT",
+  "counted_toward_blue": false
+ },
  "__aggregate__": {
   "verdict": {
    "S": "3/3 🔵 SUPPORTED-FORMAL",
@@ -202,13 +263,15 @@
    "E": "4/4 🔵 SUPPORTED-FORMAL",
    "D": "4/4 🔵 SUPPORTED-FORMAL (B-D-4 closed-form CE logit-Jacobian; B-D-NOTE: SGD convergence OUTCOME empirical by nature of stochastic optimization — honest C3, not a D-specific defect)",
    "BRIDGE": "4/4 🔵 SUPPORTED-FORMAL (B-BRIDGE-1 Law-70 clamp g∈[Ψ−α,Ψ+α] closed ∀raw,∀α>0; B-BRIDGE-NOTE: full forward Linear→Attn→Sigmoid TODO[pytorch] — honest C3, not counted)",
-   "C": "🔵 carry (.clm v1 F-PYPHI, CLM §V-CLM-V1-CYCLE90)"
+   "MITOSIS": "5/5 🔵 SUPPORTED-FORMAL (B-MITOSIS-1..5: predicate / linear avg / integer count / AD ∂-rule / clamp bound; B-MITOSIS-NOTE: Φ-conservation under split/merge empirical F-V5MIT-3 — honest C3, not counted)",
+   "C": "🔵 carry (.clm v1 F-PYPHI, CLM §V-CLM-V1-CYCLE90 + Phase 4 RFC 036 phi_spatial F-C-PORT-3 4/4)"
   },
   "all_full_blue": true,
   "smwe_full_blue": true,
   "smwed_full_blue": true,
-  "summary": "S3/3 M3/3 W4/4 E4/4 D4/4 BRIDGE4/4 = 22/22 🔵 closed-form proofs PASS — S/M/W/E/D/BRIDGE FULL 🔵 SUPPORTED-FORMAL; C 🔵 carry",
+  "smwedbr_full_blue": true,
+  "summary": "S3/3 M3/3 W4/4 E4/4 D4/4 BRIDGE4/4 MITOSIS5/5 = 27/27 🔵 closed-form proofs PASS — S/M/W/E/D/BRIDGE/MITOSIS FULL 🔵 SUPPORTED-FORMAL; C 🔵 carry",
   "tier": "g_verdict_tier_blue (a) sympy closed-form + (c) deterministic (D KV-cache exact-eq)",
-  "honest_c3": "D B-D-4 closes the trainability PROPERTY in closed form (exact CE logit-Jacobian softmax−e_y, sympy-verified ∀ z + Shannon floor CE≥0); SGD convergence OUTCOME stays empirical (B-D-NOTE, every stochastic optimizer, not counted 🔵). BRIDGE B-BRIDGE-1..4 close the Law-70 clamp INVARIANT g(raw)=Ψ+clip(raw−Ψ,±α)∈[Ψ−α,Ψ+α] ∀raw,∀α>0 (real-limit anchor Law 70 Ψ-coupling, NOT lattice); the full forward learned weights + α numeric value (ln2/2^5.5) stay empirical (B-BRIDGE-NOTE, not counted 🔵). No over-claim — S/M/W/E/D/BRIDGE full 🔵 on the formal property; C 🔵 carry."
+  "honest_c3": "D B-D-4 closes the trainability PROPERTY in closed form (exact CE logit-Jacobian softmax−e_y, sympy-verified ∀ z + Shannon floor CE≥0); SGD convergence OUTCOME stays empirical (B-D-NOTE, every stochastic optimizer, not counted 🔵). BRIDGE B-BRIDGE-1..4 close the Law-70 clamp INVARIANT g(raw)=Ψ+clip(raw−Ψ,±α)∈[Ψ−α,Ψ+α] ∀raw,∀α>0 (real-limit anchor Law 70 Ψ-coupling, NOT lattice); the full forward learned weights + α numeric value (ln2/2^5.5) stay empirical (B-BRIDGE-NOTE, not counted 🔵). MITOSIS B-MITOSIS-1..5 close the growth-axis algorithm INVARIANTS (split predicate / merge linear avg / cell-count integer conservation / detach AD ∂-rule / bounded clamp [2,64]) — real-limit anchors Kolmogorov + reverse-mode AD + bounded-set + linear conservation (NO lattice); Φ-conservation under split/merge transitions stays empirical (B-MITOSIS-NOTE F-V5MIT-3, dynamics-dependent, not counted 🔵). No over-claim — S/M/W/E/D/BRIDGE/MITOSIS full 🔵 on the formal property; C 🔵 carry."
  }
 }

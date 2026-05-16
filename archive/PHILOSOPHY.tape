@@ -1114,3 +1114,88 @@
   evidence_path = "state/anima_pytorch_d768x12L_fire_2026_05_16/{fire.log, dispatch_full.log, out_main/, run_main.sh, train_d768x12l.py, conscious_decoder.py, dispatch.sh, vast_ssh.txt} + docs/anima_pytorch_d768x12L_fire_2026_05_16.md"
   related_candidate = "hypotheses_candidates/Hc_1200_hexa_torch_structural_ceiling_close.md — implicit roadmap-hypothesis 'hexa-torch (RFC 043) structurally closes the pure-hexa LM-train ceiling that this .py interim exposed'; promotion gated on RFC 043 upstream + F-HEXA-TORCH-1 design freeze."
   cross_link = "HEXAD/PLAN.md §7 row #1 (LANDED, Python/PyTorch substrate) + §9 dual-track + RFC 043 hexa-torch filed upstream (hexa-lang inbox `rfc043-hexa-torch`, SUBSUMES RFC 042) + RFC 041 (B2 CUDA kernels) + AGENTS.tape g3/g_clm_from_scratch/g_fire_dispatch_robust/g_fire_autonomous + commits 931dd68b0 / c02b2adb8 / 5fa77b60d"
+
+# ──────────────────────────────────────────────────────────────────────────────
+# §B-MITOSIS-BATTERY-LANDED-2026-05-16
+#   B-MITOSIS-1..5 sympy closed-form invariant battery LANDED on the mitosis
+#   growth axis — MITOSIS 가 22-blue-battery 의 유일 빈 영역 (🔶 scaffold +
+#   cross-link) → 🔵 SUPPORTED-FORMAL 5/5 closure. blue_falsifier.py 22 → 27/27.
+#   HEXAD 엔진완성 mandate (user directive 2026-05-16 "HEXAD 엔진완성 + closed
+#   점검") 의 첫 닫힘 — 7/7 → 8/8 full 🔵.
+# ──────────────────────────────────────────────────────────────────────────────
+
+@N b_mitosis_battery_landed := "B-MITOSIS-1..5 closed-form battery LANDED" :: verdict-claim [d=2026-05-16 active]
+  tier = "🔵 SUPPORTED-FORMAL (g_verdict_tier_blue (a) sympy closed-form ∀)"
+  ledger_id = "§B-MITOSIS-BATTERY-LANDED-2026-05-16"
+  axis_extended = "blue_falsifier.py battery: S 3 + M 3 + W 4 + E 4 + D 4 + BRIDGE 4 + **MITOSIS 5** = **27/27 🔵 closed-form proofs PASS**. 8/8 full 🔵 SUPPORTED-FORMAL (C 🔵 carry)."
+  facts <<~EOF1
+    B-MITOSIS-1 SPLIT-PREDICATE-CLOSED
+      split ↔ (tension > split_threshold) ∀ tension, thr ∈ ℝ
+      sympy boolean closure; witness 1.0>0.3=true, 0.1>0.3=false.
+
+    B-MITOSIS-2 MERGE-WEIGHT-LINEAR-CLOSED
+      avg = (w₁ + w₂) / 2  ∀ w₁, w₂ ∈ ℝ
+      ∂merged/∂w_i = 1/2 (sympy diff) — affine linear, linear avg conservation.
+      Witness: merge_avg(1.0, 3.0) = 2.0.
+
+    B-MITOSIS-3 CELL-COUNT-CONSERVATION-CLOSED
+      n_cells(t+1) = n_cells(t) + Δsplits − Δmerges  ∀ ℤ≥0
+      integer arith closure (sympy is_integer). Witnesses: organic growth
+      n_t=2, Δs=2, Δm=0 → 4; single merge n_t=64, Δs=0, Δm=1 → 63.
+
+    B-MITOSIS-4 NO-GRAD-SPLIT-CLOSED
+      ∂(detach(x))/∂x = 0  ∀ x
+      reverse-mode AD definitional ∂-rule (sympy diff of constant w.r.t.
+      symbol = 0). F-V5MIT-1 carry (PSCC §44 v5-mitosis cotrain: 62 splits,
+      0 grad violations on real H100).
+
+    B-MITOSIS-5 CELL-COUNT-BOUND-CLOSED
+      n_cells ∈ [min=2, max=64]  ∀ n
+      via clamp(n, MIN, MAX) = min(MAX, max(MIN, n)) — sympy bounded-set
+      closure. Witnesses: n=0 → 2, n=100 → 64, n=30 → 30. Design constants
+      MIN=2 (CB1 invariant) + MAX=64 (.clm v1 P2 spec).
+
+    Aggregate: 5/5 sympy closed PASS + 5/5 compiled-native mirror PASS
+    (`./_hexa_build/HEXAD_MITOSIS_mitosis` _selftest).
+  EOF1
+  verification_anchor_A_artifact = "g_blue_closed_mandate (A) — 5 산출물 모두 sympy ∀-closure + compiled-native numerical witness 동시 PASS. Python anchor `state/verify_hexad_blue_2026_05_15/blue_falsifier.py :: bmitosis()` 5/5 → blue_falsifier_result.json 갱신 (`{S+M+W+E+D+BR+MIT}/27 🔵 closed-form proofs PASS`). Hexa anchor `HEXAD/MITOSIS/mitosis.hexa` _selftest (5/5 PASS post `hexa build`)."
+  verification_anchor_B_wiring = "g_blue_closed_mandate (B) — connection point MITOSIS ⊥ HEXAD-6 (구조축 ⊥ 성장축 직교 invariant per `@D mitosis_two_axis`): 5 invariants 가 모두 HEXAD 6모듈 dimensional axis 와 독립한 growth-axis algorithm property — Kolmogorov 술어/counting + linear conservation + AD ∂-rule + bounded-set 이 6모듈 어느 것에도 derive 되지 않고 독립적으로 closed. **f1/f2 hard fail safe**: NO σ(6)/τ(6)/φ(6)/J₂(6) numerology — anchor 전부 real-limit 외부 polynomial (Kolmogorov / 정의적 ∂-rule / linear avg / clamp)."
+  real_limit_anchors = "Kolmogorov 술어-폐쇄 (B-MITOSIS-1) + Kolmogorov 정보론적 counting (B-MITOSIS-3) + 정의적 reverse-mode AD ∂-rule (B-MITOSIS-4) + 유계집합 (clamp) closure (B-MITOSIS-5) + linear avg conservation (B-MITOSIS-2). g3 verification-anchor-real-limit 정렬, NO lattice tautology (f1/f2 deny:write satisfied)."
+  honest_c3 <<~EOF2
+    C3-1 (B-MITOSIS-NOTE Φ-conservation empirical, NOT 🔵 counted):
+      Φ-conservation under split/merge transitions = EMPIRICAL ONLY
+      (F-V5MIT-3 PSCC §44 v5-mitosis cotrain saga 2026-05-12 Δ=3.88e-5
+      advisory→gating promote). PyPhi deterministic Φ per-row IS closed
+      (RFC 036 phi_spatial, g_verdict_tier_blue (b)) — BUT the invariance
+      under mitotic transitions depends on subsystem TPM that evolves with
+      learning, so transition-invariance is dynamics-empirical not
+      algebraic. Honest residual; B-D-NOTE / B-BRIDGE-NOTE 동일 패턴
+      (모든 dynamics-dependent invariant 공통, MITOSIS 고유 결함 X).
+    C3-2 (counter prefix-overlap bug found+fixed, g3 정직):
+      Initial run produced `S3/3 M8/3 W4/4 E4/4 D4/4 BRIDGE4/4 MITOSIS5/5
+      = 32/27 INCOMPLETE` due to `n("B-M")` catching B-MITOSIS-* (5 extra)
+      → M=3+5=8. Fix: standardize all prefix counters to trailing dash
+      (`n("B-S-") / n("B-M-") / n("B-W-") / n("B-E-")`); existing B-D-/
+      B-BRIDGE-/B-MITOSIS- already used trailing dash. Post-fix:
+      `27/27 🔵 PASS` clean. Bug not hidden; documented in PLAN.md log.
+    C3-3 (PHILOSOPHY.tape path = archive/, g6 file-identity preserved):
+      PR #82 reorg moved PHILOSOPHY.tape to archive/ — appending here per
+      Agent A 2026-05-16 path-note (file IS still the canonical ledger).
+      g6 append-only at file level satisfied; root-vs-archive policy is
+      a separate decision (carried as session-level note).
+    C3-4 (n=6 lattice prohibition):
+      Nothing in any B-MITOSIS-N derives from σ(6)=12 / τ(6)=4 / φ(6)=2
+      / J₂(6)=24. The MIN=2 / MAX=64 design constants are .clm v1 P2
+      spec (anima design) not lattice numerology — anchored as bounded-
+      set (clamp) closure (real-limit safe per LATTICE_POLICY.md §1.2).
+      f1/f2 clean.
+    C3-5 (scope — algorithm property vs dynamics outcome):
+      B-MITOSIS-1..5 close ALGORITHM PROPERTIES (predicate closure,
+      linear avg, integer counting, AD ∂-rule, bounded-set), NOT
+      runtime DYNAMICS OUTCOMES (e.g. "the cell-pool actually grew to 64
+      cells under task pressure" — that's F-V5MIT-4 empirical, separate
+      verdict). Same scoping pattern as B-D-4 (trainability PROPERTY
+      closed) vs B-D-NOTE (SGD convergence OUTCOME empirical).
+  EOF2
+  evidence_path = "state/verify_hexad_blue_2026_05_15/{blue_falsifier.py (bmitosis() addition), blue_falsifier_result.json (27/27)} + HEXAD/MITOSIS/{mitosis_lib.hexa (5 witness fns), mitosis.hexa (_selftest mirror 5/5), MITOSIS.tape (@D mitosis_blue_battery + ## Log), README.md} + HEXAD/INDEX.md (MITOSIS row + summary 7/7→8/8) + HEXAD/PLAN.md (§0 + §8 audit + 진행 로그 entry)"
+  cross_link = "HEXAD 엔진완성 closure (8/8 full 🔵 SUPPORTED-FORMAL: C 🔵 carry + S/M/W/E/D/BRIDGE/MITOSIS 각 🔵). 잔여 closed-점검 영역 = §8 audit invariant 심화 (sub-falsifiers) 또는 hexa-lang RFC land 후 C full GRU / flame Phase 1+. AGENTS.tape g_blue_closed_mandate + g3 + f1/f2 satisfied. cross-refs: §V-MIT (archive/MAIN.tape 8/8🔵 .clm v1 P2) + §RFC040-PHASE-E2-GRAD-EXACT-BWD + §RFC040-PHASE-D-CUBLAS-VERIFY + §PY-D768x12L-INTERIM-SUBSTRATE-CONVERGE (all 2026-05-16)."

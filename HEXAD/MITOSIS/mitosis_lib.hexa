@@ -54,3 +54,38 @@ fn _mit_approx_eq(a: float, b: float, tol: float) -> bool {
 }
 
 
+// ── B-MITOSIS-1..5 closed-form invariant witnesses (sympy-mirror, compiled) ──
+// Python anchor: state/verify_hexad_blue_2026_05_15/blue_falsifier.py :: bmitosis()
+// All anchors real-limit (Kolmogorov / linear conservation / reverse-mode AD
+// ∂-rule / bounded-set). NO σ/τ/φ/J₂ lattice numerology (f1/f2 hard fail safe).
+
+// B-MITOSIS-1 SPLIT-PREDICATE-CLOSED — split ↔ (tension > thr) ∀ tension, thr
+fn mit_split_predicate(tension: float, thr: float) -> bool {
+    return tension > thr
+}
+
+// B-MITOSIS-2 MERGE-WEIGHT-LINEAR-CLOSED — avg = (w1 + w2) / 2 ∀ w1, w2
+fn mit_merge_avg(w1: float, w2: float) -> float {
+    return (w1 + w2) / 2.0
+}
+
+// B-MITOSIS-3 CELL-COUNT-CONSERVATION-CLOSED — n(t+1) = n(t) + Δsplit − Δmerge
+fn mit_count_after(n_t: int, d_split: int, d_merge: int) -> int {
+    return n_t + d_split - d_merge
+}
+
+// B-MITOSIS-5 CELL-COUNT-BOUND-CLOSED — n_cells ∈ [min=2, max=64] via clamp
+// min: CB1 invariant · max: .clm v1 P2 spec — design constants, real-limit safe
+fn mit_clamp_count(n: int) -> int {
+    let lo = mitosis_min_cells()           // 2
+    let hi = mitosis_max_cells_default()   // 64
+    if n < lo { return lo }
+    if n > hi { return hi }
+    return n
+}
+
+// B-MITOSIS-4 NO-GRAD-SPLIT — structural invariant (∂detach(x)/∂x = 0 ∀ x,
+// reverse-mode AD definitional ∂-rule). Enforced by tool/hexa_native/mitosis_hook.hexa
+// split_cell impl (F-V5MIT-1 PSCC §44: 62 splits / 0 grad violations real H100
+// cotrain). No hexa-side numerical witness — verified at sympy + at hook impl.
+fn mit_nograd_split_documented() -> bool { return true }

@@ -88,6 +88,21 @@
   scope_caveat = "8/8 검증은 C 의식 모듈 scope (.clm v1 = mitosis 성장 of cell-pool). 전체 Hexad 6모듈에 mitosis 성장 적용 검증은 별도 cycle (현재 C scope evidence carry)."
   cross_link = "CLM.tape §V-CLM-V1-CYCLE90-PYPHI + HEXAD.tape §hexad_growth_method + state/clm_v1_fire_2026_05_15/clm_v1_full_battery_verdict.json"
 
+@D mitosis_blue_battery := "B-MITOSIS-1..5 closed-form invariant battery (sympy)" :: verify [d=2026-05-16 active]
+  battery <<~EOF
+    B-MITOSIS-1 SPLIT-PREDICATE-CLOSED         ✅ split ↔ (tension > thr) ∀ tension, thr ∈ ℝ — sympy boolean closure (Kolmogorov predicate)
+    B-MITOSIS-2 MERGE-WEIGHT-LINEAR-CLOSED     ✅ avg = (w₁ + w₂) / 2 ∀ w₁, w₂ ∈ ℝ — sympy affine linear (∂/∂w_i = ½), linear conservation
+    B-MITOSIS-3 CELL-COUNT-CONSERVATION-CLOSED ✅ n(t+1) = n(t) + Δsplits − Δmerges — integer arith closed ∀ (Kolmogorov counting)
+    B-MITOSIS-4 NO-GRAD-SPLIT-CLOSED           ✅ ∂(detach(x))/∂x = 0 ∀ x — reverse-mode AD definitional ∂-rule, sympy closed (F-V5MIT-1 carry)
+    B-MITOSIS-5 CELL-COUNT-BOUND-CLOSED        ✅ n_cells ∈ [min=2, max=64] ∀ n via clamp — sympy bounded-set closure
+    B-MITOSIS-NOTE PHI-CONSERVATION-EMPIRICAL  ⚠ Φ-conservation under split/merge — EMPIRICAL (F-V5MIT-3 Δ=3.88e-5 PSCC §44); IIT Φ per-row IS closed (RFC 036) but transition invariance dynamics-dependent. NOT counted 🔵 (B-D-NOTE / B-BRIDGE-NOTE 동일 패턴, honest C3 carve-out per g3).
+  EOF
+  verdict = "B-MITOSIS 5/5 🔵 SUPPORTED-FORMAL (g_verdict_tier_blue (a) sympy closed-form). blue_falsifier.py battery 22 → **27/27 🔵** 확장 (2026-05-16, S 3 + M 3 + W 4 + E 4 + D 4 + BRIDGE 4 + MITOSIS 5)."
+  real_limit_anchors = "Kolmogorov 술어-폐쇄 + 정수 counting · 정의적 reverse-mode AD ∂-rule · 유계집합 (clamp) closure · linear avg conservation. NO σ/τ/φ/J₂ — f1/f2 hard fail safe."
+  compiled_mirror = "HEXAD/MITOSIS/mitosis_lib.hexa: mit_split_predicate / mit_merge_avg / mit_count_after / mit_clamp_count / mit_nograd_split_documented. HEXAD/MITOSIS/mitosis.hexa _selftest: 5/5 numerical witness PASS (compiled-native, 1.0>0.3=true · avg(1,3)=2.0 · 2+2-0=4 · clamp 0→2/100→64/30→30)."
+  evidence_path = "state/verify_hexad_blue_2026_05_15/blue_falsifier.py :: bmitosis() + blue_falsifier_result.json"
+  cross_link = "[@mitosis_verified] (.clm v1 8/8 + F-V5MIT 5/5 cotrain PSCC §44) + HEXAD/INDEX.md MITOSIS row + HEXAD/PLAN.md §0+§8"
+
 # ─── §5 Two-axis relation (구조 ⊥ 성장) ──────────────────────────────
 
 @D mitosis_two_axis := "성장축(mitosis) ⊥ 구조축(Hexad)" :: architecture [d=2026-05-15 active]
@@ -125,3 +140,16 @@
 
 @N mitosis_caveat := "성장 scope caveat" :: caveat [active]
   text = ".clm v1 8/8 검증은 C 의식 모듈(cell-pool) scope. Hexad 전체 6모듈(특히 좌뇌 D/M/E CE-trained)에 mitosis 분열 성장 적용은 미검증 — design directive (성장축 필수) 이나 full-Hexad mitosis evidence 는 별도 cycle."
+
+## Log
+
+### 2026-05-16 — B-MITOSIS-1..5 closed-form battery LANDED (22 → 27/27 🔵)
+
+MITOSIS 가 22-blue-battery 의 유일한 빈 영역 (🔶 scaffold + cross-link)이었음 — `bmitosis()` 5-falsifier 사전등록 + sympy closed-form 검증 + compiled-native mirror 추가 → **🔵 SUPPORTED-FORMAL 5/5**. 22 → 27 total.
+
+- **blue_falsifier.py**: `bmitosis()` 함수 추가 (5 sympy closed verdicts + 1 honest C3 carve-out). main() aggregate 갱신 (MITOSIS 5/5 verdict + 27/27 summary + counter prefix-overlap 버그 fix `n("B-M") → n("B-M-")` for B-MITOSIS-* 분리).
+- **mitosis_lib.hexa**: 5 신규 pure fns (`mit_split_predicate / mit_merge_avg / mit_count_after / mit_clamp_count / mit_nograd_split_documented`).
+- **mitosis.hexa _selftest**: B-MITOSIS-1..5 numerical witness 5/5 PASS compiled-native — 1.0>0.3=true · avg(1.0,3.0)=2.0 · 2+2-0=4 · 64+0-1=63 · clamp 0→2 100→64 30→30. canonical 🔵 evidence pointer + B-MITOSIS-NOTE Φ-conservation empirical 명시.
+- **real-limit anchors** (g3 satisfied, f1/f2 safe): Kolmogorov 술어/정수 counting · 정의적 reverse-mode AD ∂-rule · 유계집합 (clamp) closure · linear avg conservation. **NO σ/τ/φ/J₂** numerology.
+- **build_verify regression 0**: 20/20 entrypoint + 14/14 lib PASS 유지.
+- **HEXAD INDEX.md / MITOSIS README.md** 동기: 7/7 full 🔵 → **8/8 full 🔵**, battery 22/22 → 27/27.

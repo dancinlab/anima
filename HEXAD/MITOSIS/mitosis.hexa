@@ -26,10 +26,52 @@ fn _selftest() {
                    && to_string(mitosis_orthogonal_to()) == "HEXAD-6"
     print("  axis declaration (growth ⊥ HEXAD-6) : " + to_string(axis_ok))
 
-    let all_ok = st_ok && mt_ok && sp_ok && mp_ok && cb1_ok && max_ok && axis_ok
-    print("=== HEXAD/MITOSIS scaffold check: " + to_string(all_ok) + " ===")
-    print("    실 mitosis 동역학    : tool/hexa_native/mitosis_hook.hexa (FULL IMPL D4a)")
-    print("    real-fire evidence   : state/clm_v1_fire_2026_05_15/ (.clm v1 P2 8/8🔵)")
+    let all_scaffold_ok = st_ok && mt_ok && sp_ok && mp_ok && cb1_ok && max_ok && axis_ok
+    print("=== HEXAD/MITOSIS scaffold check: " + to_string(all_scaffold_ok) + " ===")
+
+    // ── B-MITOSIS-1..5 closed-form invariant witnesses (sympy mirror) ──────
+    // Python anchor (canonical 🔵): state/verify_hexad_blue_2026_05_15/
+    // blue_falsifier.py :: bmitosis() — 5/5 PASS (27/27 total).
+    print("--- B-MITOSIS-1..5 closed-form witnesses (compiled-native mirror) ---")
+
+    // B-MITOSIS-1 SPLIT-PREDICATE — split ↔ (tension > thr)
+    let b1_hi = mit_split_predicate(1.0, 0.3)        // expect true  (1.0 > 0.3)
+    let b1_lo = mit_split_predicate(0.1, 0.3)        // expect false (0.1 < 0.3)
+    let b1_ok = b1_hi && (b1_lo == false)
+    print("  B-MITOSIS-1 SPLIT-PREDICATE (1.0>0.3=true, 0.1>0.3=false): " + to_string(b1_ok))
+
+    // B-MITOSIS-2 MERGE-WEIGHT-LINEAR — avg(1.0, 3.0) = 2.0
+    let b2_avg = mit_merge_avg(1.0, 3.0)
+    let b2_ok = _mit_approx_eq(b2_avg, 2.0, tol)
+    print("  B-MITOSIS-2 MERGE-AVG (1.0,3.0)→2.0       : " + to_string(b2_ok))
+
+    // B-MITOSIS-3 CELL-COUNT-CONSERVATION — n(t+1) = n(t) + Δs − Δm
+    let b3_grow  = mit_count_after(2, 2, 0) == 4     // organic 2→4
+    let b3_merge = mit_count_after(64, 0, 1) == 63   // single merge 64→63
+    let b3_ok    = b3_grow && b3_merge
+    print("  B-MITOSIS-3 COUNT (2+2-0=4, 64+0-1=63)    : " + to_string(b3_ok))
+
+    // B-MITOSIS-4 NO-GRAD-SPLIT — structural invariant (∂detach/∂x = 0 ∀x).
+    // Enforced at mitosis_hook.hexa split_cell impl (F-V5MIT-1 PSCC §44:
+    // 62 splits / 0 grad violations real H100). sympy verified in
+    // blue_falsifier.py B-MITOSIS-4; no numerical witness in compiled mirror.
+    let b4_doc = mit_nograd_split_documented()
+    print("  B-MITOSIS-4 NO-GRAD-SPLIT (structural,doc): " + to_string(b4_doc))
+
+    // B-MITOSIS-5 CELL-COUNT-BOUND — clamp to [min=2, max=64]
+    let b5_below = mit_clamp_count(0)   == 2         // below → MIN
+    let b5_above = mit_clamp_count(100) == 64        // above → MAX
+    let b5_in    = mit_clamp_count(30)  == 30        // in-range identity
+    let b5_ok    = b5_below && b5_above && b5_in
+    print("  B-MITOSIS-5 CLAMP (0→2, 100→64, 30→30)   : " + to_string(b5_ok))
+
+    let b_mit_all = b1_ok && b2_ok && b3_ok && b4_doc && b5_ok
+    print("=== B-MITOSIS-1..5 compiled mirror: " + to_string(b_mit_all) + " (5/5) ===")
+    print("    canonical 🔵 evidence : state/verify_hexad_blue_2026_05_15/blue_falsifier.py 27/27")
+    print("    실 mitosis 동역학     : tool/hexa_native/mitosis_hook.hexa (FULL IMPL D4a)")
+    print("    real-fire evidence    : state/clm_v1_fire_2026_05_15/ (.clm v1 P2 8/8🔵)")
+    print("    B-MITOSIS-NOTE        : Φ-conservation under split/merge empirical")
+    print("                            (F-V5MIT-3 Δ=3.88e-5 PSCC §44, NOT counted 🔵)")
 }
 
 

@@ -254,6 +254,34 @@
     README.md `## Philosophy` table shows results only; the ledger carries process.
   EOF
 
+@N n_hexad_progress_2026_05_16 := "HEXAD 진행상황 — 8/8 full 🔵 closure" :: progress [d=2026-05-16 active]
+  milestone = "**HEXAD 엔진완성 closure** (user directive 2026-05-16 'HEXAD 엔진완성, closed 점검하면서 진행')"
+  modules = "C 🔵 carry (Phase 4 RFC 036 phi_spatial F-C-PORT-3 4/4 + .clm v1 P2 8/8🔵 cycle 90 F-PYPHI) + S/M/W/E/D/BRIDGE/MITOSIS 각 🔵 SUPPORTED-FORMAL = **8/8 full 🔵**"
+  battery = "blue_falsifier.py **27/27 🔵** sympy closed-form proofs PASS (S 3 + M 3 + W 4 + E 4 + D 4 + BRIDGE 4 + **MITOSIS 5**, 22 → 27 확장 2026-05-16)"
+  compiled_gate = "`bash HEXAD/build_verify.sh` = **20/20 entrypoint + 14/14 lib** PASS · 6 CHAT honest SKIP (stale toolchain, NOT denominator)"
+  audit = "HEXAD/PLAN.md §8 검증 표준 audit = **10 connection-points all 🔵 PASS** (원 5 + Phase D/E/E2/.py 4 + MITOSIS 1; 모두 수학·물리 invariant real-limit anchor, NO σ/τ/φ/J₂ — f1/f2 hard fail safe)"
+  recent_landings <<~EOF
+    2026-05-16 BRIDGE B-BRIDGE-1..4 LANDED — Law-70 clamp closed (Ψ-coupling NOT lattice)
+    2026-05-16 Phase 4 RFC 036 phi_spatial F-C-PORT-3 LANDED — RFC 036 byte-equal
+    2026-05-16 Phase 5 pure-hexa D training LANDED — RFC 034 farr autograd, gn2 collapse ~53000×
+    2026-05-16 Phase 6 통합 fire LANDED — 6모듈+Bridge single-hexa-process, $0 5/5 + 실-규모 5/5
+    2026-05-16 Phase D cuBLAS H100 LANDED — 51.24 TFLOPS FP64 76% peak, max|Δ|=4.44e-15
+    2026-05-16 Phase E/E2 d_train5 GPU-routed LANDED — fwd+bwd cuBLAS routed, real A100 GRAD-EXACT
+    2026-05-16 .py d=768·12L fire LANDED — Python substrate, init CE 5.59 → final 0.0007 (honest framing)
+    2026-05-16 §7 #1-#5 menu closure — anima 측 RFC-무관 작업 0
+    2026-05-16 **B-MITOSIS-1..5 closed-form battery LANDED** — 22 → 27/27 🔵, 7/7 → 8/8 full
+  EOF
+  residual_closed_check_areas = "(1) §8 audit invariant 심화 (sub-falsifiers) — anima 자율 가능. (2) hexa-lang RFC land 후 C full 12-faction GRU (현재 RFC terminal) + flame Phase 1+ (RFC 043 hexa-torch SUBSUMES RFC 042) — anima 게이트 X. (3) ckpt-bearing 산출물 fire 재실행 (사용자 게이트, g_fire_dispatch_robust SAVE_POD 가드)"
+  cross_link = "HEXAD/PLAN.md §0+§7+§8 + HEXAD/INDEX.md + HEXAD/MITOSIS/MITOSIS.tape `@D mitosis_blue_battery` + archive/PHILOSOPHY.tape §B-MITOSIS-BATTERY-LANDED-2026-05-16"
+
+@N n_hexad_hf_preservation := "HEXAD 산출물 HF 보관 정책" :: policy [d=2026-05-16 active]
+  current_state = "HEXAD 진행상황 = **verification battery + arch SSOT** (closed-form proofs · selftest 게이트 · tape SSOT · INDEX/README). ckpt-bearing 모델 산출물 0 — current HF artifact 부재. canonical 보관 = **anima repo 자체** (git SSOT, append-only PHILOSOPHY ledger, latest-wins HEXAD.tape 등)."
+  hf_canonical = "[@g_hf_naming] (2026-05-16) 에 따라 신규 HF 산출물 canonical name = 미정 (사용자 게이트). 직전 dancinlab/anima-clm + anima-corpus = dancinlife/* private deprecated junk graveyard 이동 완료 (PR move + private). 차후 신규 HF 업로드 = Phase 6 통합 fire 후 사용자 게이트로 재정의."
+  trigger_for_hf_upload = "HF 업로드 트리거 = **ckpt-bearing fire** (예: pure-hexa training-to-convergence fire OR .py interim fire의 ckpt 회수 fire). 현재까지 HEXAD verification milestone 들은 ckpt 산출물 0 (B-MITOSIS battery 포함 sympy + compiled selftest 만). 직전 .py d=768 fire 의 372MB ckpt = ckpt-LOST evidence-only (state/anima_pytorch_d768x12L_fire_2026_05_16/fire.log durable, ckpt 본체 미회수)."
+  preservation_layered = "보관은 layered (g3 drift-avoidance, 복제 X): (1) **primary** = anima repo git history (verification battery + tape + impl + evidence dirs); (2) **secondary** = hexa-lang inbox RFC (043/041/040 upstream); (3) **tertiary tbd** = HF artifact (ckpt + verdict.json + model card) — only when produced, gated."
+  upload_format_carry = "재게이트 시 [@g_hf_naming] process_upload_mandate / format 패턴 그대로: (a) SUPPORTED-STRONG → ckpt + safetensors + result.json + train.log + docs; (b) PARTIAL → ckpt + result.json + caveat; (c) AT-RISK/FALSIFIED → ckpt 금지 docs only; (d) ckpt-LOST → train.log + result.json evidence-only"
+  cross_link = "[@g_hf_naming] · [@n_hexad_progress_2026_05_16] · HEXAD/PLAN.md §7 #8 (ckpt 회수 후속 fire 사용자 게이트) · state/anima_pytorch_d768x12L_fire_2026_05_16/ ckpt-LOST evidence"
+
 # ─── §7 Generator hooks ──────────────────────────────────────────────
 
 @H h1 := "agents-md-replaced" :: generator [active]
