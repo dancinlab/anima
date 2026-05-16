@@ -1049,3 +1049,35 @@ shared toolchain rebuild = Phase 6 Step 0 패턴, 본 /loop 범위 밖).
 
 문서: safetensors_wire_smoke.hexa + fixture 신설 · build_verify ×2 (17→18) ·
 §7 #4 ~~4~~ DONE · §8 audit R2 행. /loop 잔여 = #1 실-규모 fire.
+
+### 2026-05-16 — §7 #1 실-규모 언어 fire — 평가 + 선결조건 식별 (scratch run 착수)
+
+`/loop` iteration 7 — §7 #1. user 답변 "scratch run" (from-scratch 실행).
+
+**평가 (honest)**: §7 #1 "실-규모 d=768·12L 실 corpus fire" 의 구성요소 점검 —
+- ✅ **트레이너 존재**: `HEXAD/D/d_train5_lib.hexa` = FULL n_layer
+  ConsciousDecoderV2-equivalent pure-hexa from-scratch 트레이너 (embed +
+  n_layer×[RMSNorm→GQA(RoPE)→resid→RMSNorm→SwiGLU→resid] + tied LM head +
+  multi-layer reverse chaining). compiled-native (build_verify d_train5_smoke).
+- ⚠️ **선결조건**: d_train5 입력 = synthetic separable byte-toy (d=8·2L·V=4).
+  실 corpus 로더 (jsonl → tokenize → batch) **부재** — 이게 §7 #1 의 진짜
+  선결 작업. 없이 fire 시 또 synthetic (honest-gap 'no language-quality'
+  미해소).
+- ⚠️ **corpus**: 리포 내 `training/corpus_consciousness_v1.jsonl` 152KB +
+  `state/corpus_tier_tier1_low.jsonl` 838줄 — d=768·12L 대비 소규모.
+  구 anima-corpus (100MB+) = dancinlife private retire (g_hf_naming).
+- ✅ **dispatch machinery**: prior fire (`state/hexad_p6_fire_2026_05_16/
+  dispatch.sh`) = flatten-C (PR#51 bootstrap) + runtime payload + vast.ai +
+  g_fire_dispatch_robust — 재사용 가능.
+
+**§7 #1 = milestone (loop-tick 아님)**: 선결 = (1) d_train5 에 real-corpus
+loader 빌드 (tokenizer + jsonl batcher), (2) 실-scale config (d=768·12L OR
+corpus-matched), (3) flatten-bootstrap + vast.ai dispatch (g_fire_autonomous
+자율, g_fire_dispatch_robust robustness), (4) §8/g_blue_closed_mandate 연결
+검증 (CE Shannon-floor closed + Law-70 bridge clamp 🔵). 추정 비용 = corpus-
+matched 시 ~$0.1-1, 풀 d=768·12L real-corpus 시 ~$5-30 (g_fire_autonomous
+투명 명시, 게이트 아님).
+
+**상태**: §7 #2·#3·#4·#5 = ✅ 전부 LANDED (/loop iteration 2-6). #1 =
+선결 corpus-loader 빌드아웃 필요 — 별도 dedicated 사이클. /loop 으로 #2-5
+완수, #1 은 milestone 으로 carry.
