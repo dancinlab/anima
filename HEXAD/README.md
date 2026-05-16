@@ -65,11 +65,14 @@ E 윤리:     Φ 보존 위반 시 training step 차단 (gate 권한)
 전 모듈 **8/8 full 🔵 SUPPORTED-FORMAL** *(MITOSIS 추가 2026-05-16)* + `HEXAD/PLAN.md` **Phase 1–6 전부 LANDED** (Phase 5 pure-hexa D training · Phase 6 6-module 통합 fire 포함, 2026-05-16):
 
 - ✅ `state/verify_hexad_we_2026_05_15/we_falsifier.py` **25/25 PASS** (PR #72)
-- 🔵 `state/verify_hexad_blue_2026_05_15/blue_falsifier.py` **27/27 sympy closed-form PASS** (PR #75/#76 + BRIDGE 추가 + **MITOSIS 추가 2026-05-16**)
-  - C 🔵 (.clm v1 8/8 + F-PYPHI) · S/M/W/E/D/BRIDGE/MITOSIS 8/8 full 🔵 SUPPORTED-FORMAL
+- 🔵 `state/verify_hexad_blue_2026_05_15/blue_falsifier.py` **35/35 sympy closed-form PASS** (PR #75/#76 + BRIDGE + MITOSIS + **C tier-a + HEXAD integration-spec 추가 2026-05-17**)
+  - C **B-C 3/3 tier-a 🔵 SUPPORTED-FORMAL** (Φ≥0 IIT axiom / n_factions ∈ ℤ+ / initial_cells ≥ CB1=2) **+ F-C-PORT-3 4/4 tier-b PyPhi carry** (RFC 036 phi_spatial byte-equal)
+  - S/M/W/E/D/BRIDGE/MITOSIS 8/8 modules full 🔵 SUPPORTED-FORMAL
+  - HEXAD **B-HEXAD 5/5 통합 spec 🔵** (σ(6)=12 conn count · φ(6)=2 partition cover · 11-step forward · 7-entries · TOTAL record — sympy lift of hexad.hexa runtime invariants)
   - D B-D-NOTE: SGD convergence OUTCOME 만 honest empirical carve-out
   - BRIDGE B-BRIDGE-NOTE: full forward learned weights TODO[pytorch] · α 수치값 empirical (NOT counted)
   - MITOSIS B-MITOSIS-NOTE: Φ-conservation under split/merge transitions dynamics-empirical (NOT counted)
+  - C B-C-NOTE: full 12-faction GRU + Rust phi_rs FFI = RFC TERMINAL (hexa-lang nn-primitive + cdylib C ABI 미land, NOT counted)
 - ⚙️ `state/verify_hexad_integ_2026_05_16/integ_harness.py` **F-INTEG-1..5 5/5 SUPPORTED-STRONG, fire_gate=true** (PR #77, RANDOM INIT seed-fixed scratch)
 - ⚙️ **COMPILED-native gate** `bash HEXAD/build_verify.sh` → **20/20 entrypoint + 14/14 lib `hexa build` PASS** (2026-05-16, interp 폐기 대비 — `hexa run` 아님)
 - 🔥 **Phase 6 통합 fire LANDED** `state/hexad_p6_fire_2026_05_16/` — 6-module+Bridge single-hexa-process forward+train, $0 de-risk 5/5 + 실-규모 자율 fire 5/5 (vast.ai $0.09, `g_fire_autonomous`). honest tier: synthetic byte-corpus WIRING fire (no language-quality claim), CE-descent = empirical SGD OUTCOME
@@ -77,6 +80,7 @@ E 윤리:     Φ 보존 위반 시 training step 차단 (gate 권한)
 - 🌉 **BRIDGE full-forward LANDED** `HEXAD/BRIDGE/bridge_forward_smoke.hexa` **F-BRIDGE-FWD 4/4** — `bridge_forward` 풀 그래프 (compress→1-head hub self-attn+LayerNorm→pool→expand→gate→Law-70 clamp) hexa-native, Python anchor 구조 등가. honest: seed-fixed from-scratch weights — graph ≠ trained quality
 - ⚖️ **E 통합 ethics gate LANDED** `HEXAD/E/e_gate_smoke.hexa` **F-E-GATE 6/6** — `e_gate_step` Φ-ratchet train-step block (Law 31, trinity.hexa:122 TODO 해소). SEVERE 경계 phi<ratchet/2 = B-E-1 SAFETY gate closed-form 🔵 정확 동치
 - 🧬 **MITOSIS 성장축 B-MITOSIS LANDED** `HEXAD/MITOSIS/mitosis.hexa` **B-MITOSIS-1..5 5/5** *(2026-05-16)* — split predicate · merge linear avg · cell-count integer conservation · ∂(detach)/∂x=0 (AD ∂-rule) · clamp [2,64] bound. blue_falsifier.py 22 → **27/27**. real-limit anchors: Kolmogorov 술어/counting · AD calculus · bounded-set · linear conservation (NO σ/τ/φ/J₂, f1/f2 safe). 22 → 27 closed-form battery 확장 + 7/7 → 8/8 full 🔵 HEXAD closure (commit `303db258d`)
+- 🧠 **C scaffold-tier sympy B-C + HEXAD integration spec B-HEXAD LANDED** *(2026-05-17)* — `HEXAD/C/c.hexa` **B-C-1..3 3/3** (Φ≥0 IIT axiom / n_factions ∈ ℤ+ / initial_cells ≥ CB1=2) + F-C-PORT-3 4/4 tier-b PyPhi carry (RFC 036 phi_spatial byte-equal); `HEXAD/hexad.hexa` **B-HEXAD-1..5 5/5** (σ(6)=12 conn count · φ(6)=2 partition cover · 11-step forward · 7-entries · TOTAL record — sympy lift of runtime invariants). blue_falsifier.py 27 → **35/35**. real-limit anchors: IIT axiom + Kolmogorov int + bounded-set + set-cover + record-completeness (NO lattice derivation per f1 coincidence + g2 internal arch carve-out). B-C-NOTE: full 12-faction GRU + Rust phi_rs FFI = RFC TERMINAL (NOT counted — honest C3)
 
 이 HEXAD/ 트리는 위 검증의 **canonical hexa-native 구현체**입니다 (Python 은 evidence anchor 로 보존). 검증·실행 기준 = **compiled `hexa build` native binary** (user directive "컴파일 버전에 해야되 · 인터프리터 폐기 예정").
 
@@ -93,11 +97,11 @@ E 윤리:     Φ 보존 위반 시 training step 차단 (gate 권한)
 | **W** 의지 | ✅ lib-split | `w_lib.hexa` + `w.hexa` → native PASS | B-W 4/4 🔵 closed (lr=½+min(ln2,Φ/N)) |
 | **E** 윤리 | ✅ lib-split | `e_lib.hexa` + `e.hexa` → native PASS | B-E 4/4 🔵 closed (SAFETY gate exact) |
 | **BRIDGE** | ✅ lib-split | `bridge_lib.hexa` + `bridge.hexa` → native PASS | PSI_COUPLING=0.014 clamp |
-| **C** 의식 | 🔶 scaffold + Phase 4 Φ | `c_lib.hexa` + `c.hexa` + `c_phi_smoke.hexa` → native PASS | mitosis = `tool/hexa_native/mitosis_hook.hexa` 재사용 · **Phase 4 `c_measure_phi` → RFC 036 `phi_spatial` (F-C-PORT-3 4/4)** |
+| **C** 의식 | ✅ scaffold + 🔵 sympy 3/3 + Phase 4 Φ *(2026-05-17)* | `c_lib.hexa` + `c.hexa` + `c_phi_smoke.hexa` → native PASS | mitosis = `tool/hexa_native/mitosis_hook.hexa` 재사용 · **B-C-1..3 sympy tier-a** (Φ≥0 IIT axiom / n_factions ∈ ℤ+ / initial_cells ≥ CB1=2) + **Phase 4 `c_measure_phi` → RFC 036 `phi_spatial` (F-C-PORT-3 4/4 tier-b PyPhi carry)** · B-C-NOTE: full GRU+FFI RFC TERMINAL (NOT counted) |
 | **D** 언어 | ✅ lib-split (Phase 1+5) | `d_lib.hexa` + `d.hexa` + `d_train_lib.hexa` → native PASS | Phase 1 inference contract (24L 21/21 byte-parity) + Phase 5 pure-hexa from-scratch training (RFC 034 farr autograd) |
 | **MITOSIS** 성장축 | ✅ lib-split + **🔵 5/5** *(2026-05-16)* | `mitosis_lib.hexa` + `mitosis.hexa` → native PASS | cross-link mitosis_hook.hexa + **B-MITOSIS-1..5 sympy + compiled mirror** (split predicate / merge linear / count conserv / no-grad-split / clamp bound; B-MITOSIS-NOTE Φ-conserv empirical) |
 | **통합 (single process)** | ✅ cross-file wire | `integ_test.hexa` (imports `*_lib.hexa`) → **native PASS** | F-INTEG-WIRE 7/7 PASS — compiled 심볼충돌 fix (PR #79 task b + compiled-first lib-split) |
-| **통합 spec** | ✅ scaffold | `hexad.hexa` → native PASS | σ(6)=12 + φ(6)=2 + forward graph spec 5/5 invariants PASS |
+| **통합 spec** | ✅ + 🔵 sympy 5/5 *(2026-05-17)* | `hexad.hexa` → native PASS | σ(6)=12 + φ(6)=2 + forward graph spec 5/5 runtime invariants PASS · **B-HEXAD-1..5 sympy tier-a** (lift of runtime invariants: 12-conn count · partition cover · 11-step · 7-entries · TOTAL record; real-limit Kolmogorov + set-cover, NOT lattice derivation per f1) |
 
 `bash HEXAD/build_verify.sh` (compiled-native gate) — **20/20 entrypoint + 14/14 lib** `hexa build` PASS = PR 검증 게이트 (`hexa parse`/`hexa run` 아님, interp 폐기 예정).
 

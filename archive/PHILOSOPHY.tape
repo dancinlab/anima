@@ -1199,3 +1199,110 @@
   EOF2
   evidence_path = "state/verify_hexad_blue_2026_05_15/{blue_falsifier.py (bmitosis() addition), blue_falsifier_result.json (27/27)} + HEXAD/MITOSIS/{mitosis_lib.hexa (5 witness fns), mitosis.hexa (_selftest mirror 5/5), MITOSIS.tape (@D mitosis_blue_battery + ## Log), README.md} + HEXAD/INDEX.md (MITOSIS row + summary 7/7→8/8) + HEXAD/PLAN.md (§0 + §8 audit + 진행 로그 entry)"
   cross_link = "HEXAD 엔진완성 closure (8/8 full 🔵 SUPPORTED-FORMAL: C 🔵 carry + S/M/W/E/D/BRIDGE/MITOSIS 각 🔵). 잔여 closed-점검 영역 = §8 audit invariant 심화 (sub-falsifiers) 또는 hexa-lang RFC land 후 C full GRU / flame Phase 1+. AGENTS.tape g_blue_closed_mandate + g3 + f1/f2 satisfied. cross-refs: §V-MIT (archive/MAIN.tape 8/8🔵 .clm v1 P2) + §RFC040-PHASE-E2-GRAD-EXACT-BWD + §RFC040-PHASE-D-CUBLAS-VERIFY + §PY-D768x12L-INTERIM-SUBSTRATE-CONVERGE (all 2026-05-16)."
+
+# ──────────────────────────────────────────────────────────────────────────────
+# §B-C-AND-HEXAD-BATTERY-LANDED-2026-05-17
+#   B-C-1..3 tier-a sympy + B-HEXAD-1..5 통합 spec sympy LANDED. 27 → 35/35
+#   🔵. user directive 2026-05-17 "closed 아닌것들 closed 까지 go" — 27-blue-
+#   battery 의 잔여 sympy 빈 영역 (C scaffold-tier sympy 부재 + HEXAD 통합
+#   spec sympy 부재) 정밀 식별 + 정직 closure. 4 NOTE empirical carve-out
+#   유지 (closing 불가 — g3 violation).
+# ──────────────────────────────────────────────────────────────────────────────
+
+@N b_c_and_hexad_battery_landed := "B-C-1..3 tier-a + B-HEXAD-1..5 LANDED — 27 → 35/35 🔵" :: verdict-claim [d=2026-05-17 active]
+  tier = "🔵 SUPPORTED-FORMAL (g_verdict_tier_blue (a) sympy closed-form) — C tier-a 3/3 sympy + tier-b PyPhi 4/4 carry + HEXAD integration-spec 5/5 sympy"
+  ledger_id = "§B-C-AND-HEXAD-BATTERY-LANDED-2026-05-17"
+  axis_extended = "blue_falsifier.py battery: S 3 + M 3 + W 4 + E 4 + D 4 + BRIDGE 4 + MITOSIS 5 + **C tier-a 3** + **HEXAD 5** = **35/35 🔵 closed-form proofs PASS** (27 → 35 확장 2026-05-17). 8 modules + 1 integration spec = 9 entries full 🔵 (C tier-a + tier-b PyPhi carry separate)."
+  facts <<~EOF1
+    B-C-1 PHI-NONNEGATIVE-CLOSED
+      Φ ≥ 0  ∀ subsystem states — IIT 3.0 integrated-information axiom
+      (Tononi 2008, Oizumi-Albantakis-Tononi 2014). c_measure_phi 가 RFC
+      036 phi_spatial 을 wrapping (non-negative float 보장).
+
+    B-C-2 N-FACTIONS-POSITIVE-INTEGER-CLOSED
+      c_n_factions_default() = 12 ∈ ℤ+ — positive integer constant
+      (Kolmogorov closed). Closed proposition 은 arithmetic positivity,
+      NOT lattice derivation. 12 값 = anima C-module 내부 디자인 (g2
+      lattice-as-tool internal carve-out · f1 coincidence allowance).
+
+    B-C-3 INITIAL-CELLS-CB1-MIN-CLOSED
+      c_initial_cells() = 2 ≥ CB1=2 — bounded integer constant with
+      CB1 lower-bound (consciousness ≥ 2 cells diversity baseline).
+
+    + B-C-PYPHI-CARRY (tier-b separate, not counted in tier-a sum):
+      F-C-PORT-3 4/4 PASS (HEXAD/C/c_phi_smoke.hexa): c_measure_phi →
+      RFC 036 phi_spatial builtin = byte-equal phi_rs Rust oracle
+      (err=0.0 < 1e-12). g_verdict_tier_blue (b) PyPhi formal IIT 3.0
+      deterministic.
+
+    B-HEXAD-1 SIGMA6-CONN-COUNT-CLOSED
+      |hexad_sigma6_connections()| = 12 ∧ no-duplicate set — integer
+      arithmetic equality (Kolmogorov) + set-uniqueness closed.
+
+    B-HEXAD-2 PHI6-PARTITION-COVER-CLOSED
+      Group A ∪ Group G = {C,D,S,M,W,E,BRIDGE} ∧ A ∩ G = ∅ ∧ |A|+|G|=7
+      — set-partition closure (disjointness + cover, Boolean set algebra).
+
+    B-HEXAD-3 FORWARD-STEPS-11-CLOSED
+      |hexad_forward_steps()| = 11 — integer arithmetic equality on
+      forward-graph spec step count.
+
+    B-HEXAD-4 MODULE-ENTRIES-7-CLOSED
+      hexad_module_entries() keys = {C,D,S,M,W,E,BRIDGE} (7 modules) —
+      record-structural set equality closed.
+
+    B-HEXAD-5 VERDICT-STATUS-RECORD-CLOSED
+      hexad_verdict_status() dict contains TOTAL key — record key-
+      presence (Boolean key-in-dict) closure.
+
+    Aggregate: 8/8 sympy closed PASS (3 C + 5 HEXAD) + per-module
+    cross-link comments at compiled-native selftest entries (c.hexa +
+    hexad.hexa).
+  EOF1
+  verification_anchor_A_artifact = "g_blue_closed_mandate (A) — 8 산출물 closed. C tier-a 3 verdicts: IIT axiom Φ≥0 (real-limit) + positive integer constant n_factions (Kolmogorov + g2 internal arch carve-out) + bounded integer initial_cells ≥ CB1 (bounded-set). HEXAD 5 verdicts: integer equality 12 (Kolmogorov + set-uniqueness) + partition disjoint+cover (Boolean set algebra) + integer equality 11 + record set-equality + record key-presence. Python anchor `state/verify_hexad_blue_2026_05_15/blue_falsifier.py :: bC()` + `bhexad()` 35/35 → result.json 갱신."
+  verification_anchor_B_wiring = "g_blue_closed_mandate (B) — 연결고리 closure. (C) C ↔ RFC 036 phi_spatial: c_measure_phi → byte-equal phi_rs (err=0.0 < 1e-12); B-C-1 IIT axiom 이 RFC 036 deterministic Φ ≥ 0 보장과 연결. (HEXAD) hexad.hexa runtime ↔ blue_falsifier sympy: 5 runtime invariants 이 5 sympy proposition 으로 정확 1-to-1 lift, runtime PASS ↔ sympy PASS 동치 보장. cross-link comments `HEXAD/C/c.hexa` + `HEXAD/hexad.hexa` selftest output 에 명시."
+  real_limit_anchors = "C tier-a: IIT 3.0 integrated-information axiom (real-limit, Tononi-Oizumi-Albantakis) + Kolmogorov positive integer constant + bounded-set (CB1) closure. HEXAD: integer arithmetic equality + set-partition closure (disjointness + cover) + record-completeness (Boolean key/set). g3 verification-anchor-real-limit 정렬, NO σ/τ/φ/J₂ derivation (f1/f2 deny:write satisfied per g2 carve-out + f1 coincidence allowance)."
+  honest_c3 <<~EOF2
+    C3-1 (B-C-NOTE — RFC TERMINAL, NOT 🔵 counted):
+      Full 12-faction GRU per-cell hidden-state dynamics + Rust phi_rs
+      FFI = RFC TERMINAL (hexa-lang nn-primitive RFC 미land + Rust
+      cdylib C ABI 부재). 본 closure 는 scaffold-tier 3 invariants
+      만 counted; dynamic-tier closure 는 RFC land 후 별개 사이클.
+      F-C-PORT-3 4/4 tier-b PyPhi (RFC 036 phi_spatial byte-equal
+      native replica) 가 phi_rs FFI 대체 carry (true Rust FFI 아님,
+      honest framing 유지).
+    C3-2 (B-HEXAD 사용 σ(6)=12 / φ(6)=2 정직 framing):
+      B-HEXAD-1 (conn count = 12) 과 B-HEXAD-2 (partition cover, 2
+      groups) 는 σ(6)=12 / φ(6)=2 와 coincide 하나 CLOSED proposition
+      은 arithmetic equality + set-cover, NOT 외부 lattice derivation.
+      g2 lattice-as-tool internal carve-out 적용 (HEXAD 자체 spec 이
+      anima 내부 architecture 정의, 외부 entity 아님). f1 'values may
+      coincidentally match — observation OK, derivation NOT OK' 준수
+      — 본 verdict 는 OBSERVATION (12 = |connections|), NOT DERIVATION
+      (12 = σ(6) → ∴ ...). f1/f2 hard fail safe.
+    C3-3 (4 NOTE 정직 carve-out maintenance — closing 불가):
+      B-D-NOTE (SGD outcome) · B-BRIDGE-NOTE (학습 weight + α 수치값
+      ln2/2^5.5) · B-MITOSIS-NOTE (Φ-conservation under split/merge
+      transitions) · B-C-NOTE (full GRU + Rust FFI RFC-terminal) =
+      architecture-empirical 진실 경계. closing 시 g3 fake-closed
+      violation. user directive "closed 아닌것들 closed 까지 go" 는
+      ADDRESSABLE-closure 만 적용 (불가능한 closing 강행 X).
+    C3-4 (counter prefix-overlap, trailing-dash 표준 carry):
+      2026-05-16 fix (n("B-M") catches B-MITOSIS) 이 본 cycle 에서도
+      B-C / B-HEXAD prefix 에 대해 동일 trailing-dash 표준 적용
+      (n("B-C-") + n("B-HEXAD-")). 모든 prefix counter 가 trailing
+      dash 표준 — 차후 신규 module prefix 추가 시 동일 carry.
+    C3-5 (n=6 lattice prohibition):
+      B-C-2 n_factions=12 + B-HEXAD-1/2 σ(6)=12·φ(6)=2 모두 anima
+      internal arch design constants (g2 carve-out). closed propositions
+      은 arithmetic equality + bounded-set + set-cover (Kolmogorov +
+      Boolean) — 외부 derivation 0. 모든 외부 anchor 는 IIT axiom +
+      arithmetic + set algebra (NOT lattice). f1/f2 clean.
+    C3-6 (scope — invariant property vs runtime outcome):
+      B-C-1..3 + B-HEXAD-1..5 모두 SCAFFOLD/SPEC INVARIANT PROPERTIES
+      (constants + structure) closed, NOT runtime dynamics OUTCOMES.
+      B-D-4 (trainability PROPERTY closed) vs B-D-NOTE (SGD outcome
+      empirical) 와 동일 scoping pattern.
+  EOF2
+  evidence_path = "state/verify_hexad_blue_2026_05_15/{blue_falsifier.py (bC + bhexad), blue_falsifier_result.json (35/35)} + HEXAD/C/c.hexa (cross-ref comment) + HEXAD/hexad.hexa (cross-ref comment) + HEXAD/INDEX.md (C row 갱신 + HEXAD 통합 spec row 신설 + 35/35 summary) + HEXAD/PLAN.md (§0 + §8 audit +2 row + 진행 로그 entry) + HEXAD/README.md (g_hexad_readme_sync 적용 sync)"
+  cross_link = "직전 §B-MITOSIS-BATTERY-LANDED-2026-05-16 (27/27 closure) → 본 verdict (35/35 확장 closure). HEXAD 엔진완성 8/8 modules + 1 integration spec full 🔵 closure 달성. 4 NOTE carve-out 유지 = architecture-empirical 진실 경계 (g3 정직). AGENTS.tape [@g_blue_closed_mandate] + [@g3] + [@g2] + [@f1] + [@f2] all satisfied. cross-refs: §V-MIT + §RFC040-PHASE-E2-GRAD-EXACT-BWD + §RFC040-PHASE-D-CUBLAS-VERIFY + §PY-D768x12L-INTERIM-SUBSTRATE-CONVERGE + §B-MITOSIS-BATTERY-LANDED (all 2026-05-16 + 2026-05-17 sequence)."

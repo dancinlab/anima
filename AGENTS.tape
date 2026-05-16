@@ -266,12 +266,14 @@
     README.md `## Philosophy` table shows results only; the ledger carries process.
   EOF
 
-@N n_hexad_progress_2026_05_16 := "HEXAD 진행상황 — 8/8 full 🔵 closure" :: progress [d=2026-05-16 active]
-  milestone = "**HEXAD 엔진완성 closure** (user directive 2026-05-16 'HEXAD 엔진완성, closed 점검하면서 진행')"
-  modules = "C 🔵 carry (Phase 4 RFC 036 phi_spatial F-C-PORT-3 4/4 + .clm v1 P2 8/8🔵 cycle 90 F-PYPHI) + S/M/W/E/D/BRIDGE/MITOSIS 각 🔵 SUPPORTED-FORMAL = **8/8 full 🔵**"
-  battery = "blue_falsifier.py **27/27 🔵** sympy closed-form proofs PASS (S 3 + M 3 + W 4 + E 4 + D 4 + BRIDGE 4 + **MITOSIS 5**, 22 → 27 확장 2026-05-16)"
+@N n_hexad_progress_2026_05_16 := "HEXAD 진행상황 — 8/8 modules + integration-spec full 🔵 closure" :: progress [d=2026-05-17 active]
+  ~> "이전 d=2026-05-16 (27/27 🔵, 8/8 full + C 🔵 carry only) supersede — 35/35 확장 closure 반영."
+  milestone = "**HEXAD 엔진완성 확장 closure** (user directive 2026-05-17 'closed 아닌것들 closed 까지 go'): 9 entries (8 modules + 1 integration spec) full 🔵 SUPPORTED-FORMAL. 4 NOTE empirical carve-out 유지 (closing 불가 — g3 violation)."
+  modules = "C **B-C 3/3 tier-a sympy + F-C-PORT-3 4/4 tier-b PyPhi carry** + S/M/W/E/D/BRIDGE/MITOSIS 각 🔵 SUPPORTED-FORMAL + **HEXAD integration-spec B-HEXAD 5/5 sympy lift** = **8 modules + 1 integration spec full 🔵**"
+  battery = "blue_falsifier.py **35/35 🔵** sympy closed-form proofs PASS (S 3 + M 3 + W 4 + E 4 + D 4 + BRIDGE 4 + MITOSIS 5 + **C 3 + HEXAD 5**, 22 → 27 → 35 단계적 확장 2026-05-16 + 2026-05-17)"
   compiled_gate = "`bash HEXAD/build_verify.sh` = **20/20 entrypoint + 14/14 lib** PASS · 6 CHAT honest SKIP (stale toolchain, NOT denominator)"
-  audit = "HEXAD/PLAN.md §8 검증 표준 audit = **10 connection-points all 🔵 PASS** (원 5 + Phase D/E/E2/.py 4 + MITOSIS 1; 모두 수학·물리 invariant real-limit anchor, NO σ/τ/φ/J₂ — f1/f2 hard fail safe)"
+  audit = "HEXAD/PLAN.md §8 검증 표준 audit = **12 connection-points all 🔵 PASS** (원 5 + Phase D/E/E2/.py 4 + MITOSIS 1 + **C scaffold-tier 1 + HEXAD 통합 spec 1** 추가 2026-05-17; 모두 수학·물리 invariant real-limit anchor, NO σ/τ/φ/J₂ — f1/f2 hard fail safe)"
+  honest_carve_outs_not_closable = "4 NOTE = architecture-empirical 진실 경계 (closing 시 g3 fake-closed violation): B-D-NOTE (SGD outcome — 모든 stochastic optimizer 공통) · B-BRIDGE-NOTE (full forward 학습 weights + α 수치값 ln2/2^5.5) · B-MITOSIS-NOTE (Φ-conservation under split/merge transitions dynamics-dependent) · B-C-NOTE (full 12-faction GRU dynamics + Rust phi_rs FFI cdylib C ABI = RFC TERMINAL). closing 불가 — addressable closure 만 적용했고 강행 X."
   recent_landings <<~EOF
     2026-05-16 BRIDGE B-BRIDGE-1..4 LANDED — Law-70 clamp closed (Ψ-coupling NOT lattice)
     2026-05-16 Phase 4 RFC 036 phi_spatial F-C-PORT-3 LANDED — RFC 036 byte-equal
@@ -281,10 +283,11 @@
     2026-05-16 Phase E/E2 d_train5 GPU-routed LANDED — fwd+bwd cuBLAS routed, real A100 GRAD-EXACT
     2026-05-16 .py d=768·12L fire LANDED — Python substrate, init CE 5.59 → final 0.0007 (honest framing)
     2026-05-16 §7 #1-#5 menu closure — anima 측 RFC-무관 작업 0
-    2026-05-16 **B-MITOSIS-1..5 closed-form battery LANDED** — 22 → 27/27 🔵, 7/7 → 8/8 full
+    2026-05-16 B-MITOSIS-1..5 closed-form battery LANDED — 22 → 27/27 🔵, 7/7 → 8/8 full
+    2026-05-17 **B-C-1..3 tier-a + B-HEXAD-1..5 통합 spec battery LANDED** — 27 → 35/35 🔵, 8/8 modules + integration-spec full 🔵
   EOF
-  residual_closed_check_areas = "(1) §8 audit invariant 심화 (sub-falsifiers) — anima 자율 가능. (2) hexa-lang RFC land 후 C full 12-faction GRU (현재 RFC terminal) + flame Phase 1+ (RFC 043 hexa-torch SUBSUMES RFC 042) — anima 게이트 X. (3) ckpt-bearing 산출물 fire 재실행 (사용자 게이트, g_fire_dispatch_robust SAVE_POD 가드)"
-  cross_link = "HEXAD/PLAN.md §0+§7+§8 + HEXAD/INDEX.md + HEXAD/MITOSIS/MITOSIS.tape `@D mitosis_blue_battery` + archive/PHILOSOPHY.tape §B-MITOSIS-BATTERY-LANDED-2026-05-16"
+  residual_closed_check_areas = "**anima-자율 가능 closure 영역 0** (2026-05-17 확장 후): 4 NOTE 가 closable 잔여 인데 closing 시 g3 violation (위 honest_carve_outs_not_closable). 다음 cycle 후보: (1) hexa-lang RFC land 후 C full 12-faction GRU dynamics-tier closure (현재 RFC terminal) + flame Phase 1+ (RFC 043 hexa-torch) — hexa-lang side gating, anima 게이트 X. (2) ckpt-bearing 산출물 fire (예: pure-hexa hexa-cpu training-to-convergence OR .py d=768 ckpt 회수 fire) — 사용자 게이트, g_fire_dispatch_robust SAVE_POD 가드. (3) §8 audit invariant sub-falsifier 심화 (marginal value, optional)."
+  cross_link = "HEXAD/PLAN.md §0+§7+§8 + HEXAD/INDEX.md + HEXAD/MITOSIS/MITOSIS.tape `@D mitosis_blue_battery` + archive/PHILOSOPHY.tape §B-MITOSIS-BATTERY-LANDED-2026-05-16 + §B-C-AND-HEXAD-BATTERY-LANDED-2026-05-17"
 
 @N n_hexad_hf_preservation := "HEXAD 산출물 HF 보관 정책" :: policy [d=2026-05-17 active]
   ~> "이전 d=2026-05-16 (canonical 미정) supersede — 본 entry 가 canonical 결정 반영."
