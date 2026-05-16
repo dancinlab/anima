@@ -13,12 +13,12 @@
 
 | 모듈 | 현재 상태 | 비고 |
 |---|---|---|
-| **S/M/W/E/BRIDGE** | ✅ 🔵 SUPPORTED-FORMAL + compiled-native lib-split | B-X closed-form witness; `build_verify.sh` 17/17 entrypoint + 13/13 lib PASS (6 CHAT skip — stale toolchain) |
+| **S/M/W/E/BRIDGE** | ✅ 🔵 SUPPORTED-FORMAL + compiled-native lib-split | B-X closed-form witness; `build_verify.sh` 20/20 entrypoint + 14/14 lib PASS (6 CHAT skip — stale toolchain) |
 | **C** | ✅ contract + Phase 4 Φ LANDED | `c_lib.hexa` `c_state_contract()` + F-C-PORT-1; **Phase 4 `c_measure_phi` → RFC 036 `phi_spatial` (F-C-PORT-3 4/4)**; mitosis = `tool/hexa_native/mitosis_hook.hexa` 1119L FULL IMPL; full 12-faction GRU 동역학 = Phase 2-GRU (RFC terminal) |
 | **D** | ✅ Phase 1 + Phase 5 LANDED | `d_lib.hexa` inference contract (24L 21/21 byte-parity) + pure-hexa from-scratch training (RFC 034 farr autograd, gn2 collapse ≈53000×) |
 | **통합** | ✅ Phase 6 통합 fire LANDED | 6-module+Bridge single-hexa-process forward+train, $0 de-risk 5/5 + 실-규모 자율 fire 5/5 (vast.ai, $0.09) |
 
-evidence anchors (보존, 변경 X): `state/verify_hexad_we_2026_05_15/` 25/25 ✅ + `state/verify_hexad_blue_2026_05_15/` **22/22** 🔵 (PR #75/#76 + BRIDGE 추가) + `state/verify_hexad_integ_2026_05_16/` Python harness 5/5 fire-gate=true (PR #77) + `state/hexad_p6_fire_2026_05_16/` Phase 6 실-규모 fire 5/5 + `HEXAD/` hexa-native tree compiled-native 17/17+13/13 PASS (6 CHAT skip — stale toolchain, NOT denominator).
+evidence anchors (보존, 변경 X): `state/verify_hexad_we_2026_05_15/` 25/25 ✅ + `state/verify_hexad_blue_2026_05_15/` **22/22** 🔵 (PR #75/#76 + BRIDGE 추가) + `state/verify_hexad_integ_2026_05_16/` Python harness 5/5 fire-gate=true (PR #77) + `state/hexad_p6_fire_2026_05_16/` Phase 6 실-규모 fire 5/5 + `HEXAD/` hexa-native tree compiled-native 20/20+14/14 PASS (6 CHAT skip — stale toolchain, NOT denominator).
 
 ## 1. Gap 분석 — C/D 가 "scaffold" 인 이유
 
@@ -1524,3 +1524,14 @@ closure note: §7 #1-#5 닫힘, #6-#9 = next cycle (anima 측 RFC-무관 작업 
 
 `.py` 행은 Python substrate 라벨 mandatory (NOT hexa-native, g3 over-claim 금지).
 잔여 적용 갱신: #6/#7 = hexa-lang side gating, anima 측 RFC-무관 작업 0.
+
+### 2026-05-16 — §0 stale doc 정정: build_verify SSOT 17/17+13/13 → 20/20+14/14
+
+Agent C 실측 `bash HEXAD/build_verify.sh` = **20/20 entrypoint + 14/14 lib PASS · 6 CHAT honest SKIP · exit 0** (회귀 0, wall 2분 27초, log `/tmp/build_verify_1778942170.log`). 직전 reconcile 사이클 (#102/#108/#111/#112/#113/#114) 산출물이 sh ENTRYPOINTS/LIBS 배열에 누적 등록된 정상 확대:
+
+- entrypoint +3: `c_phi_smoke` (Phase 4 C/Φ RFC 036 phi_spatial, PR #112) · `safetensors_wire_smoke` (D safetensors wire, PR #102) · `corpus_loader_smoke` (Phase 6 통합 fire, PR #112) · `d_corpus_train_smoke` (corpus×train wire) → 17→20
+- lib +1: `corpus_loader_lib` → 13→14
+
+§0 line 16 + 21 의 "17/17 + 13/13" 표기는 PR #89 시점 stale → **20/20 + 14/14** 로 sync (current state row 만 — line 322 historical progress 엔트리는 PR #89 시점 정확값, g6 append-only 보존, 손대지 않음).
+
+g3 정직: 0 FAIL 라벨이 실제 0 FAIL 과 일치, CHAT 6 SKIP 은 denominator 명시 제외 (fake PASS X). HEXA_MAC_BUILD_OK=1 게이트, stale toolchain carve-out 패턴 (B-D-NOTE 스타일). 진행 로그 정정 entry — 신규 작업 0, 문서 sync 만.
