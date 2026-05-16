@@ -109,7 +109,7 @@ of 64 cores), 2026-05-16. Authoritative trainer console output (pre-pull):
 | Φ best | **4.4153** |
 | wall | **163.6 s (0.045 hr)** |
 | cost actual | **$0.03** |
-| ckpt (400-step fire) | 345,504,632 bytes on-pod — **ckpt-LOST** (proxy degraded, see below) |
+| ckpt (400-step fire) | 345,504,632 bytes — originally ckpt-LOST on the R3 #108 fire (proxy degraded); **RECOVERED 2026-05-16 via T1 deterministic refire** — pulled + byte-verified (sha256 `230df953…`, md5 `156113ee…` == remote on-pod), see §5 |
 | ckpt (Mac 4-step smoke) | 345,505,059 bytes local (`ckpt_hexad_integ_MACSMOKE_4step.pt`) — arch-validation artifact, NOT the fire ckpt (provenance honestly separated, not conflated) |
 | seed | 0 (RANDOM INIT seed-fixed) |
 
@@ -147,26 +147,42 @@ across steps — all 6+ modules influencing the integrated train_step).
 .clm v1 P2 precedent was $0.34; R3 is **$0.03** — even cheaper (shorter
 integration WIRING fire, CPU-coherent, no GPU premium).
 
-### ckpt pull caveat (honest — ckpt-LOST evidence-only)
+### ckpt RECOVERED (T1 deterministic refire 2026-05-16) — supersedes ckpt-LOST
 
-The 345 MB **400-step fire ckpt** scp through the vast.ai proxy stalled
-at ~16 MB/345 MB (~1 MB/min — the documented large-file proxy
+**Original R3 #108 fire (instance 36852855):** the 345 MB 400-step fire ckpt
+scp through the vast.ai proxy stalled / reset (documented large-file proxy
 unreliability, `feedback_dispatch_vast_template_gotchas`; `--direct` port
 refused; proxy-SSH unresponsive after sustained CPU load). The dispatch's
-`pull_with_retry` (3 tries) exhausted; the partial fragment was discarded.
-Instance 36852855 destroyed (verdict secured; manual recovery infeasible
-on a permanently-dead proxy — continuing would be pure cost bleed). This
-is the **accepted `ckpt-LOST` evidence-only** outcome, identical to the
-cycle-88 `.clm v1` precedent (`g_fire_dispatch_robust` / `g_hf_naming`
-process_upload_mandate (d)).
+`pull_with_retry` (3 tries) was exhausted on a permanently-dead proxy →
+**ckpt-LOST evidence-only** (cycle-88 `.clm v1` precedent). The verdict
+(9/9 SUPPORTED-STRONG) + all metrics + full 400-step trajectory were
+durably the trainer's pre-pull console (zero fabrication) in
+`dispatch_run.log` and reconstructed into `result.json`.
 
-**The AUTHORITATIVE evidence is the trainer's pre-pull console output**
-(9/9 + full 400-step trajectory + all metrics), durably captured verbatim
-in `state/hexad_integ_fire_2026_05_16/dispatch_run.log` (L100-137) and
-reconstructed (zero fabrication) into `result.json`. The fire model is
-RANDOM-INIT seed-fixed (seed 0, `g_clm_from_scratch`) — bit-reproducible
-from the harness + scaler. Per `g_hf_naming` no HF upload for this
-substrate WIRING fire regardless.
+**T1 recovery (deterministic refire, 2026-05-16):** because the fire is
+RANDOM-INIT seed-fixed (seed 0, `g_clm_from_scratch`, base_ckpt=NONE; no
+`load_state_dict` / `torch.load` — F-INTEG-3 AST-checked), the SAME config
+re-dispatched reproduces the SAME run **bit-for-bit**. Re-fired on vast.ai
+instance **36854209** (A100 SXM4, $0.6023/hr), wall 151.24 s, cost
+**$0.0253**. Reproduction is **BIT-EXACT**: `param_hash_init`
+`408403506a965220` (== original), loss 6.0194→5.5795 / avg100
+5.6425→5.5743 (== original), cells 3→5 / max 10 (== original), Φ best
+4.4153 (== original), params 85,822,840 (== original). **9/9
+SUPPORTED-STRONG reproduced.** This time `g_fire_dispatch_robust` did its
+job: the same proxy reset the scp at ~92 % on attempt 1; the **retry 2/3
+logic + SAVE_POD=1 auto-promote** completed the pull on the second attempt.
+
+**ckpt RECOVERED & byte-verified:** local
+`state/hexad_integ_fire_2026_05_16/ckpts/ckpt_hexad_integ_fire_final.pt`,
+345,504,632 bytes, sha256 `230df953051f47dc1278d6052f06a35f543f7339a0c4f4cc0dc1a6e02f6e4b27`,
+md5 `156113eaeada1e1046096b41c9e95a53` **== remote on-pod md5 (byte-identical)**.
+Loadable torch ckpt: `d_state_dict` (293 tensors) + `bridge_state_dict`
+(14 tensors), Group-A only. Provenance:
+`ckpts/CKPT_RECOVERED.md` (supersedes the removed `CKPT_LOST_EVIDENCE_ONLY.md`).
+Per `g_hf_naming` (2026-05-16): HF canonical = NONE — **no HF upload** for
+this substrate WIRING ckpt; it stays local + git-tracked provenance (the
+345 MB `.pt` binary is git-excluded as noise, like the MACSMOKE ckpt).
+Instance 36854209 destroyed post-pull; **zero orphan vast instances**.
 
 A separate **Mac 4-step smoke ckpt** (`ckpt_hexad_integ_MACSMOKE_4step.pt`,
 345 MB, the F-INTEG-5/5-at-scale gate that justified firing) IS available

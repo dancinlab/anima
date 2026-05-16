@@ -591,3 +591,42 @@ chat_lib import 의 mitosis_hook_lib 4-site 가 유일 차단점이었음.
 무위험). 잔여 = 상위 hexa-lang codegen_c2 3-level spine-walk fix(별도 RFC
 named item — anima 우회로 unblocked 이라 non-urgent) + 실 ckpt load end-to-end
 inference parity(별도 heavy cycle, 24L 570MB).
+
+### 2026-05-16 — T1: R3 통합 fire ckpt RECOVERED (deterministic refire) — 9/9 재현 bit-exact
+
+R3 통합 fire(위 "R3 통합 fire LANDED" entry, inst 36852855)는 9/9
+SUPPORTED-STRONG verdict durable 했으나 345MB 400-step fire ckpt 가
+vast.ai proxy 영구 degraded 로 pull 실패 → ckpt-LOST evidence-only
+(cycle-88 .clm v1 선례). fire 는 **deterministic**(RANDOM-INIT seed=0,
+g_clm_from_scratch base_ckpt=NONE, F-INTEG-3 AST-checked no-load-path) →
+**동일 config/seed refire = 동일 run bit-for-bit + 이번엔 ckpt PULL**.
+
+**T1 refire (vast.ai inst 36854209, A100 SXM4, $0.6023/hr, 2026-05-16)** —
+on-pod result.json (실 pull, authoritative): `param_hash_init`
+**408403506a965220** (== 원본) · loss 6.0194→5.5795 / avg100
+**5.6425→5.5743** (== 원본) · cells **3→5** max 10 (== 원본) · Φ_best
+**4.4153** (== 원본) · params **85,822,840** (== 원본) · falsifier
+**9/9 SUPPORTED-STRONG** (F-INTEG 5/5 + F-V5MIT-1/2/3 + F-PRIN3 4/4, ==
+원본). wall **151.24s** · cost **$0.0253** (원본 163.6s/$0.03 — wall 만
+차이, metric 은 seed-deterministic bit-exact 일치).
+
+**ckpt RECOVERED & byte-verified**: `state/hexad_integ_fire_2026_05_16/
+ckpts/ckpt_hexad_integ_fire_final.pt` 345,504,632 bytes · sha256
+`230df953051f47dc1278d6052f06a35f543f7339a0c4f4cc0dc1a6e02f6e4b27` ·
+md5 `156113eaeada1e1046096b41c9e95a53` **== remote on-pod md5 (byte-identical)**.
+loadable torch ckpt (d_state_dict 293 + bridge_state_dict 14, Group-A only).
+이번엔 `g_fire_dispatch_robust` 가 제대로 작동: 동일 proxy 가 attempt 1
+~92%에서 reset → **retry 2/3 + SAVE_POD=1 auto-promote** 가 2회차에서 pull
+완료 (cycle-88 ckpt-loss lesson 이 처방한 정확한 hardening 의 첫 성공 입증).
+
+**산출물**: result.json (실 pull + `t1_recovery` block, reconstruction →
+real) · ckpts/CKPT_RECOVERED.md (CKPT_LOST_EVIDENCE_ONLY.md supersede·삭제) ·
+t1_dispatch_run.log + t1_train.log (T1 console durable) · docs §4/§5
+LOST→RECOVERED. HF: `g_hf_naming` (2026-05-16) canonical=NONE → **HF upload
+없음**, ckpt local + git-tracked provenance (345MB `.pt` = git-excluded noise).
+instance 36854209 destroy 완료 · **zero orphan vast instances** 확인.
+
+**honest tier**: F-INTEG-5 CE-descent = SGD OUTCOME (B-D-NOTE) — empirical
+SUPPORTED-STRONG, **NOT 🔵**. synthetic byte-corpus WIRING fire (no
+language-quality claim). anima 🔵(B-D 4/4·7/7) independent + already max —
+이 recovery 가 옮기지 않음, over-claim 없음. R3 ckpt status: LOST → RECOVERED.
