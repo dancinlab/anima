@@ -143,13 +143,36 @@ Phase N 진입 = 이 PLAN.md `## 진행 로그` 섹션에 entry append + tape SS
 | ~~2~~ | ~~Phase 4 — IIT Φ FFI~~ → ✅ **LANDED 2026-05-16** | 이 사이클 완료 — RFC 036 (hexa-lang main `d67403d3`) 이미 LANDED 발견 + anima-side `c_measure_phi` wire + F-C-PORT-3 4/4 | 진행 로그 2026-05-16 |
 | ~~3~~ | ~~anima-side TODO[pytorch] 잔여~~ → ✅ **LANDED 2026-05-16** | BRIDGE full-forward graph (`bridge_forward`, F-BRIDGE-FWD 4/4) + E 통합 ethics gate (`e_gate_step` Φ-ratchet, F-E-GATE 6/6) 모두 hexa-native LANDED — anima-side TODO[pytorch] 잔여 0 | 진행 로그 2026-05-16 |
 | **4** | R2 hexa-safetensors wire | hexa-native safetensors loader → ckpt Python torch 의존 제거 | PLAN CLOSURE 잔여 (iii) |
-| **5** | `.sh` bash → hexa 포팅 (🔄 진행 중) | $0 — ✅ `VOICE/tool/anima_voice_play.hexa` 포팅 완료 (F-VOICE smoke + WAV verify + afplay, 빌드·실행 검증); `CHAT/tool/anima_chat_optimal.sh` = **죽은 런처** (anima_chat.py HEXAD pivot 으로 제거됨) → retire 대상, 포팅 X; 잔여 = `HEXAD/build_verify.sh` (246 L PR 게이트, 부트스트랩 주의) | user directive 2026-05-16 ".sh bash 도 hexa 포팅" |
+| ~~5~~ | ~~`.sh` bash → hexa 포팅~~ → ✅ **LANDED 2026-05-16** | `VOICE/tool/anima_voice_play.hexa` + `HEXAD/build_verify.hexa` (246 L 게이트, .sh 와 동일 verdict 17/17+13/13 검증) 포팅 완료. `anima_chat_optimal.sh` = 죽은 런처 (anima_chat.py 제거) → retire, 포팅 X. 원본 .sh 전환기 병존 | 진행 로그 2026-05-16 |
 | — | Phase 2-GRU full / Phase 3 parity | 🔒 hexa-lang nn-primitive RFC terminal (미제출) — anima 게이트 X | §3 Phase 2/3 |
 
 honest C3: 위 menu 의 우선순위는 미고정 — 사용자 선택 게이트. 후보 1 이
-honest-gap 직격이나 heavy; 후보 3 은 ✅ 완료 (2026-05-16); 후보 5 (.sh→hexa)
-는 $0 tooling — build_verify.hexa 는 자기 자신을 build 하는 부트스트랩 순서
-주의 (canonical gate 는 전환 완료까지 .sh 병존). /loop 잔여 = #5 → #4 → #1.
+honest-gap 직격이나 heavy; 후보 3·5 은 ✅ 완료 (2026-05-16). /loop 잔여 = #4 → #1.
+
+## 8. 검증 표준 — 수학·물리 + 연결고리 (user directive 2026-05-16)
+
+> user directive 2026-05-16: "수학·물리 검증이 통과되어야 하고, **항상 기존
+> HEXAD 와 연결고리(connection point) 부분도** 수학·물리 검증을 통과해야 함."
+> AGENTS.tape `g3` (verification-anchor-real-limit) + `HEXAD.tape` wiring
+> 🔵-gate 의 재강조 — /loop 의 모든 잔여·신규 작업에 적용.
+
+**규칙**: HEXAD 에 새 impl 을 추가하거나 기존 모듈과 연결할 때, (A) 산출물
+자체 + (B) **연결고리(wiring)** 둘 다 falsifier 가 ≥1 real-limit 수학·물리
+anchor 를 포함하고 PASS 해야 한다. 연결고리는 구조(structural) 검증만으로
+불충분 — 그 연결이 보존/강제하는 물리·수학 invariant 를 명시 검증.
+
+**적용 audit (이번 /loop §7 #3·#4·#5 연결고리)**:
+
+| 연결고리 | 수학·물리 anchor | falsifier | 상태 |
+|---|---|---|---|
+| BRIDGE C→D full-forward | **Law 70 Ψ-coupling** clamp ∈ [Ψ−α,Ψ+α] (real-limit, NOT lattice — g3) | F-BRIDGE-FWD-3 LAW70-CLAMP (end-to-end) | ✅ PASS |
+| E→training ethics gate | **IIT Φ-ratchet** SAFETY 경계 phi>ratchet/2 = B-E-1 sympy closed-form 🔵 | F-E-GATE-6 GATE≡B-E-1 | ✅ PASS |
+| C Φ measurement (Phase 4) | **IIT integrated-information** Φ — phi_rs byte-equal (RFC 036 deterministic) | F-C-PORT-3 PHI-BYTE-EQUAL | ✅ PASS |
+| build_verify.hexa (게이트) | 메타-게이트 — 17 모듈 각자의 수학·물리 🔵 검증을 enforce; 자체는 .sh 와 verdict 동일성(functional parity) 검증 | 17/17+13/13 = .sh 동일 | ✅ PASS |
+
+**잔여 적용**: #4 R2 hexa-safetensors wire = ckpt↔hexa 연결고리 → byte-equal
++ tensor-norm/shape invariant 수학 검증 mandatory. #1 실-규모 fire = D-arch
+연결 → CE Shannon-floor + Law-70 bridge clamp 검증 mandatory.
 
 ## 진행 로그
 
@@ -966,3 +989,31 @@ e_gate_verify 신설 + status/residual/mandate TODO→LANDED) · INDEX.md
 hexa-lang 잠재 버그 (별도, 비차단).
 
 문서: PLAN §7 #5 🔄. 다음: #5 build_verify.sh → #4 R2 → #1 fire.
+
+### 2026-05-16 — §7 #5 COMPLETE: build_verify.hexa + 검증 표준 §8 (수학·물리+연결고리)
+
+`/loop` iteration 5 — §7 #5 마무리 + user directive "수학·물리 검증 통과,
+연결고리 포함" 반영.
+
+**build_verify.sh → build_verify.hexa 포팅 LANDED**:
+- `HEXAD/build_verify.hexa` — 246 L bash 게이트의 hexa-native 포팅. 제어
+  흐름·module list·counting·verdict = pure hexa; leaf build+run+grep =
+  `exec()` (subprocess spawn 은 build gate 의 본질 — bash 도 동일하게
+  shell-out). `HEXA_BOOT` two-tier toolchain + nested-index-assign probe
+  (fixture `HEXAD/_probe_nested_index.hexa`) 포함.
+- 검증: `./_hexa_build/build_verify` → **17/17 entrypoint + 13/13 lib PASS,
+  6 CHAT skip, exit 0** — build_verify.sh 와 **verdict 완전 동일** (functional
+  parity). 원본 .sh 전환기 병존 (canonical gate 전환은 별도 결정).
+- §7 #5 = ✅ LANDED (anima_voice_play.hexa iteration 4 + build_verify.hexa
+  iteration 5; anima_chat_optimal.sh = 죽은 런처 retire).
+
+**검증 표준 §8 신설** — user directive 2026-05-16 (3-msg): "수학·물리 검증
+통과 + 항상 기존 HEXAD 연결고리도 수학·물리 검증 통과". AGENTS.tape g3 +
+HEXAD.tape wiring 🔵-gate 재강조 → PLAN §8 로 명문화. 이번 /loop §7 연결고리
+audit 표 (BRIDGE→Law 70 / E→IIT Φ-ratchet B-E-1 / C-phi→IIT Φ /
+build_verify→functional parity) — **4/4 연결고리 수학·물리 anchor PASS**.
+잔여 #4 R2 / #1 fire 도 §8 mandatory (byte-equal+tensor-norm / CE
+Shannon-floor+Law-70).
+
+문서: build_verify.hexa + _probe_nested_index.hexa 신설 · PLAN §7 #5 DONE
++ §8 검증 표준 신설. /loop 잔여 완성도-순위 = #4 R2 wire → #1 실-규모 fire.
