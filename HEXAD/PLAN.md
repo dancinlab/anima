@@ -543,3 +543,63 @@ PR). artifacts: `state/anima_d1_v58_compiled_parity_2026_05_16/{result.json,
 python_ssot.json, python_safetensors_ssot_probe.py}` +
 `HEXAD/CHAT/docs/anima_chat_hexa_24l_compiled_parity_2026_05_16.md`. branch
 `t3-compiled-24l-parity` (unmerged — parent reconciles).
+
+### 2026-05-16 — Phase 5 (1) T2: 풀 n_layer ConsciousDecoderV2-equiv pure-hexa 조립 LANDED + 실-규모 fire (substrate-mem 한계 정직 기록)
+
+B-closure 가 ConsciousDecoderV2 전 backward primitive 클래스 개별 입증 완료
+선언 ⟹ T2 = **새 수학 없는 mechanical 조립**: d_train3(RMSNorm/SwiGLU
+exact vjp) + d_train4(causal softmax-attn row-Jacobian) 재사용 + RoPE
+inverse-rotation vjp + GQA group bookkeeping + embedding scatter-add +
+multi-layer residual chaining + WEIGHT-TIED LM-head (head_a=tok_emb,
+conscious_decoder.py L641 — d_tok_emb 가 head outer-product ⊕ input-row
+scatter-add 양쪽 누적).
+
+**산출** (compiled-first lib-split, branch `t2-d-arch-scale-up`):
+- `HEXAD/D/d_train5_lib.hexa` (731L) — pure: d5_rope_tables/apply/bwd
+  (range-reduced Taylor trig, Rᵀ=R(−θ) closed), d5_attn_fwd/bwd (GQA nh
+  query × nkv kv, n_rep grouping, dK/dV 누적), d5_block_fwd/bwd (pre-norm
+  resid), d5_forward/grad (tied head + final RMSNorm + L-1→0 reverse),
+  d5_init (from-scratch RANDOM seed-fixed). d_train4_lib import DRY (NO
+  main/_selftest/top-level — compiled-import-safe).
+- `HEXAD/D/d_train5_smoke.hexa` (304L) — entry, TINY d=8·nL=2·nh=2·nkv=1·
+  T=4·V=4.
+
+**$0 tiny compiled-native (Mac)**: **F-D-PORT-5b GRAD-EXACT** layer-0 Wg
+(loss 에서 가장 먼 weight) analytic vs 중심차분 **|Δ|=2.75301e-11**
+(머신정밀 — 풀 composed reverse: head→tied→final-norm→2블록→RoPE→GQA→
+embed 전 link exact) + **F-D-PORT-5** gn2 **5.73771 → 1.93403e-06**
+(~3×10⁶× collapse) acc 8/8 → **PASS (EMPIRICAL)**, selftest: true.
+
+**실-규모 자율 fire (ubu, $0, g_fire_autonomous — NO gate)**: substrate
+한계 정직 기록 (g3, fake 0): pure-hexa boxed-float-list 메모리 오버헤드
+(effective-float 당 ~KB급, AdamW m/v + transient grad-accum 포함) ⟹
+d=768·12L=78.07M (full ConsciousDecoderV2 — host OOM·ubu **재부팅**
+verdict 전) · d=768·nL4=26.16M (>18GB hexa-cap rc=77) · d=768·nL2=
+13.18M (>24GB hexa-cap rc=77) **모두 단일 30GB box 초과**. **d=256·
+nL2·1.54M** (real GQA 4h/2kv hd=64 + RoPE + SwiGLU h=704 + tied head +
+2-layer composed reverse, ~190 000× tiny smoke) = full-AdamW-trainable
+최대 subset → **F-D-PORT-5 (real scale) PASS (EMPIRICAL)**: gn2 **init
+3.97712 → step5 6.19e-06 → step10 2.78e-06 → step15 9.41584e-09**
+(~4.2×10⁸× collapse), acc **0/4 → 4/4** (genuine from-scratch 학습 —
+0/4 시작, trivially-separable 아님), rc=0 wall=35s. d=768·12L 미완은
+**code/math 결함 아님** — composed reverse 는 tiny F-D-PORT-5b 가
+머신정밀(|Δ|=2.75e-11, 동일 코드패스)로 입증; **boxed-float mem
+substrate 가 유일한 벽** (≥13M-param 학습 = 단일 box 불가). 실-d=768·
+12L 학습은 flat contiguous-buffer 수치 substrate (RFC급 farr-backed
+weights, 추론은 이미 사용) 또는 GPU 필요 — T2 scope 밖 (T2 contract =
+composed-reverse 정확성 ✅ exact + trainability fire ✅ real curve at
+substrate-sustainable scale).
+
+**build_verify**: ENTRYPOINTS 15→16 · LIBS 13→14 → **16/16 + 14/14
+compiled-native PASS** (d_train5 tiny config Mac-compilable; main-path
+post-merge 시뮬레이션 검증, main 무손상).
+
+**TIER 정직 (g3)**: F-D-PORT-5 OUTCOME = **EMPIRICAL** (B-D-NOTE, SGD
+수렴 — NOT 🔵). trainability PROPERTY = B-D-4 🔵 (별개 blue_falsifier,
+불변). F-D-PORT-5b 는 IMPL 정확성(PROPERTY) 입증 — OUTCOME tier 미상승.
+새 vjp 수학 0 (조립만). scope = decoder LM CORE (RMSNorm+GQA+RoPE+
+SwiGLU+resid+tied+embed); PureField/Cross-attn/MoE = consciousness
+pathway (integ harness nn.Module, CE-trainer core 아님). artifacts:
+`state/d_train5_t2_fire_2026_05_16/{d5fire_run.log, d_train5_real_fire
+.hexa, d_train5_calib.hexa, dispatch_ubu.sh, PROVENANCE.md}`. ckpt = 무
+(pure-hexa in-memory trainer; artifact = gn2-collapse curve, not model).

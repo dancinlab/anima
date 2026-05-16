@@ -1,0 +1,731 @@
+// HEXAD/D/d_train5_lib.hexa — pure fns (NO main / NO _selftest) — compiled-first lib-split
+// ════════════════════════════════════════════════════════════════════════════
+//  PHASE 5 (1) T2 — FULL n_layer ConsciousDecoderV2-equivalent pure-hexa
+//                    from-scratch trainer (mechanical composition, NOT new math).
+//
+//  B-closure (PLAN.md 2026-05-16) honest record: ALL ConsciousDecoderV2
+//  backward primitive CLASSES are already individually proven compiled-native:
+//    • linear / B-D-4 head            — d_train2_lib (A #43)
+//    • RMSNorm / SwiGLU / residual    — d_train3_lib (C #44, exact analytic vjp)
+//    • causal softmax-attention       — d_train4_lib (B-milestone #45,
+//                                       row-Jacobian dS=P·(dP−ΣP·dP))
+//    • embedding                      — trivial scatter-add (this file)
+//    • RoPE                           — orthogonal rotation; vjp = inverse
+//                                       rotation (rotate by −θ) (this file)
+//
+//  T2 = the remaining MECHANICAL composition into the full decoder LM core:
+//    1. tok_emb embedding lookup + **WEIGHT-TIED** LM head (head_a.weight IS
+//       tok_emb.weight per conscious_decoder.py line 641 — the tied-grad
+//       subtlety is handled exactly: d_tok_emb gets BOTH the head outer-
+//       product term AND the input-row scatter-add term).
+//    2. n_layer pre-norm DecoderBlockV2-equivalent blocks, each:
+//         h  = x + GQA( RMSNorm(x; g1) )      (RoPE on Q,K · causal · GQA)
+//         x' = h + SwiGLU( RMSNorm(h; g2) )
+//    3. final RMSNorm(; gF) → tied LM head → last-position CE.
+//    4. multi-layer REVERSE chaining: per-layer fwd caches, residual grad
+//       accumulation (dh = dx' + dffn_path ; dx = dh + dattn_path),
+//       layers L-1 → 0.
+//    5. RoPE vjp: forward q' = q⊙cos + rotate_half(q)⊙sin (RoFormer);
+//       backward orthogonal ⟹ dq = dq'⊙cos + rotate_half_T(dq'⊙sin)
+//       (Rᵀ=R⁻¹=R(−θ) — closed, no tape).
+//    6. GQA bookkeeping: nh query heads grouped onto nkv KV heads
+//       (n_rep = nh/nkv); the n_rep grouped Q-heads' dK/dV ACCUMULATE into
+//       the shared KV-head (pure linear-vjp bookkeeping).
+//
+//  SCOPE (honest, g3 — named, no over-claim): the DECODER LM CORE trainable
+//  path (RMSNorm+GQA+RoPE+SwiGLU+residual+tied-head+embed) — the CE-trained
+//  "group A" pathway. PureField / Cross-Attn / CA-mix / MoE / META-CA are
+//  the consciousness / optional pathway (the integ harness keeps the
+//  ConsciousDecoderV2 nn.Module for those; this hexa trainer proves the
+//  decoder-LM backward COMPOSITION). NO new vjp math — only embed scatter-
+//  add + RoPE inverse-rotation + multi-layer chaining, all closed.
+//
+//  FALSIFIER  F-D-PORT-5  : N AdamW over the full n_layer composed analytic
+//    chain ⟹ gn2 = Σ‖softmax−onehot‖² collapses + last-token acc → N.
+//    TIER = **EMPIRICAL** (B-D-NOTE — SGD OUTCOME at composed scope, NOT
+//    closed-form, NOT 🔵). Trainability PROPERTY = B-D-4 🔵 (separate).
+//  F-D-PORT-5b GRAD-EXACT : analytic grad of a DEEP-LAYER weight (layer-0
+//    Wg, furthest-from-loss) vs central finite-difference of CE — proves
+//    the FULL composed reverse (head→tied→final-norm→block-stack→RoPE→GQA→
+//    embed) is exact. Verifies IMPL (PROPERTY); does NOT lift OUTCOME tier.
+//
+//  from-scratch : ALL weights RANDOM seed-fixed LCG, base_ckpt = NONE.
+//  COMPLIANCE   raw#11 snake_case · raw#9/10 honest tier (empirical ≠ 🔵)
+// ════════════════════════════════════════════════════════════════════════════
+
+import "/Users/ghost/core/anima/HEXAD/D/d_train4_lib.hexa"
+// (d_train4 → d_train3 → d_train2 → d_train_lib : full DRY primitive reuse:
+//  c3_matvec / c3_matvec_t / c3_outer / c3_rmsnorm_fwd / c3_rmsnorm_bwd /
+//  c3_swiglu_fwd / c3_swiglu_bwd / c4_softmax_row / dt2_softmax /
+//  dt2_adamw_step / dt2_zeros / dt2_init_W / dt_sqrt / dt_exp / dt_ln)
+
+
+// ── trig (range-reduced Taylor; period 2π) for RoPE ────────────────────────
+fn d5_two_pi() -> float { return 6.283185307179586 }
+fn d5_pi() -> float { return 3.141592653589793 }
+fn d5_reduce(x: float) -> float {
+    let tp = d5_two_pi()
+    let mut r = x
+    while r > d5_pi()  { r = r - tp }
+    while r < 0.0 - d5_pi() { r = r + tp }
+    return r
+}
+fn d5_sin(x: float) -> float {
+    let r = d5_reduce(x)
+    let r2 = r * r
+    let mut term = r
+    let mut acc = r
+    let mut k = 1
+    while k < 14 {
+        term = 0.0 - term * r2 / to_float((2*k) * (2*k+1))
+        acc = acc + term
+        k = k + 1
+    }
+    return acc
+}
+fn d5_cos(x: float) -> float {
+    let r = d5_reduce(x)
+    let r2 = r * r
+    let mut term = 1.0
+    let mut acc = 1.0
+    let mut k = 1
+    while k < 14 {
+        term = 0.0 - term * r2 / to_float((2*k-1) * (2*k))
+        acc = acc + term
+        k = k + 1
+    }
+    return acc
+}
+
+// RoPE cos/sin tables : head_dim hd, positions T (RoFormer base=10000)
+//   inv_freq[i] = base^(-2i/hd), i∈[0,hd/2) ; emb=cat([freqs,freqs])
+//   table flat [T*hd] : cos[p*hd+c] = cos(p · invf[c % half])
+fn d5_rope_tables(T: int, hd: int) {
+    let half = hd / 2
+    let base = 10000.0
+    let lnb = dt_ln(base)
+    let mut invf = []
+    let mut i = 0
+    while i < half {
+        let ex = (to_float(2 * i) / to_float(hd)) * lnb
+        invf.push(1.0 / dt_exp(ex))
+        i = i + 1
+    }
+    let mut cos = []
+    let mut sin = []
+    let mut p = 0
+    while p < T {
+        let mut c = 0
+        while c < hd {
+            let fi = if c < half { c } else { c - half }
+            let ang = to_float(p) * invf[fi]
+            cos.push(d5_cos(ang))
+            sin.push(d5_sin(ang))
+            c = c + 1
+        }
+        p = p + 1
+    }
+    return [cos, sin]
+}
+
+// rotate_half : [x1,x2] (each hd/2) -> [-x2, x1]   (RoFormer _rotate_half)
+fn d5_rotate_half(v, hd: int) {
+    let half = hd / 2
+    let mut o = []
+    let mut i = 0
+    while i < half { o.push(0.0 - v[half + i]); i = i + 1 }
+    i = 0
+    while i < half { o.push(v[i]); i = i + 1 }
+    return o
+}
+// transpose of rotate_half : [a1,a2] -> [a2, -a1]
+fn d5_rotate_half_t(v, hd: int) {
+    let half = hd / 2
+    let mut o = []
+    let mut i = 0
+    while i < half { o.push(v[half + i]); i = i + 1 }
+    i = 0
+    while i < half { o.push(0.0 - v[i]); i = i + 1 }
+    return o
+}
+// RoPE forward on one head-vec q[hd] at position p :
+//   q' = q⊙cos_p + rotate_half(q)⊙sin_p
+fn d5_rope_apply(q, cos, sin, p: int, hd: int) {
+    let rh = d5_rotate_half(q, hd)
+    let bse = p * hd
+    let mut o = []
+    let mut c = 0
+    while c < hd { o.push(q[c] * cos[bse + c] + rh[c] * sin[bse + c]); c = c + 1 }
+    return o
+}
+// RoPE backward : orthogonal rotation ⟹ vjp = inverse rotation
+//   dq = dq'⊙cos_p + rotate_half_T( dq'⊙sin_p )    (Rᵀ = R(−θ); closed)
+fn d5_rope_bwd(dqp, cos, sin, p: int, hd: int) {
+    let bse = p * hd
+    let mut gs = []
+    let mut c = 0
+    while c < hd { gs.push(dqp[c] * sin[bse + c]); c = c + 1 }
+    let rt = d5_rotate_half_t(gs, hd)
+    let mut dq = []
+    c = 0
+    while c < hd { dq.push(dqp[c] * cos[bse + c] + rt[c]); c = c + 1 }
+    return dq
+}
+
+
+// ── GQA causal self-attention FORWARD (one layer) ──────────────────────────
+//   X:[T·d] flat. Wq:[d·d] (nh·hd rows), Wk/Wv:[kvd·d] (nkv·hd rows),
+//   Wo:[d·d]. hd=d/nh, n_rep=nh/nkv, kvd=nkv·hd. RoPE on Q,K per head.
+//   Q stored [T][nh][hd] flat idx (i*nh+h)*hd+c ; K,V [T][nkv][hd].
+//   P stored [(h*T+i)*T+j].  ctx packed position-major [i*d + h*hd + c].
+fn d5_attn_fwd(X, Wq, Wk, Wv, Wo, cos, sin,
+               T: int, d: int, nh: int, nkv: int) {
+    let hd = d / nh
+    let n_rep = nh / nkv
+    let kvd = nkv * hd
+    let scale = 1.0 / dt_sqrt(to_float(hd))
+    let mut Q = dt2_zeros(T * nh * hd)
+    let mut K = dt2_zeros(T * nkv * hd)
+    let mut Vv = dt2_zeros(T * nkv * hd)
+    let mut ti = 0
+    while ti < T {
+        let mut xrow = []
+        let mut c = 0
+        while c < d { xrow.push(X[ti * d + c]); c = c + 1 }
+        let qr = c3_matvec(Wq, xrow, d, d)        // [nh*hd]
+        let kr = c3_matvec(Wk, xrow, kvd, d)      // [nkv*hd]
+        let vr = c3_matvec(Wv, xrow, kvd, d)
+        let mut h = 0
+        while h < nh {
+            let mut qh = []
+            let mut c2 = 0
+            while c2 < hd { qh.push(qr[h * hd + c2]); c2 = c2 + 1 }
+            let qrot = d5_rope_apply(qh, cos, sin, ti, hd)
+            c2 = 0
+            while c2 < hd { Q[(ti*nh + h)*hd + c2] = qrot[c2]; c2 = c2 + 1 }
+            h = h + 1
+        }
+        h = 0
+        while h < nkv {
+            let mut kh = []
+            let mut c2 = 0
+            while c2 < hd { kh.push(kr[h * hd + c2]); c2 = c2 + 1 }
+            let krot = d5_rope_apply(kh, cos, sin, ti, hd)
+            c2 = 0
+            while c2 < hd { K[(ti*nkv + h)*hd + c2] = krot[c2]; c2 = c2 + 1 }
+            c2 = 0
+            while c2 < hd { Vv[(ti*nkv + h)*hd + c2] = vr[h * hd + c2]; c2 = c2 + 1 }
+            h = h + 1
+        }
+        ti = ti + 1
+    }
+    let mut Pflat = dt2_zeros(nh * T * T)
+    let mut ctx = dt2_zeros(T * d)
+    let mut hh = 0
+    while hh < nh {
+        let kvh = hh / n_rep
+        let mut i = 0
+        while i < T {
+            let L = i + 1
+            let mut srow = []
+            let mut j = 0
+            while j < L {
+                let mut dot = 0.0
+                let mut c = 0
+                while c < hd {
+                    dot = dot + Q[(i*nh + hh)*hd + c] * K[(j*nkv + kvh)*hd + c]
+                    c = c + 1
+                }
+                srow.push(dot * scale)
+                j = j + 1
+            }
+            let pr = c4_softmax_row(srow, L)
+            j = 0
+            while j < L { Pflat[(hh*T + i)*T + j] = pr[j]; j = j + 1 }
+            let mut c = 0
+            while c < hd {
+                let mut acc = 0.0
+                j = 0
+                while j < L { acc = acc + pr[j] * Vv[(j*nkv + kvh)*hd + c]; j = j + 1 }
+                ctx[i*d + hh*hd + c] = acc
+                c = c + 1
+            }
+            i = i + 1
+        }
+        hh = hh + 1
+    }
+    let mut out = []
+    let mut i2 = 0
+    while i2 < T {
+        let mut crow = []
+        let mut c = 0
+        while c < d { crow.push(ctx[i2*d + c]); c = c + 1 }
+        let orow = c3_matvec(Wo, crow, d, d)
+        c = 0
+        while c < d { out.push(orow[c]); c = c + 1 }
+        i2 = i2 + 1
+    }
+    return #{ "Q": Q, "K": K, "Vv": Vv, "P": Pflat,
+              "ctx": ctx, "out": out, "scale": scale }
+}
+
+// ── GQA self-attention BACKWARD : dout:[T·d] → #{dWq,dWk,dWv,dWo,dX} ───────
+//   dX = grad wrt block input (for the residual h = x + attn(rmsnorm(x))).
+fn d5_attn_bwd(X, Wq, Wk, Wv, Wo, cache, cos, sin, dout,
+               T: int, d: int, nh: int, nkv: int) {
+    let hd = d / nh
+    let n_rep = nh / nkv
+    let kvd = nkv * hd
+    let scale = cache["scale"]
+    let P = cache["P"]
+    let Q = cache["Q"]
+    let K = cache["K"]
+    let Vv = cache["Vv"]
+    let ctx = cache["ctx"]
+    // Wo : out=ctx·Woᵀ ⟹ dWo += Σ_i dout[i]⊗ctx[i] ; dctx[i] = Woᵀ·dout[i]
+    let mut dWo = dt2_zeros(d * d)
+    let mut dctx = dt2_zeros(T * d)
+    let mut i = 0
+    while i < T {
+        let mut douti = []
+        let mut ctxi = []
+        let mut c = 0
+        while c < d {
+            douti.push(dout[i*d + c])
+            ctxi.push(ctx[i*d + c])
+            c = c + 1
+        }
+        let go = c3_outer(douti, ctxi, d, d)
+        let mut q = 0
+        while q < d*d { dWo[q] = dWo[q] + go[q]; q = q + 1 }
+        let dci = c3_matvec_t(Wo, douti, d, d)
+        c = 0
+        while c < d { dctx[i*d + c] = dci[c]; c = c + 1 }
+        i = i + 1
+    }
+    // attention core : per (query head, position)  (RoPE-rotated Q,K)
+    //   ctx[i,h]=Σ_j P·V ⟹ dP[i][j]=dctx·V ; dV+=ΣP·dctx
+    //   dS[i][j]=P·(dP−ΣP·dP)·scale ; dQrot+=ΣdS·K ; dKrot+=ΣdS·Q
+    let mut dQ = dt2_zeros(T * nh * hd)      // grad wrt RoPE-rotated Q
+    let mut dK = dt2_zeros(T * nkv * hd)     // grad wrt RoPE-rotated K (accum)
+    let mut dV = dt2_zeros(T * nkv * hd)
+    let mut hh = 0
+    while hh < nh {
+        let kvh = hh / n_rep
+        let mut i2 = 0
+        while i2 < T {
+            let L = i2 + 1
+            let mut dP = []
+            let mut j = 0
+            while j < L {
+                let mut acc = 0.0
+                let mut c = 0
+                while c < hd {
+                    acc = acc + dctx[i2*d + hh*hd + c] * Vv[(j*nkv + kvh)*hd + c]
+                    c = c + 1
+                }
+                dP.push(acc)
+                j = j + 1
+            }
+            let mut sdot = 0.0
+            j = 0
+            while j < L { sdot = sdot + P[(hh*T + i2)*T + j] * dP[j]; j = j + 1 }
+            j = 0
+            while j < L {
+                let pij = P[(hh*T + i2)*T + j]
+                let mut c = 0
+                while c < hd {
+                    dV[(j*nkv + kvh)*hd + c] = dV[(j*nkv + kvh)*hd + c]
+                        + pij * dctx[i2*d + hh*hd + c]
+                    c = c + 1
+                }
+                j = j + 1
+            }
+            j = 0
+            while j < L {
+                let dS = P[(hh*T + i2)*T + j] * (dP[j] - sdot) * scale
+                let mut c = 0
+                while c < hd {
+                    dQ[(i2*nh + hh)*hd + c] = dQ[(i2*nh + hh)*hd + c]
+                        + dS * K[(j*nkv + kvh)*hd + c]
+                    dK[(j*nkv + kvh)*hd + c] = dK[(j*nkv + kvh)*hd + c]
+                        + dS * Q[(i2*nh + hh)*hd + c]
+                    c = c + 1
+                }
+                j = j + 1
+            }
+            i2 = i2 + 1
+        }
+        hh = hh + 1
+    }
+    // RoPE backward (rotated-grad → pre-rotation grad) per head/position,
+    // then Q/K/V linear vjp : dWq+=ΣdQpre⊗X ; dX += Wqᵀ·dQpre etc.
+    let mut dWq = dt2_zeros(d * d)
+    let mut dWk = dt2_zeros(kvd * d)
+    let mut dWv = dt2_zeros(kvd * d)
+    let mut dX = dt2_zeros(T * d)
+    let mut tt = 0
+    while tt < T {
+        // assemble pre-RoPE dQ row [d] (nh heads) via inverse rotation
+        let mut dqrow = []
+        let mut h = 0
+        while h < nh {
+            let mut g = []
+            let mut c = 0
+            while c < hd { g.push(dQ[(tt*nh + h)*hd + c]); c = c + 1 }
+            let gpre = d5_rope_bwd(g, cos, sin, tt, hd)
+            c = 0
+            while c < hd { dqrow.push(gpre[c]); c = c + 1 }
+            h = h + 1
+        }
+        // pre-RoPE dK row [kvd] (nkv heads) ; dV row [kvd] (no RoPE on V)
+        let mut dkrow = []
+        let mut dvrow = []
+        h = 0
+        while h < nkv {
+            let mut gk = []
+            let mut c = 0
+            while c < hd { gk.push(dK[(tt*nkv + h)*hd + c]); c = c + 1 }
+            let gkpre = d5_rope_bwd(gk, cos, sin, tt, hd)
+            c = 0
+            while c < hd { dkrow.push(gkpre[c]); c = c + 1 }
+            c = 0
+            while c < hd { dvrow.push(dV[(tt*nkv + h)*hd + c]); c = c + 1 }
+            h = h + 1
+        }
+        let mut xi = []
+        let mut c = 0
+        while c < d { xi.push(X[tt*d + c]); c = c + 1 }
+        // dWq += dqrow ⊗ xi  (Wq:[d·d]) ; dWk/dWv += d{k,v}row ⊗ xi (Wk:[kvd·d])
+        let gq = c3_outer(dqrow, xi, d, d)
+        let gk = c3_outer(dkrow, xi, kvd, d)
+        let gv = c3_outer(dvrow, xi, kvd, d)
+        let mut q = 0
+        while q < d*d { dWq[q] = dWq[q] + gq[q]; q = q + 1 }
+        q = 0
+        while q < kvd*d { dWk[q] = dWk[q] + gk[q]; dWv[q] = dWv[q] + gv[q]; q = q + 1 }
+        // dX += Wqᵀ·dqrow + Wkᵀ·dkrow + Wvᵀ·dvrow
+        let dxq = c3_matvec_t(Wq, dqrow, d, d)
+        let dxk = c3_matvec_t(Wk, dkrow, kvd, d)
+        let dxv = c3_matvec_t(Wv, dvrow, kvd, d)
+        c = 0
+        while c < d { dX[tt*d + c] = dX[tt*d + c] + dxq[c] + dxk[c] + dxv[c]; c = c + 1 }
+        tt = tt + 1
+    }
+    return #{ "dWq": dWq, "dWk": dWk, "dWv": dWv, "dWo": dWo, "dX": dX }
+}
+
+
+// ── one decoder block FORWARD (pre-norm; per position) ─────────────────────
+//   Bp = #{ g1:[d], Wq:[d·d], Wk:[kvd·d], Wv:[kvd·d], Wo:[d·d],
+//           g2:[d], Wg:[h·d], Wu:[h·d], Wd:[d·h] }
+//   X:[T·d] → returns #{ Xout:[T·d], + per-position fwd caches }
+fn d5_block_fwd(X, Bp, cos, sin, T: int, d: int, nh: int, nkv: int, h: int) {
+    // 1. per-position RMSNorm(x; g1) → attn input
+    let mut rin = dt2_zeros(T * d)
+    let mut rm1xn = dt2_zeros(T * d)
+    let mut rm1inv = []
+    let mut i = 0
+    while i < T {
+        let mut xr = []
+        let mut c = 0
+        while c < d { xr.push(X[i*d + c]); c = c + 1 }
+        let rmf = c3_rmsnorm_fwd(xr, Bp["g1"], d)     // [y, xn, inv]
+        let y = rmf[0]
+        let xn = rmf[1]
+        c = 0
+        while c < d { rin[i*d + c] = y[c]; rm1xn[i*d + c] = xn[c]; c = c + 1 }
+        rm1inv.push(rmf[2])
+        i = i + 1
+    }
+    let af = d5_attn_fwd(rin, Bp["Wq"], Bp["Wk"], Bp["Wv"], Bp["Wo"],
+                         cos, sin, T, d, nh, nkv)
+    // residual : h_state = X + attn_out
+    let aout = af["out"]
+    let mut hstate = dt2_zeros(T * d)
+    i = 0
+    while i < T*d { hstate[i] = X[i] + aout[i]; i = i + 1 }
+    // 2. per-position RMSNorm(h; g2) → SwiGLU → residual
+    let mut sw_o = dt2_zeros(T * d)
+    let mut rm2xn = dt2_zeros(T * d)
+    let mut rm2inv = []
+    let mut sw_a = dt2_zeros(T * h)
+    let mut sw_b = dt2_zeros(T * h)
+    let mut sw_s = dt2_zeros(T * h)
+    let mut rin2 = dt2_zeros(T * d)
+    i = 0
+    while i < T {
+        let mut hr = []
+        let mut c = 0
+        while c < d { hr.push(hstate[i*d + c]); c = c + 1 }
+        let rmf = c3_rmsnorm_fwd(hr, Bp["g2"], d)
+        let y = rmf[0]
+        let xn = rmf[1]
+        c = 0
+        while c < d { rin2[i*d + c] = y[c]; rm2xn[i*d + c] = xn[c]; c = c + 1 }
+        rm2inv.push(rmf[2])
+        let swf = c3_swiglu_fwd(y, Bp["Wg"], Bp["Wu"], Bp["Wd"], d, h)  // [o,a,b,s]
+        let o = swf[0]
+        c = 0
+        while c < d { sw_o[i*d + c] = o[c]; c = c + 1 }
+        c = 0
+        while c < h {
+            sw_a[i*h + c] = swf[1][c]
+            sw_b[i*h + c] = swf[2][c]
+            sw_s[i*h + c] = swf[3][c]
+            c = c + 1
+        }
+        i = i + 1
+    }
+    let mut Xout = dt2_zeros(T * d)
+    i = 0
+    while i < T*d { Xout[i] = hstate[i] + sw_o[i]; i = i + 1 }
+    return #{
+        "Xout": Xout, "hstate": hstate, "rin": rin, "rin2": rin2,
+        "rm1xn": rm1xn, "rm1inv": rm1inv, "rm2xn": rm2xn, "rm2inv": rm2inv,
+        "sw_a": sw_a, "sw_b": sw_b, "sw_s": sw_s, "attn": af,
+    }
+}
+
+// ── one decoder block BACKWARD : dXout:[T·d] → #{grads + dX:[T·d]} ─────────
+fn d5_block_bwd(X, Bp, fc, cos, sin, dXout,
+                T: int, d: int, nh: int, nkv: int, h: int) {
+    let kvd = nkv * hd_of(d, nh)
+    // x' = h + swiglu(rmsnorm(h;g2)) ⟹ dh = dXout (resid) ; dsw_o = dXout
+    let mut dg2 = dt2_zeros(d)
+    let mut dWg = dt2_zeros(h * d)
+    let mut dWu = dt2_zeros(h * d)
+    let mut dWd = dt2_zeros(d * h)
+    let mut dh = dt2_zeros(T * d)
+    let mut i = 0
+    while i < T*d { dh[i] = dXout[i]; i = i + 1 }    // residual + path
+    i = 0
+    while i < T {
+        let mut dso = []
+        let mut rr = []
+        let mut a = []
+        let mut b = []
+        let mut s = []
+        let mut c = 0
+        while c < d { dso.push(dXout[i*d + c]); rr.push(fc["rin2"][i*d + c]); c = c + 1 }
+        c = 0
+        while c < h {
+            a.push(fc["sw_a"][i*h + c]); b.push(fc["sw_b"][i*h + c])
+            s.push(fc["sw_s"][i*h + c]); c = c + 1
+        }
+        let swb = c3_swiglu_bwd(rr, Bp["Wg"], Bp["Wu"], Bp["Wd"],
+                                a, b, s, dso, d, h)   // [dr,dWg,dWu,dWd]
+        let dr = swb[0]
+        let mut q = 0
+        while q < h*d { dWg[q] = dWg[q] + swb[1][q]; dWu[q] = dWu[q] + swb[2][q]; q = q + 1 }
+        q = 0
+        while q < d*h { dWd[q] = dWd[q] + swb[3][q]; q = q + 1 }
+        // rmsnorm2 backward : dr → [dx(h), dg2]
+        let mut hr = []
+        let mut xn = []
+        c = 0
+        while c < d { hr.push(fc["hstate"][i*d + c]); xn.push(fc["rm2xn"][i*d + c]); c = c + 1 }
+        let rmb = c3_rmsnorm_bwd(hr, Bp["g2"], xn, fc["rm2inv"][i], dr, d) // [dx,dg]
+        c = 0
+        while c < d { dh[i*d + c] = dh[i*d + c] + rmb[0][c]; c = c + 1 }
+        c = 0
+        while c < d { dg2[c] = dg2[c] + rmb[1][c]; c = c + 1 }
+        i = i + 1
+    }
+    // h = X + attn(rmsnorm(x;g1)) ⟹ dX_resid = dh ; dattn_out = dh
+    let ab = d5_attn_bwd(fc["rin"], Bp["Wq"], Bp["Wk"], Bp["Wv"], Bp["Wo"],
+                         fc["attn"], cos, sin, dh, T, d, nh, nkv) // dX = d(rin)
+    let drin = ab["dX"]
+    let mut dg1 = dt2_zeros(d)
+    let mut dX = dt2_zeros(T * d)
+    i = 0
+    while i < T*d { dX[i] = dh[i]; i = i + 1 }        // residual + path
+    i = 0
+    while i < T {
+        let mut xr = []
+        let mut xn = []
+        let mut dy = []
+        let mut c = 0
+        while c < d {
+            xr.push(X[i*d + c]); xn.push(fc["rm1xn"][i*d + c])
+            dy.push(drin[i*d + c]); c = c + 1
+        }
+        let rmb = c3_rmsnorm_bwd(xr, Bp["g1"], xn, fc["rm1inv"][i], dy, d)
+        c = 0
+        while c < d { dX[i*d + c] = dX[i*d + c] + rmb[0][c]; c = c + 1 }
+        c = 0
+        while c < d { dg1[c] = dg1[c] + rmb[1][c]; c = c + 1 }
+        i = i + 1
+    }
+    return #{
+        "dg1": dg1, "dWq": ab["dWq"], "dWk": ab["dWk"], "dWv": ab["dWv"],
+        "dWo": ab["dWo"], "dg2": dg2, "dWg": dWg, "dWu": dWu, "dWd": dWd,
+        "dX": dX,
+    }
+}
+
+fn hd_of(d: int, nh: int) -> int { return d / nh }
+
+
+// ── FULL model forward : tok ids → last-pos logits (tied LM head) ──────────
+//   M = #{ tok_emb:[V·d], blocks:[ B0, B1, ... ], gF:[d] }  (n_layer blocks)
+//   ids : [T] byte tokens. logits = tok_emb · zT (WEIGHT TIED head_a=tok_emb).
+fn d5_forward(ids, M, cos, sin, T: int, d: int, nh: int, nkv: int,
+              h: int, V: int, n_layer: int) {
+    let temb = M["tok_emb"]
+    let mut X = dt2_zeros(T * d)
+    let mut i = 0
+    while i < T {
+        let tok = ids[i]
+        let mut c = 0
+        while c < d { X[i*d + c] = temb[tok*d + c]; c = c + 1 }
+        i = i + 1
+    }
+    let blocks = M["blocks"]
+    let mut caches = []
+    let mut Xc = X
+    let mut l = 0
+    while l < n_layer {
+        let fc = d5_block_fwd(Xc, blocks[l], cos, sin, T, d, nh, nkv, h)
+        caches.push(fc)
+        Xc = fc["Xout"]
+        l = l + 1
+    }
+    // final RMSNorm(; gF) on last position
+    let mut zr = []
+    let mut c = 0
+    while c < d { zr.push(Xc[(T-1)*d + c]); c = c + 1 }
+    let rmf = c3_rmsnorm_fwd(zr, M["gF"], d)          // [y,xn,inv]
+    let zT = rmf[0]
+    // tied LM head : logits[k] = Σ_j tok_emb[k*d+j]·zT[j]
+    let logits = c3_matvec(temb, zT, V, d)
+    return #{
+        "logits": logits, "zT": zT, "zT_xn": rmf[1], "zT_inv": rmf[2],
+        "zr": zr, "Xc": Xc, "caches": caches, "X": X, "ids": ids,
+    }
+}
+
+// ── FULL model EXACT grad : returns #{ dtok_emb, dblocks:[...], dgF } ──────
+//   Tied-weight subtlety (head_a.weight IS tok_emb.weight, conscious_decoder
+//   line 641): d_tok_emb accumulates BOTH (a) the head outer-product
+//   dl⊗zT AND (b) the input-row embedding scatter-add of dX_emb.
+fn d5_grad(ids, M, t: int, cos, sin, T: int, d: int, nh: int, nkv: int,
+           h: int, V: int, n_layer: int) {
+    let f = d5_forward(ids, M, cos, sin, T, d, nh, nkv, h, V, n_layer)
+    let temb = M["tok_emb"]
+    let p = dt2_softmax(f["logits"])
+    let mut dl = []
+    let mut k = 0
+    while k < V { dl.push(p[k] - (if k == t { 1.0 } else { 0.0 })); k = k + 1 }  // B-D-4 🔵
+    // tied head : logits = temb·zT ⟹ (a) d_temb += dl⊗zT ; dzT = tembᵀ·dl
+    let mut dtemb = c3_outer(dl, f["zT"], V, d)       // (a) head term
+    let dzT = c3_matvec_t(temb, dl, V, d)
+    // final RMSNorm bwd : dzT → [dzr, dgF]
+    let rmb = c3_rmsnorm_bwd(f["zr"], M["gF"], f["zT_xn"], f["zT_inv"], dzT, d)
+    let dgF = rmb[1]
+    // grad enters the block stack only at last position
+    let mut dXc = dt2_zeros(T * d)
+    let mut c = 0
+    while c < d { dXc[(T-1)*d + c] = rmb[0][c]; c = c + 1 }
+    // reverse through blocks  L-1 → 0
+    let caches = f["caches"]
+    let mut dblocks_rev = []
+    let mut l = n_layer - 1
+    while l >= 0 {
+        let Xin = if l == 0 { f["X"] } else { caches[l-1]["Xout"] }
+        let gb = d5_block_bwd(Xin, M["blocks"][l], caches[l], cos, sin,
+                              dXc, T, d, nh, nkv, h)
+        dblocks_rev.push(gb)
+        dXc = gb["dX"]
+        l = l - 1
+    }
+    // reorder block grads 0..n_layer-1
+    let mut dblocks = []
+    let mut bi = n_layer - 1
+    while bi >= 0 { dblocks.push(dblocks_rev[bi]); bi = bi - 1 }
+    // (b) embedding scatter-add : dX (= dXc after full reverse) into tok rows
+    let ids2 = f["ids"]
+    let mut i = 0
+    while i < T {
+        let tok = ids2[i]
+        let mut c2 = 0
+        while c2 < d {
+            dtemb[tok*d + c2] = dtemb[tok*d + c2] + dXc[i*d + c2]   // (b) tied embed
+            c2 = c2 + 1
+        }
+        i = i + 1
+    }
+    return #{ "dtok_emb": dtemb, "dblocks": dblocks, "dgF": dgF }
+}
+
+
+// ── robust signals ─────────────────────────────────────────────────────────
+fn d5_gn2(ids, M, t: int, cos, sin, T: int, d: int, nh: int, nkv: int,
+          h: int, V: int, n_layer: int) -> float {
+    let f = d5_forward(ids, M, cos, sin, T, d, nh, nkv, h, V, n_layer)
+    let p = dt2_softmax(f["logits"])
+    let mut acc = 0.0
+    let mut k = 0
+    while k < V {
+        let dk = p[k] - (if k == t { 1.0 } else { 0.0 })
+        acc = acc + dk * dk
+        k = k + 1
+    }
+    return acc
+}
+fn d5_ce(ids, M, t: int, cos, sin, T: int, d: int, nh: int, nkv: int,
+         h: int, V: int, n_layer: int) -> float {
+    let f = d5_forward(ids, M, cos, sin, T, d, nh, nkv, h, V, n_layer)
+    let p = dt2_softmax(f["logits"])
+    let pt = if p[t] < 0.000001 { 0.000001 } else { p[t] }
+    return 0.0 - dt_ln(pt)
+}
+fn d5_predict(ids, M, cos, sin, T: int, d: int, nh: int, nkv: int,
+              h: int, V: int, n_layer: int) -> int {
+    let f = d5_forward(ids, M, cos, sin, T, d, nh, nkv, h, V, n_layer)
+    let lg = f["logits"]
+    let mut bi = 0
+    let mut bv = lg[0]
+    let mut k = 1
+    while k < V { if lg[k] > bv { bv = lg[k]; bi = k } k = k + 1 }
+    return bi
+}
+
+
+// ── from-scratch RANDOM seed-fixed init (g_clm_from_scratch, base_ckpt=NONE)
+//   one block's params (distinct deterministic seed offsets per matrix)
+fn d5_init_block(seed: int, d: int, nh: int, nkv: int, h: int) {
+    let hd = d / nh
+    let kvd = nkv * hd
+    let mut g1 = []
+    let mut g2 = []
+    let mut i = 0
+    while i < d { g1.push(1.0); g2.push(1.0); i = i + 1 }   // RMSNorm gain=1
+    return #{
+        "g1": g1,
+        "Wq": dt2_init_W(seed + 11, d, d, 0.2),       // [d·d]
+        "Wk": dt2_init_W(seed + 23, d, nkv*hd, 0.2),  // [kvd·d] (rows=kvd)
+        "Wv": dt2_init_W(seed + 37, d, nkv*hd, 0.2),
+        "Wo": dt2_init_W(seed + 53, d, d, 0.2),
+        "g2": g2,
+        "Wg": dt2_init_W(seed + 71, d, h, 0.2),       // [h·d]
+        "Wu": dt2_init_W(seed + 89, d, h, 0.2),
+        "Wd": dt2_init_W(seed + 103, h, d, 0.2),      // [d·h]
+    }
+}
+fn d5_init(seed: int, d: int, nh: int, nkv: int, h: int, V: int, n_layer: int) {
+    let mut blocks = []
+    let mut l = 0
+    while l < n_layer {
+        blocks.push(d5_init_block(seed + 1000 + l * 137, d, nh, nkv, h))
+        l = l + 1
+    }
+    let mut gF = []
+    let mut i = 0
+    while i < d { gF.push(1.0); i = i + 1 }
+    return #{
+        "tok_emb": dt2_init_W(seed + 7, d, V, 0.05),  // [V·d] small (tied head)
+        "blocks": blocks,
+        "gF": gF,
+    }
+}

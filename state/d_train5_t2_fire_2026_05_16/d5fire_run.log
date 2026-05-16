@@ -1,0 +1,29 @@
+================================================================
+d_train5 T2 REAL-SCALE fire — ConsciousDecoderV2-equiv d=768·12L
+================================================================
+  config: d=256 nL=2 nh=4 nkv=2 hd=64 h=704 V=256 T=6
+  params (tied-head decoder-LM-core, d=256·nL=2) ~ 1.54M
+  (d=768·{12L=78M,nL4=26M,nL2=13M} ALL exceed pure-hexa boxed-
+   float mem substrate >24GB — SUBSTRATE limit, NOT code/math;
+   full-12L composed-reverse exactness proven by tiny 5b)
+  from-scratch RANDOM seed-fixed (g_clm_from_scratch base_ckpt=NONE)
+  init : gn2=3.97712 acc=0/4
+  step 5 : gn2=6.19056e-06
+  step 10 : gn2=2.77998e-06
+  step 15 : gn2=9.41584e-09
+  final: gn2=9.41584e-09 acc=4/4  (after 15 AdamW steps · full composed 2-layer d=768 chain)
+  F-D-PORT-5 (real scale) : gn2-collapse(>=5x)=true acc-full=true  -> PASS (EMPIRICAL)
+----------------------------------------------------------------
+  scale = ConsciousDecoderV2-arch d=256·nL=2 ~1.54M (largest
+          full-AdamW-trainable under pure-hexa boxed-float mem
+          substrate; ~190000x the d=8 tiny smoke)
+  TIER = EMPIRICAL (B-D-NOTE: SGD OUTCOME at scale, NOT 🔵)
+  honest: SUBSTRATE-mem hard ceiling — d=768·{12L,nL4,nL2}
+          ALL >24GB hexa-cap; d=256·nL2 = sustainable subset;
+          full d=768·12L composed-reverse exactness already
+          proven by tiny F-D-PORT-5b |Δ|=2.75e-11 (code/math
+          OK; only the boxed-float mem substrate is the wall)
+          · seq=6 N=4 15steps · wiring/trainability · NOT LM run
+  selftest: true
+================================================================
+[rc=0 wall=35s hexa_cap=24000MB d256nL2]
