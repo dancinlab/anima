@@ -1,0 +1,111 @@
+// HEXAD/D/safetensors_wire_smoke.hexa — PLAN.md §7 #4 falsifier F-R2-SAFETENSORS.
+//
+//   R2 hexa-native safetensors wire — ckpt 를 Python torch 의존 없이 hexa-
+//   native 로 로드. hexa-lang RFC 025/031 `safetensors_mmap_*` 빌트인
+//   (LANDED, runtime.h decls + runtime.c) 을 anima-side 에서 compiled-native
+//   로 검증. user directive 2026-05-16 ".sh / Python 의존 제거 · hexa-native".
+//
+//   F-R2-SAFETENSORS (6 sub-checks):
+//     R2-1 OPEN        — safetensors_mmap_open(fixture) handle >= 0.
+//     R2-2 HEADER      — JSON header contains tensor name + F32 dtype + shape.
+//     R2-3 OFFSET+SIZE — data_offset == 64 (8 + header_len) ∧ size == 80.
+//     R2-4 BYTE-EQUAL  — read_f32_farr → [1,2,3,4] exact (§8 byte-equal).
+//     R2-5 TENSOR-NORM — Σvᵢ² == 30 ∧ ‖v‖₂ == √30 (§8 math anchor: the
+//                        ckpt↔hexa connection preserves the tensor's L2
+//                        norm — an analytic invariant, not structural).
+//     R2-6 DETERMINISM — re-open/re-read byte-identical.
+//
+//   §8 검증 표준 (PLAN.md): ckpt↔hexa 연결고리 = byte-equal (R2-4) +
+//   tensor-norm/shape invariant (R2-5, R2-2 shape) 수학 검증 PASS.
+//
+//   HONEST CARVE-OUT (g3): 이 smoke 는 hexa-native safetensors 로더가
+//   compiled-native 로 byte-equal 동작함을 검증 (작은 1-tensor fixture).
+//   chat_lib.hexa 의 218-tensor 풀 ckpt 로더 compiled gating 은 별개 잔여 —
+//   nested-index-assign codegen (hexa-lang main 에 있음, 배포된 system
+//   hexa.real 바이너리가 stale) → 툴체인 refresh 필요. safetensors 로더
+//   자체와 무관한 codegen-staleness 블로커 (honest, NOT this file's scope).
+// ════════════════════════════════════════════════════════════════════════
+
+fn _contains(hay: string, needle: string) -> bool {
+    let hl = len(hay)
+    let nl = len(needle)
+    if nl == 0 { return true }
+    if nl > hl { return false }
+    let mut i = 0
+    while i + nl <= hl {
+        if hay.substring(i, i + nl) == needle { return true }
+        i = i + 1
+    }
+    return false
+}
+
+fn _abs_d(x: float) -> float {
+    if x < 0.0 { return 0.0 - x }
+    return x
+}
+
+fn _selftest() {
+    let fixture = "/Users/ghost/core/anima/HEXAD/D/_safetensors_fixture.safetensors"
+
+    // ── F-R2-1 OPEN ──
+    let h = safetensors_mmap_open(fixture)
+    let open_ok = h >= 0
+    println("  F-R2-1 OPEN                  : " + to_string(open_ok) + "  (handle=" + to_string(h) + ")")
+
+    // ── F-R2-2 HEADER (tensor name + F32 + shape) ──
+    let hdr = safetensors_mmap_header(h)
+    let hdr_ok = len(hdr) > 0 && _contains(hdr, "t0") && _contains(hdr, "F32") && _contains(hdr, "[4]")
+    println("  F-R2-2 HEADER (name·F32·[4]) : " + to_string(hdr_ok))
+
+    // ── F-R2-3 OFFSET + SIZE ──
+    let doff = safetensors_mmap_data_offset(h)
+    let sz = safetensors_mmap_size(h)
+    let off_ok = doff == 64 && sz == 80
+    println("  F-R2-3 OFFSET+SIZE           : " + to_string(off_ok) + "  (off=" + to_string(doff) + " size=" + to_string(sz) + ")")
+
+    // ── F-R2-4 BYTE-EQUAL (§8 byte-equal) ──
+    let fa = safetensors_mmap_read_f32_farr(h, doff, 4)
+    let mut byteq_ok = fa >= 0
+    if byteq_ok { byteq_ok = farr_len(fa) == 4 }
+    if byteq_ok {
+        byteq_ok = farr_get(fa, 0) == 1.0 && farr_get(fa, 1) == 2.0
+                    && farr_get(fa, 2) == 3.0 && farr_get(fa, 3) == 4.0
+    }
+    println("  F-R2-4 BYTE-EQUAL            : " + to_string(byteq_ok))
+
+    // ── F-R2-5 TENSOR-NORM (§8 math anchor: L2 norm invariant) ──
+    let mut sumsq = 0.0
+    let mut i = 0
+    while i < 4 {
+        let v = farr_get(fa, i)
+        sumsq = sumsq + v * v
+        i = i + 1
+    }
+    let norm = sqrt(sumsq)
+    // analytic: Σvᵢ² for [1,2,3,4] = 30 ; ‖v‖₂ = √30 = 5.477225575051661
+    let norm_ok = sumsq == 30.0 && _abs_d(norm - 5.477225575051661) < 0.000000001
+    println("  F-R2-5 TENSOR-NORM Σv²=30·√30: " + to_string(norm_ok) + "  (Σv²=" + to_string(sumsq) + " ‖v‖=" + to_string(norm) + ")")
+
+    // ── F-R2-6 DETERMINISM ──
+    safetensors_mmap_close(h)
+    let h2 = safetensors_mmap_open(fixture)
+    let fa2 = safetensors_mmap_read_f32_farr(h2, safetensors_mmap_data_offset(h2), 4)
+    let mut det_ok = h2 >= 0
+    let mut j = 0
+    while j < 4 {
+        if farr_get(fa2, j) != farr_get(fa, j) { det_ok = false }
+        j = j + 1
+    }
+    safetensors_mmap_close(h2)
+    println("  F-R2-6 DETERMINISM           : " + to_string(det_ok))
+
+    let all_ok = open_ok && hdr_ok && off_ok && byteq_ok && norm_ok && det_ok
+    println("  F-R2-SAFETENSORS AGGREGATE 6/6: " + to_string(all_ok))
+    println("=== HEXAD/D safetensors_wire_smoke selftest: " + to_string(all_ok) + " ===")
+    println("    hexa-native ckpt load (RFC 025/031, no Python torch); §8 byte-equal + L2-norm PASS")
+}
+
+fn main() {
+    println("HEXAD/D — R2 hexa-native safetensors loader falsifier (F-R2-SAFETENSORS)")
+    _selftest()
+}

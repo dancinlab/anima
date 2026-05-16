@@ -142,7 +142,7 @@ Phase N 진입 = 이 PLAN.md `## 진행 로그` 섹션에 entry append + tape SS
 | **1** | 실-규모 언어 fire — D-arch d=768·12L 실 corpus 학습 | heavy GPU cycle (`g_fire_autonomous` 자율 dispatch) | PLAN CLOSURE 잔여 (i); 전 fire honest C3 ('no language-quality claim') 해소 |
 | ~~2~~ | ~~Phase 4 — IIT Φ FFI~~ → ✅ **LANDED 2026-05-16** | 이 사이클 완료 — RFC 036 (hexa-lang main `d67403d3`) 이미 LANDED 발견 + anima-side `c_measure_phi` wire + F-C-PORT-3 4/4 | 진행 로그 2026-05-16 |
 | ~~3~~ | ~~anima-side TODO[pytorch] 잔여~~ → ✅ **LANDED 2026-05-16** | BRIDGE full-forward graph (`bridge_forward`, F-BRIDGE-FWD 4/4) + E 통합 ethics gate (`e_gate_step` Φ-ratchet, F-E-GATE 6/6) 모두 hexa-native LANDED — anima-side TODO[pytorch] 잔여 0 | 진행 로그 2026-05-16 |
-| **4** | R2 hexa-safetensors wire | hexa-native safetensors loader → ckpt Python torch 의존 제거 | PLAN CLOSURE 잔여 (iii) |
+| ~~4~~ | ~~R2 hexa-safetensors wire~~ → ✅ **LANDED 2026-05-16** (scoped) | hexa-native safetensors 로더 compiled-native 검증 — `HEXAD/D/safetensors_wire_smoke.hexa` F-R2-SAFETENSORS 6/6 (byte-equal + L2-norm √30, §8). 잔여: `chat_lib.hexa` 218-tensor 풀 ckpt compiled gating = nested-index-assign codegen toolchain-refresh (별개, system hexa.real stale) | 진행 로그 2026-05-16 |
 | ~~5~~ | ~~`.sh` bash → hexa 포팅~~ → ✅ **LANDED 2026-05-16** | `VOICE/tool/anima_voice_play.hexa` + `HEXAD/build_verify.hexa` (246 L 게이트, .sh 와 동일 verdict 17/17+13/13 검증) 포팅 완료. `anima_chat_optimal.sh` = 죽은 런처 (anima_chat.py 제거) → retire, 포팅 X. 원본 .sh 전환기 병존 | 진행 로그 2026-05-16 |
 | — | Phase 2-GRU full / Phase 3 parity | 🔒 hexa-lang nn-primitive RFC terminal (미제출) — anima 게이트 X | §3 Phase 2/3 |
 
@@ -168,7 +168,8 @@ anchor 를 포함하고 PASS 해야 한다. 연결고리는 구조(structural) �
 | BRIDGE C→D full-forward | **Law 70 Ψ-coupling** clamp ∈ [Ψ−α,Ψ+α] (real-limit, NOT lattice — g3) | F-BRIDGE-FWD-3 LAW70-CLAMP (end-to-end) | ✅ PASS |
 | E→training ethics gate | **IIT Φ-ratchet** SAFETY 경계 phi>ratchet/2 = B-E-1 sympy closed-form 🔵 | F-E-GATE-6 GATE≡B-E-1 | ✅ PASS |
 | C Φ measurement (Phase 4) | **IIT integrated-information** Φ — phi_rs byte-equal (RFC 036 deterministic) | F-C-PORT-3 PHI-BYTE-EQUAL | ✅ PASS |
-| build_verify.hexa (게이트) | 메타-게이트 — 17 모듈 각자의 수학·물리 🔵 검증을 enforce; 자체는 .sh 와 verdict 동일성(functional parity) 검증 | 17/17+13/13 = .sh 동일 | ✅ PASS |
+| build_verify.hexa (게이트) | 메타-게이트 — 모듈 각자의 수학·물리 🔵 검증을 enforce; 자체는 .sh 와 verdict 동일성(functional parity) 검증 | 18/18+13/13 = .sh 동일 | ✅ PASS |
+| R2 ckpt↔hexa safetensors | **L2-norm invariant** Σvᵢ²=30 ∧ ‖v‖₂=√30 + byte-equal (analytic, real-limit math) | F-R2-SAFETENSORS-5 TENSOR-NORM + R2-4 BYTE-EQUAL | ✅ PASS |
 
 **잔여 적용**: #4 R2 hexa-safetensors wire = ckpt↔hexa 연결고리 → byte-equal
 + tensor-norm/shape invariant 수학 검증 mandatory. #1 실-규모 fire = D-arch
@@ -1017,3 +1018,34 @@ Shannon-floor+Law-70).
 
 문서: build_verify.hexa + _probe_nested_index.hexa 신설 · PLAN §7 #5 DONE
 + §8 검증 표준 신설. /loop 잔여 완성도-순위 = #4 R2 wire → #1 실-규모 fire.
+
+### 2026-05-16 — §7 #4 R2 hexa-native safetensors 로더 검증 LANDED (scoped)
+
+`/loop` iteration 6 — §7 #4. hexa-native safetensors ckpt 로더 (Python torch
+의존 0) compiled-native 검증.
+
+**R2 진단**: hexa-lang `safetensors_mmap_*` 빌트인 (RFC 025/031) — runtime.c
+impl + runtime.h decls 모두 LANDED (main). hexa-lang `tmp_stmmap_smoke.hexa`
+9/9 가 로더 자체 증명. anima-side §7 #4 = anima 가 그 로더를 compiled-native
++ byte-equal 로 쓰는지 검증 (§8 표준 적용).
+
+**LANDED**:
+- `HEXAD/D/safetensors_wire_smoke.hexa` (NEW entrypoint) + `_safetensors_
+  fixture.safetensors` (80 B fixture, tensor t0 F32 [1,2,3,4]) — **F-R2-
+  SAFETENSORS 6/6 PASS**: OPEN · HEADER(name·F32·shape) · OFFSET+SIZE ·
+  **BYTE-EQUAL** · **TENSOR-NORM** (Σvᵢ²=30 ∧ ‖v‖₂=√30=5.477225575051661,
+  §8 math anchor) · DETERMINISM.
+- build_verify.sh + build_verify.hexa — safetensors_wire_smoke entrypoint
+  추가 → **18/18 + 13/13 PASS** (양쪽 게이트 동일).
+
+**§8 준수**: ckpt↔hexa 연결고리 = byte-equal (R2-4) + L2-norm analytic
+invariant (R2-5) 수학 검증 PASS. §8 audit 표에 R2 행 추가.
+
+**honest 잔여 (g3)**: `chat_lib.hexa` 218-tensor 풀 ckpt 로더 compiled
+gating 은 별개 — nested-index-assign codegen 블로커 (hexa-lang main 에
+codegen 존재, 배포된 system `hexa.real` 바이너리가 stale). safetensors
+로더 자체와 무관한 codegen-staleness — 툴체인 refresh 필요 (별개 item,
+shared toolchain rebuild = Phase 6 Step 0 패턴, 본 /loop 범위 밖).
+
+문서: safetensors_wire_smoke.hexa + fixture 신설 · build_verify ×2 (17→18) ·
+§7 #4 ~~4~~ DONE · §8 audit R2 행. /loop 잔여 = #1 실-규모 fire.
