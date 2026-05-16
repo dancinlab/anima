@@ -1216,3 +1216,37 @@ LANDED + AGENTS.tape §0 g_blue_closed_mandate + hexa-lang farr realloc fix.
 
 honest: argv 는 정직 조사 후 '수정 안 함'이 옳은 결론 (load-bearing 설계).
 GPU §9 + 툴체인 refresh 는 §7 너머 carry.
+
+### 2026-05-16 — 추가 carry 진행: GPU RFC 040 + 툴체인 refresh PARTIAL
+
+**GPU §9 sub-task (1) — hexa-lang GPU CUDA RFC 초안 LANDED** (bg 에이전트):
+- `hexa-lang/inbox/rfc_drafts_2026_05_12/rfc_040_farr_gpu_cuda_backend.md`
+  (457줄, design-only). branch `rfc/farr-gpu-cuda-backend` @ `95c208f6`, push.
+- 설계 요지: device-farr 모델 (RFC 025 핸들 테이블 residence 확장, lazy
+  host⇄device transfer) + cuBLAS Dgemm dispatch (`farr_matmul` 암시적 GPU/
+  CPU dispatcher, d_train5 arch 무변경) + `#ifndef HEXA_CUDA` CPU fallback
+  + **F-GPU-040 12-falsifier battery** (CPU↔GPU byte-equal/measured-tolerance,
+  §8 연결고리 검증) + 4-Phase (matmul → 잔여 ops → d_train5 wire → 실 d=768·
+  12L vast.ai fire). honest tolerance (fp 비결합성, TOL_MATMUL~1e-9 등).
+- §9 진입점 LANDED — 실 CUDA 구현은 후속 사이클.
+
+**툴체인 refresh — PARTIAL (codegen 검증 성공, 드라이버 빌드 미완)**:
+- bg 에이전트 격리 worktree `/private/tmp/hexa-tcrefresh` (hexa-lang main HEAD
+  1f1c3403) 에서 `hexa cc --regen` → `hexa cc` 1회 실행, **fresh `self/native/
+  hexa_v2` (1.47 MB transpiler) 빌드 성공** (17:09). 에이전트는 47 tool uses /
+  12.8min 에서 rate-limit (5:30pm KST 까지). `hexa.real` 드라이버 빌드 미진입.
+- 후속 직접 검증: fresh `hexa_v2` 로 `HEXAD/CHAT/chat_lib.hexa` 단독 transpile
+  → `OK: /tmp/cl_fresh.c` ✅ — **PR#51 nested-index-assign codegen 동작 확인**
+  ('expression is not assignable' 0건, stale system 의 4건과 대조). 즉 codegen
+  수정은 main 에 있고 fresh 빌드에서 정상 emit. clang 단독 컴파일 시도는
+  multi-file import (cell_pool_init / mitosis_forward_tail 등) 인 안 묶여
+  link 단계 undefined symbol — 정상 (드라이버의 module_loader expansion 필요).
+- 잔여: (a) fresh `hexa.real` 드라이버 빌드 (worktree → 격리 binary), (b)
+  `HEXA_BOOT=<fresh>` 로 `build_verify.sh` 실행 → 6 CHAT 타깃 게이트 검증
+  (목표 20/20→26/26). 별도 deliberate 사이클 (드라이버 빌드는 hexa-lang
+  self-host 내부 — Phase 6 Step 0 패턴 추가 round 필요).
+
+**상태**: argv ✅(버그 아님) · GPU §9 ✅ 등록 + RFC 040 ✅ 초안 · 툴체인
+refresh 🔶 PARTIAL (codegen 검증, 드라이버 잔여). §7 #1-5 + 본 후속까지의
+/loop 사이클 closure — 다음 진척은 (a) 툴체인 driver 빌드 또는 (b) GPU §9
+Phase A 착수 (RFC 040 sub-task) — 사용자 선택.
