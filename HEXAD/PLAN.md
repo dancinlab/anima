@@ -1292,3 +1292,32 @@ user "all bg go" — 두 bg 에이전트 병렬 dispatch, 둘 다 완료.
 refresh ✅ COMPLETE (24/24+16/16 with HEXA_BOOT). 두 carry 모두 closure.
 잔여 = (i) 사용자 결정 시 toolchain promote (`~/.hx/bin/hexa.real`), (ii) GPU
 Phase B/C/D (CUDA 하드웨어 사이클).
+
+### 2026-05-16 — toolchain promote ✅ + Phase B+C scaffolding bg dispatch
+
+user "1 ok 불요하면 좋음 / 2 ok go" — toolchain promote + GPU Phase B/C/D 진행.
+
+**toolchain promote ✅ COMPLETE**: worktree fresh artifacts → 시스템 hexa-lang.
+- `/Users/ghost/core/hexa-lang/hexa.real` ← `/private/tmp/hexa-tcrefresh/hexa.real`
+  (480,976 B, May 16 18:00). 백업: `hexa.real.bak.pre-tcrefresh-promote-<ts>`.
+- `/Users/ghost/core/hexa-lang/self/native/hexa_v2` ← worktree (1,470,360 B).
+  교체 사유: hexa.real 가 hexa_v2 를 subprocess 로 invoke — 둘 다 fresh 여야
+  PR#51 codegen 일관. probe 실패 디버그로 shared hexa_v2 가 stale (md5 mismatch)
+  확인 후 promote. 백업: `hexa_v2.bak.pre-tcrefresh-<ts>`.
+- **검증**: `bash HEXAD/build_verify.sh` (NO HEXA_BOOT) → **24/24 entrypoint
+  + 16/16 lib PASS, "ALL COMPILED-NATIVE PASS — interp-deprecation safe"**.
+  6 CHAT 타깃 시스템 게이트 통과 — HEXA_BOOT= 불요.
+
+**GPU Phase B+C bg agent dispatched** (병렬 scaffolding):
+- Phase B: hexa-lang 잔여 ops scaffolding (softmax/RMSNorm-reduce/AdamW/
+  elementwise — 4-5 ops, `#ifdef HEXA_CUDA` guard, no-CUDA → CPU 라우팅).
+- Phase C: anima `d_train5_lib.hexa` matmul 1-call demo-wire (`farr_matmul`
+  → `farr_matmul_gpu` 디스패처, no-CUDA 시 no-op identity 라우팅 — `d_corpus
+  _fire` 결과 bit-equal 유지로 검증).
+- 출력: hexa-lang `rfc/farr-gpu-cuda-backend` 추가 커밋 + anima main 커밋
+  (one-line wire). 검증: tmp_rfc040*_smoke + zero regression (24/24 + 16/16
+  + d_corpus_fire + RFC 034/036 smoke 유지). rate-limit 인지 ≤50 tool uses.
+
+**Phase D (실 GPU fire)**: CUDA-box dedicated 사이클 — Mac 환경에서 불가.
+별도 vast.ai dispatch + RFC 040 §"Phase D" 명세대로 (d=768·12L 진짜 실-규모
+fire). 본 /loop 범위 밖.
