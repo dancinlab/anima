@@ -558,3 +558,36 @@ g6: 과거 진행-로그 의 당시-사실 기록은 불변하되 `g_fire_autono
 latest-wins 로 **전면 supersede** — 잔존 fire-게이트 표현은 전부 死문,
 효력 없음. 효과: Phase 6 실-규모 GPU fire 및 차후 모든 cost-bearing fire
 = 즉시/병렬/bg 자율 진행. 조건부 hold 도 폐기 (무조건 자율).
+
+### 2026-05-16 — R2 RESOLVED (chat_lib/anima_chat compiled-native re-integrated)
+
+사용자 "R2 ... fix go". **이전 진단 STALE 정정**: PLAN 의 R2 named blocker
+("hexa_safetensors_mmap_data_offset C decl 부재")는 더 이상 사실 아님 — 그
+decl 은 hexa-lang runtime.h:677-688 + runtime.c:6625+ 에 이미 land(RFC 025/
+034-era). 실제 R2 blocker = **hexa-lang codegen_c2 `_gen2_nested_index_
+assign_stmt` 3-level mixed-key spine-walk 버그**: `cell_pool["cells"][i]["k"]
+= v` 를 `hexa_index_get(...) = hexa_index_set(...)` (좌변이 함수콜 rvalue)
+로 lower → clang "expression is not assignable". 최소재현 `/tmp/nidx_repro.hexa`
+(`p["a"][0]["b"]=v`) 확정.
+
+codegen 패치는 self-hosting dual-backend(build_c.hexa + codegen_c2.hexa,
+7k+ LoC) 회귀위험(주석 "1/2-level byte-identical 보장") 커서 **anima-side
+무위험 우회** 채택 (정직 — 상위 hexa-lang fix 는 별도 named item):
+- `tool/hexa_native/mitosis_hook_lib.hexa`: 검증된 defensive helper
+  `_mit_pool_set_cell_field`(level-by-level 1-step, codegen-safe — h1_repro
+  로 사전검증) 추가 + 4 buggy 3-level site (298 blended / 619 clamped /
+  863 tension_history / 867 process_count+1) rewrite.
+- `HEXAD/CHAT/anima_chat.hexa`: `_ac_smoke_fail` 모듈-mut 집계 → build_verify
+  PASS_MARKER(`selftest: true`) honest aggregate(가짜 marker 아님, 실제
+  F-AC-HEXA FAIL 시 false).
+- `HEXAD/build_verify.sh`: chat_lib.hexa→LIBS · anima_chat.hexa→ENTRYPOINTS
+  재편입 + DEFERRED 주석 → R2 RESOLVED 정정(stale safetensors 진단 교체).
+
+**build_verify gate: 16/16 entrypoint + 14/14 lib = ALL COMPILED-NATIVE PASS**
+(chat_lib + anima_chat 둘 다 compiled-native PASS — R2 codegen blocker 해소).
+chat_lib import 의 mitosis_hook_lib 4-site 가 유일 차단점이었음.
+
+상태: **R2 inference-parity wire compiled = RESOLVED** (anima-side, $0,
+무위험). 잔여 = 상위 hexa-lang codegen_c2 3-level spine-walk fix(별도 RFC
+named item — anima 우회로 unblocked 이라 non-urgent) + 실 ckpt load end-to-end
+inference parity(별도 heavy cycle, 24L 570MB).
