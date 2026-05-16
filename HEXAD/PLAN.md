@@ -1250,3 +1250,45 @@ GPU §9 + 툴체인 refresh 는 §7 너머 carry.
 refresh 🔶 PARTIAL (codegen 검증, 드라이버 잔여). §7 #1-5 + 본 후속까지의
 /loop 사이클 closure — 다음 진척은 (a) 툴체인 driver 빌드 또는 (b) GPU §9
 Phase A 착수 (RFC 040 sub-task) — 사용자 선택.
+
+### 2026-05-16 — "all bg go": 툴체인 refresh ✅ COMPLETE + GPU §9 Phase A ✅ scaffolding LANDED
+
+user "all bg go" — 두 bg 에이전트 병렬 dispatch, 둘 다 완료.
+
+**툴체인 refresh ✅ COMPLETE**:
+- 격리 worktree `/private/tmp/hexa-tcrefresh/` 에 **fresh `hexa.real` 드라이버**
+  빌드 (480,976 B Mach-O arm64) + `hexa` shim. `hexa_cc.c` fixed-point sha
+  **`b4c78cadd5622a43e13c5ac53c47b59ee94f07029abdf5e911ba2bef8689c503`** —
+  Phase 6 Step 0 precedent (`b4c78cad…`) **완전 일치**.
+- 결정적 gap closure: 이전 에이전트가 놓친 `build/hexa_interp` POSIX-sh shim
+  (module_loader expansion) 을 worktree 로 복제 → multi-file import 해소.
+- 검증 (직접 실행 확인): `HEXA_BOOT=/private/tmp/hexa-tcrefresh/hexa bash
+  HEXAD/build_verify.sh` → **24/24 entrypoint + 16/16 lib PASS, exit 0**,
+  "ALL COMPILED-NATIVE PASS — interp-deprecation safe". 6 CHAT 타깃 전부
+  PASS (이전 SKIP-with-warning → 모두 게이트 통과): chat_lib · anima_chat ·
+  d · d_lib · integ_test · integ_train_smoke.
+- 시스템 `~/.hx/bin/hexa.real` + `/Users/ghost/core/hexa-lang/hexa.real`
+  **미손댐** (동시 에이전트 보호). worktree 가 HEXA_BOOT 참조용 long-lived
+  toolchain 으로 보존. **promote to ~/.hx/bin/hexa.real = 별도 사용자 결정**
+  (그러면 HEXA_BOOT= 불요, 시스템 게이트 자체가 26-target full gate).
+
+**GPU §9 Phase A scaffolding ✅ LANDED** (hexa-lang `rfc/farr-gpu-cuda-backend`
+@ `5ae8823f`, push):
+- `self/runtime.h` +46줄 + `self/runtime.c` +253/-2줄 — **HexaFarrEntry 확장**
+  (`FarrLoc` enum + `d_buf` + `pinned` + `dirty_host/dev` flags) + 7 builtin
+  scaffolding (`cuda_available` / `cuda_device_count` / `farr_to_device` /
+  `farr_to_host` / `farr_pin` / `farr_device_free` / `farr_matmul_gpu`)
+  모두 `#ifdef HEXA_CUDA` / `#ifndef HEXA_CUDA` 가드. CPU path byte-clean.
+- `tmp_rfc040_smoke.hexa` 213줄 — **F-RFC040 5/5 PASS** 컴파일-네이티브:
+  AVAIL (cuda_available=0 coherent) · STRUCT-NOREGRESS · DISPATCH-FALLBACK
+  (`farr_matmul_gpu` ≡ `farr_matmul` no-CUDA) · DETERMINISM · CUDA-BLOCKER-DOC.
+- Zero regression: anima HEXAD build_verify 20/20+14/14 변동 없음; RFC
+  036·034 smoke 5/5 유지 (struct 확장이 byte-clean on host path).
+- Out-of-scope (RFC 040 §"Phase A" 명시): 실 `__global__` 커널 + `cublasDgemm`
+  · `nvcc`/`.cu` 빌드 · 실 GPU tolerance falsifier · d_train5 GPU wire
+  (Phase C) — **CUDA-box dedicated 사이클** 잔여.
+
+**상태 closure**: argv✅(not-a-bug) · GPU §9 ✅ Phase A scaffolding · 툴체인
+refresh ✅ COMPLETE (24/24+16/16 with HEXA_BOOT). 두 carry 모두 closure.
+잔여 = (i) 사용자 결정 시 toolchain promote (`~/.hx/bin/hexa.real`), (ii) GPU
+Phase B/C/D (CUDA 하드웨어 사이클).
