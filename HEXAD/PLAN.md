@@ -424,3 +424,35 @@ heavy cycle 별도). 잔여 "모두 시도": (C) head + 단일 transformer block
 analytic backprop(#44), (B) 풀 12L tensor-autograd(#45, RFC급 multi-cycle),
 (2) Phase 6 통합 fire(#46, cost-bearing 사용자 게이트). R2 PR #102(d_lib
 wire) = 별개 parent-review item, Phase 5 무관(미손댐).
+
+### 2026-05-16 — Phase 5 (1) C: hybrid head + 단일 비선형 블록 analytic backprop LANDED
+
+"모두 시도" C. **head(B-D-4 closed 🔵 reused) ⊕ 단일 pre-norm 비선형 블록의
+HAND-DERIVED EXACT analytic reverse-mode** (scalar tape 不要 — tensor/vector-
+level closed vjp). 블록 = `z = x + W_d·(silu(W_g·RMSNorm(x))⊙(W_u·RMSNorm(x)))`.
+
+**산출** (compiled-first lib-split, branch feat/phase5-c-…):
+- `HEXAD/D/d_train3_lib.hexa` — pure: c3_sigmoid/silu/silu_grad, matvec/
+  matvec_t/outer, **c3_rmsnorm_fwd+bwd (exact: dx=inv·dxn−(inv³x/d)Σdxnₖxₖ)**,
+  **c3_swiglu_fwd+bwd (exact: da=ds⊙b⊙silu'(a), db=ds⊙silu(a))**, c3_forward
+  (residual+head), **c3_grad (B-D-4 head ⊕ block vjp chain, NO tape)**,
+  c3_gn2/ce/predict, epoch reducers, c3_init (RANDOM seed-fixed, base_ckpt=
+  NONE). d_train2_lib import 재사용(dt2_softmax/adamw/init/zeros; DRY).
+- `HEXAD/D/d_train3_smoke.hexa` — entry, dimension-generic, TINY d=4·h=8·
+  V=4 Mac compiled-native (실 d=768 = 동일코드 ubu heavy cycle).
+
+**F-D-PORT-3 (compiled binary)**: gn2 **6.06592 → 5.0e-42** (전 analytic
+chain 120 AdamW), acc **0/8 → 8/8**, **F-D-PORT-3b GRAD-EXACT Wg[3]
+analytic vs 중심차분 |Δ|=3.3e-13** (손유도 RMSNorm/SwiGLU vjp = machine
+precision ⟹ pure-hexa 비선형 블록 analytic backprop 정확성 입증) →
+**selftest: true**. TIER = **EMPIRICAL** (B-D-NOTE; head grad = B-D-4
+closed 🔵 reused, 블록 vjp = hand-derived exact — OUTCOME tier 미상승, g3).
+
+**build_verify**: ENTRYPOINTS 13→14(+d_train3_smoke) · LIBS 11→12
+(+d_train3_lib) → **14/14 + 12/12 compiled-native PASS**.
+
+**honest scope (g3, no over-claim)**: attention(T×T softmax) / RoPE / GQA /
+cross-attn / 멀티블록 깊이 = 본 milestone **제외** — C 는 비선형 FFN+norm
+코어의 pure-hexa analytic backprop 을 d_model-generic 으로 입증. 전 12L
+ConsciousDecoderV2 + attention vjp registry = #45 (B) RFC급 cycle (C→B
+bridge 명시). 상태: **Phase 5 (1) C LANDED**.
