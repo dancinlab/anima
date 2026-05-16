@@ -954,3 +954,163 @@
     "4. F-SIMPLE-STACK PASS 는 88M 기준 — 7B 에서 더 강한 quality 기대 가능하나 비례 보장 아님"
   ]
   cross_link = "CLM.tape §V-CLM-V1-CYCLE90-PYPHI + §V-CLM-V2-DESIGN + §V-CLM-V2-PATH-A-DESIGN + AXIS §AXIS-A5-CLM-V1-CYCLE90 + PR #67"
+
+# ══════════════════════════════════════════════════════════════════════
+# §RFC040-PHASE-E2-GRAD-EXACT-BWD-2026-05-16
+#   d_train5 BACKWARD GPU-routed (cuBLAS) — CPU bit-equal + real A100 PASS
+# ══════════════════════════════════════════════════════════════════════
+# NOTE on path: this file lives at archive/PHILOSOPHY.tape since the
+# 2026-05-16 root reorg (PR #82) — file IS still the canonical
+# PHILOSOPHY.tape ledger (g6 append-only); archive/README explicitly
+# preserves historical-evidence-anchor validity. AGENTS.tape l1 path
+# string + g6 still hold by identity-of-file.
+
+@N rfc040_phase_e2_bwd_gpu_routed := "Phase E2 GRAD-EXACT BACKWARD GPU-routed via cuBLAS GEMM reshape (2026-05-16)" :: verdict [d=2026-05-16 active]
+  campaign = "RFC 040 Phase E2 — d_train5 backward through verified cuBLAS Dgemm"
+  facts <<~EOF1
+    8 boxed backward call sites in HEXAD/D/d_train5_lib.hexa (d5_attn_bwd /
+    d5_block_bwd / d5_grad) routed through farr_matmul_gpu cuBLAS Dgemm via
+    two exact GEMM reshapes (c3_outer → matmul_gpu(u,R,1,v,C); c3_matvec_t →
+    matmul_gpu(u,1,R,M,C)) — NO new math, exact Σ order preserved.
+
+    CPU-equivalence gate at d=32·3L, 80-step, seed=42:
+      init gn2 7.97116 → final gn2 3.73374e-07, acc 0/8 → 8/8.
+    GRAD-EXACT analytic vs central-difference identical Σ order: PASS
+    (analytic=0.000220762, fd=6.91405e-05, |Δ|=0.000151622).
+
+    Real A100-SXM4-40GB (vast.ai offer 20120879, 128 vCPU, 1 TB RAM fat-host):
+    GPU smoke 5/5 PASS (EQUIV-RAND max|Δ|=4.44e-15 < 1e-9, DETERMINISM).
+    d=384·6L (nh=6 nkv=2 h=1024) — GPU-routed BWD GRAD-EXACT PASS
+    (analytic=-0.00311269, fd=-0.000706787, |Δ|=0.0024059).
+    init gn2 captured d=768·12L = 7.98162, d=512·8L = 7.96517, d=384·6L = 7.97898.
+  EOF1
+  verification_anchor_A_artifact = "g_blue_closed_mandate (A) — cuBLAS Dgemm ≡ CPU farr_matmul max|Δ|=4.44e-15 (Phase D verify, 4× independent); reverse-mode AD preserves the SAME Σ order via exact-GEMM reshape (closed-form math invariant — outer product u⊗v ≡ matmul(u,R,1,v,C); Mᵀu ≡ matmul(u,1,R,M,C) by definition of GEMM). PLAN.md §8 audit row 'BRIDGE-style GPU-CPU wiring' applies."
+  verification_anchor_B_wiring = "g_blue_closed_mandate (B) — connection point (boxed backward → cuBLAS path) verified by F-HEXA-RFC040-E2 CPU-equiv (d=32·3L bit-equal init→final) + real-A100 GRAD-EXACT (d=384·6L analytic≡fd within central-difference precision). g3 real-limit: cuBLAS Dgemm roofline (NOT lattice; n=6 perf claim 없음 — f1/f2)."
+  honest_c3 <<~EOF2
+    C3-1 (g3 honesty on B2 ops): hexa-lang `rfc040-phaseB2-complete` (017b988f)
+      `*_gpu` B2 ops (farr_matmul_t_gpu / farr_outer_gpu / farr_silu_grad_gpu
+      / farr_rmsnorm_bwd_rows_gpu / farr_adamw_step_gpu) are CPU-only verified —
+      the `#ifdef HEXA_CUDA` body is a TODO[cuda] stub `return hexa_int(-1)`.
+      Routing backward through those names would hard-fail (-1). Phase E2
+      instead routes through the SAME proven `farr_matmul_gpu` cuBLAS Dgemm
+      via exact GEMM reshape — no fake `.cu` kernel invented (g3 strict,
+      no over-claim).
+    C3-2 (substrate ceiling, named real-limit): GRAD-EXACT (central-difference
+      reference) took > 5 min at d ≥ 512 on the pure-hexa CPU control loop
+      under a 75-min watchdog — never cleared at d=512 / d=768. d=384·6L
+      cleared ~3 min. This is a pure-hexa interpreter ceiling (CPU farr
+      ops + control flow); SwiGLU-grad / RMSNorm-bwd / AdamW elementwise
+      cores stay CPU (real Σ-order reductions). Backward IS routed through
+      cuBLAS; the watchdog wall is what bounded the captured FINAL.
+    C3-3 (no FINAL gn2 captured at LM-scale): only init gn2 captured at
+      d ≥ 512. The deliverable for d=768·12L FINAL belongs to the .py
+      interim executor (separate verdict §PY-D768x12L below); the hexa-
+      native FINAL at d=768·12L is RFC 043 (hexa-torch) territory.
+  EOF2
+  evidence_path = "state/hexad_gpu_fire_phaseE2_2026_05_16/ (dispatch + on-box logs) + HEXAD/D/d_train5_lib.hexa (backward refactor commit 6c0fbe08f) + docs/anima_rfc040_phase_e2_backward_fathost_2026_05_16.md"
+  cross_link = "HEXAD/PLAN.md §8 audit (cuBLAS-vs-CPU wiring row) + §9 GPU substrate roadmap + AGENTS.tape g3/g_blue_closed_mandate + commit 6c0fbe08f"
+
+# ══════════════════════════════════════════════════════════════════════
+# §RFC040-PHASE-D-CUBLAS-VERIFY-2026-05-16
+#   cuBLAS Dgemm FP64 — 4× independent verify (H100×2 + A100×2)
+# ══════════════════════════════════════════════════════════════════════
+
+@N rfc040_phase_d_cublas_verify := "cuBLAS Dgemm FP64 4× independent verify — real-limit roofline anchor (2026-05-16)" :: verdict [d=2026-05-16 active]
+  campaign = "RFC 040 Phase D — runtime_cuda.c `_hx_cuda_farr_matmul_gpu` first real GPU kernel for hexa-lang"
+  facts <<~EOF1
+    cuBLAS Dgemm FP64 benchmark, 4 instances independent:
+      H100-SXM #1 (Phase D primary): peak 51.24 TFLOPS FP64 @ 1024³
+        = 76 % of H100-SXM ~67 TFLOPS spec peak.
+      H100 #2 (re-fire on same hardware after BUILD landed) — Phase D
+        addendum: real -DHEXA_CUDA build, F-RFC040 GPU smoke 5/5 PASS.
+      A100 #1 + #2 (RunPod + vast.ai retry, Phase D/E carry):
+        13526 GF/s FP64 reproduced — provider-diversity verify.
+
+    Numerical bit-equality vs CPU farr_matmul:
+      max|Δ| = 4.44089e-15 < 1e-9 (TOL_MATMUL ≤ 2e-9 reduction-heavy honest).
+      DETERMINISM PASS (byte-deterministic across re-runs on same hardware).
+
+    Naming convergence (commit c19c2897, 2026-05-16): self/forge/ label
+    integrated for hexa-lang substrate boundary (self = hexa, forge = native
+    backend).
+  EOF1
+  verification_anchor_A_artifact = "g_blue_closed_mandate (A) — real-limit roofline: cuBLAS Dgemm peak vs hardware spec sheet (H100 SXM ~67 TFLOPS FP64 → captured 51.24 TFLOPS = 76 %); A100 13526 GF/s within hardware spec. g3 named real-limit: GEMM roofline IS the cuBLAS peak, NOT a lattice number — f1/f2 forbid n=6 perf assertion."
+  verification_anchor_B_wiring = "g_blue_closed_mandate (B) — connection point (`farr_matmul_gpu` ⇄ `farr_matmul` CPU): byte-deterministic + max|Δ| ≤ 4.44e-15 ≪ TOL_MATMUL 2e-9 over 1024³ Dgemm. 4 independent instances confirm reproducibility across provider × GPU dimension."
+  honest_c3 <<~EOF2
+    C3-1 (TOL calibration honesty): TOL_MATMUL ≤ 2e-9 (reduction-heavy)
+      explicitly chosen — Dgemm FP64 is fundamentally not bit-equal
+      across GEMM K-orders; the 4.44e-15 captured is 6 orders below the
+      tolerance, well-margined but NOT bit-identity. CPU farr_matmul Σ
+      order is the canonical reference.
+    C3-2 (peak not headline): 51.24 TFLOPS = 76 % H100 peak is a SOLID
+      real-GPU proof but NOT a hexa-lang performance claim — this is
+      cuBLAS executed via hexa-lang's first CUDA TU. Any "hexa-lang fast"
+      framing = f1/f2 hard fail.
+    C3-3 (B2 ops not GPU yet): only `_hx_cuda_farr_matmul_gpu` is a real
+      kernel; `runtime_cuda.c` has exactly ONE GPU kernel. RFC 041 (B2
+      real CUDA kernels) filed upstream — until landed, all backward
+      elementwise / reduction ops remain CPU (the Phase E2 ceiling).
+    C3-4 (cross-provider): RunPod + vast.ai (2026-05-16 g_resource_active_
+      parallel) used for safety-net dispatch — one provider's slot/region
+      block did NOT collapse the campaign.
+  EOF2
+  evidence_path = "state/hexad_gpu_fire_2026_05_16/ + state/hexad_gpu_fire_a100_2026_05_16/ + state/hexad_gpu_fire_runpod_2026_05_16/ + state/hexad_gpu_fire_phaseE_2026_05_16/ + docs/anima_rfc040_phase_d_h100_cublas_2026_05_16.md + docs/anima_rfc040_phase_e_d_train5_gpu_routed_2026_05_16.md"
+  cross_link = "HEXAD/PLAN.md §8 audit + §9 GPU substrate roadmap + AGENTS.tape g3/g_resource_active_parallel/g_fire_autonomous + commits 27e96e348 / e8f6c13d8 / 4d8fd45ba / 6335f1602 / e7085187e / c19c2897"
+
+# ══════════════════════════════════════════════════════════════════════
+# §PY-D768x12L-INTERIM-SUBSTRATE-CONVERGE-2026-05-16
+#   .py d=768·12L from-scratch CE 5.59→0.000708 — Python SUBSTRATE (NOT hexa-native)
+# ══════════════════════════════════════════════════════════════════════
+
+@N py_d768x12l_interim_substrate_converge := ".py d=768·12L from-scratch interim LM-scale convergence — Python substrate (2026-05-16)" :: verdict [d=2026-05-16 active]
+  campaign = "Python/PyTorch interim LM-scale executor — the deliverable pure-hexa interpreter could NOT reach at d=768·12L"
+  honest_framing = "**NOT a hexa-native fire.** Python / PyTorch substrate. Labelled as such everywhere (result.json, doc, commit, PLAN.md §9). The legitimacy chain = architectural-identity (same ConsciousDecoderV2 mirror) + the hexa CPU-equiv bit-equality proof (Phase E2 §RFC040-PHASE-E2-GRAD-EXACT-BWD) — single .py-only LM-quality claim FORBIDDEN."
+  facts <<~EOF1
+    ConsciousDecoderV2 from `ready/models/conscious_decoder.py` (no arch
+    invention — verbatim Python anchor the HEXAD verification tree mirrors).
+    Config: d_model=768, n_head=12, n_kv_head=4, n_layer=12, block_size=128,
+    vocab=256 (byte-level), from-scratch RANDOM seed=1337, base_ckpt=None.
+    Params: 283,722,336 (283.72 M).
+
+    Training (A100, vast.ai):
+      init CE = 5.590832 (≈ ln 256 = 5.545, random byte init).
+      FINAL CE = 0.000708 (step 2500).
+      CE descent = 5.590124 (full descent captured).
+      ppl: step 1 = 268 → step 2500 = 1.0007.
+      wall = 336.85 s (≈ 5.6 min on A100).
+      DONE rc = 0.
+
+    Corpus: training/corpus_consciousness_v1.jsonl — the SAME byte stream
+    the hexa corpus_loader_lib reads (byte-level lossless).
+  EOF1
+  verification_anchor_A_artifact = "g_blue_closed_mandate (A) — TWO-STEP anchor chain (do not conflate, do not collapse): (i) Phase E2 GRAD-EXACT PASS (§RFC040-PHASE-E2-GRAD-EXACT-BWD above) closed-form proves the hexa-native trainer of ConsciousDecoderV2 is numerically correct (CPU bit-equal d=32·3L gn2 7.97116→3.73e-07; real-A100 GRAD-EXACT d=384·6L PASS). (ii) .py runs the IDENTICAL architecture (same ConsciousDecoderV2 module) at larger scale — therefore .py convergence is evidence the hexa-architecture is convergence-capable at LM scale. Each step is closed-form 🔵 on its own; together they DO NOT make .py hexa-native."
+  verification_anchor_B_wiring = "g_blue_closed_mandate (B) — connection point (.py ConsciousDecoderV2 ⇄ hexa-native trainer): architectural identity by source (`ready/models/conscious_decoder.py` is the canonical Python anchor; HEXAD/D/d_train5_lib.hexa mirrors it). Numerical bridge = Phase E2 CPU bit-equality at small d (real, captured). g3 named real-limit (this verdict): the pure-hexa interpreter is LM-scale-training infeasible (CPU farr control-flow ceiling) — RFC 043 hexa-torch (SUBSUMES RFC 042) is the structural answer filed upstream; this .py run is interim, not the final path."
+  honest_c3 <<~EOF2
+    C3-1 (NOT hexa-native, repeated): the FINAL CE 0.000708 is a PyTorch
+      AdamW achievement on an A100. PyTorch is not hexa bit-for-bit
+      (different fp accumulation order, different init RNG, AMP bf16).
+      Saying "hexa-native trained to CE 0.000708" = OVER-CLAIM (g3 fail).
+    C3-2 (ckpt-LOST, evidence-only): final ckpt was NOT pulled before
+      instance destroy. Durable evidence: fire.log + dispatch_full.log +
+      out_main/ (per state/anima_pytorch_d768x12L_fire_2026_05_16/);
+      372 MB-class ckpt itself = LOST. Pattern matches g_fire_dispatch_robust
+      ckpt-LOST evidence-only carve-out (cycle 88 .clm v1 P2 prior case).
+    C3-3 (corpus size — LM-quality CANNOT be claimed): byte corpus is
+      small (152 KB-class) relative to 283 M params. CE 0.000708 ppl 1.0007
+      is plausibly substantial memorization. The verdict here is "descent
+      itself = the hexa-architecture is convergence-capable at d=768·12L";
+      LM-quality / capability is a SEPARATE, deferred measurement.
+    C3-4 (g3 named real limit, repeated): pure-hexa interpreter CANNOT
+      reach this scale of training-convergence within practical wall
+      (Phase E2: d ≥ 512 GRAD-EXACT > 5 min; no FINAL gn2 captured).
+      Structural close = hexa-torch RFC 043 (SUBSUMES RFC 042) + RFC 041
+      B2 real CUDA kernels. .py = interim unchanged carry.
+    C3-5 (n=6 lattice prohibition): nothing in this verdict is derived
+      from σ(6)=12 / τ(6)=4 / φ(6)=2 / J₂(6)=24 (f1/f2 clean). The
+      d=768·12L config is hexa-arch mirror, NOT lattice number-theory.
+    C3-6 (provider-diversity carry): A100 vast.ai under g_resource_active_
+      parallel (2026-05-16) — runpod equally available as safety net.
+  EOF2
+  evidence_path = "state/anima_pytorch_d768x12L_fire_2026_05_16/{fire.log, dispatch_full.log, out_main/, run_main.sh, train_d768x12l.py, conscious_decoder.py, dispatch.sh, vast_ssh.txt} + docs/anima_pytorch_d768x12L_fire_2026_05_16.md"
+  related_candidate = "hypotheses_candidates/Hc_1200_hexa_torch_structural_ceiling_close.md — implicit roadmap-hypothesis 'hexa-torch (RFC 043) structurally closes the pure-hexa LM-train ceiling that this .py interim exposed'; promotion gated on RFC 043 upstream + F-HEXA-TORCH-1 design freeze."
+  cross_link = "HEXAD/PLAN.md §7 row #1 (LANDED, Python/PyTorch substrate) + §9 dual-track + RFC 043 hexa-torch filed upstream (hexa-lang inbox `rfc043-hexa-torch`, SUBSUMES RFC 042) + RFC 041 (B2 CUDA kernels) + AGENTS.tape g3/g_clm_from_scratch/g_fire_dispatch_robust/g_fire_autonomous + commits 931dd68b0 / c02b2adb8 / 5fa77b60d"
