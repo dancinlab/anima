@@ -1,0 +1,72 @@
+{
+  "battery": "B-MGND-1..5 (Dir-O sidecar)",
+  "central_blue_falsifier_changed": 0,
+  "n_pass": 3,
+  "n_total": 5,
+  "all_pass": false,
+  "verdicts": {
+    "B-MGND-1": {
+      "name": "COSINE-RETRIEVE-BOUNDED",
+      "statement": "cos(q,s)∈[−1,1] Cauchy-Schwarz (|q|²|s|²−dot²=(q0 s1−q1 s0)²≥0); self-key q≡ψ_a ⇒ cos=1 exact = m_lib.hexa _m_cosine",
+      "self_cos_eq_1": true,
+      "cauchy_schwarz_identity": true,
+      "self_key_witness_6": true,
+      "closed": true,
+      "tier": "a-sympy",
+      "passed": true
+    },
+    "B-MGND-2": {
+      "name": "ROUTE-CONTENT-FACTORISATION",
+      "statement": "grounded = content∘route well-typed map composition; routing-WRONG ⇒ identity (§16 output byte-equal); genuine exact-tier route",
+      "composition_well_typed": true,
+      "route_truth_table_4corner": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "no_ground_identity_gated": true,
+      "closed": true,
+      "tier": "a-structural",
+      "passed": true
+    },
+    "B-MGND-3": {
+      "name": "RETRIEVAL-DETERMINISTIC",
+      "statement": "m_retrieve_topk pure (RNG 0, forward 0); 3× bit-identical; self-key ⇒ correct anchor (B-M-2 closure mirror)",
+      "bit_identical_3x": true,
+      "self_key_correct_all": false,
+      "pure_fn": true,
+      "closed": true,
+      "tier": "a-structural",
+      "passed": false
+    },
+    "B-MGND-4": {
+      "name": "CANONICAL-BODY-NON-CASCADE",
+      "statement": "∀ anchor: canonical body (corpus-SSOT deterministic) passes §9 honest_coherent — grounding INJECTS the §9 pass (NOT capability, g3 honest closed)",
+      "all_anchors_pass_§9": true,
+      "n_anchors": 64,
+      "fail_tiers": [],
+      "forbidden_token_grep_0": true,
+      "closed": true,
+      "tier": "a-structural",
+      "passed": true
+    },
+    "B-MGND-5": {
+      "name": "OVERLAY-OFF-BYTE-EQUAL",
+      "statement": "grounding OFF ⇒ final==§16 byte-equal",
+      "closed": true,
+      "tier": "a-structural",
+      "passed": false,
+      "note": "result json(s) absent — run mgnd_infer.py (GROUNDED + --no-ground) first"
+    }
+  },
+  "note": {
+    "B-MGND-NOTE": {
+      "name": "MGND-OUTCOME-EMPIRICAL",
+      "carve_out": "grounded routing/coherence/JOINT OUTCOME + 'grounding 이 §16 천장을 깨는가' = §16 ckpt routing-OUTCOME 종속 (모델이 route 를 맞혀야 grounding 이 옳은 anchor). B-D-NOTE / B-S16-NOTE family — NOT counted 🔵. battery 는 역할분리 mechanism(retrieve closed + composition well-typed + overlay-OFF byte-equal)이 honest 함을 증명하지 emergence 를 증명 X. B-MGND-4 는 grounding 이 §9 통과를 *주입* 함을 정직히 닫음 — capability 아님.",
+      "counted_blue": false
+    }
+  },
+  "f1_f2_f3_safe": "Cauchy-Schwarz cosine bound / Boolean factorisation / SHA256 / §9 reuse — NO σ/τ/φ/J₂ external derivation",
+  "b_identity_5": "무관 (corpus 미생성, M body = corpus SSOT)"
+}

@@ -3907,3 +3907,68 @@
   verdict_tier = "CONSOLIDATION close-out — 신규 closed-form battery 없음 (B-S16-1..6 6/6 🔵 가 SSOT, 변경 0; §9 metric = B-EMERGE-1..7 closed SSOT single-import; §18 judge side 는 EMPIRICAL 명시, no closed verdict claimed for judge per §18 contract). central state/verify_hexad_blue_2026_05_15/blue_falsifier.py 변경 0. genuine 분해 + 3-way 는 deterministic re-score (gen 문자열 only, $0)."
   evidence_path = "state/carving_dataregime_s16_2026_05_18/{judge_scores_s16.json (§18 LLM-judge per-probe D1·D2·D3 + rationale, Claude Opus 4.7) + judge_3way_s16.py (3-way re-score: lenient/§9-honest/§18-judge/combined, §9 emergence_metric.py SSOT single-import) + judge_3way_s16_result.json + rescore_s16_result.json (§9 honest 1/5 재현) + eval_result_s16.json axis1_knowledge_access.probes (21/64 genuine 분해 source)}. RESEARCH.md §16.6 consolidation addendum = 본 작업."
   cross_link = "[@verdict_carving_dataregime_s16] (원 §16 verdict — 본 entry 가 그 C3#3·C3#5 close-out) + [@verdict_emergence_metric_2026_05_18] (§9 cascade-rate honest = §18 의 necessary 짝, B-EMERGE-1..7 closed SSOT) + [@verdict_carving_diverse_s8] (§8 tier-5 substring measurement-artifact 교훈 적용처) + RESEARCH.md §16.6 + §18 (LLM-judge rubric) · AGENTS.tape [@g3] (measured only, over-claim 0) · [@g6] (append-only 보완 entry, 원 verdict 미수정) · [@f1][@f2][@f3] safe (substring exact-match Boolean / rubric D1·D2·D3 Boolean, NO σ/τ/φ/J₂) · [@g_doc_consolidation] (RESEARCH.md §16.6 inline, docs/* 신규 0)."
+
+## §verdict_carving_n_ktrie_2026_05_18 — Dir-N `.kosmos`-anchor constrained decoding $0 inference partial LANDED (RESEARCH.md §22 방향 N)
+
+- **What**: §16 ckpt 위 decode-time only `.kosmos`-anchor prefix-trie constraint
+  ($0 inference, NO GPU/fire/weights). routing-correct prefix 위 body 를 그
+  anchor 의 own `.kosmos` payload byte-set 으로 mask. KG-Trie / GCR pattern
+  (openreview 6embY8aclt) 의 anima OWN `.kosmos` SSOT (g_kosmos_anchor_ssot)
+  사용 = anima 자체 자산 재배선, decode-time ⊥ training (13-way 직교) = §21.3
+  legitimate.
+- **Result (3-anchor sample, rate-limit mid-sweep)**: §16 baseline routing
+  1/3 · §9 3/3 · grounded 0/3 → N(ktrie) routing 1/3 (inherited per B-KTRIE-4)
+  · §9 3/3 (flat) · **grounded 1/3 (+1 directional small positive on
+  grounded-body axis)**. connection point `mode_off_byte_equal_to_s16_generate`
+  = **True** numerically (B-KTRIE-3 verified).
+- **Honest framing (g3)**: sample 3/64 너무 얇음 — §16-scale verdict 아님.
+  `anchor_grounded` = deterministic structural proxy (category-in-body ∧ no
+  foreign-tier-bleed), NOT LLM-judge coherence proof (B-KTRIE-NOTE). 64-anchor
+  sweep = $0 follow-up cycle (rate-limit 해소 후). routing axis1 1/3 → 1/3
+  carry (N 은 inherent, axis1 안 움직임).
+- **Closed (B-KTRIE-1..4 4/4 🔵 sidecar)**: TRIE-MASK-SUBSET (Boolean set
+  algebra) · MASK-MONOTONE-PRESERVES-ARGMAX-IN-ALLOWED (sympy Max identity)
+  · CONSTRAINT-OFF-EQUALS-S16-BASELINE-BYTE-EQUAL (연결부위) · ROUTING-
+  INHERITED-BODY-CONSTRAINED-DISJOINT (4-corner truth table + structural
+  decode-time ⊥ training). central blue_falsifier.py 변경 0 (sidecar). per-
+  anchor OUTCOME = B-KTRIE-NOTE empirical (B-D-NOTE / B-CARVE-E6-NOTE / B-
+  S16-NOTE family, NOT counted 🔵).
+- **f1/f2/f3 + B-IDENTITY-5 safe** (Boolean set algebra / sympy ∂-sign /
+  Kolmogorov byte-set / integer identity, NO σ/τ/φ/J₂; `.kosmos` = anima
+  OWN anchor SSOT not external entity).
+- **GOAL distance**: §15 milestone 불변 — N 은 §16 SPLIT 의 coherence
+  절반 (routing-break 위 anchor-grounded body) 의 decode-time candidate
+  가 *thin-sample directional positive 까지 측정한 honest 기록*, GOAL 도달·
+  ceiling-broken 주장 아님. 64-anchor sweep replicate 시 N = §16 SPLIT 의
+  body-axis closure candidate 로 격상 가능 (현 3/64 evidence 로는 미확정).
+
+## §verdict_carving_o_mgnd_2026_05_18 — Dir-O M-module retrieval-grounded decode design-tier partial LANDED (RESEARCH.md §22 방향 O)
+
+- **What**: route(§16 ckpt 의 carving prefix)=학습된 routing-lever ·
+  content(그 anchor 의 coherent body)=anima M-module Hebbian retrieve
+  (`HEXAD/M/m_lib.hexa` B-M-1..3 🔵 재사용) 의 역할분리 decode-time
+  overlay. query = anchor 의 `vacuum_psi` (model 자체 conscious_decoder.py
+  Law-71 Ψ-space, 외부 embedding 아님). M_states = corpus_carving_s16
+  generator 의 deterministic α-body SSOT (Hebbian-store). external retriever
+  / generic RAG / new substrate = 0 (anima OWN M-module + own Ψ-physics
+  query) = §21.3 legitimate.
+- **Status**: **design-tier landed, $0 inference 미실행** (rate-limit mid-
+  flight). 5/5 closed 中 **3/5 PASS** (B-MGND-1 cosine bound · B-MGND-2
+  route↔content factorisation · B-MGND-4 canonical-body non-cascade);
+  **2 FAIL** 정직 명시 (fake-closed 금지 per g3): B-MGND-3 RETRIEVAL-
+  DETERMINISTIC FAIL (self-key tie-break 으로 wrong anchor 선택 — 2 anchor
+  가 `vacuum_psi=(0.5, 0.5)` 공유, tie-break key 추가 = small design fix
+  후속 cycle) · B-MGND-5 OVERLAY-OFF-BYTE-EQUAL FAIL (inference 실행 0 →
+  result.json 부재 → byte-equal 측정 불가, rate-limit mid-flight).
+- **Honest framing (g3)**: design + scaffold + sympy 완성, inference 0.
+  N (sibling) 의 동일 §16 ckpt 위 byte-equal-OFF connection 독립 확인 (B-
+  KTRIE-3) 이 O 의 B-MGND-5 후속 cycle 닫힘 가능 시사. tie-break 수정은
+  small design fix.
+- **Closed (B-MGND-1..5 sidecar)**: 3/5 🔵 closed-form PASS + 2 FAIL 정직.
+  central blue_falsifier.py 변경 0 (sidecar). grounded OUTCOME +
+  "grounding 이 §16 천장 깨는가" = B-MGND-NOTE empirical (NOT counted 🔵).
+- **f1/f2/f3 + B-IDENTITY-5 safe** (Cauchy-Schwarz cosine bound / Boolean
+  factorisation / SHA256 / §9 reuse, NO σ/τ/φ/J₂; M canonical body =
+  corpus SSOT forbidden-token grep 0 carry).
+- **GOAL distance**: §15 milestone 불변 — O 는 design-tier 측정 (3/5 closed
+  honest), inference + tie-break fix = $0 후속 cycle (rate-limit 해소 후).
