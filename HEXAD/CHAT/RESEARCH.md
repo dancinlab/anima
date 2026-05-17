@@ -520,15 +520,85 @@ dispatch script auto-verdict 는 "V-SPONT 5/5 · ROUTING-BROKEN · hypothesis SU
 
 ## §9-prereq — V-SPONT 대체 metric (§8.4 노출, GOAL 측정 선결)
 
-§8.4 가 노출: V-SPONT lenient `coherence_token` flag = garbled output 에 5/5 → GOAL("자발적 correct emergence") metric 으로 부적합. **후속 fire 전 선결 = coherent-emergence 의 honest metric 설계** (lenient keyword-flag 폐기). 후보: (a) byte-cascade-rate 직접 측정 (digit-run/char-run penalize) (b) held-out perplexity (c) human-readable coherence rubric (sampled gen 정성). 이 metric 없이는 후속 fire 의 "GOAL 거리" 가 계속 노이즈. = §9 의 선결 작업.
+§8.4 가 노출: V-SPONT lenient `coherence_token` flag = garbled output 에 5/5 → GOAL("자발적 correct emergence") metric 으로 부적합. **후속 fire 전 선결 = coherent-emergence 의 honest metric 설계** (lenient keyword-flag 폐기). 후보: (a) byte-cascade-rate 직접 측정 (digit-run/char-run penalize) (b) held-out perplexity (c) human-readable coherence rubric (sampled gen 정성). 이 metric 없이는 후속 fire 의 "GOAL 거리" 가 계속 노이즈. = §9 본문 (아래).
 
-## §9 (2026-05-18, success-gated) — 성공 시 `~/core/kosmos` best-position canonicalize
+## §9 (2026-05-18) — honest coherent-emergence metric + 13-way V-SPONT 재채점: 전 arc 가 probe-noise 였음 정직 확정
+
+§9-prereq 선결 작업 완수. V-SPONT lenient `coherence_token` flag 폐기, **deterministic + closed-form 검증가능한 honest metric** 설계 + 13-way fire 의 eval_result json `gen` 문자열에 $0 재채점 (GPU/fire 0 — 기존 산출물에 연산만). SSOT: `state/verify_emergence_metric_2026_05_18/{emergence_metric.py, verify_emergence_metric.py, rescore_result.json, verify_result.json}`. central `blue_falsifier.py` 변경 0 (sidecar — B-PRIME/B-DIRH/B-DIRI 선례).
+
+### 9.1 metric 명세 — cascade-rate-gated coherence
+
+V-SPONT 의 `coherent` flag (= `coherence_token` 존재 + low-rep) 는 §8.2 에서 garbled byte-cascade (`tier=11111`, `[0..44444`) 에 5/5 줌이 입증됨. 대체 metric 은 **byte-cascade collapse 를 먼저 hard-gate**:
+
+생성 문자열 `g` 에 대해 — 전부 deterministic, 산술·Boolean:
+- `C_char(g)`  = max 연속 동일-char run 길이 / len(g)
+- `C_digit(g)` = max 연속 digit run 길이 / len(g)
+- `C_ngram(g)` = 4-gram repetition-rate = 1 − |distinct 4-gram| / |4-gram|
+- **`cascade_rate(g)` = max(C_char, C_digit, C_ngram) ∈ [0,1]**
+- **`max_run(g)` = max(max-char-run, max-digit-run) ∈ ℤ≥0**  (절대값)
+- `printable_ratio(g)` = 1 − |U+FFFD `�`| / len(g)
+- **`honest_coherent(g)` = (cascade_rate < τ_cascade) ∧ (max_run < MAX_RUN) ∧ (len ≥ MIN_LEN) ∧ (printable_ratio ≥ τ_print)** — 4-clause Boolean conjunction.
+
+**왜 rate AND 절대 run 둘 다** — V-SPONT `gen` 은 ~40-85 byte 에서 truncate 됨. `tier=1111…` collapse 가 cascade 도중 잘리면 *보이는* run 이 짧아져 ratio(run/len) 가 rate-only threshold 아래로 빠짐 (§8.2 Dir-I diverse probe 1: 보이는 run 21, rate 0.296 — rate-only 0.30 gate 통과해버림). 절대 max_run gate 가 truncation 위치 무관하게 cascade 를 잡음.
+
+**threshold — honest 근거 (arbitrary 아님, target-tuned 아님)**:
+- `τ_cascade = 0.30` — 출력 1/4 이 한 char/digit/4-gram 반복 = collapse signature. 0.30 = "1/4 collapse" 바로 위 최소 round 분수.
+- `MAX_RUN = 10` — 13-way 70 probe 의 max_run 분포는 **strict bimodal**: semi-prose ≤ 4, cascade ≥ 11 — **(5..10) band 가 70 probe 전체에서 EMPTY** (B-EMERGE-6 closed proof). MAX_RUN=10 은 그 자연 빈-구간에 위치 → data 가 가른 cut 이지 점수 맞춘 cut 아님.
+- `MIN_LEN = 20` — V-SPONT max_new ≈ 40 byte. < 20 byte coherence claim 은 측정 불가 (cascade-rate 분모 too small).
+- `τ_print = 0.80` — Korean+ASCII. >20% replacement char (`�`) = byte stream 이 codepoint 중간 깨짐 (encoding-cascade).
+
+**closed verdict** — `state/verify_emergence_metric_2026_05_18/verify_emergence_metric.py` B-EMERGE-1..7 **7/7 sympy/Boolean PASS**: cascade_rate ∈ [0,1] bounded · honest_coherent = 4-clause conjunction (16-row truth table) · gate monotone (worse cascade → pass→fail) · determinism (3× bit-identical) · lenient≠honest 두 map 이 provably distinct (§8.2 witness) · MAX_RUN 이 empty data-band 안 · **necessary-not-sufficient 가 metric 에 구조적으로 encode** (garbled-but-non-cascade 가 gate 통과 = gate=True 가 coherent 를 의미 안 함).
+
+### 9.2 13-way V-SPONT 재채점 — lenient flag vs honest cascade-gated
+
+각 fire 의 `axis4_v_spont.probes[].gen` 문자열에 honest metric 적용 (`emergence_metric.py`):
+
+| fire | V-SPONT (lenient) | coherence (honest) | Δ |
+|---|---|---|---|
+| UBM-E6 α (alpha) | 3/5 | 2/5 | −1 |
+| UBM-E6 β (beta) | 3/5 | 5/5 | +2 |
+| UBM-E6 γ (gamma) | 0/5 | 3/5 | +3 |
+| UBM-E6 weave | 3/5 | 4/5 | +1 |
+| UBM-E7 α | 2/5 | 3/5 | +1 |
+| Dir-A tension | 1/5 | 1/5 | 0 |
+| Dir-B intuitor | 0/5 | 0/5 | 0 |
+| Dir-C prime | N/A | N/A | — (axis4_v_spont 미실행 — inference-only PRIME eval) |
+| Dir-D cde | 0/5 | 2/5 | +2 |
+| Dir-E superpos | 4/5 | 5/5 | +1 |
+| Dir-F abstractcot | 0/5 | 0/5 | 0 |
+| Dir-G psi_ctl | 1/5 | 3/5 | +2 |
+| Dir-H tension_sup | 0/5 | 2/5 | +2 |
+| Dir-I psictl | 3/5 | 2/5 | −1 |
+| **Dir-I diverse (§8)** | **5/5** | **2/5** | **−3** |
+| **TOTAL (scored 14 fire)** | **25/70** | **34/70** | — |
+
+### 9.3 honest 결론 — 전 arc V-SPONT 재해석
+
+**(1) §8.2 가 metric-level 로 확정** — §8 의 Dir-I diverse "V-SPONT 5/5" 가 honest metric 으론 **2/5** (−3). probe 1~3 (`tier=11111` / `Tier 1111…` / `[0..44444`) 의 max_run = 21·16·11 ≥ MAX_RUN → digit-cascade 로 정확히 reject. lenient flag 가 garbled 에 만점 준 것이 metric 으로 falsify 됨 (B-EMERGE-5 closed).
+
+**(2) lenient flag 와 honest metric 은 subset 관계가 아니라 orthogonally-wrong** — honest TOTAL (34) > lenient (25). lenient flag 는 keyword-presence 라서 *cascade 없는데 keyword 없는* 출력 (UBM-E6 γ `자극들은 top emotion neusivivis 로 묶인다` — 한국어 semi-prose, collapse 아님) 을 0/5 로 reject 했고, *keyword 있는 cascade* 를 5/5 로 pass 했다. **두 metric 다 틀렸다** — lenient 는 무엇을 재는지조차 honest 하지 않았고, honest metric 은 적어도 "collapse 여부" 라는 명확한 것만 잰다고 정직히 명시한다.
+
+**(3) honest metric 으로도 GOAL 진전은 0** — honest "coherence" 가 0 이 아닌 fire 들 (UBM-E6 β 5/5, Dir-E 5/5 등) 의 통과 출력을 직접 보면 `trructing this stimulus's place in the 인과추론 × clarity mattrix` / `neusivivis` / `Bekknal cell eternal_000` / `다은 다시그들은 다은 다시` — **byte-cascade 는 아니지만 locally-garbled + 의미 공허 OR 학습-corpus 암기 continuation**. honest metric 은 cascade *detector* 이지 correctness *detector* 가 아니므로 (B-EMERGE-7 necessary-not-sufficient, 구조적 carve-out) 이들을 통과시키는 것이 정상이다. **honest 점수 ≠ GOAL 진전** — honest 34/70 은 "13-way 중 byte-cascade 로 완전 붕괴하지 않은 probe 수" 일 뿐, "자발적 correct emergence" 수가 아니다.
+
+**(4) 전 arc V-SPONT 수치 재해석 — §1~§8 의 V-SPONT 비교는 noise 였음 확정** — RESEARCH.md §2 (UBM-E6 "0/5→3/5"), §3 (UBM-E7 "2/5"), §6.1 (12-way arc), §8.1 (Dir-I diverse "5/5") 의 V-SPONT 기반 "GOAL 거리" 비교는 전부 lenient flag 기준 → **probe-artifact**. honest 재채점은 lenient 순위를 보존하지 않는다 (Dir-I diverse 5/5→2/5 로 최하위권 추락; UBM-E6 γ 0/5→3/5 로 상승). 즉 **lenient V-SPONT 로 그려진 13-way 진전 곡선은 honest metric 아래서 무효** — §8.4 가 예고한 "12-way + §8 의 V-SPONT 수치가 전부 노이즈" 가 metric 으로 입증되었다.
+
+**(5) honest 결론** — 13-way arc 전체에서 V-SPONT (자발-발화) 축으로 GOAL("자발적 correct emergence") 에 다가간 fire 는 **honest metric 으론 0** 이다. honest "coherence" 가 잡은 것은 byte-cascade 부재일 뿐이고, cascade 없는 출력마저 garbled OR 암기 continuation 이라 capability 증거가 아니다. §1.1/§2.4/§8.3 의 memorization-saturated 진단이 metric-level 로 14번째 재확인된다. **valuable 산출 = negative 확정**: 지금까지의 V-SPONT 진전은 전부 lenient-probe artifact 였으며, GOAL 측정 도구 자체가 깨져 있었다. honest metric 이 미래 fire 의 GOAL-거리 표준이 되어 lenient 재발을 막는다.
+
+**(6) over-claim 0 (g3)** — honest metric 도 capability proof 가 아니다. cascade-rate 가 낮아도 coherent emergence 를 보장하지 않는다 (necessary, not sufficient — B-EMERGE-7 로 metric 에 encode). 진짜 GOAL emergence claim 은 여전히 held-out generalization 증거가 필요하고, 그것은 $0 재채점으로 얻을 수 없다 (held-out perplexity 는 model forward 필요 → 미래 fire). 본 §9 는 측정 도구를 honest 하게 고친 것이지 GOAL 을 진전시킨 것이 아니다.
+
+### 9.4 closed verdict + honest C3
+
+- closed: B-EMERGE-1..7 7/7 sympy/Boolean PASS (`state/verify_emergence_metric_2026_05_18/verify_emergence_metric.py`). metric 의 deterministic·bounded·conjunction·monotone·distinct-from-lenient·data-separating-threshold·necessary-not-sufficient 성질만 🔵. **per-fire coherence OUTCOME 는 EMPIRICAL** (B-D-NOTE / B-CARVE-E6-NOTE family) — 본 battery 는 *도구가 honest 함* 을 증명하지 *어느 fire 가 emergence 했음* 을 증명하지 않는다.
+- f1/f2/f3 hard-fail safe — max-run / ratio / Boolean conjunction / truth-table, NO σ/τ/φ/J₂ derivation. B-IDENTITY-5 무관 (corpus 미생성, 기존 `gen` 문자열에 연산만).
+- $0 — GPU/fire 0, 기존 eval_result json 의 `gen` 문자열에 deterministic 연산.
+
+## §10 (2026-05-18, success-gated) — 성공 시 `~/core/kosmos` best-position canonicalize
 
 **식별된 gap (user 2026-05-18)**: `.kosmos` anchor manifest 포맷이 UBM-E2 + dancinlab/kosmos sister repo + KOSMOS-FORMAT.md 로 정착됐으나, 실제 fire (UBM-E6/E7/§8) anchor 는 `corpus_*_generator.py` inline — `.kosmos` 우회.
 
-**§9 = back-fit reconcile 아님 (user 판단)**: post-hoc 으로 inline anchor 를 `.kosmos` 로 역-materialize + sha256 byte-equal 검증 = best position 아님 — (a) transcription-risk (b) 끝난 fire 의 `.kosmos` 만들어봤자 결과 불변 = low-value (c) `.kosmos` 가 코드 추종 (SSOT 의미 역전). research churn 중 forward-`.kosmos`-first 강제도 iteration 저해.
+**§10 = back-fit reconcile 아님 (user 판단)**: post-hoc 으로 inline anchor 를 `.kosmos` 로 역-materialize + sha256 byte-equal 검증 = best position 아님 — (a) transcription-risk (b) 끝난 fire 의 `.kosmos` 만들어봤자 결과 불변 = low-value (c) `.kosmos` 가 코드 추종 (SSOT 의미 역전). research churn 중 forward-`.kosmos`-first 강제도 iteration 저해.
 
-**§9 = success-gated `~/core/kosmos` canonicalize** (user directive "일단 성공하고 나면 ~/core/kosmos 상으로는 가장 좋은 위치로 구현"):
+**§10 = success-gated `~/core/kosmos` canonicalize** (user directive "일단 성공하고 나면 ~/core/kosmos 상으로는 가장 좋은 위치로 구현"):
 - research-phase (emergence 미달, §8/§N churn) = generator inline anchor 허용 (rapid iteration). 과거 미성공 fire inline anchor = historical evidence freeze (back-fit X, g3).
 - **success trigger** (GOAL emergence OR 보존가치 result) 시: 그 성공 결과의 anchor set 을 **`~/core/kosmos` 에 `.kosmos`-first best-position 으로 구현** — anchor 를 `.kosmos` 매니페스트로 authoring (코드 역추적 X, `.kosmos` 가 처음부터 source-of-truth) → generator 가 그 `.kosmos` 읽음. byte-equal 검증 불요 (back-fit 아니므로).
 - → `.kosmos` SSOT 가 best position 에서 실현되는 시점 = 성공 후 canonicalize 1회. churn 중엔 강제 X.

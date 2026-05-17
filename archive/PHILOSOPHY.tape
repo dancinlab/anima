@@ -3618,3 +3618,40 @@
   honest_c3 = "g3 — over-claim 0. §7.3 crux = 이 scale 에서 FALSIFIED (anima-physics-anchored diverse 114MB 가 routing-rate 못 올림, JOINT 하락, digit-cascade 잔존). dispatch script auto-verdict 'hypothesis SUPPORTED' 는 단순 1/31≠ 비교라 신뢰 X — 정직 downgrade. V-SPONT 5/5 = probe artifact (lenient coherence_token flag, garbled 출력에 만점) = capability claim 절대 X. §8 의 valuable 산출 = capability 아닌 metric 진단: V-SPONT 가 GOAL metric 으로 부적합 입증 → 후속 선결 = coherent-emergence honest metric. GOAL 미도달 — 13-way negative. memorization-saturated 진단 (§1.1/§2.4) 재확인."
   evidence_path = "state/carving_dirI_diverse_scaleup_2026_05_18/ (result.json + eval_result_diverse.json + train/eval/dispatch logs + *.py; ckpt 1.1GB·corpus 112MB·key-bearing dispatch script gitignore) + HEXAD/CHAT/RESEARCH.md §8 + §9-prereq. orphan 0 (pod GONE)."
   cross_link = "RESEARCH.md §7 (③ gate) §8 (본 fire) §9-prereq (V-SPONT 대체 metric) · [@verdict_carving_dirI_psictl_tensionsup] (Dir-I lever, 본 fire 가 scale-up) · AGENTS.tape [@g_goal] (GOAL 미도달 measured) [@g3] [@g_kosmos_anchor_ssot] (§8 negative → canonicalize 미발동, 정상) · [@f1][@f2][@f3] safe."
+
+@V verdict_emergence_metric_2026_05_18 := "honest coherent-emergence metric (cascade-rate-gated coherence) 설계 + 13-way V-SPONT 재채점 — 전 arc V-SPONT 진전이 lenient-probe artifact 였음 정직 확정 + B-EMERGE-1..7 closed" :: verdict [d=2026-05-18 active]
+  scope = "RESEARCH.md §9 (§9-prereq 본문화) — §8.4 노출 (V-SPONT lenient coherence_token flag 가 garbled byte-cascade 에 5/5) 의 후속 선결. V-SPONT 대체 metric 설계 + 13-way fire (UBM-E6 4-path + UBM-E7 α + Dir-A..I) eval_result json 의 gen 문자열에 $0 재채점 (GPU/fire 0 — 기존 산출물에 deterministic 연산만)."
+  metric <<~EOFM
+    cascade-rate-gated coherence (deterministic, closed-form 검증가능):
+    cascade_rate(g) = max(max-char-run/L, max-digit-run/L, 4gram-rep-rate) ∈ [0,1]
+    max_run(g)      = max(max-char-run, max-digit-run) ∈ ℤ≥0 (절대값 — truncation 무관 cascade catch)
+    honest_coherent(g) = (cascade_rate < τ_cascade=0.30) ∧ (max_run < MAX_RUN=10)
+                       ∧ (len ≥ MIN_LEN=20) ∧ (printable_ratio ≥ τ_print=0.80)
+    threshold honest 근거: τ_cascade 0.30 = "1/4 collapse" 바로 위 round 분수.
+    MAX_RUN 10 = 70-probe max_run 분포가 strict bimodal (≤4 OR ≥11, (5..10) EMPTY)
+      라 자연 빈-구간 cut (B-EMERGE-6 closed, target-tuned 아님).
+    rate AND 절대 run 둘 다인 이유: gen 이 ~40-85B truncate → cascade 도중 잘리면
+      rate 가 threshold 아래로 빠짐 (§8.2 Dir-I diverse probe1 보이는 run 21 rate 0.296).
+  EOFM
+  rescore_table <<~EOFT
+    fire                 V-SPONT(lenient)  coherence(honest)  Δ
+    UBM-E6 α              3/5              2/5               −1
+    UBM-E6 β              3/5              5/5               +2
+    UBM-E6 γ              0/5              3/5               +3
+    UBM-E6 weave          3/5              4/5               +1
+    UBM-E7 α              2/5              3/5               +1
+    Dir-A tension         1/5              1/5                0
+    Dir-B intuitor        0/5              0/5                0
+    Dir-C prime           N/A              N/A    (axis4_v_spont 미실행 — inference-only PRIME eval)
+    Dir-D cde             0/5              2/5               +2
+    Dir-E superpos        4/5              5/5               +1
+    Dir-F abstractcot     0/5              0/5                0
+    Dir-G psi_ctl         1/5              3/5               +2
+    Dir-H tension_sup     0/5              2/5               +2
+    Dir-I diverse (§8)    5/5              2/5               −3
+    TOTAL (scored 14)     25/70            34/70
+  EOFT
+  judgement = "**전 arc V-SPONT 진전이 probe-noise 였음 정직 확정 (g3 negative — valuable)**. (1) §8.2 가 metric-level 로 확정: §8 Dir-I diverse 'V-SPONT 5/5' → honest 2/5 (−3), probe 1~3 digit-cascade (max_run 21·16·11 ≥ 10) reject (B-EMERGE-5 closed). (2) lenient↔honest 는 subset 아닌 orthogonally-wrong: honest TOTAL 34 > lenient 25 — lenient 는 keyword-presence 라 cascade-없는 비-keyword 출력(UBM-E6 γ 한국어 semi-prose)을 0/5 reject 하고 keyword 있는 cascade 를 5/5 pass. 두 metric 다 틀림 — lenient 는 무엇을 재는지조차 honest 하지 않았고 honest 는 'collapse 여부'만 잰다고 정직 명시. (3) honest 통과 출력 직접 검수 시 trructing/neusivivis/Bekknal/다은 다시그들은 — byte-cascade 는 아니나 locally-garbled OR 암기 continuation → honest 점수 ≠ GOAL 진전 (cascade detector 이지 correctness detector 아님, B-EMERGE-7 necessary-not-sufficient). (4) §1~§8 의 V-SPONT 기반 'GOAL 거리' 비교는 전부 lenient flag 기준 → probe-artifact; honest 재채점이 lenient 순위 미보존 (Dir-I diverse 5/5→2/5 추락, UBM-E6 γ 0/5→3/5 상승) = §8.4 예고 입증. (5) honest 결론: 13-way arc 에서 V-SPONT 축으로 GOAL 에 다가간 fire = honest metric 으론 0. memorization-saturated 진단 (§1.1/§2.4/§8.3) metric-level 14번째 재확인. valuable 산출 = negative 확정 + 측정 도구 자체가 깨졌었음. (6) over-claim 0: honest metric 도 capability proof 아님 — cascade 낮아도 coherent emergence 보장 X (necessary not sufficient), 진짜 GOAL claim 은 held-out generalization 필요 (model forward → 미래 fire)."
+  verdict_tier = "closed side = metric 의 deterministic 성질만 🔵 (B-EMERGE-1..7 7/7 sympy/Boolean PASS, state/verify_emergence_metric_2026_05_18/verify_emergence_metric.py): B-EMERGE-1 CASCADE-RATE-BOUNDED (run/L ∈ [0,1] symbolic + ∈[0,1] on stress set) · B-EMERGE-2 HONEST-GATE-CONJUNCTION (4-clause = sympy And, 16-row truth table exhaustive) · B-EMERGE-3 GATE-MONOTONE (worse cascade → cascade_rate↑·max_run↑ ⇒ pass→fail) · B-EMERGE-4 DETERMINISM (3× bit-identical, pure fn no RNG/forward) · B-EMERGE-5 LENIENT-VS-HONEST-DISTINCT (§8.2 Dir-I diverse probe1 lenient=True honest=False max_run 21 — 두 map provably 구별) · B-EMERGE-6 MAX-RUN-IN-EMPTY-BAND (70-probe max_run bimodal, (5..10) EMPTY → MAX_RUN=10 data-separating not target-tuned) · B-EMERGE-7 NECESSARY-NOT-SUFFICIENT (garbled-but-non-cascade 가 gate 통과 ⇒ gate=True 가 coherent 미함의, g3 carve-out 구조적 encode). per-fire coherence OUTCOME 은 EMPIRICAL (B-D-NOTE / B-CARVE-E6-NOTE family) — battery 는 도구가 honest 함을 증명하지 어느 fire 가 emergence 했음을 증명 X. central blue_falsifier.py 변경 0 (sidecar — B-PRIME/B-DIRH/B-DIRI/B-PSICTL 선례)."
+  evidence_path = "state/verify_emergence_metric_2026_05_18/ (emergence_metric.py 재채점기 + verify_emergence_metric.py B-EMERGE 7/7 🔵 + rescore_result.json + verify_result.json) + HEXAD/CHAT/RESEARCH.md §9 (§9-prereq 본문화, 기존 §9 kosmos = §10 재번호). $0 — GPU/fire 0, 기존 eval_result json 의 gen 문자열에 deterministic 연산만."
+  cross_link = "[@verdict_carving_diverse_s8] (§8 — V-SPONT 5/5 lenient artifact 노출, 본 §9 의 트리거) + [@verdict_carving_dirI_psictl_tensionsup] + [@verdict_carving_dirG_psi_ctl] + [@verdict_carving_dirH_tension_sup] + [@verdict_consciousness_carving_e7_alpha_scaleup] (13-way arc — 본 §9 가 그 V-SPONT 수치 전부 재해석) · RESEARCH.md §1.1/§2.4 (memorization-saturated 진단, metric-level 재확인) §8.2/§8.4 (V-SPONT lenient flag 부적합 노출) §9-prereq (선결 작업 명세). AGENTS.tape [@g3] (negative 정직 기록, over-claim 0, honest metric 도 capability proof 아님) [@g6] philosophy append-only [@g_doc_consolidation] (RESEARCH.md 내부 통합, docs/* 신규 0) [@g_hexad_readme_sync] + [@f1][@f2][@f3] hard-fail safe (max-run/ratio/Boolean conjunction/truth-table, NO σ/τ/φ/J₂). B-IDENTITY-5 무관 (corpus 미생성). 단일 작업 · branch 0 (anima main 직접). 후속: honest metric 이 미래 fire GOAL-거리 표준 — held-out perplexity (model forward) 는 미래 fire 에서 추가."
