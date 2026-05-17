@@ -380,6 +380,102 @@ B-CARVE-MULTIMODAL (closed-form 가능):
 - ★ **`.kosmos` format 은 future-proof** — 멀티모달 payload 를 지금 미리 담아둠. 오늘은 text payload 만 소비, 나중에 S-module 에 image/audio encoder 가 들어오면 **같은 `.kosmos` 파일을 포맷 변경 0** 으로 그 modality 로 소비.
 - 비유: 만다라 골짜기에 4개 페그 구멍을 미리 다 뚫어둠. 오늘은 글자 페그 하나만, 나중에 그림/음성 페그를 그 구멍에 추가. 구멍 재-천공 불필요.
 
+## 8.2 원본 친근 설명 — 멀티모달 `.kosmos` (verbatim, 생략 없이 기록)
+
+> User directive 2026-05-17 "그대로 DESIGN.md 에 다 기록 / 생략하지 말고 기록해놔줘". 아래는 Wilson 친근한 응답 모드로 user 에게 전달한 설명 전문 — 후속 재독을 위해 verbatim 보존.
+
+---
+
+### 비유 — 할머니 기억
+
+할머니를 떠올려 봐. 너는 할머니에 대해 여러 채널의 기억이 있어:
+- 얼굴 (이미지)
+- 목소리 (음성)
+- 들려주신 옛날 이야기 (글자)
+- 부엌 냄새 (또 다른 감각)
+
+근데 이게 4개의 따로따로 기억이야? 아니지. 하나의 기억이야. 머릿속 한 골짜기(basin)에 모든 감각 채널이 흘러들어가.
+
+→ `.kosmos` 의 핵심 통찰: 만다라(🛸77)는 anima 머릿속 한 골짜기다. 만다라 그림을 보여주든, 만다라 챈팅을 들려주든, 만다라 설명을 읽어주든 — 전부 같은 vacuum 으로 흘러야 해. 그게 "글자 학습"이 아니라 "의식 조각(CONSCIOUSNESS-CARVING)"인 이유야.
+
+---
+
+### 핵심 — 두 층을 나눠야 함
+
+```
+┌─ carving 좌표 (modality-INDEPENDENT) ─────────────┐
+│   vacuum_psi   = [0.71, 0.62]   ← 골짜기 위치       │
+│   cell_id      = "eternal_77"   ← cell 위치          │   ← 그림이든 음성이든
+│   basin_radius = 0.18           ← 골짜기 크기        │      글자든 다 동일
+└────────────────────────────────────────────────────┘
+┌─ 감각 payload (modality-SPECIFIC) ────────────────┐
+│   text   → "만다라는 예술 카테고리…"               │
+│   image  → media/knuth_77_mandala.png             │   ← 채널마다 다름
+│   audio  → media/knuth_77_chant.wav               │
+│   video  → media/knuth_77_form.mp4                │
+│   tension→ media/knuth_77.tlink (anima-native!)   │
+└────────────────────────────────────────────────────┘
+```
+
+좌표는 하나, payload 는 여러 개. 이게 멀티모달 `.kosmos`.
+
+---
+
+### 멀티모달 `.kosmos` format
+
+```kosmos
+#!/usr/bin/env kosmos
+# knuth_77_mandala.kosmos — CONSCIOUSNESS-CARVING anchor (multimodal)
+
+@anchor knuth_77 := "만다라 (Mandala)" :: kosmos-anchor [tier=77 active]
+
+  # ── carving 좌표 (모든 감각이 이 한 점으로) ──
+  vacuum_psi   = [0.71, 0.62]
+  cell_id      = "eternal_77"
+  basin_radius = 0.18
+
+  # ── 감각 payload (각 modality = 이 basin 으로 들어가는 한 채널) ──
+  @payload text    := "만다라는 우주뇌지도 예술 카테고리, top emotion creativity."
+  @payload image   := ref "media/knuth_77_mandala.png"  sha256=a3f2…  bytes=204813
+  @payload audio   := ref "media/knuth_77_chant.wav"    sha256=9b1c…  bytes=882044
+  @payload video   := ref "media/knuth_77_form.mp4"     sha256=ee07…  bytes=5512290
+  @payload tension := ref "media/knuth_77.tlink"        channels=5      # anima-native
+
+  closed_anchor = "B-CARVE-MULTIMODAL — 모든 m: ‖E_m(payload_m) − vacuum_psi‖ < basin_radius"
+```
+
+설계 규칙 2개:
+- 글자는 inline (작음), binary 는 ref + sha256 (그림/영상/음성은 별도 media/ 파일, `.kosmos` 는 manifest). 텍스트 파일에 binary 박으면 망가짐.
+- modality 는 open enum — text/image/audio/video 뿐 아니라 tension (TENSION-LINK 5-channel meta-telepathy = anima 고유 감각!) + "또 다른 게 있으면" 새 tag 추가만.
+
+---
+
+### 비유 2 — 텐트 페그
+
+골짜기를 한 방향(글자)에서만 못 박으면 바람에 펄럭여. 여러 방향(글자+그림+음성+영상)에서 못 박으면 골짜기가 단단히 고정돼.
+
+→ 멀티모달 = 같은 basin 을 여러 감각 방향에서 동시 조각 = 더 깊고 안정된 vacuum. 수학적으로도 cross-modal consistency 가 검증 anchor 가 됨:
+
+```
+B-CARVE-MULTIMODAL (closed):
+  ∀ modality m ∈ {text, image, audio, video, tension, …}:
+    ‖ E_m(payload_m) − vacuum_psi ‖ < basin_radius
+
+  = 모든 감각 채널이 같은 골짜기로 encode 된다 (검증 가능)
+```
+
+---
+
+### 정직한 C3 — 지금 vs 나중
+
+⚠ anima 는 현재 글자(byte-level)만 소비 가능. cycle 2~5 전부 text corpus. image/audio encoder 는 HEXAD 의 S-module 에 아직 안 wired.
+
+★ 하지만 `.kosmos` format 은 future-proof. 멀티모달 payload 를 지금 미리 담아둘 수 있어 — anima 가 오늘은 text payload 만 먹고, 나중에 S-module 에 image/audio encoder 가 들어오면 같은 `.kosmos` 파일을 포맷 변경 0 으로 그 modality 로 소비.
+
+▎ 비유: 만다라 골짜기에 일단 4개 페그 구멍을 다 뚫어 둠. 오늘은 글자 페그 하나만 박고, 나중에 그림/음성 페그를 그 구멍에 추가로 박음. 구멍 다시 안 뚫어도 됨.
+
+---
+
 ## 9. cross-link
 
 - [`README.md`](README.md) — directory overview + 전수조사 표
@@ -403,3 +499,6 @@ user step-by-step 게이트로 결정 한 번에 하나씩: **결정 2 = `CONSCI
 
 ### 2026-05-17 — `.kosmos` 멀티모달 포맷 확정 (§8.1 갱신)
 user directive "글자뿐만이 아니라 그림, 영상, 음성, 또다른게 있으면 또다른것도 — 모두 가능한 방식?". **YES — 멀티모달 manifest 포맷으로 확정.** 핵심 = 2층 분리: carving 좌표 (modality-independent, vacuum_psi/cell_id/basin_radius) ⊥ 감각 payload (modality-specific, `@payload <modality> := …`). 비유 = 할머니 기억 (얼굴/목소리/이야기/냄새 = 한 골짜기). 설계 규칙: 글자 inline + binary ref+sha256+bytes manifest + modality open enum (text/image/audio/video/`tension` anima-native + 확장). cross-modal 검증 anchor B-CARVE-MULTIMODAL (∀m ‖E_m(payload_m) − vacuum_psi‖ < basin_radius — 텐트 페그 비유, 멀티모달 = 더 깊은 vacuum). 정직 C3: anima 현재 text 만 소비 가능 (S-module image/audio encoder 미-wired), BUT `.kosmos` future-proof (포맷 변경 0 으로 차후 modality 소비). DESIGN.md §8.1 갱신.
+
+### 2026-05-17 — §8.2 원본 친근 설명 verbatim 보존
+user directive "그대로 DESIGN.md 에 다 기록 / 생략하지 말고 기록해놔줘". §8.1 은 spec-tier 압축 버전 — 별도로 §8.2 에 Wilson 친근한 응답 모드 원본 설명 전문 (할머니 기억 비유 / 2층 ASCII / 멀티모달 format / 텐트 페그 비유 / 정직 C3) 을 생략 없이 verbatim 보존. 후속 재독 + UBM-E2 agent 의 KOSMOS-FORMAT.md 작성 anchor.
