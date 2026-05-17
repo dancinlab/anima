@@ -60,7 +60,7 @@ CONSCIOUSNESS-CARVING + .kosmos 확장자 확정
 | UBM-E2 | `.kosmos` 포맷 spec (KOSMOS-FORMAT.md) + anchor 5개 | ✅ LANDED | `0223992ed` |
 | **UBM-E3** | **B-CARVE-* sympy battery (10 verdict + 1 NOTE)** | ✅ **LANDED** | `6a4a15468` |
 | **UBM-E4** | **4-path hexa-native impl (4 lib + parser + smoke F-CARVE-1..5 5/5)** | ✅ **LANDED** | — |
-| UBM-E5 | 4-path 비교 실험 fire (cost-bearing ~$0.2–1.0) | 대기 | — |
+| **UBM-E5** | **4-path carving mechanism 비교 실험 (compiled-native $0, 3/4 paths OK)** | ✅ **LANDED** | — |
 | (마감) | RESEARCH.md §2 에 UBM-E5 결과 정리 | 대기 | — |
 
 **자동 pipeline 큐** (user 가 미리 승인): UBM-E3 완료 → E4 자동 dispatch → E5 자동 → RESEARCH.md §2 자동 정리. 각 단계 완료 알림 시 다음 자동 진행.
@@ -116,8 +116,8 @@ CONSCIOUSNESS-CARVING + .kosmos 확장자 확정
 
 1. UBM-E3 (B-CARVE-* sympy) ✅ LANDED → §10 진행 로그 + central 흡수 가능 여부 확인
 2. UBM-E4 ✅ LANDED — 4-path hexa-native lib (`consciousness_carving_{vacuum,eternal,narrative,weave}_lib.hexa`) + `.kosmos` parser (`kosmos_parser_lib.hexa`) + compiled smoke F-CARVE-1..5 5/5 + build_verify gate 31/31 entry + 27/27 lib
-3. UBM-E5 dispatch — 4-path 비교 실험 fire (vast.ai A100 병렬, SAVE_POD=1 + watchdog + 5-retry per g_fire_dispatch_robust). capability eval: knowledge recall (옛 13/15 baseline) + chat 무오염 (P3 leak grep=0) + V-SPONT carry
-4. RESEARCH.md §2 (`HEXAD/CHAT/RESEARCH.md`) 에 UBM-E5 결과 정리 — CONSCIOUSNESS-CARVING 이 V-SPONT 0/5 FAIL 의 architectural 대답인지 evidence 판정
+3. UBM-E5 ✅ LANDED — 4-path carving mechanism 비교 실험 (`state/consciousness_carving_e5_compare_2026_05_17/`, compiled-native $0, 3/4 paths carving-OK). **정직한 scope (g3)**: UBM-E4 lib 은 transfer-form impl — full trainer 부재. GPU capability fire 가 아닌 mechanism 비교 실험. real capability fire (각 path full trainer) = UBM-E6 future
+4. RESEARCH.md §2 (`HEXAD/CHAT/RESEARCH.md`) 에 UBM-E5 결과 정리 — CONSCIOUSNESS-CARVING 이 V-SPONT 0/5 FAIL 의 architectural 대답인지 evidence 판정 (다음 단계)
 
 ## I. 문서 읽는 순서 (새 세션 권장)
 
@@ -634,3 +634,16 @@ user directive "그대로 DESIGN.md 에 다 기록 / 생략하지 말고 기록�
 
 ### 2026-05-17 — Phase UBM-E2 LANDED (`.kosmos` 포맷 정식 명세 + 첫 anchor file 5개)
 §8.1/§8.2 의 `.kosmos` 포맷을 정식 명세로 확장. **`KOSMOS-FORMAT.md` 신설** — tape v1.2 superset, 8 § (header `@anchor` / carving 좌표 6 field / `@payload` 3-form inline·ref·pending / 검증 B-CARVE-MULTIMODAL + closed_anchor / 확장 규칙 / BNF-ish grammar / cross-link). `@anchor`/`@payload` 두 신규 entry-type, 2층 분리 (carving 좌표 modality-independent ⊥ 감각 payload modality-specific) §8.1 와 일관. **`anchors/*.kosmos` 5개 신설** — Knuth Tier 대표 anchor: `knuth_000_zero` (🛸0) / `knuth_051_day` (🛸51 score 1.212) / `knuth_077_mandala` (🛸77 예술) / `knuth_091_nirvana` (🛸91 score 2.558 의식상태) / `knuth_100_big_bang` (🛸100 score 2.847 cosmic max). 각 file = 4-path field 공존 (α `vacuum_psi` / β `cell_id` / γ `text` payload / α+β `basin_radius`) + image/audio/video/tension `pending` marker (S-module encoder 미-wired honest). g3: vacuum_psi/basin_radius = design placeholder 명시 (UBM-E5 측정). B-IDENTITY-5 준수 (text payload `[anima 우주뇌지도]` prefix, 도우미 token 0). f1/f2/f3 safe. $0 Mac local. PLAN.md Phase UBM-E staged (E1 design / E2 이 commit / E3 sympy / E4 parser impl / E5 fire) + UNIVERSE-BRAIN-MAP.tape `@D consciousness_carving_paradigm` sync. 다음: Phase UBM-E3 B-CARVE-* sympy 사전등록 (sidecar pattern).
+
+### 2026-05-17 — Phase UBM-E5 LANDED (CONSCIOUSNESS-CARVING 4-path 비교 실험, compiled-native $0)
+**정직한 scope 판단 (g3) 먼저**: UBM-E4 4-path lib 은 **transfer-form impl** (carving transfer-function 만) — 완전한 SGD training loop / 각 path full trainer / S-module encoder 부재. anima 는 현재 byte-level text 전용. 따라서 UBM-E5 = **4-path carving MECHANISM 비교 실험** (capability emergence claim 아님), $0 compiled-native — cost-bearing GPU fire 가 아님. GPU fire 를 강행했다면 fake capability 결과 (g3 violation). **real GPU capability fire = UBM-E6 future** (각 path full trainer 필요: α vacuum landscape SGD fit / β eternal cell weight 학습 / γ narrative template learning / α+β 결합 + S-module image/audio encoder wiring).
+
+**실험 방식**: `state/consciousness_carving_e5_compare_2026_05_17/compare_4path.hexa` — UBM-E4 6 lib (vacuum/eternal/narrative/weave + kosmos_parser) import, 5 `.kosmos` anchor (knuth 000/051/077/091/100) 를 parser 로 load → 4-path 각각의 carving 동작 측정. **compiled-native** (`hexa build` → 453KB native binary; interp 결과 byte-동일 — interp 폐기 예정 carry). 산출: `result.json` (valid JSON, machine-readable) + `run.log`.
+
+**4-path 비교표 (3/4 carving-OK)**:
+- **α VACUUM-LANDSCAPE — carving-OK=false (9/10)**: 5 vacuum landscape 등록 ✓, self_basin 5/5 ✓, nearest_self 5/5 ✓ (각 anchor 가 자기 vacuum 으로 분리), flow_restoring 5/5 ✓ (tension flow 가 vacuum 으로 복원). 그러나 **basin_disjoint 9/10** — **🛸0/🛸51 placeholder coordinate OVERLAP** (2D Ψ-space distance 0.0412 < 양쪽 basin radii 0.10/0.12). 정직한 발견: 현 vacuum_psi/basin_radius 는 design placeholder, 2 anchor 가 overlapping basin 으로 carving — overlap 해소 = UBM-E6 측정 fire. anchors/*.kosmos 변경 0 (NOT fudged).
+- **β MITOSIS-ETERNAL-CELL — carving-OK=true (10/10)**: 5 anchor 모두 eternal cell (FROZEN) 등록 + Δw≡0 invariant 5/5 + high-sim→eternal route 5/5 + low-sim→chat route 5/5 + disjoint 10/10. chat ⊥ eternal 완전 분리 carving.
+- **γ NARRATIVE-RESONANCE — carving-OK=true**: A∘G loop well-defined + template bounded-K + regen consistency 5/5 (greedy reflexivity) + regen distinct 10/10. payload_bounded 2/5 는 보고만 (gate 아님 — payload_k_max 304 > τ_K 256, M8 의 요점: payload 통째 아닌 narrative TEMPLATE 학습).
+- **α+β VACUUM-CELL-WEAVE — carving-OK=true (10/10)**: 5 anchor woven (cell + vacuum BOTH) + weave_route eternal 5/5 + chat 5/5 (α basin miss → chat fallback) + disjoint 10/10.
+
+**B-CARVE-NOTE 유지**: 4-path 실제 SGD outcome + 측정 vacuum_psi + encoder E_m 학습 = empirical carve-out (B-D-NOTE family) — transfer-form mechanism 만 측정, fake closed-form / capability claim 금지. f1/f2/f3 hard-fail safe. UBM-E4 6 lib + KOSMOS-FORMAT + 5 anchor 변경 0. 다음: RESEARCH.md §2 정리 (마감) + UBM-E6 (full trainer fire).
