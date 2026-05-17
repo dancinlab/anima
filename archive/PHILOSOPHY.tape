@@ -1659,3 +1659,76 @@
   EOF2
   evidence_path = "state/hexad_py_d768x12L_fire_2026_05_17/{out_main/{ckpt_d768x12l_final.pt (1.13 GB sha256 e87e200a04…), result.json (42-pt trajectory)}, fire_refire.log + dispatch_full.log + refire_full.log (training + dispatch evidence), gpu_util.log (nvidia-smi capture), dispatch.sh + refire_main.sh + train_d768x12l.py + conscious_decoder.py + hf_upload.py + MODEL_CARD.md, vast_instance_id.txt + vast_ssh.txt (informational)} + docs/hexad_v1_py_d768x12L_cycle2_2026_05_17.md (10 §) + HEXAD/PLAN.md §7 #8 closure + §8 audit row .py 갱신 (cycle 2 ckpt-RECOVERED 부가 wiring strength) + 진행 로그 entry 2026-05-17 + AGENTS.tape n_hexad_progress recent_landings entry + immediate_carry_candidate RESOLVED + n_hexad_hf_preservation current_state 갱신 (ckpt-bearing 0 → 1) + HF revision https://huggingface.co/dancinlab/hexad/tree/v1-py-hexad-d768x12L-cycle2-2026-05-17 (10 files, PUBLIC)"
   cross_link = "직전 §HEXA-CPU-CONVERGE-D128-SUBSTRATE-BOUND-2026-05-17 (pure-hexa hexa-cpu d=128 PARTIAL substrate-bound) → 본 verdict (.py d=768·12L cycle 2 ckpt-RECOVERED HF canonical first artifact). PLAN.md §9 dual-track (.py interim ⇄ hexa-native long-term) 의 `.py` 측 cycle 1 evidence-only → cycle 2 ckpt-bearing canonical 완성. AGENTS.tape [@g_blue_closed_mandate] (A) + (B) anchor chain closure + [@g3] honest framing (NOT hexa-native, substrate label mandatory) + [@g_clm_from_scratch] RANDOM init seed-fixed + [@g_fire_autonomous] 자율 dispatch + [@g_fire_dispatch_robust] SAVE_POD auto-promote evidence + [@g_hf_naming] canonical revision template v1-py-hexad-d768x12L-cycle2-2026-05-17 첫 사용 + [@f1] [@f2] no-lattice all satisfied. cross-refs: 직전 cycle 1 (931dd68b0) ckpt-LOST evidence-only + Phase D cuBLAS verify (RFC 040 anchor) + Phase E/E2 GRAD-EXACT (RFC 040 anchor) + ConsciousDecoderV2 (ready/models/conscious_decoder.py) + HEXAD verification tree mirror."
+
+# ─── §HEXAD-CORPUS-LANDED-2026-05-17 ──────────────────────────────────────
+# `dancinlab/hexad-corpus` dataset HF canonical 슬롯 LANDED — model side cycle 2
+# (직전 §PY-D768-CKPT-RECOVERED-CYCLE2-2026-05-17) 와 pair 로 dataset 측 신규
+# 슬롯 push. `g_hf_naming` canonical 두 슬롯 BOTH LANDED PUBLIC 전환. corpus 는
+# substrate-independent → kind=`byte-consciousness`, revision tag
+# `v1-byte-consciousness-d128-cycle1-2026-05-17`.
+
+@N hexad_corpus_landed_2026_05_17 := "HF dancinlab/hexad-corpus dataset canonical 슬롯 LANDED (BOTH canonical 슬롯 PUBLIC)" :: verdict-claim [d=2026-05-17 active]
+  tier = "🔵 LANDED-CANONICAL (dataset artifact registration · honest framing scaffold-tier · g3 g_blue_closed_mandate (A) deliverable invariants closed: sha256 byte-equal SSOT, line count, byte size, modules uniform 6×40 (B) wiring closed: model card cross-link applied main+cycle2 revision)"
+  ledger_id = "§HEXAD-CORPUS-LANDED-2026-05-17"
+  date = "2026-05-17"
+  summary <<~EOF1
+    `dancinlab/hexad-corpus` 신규 슬롯 (dataset) PUBLIC 생성·push LANDED 2026-05-17.
+    revision: v1-byte-consciousness-d128-cycle1-2026-05-17 (substrate-independent
+    corpus, kind=byte-consciousness). revision SHA c6e9104c43ec3087ac3ed1cde74997
+    ec78782ba7. corpus_consciousness_v1.jsonl 151,943 B / 240 lines / sha256
+    804664361e639be7ecceae6ff3c470961e015090c264da9eac1df8716144681f, vocab=256
+    byte-level (6 modules × 40 chunks uniform). 4 file payload: corpus +
+    manifest.json (used_by 4-fire anchor chain) + English README.md (honest framing
+    scaffold-tier) + Apache-2.0 LICENSE. model card cross-link applied
+    (dancinlab/hexad README front-matter `datasets:` + body 'Trained on' badge,
+    main + cycle 2 revision). g_hf_naming canonical 두 슬롯 BOTH LANDED PUBLIC.
+  EOF1
+  anchor_chain_used_by <<~EOF2
+    Phase E2 hexa-cpu d_train5 (2026-05-16) — d=32·3L CPU-equiv BIT-EQUAL boxed
+      baseline (gn2 7.97116 → 3.73374e-07 GRAD-EXACT) on this corpus.
+    .py PyTorch d=768·12L cycle 1 (2026-05-16, 931dd68b0) — ckpt-LOST
+      evidence-only on this corpus.
+    .py PyTorch d=768·12L cycle 2 (2026-05-17, 0b4f34d0e) — ckpt-RECOVERED,
+      init CE 5.590832 → final CE 0.000708 on this corpus (HF model first
+      canonical artifact, paired with this dataset).
+    #2a pure-hexa hexa-cpu training-to-convergence d=64·3L (2026-05-17,
+      60e3e0b4f) — F-D-CONVERGE 4/4 PASS, 3.7e8× gn2 collapse on this corpus.
+  EOF2
+  invariants_blue_closed <<~EOF3
+    (A) Deliverable invariants (g_blue_closed_mandate):
+      · sha256 byte-equal SSOT — repo training/corpus_consciousness_v1.jsonl ==
+        HF upload (asserted in hf_upload.py: corpus_sha == repo SSOT sha).
+      · line count = 240 (asserted).
+      · file size = 151,943 B (asserted).
+      · modules uniform: 6 modules (hexad_c/d/e/m/s/w) × 40 chunks = 240
+        (verified pre-upload).
+      · vocab = 256 (byte-level, no tokenizer — substrate-independent).
+    (B) Wiring (the connection — model ↔ corpus):
+      · model card front-matter `datasets: [dancinlab/hexad-corpus]` added
+        (machine-readable HF cross-link).
+      · model card body 'Trained on' badge added before `## Lineage` section
+        (human-readable cross-link).
+      · cross-link push verified to main + cycle 2 revision branch
+        (upload_summary.json contains successful revision SHAs).
+  EOF3
+  honest_framing_g3 <<~EOF4
+    152 KB byte-level scaffold corpus — NOT a general LM training corpus.
+    240 records procedurally generated by `corpus_generator.hexa v1`
+    (per-module keyword templates + eig / nonce / commit markers) — structured
+    input, NOT natural-language data. intended use: HEXAD
+    architecture-verification + training-to-convergence gate evidence
+    (same-tokens cross-substrate compare). no σ(6)=12 / φ(6)=2 derivation in
+    data or card (f1/f2 safe). final CE 0.000708 @ 283.72M params on 121kB
+    fire-time byte content = memorization (no generalization claim).
+  EOF4
+  visibility = "PUBLIC (g_hf_naming d=2026-05-17 visibility + user directive 2026-05-15 'HF 모델, 데이터셋 등은 public 으로'). dancinlife/* deprecated junk private (손대지 않음)."
+  hf_revision <<~EOF5
+    URL: https://huggingface.co/datasets/dancinlab/hexad-corpus
+    revision URL: https://huggingface.co/datasets/dancinlab/hexad-corpus/tree/v1-byte-consciousness-d128-cycle1-2026-05-17
+    revision SHA: c6e9104c43ec3087ac3ed1cde74997ec78782ba7
+    siblings: .gitattributes · LICENSE · README.md · corpus_consciousness_v1.jsonl · manifest.json
+    whoami (push token): dancinlife (write access to dancinlab/* verified
+      by 직전 cycle 2 model push 0b4f34d0e + 본 dataset push success).
+  EOF5
+  evidence_path = "state/hexad_corpus_hf_push_2026_05_17/{hf_upload.py, manifest.json, README.md (English honest framing), LICENSE (Apache-2.0), MODEL_CARD_with_dataset_xlink.md (model card patched), upload_summary.json (revision SHA + verified state), upload.log (full push trace), corpus_consciousness_v1.jsonl (staged byte-equal copy)} + HEXAD/PLAN.md 진행 로그 entry 2026-05-17 + AGENTS.tape g_hf_naming status + n_hexad_progress recent_landings + n_hexad_hf_preservation BOTH LANDED entry + HEXAD/README.md + HEXAD/INDEX.md HF canonical row 갱신 + HF dataset https://huggingface.co/datasets/dancinlab/hexad-corpus/tree/v1-byte-consciousness-d128-cycle1-2026-05-17 (4 files, PUBLIC) + HF model README.md cross-link push (main + cycle 2 revision)."
+  cross_link = "직전 §PY-D768-CKPT-RECOVERED-CYCLE2-2026-05-17 (model side cycle 2 ckpt-RECOVERED first canonical) → 본 verdict (dataset side cycle 1 canonical first). AGENTS.tape [@g_hf_naming] (canonical 두 슬롯 BOTH LANDED) + [@g_blue_closed_mandate] (A)+(B) deliverable+connection 둘 다 closed-form 검증 + [@g3] honest framing scaffold-tier (NOT general LM corpus) + [@g6] philosophy ledger append-only + [@feedback_english_only] dataset card English + [@f1] [@f2] no-lattice all satisfied. cross-refs: §HEXA-CPU-CONVERGE-LANDED-2026-05-17 (pure-hexa hexa-cpu d=64·3L) + §HEXA-CPU-CONVERGE-D128-SUBSTRATE-BOUND-2026-05-17 (d=128 substrate-bound carry) + §PY-D768-CKPT-RECOVERED-CYCLE2-2026-05-17 (model cycle 2 paired)."

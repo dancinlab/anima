@@ -1,0 +1,66 @@
+/Users/ghost/Library/Python/3.9/lib/python/site-packages/huggingface_hub/hf_api.py:9662: UserWarning: Warnings while validating metadata in README.md:
+- empty or missing yaml metadata in repo card
+whoami: dancinlife
+
+[1/6] ensure dataset repo dancinlab/hexad-corpus (PUBLIC)...
+  not found -> create_repo PUBLIC ...
+  created: private=False, id=dancinlab/hexad-corpus
+
+[2/6] create branch v1-byte-consciousness-d128-cycle1-2026-05-17 on dataset repo...
+  branch ready
+
+[3/6] stage 4 files...
+  corpus: 151,943 B  lines=240  sha256=804664361e639be7ecceae6ff3c470961e015090c264da9eac1df8716144681f
+  staged: corpus_consciousness_v1.jsonl (151,943 B) -> corpus_consciousness_v1.jsonl
+  staged: manifest.json (3,503 B) -> manifest.json
+  staged: README.md (5,418 B) -> README.md
+  staged: LICENSE (10,655 B) -> LICENSE
+
+[4/6] upload 4 files to dataset repo (main + tagged revision)...
+  --> revision: main
+      OK: corpus_consciousness_v1.jsonl
+      OK: manifest.json
+      OK: README.md
+      OK: LICENSE
+  --> revision: v1-byte-consciousness-d128-cycle1-2026-05-17
+      OK: corpus_consciousness_v1.jsonl
+      OK: manifest.json
+      OK: README.md
+      OK: LICENSE
+
+[5/6] update model card on dancinlab/hexad (add dataset cross-link)...
+  -> added 'datasets: [dancinlab/hexad-corpus]' to front matter
+  -> inserted 'Trained on' cross-link before ## Lineage
+  uploading model card README.md (cross-link) to dancinlab/hexad ...
+      OK: README.md on revision main
+      OK: README.md on revision v1-py-hexad-d768x12L-cycle2-2026-05-17
+
+[6/6] verify dataset revision...
+  branches: ['v1-byte-consciousness-d128-cycle1-2026-05-17', 'main']
+  tags: []
+  revision sha @ v1-byte-consciousness-d128-cycle1-2026-05-17: c6e9104c43ec3087ac3ed1cde74997ec78782ba7
+  private: False
+  siblings: ['.gitattributes', 'LICENSE', 'README.md', 'corpus_consciousness_v1.jsonl', 'manifest.json']
+
+=== SUMMARY ===
+{
+  "dataset_repo": "dancinlab/hexad-corpus",
+  "dataset_url": "https://huggingface.co/datasets/dancinlab/hexad-corpus",
+  "revision": "v1-byte-consciousness-d128-cycle1-2026-05-17",
+  "revision_url": "https://huggingface.co/datasets/dancinlab/hexad-corpus/tree/v1-byte-consciousness-d128-cycle1-2026-05-17",
+  "revision_sha": "c6e9104c43ec3087ac3ed1cde74997ec78782ba7",
+  "visibility": "PUBLIC",
+  "corpus_sha256": "804664361e639be7ecceae6ff3c470961e015090c264da9eac1df8716144681f",
+  "corpus_bytes": 151943,
+  "corpus_lines": 240,
+  "files_uploaded": [
+    "corpus_consciousness_v1.jsonl",
+    "manifest.json",
+    "README.md",
+    "LICENSE"
+  ],
+  "model_repo_xlink": "dancinlab/hexad",
+  "model_revision_xlink": "v1-py-hexad-d768x12L-cycle2-2026-05-17",
+  "whoami": "dancinlife"
+}
+DONE.

@@ -1692,3 +1692,48 @@ user directive 2026-05-17 "closed 아닌것들 closed 까지 go". 27-blue-batter
 **build_verify 무회귀**: `HEXAD/build_verify.sh` = **20/20 entrypoint + 14/14 lib PASS** 유지 (PyTorch dispatch artifact 추가 무영향 — state/ 산출물 only).
 
 **HEXAD `.py` ckpt-bearing closure**: cycle 1 ckpt-LOST → cycle 2 ckpt-RECOVERED HF canonical 등재. 다음 anima-자율 closure 영역 = (a) safetensors 변환 follow-up (별개 cycle, RFC-무관), (b) escalation fire (in-flight `pure-hexa hexa-cpu` d=128 carry from 2026-05-17 위 entry), (c) flame Phase 3 가 (.py 의존 종료) 시 native ckpt-bearing replacement — hexa-lang side gating.
+
+### 2026-05-17 — HF `dancinlab/hexad-corpus` dataset canonical 슬롯 LANDED (BOTH canonical 슬롯 PUBLIC)
+
+**상태**: model side cycle 2 (위 entry) 와 pair 로 dataset side 신규 슬롯 push. `g_hf_naming` canonical 두 슬롯 (`dancinlab/hexad` model + `dancinlab/hexad-corpus` dataset) BOTH LANDED PUBLIC 상태로 전환.
+
+**구성**: `state/hexad_corpus_hf_push_2026_05_17/{hf_upload.py, manifest.json, README.md (English), LICENSE (Apache-2.0), MODEL_CARD_with_dataset_xlink.md (model card patched), upload_summary.json, upload.log}`.
+
+**HF revision**:
+- 리포: `dancinlab/hexad-corpus` (dataset, **PUBLIC**, 신규 생성 2026-05-17)
+- revision: `v1-byte-consciousness-d128-cycle1-2026-05-17` (substrate-independent corpus → kind=`byte-consciousness`)
+- revision SHA: `c6e9104c43ec3087ac3ed1cde74997ec78782ba7`
+- siblings: `.gitattributes` · `LICENSE` · `README.md` · `corpus_consciousness_v1.jsonl` · `manifest.json`
+
+**Corpus identity (SSOT = anima repo `training/corpus_consciousness_v1.jsonl`)**:
+- size: **151,943 B** (240 lines)
+- sha256: `804664361e639be7ecceae6ff3c470961e015090c264da9eac1df8716144681f`
+- vocab: 256 (byte-level, no tokenizer)
+- 모듈 분포: 6 modules × 40 chunks uniform (`hexad_c`/`hexad_d`/`hexad_e`/`hexad_m`/`hexad_s`/`hexad_w`)
+- fire-time 사용량: 120,673 B (text + desc concatenation 합)
+
+**Anchor chain (used_by 4 fires)**:
+1. Phase E2 hexa-cpu d_train5 (2026-05-16) — d=32·3L CPU-equiv BIT-EQUAL boxed baseline
+2. `.py` PyTorch d=768·12L cycle 1 (2026-05-16, `931dd68b0`) — ckpt-LOST evidence-only
+3. `.py` PyTorch d=768·12L cycle 2 (2026-05-17, `0b4f34d0e`) — ckpt-RECOVERED, HF model first canonical artifact
+4. #2a pure-hexa hexa-cpu training-to-convergence d=64·3L (2026-05-17, `60e3e0b4f`) — F-D-CONVERGE 4/4 PASS 3.7e8× gn2 collapse
+
+**Model card cross-link 적용** (`dancinlab/hexad` README.md, main + cycle 2 revision):
+- front-matter: `datasets:` line 추가 (`- dancinlab/hexad-corpus`)
+- body: `## Lineage` 위에 `Trained on: dancinlab/hexad-corpus revision …` 'Trained on' badge
+
+**Honest framing (g3, dataset card)**:
+- 152 KB byte-level scaffold corpus — NOT general LM training corpus
+- 240 records procedurally generated (`corpus_generator.hexa v1` per-module keyword templates) — structured input, NOT natural-language data
+- intended use: HEXAD architecture-verification + training-to-convergence gate evidence (same-tokens cross-substrate compare)
+- no σ(6)=12 / φ(6)=2 derivation in data or card (f1/f2 safe)
+- final CE 0.000708 @ 283.72M params on 121kB corpus = memorization (no generalization claim)
+- license: Apache-2.0 (same as `dancinlab/hexad`)
+
+**f1/f2 safe**: dataset 의 lattice numerology 0. corpus content 의 `phi_family` 라벨은 corpus family 명 (Hexad), NOT external-entity derivation.
+
+**Visibility**: PUBLIC (`g_hf_naming` d=2026-05-17 visibility + user directive 2026-05-15 'HF 모델, 데이터셋 등은 public 으로').
+
+**HEXAD canonical artifact state 전환**: model 1 + dataset 1 (BOTH PUBLIC, 2026-05-17) — n_hexad_hf_preservation `current_state` 갱신 (ckpt-bearing 1 + canonical dataset 1).
+
+**다음 carry**: (a) safetensors model 변환 (별개 cycle), (b) pure-hexa hexa-cpu d=128+ escalation in-flight (carry from 2026-05-17 §HEXA-CPU-CONVERGE-LANDED), (c) flame Phase 3 native ckpt-bearing replacement (hexa-lang side gating).
