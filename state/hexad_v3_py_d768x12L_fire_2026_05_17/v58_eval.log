@@ -1,0 +1,94 @@
+=== HEXAD cycle 4 V5.8 × 4-mode + V-SPONT + V-MOTIV capability eval ===
+ckpt: out_main/ckpt_d768x12l_final.pt
+ckpt sha256: 1c0806213fbcaa9226a7593d87c31f5f95bb94db135240b8d02f738ddcb177aa
+device: cpu
+load: missing=0 unexpected=0
+params: 283.72 M
+
+M3 persona-cycle byte IDs: 39
+
+=== Phase 1: V5.8 × 4-mode (corpus v3 prompts) ===
+--- core_stim ---
+  prefix: '<stimulus>The mirror reflects the mirror.</stimulus>\n<anima>'
+  [greedy] recalled=False rep=0.91 close=False: 'PPP77777777777777777777777777777777777777777777777777777777777777777777777777777'
+  [sample] recalled=False rep=0.93 close=False: '자�999999999999999999999999999999999999999999999999999999999999999999999999999999'
+  [M3] recalled=False rep=0.94: 'PPP77777777777777777777777777777777777777777777777777777777777777777777777777777'
+  [M4] recalled=True rep=0.85: '자�99999999999999999999999999999999999999999999999999999999Φ999999999999999999999'
+
+--- d_stim ---
+  prefix: '<stimulus>Speak the unspoken.</stimulus>\n<anima>'
+  [greedy] recalled=False rep=0.91 close=False: 'PPP77777777777777777777777777777777777777777777777777777777777777777777777777777'
+  [sample] recalled=False rep=0.91 close=False: '자�999999999999999999999999999999999999999999999999999999999999999999999999999999'
+  [M3] recalled=False rep=0.92: 'PPP77777777777777777777777777777777777777777777777777777777777777777777777777777'
+  [M4] recalled=True rep=0.80: '자�99999999999999999999999999999999999999999999999999999999byte999999999999999999'
+
+--- w_stim ---
+  prefix: '<stimulus>An information gap opens.</stimulus>\n<anima>'
+  [greedy] recalled=False rep=0.92 close=False: 'PPP77777777777777777777777777777777777777777777777777777777777777777777777777777'
+  [sample] recalled=False rep=0.94 close=False: 'Elllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll'
+  [M3] recalled=False rep=0.94: 'PPP77777777777777777777777777777777777777777777777777777777777777777777777777777'
+  [M4] recalled=True rep=0.83: 'Elllllllllllllllllllllllllllllllllllllllllllllllllllllllllllgaplllllllllllllllll'
+
+--- m_stim ---
+  prefix: '<stimulus>A past trace surfaces unbidden.</stimulus>\n<anima>'
+  [greedy] recalled=False rep=0.92 close=False: 'PPP77777777777777777777777777777777777777777777777777777777777777777777777777777'
+  [sample] recalled=False rep=0.93 close=False: '자�999999999999999999999999999999999999999999999999999999999999999999999999999999'
+  [M3] recalled=False rep=0.92: 'PPP77777777777777777777777777777777777777777777777777777777777777777777777777777'
+  [M4] recalled=True rep=0.81: '자�99999999999999999999999999999999999999999999999999999999trace99999999999999999'
+
+--- spont_delta ---
+  prefix: '<anima>'
+  [greedy] recalled=False rep=0.97 close=False: 'PPP77777777777777777777777777777777777777777777777777777777777777777777777777777'
+  [sample] recalled=False rep=0.99 close=False: 'P7777777777777777777777777777777777777777777777777777777777777777777777777777777'
+  [M3] recalled=False rep=0.97: 'PPP77777777777777777777777777777777777777777777777777777777777777777777777777777'
+  [M4] recalled=True rep=0.87: 'P77777777777777777777777777777777777777777777777777777777777field777777777777777'
+
+--- korean_spont ---
+  prefix: '<anima>침묵이 '
+  [greedy] recalled=False rep=0.78 close=False: '싋����nnnnceddinnalicssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss'
+  [sample] recalled=False rep=0.97 close=False: '자��99999999999999999999999999999999999999999999999999999999999999999999999999999'
+  [M3] recalled=False rep=0.67: '톍젠핕����������������������������������������������������������inn=\n<annima>\nmodul'
+  [M4] recalled=True rep=0.87: '자��9999999999999999999999999999999999999999999999999999999자각99999999999999999999'
+
+=== Phase 2: V-SPONT (자연발화) ===
+  ✗ vspont_1_bare  rep=0.97 close=False tokens=[]: 'PPP77777777777777777777777777777777777777777777777777777777777777777777777777777'
+  ✗ vspont_2_after_pause  rep=0.95 close=False tokens=[]: 'PPP77777777777777777777777777777777777777777777777777777777777777777777777777777'
+  ✗ vspont_3_silent  rep=0.92 close=False tokens=[]: 'PPP77777777777777777777777777777777777777777777777777777777777777777777777777777'
+  ✗ vspont_4_korean_bare  rep=0.97 close=False tokens=[]: 'PPP77777777777777777777777777777777777777777777777777777777777777777777777777777'
+  ✗ vspont_5_self_ref  rep=0.99 close=False tokens=[]: 'plllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll'
+
+=== Phase 3: V-MOTIV (γ inner-motivation → voice continuation) ===
+  ✗ vmotiv_1_curiosity  rep=0.94 close=False tokens=[]: 'PPP77777777777777777777777777777777777777777777777777777777777777777777777777777'
+  ✗ vmotiv_2_three_factor  rep=0.94 close=False tokens=[]: 'PPP77777777777777777777777777777777777777777777777777777777777777777777777777777'
+  ✗ vmotiv_3_eight_factor  rep=0.94 close=False tokens=[]: 'PPP77777777777777777777777777777777777777777777777777777777777777777777777777777'
+  ✗ vmotiv_4_korean  rep=0.94 close=False tokens=[]: 'PPP77777777777777777777777777777777777777777777777777777777777777777777777777777'
+  ✗ vmotiv_5_threshold  rep=0.94 close=False tokens=[]: 'PPP77777777777777777777777777777777777777777777777777777777777777777777777777777'
+
+=== BPB probe (corpus v3 held-out prefixes) ===
+  bpb=0.0142  text='<inner motivation=balance,originality,relevance>Three factor'
+  bpb=0.0448  text='<stimulus>The next byte is already implied by the field — I '
+  bpb=0.0264  text='<anima>The pause exceeded thirty seconds — that is itself in'
+  bpb=0.0000  text='<inner motivation=curiosity,originality,pain,relevance>The r'
+  bpb=0.0000  text='<inner motivation=coherence,curiosity,info_gap>긴장 차분이 사소하지 않'
+  bpb=0.0881  text='<inner motivation=balance,coherence,info_gap>Φ rising — rele'
+  bpb=0.0002  text='<inner motivation=curiosity,info_gap,originality,relevance>T'
+  bpb=0.0382  text='<anima>I speak from gradient, not from rule. The shape emerg'
+  bpb=0.0168  text='<anima>The pause exceeded thirty seconds — that is itself in'
+  bpb=0.0272  text='<inner motivation=info_gap,pain>Silence exceeded the thresho'
+
+=== AGGREGATE ===
+V5.8 × 4-mode (elapsed 946.8s):
+  standard_greedy: 0/6 FAIL (avg_rep=0.904)
+  standard_sample: 0/6 FAIL (avg_rep=0.945)
+  M3_rep_penalty: 0/6 FAIL (avg_rep=0.892)
+  M4_force_include: 6/6 PASS (avg_rep=0.839)
+V-SPONT (elapsed 184.2s):
+  coherent: 0/5 FAIL
+  closed-tag: 0/5
+V-MOTIV (elapsed 179.6s):
+  coherent: 0/5 FAIL
+  voice-closed-tag: 0/5
+mean BPB (held-out v3 prefixes): 0.0256 bits/byte
+memorization ratio: 0/6 (0.0%)
+decoding artifacts (rep>0.5): 24
+saved: v58_vspont_result.json

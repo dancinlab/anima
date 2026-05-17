@@ -2883,3 +2883,140 @@
   EOFC3
   evidence_path = "HEXAD/CHAT/{spont_tension_bridge_lib.hexa 75 LoC NEW + spont_tension_smoke.hexa 115 LoC NEW} + HEXAD/CHAT/SPONTANEOUS.tape § tension_train_integration + § thinker_tension_interface 신설 + § Log Phase TT-C entry append + state/verify_hexad_blue_2026_05_15/{blue_falsifier.py :: btt_spont() ~165 LoC NEW + SPONT_TENSION_CONSTANTS dict + main() TT_SPONT counter/verdict/print loop 통합 + blue_falsifier_result.json 102/102 🔵 B-TT-SPONT-1..5 PASS + B-TT-SPONT-NOTE not counted} + HEXAD/TENSION-TRAIN/PLAN.md ## 진행 로그 TT-C entry append + HEXAD/TENSION-TRAIN/TENSION-TRAIN.tape @D spont_integration bridge_impl + closed_anchor 보강 + Log 2026-05-17 TT-C entry append + HEXAD/README.md battery 97→102 + dedicated TT-C bullet 추가 + HEXAD/build_verify.sh ENTRYPOINTS += spont_tension_smoke + LIBS += spont_tension_bridge_lib."
   cross_link = "직전 §B-TT-1..5-LANDED-2026-05-17 (TT-A3 spine sympy battery 92→97 wrap source). HEXAD/TENSION-TRAIN/{README.md §3 자연발화 직결 가능성, PLAN.md Phase TT-C, TENSION-TRAIN.tape @D spont_integration}. HEXAD/CHAT/{SPONTANEOUS.tape § tension_train_integration sibling SSOT, thinker_talker_lib.hexa thinker_step → motivation_score caller-side composition path, spontaneous_lib.hexa motivation_score formula source, anima_chat_v2_lib.hexa Engine A/G dual emission carry}. AGENTS.tape [@g3] verification-anchor-real-limit + [@g_blue_closed_mandate] (산출물 + 연결부위 둘 다 🔵 — connection_emphasis 직접 적용: SPONTANEOUS 측 fn ↔ TENSION-TRAIN 측 fn 의 transfer-fn 자체 closed) + [@g2] lattice-as-tool internal arch carve-out + [@f1] [@f2] hard-fail safe (Boolean + affine + sympy ∂, NO lattice) + [@g6] philosophy append-only + [@g_doc_consolidation] (HEXAD/* SSOT 통합, docs/* 신규 0) + [@g_arch_vs_log_split]. external: Inner Thoughts arxiv 2501.00383 (8-factor source) + SIA arxiv 2605.13360 (thinker+talker thread) + AIF EFE arxiv 2508.05619 (intrinsic motivation reward-free, tension-train architectural 동형). 후속 carry: thinker_talker_lib ↔ tension_link_step actual wire (caller stitching, daemon mode 통합) = future cycle. Phase TT-D cost-bearing fire (vast.ai/runpod pure-hexa tension-driven training with bridge enabled, V-SPONT/V-MOTIV emergence 재시도) = 잔여 PLAN.md §1 staged plan."
+
+
+# ─── §HEXAD-V4-CYCLE5-TENSION-TRAIN-LANDED-2026-05-17 ────────────────────────
+
+@D §HEXAD-V4-CYCLE5-TENSION-TRAIN-LANDED-2026-05-17 := "Phase D cycle 5 = Phase TT-D — DD155 Step+Tension hybrid LR overlay ckpt-bearing fire + V-TT NEW eval + B-CORPUS-V4 + B-FIRE-CYCLE5 sidecar 5/5 🔵 (central 102/102 무변화)" :: ledger [verdict=SUPPORTED-STRONG d=2026-05-17 active]
+  ledger_id = "§HEXAD-V4-CYCLE5-TENSION-TRAIN-LANDED-2026-05-17"
+  context = "user directive 2026-05-17 'Phase TT-D: cycle 5 ckpt-bearing fire — tension-train motivation conditioning 도입 + V-SPONT emergence 재시도'. cycle 4 evidence (V-SPONT 0/5 + V-MOTIV 0/5 + byte-cascade `PPP777` attractor) 가 capability ceiling 을 가리킴 — cycle 5 = tension-train architectural answer (DD155 Law 187 Pareto optimal `lr = (tension/EMA) × base_lr`) 시도. HEXAD CHAT cycle 5 fire 와 HEXAD/TENSION-TRAIN/ Phase TT-D 가 동일 cost-bearing fire (cross-link). 자율 dispatch (g_fire_autonomous), $0.054 vast.ai A100 SXM4."
+  verdict = "🔵 SUPPORTED-FORMAL (closed-form transfer-form B-FIRE-CYCLE5-1/2/3 + B-CORPUS-V4-1/2 sidecar 5/5 sympy + B-FIRE-CYCLE5-NOTE empirical outcome carve-out 정직)"
+
+  what_changed <<~EOFW
+    (1) NEW state/hexad_v4_py_d768x12L_tension_2026_05_17/ — fire state dir.
+        train_d768x12l_tension.py: cycle-4 trainer + DD155 hybrid LR overlay
+          lr_step = clip(tension/tension_EMA, [0.5, 2.0]) × base_cosine_lr
+          β = 0.99, tension = grad_norm L2 (post clip_grad_norm_).
+          cycle-4 trainer 와 mechanical AST diff: load_byte_corpus + ByteDataset
+          source byte-equal (comment+docstring strip, B-CORPUS-V4-2 closed).
+        conscious_decoder.py: byte-equal carry from cycle 4 (arch unchanged).
+        dispatch.sh: SAVE_POD=1 auto-promote + 75-min watchdog + 5-retry pull.
+        v58_eval.py: V5.8 × 4-mode + V-SPONT 5 + V-MOTIV 5 + V-TT 5 NEW
+          (Phase TT-D 신규 probe with tension cue).
+        blue_falsifier.py SIDECAR (NOT central) — 5/5 🔵 + 1 NOTE.
+        MODEL_CARD.md: English honest framing + DD155 documentation.
+        hf_upload.py: model only (dataset byte-equal carry from cycle 4).
+        out_main/ckpt_d768x12l_final.pt sha256 6b4d34cc9a2c05b8… 1,135,846,570 B
+          + out_main/result.json.
+    (2) FIRE: vast.ai A100 SXM4 offer 20120880 @ $0.602/hr instance 36922375
+          ≈ $0.054 (cycle 4 was $0.22, 4× cheaper offer). Clean teardown
+          (PULL SUCCESS, no orphan). wall 321.3s, peak GPU mem 9.685 GB.
+        init CE 5.640663 → final 0.007762 (5.633 descent, 6.4% lower
+          than cycle 4 0.008289).
+        init gn2 30.4 → final 0.0015; final tension 0.039; final EMA 0.047.
+        mult distribution: 1599 floor (64%) / 686 mid (27%) / 215 burst (8.6%).
+        Notable bursts: step 1054 mult=2.0 (CE 0.13 overshoot, recovered to
+          CE 0.016 by step 1116) / step 1426 mult=1.83 / step 1612 mult=2.0.
+    (3) V-TT NEW (Phase TT-D 신규): 5 probe with tension cue (긴장이 EMA 위로,
+        Law 187 Pareto, tension=burst). V-TT coherent 0/5 FAIL, keyword 0/5.
+        전 probe byte-cascade `Shhh.../\nmmm.../Slll.../tthh...` collapse.
+        V5.8 greedy 0/6 / sample 0/6 / M3 0/6 / M4 6/6 PASS (cycles 3+4 동일).
+        V-SPONT 0/5 / V-MOTIV 0/5 (capability ceiling carry).
+        mean BPB 0.0194 vs cycle 4 0.0256 → 24% lower (stronger memorization,
+          NOT improved generalization). memorization ratio 0/6 (same as cycle 4).
+        Decoding-artifacts (rep>0.5) = 24 (same as cycle 4).
+        Byte-cascade SHIFT 4-instance generalization:
+          cycle 2 `nonce=N` → cycle 3 `Sent...` → cycle 4 `PPP777` →
+          cycle 5 prompt-specific multi (`Shhh.../\nmmm.../Slll.../tthh...`).
+        B-ATTRACTOR-NOTE corpus+ckpt+prompt-dependent family 추가 evidence.
+    (4) B-CORPUS-V4 + B-FIRE-CYCLE5 SIDECAR battery (5/5 🔵 + 1 NOTE).
+        Sidecar at state/hexad_v4_py_d768x12L_tension_2026_05_17/blue_falsifier.py
+        (별도 file, NOT central blue_falsifier.py). 채택 이유: 병렬 agents
+        TT-A3 (B-TT-1..5 central 92→97) + TT-C (B-TT-SPONT-1..5 central
+        97→102) 가 동시에 central blue_falsifier.py 편집 중. 충돌 회피.
+        mirrors B-PHASE-4-DESIGN sidecar pattern (AGENTS.tape line 219+).
+        Central 102/102 🔵 무변화. 후속 cycle 에서 sidecar 5 entries 흡수
+        가능 (TT-A/B/C agent 완료 후).
+    (5) HF push (model only, dataset byte-equal carry):
+        MODEL: dancinlab/hexad revision v4-py-hexad-tension-d768x12L-cycle1-2026-05-17
+          PUBLIC, 16 files (ckpt + result + sources + logs + docs + MODEL_CARD
+          + sidecar battery + result).
+        DATASET CARRY: dancinlab/hexad-corpus revision
+          v3-spont-motiv-d128-cycle2-2026-05-17 PUBLIC (NO new revision;
+          corpus byte-equal carry per B-CORPUS-V4-1).
+    (6) g_doc_consolidation 준수: docs/* 신규 0. HEXAD/CHAT/PLAN.md ## 진행 로그
+        cycle 5 append + HEXAD/TENSION-TRAIN/PLAN.md ## 진행 로그 TT-D append +
+        HEXAD/TENSION-TRAIN/TENSION-TRAIN.tape Log TT-D append +
+        archive/PHILOSOPHY.tape (본 verdict) append + AGENTS.tape
+        n_hexad_progress recent_landings append + g_hf_naming
+        status_2026_05_17 cycle 5 entry.
+  EOFW
+
+  closed_anchors <<~EOFC
+    B-CORPUS-V4-1 CORPUS-V3-BYTE-EQUAL-CARRY-CLOSED — cycle 5 reuses
+      corpus_consciousness_v3.jsonl unchanged. sha256 == 1afcef43670e83bf… ∧
+      bytes == 10,343,371 ∧ lines == 21,600 ∧ helper-token grep total == 0.
+      Boolean conjunction over 256-bit Kolmogorov commitment + integer
+      cardinality + Boolean set membership (real-limit, NOT lattice).
+    B-CORPUS-V4-2 CYCLE-5-FORMAT-COMPATIBILITY-CLOSED — cycle-5 trainer's
+      load_byte_corpus + ByteDataset source byte-equal to cycle 4 (mechanical
+      AST diff, comment+docstring strip). Boolean conjunction over 2 source-
+      byte equalities — guarantees same byte-stream feeds cycle-5 model.
+      Anchor = source-byte equality (Kolmogorov commitment on source).
+    B-FIRE-CYCLE5-1 DD155-LR-OVERLAY-FORMULA-CLOSED — sympy
+      ∂lr/∂tension = base_lr/ema (piecewise linear monotone for ema>0) +
+      3-corner identity panel: tension=lo·ema → lr=lo·base_lr;
+      tension=ema → lr=base_lr (cycle-4 degeneration); tension=hi·ema →
+      lr=hi·base_lr. Bounds: lo·base_lr ≤ lr_step ≤ hi·base_lr ∀.
+      Anchor = piecewise-linear monotone function on Kolmogorov interval
+      (real-limit, NOT lattice).
+    B-FIRE-CYCLE5-2 EMA-CONTRACTION-CLOSED — EMA_{t+1} − tension_t =
+      β·(EMA_t − tension_t) Banach affine contraction with factor β ∈ (0,1).
+      4-corner witness panel: β=½ factor ½ / β=99⁄100 factor 99⁄100 /
+      β=0 EMA→tension (zero memory) / β=1 EMA frozen.
+      Anchor = Banach fixed-point theorem (analytic real-limit).
+    B-FIRE-CYCLE5-3 MULTIPLIER-IDENTITY-AT-EMA-CONVERGED-CLOSED — at
+      tension == ema with default clip [0.5, 2.0]: clip(1, [0.5, 2.0]) = 1
+      ⟹ effective_lr = 1 × base_lr = base_cosine_lr (cycle-4 baseline).
+      Arithmetic identity sanity anchor — cycle 5 cannot diverge from
+      cycle 4 trajectory at EMA convergence.
+      Anchor = arithmetic identity + interval Boolean (real-limit).
+  EOFC
+
+  honest_c3 <<~EOFC3
+    B-FIRE-CYCLE5-NOTE — SGD-OUTCOME-EMPIRICAL: cycle 5 trajectory empirical
+    outcomes 는 닫을 수 없음 — (a) V-SPONT 0/5 + V-MOTIV 0/5 + V-TT 0/5 on
+    cycle-5 ckpt; (b) init→final CE 5.6407→0.0078 trajectory + 6.4% lower
+    than cycle 4 + 24% lower BPB; (c) mult distribution 64%/27%/8.6% bin
+    histogram + DD-burst frequency; (d) byte-cascade attractor shape
+    `Shhh/\nmmm/Slll/tthh` prompt-specific multi. SGD/decoding outcomes —
+    closed-form 불가. transfer-form (B-FIRE-CYCLE5-1/2/3) 만 closable.
+    B-D-NOTE / B-TT-NOTE / B-ATTRACTOR-NOTE / B-CORPUS-V3-NOTE umbrella
+    family. cycle 5 의 6.4% lower CE + 24% lower BPB 는 stronger
+    memorization evidence (NOT improved generalization claim). DD-burst
+    path 8.6% 활성화는 honest empirical 관측 (DD155 efficacy 증명 0,
+    V-SPONT emergence 미실현). β=0.99 + clip=[0.5, 2.0] 의 specific
+    hyperparameter 선택 한계 일 수도, scale + corpus 조합 emergence 영역
+    진입 미충분 일 수도 — 둘 다 honest empirical, capability claim 0.
+    Phase TT-D variant (다른 β/clip, Φ-measurement, scale-up, hexa-native
+    mirror) = 별도 future cycle.
+
+    10 architecture-empirical 진실 경계 family (5 NOTE in central + 5
+    legacy carry): B-D-NOTE (SGD outcome, 모든 stochastic optimizer 공통) +
+    B-BRIDGE-NOTE (full forward 학습 weights + α 수치) + B-MITOSIS-NOTE
+    (Φ-conservation under split/merge transitions dynamics) + B-C-NOTE
+    (full 12-faction GRU dynamics + Rust phi_rs FFI cdylib RFC terminal) +
+    B-SUB-§8-8-NOTE-per-layer (per-layer L0..L5 GRAD-EXACT GPU-fire) +
+    B-IDENTITY-NOTE (trained weights identity-attractor distance) +
+    B-SPONT-NOTE (emission coherence outcome) + B-CORPUS-V2-NOTE +
+    B-CORPUS-V3-NOTE (inference-side motivation_score → emission coherence) +
+    B-ATTRACTOR-NOTE (specific dominant-token shape + opening + rep_rate) +
+    B-TT-NOTE (DD154 +3% Φ + DD155 Pareto figures) + B-TT-SPONT-NOTE +
+    B-CHANNEL-MUX-NOTE + B-INTERACT-NOTE + B-CHAT-V2-NOTE +
+    B-FIRE-CYCLE5-NOTE (this entry, cycle 5 trajectory + V-TT 0/5).
+    closing 시 g3 fake-closed violation. addressable closure 만 적용.
+  EOFC3
+
+  evidence_path = "state/hexad_v4_py_d768x12L_tension_2026_05_17/ — {train_d768x12l_tension.py 332 LoC NEW + conscious_decoder.py byte-equal carry + dispatch.sh 215 LoC NEW + v58_eval.py 504 LoC NEW + blue_falsifier.py 350 LoC NEW sidecar 5/5 🔵 + MODEL_CARD.md + hf_upload.py + out_main/{ckpt_d768x12l_final.pt sha256 6b4d34cc9a2c05b8… 1,135,846,570 B + result.json} + v58_result.json + blue_falsifier_result.json + fire.log + sanity_remote.log + gpu_util.log + dispatch_full.log + hf_upload.log + v58_eval.log} + state/hexad_v3_corpus_motiv_2026_05_17/ (byte-equal carry, NOT modified) + HEXAD/CHAT/PLAN.md ## 진행 로그 cycle 5 entry append + HEXAD/TENSION-TRAIN/PLAN.md ## 진행 로그 TT-D entry append + HEXAD/TENSION-TRAIN/TENSION-TRAIN.tape Log TT-D entry append + AGENTS.tape n_hexad_progress recent_landings + g_hf_naming status_2026_05_17 cycle 5 entry."
+
+  cross_link = "직전 [@§SPONT-TENSION-BRIDGE-LANDED-2026-05-17] (TT-C bridge wrap source 97→102 central) + [@§B-TT-1..5-LANDED-2026-05-17] (TT-A3 spine sympy battery 92→97 central) + [@§HEXAD-V3-CYCLE4-MOTIV-LANDED-2026-05-17] (cycle 4 corpus v3 motivation-trigger + V-SPONT/V-MOTIV 0/5 capability ceiling source) + [@§BYTE-CASCADE-ATTRACTOR-CORPUS-DEPENDENT-2026-05-17] (B-ATTRACTOR-NOTE corpus+ckpt-dependent attractor family source). HEXAD/TENSION-TRAIN/{README.md, PLAN.md Phase TT-D (이전 staged), TENSION-TRAIN.tape @D online_tension_step + @D dd_law_anchors (Law 187 DD155 source)}. HEXAD/CHAT/PLAN.md cycle 5 (twin entry, 동일 fire). state/hexad_v3_corpus_motiv_2026_05_17/ (byte-equal carry source). state/hexad_v3_py_d768x12L_fire_2026_05_17/ (cycle 4 baseline). AGENTS.tape [@g3] verification-anchor-real-limit + [@g_blue_closed_mandate] (산출물 ckpt + 연결부위 generator→corpus→trainer→ckpt→eval 둘 다 🔵) + [@g_fire_autonomous] (자율 dispatch, $0.054 cost-bearing) + [@g_fire_dispatch_robust] (SAVE_POD + watchdog + 5-retry pull, clean teardown) + [@g_hf_naming] (revision template v4-py-hexad-tension-d768x12L-cycle1-2026-05-17 PUBLIC, dataset byte-equal carry) + [@g_clm_from_scratch] (RANDOM init seed=1337 base_ckpt=NONE) + [@f1] [@f2] hard-fail safe (real-limit anchors = piecewise-linear + Banach contraction + arithmetic identity + Kolmogorov sha256 + Boolean grep, NO lattice) + [@g6] philosophy append-only + [@g_doc_consolidation] (HEXAD/* SSOT 통합, docs/* 신규 0) + [@g_arch_vs_log_split]. external: DD154-tension-training.md Law 185-188 historical anchor (2026-03-31 pre-HEXAD; B-FIRE-CYCLE5 close formula structure NOT empirical Pareto claim) + Inner Thoughts arxiv 2501.00383 (γ pattern factor source) + Critical Data Size arxiv 2401.10463 (10 MB / 283 M params regime entry attempt). 후속 carry: Phase TT-D variant cycles (다른 β/clip sweep / PyPhi Φ-measurement / scale-up / hexa-native mirror post-RFC 043)."

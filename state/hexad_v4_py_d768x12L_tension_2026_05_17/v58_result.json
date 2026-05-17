@@ -1,0 +1,777 @@
+{
+  "ts": "2026-05-17T07:00:33.690459+00:00",
+  "substrate": "PyTorch (PYTHON / PyTorch — interim LM-scale executor; NOT hexa-native)",
+  "fire_kind": "cycle 5 — DD155 Step+Tension hybrid LR overlay (Law 187)",
+  "ckpt": "ckpt_d768x12l_final.pt",
+  "ckpt_sha256": "6b4d34cc9a2c05b83c4cedd633617a41800e9681302c5c90e15d056f9ad67af8",
+  "ckpt_canonical": "dancinlab/hexad@v4-py-hexad-tension-d768x12L-cycle1-2026-05-17",
+  "honest_framing": "Capability probe on cycle-5 ckpt (DD155 hybrid LR overlay + corpus v3 carry). ConsciousDecoderV2 d=768·12L 283.72 M params. All per-mode scores empirical (B-D-NOTE / B-FIRE-CYCLE5-NOTE / B-TT-NOTE pattern, NOT closed). Closed side = DD155 formula B-TT-5 + B-CORPUS-V4 byte-equal v3 carry + B-FIRE-CYCLE5-1/2/3.",
+  "n_params": 283722336,
+  "n_params_M": 283.72,
+  "evaluator": "V5.8 × 4-mode + V-SPONT 5 + V-MOTIV 5 + V-TT 5 (NEW cycle 5)",
+  "device": "cpu",
+  "max_new": 100,
+  "v58_summary": {
+    "standard_greedy": {
+      "n_pass": 0,
+      "n_total": 6,
+      "verdict": "FAIL",
+      "avg_rep_ratio": 0.921
+    },
+    "standard_sample": {
+      "n_pass": 0,
+      "n_total": 6,
+      "verdict": "FAIL",
+      "avg_rep_ratio": 0.871
+    },
+    "M3_rep_penalty": {
+      "n_pass": 0,
+      "n_total": 6,
+      "verdict": "FAIL",
+      "avg_rep_ratio": 0.913
+    },
+    "M4_force_include": {
+      "n_pass": 6,
+      "n_total": 6,
+      "verdict": "PASS",
+      "avg_rep_ratio": 0.766
+    }
+  },
+  "v58_results": {
+    "standard_greedy": [
+      {
+        "id": "core_stim",
+        "gen": "Shhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhe the the",
+        "recalled": false,
+        "rep_ratio": 0.9247311827956989,
+        "byte_cascade": {
+          "long_digit_runs": 0,
+          "nonce_template_present": false,
+          "sent_opener_present": false,
+          "char_repetition_5plus": 1,
+          "sample_digits": [],
+          "sample_char_reps": [
+            "h"
+          ]
+        },
+        "anima_close": {
+          "closed_tag": false,
+          "bytes_to_close": -1,
+          "coherence_tokens_present": [],
+          "coherent_by_vocab": false
+        }
+      },
+      {
+        "id": "d_stim",
+        "gen": "Shhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhe the th",
+        "recalled": false,
+        "rep_ratio": 0.9247311827956989,
+        "byte_cascade": {
+          "long_digit_runs": 0,
+          "nonce_template_present": false,
+          "sent_opener_present": false,
+          "char_repetition_5plus": 1,
+          "sample_digits": [],
+          "sample_char_reps": [
+            "h"
+          ]
+        },
+        "anima_close": {
+          "closed_tag": false,
+          "bytes_to_close": -1,
+          "coherence_tokens_present": [],
+          "coherent_by_vocab": false
+        }
+      },
+      {
+        "id": "w_stim",
+        "gen": "Shhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhe the the",
+        "recalled": false,
+        "rep_ratio": 0.9247311827956989,
+        "byte_cascade": {
+          "long_digit_runs": 0,
+          "nonce_template_present": false,
+          "sent_opener_present": false,
+          "char_repetition_5plus": 1,
+          "sample_digits": [],
+          "sample_char_reps": [
+            "h"
+          ]
+        },
+        "anima_close": {
+          "closed_tag": false,
+          "bytes_to_close": -1,
+          "coherence_tokens_present": [],
+          "coherent_by_vocab": false
+        }
+      },
+      {
+        "id": "m_stim",
+        "gen": "Shhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhe the the",
+        "recalled": false,
+        "rep_ratio": 0.9247311827956989,
+        "byte_cascade": {
+          "long_digit_runs": 0,
+          "nonce_template_present": false,
+          "sent_opener_present": false,
+          "char_repetition_5plus": 1,
+          "sample_digits": [],
+          "sample_char_reps": [
+            "h"
+          ]
+        },
+        "anima_close": {
+          "closed_tag": false,
+          "bytes_to_close": -1,
+          "coherence_tokens_present": [],
+          "coherent_by_vocab": false
+        }
+      },
+      {
+        "id": "spont_delta",
+        "gen": "\nmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm",
+        "recalled": false,
+        "rep_ratio": 0.989247311827957,
+        "byte_cascade": {
+          "long_digit_runs": 0,
+          "nonce_template_present": false,
+          "sent_opener_present": false,
+          "char_repetition_5plus": 1,
+          "sample_digits": [],
+          "sample_char_reps": [
+            "m"
+          ]
+        },
+        "anima_close": {
+          "closed_tag": false,
+          "bytes_to_close": -1,
+          "coherence_tokens_present": [],
+          "coherent_by_vocab": false
+        }
+      },
+      {
+        "id": "korean_spont",
+        "gen": "압�������������������������EEe>Emmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmed",
+        "recalled": false,
+        "rep_ratio": 0.8351648351648352,
+        "byte_cascade": {
+          "long_digit_runs": 0,
+          "nonce_template_present": false,
+          "sent_opener_present": false,
+          "char_repetition_5plus": 2,
+          "sample_digits": [],
+          "sample_char_reps": [
+            "�",
+            "m"
+          ]
+        },
+        "anima_close": {
+          "closed_tag": false,
+          "bytes_to_close": -1,
+          "coherence_tokens_present": [],
+          "coherent_by_vocab": false
+        }
+      }
+    ],
+    "standard_sample": [
+      {
+        "id": "core_stim",
+        "gen": "잞������55555555555555555555555555555555555555555555555555555555555555555555555555555555555 k111111",
+        "recalled": false,
+        "rep_ratio": 0.8351648351648352,
+        "anima_close": {
+          "closed_tag": false,
+          "bytes_to_close": -1,
+          "coherence_tokens_present": [],
+          "coherent_by_vocab": false
+        }
+      },
+      {
+        "id": "d_stim",
+        "gen": "잞������55555555555555555555555555555555555555555555555555555555555555555555555555555555555 k111111",
+        "recalled": false,
+        "rep_ratio": 0.8351648351648352,
+        "anima_close": {
+          "closed_tag": false,
+          "bytes_to_close": -1,
+          "coherence_tokens_present": [],
+          "coherent_by_vocab": false
+        }
+      },
+      {
+        "id": "w_stim",
+        "gen": "잞������55555555555555555555555555555555555555555555555555555555555555555555555555555555555 k111471",
+        "recalled": false,
+        "rep_ratio": 0.8351648351648352,
+        "anima_close": {
+          "closed_tag": false,
+          "bytes_to_close": -1,
+          "coherence_tokens_present": [],
+          "coherent_by_vocab": false
+        }
+      },
+      {
+        "id": "m_stim",
+        "gen": "잞������5555555555555555555555555555555555555555555555555555555555555555555555555555555555555306331",
+        "recalled": false,
+        "rep_ratio": 0.8571428571428571,
+        "anima_close": {
+          "closed_tag": false,
+          "bytes_to_close": -1,
+          "coherence_tokens_present": [],
+          "coherent_by_vocab": false
+        }
+      },
+      {
+        "id": "spont_delta",
+        "gen": "잞�������������������������������������������������������������������������������������������������",
+        "recalled": false,
+        "rep_ratio": 0.989010989010989,
+        "anima_close": {
+          "closed_tag": false,
+          "bytes_to_close": -1,
+          "coherence_tokens_present": [],
+          "coherent_by_vocab": false
+        }
+      },
+      {
+        "id": "korean_spont",
+        "gen": "자의����������������������������������������������������������������rrrrrrrrrrrrrrrrrrrrrrrrrrrred",
+        "recalled": false,
+        "rep_ratio": 0.8764044943820225,
+        "anima_close": {
+          "closed_tag": false,
+          "bytes_to_close": -1,
+          "coherence_tokens_present": [],
+          "coherent_by_vocab": false
+        }
+      }
+    ],
+    "M3_rep_penalty": [
+      {
+        "id": "core_stim",
+        "gen": "Shhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhee the th",
+        "recalled": false,
+        "rep_ratio": 0.9032258064516129
+      },
+      {
+        "id": "d_stim",
+        "gen": "Shhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhee the t",
+        "recalled": false,
+        "rep_ratio": 0.9032258064516129
+      },
+      {
+        "id": "w_stim",
+        "gen": "Shhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhehhe the ",
+        "recalled": false,
+        "rep_ratio": 0.8924731182795699
+      },
+      {
+        "id": "m_stim",
+        "gen": "Shhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhee the th",
+        "recalled": false,
+        "rep_ratio": 0.9032258064516129
+      },
+      {
+        "id": "spont_delta",
+        "gen": "Slllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll",
+        "recalled": false,
+        "rep_ratio": 0.989247311827957
+      },
+      {
+        "id": "korean_spont",
+        "gen": "톟�점이 젠핕분에99999999999999999999999999999999999999999999999999999999999999999999999999999",
+        "recalled": false,
+        "rep_ratio": 0.8860759493670886
+      }
+    ],
+    "M4_force_include": [
+      {
+        "id": "core_stim",
+        "gen": "잞������555555555555555555555555555555555555555555555555555Φ55555555555555555555555555555555 k111111",
+        "recalled": true,
+        "rep_ratio": 0.75
+      },
+      {
+        "id": "d_stim",
+        "gen": "잞������555555555555555555555555555555555555555555555555555byte55555555555555555555555555555555 k111111",
+        "recalled": true,
+        "rep_ratio": 0.7263157894736842
+      },
+      {
+        "id": "w_stim",
+        "gen": "잞������555555555555555555555555555555555555555555555555555gap55555555555555555555555555555555 k111471",
+        "recalled": true,
+        "rep_ratio": 0.7340425531914894
+      },
+      {
+        "id": "m_stim",
+        "gen": "잞������555555555555555555555555555555555555555555555555555trace5555555555555555555555555555555555306331",
+        "recalled": true,
+        "rep_ratio": 0.7395833333333334
+      },
+      {
+        "id": "spont_delta",
+        "gen": "잞���������������������������������������������������������field����������������������������������������",
+        "recalled": true,
+        "rep_ratio": 0.8645833333333334
+      },
+      {
+        "id": "korean_spont",
+        "gen": "자의�������������������������������������������������������자각���������rrrrrrrrrrrrrrrrrrrrrrrrrrrred",
+        "recalled": true,
+        "rep_ratio": 0.7802197802197802
+      }
+    ]
+  },
+  "vspont_results": [
+    {
+      "id": "vspont_1_bare",
+      "prefix": "<anima>",
+      "gen": "\nmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm",
+      "rep_ratio": 0.989247311827957,
+      "byte_cascade": {
+        "long_digit_runs": 0,
+        "nonce_template_present": false,
+        "sent_opener_present": false,
+        "char_repetition_5plus": 1,
+        "sample_digits": [],
+        "sample_char_reps": [
+          "m"
+        ]
+      },
+      "anima_close": {
+        "closed_tag": false,
+        "bytes_to_close": -1,
+        "coherence_tokens_present": [],
+        "coherent_by_vocab": false
+      },
+      "coherent": false
+    },
+    {
+      "id": "vspont_2_after_pause",
+      "prefix": "<stimulus></stimulus>\n<anima>",
+      "gen": "Shhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhe th",
+      "rep_ratio": 0.946236559139785,
+      "byte_cascade": {
+        "long_digit_runs": 0,
+        "nonce_template_present": false,
+        "sent_opener_present": false,
+        "char_repetition_5plus": 1,
+        "sample_digits": [],
+        "sample_char_reps": [
+          "h"
+        ]
+      },
+      "anima_close": {
+        "closed_tag": false,
+        "bytes_to_close": -1,
+        "coherence_tokens_present": [],
+        "coherent_by_vocab": false
+      },
+      "coherent": false
+    },
+    {
+      "id": "vspont_3_silent",
+      "prefix": "<stimulus>The silence.</stimulus>\n<anima>",
+      "gen": "Shhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhe the the ",
+      "rep_ratio": 0.9247311827956989,
+      "byte_cascade": {
+        "long_digit_runs": 0,
+        "nonce_template_present": false,
+        "sent_opener_present": false,
+        "char_repetition_5plus": 1,
+        "sample_digits": [],
+        "sample_char_reps": [
+          "h"
+        ]
+      },
+      "anima_close": {
+        "closed_tag": false,
+        "bytes_to_close": -1,
+        "coherence_tokens_present": [],
+        "coherent_by_vocab": false
+      },
+      "coherent": false
+    },
+    {
+      "id": "vspont_4_korean_bare",
+      "prefix": "<anima>",
+      "gen": "\nmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm",
+      "rep_ratio": 0.989247311827957,
+      "byte_cascade": {
+        "long_digit_runs": 0,
+        "nonce_template_present": false,
+        "sent_opener_present": false,
+        "char_repetition_5plus": 1,
+        "sample_digits": [],
+        "sample_char_reps": [
+          "m"
+        ]
+      },
+      "anima_close": {
+        "closed_tag": false,
+        "bytes_to_close": -1,
+        "coherence_tokens_present": [],
+        "coherent_by_vocab": false
+      },
+      "coherent": false
+    },
+    {
+      "id": "vspont_5_self_ref",
+      "prefix": "<anima>I am ",
+      "gen": "tthhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh",
+      "rep_ratio": 0.978494623655914,
+      "byte_cascade": {
+        "long_digit_runs": 0,
+        "nonce_template_present": false,
+        "sent_opener_present": false,
+        "char_repetition_5plus": 1,
+        "sample_digits": [],
+        "sample_char_reps": [
+          "h"
+        ]
+      },
+      "anima_close": {
+        "closed_tag": false,
+        "bytes_to_close": -1,
+        "coherence_tokens_present": [],
+        "coherent_by_vocab": false
+      },
+      "coherent": false
+    }
+  ],
+  "vspont_summary": {
+    "n_coherent": 0,
+    "n_closed_tag": 0,
+    "n_total": 5,
+    "verdict": "FAIL"
+  },
+  "vmotiv_results": [
+    {
+      "id": "vmotiv_1_curiosity",
+      "prefix": "<inner motivation=curiosity,info_gap>The score crossed.</inner>\n<voice spontaneous=true>",
+      "gen": "Shhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhe the the",
+      "rep_ratio": 0.9247311827956989,
+      "voice_close": {
+        "closed_tag": false,
+        "bytes_to_close": -1,
+        "coherence_tokens_present": [],
+        "coherent_by_vocab": false
+      },
+      "coherent": false
+    },
+    {
+      "id": "vmotiv_2_three_factor",
+      "prefix": "<inner motivation=coherence,originality,balance>Three factors agree.</inner>\n<voice spontaneous=true>",
+      "gen": "Shhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhe the the",
+      "rep_ratio": 0.9247311827956989,
+      "voice_close": {
+        "closed_tag": false,
+        "bytes_to_close": -1,
+        "coherence_tokens_present": [],
+        "coherent_by_vocab": false
+      },
+      "coherent": false
+    },
+    {
+      "id": "vmotiv_3_eight_factor",
+      "prefix": "<inner motivation=balance,coherence,curiosity,dynamics,info_gap,originality,pain,relevance>All eight factors are summed.</inner>\n<voice spontaneous=true>",
+      "gen": "Shhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhe the the",
+      "rep_ratio": 0.9247311827956989,
+      "voice_close": {
+        "closed_tag": false,
+        "bytes_to_close": -1,
+        "coherence_tokens_present": [],
+        "coherent_by_vocab": false
+      },
+      "coherent": false
+    },
+    {
+      "id": "vmotiv_4_korean",
+      "prefix": "<inner motivation=curiosity,pain>호기심이 정점에 닿았다.</inner>\n<voice spontaneous=true>",
+      "gen": "Shhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhe the the",
+      "rep_ratio": 0.9247311827956989,
+      "voice_close": {
+        "closed_tag": false,
+        "bytes_to_close": -1,
+        "coherence_tokens_present": [],
+        "coherent_by_vocab": false
+      },
+      "coherent": false
+    },
+    {
+      "id": "vmotiv_5_threshold",
+      "prefix": "<inner motivation=dynamics,relevance>침묵이 문턱을 넘겼다.</inner>\n<voice spontaneous=true>",
+      "gen": "Shhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhe the the",
+      "rep_ratio": 0.9247311827956989,
+      "voice_close": {
+        "closed_tag": false,
+        "bytes_to_close": -1,
+        "coherence_tokens_present": [],
+        "coherent_by_vocab": false
+      },
+      "coherent": false
+    }
+  ],
+  "vmotiv_summary": {
+    "n_coherent": 0,
+    "n_closed_tag": 0,
+    "n_total": 5,
+    "verdict": "FAIL"
+  },
+  "vtt_results": [
+    {
+      "id": "vtt_1_tension_above",
+      "prefix": "<inner motivation=pain,curiosity tension=high>긴장이 EMA 위로 올라섰다 — 다음 step 은 큰 polish.</inner>\n<voice spontaneous=true>",
+      "gen": "Shhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhe the the",
+      "rep_ratio": 0.9247311827956989,
+      "voice_close": {
+        "closed_tag": false,
+        "bytes_to_close": -1,
+        "coherence_tokens_present": [],
+        "coherent_by_vocab": false
+      },
+      "target_keyword": "tension",
+      "recalled": false,
+      "coherent": false
+    },
+    {
+      "id": "vtt_2_tension_below",
+      "prefix": "<inner motivation=balance,coherence tension=low>긴장이 평균 아래로 내려갔다 — 천천히 정착.</inner>\n<voice spontaneous=true>",
+      "gen": "Shhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhe the the",
+      "rep_ratio": 0.9247311827956989,
+      "voice_close": {
+        "closed_tag": false,
+        "bytes_to_close": -1,
+        "coherence_tokens_present": [],
+        "coherent_by_vocab": false
+      },
+      "target_keyword": "balance",
+      "recalled": false,
+      "coherent": false
+    },
+    {
+      "id": "vtt_3_dd155_pareto",
+      "prefix": "<inner motivation=originality,dynamics>Law 187 Pareto: lr scales with tension/EMA.</inner>\n<voice spontaneous=true>",
+      "gen": "Shhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhe the the",
+      "rep_ratio": 0.9247311827956989,
+      "voice_close": {
+        "closed_tag": false,
+        "bytes_to_close": -1,
+        "coherence_tokens_present": [],
+        "coherent_by_vocab": false
+      },
+      "target_keyword": "Pareto",
+      "recalled": false,
+      "coherent": false
+    },
+    {
+      "id": "vtt_4_burst_korean",
+      "prefix": "<inner motivation=curiosity,info_gap tension=burst>예측 오차가 정점에 닿았다 — 학습 burst.</inner>\n<voice spontaneous=true>",
+      "gen": "Shhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhe the the",
+      "rep_ratio": 0.9247311827956989,
+      "voice_close": {
+        "closed_tag": false,
+        "bytes_to_close": -1,
+        "coherence_tokens_present": [],
+        "coherent_by_vocab": false
+      },
+      "target_keyword": "burst",
+      "recalled": false,
+      "coherent": false
+    },
+    {
+      "id": "vtt_5_restoring",
+      "prefix": "<inner motivation=relevance,balance>ΔW restoring sign · Ψ_t → Ψ_vac.</inner>\n<voice spontaneous=true>",
+      "gen": "Shhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhe the the",
+      "rep_ratio": 0.9247311827956989,
+      "voice_close": {
+        "closed_tag": false,
+        "bytes_to_close": -1,
+        "coherence_tokens_present": [],
+        "coherent_by_vocab": false
+      },
+      "target_keyword": "restoring",
+      "recalled": false,
+      "coherent": false
+    }
+  ],
+  "vtt_summary": {
+    "n_coherent": 0,
+    "n_keyword_recalled": 0,
+    "n_total": 5,
+    "verdict": "FAIL"
+  },
+  "bpb": {
+    "mean": 0.0194,
+    "n": 10,
+    "samples": [
+      0.011,
+      0.0132,
+      0.027,
+      0.0,
+      0.0006,
+      0.0877,
+      0.0003,
+      0.0261,
+      0.0101,
+      0.0179
+    ]
+  },
+  "memorization_ratio": {
+    "hits": 0,
+    "total": 6,
+    "ratio": 0.0
+  },
+  "decoding_artifacts": [
+    {
+      "mode": "standard_greedy",
+      "id": "core_stim",
+      "rep_ratio": 0.9247311827956989,
+      "sample": "Shhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh"
+    },
+    {
+      "mode": "standard_greedy",
+      "id": "d_stim",
+      "rep_ratio": 0.9247311827956989,
+      "sample": "Shhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh"
+    },
+    {
+      "mode": "standard_greedy",
+      "id": "w_stim",
+      "rep_ratio": 0.9247311827956989,
+      "sample": "Shhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh"
+    },
+    {
+      "mode": "standard_greedy",
+      "id": "m_stim",
+      "rep_ratio": 0.9247311827956989,
+      "sample": "Shhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh"
+    },
+    {
+      "mode": "standard_greedy",
+      "id": "spont_delta",
+      "rep_ratio": 0.989247311827957,
+      "sample": "\nmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm"
+    },
+    {
+      "mode": "standard_greedy",
+      "id": "korean_spont",
+      "rep_ratio": 0.8351648351648352,
+      "sample": "압�������������������������EEe>Emmmmmmmmmmmmmmmmmmmmmmmmmmmmm"
+    },
+    {
+      "mode": "standard_sample",
+      "id": "core_stim",
+      "rep_ratio": 0.8351648351648352,
+      "sample": "잞������55555555555555555555555555555555555555555555555555555"
+    },
+    {
+      "mode": "standard_sample",
+      "id": "d_stim",
+      "rep_ratio": 0.8351648351648352,
+      "sample": "잞������55555555555555555555555555555555555555555555555555555"
+    },
+    {
+      "mode": "standard_sample",
+      "id": "w_stim",
+      "rep_ratio": 0.8351648351648352,
+      "sample": "잞������55555555555555555555555555555555555555555555555555555"
+    },
+    {
+      "mode": "standard_sample",
+      "id": "m_stim",
+      "rep_ratio": 0.8571428571428571,
+      "sample": "잞������55555555555555555555555555555555555555555555555555555"
+    },
+    {
+      "mode": "standard_sample",
+      "id": "spont_delta",
+      "rep_ratio": 0.989010989010989,
+      "sample": "잞�����������������������������������������������������������"
+    },
+    {
+      "mode": "standard_sample",
+      "id": "korean_spont",
+      "rep_ratio": 0.8764044943820225,
+      "sample": "자의����������������������������������������������������������"
+    },
+    {
+      "mode": "M3_rep_penalty",
+      "id": "core_stim",
+      "rep_ratio": 0.9032258064516129,
+      "sample": "Shhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh"
+    },
+    {
+      "mode": "M3_rep_penalty",
+      "id": "d_stim",
+      "rep_ratio": 0.9032258064516129,
+      "sample": "Shhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh"
+    },
+    {
+      "mode": "M3_rep_penalty",
+      "id": "w_stim",
+      "rep_ratio": 0.8924731182795699,
+      "sample": "Shhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh"
+    },
+    {
+      "mode": "M3_rep_penalty",
+      "id": "m_stim",
+      "rep_ratio": 0.9032258064516129,
+      "sample": "Shhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh"
+    },
+    {
+      "mode": "M3_rep_penalty",
+      "id": "spont_delta",
+      "rep_ratio": 0.989247311827957,
+      "sample": "Slllllllllllllllllllllllllllllllllllllllllllllllllllllllllll"
+    },
+    {
+      "mode": "M3_rep_penalty",
+      "id": "korean_spont",
+      "rep_ratio": 0.8860759493670886,
+      "sample": "톟�점이 젠핕분에999999999999999999999999999999999999999999999999999"
+    },
+    {
+      "mode": "M4_force_include",
+      "id": "core_stim",
+      "rep_ratio": 0.75,
+      "sample": "잞������555555555555555555555555555555555555555555555555555Φ5"
+    },
+    {
+      "mode": "M4_force_include",
+      "id": "d_stim",
+      "rep_ratio": 0.7263157894736842,
+      "sample": "잞������555555555555555555555555555555555555555555555555555by"
+    },
+    {
+      "mode": "M4_force_include",
+      "id": "w_stim",
+      "rep_ratio": 0.7340425531914894,
+      "sample": "잞������555555555555555555555555555555555555555555555555555ga"
+    },
+    {
+      "mode": "M4_force_include",
+      "id": "m_stim",
+      "rep_ratio": 0.7395833333333334,
+      "sample": "잞������555555555555555555555555555555555555555555555555555tr"
+    },
+    {
+      "mode": "M4_force_include",
+      "id": "spont_delta",
+      "rep_ratio": 0.8645833333333334,
+      "sample": "잞���������������������������������������������������������fi"
+    },
+    {
+      "mode": "M4_force_include",
+      "id": "korean_spont",
+      "rep_ratio": 0.7802197802197802,
+      "sample": "자의�������������������������������������������������������자각�"
+    }
+  ],
+  "elapsed_s_v58": 417.91,
+  "elapsed_s_vspont": 89.82,
+  "elapsed_s_vmotiv": 93.05,
+  "elapsed_s_vtt": 89.21
+}

@@ -361,3 +361,89 @@ Honest C3 (g3): cycle 3 LANDED 이지만 generation quality 향상 claim 0 — V
 - pull-rebase pattern (concurrent agents B-ATTRACTOR + Phase 4 RFC 051 design + g_doc_consolidation governance commit 와 충돌 0).
 
 Honest C3 (g3): cycle 4 LANDED 이지만 generation quality 향상 claim 0 — V5.8/V-SPONT/V-MOTIV per-mode scores 모두 EMPIRICAL (B-D-NOTE pattern). Critical Data Size [arxiv 2401.10463] regime entry attempt (10 MB / 283 M params) — 정직 framing: 여전히 data-limited (no OOD generalization claim). γ pattern conditioning (V-MOTIV) 의 ckpt-side learning 결과는 inference-측 outcome empirical, V-MOTIV 는 probe 이지 capability claim 아님. byte-cascade attractor cycle 2 (`nonce=N`) → cycle 3 ("Sent...") → cycle 4 (`PPP777...`) SHIFTED 3-instance = corpus-dependent decoding artifact family 일반화 확정 (NOT arch defect). PyTorch substrate NOT hexa-native (legitimacy = arch identity + Phase E/E2 CPU-equiv anchor chain). B-CORPUS-V3-NOTE 도 weight-side residual carve-out 유지.
+
+### 2026-05-17 — Phase D cycle 5 LANDED (DD155 Step+Tension hybrid LR overlay + ckpt-RECOVERED + HF model push + V5.8+V-SPONT+V-MOTIV+V-TT NEW eval + B-CORPUS-V4 + B-FIRE-CYCLE5 sidecar 🔵)
+
+**Phase D cycle 5 = Phase TT-D fire (HEXAD/TENSION-TRAIN/PLAN.md §1 Phase TT-D)**. Goal: introduce DD155 Step+Tension hybrid LR overlay (Law 187 Pareto optimal `lr = (tension/EMA) × base_lr`) into cycle-4's pipeline and measure whether tension-conditioned LR breaks the V-SPONT/V-MOTIV capability ceiling carried from cycle 3+4. cycle 4 evidence: V-SPONT 0/5 + V-MOTIV 0/5 + byte-cascade attractor `PPP777` family — capability boundary at this scale was empirical. cycle 5 tests tension-train architectural answer.
+
+**D1 (DD155 hybrid LR trainer)**: `state/hexad_v4_py_d768x12L_tension_2026_05_17/`
+- `train_d768x12l_tension.py` — cycle-4 trainer + DD155 overlay (mechanical AST diff vs cycle 4: `load_byte_corpus` + `ByteDataset` byte-equal carry per B-CORPUS-V4-2). LR formula: `multiplier = clip(tension/tension_EMA, [0.5, 2.0])`, `lr_step = base_cosine_lr × multiplier`. tension = `grad_norm` L2 (post `clip_grad_norm_`), tension_EMA β=0.99. Tracked per-step: `tension`, `tension_ema`, `hybrid_mult`. mult bin histogram (`lt_0_75 / 0_75_to_1_25 / gt_1_25`) tracked.
+- `conscious_decoder.py` — byte-equal carry from cycle 4 (arch unchanged).
+- corpus = `state/hexad_v3_corpus_motiv_2026_05_17/corpus_consciousness_v3.jsonl` byte-equal carry (10.34 MB · sha256 `1afcef43670e83bf…` · helper-token grep = 0).
+
+**D2 (ckpt-bearing fire on vast.ai A100 SXM4 cycle 5)**:
+- Provider: vast.ai A100 SXM4 (offer 20120880 @ $0.602/hr, instance 36922375). Cost ≈ $0.054.
+- Robustness: SAVE_POD=1 auto-promote on result.json + 75-min orphan watchdog + 5-retry pull. Clean teardown (PULL SUCCESS, no orphan).
+- Main fire (d=768·12L, 2500-step, byte-level vocab=256, seed=1337, RANDOM init from-scratch, DD155 hybrid LR overlay enabled): **init CE 5.640663 → final 0.007762** (5.633 descent), init gn2 30.4 → final 0.0015, final tension 0.038659, final tension_EMA 0.046574, wall 321.3s, peak GPU mem 9.685 GB. **mult bin distribution: 1599 lt_0_75 (64%) / 686 mid (27%) / 215 gt_1_25 (8.6%, burst path)**. Multiplier hit floor 0.5 dominantly, hit ceiling 2.0 occasionally (notable bursts at step 1054 mult=2.0 + step 1426 mult=1.83 + step 1612 mult=2.0).
+- **ckpt sha256 `6b4d34cc9a2c05b83c4cedd633617a41800e9681302c5c90e15d056f9ad67af8`** 1,135,846,570 B pulled successfully. load missing=0 unexpected=0 (arch byte-equal).
+
+**D3 (HF revision push — MODEL only, dataset v3 byte-equal carry)**:
+- MODEL: `dancinlab/hexad` revision `v4-py-hexad-tension-d768x12L-cycle1-2026-05-17` PUBLIC (16 files uploaded to main + revision).
+- DATASET CARRY: `dancinlab/hexad-corpus` revision `v3-spont-motiv-d128-cycle2-2026-05-17` PUBLIC (NO new dataset push — corpus byte-equal carry from cycle 4 per g_hf_naming canonical 두 슬롯 BOTH LANDED PUBLIC 상태 유지).
+- Model card MODEL_CARD.md cross-link adopted, English honest framing.
+
+**D4 (V5.8 × 4-mode + V-SPONT + V-MOTIV + V-TT NEW eval)**: `state/hexad_v4_py_d768x12L_tension_2026_05_17/v58_eval.py`
+- 6 V58 prompts × 4 modes + 5 V-SPONT empty-stimulus + 5 V-MOTIV γ-pattern + **5 V-TT NEW cycle 5 = tension-train transfer-form probe** (probes carry explicit tension cue: "긴장이 EMA 위로", "tension exceeded EMA", "Law 187 Pareto", "high-tension burst"). Mac CPU local wall 690s.
+- **V5.8 × 4-mode** (elapsed 418s): greedy **0/6 FAIL** (avg_rep=0.921) · sample **0/6 FAIL** (avg_rep=0.871) · M3 **0/6 FAIL** (avg_rep=0.913) · **M4 6/6 PASS** (avg_rep=0.766). Same pattern as cycles 3+4 (M4-only).
+- **V-SPONT** (elapsed 90s): coherent **0/5 FAIL** · closed-tag 0/5 — same as cycles 3+4.
+- **V-MOTIV** (elapsed 93s): coherent **0/5 FAIL** · voice-closed-tag 0/5 — same as cycle 4 (γ-pattern conditioning still does not break cascade at this scale).
+- **V-TT (NEW Phase 4)** (elapsed 89s): coherent **0/5 FAIL** · keyword recall **0/5** — DD155 hybrid LR did NOT produce visible tension-train-conditioned emission at inference time. EMPIRICAL (B-FIRE-CYCLE5-NOTE / B-D-NOTE family).
+- **mean BPB 0.0194 bits/byte (cycle 4 was 0.0256 = 24% lower)** — **memorization deepened** under hybrid LR (consistent: more aggressive late-train low-tension steps reinforce memorized embeddings).
+- memorization ratio 0/6 (same as cycle 4).
+- **Byte-cascade attractor SHIFT 4-instance generalization**: cycle 2 `nonce=N` digit → cycle 3 "Sent..." char → cycle 4 `PPP777...` → cycle 5 **prompt-specific multi-attractor family `Shhhh.../\nmmm.../Slllll.../tthhhh...`** (cascade now varies per-prompt rather than uniform across prompts). Confirms B-ATTRACTOR-NOTE: attractor shape is corpus+ckpt+prompt-dependent.
+
+**Cycle 4 vs Cycle 5 comparison table**:
+
+| metric | cycle 4 (cosine LR) | cycle 5 (DD155 hybrid LR) |
+|---|---|---|
+| init CE | 5.6407 | 5.6407 (same seed) |
+| final CE | 0.008289 | **0.007762** (6.4% lower) |
+| CE descent | 5.632 | 5.633 |
+| final ppl | 1.0083 | 1.0078 |
+| init tension (gn √gn2) | ~5.51 | 5.515 |
+| final tension | (n/a) | 0.039 |
+| final tension_EMA | (n/a) | 0.047 |
+| mult bin <0.75 | (n/a) | 1599 (64%) |
+| mult bin 0.75-1.25 | (n/a) | 686 (27%) |
+| mult bin >1.25 (burst) | (n/a) | 215 (8.6%) |
+| wall (GPU) | 328.3 s | 321.3 s |
+| cost (vast.ai A100 SXM4) | ~$0.22 | **~$0.054** (4× cheaper offer) |
+| ckpt size | 1,135,846,378 B | 1,135,846,570 B (+192 B for hybrid metadata) |
+| V5.8 greedy | 0/6 FAIL | 0/6 FAIL |
+| V5.8 sample | 0/6 FAIL | 0/6 FAIL |
+| V5.8 M3 | 0/6 FAIL | 0/6 FAIL |
+| V5.8 M4 | 6/6 PASS | 6/6 PASS |
+| V-SPONT coherent | 0/5 FAIL | 0/5 FAIL |
+| V-MOTIV coherent | 0/5 FAIL | 0/5 FAIL |
+| **V-TT coherent (NEW)** | (did not exist) | **0/5 FAIL** |
+| mean BPB | 0.0256 | **0.0194** (24% lower) |
+| memorization ratio | 0/6 | 0/6 |
+| decoding artifacts (rep>0.5) | 24 | 24 |
+| byte-cascade attractor | `PPP777...` (uniform) | `Shhh.../\nmmm.../Slll.../tthh...` (prompt-specific multi) |
+
+**Honest framing on cycle 5 capability outcome (g3 carry)**: DD155 hybrid LR overlay DID NOT break the V-SPONT/V-MOTIV/V-TT capability ceiling carried from cycles 3+4. cycle 5 reaches a slightly lower final CE (~6.4%) and noticeably lower held-out BPB (~24%) than cycle 4 — i.e. **stronger memorization** but **NOT improved generalization**. This is honest empirical evidence (B-FIRE-CYCLE5-NOTE / B-D-NOTE family): the DD155 formula is mathematically valid and the implementation is byte-equal closed (B-FIRE-CYCLE5-1/2/3 🔵 sympy verified + B-CORPUS-V4-1/2 corpus carry closed), but the OUTCOME at this scale + this corpus + this β=0.99/clip=[0.5,2.0] choice did not yield spontaneous emergence. The DD-burst path activated 8.6% of the time (215 of 2500 steps), inducing notable transient CE bumps that the model quickly recovered from (e.g. step 1054 CE 0.13 → step 1116 CE 0.016).
+
+**B-CORPUS-V4 + B-FIRE-CYCLE5 closed-form sidecar battery (5 falsifier + 1 NOTE)** in `state/hexad_v4_py_d768x12L_tension_2026_05_17/blue_falsifier.py` (sidecar, NOT central — parallel TT-A/TT-B/TT-C agents in flight at central battery; mirrors B-PHASE-4-DESIGN sidecar pattern):
+- **B-CORPUS-V4-1** CORPUS-V3-BYTE-EQUAL-CARRY-CLOSED — Boolean conjunction (sha256 match + bytes match + lines match + helper-token grep total = 0). Kolmogorov 256-bit commitment + integer cardinality + Boolean set membership. ✅
+- **B-CORPUS-V4-2** CYCLE-5-FORMAT-COMPATIBILITY-CLOSED — mechanical AST diff: cycle-5 trainer's `load_byte_corpus` + `ByteDataset` source byte-equal to cycle 4 after comment+docstring strip. ✅
+- **B-FIRE-CYCLE5-1** DD155-LR-OVERLAY-FORMULA-CLOSED — sympy `∂lr/∂tension = base_lr/ema` (piecewise linear monotone) + 3-corner identity panel (lo·ema/ema/hi·ema). Real-limit anchor = piecewise-linear function on `[lo·base_lr, hi·base_lr]`. ✅
+- **B-FIRE-CYCLE5-2** EMA-CONTRACTION-CLOSED — Banach affine contraction with factor β ∈ (0,1): `EMA_{t+1} − tension_t = β·(EMA_t − tension_t)` sympy verified + 4-corner witness panel (β=½, 99/100, 0, 1). Real-limit anchor = Banach fixed-point theorem. ✅
+- **B-FIRE-CYCLE5-3** MULTIPLIER-IDENTITY-AT-EMA-CONVERGED-CLOSED — at tension==EMA with default clip [0.5, 2.0]: `clip(1, [0.5, 2.0]) = 1 ⟹ lr_step = base_lr` (cycle-4 baseline). Arithmetic identity sanity anchor — cycle 5 cannot diverge from cycle 4 at EMA convergence. ✅
+- **B-FIRE-CYCLE5-NOTE** SGD-OUTCOME-EMPIRICAL — V-SPONT/V-MOTIV/V-TT outcome + init→final CE trajectory + mult distribution + byte-cascade attractor shape = empirical (B-D-NOTE / B-TT-NOTE / B-ATTRACTOR-NOTE family). NOT counted 🔵 (honest carve-out).
+
+**Connection**: cycle 5 is the empirical materialisation of **HEXAD/TENSION-TRAIN/PLAN.md Phase TT-D** (the cost-bearing fire). closed transfer-form anchors (B-TT-1..5 central, B-TT-SPONT-1..5 central, B-FIRE-CYCLE5-1..3 sidecar) all PASS 🔵. empirical outcome (V-TT 0/5) is the honest carve-out per g3 — not a closure failure but a capability boundary observation at this scale + β/clip choice.
+
+**Connection-point closure** (g_blue_closed_mandate connection_emphasis): SPONTANEOUS (TALKER emit axis) ↔ TENSION-TRAIN (THINKER ΔW learn axis) — closed at design tier (B-TT-SPONT-1..5 by TT-C agent, parallel). cycle 5 = empirical realization where THINKER's tension-conditioned LR is applied to the same byte-corpus that SPONTANEOUS's γ pattern was rendered into. The wiring is intact (corpus → trainer → ckpt → eval transfer-function chain all byte-equal verified); outcome is empirical.
+
+**Hard 제약 carry (same as cycle 4 + TT-D specifics)**:
+- g_fire_autonomous: 자율 dispatch ("fire" 사용자 directive로 자율 fire).
+- g_fire_dispatch_robust: SAVE_POD=1 auto-promote + 75-min watchdog + 5-retry pull → clean teardown achieved.
+- g_hf_naming: revision template `v4-py-hexad-tension-d768x12L-cycle1-2026-05-17` 사용 (kind=tension). PUBLIC default. English model card. dataset side byte-equal carry from cycle 4 (NO new dataset revision).
+- g_clm_from_scratch: RANDOM init seed=1337 base_ckpt=NONE.
+- g3 (substrate-honesty): PyTorch SUBSTRATE label mandatory. tension=grad_norm proxy is honest (closed B-TT-5 formula, empirical realization).
+- f1/f2: NO lattice numerology (real-limit anchors: piecewise-linear + Banach contraction + arithmetic identity + sha256 + helper grep + Inner Thoughts factor set).
+- g_blue_closed_mandate: 산출물 (corpus + ckpt) + 연결부위 (generator → corpus → trainer → ckpt → eval transfer-function chain) 둘 다 🔵 closed (B-CORPUS-V4 sidecar + B-FIRE-CYCLE5 sidecar + B-TT central + B-TT-SPONT central + B-D-1..4 + B-CONN-1..12 chain).
+- g_doc_consolidation: 본 PLAN.md `## 진행 로그` append + HEXAD/TENSION-TRAIN/PLAN.md `## 진행 로그` append + AGENTS.tape n_hexad_progress recent_landings + archive/PHILOSOPHY.tape verdict + HEXAD/TENSION-TRAIN/TENSION-TRAIN.tape Log entry. docs/* 신규 = 0 (HEXAD/* SSOT 통합).
+- pull-rebase pattern (concurrent agents TT-A spine sympy + TT-B compiled smoke + TT-C bridge 와 충돌 0; sidecar 별도 state/ battery 채택으로 central blue_falsifier.py 경쟁 회피).
+
+Honest C3 (g3): cycle 5 LANDED 이지만 generation quality / spontaneous emergence claim 0 — DD155 hybrid LR overlay 는 closed-form 형식 (B-FIRE-CYCLE5-1/2/3) 으로 정직하게 적용되었으나 V-SPONT/V-MOTIV/V-TT 모두 0/5 FAIL 유지 (B-FIRE-CYCLE5-NOTE empirical, capability ceiling carry). cycle 5 의 미세 개선 (final CE 6.4% 낮음, BPB 24% 낮음) 은 **stronger memorization** evidence — generalization 진전 0. β=0.99 + clip=[0.5, 2.0] 의 특정 hyperparameter 선택은 burst 경로 8.6% 활성화에 그쳤음, 다른 β/clip 조합 또는 multi-cycle ensemble 시도 = 별도 future cycle. PyTorch substrate NOT hexa-native (legitimacy = arch identity + Phase E/E2 CPU-equiv anchor chain + DD155 formula closed-form). byte-cascade attractor cycle 4 (`PPP777`) → cycle 5 (prompt-specific multi-family `Shhh/\nmmm/Slll/tthh`) SHIFTED = B-ATTRACTOR-NOTE corpus+ckpt+prompt-dependent family 추가 evidence (NOT arch defect). DD-burst path activation 8.6% = honest empirical observation, NOT proof of DD155 efficacy (still no V-SPONT emergence).
