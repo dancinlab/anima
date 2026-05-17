@@ -279,11 +279,13 @@
   remedy = "anchor verification on at least one real-limit from LATTICE_POLICY.md §1.2"
   @> CLAUDE.md
 
-@F f_hardcoded_credential := "credential 평문 하드코딩" :: governance [required deny:write d=2026-05-17 active]
-  pattern = "dispatch script · config · source 에 API key / token / SSH 비밀키 / 비밀번호 를 평문으로 박기 (예: `RUNPOD_KEY=rpa_…` · `VAST_KEY=…` · `hf_…` token literal)."
-  why = "repo commit → credential 누출 (특히 PUBLIC repo / GitHub). 2026-05-17 발견: dispatch_eval_v2_runpod.sh 에 RUNPOD_KEY 하드코딩 → gitignore 선제 차단 + secret CLI 전환."
-  remedy = "모든 credential 은 `secret` CLI 에서 읽기 — `KEY=$(secret get <section.name>)`. 등록: `secret set <key>` (pipe/tty). g_fire_dispatch_robust credential_via_secret_cli 참조. 이미 누출된 key 는 rotate (`secret rotate` 또는 provider 콘솔)."
-  authority = "g_fire_dispatch_robust credential_via_secret_cli + user directive 2026-05-17 'secret cli 이용하도록'"
+@F f_hardcoded_credential := "credential 평문 하드코딩 — 재발 금지 (2026-05-17 incident)" :: governance [required deny:write d=2026-05-17 active]
+  pattern = "dispatch script · config · source · doc 에 API key / token / SSH 비밀키 / 비밀번호 를 평문으로 박기 (예: `RUNPOD_KEY=rpa_…` · `VAST_KEY=…` · `hf_…` · `sk-…` · `AKIA…` literal)."
+  why = "repo commit → credential 누출 (특히 PUBLIC repo / GitHub — 한 번 push 되면 history 에 영구, force-push 로도 완전 제거 어려움). 누출 즉시 rotate 필수."
+  remedy = "모든 credential 은 `secret` CLI 에서 read — `KEY=$(secret get <section.name>)`. 등록: `printf %s '<value>' | secret set <key>` (pipe — argv 는 shell history leak). g_fire_dispatch_robust credential_via_secret_cli 참조. 이미 누출된 key 는 **즉시 rotate** (provider 콘솔 재발급 → `secret set` 갱신)."
+  prevention_checklist = "**dispatch/fire script 작성·commit 시 매번 (재발 방지 운영 체크리스트)**: (1) script 안 credential 은 반드시 `$(secret get runpod.api_key)` / `$(secret get vast.api_key)` 형태 — literal 금지. (2) **commit 직전 staged diff 에 credential grep**: `git diff --cached | grep -nE 'rpa_|sk-|hf_[A-Za-z0-9]|AKIA|api_key.*=.*[A-Za-z0-9]{20}'` → 매치 0 확인 후 commit. (3) key 가 박힐 수밖에 없는 transient script 는 `.gitignore` 등재 (`*_runpod.sh` 등 패턴 carry). (4) fire 산출물 commit 시 `state/*/` 디렉토리째 `git add` 하면 안 — gitignore 안 걸린 key-bearing 파일이 휩쓸림. 명시적 file add OR add 후 `git diff --cached` 재검. (5) 신규 provider/도구 도입 시 key 는 먼저 `secret set` 등록부터."
+  incident_2026_05_17 = "**기록 — 2026-05-17 발생**: UBM-E6 v2 eval runpod fire dispatch 중 agent 가 `dispatch_eval_v2_runpod.sh` 에 `RUNPOD_KEY=rpa_LW57…` 평문 하드코딩. commit 전 발견 → (a) `.gitignore` 에 `*_runpod.sh` / `dispatch_*_runpod.sh` / runpod·vast transient 패턴 선제 등재 (commit d0468532b), (b) `secret` CLI 에 `runpod.api_key` 등록 + governance 명문화 (53d4dd3e9), (c) 노출됐던 RUNPOD_KEY 는 runpod 콘솔 재발급 **rotate 완료 (user 2026-05-17 '갱신완료')**. repo commit 으로 누출 0 (gitignore 차단 성공). 본 incident 재발 방지 위해 prevention_checklist 등재."
+  authority = "g_fire_dispatch_robust credential_via_secret_cli + user directive 2026-05-17 'secret cli 이용하도록' + '재발생금지 위해서 AGENTS.tape 에 주의사항 기록'"
   @> CLAUDE.md
 
 # ─── §5 External citations ───────────────────────────────────────────
