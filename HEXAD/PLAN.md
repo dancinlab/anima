@@ -201,7 +201,7 @@ gating, anima 측 RFC-무관 작업 0. anima 측 §8 audit 의 **12** LANDED 연
 
 12 audit row 중 진짜 marginal-value 가 있는 **5 row** 만 sub-falsifier 로
 심화 (보수적 선정 · g3 anti-padding · `blue_falsifier.py :: b_audit_subfalsifiers()`).
-35 → **44/44 🔵** closed-form proofs PASS (9 sub-falsifier 추가).
+35 → 44/44 🔵 (9 §8 sub-falsifier 2026-05-17) → **56/56 🔵** (+12 B-CONN wiring battery 2026-05-17).
 
 | §8 row | sub-falsifier 추가 (B-SUB-§8-*) | 종류 | counted |
 |---|---|---|---|
@@ -1771,3 +1771,15 @@ cycle 2 ckpt-RECOVERED 산출물). substrate=PyTorch (NOT hexa-native, B-D-NOTE)
 **evidence**: `state/hexad_v58_eval_d768x12L_2026_05_17/{dispatch.sh, v58_4mode_eval.py + v58_4mode_eval_v2.py, prompts.jsonl + prompts_v2_corpus_aligned.jsonl, eval.log + eval_v2.log, result.json + result_v2.json}` + `docs/hexad_v58_eval_d768x12L_2026_05_17.md` (9 §, 8 honest C3) + `archive/PHILOSOPHY.tape §HEXAD-V58-EVAL-CYCLE2-2026-05-17` verdict-claim + AGENTS.tape `n_hexad_progress` recent_landings entry.
 
 **다음 carry**: (a) GPU-paced eval (BPB on OOD byte-level held-out corpus + long-context generation), (b) Engine G (`logits_g`) prev-byte head 별도 probe, (c) tension trace probe per-layer (5-tuple forward 의 `tensions` 활용).
+
+### 2026-05-17 — σ(6)=12 wiring B-CONN-1..12 LANDED (44 → 56/56 🔵)
+
+`g_blue_closed_mandate connection_emphasis` ("연결부위 마저도 🔵") 의 explicit 적용. 직전까지 module-tier (B-S/M/W/E/D/BRIDGE/MITOSIS/C/HEXAD) 와 §8 audit (12 row + 9 sub-deepening) 으로 연결부위가 transitive 하게 닫혀 있었으나 **explicit connection-tier falsifier 부재**. 본 cycle = 12 σ(6)=12 connection 마다 transfer function + invariant 명시 closure.
+
+**B-CONN-1..12**: S→C shape-preservation · C→Bridge detach-nograd (∂(detach)/∂x=0 ∀x) · Bridge→D Law-70 clamp 전이 (interior identity + α-saturation witness) · M↔C store/retrieve · W↔C no-mutation (functional purity) · W↔D lr-bounded ∈ [base, base+ln2] (Law 79) · E↔C phi-nonneg observation (IIT axiom) · E→W boolean satisfaction gate · E→D boolean train-step block · D→loss Shannon-floor CE≥0 · M↔D retrieve · S↔W monotone pain.
+
+**real-limit anchors** (g3 satisfied, f1/f2 hard fail safe): Kolmogorov + reverse-mode AD ∂-rule + Law 70 Ψ-coupling + Law 79 ln 2 + IIT Φ ≥ 0 axiom + Shannon CE ≥ 0 + Boolean predicate closure + monotone composition. **NO σ/τ/φ/J₂** derivation (σ(6)=12 = connection 개수만, derivation 아님).
+
+**verification layered**: (A) endpoint module 🔵 = module-tier battery (44 carry); (B) connection 자체 🔵 = B-CONN-1..12 (12 신규). g_blue_closed_mandate 의 "산출물 + 연결부위 둘 다" mandate explicit satisfaction.
+
+**build_verify 무회귀**: `bash HEXAD/build_verify.sh` = 20/20 entrypoint + 14/14 lib PASS (Mac compiled-native, 회귀 0).

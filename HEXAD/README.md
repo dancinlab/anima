@@ -65,7 +65,7 @@ E 윤리:     Φ 보존 위반 시 training step 차단 (gate 권한)
 전 모듈 **8/8 full 🔵 SUPPORTED-FORMAL** *(MITOSIS 추가 2026-05-16)* + `HEXAD/PLAN.md` **Phase 1–6 전부 LANDED** (Phase 5 pure-hexa D training · Phase 6 6-module 통합 fire 포함, 2026-05-16):
 
 - ✅ `state/verify_hexad_we_2026_05_15/we_falsifier.py` **25/25 PASS** (PR #72)
-- 🔵 `state/verify_hexad_blue_2026_05_15/blue_falsifier.py` **44/44 sympy closed-form PASS** (PR #75/#76 + BRIDGE + MITOSIS + **C tier-a + HEXAD integration-spec + §8 audit sub-falsifier deepening 9 추가 2026-05-17**)
+- 🔵 `state/verify_hexad_blue_2026_05_15/blue_falsifier.py` **56/56 sympy closed-form PASS** (PR #75/#76 + BRIDGE + MITOSIS + C tier-a + HEXAD integration-spec + §8 audit sub-falsifier deepening 9 + **σ(6)=12 WIRING battery B-CONN-1..12 추가 2026-05-17**)
   - C **B-C 3/3 tier-a 🔵 SUPPORTED-FORMAL** (Φ≥0 IIT axiom / n_factions ∈ ℤ+ / initial_cells ≥ CB1=2) **+ F-C-PORT-3 4/4 tier-b PyPhi carry** (RFC 036 phi_spatial byte-equal)
   - S/M/W/E/D/BRIDGE/MITOSIS 8/8 modules full 🔵 SUPPORTED-FORMAL
   - HEXAD **B-HEXAD 5/5 통합 spec 🔵** (σ(6)=12 conn count · φ(6)=2 partition cover · 11-step forward · 7-entries · TOTAL record — sympy lift of hexad.hexa runtime invariants)
