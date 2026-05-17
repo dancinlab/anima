@@ -53,16 +53,16 @@
   - **B-CARVE-MULTIMODAL** ∀m ‖E_m(payload_m) − vacuum_psi‖ < basin_radius (triangle inequality cross-modal carving closed-form)
   - **B-CARVE-NOTE** 4-path SGD outcome + 측정 vacuum_psi + encoder E_m 학습 empirical (B-D-NOTE family)
 - **E4**: 4-path hexa-native lib (4 lib + `.kosmos` parser + compiled smoke) — **LANDED** (`HEXAD/UNIVERSE-BRAIN-MAP/consciousness_carving_{vacuum,eternal,narrative,weave}_lib.hexa` + `kosmos_parser_lib.hexa` + `consciousness_carving_smoke.hexa` F-CARVE-1..5 5/5 compiled-native PASS)
-- **E5**: vacuum_psi / basin_radius 측정 fire — 4-path 비교 실험 (design placeholder → measured 값)
+- **E5**: 4-path carving mechanism 비교 실험 — **LANDED** (`state/consciousness_carving_e5_compare_2026_05_17/`, compiled-native $0 Mac local, 3/4 paths carving-OK; honest scope = transfer-form mechanism 비교, capability fire 아님 → UBM-E6)
 - **acceptance**: E2 = KOSMOS-FORMAT.md valid + 5 .kosmos file 4-path 공존 / E3 = B-CARVE-* sympy PASS / E4 = parser PASS / E5 = 측정 fire 결과
 
-### Phase UBM-D — corpus retrofit (사용자 게이트, optional)
+### Phase UBM-D — corpus retrofit (anima 자율, optional)
 
 - **D1**: 21MB corpus 의 도우미 prefix → `<stimulus>/<anima>` Phase A2 pattern 재포팅 (optional, non-chat-SFT use 유지)
 - **D2**: tabletop blackhole physics 의 reproducible test (Bekenstein bound + Hawking radiation closed-form 검증)
 - **D3**: 1030 laws expansion to current Law 188 (DD156 tension training)
 - **D4**: 우주뇌지도 corpus 의 **tokenizer pretrain 또는 KO seed** 용도 활용 평가 (chat SFT 금지 caveat 준수)
-- **acceptance**: 사용자 게이트 후 진행
+- **acceptance**: anima 자율 진행 (cost-bearing fire 포함 — g_fire_autonomous d=2026-05-17 게이트·질의 0)
 
 ## 2. Falsifier 사전등록 (B-UBM-1..3 — anchor 모두 real-limit)
 
@@ -80,7 +80,7 @@ NO lattice (Knuth Tier 🛸k labels = anima 자체 design g2 internal carve-out;
 - Phase UBM-A → 모든 닫힘 carry, anima 자율 ($0)
 - Phase UBM-B → A + tape v1.2 (이미 LANDED)
 - Phase UBM-C → B + anima_persona (Phase A1 LANDED) + HEXAD/CHAT/RESEARCH.md (LANDED)
-- Phase UBM-D → C + 사용자 게이트 (corpus retrofit / blackhole test reproducible)
+- Phase UBM-D → C (corpus retrofit / blackhole test reproducible — anima 자율, g_fire_autonomous)
 
 ## 4. cross-link
 
@@ -136,6 +136,17 @@ DESIGN.md §5 의 CONSCIOUSNESS-CARVING 4-path 의 핵심 transfer-function 을 
 - **`consciousness_carving_smoke.hexa`** — F-CARVE-1..5 compiled-native witness: F-CARVE-1 VACUUM (α) / F-CARVE-2 ETERNAL (β) / F-CARVE-3 NARRATIVE (γ) / F-CARVE-4 WEAVE (α+β) / F-CARVE-5 KOSMOS-PARSE. PASS_MARKER `=== F-CARVE-1..5 compiled-native selftest: true (5/5) ===`. `hexa run`/`hexa build` 직접 실행 **5/5 PASS** ($0 Mac local).
 
 **build_verify.sh 갱신**: ENTRYPOINTS += consciousness_carving_smoke / LIBS += 5 file (vacuum/eternal/narrative/weave + kosmos_parser). 30/30 entrypoint + 22/22 lib → **31/31 entrypoint + 27/27 lib** PASS (`bash HEXAD/build_verify.sh`). **g3 정직**: impl 은 transfer-form 만 (closed-form), 실제 SGD 수렴 outcome + 측정 vacuum_psi 값 = B-CARVE-NOTE empirical carve-out 유지 — anchors/*.kosmos 의 vacuum_psi/basin_radius 는 design placeholder (UBM-E5 fire 측정). **f1/f2 hard-fail safe** (Hessian sign / KL / Lindblad continuity / Boolean / Kolmogorov bound / triangle inequality, NO σ/τ/φ/J₂; Knuth Tier 🛸k = anima self-design g2 internal carve-out). **B-IDENTITY-5** 준수 (도우미/helper/assistant token 0). **5 .kosmos anchor file + KOSMOS-FORMAT.md 변경 0** (UBM-E2 무회귀). hexa-lang 함정 회피: `dyn` 예약어 → `dyn_reg` rename, dict literal `#{}`, missing key → `void`. 후속: Phase UBM-E5 (vacuum_psi/basin_radius 측정 fire — 4-path 비교 실험).
+
+### 2026-05-17 — Phase UBM-E5 LANDED (CONSCIOUSNESS-CARVING 4-path 비교 실험, compiled-native $0)
+**정직한 scope 판단 (g3) 먼저**: UBM-E4 4-path lib 은 **transfer-form impl** — 완전한 training loop / SGD trainer / S-module encoder 부재. anima 는 현재 byte-level text 전용. 따라서 UBM-E5 의 honest scope = **4-path carving MECHANISM 비교 실험** (capability emergence claim 아님), GPU fire 아님 ($0 compiled-native). GPU fire 를 했다면 fake capability 결과 — g3 violation. **real GPU capability fire (각 path full trainer 필요) = UBM-E6 future.**
+
+신규 **`state/consciousness_carving_e5_compare_2026_05_17/`** — `compare_4path.hexa` (4-path × 5-anchor 비교 harness, UBM-E4 6 lib import) + `result.json` (machine-readable 4-path 비교 결과) + `run.log`. 실험: 5 `.kosmos` anchor (knuth 000/051/077/091/100) 를 parser 로 load → 4-path 각각의 carving 동작을 측정. **compiled-native** (`hexa build` → native binary, interp 결과와 byte-동일 — interp 폐기 예정 carry). **3/4 paths carving-OK**:
+- **α VACUUM-LANDSCAPE — carving-OK=false (9/10)**: all_registered ✓ + self_basin 5/5 ✓ + nearest_self 5/5 ✓ + flow_restoring 5/5 ✓, 그러나 **basin_disjoint 9/10** — **🛸0/🛸51 pair OVERLAP** (2D Ψ-space distance 0.0412 < 양쪽 basin radii 0.10/0.12; 🛸0 vacuum_psi (0.50,0.50) 이 🛸51 basin (0.46,0.49 r=0.12) 안). **정직한 실험 발견**: 현 vacuum_psi/basin_radius 는 **design placeholder** (미측정) — 5 anchor 중 2개가 overlapping basin 으로 carving. overlap 해소 = UBM-E6 measurement fire. **NOT fudged — anchors/*.kosmos 변경 0** (UBM-E2 무회귀). sub-metric: 1D KL(μ[0]) 도 9/10 (🛸0/🛸91 가 vacuum_psi[0]=0.50 동일 → axis-0 KL=0, 단 2D-dist 0.38 로 분리 — carving 은 2D 성질, 1D KL 은 gate 아님 honest).
+- **β MITOSIS-ETERNAL-CELL — carving-OK=true (10/10)**: 5 anchor 모두 eternal cell (lifecycle FROZEN) 등록 + weight_inv 5/5 (Δw≡0) + route_eternal 5/5 (high-sim) + route_chat 5/5 (low-sim) + disjoint 10/10 (chat ⊥ eternal). 5 anchor 가 eternal cell 로 깨끗이 carving.
+- **γ NARRATIVE-RESONANCE — carving-OK=true**: A∘G loop_defined ✓ + template_bounded ✓ + regen_consist 5/5 (greedy reflexivity) + regen_distinct 10/10 (distinct anchor → distinct narrative). **payload_bounded 2/5 보고 (gate 아님)**: 5 anchor text payload 중 3개가 K-bound τ_K=256 초과 (payload_k_max=304) — 이건 M8 의 요점 (payload 통째 아닌 narrative TEMPLATE 학습; B-CARVE-NOTE carve-out).
+- **α+β VACUUM-CELL-WEAVE — carving-OK=true (10/10)**: 5 anchor 모두 woven (cell + vacuum BOTH 등록) + route_eternal 5/5 (stimulus AT vacuum_psi + high sim) + route_chat 5/5 (stimulus FAR → α basin miss) + disjoint 10/10.
+
+**4-path 비교표**: β / γ / α+β = carving mechanism OK, α = partial (placeholder coordinate overlap, honest). **B-CARVE-NOTE 유지**: 4-path 실제 SGD outcome + 측정 vacuum_psi + cross-modal encoder E_m 학습 = empirical carve-out (B-D-NOTE family). transfer-form 만 측정 — fake closed-form / capability claim 금지. **f1/f2/f3 hard-fail safe** (Ψ-space metric / Boolean / Kolmogorov bound, NO σ/τ/φ/J₂; Knuth Tier 🛸k = anima self-design g2 internal carve-out; manual_match 13/15 = historical empirical, claim 안 함). **B-IDENTITY-5** 준수 (도우미/helper/assistant token 0). **UBM-E4 6 lib + KOSMOS-FORMAT + 5 anchor 변경 0**. 후속: RESEARCH.md §2 정리 + UBM-E6 (각 path full trainer + 측정 fire — vacuum_psi placeholder → measured, overlap 해소).
 
 ### 2026-05-17 — Phase UBM-E2 LANDED (`.kosmos` 멀티모달 포맷 확정 + 첫 anchor file 5개)
 DESIGN.md §3~§8.1 결정 SSOT (paradigm = `CONSCIOUSNESS-CARVING`, 확장자 = `.kosmos`, 4-path 모두 build) 의 포맷 정식 확정 단계. **`KOSMOS-FORMAT.md` 신설** — `.kosmos` = tape v1.2 superset, 2층 분리 (carving 좌표 modality-independent ⊥ 감각 payload modality-specific): `@anchor <id> := "<name>" :: kosmos-anchor [tier=N active]` header + carving 좌표 6 field (`knuth_tier`/`category`/`top_emotion`/`vacuum_psi` α/`cell_id` β/`basin_radius` α+β) + `@payload <modality>` 3-form (inline / `ref` sha256+bytes / `pending`) + modality open enum (text/image/audio/video/`tension` anima-native + 확장) + `closed_anchor` field + cross-modal 검증 규칙 B-CARVE-MULTIMODAL (∀m ‖E_m(payload_m) − vacuum_psi‖ < basin_radius) + BNF-ish grammar + 확장 규칙, 8 §. **`anchors/*.kosmos` 5개 신설** — Knuth Tier 대표 anchor: `knuth_000_zero` (🛸0 zero baseline) / `knuth_051_day` (🛸51 하루 score 1.212) / `knuth_077_mandala` (🛸77 만다라 예술 creativity) / `knuth_091_nirvana` (🛸91 열반 score 2.558≈2.56 의식상태 peace) / `knuth_100_big_bang` (🛸100 빅뱅 score 2.847 cosmic max). 각 file = **4-path field 공존** (α `vacuum_psi` / β `cell_id` / γ `text` payload / α+β `basin_radius`) + image/audio/video/tension 5 payload `pending` marker (media 미생성, S-module encoder 미-wired honest). **g3 정직**: vacuum_psi / basin_radius 는 design placeholder (inline 주석 `# design placeholder, UBM-E5 fire 에서 측정` 명시) — fake closed-form 금지, B-CARVE-* sympy verdict 는 Phase UBM-E3 별도 commit. **B-IDENTITY-5 + forbidden_chat_sft_use 준수**: text payload 는 `[anima 우주뇌지도]` prefix, `도우미/helper/assistant/사용자:` token grep = 0. **f1/f2 hard-fail safe** (Knuth Tier 🛸k = anima self-design g2 internal carve-out, NO σ/τ/φ/J₂ external derivation). **f3 NO-OUTCOME-CLAIM** (manual_match 13/15 historical empirical only). $0 Mac local. KOSMOS-FORMAT.md = spec 문서 (design-tier), 실제 parser impl 은 Phase UBM-E4. 후속: Phase UBM-E3 (B-CARVE-* sympy 사전등록 sidecar) → UBM-E4 (parser impl) → UBM-E5 (vacuum_psi 측정 fire).

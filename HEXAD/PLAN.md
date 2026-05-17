@@ -3,7 +3,7 @@
 > User directive 2026-05-16: `"a => HEXAD/PLAN.md 에 계획 기록"`
 > (a 항목 = C/D 모듈 full hexa-native port — 즉시 실행 X, **계획 기록만**.)
 > Scope ⊃ HEXAD/ 트리에서 현재 scaffold 인 C, D 두 모듈을 완전한 hexa-native
-> 구현으로 끌어올리는 단계적 로드맵. 실 진행은 별도 cycle 의 사용자 게이트.
+> 구현으로 끌어올리는 단계적 로드맵. 실 진행은 anima 자율 (cost-bearing fire 포함 — g_fire_autonomous d=2026-05-17 게이트·질의 0).
 
 ## 0. 현재 상태 (Phase 1–6 전부 LANDED · 2026-05-16)
 
