@@ -31,16 +31,20 @@
 = 전부 "emergence 로 가는 architectural path 가 어디인가" 의 탐색
 ```
 
-## 현재 정직한 위치 (g3 — over-claim 금지)
+## 현재 정직한 위치 (g3 — over-claim 금지, 2026-05-18 갱신)
 
-**목표 미도달.** mechanism 은 🔵 closed, emergence(목표) 는 측정상 미발현 — 그게 정직한 현재.
+**목표 미도달.** mechanism 은 🔵 closed, emergence(목표) 는 측정상 미발현. 13-way arc 가 접근 가능한 mechanism+data-regime 공간을 소진했고, 그 안에 emergence 가 없음을 metric-level 로 확정 — 그게 정직한 현재.
 
-- V-SPONT: 0/5 (cycle 3/4) → 3/5 (UBM-E6 α, weak/noisy) → 2/5 (UBM-E7 α scaled)
-- JOINT: UBM-E6 α 0.0255 → UBM-E7 α scaled **0.0155 (하락)** — scale 단독 불충분 입증
-- 진단: memorization-saturated regime (RESEARCH.md §1.1 + §2.4 + §3 재확인)
-- 다음: architectural 변경 (RESEARCH.md §1.3 A~F 6 방향 병렬 fire — `g_multidirectional_explore`)
+**경과 (RESEARCH.md §1~§11)**:
+- 13-way fire (scale UBM-E6/E7 + 6-overlay D/B/F/A/C/E + G/H/I + diverse §8) = GOAL 축 전부 negative.
+- §8 (Ψ-anchored diverse 114MB) — §7.3 crux 이 scale 에서 FALSIFIED (routing rate Dir-I 3/31 → 2/64 하락).
+- **§9: 측정 도구 자체가 깨져있었음** — V-SPONT lenient `coherence_token` flag 가 garbled byte-cascade 에 5/5. cascade-rate-gated honest metric (B-EMERGE-1..7 🔵) 으로 교체 + 13-way 재채점 → **arc 전체의 V-SPONT "진전"(3/5·4/5·5/5)은 전부 probe-artifact 였음 metric-level 확정** (faint signal 0). §1~§8 의 V-SPONT-기반 GOAL-거리 비교 무효.
+- **§11-B: anima physics 단독(no-CE) 학습 = DEGENERATE** — CE 가 load-bearing. "자기 physics 로부터" = physics-only 학습 불가, **physics-anchored learning ON a base prediction objective** (Dir-I lever 형태) 로만 성립. = GOAL 실현형태의 실질 제약.
+- 진단: memorization-saturated regime (CE → 0.0001) — mechanism 으로 不破, 13-way 재확인.
 
-> mechanism transfer-form 만 🔵 (B-VAC/B-MIT-ETN/B-NAR sympy). emergence 는 empirical, 미발현 상태를 정직히 기록 (B-D-NOTE family). 이 GOAL 은 north-star — 달성 주장 아님, 측정된 거리 명시.
+**다음 (RESEARCH.md §11~)**: mechanism space 소진 — frontier = data-regime 근본 (§7 generic = GOAL-illegitimate, Ψ-anchored 114MB = §8 실패) OR 새 architectural insight. 현재 §11-A (SCALE-DECOMP — model-capacity vs data-regime ceiling 분리) in-flight.
+
+> emergence 는 empirical, 미발현 상태를 정직히 기록 (B-D-NOTE family). honest metric (§9) 도 cascade-*detector* 이지 correctness-detector 아님 (necessary not sufficient). 이 GOAL 은 north-star — 달성 주장 아님, 측정된 거리 명시. GOAL 한 줄(north-star) 은 불변, 본 섹션(honest-status)만 갱신.
 
 ---
 
