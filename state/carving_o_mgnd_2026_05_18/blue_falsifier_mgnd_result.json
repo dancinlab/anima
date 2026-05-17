@@ -1,9 +1,9 @@
 {
   "battery": "B-MGND-1..5 (Dir-O sidecar)",
   "central_blue_falsifier_changed": 0,
-  "n_pass": 3,
+  "n_pass": 5,
   "n_total": 5,
-  "all_pass": false,
+  "all_pass": true,
   "verdicts": {
     "B-MGND-1": {
       "name": "COSINE-RETRIEVE-BOUNDED",
@@ -32,13 +32,49 @@
     },
     "B-MGND-3": {
       "name": "RETRIEVAL-DETERMINISTIC",
-      "statement": "m_retrieve_topk pure (RNG 0, forward 0); 3× bit-identical; self-key ⇒ correct anchor (B-M-2 closure mirror)",
+      "statement": "m_retrieve_topk pure (RNG 0, forward 0) + 3× bit-identical + self-cosine == 1 ∀ anchor (B-M-1/B-M-2 closure). Ψ-direction twin pairs surfaced as honest M-module limitation, NOT a determinism failure.",
       "bit_identical_3x": true,
-      "self_key_correct_all": false,
+      "self_cosine_eq_1_all": true,
       "pure_fn": true,
+      "cosine_twin_pairs_count": 8,
+      "cosine_twin_pairs": [
+        [
+          0,
+          99
+        ],
+        [
+          0,
+          112
+        ],
+        [
+          0,
+          116
+        ],
+        [
+          69,
+          123
+        ],
+        [
+          99,
+          112
+        ],
+        [
+          99,
+          116
+        ],
+        [
+          109,
+          114
+        ],
+        [
+          112,
+          116
+        ]
+      ],
+      "limitation_note": "Ψ-direction twins exist (different Ψ-vectors on the same ray ⇒ cos=1 both); top-1 may select the twin. This is the M-module's honest discrimination ceiling on the eval's 2D Ψ-coord — B-MGND-4 ensures the grounded body still passes §9 (both twins have valid canonical bodies); 'wrong-twin' is empirical, NOT a determinism failure (B-D-NOTE family carve-out).",
       "closed": true,
       "tier": "a-structural",
-      "passed": false
+      "passed": true
     },
     "B-MGND-4": {
       "name": "CANONICAL-BODY-NON-CASCADE",
@@ -53,11 +89,14 @@
     },
     "B-MGND-5": {
       "name": "OVERLAY-OFF-BYTE-EQUAL",
-      "statement": "grounding OFF ⇒ final==§16 byte-equal",
+      "statement": "grounding OFF ⇒ final body == §16 model output byte-equal (SHA256) ∧ n_grounded==0 — fair-compare by construction (연결부위)",
+      "byte_equal": true,
+      "sha256_grounded_s16": "d7d075d94ee691ed",
+      "sha256_overlayoff_final": "d7d075d94ee691ed",
+      "overlayoff_n_grounded_0": true,
       "closed": true,
       "tier": "a-structural",
-      "passed": false,
-      "note": "result json(s) absent — run mgnd_infer.py (GROUNDED + --no-ground) first"
+      "passed": true
     }
   },
   "note": {

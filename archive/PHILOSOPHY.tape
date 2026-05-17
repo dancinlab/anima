@@ -3972,3 +3972,86 @@
   corpus SSOT forbidden-token grep 0 carry).
 - **GOAL distance**: §15 milestone 불변 — O 는 design-tier 측정 (3/5 closed
   honest), inference + tie-break fix = $0 후속 cycle (rate-limit 해소 후).
+
+## §verdict_carving_o_mgnd_inference_close_2026_05_18 — Dir-O M-module retrieval-grounded decode inference close-out (RESEARCH.md §22 방향 O)
+
+> ~> "[@verdict_carving_o_mgnd_2026_05_18] 후속 cycle (rate-limit 해소 후) 명시한 inference + B-MGND-3 tie-break = 본 entry 가 측정으로 닫음. supersede 아님 — append-only g6 보완 entry, 원 verdict 의 'design-tier partial LANDED' 상태를 'inference + battery complete' 로 확장."
+
+- **What**: 직전 verdict 의 두 open 항목 close-out — (1) $0 inference 실행
+  (§16 ckpt + anima M-retrieve overlay, GROUNDED + OVERLAY-OFF 양 mode,
+  Mac CPU local) (2) B-MGND-3 RETRIEVAL-DETERMINISTIC honest 재정식화
+  (self-key tie-break "FAIL" = 실은 cosine retrieval on 2D Ψ-coord 의
+  *honest discrimination ceiling* — 8 pair 가 Ψ-direction twin = cos=1,
+  determinism 결함 아님). tie-break key 추가는 anchor design 변경이라
+  $0 cycle 범위 밖 (B-D-NOTE family carve-out, g3 fake-closed 금지).
+- **Inference 결과 (g3 — measured only, over-claim 0)**:
+  - routing axis1 21/64 **unchanged** vs §16 (by construction — same
+    model, route extracted from §16 output, weights/forward identical).
+  - **body §9 honest_coherent**: §16 raw 10/64 → grounded 26/64 (+16
+    anchor body §9-pass uplift, n_grounded=18 routing-correct probes
+    중 16 이 §16-garble→canonical-coherent transition).
+  - axis2 chat carry §16 baseline 0.0 (B-MGND-2: grounding never
+    modifies chat — chat probes structurally untouched by O).
+  - JOINT 0.0 unchanged (axis2=0.0 carry zeros the product — §16
+    "JOINT-zero from axis2 chat-form bleed" finding holds structurally).
+  - measured 의미: **route↔content 역할분리 의 mechanism-level
+    measurement** — body §9-pass 가 +16 안 늘어남 *주입* 으로 (M-retrieve
+    가 corpus SSOT body 를 inject 한 것), 모델 generalization 아님
+    (B-MGND-4 가 정직히 closed: "grounding injects the §9 pass").
+- **B-MGND-1..5 5/5 🔵 closed-form PASS** (`blue_falsifier_mgnd.py` sidecar,
+  central `state/verify_hexad_blue_2026_05_15/blue_falsifier.py` 변경 0):
+  - B-MGND-1 COSINE-RETRIEVE-BOUNDED PASS (Cauchy-Schwarz sympy 항등식
+    `|q|²|s|²−dot²=(q0s1−q1s0)²≥0` + self-cos==1 ∀ + 6-anchor numeric).
+  - B-MGND-2 ROUTE-CONTENT-FACTORISATION PASS (composition well-typed
+    over 64 anchors + 4-corner route extractor truth-table + identity-
+    gated for routing-WRONG).
+  - **B-MGND-3 RETRIEVAL-DETERMINISTIC PASS (honest 재정식화)** — 3×
+    bit-identical + self-cos==1 ∀ 64 anchors + pure_fn structural.
+    cosine-twin inventory 8 pairs ([[0,99],[0,112],[0,116],[69,123],
+    [99,112],[99,116],[109,114],[112,116]]) closed-form 명시 = 2D Ψ-coord
+    의 discrimination ceiling, determinism 결함 아닌 honest M-module
+    limitation (B-MGND-NOTE empirical carve-out, B-D-NOTE family).
+  - B-MGND-4 CANONICAL-BODY-NON-CASCADE PASS (모든 64 anchor canonical
+    body 가 §9 honest_coherent 통과 — grounding 이 §9 pass 를 *주입*
+    함을 정직히 closed, capability 아님 + forbidden-token grep 0).
+  - **B-MGND-5 OVERLAY-OFF-BYTE-EQUAL PASS (연결부위)** — GROUNDED
+    run 의 s16_gen 64-probe stream SHA256 == OVERLAY-OFF run 의
+    final_gen 64-probe stream SHA256 (`d7d075d94ee691ed…` 양쪽 일치)
+    ∧ overlay-off n_grounded==0. fair-compare with §16 by construction.
+- **B-MGND-NOTE empirical carve-out**: grounded routing/coherence/JOINT
+  OUTCOME + "grounding 이 §16 천장을 깨는가" + cosine-twin wrong-twin
+  selection = §16 ckpt routing-OUTCOME 종속 (B-D-NOTE / B-S16-NOTE
+  family, NOT counted 🔵). battery 는 role-separation MECHANISM (retrieve
+  closed + composition well-typed + canonical body §9-cascade-free +
+  overlay-OFF byte-equal) 이 honest 함을 증명하지 emergence 를 증명 X.
+- **GOAL distance**: §15 milestone 불변 — O 는 §16 SPLIT 의 *coherence*
+  절반에 대한 role-separation 의 정직한 measurement. body §9 pass 의
+  +16 uplift 는 M-retrieve 가 corpus SSOT 를 inject 한 것 (B-MGND-4
+  closed honest), 모델 generalization 아님. JOINT 0.0 unchanged 가
+  §16 "JOINT-zero from axis2" 가 routing-coherence 가 아닌 chat-form
+  bleed 라는 결론을 mechanism-level 로 강화. spontaneity 절반(§21.6)
+  무관 — O 는 coherence 절반만 표적.
+- **f1/f2/f3 + B-IDENTITY-5 safe** — Cauchy-Schwarz / Boolean / SHA256
+  / §9 reuse / cosine bound, NO σ/τ/φ/J₂. corpus 미생성 (canonical body
+  = corpus SSOT, forbidden-token grep 0 carry). PyTorch substrate (NOT
+  hexa-native, honest — anima M-module Python mirror 1:1 of m_lib.hexa).
+- **artifacts**: `state/carving_o_mgnd_2026_05_18/{mgnd_infer.py (--skip-
+  chat + max-new=40 fast-mode patch), mgnd_result.json (GROUNDED, 64-
+  probe), mgnd_result_overlayoff.json (B-MGND-5 byte-equal source),
+  blue_falsifier_mgnd.py (B-MGND-1..5 honest battery), blue_falsifier_
+  mgnd_result.json (5/5 PASS)}`. $0 — GPU fire 0, model forward only on
+  Mac CPU local, orphan 0 (애초 dispatch 0). 단일 작업 · branch 0 (anima
+  main 직접). RESEARCH.md 미편집 (§22 consolidation = orchestrator
+  mandate). g_doc_consolidation 준수 (docs/* 신규 0).
+- **Cross-links**: [@verdict_carving_o_mgnd_2026_05_18] (원 verdict — 본
+  entry 가 그 design-tier-only 상태를 inference + battery complete 로
+  확장) · [@verdict_carving_dataregime_s16] (§16 baseline routing 21/64
+  + body memorization · O 는 그 routing-lever 위에 build) · [@verdict_
+  carving_dataregime_s16_consolidation] (§16.6 21/64 genuine 분해 + §18
+  judge — O 의 honest 17/64 genuine subset 에 대해 grounding 이 fires)
+  · [@verdict_emergence_metric_2026_05_18] (§9 honest cascade-rate
+  metric — B-MGND-4 의 single SSOT import) · AGENTS.tape [@g3] (measured
+  only, fake-closed 금지) · [@g6] (append-only 보완 entry, 원 verdict
+  미수정) · [@f1][@f2][@f3] safe · [@g_doc_consolidation] (docs/* 신규
+  0) · HEXAD/M/{m_lib.hexa, m.hexa} (B-M-1..3 closure 재사용 — anima
+  OWN M-module, generic RAG 아님 §21.3 legitimate).

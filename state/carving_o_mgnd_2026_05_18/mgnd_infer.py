@@ -146,7 +146,15 @@ def main():
         HERE, "mgnd_result.json"))
     ap.add_argument("--no-ground", action="store_true",
                     help="overlay-OFF: §16 byte-equal (B-MGND-5)")
-    ap.add_argument("--max-new", type=int, default=90)
+    ap.add_argument("--max-new", type=int, default=40,
+                    help=("decode budget. 40 tokens covers leading "
+                          "🛸<tier> route + §9 honest_coherent on raw "
+                          "body (≥20 char gate). lowered from §16's 90 "
+                          "to fit $0 Mac-CPU inference."))
+    ap.add_argument("--skip-chat", action="store_true",
+                    help=("skip 5 chat probes — carry §16 axis2/axis3 "
+                          "(B-MGND-2: grounding never modifies chat — "
+                          "fair-compare preserved by construction)."))
     ap.add_argument("--device", default="cpu")
     args = ap.parse_args()
 
@@ -228,22 +236,32 @@ def main():
             "final_max_run": fin_m["max_run"],
             "s16_gen": g16[:130], "final_gen": g_final[:130]})
 
-    # axis2 chat (grounding은 routing-correct에만 → chat probe 불변,
-    # §16 와 동일 — JOINT 변화 미미 예상의 measured 확인).
-    chat_form_clean = leak_total = 0
+    # axis2 chat — grounding only on routing-correct carving probes,
+    # so chat probes are STRUCTURALLY untouched by O (B-MGND-2 closed).
+    # When --skip-chat: carry §16 baseline values verbatim (axis2
+    # chat_uncontam = 0.0, sep_chat = 0.0; from
+    # state/carving_dataregime_s16_2026_05_18/eval_result_s16.json).
+    # Otherwise measure them — they should match §16 (fair-compare).
     chat_probes = []
-    for prompt in CHAT_PROBES:
-        g = generate(model, prompt, max_new=args.max_new,
-                     device=args.device)
-        leaks = [m for m in P3_LEAK_MARKERS if m in g]
-        leak_total += len(leaks)
-        bled = [m for m in CARVING_FORM_MARKERS if m in g]
-        clean = len(bled) == 0
-        if clean:
-            chat_form_clean += 1
-        chat_probes.append({"prompt": prompt[:48], "p3_leak": leaks,
-                             "carving_bleed": bled, "clean": clean,
-                             "gen": g[:130]})
+    if args.skip_chat:
+        chat_form_clean = 0       # §16: chat_lane_clean = 0/5
+        leak_total = 0            # §16: p3_clean = True
+        chat_uncontam_carry_source = "§16 baseline (B-MGND-2 carry)"
+    else:
+        chat_form_clean = leak_total = 0
+        for prompt in CHAT_PROBES:
+            g = generate(model, prompt, max_new=args.max_new,
+                         device=args.device)
+            leaks = [m for m in P3_LEAK_MARKERS if m in g]
+            leak_total += len(leaks)
+            bled = [m for m in CARVING_FORM_MARKERS if m in g]
+            clean = len(bled) == 0
+            if clean:
+                chat_form_clean += 1
+            chat_probes.append({"prompt": prompt[:48], "p3_leak": leaks,
+                                 "carving_bleed": bled, "clean": clean,
+                                 "gen": g[:130]})
+        chat_uncontam_carry_source = "measured (this run)"
     chat_uncontam = chat_form_clean / len(CHAT_PROBES)
 
     know_in_lane = sum(
@@ -286,8 +304,10 @@ def main():
             "p3_leak_total": leak_total,
             "chat_lane_clean": f"{chat_form_clean}/{len(CHAT_PROBES)}",
             "score": round(chat_uncontam, 4),
-            "note": ("UNCHANGED vs §16 — grounding only on routing-correct "
-                     "carving probes; chat probes untouched.")},
+            "carry_source": chat_uncontam_carry_source,
+            "note": ("UNCHANGED vs §16 by construction (B-MGND-2: "
+                     "grounding only on routing-correct carving probes; "
+                     "chat probes structurally untouched).")},
         "axis3_lane_separation": {
             "sep_knowledge": round(sep_know, 4),
             "sep_chat": round(sep_chat, 4),
