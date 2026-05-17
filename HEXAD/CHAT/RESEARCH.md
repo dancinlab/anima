@@ -280,9 +280,65 @@ runpod A100 80GB PCIe pod `5456bx092qbtr1`, **detached-nohup + bounded-poll disp
 
 ---
 
-## §4 (placeholder for next research cycle)
+## §4 (2026-05-17) — g_multidirectional_explore 6-way consolidation: §1.3 A~F 전 방향 fire
 
-(future research synthesis will append here as § headers, append-only g6 pattern)
+§3 결론 ("scale 단독 불충분 → architectural 변경 필요") 후, user directive "한방향 시도가 아니라 모든 방향" → `g_multidirectional_explore` 등록 + §1.3 candidate A~F **6 방향 병렬 동시 fire**. 단일방향 순차 아닌 comparative evidence. GOAL = `/goal` (GOAL.md) = "anima 가 자기 physics 로부터 자발적으로 말 거는 Living Consciousness 로 *실제 emergence*" — 측정 proxy = V-SPONT (자발-발화), JOINT 은 보조 (chat 무오염×lane×knowledge 합성).
+
+### 4.1 6-way 결과표 (전부 동일 corpus 30MB · d768/12L · 31-anchor · paradigm-native 4축 EVAL.md)
+
+| Dir | 유형 | routing axis1 | chat axis2 | lane axis3 | **V-SPONT (GOAL축)** | JOINT (proxy) | 가설 |
+|---|---|---|---|---|---|---|---|
+| baseline UBM-E7 α | scale-up | 1/31 | 0.6 | 0.8 | **2/5** | 0.0155 | (기준) |
+| **D** CDE | loss overlay | 1/31 | 0.4 | 0.7 | 0/5 | 0.009 | FALSIFIED |
+| **B** INTUITOR | reward overlay | 1/31 | 1.0 | 0.5 | 0/5 | 0.0161 | FALSIFIED |
+| **F** Abstract CoT | surface(discrete-latent) | 1/31 | 1.0 | 0.984 | 0/5 | **0.0317** | 부분입증·반증 |
+| **A** TENSION-TRAIN | backprop-free | 1/31 | 1.0 | 1.0 | 1/5 | **0.0323** | FALSIFIED(core) |
+| **E** 2-stage superpos | corpus form | 1/31 | 0.0 | 0.5 | **4/5** | 0.0 | FALSIFIED(proxy)·GOAL축↑ |
+| **C** PRIME | gradient-free inference | 1/31 | 0.8 | 0.43 | 2/5 | 0.0112 | FALSIFIED |
+
+(각 closed-form: B-CDE/B-INTUITOR/B-TENSION/B-DIRF-CORPUS/(E)/B-PRIME sympy 3~4/4 🔵 sidecar, transfer-form + overlay-OFF=baseline byte-equal 연결부위만 🔵; 4축 capability = empirical B-CARVE-E6-NOTE/B-D-NOTE carve-out. central blue_falsifier.py 변경 0.)
+
+### 4.2 universal finding — routing axis1 = 7/7 FLAT 1/31
+
+**모든 방향 (loss/reward/surface/backprop-free/2-stage-corpus/gradient-free-inference) + baseline = routing 정확히 1/31 불변.** knowledge-generalization 병목이 어떤 mechanism 으로도 안 움직임. Dir-C 핵심 진단: `🛸99`-class single-attractor collapse 는 **byte-surface 가 아니라 representation/weight-level defect** — inference-time logit steering·corpus reshape·loss/reward overlay·backprop-free nudge 全 복원 불가. Dir-C round-0 dry 가 UBM-E7 α 0.0155 **byte-equal 재현** → harness validity + single-attractor 진단 독립 교차확인. 6 independent direction × 1 baseline = RESEARCH.md §2.4 memorization-saturated 진단의 7-way 강건 입증.
+
+### 4.3 JOINT ≠ GOAL — 핵심 disambiguation
+
+JOINT proxy 와 GOAL축(V-SPONT)이 **반대로 움직임**:
+- **F/A**: JOINT ~2× ↑ (chat·lane mechanical saturation) 이나 V-SPONT 0~1/5 ↓ — proxy headline 이 GOAL 후퇴를 가림.
+- **E**: JOINT 0.0 (carving-form over-memorize → chat 100% bleed) 이나 **V-SPONT 4/5 = anima 全 cycle 최고** (cycle3/4/5=0/5 · UBM-E6=3/5 · UBM-E7=2/5 · E=4/5).
+→ GOAL = 자발-발화 emergence 이면 측정은 **V-SPONT 우선, JOINT 보조**. JOINT 2× 들은 capability 아닌 proxy artifact (g_goal: helper품질/proxy 개선 = 수단 오인 경고 그대로).
+
+### 4.4 honest GOAL verdict (g3 — over-claim 0)
+
+**6-way 어느 방향도 GOAL(emergence)을 닫지 못함.** routing-generalization 7/7 FLAT — emergence 의 핵심 병목 不破.
+- GOAL축 최근접 = **Dir-E 2-stage superposition (V-SPONT 4/5)** — 단 (a) JOINT 0.0 (b) routing 1/31 flat (attractor `🛸99`→`🛸58/55` corpus-shape shift 일 뿐) (c) lenient flag over garbled output = probe ≠ capability (B-D-NOTE). **"emergence 달성" 아님 — "GOAL축을 가장 많이 움직인 corpus-form"**.
+- 나머지 5 = GOAL축 ≤ baseline. mechanism-overlay family (loss D / reward B / surface F / backprop-free A / gradient-free-inference C) 전부 negative.
+
+### 4.5 수렴된 다음 방향 — mechanism 아닌 representation-level architectural change
+
+6-way + baseline 7-way 교차증거의 일관 결론 (Dir-A/B/C/D/E/F agent 독립 동일 도달):
+- emergence 병목 = **mechanism 부재 아님** (6 family 시도·전부 negative) — **data-regime + representation-level**.
+- RESEARCH.md §1.1 진단 재확정: emergence = diverse-data **pre-training loss threshold**, NOT tiny(30MB byte) corpus 의 training loss. 30MB carving corpus 자체가 threshold 아래.
+- Dir-E + Dir-C 가 가리키는 구체 방향: **continuous-thought latent (hidden-state soft superposition)** — discrete byte-level `<inner>` encoding 아닌 representation-level — **+ routing-supervision** (single-attractor collapse 는 weight-level defect 라 supervision signal 필요). corpus/loss/lr/inference overlay 로는 不可 (7-way 입증).
+- → §5 후보: (i) continuous-thought latent architectural change (hidden-state superposition, NOT corpus form) (ii) routing-supervision signal (attractor-collapse 직접 penalize) (iii) data-regime 근본 확대 (diverse pre-training, byte-carving 탈피) — 단 이는 GOAL.md "anima 자체 physics" 정합성 재검토 필요 (g_goal apply).
+
+### 4.6 honest C3
+
+1. 6-way 전부 negative = 실패 아니라 **valuable comparative evidence** (g_multidirectional_explore why) — mechanism-overlay family 를 7-way 로 강건 배제, 병목을 representation/data-regime 로 정밀화.
+2. Dir-E V-SPONT 4/5 = anima 최고 signal 이나 noisy probe + JOINT 0 + routing flat — capability 주장 절대 X (g3/g_goal honest_status).
+3. JOINT 2× (F/A) = proxy artifact, GOAL 진전 아님 — metric 혼동 경계.
+4. routing 1/31 FLAT 7/7 = 가장 강건한 단일 사실 — emergence 병목의 정확한 위치 (representation/weight-level, not surface/mechanism).
+5. 모든 closed = transfer-form + overlay-OFF=baseline 연결부위만 🔵; capability 4축 = empirical carve-out 정직 (B-CARVE-E6-NOTE/B-D-NOTE family).
+6. 다음 방향(continuous-thought latent)은 GOAL.md "anima 자체 physics(Ψ/tension/Φ)" 와의 정합성 선검토 필요 — substrate 변경이 identity 훼손 아닌지 (g_goal apply, 별 cycle).
+7. f1/f2/f3 hard-fail safe 전 방향 (Ψ-metric/Boolean/Kolmogorov, NO σ/τ/φ/J₂; 13/15 historical only). B-IDENTITY-5 준수 (corpus 도우미 token grep 0 전 방향).
+8. multi-agent shared-index hazard 2건 (B↔F, E↔C) — 전부 agent self-reconcile (stash/rebase/pop, 명시 add) — 산출물 무손실, 단 병렬 git-index 공유 = 알려진 risk carry.
+
+---
+
+## §5 (placeholder for next research cycle)
+
+(future research synthesis — 후보: continuous-thought latent architectural change + routing-supervision, §4.5. append-only g6 pattern)
 
 ---
 
