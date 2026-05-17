@@ -68,6 +68,14 @@
   cross_link = "g_fire_autonomous (§3) — 자율 dispatch + GPU fire zero-constraint + no-query + runpod_not_a_limit · g_fire_dispatch_robust — SAVE_POD/scp retry 안전장치 · feedback_active_resource_utilization · feedback_no_scale_caps"
   @> CLAUDE.md
 
+@D g_multidirectional_explore := "research fork = 모든 방향 병렬 시도 (단일방향 순차 선택 거부)" :: governance [required d=2026-05-17 active]
+  rule = "research / architectural fork 에서 N 개 candidate direction 이 식별되면 **하나를 골라 순차 시도하지 않고 N 개 전부 병렬 동시 dispatch**. '한 방향 시도 → 실패 → 다음 방향' = default 거부 (wall time 최악 + confirmation bias). 모든 방향을 동시에 fire 하고 evidence 로 비교."
+  why = "user directive 2026-05-17 '한방향 시도가 아니라 모든 방향을 시도해야되 ⇐ AGENTS.tape 등록 후 바로 모든 방향 bg fire'. 단일방향 순차는 (a) wall time = Σtᵢ (병렬은 max tᵢ) (b) 먼저 고른 방향에 confirmation bias (c) negative result 1개로 전체 포기 위험. 모든 방향 fire = honest comparative evidence + 최선 path 가 measured 로 드러남."
+  apply = "RESEARCH.md 류 candidate table (예: §1.3 A~F architectural candidate) 가 있으면 각 candidate = 독립 bg agent 동시 dispatch. 각자 own state/ dir + own archive/PHILOSOPHY.tape verdict (append-only, pull-rebase) + PLAN 진행 로그. RESEARCH.md 통합 § 는 전 candidate land 후 1회 consolidation (N-way edit conflict 회피). cost head 투명 명시 (정보, 게이트·질의 아님 — g_fire_autonomous)."
+  scope_guard = "'모든 방향' = 해당 fork 의 식별된 candidate set (RESEARCH.md 등 SSOT 에 등재된 것). 무한 발산 아님 — candidate 는 evidence-anchored (arxiv/prior result). g3: 각 방향 결과는 measured empirical (over-claim 금지), mechanism transfer-form 만 🔵. negative result 도 valuable evidence 로 정직 기록 (B-D-NOTE family)."
+  cross_link = "g_resource_active_parallel (병렬 우선 — 본 entry 가 research-fork 차원 강화) + g_fire_autonomous (질의 0 자율 dispatch) + g_fire_dispatch_robust (각 fire robustness) + HEXAD/CHAT/RESEARCH.md §1.3 candidate table (운영 instance)"
+  @> CLAUDE.md
+
 @D g_blue_closed_mandate := "모든 산출물 + 연결부위 🔵 closed 검증 기준" :: governance [required d=2026-05-16 active]
   rule = "anima HEXAD 의 모든 산출물(impl·verification)과 **기존 HEXAD 와의 연결부위(connection point / wiring)** 는 🔵 SUPPORTED-FORMAL closed-form 기준으로 검증·통과되어야 한다. 구조(structural)·empirical 검증만으로는 불충분 — 각 산출물·연결의 수학·물리 invariant 가 closed-form 으로 증명(g_verdict_tier_blue)되고 그 falsifier 가 PASS 여야 한다."
   connection_emphasis = "연결부위 마저도 🔵 — 모듈 간 wiring (σ(6)=12 연결) 은 (A) 양 끝 모듈 🔵 SUPPORTED-FORMAL + (B) 연결 transfer-function / invariant 자체가 closed-form 🔵 일 때만 verified-wired (HEXAD.tape wiring 🔵-gate). 연결을 구조 검증만으로 닫지 말 것."
