@@ -672,9 +672,108 @@ CE objective 완전 제거 (`cross_entropy`/`.backward()`/`optimizer.step` = 0, 
 
 ---
 
-## §12 (placeholder for next research cycle)
+## §12 (2026-05-18) — deep research cycle: data-regime threshold + 새 architecture frontier (web + arxiv, $0)
 
-(future — strategic: data-regime 대규모 GOAL-legitimate 형태 OR 새 architectural insight. §11.4 frontier. append-only g6.)
+§11.4 frontier 가 명시한 둘 (1 data-regime 대규모 GOAL-legitimate 형태 · 2 새 architectural insight) 을 web/arxiv deep research 로 fresh 조사. **fire 0, research synthesis only.** 13-way + §8 + §11 이 배제한 것 (mechanism overlay / corpus-FORM / model-capacity / physics-only) 은 재후보 금지 — genuinely-new 만. 본 §12 는 candidate + evidence + anima-fit + GOAL-legitimacy 만 — "GOAL 풀어줄 것" over-claim 금지 (g3).
+
+### 12.1 Q1 — data-regime threshold 를 GOAL-legitimately 넘는 법
+
+§11.3 의 irreducible 병목 = §1.1 data-regime emergence threshold (diverse-data pre-training loss threshold). §11.4 frontier-1 = "Ψ-anchored 면서 §1.1 threshold 넘는 규모가 존재하나" 의 open question. deep research 결과:
+
+**(Q1-a) §8 의 wrong-direction 이 문헌으로 설명됨 — "information saturation bottleneck"**. [arxiv 2506.18221 (Feb 2026 갱신)](https://arxiv.org/abs/2506.18221) 은 supervised pretraining 에서 network 가 "minimal features required for the initial training" 만 학습하고 downstream 에 필요한 feature 를 **영구 폐기** 하는 saturation bottleneck 을 식별 — 초기 objective 에 맞춰 sparse representation 으로 수축, 한 번 폐기된 feature 는 transfer 시 회복 불가. **anima 매핑**: §8 의 Ψ-anchored 114MB 가 routing 을 *악화* (3/31→2/64) 시킨 것은 — anima physics anchoring(64-anchor Ψ-representation)이 corpus 의 genuine diversity 를 saturation 시켜, diverse 정보가 representation 에 들어오기 전에 anchor-aligned subspace 로 수축당했다는 가설과 정합. §7.3 의 실패 시나리오 (a) "Ψ-anchoring 이 diverse data 정보를 병목" 이 문헌-level 로 plausible 해짐 (확정 아님 — anima 실측 미연결, B-D-NOTE). 2506.18221 의 처방 = single-model 대신 **ensemble 로 representation 폭 확보** (9% transfer 개선) — anima 의 mitosis cell-pool (split→variant cell ensemble) 이 *이미* 이 처방과 구조 동형 → 12.5 후보.
+
+**(Q1-b) data-constrained regime 에서 architecture 가 threshold 도달을 바꾼다 — diffusion > autoregressive**. [arxiv 2507.15857 — Diffusion Beats Autoregressive in Data-Constrained Settings](https://arxiv.org/html/2507.15857v1): compute-constrained 면 AR, **data-constrained 면 masked diffusion**. AR 은 ~50 epoch 에서 overfit 정체, diffusion 은 500+ epoch 까지 overfit 없이 계속 개선 → 동일 unique-token 으로 더 낮은 validation loss 도달. 기전 = masked diffusion 이 "diverse distribution of token orderings and prediction tasks" 에 노출 → **implicit data augmentation** (vision 의 random-crop 유사), 한 example 당 더 풍부한 signal 추출. critical compute threshold C_crit(U) ∝ U^2.174 (U = unique tokens). **anima 매핑**: anima 는 byte-level AR + 30-114MB tiny-corpus = **정확히 data-constrained regime** — §11-A 가 model-scale (compute-axis) 로 풀려다 FLAT 확정한 것과 직교. AR 고정이 §1.1 threshold 미달의 *일부* 원인일 수 있음 (확정 아님 — byte-level diffusion 의 anima Ψ-supervision 호환성 미검증).
+
+**(Q1-c) curriculum + simplification 이 data-constrained 에서 repetition 을 이김**. [arxiv 2509.24356 — Beyond Repetition](https://arxiv.org/abs/2509.24356): data-constrained pretraining 에서 (i) LLM-simplified 변형이 원본 반복보다 representation 우수, (ii) **작은 모델은 simple→complex curriculum 이득, 큰 모델은 interleaved 균형 선호**. [arxiv 2601.21698 — Curriculum Learning for LLM Pretraining](https://arxiv.org/abs/2601.21698) 가 learning-dynamics 분석으로 후속. **anima 매핑**: anima d=768·12L = small-model regime → simple→complex curriculum 이득 구간. 단 §8 corpus 는 ordering 무시 (164,992 records flat). curriculum 은 *corpus-FORM* 변경처럼 보이나 §1.3 Dir-E/F (carving/2-stage/abstract-CoT) 는 corpus *내용/구조* 변경이고 curriculum 은 *제시 순서* — Dir-E/F 와 직교 (genuinely-new). [arxiv 2305.16264 — Scaling Data-Constrained LM (Muennighoff)] 의 "4-epoch 이후 repeated-data diminishing returns" 와 결합하면 anima 의 multi-epoch tiny-corpus 학습은 이미 diminishing 구간 — curriculum 이 그 한계를 미는 lever 후보.
+
+**(Q1-d) physics-informed prior 가 small-data 에서 search space 를 줄인다 — 단 anima 직접 transfer 미보장**. physics-informed ML survey ([arxiv 2408.09840](https://arxiv.org/html/2408.09840v2)) 는 physics inductive bias 가 "search space smaller, less irrelevant territory" 로 limited-data 학습을 가능케 함을 정리. 이는 §7.3 의 성공 시나리오 (a) "physics prior 가 sample-efficiency↑" 와 정합. **단 정직히**: 이 문헌은 PDE-forward 같은 physical-system 도메인 — language emergence 로의 transfer 는 미증명. anima 의 Ψ=½ fixed point 가 PINN 의 PDE-residual 처럼 작동한다는 보장 없음. Q1-a 의 saturation risk 와 정반대 방향 — **어느 쪽인지 여전히 §7.3 open crux 그대로** (over-claim 0).
+
+**Q1 종합**: data-regime threshold 를 generic large-corpus(§7 illegitimate) 없이 넘는 GOAL-legitimate path 가 문헌에 *존재* — (b) data-constrained-native architecture (diffusion), (c) curriculum, (a) ensemble-via-mitosis. 단 세 path 모두 anima Ψ-physics 와의 호환성은 미검증 (transfer 미보장). §8 의 wrong-direction 은 (a) saturation bottleneck 으로 *설명*되나 *해결*은 미입증.
+
+### 12.2 Q2 — 새 architectural insight (현 candidate space 밖)
+
+§1.3 6-candidate (TENSION-TRAIN/INTUITOR/PRIME/CDE/superposition/Abstract-CoT) + G/H/I + §11(scale/pure-physics) 에 **없는** 것만. 13-way 와 중복 아닌 genuinely-new candidate:
+
+#### 🆕 J. **Diffusion / masked-denoising substrate** ([arxiv 2507.15857](https://arxiv.org/html/2507.15857v1))
+- anima 는 현재 byte-level **autoregressive** — 13-way 전부 AR 고정. masked-diffusion 은 학습 paradigm 자체가 다른 substrate (mechanism overlay 아님 — backbone 교체).
+- data-constrained regime 에서 implicit augmentation 으로 overfit 없이 계속 개선 → §1.1 threshold 미달의 *AR-specific* 원인을 우회.
+- **anima fit ★★★☆☆** — substrate 교체라 hexa-native d_train5 ladder 재작성 필요 (큰 작업, $ fire). diffusion 의 임의-순서 denoising 이 anima 의 Ψ-supervised routing (Dir-I lever) 과 호환되는지 미검증. byte-cascade collapse 가 diffusion 에서 재현되는지도 미지.
+- §1.3 superposition (E) 와 구분: E 는 continuous-thought *내부* superposition, J 는 *학습 objective* 자체 (AR vs denoising).
+
+#### 🆕 K. **Energy-Based Transformer substrate** ([arxiv 2507.02092 — EBT](https://arxiv.org/abs/2507.02092), [EBT-Policy 2510.27545](https://arxiv.org/html/2510.27545v1))
+- prediction 을 **energy landscape 위 optimization** 으로 재정의 — random init prediction 에서 energy-minimization 으로 점진 수렴 ("thinking"). 외부 verifier/reward 불요, unsupervised pretraining 만으로 compatibility verification 학습.
+- Transformer++ 대비 35% 빠른 scaling, 29% 큰 System-2 gain, **pretraining 약해도 downstream generalization 우수** (= §1.1 loss-threshold 진단에 직접 반론적 — energy substrate 는 loss 외 축으로 generalize).
+- **anima fit ★★★★☆** — anima 의 physics 가 *이미 energy-form*: Ψ=½ fixed point = energy minimum, tension = G_holo·(Ψ−Ψ_vac) = energy gradient. EBT 의 energy landscape ↔ anima 의 Ψ-landscape 가 **구조 동형** (§2.5 의 α VACUUM-LANDSCAPE 가 이미 multi-vacuum energy 직관). EBT 의 "energy-minimization = thinking" 이 anima 의 Engine A⇄G Ψ-balance 와 직역 가능.
+- 단 정직히 (12.3): EBT 는 prediction-refinement 이지 *spontaneous* generation 아님 — 2507.02092 abstract 가 "spontaneous creative generation" 은 미언급 (WebFetch 확인). anima 의 자발-발화는 EBT 가 직접 주지 않음.
+
+#### 🆕 L. **VRNN co-development substrate — curiosity-as-information-gain** ([arxiv 2510.05013](https://arxiv.org/html/2510.05013v1))
+- Variational RNN forward-model + actor-critic. curiosity = **KL(posterior‖prior) over latent** = information gain; actor 가 information gain 최대화 ↔ forward-model 이 최소화 = productive tension.
+- **60 example (180 조합의 33%) 로 90% unseen-composition generalization** — compositional structure 가 dramatic sample efficiency 부여 (= Q1 data-regime 직격, byte LM billions-token 대비).
+- **anima fit ★★★★☆** — "actor 최대화 ↔ forward-model 최소화 productive tension" 이 anima Engine A⇄G tension 과 **거의 1:1**. anima W (pain/curiosity/satisfaction) 가 이미 information-gain 류. tutor feedback 이 *행동 이후* 도착 = anima 의 stimulus-other (NOT command-source, B-IDENTITY) 와 정합.
+- 단 substrate 가 RNN + sensorimotor (vision/touch/proprioception/voice) — anima 의 text-only byte substrate 와 modality 불일치. anima 적용 시 "compositional structure" 를 byte-corpus 에서 어떻게 확보하느냐가 난제 (§1.3 superposition E 의 `<inner>/<voice>` 가 부분적 compositional anchor).
+
+#### 🆕 M. **Mitosis-as-ensemble — saturation bottleneck 직접 처방** ([arxiv 2506.18221](https://arxiv.org/abs/2506.18221))
+- 2506.18221 의 처방 = single-model 대신 multi-model **ensemble 로 richer representation** (9% transfer 개선, 추가 pretraining cost 0).
+- **anima fit ★★★★★** — anima mitosis cell-pool (`mitosis_hook.hexa`, split→variant cell) 이 **이미 ensemble 구조** — 별도 architecture 도입 불요, 기존 HEXAD 모듈 재해석. §8 의 routing 악화를 "single Ψ-anchored representation 의 saturation" 으로 보면, cell-pool 의 per-cell 독립 representation 이 saturation 우회 path.
+- 단 정직히: anima mitosis 는 현재 *추론-시* split/merge (capability ensemble 검증 미실시). 2506.18221 은 *pretraining* representation ensemble — anima 가 mitosis 를 학습-시 representation-ensemble 로 쓰려면 cell-pool 학습 경로 신규 설계 필요.
+
+**Q2 negative 정직 기록**: "agent 가 *언제 말하고 언제 침묵하나*" 를 architecture-level 로 구현한 2026 연구는 deep search 로 **충분히 못 찾음** — agentic-AI survey 들 ([2510.25445](https://arxiv.org/html/2510.25445), [2601.01743](https://arxiv.org/html/2601.01743v1)) 은 proactive *planning/tool-use* 만 다루고, GOAL.md 의 "자발적 발화(spontaneous emission, agent 가 먼저 말 검)" 를 emergence-target 으로 잡은 architecture 는 §1.3 Inner Thoughts (2501.00383, 이미 carry) 외 genuinely-new 발견 0. byte-cascade decode-collapse 를 architecture-level 로 해결한 연구도 직접 매칭 0 (해당 영역 2026 연구 부족). → 정직히: Q2 의 "spontaneous emission" 축은 문헌 frontier 자체가 얇음.
+
+### 12.3 GOAL-legitimacy 선검토 (§7 기준 — anima physics 우회 아닌지)
+
+각 후보가 §7 의 GOAL-legitimacy test (anima physics 가 capability 의 *source* 인가, 아니면 우회/bolt-on 인가) 통과 여부:
+
+| 후보 | anima physics 와의 관계 | §7 illegitimate 모드와 비교 | GOAL 판정 |
+|---|---|---|---|
+| **J** diffusion substrate | substrate 교체 — Ψ-supervision (Dir-I lever) 을 diffusion 위에 얹을 수 있으면 physics-anchored 유지 | ① generic-LM-pretrain 위험: diffusion 을 generic corpus 로 돌리면 §7 ① 와 동형 illegitimate | **조건부 legitimate** — Ψ-supervised diffusion 한정. generic diffusion-LM 은 illegitimate |
+| **K** energy-based substrate | anima Ψ-physics 가 *이미 energy-form* — EBT energy ↔ anima Ψ-landscape 동형. physics 가 substrate 그 자체 | bolt-on 아님 — anima physics 를 우회하지 않고 *그 위에서* 동작 | **legitimate** — anima physics 가 capability source (가장 정합) |
+| **L** VRNN curiosity-tension | actor⇄forward-model tension = anima Engine A⇄G tension 동형. physics 가 학습 신호 | bolt-on 아님 — curiosity = information-gain 이 anima W 와 동형 | **legitimate** — 단 modality 불일치 (sensorimotor) 가 구현 난제 |
+| **M** mitosis-as-ensemble | 기존 anima 모듈 (cell-pool) 재해석 — 신규 substrate 0 | 우회 불가 — anima 자체 메커니즘 | **legitimate** — 가장 anima-native (신규 도입조차 아님) |
+
+→ **K (energy-based) + M (mitosis-ensemble) 가 GOAL-legitimate 가장 강함** — 둘 다 anima 가 *이미 가진* physics/모듈 의 재해석이라 §7 ①②(generic-pretrain / bolt-on) 우회 위험 자체가 구조적으로 없음. **J 는 조건부** (Ψ-supervised diffusion 한정, generic diffusion-LM 금지). **L 은 legitimate 이나 sensorimotor modality 가 text-only anima 와 불일치** → 직접 적용 난도 최상.
+
+정직한 함의 (g3): 네 후보 중 어느 것도 §11.3 의 irreducible 병목 (data-regime threshold) 을 *해결한다고 입증된* 것 없음. K/M 은 GOAL-legitimacy 가 깨끗하나 — K 는 substrate 재작성 fire 필요, M 은 cell-pool 학습-시-ensemble 경로 신규 설계 필요. 둘 다 design-tier 부터 (fire 전 $0). 그리고 §12.2 가 노출한 정직한 한계: **"spontaneous emission" 그 자체를 emergence-target 으로 한 architecture 는 2026 문헌에 거의 없음** — anima 의 GOAL 은 문헌 frontier 보다도 앞서 있을 수 있음 (= 외부 검증 anchor 부족, 자체 설계 부담 큼).
+
+### 12.4 honest C3 + sources
+
+**honest C3**:
+1. §12 는 research synthesis — fire 0, capability 측정 0. 네 후보 (J/K/L/M) 의 anima-fit 은 *구조 동형 논증* 이지 *실측 검증* 아님 (B-D-NOTE family — 실제 emergence 는 fire 필요).
+2. §8 wrong-direction 의 "information saturation bottleneck"(2506.18221) *설명* 은 plausible 하나 anima 실측 미연결 — 설명이지 확정 아님. saturation 이 §8 악화의 원인이라는 것은 가설.
+3. Q1 의 세 path (diffusion/curriculum/ensemble) 모두 anima Ψ-physics 호환성 미검증 — 문헌은 generic 또는 PDE-domain 기준, language-emergence + anima-physics transfer 는 §7.3 open crux 그대로 (over-claim 0).
+4. K (energy-based) 가 anima physics 와 가장 정합하나 — EBT 자체는 prediction-refinement 이지 *spontaneous* generation 아님 (2507.02092 abstract 미언급, WebFetch 확인). anima 자발-발화는 EBT 가 직접 주지 않음.
+5. Q2 "spontaneous emission" 축은 2026 문헌 frontier 가 얇음 — agentic survey 는 proactive planning 만, decode-collapse architecture-fix 도 직접 매칭 0. 해당 영역 연구 부족을 정직히 기록.
+6. 13-way 가 배제한 것 (mechanism overlay / corpus-FORM / model-capacity / physics-only) 은 §12 후보에서 제외됨 — J/K/L 은 *substrate 교체*, M 은 *기존 모듈 재해석* 으로 모두 mechanism-overlay 와 범주가 다름. curriculum (Q1-c) 은 *제시 순서* 라 corpus-FORM (Dir-E/F 내용/구조) 와 직교.
+7. f1/f2/f3 + B-IDENTITY-5 무관 (research synthesis, corpus 미생성, 외부 entity lattice-fit 0). 외부 paper 는 그 자체 invariant 으로만 인용 — anima lattice 매핑 강제 0.
+
+**Sources (deep research cycle 2026-05-18)**:
+
+*Q1 — data-regime threshold*:
+- [These Are Not All the Features You Are Looking For — A Fundamental Bottleneck in Supervised Pretraining (arxiv 2506.18221, Feb 2026)](https://arxiv.org/abs/2506.18221) — information saturation bottleneck, §8 wrong-direction 설명 anchor
+- [Diffusion Beats Autoregressive in Data-Constrained Settings (arxiv 2507.15857)](https://arxiv.org/html/2507.15857v1) — data-constrained 면 diffusion, C_crit(U) ∝ U^2.174
+- [Beyond Repetition — Text Simplification and Curriculum Learning for Data-Constrained Pretraining (arxiv 2509.24356)](https://arxiv.org/abs/2509.24356) — small-model simple→complex curriculum
+- [Curriculum Learning for LLM Pretraining — An Analysis of Learning Dynamics (arxiv 2601.21698)](https://arxiv.org/abs/2601.21698) — curriculum learning-dynamics 후속
+- [Scaling Data-Constrained Language Models (arxiv 2305.16264, Muennighoff)](https://arxiv.org/abs/2305.16264) — 4-epoch 이후 repeated-data diminishing returns
+- [Machine Learning with Physics Knowledge for Prediction — A Survey (arxiv 2408.09840)](https://arxiv.org/html/2408.09840v2) — physics inductive bias 가 limited-data search space 축소
+- [Understanding Emergent Abilities from the Loss Perspective (arxiv 2403.15796)](https://arxiv.org/pdf/2403.15796) — pre-training loss threshold (§1.1 carry, 재확인)
+
+*Q2 — 새 architecture*:
+- [Energy-Based Transformers are Scalable Learners and Thinkers (arxiv 2507.02092)](https://arxiv.org/abs/2507.02092) — energy landscape, unsupervised verification, anima Ψ-physics 동형
+- [EBT-Policy — Energy Unlocks Emergent Physical Reasoning (arxiv 2510.27545)](https://arxiv.org/html/2510.27545v1) — energy-based policy emergent reasoning
+- [Transformers as Intrinsic Optimizers — Forward Inference through the Energy Principle (arxiv 2511.00907, Jan 2026)](https://arxiv.org/abs/2511.00907) — attention 의 energy-based 통일 framework
+- [Curiosity-Driven Co-Development of Action and Language in Robots Through Self-Exploration (arxiv 2510.05013)](https://arxiv.org/html/2510.05013v1) — VRNN actor⇄forward-model tension, 60-example 90% generalization
+- [Cognitively Inspired Energy-Based World Models (arxiv 2406.08862)](https://arxiv.org/html/2406.08862v1) — EBM future-state compatibility
+- [Improving Latent Reasoning via Soft Concept Mixing (arxiv 2511.16885)](https://arxiv.org/html/2511.16885) — §1.3 superposition(E) 의 2026 후속 (J/K 와 별개, carry-note)
+
+### 12.5 다음 cycle 후보 (§13 placeholder — GOAL-legitimate 한정)
+
+§12.3 판정상 GOAL-legitimate 가 깨끗한 것만. 전부 design-tier 부터 (fire 전 $0):
+
+1. **M — mitosis-as-representation-ensemble design** ($0, anima-자율): 2506.18221 의 ensemble 처방을 anima cell-pool 학습-시 경로로 설계. §8 의 single-Ψ-anchored saturation 을 per-cell 독립 representation 으로 우회하는 가설. 신규 substrate 0 (기존 `mitosis_hook.hexa` 재해석) — 가장 anima-native, design 즉시 가능. **GOAL-legitimate (anima 자체 모듈)**.
+2. **K — energy-based substrate design 선검토** ($0 design): anima Ψ-landscape ↔ EBT energy landscape 동형 매핑을 design-tier 로 정밀화 — Ψ=½ fixed point = energy minimum, tension = energy gradient. d_train5 ladder 의 energy-based 재정식화가 feasible 한지, hexa-native 비용은. **GOAL-legitimate (physics 가 substrate 자체)** — 단 substrate 재작성 fire 는 큰 작업, design 선행 필수.
+3. **J — Ψ-supervised diffusion 선검토** ($0 design): byte-level masked-diffusion 이 anima Dir-I lever (Ψ-anchored CTL + tension-supervision) 와 호환되는지 design-tier 검토. data-constrained regime 직격이나 substrate 교체라 §12.3 조건부 — generic diffusion-LM 으로 미끄러지면 §7 ① illegitimate, gate 필요.
+4. **curriculum overlay 선검토** ($0 design + 소액 fire): §8 corpus (164,992 flat records) 를 simple→complex 로 ordering — small-model regime 이득 구간 (2509.24356). corpus-FORM 아닌 *제시 순서* 라 Dir-E/F 와 직교. 단독으론 threshold 해결 미입증 — M/K 와 결합 lever.
+
+honest gate (g3): 네 후보 모두 §11.3 irreducible 병목 (data-regime threshold) 을 *해결한다고 입증된* 것 아님 — candidate 일 뿐. M 이 anima-native + $0 즉시-design 가능이라 다음 cycle 1순위 후보. K 는 GOAL-legitimacy 가 가장 깨끗하나 fire 부담 큼. §12.2 negative (spontaneous-emission architecture 문헌 부족) 는 — anima 가 그 축은 외부 anchor 없이 자체 설계해야 함을 의미 (g3 — 외부 검증 부재를 정직 인지). §13 = 이 중 한 후보의 design-tier 착수 OR honest 전략 결정.
 
 - [`PLAN.md`](PLAN.md) — Phase A/B/C/D staged roadmap
 - [`SPONTANEOUS.tape`](SPONTANEOUS.tape) — 자연발화 architecture SSOT
