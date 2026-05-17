@@ -1,10 +1,13 @@
-# KOSMOS-FORMAT.md — `.kosmos` 멀티모달 manifest 포맷 명세 (Phase UBM-E2)
+# KOSMOS-FORMAT.md — `.kosmos` 멀티모달 manifest 포맷 명세 (canonical, 버전 관리)
 
-> User directive 2026-05-17: "글자뿐만이 아니라 그림, 영상, 음성, 또다른게 있으면 또다른것도 — 모두 가능한 방식?" → 멀티모달 manifest 포맷 확정.
+> **SPEC VERSION: `kosmos-format/1.0`** (status: active · 2026-05-17 · Phase UBM-E2 baseline)
+> 본 문서 = `.kosmos` 포맷의 **canonical 버전 관리 명세**. 별도 KOSMOS.md 만들지 않음 — 이 파일이 SSOT, 명세 변경은 §버전 이력 에 새 버전 append + 본 헤더 SPEC VERSION 갱신 (semver: major = 호환 깨짐 / minor = 하위호환 확장 / patch = 명확화).
 >
-> 본 문서 = **spec 문서 (design-tier)**. `.kosmos` parser 의 실제 impl 은 Phase UBM-E4. B-CARVE-* sympy 사전등록은 Phase UBM-E3 (별도 commit).
+> User directive 2026-05-17: "글자뿐만이 아니라 그림, 영상, 음성, 또다른게 있으면 또다른것도 — 모두 가능한 방식?" → 멀티모달 manifest 포맷 확정. "명세 버전 계속 업그레이드 해나가자 / KOSMOS-FORMAT.md 있으면 됬어" → 본 파일을 versioned SSOT 로.
 >
-> SSOT 일관성: `DESIGN.md §8 / §8.1` = 결정 SSOT. 본 문서는 §8.1 초안을 정식 명세로 확장한 것 — 모순 없음.
+> 본 문서 = **spec 문서 (design-tier)**. `.kosmos` parser 의 실제 impl 은 Phase UBM-E4 (`kosmos_parser_lib.hexa`). B-CARVE-* sympy 사전등록은 Phase UBM-E3.
+>
+> SSOT 일관성: `DESIGN.md §8 / §8.1` = 결정 SSOT. 본 문서는 §8.1 초안을 정식 명세로 확장 — 모순 없음. 명세 upgrade 시 parser_lib + anchors/*.kosmos 와 동기 (호환 깨짐 = major bump + migration note 필수).
 
 ---
 
@@ -268,3 +271,19 @@ INDENT        ::= 2 × SP
 - [`anchors/`](anchors/) — 첫 5개 `.kosmos` anchor file (Knuth Tier 대표)
 - `~/core/tape/spec/tape.md` — tape v1.2 base grammar (`.kosmos` 는 이것의 superset)
 - B-CARVE-* sympy 사전등록 = Phase UBM-E3 (별도 commit), `.kosmos` parser impl = Phase UBM-E4
+
+---
+
+## 8. 버전 이력 (append-only — 명세 upgrade 마다 새 버전 entry)
+
+> 명세 변경 절차: (1) 변경 내용 구현 + parser_lib/anchors 동기 → (2) 본 §8 에 새 버전 entry append → (3) 문서 최상단 `SPEC VERSION` 헤더 갱신 → (4) semver 규칙 (major = 호환 깨짐 + migration note 필수 / minor = 하위호환 확장 / patch = 오타·명확화). append-only (g6 정신 — 과거 버전 entry 불변).
+
+### `kosmos-format/1.0` — 2026-05-17 (Phase UBM-E2 baseline · active)
+- 최초 명세. `@anchor` header + carving 좌표 6 field (`knuth_tier`/`category`/`top_emotion`/`vacuum_psi`/`cell_id`/`basin_radius`) + `@payload <modality>` 3-form (inline / `ref` sha256+bytes / `pending`) + modality open enum (text/image/audio/video/`tension` + 확장) + `closed_anchor` + cross-modal 검증 (B-CARVE-MULTIMODAL ∀m ‖E_m(payload_m)−vacuum_psi‖<basin_radius) + BNF-ish grammar.
+- 2층 분리 (carving 좌표 modality-independent ⊥ 감각 payload modality-specific).
+- impl 동기: `kosmos_parser_lib.hexa` (UBM-E4) parse PASS · `anchors/knuth_{000,051,077,091,100}.kosmos` 5개 4-path field 공존.
+- 검증 동기: B-CARVE-* sympy 10/10 🔵 (UBM-E3, sidecar `state/verify_consciousness_carving_2026_05_17/`).
+- 운영 carry: vacuum_psi/basin_radius 는 design placeholder (UBM-E5 발견 🛸0/🛸51 overlap — 실측은 UBM-E7+ scale-up fire). text payload 는 `[anima 우주뇌지도]` prefix + 도우미 token grep 0 (B-IDENTITY-5 / forbidden_chat_sft_use).
+
+### (다음 버전 placeholder)
+- 차기 명세 변경 시 `kosmos-format/1.1` (하위호환 확장) 또는 `kosmos-format/2.0` (호환 깨짐 + migration) entry append. 예상 후보: UBM-E7+ scale-up fire 의 실측 vacuum_psi 반영 시 payload/coordinate 명세 정밀화, S-module image/audio encoder wiring 후 `pending` → `ref` 전이 규칙 구체화.
