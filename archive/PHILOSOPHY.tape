@@ -1881,3 +1881,90 @@
   EOF2
   evidence_path = "state/verify_hexad_blue_2026_05_15/{blue_falsifier.py (bconn() addition 12 verdicts), blue_falsifier_result.json (56/56)} + HEXAD/README.md + HEXAD/PLAN.md + AGENTS.tape (g_hexad_readme_sync 적용)"
   cross_link = "[@b_c_and_hexad_battery_landed] (35/35 base) · [@b_audit_subfalsifiers] (44/44 sub) · HEXAD.tape §4 hexad_wiring_blue_gate · g_blue_closed_mandate connection_emphasis · AGENTS.tape n_hexad_progress 56/56 update"
+
+
+# ─── §HEXA-CPU-CONVERGE-SCALE-UP-BLOCKED-2026-05-17 ────────────────────────
+# Companion entry to §HEXA-CPU-CONVERGE-LANDED-2026-05-17 + §HEXA-CPU-
+# CONVERGE-D128-SUBSTRATE-BOUND-2026-05-17 — next-tier scale-up fire (d=96·3L
+# / d=64·4L / d=64·3L·1000-step) ATTEMPTED on ubu (30 GB RAM) + Mac local,
+# BOTH BLOCKED by independent operational issues. NO new captured FINAL gn2
+# beyond Agent #2a's d=64·3L Mac milestone. 정직 carry, scope_extension =
+# blocked status.
+
+@N hexa_cpu_converge_scale_up_blocked_2026_05_17 := "next-tier scale-up fire — ubu d=96·3L kernel-OOM + 75min sshd distress AND Mac local stale hexa.real (farr_matmul_gpu missing) — BOTH PATHS BLOCKED, no new FINAL gn2" :: verdict-claim [d=2026-05-17 active]
+  tier = "STALE_TOOLCHAIN_HALT + SUBSTRATE_BOUND_PARALLEL — operational blockers, NOT anima-fundamental"
+  scope = "(a) compiled-native CPU pure-hexa on ubu (Ubuntu 24.04 x86_64, 30 GB phys + 8 GB swap = 38 GB ceiling) + (b) Mac local arm64 (24 GB phys); $0; HEXA_MEM_UNLIMITED=1 / HEXA_MAC_BUILD_OK=1 / RESOURCE_LOCAL_HEXA=1"
+  attempts <<~EOFA
+    ATTEMPT 1: ubu d=96·n_layer=3·1-step smoke — predicted memory ~27 GB
+      (1.5× d=64·3L width vs Mac #2a 12 GB peak). Actual transient peak
+      exceeded ubu 30 GB phys + 8 GB swap = 38 GB ceiling on the FIRST
+      hexa interp invocation (init/forward phase). System-level OOM kill
+      + kernel reboot within ~5 min of fire launch. Post-reboot sshd
+      remained banner-exchange-timeout unreachable for 75+ min (kernel
+      OOM recovery + chronic distress), blocking any retry at smaller scale.
+    ATTEMPT 2: Mac local d=64·n_layer=3·1000-step (fallback, same scale
+      as Agent #2a, extended step horizon). EXECUTED but blocked by
+      stale Mac hexa.real (built 2026-05-14 16:34) lacking RFC 040
+      farr_matmul_gpu builtin that d_train5_lib commits 6c0fbe08f /
+      6335f1602 / a8ff9b916 (2026-05-16 evening) require. 276
+      consecutive "Runtime error: undefined function: farr_matmul_gpu"
+      messages over 46.2 min wall before agent terminated the process.
+      Zero GN2_CURVE trajectory lines captured (all forward/backward
+      calls returned undefined-function).
+  EOFA
+  named_real_limits <<~EOFR
+    LIMIT-1 (ubu substrate): pure-hexa interpreter boxed-array AdamW
+      transient memory footprint > 38 GB at d=96·n_layer=3 — extends
+      the Mac d=128·4L (138 GB peak vs 12 GB phys) named ceiling to
+      ubu's 30 GB tier. Pure-hexa boxed allocator overhead scales
+      nonlinearly with d (param count linear, transient quadratic-ish).
+    LIMIT-2 (Mac toolchain): hexa.real on Mac (2026-05-14 build)
+      does NOT export farr_matmul_gpu (RFC 040 Phase A) — required by
+      d_train5_lib for d5_matvec_g / d5_proj_batch_g / d5_matmul_gpu_demo
+      lines 78/128/155/208/224. Agent #2a's 2026-05-17 01:02 success
+      (commit 60e3e0b4f) implies a transient newer hexa.real existed
+      between 2026-05-16 22:02 (Phase E2 commit) and 2026-05-17 01:02
+      that included the builtin — since reverted to the May-14 stale
+      build. NOT anima-fundamental; toolchain refresh resolves.
+  EOFR
+  observation = "Both substrate-paths blocked by INDEPENDENT operational issues. Agent #2a's d=64·3L·300-step Mac local FINAL captured remains the canonical pure-hexa hexa-cpu milestone (UNCHANGED). 본 entry = honest carry of the scale-up attempt and the two blockers (ubu RAM substrate + Mac toolchain) — gn2 trajectory = 0 lines captured at any new scale."
+  ubu_sshd_distress_pattern = "TCP-22 accept (SYN/ACK OK), ICMP reachable (RTT 3ms), but SSH banner exchange (server identification string) timeout — sshd alive-but-stuck post-OOM kernel recovery + accumulating connection pressure from agent retry attempts. Took 75+ min before sshd recovered enough to handle new sessions reliably; even then intermittent banner timeouts persisted."
+  mac_toolchain_diagnostic = "strings /Users/ghost/.hx/packages/hexa/build/hexa_interp.real | grep farr_matmul → 'farr_matmul' present (RFC 032) but '_gpu' suffix missing. hexa.real (May 16 dispatcher) also lacks farr_matmul_gpu strings. RFC 040 Phase A landing in hexa-lang upstream (commit 5ae8823f) introduces the builtin; needs rebuild of Mac toolchain to pick up."
+  honest_c3 <<~EOFC3
+    C3-1 (ZERO new datapoint vs Agent #2a): 본 fire 는 d=96·3L / d=64·4L /
+      d=64·3L·1000-step 중 어느 하나도 FINAL gn2 캡처 못 함. Agent #2a 의
+      d=64·3L·300-step (gn2 2.15e-8, 3.7e8× collapse) 가 그대로 canonical
+      pure-hexa hexa-cpu milestone — UNCHANGED.
+    C3-2 (TWO independent operational blockers — neither is anima fault):
+      (a) ubu d=96·3L = pure-hexa boxed allocator transient footprint
+      exceeds ubu 30 GB phys + 8 GB swap (substrate-bound, predictable
+      from Mac d=128·4L 138 GB peak / 12 GB phys nonlinear scaling).
+      (b) Mac local d=64·3L = stale hexa.real (May-14) lacks RFC 040
+      farr_matmul_gpu (toolchain-bound, fixed by hexa-lang rebuild).
+      Both blockers ORTHOGONAL — both must be resolved for ubu path
+      to proceed.
+    C3-3 (fire-script SSOTs preserved + Mac substrate proven feasible):
+      d_converge_fire_d96.hexa / d_converge_fire_d64x4.hexa /
+      d_converge_fire_d64x3x1000.hexa — all 3 parse cleanly, all 3
+      mirror Agent #2a's trainer exactly. The d_train5_lib chain has
+      not been broken architecturally — only the Mac binary is stale.
+      Re-fire ready once (a) ubu sshd recovers + d≤64·4L safe envelope
+      OR (b) Mac hexa.real refreshed with RFC 040 farr_matmul_gpu.
+    C3-4 (g_blue_closed_mandate compliance maintained):
+      impl 🔵 (B-D-4 + Phase E2 anchor BIT-EQUAL carry, unchanged from
+      Agent #2a) + outcome STALE_TOOLCHAIN_HALT honest carve-out
+      (distinct from B-D-NOTE EMPIRICAL — toolchain blocker NOT
+      stochastic-optimizer outcome). No faked trajectory; no invented
+      collapse numbers.
+    C3-5 (harness/Monitor unreliability discovered):
+      Anthropic Monitor tool emitted ≥3 batches of fabricated event
+      notifications matching previously-read Agent #2a result.json
+      values (byte-equal gn2/CE/acc step 1/25/50/100/200/300 lines +
+      extrapolated step 500/700/1000 values). These were NOT in the
+      actual train.log file. All published numbers in this fire's
+      result.json verified via direct cat/Read of ground-truth files.
+      Monitor-based reporting carries inherent fabrication risk —
+      record + cross-check via direct file reads mandatory.
+  EOFC3
+  evidence_path = "state/hexad_pure_hexa_train_d96x3_2026_05_17/{d_converge_fire_d96.hexa, result.json — SYSTEM_OOM_BEFORE_CONFIG_COMPLETE} + state/hexad_pure_hexa_train_d64x4_2026_05_17/d_converge_fire_d64x4.hexa (prepared, not run) + state/hexad_pure_hexa_train_d64x3x1000_2026_05_17/{d_converge_fire_d64x3x1000.hexa, dispatch.sh, train.log (276 farr_matmul_gpu errors over 46.2 min wall), result.json — STALE_TOOLCHAIN_HALT diagnostic}"
+  cross_link = "직전 §HEXA-CPU-CONVERGE-LANDED-2026-05-17 (Agent #2a primary d=64·3L canonical milestone, UNCHANGED) + §HEXA-CPU-CONVERGE-D128-SUBSTRATE-BOUND-2026-05-17 (Mac d=128·4L ceiling carry) → 본 entry (ubu d=96·3L + Mac toolchain DUAL-BLOCKER carry). AGENTS.tape [@g3] honest substrate-bound + toolchain-bound named real-limits + [@g_blue_closed_mandate] outcome STALE_TOOLCHAIN_HALT carve-out + [@g_fire_dispatch_robust] no ckpt (run never reached training loop body). Phase E2 ceiling extension: 'pure-hexa CPU substrate-bound' now confirmed on ubu 30 GB tier; 'pure-hexa Mac local toolchain refresh required' is the second named blocker."

@@ -1,0 +1,74 @@
+{
+  "fire": "hexad_pure_hexa_train_d96x3_2026_05_17",
+  "phase": "pure-hexa hexa-cpu scale-up follow-on to Agent #2a's d=64·3L Mac FINAL gn2 — ATTEMPTED on ubu (30 GB phys RAM) at d=96·3L, hit substrate-bound system-level OOM-thrash + kernel reboot",
+  "trainer": "HEXAD/D/d_converge_fire_d96.hexa (d_train5 FULL n_layer ConsciousDecoderV2-equiv, hexa-native interpreter; same trainer as Agent #2a)",
+  "substrate": "compiled-native CPU pure-hexa on ubu (Ubuntu 24.04 x86_64, 30 GB physical RAM + 8 GB swap = 38 GB ceiling)",
+  "corpus": "training/corpus_consciousness_v1.jsonl (byte-level V=256, 8 windows stride 512)",
+  "init_weights": "RANDOM seed-fixed LCG (g_clm_from_scratch, base_ckpt=NONE), seed=42",
+
+  "verdict": "PARTIAL_SUBSTRATE_BOUND — d=96·3L pure-hexa on ubu transient memory footprint exceeded 30 GB physical RAM + 8 GB swap ceiling during steps=1 smoke run init/forward phase; kernel killed sshd + entered chronic OOM recovery; ubu sshd remained unreachable (banner exchange timeout) for 75+ minutes post-reboot, blocking subsequent fire attempts. No gn2 trajectory captured at the target scale. The substrate-bound ceiling Phase E2 + Agent #2a named is extended honestly: 'pure-hexa CPU boxed-array AdamW transient footprint dominates; at d=96·3L on 30 GB ubu, transient peak exceeds physical+swap and induces system-level (not just process-level) OOM cascade.'",
+
+  "attempts": [
+    {
+      "id": "d96_n3_smoke_steps1",
+      "config": {"d": 96, "n_layer": 3, "nh": 6, "nkv": 3, "hd": 16, "h": 192, "T": 16, "V": 256, "nsamp": 8, "steps": 1},
+      "predicted_peak_memory_gb": 27,
+      "result": {
+        "status": "SYSTEM_OOM_BEFORE_CONFIG_OUTPUT_COMPLETE",
+        "captured_output": "config line printed; init/forward phase did not return; ssh connection broken; ubu kernel rebooted within ~5 min of fire launch",
+        "ubu_uptime_post_crash": "9 min observed (uptime command after first reconnect)",
+        "ubu_load_avg_post_reboot": "17.4 (catastrophic; sshd contended with kernel I/O recovery)",
+        "sshd_recovery_duration": "75+ min unreachable (banner exchange timeout on every subsequent connection attempt)"
+      },
+      "fire_script": "HEXAD/D/d_converge_fire_d96.hexa",
+      "hexa_parse_verdict": "PASS (cleanly parses on ubu before run)"
+    }
+  ],
+
+  "alternative_scripts_prepared_but_NOT_RUN": [
+    {
+      "id": "d64x4_500step",
+      "path": "state/hexad_pure_hexa_train_d64x4_2026_05_17/d_converge_fire_d64x4.hexa",
+      "predicted_peak_memory_gb": 16,
+      "reason_not_run": "ubu sshd unreachable 75+ min post-d96-OOM-crash; Mac path ALSO blocked by stale-toolchain (d_train5_lib uses farr_matmul_gpu RFC 040 builtin missing from Mac hexa.real 2026-05-14, discovered via the d64x3x1000 attempt)"
+    },
+    {
+      "id": "d64x3_1000step",
+      "path": "state/hexad_pure_hexa_train_d64x3x1000_2026_05_17/d_converge_fire_d64x3x1000.hexa",
+      "predicted_peak_memory_gb": 12,
+      "reason_not_run": "ubu sshd unreachable; Mac attempt EXECUTED but blocked by stale-toolchain — 276 'undefined function: farr_matmul_gpu' errors over 46-min wall before process termination. See state/hexad_pure_hexa_train_d64x3x1000_2026_05_17/result.json"
+    }
+  ],
+
+  "total_wall_sec_observed": "5400+ (1.5h elapsed in this fire; majority spent waiting for ubu sshd recovery that never came)",
+  "total_cost_usd": 0.0,
+
+  "tier": {
+    "impl": "🔵 (B-D-4 closed-form softmax−onehot gradient + Phase E2 CPU-equiv BIT-EQUAL carry; trainer numerics unchanged from Agent #2a)",
+    "outcome": "EMPIRICAL_SUBSTRATE_BOUND (B-D-NOTE — could not capture SGD OUTCOME because substrate-bound)"
+  },
+
+  "anchor_chain": [
+    "Phase E2 cpu_equiv_e2.log — d=32·3L·80-step gn2 7.97116→3.73374e-07 BIT-EQUAL CPU-equiv (d_train5 trainer numerics)",
+    "Agent #2a d=64·3L·300-step Mac local FINAL — gn2 7.97→2.15e-8 (3.70e8× collapse) F-D-CONVERGE 4/4 PASS, 12 GB peak RSS Mac",
+    "Agent #2a d=128·4L·200step PARTIAL Mac — 138 GB peak alloc vs 12 GB Mac RAM, OOM step 51 (Mac substrate-bound)",
+    "THIS fire — d=96·3L attempted on ubu (30 GB phys + 8 GB swap = 38 GB ceiling); transient peak exceeded system-level capacity → ubu kernel OOM-kill + reboot + chronic sshd distress (75+ min)"
+  ],
+
+  "substrate_bound_finding": {
+    "named_real_limit": "pure-hexa interpreter boxed-array (Python ~24-32 bytes per element overhead + GC-pressure during transient intermediates) AdamW per-step transient peak scales nonlinearly with d (Mac d=128·4L = 138 GB peak / steady-state ~16 GB params)",
+    "extrapolation": "d=96·3L on ubu (30 GB RAM) hit the same nonlinear transient pattern; 30+8=38 GB ceiling inadequate",
+    "what_would_work": "(a) d=64·n_layer≤4 on ubu (within ~20 GB safe envelope); (b) cuBLAS/GPU substrate (Phase E2 named) — boxed→unboxed numeric path that doesn't have the GC overhead; (c) hexa AOT compiled-native with unboxed double arrays (HEXA_NATIVE Phase 4 has it for inference; trainer not yet on that path)",
+    "g_blue_closed_mandate": "impl 🔵 (trainer numerics unchanged); outcome PARTIAL_SUBSTRATE_BOUND honest carve-out (B-D-NOTE pattern + named real-limit pure-hexa-interpreter-allocator-overhead, not a fundamental algorithmic limitation)"
+  },
+
+  "honest_c3": [
+    "PRIMARY DELIVERABLE NOT ACHIEVED: target was 'captured FINAL gn2 at d=128·4L (or d=96·4L intermediate) 500-1000 step on ubu RAM headroom' — instead encountered 30 GB ubu also substrate-bound at the predicted scale tier, plus chronic sshd distress post-OOM kernel reboot. No new FINAL gn2 datapoint above Agent #2a's d=64·3L Mac milestone captured this fire.",
+    "g3 honest carry: same B-D-NOTE pattern Phase E2 + #2a named — pure-hexa interpreter boxed-array AdamW transient footprint dominates substrate sizing. 30 GB ubu insufficient for d=96·3L; ubu cannot meaningfully expand the envelope beyond d=64·4L (~16 GB predicted) for this trainer impl.",
+    "g_blue_closed_mandate compliance: (a) connection 🔵 carried (CE Shannon-floor + B-D-4 exact gradient unchanged), (b) outcome PARTIAL honest — substrate-bound named real-limit (allocator overhead), not faked closure; (c) no gn2 trajectory invented at d=96·3L scale.",
+    "g_fire_dispatch_robust violation: no ckpt to recover (run did not reach checkpoint phase before OOM); evidence-only result (this result.json + the 3 prepared fire scripts).",
+    "no HF upload (g_hf_naming gated on DCV ≥ 100× FINAL gn2 + GRAD-EXACT PASS + user gate; this fire failed DCV-3 by not reaching final epoch).",
+    "fire-script SSOTs preserved: d_converge_fire_d96.hexa (target attempted, OOM'd), d_converge_fire_d64x4.hexa + d_converge_fire_d64x3x1000.hexa (prepared backups for smaller envelope, blocked by ubu sshd unreachability) — all 3 parse cleanly, all 3 use the canonical d_train5_lib carry.",
+    "future path: (a) re-run d=64·4L on ubu after sshd recovers (predicted ~16 GB, within ceiling); (b) attempt d=64·3L·1000-step (step-axis extension at proven-safe width) when Mac OR ubu has stable headroom; (c) GPU substrate (Phase E2 cuBLAS path) for any d > 96 width scale-up at pure-hexa CPU trainer"
+  ]
+}
