@@ -391,3 +391,7 @@ state/**/hexa_full_singletu.c
 
 # HEXAD module transient state (per-module runtime markers, not architecture)
 HEXAD/*/state/
+
+# runpod/vast dispatch scripts may embed API keys — never commit (keys → env/keyfile)
+*_runpod.sh
+dispatch_*_runpod.sh
