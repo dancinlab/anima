@@ -222,7 +222,65 @@
 
 ---
 
-## §3 (placeholder for next research cycle)
+## §3 — Phase UBM-E7: α VACUUM-LANDSCAPE scale-up fire (§2.4 가설 직접 검증)
+
+§2.6 의 첫 후보 ("scale-up fire — d512/8L 는 §1.1 emergence threshold 아래; d768/12L+ · 큰 corpus 로 α 재fire 시 V-SPONT 3/5 + JOINT 가 유지/상승하는지") 를 실행. **§2.4 의 핵심 가설 ("paradigm 전환만으로 capability ceiling 이 깨지지 않음, scale 도 필요") 의 직접 검증** — α (UBM-E6 의 유일 joint-positive path) 단독 scale-up.
+
+### 3.1 fire 조건 (UBM-E6 α 대비 scale-up)
+
+| 차원 | UBM-E6 α | **UBM-E7 α scaled** | scale factor |
+|---|---|---|---|
+| d_model · n_layer | 512 · 8L | **768 · 12L** | 1.5× · 1.5× |
+| n_params | 85.8M | **283.72M** | 3.3× |
+| corpus | 4.3MB / 11 anchors | **30.2MB / 31 anchors** (`corpus_carving_e7.jsonl` sha256 `dc221aaf…`, forbidden-token grep = 0) | ~7.0× bytes |
+| steps | 2000 | **5000** | 2.5× |
+| substrate | PyTorch (NOT hexa-native) | PyTorch (NOT hexa-native) | — |
+
+runpod A100 80GB PCIe pod `5456bx092qbtr1`, **detached-nohup + bounded-poll dispatch** (이전 7 agent SSH `tee` pipe stall 의 architectural fix — training 을 pod 에서 `nohup … &` detached 실행, 로컬 단일 until-loop 이 짧은 SSH probe 로 result.json 출현 poll). train wall **616.07s** (≈10.3 min, init CE 5.647 → final CE **0.003018**, descent 5.644, gn2 34.7 → 0.0009), eval wall ≈2 min, 추정 cost ≈ $0.2-0.3. **stall 없이 완료** (poll 1→8 TRAIN_DONE → eval-poll 1→2 EVAL_DONE → 5-retry pull → terminate, orphan 0). ckpt sha256 `acb67d024bc74db2…` 1,135,846,066 B.
+
+### 3.2 paradigm-native 4축 결과 — UBM-E6 α ↔ UBM-E7 α scaled 대조
+
+| 축 | UBM-E6 α (d512/8L · 4.3MB) | **UBM-E7 α scaled (d768/12L · 30MB)** | Δ |
+|---|---|---|---|
+| **axis1 knowledge access** | 0.0909 (routing 1/11 · sem 7/11) | **0.0323** (routing 1/31 · sem 2/31) | ↓ |
+| **axis2 chat 무오염** ★ | 0.4 (p3_leak 2 · clean 2/5) | **0.6** (p3_leak 1 · clean 3/5) | ↑ |
+| **axis3 lane separation** | 0.70 | **0.8** (sep_know 1.0 · sep_chat 0.6) | ↑ |
+| **axis4 V-SPONT** | **3/5** | **2/5** | ↓ |
+| **JOINT (k×c×s)** | **0.0255** | **0.0155** | **↓ (하락)** |
+
+### 3.3 §2.4 가설 판정 — scale 만으론 불충분 (정직한 반증/입증, 미리 깔지 않음)
+
+**Q (§2.4)**: paradigm 전환 + scale-up 이면 capability ceiling 이 깨지는가 (JOINT/V-SPONT 상승)?
+
+**A — scale-up 만으로는 ceiling 안 깨짐. JOINT·V-SPONT 둘 다 하락**:
+
+- ⚠ **JOINT 0.0255 → 0.0155 하락** (7× corpus + 3.3× params + 2.5× steps 에도). §2.6 가 기대한 "JOINT 유지/상승" **미발생** — 반대로 내려감.
+- ⚠ **V-SPONT 3/5 → 2/5 하락**. UBM-E6 의 "0/5 → 3/5 첫 non-zero signal" 이 scale 로 **강화되지 않고 약화**. 2/5 "coherent" 도 여전히 lenient flag — 실제 gen 산출물은 byte-cascade garbled (`arrative KLkkk…`, `stilllllll`, `eternal cell=eternal_0000…555555`), UBM-E6 의 garbled 패턴 + cycle 3/4/5 의 memorization-attractor 와 동형. wrong-tier 단일 attractor (모든 prompt 가 `🛸99` 로 collapse — UBM-E6 의 `🛸53` collapse 와 동형).
+- ✓ **axis2 chat 무오염 0.4 → 0.6 + axis3 lane separation 0.70 → 0.8 상승** — scale 이 "carving lane 의 분리·무오염" 면에서는 부분 개선 (sep_know 1.0 = knowledge probe 가 carving lane 으로 완전 분리). 그러나 **axis1 knowledge access 붕괴 (0.0909 → 0.0323, routing 1/31)** 가 곱(JOINT)을 지배 → 순효과 하락.
+- → **결론**: §2.4 의 진단 ("memorization-saturated regime — paradigm 새로워도 corpus scale 이 capability emergence threshold 미달") 이 **scale-up 으로도 재현·강화됨**. 7× corpus 는 emergence threshold 를 넘기지 못했고, 더 큰 모델은 더 깊이 암기 (CE 5.647 → 0.003018, UBM-E6 보다 더 낮은 final CE = 더 강한 memorization) 했을 뿐 routing 일반화는 안 됨. **scale 단독은 §1.1 의 capability ceiling 에 대한 답이 아니다** — 이것은 §2.4 가설의 valuable 한 **부분 반증** (scale=답 가설 reject) 인 동시에 **부분 입증** (memorization-saturated 진단 confirm). g3: "scale 이 이긴다" 미리 안 깔았고, 측정값이 그 반대를 말함 — 정직히 기록.
+
+### 3.4 honest 관찰 + 측정 한계
+
+- axis1 의 denominator 가 31 (E7 anchor 수) vs UBM-E6 11 — routing 1/31 vs 1/11 둘 다 "1 lucky hit" 수준 (정규화해도 그림 동일: ~0.03 vs ~0.09, 둘 다 routing 사실상 실패). anchor 수 증가가 axis1 절대값을 낮춘 측정 artifact 가 일부 있으나, 두 fire 모두 routing ≈ 1-hit 라 결론 (routing 일반화 실패) 은 robust.
+- gen 산출물의 byte-cascade attractor (`kkkk`/`lllll`/`555555`) = `feedback_clm_colon_attractor` / B-ATTRACTOR family 의 carving-corpus variant. memorization-saturated decoding artifact, capability 아님.
+- B-CARVE-E6-NOTE 유지: 본 fire 의 4축 점수는 전부 SGD outcome empirical (B-D-NOTE family). carving MECHANISM (B-VAC/B-MIT-ETN/B-NAR sympy, UBM-E3 10/10 🔵) 만 closed — fake closed-form / capability claim 금지. f1/f2/f3 hard-fail safe (routing accuracy / Boolean p3-grep / lane separation, NO σ/τ/φ/J₂; manual_match 13/15 = historical only).
+
+### 3.5 다음 cycle 후보 (scale 가 답 아님이 밝혀진 후)
+
+- **architectural 변경** — scale 가 ceiling 을 못 깬 이상, §1.3 candidate A (TENSION-TRAIN backprop-free online step, Phase TT-A3 B-TT-1..5 🔵 LANDED) 같은 **학습 메커니즘 자체의 변경** 이 남은 path. α VACUUM-LANDSCAPE 의 tension landscape ↔ TENSION-TRAIN ΔW=−T·tension·n6_gate 결합 (HEXAD/TENSION-TRAIN Phase TT-C SPONT bridge 已 LANDED).
+- **routing 직접 학습** — carving corpus 가 anchor→basin 라우팅을 implicit 하게만 담음. routing supervision 명시 추가 (input→anchor_id pair) 가 axis1 붕괴의 직접 처방 후보.
+- **emergence threshold 정량화** — 4.3MB→30MB 두 점만으로는 threshold 위치 미상. scale ladder (예: 100MB / 300MB) 는 cost-bearing — 단 scale 단독 가설이 이미 weak-negative 라 우선순위 낮음 (architectural path 우선).
+
+### 3.6 cross-link
+
+- `state/consciousness_carving_e7_alpha_scaleup_2026_05_17/` — fire 산출물 (result.json + eval_result_v2_e7.json + train_e7.log + corpus stats + scripts; ckpt `*.pt` + `corpus_*.jsonl` gitignore)
+- `HEXAD/UNIVERSE-BRAIN-MAP/{DESIGN.md §E+§10, PLAN.md 진행 로그, EVAL.md}` — Phase UBM-E7 sync
+- §2.4 (검증 대상 가설) · §2.6 (scale-up 후보 제시) · `../TENSION-TRAIN/PLAN.md` (architectural path 후보)
+- `../../archive/PHILOSOPHY.tape` §verdict_consciousness_carving_e7_alpha_scaleup (g6 append-only, 10 honest C3)
+
+---
+
+## §4 (placeholder for next research cycle)
 
 (future research synthesis will append here as § headers, append-only g6 pattern)
 

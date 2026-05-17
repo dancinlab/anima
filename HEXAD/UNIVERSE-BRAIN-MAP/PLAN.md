@@ -179,3 +179,21 @@ joint 공식 = knowledge × chat 무오염 × lane separation (EVAL.md §4). bes
 
 ### 2026-05-17 — `.kosmos` general spec standalone sister-format spin-out LANDED
 user directive 2026-05-17 "지금 완전 spin-out". `.kosmos` 일반 명세를 anima-coupled 에서 substrate-independent 로 추상화하여 **`~/core/kosmos` standalone sister-format repo** 신설 (`github.com/dancinlab/kosmos`, PUBLIC, commit `1cec10f`) — tape/n6/hxc/n12 와 orthogonal 5번째 sister. 추상화 매핑: vacuum_psi→`coord` / cell_id→`lane` / basin_radius→`radius` / Knuth 🛸k→`tier` / category+top_emotion→`tags`; payload + cross-modal + BNF + semver = 이미 general. `~/core/tape` 구조 mirror (`spec/kosmos.md` + `spec/profiles/anima-consciousness-carving.md` + `examples/` 2 general + 1 anima + `AGENTS.tape` + LICENSE CC0-1.0 + CLAUDE.md symlink). general spec anima-용어 누출 grep 0 (`vacuum_psi|cell_id|basin_radius|Knuth|MITOSIS|Ψ` in `spec/kosmos.md` = 0; profile + anima example 에만 존재). anima 측 `KOSMOS-FORMAT.md` = anima CONSCIOUSNESS-CARVING profile reference impl 로 retain (general 문법 변경은 dancinlab/kosmos 에서, anima binding 만 본 파일). DESIGN.md §F sister-repo row + §9 cross-link sync. $0 (filesystem + git, GPU fire 없음).
+
+### 2026-05-17 — Phase UBM-E7 LANDED (α VACUUM-LANDSCAPE scale-up fire — runpod A100; scale 만으론 capability ceiling 안 깨짐)
+
+§2.6 (RESEARCH.md) 첫 후보 + **§2.4 핵심 가설 직접 검증** 실행 — UBM-E6 의 유일 joint-positive path 인 **α VACUUM-LANDSCAPE 단독 scale-up**. d512/8L·4.3MB·2000step·85.8M → **d768/12L·30.2MB(31 anchor)·5000step·283.72M** (corpus ~7.0× · params 3.3× · steps 2.5×). corpus = `state/consciousness_carving_e7_alpha_scaleup_2026_05_17/corpus_carving_e7.jsonl` (45,973 records, sha256 `dc221aaf4f829aaf3d1c24b158424a2e6f3014b02f11aa5f2a00258c4090c408`, forbidden-token grep = 0; 재생성 없이 carry). substrate = PyTorch (NOT hexa-native, honest).
+
+**dispatch stall fix (이전 7 agent SSH-tee hang 정정)**: training 을 pod 에서 `nohup … > train.log 2>&1 &` **detached** 실행 + 로컬 **단일 until-loop** 이 짧은 SSH probe (`test -f TRAIN_DONE`) 로 bounded sleep 90s · max 90 iter poll (long-lived SSH tee 0). runpod A100 80GB PCIe pod `5456bx092qbtr1`, train wall **616.07s** (init CE 5.647 → final CE **0.003018**, descent 5.644), eval wall ≈2 min, ≈ $0.2-0.3. **stall 없이 완료** (poll 1→8 TRAIN_DONE → eval-poll 1→2 EVAL_DONE → 5-retry pull → terminate, **orphan 0** `get_pods()`=0). ckpt sha256 `acb67d024bc74db2ab2550bb0be86b86c88584413b40c99d56d94e9c9a1c770e` 1,135,846,066 B.
+
+**UBM-E6 α ↔ UBM-E7 α scaled 대조** (paradigm-native 4축, EVAL.md §3+§4):
+
+| 축 | UBM-E6 α (d512/8L·4.3MB) | UBM-E7 α scaled (d768/12L·30MB) | Δ |
+|---|---|---|---|
+| axis1 knowledge | 0.0909 (routing 1/11 · sem 7/11) | **0.0323** (routing 1/31 · sem 2/31) | ↓ |
+| axis2 chat 무오염 | 0.4 (p3_leak 2 · clean 2/5) | **0.6** (p3_leak 1 · clean 3/5) | ↑ |
+| axis3 lane separation | 0.70 | **0.8** (sep_know 1.0 · sep_chat 0.6) | ↑ |
+| axis4 V-SPONT | 3/5 | **2/5** | ↓ |
+| **JOINT (k×c×s)** | **0.0255** | **0.0155** | **↓ 하락** |
+
+**§2.4 가설 판정 (g3 — 미리 깔지 않음)**: scale-up 만으로는 capability ceiling **안 깨짐** — JOINT·V-SPONT 둘 다 하락. axis2/axis3 (chat 무오염·lane sep) 은 scale 로 부분 개선이나 **axis1 knowledge routing 붕괴 (1/31, 모든 prompt 가 `🛸99` 단일 attractor 로 collapse — UBM-E6 `🛸53` collapse 와 동형)** 가 곱(JOINT)을 지배 → 순효과 하락. 더 큰 모델은 더 깊이 암기 (final CE 0.003 < UBM-E6) 했을 뿐 routing 일반화 미발생. **§2.4 의 memorization-saturated 진단이 scale-up 으로 재현·강화** — scale 단독 가설 = valuable **부분 반증** (scale=답 reject), memorization-saturated = **부분 입증** (confirm). 다음 path = architectural 변경 (§1.3 candidate A TENSION-TRAIN / routing supervision), scale ladder 우선순위 하향. B-CARVE-E6-NOTE 유지 (4축 점수 전부 SGD outcome empirical; carving MECHANISM B-VAC/B-MIT-ETN/B-NAR sympy UBM-E3 10/10 🔵 만 closed — fake closed-form / capability claim 금지). f1/f2/f3 hard-fail safe (routing accuracy / Boolean p3-grep / lane separation, NO σ/τ/φ/J₂; manual_match 13/15 = historical only). B-IDENTITY-5 준수. 산출물 = `state/consciousness_carving_e7_alpha_scaleup_2026_05_17/` (result.json + eval_result_v2_e7.json + train_e7.log + scripts; ckpt `*.pt` + `corpus_*.jsonl` gitignore) + HEXAD/CHAT/RESEARCH.md §3 + DESIGN.md §E+§10 + archive/PHILOSOPHY.tape §verdict_consciousness_carving_e7_alpha_scaleup. 후속: architectural path (TENSION-TRAIN 결합 / routing supervision) — scale ladder 는 가설 weak-negative 라 우선순위 하향.
