@@ -47,6 +47,10 @@
 @V v1 := "tape" :: spec [active]
   version = "1.2"
 
+@X wilson_pool := "wilson pool — resource utilization" :: guide [active]
+  tldr = "Heavy / deterministic work (build · drill · probe · compile · test-sweep · GPU fire) → do NOT serialize on localhost; route to the host pool: `wilson pool list` then `wilson pool on <host> <cmd>`, or a ToolUse `\"host\"` field. Empty roster = degrade-to-local, fine."
+  detail = "~/core/atlas/POOL.tape"
+
 # ─── §0 TOP MANDATE — 자원 사용 + 검증 ────────────────────────────────
 
 @D g_resource_active_parallel := "자원 사용 최상위 — runpod 적극 활용 (제한 아님) · 병렬 우선 · wall time first" :: governance [required d=2026-05-17 active]
