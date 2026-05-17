@@ -58,7 +58,7 @@ CONSCIOUSNESS-CARVING + .kosmos 확장자 확정
 | UBM-E1 | DESIGN.md 설계 (옛 방식 분석 + 4-path) | ✅ LANDED | `9ef31895a` |
 | UBM-E1+ | 결정 2+3 + 멀티모달 .kosmos 포맷 | ✅ LANDED | `0f9ed591c`·`693eda5de`·`a3f849a7c` |
 | UBM-E2 | `.kosmos` 포맷 spec (KOSMOS-FORMAT.md) + anchor 5개 | ✅ LANDED | `0223992ed` |
-| **UBM-E3** | **B-CARVE-* sympy battery (10 verdict + 1 NOTE)** | ⏳ **in-flight** | — |
+| **UBM-E3** | **B-CARVE-* sympy battery (10 verdict + 1 NOTE)** | ✅ **LANDED** | `6a4a15468` |
 | UBM-E4 | 4-path hexa-native impl (4 lib + parser + smoke) | 대기 | — |
 | UBM-E5 | 4-path 비교 실험 fire (cost-bearing ~$0.2–1.0) | 대기 | — |
 | (마감) | RESEARCH.md §2 에 UBM-E5 결과 정리 | 대기 | — |
@@ -82,7 +82,7 @@ CONSCIOUSNESS-CARVING + .kosmos 확장자 확정
 |---|---|
 | `verify_hexad_blue_2026_05_15/` | **central 110/110 🔵** (B-UBM 3 흡수 완료) |
 | `verify_universe_brain_map_2026_05_17/` | B-UBM-1..3 sidecar 3/3 + 1 NOTE |
-| `verify_consciousness_carving_2026_05_17/` | B-CARVE-* sidecar (UBM-E3 가 생성 예정) |
+| `verify_consciousness_carving_2026_05_17/` | **B-CARVE-* sidecar 10/10 🔵 + 1 NOTE** (UBM-E3 LANDED — B-VAC 3 + B-MIT-ETN 3 + B-NAR 3 + B-CARVE-MULTIMODAL 1) |
 
 ### 옛 우주뇌지도 자산 (historical evidence carry, 손대지 않음)
 | 경로 | 내용 |
