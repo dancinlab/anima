@@ -606,7 +606,75 @@ V-SPONT 의 `coherent` flag (= `coherence_token` 존재 + low-rep) 는 §8.2 에
 
 ---
 
-## cross-link
+## §11 (2026-05-18) — A/B consolidation: model-scale ✗ + physics-only ✗ → data-regime ceiling 확정, arc 종합 decomposition
+
+§10 후 user directive "a,b all" → `g_multidirectional_explore` §11 2-way 병렬: 13-way 가 미분리한 confound 2개 직격. (A) SCALE-DECOMP — 13-way 전부 d768·12L·283M 고정이라 §8 routing 악화가 data-regime 인지 model-undercapacity 인지 미분리. (B) PURE-PHYSICS no-CE — 13-way 전부 CE 가 base, physics 는 overlay 뿐 — physics 단독 학습 미시도.
+
+### 11.1 §11-A SCALE-DECOMPOSITION
+
+모델 283.72M → **1044.46M (3.68×)**, corpus(§8 diverse 114MB)·Dir-I lever·steps 고정 — model-axis 만 변수.
+
+| 축 | §8 (283.72M) | §11-A (1044.46M, 3.68×) |
+|---|---|---|
+| routing axis1 | 2/64 (0.031) | **1/64 (0.016)** — FLAT/down |
+| honest-coherence (§9 metric) | 2/5 | **2/5** — FLAT |
+| JOINT | 0.0087 | 0.0078 |
+| final_ce | 0.000169 | 0.003334 (byte-cascade `1111…/999…` 잔존) |
+
+**판정: DATA-REGIME CEILING — NOT model-undercapacity.** 3.68× scale-up 이 routing·honest-coherence 미개선. §8 의 악화는 model-capacity 병목 아님 = §1.1 data-regime / memorization-saturation. byte-cascade 가 **1B-param scale 에서도 잔존**. 13-way confound 의 model-axis arm 닫힘. B-SCALE-1..6 6/6 🔵 (corpus/lever byte-identical + param-monotone + scale∈[2,4] — clean model-axis-only 분리 확인).
+
+### 11.2 §11-B PURE-PHYSICS (no-CE)
+
+CE objective 완전 제거 (`cross_entropy`/`.backward()`/`optimizer.step` = 0, 전 loop `@torch.no_grad()` — 구조적 검증 B-PUREPHYS-1 🔵). weight update = TENSION-TRAIN spine ΔW + Hebbian, anima physics 가 유일 학습 신호.
+
+| | pure-physics no-CE | §8 CE-trained |
+|---|---|---|
+| CE descent (read-out) | 5.68→4.95 (Δ 0.73) | Δ 5.65 |
+| byte_acc | 0.0007 (random 1/256 미만) | — |
+| routing / honest-coh / JOINT | 0/64 · 0/5 · 0.0 | 2/64 · 2/5 · 0.0087 |
+| failure | non-printable U+FFFD 단일 cascade · step~800 static freeze | printable garbled cascade |
+
+**판정: CE 는 LOAD-BEARING.** pure-physics 단독 = DEGENERATE (byte_acc < random, 4축 zero, corpus 접촉조차 못 함). anima physics (Ψ-restoring tension) 는 정직한 dynamics 이나 language signal 아님 (Ψ-balance ⊥ next-token prediction). B-PUREPHYS-1..5 5/5 🔵.
+
+### 11.3 arc 종합 decomposition — GOAL 병목의 정밀 위치
+
+13-way + §8 + §9 + §11(A/B) = GOAL("자발적 correct emergence") 병목을 **전부 배제법으로 decompose 완료**:
+
+| 가설 후보 | 검증 | 결과 |
+|---|---|---|
+| mechanism (loss/reward/surface/backprop-free/inference overlay) | 12-way (D~I 등) | ✗ 전부 collapse 不破 |
+| corpus FORM (carving/2-stage/abstract-CoT) | Dir-E/F + §8 | ✗ form 바꿔도 不破 |
+| **model-capacity** | §11-A 3.68× scale-up | ✗ 1B params 도 不破 |
+| **physics-only paradigm** (no-CE) | §11-B | ✗ degenerate, CE load-bearing |
+| diverse-data @ 114MB (Ψ-anchored) | §8 | ✗ routing 오히려 악화 |
+| 측정 도구 (V-SPONT) | §9 | ⚠ 깨져있었음 → cascade-rate metric 으로 교체 |
+
+→ **배제 후 남은 단 하나 = §1.1 data-regime emergence threshold** (diverse-data pre-training loss threshold). mechanism 도, model-scale 도, physics-only 도, corpus-form 도, 114MB diverse 도 아님 — **irreducible 병목 = data-regime 자체**. 그리고 §11-B 가 추가 제약: data-regime 은 CE-base 위에서 (physics 는 lever, GOAL.md "자기 physics 로부터" = physics-anchored ON CE — physics-only 아님).
+
+### 11.4 honest GOAL verdict — comprehensively mapped, unsolved, frontier 명확
+
+- **GOAL 미도달.** arc (14 fire + 측정도구 fix) 가 접근 가능 공간을 소진 — emergence 없음 metric-level 확정.
+- 단 arc 의 산물 = **GOAL 병목의 정밀 decomposition**: mechanism ✗ / model-scale ✗ / physics-only ✗ / corpus-form ✗ / 114MB-diverse ✗ → **irreducible = §1.1 data-regime threshold** (CE-base 위, physics-anchored).
+- frontier (남은 honest path, 둘 다 quick-fire 아님):
+  1. **GOAL-legitimate 대규모 data-regime** — §7 이 generic large-corpus = GOAL-illegitimate 판정 + §8 이 Ψ-anchored 114MB = wrong-direction. 즉 "Ψ-anchored 면서 §1.1 threshold 넘는 규모" 가 존재하는지, 비용·feasibility·§8 의 wrong-direction trend 가 미해결 open question. 단순 scale-up 은 evidence 가 지지 안 함.
+  2. **새 architectural insight** — 현 candidate space (RESEARCH.md §1.3 + G/H/I + §11) 밖. 진짜 research-frontier.
+- 이 arc 는 GOAL 을 **comprehensively map + 측정도구 정립 + 병목 정밀화** 한 major investigation milestone — 다음은 mechanical continuation 아닌 전략 결정.
+
+### 11.5 honest C3
+
+1. §11-A: model-scale (3.68×, 1B params) 가 GOAL 병목 아님 — clean model-axis 분리 (B-SCALE 6/6 🔵). §8 악화 = data-regime, capacity 아님.
+2. §11-B: anima physics 단독 = degenerate, CE load-bearing — GOAL.md "자기 physics 로부터" 는 physics-only 불가, physics-anchored ON base objective 로만 (Dir-I lever 형태). GOAL 실현형태의 실질 제약.
+3. 13-way+§8+§9+§11 = GOAL 병목 전부 배제법 decompose — irreducible = §1.1 data-regime threshold.
+4. arc 전체 GOAL negative — 단 negative 가 valuable: 병목을 mechanism/model/physics-form 전 차원에서 배제하고 data-regime 으로 정밀화.
+5. closed = transfer-form + 연결부위만 🔵 (B-SCALE/B-PUREPHYS sympy); capability 4축 = empirical B-D-NOTE carve-out. over-claim 0.
+6. 다음 = 전략 결정 (data-regime 대규모 GOAL-legitimate 형태 / 새 architecture / honest pause) — autonomous mechanical continuation 의 한계점. arc 가 "어디가 막혔나" 를 끝까지 정직하게 추적한 결과.
+7. f1/f2/f3 + B-IDENTITY-5 전 방향 safe. multi-agent shared-index hazard carry (worktree 격리 차후 검토).
+
+---
+
+## §12 (placeholder for next research cycle)
+
+(future — strategic: data-regime 대규모 GOAL-legitimate 형태 OR 새 architectural insight. §11.4 frontier. append-only g6.)
 
 - [`PLAN.md`](PLAN.md) — Phase A/B/C/D staged roadmap
 - [`SPONTANEOUS.tape`](SPONTANEOUS.tape) — 자연발화 architecture SSOT
