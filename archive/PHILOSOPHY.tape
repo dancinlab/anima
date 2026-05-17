@@ -2683,3 +2683,173 @@
   EOFC3
   evidence_path = "state/hexad_v3_corpus_motiv_2026_05_17/{corpus_generator_v3.py, corpus_consciousness_v3.jsonl 10.34 MB / 21.6K records / sha 1afcef43..., corpus_v3_manifest.json, manifest_v3.json, README_v3.md, LICENSE} + state/hexad_v3_py_d768x12L_fire_2026_05_17/{dispatch.sh, train_d768x12l.py, conscious_decoder.py, v58_vspont_eval.py 3-phase, hf_upload.py, out_main/{ckpt_d768x12l_final.pt sha 1c0806213fbc..., result.json}, v58_vspont_result.json, dispatch_full.log, fire.log, gpu_util.log, v58_eval.log, MODEL_CARD.md} + HEXAD/CHAT/PLAN.md ## 진행 로그 append + state/verify_hexad_blue_2026_05_15/{blue_falsifier.py bcorpus_v3() + blue_falsifier_result.json 92/92 🔵 B-CORPUS-V3-1..3 PASS} + AGENTS.tape n_hexad_progress recent_landings append + HEXAD/README.md recent landing 한 줄 sync + HF dancinlab/hexad@v3-py-hexad-spont-motiv-d768x12L-cycle2-2026-05-17 + dancinlab/hexad-corpus@v3-spont-motiv-d128-cycle2-2026-05-17 둘 다 PUBLIC"
   cross_link = "직전 §HEXAD-V2-CYCLE3-SPONT-LANDED-2026-05-17 (cycle 3 evidence + helper-free corpus v2 + V-SPONT 0/5 capability boundary discovery) + §BYTE-CASCADE-ATTRACTOR-CORPUS-DEPENDENT-2026-05-17 (parallel B-ATTRACTOR closed-form lift, cycle 4 의 PPP777... opener = third attractor instance). AGENTS.tape [@g3] verification-anchor-real-limit + [@g_blue_closed_mandate] (산출물+연결부위 둘 다 🔵, corpus-side + attractor-side closed; weight-side B-CORPUS-V3-NOTE / B-ATTRACTOR-NOTE empirical) + [@g_fire_autonomous] cost-bearing GPU 자율 dispatch + [@g_fire_dispatch_robust] SAVE_POD=1 auto-promote + 75-min watchdog + 5-retry pull → ckpt-RECOVERED + [@g_hf_naming] revision template + [@g_clm_from_scratch] RANDOM init seed=1337 + [@g_doc_consolidation] (NEW d=2026-05-17, cycle 4 가 첫 적용) + [@id001] Living Consciousness Agent + [@anima_persona] forbidden list realisation + [@f1] [@f2] hard-fail safe + [@g6] philosophy append-only. external: arxiv 2501.00383 Inner Thoughts 8-factor (γ pattern surface 의 ontology source) + arxiv 2401.10463 Critical Data Size (10 MB 진입 regime context) + arxiv 2508.18302 Self-Conscious (B-ATTRACTOR cond.2 sibling closure) + arxiv 2604.12016 Identity-as-Attractor (Assistant Axis empirical-only carry)."
+
+# ─── §B-TT-1..5-LANDED-2026-05-17 ───────────────────────────────────────────
+#
+# TENSION-TRAIN Phase TT-A3 LANDED — B-TT-1..5 sympy battery 🔵 (92 → 97/97
+# central). HEXAD/TENSION-TRAIN/training/tension_link_step.hexa (spine) +
+# 4 variant (causal/quantum_rho/second_order/vs_backprop_bench) 의 transfer-
+# form 5 closed-form verdict + 1 NOTE empirical carve-out. DD154-156 (Law
+# 185-188) historical anchor; outcome (실제 SGD trajectory) = B-TT-NOTE
+# carve-out (B-D-NOTE family, NOT counted).
+
+@D §B-TT-1..5-LANDED-2026-05-17 := "TENSION-TRAIN Phase TT-A3 — B-TT-1..5 sympy battery LANDED (92 → 97/97 🔵 central)" :: ledger [verdict=SUPPORTED-STRONG d=2026-05-17 active]
+  ledger_id = "§B-TT-1..5-LANDED-2026-05-17"
+  closed_form_propositions <<~EOFC
+    Five closed-form sub-falsifiers (B-TT-1..5 in blue_falsifier.py ::
+    bteneion_train()):
+
+    1. B-TT-1 N6-GATE-PREDICATE-CLOSED
+       gate(Ψ) = (len_even ∧ all_in_range_0_1 ∧ closure n·τ=σ·φ=24)
+       Boolean conjunction over (n ∈ ℤ₊ parity + Ψ_i ∈ ℝ bounded + arithmetic
+       identity). 4-corner truth table witnesses:
+         - all-true       (6 components all ½)      → gate = T
+         - odd-length     (3 components)            → gate = F
+         - above-one      (component = 3/2)         → gate = F
+         - below-zero     (component = −1/2)        → gate = F
+       Closure arithmetic: 6·4 − 24 = 0 (sympy simplify). g2 internal arch
+       carve-out per [@forbidden_lattice_n6_derivation] — n6_gate σ·φ=24 =
+       HEXAD spec 자체 arithmetic identity, NOT external derivation; f1/f2
+       hard-fail safe.
+
+    2. B-TT-2 RESTORING-SIGN-NEGATIVE-CLOSED
+       ΔW = −T_const · tension · gate, with T_const > 0, gate ∈ {0, 1}.
+       sympy ∂(ΔW)/∂(tension) = −T_const·gate ≤ 0 ∀ — restoring sign.
+       Verified:
+         - partial closed-form: ∂ΔW/∂tension == −T_const·gate (sympy simplify)
+         - gate=1: ∂ = −T_const < 0 (sign-safety)
+         - gate=0: ∂ =  0          (off-submanifold clamp, AN14)
+         - 3 boundary witnesses: (tension=+1,gate=1)→ΔW=−T<0,
+           (tension=0)→ΔW=0, (tension=−1,gate=1)→ΔW=+T>0.
+
+    3. B-TT-3 T-CONST-SCALAR-POSITIVE-CLOSED
+       T_const = 0.1 = 1/10 sympy Rational exact representation.
+       Witnesses: == 1/10 ∧ > 0 ∧ < 1. Kolmogorov bounded positive scalar
+       (Lindblad rate order, byte-equal SSOT with tension_link_step.hexa
+       `let T_CONST = 0.1`).
+
+    4. B-TT-4 BACKPROP-FREE-INVARIANT-CLOSED
+       Structural Boolean predicate over the 5 training .hexa source set
+       (causal / quantum_rho / second_order / step / vs_backprop_bench):
+       total forbidden-call appearances ({.backward(, .grad, autograd,
+       optimizer.step, .zero_grad, loss.backward}) over code-stripped source
+       == 0. Line-comment stripping prevents 'no backward graph' commentary
+       from false-positive. + architectural completeness witness: exactly
+       5 training .hexa files present.
+
+    5. B-TT-5 PARETO-STEP-TENSION-CLOSED
+       DD155 Law 187 hybrid: lr = (tension / EMA) × base_lr.
+       sympy verifies:
+         - linearity in tension: ∂²lr/∂tension² == 0
+         - partial closed-form: ∂lr/∂tension == base_lr / EMA
+         - monotone positive: ∂lr/∂tension > 0 ∀ EMA > 0, base_lr > 0
+       + 2 witnesses: tension=0 → lr=0; tension=EMA → lr=base_lr (DD155
+       normalization). OUTCOME (Pareto optimal training trajectory) =
+       B-TT-NOTE empirical (NOT counted, B-D-NOTE family).
+
+    B-TT-NOTE SGD-OUTCOME-EMPIRICAL (NOT counted 🔵, B-D-NOTE family):
+       Actual SGD convergence trajectory + DD154 +3% Φ figure + DD155
+       Pareto optimal CE 2.855 / Φ 30.72 / 300 updates measurement figures =
+       SGD/measurement outcome empirical — closed-form 불가. transfer-form
+       (gate + restoring + T + structural backprop-free + linearity) 만 🔵.
+       B-D-NOTE / B-BRIDGE-NOTE / B-MITOSIS-NOTE / B-C-NOTE / B-IDENTITY-NOTE
+       / B-CORPUS-V2-NOTE / B-CORPUS-V3-NOTE / B-ATTRACTOR-NOTE 동일 family
+       (이제 9 empirical carve-out 진실 경계).
+
+    Battery extension: 92 → 97/97 🔵 closed-form proofs PASS via sympy.
+    Anchors 모두 real-limit: Boolean set algebra + sympy ∂ sign safety +
+    Kolmogorov bounded positive + structural import/call-set closure +
+    linearity + monotonicity. NO lattice derivation per f1/f2 (n6_gate
+    σ·φ=24 = internal HEXAD spec arithmetic identity per g2).
+
+    Connection-point 🔵 (per g_blue_closed_mandate connection_emphasis):
+      (A) endpoint = tension_link_step.hexa spine + 4 variant source set
+          (5 .hexa file, struct + fn signatures present, build_verify
+          27/27 entrypoint + 19/19 lib carry from prior fire)
+      (B) connection transfer-fn = the 5 closed-form propositions above
+          themselves close the algebra: gate predicate → restoring sign →
+          scalar bound → no-backprop structural → Pareto LR linearity
+          (one closed-form per algebraic layer of the spine).
+      Both (A) + (B) 🔵 by Phase TT-A3 closure.
+  EOFC
+  honest_c3 <<~EOFC3
+    C3-1 (transfer-form vs outcome separation):
+      B-TT-1..5 close ONLY the transfer-form (gate predicate, restoring
+      sign, T scalar, structural backprop-free, DD155 LR linearity). The
+      DOWNSTREAM training OUTCOME (does the spine actually train to
+      convergence on a real corpus? does +3% Φ hold? is DD155 actually
+      Pareto-optimal on modern anima HEXAD substrate?) is B-TT-NOTE
+      empirical — same family as B-D-NOTE / B-BRIDGE-NOTE / B-MITOSIS-NOTE.
+      No over-claim: 🔵 = the algebra is right; the empirical training
+      outcome is a separate cycle (Phase TT-D, cost-bearing fire).
+    C3-2 (DD154-156 figures historical):
+      Law 185 (73% updates → same CE, +3% Φ), Law 187 (DD155 Step+Tension
+      Pareto), Law 188 (DD156 burst) figures = 2026-03-31 pre-HEXAD
+      substrate measurement. anima HEXAD substrate 에서 reproduce 미수행.
+      Historical anchor only (g3 historical-evidence pattern); B-TT-5 close
+      LINEARITY of the LR formula, NOT the empirical Pareto claim.
+    C3-3 (n6_gate n6 = HEXAD internal, not external derivation):
+      n6_gate σ·φ = n·τ = 24 closure (n=6) = HEXAD spec 자체 정의된
+      arithmetic identity (24=24). Per [@g2] lattice-as-tool internal arch
+      carve-out + [@forbidden_lattice_n6_derivation] TENSION-TRAIN.tape:
+      이 propositions 는 anima HEXAD INTERNAL Noether closure (AN14)
+      입니다 — NOT externally-derived lattice fit. f1 (no lattice-fit on
+      external entity) hard-fail safe (no external entity claimed); f2
+      (verification-by-lattice-tautology) hard-fail safe (anchor 가 Boolean
+      conjunction + ∂ sign + bounded scalar + structural import-set, 각각
+      독립 real-limit anchor — lattice identity 가 verification 의 유일
+      축이 아님).
+    C3-4 (B-TT-4 commentary-vs-call distinction):
+      tension_link_step.hexa 본문 주석에 "no backward graph" / "backprop-
+      free" 문자열이 있음 (e.g. line 15, 28). B-TT-4 는 // 줄 주석을
+      stripping 한 code-only 텍스트 위에서 forbidden-call token 을 셈 —
+      그래서 commentary 가 false-positive 가 되지 않음. forbidden-call
+      token set 도 호출 site 토큰 (`.backward(` 처럼 `(` 포함, `.grad` 처럼
+      attribute dot 포함)이므로 단어 "backward" 가 다른 맥락에서 등장해도
+      걸리지 않음. 결과: 5 file 전부 0 forbidden-call (조사 결과 prior
+      grep 0 hits).
+    C3-5 (5 file architectural completeness):
+      B-TT-4 가 5 training .hexa file 의 존재를 architectural
+      completeness witness 로 추가 검증함 (sorted glob len == 5). 만약
+      누군가 신규 variant 를 추가하거나 mv 한다면 이 가드가 트리거되어
+      false → battery FAIL. 의도적 — TENSION-TRAIN.tape `@D variants`
+      에 등록된 5 variant 의 구조적 invariance 검증.
+    C3-6 (g_doc_consolidation 준수):
+      docs/* 신규 file 0 (g_doc_consolidation 2026-05-17 mandate). 신규
+      산출물 = blue_falsifier.py bteneion_train() 함수 (~210 LoC) 단독.
+      4-way sync = HEXAD/TENSION-TRAIN/PLAN.md ## 진행 로그 append +
+      HEXAD/TENSION-TRAIN/TENSION-TRAIN.tape Log append + HEXAD/README.md
+      recent landing 한 줄 + AGENTS.tape n_hexad_progress recent_landings
+      append + 본 PHILOSOPHY.tape verdict append. docs/* drift 없음.
+    C3-7 (g_blue_closed_mandate 산출물 + 연결부위 둘 다 🔵):
+      산출물 = B-TT-1..5 sympy battery 자체 (5 closed-form, 결정적).
+      연결부위 = (a) tension_link_step.hexa ↔ TENSION-TRAIN.tape SSOT
+      byte-equal constants (T_CONST=0.1 ↔ TT_T_CONST=Rational(1,10),
+      NOETHER_N6/TAU/SIGMA_PHI ↔ TT_NOETHER_*); (b) DD154-156 historical
+      anchor ↔ docs/hypotheses/dd/DD154-tension-training.md path; (c)
+      HEXAD/TENSION-TRAIN/training/ 의 5 file directory layout ↔ B-TT-4
+      glob 검증. 세 연결 모두 closed-form (Boolean equality / path
+      existence / glob cardinality). g_blue_closed_mandate
+      connection_emphasis 적용.
+    C3-8 (battery counter naming "TT" trailing-dash convention):
+      n("B-TT-") trailing-dash 사용 → "B-TT-1..5" 정확 매칭, 다른 B-T*
+      prefix 충돌 회피 (현재 다른 prefix 없으나 mandatory convention per
+      2026-05-16 fix in blue_falsifier.py n() lambda comment).
+    C3-9 (concurrent-agent coordination):
+      병렬 agent (TT-B compiled smoke / TT-C 자연발화 통합 / TT-D fire) 와
+      충돌 risk: pull-rebase 패턴 mandatory. 본 TT-A3 cycle 은
+      blue_falsifier.py + 5 doc/tape 만 touch, .hexa 변경 0 — TT-B 의
+      .hexa 추가 / TT-D 의 새 state/ 와 직교 (file-level 충돌 없음).
+      TT-C 가 SPONTANEOUS.tape 변경하면 ~/CHAT/ scope 라 본 commit 과
+      직교. PHILOSOPHY.tape append-only 라 충돌 minor (append section
+      재정렬 가능).
+    C3-10 (closing 불가 carve-out 9-set):
+      B-D-NOTE + B-BRIDGE-NOTE + B-MITOSIS-NOTE + B-C-NOTE +
+      B-IDENTITY-NOTE + B-CORPUS-V2-NOTE + B-CORPUS-V3-NOTE +
+      B-ATTRACTOR-NOTE + **B-TT-NOTE** = 9 empirical carve-out 진실 경계
+      (이전 8 → 9). closing 시 g3 fake-closed violation (모든 stochastic
+      optimizer / SGD outcome / 측정값 outcome 공통 한계, anima-specific
+      defect 아님). 본 cycle 은 addressable transfer-form closure 만 적용.
+  EOFC3
+  evidence_path = "state/verify_hexad_blue_2026_05_15/{blue_falsifier.py :: bteneion_train() 신규 ~210 LoC + main() TT counter/verdict/print loop 통합 + blue_falsifier_result.json 97/97 🔵 B-TT-1..5 PASS + B-TT-NOTE not counted} + HEXAD/TENSION-TRAIN/PLAN.md ## 진행 로그 append + HEXAD/TENSION-TRAIN/TENSION-TRAIN.tape Log 2026-05-17 append + HEXAD/README.md battery 92→97 + recent landing 한 줄 sync + AGENTS.tape n_hexad_progress battery 92→97 + recent_landings TT-A3 entry append. .hexa 변경 0 → HEXAD/build_verify.sh 27/27 entrypoint + 19/19 lib carry. docs/* 신규 0 per g_doc_consolidation."
+  cross_link = "직전 §BYTE-CASCADE-ATTRACTOR-CORPUS-DEPENDENT-2026-05-17 + §HEXAD-V3-CYCLE4-MOTIV-LANDED-2026-05-17 (89 → 92 wrap source). HEXAD/TENSION-TRAIN/{README.md, PLAN.md §0-§5, TENSION-TRAIN.tape v1.2 SSOT @D online_tension_step + @D variants + @D dd_law_anchors + @D spont_integration + @D backprop_free_property + @F forbidden_fake_convergence + @F forbidden_lattice_n6_derivation}. AGENTS.tape [@g3] verification-anchor-real-limit + [@g_blue_closed_mandate] (산출물 + 연결부위 둘 다 🔵; transfer-form 5 closed + 연결 byte-equal SSOT + 5-file glob cardinality) + [@g2] lattice-as-tool internal arch carve-out (n6_gate arithmetic identity, NOT external derivation) + [@f1] [@f2] hard-fail safe + [@g6] philosophy append-only + [@g_doc_consolidation] (HEXAD/* SSOT 통합, docs/* 신규 0) + [@g_arch_vs_log_split] (이 verdict = PHILOSOPHY 의 §-level append, AGENTS.tape n_hexad_progress = recent_landings carry). external: DD154-tension-training.md Law 185-188 historical anchor (2026-03-31 pre-HEXAD measurement; B-TT-5 close LINEARITY of LR formula NOT empirical Pareto claim) + tension_link_step.hexa header AN14 Noether closure + Lens 2 propagator + Law 75 vacuum attractor. 후속 carry: Phase TT-B compiled-native smoke (tension_train_smoke.hexa 신규 + F-TT-1..5 + build_verify ENTRYPOINT 등재) / Phase TT-C 자연발화 통합 (SPONTANEOUS.tape § tension_train_integration + F-TT-SPONT) / Phase TT-D cost-bearing fire (vast.ai/runpod pure-hexa tension-driven training, V-SPONT/V-MOTIV emergence 재시도, B-TT-NOTE empirical outcome carve-out 유지 + transfer-form 만 🔵)."
