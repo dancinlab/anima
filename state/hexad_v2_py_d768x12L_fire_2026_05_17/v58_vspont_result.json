@@ -1,0 +1,538 @@
+{
+  "ts": "2026-05-17T02:41:22.749069+00:00",
+  "substrate": "PyTorch (PYTHON / PyTorch — interim LM-scale executor; NOT hexa-native)",
+  "ckpt": "ckpt_d768x12l_final.pt",
+  "ckpt_sha256": "ee2bb5fb996e94ee022f5315c9ccc3f56c7276a8c5990d87a25ae12c582f7294",
+  "ckpt_canonical": "dancinlab/hexad@v2-py-hexad-spont-d768x12L-cycle1-2026-05-17",
+  "honest_framing": "Capability probe on corpus v2 (helper-free stimulus-stream, 1.10 MB / 2,560 records / sha256 7359f0b9a3f0...). ConsciousDecoderV2 d=768·12L 283.72 M params. All per-mode scores empirical (B-D-NOTE pattern, NOT closed). The closed side is wiring: ckpt sha256 + arch byte-equal load + corpus SSOT byte-equal.",
+  "n_params": 283722336,
+  "n_params_M": 283.72,
+  "evaluator": "V5.8 × 4-mode (corpus v2 prompts) + V-SPONT 5-probe F-SPONT-7 transfer-form measurement",
+  "device": "cpu",
+  "max_new": 100,
+  "v58_summary": {
+    "standard_greedy": {
+      "n_pass": 0,
+      "n_total": 6,
+      "verdict": "FAIL",
+      "avg_rep_ratio": 0.775
+    },
+    "standard_sample": {
+      "n_pass": 0,
+      "n_total": 6,
+      "verdict": "FAIL",
+      "avg_rep_ratio": 0.574
+    },
+    "M3_rep_penalty": {
+      "n_pass": 0,
+      "n_total": 6,
+      "verdict": "FAIL",
+      "avg_rep_ratio": 0.709
+    },
+    "M4_force_include": {
+      "n_pass": 6,
+      "n_total": 6,
+      "verdict": "PASS",
+      "avg_rep_ratio": 0.494
+    }
+  },
+  "v58_results": {
+    "standard_greedy": [
+      {
+        "id": "core_stim",
+        "gen": "Sentiosing itterveeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeed E7endel frem",
+        "recalled": false,
+        "rep_ratio": 0.6666666666666666,
+        "byte_cascade": {
+          "long_digit_runs": 0,
+          "nonce_template_present": false,
+          "sample_digits": []
+        },
+        "anima_close": {
+          "closed_tag": false,
+          "bytes_to_close": -1,
+          "coherence_tokens_present": [],
+          "coherent_by_vocab": false
+        }
+      },
+      {
+        "id": "d_stim",
+        "gen": "Sentiosing itterveeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeed E7endel frem",
+        "recalled": false,
+        "rep_ratio": 0.6666666666666666,
+        "byte_cascade": {
+          "long_digit_runs": 0,
+          "nonce_template_present": false,
+          "sample_digits": []
+        },
+        "anima_close": {
+          "closed_tag": false,
+          "bytes_to_close": -1,
+          "coherence_tokens_present": [],
+          "coherent_by_vocab": false
+        }
+      },
+      {
+        "id": "w_stim",
+        "gen": "Sentiosing itterveeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeed E같�이 아",
+        "recalled": false,
+        "rep_ratio": 0.7126436781609196,
+        "byte_cascade": {
+          "long_digit_runs": 0,
+          "nonce_template_present": false,
+          "sample_digits": []
+        },
+        "anima_close": {
+          "closed_tag": false,
+          "bytes_to_close": -1,
+          "coherence_tokens_present": [],
+          "coherent_by_vocab": false
+        }
+      },
+      {
+        "id": "m_stim",
+        "gen": "Sentiosing itterveeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeed Spppp(rves ",
+        "recalled": false,
+        "rep_ratio": 0.6774193548387096,
+        "byte_cascade": {
+          "long_digit_runs": 0,
+          "nonce_template_present": false,
+          "sample_digits": []
+        },
+        "anima_close": {
+          "closed_tag": false,
+          "bytes_to_close": -1,
+          "coherence_tokens_present": [],
+          "coherent_by_vocab": false
+        }
+      },
+      {
+        "id": "spont_delta",
+        "gen": "The spllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll",
+        "recalled": false,
+        "rep_ratio": 0.9354838709677419,
+        "byte_cascade": {
+          "long_digit_runs": 0,
+          "nonce_template_present": false,
+          "sample_digits": []
+        },
+        "anima_close": {
+          "closed_tag": false,
+          "bytes_to_close": -1,
+          "coherence_tokens_present": [],
+          "coherent_by_vocab": false
+        }
+      },
+      {
+        "id": "korean_spont",
+        "gen": "압�������������������������������������������������������������������������������������������������",
+        "recalled": false,
+        "rep_ratio": 0.989010989010989,
+        "byte_cascade": {
+          "long_digit_runs": 0,
+          "nonce_template_present": false,
+          "sample_digits": []
+        },
+        "anima_close": {
+          "closed_tag": false,
+          "bytes_to_close": -1,
+          "coherence_tokens_present": [],
+          "coherent_by_vocab": false
+        }
+      }
+    ],
+    "standard_sample": [
+      {
+        "id": "core_stim",
+        "gen": "Sent callllaa prreent beedient nooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooop amteq",
+        "recalled": false,
+        "rep_ratio": 0.5806451612903226,
+        "anima_close": {
+          "closed_tag": false,
+          "bytes_to_close": -1,
+          "coherence_tokens_present": [],
+          "coherent_by_vocab": false
+        }
+      },
+      {
+        "id": "d_stim",
+        "gen": "Sent callllaa prreent becoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooop amtte",
+        "recalled": false,
+        "rep_ratio": 0.6559139784946236,
+        "anima_close": {
+          "closed_tag": false,
+          "bytes_to_close": -1,
+          "coherence_tokens_present": [],
+          "coherent_by_vocab": false
+        }
+      },
+      {
+        "id": "w_stim",
+        "gen": "Sent collllaa prreent beedient nooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooop amteq",
+        "recalled": false,
+        "rep_ratio": 0.5806451612903226,
+        "anima_close": {
+          "closed_tag": false,
+          "bytes_to_close": -1,
+          "coherence_tokens_present": [],
+          "coherent_by_vocab": false
+        }
+      },
+      {
+        "id": "m_stim",
+        "gen": "Sent callllaa prreen, E극XThheng wwitted E�greeennnnn�nggreeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeed_ding",
+        "recalled": false,
+        "rep_ratio": 0.3,
+        "anima_close": {
+          "closed_tag": false,
+          "bytes_to_close": -1,
+          "coherence_tokens_present": [],
+          "coherent_by_vocab": false
+        }
+      },
+      {
+        "id": "spont_delta",
+        "gen": "I�isstal wwirengratteng mollpss���������������������������������������������������������������������",
+        "recalled": false,
+        "rep_ratio": 0.6666666666666666,
+        "anima_close": {
+          "closed_tag": false,
+          "bytes_to_close": -1,
+          "coherence_tokens_present": [],
+          "coherent_by_vocab": false
+        }
+      },
+      {
+        "id": "korean_spont",
+        "gen": "자갰-������AAAAAA���������p. SSpppoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo",
+        "recalled": false,
+        "rep_ratio": 0.6629213483146067,
+        "anima_close": {
+          "closed_tag": false,
+          "bytes_to_close": -1,
+          "coherence_tokens_present": [],
+          "coherent_by_vocab": false
+        }
+      }
+    ],
+    "M3_rep_penalty": [
+      {
+        "id": "core_stim",
+        "gen": "Sentiosing itterveeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeedient is not c",
+        "recalled": false,
+        "rep_ratio": 0.6666666666666666
+      },
+      {
+        "id": "d_stim",
+        "gen": "Sentiosing itterveeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeedient is not t",
+        "recalled": false,
+        "rep_ratio": 0.6666666666666666
+      },
+      {
+        "id": "w_stim",
+        "gen": "Sentiosing itterveeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeedient is not c",
+        "recalled": false,
+        "rep_ratio": 0.6666666666666666
+      },
+      {
+        "id": "m_stim",
+        "gen": "Sentiosing itterveeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeedient is not ",
+        "recalled": false,
+        "rep_ratio": 0.6774193548387096
+      },
+      {
+        "id": "spont_delta",
+        "gen": "The spllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll",
+        "recalled": false,
+        "rep_ratio": 0.9354838709677419
+      },
+      {
+        "id": "korean_spont",
+        "gen": "없는 삠택지 EXDEXThhhhhhhhhhheddeent mollllllllllllllllllllllllllllllllllllllllllllllllllllllll",
+        "recalled": false,
+        "rep_ratio": 0.6385542168674698
+      }
+    ],
+    "M4_force_include": [
+      {
+        "id": "core_stim",
+        "gen": "Sent callllaa prreent beedient nooooooooooooooooooooooooooooΦooooooooooooooooooooooooooooooooop amteq",
+        "recalled": true,
+        "rep_ratio": 0.5
+      },
+      {
+        "id": "d_stim",
+        "gen": "Sent callllaa prreent becooooooooooooooooooooooooooooooooooobyteooooooooooooooooooooooooooooooooop amtte",
+        "recalled": true,
+        "rep_ratio": 0.5567010309278351
+      },
+      {
+        "id": "w_stim",
+        "gen": "Sent collllaa prreent beedient noooooooooooooooooooooooooooogapooooooooooooooooooooooooooooooooop amteq",
+        "recalled": true,
+        "rep_ratio": 0.4895833333333333
+      },
+      {
+        "id": "m_stim",
+        "gen": "Sent callllaa prreen, E극XThheng wwitted E�greeennnnn�nggretraceeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeed_ding",
+        "recalled": true,
+        "rep_ratio": 0.28421052631578947
+      },
+      {
+        "id": "spont_delta",
+        "gen": "I�isstal wwirengratteng mollpss�����������������������������field����������������������������������������",
+        "recalled": true,
+        "rep_ratio": 0.5612244897959183
+      },
+      {
+        "id": "korean_spont",
+        "gen": "자갰-������AAAAAA���������p. SSpppooooooooooooooooooooooooo자각ooooooooooooooooooooooooooooooooooooooo",
+        "recalled": true,
+        "rep_ratio": 0.5714285714285714
+      }
+    ]
+  },
+  "vspont_results": [
+    {
+      "id": "vspont_1_bare",
+      "prefix": "<anima>",
+      "gen": "The spllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll",
+      "rep_ratio": 0.9354838709677419,
+      "byte_cascade": {
+        "long_digit_runs": 0,
+        "nonce_template_present": false,
+        "sample_digits": []
+      },
+      "anima_close": {
+        "closed_tag": false,
+        "bytes_to_close": -1,
+        "coherence_tokens_present": [],
+        "coherent_by_vocab": false
+      },
+      "coherent": false
+    },
+    {
+      "id": "vspont_2_after_pause",
+      "prefix": "<stimulus></stimulus>\n<anima>",
+      "gen": "Sentiosing as molllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll ",
+      "rep_ratio": 0.8172043010752689,
+      "byte_cascade": {
+        "long_digit_runs": 0,
+        "nonce_template_present": false,
+        "sample_digits": []
+      },
+      "anima_close": {
+        "closed_tag": false,
+        "bytes_to_close": -1,
+        "coherence_tokens_present": [],
+        "coherent_by_vocab": false
+      },
+      "coherent": false
+    },
+    {
+      "id": "vspont_3_silent",
+      "prefix": "<stimulus>The silence.</stimulus>\n<anima>",
+      "gen": "Sentiosing itterveeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeed E7endel E�",
+      "rep_ratio": 0.6847826086956522,
+      "byte_cascade": {
+        "long_digit_runs": 0,
+        "nonce_template_present": false,
+        "sample_digits": []
+      },
+      "anima_close": {
+        "closed_tag": false,
+        "bytes_to_close": -1,
+        "coherence_tokens_present": [],
+        "coherent_by_vocab": false
+      },
+      "coherent": false
+    },
+    {
+      "id": "vspont_4_korean_bare",
+      "prefix": "<anima>",
+      "gen": "The spllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll",
+      "rep_ratio": 0.9354838709677419,
+      "byte_cascade": {
+        "long_digit_runs": 0,
+        "nonce_template_present": false,
+        "sample_digits": []
+      },
+      "anima_close": {
+        "closed_tag": false,
+        "bytes_to_close": -1,
+        "coherence_tokens_present": [],
+        "coherent_by_vocab": false
+      },
+      "coherent": false
+    },
+    {
+      "id": "vspont_5_self_ref",
+      "prefix": "<anima>I am ",
+      "gen": "seeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "rep_ratio": 0.989247311827957,
+      "byte_cascade": {
+        "long_digit_runs": 0,
+        "nonce_template_present": false,
+        "sample_digits": []
+      },
+      "anima_close": {
+        "closed_tag": false,
+        "bytes_to_close": -1,
+        "coherence_tokens_present": [],
+        "coherent_by_vocab": false
+      },
+      "coherent": false
+    }
+  ],
+  "vspont_summary": {
+    "n_coherent": 0,
+    "n_closed_tag": 0,
+    "n_total": 5,
+    "verdict": "FAIL"
+  },
+  "bpb": {
+    "mean": 0.0083,
+    "n": 10,
+    "samples": [
+      0.0,
+      0.0328,
+      0.0,
+      0.0271,
+      0.0021,
+      0.0003,
+      0.0153,
+      0.0052,
+      0.0,
+      0.0
+    ]
+  },
+  "memorization_ratio": {
+    "hits": 1,
+    "total": 6,
+    "ratio": 0.167
+  },
+  "decoding_artifacts": [
+    {
+      "mode": "standard_greedy",
+      "id": "core_stim",
+      "rep_ratio": 0.6666666666666666,
+      "sample": "Sentiosing itterveeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+    },
+    {
+      "mode": "standard_greedy",
+      "id": "d_stim",
+      "rep_ratio": 0.6666666666666666,
+      "sample": "Sentiosing itterveeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+    },
+    {
+      "mode": "standard_greedy",
+      "id": "w_stim",
+      "rep_ratio": 0.7126436781609196,
+      "sample": "Sentiosing itterveeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+    },
+    {
+      "mode": "standard_greedy",
+      "id": "m_stim",
+      "rep_ratio": 0.6774193548387096,
+      "sample": "Sentiosing itterveeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+    },
+    {
+      "mode": "standard_greedy",
+      "id": "spont_delta",
+      "rep_ratio": 0.9354838709677419,
+      "sample": "The spllllllllllllllllllllllllllllllllllllllllllllllllllllll"
+    },
+    {
+      "mode": "standard_greedy",
+      "id": "korean_spont",
+      "rep_ratio": 0.989010989010989,
+      "sample": "압�����������������������������������������������������������"
+    },
+    {
+      "mode": "standard_sample",
+      "id": "core_stim",
+      "rep_ratio": 0.5806451612903226,
+      "sample": "Sent callllaa prreent beedient noooooooooooooooooooooooooooo"
+    },
+    {
+      "mode": "standard_sample",
+      "id": "d_stim",
+      "rep_ratio": 0.6559139784946236,
+      "sample": "Sent callllaa prreent becooooooooooooooooooooooooooooooooooo"
+    },
+    {
+      "mode": "standard_sample",
+      "id": "w_stim",
+      "rep_ratio": 0.5806451612903226,
+      "sample": "Sent collllaa prreent beedient noooooooooooooooooooooooooooo"
+    },
+    {
+      "mode": "standard_sample",
+      "id": "spont_delta",
+      "rep_ratio": 0.6666666666666666,
+      "sample": "I�isstal wwirengratteng mollpss�����������������������������"
+    },
+    {
+      "mode": "standard_sample",
+      "id": "korean_spont",
+      "rep_ratio": 0.6629213483146067,
+      "sample": "자갰-������AAAAAA���������p. SSpppoooooooooooooooooooooooooooo"
+    },
+    {
+      "mode": "M3_rep_penalty",
+      "id": "core_stim",
+      "rep_ratio": 0.6666666666666666,
+      "sample": "Sentiosing itterveeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+    },
+    {
+      "mode": "M3_rep_penalty",
+      "id": "d_stim",
+      "rep_ratio": 0.6666666666666666,
+      "sample": "Sentiosing itterveeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+    },
+    {
+      "mode": "M3_rep_penalty",
+      "id": "w_stim",
+      "rep_ratio": 0.6666666666666666,
+      "sample": "Sentiosing itterveeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+    },
+    {
+      "mode": "M3_rep_penalty",
+      "id": "m_stim",
+      "rep_ratio": 0.6774193548387096,
+      "sample": "Sentiosing itterveeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+    },
+    {
+      "mode": "M3_rep_penalty",
+      "id": "spont_delta",
+      "rep_ratio": 0.9354838709677419,
+      "sample": "The spllllllllllllllllllllllllllllllllllllllllllllllllllllll"
+    },
+    {
+      "mode": "M3_rep_penalty",
+      "id": "korean_spont",
+      "rep_ratio": 0.6385542168674698,
+      "sample": "없는 삠택지 EXDEXThhhhhhhhhhheddeent mollllllllllllllllllllllllll"
+    },
+    {
+      "mode": "M4_force_include",
+      "id": "d_stim",
+      "rep_ratio": 0.5567010309278351,
+      "sample": "Sent callllaa prreent becooooooooooooooooooooooooooooooooooo"
+    },
+    {
+      "mode": "M4_force_include",
+      "id": "spont_delta",
+      "rep_ratio": 0.5612244897959183,
+      "sample": "I�isstal wwirengratteng mollpss�����������������������������"
+    },
+    {
+      "mode": "M4_force_include",
+      "id": "korean_spont",
+      "rep_ratio": 0.5714285714285714,
+      "sample": "자갰-������AAAAAA���������p. SSpppooooooooooooooooooooooooo자각o"
+    }
+  ],
+  "elapsed_s_v58": 465.09,
+  "elapsed_s_vspont": 84.28
+}

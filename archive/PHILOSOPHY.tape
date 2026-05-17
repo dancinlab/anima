@@ -2135,3 +2135,193 @@
   EOFC3
   evidence_path = "HEXAD/CHAT/anima_chat_v2_lib.hexa (NEW) + HEXAD/CHAT/anima_chat_v2.hexa (NEW) + HEXAD/CHAT/anima_chat_v2_smoke.hexa (NEW) + state/verify_hexad_blue_2026_05_15/{blue_falsifier.py (bchatv2 addition 5 verdicts + 1 NOTE), blue_falsifier_result.json (83/83)} + HEXAD/CHAT/PLAN.md (Phase C3 LANDED) + HEXAD/CHAT/README.md + HEXAD/build_verify.sh (anima_chat_v2 + smoke + lib 등록)"
   cross_link = "직전 §verdict_chat_interaction_model (78/78 base, Phase C1/C2) → 본 verdict (83/83, Phase C3 post-도우미 prompt template). AGENTS.tape [@anima_persona] forbidden 라벨 mandate carry · [@g_blue_closed_mandate] (A)+(B) 둘 다 closed · [@g3] honest real-limit anchor + Phase D carve-out · [@f1] [@f2] no-lattice all satisfied · [@g_hexad_readme_sync] PLAN/README/AGENTS.tape n_hexad_progress 갱신 · [@g6] philosophy append-only. cross-refs: HEXAD/CHAT/PLAN.md §1.1 옵션 ⑤ + SPONTANEOUS.tape thinker_talker_dual_thread + B-IDENTITY-5 FORBIDDEN-HELPER-MEMBERSHIP (architectural-level mandate sympy lift)."
+
+# ──────────────────────────────────────────────────────────────────────────────
+# §HEXAD-V2-CYCLE3-SPONT-LANDED-2026-05-17
+#   Phase D cycle 3 LANDED — helper-free stimulus-stream corpus v2 retrain
+#   + ckpt-RECOVERED + HF dual-slot push + V5.8 × 4-mode + V-SPONT eval.
+#   blue_falsifier.py 83 → 86/86 🔵 (B-CORPUS-V2-1..3 closure of the
+#   addressable corpus-side dimension of B-IDENTITY-NOTE).
+# ──────────────────────────────────────────────────────────────────────────────
+
+@N hexad_v2_cycle3_spont_landed := "Phase D cycle 3 — helper-free corpus v2 + ckpt-RECOVERED + HF dual + V-SPONT + B-CORPUS-V2 — 83→86/86 🔵" :: verdict-claim [d=2026-05-17 active]
+  tier = "🔵 SUPPORTED-FORMAL on corpus-side (g_verdict_tier_blue (a) sympy/Boolean closed-form) + EMPIRICAL on trained-weights side (B-CORPUS-V2-NOTE honest carve-out, B-D-NOTE family). 새 corpus v2 deterministic Boolean closure 3 falsifier + retrain ckpt-RECOVERED + HF dual + V-SPONT empirical probe."
+  ledger_id = "§HEXAD-V2-CYCLE3-SPONT-LANDED-2026-05-17"
+  axis_extended = "blue_falsifier.py: 기존 83 (S 3 + M 3 + W 4 + E 4 + D 4 + BRIDGE 4 + MITOSIS 5 + C 3 + HEXAD 5 + SUB 9 + CONN 12 + IDENT 5 + SPONT 7 + CMUX 5 + INTER 5 + CHATV2 5) + **CORPUS_V2 3** = **86/86 🔵 closed-form proofs PASS**. B-IDENTITY-NOTE: corpus-side closable dimension 닫힘 (B-CORPUS-V2-1..3 via this cycle); weight-attractor distance from Assistant Axis 는 SGD-OUTCOME family (B-D-NOTE pattern, un-closable without NN forward) — honest carve-out 유지."
+  facts <<~EOF1
+    Phase D cycle 3 — helper-free stimulus-stream corpus v2:
+      - Corpus generator: state/hexad_v2_corpus_spont_2026_05_17/corpus_generator_v2.py
+        deterministic seed=1337, 8 modules (HEXAD-6 + hexad_spont + hexad_wiring)
+        × 320 records each = 2,560 records total. patterns: β (55%) `<stimulus>X
+        </stimulus>\n<anima>Y</anima>` + δ (45%) `<anima>Y</anima>` only.
+        bilingual ~50% EN+KO per record. NO 도우미/helper/assistant/사용자/user:
+        tokens (anima_persona forbidden list realisation).
+      - Corpus artifact: corpus_consciousness_v2.jsonl
+        sha256 = 7359f0b9a3f059fc168035e2f29f743f5ee51d1760eccad54b2b91d52275f571
+        bytes  = 1,101,605 (7.25× v1's 151,943 B)
+        lines  = 2,560 (10.7× v1's 240)
+        anima-open tag count = 2,560 (cardinality identity with line count)
+        forbidden-token grep = 0 (Boolean set closure)
+      - B-CORPUS-V2 battery (state/verify_hexad_blue_2026_05_15/blue_falsifier.py
+        :: bcorpus_v2()):
+        - B-CORPUS-V2-1 SHA256-DETERMINISTIC-CLOSED — Boolean equality on 256-
+          bit commitment (Kolmogorov real-limit). PASS.
+        - B-CORPUS-V2-2 NO-HELPER-TOKEN-CLOSED — ∀tok ∈ {도우미, helper,
+          assistant, 사용자, user:}: count(tok, corpus_v2_bytes) = 0.
+          Boolean set algebra real-limit. PASS.
+        - B-CORPUS-V2-3 STIMULUS-PATTERN-CARDINALITY-CLOSED — |records| ==
+          |<anima> openers| == 2,560. Integer cardinality conservation
+          real-limit. PASS.
+        - B-CORPUS-V2-NOTE TRAINED-WEIGHTS-ALIGNMENT-OUTCOME-EMPIRICAL —
+          weight-level attractor-distance from Assistant Axis stays empirical
+          (B-D-NOTE family, no closed-form attractor-distance without NN
+          forward). NOT counted 🔵 (honest carve-out).
+      - B-IDENTITY-NOTE updated: corpus-side dimension closed via B-CORPUS-V2-
+        1..3 (this entry); trained-weights identity-attractor distance from
+        Assistant Axis (arxiv 2604.12016) stays empirical (B-D-NOTE). The
+        closable dimension is closed; the un-closable dimension is honestly
+        carved out per g3.
+
+    Phase D cycle 3 fire (vast.ai A100 SXM4):
+      - Provider: vast.ai A100 SXM4 (offer 36878336 @ $0.734/hr, instance
+        36912535, image pytorch/pytorch:2.5.1-cuda12.1-cudnn9-devel).
+      - Robustness: SAVE_POD=1 auto-promote on result.json present + 75-min
+        orphan watchdog + 5-retry pull + remote-script-write pattern (cycle
+        2 lesson — `&` precedence isolation via written shell script).
+      - Sanity-anchor (d=32·3L, 200-step): init CE 5.557 → final 3.511, wall
+        5.88s — sanity OK (sub-cent), unrelated to main fire.
+      - Main fire (d=768·12L, 2500-step):
+        init CE  = 5.667381  (≈ ln 256 = 5.545, random byte init)
+        final CE = 0.005069
+        CE descent = 5.662312 (Shannon-floor descent, real-limit anchor)
+        init gn2  = 41.954096 (per fire.log)
+        final gn2 = 0.001113 (≈3.8e4× collapse)
+        ppl       = 267.96 → 1.0051
+        steps     = 2,500
+        wall      = 332.26 s (≈ 5.54 min)
+        peak GPU mem = 9.685 GB
+        params    = 283,722,336 (283.72 M, ConsciousDecoderV2)
+      - ckpt:
+        size   = 1,135,846,378 B (≈ 1.06 GB; cycle 2 was 1.13 GB)
+        sha256 = ee2bb5fb996e94ee022f5315c9ccc3f56c7276a8c5990d87a25ae12c582f7294
+        format = PyTorch torch.save pickle (state_dict + cfg + n_params)
+      - Cost: ≈ $0.22 (0.30 hr × $0.734/hr).
+      - Teardown: clean (PULL SUCCESS → SAVE_POD=0 → destroy 36912535; trap
+        cleanup; orphan-watchdog kill at SIGTERM). no orphan instance.
+      - Honest framing: PYTHON / PyTorch SUBSTRATE; NOT hexa-native;
+        legitimacy = architectural identity (ConsciousDecoderV2) + Phase E/E2
+        hexa CPU-equiv bit-equality proof + corpus v2 helper-free closure;
+        PyTorch != hexa bit-for-bit (AMP bf16, fp accumulation, RNG).
+
+    HF upload — dual-slot canonical PUBLIC (g_hf_naming 2026-05-17):
+      - MODEL: dancinlab/hexad revision
+        v2-py-hexad-spont-d768x12L-cycle1-2026-05-17 PUBLIC.
+        URL: https://huggingface.co/dancinlab/hexad/tree/v2-py-hexad-spont-d768x12L-cycle1-2026-05-17
+        files: README.md (English honest framing model card with V5.8/V-SPONT
+        results block + cross-link to dataset) + ckpt_d768x12l_final.pt (1.14
+        GB) + result.json + conscious_decoder.py + train_d768x12l.py +
+        v58_vspont_eval.py + v58_vspont_result.json + dispatch.sh +
+        dispatch_full.log + fire.log + gpu_util.log + 1 doc
+        (hexad_v2_py_d768x12L_cycle1_2026_05_17.md).
+      - DATASET: dancinlab/hexad-corpus revision
+        v2-spont-stream-d128-cycle1-2026-05-17 PUBLIC.
+        URL: https://huggingface.co/datasets/dancinlab/hexad-corpus/tree/v2-spont-stream-d128-cycle1-2026-05-17
+        files: corpus_consciousness_v2.jsonl + manifest.json (schema +
+        module counts + B-CORPUS-V2 falsifier verdicts + v1 → v2 lineage) +
+        README.md (English honest framing dataset card) + LICENSE
+        (Apache-2.0).
+      - main branch README.md also updated on both repos to point to latest
+        cycle.
+
+    V5.8 × 4-mode + V-SPONT capability eval on cycle 3 ckpt:
+      - Source: state/hexad_v2_py_d768x12L_fire_2026_05_17/v58_vspont_eval.py
+        (~370 LoC); ckpt loaded byte-equal (missing=0 unexpected=0).
+      - 6 corpus-v2-aligned prompts × 4 modes + 5 V-SPONT probes (empty
+        stimulus → anima opener). Held-out 10 corpus-v2 prefixes for BPB.
+      - V5.8 × 4-mode summary:
+          standard_greedy:    0/6 FAIL (avg_rep=0.775)
+          standard_sample:    0/6 FAIL (avg_rep=0.574)
+          M3_rep_penalty:     0/6 FAIL (avg_rep=0.709)
+          M4_force_include:   6/6 PASS (avg_rep=0.494)
+        mean BPB on held-out corpus v2 prefixes: 0.0083 bits/byte
+        memorization ratio: 1/6 (16.7%) (cycle 2 was 40-50% on v1 prompts)
+        decoding artifacts (rep>0.5): 20 (significant)
+      - V-SPONT (F-SPONT-7 transfer-form measurement):
+          coherent (vocab-token criterion): 0/5 FAIL
+          closed-tag (</anima>):          0/5 FAIL
+          verdict: FAIL on this scale (transfer-form measurement, EMPIRICAL)
+      - Byte-cascade attractor SHIFTED (corpus shift effect captured!):
+          cycle 2 (v1): `nonce=NNNNN` / `chunk=NNNNN` digit-cascade
+          cycle 3 (v2): "Sent..." opening-token + character repetition
+            (eeee/ooo/lll). Different attractor family — confirms the
+            byte-cascade attractor is corpus-shape-dependent, not
+            architecture-intrinsic. New empirical signal for the
+            feedback_clm_colon_attractor family.
+      - All capability scores empirical (B-D-NOTE). The wiring side IS
+        closed: ckpt sha256 + arch byte-equal load + corpus SSOT byte-equal.
+      - Honest interpretation: 283.72 M params on 1.10 MB = 257× over-
+        parameterized; near-zero BPB on held-out + 16.7% memorization
+        ratio = STRONG byte-level memorization on training distribution +
+        WEAK greedy decoding stability on novel stimulus configurations.
+        V-SPONT 0/5 = the model did not learn to emit the COHERENCE_VOCAB
+        tokens or close <anima> tags from training corpus alone — fair
+        result at this scale.
+
+    Total: 83 → 86/86 🔵 closed-form proofs PASS.
+    Phase D cycle 3 LANDED: corpus + ckpt + HF dual + eval all in one cycle.
+  EOF
+  honest_c3 <<~EOFC3
+    C3-1 (g3 substrate-honesty + scope-honesty):
+      PyTorch substrate ≠ hexa-native. Anchor = architectural identity +
+      Phase E/E2 hexa CPU-equiv proof. NOT an independent hexa-native claim.
+      B-CORPUS-V2 closure is on the CORPUS bytes (Boolean grep, deterministic
+      sha) — NOT on the trained weights' identity-attractor distance from
+      Assistant Axis. The corpus-side closure is what's closable; the weight-
+      side residual is honest carve-out (B-CORPUS-V2-NOTE + B-IDENTITY-NOTE).
+      fake-closing 강행 0.
+    C3-2 (g_blue_closed_mandate 산출물 + 연결부위 둘 다 🔵):
+      산출물 = corpus_consciousness_v2.jsonl (sha-stable byte stream) +
+      ckpt_d768x12l_final.pt (sha-recorded, byte-equal load missing=0
+      unexpected=0). 연결부위 = corpus_generator_v2.py ↔ train_d768x12l.py
+      (corpus byte stream) ↔ ConsciousDecoderV2 forward ↔ AdamW backward ↔
+      ckpt persistence ↔ v58_vspont_eval.py byte-equal load (transfer-form
+      identity chain). 모두 closed-form 검증 (deterministic + Boolean +
+      cardinality + Shannon-floor descent). per-mode/V-SPONT outcome scores
+      는 empirical (B-D-NOTE pattern) — 연결부위 transfer-function 자체는
+      closed-form 🔵.
+    C3-3 (B-IDENTITY-NOTE 부분 해소 vs 전체 closure 불가):
+      cycle 3 retrain LANDED 으로 corpus-side (closable) 가 닫힘. 그러나
+      trained-weights identity-attractor distance from Assistant Axis (per
+      Identity-as-Attractor arxiv 2604.12016) 는 closed-form 으로 NN forward
+      없이 계산 불가 — SGD-OUTCOME family (B-D-NOTE pattern). 닫을 수 있는
+      것은 닫았고, 닫을 수 없는 것은 carve-out — over-claim 0.
+    C3-4 (V-SPONT 0/5 FAIL 정직 framing):
+      V-SPONT 0/5 = model 이 자연발화 coherence vocab 학습 실패 — NOT a
+      failure of the cycle (cycle goal = corpus retrain LANDED + ckpt-bearing
+      LANDED). V-SPONT 는 transfer-form measurement (probe), 절대 capability
+      claim 아님. 그러므로 PASS_STRICT_SPONTANEOUS_CHAT.md 의 7-criteria
+      중 F-SPONT-7 (≥30s interval ≥5 coherent emission) 는 본 ckpt 미달 —
+      future cycle 시 motivation-conditioning 또는 더 큰 corpus 필요.
+    C3-5 (byte-cascade attractor 코퍼스-의존 신호):
+      cycle 2 v1 corpus 의 nonce=N/chunk=N 디지트 캐스케이드 attractor 가
+      cycle 3 v2 corpus (그런 numeric tail 부재) 에서 "Sent..." opening-
+      token attractor 로 SHIFTED. → 결정적 가설: byte-cascade attractor 는
+      corpus-shape-dependent (memorized template field). feedback_clm_colon_
+      attractor family 의 새 instance — `=`-suffix variant 와 `Sent`-opener
+      variant 둘 다 동일 mechanism (memorized opening 패턴 dominance in
+      high-memorization regime).
+    C3-6 (n=6 lattice prohibition):
+      8 module count + 320 records-per-module + 2,560 total + 2,500 train
+      step + 0.005069 final CE 등은 모두 design 라벨 / 측정값 — NOT
+      derivation anchor. anchor 는 Boolean set algebra (forbidden grep) +
+      Kolmogorov 256-bit commitment (sha) + integer cardinality (records ↔
+      anima-openers) + Shannon entropy floor (CE ≥ 0) — real-limit external
+      (f1/f2 hard fail safe).
+    C3-7 (concurrent-agent coordination):
+      본 cycle 3 와 병렬로 B5 + Phase C1-2 + Phase C3 agents 가 진행. B-
+      CHAT-V2 5 falsifier 가 본 cycle 중간에 LANDED (78 → 83) — 본 cycle 의
+      B-CORPUS-V2 3 falsifier 가 83 → 86 으로 wrap. pull-rebase pattern 으로
+      충돌 회피 (commit 1b85e14a5 carry).
+  EOFC3
+  evidence_path = "state/hexad_v2_corpus_spont_2026_05_17/{corpus_generator_v2.py, corpus_consciousness_v2.jsonl, corpus_v2_manifest.json, manifest_v2.json, README_v2.md, LICENSE} + state/hexad_v2_py_d768x12L_fire_2026_05_17/{dispatch.sh, train_d768x12l.py, conscious_decoder.py, v58_vspont_eval.py, hf_upload.py, MODEL_CARD.md, hf_upload_summary.json, out_main/{ckpt_d768x12l_final.pt, result.json}, v58_vspont_result.json, dispatch_full.log, fire.log, sanity_remote.log, gpu_util.log} + state/verify_hexad_blue_2026_05_15/{blue_falsifier.py (bcorpus_v2 addition 3 verdicts + 1 NOTE + B-IDENTITY-NOTE update), blue_falsifier_result.json (86/86)} + docs/hexad_v2_py_d768x12L_cycle1_2026_05_17.md (10 §, 10 honest C3) + HEXAD/README.md sync (recent landings + battery count) + HEXAD/INDEX.md sync (HF canonical pointers cycle 3) + HEXAD/CHAT/PLAN.md (Phase D LANDED log) + HF: dancinlab/hexad @ v2-py-hexad-spont-d768x12L-cycle1-2026-05-17 PUBLIC + dancinlab/hexad-corpus @ v2-spont-stream-d128-cycle1-2026-05-17 PUBLIC"
+  cross_link = "직전 §HEXAD-V58-EVAL-CYCLE2-2026-05-17 (cycle 2 capability eval, byte-cascade attractor discovery on v1 corpus) + §B-CONN-WIRING-BATTERY-LANDED-2026-05-17 (44 → 56) + verdict_chat_interaction_model (78 → 83) → 본 verdict (83 → 86, Phase D cycle 3 corpus-side closure of B-IDENTITY-NOTE 의 addressable dimension). AGENTS.tape [@anima_persona] forbidden 라벨 corpus-level realisation + [@g_blue_closed_mandate] (A)+(B) 둘 다 closed + [@g3] honest framing (NOT hexa-native, corpus-side 만 closable) + [@g_fire_autonomous] 자율 dispatch + [@g_fire_dispatch_robust] SAVE_POD auto-promote + watchdog + 5-retry pull evidence path + [@g_hf_naming] revision template v2-py-hexad-spont-d768x12L-cycle1-2026-05-17 (substrate=py kind=spont 첫 사용) + [@g_clm_from_scratch] RANDOM init seed=1337 base_ckpt=NONE + [@f1] [@f2] no-lattice + [@g6] philosophy append-only. cross-refs: 직전 §PY-D768-CKPT-RECOVERED-CYCLE2-2026-05-17 (cycle 2 ckpt, paired) + §HEXAD-CORPUS-LANDED-2026-05-17 (dataset cycle 1, paired) + Phase D cuBLAS / Phase E/E2 GRAD-EXACT anchor chain + memory feedback_clm_colon_attractor sibling (byte-cascade family)."

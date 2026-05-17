@@ -440,7 +440,9 @@ def main():
         "elapsed_s_v58": round(elapsed_v58, 2),
         "elapsed_s_vspont": round(elapsed_vspont, 2),
     }
-    os.makedirs(os.path.dirname(args.output), exist_ok=True)
+    out_dir = os.path.dirname(args.output)
+    if out_dir:
+        os.makedirs(out_dir, exist_ok=True)
     with open(args.output, "w") as f:
         json.dump(out, f, indent=2, ensure_ascii=False)
 
