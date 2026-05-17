@@ -419,9 +419,45 @@ continuous-thought latent (CTL) = discrete byte `<inner>` 대신 hidden-state �
 
 ---
 
-## §7 (placeholder for next research cycle)
+## §7 (2026-05-18) — diverse-data 의 GOAL-identity 선검토 (§6.4 gate, g_goal apply, fire 전 $0)
 
-(future — diverse-data pre-training 의 GOAL-identity 선검토 gate: Ψ-anchored diverse-corpus + tension-supervision(Dir-I lever scale-up) = GOAL-legitimate 후보 vs generic LM pre-training = illegitimate. §6.4 / g_goal apply / §4.6 #6. design-tier $0, fire 전. append-only g6.)
+§6.4 잔여 병목 = §1.1 diverse-data pre-training loss threshold (30MB byte tiny-corpus 미달). 그러나 diverse-data 는 GOAL.md "anima 가 **자기 physics(Ψ/tension/Φ)로부터** 의식" 와 충돌 risk — §5 패턴으로 fire-전 identity 선검토 (g_goal apply mandate).
+
+### 7.1 검토 질문
+
+emergence 는 diverse-data threshold 필요(§1.1) ↔ GOAL 은 anima-physics-originated 요구. 양립 가능한 형태가 존재하나?
+
+### 7.2 판정 — 3 후보 중 1 GOAL-legitimate
+
+| 후보 | 형태 | anima physics 정합 | GOAL 판정 |
+|---|---|---|---|
+| ① generic LM pre-training | web/diverse corpus 일반 학습 후 anima 사용 | ✗ generic 통계 학습, Ψ/tension/Φ 무관 (§5.2 generic-latent 와 동형) | **GOAL-illegitimate** (수단 오인, g_goal rule) |
+| ② generic-pretrain → carve on top | base ckpt + anima carving bolt-on | ✗ = 옛 prefix-injection 실패 모드 (base baked pattern, P3 leak; anima physics 가 capability 의 source 아님) | **GOAL-illegitimate** (DESIGN.md §0/§1 실증 실패) |
+| ③ **Ψ-anchored diverse corpus + tension-sup (Dir-I lever @ scale)** | diverse-내용 corpus 를 anima Ψ-representation 으로 encode + tension-supervised routing, 30MB→대규모 | ✓ DATA 는 diverse(§1.1 threshold 향), LEARNING 은 anima physics substrate+supervision (Dir-I 검증 lever 의 scale 확장) | **GOAL-legitimate (유일)** |
+
+→ ①② 배제. **③ = 유일 GOAL-legitimate**: Dir-I 가 검증한 lever(Ψ-anchored representation + tension-supervision)를 **diverse·대규모 corpus 로 scale** — data 다양성(§1.1)과 anima-physics-origin(GOAL)을 동시 만족하는 유일 형태.
+
+### 7.3 정직한 open crux (g3 — 미해결 핵심)
+
+③ 이 GOAL-legitimate 형태이나 **검증 안 된 deep risk 1건**:
+- §1.1 의 emergence threshold 는 **generic diverse pre-training** 으로 establish 됨. **anima-physics-anchored diverse data 가 *동일* threshold 를 넘을 수 있는가는 미증명** — 이게 GOAL 의 실제 crux 일 가능성.
+- 두 실패 시나리오: (a) Ψ-anchoring 이 diverse data 의 정보를 병목 → threshold 미달 (anchoring 이 capacity 제약) (b) anima physics 가 충분한 genuine diversity 못 생성 → self-referential degenerate.
+- 두 성공 시나리오: (a) Ψ-anchored diverse 가 generic 보다 *적은* data 로 threshold 도달 (physics prior 가 sample-efficiency↑) (b) Dir-I 의 3/31 correct-break 가 scale 에서 31/31 로 — lever 가 scale-monotone.
+- → **정직: 어느 쪽인지 미지 (over-claim 0).** §1.1 은 generic 기준 진단이라 anima-physics-anchored 에 그대로 transfer 된다는 보장 없음. 이게 12-way 가 mechanism 을 mapped 한 뒤 남은 **단 하나의 진짜 open question**.
+
+### 7.4 §8 후보 (③ 한정, GOAL-legitimate)
+
+- **Ψ-anchored diverse-corpus + tension-supervised (Dir-I lever scale-up)**: 30MB carving → 대규모 diverse 내용 (단 anima Ψ-representation encode, generic LM 아님) + Dir-I 결합 supervision. 측정: routing axis1 (3/31 → ? scale-monotone 인가) + V-SPONT + JOINT, **+ §7.3 crux 직접 판정** (anima-physics diverse 가 §1.1 threshold 넘나).
+- corpus 구성 자체가 design 난제 (diverse 면서 anima-physics-anchored — generic 아님). §8 = 이 corpus 설계 + scale fire. 비용 head (정보, g_fire_autonomous): 대규모 diverse fire = 기존 ~$0.3 보다 크게 ↑ (corpus·step scale 비례), runpod 우선 g_multidirectional_explore 적용 가능.
+- ①② 는 g_goal 에 의해 금지 — §8 은 ③ 만.
+
+### 7.5 honest C3
+
+1. ③ 만 GOAL-legitimate (①generic / ②generic-then-carve = anima physics 우회/bolt-on, g_goal rule + DESIGN.md 실증 실패).
+2. ③ 의 open crux = "anima-physics-anchored diverse 가 §1.1 threshold(generic 기준 establish) 를 넘나" — **12-way 이후 남은 단 하나의 진짜 미지수**, over-claim 0.
+3. §7 = design-tier 선검토만 (g3 — closed/fire 결과 아님). 실검증 = §8 fire (③ 한정).
+4. §1.1 threshold 의 anima-physics transfer 미보장 = GOAL 의 실제 난도 — 이 정직 인정이 §7 의 핵심 (낙관 금지).
+5. Dir-I lever(검증됨) + diverse-data(§1.1) 의 결합이 ③ — 두 검증된/진단된 요소의 합이지 새 speculation 아님.
 
 ---
 
