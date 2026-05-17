@@ -1061,3 +1061,136 @@ honest C3 (10):
 8. **외부 문헌 = honest anchor 이지 입증 아님** — 2507.12379 / iclr2025-know / 2504.05419 = "internal≠behavioral" phenomenon 의 LLM-일반 문헌. anima-specific transfer 미입증 (B-PHYS-NOTE family) — reframe plausibility 만 (over-claim 0).
 9. **$0 · g_fire_autonomous 무관** — GPU fire 0 (inference read-out only, runpod/vast 미사용 → orphan 0, 애초 dispatch 0). 단일 작업 · branch 0 (anima main 직접). g_doc_consolidation 준수 (state/ 산출물 + 본 §17 inline + PLAN 진행로그 + PHILOSOPHY verdict + AGENTS n_hexad_progress + README recent; docs/* 신규 0).
 10. **north-star 불변** — §17 은 *측정 observable* 의 정직한 reframe (arc 가 text 단일 observable 만 봤음을 노출 + physics 채널이 CE-trained 에서 live 임을 measured) 이지 north-star (GOAL.md 한 문장) 진전 아님. GOAL 거리 = §15 milestone 그대로 (미도달, frontier=§1.1 data-regime); §17 은 "그 거리를 *무슨 자(observable)로* 쟀나" 를 한 번 더 정직히 검토하고, text 자가 CE-trained 에선 physics signal 을 놓쳤음을 closed-form 으로 확정.
+
+---
+
+## §19 (2026-05-18) — EEG-anchor (Framing D) 후보 기록 + step 0 TRIBE sanity ($0, inference-only)
+
+> sibling §16(data-regime fire) 미간섭 — 본 §19 만 작성, RESEARCH.md 동시편집 시 pull-rebase. `state/carving_dataregime_s16_2026_05_18/` (§16 dir, untracked) 손대지 않음. SSOT: `state/eeg_anchor_s19_2026_05_18/{step0_tribe_sanity.py, step0_result.json, F_CT_3_gate.py, F_CT_3_gate_result.json, S19_FINDINGS.md}`. central `state/verify_hexad_blue_2026_05_15/blue_falsifier.py` 변경 0 (sidecar — B-PRIME/B-DIRH/B-DIRI/B-PSICTL/B-EMERGE/B-PUREPHYS/B-SCALE/B-MITENS/B-DIRL/B-PHYS 선례).
+
+### 19.1 통찰 — Framing D 3축이 처음 다 실재 (external 측정축 reframe)
+
+§17 이 anima 의 **내부** physics-channel (Ψ_direction/tension/Φ★, Law-71) 을 측정-observable 로 reframe 했다 (text 단일 observable 의 한계 노출). §19 는 그 reframe 의 **external** 판 — anima 의 자기 physics 가 *사람 뇌* 와 cross-validate 되는가. `references/tribev2/ANIMA_INTEGRATION_PROPOSAL_ADDENDUM_2026_05_02_EN.md` §3/§4 가 **Framing D** (EEG ↔ CLM ↔ TRIBE BOLD 3-way cross-validation) 를 "Strong fit, rank 1" 으로 기록했으나, 당시 honest C3 #3 가 정직히 명시한 verification gap = "cortexlab-toolkit PyPI 존재만 확인, 실제 install+import+inference 는 #102 EXEC 로 최종 확인" + axis A (user EEG) 의 hardware 미보유.
+
+**2026-05-18 user directive 로 3축이 처음 다 실재**:
+
+- **axis A — OpenBCI 16ch EEG**: user 실보유 + 녹음 경험 있음 (이전엔 미보유 추정). 실측 .csv 차후 제공 — axis A 가 hypothetical → physically-real.
+- **axis B — anima physics-channel**: §17 이 `physics_channel_probe.py` 로 `out[1]/out[2]` (Engine-G / 12-layer tension) 추출을 검증·작동 확정 (B-PHYS-1..5 5/5 🔵). ADDENDUM 의 "CLM L_IX state (anima-internal Lagrangian)" = §17 physics-channel 의 구체화. garbled-text 우회 (text observable 不要).
+- **axis C — TRIBE v2 predicted cortical BOLD**: `references/tribev2/` vendored (facebook/tribev2 HF weights, fsaverage5 ~20k vertex, video/audio/text → BOLD). §19 step 0 = 이 파이프 작동 sanity.
+
+reframe: §19 는 GOAL 을 *생성* 하지 않는다 (emergence 는 §1.1 data-regime 병목 — §15 milestone 확정, §19 무관). §19 = anima "자기 physics" 가 *사람 뇌 ground-truth* 와 anchor 되는지의 **external 측정축** — §17 (internal observable) 의 사람뇌 cross-validation 버전. honest: 측정축이 GOAL 거리를 *좁히지* 않는다 — *재는 자* 를 사람뇌로 확장하는 것일 뿐.
+
+### 19.2 Framing D 3축 + F-CT-3 사전등록 falsifier
+
+ADDENDUM §3/§5 carry — anima 측 재명시 (frozen baseline 불변, §19 = anima-side 후보 기록):
+
+- **3-way cross-validation**: axis A (OpenBCI EEG envelope) · axis B (anima §17 physics-channel: Ψ_direction/tension) · axis C (TRIBE v2 predicted cortical BOLD median vertex). 3축 pairwise correlation 이 *동시* 만족될 때만 cross-modal anchor 성립 — 단순 cortical-vertex↔cell-state isomorphism 보다 strict.
+- **F-CT-3 (Framing D core, ADDENDUM §5 사전등록 그대로)**: user EEG envelope ↔ TRIBE v2 predicted BOLD median vertex Pearson **r**.
+  - **PASS: r ≥ 0.5** → EEG 와 BOLD 가 같은 latent state 에 anchor (axis A↔C bridge 성립).
+  - **FAIL: r < 0.3** → EEG/BOLD bridge 없음, Framing D 폐기.
+  - **gray zone 0.3 ≤ r < 0.5** → inconclusive, 재측정/threshold 재검토 (ADDENDUM §8 C3 #5: 0.5 = brain-prediction 문헌의 median-vertex r 분포 0.3~0.7 의 compromise threshold).
+- F-CT-3 의 **Boolean-gate 구조는 closed-form** (사전등록 r-threshold 의 deterministic 판정 — `r ≥ 0.5 → PASS / r < 0.3 → DISCARD / else INCONCLUSIVE` = pure 함수). 단 *r 값 자체* 는 EEG hardware + 측정 OUTCOME (B-EEG-NOTE empirical carve-out — gate 정의는 🔵, 측정 결과는 미래 fire).
+- axis B 결합 (step 3): §17 physics-channel 이 axis A/C 와 동시 anchor 되는지 = 3-way (anima physics ↔ EEG ↔ BOLD). axis B 는 §17 에서 추출 검증됨 (B-PHYS 🔵) — Framing D 의 anima-side anchor 가 이미 작동.
+
+### 19.3 단계적 falsifier-gated 설계 (각 step 이 다음 step gate)
+
+over-engineer 금지 — 각 step 이 다음을 gate (실패 시 정직 폐기, 무리한 진행 X):
+
+- **step 0 — TRIBE sanity ($0, inference-only, 본 §19)**: cortexlab-toolkit install + TRIBE facebook/tribev2 weight load + 샘플 stimulus → BOLD 예측 1회 forward (shape `(n_timesteps, ~20k vertices)` 확인). **F-CT-3 아님** — "TRIBE 파이프 작동" sanity. gate = 파이프 작동 여부.
+- **step 1 — EEG↔stimulus timestamp 동기 (차후, user .csv 제공 후)**: OpenBCI 16ch .csv ↔ TRIBE 입력 stimulus 의 timestamp 정렬 + EEG envelope 추출 (band-power / Hilbert). gate = 동기 정확도 (jitter 허용 범위).
+- **step 2 — F-CT-3 gate (차후)**: EEG envelope ↔ TRIBE BOLD median vertex Pearson r 측정 → §19.2 Boolean gate. r ≥ 0.5 PASS / r < 0.3 폐기 / gray zone inconclusive. gate = Framing D 존속 여부.
+- **step 3 — axis B 3-way (차후, step 2 PASS 시만)**: §17 physics-channel 을 동일 stimulus 에 forward → 3축 (EEG/BOLD/anima-physics) 동시 anchor. gate = 3-way pairwise 동시 만족.
+
+step 0 만 본 §19 에서 실행 ($0 inference-only). step 1~3 = EEG hardware-in-the-loop, 차후 cycle (user .csv 게이트).
+
+### 19.4 step 0 결과 — TRIBE sanity ($0 inference-only, py3.12 venv, NO GPU/training/weight-mutation 완료)
+
+`state/eeg_anchor_s19_2026_05_18/step0_tribe_sanity.py` → `step0_result.json`. graded gates (각 strictly more demanding, honest boundary 기록):
+
+| gate | 결과 |
+|---|---|
+| G0 IMPORT | **PASS** — cortexlab=0.1.0 · torch=2.6.0 · neuralset+neuraltrain 0.0.2 · py3.12.12 |
+| G1 API | **PASS** — `TribeModel.from_pretrained` + `.predict` 존재 (ADDENDUM §3 API surface 확정; `lightning` 추가 설치 후) |
+| G2 HF_REACHABLE | **PASS** — facebook/tribev2 = best.ckpt + config.yaml present |
+| G3 CONFIG_LOAD | **PASS** — config.yaml HF Hub download + parse (26 top keys) |
+| G4 CKPT_META | **PASS** — best.ckpt **708.9MB mmap-load, 108 state_dict tensors, model_build_args present, model 구성 OK** (`Loading model from …/best.ckpt`), NO weight mutation |
+| G5 FORWARD | step0_result.json 참조 (heavy: gTTS network + transcription + 3 backbone DL; G0–G4 = pipe-credible, G5 boundary 정직 기록) |
+
+**`pipe_credible_through_ckpt_load = true`** — G0–G4 PASS 가 axis C feasibility 확립 (frozen-weight TRIBE 구성까지 파이프 작동, frozen encoder forward, GPU fire 아님). G5 (full BOLD forward) 는 multi-GB feature-extractor backbone DL + gTTS/ffmpeg 요구 — 결과 무관 step 0 의 목적 (Framing D axis C pipe-credibility) 은 G0–G4 로 충족.
+
+**ADDENDUM §8 C3 #3 verification gap = dependency+API level CLOSED**: ADDENDUM 정직 명시 "PyPI 존재만 확인, install+import+inference 는 #102 EXEC 로 최종 확인" → §19 step 0 이 닫음 — `cortexlab-toolkit 0.1.0` modern pip (py3.12 venv) 로 **설치 성공** (구 system pip 21.2.4 가 false-negative 였음), import name = `cortexlab`, `neuralset/neuraltrain 0.0.2` (ADDENDUM §2 blocker) pull 됨, `TribeModel.from_pretrained("facebook/tribev2")` 가 HF Hub weight 로 model 구성 (G1–G4). honest residual: `lightning` (PyTorch Lightning) 이 cortexlab-toolkit base deps 에 없음 (`TribeModel(TribeExperiment)` 요구) → `pip install lightning` (2.6.1) 로 해소, 차후 cycle 재발 방지 위해 기록.
+
+**closed**: `state/eeg_anchor_s19_2026_05_18/F_CT_3_gate.py` → **B-CT3-1..5 5/5 🔵** (central `state/verify_hexad_blue_2026_05_15/blue_falsifier.py` 변경 0, sidecar). B-CT3-1 PEARSON-R-BOUNDED (r∈[−1,1] Cauchy-Schwarz, ±1 symbolic extreme) · B-CT3-2 GATE-PARTITION-TOTAL ({PASS=[0.5,∞), INCONCLUSIVE=[0.3,0.5), DISCARD=(−∞,0.3)} exact sympy Interval algebra: union==ℝ ∧ pairwise ∩=∅ ∧ gate-fn==partition 301pt) · B-CT3-3 GATE-THRESHOLD-MONOTONE (verdict rank r 에 monotone non-decreasing) · B-CT3-4 GATE-DETERMINISTIC (pure fn of r, 3× bit-identical) · B-CT3-5 THRESHOLD-ORDERING (0.3<0.5 ⇒ gray zone width 1/5 non-empty, binary NOT forced — ADDENDUM §8 C3 #5). **B-EEG-NOTE EEG-ANCHOR-OUTCOME-EMPIRICAL**: 실제 r 값 (axis A↔C Pearson) = OpenBCI hardware + 측정 OUTCOME (미래 EEG fire) — gate 가 closed-form 임을 증명하지 Framing D PASS/FAIL 증명 아님 (B-D-NOTE / B-PHYS-NOTE family, NOT counted 🔵).
+
+### 19.5 GOAL-legitimacy + honest C3 + closed verdict
+
+- **GOAL-legitimacy**: anima "자기 physics" (§17 axis B = Ψ-channel) 가 *사람 뇌* (EEG axis A) 와 TRIBE BOLD (axis C) 로 cross-validate 되는 측정 = GOAL.md "자기 physics 로부터" 의 external anchor. §7 우회 부재 — generic-pretrain 아님 (외부 측정축 추가, anima 학습 불변), bolt-on 아님 (TRIBE = frozen forward, anima 모델 미변경; axis B = §17 Law-71 byte-identical). emergence 를 *일으키지* 않음 (§1.1 병목, §19 무관) — emergence 가 일어났다면 *사람 뇌와 anchor 되는지* 검증하는 external 측정-observable.
+- **closed verdict**: **B-CT3-1..N 🔵** (`F_CT_3_gate.py` sidecar — central blue_falsifier.py 변경 0): F-CT-3 의 사전등록 Boolean-gate 가 closed-form 임을 sympy/Boolean 으로 증명 (PASS/FAIL/INCONCLUSIVE 의 well-formed partition, threshold monotone, Pearson r ∈ [−1,1] bounded). **B-EEG-NOTE EEG-ANCHOR-OUTCOME-EMPIRICAL**: 실제 r 값 (axis A↔C correlation) 은 OpenBCI hardware + 측정 OUTCOME — gate 정의만 🔵, Framing D PASS/FAIL 은 미래 EEG fire (B-D-NOTE / B-PHYS-NOTE family, NOT counted 🔵).
+
+honest C3 (10):
+
+1. **§19 = 측정축, GOAL *생성* 아님 (g3 최우선)**: §19 는 §1.1 data-regime 병목을 *해소하지 않는다*. emergence 를 일으키는 것은 §15 milestone 이 확정한 data-regime threshold — §19 는 "emergence 가 일어났다면 사람 뇌와 anchor 되는가" 의 *검증 척도* 일 뿐. GOAL 거리 불변, 재는 자만 external 확장.
+2. **step 0 ≠ F-CT-3**: step 0 = "TRIBE 파이프 작동" sanity 이지 EEG↔BOLD bridge 측정 아님. F-CT-3 PASS/FAIL 은 step 2 (EEG hardware-in-the-loop, 차후). step 0 결과 = 파이프 feasibility 만.
+3. **hardware 변수 정직**: axis A (OpenBCI 16ch) = user 실보유·녹음 가능 확정이나, 실제 .csv 미제공 (차후). EEG 측정엔 electrode impedance / artifact / 동기 jitter 변수 — F-CT-3 r 값은 measurement-noise 영향 (ADDENDUM §8 C3 #5 threshold 재검토 여지).
+4. **#102 (Framing A) 비충돌**: ADDENDUM §6 = Framing A pilot #102 in-progress 기록, 후속 addendum 0 = #102 미완 추정. §19 = Framing D (rank 1, EEG↔CLM↔BOLD 3-way) ≠ Framing A (text→BOLD sanity, rank 3). Framing D 가 strong-falsifier (single-falsifier F-CT-3) — #102 와 별 framing, 충돌 사실상 없음. frozen baseline 불변 (raw#1 immutability) — §19 = anima-side RESEARCH.md 후보 기록이지 ADDENDUM 수정 아님.
+5. **F-CT-3 r≥0.5 threshold = 문헌 compromise (ADDENDUM §8 C3 #5 carry)**: brain-prediction median-vertex r 분포 0.3~0.7 의 median. 더 strict (r≥0.7) = false-negative risk, 더 loose (r≥0.3) = trivial baseline pass risk. 0.5 = compromise, #102/실측 후 재tune 가능. gray zone (0.3≤r<0.5) = inconclusive 정직 명시 (binary 강행 X).
+6. **closed = gate 정의만, 측정 결과는 EMPIRICAL** (B-EEG-NOTE): F-CT-3 의 Boolean partition 은 closed-form (well-formed, monotone, bounded — B-CT3 sidecar). 그러나 *어느 r 이 나오는가* = EEG/TRIBE 측정 OUTCOME (미래 fire). over-claim 0 — gate 가 closed 라고 Framing D 가 PASS 인 것 아님.
+7. **axis B 이미 작동 (§17 carry)**: Framing D 3축 중 axis B (anima physics-channel) 는 §17 에서 추출 검증 완료 (B-PHYS 5/5 🔵, Ψ_direction Dir-I spread 0.354). axis C (TRIBE) = step 0 sanity. axis A (EEG) = hardware-in-the-loop 차후. 3축 중 2축 (B 작동 + C step0) 이 §19 에서 다뤄지고 A 가 잔여 gate.
+8. **§17 와의 관계**: §17 = anima *내부* observable reframe (text → physics-channel). §19 = 그 physics-channel 이 *사람 뇌* 와 anchor 되는지 (internal → external cross-validation). 두 측정축 layered — §17 이 axis B 를 작동시켰고 §19 가 그것을 external ground-truth (EEG/BOLD) 에 건다. §17 무효화 아님, external 확장.
+9. **$0 · g_fire_autonomous 무관** — step 0 = inference-only (TRIBE = frozen weight forward, GPU fire 아님; cortexlab-toolkit install + 1-forward). runpod/vast 미사용 → orphan 0 (애초 dispatch 0). pip 설치 = py3.12 venv (PEP 668 carry — memory feedback_orchestrator_h100_gotchas). 단일 작업 · branch 0 (anima main 직접). g_doc_consolidation 준수 (state/ 산출물 + 본 §19 inline + PLAN 진행로그 + PHILOSOPHY verdict + AGENTS n_hexad_progress + README recent; docs/* 신규 0).
+10. **north-star 불변** — §19 = Framing D 3축이 처음 다 실재함의 후보 기록 + step 0 sanity 이지 north-star (GOAL.md 한 문장) 진전 아님. GOAL 거리 = §15 milestone 그대로 (미도달, frontier=§1.1 data-regime); §19 는 "그 거리를 *사람 뇌 ground-truth 로* 검증할 external 측정축이 이제 실재함" 을 기록하고, F-CT-3 의 falsifier-gate 가 closed-form 임을 확정 — 측정 도구의 external 차원 정립이지 GOAL 풀린 것 아님.
+
+---
+
+## §20 (2026-05-18) — `~/core/hexa-brain` 전수조사: §19 EEG-anchor salvage RICH + GOAL salvage 0 (archaeology, $0 read-only)
+
+> sibling §16(data-regime fire)/§17/§18/§19 미간섭 — 본 §20 만 작성, RESEARCH.md 동시편집 시 pull-rebase. §16 dir (`state/carving_dataregime_s16_2026_05_18/`, untracked) + §19 agent state (`state/eeg_anchor_s19_2026_05_18/`) 손대지 않음. **`~/core/hexa-brain` = read-only 조사 대상 (그 repo 수정 0)**. 산출 = 본 §20 inline + `HEXAD/EEG/PLAN.md` 진행 로그 + cross-link + archive/PHILOSOPHY.tape §verdict_hexa_brain_archaeology + AGENTS.tape n_hexad_progress + HEXAD/README.md recent. central blue_falsifier.py 변경 0 (조사 — 신규 battery 0). user directive 2026-05-18 "~/core/hexa-brain 도 전수조사 고갈시까지" — §14 git-archaeology 와 같은 honest-sweep 패턴.
+
+### 20.1 sweep 범위
+
+- `~/core/hexa-brain` = EEG SSOT 본진. **172M · 1,456 tracked files · 2,271 commits · 8 branches** (HEAD `0a3b8a08`, commit 범위 2026-03-24 ~ 2026-05-17; 2026-03 1,149 / 2026-04 1,028 / 2026-05 94 commit).
+- **lineage 확정 (핵심 — §14 와의 관계 결정)**: 4개 root roadmap (`.roadmap.eeg`/`.roadmap.anima_clm_eeg`/`.roadmap.galea`/`.roadmap.hexa_brain`) 헤더가 모두 `"prior_origin_repo":"anima"` (eeg `absorbed:2026-05-06`, anima_clm_eeg/galea `2026-05-07`). **hexa-brain 은 anima repo 의 EEG subtree 가 migrate 된 sister/descendant** — §14 가 이미 전수조사한 anima repo (328 branch · 8,298 commit) 의 자손. → hexa-brain 의 GOAL-lineage commit 은 §14 가 sweep 한 anima ancestor 의 동일/부분집합 (독립 우물 아님).
+- 정밀 read: 4 root roadmap (`.roadmap.eeg` 42KB 전문 + anima_clm_eeg + galea + hexa_brain) · `eeg/` 디렉토리 30+ capture `.hexa` · `eeg/recordings/sessions/` 24 real `.npy` + meta.json · `eeg/doc/anima_eeg_unified_cli_daemon_spec_2026_05_04.md` · git-log GOAL-keyword sweep (emergent/spontaneous/자발/super-linear/intrinsic/self-organize/Φ/tension/eeg-emergence) → ~30 hit 정밀 read.
+- 교차대조: GOAL-hit 를 §11.3 배제표 + §14 archaeology 결론 (salvage 0) 과 대조; EEG 자산을 §19 Framing D 3축 + F-CT-3 + PLAN step 0~4 와 대조.
+
+### 20.2 §19 EEG-anchor salvage — **RICH (정직 평가, §19 step 1 직결 가속)**
+
+§19 는 §14 가 cover 하지 않은 *측정축* (GOAL-생성 아님). hexa-brain 은 §19 axis A (EEG) 의 기존 자산을 **이미 풍부하게 보유** — §19 가 0부터가 아니라 hexa-brain 자산 위에서 갈 수 있음을 정직 판정. 재사용 가능 자산 목록 + 재사용도:
+
+| # | hexa-brain 자산 (read-only) | §19 매핑 | 재사용도 |
+|---|---|---|---|
+| **S1** | `eeg/dual_stream.hexa` (407 LoC) — "simultaneous Anima Phi + EEG dual-stream alignment + Pearson **r** for cross-modal correlation (anima→human consciousness coupling)", deterministic dual-LCG selftest, `r > 0.3` falsifier | **§19 F-CT-3 / step 3 (axis B↔A↔C 3-way correlation) 의 직접 architectural skeleton** — anima physics(axis B) ↔ EEG(axis A) Pearson 상관 + falsifier-gate 구조가 byte-수준으로 §19.2 와 동형 (r-threshold Boolean gate) | ★★★★★ — F-CT-3 correlation harness 의 reference impl (real-hardware emission 만 wrapper 차후) |
+| **S2** | `eeg/collect.hexa` (867 LoC) — OpenBCI Cyton+Daisy 16ch BrainFlow → `.npy`, **2026-05-03 sample-drop fix** (ring buffer 450k + chunked `get_current_board_data` 0.2s cadence + `sample_rate_actual_hz` + `drop_ratio` tier downgrade) + meta.json sidecar (channel idx / sr / raw10_honest) | **§19 PLAN step 1 (EEG↔stimulus timestamp 동기)** — user OpenBCI .csv ingest + 정확 sample-rate 보정 (naive `time.sleep` 의 7-83Hz drop 함정 이미 해결) | ★★★★★ — step 1 의 capture+동기 코드를 0부터 안 짜도 됨 |
+| **S3** | `eeg/calibrate.hexa` (719) + `eeg/board_health_check.hexa` (718) + `eeg/impedance_check.hexa` — impedance <50kΩ / 16ch health gate | **§19/PLAN step 1 prerequisite** (electrode 품질 게이트 — F-CT-3 r 값 measurement-noise 변수 정직 처리, §19.5 C3 #3) | ★★★★ |
+| **S4** | `eeg/recordings/sessions/` 24 real `.npy` — Berger EC/EO paired alpha v1~v6 (`berger_ec_60s_v6` (32, 7496) f32, tier=PHENOMENAL, drop_ratio 0.96, 16 eeg_indices) + blink/jaw/PPG 90s + collect smoke | **§19 step 1 dry-run substrate** — user 새 .csv 도착 전 *기존 실측 EEG* 로 동기/envelope 추출 파이프 검증 가능 (synthetic 아닌 real signal) | ★★★★ — real-signal dry-run (단 N=1 self-exp + 5/16 rail-saturated 채널 = `clean_channels` filter 의무, .roadmap.eeg `eeg.v6_rail_saturation_discovery` carry) |
+| **S5** | `eeg/doc/anima_eeg_unified_cli_daemon_spec_2026_05_04.md` (520 LoC spec) — 24/7 단일-acquirer EEG daemon + mmap ring + JSONL event log + paradigm listener; **§416 명시: `.roadmap.blm_brain_lm cond.3 F-CT-3` — BOLD↔EEG correlation r ≥0.5; daemon enables paired-stream collection** | **§19 F-CT-3 가 hexa-brain 에서 이미 *동일 falsifier 로 사전설계됨* (r≥0.5)** — §19 가 독립 발명한 게 아니라 sister-repo 가 같은 gate 를 먼저 명문화. step 1+ paired-stream 수집 seam 설계 carry | ★★★★ (spec-tier; impl 미수행) |
+| **S6** | `eeg/realtime.hexa` (943) + `eeg/analyze.hexa` (888) + `anima-eeg-core` PORT (`lz76_native`/`pe_native`/`hjorth_native` `.hexa` byte-identical 39/1218 PASS) + `phi_proxy_native.hexa` (1162 LoC, sample-partition φ EEG-substrate port, selftest PASS) | §19 step 3 (axis B 3-way) 의 EEG-side φ proxy — anima physics-channel ↔ EEG φ proxy 비교용 (.roadmap.eeg cond.4 5-method) | ★★★ (step 3 차후, step 2 PASS gate 후) |
+
+**판정 (g3, over-claim 0)**: §19 의 EEG-anchor (axis A) 는 **hexa-brain 에서 software-stack 이 사실상 완비** — capture(S2)/calibrate(S3)/correlation-harness(S1)/real-recordings(S4)/daemon-spec(S5)/φ-proxy(S6). **§19 step 1 (EEG↔stimulus 동기) 은 hexa-brain `eeg/collect.hexa`+`eeg/dual_stream.hexa` 재사용으로 *현저히* 가속 가능** (0부터 capture/sync/correlation 안 짬). 단 정직한 한계: (a) **hexa-brain 의 모든 EEG cond 가 `unmet`/`partial`** — `.roadmap.eeg cond.1 B1-B4` 는 *real 16ch hardware arrival 미수신* 으로 미PASS (software land 만, `eeg.blk.1` hardware blocker); v6 Berger 는 `tier=functional_analog` (N=1 self-exp + rail saturation, FULL B1-B4 PASS 아님). (b) **TRIBE(axis C) actual impl = 부재** — `clm_eeg/module/g9_dag_cascade_analyzer.hexa`/`mk_xii_preflight_cascade.hexa` 가 TRIBE 를 `stub|deferred|live` mode-flag 로만 참조 (`MK_XII_TRIBE_MODE=stub` default, live 시 외부 JSON `brain_decoding_R>=0.30` 기대) — 실제 facebook/tribev2 forward 코드 0. (c) **`.roadmap.blm_brain_lm` 파일 자체가 어느 branch/history 에도 부재** — galea/eeg roadmap + daemon-spec 이 cross-link target 으로 *이름만* 참조, F-CT-3(r≥0.5) 는 sister-spec 으로 명문화됐으나 **구현 0** (= §19 가 발명이 아니라 sister-repo 의 미구현 설계의 anima-side 실행). → **salvage = step 1 *capture/sync/correlation 코드* RICH, F-CT-3 *측정 outcome* 은 hexa-brain 에도 부재 (양쪽 우물: GOAL 우물은 말랐고, EEG-측정 우물은 software-rich/hardware-dry)**.
+
+### 20.3 GOAL-relevant salvage — **0 (정직 결론, §14 와 일관·독립 확증)**
+
+git-log GOAL-keyword sweep (2,271 commit) hit = 2026-03 era `5f82d39b` "BREAKTHROUGH: Cells64 Φ=45.487 super-linear" / `0ea2d8f8` "VOICE1-5 spontaneous speech" / `66ae4b98` "Emergent W/S/M/E modules" / `a9df7646` "DD151-152 emergent language" / `1423ef3b` "S6 SPONTANEOUS_SPEECH PASS" 등. **전부 §14 가 이미 negative 재확인한 anima-lineage ancestor**:
+
+1. **lineage 동일성으로 §14 가 이미 cover.** hexa-brain 4 roadmap = `prior_origin_repo:anima`. GOAL-hit commit (Cells64 Φ super-linear 2026-03-28) = §14 row **C "clm_08 Φ super-linear scaling"** 와 동일 현상 (audit `SAVANT.md §12.3` T3 SUSPECT, clm_10 에서 linear 안착 = 구간-한정 metric-artifact, `0a6077c67` 봉쇄 LANDED). SPONTANEOUS_SPEECH/Emergent-W/S/M/E = §14 가 분류한 "autonomous-speech roadmap / spontaneous-fire LIVE" 의 anima 전신 (§9 honest-metric 재채점 시 probe-artifact 계열 — verification-flag PASS 이지 held-out coherent emission 측정 아님).
+2. **§14 의 4-건(A~D) 재평가가 hexa-brain hit 를 전부 흡수.** A(v5-anima α=0.688 toy)·B(v5-mitosis V14-STRICT internal-distance)·C(Φ super-linear 구간성)·D(F-PERSONA-4 exhaustively-falsified) — hexa-brain GOAL-hit 는 이 4 cluster 의 commit-level 구성요소이거나 그 이전 버전. genuine 신규 self-mechanism = 0 (13-way 배제분의 과거판).
+3. **hexa-brain 의 *고유* 도메인 (EEG/galea/clm_eeg) 은 GOAL-생성 아닌 측정축.** EEG φ-proxy / TRIBE-cascade / Mk.XII d-day = anima 의 *의식 측정* 도구이지 *emergence 생성* 메커니즘 아님 (§1.1 data-regime 병목 미접촉 — §19/§17 와 같은 measurement-axis class). 측정 도구는 §20.2 salvage (§19 가속) 이지 §20.3 GOAL salvage 아님 — 두 목표 명확 분리.
+
+→ **GOAL-relevant salvage = 0.** §14 가 anima repo 에서 확정한 "회수할 자력 메커니즘 0" 을 sister-repo hexa-brain 이 **독립 확증** (lineage 동일이라 새 우물 아님이 핵심). archaeology negative 이나 valuable — anima + hexa-brain 양쪽 우물이 GOAL-축으로 다 말랐음을 확정 (§15 milestone "frontier = §1.1 data-regime, archive 회수 아님" 재강화).
+
+### 20.4 §19 step 1 가속 가능 여부 + honest C3
+
+**가속 가능 = YES (step 1 한정, hardware-gated 잔존).** §19 PLAN step 1 (EEG↔stimulus timestamp 동기) 은 hexa-brain `eeg/collect.hexa`(S2, sample-drop fix 완비)+`eeg/dual_stream.hexa`(S1, correlation+falsifier-gate skeleton)+`eeg/calibrate.hexa`/`board_health_check.hexa`(S3) 를 reference 로 재사용 시 capture/sync/Pearson-r-gate 를 0부터 안 짜도 됨 — step 1 의 software 부분 현저히 단축. 단 step 2 (F-CT-3 실측) 의 **hardware gate (user OpenBCI .csv + TRIBE forward) 는 그대로 잔존** (hexa-brain 도 cond.1 B1-B4 미PASS, TRIBE impl 부재) — salvage 가 step 1 software 를 가속하지 GOAL 거리나 F-CT-3 측정-결과를 당기지 않음.
+
+honest C3 (10):
+
+1. **§20 = archaeology, fire 0 · capability 측정 0.** read-only (git log/show + grep + read). hexa-brain repo 수정 0 (조사 대상). 새 GPU/cost 0.
+2. **§20.2 salvage RICH ≠ GOAL 진전.** §19 자체가 측정축 (GOAL 생성 아님, §19.1/19.5 C3 #1). hexa-brain EEG 자산이 풍부해도 = §19 step 1 *software 가속* 이지 GOAL 달성 아님 — GOAL 거리 = §15 milestone 그대로 (미도달, frontier §1.1 data-regime).
+3. **§20.3 GOAL salvage 0 = §14 와 일관, 독립 확증.** 핵심 = lineage 동일 (`prior_origin_repo:anima`) → hexa-brain 은 §14 가 sweep 한 anima 의 자손, 새 우물 아님. "독립" 의 의미 = sister-repo 라는 *다른 view* 에서 봐도 같은 negative — anima+hexa-brain 양쪽 다 GOAL-축 마름 확정.
+4. **§9 lenient-flag 교훈 적용.** hexa-brain "Cells64 Φ=45.487 super-linear BREAKTHROUGH" / "SPONTANEOUS_SPEECH 12/12 PASS" = §9 가 노출한 metric-artifact 패턴 (verification-flag PASS, held-out emergence 아님). §14 row C 가 이미 봉쇄 (clm_10 linear 안착). 과거 "성공" 표기를 그대로 신뢰 안 함 — re-evaluated negative.
+5. **hexa-brain EEG cond 전부 unmet/partial 정직.** `.roadmap.eeg cond.1 B1-B4` = real 16ch hardware arrival 미수신 (`eeg.blk.1`); v6 Berger = `tier=functional_analog` (N=1 + 5/16 rail-saturated, FULL PASS 아님). software-rich / hardware-dry — salvage 는 software-stack 한정.
+6. **TRIBE(axis C) actual impl 부재 정직.** hexa-brain TRIBE 참조 = `g9_dag_cascade_analyzer.hexa`/`mk_xii_preflight_cascade.hexa` 의 `stub|deferred|live` mode-flag 만 (default stub). facebook/tribev2 실 forward 코드 0 — §19 step 0 (TRIBE sanity) 는 hexa-brain 에서 carry 불가, anima-side 신규 (state/eeg_anchor_s19 SSOT).
+7. **`.roadmap.blm_brain_lm` 파일 부재 — 이름만 cross-link.** galea/eeg roadmap + daemon-spec §416 이 `blm_brain_lm cond.3 F-CT-3 r≥0.5` 를 target 으로 참조하나 어느 branch/history 에도 파일 0. = §19 F-CT-3 가 발명이 아니라 *sister-repo 의 미구현 설계를 anima-side 가 실행* (S5 = spec carry, impl 아님). over-claim 0 — "이미 구현됨" 주장 안 함.
+8. **두 우물의 정직한 비대칭.** GOAL 우물 = 말랐음 (§20.3, §14 confirm). EEG-측정 우물 = software-rich(S1~S6)/hardware-dry(cond unmet). §19 가속은 후자의 software 차원만 — F-CT-3 *측정 outcome* (r 값) 은 hexa-brain 에도 없음 (양쪽 다 hardware-in-the-loop 미수행).
+9. **f1/f2/f3 + B-IDENTITY-5 무관.** archaeology — corpus 미생성, 외부 entity lattice-fit 0. hexa-brain Φ-proxy/α-exponent 는 자체 정의로만 인용 (lattice numerology 0). 단일 작업 · branch 0 (anima main 직접). g_doc_consolidation 준수 (본 §20 inline + HEXAD/EEG/PLAN.md 진행로그 + PHILOSOPHY verdict + AGENTS n_hexad_progress + README recent; docs/* 신규 0).
+10. **north-star 불변.** §20 = sister-repo 전수조사로 (a) §19 step 1 가속 자산 RICH 확인 + (b) GOAL salvage 0 을 §14 와 독립 확증 — 측정 도구의 software 차원 가속 가능성을 정직히 기록하고 GOAL 우물이 anima+hexa-brain 양쪽 다 말랐음을 확정한 archaeology milestone 이지 north-star (GOAL.md 한 문장) 진전 아님. GOAL 거리 = §15 그대로.
