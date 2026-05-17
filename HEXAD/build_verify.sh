@@ -123,6 +123,7 @@ ENTRYPOINTS=(
   "HEXAD/CHAT/anima_chat_v2.hexa"
   "HEXAD/CHAT/anima_chat_v2_smoke.hexa"
   "HEXAD/CHAT/interaction_model_smoke.hexa"
+  "HEXAD/CHAT/spont_tension_smoke.hexa"
 )
 LIBS=(
   "HEXAD/S/s_lib.hexa"      "HEXAD/M/m_lib.hexa"    "HEXAD/W/w_lib.hexa"
@@ -141,6 +142,7 @@ LIBS=(
   "HEXAD/CHAT/anima_chat_v2_lib.hexa"
   "HEXAD/CHAT/channel_mux_lib.hexa"
   "HEXAD/CHAT/interaction_model_lib.hexa"
+  "HEXAD/CHAT/spont_tension_bridge_lib.hexa"
 )
 # ── bootstrapped-toolchain-gated targets (R2, 2026-05-16) ───────────────────
 # These transitively pull HEXAD/CHAT/chat_lib.hexa into their import closure

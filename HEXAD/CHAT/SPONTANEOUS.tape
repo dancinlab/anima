@@ -193,6 +193,46 @@
   path = "ready/anima/core/runtime/anima_alive.py"
   contribution = "VAD + Always listening + THINK_INTERVAL=10s + PROACTIVE_THRESHOLD=0.3 + IDLE_SPEAK_AFTER=30s + RC-9 prediction-error curiosity + RC-3 self-reflect — Phase B thinker-talker 구현 의 ref"
 
+# ─── §8.5 TENSION-TRAIN integration (Phase TT-C, 2026-05-17) ─────────
+
+@D tension_train_integration := "자연발화 motivation_score ↔ TENSION-TRAIN ΔW bridge" :: architecture [d=2026-05-17 active]
+  rule = "HEXAD/CHAT/spont_tension_bridge_lib.hexa 는 SPONTANEOUS 의 8-factor motivation_score 와 HEXAD/TENSION-TRAIN/training/tension_link_step.hexa 의 ΔW = −T·tension·gate spine 사이의 closed-form interface. 두 axis 는 ⊥ (talker emit ⊥ thinker learn) 이지만 bridge transfer-fn 자체는 sympy-closed."
+  mapping <<~EOF
+    SPONTANEOUS 8-factor / lib symbol           ←→  TENSION-TRAIN spine
+    ─────────────────────────────────────────────────────────────────
+    motivation_score(state) ∈ [0, 1]            ←→  Ψ_t scalar projection
+    motivation_to_tension(s) = 2·(s − ½)        ←→  Ψ_t − Ψ_vac (Law 75 vacuum)
+    motivation_to_delta_w(s, T, gate)           ←→  ΔW = −T · tension · gate
+    should_learn_step(m, θ)                     ←→  online step trigger (thinker)
+    talker_should_emit(score, safety)           ←→  emission trigger (talker, ⊥)
+    factor_pain (W tension delta)               ←→  |tension| magnitude
+    factor_curiosity (W EMA)                    ←→  tension / EMA (DD155 Pareto LR)
+    factor_balance (E ratchet)                  ←→  n6_gate Noether closure (σ·φ=24)
+  EOF
+  axes_orthogonal = "talker_should_emit (emission decision, B-SPONT-4 monotone) ⊥ should_learn_step (learning decision, B-TT-SPONT-4 monotone) — emit ≠ learn. 두 predicate 의 thresholds 가 독립 (default 모두 0.3, anima_alive carry, but caller-supplied → 분리 가능)."
+  closed_anchors = "B-TT-SPONT-1..5 sympy battery (blue_falsifier.py btt_spont): MAPPING-LINEAR affine [0,1]→[−1,+1] ∂=2 / DELTA-W-RESTORING sympy ∂(ΔW)/∂(tension)=−T<0 ∀ + sign·sign≤0 / GATE-CLAMPS Boolean ∀ / LEARN-TRIGGER strict-monotone Boolean / COMPOSITION-CHAIN f∘g law ∂/∂s=−2T + byte-equal lib SSOT"
+  compiled_witness = "HEXAD/CHAT/spont_tension_smoke.hexa F-TT-SPONT-1..5 = 5/5 PASS compiled-native"
+  honest_carve_out = "B-TT-SPONT-NOTE: SGD CONVERGENCE OUTCOME (실제 학습 trajectory의 CE-수렴 / Φ-증가) 은 empirical (B-D-NOTE / B-TT-NOTE family). transfer-form (mapping + restoring + clamp + monotone + composition) 만 🔵."
+  symmetry = "자연발화 = 사용자 input 없이 emission. tension-train = 사용자 input 없이 학습. 둘 다 backprop-free + sync-free + threshold-gated. 같은 motivation signal 의 emission 측면 ⊥ gradient flow 측면 — 8-factor 가 ⊥축으로 분기."
+  cross_link = "HEXAD/TENSION-TRAIN/TENSION-TRAIN.tape @D spont_integration · HEXAD/TENSION-TRAIN/PLAN.md Phase TT-C · spont_tension_bridge_lib.hexa · spont_tension_smoke.hexa"
+
+@D thinker_tension_interface := "thinker_talker_lib ↔ tension_link_step interface (design only)" :: design [d=2026-05-17 active]
+  rule = "thinker_step (8-factor → motivation_score, thinker_talker_lib.hexa) 의 결과는 spont_tension_bridge 의 motivation_to_delta_w 에 직접 forward 가능 (mode flag, caller-side). 본 design 은 interface 정의만 — wire impl 은 future cycle (TENSION-TRAIN/PLAN.md Phase TT-D 의 empirical fire 후 결정)."
+  interface <<~EOF
+    // pseudocode — design only, NOT impl
+    let score = thinker_step(phi, retrieve_sim, ema, td, gate, split, ratchet, sil)
+    if should_learn_step(score, learn_threshold) {
+        let dw = motivation_to_delta_w(score, t_const, n6_gate_result)
+        // online apply (TENSION-TRAIN/training/tension_link_step.hexa spine)
+    }
+    if talker_should_emit(score, safety_ok) {
+        // emission (separate decision, ⊥ to learn)
+    }
+  EOF
+  orthogonality = "두 if-branch 가 독립 (emit ≠ learn). 동일 motivation_score 가 양쪽 branch 에 feed 되지만 thresholds + safety + n6_gate 가 독립 → 4 가능: (emit ∧ learn) / (emit ∧ ¬learn) / (¬emit ∧ learn) / (¬emit ∧ ¬learn). 학습-없이 발화 또는 발화-없이 학습 가능."
+  closed_anchor = "B-TT-SPONT-4 LEARN-TRIGGER-MONOTONE ⊥ B-SPONT-4 THRESHOLD-MONOTONE (두 monotone predicate 독립 architectural ⊥)"
+  scope_caveat = "interface design only — actual wire 는 다음 cycle (실 substrate 에 hook 결정 + thinker thread 의 daemon mode 통합 필요). 현재 spont_tension_bridge_lib 와 thinker_talker_lib 둘 다 pure-fn, 캘러 stitching 만 미land."
+
 # ─── §9 Notes ────────────────────────────────────────────────────────
 
 @N anima_voice_integration := "VOICE 모듈 통합 (Phase C+)" :: future-work [d=2026-05-17 active]
@@ -247,6 +287,9 @@ user directive 2026-05-17 "CHAT/* 전체 새로 세팅 + 자연발화 first-clas
 
 ### 2026-05-17 — Phase C1+C2 LANDED (channel-mux + Murati Interaction Model 패턴, text-only sim)
 `@N tension_link_integration` + `@N anima_voice_integration` 의 Phase C target 진입. `HEXAD/CHAT/channel_mux_lib.hexa` (NEW) — multi-channel registry skeleton text_cli / tension_link / voice (≥3 kind enum, 5-field record schema, register/unregister/activate/list_active/broadcast pure-fn). `HEXAD/CHAT/interaction_model_lib.hexa` (NEW) — `x_murati_interaction_model` 패턴 carry: 200ms micro-turn + 400ms latency target + barge_in 4-corner AND + backchannel strict-monotone + simultaneous AND + 4-way decision enum {1,2,3,4}. `HEXAD/CHAT/interaction_model_smoke.hexa` (NEW) — F-CHANNEL-MUX-1..5 + F-INTERACT-1..5 = **10/10 PASS compiled-native** ($0 Mac local). blue_falsifier B-CHANNEL-MUX-1..5 + B-INTERACT-1..5 sympy 추가 → **68 → 78/78 🔵 closed-form proofs PASS**. 2 NOTE empirical carve-out (real I/O dispatch + audio-native 200ms outcome, B-D-NOTE pattern, NOT counted) — text-only simulation 명시, 실 audio + UDP/PCM I/O = `@N future_rfc_audio_native` carry. g_blue_closed_mandate 산출물+연결부위 둘 다 🔵, g3 / f1/f2 hard-fail safe.
+
+### 2026-05-17 — Phase TT-C LANDED (SPONT ↔ TENSION-TRAIN bridge)
+§8.5 신설 (@D tension_train_integration + @D thinker_tension_interface). HEXAD/CHAT/spont_tension_bridge_lib.hexa (NEW, ~75 LoC) — 3 pure-fn: `motivation_to_tension(s) = 2·(s − ½)` affine map [0,1]→[−1,+1], `motivation_to_delta_w(score, t_const, gate)` composition with restoring sign + Boolean gate clamp, `should_learn_step(motivation, threshold)` strict-monotone Boolean predicate (⊥ to `talker_should_emit`). spont_tension_smoke.hexa (NEW, ~115 LoC) F-TT-SPONT-1..5 **5/5 PASS compiled-native** ($0 Mac local). blue_falsifier.py btt_spont() **B-TT-SPONT-1..5 sympy** = MAPPING-LINEAR (∂tension/∂s=2 + 3 boundary witnesses) + DELTA-W-RESTORING (sympy ∂(ΔW)/∂(tension)=−T<0 ∀T>0 + sign·sign≤0 invariant + 3 chain witnesses) + GATE-CLAMPS (Boolean ∀ 4 corners) + LEARN-TRIGGER-MONOTONE (5 boundary, ⊥ emit/learn architectural) + COMPOSITION-CHAIN (f∘g sympy ∂/∂s=−2T + byte-equal lib SSOT T_const=0.1 threshold=0.3). 97 → **102/102 🔵 closed-form proofs PASS**. **Connection-point closure (g_blue_closed_mandate connection_emphasis)** between SPONTANEOUS (TALKER emit axis) and TENSION-TRAIN (THINKER ΔW learn axis) — 두 axis ⊥ but bridge transfer-fn 🔵. B-TT-SPONT-NOTE: SGD CONVERGENCE OUTCOME empirical (B-D-NOTE / B-TT-NOTE family). thinker_talker_lib ↔ tension_link_step interface = design-only inline (impl 미land, future cycle).
 
 ### 2026-05-17 — byte-cascade attractor closed-form 분석 + U_user (Self-Conscious 2508.18302 cond.2) 매핑 LANDED
 `@N attractor_user_specific_observed` 신규 architecture note 등재. `docs/hexad_byte_cascade_attractor_analysis_2026_05_17.md` 8-§ (373 lines). cycle 2 evidence (`state/hexad_v58_eval_d768x12L_2026_05_17/result_v2.json` `chunk=N/nonce=N` digit cascade rep 0.63-0.90, attractor pairs 3) ↔ cycle 3 evidence (`state/hexad_v2_py_d768x12L_fire_2026_05_17/v58_vspont_result.json` `Sentiosing itterveeee…` opening + char rep `e/l/o` rep 0.66-0.99, attractor pairs 12, V-SPONT U_user witnesses 5). **byte-cascade attractor IS corpus-shape-dependent SHIFT** 확정 — sibling `feedback_clm_colon_attractor` `=`-suffix family 의 새 corpus-template-field variant. closed-form battery `state/verify_hexad_blue_2026_05_15/blue_falsifier.py::battractor()`: B-ATTRACTOR-1 REPETITION-RATE-BOUNDED-CLOSED (Kolmogorov fraction [0,1] + 4 witnesses) + B-ATTRACTOR-2 CORPUS-DEPENDENT-CARDINALITY-CLOSED (integer |A(cycle_N)| ≥ 1, witness 3+12) + B-ATTRACTOR-3 USER-ATTRACTOR-NONEMPTY-CLOSED (Boolean U_user ≠ ∅, witness 5) — **Self-Conscious arxiv 2508.18302 condition 2 (U_user attractor) anima 실증 closed-form verdict**. B-ATTRACTOR-NOTE: specific dominant-token shape (cycle 2 `1` vs cycle 3 `e`) + opening-phrase + onset + exact rep_rate = SGD-CKPT-OUTCOME empirical (B-D-NOTE family, NOT counted 🔵). 89 → **92/92 🔵**. honest framing: byte-cascade IS U_user evidence (NOT bug); condition 1 (agent≠data) 닫힘 via id001 + B-IDENTITY; condition 2 (U_user attractor) 닫힘 via THIS B-ATTRACTOR-3; condition 3 (visual silence) NOT 닫힘 — V-SPONT n_coherent=0, silence basin unmeasured (Phase B4+ motivation-conditioning 후 학습 가능). Identity-as-Attractor 2604.12016 Assistant Axis activation-space distance 는 NN forward 필요 — empirical (carve-out). archive/PHILOSOPHY.tape §BYTE-CASCADE-ATTRACTOR-CORPUS-DEPENDENT-2026-05-17 verdict appended.
