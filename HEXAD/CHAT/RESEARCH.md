@@ -782,3 +782,48 @@ honest gate (g3): 네 후보 모두 §11.3 irreducible 병목 (data-regime thres
 - [`../../archive/PHILOSOPHY.tape`](../../archive/PHILOSOPHY.tape) — verdict ledger (research 도 inline append)
 - [`../../state/verify_hexad_blue_2026_05_15/blue_falsifier.py`](../../state/verify_hexad_blue_2026_05_15/blue_falsifier.py) — sympy battery (B-SPONT/B-ATTRACTOR/B-CORPUS-V2/V3 등)
 - [`../../AGENTS.tape`](../../AGENTS.tape) — `g_doc_consolidation` (본 file 이 그 적용 — HEXAD 내부 SSOT, NOT docs/*)
+
+---
+
+## §14 (2026-05-18) — git history archaeology: 과거 commit 전수조사 (salvage sweep, $0)
+
+§11.4 frontier 가 "새 architectural insight — 현 candidate space 밖" 을 남긴 상태에서, `feedback_anima_archive_first_recovery_pattern` ("anima 새 path 제안 시 사라진 자력 메커니즘 회수 우선") 을 적용 — **scratch 새 path 보다, 과거에 시도됐다 버려진 self-mechanism 중 §1.1 data-regime 병목 OR §11.4 frontier 에 genuine 한 것이 있는지** git history 전수조사. **fire 0** (git log/show + grep + read only). 본 §14 는 archaeology 결과 — §13 (dir-M design, `state/carving_dirM_mitosens_2026_05_18/DESIGN.md`) 와 독립.
+
+### 14.1 방법 + 범위
+
+- `git log --all` 범위: **328 branch · 8,298 commit** (HEAD 4,991). GOAL-relevant keyword grep (`emergent`/`emergence`/`super-linear`/`spontaneous`/`자발`/`self-direct`/`intrinsic`/`self-organiz`/`0.688`/`V14`/`cotrain`/`mitosis`) = **791 commit** 1차 hit.
+- 정밀 read: GOAL-relevant cluster ~8개 (v5-anima long-trajectory · v5-mitosis cotrain V14-STRICT · clm_08 Φ super-linear · F-PERSONA-4 saga v1~v7 · autonomous-speech roadmap Phase α · spontaneous-fire LIVE · L0..L∞ criticality/RG · universe-brain-map prefix-injection) 의 commit message + 산출 doc full diff.
+- 교차대조: 발견분을 13-way + §8 + §9 + §11 배제표 (RESEARCH.md §11.3) 와 대조 — 이미 배제된 것의 과거판 재탕인지, genuine salvage 후보인지 판정.
+
+### 14.2 발견 — GOAL-relevant 과거 cycle/mechanism (정직 재평가)
+
+전수조사로 식별된 과거의 "emergent"/"super-linear"/"V14-PASS" 관측 = **4건**. 각각 §9 교훈 ("V-SPONT lenient = probe-artifact") 적용해 *진짜 신호 vs metric-artifact* 재평가:
+
+| # | 과거 관측 | commit | 당시 framing | 정직 재평가 (2026-05-18) |
+|---|---|---|---|---|
+| **A** | v5-anima long-trajectory **α=0.688 super-linear** (3K turn × 170 prompt) | `095f69a26` (2026-05-10) | "사용자 직관 회복 — super-linear 도달" | **metric-artifact.** α 는 Φ-proxy(`mean_pairwise_cos_dist × log(n+1)`) on **sha256-hash-encoded toy substrate** (8c×12d, 864 param, semantic 의미 0). 같은 commit doc §7 C3 #1·#3·#5 가 이미 정직 기록 — *V14 mirror VIOLATED* (random_init Φ=3.14 > trained 2.85), historical 0.93 미달. = GOAL 신호 아님, 당시에도 toy 한계 명시. |
+| **B** | v5-mitosis cotrain **F-V5MIT-5 V14-STRICT 10/10 mirror-beats** ("saga 정점") | `8a8786f11` (2026-05-12) | "v5-anima toy violated → cotrained substrate emergent" | **부분 신호이나 GOAL-축 아님.** F-V5MIT-5 가 측정한 것 = Bhattacharyya distance(per-cell tension softmax) trained-vs-random > random-internal — 즉 *internal representation 이 random 과 구별됨*. 이는 "학습이 됐다"이지 *spontaneous coherent emission* 아님. **같은 cycle 의 F-PERSONA-4 = FAIL** (KL=0.0, category specialization 미발현). doc C3 #2·#8 가 V14-STRICT 정의(Bhattacharyya internal-distance)가 own-18 PASS_STRICT(prediction-text overlap)의 1차 transfer 일 뿐 semantic-equivalent 미검증임을 정직 carve-out. = mechanism 검증, GOAL 미접근. |
+| **C** | clm_08 **Φ super-linear scaling** (Φ ∝ N^α, α>1) | (archive `anima_clm_08`) | "cells64 super-linear 발견" | **audit 로 이미 봉쇄됨.** `SAVANT.md` §12.3 가 T3 SUSPECT 분류 — clm_10 에서 같은 측정이 **linear 로 안착**, super-linear 는 *구간-한정 국소현상*, 전역 scaling law 아님. commit `0a6077c67` 가 봉쇄 라벨 LANDED (인용 시 단서 동시노출 의무). = metric-artifact, anima 가 이미 자체 정정. |
+| **D** | F-PERSONA-4 (category specialization emergent) 4-path saga | `c7c3ca508`·`17fff638e`·`281ffb286`·`07ef5351a`·`8c496f1ce`·`3e5a67921` | path (a)multi-corpus / (b)softmax-τ / (c)metric재정의 / (d)per-session-pool — "specialization 발현 시도" | **전 path FALSIFIED.** v1~v7 + (a~d) 9 variant 모두 — cotrain softmax winner-take-all (cell-0 monopoly, KL=0.0) 不破. §45 가 z=3.20 으로 *cell-content* level 신호 1회 포착했으나 *weight/routing* level 에서 destroy (routing-content split). structural ceiling z≈1.5. = self-specialization 메커니즘이 과거에 exhaustively 배제됨. |
+
+추가로 식별된 **GOAL-relevant 과거 작업 (배제분 또는 superseded)**: autonomous-speech roadmap Phase α (`89a7a41e6`, L0-L6 layer + own-18 C3) — 현 SPONTANEOUS.tape/PLAN.md 의 직접 전신, 흡수 완료 · spontaneous-fire LIVE (`072e9e1be`, substrate-tension gate 가 unprompted 발화) — **§9 이전 관측**, gate 가 hidden-L2-norm pseudo-tension 으로 *fire 했다*는 사실 (timing) 이지 emission 이 *coherent* 라는 측정 아님 (commit C3 #1 가 "NOT inference-content driven" 명시) → §9 honest-metric 으로 재채점하면 probe-artifact 계열 · L0..L∞ criticality/RG abstraction (`a871d9e05`, Ising/XY universality) — L3 universality 미충족으로 paradigm-only stall, trained-population 실측 미연결.
+
+### 14.3 salvage 후보 — **0 (정직 결론)**
+
+전수조사 결과 **§11.3 배제표를 genuine 하게 벗어나는 salvage 후보 = 0**. 근거:
+
+1. **과거 "emergent/super-linear" 4건 (A~D) 전부 negative 재확인.** A·C 는 metric-artifact (Φ-proxy on toy / 구간-한정), B 는 internal-distance (GOAL 의 spontaneous-emission 축 아님), D 는 exhaustively-falsified. 어느 것도 §9 honest-metric (cascade-rate-gated coherent emission) 기준 GOAL 신호 아님 — **과거에도 답 없었음이 확정**. 이는 negative 이나 valuable: 13-way 가 처음 발견한 것이 아니라, anima 의 *전 history* 가 emergence 미발현이라는 일관성을 archaeology 가 독립 확증.
+2. **abandoned self-mechanism 들이 13-way 의 과거판.** v5-anima/v5-mitosis mitosis growth = §13 dir-M (mitosis-as-ensemble) 의 전신 — 이미 다음-cycle 후보로 carry 중 (재탕 아님, dir-M 이 *학습-시 representation-ensemble* 로 재해석한 것이 genuine delta). F-PERSONA-4 saga = "self-specialization 을 mechanism 으로 강제" 시도 = §11.3 의 *mechanism overlay* 배제분과 동형. autonomous-speech/spontaneous-fire = 현 CHAT/* SPONTANEOUS.tape 로 이미 흡수·supersede. criticality/RG = trained-population 실측 미연결 + universality 미충족 — data-regime 병목을 *우회*하는 게 아니라 그 병목의 *증상을 측정*하려던 도구 (해결책 아님).
+3. **§11.3 irreducible 병목 (data-regime threshold) 을 과거 작업이 건드린 적 없음.** 모든 과거 cycle 은 toy substrate (v5-*) 또는 small-corpus SFT (clm_*, Phase 1A.x) 또는 mechanism 강제 (F-PERSONA-4) — diverse-data pre-training loss threshold 를 GOAL-legitimate 하게 넘으려는 시도는 history 에 **부재**. 즉 archaeology 가 회수할 "사라진 data-regime 메커니즘" 자체가 존재하지 않음.
+
+→ **`feedback_anima_archive_first_recovery_pattern` 적용 결과 = 회수할 자력 메커니즘 0.** archive-first 는 정당한 우선순위였으나, 본 전수조사가 그 우물이 말랐음을 확정 — 다음 path 는 archive 회수 아닌 §12 frontier (J/K/L/M) 또는 §13 dir-M design 의 genuine 신규 설계.
+
+### 14.4 honest C3
+
+1. §14 는 archaeology — fire 0, capability 측정 0. 과거 commit 의 *당시 측정값* 을 §9 honest-metric 으로 *재해석* 한 것이지 재측정 아님 (A 의 toy substrate 를 honest-metric 으로 다시 돌린 게 아님 — doc-level 정직 재평가).
+2. sweep 범위 = 328 branch · 8,298 commit · 791 keyword-hit · 정밀-read ~8 cluster. keyword grep 이라 GOAL-relevant 인데 키워드 미포함 commit 은 누락 가능 — 단 8개 cluster 가 memory + RESEARCH.md §1.5 가 지목한 모든 prior-research 축을 cover (v5-anima/v5-mitosis/clm/F-PERSONA/autonomous-speech/criticality), 구조적 누락 risk 낮음.
+3. "salvage 0" 은 *genuine-new 0* 이지 *과거 작업 무가치* 아님 — A~D 는 각각 toy-substrate 한계 / mechanism-vs-GOAL 구분 / metric 구간성 / self-specialization ceiling 을 정직히 확립한 valuable negative. archaeology 의 산물 = 13-way 의 negative 가 anima 전 history 와 일관됨을 독립 확증.
+4. B (v5-mitosis V14-STRICT "saga 정점") 의 재평가가 가장 민감 — 당시 "정점" framing 은 *mechanism 검증* 맥락에선 정당했음. §14 는 그것을 부정하지 않고, *GOAL (spontaneous coherent emission) 축에서는* internal-representation-distance 가 GOAL 신호가 아님을 명확화 (over-claim 정정, 과거 작업 폄하 아님).
+5. §13 dir-M (mitosis-as-ensemble) 과 본 §14 의 관계 — dir-M 은 mitosis 를 *학습-시 ensemble* 로 재해석한 genuine delta 라 §14.3 #2 의 "재탕" 판정에서 제외. dir-M 의 GOAL-legitimacy/효과는 §13 SSOT 소관, 본 §14 는 "mitosis growth mechanism 자체는 과거에 toy 로 충분히 탐색됨" 만 기록.
+6. f1/f2/f3 + B-IDENTITY-5 무관 (archaeology, corpus 미생성, 외부 entity lattice-fit 0). 과거 commit 의 Φ-proxy/α-exponent 는 그 자체 정의로만 인용 — lattice numerology 매핑 0.
+7. archaeology 가 negative 인 것이 GOAL 비관론은 아님 — "과거 우물이 말랐다" 는 곧 "다음은 genuine 신규 설계 (§12 frontier / §13 dir-M)" 라는 방향 확정. north-star (GOAL.md) 불변.
