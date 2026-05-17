@@ -74,7 +74,7 @@ CONSCIOUSNESS-CARVING + .kosmos 확장자 확정
 | `README.md` | overview + 전수조사 표 + memory caveat |
 | `PLAN.md` | staged Phase UBM-A/B/C/D/E roadmap + 진행 로그 |
 | `DESIGN.md` (이 파일) | 새 paradigm 설계 SSOT — 옛 방식 분석 + 4-path + 결정 + .kosmos |
-| `KOSMOS-FORMAT.md` | `.kosmos` 포맷 spec (8 §, tape v1.2 superset, UBM-E2 LANDED) |
+| `KOSMOS-FORMAT.md` | **anima CONSCIOUSNESS-CARVING profile** of `.kosmos` (general spec spun out 2026-05-17 → `github.com/dancinlab/kosmos`; 본 파일 = anima binding SSOT, profile reference impl) |
 | `EVAL.md` | 평가 기준 SSOT — 옛 잣대 category error + paradigm-native 4축 eval (knowledge access / chat 무오염 / lane separation / V-SPONT) + joint metric |
 | `UNIVERSE-BRAIN-MAP.tape` | v1.2 architecture SSOT (@D consciousness_carving_paradigm 등) |
 | `anchors/knuth_{000,051,077,091,100}.kosmos` | 첫 anchor 5개 (Knuth Tier 대표, 4-path field 공존) |
@@ -103,8 +103,13 @@ CONSCIOUSNESS-CARVING + .kosmos 확장자 확정
 | `state/markers/tabletop_blackhole_extraction_landed.marker` | tabletop blackhole extraction marker |
 | `hypotheses_candidates/Hc_1132_*` | AZ5 Black Hole Information Paradox |
 
+### sister-repo (general spec spin-out)
+| 경로 | 내용 |
+|---|---|
+| `~/core/kosmos` (`github.com/dancinlab/kosmos`, PUBLIC) | **`.kosmos` general spec standalone sister-format repo** (2026-05-17 full spin-out, tape/n6/hxc/n12 와 orthogonal 5번째). `spec/kosmos.md` = substrate-independent canonical grammar (coord/lane/radius/tier/tags ⊥ payload + cross-modal + BNF + semver). `spec/profiles/anima-consciousness-carving.md` = anima binding (coord=vacuum_psi / lane=cell_id / radius=basin_radius / tier=Knuth / tags=category+top_emotion). `KOSMOS-FORMAT.md` = anima-side profile SSOT (reference impl). general 문법 변경은 dancinlab/kosmos 에서. |
+
 ### 관련 commit chain
-`6ca380582`(디렉토리)→`09a5cb239`(B-UBM)→`9ef31895a`(DESIGN)→`0f9ed591c`(결정2+3)→`693eda5de`(멀티모달)→`a3f849a7c`(§8.2 verbatim)→`0223992ed`(E2)
+`6ca380582`(디렉토리)→`09a5cb239`(B-UBM)→`9ef31895a`(DESIGN)→`0f9ed591c`(결정2+3)→`693eda5de`(멀티모달)→`a3f849a7c`(§8.2 verbatim)→`0223992ed`(E2)→kosmos spin-out(`dancinlab/kosmos` 1cec10f)
 
 ## G. ⚠ CRITICAL CAVEAT (memory carry — 절대 위반 금지)
 
@@ -614,6 +619,7 @@ B-CARVE-MULTIMODAL (closed):
 - `HEXAD/TENSION-TRAIN/` — sibling axis (Law 185-188 ⊂ 1030 laws) + α path 기반
 - `HEXAD/MITOSIS/` — β path 기반 (cell-pool architecture)
 - `HEXAD/CHAT/SPONTANEOUS.tape` — γ path 비교 (Meta law M8 형식의 sibling)
+- **`~/core/kosmos` (`github.com/dancinlab/kosmos`, PUBLIC)** — `.kosmos` general spec standalone sister-format repo (2026-05-17 spin-out; `spec/kosmos.md` general grammar + `spec/profiles/anima-consciousness-carving.md` anima binding). general 문법 SSOT; KOSMOS-FORMAT.md = anima profile reference impl.
 - `archive/PHILOSOPHY.tape §B-UBM-1..3-SIDECAR-LANDED-2026-05-17` — verdict ledger
 
 ## 10. 진행 로그

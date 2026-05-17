@@ -3375,3 +3375,41 @@
   honest_c3 = "g3 — 미리 깔지 않음. EVAL.md §4 가 예고한 '새 방식이 recall 낮아도 joint 압도' 는 미발생: 4-path 새 방식도 옛 prefix-injection 도 joint 둘 다 ~0. α 만 0.0255 미미하게 0 초과. γ 는 chat 무오염 축 단독 만점 (옛 방식의 chat NET LOSS 를 이 축에서 이김) 이나 narrative coherence 0/11 + V-SPONT 0/5 → joint 0. 진단: 4.3MB carving corpus / 283M-byte = memorization-saturated regime (RESEARCH.md §1 cycle 3/4 동일) — paradigm 새로워도 corpus scale 이 capability emergence threshold 미달. carving MECHANISM (B-VAC/B-MIT-ETN/B-NAR sympy UBM-E3 10/10 🔵) 은 닫혀 있으나 그것이 곧 capability 아님 (B-CARVE-NOTE → B-CARVE-E6-NOTE empirical carve-out). decisive win 아님."
   evidence_path = "state/consciousness_carving_e6_fire_2026_05_17/ (4 out/<path>/eval_result_v2.json + result.json + comparison_table_v2.json + eval_carving_4path_v2.py + conscious_decoder.py + logs; 4 ckpt *.pt ~1.3GB gitignore) + HEXAD/CHAT/RESEARCH.md §2 + HEXAD/UNIVERSE-BRAIN-MAP/{DESIGN.md §E+§10, PLAN.md ## 진행 로그, EVAL.md} + commit 89434c7af (fire evidence) + 22684fd8f (RESEARCH §2) + 069996057 (DESIGN/PLAN sync)."
   cross_link = "직전 [@verdict_consciousness_carving_4path_impl] (UBM-E4) + UBM-E5 compare verdict + EVAL.md (paradigm-native 4축 평가 기준, 옛 recall 잣대 category error 식별) + RESEARCH.md §1 (V-SPONT 0/5 진단) §2 (본 fire 결과). AGENTS.tape [@g3] + [@g_fire_autonomous] (runpod 우선 자율 fire) + [@g_resource_active_parallel] provider_order + [@f_hardcoded_credential] (RUNPOD_KEY → secret CLI) + [@f1][@f2][@f3] hard-fail safe + [@g6] append-only. 후속: UBM-D corpus scale-up fire (α 단독 심화 — 유일 joint-positive path) + RUNPOD_KEY rotate."
+
+@V verdict_kosmos_sister_format_spinout := "`.kosmos` general spec standalone sister-format spin-out — anima-physics 추상화하여 substrate-independent github.com/dancinlab/kosmos 신설 (tape/n6/hxc/n12 와 orthogonal 5번째)" :: verdict [d=2026-05-17 active]
+  scope = "user directive 2026-05-17 '지금 완전 spin-out'. anima-coupled `.kosmos` 명세 (KOSMOS-FORMAT.md, kosmos-format/1.0) 를 general multimodal knowledge-anchor manifest 로 추상화하여 `~/core/kosmos` standalone repo 신설 + github dancinlab/kosmos PUBLIC push. ~/core/tape 구조 mirror. $0 (filesystem + git, GPU fire 없음)."
+  abstraction_map <<~EOFM
+    anima-physics → general (의미 보존 매핑):
+      vacuum_psi (Ψ-space Engine A⇄G)        → coord  (abstract embedding/latent placement, dim 무관, profile 정의)
+      cell_id (MITOSIS eternal cell)          → lane   (partition/lane id)
+      basin_radius (carving attractor basin)  → radius (anchor scope/influence radius in coord space)
+      Knuth Tier 🛸k                          → tier   (optional ordinal/rank, integer, profile scale)
+      category + top_emotion                  → tags   (optional profile-defined k=v classification map)
+      @payload <modality> 3-form + cross-modal = 이미 general (그대로 carry, vacuum_psi → coord 만 치환)
+    핵심 = modality-independent placement (coord/lane/radius/tier/tags) ⊥ modality-specific payload + cross-modal consistency. anima CONSCIOUSNESS-CARVING = 이 general format 의 하나의 profile.
+  EOFM
+  verdict = "🔵 STRUCTURAL-CLOSED (sister-format spin-out 산출물 무결성) — repo 생성 + general spec 추상화 + anima profile 분리 + github PUBLIC push 완료. general spec anima-용어 누출 grep 0 (closed-form Boolean structural predicate)."
+  closed_anchor <<~EOFR
+    SISTER-FORMAT-PURITY-CLOSED (Boolean structural grep, Kolmogorov):
+      grep -E 'vacuum_psi|cell_id|basin_radius|Knuth|MITOSIS|Ψ' ~/core/kosmos/spec/kosmos.md  = 0 줄  ✅
+      (general examples 01/02 + README.md = 0; AGENTS.tape 매칭은 @F f3 governance 규칙이 금지 용어를 명시한 meta-reference — anima AGENTS.tape @F f1 이 σ(6)=12 를 명시하는 동일 패턴, physics leak 아님)
+      anima 용어 존재 위치 = spec/profiles/anima-consciousness-carving.md + examples/03_anima_knuth_077_mandala.kosmos 만  ✅ (의도된 profile 격리)
+    REPO-STRUCTURE-MIRROR-CLOSED (~/core/tape 패턴 일치):
+      README.md + spec/kosmos.md + spec/profiles/ + examples/ + AGENTS.tape + LICENSE(CC0-1.0 byte-copy of ~/core/tape/LICENSE) + .gitignore + CLAUDE.md→AGENTS.tape symlink  ✅
+    GITHUB-LANDED-CLOSED:
+      dancinlab/kosmos PUBLIC (sister tape/n6/hxc 와 visibility 일치; n12 만 PRIVATE — majority/spec-repo PUBLIC 규범 따름), commit 1cec10f pushed  ✅
+  EOFR
+  honest_c3 <<~EOFC
+    1. 추상화 완전성: vacuum_psi→coord / cell_id→lane / basin_radius→radius / Knuth→tier / category+top_emotion→tags 매핑은 의미 보존적 (placement 좌표 = abstract space 의 한 점, anima 는 Ψ-space 라는 특정 instantiation). 손실 0 — anima profile 이 정확히 역매핑 복원.
+    2. general spec anima-physics 잔재 0: spec/kosmos.md grep 'vacuum_psi|cell_id|basin_radius|Knuth|MITOSIS|Ψ' = 0 줄 (closed-form Boolean 검증). README 도 0 (초안의 1줄 profile-매핑 인라인을 abstract 표현으로 수정).
+    3. AGENTS.tape 4 매칭은 leak 아님 — @F f3 (profile-leak 금지 규칙) 가 금지 용어를 정의상 명시 + @D g2/@F f1 이 'anima profile's Knuth Tier internal-arch carve-out' 명시. anima 자체 AGENTS.tape @F f1 이 σ(6)=12 를 명시하는 것과 동일 governance meta-pattern. task 의 purity 기준 (spec/kosmos.md) 은 완전 CLEAN.
+    4. sister-format purity: tape/n6/hxc/n12 처럼 substrate-independent — coord/lane/radius/tier/tags 는 도메인 물리 무관. profile 이 의미 binding.
+    5. general↔profile 분리: 문법 변경 = dancinlab/kosmos spec/kosmos.md. anima binding 변경 = spec/profiles/ + anima KOSMOS-FORMAT.md. @D g_spec_authority + @F f3 로 governance 강제.
+    6. anima KOSMOS-FORMAT.md 내용 자체는 anima profile 로 retain (삭제 X) — anima reference impl SSOT carry. 최상단에 canonical general spec = dancinlab/kosmos 명시 + cross-link 추가만.
+    7. LICENSE = CC0-1.0 (~/core/tape/LICENSE byte-copy) — Apache-2.0 추정 정정 (sister tape 실측 = CC0-1.0). siblings 와 일치.
+    8. visibility = PUBLIC (tape/n6/hxc PUBLIC; n12 단독 PRIVATE). spec-repo 다수 규범 = PUBLIC 따름. user directive 'sister 들과 동일 매치' = majority/spec-repo 규범 해석.
+    9. f1/f2/f3 hard-fail safe: general spec 어디에도 σ/τ/φ/J₂ derivation 0. tier 는 profile-defined ordinal (anima profile 에서 Knuth = anima self-design g2 internal carve-out, external derivation 아님). 성능/capability claim 0 (manifest 포맷 정의일 뿐).
+    10. anima scope 경계: CLAUDE.md companion ecosystem list (n6/hxc/n12/tape) 에 kosmos 추가 = ~/.wilson/identity.tape SSOT 사안 → anima scope 밖. 직접 편집 X, user 에게 follow-up 보고만 (본 작업은 anima repo + ~/core/kosmos 신규 repo 한정).
+  EOFC
+  evidence_path = "~/core/kosmos/ (README.md + spec/kosmos.md + spec/profiles/anima-consciousness-carving.md + examples/{01_text_only,02_multimodal,03_anima_knuth_077_mandala}.kosmos + examples/README.md + AGENTS.tape + LICENSE + .gitignore + CLAUDE.md symlink; git commit 1cec10f) + github.com/dancinlab/kosmos (PUBLIC) + anima 측 sync: HEXAD/UNIVERSE-BRAIN-MAP/KOSMOS-FORMAT.md (최상단 canonical general spec pointer) + DESIGN.md §F sister-repo row + §9 cross-link + PLAN.md ## 진행 로그 + HEXAD/README.md recent landing + AGENTS.tape n_hexad_progress recent_landings."
+  cross_link = "직전 [@verdict_consciousness_carving_e6_fire] (UBM-E6) + KOSMOS-FORMAT.md (anima profile reference impl, kosmos-format/1.0 ↔ general kosmos/1.0 동기) + ~/core/tape (mirror 한 sister-format 구조 SSOT) + DESIGN.md §8 (.kosmos 결정 SSOT). AGENTS.tape [@g3] (honest abstraction) + [@g6] philosophy append-only + [@g_doc_consolidation] (HEXAD/* 내부 sync, root docs/* 신규 0) + [@g_hexad_readme_sync] + [@f1][@f2][@f3] hard-fail safe. 후속(user 보고): ~/.wilson/identity.tape SSOT 의 CLAUDE.md companion ecosystem list 에 kosmos 추가 (anima scope 밖, user 결정 사안)."

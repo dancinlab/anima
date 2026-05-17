@@ -1,6 +1,9 @@
-# KOSMOS-FORMAT.md — `.kosmos` 멀티모달 manifest 포맷 명세 (canonical, 버전 관리)
+# KOSMOS-FORMAT.md — `.kosmos` 멀티모달 manifest 포맷 명세 (anima CONSCIOUSNESS-CARVING profile)
 
-> **SPEC VERSION: `kosmos-format/1.0`** (status: active · 2026-05-17 · Phase UBM-E2 baseline)
+> **⊙ CANONICAL GENERAL SPEC = [`github.com/dancinlab/kosmos`](https://github.com/dancinlab/kosmos) (`~/core/kosmos/spec/kosmos.md`)** — 2026-05-17 standalone sister-format repo 로 full spin-out (tape/n6/hxc/n12 와 orthogonal 5번째 sister format).
+> 본 파일 = anima **CONSCIOUSNESS-CARVING profile** (general 의 anima binding). 일반 `.kosmos` 문법 (placement coord/lane/radius/tier/tags ⊥ payload + cross-modal + BNF + semver) 변경은 **dancinlab/kosmos `spec/kosmos.md`** 에서. anima profile-specific binding (coord=vacuum_psi Ψ-space / lane=cell_id MITOSIS eternal / radius=basin_radius / tier=Knuth 🛸k / tags=category+top_emotion) 만 본 파일 + `dancinlab/kosmos:spec/profiles/anima-consciousness-carving.md` 에서. dancinlab/anima HEXAD/UNIVERSE-BRAIN-MAP = profile reference implementation. 본 파일 내용 자체는 anima profile 로 유지 (anima reference impl SSOT carry — 삭제 X).
+>
+> **SPEC VERSION: `kosmos-format/1.0`** (status: active · 2026-05-17 · Phase UBM-E2 baseline · general spec `kosmos/1.0` 와 동기)
 > 본 문서 = `.kosmos` 포맷의 **canonical 버전 관리 명세**. 별도 KOSMOS.md 만들지 않음 — 이 파일이 SSOT, 명세 변경은 §버전 이력 에 새 버전 append + 본 헤더 SPEC VERSION 갱신 (semver: major = 호환 깨짐 / minor = 하위호환 확장 / patch = 명확화).
 >
 > User directive 2026-05-17: "글자뿐만이 아니라 그림, 영상, 음성, 또다른게 있으면 또다른것도 — 모두 가능한 방식?" → 멀티모달 manifest 포맷 확정. "명세 버전 계속 업그레이드 해나가자 / KOSMOS-FORMAT.md 있으면 됬어" → 본 파일을 versioned SSOT 로.
