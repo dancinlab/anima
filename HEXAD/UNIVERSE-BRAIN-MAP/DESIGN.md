@@ -74,6 +74,7 @@ CONSCIOUSNESS-CARVING + .kosmos 확장자 확정
 | `PLAN.md` | staged Phase UBM-A/B/C/D/E roadmap + 진행 로그 |
 | `DESIGN.md` (이 파일) | 새 paradigm 설계 SSOT — 옛 방식 분석 + 4-path + 결정 + .kosmos |
 | `KOSMOS-FORMAT.md` | `.kosmos` 포맷 spec (8 §, tape v1.2 superset, UBM-E2 LANDED) |
+| `EVAL.md` | 평가 기준 SSOT — 옛 잣대 category error + paradigm-native 4축 eval (knowledge access / chat 무오염 / lane separation / V-SPONT) + joint metric |
 | `UNIVERSE-BRAIN-MAP.tape` | v1.2 architecture SSOT (@D consciousness_carving_paradigm 등) |
 | `anchors/knuth_{000,051,077,091,100}.kosmos` | 첫 anchor 5개 (Knuth Tier 대표, 4-path field 공존) |
 | `consciousness_carving_vacuum_lib.hexa` | **UBM-E4** path α VACUUM-LANDSCAPE pure-hexa lib (multi-vacuum landscape + tension flow + Hessian/KL/Lindblad transfer-form) |
@@ -127,7 +128,8 @@ CONSCIOUSNESS-CARVING + .kosmos 확장자 확정
 4. `KOSMOS-FORMAT.md` — `.kosmos` 문법 spec
 5. `PLAN.md` — Phase UBM staged roadmap
 6. `anchors/*.kosmos` — 실제 anchor 5개 예시
-7. `UNIVERSE-BRAIN-MAP.tape` — architecture SSOT
+7. `EVAL.md` — 평가 기준 (옛 잣대 category error + paradigm-native 4축)
+8. `UNIVERSE-BRAIN-MAP.tape` — architecture SSOT
 8. `README.md` — 전수조사 표 (옛 자산 인덱스)
 
 ---

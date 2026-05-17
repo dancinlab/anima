@@ -107,6 +107,8 @@
 
 ## 7. cross-link
 
+- [`EVAL.md`](EVAL.md) — CONSCIOUSNESS-CARVING 평가 기준 (옛 잣대 폐기 + paradigm-native 4축)
+
 - [`PLAN.md`](PLAN.md) — staged roadmap (UBM-A: 통합 / UBM-B: tape lift / UBM-C: 자연발화 cross-anchor)
 - [`UNIVERSE-BRAIN-MAP.tape`](UNIVERSE-BRAIN-MAP.tape) — v1.2 SSOT
 - `/.roadmap.universe_brain_map` — original mk1 D-domain roadmap (root, 2026-05-07)

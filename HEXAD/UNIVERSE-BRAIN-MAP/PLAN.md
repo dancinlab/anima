@@ -84,6 +84,8 @@ NO lattice (Knuth Tier 🛸k labels = anima 자체 design g2 internal carve-out;
 
 ## 4. cross-link
 
+- [`EVAL.md`](EVAL.md) — 평가 기준 SSOT (옛 prefix-injection 잣대 category error 식별 + paradigm-native 4축 eval + joint metric recall×separation)
+
 - [`README.md`](README.md) — overview + 전수조사 표 + memory caveat
 - [`UNIVERSE-BRAIN-MAP.tape`](UNIVERSE-BRAIN-MAP.tape) — v1.2 SSOT
 - `/.roadmap.universe_brain_map` — original mk1 (root, 2026-05-07)
