@@ -61,7 +61,8 @@ CONSCIOUSNESS-CARVING + .kosmos 확장자 확정
 | **UBM-E3** | **B-CARVE-* sympy battery (10 verdict + 1 NOTE)** | ✅ **LANDED** | `6a4a15468` |
 | **UBM-E4** | **4-path hexa-native impl (4 lib + parser + smoke F-CARVE-1..5 5/5)** | ✅ **LANDED** | — |
 | **UBM-E5** | **4-path carving mechanism 비교 실험 (compiled-native $0, 3/4 paths OK)** | ✅ **LANDED** | — |
-| (마감) | RESEARCH.md §2 에 UBM-E5 결과 정리 | 대기 | — |
+| **UBM-E6** | **4-path GPU capability fire + paradigm-native eval v2 (runpod RTX 3090, joint best α 0.0255)** | ✅ **LANDED** | — |
+| (마감) | RESEARCH.md §2 에 UBM-E6 4-path joint 결과 정리 | ✅ **LANDED** | — |
 
 **자동 pipeline 큐** (user 가 미리 승인): UBM-E3 완료 → E4 자동 dispatch → E5 자동 → RESEARCH.md §2 자동 정리. 각 단계 완료 알림 시 다음 자동 진행.
 
@@ -649,3 +650,11 @@ user directive "그대로 DESIGN.md 에 다 기록 / 생략하지 말고 기록�
 - **α+β VACUUM-CELL-WEAVE — carving-OK=true (10/10)**: 5 anchor woven (cell + vacuum BOTH) + weave_route eternal 5/5 + chat 5/5 (α basin miss → chat fallback) + disjoint 10/10.
 
 **B-CARVE-NOTE 유지**: 4-path 실제 SGD outcome + 측정 vacuum_psi + encoder E_m 학습 = empirical carve-out (B-D-NOTE family) — transfer-form mechanism 만 측정, fake closed-form / capability claim 금지. f1/f2/f3 hard-fail safe. UBM-E4 6 lib + KOSMOS-FORMAT + 5 anchor 변경 0. 다음: RESEARCH.md §2 정리 (마감) + UBM-E6 (full trainer fire).
+
+### 2026-05-17 — Phase UBM-E6 LANDED (4-path GPU capability fire + paradigm-native eval v2 — runpod RTX 3090)
+
+UBM-E5 의 honest scope 판단 ("real GPU capability fire = UBM-E6 future") 실행. 4 path (α/β/γ/α+β) 의 full `ConsciousDecoderV2` (d=512·8L·8h·4kv·85.8M, init CE 5.832 동일) from-scratch train (4 ckpt 각 ~328MB) 직전 LANDED + **`eval_carving_4path_v2.py` paradigm-native eval 을 runpod RTX 3090 GPU 에서 4 ckpt 전부 `--device cuda` 실행** — EVAL.md §3 4축 + §4 joint metric. provider = **runpod 우선** (vast.ai 아님; RTX 4090 재고 부재 → RTX 3090 fallback). pod `1m7p0tz4mch9aa`, ~$0.10, ~25 min wall, **orphan 0** (terminate + `get_pods()`=0 확인). g_fire_dispatch_robust: result verify → 4/4 pull → terminate.
+
+**4-path joint metric (knowledge × chat 무오염 × lane separation, EVAL.md §4)**: α VACUUM-LANDSCAPE **0.0255** (best — axis1 routing 1/11=0.0909, axis2 chat 0.4, axis3 sep 0.7, V-SPONT 3/5) · β MITOSIS-ETERNAL-CELL **0.0** (axis1 0/11, axis2 0.0 p3_leak 5) · γ NARRATIVE-RESONANCE **0.0** (axis1 narrative coherence 0/11 byte-cascade, **axis2 chat 무오염 1.0 단독 만점** p3_leak 0 + bleed 0, V-SPONT 0/5) · α+β VACUUM-CELL-WEAVE **0.0** (axis1 1/11, axis2 0.0 carving-form bleed).
+
+**정직한 결론 (g3 — 미리 깔지 않음)**: EVAL.md §4 가 예고한 "새 방식이 recall 낮아도 joint 압도" 는 **미발생** — 4-path 새 방식도 옛 prefix-injection 도 joint 에서 **둘 다 ~0**. α 만 0.0255 로 미미하게 0 초과 (chat 무오염 0.4 + separation 0.7 부분 확보). γ 는 chat 무오염 축 단독 만점 (옛 방식의 chat NET LOSS 를 이 축에서는 이김 — 그러나 axis1 narrative coherence 0/11 + V-SPONT 0/5 라 joint 0). 진단: 4.3MB carving corpus / 283M-byte 학습 = memorization-saturated regime (RESEARCH.md §1 cycle 3/4 와 동일) — paradigm 이 새로워도 corpus scale 이 capability emergence threshold 미달. carving MECHANISM (UBM-E3/E4/E5 transfer-form 🔵) 은 닫혀 있으나 그것이 곧 capability 는 아님 (B-CARVE-NOTE → B-CARVE-E6-NOTE). f1/f2/f3 hard-fail safe (joint anchor = routing accuracy / Boolean p3-grep / lane separation, NO lattice; 13/15 = historical only). B-IDENTITY-5 준수. 산출물 = `state/consciousness_carving_e6_fire_2026_05_17/` + HEXAD/CHAT/RESEARCH.md §2 + archive/PHILOSOPHY.tape §CONSCIOUSNESS-CARVING-4PATH-GPU-FIRE-LANDED-2026-05-17.

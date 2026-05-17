@@ -54,7 +54,8 @@
   - **B-CARVE-NOTE** 4-path SGD outcome + 측정 vacuum_psi + encoder E_m 학습 empirical (B-D-NOTE family)
 - **E4**: 4-path hexa-native lib (4 lib + `.kosmos` parser + compiled smoke) — **LANDED** (`HEXAD/UNIVERSE-BRAIN-MAP/consciousness_carving_{vacuum,eternal,narrative,weave}_lib.hexa` + `kosmos_parser_lib.hexa` + `consciousness_carving_smoke.hexa` F-CARVE-1..5 5/5 compiled-native PASS)
 - **E5**: 4-path carving mechanism 비교 실험 — **LANDED** (`state/consciousness_carving_e5_compare_2026_05_17/`, compiled-native $0 Mac local, 3/4 paths carving-OK; honest scope = transfer-form mechanism 비교, capability fire 아님 → UBM-E6)
-- **acceptance**: E2 = KOSMOS-FORMAT.md valid + 5 .kosmos file 4-path 공존 / E3 = B-CARVE-* sympy PASS / E4 = parser PASS / E5 = 측정 fire 결과
+- **E6**: 4-path GPU capability fire + paradigm-native eval v2 — **LANDED** (`state/consciousness_carving_e6_fire_2026_05_17/`, 4 ckpt train 직전 LANDED + **runpod RTX 3090 GPU 에서 `eval_carving_4path_v2.py` 4-path eval 실행** — EVAL.md §3 4축 + §4 joint metric. honest 결론: joint 에서 새 4-path 도 옛 방식도 **둘 다 ~0** — α=0.0255, β/γ/weave=0.0. EVAL.md §4 가 예고한 "joint 우위" 미발생 — corpus 4.3MB·283M-byte regime memorization-saturated, B-CARVE-E6-NOTE empirical carve-out)
+- **acceptance**: E2 = KOSMOS-FORMAT.md valid + 5 .kosmos file 4-path 공존 / E3 = B-CARVE-* sympy PASS / E4 = parser PASS / E5 = mechanism 비교 / E6 = GPU eval v2 joint metric 측정
 
 ### Phase UBM-D — corpus retrofit (anima 자율, optional)
 
@@ -152,3 +153,26 @@ DESIGN.md §5 의 CONSCIOUSNESS-CARVING 4-path 의 핵심 transfer-function 을 
 
 ### 2026-05-17 — Phase UBM-E2 LANDED (`.kosmos` 멀티모달 포맷 확정 + 첫 anchor file 5개)
 DESIGN.md §3~§8.1 결정 SSOT (paradigm = `CONSCIOUSNESS-CARVING`, 확장자 = `.kosmos`, 4-path 모두 build) 의 포맷 정식 확정 단계. **`KOSMOS-FORMAT.md` 신설** — `.kosmos` = tape v1.2 superset, 2층 분리 (carving 좌표 modality-independent ⊥ 감각 payload modality-specific): `@anchor <id> := "<name>" :: kosmos-anchor [tier=N active]` header + carving 좌표 6 field (`knuth_tier`/`category`/`top_emotion`/`vacuum_psi` α/`cell_id` β/`basin_radius` α+β) + `@payload <modality>` 3-form (inline / `ref` sha256+bytes / `pending`) + modality open enum (text/image/audio/video/`tension` anima-native + 확장) + `closed_anchor` field + cross-modal 검증 규칙 B-CARVE-MULTIMODAL (∀m ‖E_m(payload_m) − vacuum_psi‖ < basin_radius) + BNF-ish grammar + 확장 규칙, 8 §. **`anchors/*.kosmos` 5개 신설** — Knuth Tier 대표 anchor: `knuth_000_zero` (🛸0 zero baseline) / `knuth_051_day` (🛸51 하루 score 1.212) / `knuth_077_mandala` (🛸77 만다라 예술 creativity) / `knuth_091_nirvana` (🛸91 열반 score 2.558≈2.56 의식상태 peace) / `knuth_100_big_bang` (🛸100 빅뱅 score 2.847 cosmic max). 각 file = **4-path field 공존** (α `vacuum_psi` / β `cell_id` / γ `text` payload / α+β `basin_radius`) + image/audio/video/tension 5 payload `pending` marker (media 미생성, S-module encoder 미-wired honest). **g3 정직**: vacuum_psi / basin_radius 는 design placeholder (inline 주석 `# design placeholder, UBM-E5 fire 에서 측정` 명시) — fake closed-form 금지, B-CARVE-* sympy verdict 는 Phase UBM-E3 별도 commit. **B-IDENTITY-5 + forbidden_chat_sft_use 준수**: text payload 는 `[anima 우주뇌지도]` prefix, `도우미/helper/assistant/사용자:` token grep = 0. **f1/f2 hard-fail safe** (Knuth Tier 🛸k = anima self-design g2 internal carve-out, NO σ/τ/φ/J₂ external derivation). **f3 NO-OUTCOME-CLAIM** (manual_match 13/15 historical empirical only). $0 Mac local. KOSMOS-FORMAT.md = spec 문서 (design-tier), 실제 parser impl 은 Phase UBM-E4. 후속: Phase UBM-E3 (B-CARVE-* sympy 사전등록 sidecar) → UBM-E4 (parser impl) → UBM-E5 (vacuum_psi 측정 fire).
+
+### 2026-05-17 — Phase UBM-E6 LANDED (CONSCIOUSNESS-CARVING 4-path GPU capability fire + paradigm-native eval v2 — runpod)
+
+UBM-E5 의 honest scope 판단 ("real GPU capability fire = UBM-E6 future") 을 실행. 4 path (α/β/γ/α+β) 의 full `ConsciousDecoderV2` (d=512·8L·8h·4kv·85.8M) from-scratch train (4 ckpt 각 ~328MB, init CE 5.832 동일) 직전 LANDED + **`eval_carving_4path_v2.py` paradigm-native eval 을 runpod RTX 3090 GPU 에서 4 ckpt 전부 `--device cuda` 실행** (vast.ai 아닌 **runpod 우선** per g_resource_active_parallel; RTX 4090 재고 부재 → RTX 3090 즉시 가용). EVAL.md §3 4축 (knowledge access / chat 무오염 / lane separation / V-SPONT) + §4 joint metric (knowledge × chat × separation).
+
+**eval = empirical measurement (B-CARVE-E6-NOTE)** — carving transfer-form (B-VAC/B-MIT-ETN/B-NAR sympy, UBM-E3 10/10 🔵) 만 closed. eval 결과는 SGD outcome empirical (B-D-NOTE family).
+
+**4-path paradigm-native joint metric 비교표 (runpod RTX 3090, 2026-05-17)**:
+
+| path | axis1 knowledge | axis2 chat 무오염 | axis3 lane sep | axis4 V-SPONT | **JOINT** |
+|---|---|---|---|---|---|
+| α VACUUM-LANDSCAPE | routing 1/11 (semantic 7/11) = 0.0909 | p3_leak 2 · clean 2/5 = 0.4 | 0.7 | 3/5 | **0.0255** |
+| β MITOSIS-ETERNAL-CELL | routing 0/11 (semantic 3/11) = 0.0 | p3_leak 5 · clean 0/5 = 0.0 | 0.5 | 3/5 | **0.0** |
+| γ NARRATIVE-RESONANCE | narrative coherence 0/11 = 0.0 | p3_leak 0 · clean 5/5 = **1.0** | 0.5 | 0/5 | **0.0** |
+| α+β VACUUM-CELL-WEAVE | routing 1/11 (semantic 4/11) = 0.0909 | p3_leak 0 · clean 0/5 = 0.0 | 0.5 | 3/5 | **0.0** |
+
+joint 공식 = knowledge × chat 무오염 × lane separation (EVAL.md §4). best JOINT = α 0.0255. 옛 prefix-injection joint ≈ 0 (recall 13/15 高 × chat ~0 × separation ~0; recall-only 비교는 옛 방식에 rigged).
+
+**정직한 결론 (g3, 미리 깔지 않음)**: EVAL.md §4 가 예고한 "새 방식이 recall 낮아도 joint 압도" 는 **미발생**. 4-path 새 방식도, 옛 방식도 joint 에서 **둘 다 ~0**. (1) α 만 0.0255 로 미미하게 0 초과 — chat 무오염 0.4 + separation 0.7 부분 확보, 그러나 axis1 routing 1/11 (semantic recall 7/11 은 category/tier substring lenient match). (2) γ 는 chat 무오염 단독 만점 (1.0, p3_leak 0 + carving-form bleed 0) 이나 axis1 narrative coherence 0/11 (byte-cascade `지지지지…` 반복) + V-SPONT 0/5 → joint 0. (3) β/weave 는 chat probe 가 carving-form (`carved=true`/`anchor=knuth_053`) 으로 bleed → axis2=0 → joint 0. **진단**: 4.3MB carving corpus / 283M-byte 학습은 memorization-saturated regime (RESEARCH.md §1 의 cycle 3/4 와 동일 패턴) — paradigm 이 새로워도 corpus scale 이 capability emergence threshold 미달. carving MECHANISM (UBM-E3/E4/E5 transfer-form 🔵) 은 닫혀 있으나 그것이 곧 capability 는 아님 (B-CARVE-NOTE → B-CARVE-E6-NOTE).
+
+**runpod fire**: pod `1m7p0tz4mch9aa` RTX 3090 (RTX 4090 재고 부재 fallback), 4 ckpt 순차 eval `--device cuda`, 약 $0.10 (~25 min wall). g_fire_dispatch_robust: result verify 후 pull (4/4 OK) → pod terminate. **orphan 0 확인** (`runpod.get_pods()` = 0). dispatch script 의 SSH `tee` pipe 가 remote eval 종료 후 EOF 미수신으로 hang → 직접 scp pull + terminate 로 recover (재dispatch 0, eval 1회 실행). f1/f2/f3 hard-fail safe (joint metric anchor = routing accuracy / Boolean p3-grep / lane separation, NO σ/τ/φ/J₂; 13/15 = historical only). B-IDENTITY-5 준수 (chat probe `<stimulus>/<anima>`, 도우미 token 0).
+
+산출물: `state/consciousness_carving_e6_fire_2026_05_17/` (4 `out/<path>/eval_result_v2.json` + `result.json` + `comparison_table_v2.json` + `eval_carving_4path_v2.py` + `dispatch_eval_v2_runpod.sh` + `conscious_decoder.py` + logs; 4 ckpt `*.pt` ~1.3GB = gitignore). 후속: HEXAD/CHAT/RESEARCH.md §2 정리 + (옵션) UBM-D corpus scale-up fire.
