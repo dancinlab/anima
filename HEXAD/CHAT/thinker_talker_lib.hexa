@@ -1,0 +1,112 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  thinker_talker_lib.hexa — Thinker-Talker dual-thread orchestration (Phase B2)
+//
+//  Thinker (background, always-on) + Talker (foreground, on-demand) 분리.
+//  본 lib 는 pure-fn composition: 동시-thread async 는 Phase C 의 channel-mux.
+//  현재는 sequential test fixture — pure fn으로 closed-form 검증 가능.
+//
+//  Inner Thoughts (arxiv 2501.00383) + SIA thinker+talker thread (arxiv
+//  2605.13360) + Mira Murati Interaction Models (2026-05-11) 의 종합.
+//
+//  thinker_step: 8 sensor input → motivation_score (linear weighted, B-SPONT-1)
+//  talker_should_emit: motivation_score + safety_combined → emit decision
+//
+//  SSOT: HEXAD/CHAT/SPONTANEOUS.tape thinker_talker_dual_thread
+//        HEXAD/CHAT/PLAN.md Phase B2
+//  compiled-first lib (NO main · NO _selftest · NO top-level call).
+// ════════════════════════════════════════════════════════════════════════════
+
+import "/Users/ghost/core/anima/HEXAD/CHAT/spontaneous_lib.hexa"
+
+
+// ── §1 thinker_step — 8 input sensor → motivation_score ─────────────────────
+
+// Pure composition of factor_* fns + motivation_score. Deterministic, side-
+// effect free. Each input has closed bound from upstream module (B-C-1 Φ≥0,
+// B-M-2 cos sim, B-W-2 EMA bounded, B-BRIDGE-1..4 gate clamp, ...).
+fn thinker_step(phi: float, retrieve_sim: float, curiosity_ema: float,
+                tension_delta: float, bridge_gate_value: float,
+                split_event_recent: bool, ratchet: float,
+                silence_seconds: float) -> float {
+    let rel = factor_relevance(phi)
+    let gap = factor_info_gap(retrieve_sim)
+    let cur = factor_curiosity(curiosity_ema)
+    let pn  = factor_pain(tension_delta)
+    let coh = factor_coherence(bridge_gate_value)
+    let orig = factor_originality(split_event_recent)
+    let bal = factor_balance(phi, ratchet)
+    let dyn = factor_dynamics(silence_seconds)
+    return motivation_score(rel, gap, cur, pn, coh, orig, bal, dyn)
+}
+
+
+// ── §2 talker_should_emit — final emit gate (score + safety) ────────────────
+
+// Closed predicate: motivation_score > imThreshold ∧ safety_combined.
+fn talker_should_emit(score: float, safety_ok: bool) -> bool {
+    if safety_ok == false { return false }
+    return should_emit(score)
+}
+
+fn talker_should_interrupt(score: float, safety_ok: bool) -> bool {
+    if safety_ok == false { return false }
+    return should_interrupt(score)
+}
+
+
+// ── §3 emit_decision: triggers ──────────────────────────────────────────────
+
+// 자연발화 trigger 3 종 (per SPONTANEOUS.tape §3):
+//   1. on_pause(silence > IDLE_SPEAK_AFTER)
+//   2. on_new_message(user_input) — caller가 force_emit_due_to_user_input flag
+//   3. motivation_score > imThreshold (continuous monitor)
+//
+// 본 fn 은 (1) + (3) 결합. (2) 는 caller가 score 와 무관하게 호출.
+
+fn emit_decision_from_pause_and_motivation(silence_seconds: float, score: float,
+                                            safety_ok: bool) -> bool {
+    if safety_ok == false { return false }
+    let on_pause = silence_seconds >= spont_idle_speak_after()
+    let motivation_high = should_emit(score)
+    // emit if EITHER pause-triggered OR motivation-triggered
+    return on_pause || motivation_high
+}
+
+
+// ── §4 safety composite (closed AND, B-SPONT-5) ─────────────────────────────
+
+// 4-input AND closure. associative + commutative — sympy-verifiable
+// (Boolean set algebra real-limit).
+fn safety_check_all(env_off: bool, seconds_since_last: float,
+                    phi: float, ratchet: float, content_clean: bool) -> bool {
+    let kill = safety_kill_switch_on(env_off)
+    let rate = safety_rate_limit_ok(seconds_since_last)
+    let phi_r = safety_phi_ratchet_ok(phi, ratchet)
+    let content = safety_content_ok(content_clean)
+    return safety_combined(kill, rate, phi_r, content)
+}
+
+
+// ── §5 emission output assembly (no model forward — Phase B placeholder) ────
+
+// emission text = (optional meta prefix) + seed strategy name + ":" + body
+// Phase B compiled-native: model forward 은 anima_chat.hexa rewrite (Phase B 후속)
+// 또는 별도 D forward 연결. 본 lib 는 emission shell 만.
+
+fn assemble_emission(meta_tag: bool, strategy_idx: int, body: string) -> string {
+    let prefix = if meta_tag { spont_meta_prefix() } else { "" }
+    let strat = spont_seed_strategy_name(strategy_idx)
+    return prefix + strat + ": " + body
+}
+
+
+// ── §6 audit log entry (stub — JSONL serialize in Phase B5/C) ────────────────
+
+// Compiled-native stub: tuple of (timestamp_proxy, score, strategy, accepted)
+// 실 JSONL write 는 hexa-lang fs stdlib (RFC pending) 또는 Phase C python-bridge.
+
+fn audit_entry_accepted(score: float, strategy_idx: int, accepted: bool) -> string {
+    // returns canonical string repr for logging (smoke test only)
+    let acc_tag = if accepted { "ACCEPT" } else { "REJECT" }
+    return acc_tag + " score=" + to_string(score) + " strategy=" + spont_seed_strategy_name(strategy_idx)
+}

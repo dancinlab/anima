@@ -557,6 +557,93 @@
   "class": "RFC-PENDING-CORPUS-RETRAIN",
   "counted_toward_blue": false
  },
+ "B-SPONT-1": {
+  "name": "MOTIVATION-LINEAR-CLOSED",
+  "statement": "motivation_score = Σ w_i · f_i — sympy affine linear in 8 factors (∂score/∂f_i = w_i ∀); explicit witness: all f_i=1 → score=1 (Σw=1)",
+  "d_score_d_rel": "1/5",
+  "all_factors_1_unity": true,
+  "anchor": "linear conservation (real-limit, NOT lattice)",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-SPONT-2": {
+  "name": "FACTOR-BOUNDED-CLOSED",
+  "statement": "각 factor_* fn ∈ [0, 1] ∀ input — bounded-set clamp closure (factor_relevance/info_gap/curiosity/pain/coherence/originality/balance/dynamics 모두 동일 패턴)",
+  "witness_below_to_0": true,
+  "witness_above_to_1": true,
+  "witness_inrange_identity": true,
+  "anchor": "bounded-set (clamp) closure ∀ input (real-limit, B-MITOSIS-5 mirror)",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-SPONT-3": {
+  "name": "SCORE-BOUNDED-CLOSED",
+  "statement": "motivation_score ∈ [0, 1] ∀ factors ∈ [0, 1] — corner cases: all_0→0, all_1→1 (convex combination via Σw=1)",
+  "score_at_all_0": "0",
+  "score_at_all_1": "1",
+  "anchor": "convex combination closure (positive weights summing to 1 → output ∈ convex hull)",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-SPONT-4": {
+  "name": "THRESHOLD-MONOTONE-CLOSED",
+  "statement": "should_emit(score) = (score > imThreshold=0.3) — strict monotone non-decreasing Boolean predicate; witnesses: 0.2→false, 0.4→true, 0.3 boundary→false",
+  "witness_below": true,
+  "witness_above": true,
+  "witness_boundary_strict": true,
+  "anchor": "Boolean monotone predicate closure (Kolmogorov real-limit)",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-SPONT-5": {
+  "name": "SAFETY-CONJUNCTION-CLOSED",
+  "statement": "safety_combined(k, r, p, c) = k ∧ r ∧ p ∧ c — Boolean AND closure (associative + commutative + identity); 5 corner: all_true→T, any_false→F",
+  "all_true": true,
+  "any_false_F": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "anchor": "Boolean set algebra AND (real-limit, identical structure to B-CONN-8/9 predicate closure)",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-SPONT-6": {
+  "name": "INTERVAL-CONSTRAINT-CLOSED",
+  "statement": "rate_limit_ok(s) ↔ (s ≥ 30) — Kolmogorov arithmetic predicate; witnesses: 30→T (boundary inclusive), 29.999→F, 31→T (F-SPONT-7 anima_alive IDLE_SPEAK_AFTER carry)",
+  "boundary_30_inclusive": true,
+  "below_29_999_false": true,
+  "above_31_true": true,
+  "anchor": "Kolmogorov arithmetic ≥ predicate (real-limit, anima_alive IDLE_SPEAK_AFTER 30s)",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-SPONT-7": {
+  "name": "WEIGHT-SUM-UNITY-CLOSED",
+  "statement": "Σ_{i=1}^{8} w_i = 1.0 — linear conservation closure ∧ each w_i ∈ (0, 1); 8 weights = {0.20, 0.10, 0.15, 0.10, 0.10, 0.10, 0.15, 0.10}",
+  "weight_sum": "1",
+  "all_positive": true,
+  "all_below_one": true,
+  "anchor": "linear conservation closure (real-limit, identical structure to B-MITOSIS-2 merge_avg)",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-SPONT-NOTE": {
+  "name": "EMISSION-COHERENCE-OUTCOME-EMPIRICAL",
+  "statement": "spontaneous emission COHERENCE per-utterance (V4-lite ≥3/5) + 5-chain consecutive coherent 결과는 SGD/decoding outcome empirical — closed-form 불가. transfer-form (8-factor → motivation_score → threshold predicate) 만 🔵. B-D-NOTE / B-BRIDGE-NOTE / B-MITOSIS-NOTE 동일 패턴.",
+  "scope": "transfer-form 🔵 (B-SPONT-1..7); coherence outcome NOT counted (honest empirical, F-SPONT-7 carry)",
+  "convergence_closed": false,
+  "class": "EMPIRICAL-EMISSION-OUTCOME",
+  "counted_toward_blue": false
+ },
  "B-SUB-§8-1-α-small": {
   "name": "BRIDGE-CLAMP-α-SMALL-WITNESS",
   "statement": "Law-70 clamp at α=0.001 (tight Ψ-coupling): rail/interior/width 4-eq panel closed sympy",
@@ -680,14 +767,15 @@
    "HEXAD": "5/5 🔵 SUPPORTED-FORMAL integration-spec (B-HEXAD-1 σ(6)=12 conn count / B-HEXAD-2 φ(6)=2 partition cover / B-HEXAD-3 forward 11 steps / B-HEXAD-4 7-module entries / B-HEXAD-5 verdict TOTAL record) — sympy lift of hexad.hexa runtime invariants",
    "SUB": "9/9 🔵 §8-audit-deepening sub-falsifiers PASS — BRIDGE 3 (multi-α witness) + R2 1 (Σvᵢ² sympy) + cuBLAS 1 (Higham fp-bound) + MITOSIS 4 (multi-n witness panel); §8-row 8 per-layer GRAD-EXACT empirical carve-out NOT counted (honest C3 per B-D-NOTE pattern)",
    "CONN": "12/12 🔵 σ(6)=12 WIRING battery — B-CONN-1..12 connection-tier closures (S→C / C→Bridge detach / Bridge→D clamp / M↔C / W↔C / W↔D lr bound / E↔C phi-obs / E→W gate / E→D gate / D→loss Shannon / M↔D / S↔W monotone). g_blue_closed_mandate connection_emphasis explicit closure — (A) endpoint module + (B) connection transfer-fn 둘 다 🔵.",
-   "IDENTITY": "5/5 🔵 anima_persona descriptor (Phase A1, 2026-05-17) — B-IDENTITY-1..5: PERSONA-COMPLETE 14-field record / ROLE-NOT-HELPER string predicate / VALUES-ANCHOR closed-hypothesis set / BOUNDARIES-PHI-RATCHET cross-ref / FORBIDDEN-HELPER-MEMBERSHIP. B-IDENTITY-NOTE: trained-weights corpus 도우미-residual = Phase D retrain (RFC-pending honest carve-out, NOT counted)"
+   "IDENTITY": "5/5 🔵 anima_persona descriptor (Phase A1, 2026-05-17) — B-IDENTITY-1..5: PERSONA-COMPLETE 14-field record / ROLE-NOT-HELPER string predicate / VALUES-ANCHOR closed-hypothesis set / BOUNDARIES-PHI-RATCHET cross-ref / FORBIDDEN-HELPER-MEMBERSHIP. B-IDENTITY-NOTE: trained-weights corpus 도우미-residual = Phase D retrain (RFC-pending honest carve-out, NOT counted)",
+   "SPONT": "7/7 🔵 자연발화 motivation battery (Phase B4, 2026-05-17) — B-SPONT-1..7: MOTIVATION-LINEAR ∂score/∂f_i=w_i / FACTOR-BOUNDED [0,1] / SCORE-BOUNDED convex / THRESHOLD-MONOTONE Boolean / SAFETY-CONJUNCTION 4-AND / INTERVAL-CONSTRAINT ≥30s / WEIGHT-SUM =1.0 conservation. B-SPONT-NOTE: emission coherence outcome empirical (F-SPONT-7, B-D-NOTE pattern, NOT counted)"
   },
   "all_full_blue": true,
   "smwe_full_blue": true,
   "smwed_full_blue": true,
   "smwedbr_full_blue": true,
   "smwedbrmit_full_blue": true,
-  "summary": "S3/3 M3/3 W4/4 E4/4 D4/4 BRIDGE4/4 MITOSIS5/5 C3/3 HEXAD5/5 SUB9/9 CONN12/12 IDENT5/5 = 61/61 🔵 closed-form proofs PASS — ALL 9 modules+integration + §8-audit 9 sub + σ(6)=12 WIRING 12 + B-IDENTITY persona descriptor 5 (Phase A1) FULL 🔵 SUPPORTED-FORMAL (C tier-a 3 + tier-b PyPhi carry)",
+  "summary": "S3/3 M3/3 W4/4 E4/4 D4/4 BRIDGE4/4 MITOSIS5/5 C3/3 HEXAD5/5 SUB9/9 CONN12/12 IDENT5/5 SPONT7/7 = 68/68 🔵 closed-form proofs PASS — ALL 9 modules+integration + §8-audit 9 sub + σ(6)=12 WIRING 12 + B-IDENTITY persona 5 + B-SPONT 자연발화 motivation 7 FULL 🔵 SUPPORTED-FORMAL (C tier-a 3 + tier-b PyPhi carry)",
   "tier": "g_verdict_tier_blue (a) sympy closed-form + (b) PyPhi formal IIT 3.0 (C carry) + (c) deterministic (D KV-cache exact-eq)",
   "honest_c3": "D B-D-4 closes the trainability PROPERTY in closed form (exact CE logit-Jacobian softmax−e_y, sympy-verified ∀ z + Shannon floor CE≥0); SGD convergence OUTCOME stays empirical (B-D-NOTE, every stochastic optimizer, not counted 🔵). BRIDGE B-BRIDGE-1..4 close the Law-70 clamp INVARIANT g(raw)=Ψ+clip(raw−Ψ,±α)∈[Ψ−α,Ψ+α] ∀raw,∀α>0 (real-limit anchor Law 70 Ψ-coupling, NOT lattice); the full forward learned weights + α numeric value (ln2/2^5.5) stay empirical (B-BRIDGE-NOTE, not counted 🔵). MITOSIS B-MITOSIS-1..5 close the growth-axis algorithm INVARIANTS (split predicate / merge linear avg / cell-count integer conservation / detach AD ∂-rule / bounded clamp [2,64]) — real-limit anchors Kolmogorov + reverse-mode AD + bounded-set + linear conservation (NO lattice); Φ-conservation under split/merge transitions stays empirical (B-MITOSIS-NOTE F-V5MIT-3, dynamics-dependent, not counted 🔵). C B-C-1..3 close the scaffold-tier invariants (Φ≥0 IIT axiom + n_factions ∈ ℤ+ + initial_cells ≥ CB1=2); full 12-faction GRU dynamics + Rust phi_rs FFI = RFC TERMINAL (B-C-NOTE, hexa-lang nn-primitive + cdylib C ABI 미land, not counted 🔵); F-C-PORT-3 4/4 PyPhi tier-(b) carry separate (RFC 036 phi_spatial byte-equal). HEXAD B-HEXAD-1..5 close the integration-spec invariants (σ(6)=12 connection count / φ(6)=2 partition cover / forward 11-step / 7-module entries / verdict TOTAL record) — sympy lift of hexad.hexa runtime selftest (g2 lattice-as-tool internal carve-out; arithmetic+set-cover closed propositions NOT lattice derivation per f1 coincidence allowance). SUB B-SUB-§8-* deepens 5 of 12 §8 audit rows with marginal-value sub-falsifiers (closed sympy only counted): row 1 BRIDGE multi-α witness panel (α=1e-3 / 0.014 json SSOT / 0.5 stress) + row 5 R2 L2-norm Σvᵢ²=30 sympy + row 6 cuBLAS Higham 2002 fp64 GEMM bound n·u·‖A‖·‖B‖ (IEEE 754 + Higham real-limit) + row 10 MITOSIS clamp [2,64] multi-n witness panel (neg-extreme / just-below / interior / huge-extreme). §8-row 8 per-layer GRAD-EXACT carved-out as honest empirical (multi-layer GPU-dependent, Mac-local closing would be fake-closed per g3). Other 6 rows (2/3/4/7/9/11/12) skipped — no genuine marginal closed-form value (g3 anti-padding). No over-claim — ALL 9 modules+integration full 🔵 (C tier-a 3 + tier-b carry) + 9 §8-audit sub-falsifiers."
  }
