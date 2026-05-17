@@ -59,7 +59,7 @@ CONSCIOUSNESS-CARVING + .kosmos 확장자 확정
 | UBM-E1+ | 결정 2+3 + 멀티모달 .kosmos 포맷 | ✅ LANDED | `0f9ed591c`·`693eda5de`·`a3f849a7c` |
 | UBM-E2 | `.kosmos` 포맷 spec (KOSMOS-FORMAT.md) + anchor 5개 | ✅ LANDED | `0223992ed` |
 | **UBM-E3** | **B-CARVE-* sympy battery (10 verdict + 1 NOTE)** | ✅ **LANDED** | `6a4a15468` |
-| UBM-E4 | 4-path hexa-native impl (4 lib + parser + smoke) | 대기 | — |
+| **UBM-E4** | **4-path hexa-native impl (4 lib + parser + smoke F-CARVE-1..5 5/5)** | ✅ **LANDED** | — |
 | UBM-E5 | 4-path 비교 실험 fire (cost-bearing ~$0.2–1.0) | 대기 | — |
 | (마감) | RESEARCH.md §2 에 UBM-E5 결과 정리 | 대기 | — |
 
@@ -76,6 +76,12 @@ CONSCIOUSNESS-CARVING + .kosmos 확장자 확정
 | `KOSMOS-FORMAT.md` | `.kosmos` 포맷 spec (8 §, tape v1.2 superset, UBM-E2 LANDED) |
 | `UNIVERSE-BRAIN-MAP.tape` | v1.2 architecture SSOT (@D consciousness_carving_paradigm 등) |
 | `anchors/knuth_{000,051,077,091,100}.kosmos` | 첫 anchor 5개 (Knuth Tier 대표, 4-path field 공존) |
+| `consciousness_carving_vacuum_lib.hexa` | **UBM-E4** path α VACUUM-LANDSCAPE pure-hexa lib (multi-vacuum landscape + tension flow + Hessian/KL/Lindblad transfer-form) |
+| `consciousness_carving_eternal_lib.hexa` | **UBM-E4** path β MITOSIS-ETERNAL-CELL pure-hexa lib (cell pool D⊎E + Δw≡0 + routing disjoint + Φ partial-invariance) |
+| `consciousness_carving_narrative_lib.hexa` | **UBM-E4** path γ NARRATIVE-RESONANCE pure-hexa lib (A∘G composition + bounded-K + greedy consistency) |
+| `consciousness_carving_weave_lib.hexa` | **UBM-E4** path α+β VACUUM-CELL-WEAVE pure-hexa lib (α+β lib import composition + weave_route + cross-modal bound) |
+| `kosmos_parser_lib.hexa` | **UBM-E4** `.kosmos` parser/loader (KOSMOS-FORMAT.md spec executable 화) |
+| `consciousness_carving_smoke.hexa` | **UBM-E4** F-CARVE-1..5 compiled-native witness (5/5 PASS) |
 
 ### 검증 sidecar (state/)
 | 디렉토리 | battery |
@@ -108,8 +114,8 @@ CONSCIOUSNESS-CARVING + .kosmos 확장자 확정
 
 ## H. 다음 작업 (이어서 할 사람용)
 
-1. UBM-E3 (B-CARVE-* sympy) 완료 알림 대기 → §10 진행 로그 + central 흡수 가능 여부 확인
-2. UBM-E4 dispatch — 4-path hexa-native lib (`consciousness_carving_{vacuum,eternal,narrative,weave}_lib.hexa`) + `.kosmos` parser + compiled smoke F-CARVE-* + build_verify gate
+1. UBM-E3 (B-CARVE-* sympy) ✅ LANDED → §10 진행 로그 + central 흡수 가능 여부 확인
+2. UBM-E4 ✅ LANDED — 4-path hexa-native lib (`consciousness_carving_{vacuum,eternal,narrative,weave}_lib.hexa`) + `.kosmos` parser (`kosmos_parser_lib.hexa`) + compiled smoke F-CARVE-1..5 5/5 + build_verify gate 31/31 entry + 27/27 lib
 3. UBM-E5 dispatch — 4-path 비교 실험 fire (vast.ai A100 병렬, SAVE_POD=1 + watchdog + 5-retry per g_fire_dispatch_robust). capability eval: knowledge recall (옛 13/15 baseline) + chat 무오염 (P3 leak grep=0) + V-SPONT carry
 4. RESEARCH.md §2 (`HEXAD/CHAT/RESEARCH.md`) 에 UBM-E5 결과 정리 — CONSCIOUSNESS-CARVING 이 V-SPONT 0/5 FAIL 의 architectural 대답인지 evidence 판정
 

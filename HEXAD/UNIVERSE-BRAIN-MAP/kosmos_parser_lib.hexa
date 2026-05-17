@@ -1,0 +1,386 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  kosmos_parser_lib.hexa — `.kosmos` 멀티모달 manifest parser/loader (pure-hexa)
+//
+//  Phase UBM-E4 — KOSMOS-FORMAT.md spec 의 executable 화. `.kosmos` 파일을
+//  파싱하여 anchor record (carving 좌표 6 field) + `@payload` 3-form (inline /
+//  ref / pending) 을 추출.
+//
+//  `.kosmos` = tape v1.2 superset:
+//    @anchor <id> := "<name>" :: kosmos-anchor [tier=N active]
+//      knuth_tier   = <int>          # carving 좌표 (modality-independent)
+//      category     = "<str>"
+//      top_emotion  = "<str>"
+//      vacuum_psi   = [x, y]         # α path
+//      cell_id      = "<str>"        # β path
+//      basin_radius = <float>        # α+β hybrid
+//      @payload <modality> := "<inline>"                       (a) inline
+//      @payload <modality> := ref "<path>" sha256=<h> bytes=<N> (b) ref
+//      @payload <modality> := pending "<reason>"                (c) pending
+//      closed_anchor = "<str>"
+//
+//  HARD CONSTRAINTS:
+//    - pure-hexa only (NO GPU, NO PyTorch import)
+//    - NO main / NO _selftest (compiled-first lib)
+//    - hexa-lang syntax: dict literal `#{}`, missing key → `void`
+//    - 5 .kosmos anchor file + KOSMOS-FORMAT.md 변경 0 (UBM-E2 무회귀)
+//    - f1/f2 safe: Knuth Tier 🛸k = anima self-design (g2 internal carve-out)
+//
+//  SSOT: HEXAD/UNIVERSE-BRAIN-MAP/KOSMOS-FORMAT.md (포맷 spec)
+// ════════════════════════════════════════════════════════════════════════════
+
+
+// ── §0 string helpers ────────────────────────────────────────────────────────
+
+// is a 1-char string ASCII whitespace (space / tab / CR)?
+fn kosmos_is_ws(c: string) -> bool {
+    if c == " "  { return true }
+    if c == "\t" { return true }
+    if c == "\r" { return true }
+    return false
+}
+
+// trim leading + trailing ASCII whitespace (space / tab / CR) from a string.
+fn kosmos_trim(s: string) -> string {
+    let n = len(s)
+    if n <= 0 { return "" }
+    let mut a = 0
+    let mut scanning = true
+    while scanning {
+        if a >= n { scanning = false }
+        else {
+            if kosmos_is_ws(s.substring(a, a + 1)) { a = a + 1 }
+            else { scanning = false }
+        }
+    }
+    if a >= n { return "" }       // all-whitespace → empty
+    let mut b = n
+    let mut scan2 = true
+    while scan2 {
+        if b <= a { scan2 = false }
+        else {
+            if kosmos_is_ws(s.substring(b - 1, b)) { b = b - 1 }
+            else { scan2 = false }
+        }
+    }
+    if b <= a { return "" }
+    return s.substring(a, b)
+}
+
+// does line start with a given prefix (after no trim)?
+fn kosmos_starts_with(s: string, prefix: string) -> bool {
+    let ls = len(s)
+    let lp = len(prefix)
+    if lp > ls { return false }
+    return s.substring(0, lp) == prefix
+}
+
+// is the line a comment / blank (skip during parse)?
+fn kosmos_is_skip_line(line: string) -> bool {
+    let t = kosmos_trim(line)
+    if t == "" { return true }
+    if kosmos_starts_with(t, "#") { return true }
+    return false
+}
+
+// strip surrounding double-quotes from a value token, if present.
+fn kosmos_unquote(s: string) -> string {
+    let t = kosmos_trim(s)
+    let n = len(t)
+    if n < 2 { return t }
+    let first = t.substring(0, 1)
+    let last = t.substring(n - 1, n)
+    if first == "\"" {
+        if last == "\"" {
+            return t.substring(1, n - 1)
+        }
+    }
+    return t
+}
+
+
+// ── §1 key=value field parsing ───────────────────────────────────────────────
+//
+// a coord-field line is `  <key> = <value>`. extract key and (raw) value
+// split on the FIRST `=`.
+
+// returns the key (trimmed, lowercased not needed — keys are literal).
+fn kosmos_field_key(line: string) -> string {
+    let eq = line.index_of("=")
+    if eq < 0 { return "" }
+    return kosmos_trim(line.substring(0, eq))
+}
+
+// returns the raw value (trimmed, after the first `=`; trailing `# comment`
+// stripped).
+fn kosmos_field_value(line: string) -> string {
+    let eq = line.index_of("=")
+    if eq < 0 { return "" }
+    let raw = line.substring(eq + 1, len(line))
+    // strip trailing inline `# comment` (KOSMOS-FORMAT.md allows comments
+    // after vacuum_psi / basin_radius). only strip a `#` that is NOT inside
+    // a quoted string — coord values are never quoted-with-#, so a plain
+    // first-# strip is safe for coord fields.
+    let hash = raw.index_of("#")
+    if hash >= 0 {
+        return kosmos_trim(raw.substring(0, hash))
+    }
+    return kosmos_trim(raw)
+}
+
+
+// ── §2 vacuum_psi `[x, y]` pair parsing ──────────────────────────────────────
+//
+// parse a `[x, y]` literal into a 2-element float array. malformed → [].
+
+fn kosmos_parse_psi(raw: string) -> array {
+    let t = kosmos_trim(raw)
+    let n = len(t)
+    if n < 3 { return [] }
+    if t.substring(0, 1) != "[" { return [] }
+    if t.substring(n - 1, n) != "]" { return [] }
+    let inner = t.substring(1, n - 1)
+    let parts = inner.split(",")
+    if len(parts) != 2 { return [] }
+    let x = to_float(kosmos_trim(parts[0]))
+    let y = to_float(kosmos_trim(parts[1]))
+    let mut out = []
+    out = out.push(x)
+    out = out.push(y)
+    return out
+}
+
+
+// ── §3 @payload entry parsing (3-form: inline / ref / pending) ───────────────
+//
+// a payload line is `  @payload <modality> := <body>`.
+//   (a) inline  : := "<inline-string>"
+//   (b) ref     : := ref "<path>" sha256=<h> bytes=<N> [attrs]
+//   (c) pending : := pending "<reason>"
+
+// extract the modality token from a `@payload <modality> := ...` line.
+fn kosmos_payload_modality(line: string) -> string {
+    let t = kosmos_trim(line)
+    // drop the leading "@payload " token
+    if kosmos_starts_with(t, "@payload ") == false { return "" }
+    let rest = kosmos_trim(t.substring(9, len(t)))
+    let assign = rest.index_of(":=")
+    if assign < 0 { return "" }
+    return kosmos_trim(rest.substring(0, assign))
+}
+
+// extract the payload body (everything after `:=`).
+fn kosmos_payload_raw_body(line: string) -> string {
+    let t = kosmos_trim(line)
+    let assign = t.index_of(":=")
+    if assign < 0 { return "" }
+    return kosmos_trim(t.substring(assign + 2, len(t)))
+}
+
+// classify the payload form: "inline" | "ref" | "pending" | "unknown".
+fn kosmos_payload_form(line: string) -> string {
+    let body = kosmos_payload_raw_body(line)
+    if body == "" { return "unknown" }
+    if kosmos_starts_with(body, "ref ") { return "ref" }
+    if kosmos_starts_with(body, "pending ") { return "pending" }
+    if kosmos_starts_with(body, "\"") { return "inline" }
+    return "unknown"
+}
+
+// build a payload record from a `@payload` line:
+//   #{ "modality": str, "form": str, "value": str }
+// for inline → value = the unquoted inline string
+// for ref    → value = the unquoted ref path
+// for pending→ value = the unquoted reason string
+fn kosmos_parse_payload(line: string) -> any {
+    let modality = kosmos_payload_modality(line)
+    let form = kosmos_payload_form(line)
+    let body = kosmos_payload_raw_body(line)
+    let mut value = ""
+    if form == "inline" {
+        value = kosmos_unquote(body)
+    } else {
+        if form == "ref" {
+            // ref "<path>" sha256=... — take the first quoted token
+            let after = kosmos_trim(body.substring(4, len(body)))
+            // after starts with "<path>" — grab up to the closing quote
+            if kosmos_starts_with(after, "\"") {
+                let close = after.substring(1, len(after)).index_of("\"")
+                if close >= 0 {
+                    value = after.substring(1, close + 1)
+                }
+            }
+        } else {
+            if form == "pending" {
+                let after = kosmos_trim(body.substring(8, len(body)))
+                value = kosmos_unquote(after)
+            }
+        }
+    }
+    let rec = #{
+        "modality": modality,
+        "form": form,
+        "value": value
+    }
+    return rec
+}
+
+
+// ── §4 @anchor header parsing ────────────────────────────────────────────────
+//
+// header: `@anchor <id> := "<name>" :: kosmos-anchor [tier=N active]`
+
+fn kosmos_is_anchor_header(line: string) -> bool {
+    let t = kosmos_trim(line)
+    return kosmos_starts_with(t, "@anchor ")
+}
+
+// extract anchor id (token between `@anchor ` and ` :=`).
+fn kosmos_anchor_id(line: string) -> string {
+    let t = kosmos_trim(line)
+    if kosmos_is_anchor_header(t) == false { return "" }
+    let rest = kosmos_trim(t.substring(8, len(t)))
+    let assign = rest.index_of(":=")
+    if assign < 0 { return "" }
+    return kosmos_trim(rest.substring(0, assign))
+}
+
+// extract anchor name (quoted string between `:=` and `::`).
+fn kosmos_anchor_name(line: string) -> string {
+    let t = kosmos_trim(line)
+    let assign = t.index_of(":=")
+    if assign < 0 { return "" }
+    let after = t.substring(assign + 2, len(t))
+    let kk = after.index_of("::")
+    let mut chunk = after
+    if kk >= 0 { chunk = after.substring(0, kk) }
+    return kosmos_unquote(chunk)
+}
+
+
+// ── §5 kosmos_load — full `.kosmos` file → anchor record ─────────────────────
+//
+// kosmos_load reads a `.kosmos` file and builds an anchor record:
+//   #{ "id": str, "name": str, "knuth_tier": int, "category": str,
+//      "top_emotion": str, "vacuum_psi": [x,y], "cell_id": str,
+//      "basin_radius": float, "closed_anchor": str,
+//      "payload_text": str,   "payload_text_form": str,
+//      "payload_image_form": str, "payload_audio_form": str,
+//      "payload_video_form": str, "payload_tension_form": str,
+//      "payload_count": int, "ok": bool }
+//
+// modality payloads are indexed by the standard 5 (text/image/audio/video/
+// tension); the open-enum is preserved per-line but the record exposes the
+// 5 standard form-slots + the inline text value.
+
+fn kosmos_load(path: string) -> any {
+    let body = read_file(path)
+    let lines = body.split("\n")
+    let nlines = len(lines)
+
+    let mut rec = #{
+        "id": "",
+        "name": "",
+        "knuth_tier": 0,
+        "category": "",
+        "top_emotion": "",
+        "vacuum_psi": [],
+        "cell_id": "",
+        "basin_radius": 0.0,
+        "closed_anchor": "",
+        "payload_text": "",
+        "payload_text_form": "",
+        "payload_image_form": "",
+        "payload_audio_form": "",
+        "payload_video_form": "",
+        "payload_tension_form": "",
+        "payload_count": 0,
+        "ok": false
+    }
+
+    let mut saw_anchor = false
+    let mut pcount = 0
+    let mut i = 0
+    while i < nlines {
+        let line = lines[i]
+        if kosmos_is_skip_line(line) {
+            i = i + 1
+        } else {
+            let t = kosmos_trim(line)
+            if kosmos_is_anchor_header(t) {
+                rec["id"] = kosmos_anchor_id(t)
+                rec["name"] = kosmos_anchor_name(t)
+                saw_anchor = true
+            } else {
+                if kosmos_starts_with(t, "@payload ") {
+                    let pl = kosmos_parse_payload(t)
+                    let m = to_string(pl["modality"])
+                    let f = to_string(pl["form"])
+                    let v = to_string(pl["value"])
+                    pcount = pcount + 1
+                    if m == "text" {
+                        rec["payload_text"] = v
+                        rec["payload_text_form"] = f
+                    }
+                    if m == "image"   { rec["payload_image_form"] = f }
+                    if m == "audio"   { rec["payload_audio_form"] = f }
+                    if m == "video"   { rec["payload_video_form"] = f }
+                    if m == "tension" { rec["payload_tension_form"] = f }
+                } else {
+                    // coord-field key=value line
+                    let key = kosmos_field_key(t)
+                    let val = kosmos_field_value(t)
+                    if key == "knuth_tier"   { rec["knuth_tier"] = to_int(val) }
+                    if key == "category"     { rec["category"] = kosmos_unquote(val) }
+                    if key == "top_emotion"  { rec["top_emotion"] = kosmos_unquote(val) }
+                    if key == "vacuum_psi"   { rec["vacuum_psi"] = kosmos_parse_psi(val) }
+                    if key == "cell_id"      { rec["cell_id"] = kosmos_unquote(val) }
+                    if key == "basin_radius" { rec["basin_radius"] = to_float(val) }
+                    if key == "closed_anchor" { rec["closed_anchor"] = kosmos_unquote(val) }
+                }
+            }
+            i = i + 1
+        }
+    }
+
+    rec["payload_count"] = pcount
+    // ok = anchor header parsed + tier in range + vacuum_psi 2-pair +
+    //      basin_radius positive + at least the text payload present.
+    let tier = to_int(rec["knuth_tier"])
+    let tier_ok = (tier >= 0) && (tier <= 100)
+    let psi_ok = len(rec["vacuum_psi"]) == 2
+    let radius_ok = to_float(rec["basin_radius"]) > 0.0
+    let text_ok = to_string(rec["payload_text"]) != ""
+    rec["ok"] = saw_anchor && tier_ok && psi_ok && radius_ok && text_ok
+    return rec
+}
+
+
+// ── §6 kosmos_payload — modality payload lookup ──────────────────────────────
+//
+// kosmos_payload(anchor, modality) → the payload value/form for a modality.
+// returns #{ "modality", "form", "value" }. unknown modality → form "void".
+
+fn kosmos_payload(anchor: any, modality: string) -> any {
+    let mut form = "void"
+    let mut value = ""
+    if modality == "text" {
+        form = to_string(anchor["payload_text_form"])
+        value = to_string(anchor["payload_text"])
+    }
+    if modality == "image"   { form = to_string(anchor["payload_image_form"]) }
+    if modality == "audio"   { form = to_string(anchor["payload_audio_form"]) }
+    if modality == "video"   { form = to_string(anchor["payload_video_form"]) }
+    if modality == "tension" { form = to_string(anchor["payload_tension_form"]) }
+    if form == "" { form = "void" }
+    let rec = #{
+        "modality": modality,
+        "form": form,
+        "value": value
+    }
+    return rec
+}
+
+// kosmos_anchor_valid: closed predicate — anchor record well-formed.
+fn kosmos_anchor_valid(anchor: any) -> bool {
+    return to_string(anchor["ok"]) == "true"
+}

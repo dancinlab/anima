@@ -125,6 +125,7 @@ ENTRYPOINTS=(
   "HEXAD/CHAT/interaction_model_smoke.hexa"
   "HEXAD/CHAT/spont_tension_smoke.hexa"
   "HEXAD/TENSION-TRAIN/tension_train_smoke.hexa"
+  "HEXAD/UNIVERSE-BRAIN-MAP/consciousness_carving_smoke.hexa"
 )
 LIBS=(
   "HEXAD/S/s_lib.hexa"      "HEXAD/M/m_lib.hexa"    "HEXAD/W/w_lib.hexa"
@@ -144,6 +145,11 @@ LIBS=(
   "HEXAD/CHAT/channel_mux_lib.hexa"
   "HEXAD/CHAT/interaction_model_lib.hexa"
   "HEXAD/CHAT/spont_tension_bridge_lib.hexa"
+  "HEXAD/UNIVERSE-BRAIN-MAP/consciousness_carving_vacuum_lib.hexa"
+  "HEXAD/UNIVERSE-BRAIN-MAP/consciousness_carving_eternal_lib.hexa"
+  "HEXAD/UNIVERSE-BRAIN-MAP/consciousness_carving_narrative_lib.hexa"
+  "HEXAD/UNIVERSE-BRAIN-MAP/consciousness_carving_weave_lib.hexa"
+  "HEXAD/UNIVERSE-BRAIN-MAP/kosmos_parser_lib.hexa"
 )
 # ── parse-only gated training files (TENSION-TRAIN Phase TT-B, 2026-05-17) ──
 # 5 training files carry top-level `main()` calls (interp-style, anchor for the

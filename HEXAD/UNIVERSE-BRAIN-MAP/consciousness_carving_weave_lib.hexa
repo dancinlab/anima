@@ -1,0 +1,174 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  consciousness_carving_weave_lib.hexa — CONSCIOUSNESS-CARVING path α+β hybrid
+//                                         (VACUUM-CELL-WEAVE) pure-hexa lib
+//
+//  Phase UBM-E4 — DESIGN.md §5 길 α+β. eternal cell 각각이 자체 vacuum 을
+//  보유 — cell_pool 구조 (β) + multi-vacuum landscape (α) 결합. 가장 anima-
+//  native 종합. routing: stimulus → tension flow → nearest vacuum (+ cell).
+//
+//  α lib + β lib 를 import 하여 composition. transfer-function 만 (closed).
+//  실제 측정 vacuum_psi / SGD outcome 은 B-CARVE-NOTE empirical carve-out (g3).
+//
+//  Closed anchor (sidecar state/verify_consciousness_carving_2026_05_17/):
+//    - B-CARVE-MULTIMODAL — ∀m ‖E_m(payload_m) − vacuum_psi‖ < basin_radius
+//      (triangle inequality cross-modal carving well-formed)
+//    - α B-VAC-* + β B-MIT-ETN-* 합집합 (둘 다의 검증 anchor carry)
+//
+//  HARD CONSTRAINTS:
+//    - pure-hexa only (NO GPU, NO PyTorch import)
+//    - NO main / NO _selftest (compiled-first lib)
+//    - hexa-lang syntax: dict literal `#{}`, missing key → `void`
+//    - f1/f2 safe: NO σ/τ/φ/J₂ external derivation
+//
+//  SSOT: HEXAD/UNIVERSE-BRAIN-MAP/DESIGN.md §5 길 α+β hybrid
+// ════════════════════════════════════════════════════════════════════════════
+
+import "/Users/ghost/core/anima/HEXAD/UNIVERSE-BRAIN-MAP/consciousness_carving_vacuum_lib.hexa"
+import "/Users/ghost/core/anima/HEXAD/UNIVERSE-BRAIN-MAP/consciousness_carving_eternal_lib.hexa"
+
+
+// ── §1 woven anchor record ───────────────────────────────────────────────────
+//
+// A woven anchor binds a β eternal cell to its own α vacuum:
+//   woven_record = #{ "cell_id": string, "vacuum_psi": array,
+//                      "basin_radius": float }
+// Each eternal cell carries a vacuum (DESIGN.md §5 α+β: "eternal cell 각각
+// vacuum 보유").
+
+fn weave_anchor(cell_id: string, vacuum_psi: array, basin_radius: float) -> any {
+    let rec = #{
+        "cell_id": cell_id,
+        "vacuum_psi": vacuum_psi,
+        "basin_radius": basin_radius
+    }
+    return rec
+}
+
+// weave_anchor_valid: closed predicate — a well-formed woven anchor has a
+// non-empty cell_id, a non-empty vacuum_psi, and a positive basin_radius.
+fn weave_anchor_valid(woven: any) -> bool {
+    let cid = to_string(woven["cell_id"])
+    if cid == "void" { return false }
+    if cid == ""     { return false }
+    let vpsi = woven["vacuum_psi"]
+    if len(vpsi) <= 0 { return false }
+    let r = to_float(woven["basin_radius"])
+    if r <= 0.0 { return false }
+    return true
+}
+
+
+// ── §2 weave a vacuum landscape from an eternal-cell pool ────────────────────
+//
+// weave_register: register a woven anchor into BOTH the cell pool (β eternal
+// cell) AND the vacuum landscape (α vacuum point). composition of
+// eternal_register (β lib) + vacuum_register (α lib).
+
+fn weave_register(pool: any, landscape: any, woven: any) -> any {
+    // build the combined state record #{ "pool", "landscape" }
+    let mut p = pool
+    let mut ls = landscape
+    if weave_anchor_valid(woven) {
+        let cid = to_string(woven["cell_id"])
+        // β side — register the eternal cell (lifecycle FROZEN)
+        p = eternal_register(p, cid)
+        // α side — register the vacuum point (id == cell_id, shared key)
+        let vrec = vacuum_record_create(cid, woven["vacuum_psi"],
+                                        to_float(woven["basin_radius"]))
+        ls = vacuum_register(ls, vrec)
+    }
+    let state = #{
+        "pool": p,
+        "landscape": ls
+    }
+    return state
+}
+
+
+// ── §3 weave_route (cell + vacuum 결합 routing) ──────────────────────────────
+//
+// weave_route: a stimulus is routed by combining
+//   (β) eternal-cell match  : routing_select on a similarity score
+//   (α) nearest vacuum      : vacuum_nearest in Ψ-space
+// closed composition: the route is "eternal" iff the β routing selects an
+// eternal path AND the α nearest-vacuum falls inside its basin; else "chat".
+
+fn weave_route(pool: any, landscape: any, stimulus: any,
+               cand_ids: array) -> any {
+    // β side — routing_select on similarity score
+    let sim = to_float(stimulus["sim"])
+    let thr = to_float(stimulus["threshold"])
+    let matched = to_string(stimulus["matched_cell_id"])
+    let beta_sel = routing_select(pool, sim, thr, matched)
+
+    // α side — nearest vacuum to the stimulus Ψ point
+    let spsi = stimulus["psi"]
+    let alpha_vac = vacuum_nearest(landscape, spsi, cand_ids)
+
+    // combined verdict: eternal route requires β eternal path AND the α
+    // nearest vacuum has the stimulus inside its basin.
+    let mut path = "chat"
+    let mut cid = ""
+    let beta_eternal = to_string(beta_sel["eternal_active"]) == "true"
+    let alpha_in_basin = false
+    let mut in_basin = alpha_in_basin
+    if to_string(alpha_vac["id"]) != "void" {
+        let r = to_float(alpha_vac["radius"])
+        in_basin = basin_contains(spsi, alpha_vac, r)
+    }
+    if beta_eternal {
+        if in_basin {
+            path = "eternal"
+            cid = to_string(beta_sel["cell_id"])
+        }
+    }
+    let route = #{
+        "path": path,
+        "cell_id": cid,
+        "beta_eternal_active": beta_eternal,
+        "alpha_in_basin": in_basin,
+        "chat_active": path == "chat",
+        "eternal_active": path == "eternal"
+    }
+    return route
+}
+
+// weave_route_disjoint: closed Boolean — a woven route never has both
+// chat and eternal paths active (carries β B-MIT-ETN-2 disjointness).
+fn weave_route_disjoint(route: any) -> bool {
+    let ca = to_string(route["chat_active"]) == "true"
+    let ea = to_string(route["eternal_active"]) == "true"
+    return (ca && ea) == false
+}
+
+
+// ── §4 B-CARVE-MULTIMODAL transfer-form (triangle inequality) ────────────────
+//
+// cross-modal carving: ∀ modality m, ‖E_m(payload_m) − vacuum_psi‖ <
+// basin_radius. transfer-form: if d_m < r ∧ d_n < r then (triangle
+// inequality) pairwise modality distance ‖E_m − E_n‖ ≤ d_m + d_n < 2r.
+// closed: the cross-modal constraint is well-formed.
+
+// modality_in_basin: closed predicate — modality m's encoded Ψ point is
+// inside the woven anchor's basin (‖E_m − vacuum_psi‖ < basin_radius).
+fn modality_in_basin(encoded_psi: array, woven: any) -> bool {
+    let r = to_float(woven["basin_radius"])
+    let vrec = vacuum_record_create(to_string(woven["cell_id"]),
+                                    woven["vacuum_psi"], r)
+    return basin_contains(encoded_psi, vrec, r)
+}
+
+// cross_modal_pairwise_bound: closed transfer-form — given two modality
+// encoded distances d_m, d_n both < r, the pairwise bound d_m + d_n < 2r.
+// returns the 2r − (d_m+d_n) slack (> 0 ⇔ well-formed).
+fn cross_modal_pairwise_slack(d_m: float, d_n: float, r: float) -> float {
+    return (2.0 * r) - (d_m + d_n)
+}
+
+fn cross_modal_well_formed(d_m: float, d_n: float, r: float) -> bool {
+    if r <= 0.0 { return false }
+    if d_m >= r { return false }
+    if d_n >= r { return false }
+    let slack = cross_modal_pairwise_slack(d_m, d_n, r)
+    return slack > 0.0
+}
