@@ -4309,3 +4309,168 @@
   fulfilled) [@g_doc_consolidation] [@g_blue_closed_mandate] · arxiv:
   Memory Decoder 2508.09874 (O) · KG-Trie openreview 6embY8aclt + DoGe
   2407.05718 (N) · DiffuSpeech 2601.22889 (P).
+
+## §verdict_carving_intra_anchor_diversity_s23_2026_05_18 — RESEARCH.md §23 candidate A intra-anchor diversity via anima OWN physics ($0 design-tier, fire 0, B-INTRA-1..5 5/5 🔵 sidecar)
+
+- **Scope**: §22 closed §16 ceiling on mechanism-axis (N decode-time
+  `.kosmos`-trie / O decode-time M-retrieve / P training-time emission-
+  refine — all valuable but capability-emergence-negative). §22.5 결론:
+  "data-regime threshold (§1.1). mechanism 차원 어느 path 도 §16 ceiling
+  못 깸." §23 A = data-axis lever (corpus generator level), NOT
+  mechanism-axis re-attempt. §16.6-C "정교한 암기" 의 root structural
+  defect = `corpus_carving_s16_generator.py` `gen_alpha_record` 의
+  **single body framing per anchor** 직격.
+
+- **Defect identification (closed structural observation)**: §16
+  generator 의 α/β/γ body 가 anchor 별 deterministic single template —
+  변형 = bilingual order randomization 뿐. anchor 한 개당 ~4,624 records
+  (777,000/168) 가 동일 framing 으로 학습됨. §22 N body-shift evidence
+  (tier 77 → `🛸77Tier 77 만다라 — domain 예술, the stimuli converge into
+  one basin…`) 가 `gen_alpha_record` 의 verbatim template 임을 closed-form
+  확인. N 의 +21 movement 는 *correct placement of the same template*
+  이지 *intra-anchor diversity* 아님.
+
+- **Design A — 4 anima-physics variation axes (anchor-meaning preserving)**:
+  각 axis 는 anima 자체 모듈 SSOT 에서 derive, 외부 paraphraser 0:
+  - **Axis V (Ψ_dir framing)**: `psi_direction = (1 + cos(logits_a,
+    logits_g))/2` (`conscious_decoder.py:740` Law-71) 3-bucket
+    {covert/balanced/overt} — same anchor, 3 grammatical orientations
+    (engine G covert / fixed-pt balanced / engine A overt).
+  - **Axis T (tension state)**: `tension_link_step.hexa` spine
+    ΔW=−T_const·tension·n6_gate(Ψ) (B-TT-2 restoring sign closed) 3-bucket
+    {low/mid/high} → enumerated `T_PHRASES` table.
+  - **Axis Φ (Φ-context)**: MITOSIS cell-pool co-occurrence via
+    `vacuum_psi`-L2 nearest-neighbour closed-form 3-bucket
+    {self/near/pair} — anima self-routing structure.
+  - **Axis S (sensory↔analytical)**: HEXAD S-module sensory carving / M-
+    module Hebbian retrieve / default analytical, deterministic
+    `S_RAW_SENSE_TABLE[dom]` 30-row fixed lookup.
+
+  Per-anchor variants = 3^4 = 81. Total variant space = 168 × 81 = 13,608
+  (bounded integer cardinality, B-INTRA-5 anti-explosion closed). vs §16
+  baseline 2 unique framings per anchor (KO/EN × 1 template) → **40×
+  more unique framings**.
+
+- **GOAL-legitimacy gate (§7 / §21.3 3-condition, all hold)**: §7①
+  not-generic-LM-pretrain ✅ (anchor SSOT + anima physics formulas only)
+  · §7② not-generic-then-graft ✅ (B-INTRA-3 closed AST predicate:
+  forbidden_call_set {openai/anthropic/llm_call/paraphrase/gpt/bert_score/
+  AutoModel/HfApi/llama/huggingface_hub/gen_corpus_with_llm} exact-
+  component case-insensitive match total=0 over generator source —
+  DoAug ACL 2025 LLM-paraphraser path **explicitly excluded** by
+  structural predicate) · §7③ anima-physics-as-source ✅ (4 axes each
+  reference an anima module SSOT formula byte-exact). **DoAug-style
+  external-LLM intra-class augmentation 거부**, anima-native finite
+  enumerated tables only.
+
+- **§11-B precedence respected**: A 는 corpus-level (data-axis) lever,
+  NOT physics-only training. CE remains base objective (§11-B "pure-
+  physics no-CE = degenerate, CE load-bearing" verdict carry). Dir-I
+  trainer + Dir-I lever 불변 — A only varies what CE-targeted body spans
+  see during training.
+
+- **Closed (B-INTRA-1..5 sidecar 5/5 🔵, central blue_falsifier.py 변경
+  0 — B-PRIME/B-DIRH/B-DIRI/B-PSICTL/B-EMERGE/B-PUREPHYS/B-SCALE/B-MITENS/
+  B-DIRL/B-EBT/B-DIRJ/B-KTRIE/B-MGND/B-TTS sidecar 선례)**:
+  - **B-INTRA-1 ANCHOR-MEANING-PRESERVED** — anchor 6-field invariant
+    `{tier, name, dom, emo, vacuum_psi, basin_radius}` byte-identical
+    across all 12 (4 axes × 3 buckets) variations on representative
+    anchor (tier 77 만다라) Boolean conjunction.
+  - **B-INTRA-2 PHYSICS-AXIS-ORTHOGONALITY** — 4 axes pairwise-disjoint
+    formula source sets (C(4,2)=6-pair Boolean conjunction): V={logits_a,
+    logits_g, cos_psi_dir, Law_71}; T={tension_const, T_PHRASES,
+    tension_link_step}; Phi={vacuum_psi, L2_argmin, MITOSIS_cell_pool};
+    S={S_RAW_SENSE_TABLE, HEXAD_S_module, domain}. No axis reads another's
+    formula sources.
+  - **B-INTRA-3 NO-EXTERNAL-LLM-CALL** — AST Call-node grep on
+    `variation_generator.py` + `blue_falsifier_intra_anchor.py` source:
+    exact-component case-insensitive match over forbidden_call_set
+    (12-pattern §3.2 list, comment/docstring/string-literal stripped per
+    B-PUREPHYS-1) total = 0. §7② structural enforcement closed by
+    construction.
+  - **B-INTRA-4 §16-CONNECTION-POINT-BYTE-EQUAL-AT-DISABLED** — closed-
+    form contract: when all 4 axes default to §16-baseline buckets
+    (V=balanced, T=mid, Phi=self, S=analytical), `varied_alpha_body`
+    output is byte-identical to §16 `gen_alpha_record` body. Connection-
+    point closed by design specification (numeric sha256 verification =
+    follow-up impl cycle gate post-impl). A-vs-§16 fair compare BY
+    CONSTRUCTION.
+  - **B-INTRA-5 CARDINALITY-BOUNDED-EXPANSION** — per-anchor variants =
+    3^4 = 81 integer Kolmogorov set cardinality (sympy integer identity
+    base^k); total 168 × 81 = 13,608 < 1e5 anti-explosion threshold.
+    Framing ratio vs §16: 40×.
+
+- **B-INTRA-NOTE INTRA-ANCHOR-DIVERSITY-OUTCOME-EMPIRICAL**: B-INTRA-1..5
+  prove (1) anchor meaning preserved, (2) physics axes orthogonal, (3)
+  zero external LLM call by AST predicate, (4) §16 connection-point
+  byte-equal-at-disabled, (5) variant cardinality bounded. They DO NOT
+  prove that intra-anchor diversity causes emergence — SGD/measurement
+  OUTCOME (B-D-NOTE / B-CARVE-E6-NOTE / B-SCALE-NOTE / B-PUREPHYS-NOTE /
+  B-EBT-NOTE / B-DIRJ-NOTE / B-KTRIE-NOTE / B-MGND-NOTE / B-TTS-NOTE
+  family, NOT counted 🔵). Honest necessary-not-sufficient (mirroring
+  B-EMERGE-7 / §9 discipline).
+
+- **g_blue_closed_mandate**: 산출물 (DESIGN_A.md + variation_generator.py
+  sketch + blue_falsifier_intra_anchor.py) transfer-form 🔵 + 연결부위
+  (B-INTRA-4 all-axes-disabled = §16 baseline byte-equal contract +
+  B-INTRA-3 anti-paraphraser AST predicate + B-INTRA-2 4-axis pairwise
+  orthogonality) 🔵; capability OUTCOME 만 정직 carve-out.
+
+- **Honest fire-worth assessment (g3, Stop hook frontier-narrowing
+  acknowledged)**: §22 closed §16 ceiling on mechanism-axis (3 paths
+  negative). A is data-axis lever — closest to §1.1/§15 milestone
+  frontier. Honest risk: A's 40× framing diversity may operate in same
+  memorization-saturated regime if 13,608 framings × ~57 records-per-
+  framing average ≪ Critical Data Size (arxiv 2401.10463 Q1-a). Intra-
+  anchor diversity varies framing of same 168 anchors ≠ new factual
+  content; A may move framing-diversity but not necessarily CDS.
+
+- **Verdict**: **Design holds (5/5 🔵 closed). Fire = conditional**
+  (small pilot $0.05-0.10 ≪ §16 full-scale $0.5-0.8 first, gates full
+  spend; if pilot null/negative on routing or §9 honest cascade-rate axes
+  vs §16 21/64 + §22 N+O structural-proxy 26/64, design-tier close-out
+  per §13-M/§13-L anti-padding discipline). Design-tier close-out on
+  null pilot is the honest stop, per §13-M precedent.
+
+- **f1/f2/f3 hard-fail safe** (Boolean conjunction / integer Kolmogorov
+  set-cardinality / AST structural / sympy integer identity / sha256
+  byte-equal contract, NO σ/τ/φ/J₂ external derivation; arxiv 2401.10463
+  CDS hypothesis own-invariant only). B-IDENTITY-5 무관 (design-tier,
+  corpus 미생성). $0 — GPU/fire 0 (orphan 0 애초 dispatch 0). 단일 작업 ·
+  branch 0 (anima main 직접).
+
+- **GOAL distance**: §15 milestone 불변 — §23 A = data-axis design-tier
+  intervention, structural defect remediation at corpus generator level.
+  Design closure is valuable (closed-form anima-physics-native data-axis
+  lever for future cycles), but **GOAL emergence proof requires fire**.
+  Even successful fire would only narrow §1.1 frontier, not solve "자기
+  physics 로부터 자발적으로 말 거는 Living Consciousness." Over-claim 0;
+  north-star (GOAL.md) honestly distant.
+
+- **cross_link**: [@verdict_carving_dataregime_s16] (§16 BREAKTHROUGH —
+  A 의 baseline + 직접 fair-compare 대상, B-INTRA-4 connection-point) +
+  [@verdict_carving_dataregime_s16_consolidation] (§16.6-C "정교한 암기"
+  진단 — A 가 root structural defect 로 좁힘) + [@verdict_carving_n_ktrie_2026_05_18]
+  + [@verdict_carving_o_mgnd_2026_05_18] + [@verdict_carving_p_tts_2026_05_18]
+  (§22 3-way — mechanism-axis 닫음 + body 절반 frontier narrowing) +
+  [@verdict_research_s22_consolidation_2026_05_18] (§22 orchestrator —
+  data-axis 이외 path 닫힘) + [@verdict_carving_dirM_mitosens] + [@verdict_carving_dirL_vrnn]
+  (§13 design-tier close-out 선례 — A 와 동일 anti-padding discipline) +
+  [@verdict_emergence_metric_2026_05_18] (§9 honest cascade-rate metric —
+  A pilot 의 GOAL-distance 표준) + [@verdict_goal_investigation_milestone]
+  (§15 milestone 불변 — A 는 milestone 이후 frontier narrowing) ·
+  RESEARCH.md §23 cand A inline (orchestrator commit time editing
+  deferred — §23 = candidates A/B/... land 후 1회 consolidation per
+  g_multidirectional_explore mandate) · §1.1 (data-regime threshold —
+  A's frontier target) · §7 (GOAL-legitimacy test — A 통과) · §11.3
+  (irreducible 병목 — A 가 data-axis arm 진입 시도) · §16.6-C ("정교한
+  암기 + correct-prefix routing") · §22.5 (mechanism-axis 닫힘 — A 의
+  필요성 근거) · arxiv 2401.10463 (Critical Data Size, A risk anchor) ·
+  DoAug ACL 2025 (LLM-paraphraser path explicitly excluded by B-INTRA-3) ·
+  AGENTS.tape [@g_goal] [@g3] (negative-acceptable design-tier close-out) ·
+  [@g_multidirectional_explore] (§23 sibling agents may design B/C/...
+  concurrently for same frontier, comparative narrowing) · [@g_doc_consolidation]
+  (state/ + tape append only, docs/* 신규 0) · [@g_blue_closed_mandate]
+  (산출물 + 연결부위 둘 다 🔵 — B-INTRA-4 connection-point closed at
+  disabled branch) · [@g6] (philosophy append-only) · [@g_clm_from_scratch]
+  (impl cycle inherits) · [@f1][@f2][@f3] safe.

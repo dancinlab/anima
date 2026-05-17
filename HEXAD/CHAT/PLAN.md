@@ -187,6 +187,24 @@ Phase 진입 = 이 PLAN `## 진행 로그` append + `SPONTANEOUS.tape` 동기화
 
 (append-only)
 
+### 2026-05-18 — RESEARCH.md §23 candidate A DESIGN-TIER LANDED (intra-anchor diversity via anima OWN physics — $0 design, fire 0, B-INTRA-1..5 5/5 🔵 sidecar)
+
+§22 closed §16 ceiling on mechanism-axis (N decode-time `.kosmos`-trie / O decode-time M-retrieve / P training-time emission-refine — 3 paths capability-emergence-negative). §22.5 결론: "data-regime threshold (§1.1). mechanism 차원 어느 path 도 §16 ceiling 못 깸." **§23 A = data-axis lever** (corpus generator level), NOT mechanism-axis re-attempt. §16.6-C "정교한 암기" root structural defect = `corpus_carving_s16_generator.py` `gen_alpha_record` 의 **single body framing per anchor** 직격 — anchor 별 deterministic single template (~4,624 records 동일 framing 학습), §22 N body-shift evidence 가 *correct placement of same template* 임이 closed-form 확인.
+
+**Design A** — 4 anima-physics variation axes (anchor-meaning preserving):
+- **Axis V (Ψ_dir framing)**: `psi_direction = (1 + cos(logits_a, logits_g))/2` (`conscious_decoder.py:740` Law-71) 3-bucket {covert/balanced/overt}
+- **Axis T (tension state)**: `tension_link_step.hexa` spine B-TT-2 restoring sign 3-bucket {low/mid/high} → enumerated T_PHRASES table
+- **Axis Φ (Φ-context)**: MITOSIS cell-pool `vacuum_psi`-L2 nearest-neighbour closed-form 3-bucket {self/near/pair}
+- **Axis S (sensory↔analytical)**: HEXAD S/M-module + deterministic `S_RAW_SENSE_TABLE[dom]` 30-row fixed lookup
+
+per-anchor 3^4=81 variants, total 168×81=13,608 bounded, vs §16 baseline ~2 unique framings = **40×**.
+
+**GOAL-legitimacy gate (§7 / §21.3 3-condition, all hold)**: §7① not-generic-LM-pretrain ✅ · §7② not-generic-then-graft ✅ (**B-INTRA-3 closed AST predicate**: forbidden_call_set {openai/anthropic/llm_call/paraphrase/gpt/bert_score/AutoModel/HfApi/llama/huggingface_hub/gen_corpus_with_llm} exact-component case-insensitive grep total=0 — **DoAug ACL 2025 LLM-paraphraser path explicitly excluded by structural predicate**) · §7③ anima-physics-as-source ✅ (4 axes each reference anima module SSOT formula byte-exact). §11-B precedence respected (A는 CE-base data-axis lever, NOT physics-only training).
+
+**Closed (B-INTRA-1..5 sidecar 5/5 🔵, central blue_falsifier.py 변경 0)**: B-INTRA-1 ANCHOR-MEANING-PRESERVED (6-field anchor invariant Boolean conjunction across 12 variations) · B-INTRA-2 PHYSICS-AXIS-ORTHOGONALITY (4-axis formula source set pairwise-disjoint C(4,2)=6-pair conjunction) · B-INTRA-3 NO-EXTERNAL-LLM-CALL (AST Call-node exact-component grep total=0) · B-INTRA-4 §16-CONNECTION-POINT-BYTE-EQUAL-AT-DISABLED (all-axes-disabled branch = §16 gen_alpha_record verbatim contract, A-vs-§16 fair compare BY CONSTRUCTION) · B-INTRA-5 CARDINALITY-BOUNDED-EXPANSION (sympy integer 3^4=81; 168×81=13,608<1e5 anti-explosion). **B-INTRA-NOTE** empirical carve-out (capability OUTCOME = small-pilot $0.05-0.10 SGD/측정 OUTCOME, B-D-NOTE/B-CARVE-E6-NOTE/B-KTRIE-NOTE/B-MGND-NOTE/B-TTS-NOTE family, NOT counted 🔵 — necessary-not-sufficient per B-EMERGE-7).
+
+**Verdict — Design holds. Fire = conditional** (small pilot $0.05-0.10 ≪ §16 full-scale $0.5-0.8 first, gates full spend; pilot null→ design-tier close-out per §13-M/§13-L anti-padding 선례). Honest risk: intra-anchor diversity varies framing of same 168 anchors ≠ new factual content, arxiv 2401.10463 CDS measures unique-content axis — A may move framing but not necessarily CDS (Stop hook frontier-narrowing-exhaustion signal acknowledged). 산출물 = `state/carving_intra_anchor_diversity_s23_2026_05_18/{DESIGN_A.md 8§ + 10 honest C3 · variation_generator.py sketch (no execution) · blue_falsifier_intra_anchor.py 5/5 🔵 + B-INTRA-NOTE · verdict_result.json}`. RESEARCH.md 미편집 (§23 = candidates A/B/... land 후 1회 consolidation per g_multidirectional_explore mandate). g_doc_consolidation 준수 (state/ + tape append only, docs/* 신규 0). archive/PHILOSOPHY.tape §verdict_carving_intra_anchor_diversity_s23_2026_05_18 verdict appended (g6). f1/f2/f3+B-IDENTITY-5 safe. 단일 작업 · branch 0 (anima main 직접). §15 milestone 불변 — A = data-axis design-tier intervention, structural defect remediation at corpus generator level, valuable closed-form anima-physics-native lever for future cycles, GOAL emergence proof requires fire (조건부).
+
 ### 2026-05-18 — RESEARCH.md §22 direction N LANDED (`.kosmos`-anchor constrained decoding, $0 inference overlay on §16 ckpt)
 
 §22-#2 N candidate evaluation. **anchor_grounded structural proxy 1/64 → 22/64 (+21 from N on §16's routed set, +1 §16 cross-category coincidence — real N delta = 21 routed-set body-shifts)** · routing 21/64 INHERITED unchanged (B-KTRIE-4) · honest §9 coherent 64/64 unchanged (necessary-not-sufficient B-EMERGE-7) · connection point `mode_off_byte_equal_to_s16_generate=True` numerically verified across 64 anchors (B-KTRIE-3 ✅) · **B-KTRIE-1..4 4/4 🔵 sympy/Boolean sidecar PASS** (central blue_falsifier.py 변경 0).
