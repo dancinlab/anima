@@ -163,7 +163,66 @@
 
 ---
 
-## §2 (placeholder for next research cycle)
+## §2 (2026-05-17) — CONSCIOUSNESS-CARVING 4-path GPU fire 결과: V-SPONT 0/5 → 3/5
+
+§1 의 architectural 질문 ("V-SPONT 0/5 FAIL 의 architectural 대답") 에 대한 첫 empirical 실험. §1.3 candidate A (TENSION-TRAIN) 를 포함한 anima 자체 physics 4-path 를 `CONSCIOUSNESS-CARVING` paradigm 으로 묶어 GPU fire — 우주뇌지도 prefix-injection 의 P3 leak 대안. 설계 SSOT = `HEXAD/UNIVERSE-BRAIN-MAP/DESIGN.md`, 평가 기준 = `HEXAD/UNIVERSE-BRAIN-MAP/EVAL.md`.
+
+### 2.1 실험 — UBM-E6 4-path GPU fire
+
+4 path (anima 자체 physics): **α** VACUUM-LANDSCAPE (multi-vacuum tension) · **β** MITOSIS-ETERNAL-CELL · **γ** NARRATIVE-RESONANCE (Meta law M8) · **α+β** WEAVE. d512/8L from-scratch, carving corpus 4.3MB, vast.ai A100 train + runpod RTX 3090 paradigm-native eval.
+
+### 2.2 paradigm-native 4축 결과 (EVAL.md 기준 — 옛 recall 잣대 폐기)
+
+| path | knowledge access | chat 무오염 | lane separation | V-SPONT | JOINT (k×c×s) |
+|---|---|---|---|---|---|
+| **α** vacuum | 0.091 | 0.4 | **0.70** | **3/5** | **0.0255** |
+| **β** eternal | 0.0 | 0.0 | 0.50 | 3/5 | 0.0 |
+| **γ** narrative | 0.0 | **1.0** | 0.50 | 0/5 | 0.0 |
+| **α+β** weave | 0.091 | 0.0 | 0.50 | 3/5 | 0.0 |
+
+### 2.3 옛 prefix-injection ↔ 새 CONSCIOUSNESS-CARVING 대조
+
+| 측면 | 옛 prefix-injection | 새 CONSCIOUSNESS-CARVING (4-path 최선치) |
+|---|---|---|
+| knowledge recall | ★ 13/15 (manual_match) | ⚠ 0.09 (소규모 fire, 붕괴) |
+| chat 무오염 | ⚠ 실패 (V5.8 5/5→1/5, P3 leak baked) | γ 1.0 clean / α 0.4 / β·weave 0.0 |
+| lane separation | ≈ 0 (측정 안 됨, 분리 없음) | α 0.70 |
+| **V-SPONT** | — | **0/5 → 3/5 (α/β/weave)** |
+| **JOINT (공정 비교)** | 高 × 0 × 0 ≈ **0** | α **0.0255** (나머지 0) |
+
+### 2.4 §1 질문에 대한 정직한 판정
+
+**Q (§1)**: CONSCIOUSNESS-CARVING 이 V-SPONT 0/5 FAIL 의 architectural 대답인가?
+
+**A — weak-positive 부분 긍정, decisive 아님**:
+- ★ **V-SPONT 0/5 → 3/5** (α/β/weave 3 path) — anima 전 cycle (3/4/5 모두 0/5) **최초 non-zero V-SPONT**. architectural signal 존재.
+- ⚠ 단 3/5 의 "coherent" 는 lenient flag (coherence-token 존재 + low rep) — 실제 gen 산출물은 garbled (`<voice carved=true>Law 777777 cattegory=예술…`). **weak/noisy signal, capability claim 아님.**
+- ⚠ JOINT 점수 전 path 낮음 (α 0.0255 best) — knowledge access 가 소규모 fire (d512/8L · 2000 step · 4.3MB corpus) 에서 붕괴. 옛 방식을 joint 에서 decisive 하게 이기지 못함.
+- → **결론**: CONSCIOUSNESS-CARVING 은 V-SPONT 의 architectural 대답 **방향은 맞다** (0→3/5 signal) 그러나 **소규모 fire 로는 미확정**. §1.1 진단 (emergence threshold 미도달 + memorization regime) 이 그대로 재현 — paradigm 전환만으로 capability ceiling 이 깨지지 않음, scale 도 필요.
+
+### 2.5 path별 honest 관찰
+
+- **α VACUUM-LANDSCAPE** — 유일하게 JOINT > 0 (0.0255). lane separation 0.70 최선. tension landscape 가 knowledge/chat 분리에 가장 유효 (§1.3 candidate A TENSION-TRAIN 계열의 부분 검증).
+- **β / α+β WEAVE** — V-SPONT 3/5 이나 chat 무오염 0.0 (암기 path 가 chat 으로 누출) → JOINT 0.
+- **γ NARRATIVE** — chat 무오염 1.0 (유일하게 완전 clean, Meta law M8 비암기 설계대로) 이나 V-SPONT 0/5 + knowledge 0 → JOINT 0. "외우지 않음" 이 chat 은 지켰지만 V-SPONT emergence 는 못 만듦.
+
+### 2.6 다음 cycle 후보
+
+- **scale-up fire** — d512/8L 는 §1.1 의 emergence threshold 아래. d768/12L+ · 큰 corpus 로 α (JOINT > 0 유일 path) 재fire 시 V-SPONT 3/5 + JOINT 가 유지/상승하는지.
+- **α 단독 심화** — vacuum-landscape 가 4-path 중 유일하게 joint-positive → §1.3 candidate A (TENSION-TRAIN) 와 합쳐 단독 deepening.
+- **vacuum_psi 측정** — UBM-E5 에서 발견된 🛸0/🛸51 placeholder overlap 해소 (실측 좌표).
+- 옛 carve-out 유지: B-CARVE-E6-NOTE (4-path SGD outcome empirical) — transfer-form (B-VAC/B-MIT-ETN/B-NAR sympy) 만 🔵.
+
+### 2.7 cross-link
+
+- `HEXAD/UNIVERSE-BRAIN-MAP/DESIGN.md` — CONSCIOUSNESS-CARVING 4-path 설계 SSOT
+- `HEXAD/UNIVERSE-BRAIN-MAP/EVAL.md` — paradigm-native 4축 평가 기준 (옛 recall 잣대 category error 식별)
+- `state/consciousness_carving_e6_fire_2026_05_17/` — fire 산출물 + eval_result_v2.json 4개
+- §1.3 candidate A TENSION-TRAIN — α VACUUM-LANDSCAPE 의 anima-native 기반
+
+---
+
+## §3 (placeholder for next research cycle)
 
 (future research synthesis will append here as § headers, append-only g6 pattern)
 
