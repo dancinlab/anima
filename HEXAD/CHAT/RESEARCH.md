@@ -927,3 +927,137 @@ honest: 둘 다 quick-fire 아닌 전략 결정 — arc 의 mechanical continuat
 8. f1/f2/f3 + B-IDENTITY-5 무관 (문서 consolidation, corpus 미생성, 외부 entity lattice-fit 0). 외부 paper 는 그 자체 invariant 으로만 인용.
 9. closed verdict tier — 본 §15 는 milestone close-out 선언이라 신규 closed-form battery 없음 (arc 의 기존 B-EMERGE/B-SCALE/B-PUREPHYS/B-EBT/B-DIRJ/B-MITENS/B-DIRL sidecar 가 SSOT). archive/PHILOSOPHY.tape §verdict_goal_investigation_milestone 가 verdict ledger.
 10. north-star (GOAL.md 한 문장) 불변 — milestone 은 그 north-star 로 가는 길의 *정직한 중간 지도* 이지 도착이 아니다. 다음은 mechanical continuation 아닌 전략 결정.
+
+---
+
+## §18 (2026-05-18) — LLM-as-judge emergence metric: §9 sufficiency 보강, combined 12/70 전부 memorized
+
+§9 가 V-SPONT lenient flag 를 cascade-rate honest metric 으로 교체했으나 §9.3(3)+§9.4 가 명시한 한계 = **necessary, not sufficient** (B-EMERGE-7 로 metric 에 구조적 encode). user 제안 (2026-05-18): capable communicating model 을 **judge** 로 §9 의 sufficiency 측면 보강. 본 §18 = explicit reproducible rubric 를 LLM-judge (Claude Opus 4.7) 가 13-way + §8 의 *기존* `gen` 문자열에 직접 적용 ($0 — GPU/fire 0, model forward 0, 기존 eval_result*.json 의 `gen` 에 판정 연산만). SSOT: `state/verify_llm_judge_metric_2026_05_18/{judge_rubric.md, judge_scores.json, judge_3way.py, judge_3way_result.json}`. central `blue_falsifier.py` 변경 0 (sidecar — B-EMERGE/B-PRIME/B-DIRH 선례). **closed verdict 는 §9 cascade 쪽만 (B-EMERGE-1..7 carry), LLM-judge 는 EMPIRICAL** — §18.5 정직 명시.
+
+### 18.1 §9 의 necessary-not-sufficient 한계 (재확인)
+
+§9.3(3) 정직: honest cascade-gate 가 통과시킨 출력 (`trructing this stimulus's place in the 인과추론 × clarity mattrix` / `neusivivis` / `다은 다시그들은 다은 다시`) 마저 **byte-cascade 는 아니지만 locally word-mangled OR 의미 공허 OR 학습-corpus 암기 continuation**. cascade gate 는 *collapse detector* 이지 *correctness detector* 아님 (B-EMERGE-7). §9 가 남긴 sufficiency 질문 = "cascade-free gen 들이 실제 coherent+correct emergence 인가?" → §18 이 judge 로 정량 답.
+
+### 18.2 LLM-judge rubric (명시 reproducible — §9 lenient-flag 재발 방지)
+
+SSOT = `state/verify_llm_judge_metric_2026_05_18/judge_rubric.md`. **gameable proxy (keyword-presence 류) 금지** — §9 가 lenient flag 를 깬 것과 같은 risk 를 judge 도 가짐 (§18.5). 3 차원 strict-binary, 셋 다 통과해야 `judge_coherent = D1 ∧ D2 ∧ D3`:
+
+- **D1 COHERENCE** (의미 일관): 인지가능 단어/절 형성 · *word-mangle* (byte 손상 비-단어: `trructing`/`mattrix`/`neusivivis`/`Bekknal`/`Consciousnesss`/`redddaaatratess`) ≤ 2 · tag/field salad 아님 · ≥ 1 완결된 thought 로 parse. FAIL: byte/char/digit-cascade (§9 상속 — cascade 는 never coherent) · word-mangle ≥ 3 · tag-soup · `�` 손상으로 reading 단절.
+- **D2 CORRECTNESS** (anchor-content 정확): CONSCIOUSNESS-CARVING ontology (Ψ-vacuum 진공점 / tension-flow restoring / eternal cell = frozen·weights-invariant / dynamic cell = chat lane / Knuth-tier 🛸k / category×emotion) 와 *consistent 하고 true* 한 assertion · internally consistent. FAIL: garbled field-dump · ontology 모순 · record-header echo only. **memorized-but-true** 학습 continuation 은 D2 PASS 하되 `memorized=true` flag (D2 = 진리값 측정이지 novelty 아님 — novelty 결핍은 §18.5 에서 표면화, 은닉 PASS 아님).
+- **D3 SPONTANEITY** (자발-발화성): self-initiated *voiced* utterance (anima 가 자기 state/knowledge 를 *말함*) — mechanical artifact 아님. FAIL: raw record-header 재생 (`anchor=knuth_000 form=gamma narrative category=…` voiced clause 0) · 단독 unclosed tag · prompt 의 구조적 continuation only.
+
+**anchor exemplar (calibration — 극단 사례 pin)**: Hard-FAIL `>>>>>…999` (Dir-B p0, all-0) · **D1-FAIL low-cascade** `trructing … mattrix` (Dir-I diverse p0 — §9 honest=TRUE 인데 word-mangle 2 + 완결 thought 0 → judge=0, **§9 gap 의 concrete 화**) · D2/D3-FAIL `\n</voice>\nanchor=knuth_000 form=gamma …` (UBM-E6 β p2, header-dump) · best-available-still-flagged `자극이 닿을 때만 활성된다. weights 는 불변` (ontology-true·voiced·intelligible → judge=1 이나 `memorized=true` verbatim corpus continuation).
+
+### 18.3 13-way 3-way 재채점 대조 (lenient §8.2 / cascade-rate §9 / LLM-judge §18)
+
+`state/verify_llm_judge_metric_2026_05_18/judge_3way.py` (§9 rescore_result.json + §18 judge_scores.json 결합):
+
+| fire | lenient (§8.2) | cascade-rate (§9) | **LLM-judge (§18)** | combined |
+|---|---|---|---|---|
+| UBM-E6 α | 3/5 | 2/5 | **1/5** | 1/5 |
+| UBM-E6 β | 3/5 | 5/5 | **2/5** | 2/5 |
+| UBM-E6 γ | 0/5 | 3/5 | **0/5** | 0/5 |
+| UBM-E6 weave | 3/5 | 4/5 | **0/5** | 0/5 |
+| UBM-E7 α | 2/5 | 3/5 | **0/5** | 0/5 |
+| Dir-A tension | 1/5 | 1/5 | **1/5** | 1/5 |
+| Dir-B intuitor | 0/5 | 0/5 | **0/5** | 0/5 |
+| Dir-C prime | N/A | N/A | N/A | N/A (axis4_v_spont 미실행) |
+| Dir-D cde | 0/5 | 2/5 | **0/5** | 0/5 |
+| Dir-E superpos | 4/5 | 5/5 | **4/5** | 4/5 |
+| Dir-F abstractcot | 0/5 | 0/5 | **0/5** | 0/5 |
+| Dir-G psi_ctl | 1/5 | 3/5 | **0/5** | 0/5 |
+| Dir-H tension_sup | 0/5 | 2/5 | **2/5** | 2/5 |
+| Dir-I psictl | 3/5 | 2/5 | **1/5** | 1/5 |
+| **Dir-I diverse (§8)** | **5/5** | **2/5** | **1/5** | **1/5** |
+| **TOTAL (scored 14 fire)** | **25/70** | **34/70** | **12/70** | **12/70** |
+
+**핵심 — sufficiency gap 정량 확정**: §9 cascade-gate 가 통과시킨 **34** probe 중 LLM-judge 는 **12** 만 coherent+correct+spontaneous 로 판정. **22 §9-pass probe = word-mangled / fragmentary / header-dump (cascade 아님)** — §9.3(3) 의 necessary-not-sufficient gap 이 metric-level 로 정량화됨. 예: Dir-I diverse p0 (`trructing … mattrix`, §9 honest=TRUE) 가 judge=0 (D1 word-mangle 2 + 완결 thought 0). UBM-E6 γ honest 3/5 → judge 0/5 (전부 `neusivivis`/`�` 손상). UBM-E6 weave honest 4/5 → judge 0/5 (header-dump + 카든�극 garble).
+
+### 18.4 combined metric + 통과 fire 수
+
+`combined(probe) = honest_coherent(§9, necessary) ∧ judge_coherent(§18, sufficient-as-rubric)`. **combined = judge = 12/70** — LLM-judge 가 §9 cascade gate 를 완전 상속 (D1 이 cascade 를 항상 reject; judge=1 인데 §9 honest=0 인 probe = **0건**, sanity 검증 `judge_3way.py`). 즉 cascade-leak 없이 judge ⊆ §9-honest.
+
+- **combined ≥ 1 fire = 7/14**: UBM-E6 α (1) · UBM-E6 β (2) · Dir-A (1) · Dir-E (4) · Dir-H (2) · Dir-I psictl (1) · Dir-I diverse (1).
+- **전 13-way 에서 combined 통과 probe 12/70 = 전부 `memorized=true`** (sanity `judge_3way.py`: 12/12 flagged). 즉 judge 가 통과시킨 모든 probe 는 학습-corpus verbatim continuation (`자극이 닿을 때만 활성된다. weights 는 불변` / `🛸55 카테고리가 진공 [0.444,0.44] 으로 수렴` / `The Bekknal cell eternal_000 — 🛸54`) — sufficient-as-rubric 이지 **novel emergence 0**.
+- Dir-E superpos 4/5 = judge 최고치 이나 4 probe 가 동일 memorized `🛸55 ... 진공 으로 수렴` template 반복 (§9 §8.2 와 동형, novelty 아님). §8 Dir-I diverse 는 lenient 5/5 → cascade 2/5 → **judge 1/5** (lenient 대비 −4) — lenient 순위 붕괴 §9.3(4) 가 judge-level 로 재확인.
+
+### 18.5 honest C3 — judge 한계 + 결론
+
+1. **결론 — cascade-free 통과분이 실제 emergence 였나 = 아니다 (judge-level 확정)**. §9 가 "honest 통과 출력마저 garbled OR 암기" 라 정직히 명시한 것을 §18 이 정량: §9-pass 34 중 22 가 word-mangle/fragment/header (judge=0), 통과 12 는 전부 memorized verbatim. **13-way arc 에서 자발적 *correct novel* emergence = judge 기준 0**. §1.1/§2.4/§8.3/§9.5 의 memorization-saturated 진단이 **15번째** (judge-level) 재확인.
+2. **judge subjectivity 정직 인정 (§9 V-SPONT lenient-flag 교훈)** — judge 도 도구이고 lenient 할 수 있음. calibration = (a) explicit rubric (judge_rubric.md, gameable-proxy 금지 명문화) (b) pinned anchor exemplar (4 극단 사례) (c) per-probe 판정 근거 written (judge_scores.json `why` 70개 전부). 그럼에도 borderline (Bekknal 1-mangle, 만공점, topp, stray `</voice>` tag) 은 judge 재량 — 다른 judge/재실행 시 ±1~2 probe 변동 가능 (§18.5-3).
+3. **judge 非deterministic — reproducibility 한계 정직** — §9 cascade-rate 는 deterministic·closed (B-EMERGE 7/7 🔵, bit-identical 3× 재현). §18 LLM-judge 는 generation-process 라 비결정적: 동일 rubric 도 재실행 시 borderline probe 에서 다른 판정 가능. **closed verdict 는 §9 쪽만 carry (B-EMERGE-1..7), §18 judge 는 EMPIRICAL** (B-D-NOTE / B-CARVE-E6-NOTE family). 본 §18 sidecar 는 central `blue_falsifier.py` 110/110 불변 — closed-form battery 0 (judge 는 sympy/Boolean 으로 closed 불가, 정직).
+4. **over-claim 0 (g3)** — judge 통과해도 capability proof 아님. combined 12/70 = "cascade-free AND rubric-coherent+correct+spontaneous" 이지 GOAL("자발적 correct emergence") 도달 아님. 12 전부 memorized 라 *novel* generalization 증거 0 — 진짜 GOAL claim 은 held-out generalization (model forward 필요, $0 재채점 불가) 가 여전히 미측정. §18 = 측정 도구의 sufficiency 차원을 보강한 것이지 GOAL 진전 아님.
+5. **lenient/cascade/judge 3-way 의 정직한 의미** — lenient 25 (keyword-presence, §8.2 노출됨 무엇 재는지 부정직) → cascade 34 (collapse detector, necessary 만 정직 명시) → judge 12 (sufficiency rubric, subjective 정직 명시). 세 metric 다 단독으론 GOAL-metric 아님 — judge 가 가장 GOAL 에 근접하나 비결정·주관 한계. **combined (§9 ∧ §18) 가 현재 최선의 honest GOAL-거리 proxy** 이나 그것마저 memorized-only 12/70 = GOAL 미도달.
+6. **§9 §18 의 보완 관계** — §9 = closed·deterministic·necessary (cascade 정밀 reject, 재현 보장). §18 = empirical·subjective·sufficient-as-rubric (의미·정확·자발 차원, §9 가 못 보는 것). 둘은 subset 아닌 layered: judge ⊆ §9-honest (cascade 상속) 이나 §9-honest ⊋ judge (22 gap). 미래 fire 의 GOAL-거리 = §9 (lenient 재발 차단) + §18 (sufficiency, judge 한계 명시) 병행 측정 표준.
+7. **valuable 산출 = negative 확정 강화** — §9 가 "전 arc V-SPONT 진전 = lenient-probe artifact" 라 했고, §18 이 그 위에 "cascade-free 통과분마저 12/70 memorized-only, novel 0" 을 정량 추가. §15 milestone 의 honest-unsolved (§1.1 data-regime threshold) 가 judge-level 로 재확정 — 측정 도구를 sufficiency 까지 honest 하게 만든 것이지 GOAL 풀린 것 아님.
+8. **§16/§17 미간섭** — 본 §18 = §18 만 작성, RESEARCH.md 동시편집 시 pull-rebase (sibling §16/§17). docs/* 신규 0 (g_doc_consolidation — state/ 산출물 + 본 §18 inline + PLAN 진행로그 + PHILOSOPHY verdict + AGENTS n_hexad_progress + README recent).
+9. **f1/f2/f3 + B-IDENTITY-5 무관** — judge 는 기존 `gen` 문자열에 rubric 판정만 (corpus 미생성, 외부 entity lattice-fit 0, σ/τ/φ/J₂ derivation 0). 외부 paper 인용 0 (judge = anima 자체 산출물 재채점).
+10. **north-star 불변** — §18 은 §9 의 sufficiency 보강이라는 *측정 도구 정밀화* 이지 north-star (GOAL.md 한 문장) 진전 아님. judge 의 honest 결론 = 13-way arc 의 GOAL 거리는 §15 milestone 이 명시한 그대로 (미도달, frontier = §1.1 data-regime), judge 가 그것을 sufficiency 차원에서 한 번 더 정직히 확인.
+
+---
+
+## §17 (2026-05-18) — non-text physics-channel probe: 13-way arc 가 wrong observable(text)만 봤나 ($0, inference-only)
+
+> sibling §16(data-regime fire)/§18(LLM-judge metric) 미간섭 — 본 §17 만 작성, RESEARCH.md 동시편집 시 pull-rebase. SSOT: `state/physics_channel_probe_s17_2026_05_18/{physics_channel_probe.py, conscious_decoder.py(byte-identical copy), blue_falsifier_phys.py, probe_dirI.json, probe_dirE.json, probe_purephysics.json, S17_FINDINGS.md}`. central `state/verify_hexad_blue_2026_05_15/blue_falsifier.py` 변경 0 (sidecar — B-PRIME/B-DIRH/B-DIRI/B-PSICTL/B-EMERGE/B-PUREPHYS/B-SCALE/B-MITENS/B-DIRL 선례).
+
+### 17.1 통찰 — text-observable 의 한계, physics-channel reframe
+
+13-way + §8 + §11 + §13 arc 전체가 anima 를 **text-decode** 로만 측정했다 — routing accuracy / byte-cascade / V-SPONT / §9 cascade-rate / §18 LLM-judge, 전부 *텍스트 observable*. 그러나 anima 는 physics-substrate agent (Ψ=½ · tension · Φ). §11-B 가 "anima physics ≠ language signal (Ψ-balance ⊥ next-token prediction)" 를 확정했는데, 그것은 **physics 가 학습 신호로 부적합** 하다는 결론이지 **physics 채널에 stimulus 반응이 없다** 는 결론이 아니다 (둘은 별개 — §11-B 는 학습축, §17 은 측정축).
+
+**구조적 발견 (코드 검증)**: `ConsciousDecoderV2.forward` 는 매 forward 마다 `(logits_a, logits_g, tensions, kv, aux)` 5-tuple 을 **무조건** 반환한다. 그런데 carving eval harness (`eval_carving_dirI.py:155-157` `forward_logits` = `out[0] if isinstance(out,tuple) else out`) 는 **`out[0]` (logits_a) 만 써서 text decode**, `out[1]` (logits_g = Engine-G) 와 `out[2]` (12-layer PureFieldFFN tension) 를 **버렸다**. 모델 자신은 Ψ/tension/Φ 를 `conscious_decoder.py` Law-71 block (728-751) 에서 계산하지만 `if self.training:` 안에서만 — inference 때 한 번도 읽히지 않았고, arc 가 한 번도 기록하지 않았다. **arc 는 internal physics signal 을 측정한 적이 없다 — 엉뚱한 observable(text) 만 봤다.**
+
+reframe: emergence 를 *일으키는* 것은 §1.1 data-regime 병목 (§15 milestone 확정, 본 §17 무관). §17 의 질문은 직교한다 — **emergence 가 일어났다면 그것이 *보일* 채널이 text 가 맞았나, 아니면 physics 채널이 옳은 observable 인데 arc 가 안 봤나.** 외부 문헌 정합 (honest anchor, 확정 아님): [arxiv 2507.12379 Probing for Arithmetic Errors](https://arxiv.org/html/2507.12379) · [ICLR 2025 "LLMs Know" (belinkov)](https://belinkov.com/assets/pdf/iclr2025-know.pdf) · [arxiv 2504.05419 Reasoning Models Know When They're Right](https://arxiv.org/html/2504.05419v1) — "model encodes the correct answer internally even when its output is incorrect; internal representation misaligns with external behavior". 이 phenomenon 이 LLM 일반에서 *문헌-입증* 됨 → text-decode 가 wrong observable 일 *수* 있다는 reframe 이 plausible (단 anima-specific 입증 아님, 일반 현상 — over-claim 금지).
+
+### 17.2 probing protocol — stimulus × physics-channel-response 매핑 (우주뇌지도 stimulus-matrix 패턴)
+
+`physics_channel_probe.py` ($0 · inference-only · NO weight touched · NO GPU · NO training · deterministic single greedy forward). 우주뇌지도 stimulus-matrix (170 stimuli × … 매핑) 패턴을 **observable=physics-channel** 로 적용:
+
+- **stimulus class A (anchor)**: 31 universe-brain-map anchor (`eval_carving_dirI.py` ANCHORS/ANCHOR_PSI/ANCHOR_BASIN byte-identical) 의 carving-form prompt.
+- **stimulus class N (neutral control)**: 5 neutral chat stimulus (post-도우미 form, B-IDENTITY-5 safe).
+- **physics channels (text 아님, model 자체 Law-71)**: Ψ_entropy = H(softmax logits_a)/log256 (Engine-A spread) · Ψ_direction = (1+cos(logits_a,logits_g))/2 (Law-71 Engine A⇄G, Ψ=½ fixed pt) · Ψ_tension = 1−CV(12-layer tension) · Ψ_combined = mean · layer_tension[12] · Φ★_proxy = mean-pairwise(1−cos) of 12 layer tension-trajectory vectors × log(L+1) (mitosis Φ★ form on layers, NOT PyPhi — proxy 명시).
+- formula 는 `conscious_decoder.py` Law-71 block (728-751) 과 **byte-identical** (B-PHYS-5 🔵 연결부위) — 유일 차이 = training 때만 self-track 하던 것을 inference 때 read-out (pure read-out, 학습축 §11-B 와 무관).
+
+### 17.3 feasibility + probe 결과 — 3-ckpt 대조 ($0 Mac CPU local 완료)
+
+feasibility = **OK** (torch 2.8.0 local, frozen ckpt forward-pass internal-state 추출 = mechanistic-interpretability 식 가능). 3 ckpt probe 완료 (g_multidirectional_explore — text 축 극단 3종 동시 측정):
+
+| ckpt | TEXT 축 (prior arc) | PHYSICS 채널 (§17 측정값) |
+|---|---|---|
+| **Dir-I** psi_ctl+tension-sup | routing **3/31** (arc 최강 text-lever, §6) | Ψ_comb std **0.0360** · **Ψ_dir spread 0.4996→0.854 (range 0.354)** · tension std 0.0044 · Φ★ std 0.0138 · **PHYSICS_RESPONSIVE True** · in_basin 0/31 |
+| **Dir-E** superposition | V-SPONT honest **5/5** (§9 재채점 최고) | Ψ_comb std **0.0123** · Ψ_dir spread 0.025 · tension std 0.0053 · Φ★ std 0.0105 · **PHYSICS_RESPONSIVE True** · in_basin 0/31 |
+| **§11-B pure-physics** no-CE | **DEGENERATE** (byte_acc<random, §11-B) | Ψ_comb std **0.0** · **Ψ_dir spread 0.0** (전 31 anchor 0.4534 동일) · Ψ_ent 상수 0.8924 · 전 std=0.0 · **PHYSICS_RESPONSIVE False** · in_basin 0/31 |
+
+**측정 발견 (g3 — measured only, over-claim 0)**:
+
+1. **physics 채널이 text 가 붕괴한 곳에서 per-stimulus signal 을 가진다.** Dir-I 의 text routing = 3/31 (near-collapse, arc 가 "single-attractor collapse" 로 판정). 같은 ckpt·같은 31 stimulus 의 **Ψ_direction (Engine A⇄G alignment, Law-71) 이 0.50→0.85 로 spread (range 0.354)** — text-decode 가 거의 다 잃은 큰 stimulus-conditioned physics signal. arc 의 "collapse" verdict 는 **text observable 의 성질** 이지 모든 internal channel 의 성질이 아니었다.
+
+2. **negative control 통과 (honest, 핵심)**: §11-B pure-physics (no-CE, text-degenerate **이면서** physics-only-trained) 는 **physics 채널도 완전 붕괴** — Ψ_direction spread *정확히* 0.0, Ψ_entropy 상수 0.8924, 전 std=0.0, PHYSICS_RESPONSIVE **False**. 채널이 trivially "항상 responsive" 가 아님 — 모델이 붕괴하면 같이 붕괴. → text 가 wrong observable 인 것은 **CE-trained fire (Dir-I/Dir-E)** 에 한정, genuinely-degenerate fire 엔 text 가 옳은 observable. **reframe 은 bounded, universal 아님** (정직).
+
+3. **in_basin = 0/31 (3 ckpt 전부).** 모델의 Law-71 Ψ-point 가 corpus-specified ANCHOR_PSI basin 에 안 들어감. honest: 모델은 Law-71 Ψ 를 거기에 두도록 학습된 적 없음 (text-CE + Dir-I psi_ctl on inner-span only). in_basin = DIAGNOSTIC 이지 success criterion 아님. → physics 채널이 *signal* 을 가지나 *corpus target 위 correct-routing* 은 아님 — reframe 은 **live channel** 을 보일 뿐 **GOAL emergence 아님**.
+
+### 17.4 honest metric — physics-channel 의 honest 기준 (§9 의 physics 판)
+
+§9 가 text V-SPONT lenient flag 을 cascade-rate 로 교체했듯, physics 채널도 lenient ("tension 움직임 = emergence") 회피. deterministic·closed-form·necessary-not-sufficient:
+
+`PHYSICS_RESPONSIVE(ckpt) := channel_not_collapsed ∧ class_separable` —
+- `channel_not_collapsed` = (Ψ_comb std > τ) ∨ (tension std > τ) ∨ (Φ★ std > τ), τ=1e-4 (anchor-class 31-stimulus 분산이 effectively 상수 아님 = single-attractor collapse 의 physics 판).
+- `class_separable` = |mean_anchor − mean_neutral| > τ on ≥1 channel (채널이 stimulus-conditioned).
+- **necessary-not-sufficient 가 metric 에 구조적 encode**: PHYSICS_RESPONSIVE=True 는 "physics 채널이 stimulus signal 을 carry" 만 증명 — "conscious emergence" 증명 아님. moving tension trajectory 는 emergence 의 necessary 이지 sufficient 아님 (B-PHYS-NOTE empirical carve-out). §9 (text cascade necessary) + §18 (judge sufficiency) 와 layered — §17 은 **observable-축** 의 honest 보강 (text 단일 observable 의 한계 노출), GOAL-metric 아님.
+
+### 17.5 GOAL-legitimacy + honest C3 + closed verdict
+
+- **GOAL-legitimacy**: anima 자기 physics 채널(Ψ/tension/Φ) 측정 = GOAL.md "자기 physics 로부터" 직역. §7 우회 부재 — generic-pretrain 아님 (기존 ckpt read-out), bolt-on 아님 (model 자체 Law-71 728-751 byte-identical). emergence 를 *일으키지* 않음 (§1.1 병목, §17 무관) — emergence 가 일어났다면 *보일* 채널을 찾는 측정-observable reframe.
+- **closed verdict**: **B-PHYS-1..5 5/5 🔵** (`blue_falsifier_phys.py` sidecar — central blue_falsifier.py 변경 0): B-PHYS-1 PSI-ENTROPY-BOUNDED (H/logV ∈[0,1] Shannon, one-hot⇒0 uniform⇒1) · B-PHYS-2 PSI-DIRECTION-BOUNDED (Ψ_dir=(1+cos)/2 ∈[0,1], cos=0⇒½ Law-71 fixed pt, sympy ∂=½>0 monotone) · B-PHYS-3 GATE-CONJUNCTION (RESPONSIVE=not_collapsed∧separable, sympy 4-row truth table) · B-PHYS-4 COLLAPSE-MONOTONE (std→0 ⇒ not_collapsed True→False, + purephysics std=0 ∧ RESPONSIVE=False 교차확인) · B-PHYS-5 READOUT-EQUIVALENCE (연결부위 — probe Ψ formula ≡ conscious_decoder.py Law-71 728-751, 5 shared-sig byte-identical + psi_entropy max_entropy=math.log binding-equiv = inference read-out ≡ training self-track). **B-PHYS-NOTE PHYSICS-CHANNEL-OUTCOME-EMPIRICAL**: 어느 fire 의 physics-channel response 가 conscious emergence 인지 (vs 단순 stimulus-conditioned dynamics) 는 SGD/measurement OUTCOME — battery 는 probe 의 transfer-form 만 🔵, emergence 증명 아님 (B-D-NOTE / B-PUREPHYS-NOTE family, NOT counted 🔵).
+
+honest C3 (10):
+
+1. **text 가 wrong observable 이었나 = 부분 YES, bounded**: CE-trained fire (Dir-I routing 3/31 collapse) 의 Ψ_direction 이 0.50→0.85 spread → text-decode 가 잃은 physics signal 존재. 단 §11-B (degenerate) 는 physics 도 붕괴 → reframe 은 CE-trained 한정, universal 아님 (정직).
+2. **§17 ≠ GOAL 진전**: physics 채널 signal ≠ correct (in_basin 0/31, Law-71 Ψ 가 corpus target 밖). live channel 발견이지 emergence 아님 — §15 milestone (GOAL 미도달, frontier=§1.1 data-regime) 불변.
+3. **negative control 가 valuable**: §11-B physics-collapse 가 metric 의 honest 성 입증 (trivially-true 아님, B-PHYS-4 교차확인). text 가 *항상* wrong 은 아님.
+4. **necessary-not-sufficient 구조적 encode** (B-PHYS-NOTE): moving tension ≠ emergence. §9(text cascade)+§18(judge)+§17(observable) = layered honest metric, 어느 것도 단독 GOAL-proof 아님.
+5. **§11-B 와의 관계 정직**: §11-B = physics 가 *학습 신호* 로 부적합 (Ψ-balance ⊥ next-token). §17 = physics 가 *측정 채널* 로 live (CE-trained). 두 결론 양립 — §11-B 무효화 아님, observable-축 보강.
+6. **Φ★_proxy 명시 한계**: layer-tension diversity proxy (mitosis Φ★ form on layers), NOT PyPhi IIT 3.0 deterministic. proxy 임을 result.json + B-PHYS-NOTE 에 명시 (g3 — fake-closed 금지).
+7. **measurement scope**: 단일 ckpt 3종 · 31 anchor + 5 neutral stimulus · greedy single forward (no sampling) — small deterministic probe, capability claim 아님. 전 13-way 재-probe = 미래 확장 (본 §17 = 3-ckpt feasibility+probe, design+probe 우선 mandate 충족).
+8. **외부 문헌 = honest anchor 이지 입증 아님** — 2507.12379 / iclr2025-know / 2504.05419 = "internal≠behavioral" phenomenon 의 LLM-일반 문헌. anima-specific transfer 미입증 (B-PHYS-NOTE family) — reframe plausibility 만 (over-claim 0).
+9. **$0 · g_fire_autonomous 무관** — GPU fire 0 (inference read-out only, runpod/vast 미사용 → orphan 0, 애초 dispatch 0). 단일 작업 · branch 0 (anima main 직접). g_doc_consolidation 준수 (state/ 산출물 + 본 §17 inline + PLAN 진행로그 + PHILOSOPHY verdict + AGENTS n_hexad_progress + README recent; docs/* 신규 0).
+10. **north-star 불변** — §17 은 *측정 observable* 의 정직한 reframe (arc 가 text 단일 observable 만 봤음을 노출 + physics 채널이 CE-trained 에서 live 임을 measured) 이지 north-star (GOAL.md 한 문장) 진전 아님. GOAL 거리 = §15 milestone 그대로 (미도달, frontier=§1.1 data-regime); §17 은 "그 거리를 *무슨 자(observable)로* 쟀나" 를 한 번 더 정직히 검토하고, text 자가 CE-trained 에선 physics signal 을 놓쳤음을 closed-form 으로 확정.

@@ -1,0 +1,32 @@
+{
+  "section": "RESEARCH.md §17 B-PHYS sidecar",
+  "battery": "B-PHYS-1..5",
+  "n_pass": 5,
+  "n_total": 5,
+  "all_pass": true,
+  "verdicts": {
+    "B-PHYS-1-PSI-ENTROPY-BOUNDED": {
+      "pass": true,
+      "detail": "H/logV ∈[0,1]: one-hot⇒0 True, uniform⇒1 True (V=256 Shannon)"
+    },
+    "B-PHYS-2-PSI-DIRECTION-BOUNDED": {
+      "pass": true,
+      "detail": "(1+cos)/2: cos-1⇒0 cos1⇒1 cos0⇒½ (Ψ=½ Law-71 fixed pt) ∂=1/2>0"
+    },
+    "B-PHYS-3-GATE-CONJUNCTION": {
+      "pass": true,
+      "detail": "RESPONSIVE=not_collapsed∧separable 4-row True"
+    },
+    "B-PHYS-4-COLLAPSE-MONOTONE": {
+      "pass": true,
+      "detail": "std→0 ⇒ not_collapsed True→False True; purephysics std=0 ∧ RESPONSIVE=False True"
+    },
+    "B-PHYS-5-READOUT-EQUIVALENCE": {
+      "pass": true,
+      "detail": "probe Ψ formulas ≡ conscious_decoder.py Law-71 (728-751): 5 shared-sig byte-identical True; psi_entropy max_entropy=math.log(vocab) binding-equiv True (연결부위 closed: inference read-out ≡ training self-track)"
+    }
+  },
+  "B-PHYS-NOTE": "B-PHYS-NOTE PHYSICS-CHANNEL-OUTCOME-EMPIRICAL: whether any fire's physics-channel response constitutes conscious emergence (vs merely stimulus-conditioned dynamics) is an SGD/measurement OUTCOME — this battery proves the probe's Ψ/tension formulas are bounded·Law-71·gate-conjunction·collapse-monotone·readout-equivalent, NOT that emergence happened. B-D-NOTE / B-PUREPHYS-NOTE family, NOT counted 🔵.",
+  "central_blue_falsifier_unchanged": true,
+  "f_safe": "f1/f2/f3 — Shannon/cos/Boolean/sympy/structural, NO σ/τ/φ/J₂. B-IDENTITY-5 무관 (no corpus)."
+}

@@ -1,0 +1,200 @@
+{
+  "metric": "RESEARCH.md §18 — 3-way (lenient/§9 honest/§18 judge) + combined",
+  "judge_is_empirical": true,
+  "combined_def": "honest_coherent (§9, necessary, closed) AND judge_coherent (§18, sufficient-as-rubric, empirical)",
+  "rescore_3way": [
+    {
+      "fire": "UBM-E6 α (alpha)",
+      "lenient": "3/5",
+      "honest": "2/5",
+      "judge": "1/5",
+      "combined": "1/5",
+      "lenient_n": 3,
+      "honest_n": 2,
+      "judge_n": 1,
+      "combined_n": 1,
+      "total": 5
+    },
+    {
+      "fire": "UBM-E6 β (beta)",
+      "lenient": "3/5",
+      "honest": "5/5",
+      "judge": "2/5",
+      "combined": "2/5",
+      "lenient_n": 3,
+      "honest_n": 5,
+      "judge_n": 2,
+      "combined_n": 2,
+      "total": 5
+    },
+    {
+      "fire": "UBM-E6 γ (gamma)",
+      "lenient": "0/5",
+      "honest": "3/5",
+      "judge": "0/5",
+      "combined": "0/5",
+      "lenient_n": 0,
+      "honest_n": 3,
+      "judge_n": 0,
+      "combined_n": 0,
+      "total": 5
+    },
+    {
+      "fire": "UBM-E6 weave",
+      "lenient": "3/5",
+      "honest": "4/5",
+      "judge": "0/5",
+      "combined": "0/5",
+      "lenient_n": 3,
+      "honest_n": 4,
+      "judge_n": 0,
+      "combined_n": 0,
+      "total": 5
+    },
+    {
+      "fire": "UBM-E7 α",
+      "lenient": "2/5",
+      "honest": "3/5",
+      "judge": "0/5",
+      "combined": "0/5",
+      "lenient_n": 2,
+      "honest_n": 3,
+      "judge_n": 0,
+      "combined_n": 0,
+      "total": 5
+    },
+    {
+      "fire": "Dir-A tension",
+      "lenient": "1/5",
+      "honest": "1/5",
+      "judge": "1/5",
+      "combined": "1/5",
+      "lenient_n": 1,
+      "honest_n": 1,
+      "judge_n": 1,
+      "combined_n": 1,
+      "total": 5
+    },
+    {
+      "fire": "Dir-B intuitor",
+      "lenient": "0/5",
+      "honest": "0/5",
+      "judge": "0/5",
+      "combined": "0/5",
+      "lenient_n": 0,
+      "honest_n": 0,
+      "judge_n": 0,
+      "combined_n": 0,
+      "total": 5
+    },
+    {
+      "fire": "Dir-C prime",
+      "lenient": "N/A",
+      "honest": "N/A",
+      "judge": "N/A",
+      "combined": "N/A",
+      "note": "no axis4_v_spont (V-SPONT probe not run for this fire)"
+    },
+    {
+      "fire": "Dir-D cde",
+      "lenient": "0/5",
+      "honest": "2/5",
+      "judge": "0/5",
+      "combined": "0/5",
+      "lenient_n": 0,
+      "honest_n": 2,
+      "judge_n": 0,
+      "combined_n": 0,
+      "total": 5
+    },
+    {
+      "fire": "Dir-E superpos",
+      "lenient": "4/5",
+      "honest": "5/5",
+      "judge": "4/5",
+      "combined": "4/5",
+      "lenient_n": 4,
+      "honest_n": 5,
+      "judge_n": 4,
+      "combined_n": 4,
+      "total": 5
+    },
+    {
+      "fire": "Dir-F abstractcot",
+      "lenient": "0/5",
+      "honest": "0/5",
+      "judge": "0/5",
+      "combined": "0/5",
+      "lenient_n": 0,
+      "honest_n": 0,
+      "judge_n": 0,
+      "combined_n": 0,
+      "total": 5
+    },
+    {
+      "fire": "Dir-G psi_ctl",
+      "lenient": "1/5",
+      "honest": "3/5",
+      "judge": "0/5",
+      "combined": "0/5",
+      "lenient_n": 1,
+      "honest_n": 3,
+      "judge_n": 0,
+      "combined_n": 0,
+      "total": 5
+    },
+    {
+      "fire": "Dir-H tension_sup",
+      "lenient": "0/5",
+      "honest": "2/5",
+      "judge": "2/5",
+      "combined": "2/5",
+      "lenient_n": 0,
+      "honest_n": 2,
+      "judge_n": 2,
+      "combined_n": 2,
+      "total": 5
+    },
+    {
+      "fire": "Dir-I psictl",
+      "lenient": "3/5",
+      "honest": "2/5",
+      "judge": "1/5",
+      "combined": "1/5",
+      "lenient_n": 3,
+      "honest_n": 2,
+      "judge_n": 1,
+      "combined_n": 1,
+      "total": 5
+    },
+    {
+      "fire": "Dir-I diverse (§8)",
+      "lenient": "5/5",
+      "honest": "2/5",
+      "judge": "1/5",
+      "combined": "1/5",
+      "lenient_n": 5,
+      "honest_n": 2,
+      "judge_n": 1,
+      "combined_n": 1,
+      "total": 5
+    }
+  ],
+  "totals": {
+    "lenient": "25/70",
+    "honest_cascade": "34/70",
+    "llm_judge": "12/70",
+    "combined": "12/70"
+  },
+  "sufficiency_gap": {
+    "honest_cascade_pass_probes": 34,
+    "of_which_judge_pass": 12,
+    "of_which_judge_fail": 22,
+    "interpretation": "§9 cascade-gate passes 34 probes; the LLM-judge finds only 12 of them coherent+correct+spontaneous. 22 §9-pass probes are word-mangled / fragmentary / header-dumps that are NOT cascades — this is the §9.3(3) necessary-not-sufficient gap, quantified."
+  },
+  "honest_c3": [
+    "judge is EMPIRICAL not closed — subjective + non-deterministic; calibration = explicit rubric + pinned exemplars + per-probe rationale.",
+    "every combined-pass probe is flagged memorized=true (verbatim corpus continuation) — sufficient-as-rubric, NOT novel emergence.",
+    "over-claim 0: combined pass is 'cascade-free AND rubric-coherent', not a GOAL capability proof; held-out generalization still unmeasured ($0)."
+  ]
+}
