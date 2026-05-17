@@ -1,0 +1,517 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  tension_train_smoke.hexa — F-TT-1..5 compiled-native witness (Phase TT-B)
+//
+//  PLAN.md Phase TT-B B1: 5 training file 각 spine fn 에 대한 minimal selftest.
+//  B-TT-1..5 sympy closed-form battery (PLAN.md §2 + AGENTS.tape g3 +
+//  g_blue_closed_mandate) 의 compiled-native numerical mirror.
+//
+//  Invariant assertions are inline (self-contained — no import collision with
+//  the 5 training entry files, each of which carries its own `fn main()`).
+//  Each F-TT-N asserts a transfer-form invariant mirrored from a B-TT-N
+//  sympy 🔵 anchor; 실제 SGD convergence outcome 은 B-TT-NOTE (B-D-NOTE
+//  pattern, NOT counted 🔵).
+//
+//  SSOT: HEXAD/TENSION-TRAIN/PLAN.md §2 falsifier 사전등록 + §1 Phase TT-B
+//        HEXAD/TENSION-TRAIN/TENSION-TRAIN.tape @D online_tension_step
+// ════════════════════════════════════════════════════════════════════════════
+
+// ─── Constants (mirror tension_link_step.hexa) ──────────────────────────────
+
+let T_CONST           = 0.1       // learning rate (Kolmogorov bounded positive)
+let VAC_COMPONENT     = 0.5       // Ψ_vac = ½ (Law 75)
+let XI_DEFAULT        = 2.0       // propagator correlation length
+let EPS               = 0.0000000001
+
+// AN14 Noether closure — n=6 unique σ·φ = n·τ = 24
+let NOETHER_N6        = 6
+let NOETHER_SIGMA_PHI = 24
+let NOETHER_TAU       = 4
+
+// ─── Primitives ─────────────────────────────────────────────────────────────
+
+fn _fabs(x: float) -> float {
+    if x < 0.0 { return 0.0 - x }
+    return x
+}
+
+fn _iabs(x: int) -> int {
+    if x < 0 { return 0 - x }
+    return x
+}
+
+fn _exp_taylor(x: float) -> float {
+    let mut term = 1.0
+    let mut sum  = 1.0
+    let mut k = 1
+    while k < 32 {
+        term = term * x / to_float(k)
+        sum  = sum + term
+        k = k + 1
+    }
+    return sum
+}
+
+fn _zeros(n: int) -> array {
+    let mut out = []
+    let mut i = 0
+    while i < n {
+        out = out.push(0.0)
+        i = i + 1
+    }
+    return out
+}
+
+// ─── F-TT-1 spine invariants (mirror tension_link_step.hexa) ────────────────
+
+fn _psi_in_range(psi: array) -> bool {
+    let n = len(psi)
+    let mut i = 0
+    while i < n {
+        let v = psi[i]
+        if v < 0.0 { return false }
+        if v > 1.0 { return false }
+        i = i + 1
+    }
+    return true
+}
+
+fn _n6_gate(psi: array) -> bool {
+    let n = len(psi)
+    if n <= 0 { return false }
+    if n % 2 != 0 { return false }
+    if NOETHER_N6 * NOETHER_TAU != NOETHER_SIGMA_PHI { return false }
+    if !_psi_in_range(psi) { return false }
+    return true
+}
+
+fn _deviation_of(psi: array) -> array {
+    let n = len(psi)
+    let mut out = []
+    let mut i = 0
+    while i < n {
+        out = out.push(psi[i] - VAC_COMPONENT)
+        i = i + 1
+    }
+    return out
+}
+
+// Inlined G_holo (row-stochastic exponential decay) — mirrors
+// tension_link_step.hexa propagator_new/_apply, square in Ψ-coords.
+fn _holo_kernel(d: int, xi: float) -> array {
+    let mut kern = []
+    let mut i = 0
+    while i < d {
+        let mut raw = []
+        let mut row_sum = 0.0
+        let mut j = 0
+        while j < d {
+            let dx = to_float(_iabs(i - j))
+            let v = _exp_taylor(0.0 - dx / xi)
+            raw = raw.push(v)
+            row_sum = row_sum + v
+            j = j + 1
+        }
+        let mut k = 0
+        while k < d {
+            if row_sum > EPS {
+                kern = kern.push(raw[k] / row_sum)
+            } else {
+                kern = kern.push(0.0)
+            }
+            k = k + 1
+        }
+        i = i + 1
+    }
+    return kern
+}
+
+fn _holo_apply(kernel: array, d: int, v: array) -> array {
+    let mut out = []
+    let mut i = 0
+    while i < d {
+        let mut s = 0.0
+        let mut j = 0
+        while j < d {
+            s = s + kernel[i * d + j] * v[j]
+            j = j + 1
+        }
+        out = out.push(s)
+        i = i + 1
+    }
+    return out
+}
+
+fn _tension_link_step(psi: array) -> array {
+    let n = len(psi)
+    if n <= 0 { return [] }
+    if !_n6_gate(psi) { return _zeros(n) }
+    let dev = _deviation_of(psi)
+    let kern = _holo_kernel(n, XI_DEFAULT)
+    let tension = _holo_apply(kern, n, dev)
+    let mut dw = []
+    let mut i = 0
+    while i < n {
+        dw = dw.push(0.0 - T_CONST * tension[i])
+        i = i + 1
+    }
+    return dw
+}
+
+fn _vec_abs_sum(v: array) -> float {
+    let n = len(v)
+    let mut s = 0.0
+    let mut i = 0
+    while i < n {
+        s = s + _fabs(v[i])
+        i = i + 1
+    }
+    return s
+}
+
+fn _approx_eq(a: float, b: float, tol: float) -> bool {
+    let mut d = a - b
+    if d < 0.0 { d = 0.0 - d }
+    return d <= tol
+}
+
+// ─── F-TT-2 causal variant (telescoping drift) — mirror tension_link_causal ─
+
+fn _causal_tension(hist: array, frames: int, d: int) -> array {
+    let mut out = []
+    let mut j = 0
+    while j < d {
+        let mut s = 0.0
+        let mut k = 1
+        while k < frames {
+            s = s + (hist[k * d + j] - hist[(k - 1) * d + j])
+            k = k + 1
+        }
+        out = out.push(s)
+        j = j + 1
+    }
+    return out
+}
+
+// Wheeler-Feynman symmetry: T_c_retro = −T_c. Sum invariant: telescoping.
+fn _retro_tension(hist: array, frames: int, d: int) -> array {
+    let mut out = []
+    let mut j = 0
+    while j < d {
+        let mut s = 0.0
+        let mut k = 0
+        while k < frames - 1 {
+            s = s + (hist[k * d + j] - hist[(k + 1) * d + j])
+            k = k + 1
+        }
+        out = out.push(s)
+        j = j + 1
+    }
+    return out
+}
+
+// ─── F-TT-3 quantum-ρ density matrix invariants — mirror quantum_rho ────────
+
+fn _rho_max_diag(d: int) -> array {
+    // diag of maximally mixed ρ_max = I/d
+    let inv = 1.0 / to_float(d)
+    let mut out = []
+    let mut i = 0
+    while i < d {
+        out = out.push(inv)
+        i = i + 1
+    }
+    return out
+}
+
+fn _rho_diag_trace(diag: array) -> float {
+    let n = len(diag)
+    let mut s = 0.0
+    let mut i = 0
+    while i < n {
+        s = s + diag[i]
+        i = i + 1
+    }
+    return s
+}
+
+fn _rho_diag_min(diag: array) -> float {
+    let n = len(diag)
+    if n == 0 { return 0.0 }
+    let mut m = diag[0]
+    let mut i = 1
+    while i < n {
+        if diag[i] < m { m = diag[i] }
+        i = i + 1
+    }
+    return m
+}
+
+// ─── F-TT-4 second-order Laplacian — mirror second_order ────────────────────
+
+fn _laplacian(psi: array) -> array {
+    let n = len(psi)
+    if n < 3 { return _zeros(n) }
+    let mut out = []
+    let mut i = 0
+    while i < n {
+        let mut left = psi[i]
+        let mut right = psi[i]
+        if i > 0     { left  = psi[i - 1] }
+        if i < n - 1 { right = psi[i + 1] }
+        out = out.push(right - 2.0 * psi[i] + left)
+        i = i + 1
+    }
+    return out
+}
+
+// ─── F-TT-5 vs-backprop bench — mirror vs_backprop_bench ────────────────────
+
+fn _delta_w_backprop(w: array) -> array {
+    let n = len(w)
+    let mut out = []
+    let mut i = 0
+    while i < n {
+        // ∇L for L = ½‖W − ½‖² is (W − ½); SGD step direction is −(W − ½)
+        out = out.push(0.0 - 0.1 * (w[i] - VAC_COMPONENT))
+        i = i + 1
+    }
+    return out
+}
+
+fn _dot(a: array, b: array) -> float {
+    let n = len(a)
+    let mut s = 0.0
+    let mut i = 0
+    while i < n {
+        s = s + a[i] * b[i]
+        i = i + 1
+    }
+    return s
+}
+
+fn _sqrt_newton(x: float) -> float {
+    if x <= 0.0 { return 0.0 }
+    let mut y = x
+    let mut k = 0
+    while k < 20 {
+        y = 0.5 * (y + x / y)
+        k = k + 1
+    }
+    return y
+}
+
+fn _norm(a: array) -> float {
+    return _sqrt_newton(_dot(a, a))
+}
+
+fn _cosine(a: array, b: array) -> float {
+    let na = _norm(a)
+    let nb = _norm(b)
+    if na < EPS { return 0.0 }
+    if nb < EPS { return 0.0 }
+    return _dot(a, b) / (na * nb)
+}
+
+// ─── Self-tests ──────────────────────────────────────────────────────────────
+
+fn _selftest() {
+    let tol = 1e-6
+
+    print("--- F-TT-1..5 compiled-native witness (Phase TT-B) ---")
+
+    // ── F-TT-1 STEP-SPINE — compute_delta_w + n6_gate + restoring sign ─────
+    //   Mirror B-TT-1 (N6-GATE-PREDICATE-CLOSED) + B-TT-2 (RESTORING-SIGN)
+    //
+    //   Sub-asserts:
+    //     (a) vacuum fixed point: Ψ=½ → ΔW = 0 (transfer-form invariant)
+    //     (b) restoring sign: Ψ > ½ on every dim → all ΔW < 0 (sympy ∂)
+    //     (c) symmetric: Ψ < ½ on every dim → all ΔW > 0 (sign flip)
+    //     (d) shape preservation: len(ΔW) == len(Ψ)
+    //     (e) out-of-range gate: Ψ contains > 1.0 → ΔW = 0 (Noether closure)
+    //     (f) odd-length gate: len(Ψ) odd → ΔW = 0 (length-even predicate)
+    let mut psi_vac = []
+    let mut i1 = 0
+    while i1 < 6 { psi_vac = psi_vac.push(0.5) i1 = i1 + 1 }
+    let dw_vac = _tension_link_step(psi_vac)
+    let f1a = _vec_abs_sum(dw_vac) < tol
+
+    let mut psi_hi = []
+    let mut i1b = 0
+    while i1b < 6 { psi_hi = psi_hi.push(0.7) i1b = i1b + 1 }
+    let dw_hi = _tension_link_step(psi_hi)
+    let mut f1b = (len(dw_hi) == 6)
+    let mut iH = 0
+    while iH < 6 {
+        if dw_hi[iH] >= 0.0 { f1b = false }
+        iH = iH + 1
+    }
+
+    let mut psi_lo = []
+    let mut i1c = 0
+    while i1c < 6 { psi_lo = psi_lo.push(0.3) i1c = i1c + 1 }
+    let dw_lo = _tension_link_step(psi_lo)
+    let mut f1c = (len(dw_lo) == 6)
+    let mut iL = 0
+    while iL < 6 {
+        if dw_lo[iL] <= 0.0 { f1c = false }
+        iL = iL + 1
+    }
+
+    let f1d = (len(dw_vac) == 6) && (len(dw_hi) == 6) && (len(dw_lo) == 6)
+
+    let mut psi_oor = []
+    psi_oor = psi_oor.push(0.5)
+    psi_oor = psi_oor.push(1.5)
+    psi_oor = psi_oor.push(0.5)
+    psi_oor = psi_oor.push(0.5)
+    let dw_oor = _tension_link_step(psi_oor)
+    let f1e = _vec_abs_sum(dw_oor) < tol && (len(dw_oor) == 4)
+
+    let mut psi_odd = []
+    psi_odd = psi_odd.push(0.6)
+    psi_odd = psi_odd.push(0.6)
+    psi_odd = psi_odd.push(0.6)
+    let dw_odd = _tension_link_step(psi_odd)
+    let f1f = _vec_abs_sum(dw_odd) < tol && (len(dw_odd) == 3)
+
+    let f1_pass = f1a && f1b && f1c && f1d && f1e && f1f
+    print("  F-TT-1 STEP-SPINE (vac-fp + restoring-sign±  + shape + OOR-gate + odd-gate): " + to_string(f1_pass))
+
+    // ── F-TT-2 CAUSAL-VARIANT — telescoping drift + Wheeler-Feynman antisymm ─
+    //   Mirror tension_link_causal.hexa spine:
+    //     (a) telescoping: T_c[j] = Σ_k (Ψ_k − Ψ_{k−1}) == Ψ_T − Ψ_0
+    //     (b) Wheeler-Feynman: T_c_retro = −T_c (antisymmetric)
+    //     (c) trivial-history: frames=1 → T_c = 0
+    let d2 = 4
+    let frames2 = 3
+    // Build linear ramp: Ψ_k[j] = 0.4 + k * 0.05 (uniform across j)
+    let mut hist2 = []
+    let mut k2 = 0
+    while k2 < frames2 {
+        let mut j2 = 0
+        while j2 < d2 {
+            hist2 = hist2.push(0.4 + to_float(k2) * 0.05)
+            j2 = j2 + 1
+        }
+        k2 = k2 + 1
+    }
+    let tc = _causal_tension(hist2, frames2, d2)
+    // Telescoping: Ψ_2 − Ψ_0 = (0.4 + 2*0.05) − 0.4 = 0.10 per component
+    let mut f2a = (len(tc) == d2)
+    let mut jc = 0
+    while jc < d2 {
+        if !_approx_eq(tc[jc], 0.1, tol) { f2a = false }
+        jc = jc + 1
+    }
+    let tcr = _retro_tension(hist2, frames2, d2)
+    let mut f2b = (len(tcr) == d2)
+    let mut jr = 0
+    while jr < d2 {
+        if !_approx_eq(tcr[jr], 0.0 - tc[jr], tol) { f2b = false }
+        jr = jr + 1
+    }
+    // Trivial history: frames=1
+    let mut hist1 = []
+    let mut j1 = 0
+    while j1 < d2 { hist1 = hist1.push(0.5) j1 = j1 + 1 }
+    let tc_triv = _causal_tension(hist1, 1, d2)
+    let f2c = _vec_abs_sum(tc_triv) < tol && (len(tc_triv) == d2)
+    let f2_pass = f2a && f2b && f2c
+    print("  F-TT-2 CAUSAL-VARIANT (telescoping + Wheeler-Feynman antisymm + trivial-hist): " + to_string(f2_pass))
+
+    // ── F-TT-3 QUANTUM-RHO-DENSITY — ρ_max trace + diag positivity invariants ─
+    //   Mirror tension_link_quantum_rho.hexa rho_new_max + n6_gate_rho:
+    //     (a) Tr(ρ_max) = 1 (probability mass)
+    //     (b) diag(ρ_max) ≥ 0 (positivity, all 1/d > 0 for d ≥ 1)
+    //     (c) uniform: diag(ρ_max) = (1/d, 1/d, ..., 1/d) (max entropy state)
+    let d3 = 6
+    let rho_diag = _rho_max_diag(d3)
+    let f3a = _approx_eq(_rho_diag_trace(rho_diag), 1.0, tol)
+    let f3b = _rho_diag_min(rho_diag) > 0.0
+    let mut f3c = (len(rho_diag) == d3)
+    let inv_d = 1.0 / to_float(d3)
+    let mut iR = 0
+    while iR < d3 {
+        if !_approx_eq(rho_diag[iR], inv_d, tol) { f3c = false }
+        iR = iR + 1
+    }
+    let f3_pass = f3a && f3b && f3c
+    print("  F-TT-3 QUANTUM-RHO-DENSITY (Tr=1 + diag≥0 + uniform=1/d): " + to_string(f3_pass))
+
+    // ── F-TT-4 SECOND-ORDER — Laplacian invariants (Newton-lite pre-conditioner) ─
+    //   Mirror tension_link_second_order.hexa laplacian:
+    //     (a) constant input: ∇²Ψ = 0 on flat Ψ (no curvature)
+    //     (b) Laplacian of quadratic Ψ_j = (j − j₀)² is constant 2 (interior)
+    //     (c) shape preservation: len(∇²Ψ) == len(Ψ)
+    let mut psi_flat = []
+    let mut iF = 0
+    while iF < 6 { psi_flat = psi_flat.push(0.5) iF = iF + 1 }
+    let lap_flat = _laplacian(psi_flat)
+    let f4a = _vec_abs_sum(lap_flat) < tol
+    // Quadratic: Ψ_j = (j − 2.5)² scaled small
+    let mut psi_quad = []
+    let mut iQ = 0
+    while iQ < 6 {
+        let dx = to_float(iQ) - 2.5
+        psi_quad = psi_quad.push(0.01 * dx * dx)
+        iQ = iQ + 1
+    }
+    let lap_quad = _laplacian(psi_quad)
+    // interior j ∈ {1,2,3,4}: ∇² = (j+1−2.5)² − 2(j−2.5)² + (j−1−2.5)² = 2 × scaling
+    // scaled by 0.01 → expected 0.02 (constant on interior)
+    let mut f4b = true
+    let mut iI = 1
+    while iI < 5 {
+        if !_approx_eq(lap_quad[iI], 0.02, tol * 100.0) { f4b = false }
+        iI = iI + 1
+    }
+    let f4c = (len(lap_flat) == 6) && (len(lap_quad) == 6)
+    let f4_pass = f4a && f4b && f4c
+    print("  F-TT-4 SECOND-ORDER (Laplacian: flat=0 + quadratic-const-interior + shape): " + to_string(f4_pass))
+
+    // ── F-TT-5 VS-BACKPROP-BENCH — cos(ΔW_tl, ΔW_bp) ≈ 1 baseline reproduce ─
+    //   Mirror tension_link_vs_backprop_bench.hexa baseline:
+    //     (a) backprop ΔW direction: −(W − ½), so cos with (½ − W) = 1
+    //     (b) tension ΔW direction restoring → cos(ΔW_tl, ΔW_bp) > 0.5
+    //         (G_holo smoothing keeps overall direction toward ½)
+    //     (c) at vacuum: both ΔW = 0 (degenerate, cos undefined → handled as 0)
+    let mut w5 = []
+    let mut iW = 0
+    while iW < 8 { w5 = w5.push(0.7) iW = iW + 1 }
+    let dw_bp = _delta_w_backprop(w5)
+    let dw_tl = _tension_link_step(w5)
+    // (a) ΔW_bp[i] = −0.1 * (0.7 − 0.5) = −0.02, uniform negative on uniform Ψ
+    let mut f5a = (len(dw_bp) == 8)
+    let mut iB = 0
+    while iB < 8 {
+        if !_approx_eq(dw_bp[iB], 0.0 - 0.02, tol) { f5a = false }
+        iB = iB + 1
+    }
+    // (b) cos similarity > 0.5 (both restoring; G_holo doesn't flip sign)
+    let cos_sim = _cosine(dw_bp, dw_tl)
+    let f5b = cos_sim > 0.5
+    // (c) at vacuum, both zero → cos = 0 (handled by EPS guard)
+    let dw_bp_vac = _delta_w_backprop(psi_vac)
+    let dw_tl_vac = _tension_link_step(psi_vac)
+    let f5c = _vec_abs_sum(dw_bp_vac) < tol && _vec_abs_sum(dw_tl_vac) < tol
+    let f5_pass = f5a && f5b && f5c
+    print("  F-TT-5 VS-BACKPROP-BENCH (bp-direction + cos>0.5 + vacuum-degenerate): " + to_string(f5_pass)
+          + "  cos=" + to_string(cos_sim))
+
+    let all_ok = f1_pass && f2_pass && f3_pass && f4_pass && f5_pass
+    // PASS_MARKER per build_verify.sh regex 'selftest: true|...'
+    print("=== F-TT-1..5 compiled-native selftest: " + to_string(all_ok) + " (5/5) ===")
+    print("    canonical 🔵 sympy : Phase TT-A3 B-TT-1..5 사전등록 (PLAN.md §2)")
+    print("    transfer-form only : restoring sign + Noether gate + Wheeler-Feynman")
+    print("                          + trace=1 + Laplacian + cos-direction")
+    print("    B-TT-NOTE          : SGD convergence OUTCOME empirical")
+    print("                          (B-D-NOTE pattern, NOT counted 🔵)")
+}
+
+
+fn main() {
+    print("HEXAD/TENSION-TRAIN — tension_train_smoke (Phase TT-B, F-TT-1..5 compiled-native)")
+    print("anchor: PLAN.md §2 falsifier 사전등록 + TENSION-TRAIN.tape @D online_tension_step")
+    print("")
+    _selftest()
+}

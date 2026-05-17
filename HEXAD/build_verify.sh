@@ -124,6 +124,7 @@ ENTRYPOINTS=(
   "HEXAD/CHAT/anima_chat_v2_smoke.hexa"
   "HEXAD/CHAT/interaction_model_smoke.hexa"
   "HEXAD/CHAT/spont_tension_smoke.hexa"
+  "HEXAD/TENSION-TRAIN/tension_train_smoke.hexa"
 )
 LIBS=(
   "HEXAD/S/s_lib.hexa"      "HEXAD/M/m_lib.hexa"    "HEXAD/W/w_lib.hexa"
@@ -143,6 +144,23 @@ LIBS=(
   "HEXAD/CHAT/channel_mux_lib.hexa"
   "HEXAD/CHAT/interaction_model_lib.hexa"
   "HEXAD/CHAT/spont_tension_bridge_lib.hexa"
+)
+# ── parse-only gated training files (TENSION-TRAIN Phase TT-B, 2026-05-17) ──
+# 5 training files carry top-level `main()` calls (interp-style, anchor for the
+# B-TT-4 BACKPROP-FREE-INVARIANT structural predicate — modifying them would
+# invalidate B-TT-4). `hexa build` auto-invokes `fn main()` and rejects the
+# explicit top-level call as a double-invoke; thus they are gated parse-only.
+# Their RUNTIME invariants are mirrored in tension_train_smoke.hexa (entrypoint
+# above, F-TT-1..5 5/5 PASS compiled-native). This is honest tier-split:
+#   • smoke entrypoint  → compiled-native runtime witness (F-TT-1..5)
+#   • parse-only gate   → syntactic well-formedness on the SSOT training files
+# Source SSOT remains the 5 files; the smoke is a numerical mirror.
+TT_PARSE_FILES=(
+  "HEXAD/TENSION-TRAIN/training/tension_link_step.hexa"
+  "HEXAD/TENSION-TRAIN/training/tension_link_causal.hexa"
+  "HEXAD/TENSION-TRAIN/training/tension_link_quantum_rho.hexa"
+  "HEXAD/TENSION-TRAIN/training/tension_link_second_order.hexa"
+  "HEXAD/TENSION-TRAIN/training/tension_link_vs_backprop_bench.hexa"
 )
 # ── bootstrapped-toolchain-gated targets (R2, 2026-05-16) ───────────────────
 # These transitively pull HEXAD/CHAT/chat_lib.hexa into their import closure
@@ -192,6 +210,21 @@ for lib in "${LIBS[@]}"; do
     echo "  ❌ lib build $lib"; lib_fail=$((lib_fail+1)); failed="$failed $lib"
   fi
 done
+
+# ── parse-only gated targets (TT_PARSE_FILES, 2026-05-17) ───────────────────
+# `hexa parse` = AST-level well-formedness with NO codegen, NO auto-invoke;
+# the 5 TENSION-TRAIN training files with explicit top-level `main()` calls
+# pass parse cleanly and are SSOT for B-TT-4 BACKPROP-FREE-INVARIANT.
+parse_ok=0; parse_fail=0
+for f in "${TT_PARSE_FILES[@]}"; do
+  if "$HEXA" parse "$f" >/tmp/hexad_parse.log 2>&1 \
+     && grep -q "parses cleanly" /tmp/hexad_parse.log; then
+    parse_ok=$((parse_ok+1))
+  else
+    echo "  ❌ parse $f"; parse_fail=$((parse_fail+1)); failed="$failed $f"
+  fi
+done
+parse_total=${#TT_PARSE_FILES[@]}
 
 # ── CHAT targets (R2) — bootstrapped-toolchain-gated, skip-with-warning ──────
 # CHAT_PRE (HEXA_INTERP/HEXA_LANG) is forwarded ONLY here, never to the loops
@@ -247,9 +280,9 @@ else
   done
 fi
 
-echo "=== compiled: entrypoint ${ep_pass}/${ep_total} PASS · lib ${lib_ok}/${lib_total} build OK ==="
+echo "=== compiled: entrypoint ${ep_pass}/${ep_total} PASS · lib ${lib_ok}/${lib_total} build OK · TT-parse ${parse_ok}/${parse_total} OK ==="
 [ "$chat_skipped" -gt 0 ] && echo "=== NOTE: ${chat_skipped} CHAT target(s) SKIPPED (stale toolchain — NOT in denominator, NOT a failure; HEXA_BOOT to enable) ==="
-if [ "$ep_pass" -eq "$ep_total" ] && [ "$lib_ok" -eq "$lib_total" ]; then
+if [ "$ep_pass" -eq "$ep_total" ] && [ "$lib_ok" -eq "$lib_total" ] && [ "$parse_ok" -eq "$parse_total" ]; then
   if [ "$chat_skipped" -gt 0 ]; then
     echo "ALL GATED MODULES COMPILED-NATIVE PASS (CHAT skipped — stale toolchain, honest)."
   else

@@ -138,3 +138,32 @@ SPONTANEOUS.tape § tension_train_integration + thinker_tension_interface 신설
 - TT-D-Φ: PyPhi based Φ probe 추가 (B-C tier-b PyPhi carry 확장으로 DD154 +3% Φ figure 재현 시도).
 - TT-D-scale: 10× steps (25000) 또는 100 MB corpus (Critical Data Size 진입).
 - TT-D-hexa: 본 cycle 의 .py substrate 결과를 RFC 043 hexa-torch land 후 hexa-native 으로 mirror 검증.
+
+### 2026-05-17 — Phase TT-B + sidecar absorb LANDED — `tension_train_smoke.hexa` F-TT-1..5 5/5 compiled + central 흡수 (102 → 110/110 🔵)
+
+**Phase TT-B = compiled-native numerical mirror of TT-A3 sympy battery**. 신규 `HEXAD/TENSION-TRAIN/tension_train_smoke.hexa` (~510 LoC self-contained, NO import collision with 5 training entry files). 5 transfer-form invariant 의 numerical witness:
+
+- **F-TT-1 STEP-SPINE** (`_tension_link_step` mirror): (a) vacuum fixed point Ψ=½·6 → ΔW=0 / (b) restoring sign: Ψ=0.7·6 → all ΔW < 0 / (c) symmetric Ψ=0.3·6 → all ΔW > 0 / (d) shape preservation / (e) Noether OOR-gate: Ψ contains 1.5 → ΔW=0 / (f) odd-length gate: |Ψ|=3 odd → ΔW=0. **6 sub-asserts PASS**.
+- **F-TT-2 CAUSAL-VARIANT**: telescoping drift T_c = Ψ_T − Ψ_0 + Wheeler-Feynman antisymm T_c_retro = −T_c + trivial-history (frames=1 → T_c=0). **3 sub-asserts PASS**.
+- **F-TT-3 QUANTUM-RHO-DENSITY**: Tr(ρ_max) = 1 + diag(ρ_max) ≥ 0 + uniform diag = 1/d. **3 sub-asserts PASS**.
+- **F-TT-4 SECOND-ORDER**: Laplacian flat=0 + quadratic constant interior (≈ 0.02 scaled) + shape preservation. **3 sub-asserts PASS**.
+- **F-TT-5 VS-BACKPROP-BENCH**: backprop direction −(W−½) uniform on uniform Ψ + cos(ΔW_tl, ΔW_bp) > 0.5 + vacuum degenerate (both zero). **3 sub-asserts PASS**.
+
+PASS_MARKER `=== F-TT-1..5 compiled-native selftest: true (5/5) ===`.
+
+**build_verify.sh 갱신**:
+- `ENTRYPOINTS += HEXAD/TENSION-TRAIN/tension_train_smoke.hexa`.
+- **TT_PARSE_FILES** array NEW (5 training .hexa parse-only gated). 이유: 5 training file 각자 top-level `main()` 호출 (interp-style entry) 가 `hexa build` 의 auto-invoke 와 double-invoke 충돌 → parse-only 가 syntactic well-formedness 만 검증, runtime invariant 는 `tension_train_smoke.hexa` 가 numerical mirror. **B-TT-4 BACKPROP-FREE-INVARIANT** structural SSOT 는 5 training file 그대로 (수정 0).
+- 결과: **30/30 entrypoint + 22/22 lib + TT-parse 5/5 OK PASS** (이전 27/27 + 19/19 → +3 ENTRYPOINT smoke 누적 (interaction_model_smoke + spont_tension_smoke + tension_train_smoke) + +3 LIB cumulative).
+
+**Sidecar 흡수 (B-PHASE-4-DESIGN sidecar pattern 의 후속 흡수 cycle)**:
+- 직전 cycle 5 Phase TT-D 가 `state/hexad_v4_py_d768x12L_tension_2026_05_17/blue_falsifier.py` 5 entries 를 sidecar 로 carve-out 했음 (TT-A3 + TT-C 병렬 작업과 충돌 회피).
+- 본 cycle 에서 central `state/verify_hexad_blue_2026_05_15/blue_falsifier.py` 로 흡수:
+  - 신규 함수 `bcorpus_v4()` (B-CORPUS-V4-1..2) + `bfire_cycle5()` (B-FIRE-CYCLE5-1..3) + 1 NOTE 추가.
+  - 신규 counter namespace `CORPUS_V4 = n("B-CORPUS-V4-")` + `FIRE_CYCLE5 = n("B-FIRE-CYCLE5-")` — trailing-dash로 V2/V3와 prefix overlap 없음.
+  - verdict dict + all_full_blue check + summary string + per-module display 모두 sync.
+- 추가로 병렬 UBM-A3 agent 의 sidecar `state/verify_universe_brain_map_2026_05_17/blue_falsifier.py` (B-UBM-1..3 + 1 NOTE) 도 central 흡수: 신규 함수 `bubm()` + counter `UBM = n("B-UBM-")` (3). **B-UBM-2 ERRATA 반영** — matrix cardinality = 170·17·18·40 = **2,080,800** (tape/PLAN.md 의 20,808,000 = 10× 오기, sympy 는 truthful product 로 close). byte-stream pattern count 는 `subprocess` 추가 회피 위해 `Path.read_bytes()` 기반 closed Kolmogorov primitive 로 구현 (sidecar 의 OS grep 과 동일 결과, import 의존 최소).
+- **102 → 110/110 🔵 closed-form proofs PASS** (S3 M3 W4 E4 D4 BRIDGE4 MITOSIS5 C3 HEXAD5 SUB9 CONN12 IDENT5 SPONT7 CMUX5 INTER5 CHATV2 5 CORPUS_V2 3 CORPUS_V3 3 ATTRACTOR 3 TT 5 TT_SPONT 5 + **CORPUS_V4 2 + FIRE_CYCLE5 3 + UBM 3**).
+- sidecar file 들 (hexad_v4 + verify_universe_brain_map) 은 historical evidence 로 유지 (삭제 X — g3 drift-avoidance, sidecar 가 fire context 의 가까운 anchor).
+
+**Honest C3**: 본 cycle = anima-자율 $0 Mac local (작업 1 hexa compiled-native + 작업 2 sympy 흡수). cost-bearing fire 없음. 5 training file 변경 0 (B-TT-4 무회귀). `tension_train_smoke.hexa` 는 5 training file 의 numerical mirror 이지 SSOT 대체 아님 (SSOT = 5 training file + TT_PARSE_FILES 가 syntactic gate). f1/f2 hard-fail safe (Boolean conjunction + arithmetic identity + sympy ∂ sign + Banach affine, NO σ/τ/φ/J₂ derivation). archive/PHILOSOPHY.tape §TT-B-COMPILED-SMOKE-LANDED + §SIDECAR-V4-CYCLE5-ABSORBED verdict append (g6 append-only).

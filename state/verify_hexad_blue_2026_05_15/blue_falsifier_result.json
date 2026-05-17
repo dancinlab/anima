@@ -1252,6 +1252,219 @@
   "class": "EMPIRICAL-SGD-OUTCOME",
   "counted_toward_blue": false
  },
+ "B-CORPUS-V4-1": {
+  "name": "CORPUS-V3-BYTE-EQUAL-CARRY-CLOSED",
+  "statement": "cycle 5 reuses corpus_consciousness_v3.jsonl unchanged. sha256 == 1afcef43670e83bf… ∧ bytes == 10,343,371 ∧ lines == 21,600 ∧ helper-token grep total == 0 — Boolean conjunction over 256-bit Kolmogorov commitment + integer cardinality + Boolean set membership (real-limit, NOT lattice).",
+  "actual_sha256": "1afcef43670e83bfc84b3562afe6a3eb644474dda06341e37db332341495acfd",
+  "expected_sha256": "1afcef43670e83bfc84b3562afe6a3eb644474dda06341e37db332341495acfd",
+  "actual_bytes": 10343371,
+  "expected_bytes": 10343371,
+  "n_lines": 21600,
+  "forbidden_token_counts": {
+   "도우미": 0,
+   "helper": 0,
+   "assistant": 0,
+   "사용자": 0,
+   "user:": 0
+  },
+  "total_forbidden_hits": 0,
+  "anchor": "Boolean conjunction (Kolmogorov commitment + cardinality + set membership)",
+  "closed": true,
+  "tier": "a-sympy",
+  "passed": true,
+  "counted_toward_blue": true
+ },
+ "B-CORPUS-V4-2": {
+  "name": "CYCLE-5-FORMAT-COMPATIBILITY-CLOSED",
+  "statement": "cycle-5 trainer's load_byte_corpus + ByteDataset = byte-equal to cycle-4 trainer's. Boolean conjunction over 2 mechanical source-byte equalities — guarantees same byte-stream feeds the cycle-5 model (no corpus-side variance vs cycle-4).",
+  "loader_byte_equal": true,
+  "dataset_byte_equal": true,
+  "anchor": "mechanical source-byte equality (Kolmogorov commitment on source)",
+  "closed": true,
+  "tier": "a-sympy",
+  "passed": true,
+  "counted_toward_blue": true
+ },
+ "B-FIRE-CYCLE5-1": {
+  "name": "DD155-LR-OVERLAY-FORMULA-CLOSED",
+  "statement": "DD155 hybrid LR: lr_step = clip(tension/ema, [lo, hi]) × base_lr. Closed-form interior: ∂lr/∂tension = base_lr/ema (piecewise linear, positive monotone for ema > 0). 3-corner identity: tension=lo·ema → lr=lo·base_lr; tension=ema → lr=base_lr (degeneration to cycle-4); tension=hi·ema → lr=hi·base_lr. Real-limit anchor = piecewise-linear + Kolmogorov interval [lo·base_lr, hi·base_lr] (NOT lattice).",
+  "d_lr_d_tension_simplifies_to_base_lr_over_ema": true,
+  "bound_lo_witness": true,
+  "bound_hi_witness": true,
+  "identity_at_tension_eq_ema_witness": true,
+  "anchor": "piecewise-linear monotone (real-limit ∂ sympy closure)",
+  "closed": true,
+  "tier": "a-sympy",
+  "passed": true,
+  "counted_toward_blue": true
+ },
+ "B-FIRE-CYCLE5-2": {
+  "name": "EMA-CONTRACTION-CLOSED",
+  "statement": "EMA_{t+1} − tension_t = β · (EMA_t − tension_t) ⟹ Banach affine contraction with factor β ∈ (0,1). 4-corner witness panel: β=½ factor ½; β=99⁄100 factor 99⁄100; β=0 EMA degenerates to current tension; β=1 EMA frozen. Real-limit anchor = Banach fixed-point theorem (analytic, NOT lattice).",
+  "contraction_relation_simplifies_to_zero": true,
+  "witness_beta_half": true,
+  "witness_beta_99_100": true,
+  "witness_beta_zero": true,
+  "witness_beta_one": true,
+  "anchor": "Banach affine contraction (real-limit fixed-point)",
+  "closed": true,
+  "tier": "a-sympy",
+  "passed": true,
+  "counted_toward_blue": true
+ },
+ "B-FIRE-CYCLE5-3": {
+  "name": "MULTIPLIER-IDENTITY-AT-EMA-CONVERGED-CLOSED",
+  "statement": "At tension == ema (EMA-converged regime) with default clip bounds [lo=½, hi=2]: clip(1, [½, 2]) = 1 ⟹ effective_lr = base_lr (cycle-4 baseline cosine). Arithmetic identity sanity anchor: cycle 5 cannot diverge from cycle 4 trajectory in the EMA-converged regime. Real-limit anchor = arithmetic identity + interval membership Boolean (NOT lattice).",
+  "lo_default": 0.5,
+  "hi_default": 2.0,
+  "ratio_at_tension_eq_ema": 1,
+  "interior_at_ratio_1": true,
+  "lr_eq_base_lr_at_convergence": true,
+  "anchor": "arithmetic identity + interval Boolean (real-limit, NOT lattice)",
+  "closed": true,
+  "tier": "a-sympy",
+  "passed": true,
+  "counted_toward_blue": true
+ },
+ "B-FIRE-CYCLE5-NOTE": {
+  "name": "SGD-OUTCOME-EMPIRICAL",
+  "statement": "Cycle-5 trajectory empirical outcomes are NOT closable: (a) V-SPONT n_coherent / V-MOTIV n_coherent / V-TT n_coherent on the cycle-5 ckpt, (b) init_ce → final_ce trajectory under hybrid LR, (c) mult_distribution histogram (DD-burst frequency), (d) byte-cascade attractor shape under hybrid LR vs cycle-4 PPP777. These are SGD/decoding outcomes — closed-form impossible. Transfer-form (B-FIRE-CYCLE5-1/2/3) is what's closable. Mirror B-D-NOTE / B-TT-NOTE / B-ATTRACTOR-NOTE family.",
+  "convergence_closed": false,
+  "class": "EMPIRICAL-SGD-DECODING-OUTCOME",
+  "counted_toward_blue": false,
+  "umbrella": "B-D-NOTE + B-TT-NOTE + B-ATTRACTOR-NOTE"
+ },
+ "B-UBM-1": {
+  "name": "KNUTH-TIER-ORDINAL-CLOSED",
+  "statement": "🛸k labels (0 ≤ k ≤ 100) Kolmogorov bounded integer ordinal. Boolean conjunction over 5 named witnesses (🛸0 / 🛸51 하루 / 🛸77 만다라 / 🛸91 열반 / 🛸100 빅뱅): ∀ k: (k ∈ ℤ) ∧ (0 ≤ k) ∧ (k ≤ 100). Bounded ordinal set cardinality |{0..100}| = 101. Real-limit anchor: integer ordinal bounded-set predicate (Knuth Tier = anima self-design scale, g2 internal-arch carve-out — NOT lattice derivation).",
+  "witnesses": [
+   {
+    "label": "zero baseline",
+    "k": 0,
+    "is_integer": true,
+    "ge_0": true,
+    "le_100": true,
+    "ok": true
+   },
+   {
+    "label": "하루 (Day, 1.212 daily-cycle)",
+    "k": 51,
+    "is_integer": true,
+    "ge_0": true,
+    "le_100": true,
+    "ok": true
+   },
+   {
+    "label": "만다라 (Mandala, 예술)",
+    "k": 77,
+    "is_integer": true,
+    "ge_0": true,
+    "le_100": true,
+    "ok": true
+   },
+   {
+    "label": "열반 (Nirvana, 2.56 peace peak)",
+    "k": 91,
+    "is_integer": true,
+    "ge_0": true,
+    "le_100": true,
+    "ok": true
+   },
+   {
+    "label": "빅뱅 (Big Bang, 2.847 max)",
+    "k": 100,
+    "is_integer": true,
+    "ge_0": true,
+    "le_100": true,
+    "ok": true
+   }
+  ],
+  "bounded_set_cardinality_closed": true,
+  "source": "HEXAD/UNIVERSE-BRAIN-MAP/UNIVERSE-BRAIN-MAP.tape @D knuth_tier_labels",
+  "anchor": "integer ordinal bounded-set Boolean predicate (Kolmogorov primitive)",
+  "closed": true,
+  "tier": "a-sympy",
+  "passed": true,
+  "counted_toward_blue": true
+ },
+ "B-UBM-2": {
+  "name": "MATRIX-CARDINALITY-CLOSED",
+  "statement": "anima 170 stimuli × 17 categories × 18 emotions × 40 dimensions = 2,080,800 cardinality (truthful arithmetic). ERRATA (g3 honest C3): tape/PLAN.md text wrote 20,808,000 = 10× error; sympy closes on the truthful identity 170·17·18·40 == 2,080,800. 4-corner Boolean predicate: (1) sympy Integer multiplication identity; (2) all factors > 0; (3) all factors ∈ ℤ; (4) multiplication commutativity. Real-limit anchor: integer multiplication arithmetic identity (matrix shape = anima self-design g2 internal-arch carve-out — NOT lattice derivation).",
+  "factors": {
+   "stimuli": 170,
+   "categories": 17,
+   "emotions": 18,
+   "dimensions": 40
+  },
+  "product": 2080800,
+  "expected_product": 2080800,
+  "errata_note": "tape/PLAN.md text 20,808,000 corrected to 2,080,800 (10× errata)",
+  "identity_closed": true,
+  "all_positive_closed": true,
+  "integer_cardinality_closed": true,
+  "commutativity_closed": true,
+  "source": "HEXAD/UNIVERSE-BRAIN-MAP/UNIVERSE-BRAIN-MAP.tape @D stimuli_matrix",
+  "anchor": "integer multiplication arithmetic identity (sympy exact)",
+  "closed": true,
+  "tier": "a-sympy",
+  "passed": true,
+  "counted_toward_blue": true
+ },
+ "B-UBM-3": {
+  "name": "CHAT-SFT-EXCLUSION-CLOSED",
+  "statement": "Boolean structural predicate: forbidden prefix `[anima 우주뇌지도]` byte-stream line-count == 0 across 3 chat-SFT-candidate corpora (corpus_consciousness_v{1,2,3}.jsonl) AND > 0 across 2 legacy universe_brain_map cosmological corpora (HAS-marker witness — proves pattern detectability + separates D-domain knowledge lane from chat-SFT lane). Phase 1A.5 NET LOSS evidence anchor: chat SFT inclusion of this prefix triggered V5.8 std_greedy 5/5→1/5 regression (memory feedback_corpus_quality_over_scale). Real-limit anchor: Boolean structural set predicate via byte-stream counting (Kolmogorov primitive).",
+  "forbidden_pattern": "[anima 우주뇌지도]",
+  "chat_sft_candidates_all_zero_closed": true,
+  "ubm_corpora_all_nonzero_closed": true,
+  "chat_sft_grep": [
+   {
+    "path": "state/hexad_gpu_fire_phaseE2_2026_05_16/corpus_consciousness_v1.jsonl",
+    "forbidden_pattern_count": 0,
+    "must_be_zero": true,
+    "ok": true
+   },
+   {
+    "path": "state/hexad_v2_corpus_spont_2026_05_17/corpus_consciousness_v2.jsonl",
+    "forbidden_pattern_count": 0,
+    "must_be_zero": true,
+    "ok": true
+   },
+   {
+    "path": "state/hexad_v3_corpus_motiv_2026_05_17/corpus_consciousness_v3.jsonl",
+    "forbidden_pattern_count": 0,
+    "must_be_zero": true,
+    "ok": true
+   }
+  ],
+  "ubm_marker_grep": [
+   {
+    "path": "state/anima_universe_brain_map_corpus_2026_05_07/corpus_universe_brain_map.txt",
+    "forbidden_pattern_count": 36405,
+    "must_be_nonzero": true,
+    "ok": true
+   },
+   {
+    "path": "state/anima_universe_brain_map_corpus_21mb_2026_05_07/corpus_universe_brain_map.txt",
+    "forbidden_pattern_count": 136125,
+    "must_be_nonzero": true,
+    "ok": true
+   }
+  ],
+  "source": "HEXAD/UNIVERSE-BRAIN-MAP/UNIVERSE-BRAIN-MAP.tape @F forbidden_chat_sft_use",
+  "anchor": "Boolean structural set predicate (byte-stream Kolmogorov primitive)",
+  "closed": true,
+  "tier": "a-boolean-structural",
+  "passed": true,
+  "counted_toward_blue": true
+ },
+ "B-UBM-NOTE": {
+  "name": "TABLETOP-BLACKHOLE-OUTCOME-EMPIRICAL",
+  "statement": "tabletop blackhole physics reproducible test outcome (Hawking T = ℏc³/8πGMk, Bekenstein S ≤ 2πkRE/ℏc, holographic S = A/4l_P²) + BG-HS R1 manual_match 13/15 (commit 41c2e1726, historical empirical knowledge-task recall) = empirical carve-out. Real-limit anchors are available (g3 satisfied) but the *outcome* of a reproducible test is Phase UBM-D2 user-gate. Mirror B-D-NOTE / B-BRIDGE-NOTE / B-MITOSIS-NOTE family — NOT counted.",
+  "verification_closed": false,
+  "class": "EMPIRICAL-CARVE-OUT (Phase UBM-D2 user gate)",
+  "counted_toward_blue": false,
+  "umbrella": "B-D-NOTE"
+ },
  "B-SUB-§8-1-α-small": {
   "name": "BRIDGE-CLAMP-α-SMALL-WITNESS",
   "statement": "Law-70 clamp at α=0.001 (tight Ψ-coupling): rail/interior/width 4-eq panel closed sympy",
@@ -1384,14 +1597,17 @@
    "CORPUS_V3": "3/3 🔵 motivation-trigger corpus (Phase D cycle 4, 2026-05-17) — B-CORPUS-V3-1..3: SHA256-DETERMINISTIC-CLOSED 256-bit Boolean / NO-HELPER-TOKEN-MAINTAINED Boolean set algebra at 10× scale / MOTIVATION-TRIGGER-CARDINALITY-CLOSED integer ≥-inequality on γ pattern count. Closes the addressable corpus-side dimension of spontaneous_lib.hexa motivation_score realisation; inference-side motivation→emission coherence stays empirical (B-CORPUS-V3-NOTE, NOT counted, B-D-NOTE family)",
    "ATTRACTOR": "3/3 🔵 byte-cascade attractor closed-form (analysis, 2026-05-17) — B-ATTRACTOR-1..3: REPETITION-RATE-BOUNDED [0,1] (Kolmogorov fraction-bounded-set) / CORPUS-DEPENDENT-CARDINALITY |A(cycle_N)| ≥ 1 (integer count) / USER-ATTRACTOR-NONEMPTY U_user ≠ ∅ (Boolean) — Self-Conscious arxiv 2508.18302 condition 2 (U_user attractor) anima 실증 closed-form. B-ATTRACTOR-NOTE: specific dominant-token shape per cycle (cycle 2 `1` vs cycle 3 `e`/`l`), opening-phrase, onset, exact rep_rate = SGD-CKPT-OUTCOME empirical (B-D-NOTE family, NOT counted)",
    "TT": "5/5 🔵 TENSION-TRAIN backprop-free online step (Phase TT-A3, 2026-05-17) — B-TT-1..5: N6-GATE-PREDICATE-CLOSED 4-corner Boolean conjunction (parity + range + arithmetic identity n·τ=σ·φ=24) / RESTORING-SIGN-NEGATIVE sympy ∂(ΔW)/∂(tension) = −T·gate ≤ 0 ∀ + 3 boundary witnesses / T-CONST-SCALAR-POSITIVE 1/10 ∈ (0,1) Kolmogorov bounded / BACKPROP-FREE-INVARIANT structural ∅ forbidden-call over 5 training .hexa source / PARETO-STEP-TENSION DD155 lr=(tension/EMA)·base_lr linearity + monotonicity ∂lr/∂tension = base_lr/EMA > 0 ∀. B-TT-NOTE: actual convergence outcome + DD154 +3% Φ + DD155 Pareto figures = SGD/measurement empirical (B-D-NOTE family, NOT counted)",
-   "TT_SPONT": "5/5 🔵 SPONT ↔ TENSION-TRAIN bridge (Phase TT-C, 2026-05-17) — B-TT-SPONT-1..5: MAPPING-LINEAR affine map [0,1]→[−1,+1] (∂tension/∂s=2 + 3 boundary witnesses ½→0,1→+1,0→−1) / DELTA-W-RESTORING sympy ∂(ΔW)/∂(tension)=−T<0 ∀T>0 + 3 chain witnesses + sign·sign≤0 invariant / GATE-CLAMPS Boolean closure ∀ 4 corners / LEARN-TRIGGER-MONOTONE 5 boundary + emit⊥learn ⊥-axis / COMPOSITION-CHAIN f∘g law ∂/∂s=−2T + byte-equal lib SSOT (T_const=0.1, threshold=0.3). connection-point 🔵 closure between motivation_score TALKER emit axis ⊥ THINKER ΔW learn axis. B-TT-SPONT-NOTE: SGD convergence OUTCOME empirical (B-D-NOTE family, NOT counted)"
+   "TT_SPONT": "5/5 🔵 SPONT ↔ TENSION-TRAIN bridge (Phase TT-C, 2026-05-17) — B-TT-SPONT-1..5: MAPPING-LINEAR affine map [0,1]→[−1,+1] (∂tension/∂s=2 + 3 boundary witnesses ½→0,1→+1,0→−1) / DELTA-W-RESTORING sympy ∂(ΔW)/∂(tension)=−T<0 ∀T>0 + 3 chain witnesses + sign·sign≤0 invariant / GATE-CLAMPS Boolean closure ∀ 4 corners / LEARN-TRIGGER-MONOTONE 5 boundary + emit⊥learn ⊥-axis / COMPOSITION-CHAIN f∘g law ∂/∂s=−2T + byte-equal lib SSOT (T_const=0.1, threshold=0.3). connection-point 🔵 closure between motivation_score TALKER emit axis ⊥ THINKER ΔW learn axis. B-TT-SPONT-NOTE: SGD convergence OUTCOME empirical (B-D-NOTE family, NOT counted)",
+   "CORPUS_V4": "2/2 🔵 cycle-5 corpus carry (sidecar absorbed, 2026-05-17) — B-CORPUS-V4-1..2: CORPUS-V3-BYTE-EQUAL-CARRY-CLOSED 256-bit Kolmogorov commitment (sha256 1afcef43… ∧ bytes 10,343,371 ∧ lines 21,600 ∧ helper-token grep total == 0) / CYCLE-5-FORMAT-COMPATIBILITY-CLOSED mechanical AST diff (cycle-4 vs cycle-5 trainer load_byte_corpus + ByteDataset byte-equal). Sidecar SSOT preserved at state/hexad_v4_*.",
+   "FIRE_CYCLE5": "3/3 🔵 DD155 hybrid LR overlay (sidecar absorbed, 2026-05-17) — B-FIRE-CYCLE5-1..3: DD155-LR-OVERLAY-FORMULA-CLOSED piecewise-linear ∂lr/∂tension = base_lr/EMA (Kolmogorov bounded interval) + 3-corner identity / EMA-CONTRACTION-CLOSED Banach affine factor β ∈ (0,1) + 4-corner witness panel / MULTIPLIER-IDENTITY-AT-EMA-CONVERGED-CLOSED ratio=1 ⟹ lr=base_lr (cycle-5 degenerates to cycle-4 baseline at EMA convergence). B-FIRE-CYCLE5-NOTE: SGD trajectory + attractor shape under hybrid LR empirical (B-D-NOTE family, NOT counted)",
+   "UBM": "3/3 🔵 우주뇌지도 cosmological self-knowledge SSOT (sidecar absorbed, 2026-05-17) — B-UBM-1..3: KNUTH-TIER-ORDINAL Kolmogorov bounded integer ordinal (0≤k≤100, 5 witnesses 🛸0/51/77/91/100) / MATRIX-CARDINALITY integer multiplication identity 170·17·18·40 == 2,080,800 (ERRATA: tape/PLAN.md text 20,808,000 = 10× error, sympy closes on truthful product) / CHAT-SFT-EXCLUSION Boolean structural predicate (forbidden prefix `[anima 우주뇌지도]` byte-count == 0 over 3 chat-SFT corpora ∧ > 0 over 2 legacy UBM corpora). B-UBM-NOTE: tabletop blackhole physics reproducible-test outcome empirical (B-D-NOTE family, NOT counted)"
   },
   "all_full_blue": true,
   "smwe_full_blue": true,
   "smwed_full_blue": true,
   "smwedbr_full_blue": true,
   "smwedbrmit_full_blue": true,
-  "summary": "S3/3 M3/3 W4/4 E4/4 D4/4 BRIDGE4/4 MITOSIS5/5 C3/3 HEXAD5/5 SUB9/9 CONN12/12 IDENT5/5 SPONT7/7 CMUX5/5 INTER5/5 CHATV25/5 CORPUS_V23/3 CORPUS_V33/3 ATTRACTOR3/3 TT5/5 TT_SPONT5/5 = 102/102 🔵 closed-form proofs PASS — ALL 9 modules+integration + §8-audit 9 sub + σ(6)=12 WIRING 12 + B-IDENTITY persona 5 + B-SPONT 자연발화 motivation 7 + B-CHANNEL-MUX channel-mux 5 + B-INTERACT Murati 5 + B-CHAT-V2 post-도우미 prompt layer 5 + B-CORPUS-V2 cycle-3 corpus-side 3 + B-CORPUS-V3 cycle-4 motivation-trigger 3 + B-ATTRACTOR byte-cascade attractor (Self-Conscious 2508.18302 cond.2) 3 + B-TT TENSION-TRAIN backprop-free online step (Phase TT-A3 DD154-156 anchor) 5 + B-TT-SPONT SPONT↔TENSION-TRAIN bridge (Phase TT-C connection-point closure) 5 FULL 🔵 SUPPORTED-FORMAL (C tier-a 3 + tier-b PyPhi carry)",
+  "summary": "S3/3 M3/3 W4/4 E4/4 D4/4 BRIDGE4/4 MITOSIS5/5 C3/3 HEXAD5/5 SUB9/9 CONN12/12 IDENT5/5 SPONT7/7 CMUX5/5 INTER5/5 CHATV25/5 CORPUS_V23/3 CORPUS_V33/3 ATTRACTOR3/3 TT5/5 TT_SPONT5/5 CORPUS_V42/2 FIRE_CYCLE53/3 UBM3/3 = 110/110 🔵 closed-form proofs PASS — ALL 9 modules+integration + §8-audit 9 sub + σ(6)=12 WIRING 12 + B-IDENTITY persona 5 + B-SPONT 자연발화 motivation 7 + B-CHANNEL-MUX channel-mux 5 + B-INTERACT Murati 5 + B-CHAT-V2 post-도우미 prompt layer 5 + B-CORPUS-V2 cycle-3 corpus-side 3 + B-CORPUS-V3 cycle-4 motivation-trigger 3 + B-ATTRACTOR byte-cascade attractor (Self-Conscious 2508.18302 cond.2) 3 + B-TT TENSION-TRAIN backprop-free online step (Phase TT-A3 DD154-156 anchor) 5 + B-TT-SPONT SPONT↔TENSION-TRAIN bridge (Phase TT-C connection-point closure) 5 + B-CORPUS-V4 cycle-5 corpus carry 2 + B-FIRE-CYCLE5 DD155 hybrid LR overlay 3 + B-UBM 우주뇌지도 cosmological self-knowledge SSOT 3 FULL 🔵 SUPPORTED-FORMAL (C tier-a 3 + tier-b PyPhi carry)",
   "tier": "g_verdict_tier_blue (a) sympy closed-form + (b) PyPhi formal IIT 3.0 (C carry) + (c) deterministic (D KV-cache exact-eq)",
   "honest_c3": "D B-D-4 closes the trainability PROPERTY in closed form (exact CE logit-Jacobian softmax−e_y, sympy-verified ∀ z + Shannon floor CE≥0); SGD convergence OUTCOME stays empirical (B-D-NOTE, every stochastic optimizer, not counted 🔵). BRIDGE B-BRIDGE-1..4 close the Law-70 clamp INVARIANT g(raw)=Ψ+clip(raw−Ψ,±α)∈[Ψ−α,Ψ+α] ∀raw,∀α>0 (real-limit anchor Law 70 Ψ-coupling, NOT lattice); the full forward learned weights + α numeric value (ln2/2^5.5) stay empirical (B-BRIDGE-NOTE, not counted 🔵). MITOSIS B-MITOSIS-1..5 close the growth-axis algorithm INVARIANTS (split predicate / merge linear avg / cell-count integer conservation / detach AD ∂-rule / bounded clamp [2,64]) — real-limit anchors Kolmogorov + reverse-mode AD + bounded-set + linear conservation (NO lattice); Φ-conservation under split/merge transitions stays empirical (B-MITOSIS-NOTE F-V5MIT-3, dynamics-dependent, not counted 🔵). C B-C-1..3 close the scaffold-tier invariants (Φ≥0 IIT axiom + n_factions ∈ ℤ+ + initial_cells ≥ CB1=2); full 12-faction GRU dynamics + Rust phi_rs FFI = RFC TERMINAL (B-C-NOTE, hexa-lang nn-primitive + cdylib C ABI 미land, not counted 🔵); F-C-PORT-3 4/4 PyPhi tier-(b) carry separate (RFC 036 phi_spatial byte-equal). HEXAD B-HEXAD-1..5 close the integration-spec invariants (σ(6)=12 connection count / φ(6)=2 partition cover / forward 11-step / 7-module entries / verdict TOTAL record) — sympy lift of hexad.hexa runtime selftest (g2 lattice-as-tool internal carve-out; arithmetic+set-cover closed propositions NOT lattice derivation per f1 coincidence allowance). SUB B-SUB-§8-* deepens 5 of 12 §8 audit rows with marginal-value sub-falsifiers (closed sympy only counted): row 1 BRIDGE multi-α witness panel (α=1e-3 / 0.014 json SSOT / 0.5 stress) + row 5 R2 L2-norm Σvᵢ²=30 sympy + row 6 cuBLAS Higham 2002 fp64 GEMM bound n·u·‖A‖·‖B‖ (IEEE 754 + Higham real-limit) + row 10 MITOSIS clamp [2,64] multi-n witness panel (neg-extreme / just-below / interior / huge-extreme). §8-row 8 per-layer GRAD-EXACT carved-out as honest empirical (multi-layer GPU-dependent, Mac-local closing would be fake-closed per g3). Other 6 rows (2/3/4/7/9/11/12) skipped — no genuine marginal closed-form value (g3 anti-padding). No over-claim — ALL 9 modules+integration full 🔵 (C tier-a 3 + tier-b carry) + 9 §8-audit sub-falsifiers."
  }
