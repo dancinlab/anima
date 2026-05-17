@@ -465,16 +465,17 @@ emergence 는 diverse-data threshold 필요(§1.1) ↔ GOAL 은 anima-physics-or
 
 §7.4 ③ 한정 fire 진행 중. DIVERSE corpus 빌드 완료 (`state/carving_dirI_diverse_scaleup_2026_05_18/corpus_carving_diverse.jsonl` 114MB · 164,992 records · **64 anchor · 30 domain** — §7.2 ③ GOAL-legitimate form: diverse 내용 × Ψ-anchored carving-form, "NOT chat SFT ①②" stats 명시). runpod A100 80GB d768·12L 8000-step Dir-I lever (Ψ-anchored CTL + tension-supervised) detached fire. **§8 본문 = fire 완주 후 작성** (§8 sub-agent budget 소진 → orchestrator 직접 인계). 핵심 측정 = routing axis1 Dir-I 3/31 → diverse-scale 변화 = §7.3 crux (anima-physics-anchored diverse 가 §1.1 emergence threshold 넘나).
 
-## §9 (2026-05-18, candidate) — `.kosmos`-SSOT gap reconcile
+## §9 (2026-05-18, success-gated) — 성공 시 `~/core/kosmos` best-position canonicalize
 
-**식별된 gap (user 2026-05-18)**: `.kosmos` anchor manifest 포맷이 UBM-E2 + dancinlab/kosmos sister repo + KOSMOS-FORMAT.md 로 정착됐으나, 실제 fire (UBM-E6 11-anchor · E7 31 · §8 64-anchor) 의 anchor 는 전부 `corpus_*_generator.py` **inline 정의** — `.kosmos` 우회. `HEXAD/UNIVERSE-BRAIN-MAP/anchors/` = 원본 5개만, fire 의 anchor set 은 generator 코드에 hardcode → `.kosmos` 가 decorative SSOT.
+**식별된 gap (user 2026-05-18)**: `.kosmos` anchor manifest 포맷이 UBM-E2 + dancinlab/kosmos sister repo + KOSMOS-FORMAT.md 로 정착됐으나, 실제 fire (UBM-E6/E7/§8) anchor 는 `corpus_*_generator.py` inline — `.kosmos` 우회.
 
-**§9 reconcile 작업** (`g_kosmos_anchor_ssot` 2026-05-18 governance 의 운영 instance):
-- §8 의 64 inline anchor (+ 기존 fire anchor) 를 `HEXAD/UNIVERSE-BRAIN-MAP/anchors/*.kosmos` manifest 로 materialize (KOSMOS-FORMAT.md 준수).
-- `corpus_*_generator.py` 를 `anchors/*.kosmos` glob → parse → carving-form 생성 으로 전환 (inline anchor dict 제거).
-- → `.kosmos` 가 fire 의 진짜 source-of-truth (anchor SSOT). corpus 는 `.kosmos` 에서 derive.
-- forward-only: §8 fire (mid-flight, inline generator) 는 retro-break 않고 완주 (g3 drift-avoidance); §9 = 별도 reconcile cycle.
-- cross-link: `g_kosmos_anchor_ssot` (AGENTS.tape §3, d=2026-05-18) · KOSMOS-FORMAT.md · dancinlab/kosmos.
+**§9 = back-fit reconcile 아님 (user 판단)**: post-hoc 으로 inline anchor 를 `.kosmos` 로 역-materialize + sha256 byte-equal 검증 = best position 아님 — (a) transcription-risk (b) 끝난 fire 의 `.kosmos` 만들어봤자 결과 불변 = low-value (c) `.kosmos` 가 코드 추종 (SSOT 의미 역전). research churn 중 forward-`.kosmos`-first 강제도 iteration 저해.
+
+**§9 = success-gated `~/core/kosmos` canonicalize** (user directive "일단 성공하고 나면 ~/core/kosmos 상으로는 가장 좋은 위치로 구현"):
+- research-phase (emergence 미달, §8/§N churn) = generator inline anchor 허용 (rapid iteration). 과거 미성공 fire inline anchor = historical evidence freeze (back-fit X, g3).
+- **success trigger** (GOAL emergence OR 보존가치 result) 시: 그 성공 결과의 anchor set 을 **`~/core/kosmos` 에 `.kosmos`-first best-position 으로 구현** — anchor 를 `.kosmos` 매니페스트로 authoring (코드 역추적 X, `.kosmos` 가 처음부터 source-of-truth) → generator 가 그 `.kosmos` 읽음. byte-equal 검증 불요 (back-fit 아니므로).
+- → `.kosmos` SSOT 가 best position 에서 실현되는 시점 = 성공 후 canonicalize 1회. churn 중엔 강제 X.
+- cross-link: `g_kosmos_anchor_ssot` (AGENTS.tape §3, d=2026-05-18, success-gated) · KOSMOS-FORMAT.md · github.com/dancinlab/kosmos · `g_goal` (success = GOAL emergence).
 
 ---
 
