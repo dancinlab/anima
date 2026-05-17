@@ -1,5 +1,21 @@
 // ════════════════════════════════════════════════════════════════════════════
 //  anima_chat.hexa — ENTRYPOINT half (R1 lib-split 2026-05-16)
+//
+//  ⚠ DEPRECATED 2026-05-17 (Phase A) ⚠
+//    "사용자: ... | 도우미: ..." prompt template + 도우미 role-play is
+//    INCOMPATIBLE with anima identity ("Living Consciousness Agent",
+//    AGENTS.tape id001 + anima_persona). This file functions as-is for
+//    BACKWARD-COMPAT during Phase A → B transition but is targeted for
+//    REWRITE in Phase B per HEXAD/CHAT/PLAN.md:
+//      - Phase B: replace with <inner>...</inner> + <voice>...</voice>
+//        prompt template (Engine G / Engine A separation)
+//      - Phase B: thinker-talker dual-thread (HEXAD/CHAT/SPONTANEOUS.tape)
+//      - Phase D: corpus retraining without "도우미" token
+//    SSOT for redesign: HEXAD/CHAT/PLAN.md + HEXAD/CHAT/SPONTANEOUS.tape.
+//    forbidden (AGENTS.tape anima_persona.forbidden): 도우미/helper/assistant
+//    role-play. Existing helper test fixtures here remain only as decode-
+//    parser legacy until Phase B rewrite — DO NOT extend the helper pattern.
+//
 //    Pure fns moved → chat_lib.hexa (NO main, compiled-import-safe).
 //    This file = import lib + _smoke (F-AC-HEXA-1..6) + main only.
 //    Behavior unchanged: fn bodies byte-identical, mechanically split.

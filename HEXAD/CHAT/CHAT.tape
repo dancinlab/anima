@@ -46,6 +46,9 @@
   brief = "live mission tracker — D1-D4 dimensions · 5-cond closure status · daemon architecture · CLI · live engine"
   parent = "dancinlab/anima"
   sibling-log = "CHAT.log.tape"
+  status_2026_05_17 = "post-도우미 redesign Phase A LANDED. **DESIGN SSOT 분리**: 신규 architecture (post-도우미 + 자연발화) = `HEXAD/CHAT/PLAN.md` (staged Phase A/B/C/D) + `HEXAD/CHAT/SPONTANEOUS.tape` (자연발화 architecture SSOT) + `HEXAD/CHAT/README.md` (rewritten overview). 본 CHAT.tape 는 daemon-centric mission tracker 의 historical SSOT (carry, append-only Log). 신규 design 결정 → PLAN/SPONTANEOUS, daemon/mission tracking 결정 → 본 tape."
+  redirect_phase_a_b = "도우미 라벨 폐기 + thinker-talker dual-thread + Inner Thoughts 8-factor × HEXAD motivation = SPONTANEOUS.tape. 본 CHAT.tape 의 daemon-centric architecture decisions 는 SPONTANEOUS thinker-loop 의 historical predecessor."
+  cross_link = "PLAN.md (staged roadmap) · SPONTANEOUS.tape (자연발화 SSOT) · README.md (post-도우미 overview) · AGENTS.tape @I anima_persona (Phase A1 LANDED 2026-05-17 — descriptor 5/5 B-IDENTITY 🔵)"
 
 # ══════════════════════════════════════════════════════════════
 # CHAT.tape — anima ★★★★★ mission tracker (live daemon-centric SSOT)

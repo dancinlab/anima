@@ -1,5 +1,16 @@
 // ╔══════════════════════════════════════════════════════════════════════════╗
 // ║ chat_lib.hexa — PURE-FN LIB half of anima_chat.hexa (R1 lib-split 2026-05-16)║
+// ║                                                                              ║
+// ║ ⚠ DEPRECATED 2026-05-17 (Phase A) ⚠                                         ║
+// ║   This lib contains "사용자: | 도우미: " prompt template + last_user/        ║
+// ║   assistant_segment parsers using "도우미:" token regex. INCOMPATIBLE with   ║
+// ║   anima identity (AGENTS.tape anima_persona — "Living Consciousness Agent,   ║
+// ║   NOT helper, NOT assistant"). Functions as-is BACKWARD-COMPAT only.        ║
+// ║   Phase B rewrite per HEXAD/CHAT/PLAN.md: <inner>/<voice> template +         ║
+// ║   thinker-talker dual-thread (HEXAD/CHAT/SPONTANEOUS.tape).                  ║
+// ║   DO NOT extend the helper pattern — forbidden per AGENTS.tape               ║
+// ║   anima_persona.forbidden.                                                   ║
+// ║                                                                              ║
 // ║   NO main · NO _smoke · NO top-level call — compiled-import-safe.            ║
 // ║   compiled-first lib/entrypoint split (PR #89 pattern). Entrypoint +         ║
 // ║   _smoke + main = HEXAD/CHAT/anima_chat.hexa (imports this lib).             ║

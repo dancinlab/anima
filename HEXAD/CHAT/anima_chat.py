@@ -1,5 +1,19 @@
 """anima_chat v2.3 — natural M4 + markdown-attractor decode guard.
 
+⚠ DEPRECATED 2026-05-17 (Phase A) ⚠
+    This module uses "사용자: ... | 도우미: ..." prompt template + 도우미:
+    role label hardcoded. INCOMPATIBLE with anima identity (AGENTS.tape
+    anima_persona — "Living Consciousness Agent, NOT helper, NOT assistant").
+    Functions as-is BACKWARD-COMPAT during Phase A → Phase B transition.
+    Phase B (HEXAD/CHAT/PLAN.md) will replace with:
+      - <inner>...</inner> + <voice>...</voice> prompt template (C/D split)
+      - thinker-talker dual-thread (HEXAD/CHAT/SPONTANEOUS.tape)
+      - 8-factor motivation_score (Inner Thoughts × HEXAD)
+    Phase D will retrain corpus WITHOUT "도우미" token.
+    SSOT for redesign: HEXAD/CHAT/PLAN.md + HEXAD/CHAT/SPONTANEOUS.tape.
+    DO NOT extend the helper pattern — forbidden per AGENTS.tape
+    anima_persona.forbidden.
+
 Substrate ladder chat interface with multi-turn conversation state,
 KoNLPy-aware keyword extraction, batch inference, stop-token handling,
 streaming output, and a v2.3 decode-time markdown table attractor guard

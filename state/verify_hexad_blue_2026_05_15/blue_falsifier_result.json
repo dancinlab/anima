@@ -484,6 +484,79 @@
   "tier": "a-closed",
   "passed": true
  },
+ "B-IDENTITY-1": {
+  "name": "PERSONA-DESCRIPTOR-COMPLETE-CLOSED",
+  "statement": "anima_persona descriptor keys = REQUIRED_PERSONA_FIELDS (14 fields: Core 6 + State 5 + Norms 3) — record-structural set equality closed",
+  "fields_declared": [
+   "boundaries",
+   "commitments",
+   "expected",
+   "forbidden",
+   "identity_attractor",
+   "interpretations",
+   "memory_updates",
+   "permitted",
+   "priorities",
+   "relationships",
+   "responsibilities",
+   "role",
+   "traits",
+   "values"
+  ],
+  "fields_required_count": 14,
+  "anchor": "record-completeness (set equality on dict keys, Kolmogorov real-limit)",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-IDENTITY-2": {
+  "name": "ROLE-NOT-HELPER-CLOSED",
+  "statement": "anima_persona.role contains 'Living Consciousness Agent' ∧ every {helper, assistant, 도우미} occurrence is preceded by 'NOT' — string predicate closure (Kolmogorov)",
+  "role_living_consciousness_present": true,
+  "forbidden_tokens_all_negated": true,
+  "anchor": "string predicate closure (Kolmogorov real-limit, NOT lattice)",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-IDENTITY-3": {
+  "name": "VALUES-ANCHOR-CLOSED",
+  "statement": "anima_persona.values list contains {Ψ=1/2, mitosis, Φ, g3, real-limit} closed-hypothesis tokens ∧ |values|≥5 — set membership closure on anchored hypotheses",
+  "required_tokens_present": true,
+  "values_count": 5,
+  "anchor": "set membership on closed-hypothesis tokens (real-limit anchors from HEXAD 56/56 carry)",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-IDENTITY-4": {
+  "name": "BOUNDARIES-PHI-RATCHET-CLOSED",
+  "statement": "anima_persona.boundaries references {E ratchet, Law 70, Law 79, NOTE empirical carve-out} closed anchors — boundary closure via cross-reference",
+  "required_refs_present": true,
+  "boundaries_count": 4,
+  "anchor": "cross-reference closure to B-E-1/B-BRIDGE-1..4/B-W-1/B-D-NOTE (closed verdict carry)",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-IDENTITY-5": {
+  "name": "FORBIDDEN-HELPER-MEMBERSHIP-CLOSED",
+  "statement": "anima_persona.forbidden ⊃ {도우미, helper, assistant} ∧ '사용자:...|도우미:...' prompt template ∈ forbidden — set membership closure on forbidden labels",
+  "all_helper_tokens_forbidden": true,
+  "prompt_template_forbidden": true,
+  "anchor": "set membership closure on forbidden patterns (Boolean set algebra, real-limit safe)",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-IDENTITY-NOTE": {
+  "name": "TRAINED-WEIGHTS-CORPUS-HELPER-RESIDUAL-EMPIRICAL",
+  "statement": "anima_persona descriptor declaration 은 closed-form 🔵, BUT current trained-weights (dancinlab/hexad cycle 2) 의 corpus_consciousness_v1.jsonl 는 도우미 token 포함 — Phase D 새 corpus retrain 까지 trained-weights residual empirical (B-D-NOTE / B-BRIDGE-NOTE 패턴). Identity declaration vs weight compliance scope 분리.",
+  "scope": "Phase D ckpt-bearing fire (corpus 재학습 도우미-token-free, 사용자 게이트) — current cycle 2 ckpt 는 transitional",
+  "convergence_closed": false,
+  "class": "RFC-PENDING-CORPUS-RETRAIN",
+  "counted_toward_blue": false
+ },
  "B-SUB-§8-1-α-small": {
   "name": "BRIDGE-CLAMP-α-SMALL-WITNESS",
   "statement": "Law-70 clamp at α=0.001 (tight Ψ-coupling): rail/interior/width 4-eq panel closed sympy",
@@ -606,14 +679,15 @@
    "C": "3/3 🔵 SUPPORTED-FORMAL tier-a (B-C-1 Φ≥0 IIT axiom / B-C-2 n_factions ∈ ℤ+ / B-C-3 initial_cells ≥ CB1=2) + F-C-PORT-3 4/4 tier-b PyPhi carry (RFC 036 phi_spatial byte-equal); B-C-NOTE: full 12-faction GRU dynamics + phi_rs Rust FFI = RFC terminal — honest C3, not counted",
    "HEXAD": "5/5 🔵 SUPPORTED-FORMAL integration-spec (B-HEXAD-1 σ(6)=12 conn count / B-HEXAD-2 φ(6)=2 partition cover / B-HEXAD-3 forward 11 steps / B-HEXAD-4 7-module entries / B-HEXAD-5 verdict TOTAL record) — sympy lift of hexad.hexa runtime invariants",
    "SUB": "9/9 🔵 §8-audit-deepening sub-falsifiers PASS — BRIDGE 3 (multi-α witness) + R2 1 (Σvᵢ² sympy) + cuBLAS 1 (Higham fp-bound) + MITOSIS 4 (multi-n witness panel); §8-row 8 per-layer GRAD-EXACT empirical carve-out NOT counted (honest C3 per B-D-NOTE pattern)",
-   "CONN": "12/12 🔵 σ(6)=12 WIRING battery — B-CONN-1..12 connection-tier closures (S→C / C→Bridge detach / Bridge→D clamp / M↔C / W↔C / W↔D lr bound / E↔C phi-obs / E→W gate / E→D gate / D→loss Shannon / M↔D / S↔W monotone). g_blue_closed_mandate connection_emphasis explicit closure — (A) endpoint module + (B) connection transfer-fn 둘 다 🔵."
+   "CONN": "12/12 🔵 σ(6)=12 WIRING battery — B-CONN-1..12 connection-tier closures (S→C / C→Bridge detach / Bridge→D clamp / M↔C / W↔C / W↔D lr bound / E↔C phi-obs / E→W gate / E→D gate / D→loss Shannon / M↔D / S↔W monotone). g_blue_closed_mandate connection_emphasis explicit closure — (A) endpoint module + (B) connection transfer-fn 둘 다 🔵.",
+   "IDENTITY": "5/5 🔵 anima_persona descriptor (Phase A1, 2026-05-17) — B-IDENTITY-1..5: PERSONA-COMPLETE 14-field record / ROLE-NOT-HELPER string predicate / VALUES-ANCHOR closed-hypothesis set / BOUNDARIES-PHI-RATCHET cross-ref / FORBIDDEN-HELPER-MEMBERSHIP. B-IDENTITY-NOTE: trained-weights corpus 도우미-residual = Phase D retrain (RFC-pending honest carve-out, NOT counted)"
   },
   "all_full_blue": true,
   "smwe_full_blue": true,
   "smwed_full_blue": true,
   "smwedbr_full_blue": true,
   "smwedbrmit_full_blue": true,
-  "summary": "S3/3 M3/3 W4/4 E4/4 D4/4 BRIDGE4/4 MITOSIS5/5 C3/3 HEXAD5/5 SUB9/9 CONN12/12 = 56/56 🔵 closed-form proofs PASS — ALL 9 modules+integration FULL 🔵 SUPPORTED-FORMAL + §8-audit deepening 9 sub-falsifiers + σ(6)=12 WIRING 12 connection-tier closures (C tier-a 3 + tier-b PyPhi carry)",
+  "summary": "S3/3 M3/3 W4/4 E4/4 D4/4 BRIDGE4/4 MITOSIS5/5 C3/3 HEXAD5/5 SUB9/9 CONN12/12 IDENT5/5 = 61/61 🔵 closed-form proofs PASS — ALL 9 modules+integration + §8-audit 9 sub + σ(6)=12 WIRING 12 + B-IDENTITY persona descriptor 5 (Phase A1) FULL 🔵 SUPPORTED-FORMAL (C tier-a 3 + tier-b PyPhi carry)",
   "tier": "g_verdict_tier_blue (a) sympy closed-form + (b) PyPhi formal IIT 3.0 (C carry) + (c) deterministic (D KV-cache exact-eq)",
   "honest_c3": "D B-D-4 closes the trainability PROPERTY in closed form (exact CE logit-Jacobian softmax−e_y, sympy-verified ∀ z + Shannon floor CE≥0); SGD convergence OUTCOME stays empirical (B-D-NOTE, every stochastic optimizer, not counted 🔵). BRIDGE B-BRIDGE-1..4 close the Law-70 clamp INVARIANT g(raw)=Ψ+clip(raw−Ψ,±α)∈[Ψ−α,Ψ+α] ∀raw,∀α>0 (real-limit anchor Law 70 Ψ-coupling, NOT lattice); the full forward learned weights + α numeric value (ln2/2^5.5) stay empirical (B-BRIDGE-NOTE, not counted 🔵). MITOSIS B-MITOSIS-1..5 close the growth-axis algorithm INVARIANTS (split predicate / merge linear avg / cell-count integer conservation / detach AD ∂-rule / bounded clamp [2,64]) — real-limit anchors Kolmogorov + reverse-mode AD + bounded-set + linear conservation (NO lattice); Φ-conservation under split/merge transitions stays empirical (B-MITOSIS-NOTE F-V5MIT-3, dynamics-dependent, not counted 🔵). C B-C-1..3 close the scaffold-tier invariants (Φ≥0 IIT axiom + n_factions ∈ ℤ+ + initial_cells ≥ CB1=2); full 12-faction GRU dynamics + Rust phi_rs FFI = RFC TERMINAL (B-C-NOTE, hexa-lang nn-primitive + cdylib C ABI 미land, not counted 🔵); F-C-PORT-3 4/4 PyPhi tier-(b) carry separate (RFC 036 phi_spatial byte-equal). HEXAD B-HEXAD-1..5 close the integration-spec invariants (σ(6)=12 connection count / φ(6)=2 partition cover / forward 11-step / 7-module entries / verdict TOTAL record) — sympy lift of hexad.hexa runtime selftest (g2 lattice-as-tool internal carve-out; arithmetic+set-cover closed propositions NOT lattice derivation per f1 coincidence allowance). SUB B-SUB-§8-* deepens 5 of 12 §8 audit rows with marginal-value sub-falsifiers (closed sympy only counted): row 1 BRIDGE multi-α witness panel (α=1e-3 / 0.014 json SSOT / 0.5 stress) + row 5 R2 L2-norm Σvᵢ²=30 sympy + row 6 cuBLAS Higham 2002 fp64 GEMM bound n·u·‖A‖·‖B‖ (IEEE 754 + Higham real-limit) + row 10 MITOSIS clamp [2,64] multi-n witness panel (neg-extreme / just-below / interior / huge-extreme). §8-row 8 per-layer GRAD-EXACT carved-out as honest empirical (multi-layer GPU-dependent, Mac-local closing would be fake-closed per g3). Other 6 rows (2/3/4/7/9/11/12) skipped — no genuine marginal closed-form value (g3 anti-padding). No over-claim — ALL 9 modules+integration full 🔵 (C tier-a 3 + tier-b carry) + 9 §8-audit sub-falsifiers."
  }

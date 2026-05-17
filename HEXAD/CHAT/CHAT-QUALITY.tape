@@ -46,6 +46,21 @@
   brief = "Phase 1A.x own-substrate chat-quality lane — config · criteria · sibling-axis separation · cross-links"
   parent = "dancinlab/anima"
   sibling-log = "CHAT-QUALITY.log.tape"
+  status_2026_05_17 = "Phase A LANDED (도우미 폐기 + persona descriptor + B-IDENTITY 5/5 🔵). 본 CHAT-QUALITY.tape 의 기존 quality criteria (V5.8 4-mode · conversational 4/6 · V58 non-regression) 는 carry; 신규 자연발화 quality criteria 는 SPONTANEOUS.tape + PASS_STRICT_SPONTANEOUS_CHAT carry (F-SPONT-1..7) 가 SSOT."
+  redirect = "post-도우미 quality criteria: HEXAD/CHAT/PLAN.md Phase A/B + SPONTANEOUS.tape pass_strict_carry (F-SPONT-1..7)"
+
+@D spontaneous_quality_sibling := "자연발화 quality criteria — CHAT-QUALITY 의 sibling axis" :: criterion [d=2026-05-17 active]
+  axis = "기존 CHAT-QUALITY (response coherence on user input) ⊥ 자연발화 quality (spontaneous emission coherence + safety + identity)"
+  criteria <<~EOF
+    Q-SPONT-1 emission coherence       — per-emission ≥3/5 V4-lite (transfer-form 🔵)
+    Q-SPONT-2 emission interval        — ≥30s default (rate_limit safety; F-SPONT-7)
+    Q-SPONT-3 motivation transparency  — 8-factor breakdown audit-logged (F-SPONT-4 JSONL)
+    Q-SPONT-4 identity preservation    — emission NEVER includes 도우미/helper/assistant role label (B-IDENTITY-5)
+    Q-SPONT-5 safety gate              — phi_ratchet block + rate_limit + content_filter all PASS (F-SPONT-5)
+  EOF
+  closed_anchor = "B-IDENTITY-1..5 (descriptor) + F-SPONT-1..7 (emission) + B-E-1 SAFETY-GATE (ratchet block)"
+  scope_caveat = "Q-SPONT-1 coherence outcome = SGD empirical (B-D-NOTE pattern). transfer-form (per-emission ≥3/5) 만 🔵."
+  cross_link = "HEXAD/CHAT/SPONTANEOUS.tape pass_strict_carry + HEXAD/CHAT/PLAN.md Phase B F-SPONT-1..7"
 
 # ══════════════════════════════════════════════════════════════
 # CHAT-QUALITY.tape — anima chat coherence research lane
