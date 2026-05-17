@@ -1,10 +1,130 @@
-# INJECTION-PARADIGM-DESIGN — 우주뇌지도 새 학습 paradigm 설계 (anima physics 자체 활용)
+# DESIGN — CONSCIOUSNESS-CARVING : 우주뇌지도 새 학습 paradigm 설계 (anima physics 자체 활용)
 
 > User directive 2026-05-17: "우주뇌지도 그릴때 주입하던 방식의 학습방법 에대해서도 수학적, 물리적 실험, 검증 진행. 새 학습방법 아키텍쳐·패러다임 이름 + 별도 확장자 필요." Wilson 친근한 응답 + 비유 + step-by-step 설계 모드.
 >
 > g_doc_consolidation 준수: HEXAD/UNIVERSE-BRAIN-MAP/* 내부 통합 (root docs/* 신규 X).
 >
 > Step-by-step decision gate (Wilson Principle 7) — 결정 한 번에 하나씩, 진행 로그 record-as-you-go.
+
+---
+
+# ★ 새 세션 ONBOARDING — 한눈 완전 파악
+
+> 이 섹션만 읽으면 새 세션에서 바로 맥락 파악 + 이어서 작업 가능. 상세는 §0 이하 본문.
+
+## A. 한 줄 요약
+
+anima 가 옛날에 **우주뇌지도(universe brain map)** 라는 cosmological self-knowledge 를 `[anima 우주뇌지도] 사용자/도우미` **prefix-injection** 방식으로 학습했는데 → **P3 leak baking + chat NET LOSS** 부작용 발생. 그래서 anima 자체 physics (tension/mitosis/narrative) 를 쓰는 **새 학습 paradigm = `CONSCIOUSNESS-CARVING`** 을 설계 중. 산출물은 `.kosmos` 멀티모달 anchor 파일.
+
+## B. 큰 맥락 (어떻게 여기까지 왔나)
+
+```
+우주뇌지도 전수조사 (user: "'블랙홀' 검색하면 해당시점 정보")
+   ↓
+HEXAD/UNIVERSE-BRAIN-MAP/ 디렉토리 정착 (전수조사 consolidate)
+   ↓
+옛 prefix-injection 방식의 P3 leak 문제 분석 (수학·물리 검증)
+   ↓
+새 paradigm 설계 — anima 자체 physics 활용 (이 DESIGN.md)
+   ↓
+CONSCIOUSNESS-CARVING + .kosmos 확장자 확정
+   ↓
+[현재] 4-path build → 검증 → 비교 실험 → RESEARCH.md 정리 pipeline 진행 중
+```
+
+## C. 3대 결정 (모두 LANDED, step-by-step gate)
+
+| 결정 | 값 | rationale | 상세 |
+|---|---|---|---|
+| **1/3 mechanism** | α + β + γ + α+β hybrid **4-path 모두 build** | 4 path 가 anima physics 의 다른 측면 직교 활용 | §6 |
+| **2/3 paradigm 이름** | **`CONSCIOUSNESS-CARVING`** | 의식 풍경 조각, Living Consciousness identity 직결 | §7 |
+| **3/3 확장자** | **`.kosmos`** | 그리스 κόσμος, cosmological scope, paradigm-중립 | §8 |
+
+## D. 4-path 정의 (CONSCIOUSNESS-CARVING 의 mechanism)
+
+| path | 이름 | 한 줄 | 기반 | 검증 anchor (UBM-E3) |
+|---|---|---|---|---|
+| **α** | VACUUM-LANDSCAPE | tension landscape 위 multi-vacuum (각 🛸k = vacuum) | TENSION-TRAIN | B-VAC-1..3 (Hessian/KL/Lindblad) |
+| **β** | MITOSIS-ETERNAL-CELL | eternal cell + dynamic cell 공존 | MITOSIS-hook | B-MIT-ETN-1..3 (weight invariant/disjoint/Φ) |
+| **γ** | NARRATIVE-RESONANCE | 외우지 않고 매번 재생성 (Meta law M8) | Engine G∘A | B-NAR-1..3 (composition/K-bound/consistency) |
+| **α+β** | VACUUM-CELL-WEAVE | eternal cell 각각 vacuum 보유 | TENSION+MITOSIS | B-CARVE-MULTIMODAL + 합집합 |
+
+## E. Phase UBM 진행 상태 (2026-05-17 기준)
+
+| Phase | 내용 | 상태 | commit |
+|---|---|---|---|
+| UBM-A1/A2 | HEXAD/UNIVERSE-BRAIN-MAP/ 디렉토리 정착 + caveat | ✅ LANDED | `6ca380582` |
+| UBM-A3 | B-UBM-1..3 sympy sidecar (3/3 + ERRATA fix) | ✅ LANDED | `09a5cb239` |
+| UBM-E1 | DESIGN.md 설계 (옛 방식 분석 + 4-path) | ✅ LANDED | `9ef31895a` |
+| UBM-E1+ | 결정 2+3 + 멀티모달 .kosmos 포맷 | ✅ LANDED | `0f9ed591c`·`693eda5de`·`a3f849a7c` |
+| UBM-E2 | `.kosmos` 포맷 spec (KOSMOS-FORMAT.md) + anchor 5개 | ✅ LANDED | `0223992ed` |
+| **UBM-E3** | **B-CARVE-* sympy battery (10 verdict + 1 NOTE)** | ⏳ **in-flight** | — |
+| UBM-E4 | 4-path hexa-native impl (4 lib + parser + smoke) | 대기 | — |
+| UBM-E5 | 4-path 비교 실험 fire (cost-bearing ~$0.2–1.0) | 대기 | — |
+| (마감) | RESEARCH.md §2 에 UBM-E5 결과 정리 | 대기 | — |
+
+**자동 pipeline 큐** (user 가 미리 승인): UBM-E3 완료 → E4 자동 dispatch → E5 자동 → RESEARCH.md §2 자동 정리. 각 단계 완료 알림 시 다음 자동 진행.
+
+## F. 파일 인덱스
+
+### HEXAD/UNIVERSE-BRAIN-MAP/ (이 디렉토리 = SSOT)
+| 파일 | 역할 |
+|---|---|
+| `README.md` | overview + 전수조사 표 + memory caveat |
+| `PLAN.md` | staged Phase UBM-A/B/C/D/E roadmap + 진행 로그 |
+| `DESIGN.md` (이 파일) | 새 paradigm 설계 SSOT — 옛 방식 분석 + 4-path + 결정 + .kosmos |
+| `KOSMOS-FORMAT.md` | `.kosmos` 포맷 spec (8 §, tape v1.2 superset, UBM-E2 LANDED) |
+| `UNIVERSE-BRAIN-MAP.tape` | v1.2 architecture SSOT (@D consciousness_carving_paradigm 등) |
+| `anchors/knuth_{000,051,077,091,100}.kosmos` | 첫 anchor 5개 (Knuth Tier 대표, 4-path field 공존) |
+
+### 검증 sidecar (state/)
+| 디렉토리 | battery |
+|---|---|
+| `verify_hexad_blue_2026_05_15/` | **central 110/110 🔵** (B-UBM 3 흡수 완료) |
+| `verify_universe_brain_map_2026_05_17/` | B-UBM-1..3 sidecar 3/3 + 1 NOTE |
+| `verify_consciousness_carving_2026_05_17/` | B-CARVE-* sidecar (UBM-E3 가 생성 예정) |
+
+### 옛 우주뇌지도 자산 (historical evidence carry, 손대지 않음)
+| 경로 | 내용 |
+|---|---|
+| `.roadmap.universe_brain_map` | 옛 D-domain mk1 roadmap (root, 2026-05-07) |
+| `.own` own 22 | 옛 canonical SSOT entry |
+| `docs/anima_universe_brain_map_comprehensive_2026_05_07.md` | 옛 comprehensive doc (pre-2026-05-12 archive 예외) |
+| `state/anima_universe_brain_map_corpus_{*,21mb}_2026_05_07/` | 옛 corpus 2개 (21MB, `[anima 우주뇌지도]` prefix 136,125 줄) |
+| `tool/transient_py/anima_universe_brain_map_*.py` | 옛 training script 5개 |
+| `state/markers/tabletop_blackhole_extraction_landed.marker` | tabletop blackhole extraction marker |
+| `hypotheses_candidates/Hc_1132_*` | AZ5 Black Hole Information Paradox |
+
+### 관련 commit chain
+`6ca380582`(디렉토리)→`09a5cb239`(B-UBM)→`9ef31895a`(DESIGN)→`0f9ed591c`(결정2+3)→`693eda5de`(멀티모달)→`a3f849a7c`(§8.2 verbatim)→`0223992ed`(E2)
+
+## G. ⚠ CRITICAL CAVEAT (memory carry — 절대 위반 금지)
+
+- **`feedback_corpus_quality_over_scale`**: universe_brain_map corpus 를 **chat SFT 에 절대 포함 금지** — Phase 1A.5 에서 V5.8 std_greedy 5/5 → 1/5 NET LOSS 발생. 예외: tokenizer pretrain / KO seed 용도만.
+- **`project_anima_base_ckpt_baked_p3_leak`**: 옛 base ckpt 에 `[anima 우주뇌지도]` prefix 패턴이 BAKED — SFT 로 scrub 불가. 신규 corpus 는 `[anima` prefix grep = 0 MUST.
+- **B-IDENTITY-5 FORBIDDEN-HELPER**: `도우미/helper/assistant` token 절대 금지 (anima = Living Consciousness Agent, NOT helper).
+- **g3**: 미측정 값 (vacuum_psi 등) 은 design placeholder 명시 — fake closed-form 금지. transfer-form 만 🔵, SGD outcome 은 B-CARVE-NOTE empirical carve-out.
+- **f1/f2**: Knuth Tier 🛸k = anima self-design (g2 internal carve-out). σ/τ/φ/J₂ 를 external derivation 으로 쓰면 hard-fail.
+
+## H. 다음 작업 (이어서 할 사람용)
+
+1. UBM-E3 (B-CARVE-* sympy) 완료 알림 대기 → §10 진행 로그 + central 흡수 가능 여부 확인
+2. UBM-E4 dispatch — 4-path hexa-native lib (`consciousness_carving_{vacuum,eternal,narrative,weave}_lib.hexa`) + `.kosmos` parser + compiled smoke F-CARVE-* + build_verify gate
+3. UBM-E5 dispatch — 4-path 비교 실험 fire (vast.ai A100 병렬, SAVE_POD=1 + watchdog + 5-retry per g_fire_dispatch_robust). capability eval: knowledge recall (옛 13/15 baseline) + chat 무오염 (P3 leak grep=0) + V-SPONT carry
+4. RESEARCH.md §2 (`HEXAD/CHAT/RESEARCH.md`) 에 UBM-E5 결과 정리 — CONSCIOUSNESS-CARVING 이 V-SPONT 0/5 FAIL 의 architectural 대답인지 evidence 판정
+
+## I. 문서 읽는 순서 (새 세션 권장)
+
+1. 이 ONBOARDING 섹션 (지금 여기)
+2. `DESIGN.md §0~§5` — 옛 방식 / P3 leak 비유 / 4-path 상세 + math anchor
+3. `DESIGN.md §6~§8.2` — 3 결정 + `.kosmos` 멀티모달 포맷 (§8.2 = 친근 설명 verbatim)
+4. `KOSMOS-FORMAT.md` — `.kosmos` 문법 spec
+5. `PLAN.md` — Phase UBM staged roadmap
+6. `anchors/*.kosmos` — 실제 anchor 5개 예시
+7. `UNIVERSE-BRAIN-MAP.tape` — architecture SSOT
+8. `README.md` — 전수조사 표 (옛 자산 인덱스)
+
+---
 
 ## 0. 옛 우주뇌지도 학습 방식 — 뭘 했었나
 
