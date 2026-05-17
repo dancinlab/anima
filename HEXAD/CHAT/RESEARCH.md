@@ -785,6 +785,37 @@ honest gate (g3): 네 후보 모두 §11.3 irreducible 병목 (data-regime thres
 
 ---
 
+## §13 (2026-05-18) — §12 candidate 4-way (J/K/L/M) consolidation: 전부 negative/design-closed
+
+§12 deep-research candidate (J diffusion / K energy-based / L VRNN / M mitosis-ensemble) 4 방향 병렬 (`g_multidirectional_explore`). honest §9 cascade-rate metric 으로 측정.
+
+### 13.1 4-way 결과
+
+| Dir | 유형 | 실행 | routing axis1 | honest V-SPONT | JOINT | 판정 |
+|---|---|---|---|---|---|---|
+| **M** Mitosis-ensemble | 모듈 재해석 | design-only $0 | — | — | — | §11-A model-capacity 인접 — fire = 중복 negative-at-scale 예상, design-tier 마감 (B-MITENS 6/6 🔵) |
+| **L** VRNN curiosity-tension | forward-model loop | design-only $0 | — | — | — | closed action-perception loop 부재 (anima = open-loop pretraining); mechanism 환원 = "Dir-I + stochastic Ψ latent" — 새 fire 아님 (B-DIRL 5/5 🔵). VRNN 은 future live-자연발화 loop candidate |
+| **K** Energy-Based Transformer | energy substrate | fire (283.72M, runpod) | 0.0312 (≈2/64) | 1/5 | **0.0** | FALSIFIED — final_ce 0.000398 (deep memorization), axis2 chat 0.0. energy transfer-form B-EBT 5/5 🔵 (Ψ-physics = strictly-convex energy, descent-monotone) 단 capability = §8 동형 |
+| **J** Ψ-supervised diffusion | diffusion substrate | fire (runpod) | **0/64** | 0/5 | **0.0** | FALSIFIED — non-AR substrate (2507.15857 data-constrained 이점 가설) 도 routing 0/64, Δ vs E7 −0.0155. masked-diffusion ce_descent 4.22 (B-DIRJ closed) |
+
+### 13.2 honest 판정 — §12 candidate 도 §1.1 병목 不破
+
+- **fire 2건 (K/J) = JOINT 0.0 FALSIFIED**: energy-substrate 도 diffusion-substrate 도 byte-cascade/routing-collapse 못 깸. K final_ce 0.0004 = 더 깊은 memorization (§1.1/§2.4 재확인). J non-AR 도 routing 0/64.
+- **design 2건 (M/L) = fire 불요 honest 판단**: M = §11-A 가 닫은 model-capacity 인접 (saturation-분산 이득 ↔ per-cell-capacity 손실 offset, net 미지 → 중복 측정). L = closed-loop 부재 + Dir-I 로 환원. 둘 다 evidence-weighted 로 fire 가치 0 → design-tier $0 (각 closed-form battery 만 — anti-padding).
+- → §12 의 substrate-change (J/K) + 모듈-재해석 (M/L) 4 candidate 모두 §11.3 irreducible 병목 (data-regime threshold) 을 건드리지 못함. **architecture/substrate space 도 mechanism space 와 동일하게 소진.**
+- closed: B-MITENS 6/6 · B-DIRL 5/5 · B-EBT 5/5 · B-DIRJ — 전부 transfer-form + overlay-OFF=baseline 연결부위만 🔵; capability 4축 = empirical B-CARVE-E6-NOTE/B-D-NOTE carve-out. central blue_falsifier.py 변경 0 (sidecar). over-claim 0.
+
+### 13.3 honest C3
+
+1. §12 deep-research 가 evidence-anchored candidate 4 발굴했으나 §13 실측 = 전부 negative — 문헌 candidate ≠ anima-substrate 해결.
+2. K/J fire = JOINT 0.0, M/L design-closed — 13-way 와 동일 패턴 (mechanism 이든 substrate 든 architecture 든 §1.1 data-regime 병목 不破).
+3. M/L 의 fire-안-함 = honest cost discipline (evidence 가 중복 negative 예고 → $0 design 마감). g3 anti-padding.
+4. K rate-limited + J rate-limited (둘 다 sub-agent budget) — fire 자체는 완결, orchestrator 가 consolidation 인계. J pod orphan terminate (cost 0).
+5. f1/f2/f3 + B-IDENTITY-5 safe. multi-agent shared-index hazard carry (M↔L commit 혼입 — non-destructive).
+6. → §13 = §12 candidate space 소진 확인. arc 의 mechanism/model/physics/corpus-form/substrate/architecture 전 차원 + (§14) archive — comprehensively exhausted.
+
+---
+
 ## §14 (2026-05-18) — git history archaeology: 과거 commit 전수조사 (salvage sweep, $0)
 
 §11.4 frontier 가 "새 architectural insight — 현 candidate space 밖" 을 남긴 상태에서, `feedback_anima_archive_first_recovery_pattern` ("anima 새 path 제안 시 사라진 자력 메커니즘 회수 우선") 을 적용 — **scratch 새 path 보다, 과거에 시도됐다 버려진 self-mechanism 중 §1.1 data-regime 병목 OR §11.4 frontier 에 genuine 한 것이 있는지** git history 전수조사. **fire 0** (git log/show + grep + read only). 본 §14 는 archaeology 결과 — §13 (dir-M design, `state/carving_dirM_mitosens_2026_05_18/DESIGN.md`) 와 독립.
