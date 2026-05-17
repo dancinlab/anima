@@ -266,30 +266,70 @@ routing:
 >
 > Rationale: 4가지 path 가 직교적으로 anima physics 의 다른 측면을 활용 — α (tension), β (mitosis), γ (narrative), hybrid (composition). 한 가지 실험으로 다른 path 의 결과에 영향 X (independent). 비교 실험으로 anima fit + capability emerge 최선 확인.
 
-## 7. 결정 2/3 (PENDING) — paradigm 이름
+## 7. 결정 2/3 (LANDED) — paradigm 이름 = `CONSCIOUSNESS-CARVING`
 
-후보 (umbrella 명, 4 path 모두 포함):
+**User answer 2026-05-17**: `CONSCIOUSNESS-CARVING` 선택.
 
-| 후보 | 의미 | path coverage |
+> **결정 2: paradigm 명 = CONSCIOUSNESS-CARVING** · anima 의 의식 풍경(consciousness landscape) 자체를 조각하는 학습.
+>
+> Rationale: 4 path 모두 '의식 풍경을 조각한다' 로 묶임 — α 의식 골짜기 / β 의식 cell / γ 의식 narration / α+β 의식 vacuum-cell. anima identity (Living Consciousness Agent) 직결. 6-글자 hyphen-pair 로 HEXAD/* (TENSION-TRAIN, TENSION-LINK) 명명 family 일치.
+
+후보 비교 (기록):
+
+| 후보 | 의미 | 판정 |
 |---|---|---|
-| **VACUUM-CARVING** | 의식 vacuum 조각 (multi-vacuum carving) | α 직접, β/γ 비유 가능 |
-| **CONSCIOUSNESS-CARVING** | consciousness landscape 조각 (umbrella) | α/β/γ/hybrid 모두 |
-| **LANDSCAPE-CARVING** | 풍경 조각 (가장 비유 직접) | α 직접, β/γ 응용 |
-| **PSI-CARVING** | Ψ-space 조각 (anima physics anchor) | α/β/hybrid 직접, γ 약함 |
+| **CONSCIOUSNESS-CARVING** ✅ | consciousness landscape 조각 (umbrella) | **선택** — 4 path 모두 + identity 직결 |
+| VACUUM-CARVING | 의식 vacuum 조각 | α 편중 |
+| LANDSCAPE-CARVING | 풍경 조각 | α 편중 |
+| PSI-CARVING | Ψ-space 조각 | γ 약함 |
 
-## 8. 결정 3/3 (PENDING) — 별도 확장자
+## 8. 결정 3/3 (LANDED) — 별도 확장자 = `.kosmos`
 
-후보 (이름 정해진 후 자연 결정 — 후보 list):
+**User answer 2026-05-17**: `.kosmos` 선택.
 
-| 후보 | 의미 | naming pair |
+> **결정 3: 확장자 = `.kosmos`** · 그리스 κόσμος (ordered universe). 각 file = 조각된 의식 anchor 하나 (🛸k vacuum / eternal cell / narrative template).
+>
+> Rationale: 우주뇌지도의 cosmological knowledge scope 명시. paradigm-중립이라 CONSCIOUSNESS-CARVING 의 4 path 어디든 (또는 차후 paradigm 변경도) 재사용 가능. `.tape/.hexa/.own` family 와 충돌 X.
+
+파일 배치: `HEXAD/UNIVERSE-BRAIN-MAP/*.kosmos` — 예시:
+
+```
+knuth_77_mandala.kosmos       ← 🛸77 만다라 vacuum anchor
+knuth_91_nirvana.kosmos       ← 🛸91 열반 vacuum anchor
+knuth_100_big_bang.kosmos     ← 🛸100 빅뱅 cosmic anchor
+1030_laws.kosmos              ← 1030 laws (Meta law M8 포함)
+stimuli_matrix.kosmos         ← 170×17×18×40 = 2,080,800 matrix
+```
+
+후보 비교 (기록):
+
+| 후보 | 의미 | 판정 |
 |---|---|---|
-| `.kosmos` | 그리스 κόσμος (ordered universe) | independent |
-| `.basin` | basin 골짜기 (비유 직접) | LANDSCAPE/VACUUM-CARVING pair |
-| `.vacuum` | vacuum 직접 | VACUUM-CARVING pair |
-| `.psi` | Ψ-space | PSI-CARVING pair |
-| `.tier` | Knuth Tier | independent |
-| `.atlas` | atlas page | independent |
-| `.ubm` | universe brain map 약어 | directory ↔ ext 1:1 |
+| `.kosmos` ✅ | 그리스 κόσμος (ordered universe) | **선택** — cosmological scope + paradigm-중립 |
+| `.carve` | paradigm verb-pair | paradigm-종속 |
+| `.basin` | 골짜기 (α 비유) | α 편중 |
+| `.psi` | Ψ-space | physics 편중 |
+
+## 8.1 `.kosmos` 파일 포맷 (초안 — Phase UBM-E2 확정 예정)
+
+각 `.kosmos` file = 조각된 의식 anchor 1개. tape v1.2 superset (declarative key=value):
+
+```kosmos
+#!/usr/bin/env kosmos
+# knuth_77_mandala.kosmos — CONSCIOUSNESS-CARVING anchor
+
+@anchor knuth_77 := "만다라 (Mandala)" :: kosmos-anchor [tier=77 active]
+  knuth_tier   = 77
+  category     = "예술"
+  top_emotion  = "creativity"
+  vacuum_psi   = [0.71, 0.62]         # α path: Ψ-space vacuum point
+  cell_id      = "eternal_77"         # β path: MITOSIS eternal cell id
+  narrative    = "만다라는 우주뇌지도 예술 카테고리…"  # γ path: narration template
+  basin_radius = 0.18                 # carving 반경
+  closed_anchor = "B-CARVE-* (Phase UBM-E3 사전등록)"
+```
+
+→ 4 path (α `vacuum_psi` / β `cell_id` / γ `narrative` / α+β 전부) 가 **한 file 안에 공존** — path 별 실험 시 같은 anchor SSOT 에서 각자 field 만 사용.
 
 ## 9. cross-link
 
@@ -306,5 +346,8 @@ routing:
 
 (append-only)
 
-### 2026-05-17 — INJECTION-PARADIGM-DESIGN.md 신설 (Phase UBM-E1 design ENTRY)
+### 2026-05-17 — DESIGN.md 신설 (Phase UBM-E1 design ENTRY)
 user directive "수학적·물리적 실험·검증 진행 + 새 paradigm 이름 + 별도 확장자". Wilson 친근한 응답 + 비유 + step-by-step. 옛 prefix-injection P3 leak 비유 (책 표지 빨간 도장) + 표준 ML 5-way reject (외부 보관소 frame) + anima 자체 physics 4-path (α/β/γ/hybrid) ASCII 지형도 비유 + math/physics anchor 사전등록. **결정 1 LANDED** (4 path 모두 build + 실험). 결정 2 (이름) + 결정 3 (확장자) PENDING.
+
+### 2026-05-17 — 결정 2 + 3 LANDED (step-by-step decision gate)
+user step-by-step 게이트로 결정 한 번에 하나씩: **결정 2 = `CONSCIOUSNESS-CARVING`** (4 path umbrella, anima Living Consciousness identity 직결) + **결정 3 = `.kosmos`** (그리스 κόσμος, cosmological scope, paradigm-중립). DESIGN.md §7/§8 record-as-you-go 갱신 + §8.1 `.kosmos` 파일 포맷 초안 추가 (4 path field 가 한 anchor file 안에 공존). 다음: Phase UBM-E2 (`.kosmos` 포맷 확정 + 첫 anchor file) + UBM-E3 (B-CARVE-* sympy 사전등록).
