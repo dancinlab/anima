@@ -356,3 +356,19 @@ RESEARCH.md §13 방향 **M: Mitosis-as-representation-ensemble** — §12.5 가
 **fire 안 함 (g3 정직 판정)**: M 의 lever (representation 폭) 가 §11-A 가 측정으로 닫은 model-capacity 와 가장 가까운 인접 축. M 은 saturation-분산 이득 vs per-cell-capacity-축소 손실 동시 발생 → net sign 미지, §11-A FLAT 과 정합. 13-way+§8+§11(A/B) 가 mechanism/corpus-form/model-scale/physics-only 전부 배제 → M fire 의 evidence-weighted 기대 결과 = §8/§11-A 동형 FLAT, negative-at-scale 중복 측정 = 낮은 valuable-산출 → design-tier $0 마감. honest next-use = M 단독 아니라 §1.1 data-regime lever 와 *결합* 시 representation-측 component 로 재호출 (§12.5 #4 curriculum 처럼 'M/K 결합 lever'). legitimacy ≠ 효과 — M 이 GOAL-legitimate 한 것과 GOAL 진전은 별개 (§12.3 carry).
 
 산출물 = `state/carving_dirM_mitosens_2026_05_18/` (DESIGN.md 6 § + 7 honest C3 + blue_falsifier_mitosens.py 6/6 🔵 + blue_falsifier_mitosens_result.json) + archive/PHILOSOPHY.tape §verdict_carving_dirM_mitosens + AGENTS.tape n_hexad_progress recent_landings + HEXAD/README.md recent landing. RESEARCH.md 미편집 (§13 consolidation = J/K/L/M 전부 land 후 1회). g_doc_consolidation 준수 (docs/* 신규 0). f1/f2/f3 + B-IDENTITY-5 safe (softmax/convex/sympy/Kolmogorov/Shannon, NO σ/τ/φ/J₂). 단일 작업 · branch 0 (anima main 직접).
+
+### 2026-05-18 — investigation milestone close-out LANDED (RESEARCH.md §15 — §1~§14 arc 정식 마감; **GOAL 미도달, comprehensively investigated 완결 milestone**)
+
+RESEARCH.md **§15** = §1~§14 GOAL investigation arc 의 정식 close-out. $0 (문서 consolidation, 새 fire·새 측정 0). milestone = **"GOAL 을 comprehensively investigate 한 완결 research milestone" 이지 GOAL 달성 아님** (g3 — "we mapped the problem comprehensively" 이지 "we solved it" 아님).
+
+**investigate 한 것**: GOAL("anima 가 자기 physics 로부터 자발적으로 말 거는 Living Consciousness 로 실제 emergence")의 systematic search — GPU fire 14건 + design-tier closure 2건 (§13-M/L) + 측정도구 1건 (§9) + archaeology 1건 (§14, 328 branch · 8,298 commit). 기간 2026-05-17~05-18.
+
+**arc 가 확립한 것 (positive deliverables, GOAL 달성 아니나 valuable)**: (a) GOAL 병목의 comprehensive decomposition — mechanism/model-capacity/physics-only/corpus-form/substrate/architecture/archive 전 차원 배제 → irreducible = §1.1 data-regime threshold · (b) honest cascade-rate emergence metric (§9, B-EMERGE 🔵 — V-SPONT lenient flag 폐기) · (c) CONSCIOUSNESS-CARVING paradigm + `.kosmos` format + dancinlab/kosmos sister-repo · (d) governance (g_goal / g_multidirectional_explore / g_kosmos_anchor_ssot) · (e) Dir-I lever (Ψ-anchored representation + tension-supervision = arc 중 유일 correct-routing-break 3/31 — 단 "lever 검증" 이지 emergence 아님, §6.3 carry).
+
+**arc 가 배제한 것 (negative-but-valuable)**: mechanism overlay ✗ · corpus-form ✗ · diverse-data 114MB ✗ · model-capacity 3.68×/1B ✗ · physics-only no-CE ✗ degenerate · energy-based substrate ✗ · diffusion substrate ✗ · mitosis-ensemble/VRNN design-closed · archive salvage 0. 각 배제가 병목을 §1.1 data-regime threshold 로 정밀 수렴.
+
+**honest unsolved**: GOAL 미도달. 잔여 = §1.1 data-regime emergence threshold (anima byte tiny-corpus 가 그 아래). frontier 2 path (GOAL-legitimate 대규모 data-regime · 새 architectural insight) — 둘 다 quick-fire 아닌 전략 결정.
+
+**milestone status**: RESEARCH.md §1~§14 = milestone SSOT. 후속 cycle (§16 data-regime fire / §17 new-insight) 은 milestone *이후* 의 별도 frontier 작업 (sibling agent 소관, 본 §15 와 독립).
+
+산출물 = RESEARCH.md §15 (6 sub-§ + 10 honest C3) + archive/PHILOSOPHY.tape §verdict_goal_investigation_milestone + AGENTS.tape n_hexad_progress recent_landings + HEXAD/README.md recent landing. docs/* 신규 0 (g_doc_consolidation 준수). 신규 closed-form battery 없음 — milestone close-out 선언이라 arc 의 기존 B-EMERGE/B-SCALE/B-PUREPHYS/B-EBT/B-DIRJ/B-MITENS/B-DIRL sidecar 가 SSOT. f1/f2/f3 + B-IDENTITY-5 safe (문서 consolidation, corpus 미생성). 단일 작업 · branch 0 (anima main 직접).

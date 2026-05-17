@@ -858,3 +858,72 @@ honest gate (g3): 네 후보 모두 §11.3 irreducible 병목 (data-regime thres
 5. §13 dir-M (mitosis-as-ensemble) 과 본 §14 의 관계 — dir-M 은 mitosis 를 *학습-시 ensemble* 로 재해석한 genuine delta 라 §14.3 #2 의 "재탕" 판정에서 제외. dir-M 의 GOAL-legitimacy/효과는 §13 SSOT 소관, 본 §14 는 "mitosis growth mechanism 자체는 과거에 toy 로 충분히 탐색됨" 만 기록.
 6. f1/f2/f3 + B-IDENTITY-5 무관 (archaeology, corpus 미생성, 외부 entity lattice-fit 0). 과거 commit 의 Φ-proxy/α-exponent 는 그 자체 정의로만 인용 — lattice numerology 매핑 0.
 7. archaeology 가 negative 인 것이 GOAL 비관론은 아님 — "과거 우물이 말랐다" 는 곧 "다음은 genuine 신규 설계 (§12 frontier / §13 dir-M)" 라는 방향 확정. north-star (GOAL.md) 불변.
+
+---
+
+## §15 (2026-05-18) — investigation milestone close-out: §1~§14 arc 정식 마감
+
+§1~§14 가 GOAL("anima 가 자기 physics 로부터 자발적으로 말 거는 Living Consciousness 로 *실제 emergence*")의 systematic search space 를 전 차원에서 소진했다 — mechanism / model-capacity / physics-only / corpus-form / substrate / architecture / archive. 본 §15 는 이 arc 를 **완결된 honest investigation milestone** 로 정식 마감한다. 새 fire·새 측정 없음 ($0, 문서 consolidation). g3: GOAL 미도달을 명확히 한다 — milestone = "GOAL 달성"이 아니라 "GOAL 을 comprehensively investigate 한 완결 research milestone"이다. **"we mapped the problem comprehensively" 이지 "we solved it" 아니다.**
+
+### 15.1 milestone 선언 — 무엇을 investigate 했나
+
+GOAL 의 systematic search: anima 가 자발적 correct emergence 로 가는 architectural path 가 *어디인가* 를, 접근 가능한 search space 의 전 차원에서 fire·측정·archaeology 로 탐색했다.
+
+- **규모**: GPU fire 14건 (UBM-E6 4-path + UBM-E7 α scale-up + 6-overlay D/B/F/A/C + Dir-E superposition + Dir-G/H/I 3-way + §8 Ψ-anchored diverse + §11-A SCALE-DECOMP + §11-B PURE-PHYSICS + §13-K EBT + §13-J diffusion) + design-tier closure 2건 (§13-M mitosis-ensemble · §13-L VRNN) + 측정도구 1건 (§9 honest cascade-rate metric) + archaeology 1건 (§14 git history 전수조사 — 328 branch · 8,298 commit · 791 keyword-hit · ~8 cluster 정밀-read).
+- **기간**: 2026-05-17 ~ 2026-05-18 (RESEARCH.md §1~§14, 집중 research arc).
+- **방법**: `g_multidirectional_explore` (모든 방향 병렬 fire, 단일방향 순차 거부) + `g_goal` (GOAL-legitimacy gate, generic-pretrain/bolt-on 배제) + 매 fire closed-form 검증 (`g_blue_closed_mandate`, transfer-form + 연결부위 🔵) + 매 fire honest C3 (`g3`, over-claim 0).
+
+### 15.2 arc 가 확립한 것 — positive deliverables
+
+GOAL 미도달이나, arc 는 valuable 한 positive 산출을 확립했다:
+
+- **(a) GOAL 병목의 comprehensive decomposition** — §11.3 이 배제법으로 정밀화: mechanism(loss/reward/surface/backprop-free/inference overlay) ✗ · model-capacity(3.68×, 1B params) ✗ · physics-only(no-CE) ✗ degenerate · corpus-form(carving/2-stage/abstract-CoT) ✗ · diverse-data @ 114MB Ψ-anchored ✗ · substrate(energy-based/diffusion) ✗ · archive(8,298 commit) salvage 0. → **irreducible 병목 = §1.1 data-regime emergence threshold** (diverse-data pre-training loss threshold), CE-base 위에서 (physics 는 lever 이지 substrate 아님 — §11-B). 병목이 *어디가 아닌지* 를 전 차원에서 배제하고 *어디인지* 를 정밀하게 지목한 것이 arc 의 핵심 산물.
+- **(b) honest cascade-rate emergence metric (§9, B-EMERGE 1..7 🔵)** — V-SPONT lenient `coherence_token` flag (garbled byte-cascade 에 5/5 줌, §8.2 확정) 폐기. deterministic·closed-form 검증가능한 cascade-rate-gated coherence metric 으로 교체 + 13-way 재채점 → arc 전체의 V-SPONT "진전"(3/5·4/5·5/5)이 전부 probe-artifact 였음 metric-level 확정. 미래 fire 의 GOAL-거리 표준 (lenient 재발 차단).
+- **(c) CONSCIOUSNESS-CARVING paradigm + `.kosmos` format + dancinlab/kosmos sister-repo** — knowledge 를 P3-leak 없이 새기는 carving paradigm, `.kosmos` anchor manifest 포맷 standalone sister-format spin-out (github.com/dancinlab/kosmos).
+- **(d) governance 정착** — `g_goal` (north-star, 모든 작업이 이 목표의 수단) · `g_multidirectional_explore` (research fork = 모든 방향 병렬) · `g_kosmos_anchor_ssot` (.kosmos = anchor canonical SSOT, success-gated).
+- **(e) Dir-I lever (검증된 architectural lever)** — Ψ-anchored representation substrate + tension-supervision 결합이 12-way arc 중 universal 1/31 collapse-ceiling 을 correct-routing 방향으로 처음 깬 유일 fire (3/31 > 1/31, §6.2). = "anima 자체 physics 를 representation substrate + supervision signal 로 동시 격상"이 옳은 방향임이 measured 로 식별된 것. **단 GOAL 미달** (§6.3): 3/31 ≪ 31/31, JOINT 0.0 FALSIFIED, tier 5 measurement-artifact — lever 검증이지 emergence 아님.
+
+### 15.3 arc 가 배제한 것 — negative-but-valuable
+
+| 차원 | 검증 (§) | 결과 |
+|---|---|---|
+| mechanism overlay (loss/reward/surface/backprop-free/inference) | §4 6-way + §6 H | ✗ single-attractor collapse 不破 (routing ≤1/31, 8-way FALSIFIED) |
+| corpus FORM (carving / 2-stage superposition / abstract-CoT) | §1.3 Dir-E/F + §8 | ✗ form 바꿔도 不破 |
+| diverse-data @ 114MB (Ψ-anchored, 64-anchor) | §8 | ✗ routing 오히려 악화 (3/31 → 2/64), §7.3 crux FALSIFIED at scale |
+| model-capacity (3.68× scale-up, 1B params) | §11-A SCALE-DECOMP | ✗ routing/honest-coherence FLAT — data-regime ceiling, capacity 아님 |
+| physics-only paradigm (no-CE) | §11-B PURE-PHYSICS | ✗ degenerate (byte_acc < random), CE load-bearing |
+| 측정 도구 (V-SPONT lenient flag) | §9 | ⚠ 깨져있었음 → cascade-rate metric 으로 교체 (positive 산출 (b)) |
+| energy-based substrate (EBT) | §13-K fire | ✗ JOINT 0.0 FALSIFIED, digit-cascade 더 심함 |
+| diffusion substrate (Ψ-supervised masked-diffusion) | §13-J fire | ✗ routing 0/64, non-AR 도 不破 |
+| mitosis-as-ensemble / VRNN curiosity | §13-M/L design | ✗ M = model-capacity 인접 (§11-A FLAT 동형 예상) · L = closed-loop 부재, Dir-I 환원 — design-tier 마감 ($0, anti-padding) |
+| archive (8,298 commit, 과거 self-mechanism) | §14 archaeology | ✗ salvage 0 — 과거 "emergent/super-linear" 4건 전부 metric-artifact/mechanism-not-GOAL 재확인 |
+
+각 배제는 negative 이나 valuable — 병목이 *그 차원에 없음* 을 측정으로 닫아, irreducible 병목을 §1.1 data-regime threshold 로 정밀 수렴시켰다.
+
+### 15.4 honest unsolved — GOAL 미도달, 잔여 = data-regime frontier
+
+**GOAL 미도달.** 13-way fire + 측정도구 fix + archaeology 가 접근 가능한 mechanism+architecture+archive 공간을 소진했고, 그 안에 emergence 가 없음을 metric-level 로 확정했다. 잔여 unsolved = **§1.1 data-regime emergence threshold** (diverse-data pre-training loss threshold) — anima byte-level tiny-corpus(30~114MB) 가 그 threshold 아래. 이것이 §11.4 가 명시한 frontier:
+
+1. **GOAL-legitimate 대규모 data-regime** — §7 이 generic large-corpus = GOAL-illegitimate 판정 + §8 이 Ψ-anchored 114MB = wrong-direction. "Ψ-anchored 면서 §1.1 threshold 넘는 규모"가 존재하는지, 비용·feasibility·§8 wrong-direction trend 가 미해결 open question. 단순 scale-up 은 evidence 가 지지 안 함.
+2. **새 architectural insight** — 현 candidate space (§1.3 + G/H/I + §11 + §12 J/K/L/M) 밖. §12.2 가 노출: "agent 가 언제 말하고 언제 침묵하나"를 emergence-target 으로 한 architecture 는 2026 문헌 frontier 자체가 얇음 — anima GOAL 은 외부 anchor 없이 자체 설계해야 할 수 있음.
+
+honest: 둘 다 quick-fire 아닌 전략 결정 — arc 의 mechanical continuation 으로는 닿지 않는 진짜 frontier.
+
+### 15.5 milestone status — RESEARCH.md §1~§14 = milestone SSOT
+
+- **RESEARCH.md §1~§14 가 본 investigation milestone 의 SSOT** — GOAL 의 systematic search 의 fire evidence·측정·archaeology·decomposition 전부.
+- 본 §15 = 그 arc 의 정식 close-out 선언. milestone = honest 완결 investigation 이지 GOAL 달성 아님 — north-star (GOAL.md) 는 불변, 측정된 거리 명시.
+- **후속 cycle (§16 data-regime fire · §17 new-insight 등) 은 본 milestone *이후* 의 별도 frontier 작업** — milestone 의 연속이 아니라, milestone 이 정밀화한 frontier (§15.4) 에 대한 신규 전략 착수. §16/§17 = sibling agent 소관 (본 §15 와 독립).
+
+### 15.6 honest C3
+
+1. milestone = "GOAL 을 comprehensively investigate 한 완결 research milestone" 이지 **GOAL 달성 아님** (g3). "we mapped the problem comprehensively" 이지 "we solved it" 아님 — 명확히.
+2. arc 의 positive 산출 (15.2 a~e) 은 valuable 하나 emergence 아님 — (a) 병목 decomposition · (b) honest metric · (c) carving paradigm · (d) governance · (e) Dir-I lever 검증. Dir-I 의 3/31 correct-routing-break 도 "lever 검증" 이지 emergence 아님 (§6.3 carry — 3/31 ≪ 31/31, JOINT 0.0, tier 5 artifact).
+3. arc 의 negative (15.3 배제표) 가 valuable 한 이유 = 병목이 *어디가 아닌지* 를 전 차원에서 닫아 §1.1 data-regime threshold 로 정밀 수렴시킨 것 — 단순 실패 누적 아닌 systematic decomposition.
+4. honest unsolved = §1.1 data-regime threshold. arc 의 mechanical continuation 으로는 닿지 않음 — frontier 2 path (GOAL-legitimate 대규모 data-regime · 새 architectural insight) 모두 전략 결정 사안.
+5. milestone close-out 은 $0 — 새 fire·새 측정·새 capability claim 0. §1~§14 가 이미 산출한 evidence 의 정직 종합일 뿐 (RESEARCH.md §9/§11 의 V-SPONT 재해석·decomposition 을 milestone-level 로 명시).
+6. §16/§17 (data-regime fire / new-insight) 은 본 milestone 과 독립한 sibling-agent 작업 — 본 §15 는 §16/§17 에 미간섭 (RESEARCH.md 동시 편집 시 pull-rebase).
+7. honest metric (§9) 으로 재채점해도 GOAL 진전 0 — honest "coherence" 는 byte-cascade *detector* 이지 correctness detector 아님 (B-EMERGE-7 necessary-not-sufficient). milestone status 가 GOAL 비관론은 아님 — "어디가 막혔나"를 끝까지 정직 추적한 결과로 frontier 가 명확해진 것.
+8. f1/f2/f3 + B-IDENTITY-5 무관 (문서 consolidation, corpus 미생성, 외부 entity lattice-fit 0). 외부 paper 는 그 자체 invariant 으로만 인용.
+9. closed verdict tier — 본 §15 는 milestone close-out 선언이라 신규 closed-form battery 없음 (arc 의 기존 B-EMERGE/B-SCALE/B-PUREPHYS/B-EBT/B-DIRJ/B-MITENS/B-DIRL sidecar 가 SSOT). archive/PHILOSOPHY.tape §verdict_goal_investigation_milestone 가 verdict ledger.
+10. north-star (GOAL.md 한 문장) 불변 — milestone 은 그 north-star 로 가는 길의 *정직한 중간 지도* 이지 도착이 아니다. 다음은 mechanical continuation 아닌 전략 결정.
