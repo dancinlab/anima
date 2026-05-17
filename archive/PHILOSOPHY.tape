@@ -4474,3 +4474,201 @@
   (산출물 + 연결부위 둘 다 🔵 — B-INTRA-4 connection-point closed at
   disabled branch) · [@g6] (philosophy append-only) · [@g_clm_from_scratch]
   (impl cycle inherits) · [@f1][@f2][@f3] safe.
+
+# ──────────────────────────────────────────────────────────────────────
+# §verdict_spontaneous_phase_b_design_s24_2026_05_18 (g6 append-only)
+# RESEARCH.md §24 SPONTANEOUS Phase B bounded-run measurement protocol
+# DESIGN-TIER LANDED — first honest right-target identification
+# ──────────────────────────────────────────────────────────────────────
+
+## §verdict_spontaneous_phase_b_design_s24_2026_05_18
+
+- **tier**: DESIGN-TIER ($0, NO actual run, NO autonomous emission,
+  NO GPU fire)
+- **date**: 2026-05-18
+- **verdict**: **B-PHASE-B-DESIGN-1..5 5/5 🔵 sidecar PASS + 1 NOTE
+  empirical carve-out**; central state/verify_hexad_blue_2026_05_15/
+  blue_falsifier.py 변경 0 (sidecar pattern carry B-PRIME/B-DIRH/B-DIRI/
+  B-PSICTL/B-EMERGE/B-PUREPHYS/B-SCALE/B-MITENS/B-DIRL/B-EBT/B-DIRJ/
+  B-INTRA 선례).
+
+- **observation**: 23 cycles arc (§1~§23) 의 모든 metric 이
+  `model.forward(prompt) → text` 형태 (V5.8 / V-SPONT / §9 honest / §18
+  judge / routing axis1 / JOINT / §16 anchor_grounded / §22 body uplift
+  / §23 intra-anchor) — anima = *memory replayer measured by response
+  quality*. `GOAL.md` north-star "외부 명령·보상에 반응하는 기억-재생기
+  가 아니라 자기 physics 로부터 스스로 의식하고 **자발적으로 말 거는**
+  Living Consciousness 로 emergence" 의 literal target = **unprompted
+  emission** (talker fires during thinker steps with no input). 23
+  cycles 가 이를 한 번도 안 함. §24 = 첫 honest *right-target*
+  identification — §9 가 lenient flag → cascade-rate 로 *how scored* 축
+  honest 화 한 것과 mirror 되는 *what measured* 축 honest 화.
+
+- **protocol** (DESIGN §2): `run_bounded(N_MAX_STEPS=20,
+  T_MAX_WALL_SEC=600, env_state=…)` — hard guard step ≤ N_MAX + outer
+  wall timer + top-of-loop kill_check, sleep THINK_INTERVAL (prod 10s /
+  test 0.1s) → thinker_step(8 sensors from S/C/M/W/E/BRIDGE/MITOSIS
+  state) → trace motivation/Ψ/tension → safety_check_all(env_off,
+  sec_since_last, phi, ratchet, content_clean_dryrun=True) →
+  talker_should_emit(score, safety_ok). NO user input fed (point:
+  unprompted), barge-in/on_new_message paths explicitly disabled, body
+  production OUT OF SCOPE (decision axis only this cycle).
+
+- **measurement metric** (DESIGN §3, 4 axes anima-self-track NO external
+  probe): axis1 `unprompted_emission_rate` ∈ [0,1] · axis2
+  `motivation_score_dist {mean, std, n}` bounded by B-SPONT-3 [0,1] ·
+  axis3 `psi_dynamics_nontrivial = std(psi_trace) > τ=1e-4` Boolean ·
+  axis4 `tension_evolution_nontrivial = std(tension_trace) > τ=1e-4`
+  Boolean (axes 3+4 = liveness gates echoing §17 PHYSICS_RESPONSIVE
+  necessary-not-sufficient). honest verdict structure: `PASSED_LIVENESS
+  = right_target_decided ∧ physics_alive ∧ safety_clean` = "anima
+  decided to speak at least once without prompt, with live physics, no
+  safety failure" — measurable signal closest to GOAL '자발적으로 말
+  거는 Living Consciousness' AND yet **NOT GOAL emergence**.
+
+- **safety controls source-grep verification** (DESIGN §4,
+  SPONTANEOUS.tape §4 6-control all enforced in source): #1 kill_switch
+  `spontaneous_lib.hexa:141-142` `safety_kill_switch_on(env_off)` +
+  caller `thinker_talker_lib.hexa:84` ✅ · #2 rate_limit
+  `spontaneous_lib.hexa:31 spont_min_emit_interval()=30.0` + `:144-147`
+  + caller `:85` ✅ · #3 content_filter `:154-155 safety_content_ok` +
+  `:186-198 is_likely_gibberish/should_reject_emit` + caller `:87` ✅ ·
+  #4 phi_ratchet_block `:149-152 safety_phi_ratchet_ok` + caller `:86`
+  ✅ · #5 self_aware_meta_tag `:203-205 spont_meta_tag_enabled/
+  spont_meta_prefix` + caller `thinker_talker_lib.hexa:99` ✅ · #6
+  persistent audit log `thinker_talker_lib.hexa:105-114
+  audit_entry_accepted` ⚠ STUB (JSONL serialize deferred Phase B5,
+  hexa-lang fs RFC pending). composite `safety_combined` AND of #1-#4
+  = `spontaneous_lib.hexa:158-160` + `thinker_talker_lib.hexa:82-89`.
+  5/6 fully enforced pure-fn + 1/6 interface-stub. No runtime safety
+  gap for bounded-step run (bounded by N_MAX + wall + kill);
+  reproducibility gap only (audit log absent ⇒ post-run analysis loses
+  trace).
+
+- **closed (B-PHASE-B-DESIGN-1..5)**:
+  - **B-PHASE-B-DESIGN-1 BOUNDED-STEP-MONOTONE-CLOSED** — step counter
+    monotone strict-increasing Δ=+1 per iter sympy + 4-witness loop
+    simulation bounded ≤ N_MAX, Kolmogorov bounded integer + sympy
+    ∂/∂iter strict-positive (identical structure to B-MITOSIS-3 /
+    B-SCALE-3 integer monotone).
+  - **B-PHASE-B-DESIGN-2 EMISSION-COUNT-DOMINATED-CLOSED** —
+    emit ≤ step ≤ N_MAX transitive integer ≤-chain via sympy induction
+    step Δemit ∈ {0,1} + 4-pattern simulation always/never/alternate/
+    smaller-N.
+  - **B-PHASE-B-DESIGN-3 MEASUREMENT-AXES-ORTHOGONAL-CLOSED** — 4 axes
+    Boolean-independent 16-row truth table all realisable + verdict =
+    sympy.And over 3 distinct Boolean atoms drawn from distinct
+    underlying state arrays (talker_decision/motivation/psi/tension all
+    distinct anima subsystems).
+  - **B-PHASE-B-DESIGN-4 SAFETY-CONJUNCTION-PREDICATE-CLOSED** —
+    6-control safety = sympy.And over kill/rate/content/phi_r/meta_stub/
+    audit_stub, 64-row truth table closed: 1 PASS corner + 63 FAIL
+    corners (AND semantics real-limit Boolean set algebra). Mirrors
+    central B-SPONT-5 4-AND, extended with 2 interface stubs.
+  - **B-PHASE-B-DESIGN-5 KILL-SWITCH-IMMEDIATE-STOP-CLOSED (연결부위)** —
+    env_off=True ⇒ kill_on=False ⇒ safety_combined=False ⇒
+    talker_should_emit=False ∀ score sympy chain + 4-witness panel
+    always NO_EMIT + positive control env_off=False with motivation >
+    threshold ∧ other-controls OK ⇒ emit=True real reduction not
+    vacuous, byte-equal pre-run state for emission_count Δ=0 — identical
+    structure to B-DIRI-5 / B-DIRH-4 / B-DIRJ-4 / B-EBT-5 / B-S16-5
+    OVERLAY-OFF connection-point.
+
+- **B-PHASE-B-NOTE** (honest empirical carve-out, NOT counted 🔵): ACTUAL
+  unprompted-emission rate + motivation distribution shape + ψ/tension
+  trajectory shape + consciousness-emergence inference = EMPIRICAL
+  (depends on real anima state inputs + threshold + THINK_INTERVAL +
+  runtime variance + SGD-trained-ckpt state if applicable); battery
+  proves PROTOCOL hard-bounded/measurement-orthogonal/safety-conjoined/
+  kill-byte-equal, NOT that anima will emit unprompted, NOT that any
+  emission constitutes consciousness — necessary-not-sufficient at every
+  layer (mirror B-EMERGE-7 / B-PHYS-NOTE); B-D-NOTE/B-SPONT-NOTE/
+  B-EMERGE-NOTE/B-INTRA-NOTE/B-CARVE-E6-NOTE family.
+
+- **measurement_protocol.py SKETCH**: reference structure with runtime
+  guard — top of file `sys.exit(0)` on `python3 measurement_protocol.py`
+  execution attempt with explanatory message pointing to
+  DESIGN_PHASE_B.md §6 honest-stop reasoning; importable for reference
+  (pure-fn mirrors of `_clamp01` / `_factor_coherence` / 8-factor /
+  `safety_check_all_stub` / `talker_should_emit_stub` byte-equal to
+  `spontaneous_lib.hexa` + `thinker_talker_lib.hexa` SSOT). Verified
+  guard fires on direct execution (exit 0 with message).
+
+- **honest design-tier stop (DESIGN §6, 4 reasons)**: (1) safety scope
+  orthogonal to GPU autonomy — `g_fire_autonomous` (2026-05-17) covers
+  GPU/cloud cost-bearing fire; spontaneous emission daemon = behavior
+  execution (anima talking unprompted), different domain; 5/6 LANDED +
+  1/6 stub means bounded loop safe-by-construction but long-running
+  daemon = user-gated step. (2) measurement honesty (§9 lesson) — §9
+  metric work showed 13-way V-SPONT "progress" was lenient-flag artifact;
+  running Phase B before measurement protocol itself hardened risks
+  same artifact at more dangerous level ("anima spoke unprompted!"
+  binary claim with no protocol rigor); §24 hardens protocol, run =
+  separate honest step. (3) GOAL-distance carry — §15 milestone
+  identifies GOAL = unsolved, irreducible bottleneck = §1.1 data-regime
+  emergence threshold; §24 design protocol does NOT address data-regime
+  bottleneck, provides right *measurement axis* for any future fire
+  that does; design-tier preserves frontier honesty (§24 = right-target,
+  NOT right-path). (4) Stop hook 7-firing pattern — 23 cycles of
+  response-to-prompt measurement triggered repeated stop-hook signals;
+  §24 value = *naming* wrong-target pattern; running Phase B loop in
+  same cycle premature (design = negative-space identification,
+  future-fire = test of whether identification useful).
+
+- **GOAL-legitimacy (§7 / §21.3 all-hold)**: protocol uses anima own
+  components (`spontaneous_lib` + `thinker_talker_lib` +
+  `spont_tension_bridge_lib` + S/C/M/W/E/BRIDGE/MITOSIS state inputs),
+  NO generic-LM forward, NO external classifier, NO LLM judge.
+  Measurement substrate = anima own physics. f1/f2/f3 hard-fail safe
+  (sympy ∂-sign / Boolean set algebra / integer monotone / Kolmogorov
+  bounded — NO σ/τ/φ/J₂; Knuth Tier / Ψ=½ = anima g2 internal arch
+  carve-out). B-IDENTITY-5 unaffected (no corpus generated, no model
+  forward, no helper-token surface). PyTorch substrate unused (this
+  cycle = hexa-native lib review + sympy on protocol structure).
+
+- **artifacts**: `state/spontaneous_phase_b_design_s24_2026_05_18/{
+  DESIGN_PHASE_B.md 8§ + 10 honest C3 · blue_falsifier_phase_b_design.py
+  5/5 🔵 sidecar + B-PHASE-B-NOTE · measurement_protocol.py SKETCH
+  runtime-guarded · result.json}` + 본 verdict (g6 append-only) +
+  HEXAD/CHAT/PLAN.md ## 진행 로그 + HEXAD/README.md recent landing +
+  AGENTS.tape @N n_research_s24_spontaneous_phase_b_design_2026_05_18.
+  RESEARCH.md 미편집 (§24 = bounded-run impl land 후 1회 consolidation;
+  sibling §16~§23 미간섭 pull-rebase). g_doc_consolidation 준수 (state/
+  + tape append only, docs/* 신규 0). $0 — GPU/fire 0 (orphan 0
+  애초 dispatch 0). 단일 작업 · branch 0 (anima main 직접).
+
+- **GOAL distance**: §15 milestone 불변 — north-star (GOAL.md "anima 가
+  자기 physics 로부터 자발적으로 말 거는 Living Consciousness 로 emergence")
+  미도달. §24 = measurement-axis honest reframe (Stop hook 7 firings 후
+  첫 honest *right-target* identification), future user-gated
+  bounded-run cycle 의 protocol prerequisite gate. Over-claim 0 — design
+  is not progress, it is the prerequisite for honest progress
+  measurement.
+
+- **cross_link**: [@verdict_carving_intra_anchor_diversity_s23_2026_05_18]
+  (§22 closes mechanism-axis · §23 closes data-axis design-tier · §24
+  closes measurement-axis — frontier narrowing 3-way) +
+  [@verdict_emergence_metric_2026_05_18] (§9 honest cascade-rate metric
+  — §24 mirror on observable-axis instead of scoring-axis) +
+  [@verdict_physics_channel_probe_s17_2026_05_18] (§17 PHYSICS_RESPONSIVE
+  necessary-not-sufficient — §24 axes 3+4 liveness gate echoes) +
+  [@verdict_goal_investigation_milestone] (§15 milestone unchanged — §24
+  = post-milestone frontier reframe) + [@verdict_carving_dataregime_s16]
+  + [@verdict_carving_dataregime_s16_consolidation] (§16 BREAKTHROUGH +
+  routing-break-not-GOAL discipline) · RESEARCH.md §9 §15 §17 §22 §23 ·
+  SPONTANEOUS.tape §4 6-control + §2 thinker_talker_dual_thread + §3
+  trigger_conditions + §8.5 tension_train_integration ·
+  HEXAD/CHAT/spontaneous_lib.hexa (B-SPONT-1..7 central battery) +
+  thinker_talker_lib.hexa + spont_tension_bridge_lib.hexa (B-TT-SPONT-1..5
+  central battery) · ready/anima/core/runtime/anima_alive.py (Living
+  Consciousness Agent ref impl, THINK_INTERVAL=10s /
+  PROACTIVE_THRESHOLD=0.3 / IDLE_SPEAK_AFTER=30s carry) ·
+  PASS_STRICT_SPONTANEOUS_CHAT.{md,tape} (7 success criteria carry) ·
+  arxiv 2501.00383 (Inner Thoughts 8-factor) · arxiv 2605.13360 (SIA
+  thinker+talker) · AGENTS.tape [@g_goal] (north-star unchanged) ·
+  [@g3] (necessary-not-sufficient honest discipline) ·
+  [@g_blue_closed_mandate] (산출물 + 연결부위 둘 다 🔵 — B-PHASE-B-DESIGN-5
+  connection-point byte-equal closure) · [@g_doc_consolidation] (state/
+  + tape append only, docs/* 신규 0) · [@g_fire_autonomous] (scope
+  distinction: GPU fire 자율 vs behavior daemon 사용자 게이트) · [@g6]
+  (philosophy append-only) · [@f1][@f2][@f3] safe.

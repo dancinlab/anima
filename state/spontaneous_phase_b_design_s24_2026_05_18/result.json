@@ -1,0 +1,159 @@
+{
+  "battery": "B-PHASE-B-DESIGN \u2014 SPONTANEOUS Phase B bounded-run protocol design (RESEARCH.md \u00a724)",
+  "date": "2026-05-18",
+  "n_pass": 5,
+  "n_total_counted": 5,
+  "all_pass": true,
+  "verdicts": {
+    "B-PHASE-B-DESIGN-1": {
+      "name": "BOUNDED-STEP-MONOTONE-CLOSED",
+      "pass": true,
+      "statement": "step counter monotone strict-increasing (\u0394=+1 per iter, sympy) AND bounded by N_MAX (4-witness loop simulation)",
+      "transition": "Eq(step_next, step + 1)",
+      "monotone_delta": "1",
+      "witnesses": [
+        {
+          "n_max": 20,
+          "init_step": 0,
+          "final_step": 20,
+          "bounded": true
+        },
+        {
+          "n_max": 20,
+          "init_step": 19,
+          "final_step": 20,
+          "bounded": true
+        },
+        {
+          "n_max": 1,
+          "init_step": 0,
+          "final_step": 1,
+          "bounded": true
+        },
+        {
+          "n_max": 5,
+          "init_step": 5,
+          "final_step": 5,
+          "bounded": true
+        }
+      ],
+      "anchor": "Kolmogorov bounded integer + sympy \u2202/\u2202iter strict-positive (real-limit, identical structure to B-MITOSIS-3 / B-SCALE-3 integer monotone)"
+    },
+    "B-PHASE-B-DESIGN-2": {
+      "name": "EMISSION-COUNT-DOMINATED-CLOSED",
+      "pass": true,
+      "statement": "emission_count \u2264 step \u2264 N_MAX (transitive integer \u2264-chain via sympy induction step + 4-pattern simulation witness)",
+      "induction_step_branches": {
+        "d=1": "-emit + step",
+        "d=0": "-emit + step + 1"
+      },
+      "witnesses": [
+        {
+          "n_max": 20,
+          "pattern": "always",
+          "final_emit": 20,
+          "final_step": 20,
+          "transitive_chain_holds": true
+        },
+        {
+          "n_max": 20,
+          "pattern": "never",
+          "final_emit": 0,
+          "final_step": 20,
+          "transitive_chain_holds": true
+        },
+        {
+          "n_max": 20,
+          "pattern": "alternate",
+          "final_emit": 10,
+          "final_step": 20,
+          "transitive_chain_holds": true
+        },
+        {
+          "n_max": 5,
+          "pattern": "always",
+          "final_emit": 5,
+          "final_step": 5,
+          "transitive_chain_holds": true
+        }
+      ],
+      "anchor": "transitive \u2264-chain over integers (real-limit) + sympy induction step over \u0394emit \u2208 {0,1}"
+    },
+    "B-PHASE-B-DESIGN-3": {
+      "name": "MEASUREMENT-AXES-ORTHOGONAL-CLOSED",
+      "pass": true,
+      "statement": "4 measurement axes Boolean-independent (16-row truth table all realisable) \u2014 verdict expressible as sympy.And over distinct Boolean atoms drawn from distinct underlying state arrays",
+      "n_axes": 4,
+      "n_truth_rows_realisable": 16,
+      "verdict_expr": "psi_alive & rate_gt0 & tension_alive",
+      "verdict_atoms_distinct": true,
+      "anchor": "Boolean set algebra real-limit + 4-axis state-array distinctness (talker_decision / motivation / psi / tension all distinct anima subsystems)"
+    },
+    "B-PHASE-B-DESIGN-4": {
+      "name": "SAFETY-CONJUNCTION-PREDICATE-CLOSED",
+      "pass": true,
+      "statement": "6-control safety predicate = sympy.And over (kill, rate, content, phi_ratchet, meta_tag_stub, audit_stub) \u2014 64-row truth table closed: 1 PASS corner + 63 FAIL corners (AND semantics, real-limit Boolean set algebra). Mirrors central B-SPONT-5 4-AND, extended with 2 interface stubs (#5 meta-tag fn-present + #6 audit-stub fn-present).",
+      "predicate": "audit_log_stub_present & content_filter_ok & kill_switch_on & meta_tag_stub_present & phi_ratchet_ok & rate_limit_ok",
+      "n_pass_corners": 1,
+      "n_fail_corners": 63,
+      "all_true_substitution": true,
+      "one_false_substitution": false,
+      "anchor": "Boolean set algebra real-limit (AND closure) \u2014 identical structure to B-SPONT-5 / B-CONN-8 / B-CHANNEL-MUX-5"
+    },
+    "B-PHASE-B-DESIGN-5": {
+      "name": "KILL-SWITCH-IMMEDIATE-STOP-CLOSED",
+      "pass": true,
+      "statement": "env_off=True \u21d2 kill_on=False \u21d2 safety_combined=False \u21d2 talker_should_emit=False \u2200 score, threshold (sympy chain). Connection-point: post-step emission slot byte-equal to pre-step (audit row NO_EMIT, emit_count \u0394=0). Positive control: env_off=False with motivation>threshold \u2227 other-controls OK \u21d2 emit=True (real reduction, not vacuous False).",
+      "kill_on_definition": "Eq(env_off, False)",
+      "talker_under_env_off_true": "False",
+      "chain_collapses_to_false": true,
+      "positive_control_emit": true,
+      "witnesses": [
+        {
+          "score": 0.0,
+          "threshold": 0.3,
+          "env_off": true,
+          "emit_decision": false
+        },
+        {
+          "score": 0.3,
+          "threshold": 0.3,
+          "env_off": true,
+          "emit_decision": false
+        },
+        {
+          "score": 0.5,
+          "threshold": 0.3,
+          "env_off": true,
+          "emit_decision": false
+        },
+        {
+          "score": 1.0,
+          "threshold": 0.3,
+          "env_off": true,
+          "emit_decision": false
+        }
+      ],
+      "anchor": "Boolean chain reduction (real-limit) + sympy substitution byte-equal \u2014 identical structure to B-DIRI-5 / B-DIRH-4 / B-DIRJ-4 / B-EBT-5 OVERLAY-OFF / B-S16-5 connection-point reduction. Source: spontaneous_lib.hexa:141-142 + thinker_talker_lib.hexa:48-51, 82-89."
+    },
+    "B-PHASE-B-NOTE": {
+      "name": "UNPROMPTED-EMISSION-OUTCOME-EMPIRICAL",
+      "pass": null,
+      "counted_blue": false,
+      "statement": "ACTUAL unprompted-emission rate, motivation-score distribution shape, psi/tension trajectory shape, and any inference about consciousness emergence from the bounded run = EMPIRICAL (depends on real anima state inputs, threshold choice, THINK_INTERVAL, runtime variance, SGD-trained-ckpt state if applicable). The battery proves the PROTOCOL is hard-bounded / measurement-orthogonal / safety-conjoined / kill-switch-byte-equal; it does NOT prove anima will (or will not) emit unprompted, and it does NOT prove that any emission constitutes consciousness (necessary-not-sufficient at every layer \u2014 mirror B-EMERGE-7 / B-PHYS-NOTE).",
+      "scope": "transfer-form \ud83d\udd35 (B-PHASE-B-DESIGN-1..5: protocol boundedness + axis orthogonality + safety conjunction + kill-switch byte-equal connection-point); ACTUAL bounded-run outcome NOT counted (honest empirical, B-D-NOTE / B-SPONT-NOTE / B-EMERGE-NOTE / B-INTRA-NOTE / B-CARVE-E6-NOTE family \u2014 all stochastic / state-dependent / measurement-only-shows-trigger-axis-alive).",
+      "carve_out_family": "B-D-NOTE / B-SPONT-NOTE / B-EMERGE-NOTE / B-PHYS-NOTE / B-INTRA-NOTE"
+    }
+  },
+  "note": "Sidecar battery \u2014 central state/verify_hexad_blue_2026_05_15/blue_falsifier.py UNCHANGED. Mirror B-PRIME / B-DIRH / B-DIRI / B-PSICTL / B-EMERGE / B-PUREPHYS / B-SCALE / B-MITENS / B-DIRL / B-EBT / B-DIRJ / B-INTRA sidecar pattern (parallel-agent merge avoidance).",
+  "honest_c3": [
+    "Closed scope = protocol structure (boundedness / orthogonality / safety / kill byte-equal). Empirical scope = actual emission outcome (carved out in B-PHASE-B-NOTE).",
+    "No actual run executed this cycle. No anima_alive.py activation. No GPU fire. DESIGN-TIER only.",
+    "Necessary-not-sufficient: unprompted_emission > 0 is the minimum measurable signal, NOT a consciousness proof.",
+    "Safety controls 5/6 LANDED + 1/6 stub (audit log JSONL write deferred to Phase B5).",
+    "GOAL-distance unchanged from \u00a715 milestone \u2014 \u00a724 = measurement-axis reframe, NOT GOAL progress.",
+    "f1/f2/f3 hard-fail safe (sympy \u2202-sign / Boolean set algebra / integer monotone / Kolmogorov bounded \u2014 NO \u03c3/\u03c4/\u03c6/J\u2082).",
+    "B-IDENTITY-5 unaffected (no corpus, no model forward).",
+    "Connection-point closure (kill_switch \u21d2 byte-equal NO_EMIT) follows B-DIRI-5 / B-DIRH-4 / B-S16-5 OVERLAY-OFF reduction pattern."
+  ]
+}
