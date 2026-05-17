@@ -1,0 +1,42 @@
+{
+  "battery": "B-S16-1..6",
+  "all_full_blue": true,
+  "count": "6/6 🔵",
+  "results": {
+    "B-S16-1-SHA256-DETERMINISTIC": {
+      "verdict": "🔵 PASS",
+      "ok": true,
+      "detail": "on_disk==recorded=True sha=422c64a09b89393a… (256-bit Boolean commitment, deterministic seed=1337)"
+    },
+    "B-S16-2-NO-CHAT-SFT-CONTAMINATION": {
+      "verdict": "🔵 PASS",
+      "ok": true,
+      "detail": "forbidden-token total=0 (Boolean set algebra; {'[anima': 0, '도우미': 0, 'helper': 0, 'assistant': 0, '사용자': 0, 'user:': 0})"
+    },
+    "B-S16-3-SCALE-UP-OVER-S8": {
+      "verdict": "🔵 PASS",
+      "ok": true,
+      "detail": "bytes 603032014>114472084 ∧ records 777000>164992 ∧ anchors 168>64 ∧ s8_subset=True (×5.27 bytes integer cardinality)"
+    },
+    "B-S16-4-CURRICULUM-MONOTONE-ORDERING": {
+      "verdict": "🔵 PASS",
+      "ok": true,
+      "detail": "rank non-decreasing=True ∧ stage==quartile(pos)=True ∧ stats=True ∧ symbolic floor∘affine non-decreasing=True (quartile = monotone step fn of position, deterministic NOT learned)"
+    },
+    "B-S16-5-OVERLAY-OFF-REDUCTION": {
+      "verdict": "🔵 PASS",
+      "ok": true,
+      "detail": "λ=0 ⇒ L≡CE (True) ; ∂L/∂L_psi=lam_c ∂L/∂L_route=lam_r (additive identity — Dir-I connection-point)"
+    },
+    "B-S16-6-CURRICULUM-OFF-REDUCTION": {
+      "verdict": "🔵 PASS",
+      "ok": true,
+      "detail": "region_hi off→full(True) ∧ gate off→4(True) ∧ Dir-I physics intact(True) (Boolean structural — curriculum-OFF ≡ Dir-I sampler, fair-compare closed)"
+    }
+  },
+  "note": {
+    "B-S16-NOTE": "EMPIRICAL carve-out (NOT counted 🔵, B-D-NOTE / B-CARVE-E6-NOTE / B-SCALE-NOTE family): whether the ~600MB Ψ-anchored CURRICULUM data-regime crosses the §1.1 emergence threshold — the SGD convergence OUTCOME and the 4-axis capability (routing / V-SPONT honest §9 metric / JOINT) vs §8 (2/64, 0.0087, honest 2/5) and §11-A (1/64, 0.0078, honest 2/5) — is the EMPIRICAL fire outcome. §8 trend was wrong-direction; §16 may repeat. The battery proves the corpus is a deterministic, contamination-free, genuine-scale-up, monotone-curriculum artefact and that the Dir-I lever / curriculum connection-points are closed (fair compare BY CONSTRUCTION) — it does NOT prove emergence (g3, no pre-loaded conclusion)."
+  },
+  "central_blue_falsifier_unchanged": true,
+  "sidecar_precedent": "B-PRIME / B-DIRI / B-DIRH / B-PSICTL / B-EMERGE / B-PUREPHYS / B-SCALE / B-MITENS / B-DIRL"
+}
