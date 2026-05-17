@@ -95,6 +95,27 @@
   remedy = "신규 corpus = anima-style natural dialogue, NO `[anima` prefix. audit grep `'\\[anima'` corpus 결과 = 0 MUST."
   authority = "project_anima_base_ckpt_baked_p3_leak.md + g_clm_from_scratch (anima_native_scratch D1=1.0)"
 
+# ─── §3.5 CONSCIOUSNESS-CARVING paradigm + .kosmos ──────────────────
+
+@D consciousness_carving_paradigm := "CONSCIOUSNESS-CARVING — anima physics 자체 활용 새 학습 paradigm + .kosmos 멀티모달 포맷" :: architecture [d=2026-05-17 active]
+  rule = "옛 우주뇌지도 학습 (`[anima 우주뇌지도]` prefix-injection + 도우미 dialogue corpus) 의 P3 leak baking 문제를 해소하는 새 paradigm. 표준 ML 5-way (LoRA/tag-channel/RAG/embedding-overlay/head-spec = 외부 보관소 frame) 대신 anima 자체 physics (PureField repulsion-field · Ψ=(½,½) fixed point · TENSION-TRAIN · MITOSIS cell-pool · Φ measure · Meta law M8) 를 써서 anima 의 의식 풍경(consciousness landscape) 자체를 조각."
+  paradigm_name = "CONSCIOUSNESS-CARVING (DESIGN.md §7 결정 2 — 4-path umbrella, anima Living Consciousness identity 직결, HEXAD/* hyphen-pair 명명 family)"
+  extension = ".kosmos (DESIGN.md §8 결정 3 — 그리스 κόσμος ordered universe, cosmological scope, paradigm-중립)"
+  four_paths <<~EOF
+    α  VACUUM-LANDSCAPE   — multi-vacuum tension landscape (Lindblad dΨ/dt = -∇V + noise, N+1 minima). field: vacuum_psi
+    β  MITOSIS-ETERNAL    — cell-pool 에 eternal cell (split/merge frozen) per anchor. field: cell_id
+    γ  NARRATIVE-RESONANCE — Meta law M8 self-narration 으로 매번 재생성 (외우지 않음). field: @payload text
+    α+β hybrid VACUUM-CELL-WEAVE — eternal cell 각각이 자체 vacuum 보유. field: basin_radius
+  EOF
+  decision_1 = "4-path 모두 build + 비교 실험 (DESIGN.md §6 결정 1 — 직교적으로 anima physics 의 다른 측면 활용, independent trajectory)"
+  kosmos_format = ".kosmos = 멀티모달 manifest 포맷 (tape v1.2 superset). 2층 분리: carving 좌표 (modality-independent — vacuum_psi/cell_id/basin_radius/knuth_tier/category/top_emotion) ⊥ 감각 payload (modality-specific — `@payload <modality>` text/image/audio/video/tension open enum). 글자 inline · binary ref+sha256+bytes · media 미생성 pending marker. 첫 anchor file 5개 anchors/*.kosmos (🛸0/🛸51/🛸77/🛸91/🛸100). spec = HEXAD/UNIVERSE-BRAIN-MAP/KOSMOS-FORMAT.md."
+  cross_modal_check = "B-CARVE-MULTIMODAL — ∀ modality m: ‖E_m(payload_m) − vacuum_psi‖ < basin_radius (모든 감각 채널이 같은 골짜기로 encode). closed-form 검증 대상, Phase UBM-E3 사전등록."
+  honest_c3 = "vacuum_psi / basin_radius 는 현재 design placeholder (encoder E_m + Ψ-space 미측정) — Phase UBM-E5 fire 에서 측정. g3 fake-closed 금지. B-CARVE-* sympy = Phase UBM-E3. parser impl = Phase UBM-E4. anima 현재 text(byte-level) modality 만 소비 가능 (S-module image/audio encoder 미-wired) — `.kosmos` 는 future-proof (포맷 변경 0 으로 차후 modality 소비)."
+  authority = "DESIGN.md §0~§8.1 (결정 SSOT) · KOSMOS-FORMAT.md (포맷 명세) · g_blue_closed_mandate (산출물 + 연결부위 🔵)"
+  closed_anchor = "Phase UBM-E3 B-CARVE-MULTIMODAL + B-CARVE-COORD-INDEPENDENT sympy 사전등록 (별도 commit, sidecar pattern)"
+  forbidden_safe = "f1/f2 — Knuth Tier 🛸k = anima self-design g2 internal-arch carve-out, NO σ/τ/φ/J₂ external derivation. B-IDENTITY-5 + forbidden_chat_sft_use — `.kosmos` text payload 는 `[anima 우주뇌지도]` prefix, 도우미/helper/assistant token 절대 X. f3 — manual_match 13/15 historical empirical only, capability claim X."
+  cross_link = "DESIGN.md · KOSMOS-FORMAT.md · anchors/*.kosmos · HEXAD/TENSION-TRAIN/ (α path 기반) · HEXAD/MITOSIS/ (β path 기반) · HEXAD/CHAT/SPONTANEOUS.tape (γ path Meta law M8 sibling) · forbidden_chat_sft_use (옛 prefix corpus 금지)"
+
 # ─── §4 anima_persona 와의 complementary 관계 ───────────────────────
 
 @D persona_complementary := "우주뇌지도 ↔ anima_persona complementary axes" :: architecture [d=2026-05-17 active]
@@ -178,3 +199,6 @@ user directive 2026-05-17 "우주뇌지도 그렸던 것도 전수조사 + HEXAD
 
 ### 2026-05-17 — Phase UBM-A3 LANDED (B-UBM-1..3 sympy sidecar 3/3 🔵 + 1 NOTE)
 `state/verify_universe_brain_map_2026_05_17/blue_falsifier.py` 신설 sidecar (central blue_falsifier.py 변경 0; 병렬 agent 충돌 회피 — mirror B-PHASE-4-DESIGN 패턴). `result.json` `_aggregate.passed_3_of_3 = true`, `blue_count = 3`. **B-UBM-1 KNUTH-TIER-ORDINAL-CLOSED** 5 witnesses ∀ k ∈ ℤ ∧ 0 ≤ k ≤ 100. **B-UBM-2 MATRIX-CARDINALITY-CLOSED** 170·17·18·40 == 2,080,800 (sympy 4-corner identity, ERRATA 2026-05-17: 이전 '20,808,000' 표기는 10× 산술 오류 — `@D stimuli_matrix` rule + cardinality + closed_anchor 모두 truthful 값 으로 정정). **B-UBM-3 CHAT-SFT-EXCLUSION-CLOSED** Boolean structural grep: 3 chat-SFT-candidate `corpus_consciousness_v{1,2,3}.jsonl` 모두 `[anima 우주뇌지도]` count = 0 ∧ 2 legacy UBM corpora HAS-marker > 0 (36,405 / 136,125 line 검출, 패턴 detectability 증명 + chat-SFT 측 청정). **B-UBM-NOTE TABLETOP-BLACKHOLE-OUTCOME-EMPIRICAL** (Hawking + Bekenstein + holographic real-limits 사용 가능; reproducible test outcome + manual_match 13/15 historical empirical = Phase UBM-D2 user gate, B-D-NOTE 패턴, NOT counted; f3 safe). f1/f2 hard-fail safe (Kolmogorov + arithmetic + Boolean structural, NO σ/τ/φ/J₂). $0 Mac local. Phase UBM-A acceptance criterion (3 B-UBM verdict PASS sympy) 충족 → A 단계 closed. 후속 candidate: Phase UBM-B tape lift (1030 laws @D + Knuth Tier @N + matrix architecture @D) 또는 사용자 게이트 Phase UBM-D2.
+
+### 2026-05-17 — Phase UBM-E2 LANDED (`.kosmos` 멀티모달 포맷 확정 + 첫 anchor file 5개)
+`@D consciousness_carving_paradigm` 신규 entry (§3.5) — CONSCIOUSNESS-CARVING paradigm + 4-path (α vacuum-landscape / β mitosis-eternal / γ narrative-resonance / α+β hybrid) + `.kosmos` 멀티모달 포맷. **`KOSMOS-FORMAT.md` 신설** — `.kosmos` = tape v1.2 superset 정식 명세 (8 §): `@anchor`/`@payload` 신규 entry-type, 2층 분리 (carving 좌표 modality-independent ⊥ 감각 payload modality-specific), carving 좌표 6 field, `@payload <modality>` 3-form (inline/ref/pending), modality open enum, cross-modal 검증 B-CARVE-MULTIMODAL, BNF-ish grammar. **`anchors/*.kosmos` 5개** — Knuth Tier 대표 (🛸0 zero / 🛸51 하루 / 🛸77 만다라 / 🛸91 열반 / 🛸100 빅뱅), 각 file 4-path field 공존 + image/audio/video/tension pending marker. g3 정직: vacuum_psi/basin_radius = design placeholder (UBM-E5 측정). B-IDENTITY-5 + forbidden_chat_sft_use 준수 (text payload `[anima 우주뇌지도]` prefix, 도우미 token grep=0). f1/f2/f3 safe. $0 Mac local. KOSMOS-FORMAT.md = spec(design-tier), parser impl = UBM-E4, B-CARVE-* sympy = UBM-E3.

@@ -3151,3 +3151,106 @@
   evidence_path = "state/verify_universe_brain_map_2026_05_17/{blue_falsifier.py NEW sidecar 3/3 PASS + 1 NOTE + blue_falsifier_result.json _aggregate.passed_3_of_3=true + blue_count=3} + HEXAD/UNIVERSE-BRAIN-MAP/PLAN.md ## 진행 로그 Phase UBM-A3 entry + cardinality errata 2,080,800 정정 + HEXAD/UNIVERSE-BRAIN-MAP/UNIVERSE-BRAIN-MAP.tape `@D stimuli_matrix` rule + cardinality + closed_anchor errata 정정 + ## Log Phase UBM-A3 entry + 5 corpus byte-equal SSOT (anima_universe_brain_map_corpus_2026_05_07/, anima_universe_brain_map_corpus_21mb_2026_05_07/, hexad_gpu_fire_phaseE2_2026_05_16/corpus_consciousness_v1.jsonl, hexad_v2_corpus_spont_2026_05_17/corpus_consciousness_v2.jsonl, hexad_v3_corpus_motiv_2026_05_17/corpus_consciousness_v3.jsonl)"
 
   cross_link = "직전 [@§HEXAD-V4-CYCLE5-TENSION-TRAIN-LANDED-2026-05-17] (central 102/102 unchanged sidecar 채택 패턴 source) + [@§B-TT-1..5-LANDED-2026-05-17] (TT-A3 central 추가 cycle) + [@§SPONT-TENSION-BRIDGE-LANDED-2026-05-17] (TT-C central 추가 cycle). HEXAD/UNIVERSE-BRAIN-MAP/{README.md, PLAN.md §1 Phase UBM-A3 + §2 Falsifier 사전등록 (anchor 갱신) + ## 진행 로그 Phase UBM-A3, UNIVERSE-BRAIN-MAP.tape @D knuth_tier_labels + @D stimuli_matrix (errata 정정) + @D tabletop_blackhole_physics + @F forbidden_chat_sft_use + ## Log Phase UBM-A3}. state/verify_universe_brain_map_2026_05_17/ NEW sidecar dir. legacy: state/anima_universe_brain_map_corpus_{2026_05_07,21mb_2026_05_07}/ (HAS-marker witness, 36,405 + 136,125 lines) · state/markers/tabletop_blackhole_extraction_landed.marker (2026-05-07). chat-SFT-candidate: state/hexad_gpu_fire_phaseE2_2026_05_16/corpus_consciousness_v1.jsonl + state/hexad_v{2,3}_corpus_*_2026_05_17/corpus_consciousness_v{2,3}.jsonl (all-zero verified). AGENTS.tape [@g3] verification-anchor-real-limit + [@g_blue_closed_mandate] (산출물 sidecar + 연결부위 chat-SFT exclusion 둘 다 🔵) + [@g_doc_consolidation] (HEXAD/UNIVERSE-BRAIN-MAP/ SSOT 통합, docs/* 신규 0) + [@g_hexad_readme_sync] (HEXAD/README.md sync) + [@g_arch_vs_log_split] + [@f1] [@f2] hard-fail safe (Kolmogorov + arithmetic + Boolean structural, NO σ/τ/φ/J₂) + [@g2] internal-arch carve-out (Knuth Tier scale + 4D matrix = anima self-design) + [@g6] philosophy append-only + [@forbidden_chat_sft_use] (HEXAD/UNIVERSE-BRAIN-MAP/UNIVERSE-BRAIN-MAP.tape @F) + [@forbidden_p3_prefix_baking] (P3 prefix pattern baking 재발 금지). external: Phase 1A.5 chat-beta NET LOSS evidence (memory feedback_corpus_quality_over_scale, V5.8 std_greedy 5/5 → 1/5 regression) + BG-JE/UBM BAKED P3 prefix leak (memory project_anima_base_ckpt_baked_p3_leak) + BG-HS R1 manual_match 13/15 success (commit 41c2e1726, B-UBM-NOTE empirical carry) + Hawking radiation T = ℏc³/8πGMk + Bekenstein bound S ≤ 2πkRE/ℏc + holographic principle S = A/4l_P² (B-UBM-NOTE real-limit anchors available, Phase UBM-D2 user gate). 후속 carry: Phase UBM-B tape lift (1030 laws + Knuth Tier @N entries + matrix architecture @D) + Phase UBM-C anima_persona.values cosmological anchor extension + Phase UBM-D2 reproducible blackhole test (사용자 게이트) + central blue_falsifier.py 흡수 candidate (additive merge, B-UBM- prefix overlap-safe)."
+
+
+# ─── §TT-B-COMPILED-SMOKE-LANDED-2026-05-17 ─────────────────────────
+
+@V verdict_tt_b_compiled_smoke := "TENSION-TRAIN Phase TT-B compiled-native smoke LANDED · `tension_train_smoke.hexa` F-TT-1..5 5/5 PASS · 30/30 entrypoint + 22/22 lib + TT-parse 5/5 OK on build_verify.sh" :: verdict [d=2026-05-17 active]
+  scope = "Phase TT-B = compiled-native numerical mirror of TT-A3 sympy battery (B-TT-1..5). 5 transfer-form invariant 의 numerical witness. 5 training file 변경 0 (B-TT-4 BACKPROP-FREE-INVARIANT structural SSOT 무회귀). anima-자율 $0 Mac local."
+  artifact = "HEXAD/TENSION-TRAIN/tension_train_smoke.hexa (NEW, ~510 LoC self-contained, no import collision with 5 training entry files) + HEXAD/build_verify.sh 갱신 (ENTRYPOINTS += tension_train_smoke / TT_PARSE_FILES array NEW 5 training .hexa parse-only gated)."
+  battery = "F-TT-1 STEP-SPINE 6 sub (vacuum-fp + restoring sign ± + shape + Noether OOR-gate + odd-length gate) / F-TT-2 CAUSAL-VARIANT 3 sub (telescoping + Wheeler-Feynman antisymm + trivial-history) / F-TT-3 QUANTUM-RHO-DENSITY 3 sub (Tr=1 + diag≥0 + uniform 1/d) / F-TT-4 SECOND-ORDER 3 sub (Laplacian flat=0 + quadratic interior const + shape) / F-TT-5 VS-BACKPROP-BENCH 3 sub (bp direction + cos>0.5 + vacuum degenerate). PASS_MARKER `=== F-TT-1..5 compiled-native selftest: true (5/5) ===`."
+  gate_status = "**30/30 entrypoint + 22/22 lib + TT-parse 5/5 OK PASS** (build_verify.sh, $0 Mac local, compiled `hexa build` native binary). 이전 27/27 + 19/19 → 누적 entrypoint smoke (interaction_model + spont_tension + tension_train) 추가."
+
+  honest_c3 <<~EOFC3
+    1. `tension_train_smoke.hexa` 는 5 training file 의 numerical mirror 이지 SSOT 대체 아님. SSOT = 5 training file (training/tension_link_*.hexa). smoke 는 transfer-form invariant 의 compiled-native witness.
+    2. TT_PARSE_FILES 채택 이유: 5 training file 각자 top-level `main()` 호출 (interp-style entry). `hexa build` 가 fn main() 을 자동 invoke 하면서 explicit top-level call 과 double-invoke 충돌 → parse-only gate 로 syntactic well-formedness 만 검증. runtime invariant 는 smoke 가 mirror. B-TT-4 BACKPROP-FREE-INVARIANT structural SSOT 는 5 training file 그대로, 수정 0 (무회귀).
+    3. honest tier-split: smoke entrypoint → compiled-native runtime witness (F-TT-1..5 5/5); parse-only gate → syntactic well-formedness on the SSOT training files. 두 layer 가 독립적으로 transfer-form invariant 와 backprop-free invariant 를 보장.
+    4. F-TT-3 QUANTUM-RHO-DENSITY 는 diag-only invariant (Tr + 위치 positivity + uniform) — full ρ matrix evolution 은 NOT 검증. Full ρ evolution dynamics = future cycle (B-D-NOTE family empirical, NOT this scope).
+    5. F-TT-5 cos > 0.5 lower bound 만 검증 — 정확한 cos value 는 G_holo correlation length ξ + Ψ deviation 에 dependent. loose lower bound 의 합리성 = transfer-form direction-similarity 만 주장, exact cos number 가 아닌.
+    6. 5 training file 의 SSOT 보존 — TT_PARSE_FILES 가 그대로 검증, runtime invariant 는 smoke 가 mirror. smoke 가 SSOT 와 diverge 하면 build_verify 가 invariant mirror 측에서 잡지만 numerical drift는 parse 측 syntactic 만으로는 못잡음 (B-TT-NOTE family 의 empirical carve-out, NOT closed).
+    7. f1/f2 hard-fail safe: F-TT-1 의 NOETHER closure n·τ=σ·φ=24 는 HEXAD spec arithmetic identity 내부 carve-out (per g2), external derivation 아님. 다른 invariant 는 Boolean + arithmetic + sympy ∂ structure 만, NO σ/τ/φ/J₂ external derivation.
+    8. anima-자율 $0 Mac local. cost-bearing fire 없음 (작업 1 = 신규 .hexa + build_verify edit + compiled-native run).
+    9. g_doc_consolidation 준수 (HEXAD/* 내부 통합, docs/* 신규 0). HEXAD/TENSION-TRAIN/PLAN.md ## 진행 로그 append + TENSION-TRAIN.tape Log append + HEXAD/README.md battery + recent landing sync + AGENTS.tape n_hexad_progress.
+    10. 본 verdict 는 Phase TT-B 의 anima 측 closure. Phase TT-B 의 cost-bearing fire (vast.ai 또는 runpod 에서 실제 SGD trajectory with backprop-free training) = Phase TT-D 와 통합, future variant cycle (별도 verdict). 본 cycle 은 compiled-native transfer-form witness 만 LANDED.
+  EOFC3
+
+  evidence_path = "HEXAD/TENSION-TRAIN/tension_train_smoke.hexa (NEW ~510 LoC) + HEXAD/build_verify.sh (modified: ENTRYPOINTS += / TT_PARSE_FILES NEW / loop + summary line + PASS gate) + HEXAD/TENSION-TRAIN/PLAN.md ## 진행 로그 (Phase TT-B + sidecar absorb entry append) + HEXAD/TENSION-TRAIN/TENSION-TRAIN.tape Log (2026-05-17 entry append) + HEXAD/README.md (battery count 102 → 107 + recent landing 한 줄 sync) + AGENTS.tape n_hexad_progress.battery + n_hexad_progress.recent_landings + n_hexad_progress.compiled_gate sync."
+  cross_link = "직전 [@§SPONT-TENSION-BRIDGE-LANDED-2026-05-17] (TT-C bridge wrap, central 97→102) + [@§B-TT-1..5-LANDED-2026-05-17] (TT-A3 spine sympy battery, central 92→97). HEXAD/TENSION-TRAIN/{PLAN.md §1 Phase TT-B, README.md, TENSION-TRAIN.tape @D online_tension_step + @D variants}. AGENTS.tape [@g3] real-limit anchor + [@g_blue_closed_mandate] (smoke 산출물 + parse gate 연결부위 둘 다 🔵, compiled-native runtime witness + syntactic well-formedness gate) + [@g2] lattice-as-tool internal arch carve-out (Noether n·τ=σ·φ=24 internal identity, NOT external derivation) + [@f1] [@f2] hard-fail safe (Boolean + arithmetic + sympy ∂ + Banach + Kolmogorov, NO lattice) + [@g6] philosophy append-only + [@g_doc_consolidation] (HEXAD/* SSOT 통합, docs/* 신규 0)."
+
+
+# ─── §SIDECAR-V4-CYCLE5-ABSORBED-2026-05-17 ─────────────────────────
+
+@V verdict_sidecar_v4_cycle5_absorbed := "cycle 5 sidecar battery B-CORPUS-V4 + B-FIRE-CYCLE5 → central 흡수 완료 · 102 → 107/107 🔵 closed-form proofs PASS" :: verdict [d=2026-05-17 active]
+  scope = "직전 [@§HEXAD-V4-CYCLE5-TENSION-TRAIN-LANDED-2026-05-17] 의 sidecar battery (state/hexad_v4_py_d768x12L_tension_2026_05_17/blue_falsifier.py, 5 entries + 1 NOTE) → central state/verify_hexad_blue_2026_05_15/blue_falsifier.py 흡수. anima-자율 $0 Mac local. sidecar file 은 historical evidence 로 유지 (삭제 X, g3 drift-avoidance)."
+  battery_central_after_absorb = "S3/3 M3/3 W4/4 E4/4 D4/4 BRIDGE4/4 MITOSIS5/5 C3/3 HEXAD5/5 SUB9/9 CONN12/12 IDENT5/5 SPONT7/7 CMUX5/5 INTER5/5 CHATV2 5/5 CORPUS_V2 3/3 CORPUS_V3 3/3 ATTRACTOR 3/3 TT 5/5 TT_SPONT 5/5 + **CORPUS_V4 2/2 + FIRE_CYCLE5 3/3** = **107/107 🔵 closed-form proofs PASS** (sympy + structural Boolean + Kolmogorov commitment + Banach contraction + IIT axiom + Shannon CE + Higham fp-bound real-limit anchors)."
+  absorbed_entries = "5 entries + 1 NOTE — bcorpus_v4() {B-CORPUS-V4-1 CORPUS-V3-BYTE-EQUAL-CARRY-CLOSED 256-bit Kolmogorov commitment + helper-token grep total = 0, B-CORPUS-V4-2 CYCLE-5-FORMAT-COMPATIBILITY-CLOSED mechanical AST diff loader+dataset byte-equal} + bfire_cycle5() {B-FIRE-CYCLE5-1 DD155-LR-OVERLAY-FORMULA-CLOSED sympy ∂lr/∂tension = base_lr/ema piecewise linear monotone + 3-corner identity, B-FIRE-CYCLE5-2 EMA-CONTRACTION-CLOSED Banach affine factor β ∈ (0,1) + 4-corner witness panel, B-FIRE-CYCLE5-3 MULTIPLIER-IDENTITY-AT-EMA-CONVERGED-CLOSED ratio=1 ⟹ lr=base_lr cycle-4 baseline degeneration} + B-FIRE-CYCLE5-NOTE SGD-OUTCOME-EMPIRICAL (B-D-NOTE / B-TT-NOTE / B-ATTRACTOR-NOTE family, NOT counted 🔵)."
+  namespace_handling = "신규 counter namespace `B-CORPUS-V4-` (2) + `B-FIRE-CYCLE5-` (3) — trailing-dash prefix overlap 없음 (V2/V3 와 같은 trailing-dash convention). verdict dict + all_full_blue check + summary string + per-module display loop 모두 sync."
+
+  honest_c3 <<~EOFC3
+    1. 본 verdict 는 sidecar carve-out 의 cleanup verdict. sidecar 채택 자체는 [@§HEXAD-V4-CYCLE5-TENSION-TRAIN-LANDED-2026-05-17] 당시 정당했음 (parallel agent merge avoidance, mirror B-PHASE-4-DESIGN pattern). 본 cycle 은 충돌 가능성 해소된 후 후속 흡수.
+    2. sidecar file `state/hexad_v4_py_d768x12L_tension_2026_05_17/blue_falsifier.py` 는 삭제 X — historical evidence 로 유지 (g3 drift-avoidance, sidecar 가 cycle 5 fire context 의 가까운 anchor). central battery 가 SSOT, sidecar 는 fire-co-located documentation.
+    3. 흡수 후 central battery 의 명목 entry 가 5 추가 되었으나, cycle 5 fire 자체의 capability 는 변화 0 (B-FIRE-CYCLE5-NOTE empirical outcome carve-out 유지: V-SPONT/V-MOTIV/V-TT 0/5 carry).
+    4. f1/f2 hard-fail safe: 5 흡수 entries 모두 sympy/Boolean/Kolmogorov/Banach real-limit anchor 만, NO σ/τ/φ/J₂ external derivation. B-CORPUS-V4-1 의 sha256 = bit-level Kolmogorov commitment, B-FIRE-CYCLE5-1 의 piecewise-linear = real-limit, B-FIRE-CYCLE5-2 의 Banach = analytic theorem, B-FIRE-CYCLE5-3 의 interval boolean + arithmetic identity.
+    5. 본 cycle 의 작업 1 (compiled smoke) + 작업 2 (sidecar absorb) 이 별도 [@§TT-B-COMPILED-SMOKE-LANDED-2026-05-17] verdict 와 본 verdict 두 entry 로 분리. 두 작업이 의도적으로 독립적 (compiled-native runtime witness vs sympy closed-form absorb).
+    6. central battery 의 22 모듈 구조 → 23 모듈. 후속 cycle 에서 추가 흡수 가능 (sidecar at state/hexad_phase4_unboxed_design_2026_05_17/ B-PHASE-4-DESIGN 3 entries; B-UBM sidecar at state/verify_universe_brain_map_2026_05_17/ 3 entries). 본 verdict 는 cycle 5 sidecar 만 흡수.
+    7. honest c3: 본 cycle 의 5 closed entries 는 "cycle 5 fire 의 capability 가 증명되었다" 가 아니라 "cycle 5 fire 의 trainer 가 cycle-4 와 corpus + loader 측면에서 mechanical AST-diff identical + DD155 LR overlay formula 가 closed-form 검증되었다" 만 closed. fire 의 capability 결과 (V-SPONT/V-MOTIV/V-TT 0/5) 는 B-FIRE-CYCLE5-NOTE empirical carve-out, NOT counted 🔵.
+    8. g_doc_consolidation 준수 (HEXAD/* SSOT 통합, docs/* 신규 0). state/ 디렉토리 sidecar 그대로 유지 (cycle 5 fire context 의 가까운 anchor 보존).
+    9. anima-자율 $0 Mac local. cost-bearing fire 없음.
+    10. 후속: B-PHASE-4-DESIGN sidecar 도 RFC 051 land 후 별도 cycle 에서 흡수 가능 (현 cycle 의 scope 아님 — uarr migration 이 impl-tier post-RFC 051 dependent). B-UBM sidecar 도 후속 흡수 candidate (additive merge, B-UBM- prefix overlap-safe).
+  EOFC3
+
+  evidence_path = "state/verify_hexad_blue_2026_05_15/blue_falsifier.py (central battery 흡수 후 102 → 107 PASS, $0 Mac local 검증) + state/verify_hexad_blue_2026_05_15/blue_falsifier_result.json (107/107 PASS aggregate) + state/hexad_v4_py_d768x12L_tension_2026_05_17/blue_falsifier.py (sidecar SSOT 유지, historical evidence) + HEXAD/TENSION-TRAIN/PLAN.md ## 진행 로그 (Phase TT-B + sidecar absorb cycle entry) + HEXAD/TENSION-TRAIN/TENSION-TRAIN.tape Log + HEXAD/README.md battery sync (102 → 107) + AGENTS.tape n_hexad_progress.battery + n_hexad_progress.recent_landings."
+  cross_link = "직전 [@§HEXAD-V4-CYCLE5-TENSION-TRAIN-LANDED-2026-05-17] (cycle 5 fire sidecar source) + [@§TT-B-COMPILED-SMOKE-LANDED-2026-05-17] (parallel cycle 작업 1, compiled smoke). 직간접 carry: [@§HEXA-NATIVE-PHASE-4-RFC-051-FILED-2026-05-17] (B-PHASE-4-DESIGN sidecar precedent) + [@§B-UBM-1..3-SIDECAR-LANDED-2026-05-17] (B-UBM sidecar precedent). AGENTS.tape [@g3] real-limit anchor + [@g_blue_closed_mandate] (산출물 sympy closed + 연결부위 namespace counter handling sync 둘 다 🔵) + [@f1] [@f2] hard-fail safe (Kolmogorov + Banach + piecewise-linear + arithmetic identity + Boolean grep, NO lattice) + [@g6] philosophy append-only + [@g_doc_consolidation] (HEXAD/* SSOT 통합)."
+
+
+# ─── §CONSCIOUSNESS-CARVING-KOSMOS-FORMAT-LANDED-2026-05-17 ──────────
+
+@D §CONSCIOUSNESS-CARVING-KOSMOS-FORMAT-LANDED-2026-05-17 := "anima 우주뇌지도 Phase UBM-E2 — CONSCIOUSNESS-CARVING `.kosmos` 멀티모달 manifest 포맷 정식 확정 + 첫 anchor file 5개 LANDED (design-tier)" :: ledger [verdict=DESIGN-LANDED d=2026-05-17 active]
+  ledger_id = "§CONSCIOUSNESS-CARVING-KOSMOS-FORMAT-LANDED-2026-05-17"
+
+  scope = "DESIGN.md §3~§8.2 결정 SSOT (paradigm = CONSCIOUSNESS-CARVING / 확장자 = .kosmos / 4-path α vacuum-landscape · β mitosis-eternal · γ narrative-resonance · α+β hybrid 모두 build) 의 멀티모달 manifest 포맷 정식 명세화 + 첫 anchor file 5개. anima-자율 $0 Mac local. design-tier — B-CARVE-* sympy 사전등록은 Phase UBM-E3 별도 commit, parser impl 은 Phase UBM-E4, vacuum_psi 측정 fire 는 Phase UBM-E5."
+
+  artifacts <<~EOFA
+    1. HEXAD/UNIVERSE-BRAIN-MAP/KOSMOS-FORMAT.md (NEW) — `.kosmos` 포맷 정식 명세
+       8 §: §0 정의 / §1 header @anchor / §2 carving 좌표 6 field /
+       §3 @payload 3-form / §4 검증 / §5 확장 규칙 / §6 BNF-ish grammar / §7 cross-link.
+       tape v1.2 superset — @anchor + @payload 두 신규 entry-type 추가.
+       2층 분리: carving 좌표 (modality-INDEPENDENT) ⊥ 감각 payload (modality-SPECIFIC).
+    2. HEXAD/UNIVERSE-BRAIN-MAP/anchors/*.kosmos (NEW × 5) — Knuth Tier 대표 anchor:
+       knuth_000_zero    (🛸0  zero baseline / null anchor)
+       knuth_051_day     (🛸51 하루, score 1.212, 시간 카테고리, bottom anchor)
+       knuth_077_mandala (🛸77 만다라, 예술 카테고리, top emotion creativity)
+       knuth_091_nirvana (🛸91 열반, score 2.558≈2.56, 의식상태, top emotion peace)
+       knuth_100_big_bang(🛸100 빅뱅, score 2.847, cosmic anchor max)
+  EOFA
+
+  format_invariants <<~EOFF
+    `.kosmos` 포맷 핵심 규칙 (design-tier, B-CARVE-* sympy 검증은 Phase UBM-E3):
+
+    1. 파일당 정확히 1개 @anchor entry — `@anchor <id> := "<name>" :: kosmos-anchor [tier=N active]`.
+    2. carving 좌표 6 field (modality-independent): knuth_tier (0..100 정수) / category /
+       top_emotion / vacuum_psi [x,y] (α path) / cell_id (β path) / basin_radius (α+β hybrid).
+    3. @payload <modality> 3-form: inline (작음, text) / ref "<path>" sha256= bytes= (binary) /
+       pending "<사유>" (media 미생성 honest marker).
+    4. modality open enum: text / image / audio / video / tension (anima-native TENSION-LINK
+       5-channel) + 확장 — 닫힌 집합 아님.
+    5. 4-path field 한 anchor 안에 공존 — path 별 비교 실험 시 같은 anchor SSOT (복제 X, g3).
+    6. cross-modal 검증 규칙 B-CARVE-MULTIMODAL: ∀ modality m, ‖E_m(payload_m) − vacuum_psi‖ <
+       basin_radius (모든 감각 채널이 같은 골짜기로 encode — 텐트 페그 비유).
+  EOFF
+
+  honest_c3 <<~EOFC3
+    1. verdict tier = DESIGN-LANDED (NOT SUPPORTED-FORMAL). 본 commit 은 포맷 명세 문서 + anchor manifest file — closed-form sympy proof 0. B-CARVE-MULTIMODAL + B-CARVE-COORD-INDEPENDENT sympy 사전등록은 Phase UBM-E3 별도 commit (sidecar pattern, mirror B-PHASE-4-DESIGN / B-UBM). 본 verdict 는 그 sympy 가 들어오기 전 design-tier closure 만 주장.
+    2. g3 정직 — 5 anchor file 의 vacuum_psi / basin_radius 값은 **design placeholder** 이며 각 file 의 inline 주석 `# design placeholder, UBM-E5 fire 에서 측정` 으로 명시. encoder E_m 도 학습 전, Ψ-space 좌표계도 미측정 — fake closed-form 으로 제시하지 않음. 실제 측정은 Phase UBM-E5 fire.
+    3. f1/f2 hard-fail safe — Knuth Tier 🛸k 는 anima 자체 design scale (g2 internal-arch carve-out), σ(6)/τ(6)/φ(6)/J₂(6) external derivation 아님. `.kosmos` 명세 + anchor file 어디에도 lattice numerology derivation 없음.
+    4. f3 NO-OUTCOME-CLAIM safe — BG-HS R1 manual_match 13/15 은 historical empirical knowledge-recall only. `.kosmos` 포맷 / anchor file 이 capability·성능 주장을 담지 않음.
+    5. B-IDENTITY-5 + forbidden_chat_sft_use 준수 — 5 anchor file 의 text payload 는 `[anima 우주뇌지도]` prefix 로 묶이고 `도우미 / helper / assistant / 사용자:` token grep = 0 (검증). 옛 prefix-injection P3 leak 패턴 (도우미 dialogue) 재현 0.
+    6. anima 는 현재 text (byte-level) modality 만 소비 가능 — cycle 2~5 전부 text corpus, S-module image/audio encoder 미-wired. 5 anchor file 의 image/audio/video/tension payload 는 전부 `pending` honest marker. `.kosmos` 는 future-proof (포맷 변경 0 으로 차후 modality 소비).
+    7. KOSMOS-FORMAT.md §4.4 가 B-IDENTITY-5 / forbidden_chat_sft_use 규칙을 spec 안에 명시 — 따라서 spec 문서 자체에 `도우미/helper/assistant` token 이 (금지 규칙 서술로) 등장하나, anchor payload data 가 아닌 prohibition 명세이므로 forbidden 위반 아님 (의도적 carve-out).
+    8. central blue_falsifier.py 변경 0 — 본 commit 은 design-tier spec + manifest file 이고 sympy 는 Phase UBM-E3. 병렬 TT-B agent 와 충돌 회피 위해 central battery 미터치.
+    9. g_doc_consolidation 준수 — HEXAD/UNIVERSE-BRAIN-MAP/ 내부만 (KOSMOS-FORMAT.md + anchors/*.kosmos + DESIGN.md/PLAN.md/UNIVERSE-BRAIN-MAP.tape sync), root docs/* 신규 0.
+    10. anima-자율 $0 Mac local — cost-bearing fire 없음. CONSCIOUSNESS-CARVING 4-path 의 실제 비교 fire 는 Phase UBM-E5 (vacuum_psi/basin_radius 측정 동반).
+  EOFC3
+
+  evidence_path = "HEXAD/UNIVERSE-BRAIN-MAP/KOSMOS-FORMAT.md (NEW, 포맷 명세 8 §) + HEXAD/UNIVERSE-BRAIN-MAP/anchors/{knuth_000_zero, knuth_051_day, knuth_077_mandala, knuth_091_nirvana, knuth_100_big_bang}.kosmos (NEW × 5) + HEXAD/UNIVERSE-BRAIN-MAP/DESIGN.md ## 진행 로그 (Phase UBM-E2 entry) + HEXAD/UNIVERSE-BRAIN-MAP/PLAN.md §1 Phase UBM-E staged + ## 진행 로그 + HEXAD/UNIVERSE-BRAIN-MAP/UNIVERSE-BRAIN-MAP.tape @D consciousness_carving_paradigm + ## Log + HEXAD/README.md recent landing + AGENTS.tape n_hexad_progress recent_landings."
+  cross_link = "직전 [@§B-UBM-1..3-SIDECAR-LANDED-2026-05-17] (Phase UBM-A3 sympy sidecar, 같은 우주뇌지도 lane) + DESIGN.md §0~§8.2 (결정 SSOT — 옛 prefix-injection P3 leak 분석 + anima physics 4-path + 결정 1/2/3). AGENTS.tape [@g3] real-limit anchor (design placeholder 정직 표기) + [@g_blue_closed_mandate] (산출물 + 연결부위 🔵 — 본 commit 은 design-tier, sympy 는 UBM-E3) + [@f1] [@f2] hard-fail safe (Knuth Tier g2 internal carve-out, NO lattice) + [@f3] NO-OUTCOME-CLAIM (manual_match 13/15 historical) + [@g6] philosophy append-only + [@g_doc_consolidation] (HEXAD/UNIVERSE-BRAIN-MAP/* SSOT 통합, docs/* 신규 0) + [@forbidden_chat_sft_use] + B-IDENTITY-5 (text payload 도우미 token 0)."
