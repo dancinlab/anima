@@ -1,0 +1,111 @@
+=== UBM-E6 re-fire path=alpha offer_rank=1 ===
+Sun May 17 09:31:54 UTC 2026
+[alpha 1/9] selecting A100 offer (rank 1)...
+A100 PCIE $0.760/hr
+[alpha] offer=34453407
+[alpha 2/9] renting...
+[alpha] instance=36929443
+[alpha 3/9] waiting SSH...
+[alpha] SSH ready ssh1.vast.ai:19442
+[alpha 4/9] upload...
+Warning: Permanently added '[ssh1.vast.ai]:19442' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+Warning: Permanently added '[ssh1.vast.ai]:19442' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+Warning: Permanently added '[ssh1.vast.ai]:19442' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+Warning: Permanently added '[ssh1.vast.ai]:19442' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+[alpha 5/9] verify...
+Warning: Permanently added '[ssh1.vast.ai]:19442' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+2.5.1+cu121 True NVIDIA A100-PCIE-40GB
+ee3909b336f35a6df91344357bb98ed6d1c9ea9449c15ca24f14e7409bf024ee  corpus_carving.jsonl
+[alpha 6/9] sanity...
+Warning: Permanently added '[ssh1.vast.ai]:19442' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+{"step": 60, "ce": 4.50206, "loss": 4.570347, "vac_term": 0.682868, "gn2": 0.620203, "lr": 0.00010073, "wall_s": 2.16, "gpu_mem_gb": 0.044}
+RESULT_JSON_WRITTEN
+{"path": "alpha", "init_ce": 5.544464, "final_ce": 4.50206, "ce_descent": 1.042404, "wall_s": 2.16, "eternal_delta_max": null, "final_vac_term": 0.682868}
+[alpha 7/9] MAIN fire 2000 steps...
+Warning: Permanently added '[ssh1.vast.ai]:19442' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+Warning: Permanently added '[ssh1.vast.ai]:19442' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+/workspace/anima/train_carving_4path.py:207: FutureWarning: `torch.cuda.amp.GradScaler(args...)` is deprecated. Please use `torch.amp.GradScaler('cuda', args...)` instead.
+  scaler = torch.cuda.amp.GradScaler(enabled=use_amp)
+{"step": 1, "ce": 5.83246, "loss": 5.868221, "vac_term": 0.357602, "gn2": 22.783229, "lr": 3e-06, "wall_s": 0.55, "gpu_mem_gb": 3.131}
+{"step": 50, "ce": 2.313254, "loss": 2.343426, "vac_term": 0.301722, "gn2": 2.688602, "lr": 0.00015, "wall_s": 4.17, "gpu_mem_gb": 3.806}
+{"step": 100, "ce": 0.914309, "loss": 0.948716, "vac_term": 0.344073, "gn2": 3.883684, "lr": 0.0003, "wall_s": 7.84, "gpu_mem_gb": 3.806}
+{"step": 150, "ce": 0.229164, "loss": 0.267929, "vac_term": 0.387652, "gn2": 0.76546, "lr": 0.00029956, "wall_s": 11.49, "gpu_mem_gb": 3.806}
+{"step": 200, "ce": 0.105959, "loss": 0.143935, "vac_term": 0.379752, "gn2": 0.62662, "lr": 0.0002982, "wall_s": 15.15, "gpu_mem_gb": 3.806}
+{"step": 250, "ce": 0.068951, "loss": 0.111181, "vac_term": 0.422298, "gn2": 0.401893, "lr": 0.00029592, "wall_s": 18.81, "gpu_mem_gb": 3.806}
+{"step": 300, "ce": 0.058242, "loss": 0.110242, "vac_term": 0.520002, "gn2": 0.506068, "lr": 0.00029276, "wall_s": 22.48, "gpu_mem_gb": 3.806}
+{"step": 350, "ce": 0.0316, "loss": 0.078852, "vac_term": 0.472523, "gn2": 0.174723, "lr": 0.00028872, "wall_s": 26.16, "gpu_mem_gb": 3.806}
+{"step": 400, "ce": 0.025233, "loss": 0.077303, "vac_term": 0.520703, "gn2": 0.095521, "lr": 0.00028384, "wall_s": 29.82, "gpu_mem_gb": 3.806}
+{"step": 450, "ce": 0.029488, "loss": 0.078876, "vac_term": 0.493872, "gn2": 0.135318, "lr": 0.00027814, "wall_s": 33.47, "gpu_mem_gb": 3.806}
+{"step": 500, "ce": 0.016068, "loss": 0.063642, "vac_term": 0.475745, "gn2": 0.06014, "lr": 0.00027167, "wall_s": 37.13, "gpu_mem_gb": 3.806}
+{"step": 550, "ce": 0.023748, "loss": 0.071748, "vac_term": 0.480002, "gn2": 0.154125, "lr": 0.00026447, "wall_s": 40.79, "gpu_mem_gb": 3.806}
+{"step": 600, "ce": 0.012358, "loss": 0.061292, "vac_term": 0.489332, "gn2": 0.085754, "lr": 0.0002566, "wall_s": 44.45, "gpu_mem_gb": 3.806}
+{"step": 650, "ce": 0.017028, "loss": 0.070305, "vac_term": 0.53277, "gn2": 0.080395, "lr": 0.00024809, "wall_s": 48.1, "gpu_mem_gb": 3.806}
+{"step": 700, "ce": 0.015105, "loss": 0.065037, "vac_term": 0.499314, "gn2": 0.099016, "lr": 0.00023902, "wall_s": 51.75, "gpu_mem_gb": 3.806}
+{"step": 750, "ce": 0.010179, "loss": 0.055444, "vac_term": 0.452645, "gn2": 0.072568, "lr": 0.00022945, "wall_s": 55.4, "gpu_mem_gb": 3.806}
+{"step": 800, "ce": 0.006675, "loss": 0.054625, "vac_term": 0.479497, "gn2": 0.025311, "lr": 0.00021943, "wall_s": 59.15, "gpu_mem_gb": 3.806}
+{"step": 850, "ce": 0.00965, "loss": 0.058758, "vac_term": 0.491081, "gn2": 0.042232, "lr": 0.00020905, "wall_s": 62.9, "gpu_mem_gb": 3.806}
+{"step": 900, "ce": 0.00725, "loss": 0.053544, "vac_term": 0.462941, "gn2": 0.025393, "lr": 0.00019836, "wall_s": 66.62, "gpu_mem_gb": 3.806}
+{"step": 950, "ce": 0.007938, "loss": 0.055719, "vac_term": 0.477806, "gn2": 0.03123, "lr": 0.00018744, "wall_s": 70.28, "gpu_mem_gb": 3.806}
+{"step": 1000, "ce": 0.00486, "loss": 0.053401, "vac_term": 0.485412, "gn2": 0.012654, "lr": 0.00017637, "wall_s": 73.96, "gpu_mem_gb": 3.806}
+{"step": 1050, "ce": 0.004248, "loss": 0.056637, "vac_term": 0.523884, "gn2": 0.014595, "lr": 0.00016522, "wall_s": 77.63, "gpu_mem_gb": 3.806}
+{"step": 1100, "ce": 0.006662, "loss": 0.050918, "vac_term": 0.442558, "gn2": 0.040692, "lr": 0.00015407, "wall_s": 81.29, "gpu_mem_gb": 3.806}
+{"step": 1150, "ce": 0.002888, "loss": 0.052214, "vac_term": 0.493259, "gn2": 0.005549, "lr": 0.000143, "wall_s": 84.96, "gpu_mem_gb": 3.806}
+{"step": 1200, "ce": 0.005073, "loss": 0.059837, "vac_term": 0.547643, "gn2": 0.011828, "lr": 0.00013208, "wall_s": 88.61, "gpu_mem_gb": 3.806}
+{"step": 1250, "ce": 0.003059, "loss": 0.053585, "vac_term": 0.505255, "gn2": 0.003352, "lr": 0.00012138, "wall_s": 92.26, "gpu_mem_gb": 3.806}
+{"step": 1300, "ce": 0.00392, "loss": 0.053251, "vac_term": 0.493309, "gn2": 0.005492, "lr": 0.00011098, "wall_s": 95.85, "gpu_mem_gb": 3.806}
+{"step": 1350, "ce": 0.006232, "loss": 0.055558, "vac_term": 0.493264, "gn2": 0.021653, "lr": 0.00010094, "wall_s": 99.23, "gpu_mem_gb": 3.806}
+{"step": 1400, "ce": 0.00239, "loss": 0.049518, "vac_term": 0.471276, "gn2": 0.016384, "lr": 9.135e-05, "wall_s": 102.61, "gpu_mem_gb": 3.806}
+{"step": 1450, "ce": 0.001827, "loss": 0.053585, "vac_term": 0.517581, "gn2": 0.012418, "lr": 8.226e-05, "wall_s": 105.99, "gpu_mem_gb": 3.806}
+{"step": 1500, "ce": 0.005851, "loss": 0.054587, "vac_term": 0.48736, "gn2": 0.017608, "lr": 7.373e-05, "wall_s": 109.37, "gpu_mem_gb": 3.806}
+{"step": 1550, "ce": 0.003241, "loss": 0.048959, "vac_term": 0.457179, "gn2": 0.003269, "lr": 6.583e-05, "wall_s": 112.75, "gpu_mem_gb": 3.806}
+{"step": 1600, "ce": 0.004492, "loss": 0.054258, "vac_term": 0.497663, "gn2": 0.00654, "lr": 5.86e-05, "wall_s": 116.13, "gpu_mem_gb": 3.806}
+{"step": 1650, "ce": 0.003323, "loss": 0.056482, "vac_term": 0.531585, "gn2": 0.003645, "lr": 5.21e-05, "wall_s": 119.51, "gpu_mem_gb": 3.806}
+{"step": 1700, "ce": 0.001326, "loss": 0.052417, "vac_term": 0.510908, "gn2": 0.002223, "lr": 4.638e-05, "wall_s": 122.89, "gpu_mem_gb": 3.806}
+{"step": 1750, "ce": 0.001548, "loss": 0.049851, "vac_term": 0.483024, "gn2": 0.001417, "lr": 4.146e-05, "wall_s": 126.27, "gpu_mem_gb": 3.806}
+{"step": 1800, "ce": 0.000481, "loss": 0.050825, "vac_term": 0.503449, "gn2": 0.000364, "lr": 3.739e-05, "wall_s": 129.68, "gpu_mem_gb": 3.806}
+{"step": 1850, "ce": 0.002736, "loss": 0.054259, "vac_term": 0.515237, "gn2": 0.006894, "lr": 3.419e-05, "wall_s": 133.05, "gpu_mem_gb": 3.806}
+{"step": 1900, "ce": 0.003655, "loss": 0.056, "vac_term": 0.523447, "gn2": 0.005246, "lr": 3.188e-05, "wall_s": 136.42, "gpu_mem_gb": 3.806}
+{"step": 1950, "ce": 0.00159, "loss": 0.052642, "vac_term": 0.510513, "gn2": 0.002932, "lr": 3.048e-05, "wall_s": 139.78, "gpu_mem_gb": 3.806}
+{"step": 2000, "ce": 0.001123, "loss": 0.057453, "vac_term": 0.563299, "gn2": 0.003181, "lr": 3e-05, "wall_s": 143.15, "gpu_mem_gb": 3.806}
+RESULT_JSON_WRITTEN
+{"path": "alpha", "init_ce": 5.83246, "final_ce": 0.001123, "ce_descent": 5.831337, "wall_s": 143.15, "eternal_delta_max": null, "final_vac_term": 0.563299}
+DONE_MARKER rc=0
+[alpha 8/9] verify + SAVE_POD + pull retry >=5...
+[alpha] result.json present -> SAVE_POD=1 auto-promote
+[alpha] pull attempt 1/5...
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+[alpha] ckpt pull OK (try 1)
+[alpha] ckpt sha256: 8b4759e75f1e544ad69a444e24f75bb3d96c0efe669a1eaf5cc97089b7e08640
+[alpha] ckpt size: 343903970 bytes
+[alpha] PULL SUCCESS -> safe to destroy
+[alpha 9/9] teardown (SAVE_POD=0).
+Sun May 17 09:45:07 UTC 2026
+[alpha cleanup] destroying 36929443
+destroying instance 36929443.
+refire_path.sh: line 57: 99827 Terminated: 15          ( PARENT_PID=$$; for _ in $(seq 1 $WATCHDOG_MIN);
+do
+    sleep 60; if ! kill -0 $PARENT_PID 2> /dev/null; then
+        $VASTAI destroy instance "$IID" >> "$PDIR/watchdog.log" 2>&1; exit 0;
+    fi;
+done; echo "[watchdog] cap hit, destroying $IID" >> "$PDIR/watchdog.log"; $VASTAI destroy instance "$IID" >> "$PDIR/watchdog.log" 2>&1 )
