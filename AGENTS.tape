@@ -226,6 +226,14 @@
   cross_link = "[@g_hexad_readme_sync] (HEXAD/README sync 와 보완) · [@g_arch_vs_log_split] (v1.2 split) · [@g6] philosophy ledger append-only · user directive 2026-05-17"
   @> AGENTS.md
 
+@D g_kosmos_anchor_ssot := ".kosmos = anchor 의 유일 SSOT — inline anchor 정의 금지" :: governance [required d=2026-05-18 active]
+  rule = "CONSCIOUSNESS-CARVING / UNIVERSE-BRAIN-MAP 의 모든 knowledge-anchor 는 **`.kosmos` 파일로만 정의** (1 anchor = 1 `.kosmos` manifest, KOSMOS-FORMAT.md spec). corpus generator · trainer · eval 은 anchor 를 `.kosmos` 파일에서 **읽어서** 사용 — generator/source 코드 안 inline anchor 정의 금지."
+  why = "user directive 2026-05-18 '.kosmos 로만 사용'. 발견 (2026-05-17/18): `.kosmos` 포맷이 UBM-E2 + dancinlab/kosmos sister repo + KOSMOS-FORMAT.md 로 정착됐으나, 실제 fire (UBM-E6 11-anchor · E7 31 · §8 64-anchor) 의 anchor 가 전부 `corpus_*_generator.py` **inline 정의** — `.kosmos` 우회. `.kosmos` 가 decorative SSOT 로 전락 (anchor format 선언만, fire 의 source-of-truth 아님). anchor 가 generator 코드에 박히면 (a) SSOT 분산 (b) `.kosmos` spec drift (c) anchor 재사용·검증 불가."
+  apply = "신규 anchor 도입 시: (1) `HEXAD/UNIVERSE-BRAIN-MAP/anchors/*.kosmos` 에 manifest 파일 먼저 생성 (KOSMOS-FORMAT.md 준수); (2) corpus generator 는 `anchors/*.kosmos` 글롭 → 파싱 → carving-form 생성 (inline anchor dict 금지); (3) trainer/eval 도 anchor 참조 시 `.kosmos` 경유. generator 에 anchor 의 tier/category/coord 등을 hardcode 하면 본 governance 위반."
+  forward_only = "**이후(2026-05-18~) cycle 부터 적용** — 진행 중 §8 fire (anchor inline generator, mid-flight) 는 그대로 완주 (retro-break 금지, g3 drift-avoidance). §8 의 64 inline anchor 의 `.kosmos` materialize + generator 의 `.kosmos`-read 전환 = RESEARCH.md §9 reconcile cycle (별도)."
+  cross_link = "KOSMOS-FORMAT.md (`.kosmos` spec) · github.com/dancinlab/kosmos (sister-format repo) · HEXAD/UNIVERSE-BRAIN-MAP/anchors/ · HEXAD/CHAT/RESEARCH.md §9 (.kosmos-SSOT gap reconcile) · [@g_doc_consolidation] (SSOT 분산 방지 동류) · user directive 2026-05-18"
+  @> AGENTS.md
+
 @D g_verified_axis_anchor := "검증된 AXIS/철학/가설 기준 강제" :: governance [required d=2026-05-15 active]
   rule = ".clm design 의 모든 architectural decision + policy + verification 은 AXIS.tape SUPPORTED entries + 8 PHILOSOPHY principles + HYPOTHESIS catalog 의 직접 anchor 에서 derive. anchor 부재 시 design entry 금지."
   why = "CLM.tape §V-CLM-AUDIT-2026-05-15 의 4 violation 식별 carry — Engine A/G dual / p1 weak / n_layers number-theoretic / step 1 V14 audit anchor 부재 정정"

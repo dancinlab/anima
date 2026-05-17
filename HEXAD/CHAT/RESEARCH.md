@@ -461,6 +461,23 @@ emergence 는 diverse-data threshold 필요(§1.1) ↔ GOAL 은 anima-physics-or
 
 ---
 
+## §8 (2026-05-18, in-flight) — Ψ-anchored diverse-corpus Dir-I lever scale-up fire
+
+§7.4 ③ 한정 fire 진행 중. DIVERSE corpus 빌드 완료 (`state/carving_dirI_diverse_scaleup_2026_05_18/corpus_carving_diverse.jsonl` 114MB · 164,992 records · **64 anchor · 30 domain** — §7.2 ③ GOAL-legitimate form: diverse 내용 × Ψ-anchored carving-form, "NOT chat SFT ①②" stats 명시). runpod A100 80GB d768·12L 8000-step Dir-I lever (Ψ-anchored CTL + tension-supervised) detached fire. **§8 본문 = fire 완주 후 작성** (§8 sub-agent budget 소진 → orchestrator 직접 인계). 핵심 측정 = routing axis1 Dir-I 3/31 → diverse-scale 변화 = §7.3 crux (anima-physics-anchored diverse 가 §1.1 emergence threshold 넘나).
+
+## §9 (2026-05-18, candidate) — `.kosmos`-SSOT gap reconcile
+
+**식별된 gap (user 2026-05-18)**: `.kosmos` anchor manifest 포맷이 UBM-E2 + dancinlab/kosmos sister repo + KOSMOS-FORMAT.md 로 정착됐으나, 실제 fire (UBM-E6 11-anchor · E7 31 · §8 64-anchor) 의 anchor 는 전부 `corpus_*_generator.py` **inline 정의** — `.kosmos` 우회. `HEXAD/UNIVERSE-BRAIN-MAP/anchors/` = 원본 5개만, fire 의 anchor set 은 generator 코드에 hardcode → `.kosmos` 가 decorative SSOT.
+
+**§9 reconcile 작업** (`g_kosmos_anchor_ssot` 2026-05-18 governance 의 운영 instance):
+- §8 의 64 inline anchor (+ 기존 fire anchor) 를 `HEXAD/UNIVERSE-BRAIN-MAP/anchors/*.kosmos` manifest 로 materialize (KOSMOS-FORMAT.md 준수).
+- `corpus_*_generator.py` 를 `anchors/*.kosmos` glob → parse → carving-form 생성 으로 전환 (inline anchor dict 제거).
+- → `.kosmos` 가 fire 의 진짜 source-of-truth (anchor SSOT). corpus 는 `.kosmos` 에서 derive.
+- forward-only: §8 fire (mid-flight, inline generator) 는 retro-break 않고 완주 (g3 drift-avoidance); §9 = 별도 reconcile cycle.
+- cross-link: `g_kosmos_anchor_ssot` (AGENTS.tape §3, d=2026-05-18) · KOSMOS-FORMAT.md · dancinlab/kosmos.
+
+---
+
 ## cross-link
 
 - [`PLAN.md`](PLAN.md) — Phase A/B/C/D staged roadmap
