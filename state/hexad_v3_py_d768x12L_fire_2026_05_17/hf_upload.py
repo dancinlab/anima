@@ -493,8 +493,10 @@ files_to_upload = [
     (STATE_DIR / "dispatch.sh", "dispatch.sh"),
     (STATE_DIR / "dispatch_full.log", "dispatch_full.log"),
     (STATE_DIR / "fire.log", "fire.log"),
-    (DOC_PATH, "HEXAD_CHAT_PLAN_at_cycle4.md"),  # consolidated into PLAN.md per g_doc_consolidation
+    # consolidated PLAN.md is the source of truth (per g_doc_consolidation 2026-05-17)
+    (DOC_PATH, "HEXAD_CHAT_PLAN_at_cycle4.md") if DOC_PATH.exists() else (None, None),
 ]
+files_to_upload = [pair for pair in files_to_upload if pair[0] is not None]
 if ckpt_path.exists():
     files_to_upload.append((ckpt_path, "ckpt_d768x12l_final.pt"))
 if v58_path.exists():

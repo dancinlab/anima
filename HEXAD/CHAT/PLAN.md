@@ -309,10 +309,37 @@ Honest C3 (g3): cycle 3 LANDED 이지만 generation quality 향상 claim 0 — V
 - model card cross-link adopted (front-matter `datasets:` + body 'Trained on' badge). main branch README updated on both repos.
 
 **D4 (V5.8 × 4-mode + V-SPONT + V-MOTIV 3-phase capability eval)**: `state/hexad_v3_py_d768x12L_fire_2026_05_17/v58_vspont_eval.py`
-- 6 corpus-v3-aligned V5.8 prompts × 4 modes + 5 V-SPONT empty-stimulus probes + **5 V-MOTIV γ-pattern conditioning probes (NEW Phase 3)** + 10 held-out BPB samples. CPU-bound on Mac local (~45 min wall — 16-probe × ~80s/gen).
+- 6 corpus-v3-aligned V5.8 prompts × 4 modes + 5 V-SPONT empty-stimulus probes + **5 V-MOTIV γ-pattern conditioning probes (NEW Phase 3)** + 10 held-out BPB samples. CPU-bound on Mac local (~22 min wall total).
 - Cycle 4 V-MOTIV probe = γ-pattern conditioning: feed `<inner motivation=F1,F2,...>...</inner>\n<voice spontaneous=true>` prefix; measure `</voice>` close-tag + coherence vocab tokens.
-- **Numbers**: see `v58_vspont_result.json`. Per-mode pass count = EMPIRICAL (B-D-NOTE pattern, NOT closed).
-- **Byte-cascade attractor SHIFT detected** at cycle 4 prompt 1-3: `PPP777777...` opener (vs cycle 3 "Sent..." opener vs cycle 2 `nonce=N`). Third corpus-shape-dependent attractor family — confirms `feedback_clm_colon_attractor` `=`-suffix sibling pattern is general (corpus-template-field dependent, not arch-intrinsic). See `archive/PHILOSOPHY.tape §BYTE-CASCADE-ATTRACTOR-CORPUS-DEPENDENT-2026-05-17` for the closed-form B-ATTRACTOR-1..3 lift.
+- **V5.8 × 4-mode** (elapsed 946.8s): greedy **0/6 FAIL** (avg_rep=0.904) · sample **0/6 FAIL** (avg_rep=0.945) · M3_rep_penalty **0/6 FAIL** (avg_rep=0.892) · **M4_force_include 6/6 PASS** (avg_rep=0.839). Same pattern as cycle 3 (M4-only).
+- **V-SPONT** (elapsed 184.2s): coherent **0/5 FAIL** · closed-tag 0/5 — same as cycle 3 (F-SPONT-7 transfer-form ceiling carry, capability boundary at this scale).
+- **V-MOTIV (NEW)** (elapsed 179.6s): coherent **0/5 FAIL** · voice-closed-tag 0/5 — γ-pattern conditioning did NOT break the cascade attractor at this scale. EMPIRICAL (B-CORPUS-V3-NOTE family carry). Honest interpretation: the model memorized the γ-pattern surface markers (`<inner motivation=...>`) but the inner→voice transition was not learned at inference time (only β/δ/γ structural cardinality was closed at training time, B-CORPUS-V3-3 closure).
+- mean BPB **0.0256 bits/byte** (cycle 3 was 0.0083 — slightly higher due to 10× scale = lower per-byte memorization density, expected with Critical Data Size regime). Memorization ratio 0/6 (cycle 3 was 1/6).
+- **Byte-cascade attractor SHIFT 3-instance generalization confirmed**: cycle 2 `nonce=N`/`chunk=N` digit-cascade → cycle 3 `Sentiosing eeee` opening → cycle 4 **`PPP777777...` opener** (all 24 decoding artifacts rep>0.5 contain this opener; vspont 1-4 + vmotiv 1-5 all share `PPP777` mass). Third corpus-shape-dependent attractor family — confirms `feedback_clm_colon_attractor` `=`-suffix sibling pattern is general (corpus-template-field dependent, not arch-intrinsic). The closed-form B-ATTRACTOR-1..3 lift (in `archive/PHILOSOPHY.tape §BYTE-CASCADE-ATTRACTOR-CORPUS-DEPENDENT-2026-05-17`) covers the abstract structural propositions; cycle 4's `PPP777` instance is empirical evidence of the same family (B-ATTRACTOR-NOTE family, NOT a new closure).
+
+**Cycle 3 vs Cycle 4 comparison table**:
+
+| metric | cycle 3 (v2 corpus 1.1MB) | cycle 4 (v3 corpus 10.3MB) |
+|---|---|---|
+| init CE | 5.667 | 5.641 |
+| final CE | 0.005069 | 0.008289 |
+| CE descent | 5.66 | 5.63 |
+| final ppl | 1.0051 | 1.0083 |
+| corpus_bytes (loaded) | 620,568 | 6,223,023 (~10×) |
+| corpus_records | 2,560 | 21,600 |
+| wall (GPU) | 332.26 s | 328.33 s |
+| V5.8 greedy | 0/6 FAIL | 0/6 FAIL |
+| V5.8 sample | 0/6 FAIL | 0/6 FAIL |
+| V5.8 M3 | 0/6 FAIL | 0/6 FAIL |
+| V5.8 M4 | 6/6 PASS | 6/6 PASS |
+| V-SPONT coherent | 0/5 FAIL | 0/5 FAIL |
+| V-MOTIV coherent (NEW) | (did not exist) | 0/5 FAIL |
+| mean BPB | 0.0083 | 0.0256 |
+| memorization ratio | 1/6 (16.7%) | 0/6 (0.0%) |
+| decoding artifacts (rep>0.5) | — | 24 |
+| byte-cascade attractor | `Sent...` opener + `eeee/ooo/lll` | `PPP777...` opener |
+
+**Honest framing on cycle 4 capability outcome (g3 carry)**: cycle 4 V-SPONT 0/5 + V-MOTIV 0/5 = capability ceiling carry from cycle 3, NOT capability regression. 10× scale-up + γ pattern surface did NOT close the inner→voice generation gap at this scale. The closed scope (B-CORPUS-V3-1..3) is intact; the empirical outcome on inference-side generation is honest empirical (B-CORPUS-V3-NOTE family, un-closable). Per g3, FAIL is just as honest as PASS — V-MOTIV is a probe, not a capability claim.
 
 **B-CORPUS-V3 closed-form battery (3 falsifier + 1 NOTE)** in `state/verify_hexad_blue_2026_05_15/blue_falsifier.py :: bcorpus_v3()`:
 - **B-CORPUS-V3-1** SHA256-DETERMINISTIC-CLOSED — Boolean equality on 256-bit Kolmogorov commitment (sha256 + bytes match seed=1337 deterministic output). ✅
