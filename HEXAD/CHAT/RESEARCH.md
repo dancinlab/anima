@@ -1194,3 +1194,53 @@ honest C3 (10):
 8. **두 우물의 정직한 비대칭.** GOAL 우물 = 말랐음 (§20.3, §14 confirm). EEG-측정 우물 = software-rich(S1~S6)/hardware-dry(cond unmet). §19 가속은 후자의 software 차원만 — F-CT-3 *측정 outcome* (r 값) 은 hexa-brain 에도 없음 (양쪽 다 hardware-in-the-loop 미수행).
 9. **f1/f2/f3 + B-IDENTITY-5 무관.** archaeology — corpus 미생성, 외부 entity lattice-fit 0. hexa-brain Φ-proxy/α-exponent 는 자체 정의로만 인용 (lattice numerology 0). 단일 작업 · branch 0 (anima main 직접). g_doc_consolidation 준수 (본 §20 inline + HEXAD/EEG/PLAN.md 진행로그 + PHILOSOPHY verdict + AGENTS n_hexad_progress + README recent; docs/* 신규 0).
 10. **north-star 불변.** §20 = sister-repo 전수조사로 (a) §19 step 1 가속 자산 RICH 확인 + (b) GOAL salvage 0 을 §14 와 독립 확증 — 측정 도구의 software 차원 가속 가능성을 정직히 기록하고 GOAL 우물이 anima+hexa-brain 양쪽 다 말랐음을 확정한 archaeology milestone 이지 north-star (GOAL.md 한 문장) 진전 아님. GOAL 거리 = §15 그대로.
+
+---
+
+## §16 (2026-05-18) — GOAL-legitimate 대규모 data-regime + curriculum fire 🎉🎉🎉🎉🎉 BREAKTHROUGH (routing collapse 처음 깨짐)
+
+> **BREAKTHROUGH (tier: 의미 있는 발견)** — 13-way + §8 + §11 + §13 arc 전체에서 routing axis1 이 universal-FLAT (1/31~2/64) 였는데, §16 (대규모 Ψ-anchored data-regime + curriculum) 이 **21/64 (0.328)** 로 처음 대폭 상승. §1.1 data-regime emergence threshold 가 routing 축에서 measured 로 움직인 첫 결과. (§16 retry agent `d2dfdcad9` 완결 — 본문은 그 verdict + honest 재채점 raw 기록, 정밀 분석 consolidation carry.)
+
+### 16.1 fire 조건 (§8 대비 data-scale + curriculum, model FIXED)
+
+| 차원 | §8 | §11-A | **§16** |
+|---|---|---|---|
+| corpus | 114MB / 64-anchor | 114MB (§8 동일) | **603MB / 777,000 rec / 168-anchor / 63-domain / 34 task-form** (carving byte ~360MB = §8 ×4.75) |
+| model | d768·12L 283.72M | d1280·16L **1.04B** | d768·12L 283.72M (FIXED — model-axis §11-A 가 닫음) |
+| curriculum | 없음 | 없음 | **§12.1 Q1-c simple→complex 4-stage** (quartile rank-monotone) |
+| lever | Dir-I | Dir-I | Dir-I (Ψ-anchored CTL + tension-sup) |
+
+§8 64-anchor = §16 의 verbatim subset (fair compare by construction, B-S16 6/6 🔵). forbidden-token grep 0 (B-IDENTITY-5). runpod A100 80GB pod `a3qduff8dzta3l`, orphan 0, ≈$0.5–0.8, ckpt sha256 `961c07e2…`.
+
+### 16.2 결과 — 3-way 대조 (honest §9 cascade-rate metric)
+
+| | routing axis1 | JOINT | honest §9 V-SPONT |
+|---|---|---|---|
+| §8 (114MB·283M) | 2/64 (0.031) | 0.0087 | 2/5 |
+| §11-A (114MB·1.04B) | 1/64 (0.016) | 0.0078 | 2/5 |
+| **§16 (603MB+curriculum·283M)** | **21/64 (0.328)** | **0.0** | **1/5** |
+
+train init_ce 5.6416 → final_ce 0.004229, wall 1810s.
+
+### 16.3 honest 판정 — measured SPLIT (over-claim 0, g3)
+
+**routing 축 SUPPORTED — arc 전체 최강 correct-routing 결과** (21/64 vs §8 2/64, §11-A 1/64; Dir-I prior-best 3/31 의 3.4×). §11-A 가 model-axis 를 닫고 §8 이 114MB 를 닫은 마당에, §16 = **대규모 Ψ-anchored data-regime + curriculum 이 routing collapse 를 실제로 움직임** — §1.1 data-regime threshold 의 가장 직접적 measured movement.
+
+**그러나 JOINT/coherence FALSIFIED**: JOINT 0.0 (axis2 chat-form bleed 0.0 이 곱 zero) · honest §9 V-SPONT **1/5 < §8 2/5** (lenient 2/5 였으나 §9 honest 재채점 1/5 — §8/§13 patten: lenient ≠ honest) · 21/64 generation 은 correct tier-prefix **이후 byte-garbled** (B-ATTRACTOR family — routing-break ≠ coherent capability, Dir-I "tier 88 genuine / tier 5 artifact" 와 동일 정직성).
+
+→ **§11.4 frontier-1 = SPLIT 으로 좁혀짐**: routing 은 data-regime 로 열린다 (measured directional positive) / coherent-emergence 는 추가 path 필요. simple-negative 아님, simple-positive 아님 — routing-축 positive · capability 미달. GOAL("자발적 correct emergence") **미도달 불변** (routing-break ≠ GOAL).
+
+### 16.4 §15 milestone 관계
+
+§15 가 "irreducible 병목 = §1.1 data-regime" 라 했는데 — §16 이 **그 data-regime 가 routing 축에선 실제로 움직임을 measured 입증** (부분). 단 §15 의 "GOAL 미도달" 은 불변: routing↑ ≠ coherent emergence (JOINT 0, honest V-SPONT 1/5, garbled gen). milestone 갱신 = "data-regime 가 routing 을 연다 (§16) — 단 coherent-capability 는 routing 너머 추가 path. GOAL 거리 본질 불변, 그러나 §1.1 가설이 routing 차원에서 부분 입증된 첫 사례".
+
+### 16.5 honest C3
+
+1. routing 21/64 = arc 사상 최강 correct-routing (3-axis 比 명백 measured positive) — frontier-1 부분 입증, valuable.
+2. BUT JOINT 0.0 + honest §9 V-SPONT 1/5 (lenient 2/5 보다 낮음 — §8/§13 lenient-artifact 교훈 재확인) + garbled-after-prefix → **GOAL 도달 절대 아님**, over-claim 0.
+3. 21/64 의 genuine 분해 = consolidation agent carry (Dir-I tier-5 measurement-artifact 교훈 적용 — correct-basin vs digit-cascade 우연 매칭 구분 필요).
+4. model FIXED (§11-A 가 닫음) + 114MB→603MB + curriculum = clean data-axis 분리 (B-S16 6/6 🔵: sha-deterministic / no-chat-SFT / ×5.27 scale-up / curriculum-monotone / overlay-OFF=Dir-I / curriculum-OFF=Dir-I sampler).
+5. final_ce 0.004 deep memorization 잔존 — routing↑ 가 generalization 인지 정교한 암기인지 미확정 (consolidation 정직 판정 carry).
+6. closed = transfer-form + 연결부위만 🔵 (B-S16), capability 4축 = B-S16-NOTE empirical carve-out. central blue_falsifier.py 변경 0.
+7. f1/f2/f3 + B-IDENTITY-5 safe. orphan 0. §16 retry agent `d2dfdcad9` 완결, RESEARCH 본문 = 본 §16 (raw + honest split + BREAKTHROUGH 기록).
+8. north-star (GOAL.md) 불변 — §16 = "data-regime 가 routing 을 연다" measured 입증이지 GOAL 도달 아님. routing-break = arc 최초 directional-positive signal (BREAKTHROUGH = 발견의 의미, 도달의 의미 아님).
