@@ -1,6 +1,6 @@
 {
   "section": "RESEARCH.md §19 step 0",
-  "ts": "2026-05-18T04:46:38",
+  "ts": "2026-05-18T04:47:45",
   "is_f_ct_3": false,
   "gpu_used": false,
   "weight_mutated": false,
@@ -27,11 +27,11 @@
     },
     "G5_FORWARD": {
       "pass": false,
-      "detail": "TypeError: TribeModel.get_events_dataframe() got an unexpected keyword argument 'text' (G0-G4 = pipe-credible; full forward needs feature-extractor backbone DL — boundary honestly recorded, design-tier step 0)"
+      "detail": "RuntimeError: whisperx failed:\nDownloading transformers (11.4MiB)\nDownloading fonttools (2.7MiB)\nDownloading ctranslate2 (1.2MiB)\nDownloading scikit-learn (7.7MiB)\nDownloading onnxruntime (17.2MiB)\nDownloading scipy (19.4MiB)\nDownloading sqlalchemy (2.1MiB)\nDownloading torch (70.2MiB)\nDownloading matplotlib (7.8MiB)\nDownloading pillow (4.5MiB)\nDownloading torchvision (1.8MiB)\nDownloading av (17.8MiB)\nDownloadin (G0-G4 = pipe-credible; full forward needs feature-extractor backbone DL — boundary honestly recorded, design-tier step 0)"
     }
   },
   "notes": [
-    "TribeModel.from_pretrained OK in 2.1s (weights loaded eval mode, cpu)",
+    "TribeModel.from_pretrained OK in 2.0s (weights loaded eval mode, cpu)",
     "G5 boundary: full predict() requires text/audio/video backbone model downloads (multi-GB) + gTTS/ffmpeg; G0-G4 PASS establishes axis C feasibility (pipe works to ckpt-load), G5 forward = step-1+ scope (still inference-only, no GPU)."
   ],
   "step0_verdict": {

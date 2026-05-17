@@ -32,9 +32,9 @@ F-CT-3 (pre-registered, ADDENDUM §5 verbatim): user EEG envelope ↔ TRIBE BOLD
 | G2 HF_REACHABLE | **PASS** — facebook/tribev2 has best.ckpt + config.yaml |
 | G3 CONFIG_LOAD | **PASS** — config.yaml downloaded + parsed (26 keys) |
 | G4 CKPT_META | **PASS** — best.ckpt 708.9MB mmap-loaded, 108 state_dict tensors, model_build_args present, model constructed (`Loading model from …/best.ckpt`), NO weight mutation |
-| G5 FORWARD | see step0_result.json (heavy: gTTS network + transcription + 3 backbone DL; boundary recorded honestly) |
+| G5 FORWARD | **boundary recorded** — `TribeModel.from_pretrained OK in 2.0s` (TRIBE frozen weights loaded into model, eval mode, cpu), then full predict() text-path triggers `whisperx` (speech transcription) which auto-installs its own multi-GB backbone stack (transformers/ctranslate2/onnxruntime/torch/scipy/…) — that isolated env install failed. honest blocker, NOT over-engineered. |
 
-**`pipe_credible_through_ckpt_load = true`** — G0–G4 PASS establishes axis C feasibility (the pipe works through frozen-weight TRIBE construction). G5 (full BOLD forward) requires multi-GB feature-extractor backbone downloads + gTTS/ffmpeg; whatever its outcome, step 0's purpose (pipe-credibility for Framing D axis C) is met by G0–G4.
+**`pipe_credible_through_ckpt_load = true`** — G0–G4 PASS + `TribeModel.from_pretrained OK in 2.0s` establishes axis C feasibility (the pipe works through frozen-weight TRIBE *model construction*). G5 (full BOLD forward) requires whisperx + multi-GB feature-extractor backbone downloads + gTTS; step 0's purpose (pipe-credibility for Framing D axis C) is met by G0–G4 + model-load. G5 full forward = step-1+ scope (still inference-only, no GPU), honest boundary recorded.
 
 ## 4. ADDENDUM §8 C3 #3 verification gap — CLOSED at dependency+API level
 
