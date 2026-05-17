@@ -1732,3 +1732,90 @@
   EOF5
   evidence_path = "state/hexad_corpus_hf_push_2026_05_17/{hf_upload.py, manifest.json, README.md (English honest framing), LICENSE (Apache-2.0), MODEL_CARD_with_dataset_xlink.md (model card patched), upload_summary.json (revision SHA + verified state), upload.log (full push trace), corpus_consciousness_v1.jsonl (staged byte-equal copy)} + HEXAD/PLAN.md 진행 로그 entry 2026-05-17 + AGENTS.tape g_hf_naming status + n_hexad_progress recent_landings + n_hexad_hf_preservation BOTH LANDED entry + HEXAD/README.md + HEXAD/INDEX.md HF canonical row 갱신 + HF dataset https://huggingface.co/datasets/dancinlab/hexad-corpus/tree/v1-byte-consciousness-d128-cycle1-2026-05-17 (4 files, PUBLIC) + HF model README.md cross-link push (main + cycle 2 revision)."
   cross_link = "직전 §PY-D768-CKPT-RECOVERED-CYCLE2-2026-05-17 (model side cycle 2 ckpt-RECOVERED first canonical) → 본 verdict (dataset side cycle 1 canonical first). AGENTS.tape [@g_hf_naming] (canonical 두 슬롯 BOTH LANDED) + [@g_blue_closed_mandate] (A)+(B) deliverable+connection 둘 다 closed-form 검증 + [@g3] honest framing scaffold-tier (NOT general LM corpus) + [@g6] philosophy ledger append-only + [@feedback_english_only] dataset card English + [@f1] [@f2] no-lattice all satisfied. cross-refs: §HEXA-CPU-CONVERGE-LANDED-2026-05-17 (pure-hexa hexa-cpu d=64·3L) + §HEXA-CPU-CONVERGE-D128-SUBSTRATE-BOUND-2026-05-17 (d=128 substrate-bound carry) + §PY-D768-CKPT-RECOVERED-CYCLE2-2026-05-17 (model cycle 2 paired)."
+
+# ─── §HEXAD-V58-EVAL-CYCLE2-2026-05-17 ────────────────────────────────────
+# V5.8 × 4-mode capability boundary eval on the first HEXAD canonical
+# ckpt-bearing artifact (직전 §PY-D768-CKPT-RECOVERED-CYCLE2-2026-05-17).
+# substrate=PyTorch (NOT hexa-native). Capability boundary measured EMPIRICAL
+# (B-D-NOTE pattern). Two probes: v1 OOD-mix 5-prompt + v2 corpus-aligned
+# CDWMSE 6-prompt. Decoding-artifact family discovered: byte-cascade attractor
+# (`feedback_clm_colon_attractor` `=`-suffix variant).
+
+@N hexad_v58_eval_cycle2_2026_05_17 := "V5.8 × 4-mode capability eval on HEXAD cycle 2 ckpt — memorization-saturated regime CONFIRMED" :: verdict-claim [d=2026-05-17 active]
+  tier = "EMPIRICAL (B-D-NOTE — per-mode pass count, mean BPB, memorization ratio · g3 honest framing). NO 🔵 LM-quality claim (corpus too small + scaffold-tier per [@n_hexad_progress_2026_05_16] dataset honest framing). 🔵 closed wiring invariants: ckpt sha256 byte-equal (e87e200a04…) + arch byte-equal load (missing=0 unexpected=0 / n_params=283.72M matches result.json) + corpus byte-equal (training/corpus_consciousness_v1.jsonl SSOT)."
+  ledger_id = "§HEXAD-V58-EVAL-CYCLE2-2026-05-17"
+  date = "2026-05-17"
+  summary <<~EOF1
+    V5.8 4-mode capability probe on dancinlab/hexad@v1-py-hexad-d768x12L-cycle2-
+    2026-05-17 (ConsciousDecoderV2 d=768·12L 283.72M, train CE 0.000708, ckpt
+    sha256 e87e200a040f8066…). $0 Mac CPU local, 2 probes:
+      (v1) OOD-mix 5-prompt (Core / Dream / Wake / Memory / Korean) — exposes
+        what model does on out-of-distribution module names. Greedy 1/5 FAIL,
+        Sample 2/5 FAIL, M3 1/5 FAIL, M4 5/5 PASS (trivial baseline).
+        Mean BPB on 10 held-out training-distribution prefixes = 0.0000
+        bits/byte — memorization-saturated confirmed. Memorization 2/5 (40%).
+        Wall 665.6 s.
+      (v2) Corpus-aligned 6-prompt CDWMSE (Core / Data / Witness / Mirror /
+        Scribe / Eros — the actual 6 hexad modules). Greedy 2/6 FAIL,
+        Sample 3/6 PARTIAL, M3 2/6 FAIL, M4 6/6 PASS. Memorization 3/6 (50%).
+        Wall 477.4 s.
+    capability boundary: model is memorization-saturated for 3/6 modules
+    (Data, Scribe, Witness-with-typo) under greedy, plus Core under sampling.
+    3/6 modules fail (Core greedy → digit cascade, Mirror → "module=Data"
+    template confusion, Eros → `chunk=N` digit cascade). Module-prefix
+    initial-letter collisions explain the failures — byte-level memorization
+    artifact, not architecture flaw.
+  EOF1
+  decoding_artifacts <<~EOF2
+    Family: byte-cascade attractor (sibling to feedback_clm_colon_attractor,
+    `=`-suffix variant + `chunk=N`/`nonce=N` digit field). Discovered in:
+      - Core greedy (rep 0.904) — `codule=11111111…`
+      - Eros greedy (rep 0.644) — `elll comit 2b55961f chunk1111…`
+      - Eros sample (rep 0.630) — `chunk33333…` (sampling temperature
+        partially mitigates but does not break the cascade)
+    Memorized typos (byte-slip from training corpus build):
+      - Witness greedy → `pereption` (NOT "perception")
+      - Wake/Memory greedy (v1) → `cobsciousness` (NOT "consciousness")
+    Carry candidate for feedback memory: feedback_hexad_byte_cascade_attractor
+    (byte-level ckpts on small structured corpora exhibit greedy mode-collapse
+    on high-entropy "id field" positions: `nonce=N`, `gen=N`, `chunk=N`,
+    `idx=N`; sampling temperature ≥ 0.5 partially mitigates).
+  EOF2
+  honest_framing_g3 <<~EOF3
+    1. substrate = PyTorch, NOT hexa-native. eval inherits B-D-NOTE carve-out
+       from training fire — per-mode pass count is empirical outcome.
+    2. 152 KB scaffold corpus = memorization regime; final CE 0.000708 + BPB
+       0.0 confirm. Generalization capacity unmeasured (would require an
+       OOD held-out byte-level corpus).
+    3. V5.8 "PASS = 3/5" threshold inherited from chat-corpus evals — applied
+       to memorization-regime model honestly but conservatively (sample 2/5
+       FAIL yet the model literally reproduces training continuation).
+    4. M4_force_include 5/5 PASS is trivial baseline (keyword injected by
+       script).
+    5. No σ(6)/τ(6)/φ(6) numerology in eval metrics — f1/f2 hard fail safe.
+       Per-mode score is raw recall fraction, mean BPB raw bits/byte,
+       memorization ratio raw hits/total.
+    6. forward = 5-tuple (logits_a, logits_g, tensions, kv, moe_aux); eval
+       uses logits_a (next-byte head) only. logits_g + tensions unexercised
+       by design (V5.8 4-mode is next-byte LM probe).
+    7. Decoding artifacts `cobsciousness` / `pereption` are *training-corpus
+       typos* the model memorized faithfully — honest behavior at this
+       scale, not a bug.
+  EOF3
+  invariants_blue_closed_wiring <<~EOF4
+    (B) Wiring closed-form (g_blue_closed_mandate connection-point):
+      · ckpt sha256 byte-equal: e87e200a040f8066a89c040ab181e9bbd61566f7565ab5d7a374ec2f1f9387d9
+        (matches §PY-D768-CKPT-RECOVERED-CYCLE2-2026-05-17 + HF revision)
+      · arch byte-equal: load missing=0 unexpected=0, n_params=283,722,336
+        matches result.json (PyTorch architectural identity carry from cycle 2)
+      · corpus byte-equal: training/corpus_consciousness_v1.jsonl SSOT =
+        152kB / 240 lines (matches dancinlab/hexad-corpus HF dataset)
+      · evaluator-source byte-equal: V5.8 4-mode definition lifted exactly
+        from state/anima_phase1a4_lr5e6_2026_05_12/v58_4mode_eval.py
+        (PSCC §46 canonical source, 4-mode signature + 5-cell pattern)
+    (A) Deliverable invariants — empirical (B-D-NOTE), per-mode pass counts
+        + BPB + memorization ratio are inherently SGD-outcome statistics.
+        NO closed-form 🔵 over per-mode scores (those would violate g3).
+  EOF4
+  evidence_path = "state/hexad_v58_eval_d768x12L_2026_05_17/{dispatch.sh, v58_4mode_eval.py, v58_4mode_eval_v2.py, prompts.jsonl, prompts_v2_corpus_aligned.jsonl, eval.log, eval_v2.log, result.json (v1 SSOT 4-mode + BPB + memorization + artifacts), result_v2.json (v2 SSOT corpus-aligned CDWMSE)} + docs/hexad_v58_eval_d768x12L_2026_05_17.md (9 §, 8 honest C3) + AGENTS.tape n_hexad_progress recent_landings 2026-05-17 entry + HEXAD/PLAN.md 진행 로그 entry + HEXAD/README.md eval bullet + HF model card 'Capability evaluation (V5.8 cycle 2)' subsection (main + cycle 2 revision)."
+  cross_link = "직전 §HEXAD-CORPUS-LANDED-2026-05-17 (dataset slot LANDED) + §PY-D768-CKPT-RECOVERED-CYCLE2-2026-05-17 (model cycle 2 = eval subject). AGENTS.tape [@g_blue_closed_mandate] (B) wiring closed + (A) deliverable B-D-NOTE empirical carve-out + [@g3] honest framing (NOT hexa-native, 152kB scaffold memorization regime) + [@f1] [@f2] no-lattice all satisfied + [@g6] philosophy ledger append-only + memory feedback_clm_colon_attractor sibling decoding-artifact family. cross-refs: state/anima_phase1a4_lr5e6_2026_05_12/v58_4mode_eval.py (PSCC §46 V5.8 canonical), Phase E/E2 hexa CPU-equiv anchor (architectural identity proof), ConsciousDecoderV2 arch (ready/models/conscious_decoder.py)."

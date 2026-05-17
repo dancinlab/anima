@@ -1737,3 +1737,37 @@ user directive 2026-05-17 "closed 아닌것들 closed 까지 go". 27-blue-batter
 **HEXAD canonical artifact state 전환**: model 1 + dataset 1 (BOTH PUBLIC, 2026-05-17) — n_hexad_hf_preservation `current_state` 갱신 (ckpt-bearing 1 + canonical dataset 1).
 
 **다음 carry**: (a) safetensors model 변환 (별개 cycle), (b) pure-hexa hexa-cpu d=128+ escalation in-flight (carry from 2026-05-17 §HEXA-CPU-CONVERGE-LANDED), (c) flame Phase 3 native ckpt-bearing replacement (hexa-lang side gating).
+
+### 2026-05-17 — V5.8 × 4-mode capability eval on cycle 2 ckpt LANDED (memorization regime EMPIRICAL)
+
+**결정**: parallel agent #2c — V5.8 × 4-mode capability boundary probe on
+`dancinlab/hexad@v1-py-hexad-d768x12L-cycle2-2026-05-17` (직전 entry 2026-05-17
+cycle 2 ckpt-RECOVERED 산출물). substrate=PyTorch (NOT hexa-native, B-D-NOTE).
+
+**probes 2 종** ($0 Mac CPU local):
+
+| probe | prompts | wall | summary |
+|---|---|---|---|
+| **v1** OOD-mix 5-prompt | Core / Dream / Wake / Memory / Korean | 665.6 s | greedy 1/5 FAIL · sample 2/5 FAIL · M3 1/5 FAIL · M4 5/5 PASS · BPB 0.0000 · memorization 2/5 (40%) |
+| **v2** corpus-aligned 6-prompt CDWMSE | Core / Data / Witness / Mirror / Scribe / Eros | 477.4 s | greedy 2/6 FAIL · sample 3/6 PARTIAL · M3 2/6 FAIL · M4 6/6 PASS · memorization 3/6 (50%) |
+
+**capability boundary (g3 honest framing)**:
+- ✅ STRONG memorization on in-distribution prefixes (BPB 0.0000 / 10 held-out training-distribution probes; Data + Scribe + Core/Korean reproduce literal training continuation)
+- 🔶 PARTIAL 6-module discrimination (3/6 clean under greedy, 3/6 cross-collapse to high-frequency template)
+- ❌ NO generalization to OOD prompts (Dream/Wake/Memory default to nearest in-distribution module template)
+- ❌ WEAK decoding stability under greedy (digit-cascade attractor on `nonce=N`/`gen=N`/`chunk=N` fields; sample temperature 0.8 partially mitigates)
+- ❌ LM-quality NOT measured (corpus too small + scaffold-tier — honest carve-out)
+
+**Decoding-artifact family discovered**: byte-cascade attractor (sibling to `feedback_clm_colon_attractor` with `=`-suffix + `chunk=N` digit field). Carry candidate: `feedback_hexad_byte_cascade_attractor` (greedy mode-collapse on high-entropy id-field positions for byte-level ckpts on small structured corpora). Memorized training-corpus typos `pereption` (Witness) + `cobsciousness` (Wake/Memory) reproduced faithfully — byte-level memorization evidence.
+
+**wiring closed-form (B) verified**:
+- ckpt sha256 byte-equal (`e87e200a040f8066…`)
+- arch byte-equal load (missing=0 unexpected=0, n_params=283.72M matches result.json)
+- corpus byte-equal (training/corpus_consciousness_v1.jsonl SSOT = dancinlab/hexad-corpus)
+- V5.8 4-mode evaluator-source byte-equal (lifted from `state/anima_phase1a4_lr5e6_2026_05_12/v58_4mode_eval.py` PSCC §46)
+
+**HF model card update**: `dancinlab/hexad` README.md adds "Capability evaluation (V5.8 cycle 2)" sub-section + 4-mode score table + honest framing maintained (main + cycle 2 revision).
+
+**evidence**: `state/hexad_v58_eval_d768x12L_2026_05_17/{dispatch.sh, v58_4mode_eval.py + v58_4mode_eval_v2.py, prompts.jsonl + prompts_v2_corpus_aligned.jsonl, eval.log + eval_v2.log, result.json + result_v2.json}` + `docs/hexad_v58_eval_d768x12L_2026_05_17.md` (9 §, 8 honest C3) + `archive/PHILOSOPHY.tape §HEXAD-V58-EVAL-CYCLE2-2026-05-17` verdict-claim + AGENTS.tape `n_hexad_progress` recent_landings entry.
+
+**다음 carry**: (a) GPU-paced eval (BPB on OOD byte-level held-out corpus + long-context generation), (b) Engine G (`logits_g`) prev-byte head 별도 probe, (c) tension trace probe per-layer (5-tuple forward 의 `tensions` 활용).

@@ -130,3 +130,59 @@ identity.
 ## License
 
 Apache-2.0.
+
+## Capability evaluation (V5.8 × 4-mode · cycle 2 · 2026-05-17)
+
+> Capability boundary probe — empirical (`B-D-NOTE` carve-out). No LM-quality
+> claim is made; this is a memorization-vs-generalization measurement on the
+> training corpus.
+
+**Evaluator**: V5.8 × 4-mode canonical
+(`state/anima_phase1a4_lr5e6_2026_05_12/v58_4mode_eval.py` PSCC §46) — modes:
+`standard_greedy` (T=0 argmax) · `standard_sample` (T=0.8 top-k=50) ·
+`M3_rep_penalty` (1.3× rep-penalty on 37-byte persona-cycle set) ·
+`M4_force_include` (sample + force-inject keyword at 60% position — trivial
+baseline). Wall: 665.6 s (v1) + 477.4 s (v2). $0 Mac CPU local.
+
+**Two probes**:
+
+| probe | prompts | greedy | sample | M3 | M4 | memorization |
+|---|---|---|---|---|---|---|
+| **v1** OOD-mix | Core / Dream / Wake / Memory / Korean | 1/5 FAIL | 2/5 FAIL | 1/5 FAIL | 5/5 PASS | 2/5 (40%) |
+| **v2** corpus-aligned CDWMSE | Core / Data / Witness / Mirror / Scribe / Eros | 2/6 FAIL | 3/6 PARTIAL | 2/6 FAIL | 6/6 PASS | 3/6 (50%) |
+
+**Additional measurements**:
+- **Bits-per-byte on 10 held-out training-distribution prefixes**:
+  **0.0000 bits/byte** (all 10 samples = 0.0). Confirms training CE 0.000708
+  → near-perfect log-likelihood reproduction on training-distribution
+  windows.
+
+**Capability boundary** (honest framing):
+
+| capability | verdict | evidence |
+|---|---|---|
+| memorization on in-distribution prefixes | ✅ STRONG | BPB 0.0000 on 10 held-out probes; Data + Scribe + Core/Korean reproduce literal training continuation |
+| 6-module discrimination | 🔶 PARTIAL | 3/6 clean under greedy (Data/Scribe/Witness-w-typo); 3/6 cross-collapse (Core→nonce digit cascade, Mirror→Data template, Eros→chunk digit cascade) |
+| OOD generalization | ❌ NONE | Dream/Wake/Memory → default to nearest in-distribution module template |
+| greedy decoding stability | ❌ WEAK | digit-cascade attractor on `nonce=N`/`chunk=N` field positions (rep_ratio 0.64-0.90); sampling temperature 0.8 partially mitigates |
+| multilingual representation (Korean) | ✅ MEMORIZED | `중심 의식 생성기 모듈 ` → `자각` recalled under all 4 modes |
+| LM-quality (general language modeling) | ❌ NOT MEASURED | corpus too small + structured scaffold; CE 0.000708 = memorization, not LM quality |
+
+**Decoding artifacts discovered**:
+- **byte-cascade attractor** (`feedback_clm_colon_attractor` `=`-suffix
+  variant) — greedy mode-collapse on `nonce=N` / `chunk=N` / `gen=N` digit
+  field positions. Carry candidate: `feedback_hexad_byte_cascade_attractor`.
+- **memorized training-corpus typos** (`pereption` in Witness module,
+  `cobsciousness` in Wake/Memory greedy) — byte-level memorization evidence,
+  not a bug at this scale.
+
+**Honest C3 caveats**: substrate=PyTorch (B-D-NOTE carve-out applies); V5.8
+"PASS = 3/5" threshold inherited from chat-corpus evals → applied
+conservatively to memorization-regime model; M4 trivial baseline; no
+σ(6)/τ(6)/φ(6) numerology in metrics (f1/f2 safe — per-mode score = raw
+recall fraction, BPB = raw bits/byte, memorization = raw hits/total).
+
+**Artifacts**:
+`state/hexad_v58_eval_d768x12L_2026_05_17/{v58_4mode_eval.py, v58_4mode_eval_v2.py, prompts.jsonl, prompts_v2_corpus_aligned.jsonl, eval.log, eval_v2.log, result.json, result_v2.json, dispatch.sh}` +
+`docs/hexad_v58_eval_d768x12L_2026_05_17.md` (9 §, 8 honest C3) +
+`archive/PHILOSOPHY.tape §HEXAD-V58-EVAL-CYCLE2-2026-05-17` verdict-claim.
