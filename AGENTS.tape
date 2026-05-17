@@ -250,7 +250,8 @@
   why = "2026-05-15 cycle 88 .clm v1 P2 fire — training 5/5 SUPPORTED-STRONG PASS ($0.19 wall 12.2min on Vast.ai A100 SXM4), 그러나 exit code 1 (SSH pipe spurious or set -e false-positive) → trap cleanup destroyed instance BEFORE [8/9] pull → 372MB final ckpt 손실. evidence-only carry (dispatch_train.log + verdict)."
   apply = "dispatch script 의 train step 직후 SSH 로 `test -f .../result.json && echo SAVED` 확인 → exit 0 시 SAVE_POD=1 자동 promote → pull 시도 ≥3회 (5분 간격, scp ConnectTimeout=3600); pull 실패 시에도 SAVE_POD=1 retain + manual recovery instruction stdout. set -e + pipefail 의 false-positive 회피 위해 train + pull 사이에 `|| true` guards."
   pattern_pseudocode = "SAVED=$($SSH_CMD 'test -f /workspace/anima/output/result.json && echo SAVED' 2>/dev/null || true); if [ \"$SAVED\" = \"SAVED\" ]; then export SAVE_POD=1; for i in 1 2 3; do $SCP_CMD ... && break || sleep 300; done; fi"
-  cross_link = "state/clm_v1_fire_2026_05_15/dispatch_h100.sh (cycle 88 evidence) + memory feedback_dispatch_vast_template_gotchas + g_hf_naming process_upload_mandate (d) ckpt-LOST evidence-only"
+  credential_via_secret_cli = "**dispatch script 의 모든 credential (RUNPOD_KEY / vast api key / SSH key path 등) 은 `secret` CLI 에서 읽는다 — 하드코딩 절대 금지 (2026-05-17 user directive 'secret cli 이용하도록')**. 패턴: `RUNPOD_KEY=$(secret get runpod.api_key)` · `VAST_KEY=$(secret get vast.api_key)`. `secret` = unified credential CLI (`~/.local/bin/secret` — `secret get/set/check/list`, 값은 stdout 으로만, 파일·repo 에 평문 저장 X). 등록 완료: `runpod.api_key` (2026-05-17). 미등록 key 는 `secret set <key>` (pipe/tty, argv 지양 — shell history leak). dispatch script 에 `rpa_…` / api key 평문 박는 것 = f_hardcoded_credential 위반."
+  cross_link = "state/clm_v1_fire_2026_05_15/dispatch_h100.sh (cycle 88 evidence) + memory feedback_dispatch_vast_template_gotchas + g_hf_naming process_upload_mandate (d) ckpt-LOST evidence-only + f_hardcoded_credential (§4)"
   @> CLAUDE.md
 
 @D g_fire_autonomous := "cost-bearing fire = 완전 자율 · 무조건 허용 · 질의 없이 바로 진행 (승인 게이트 + GPU-제약 + 질의 게이트 전면 폐기)" :: governance [required d=2026-05-17 active]
@@ -276,6 +277,13 @@
 @F f2 := "verification-by-lattice-tautology" :: governance [required deny:write]
   pattern = "claiming verification by checking σ(n)·φ(n) = n·τ(n) alone (the central identity is a definitional truth at n=6, not evidence about an external system)"
   remedy = "anchor verification on at least one real-limit from LATTICE_POLICY.md §1.2"
+  @> CLAUDE.md
+
+@F f_hardcoded_credential := "credential 평문 하드코딩" :: governance [required deny:write d=2026-05-17 active]
+  pattern = "dispatch script · config · source 에 API key / token / SSH 비밀키 / 비밀번호 를 평문으로 박기 (예: `RUNPOD_KEY=rpa_…` · `VAST_KEY=…` · `hf_…` token literal)."
+  why = "repo commit → credential 누출 (특히 PUBLIC repo / GitHub). 2026-05-17 발견: dispatch_eval_v2_runpod.sh 에 RUNPOD_KEY 하드코딩 → gitignore 선제 차단 + secret CLI 전환."
+  remedy = "모든 credential 은 `secret` CLI 에서 읽기 — `KEY=$(secret get <section.name>)`. 등록: `secret set <key>` (pipe/tty). g_fire_dispatch_robust credential_via_secret_cli 참조. 이미 누출된 key 는 rotate (`secret rotate` 또는 provider 콘솔)."
+  authority = "g_fire_dispatch_robust credential_via_secret_cli + user directive 2026-05-17 'secret cli 이용하도록'"
   @> CLAUDE.md
 
 # ─── §5 External citations ───────────────────────────────────────────
