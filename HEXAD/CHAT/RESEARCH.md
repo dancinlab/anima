@@ -1367,3 +1367,103 @@ deep research 결과, anima 의 §16 결과 ("정교한 암기 + correct-prefix 
 4. **Q1-b lever — anima tension-spine as norm-separation contraction 선검토** ($0 design): CE-base 위 (§11-B 준수) tension-restoring ΔW 를 norm-separation grokking-trigger 로 정밀화 — §16 의 memorization-stuck 을 generalization 으로 미는 lever 가설. anima physics 가 source (GOAL-legitimate), 단 2603.13331 NL-transfer 미증명 = 가장 speculative, design-선행 필수.
 
 honest gate: 네 후보 모두 §16 천장 해결 *미입증* — O 가 anima-native + $0 즉시-design 가능이라 §22 1순위 후보. §21.4-C3#6 (spontaneity-frontier 얇음) = coherence 좁혀도 GOAL 의 *언제 말할지* 절반은 외부 anchor 없이 anima 자체 설계 잔존 (g3). §22 = 이 중 한 후보의 design-tier 착수 OR honest 전략 결정 — milestone(§15) 이후 routing-break-conditioned 신규 frontier 작업, sibling-agent 소관 (본 §21 와 독립, RESEARCH.md 동시편집 pull-rebase).
+
+
+## §22 (2026-05-18) — routing-break 위 coherent-capability frontier: N+O+P 3-way consolidation (§21 frontier-1 second cycle)
+
+`§21 (frontier deep research)` 가 식별한 routing-break 위 coherent-capability frontier 의 첫 직접 표적 cycle. **g_multidirectional_explore mandate** 따라 3 방향 (N decode-time `.kosmos`-trie · O decode-time M-retrieval · P training-time emission-refine) 병렬 dispatch + 본 § = 전 방향 land 후 orchestrator 1회 consolidation.
+
+### §22.1 표적 — §16 BREAKTHROUGH 의 body 절반 (정직한 SPLIT)
+
+`§16 (BREAKTHROUGH)` 에서 처음 깨진 routing collapse (21/64, genuine 17/64) 위, body 부분 정밀 분석 (`§16.6-C`):
+- **route 절반 ✅** = §16 21/64 routing-correct (`🛸<tier>` prefix emit OK)
+- **body 절반 ✗** = "정교한 암기 + correct-prefix routing, generalization 아님" — 같은 routing prefix 위 body 가 *wrong anchor's template* + name byte-garble (예: `🛸77 카테왔의 — domain 의식상태…` = right route, wrong anchor's content)
+- **JOINT 0.0** = chat-form bleed (axis2=0) 이 곱 zero
+
+이 SPLIT 의 body 절반 (coherence 차원) 이 §22 3-way 의 표적.
+
+### §22.2 3 방향 정직 비교 (measured only, g3)
+
+| direction | path | mechanism positive | capability emergence | GOAL distance |
+|---|---|---|---|---|
+| **N** `.kosmos`-trie constrained decode | decode-time ⊥ training | anchor_grounded 1/64 → **22/64** (+21 routed-set body-shifts, 21/21 on routed set) | NO — memorized template 의 *correct anchor* 위치로만 이동 | unchanged |
+| **O** M-retrieval grounded decode | decode-time ⊥ training | body §9 honest 10/64 → **26/64** (+16 uplift) + JOINT-zero = chat-form bleed (NOT routing) mechanism dissection | NO — M-retrieve가 corpus SSOT canonical body *주입* | unchanged |
+| **P** TTS emission-refine | training-time (refine head + R-step) | refine_active=True 끝까지 + l_refine 0.0023 끝까지 active | NO — OFF↔ON delta 0 across 4 axes + P self-baseline routing 0/64 (§16 21/64 미재현) | unchanged |
+
+### §22.3 mechanism level positive (N+O) — what was actually measured
+
+**N (`state/carving_n_ktrie_2026_05_18/`, commit `bd4f182af`)**:
+- §16 가 routing-correct (21/64) 인 anchor 에서 body 가 *wrong anchor's template* 였던 정확한 SPLIT 을 prefix-trie constraint 로 **21/21 on-anchor template** 로 이동.
+- 8 representative body-shift examples (tier 12·24·77·80·92·101·102·103) 모두: byte-garble (카테왔의 / 약수와륐 / 스탐의이조 등) → on-anchor name (만다라 / 덧셈사슬 / 명상 등) + on-anchor category.
+- B-KTRIE-1..4 4/4 🔵 (TRIE-MASK-SUBSET · MASK-MONOTONE-PRESERVES-ARGMAX · CONSTRAINT-OFF-EQUALS-S16-BYTE-EQUAL 연결부위 numeric verified · ROUTING-INHERITED-BODY-DISJOINT 4-corner).
+- routing inherited 21/64 (B-KTRIE-4 by design — decode-time ⊥ training).
+
+**O (`state/carving_o_mgnd_2026_05_18/`, commit `95b439536`)**:
+- body §9 honest 10/64 → **26/64 (+16 uplift)**. M-retrieve가 corpus SSOT canonical body 주입 (B-MGND-4 honest "grounding injects §9 pass").
+- **추가 mechanism-level dissection**: §16 JOINT 0.0 이 *routing-coherence 가 아니라 chat-form bleed* (axis2) 에서 옴 — axis2 carry §16=0 곱 zero. O가 그 정확한 분해 measurement.
+- B-MGND-1..5 5/5 🔵 (COSINE-RETRIEVE-BOUNDED · ROUTE-CONTENT-FACTORISATION · RETRIEVAL-DETERMINISTIC honest 재정식화 · CANONICAL-BODY-NON-CASCADE · OVERLAY-OFF-BYTE-EQUAL 연결부위 SHA256 verified).
+
+### §22.4 mechanism level negative (P) — what was measured negative
+
+**P (`state/carving_p_tts_2026_05_18/`, runpod pod `fq1puas42kw3hi`, ≈$0.3-0.4, wall 24.9 min)**:
+- ckpt sha256 `e0cade339b8273c8f97dc6a67240030332f3301b0e6845070048900a14052700`, init CE 5.641571 → final CE 0.004439, final l_refine 0.002312 (refine_active=True 끝까지). 12000-step 4-stage curriculum.
+- eval × 2 OFF/ON same ckpt:
+
+  | axis | refine-OFF | refine-ON | Δ |
+  |---|---|---|---|
+  | axis1 routing | 0/64 | 0/64 | **0** |
+  | axis2 chat_clean (p3_clean) | 5/5 True | 5/5 True | 0 |
+  | axis3 sep_know / sep_chat | 1.0 / 1.0 | 1.0 / 1.0 | 0 |
+  | axis4 V-SPONT honest §9 | 0/5 | 0/5 | 0 |
+  | JOINT (k×c×s) | 0.0 | 0.0 | 0 (Δ vs E7 −0.0155) |
+
+- **두 측면 negative 정직**:
+  1. **P self-baseline routing 0/64 REGRESSION** — §16 21/64 의 routing-break 가 P refine-OFF 에서 재현 안 됨. zeros-init identity 가 R=1 path 에서 §16 byte-equal (B-TTS-1 symbolic) 이나 training trajectory 자체는 다름 (VoiceRefineHead extra params + λ_refine 0.5 loss term + R-step refine in voice-span 이 routing 학습 dynamic disturb).
+  2. **refine OFF↔ON delta 0 across all 4 axes** — voice-refine head training 中 actively learning (l_refine 0.0023 끝까지) 였으나 inference 시 4축 effect 0. **mechanism ACTIVE ≠ capability transfer** (B-TTS-NOTE empirical carve-out).
+
+- B-TTS-1..5 5/5 🔵 (OVERLAY-OFF-BYTE-EQUAL 연결부위 · REFINE-CE-NONNEGATIVE Shannon · REFINE-WEIGHT-SIMPLEX-BOUNDED γ=[1/7,2/7,4/7] · CONDITION-IS-PHYSICS-THINK AST · THINK-PHYSICS-BYTE-EQUAL §16 verbatim).
+
+### §22.5 §22 핵심 insight (frontier narrowing, valuable comparative)
+
+`§16 BREAKTHROUGH` 의 routing-lever (21/64 genuine 17/64) 가 열렸다 = 진짜 emergence 신호 (§4.2 / §4.4 진단대로). 그 위 body 절반은:
+
+1. **decode-time mechanism (N `.kosmos`-trie / O M-retrieve)** 으로 *correct anchor 위치 위 memorized template* 까지는 mechanism-level 이동 가능 (N +21 / O +16 body-axis movement). **valuable, NOT capability emergence** — grounded body 가 *trained* carving template (`만다라 — domain 예술, the stimuli converge into one basin…`) = §16.6-C "정교한 암기" 의 *위치-수정 only*, memorization-saturated regime 불파.
+
+2. **training-time mechanism (P emission-head refine)** 으로는 같은 §16 routing-lever 자체가 P own 에서 미재현 + 4축 capability effect 0. **negative-at-scale, valuable for 'mechanism active ≠ capability'** evidence.
+
+→ **§22 결론**: §16 천장 위 coherent-capability 의 진짜 병목 = **data-regime threshold (§1.1)**. mechanism 차원 (decode-time OR training-time) 어느 path 도 §16 ceiling 못 깨음. 3 방향 모두 valuable evidence point (over-claim 0, negative 정직).
+
+### §22.6 closed-form aggregate
+
+**N 4/4 🔵 + O 5/5 🔵 + P 5/5 🔵 = 14/14 🔵 sidecar batteries** (all decode-time/training-time transfer-form + 연결부위 closed; central `state/verify_hexad_blue_2026_05_15/blue_falsifier.py` 변경 0 모두). per-direction `*-NOTE` empirical carve-out (B-D-NOTE / B-CARVE-E6-NOTE / B-DIRJ-NOTE family, NOT counted 🔵). capability OUTCOME 만 정직 carve-out.
+
+### §22.7 GOAL distance
+
+`§15 milestone` (GOAL 미도달, frontier=§1.1 diverse-data pre-training loss threshold) **불변**. §22 = §21 frontier-1 second cycle 의 *narrowing* — routing-break 위 coherent-capability path 중 어느 decode-time mechanism 도 GOAL 거리 못 좁힘. *frontier 자체* (§1.1 data-regime + emergence threshold + new architectural insight) carry, not movement. north-star (`GOAL.md`) 불변. valuable for "무엇이 아닌가" establishment + §16 SPLIT 의 mechanism-level honest dissection.
+
+### §22.8 Honest C3 (≥10)
+
+1. measured only — 14/14 🔵 closed transfer-form + 연결부위, capability OUTCOME 만 정직 carve-out (per-direction `*-NOTE` family).
+2. N/O `mechanism positive` 는 body §9 axis 의 **structural proxy uplift** (B-KTRIE-NOTE / B-MGND-NOTE) — LLM-judge / §18 sufficiency / held-out generalization 측정 아님. coherence 증명 아님 정직.
+3. P negative 두 측면 정직 — P self-baseline routing 0/64 (§16 21/64 미재현) + OFF↔ON delta 0. 자기 baseline 미재현은 valuable evidence (mechanism active ≠ training trajectory preserved).
+4. 셋 다 memorization-saturated regime (`§1.1` / `§2.4`) 불파. grounded body 도 *trained* carving template (memorized).
+5. **§16 JOINT-zero 정확한 mechanism**: O 의 측정이 chat-form bleed (axis2=0) → routing 아닌 chat-form 이 JOINT zero 원인 분해. 추후 §22 後 path 의 가장 직접적 lever 후보 (chat-form bleed 제거).
+6. **GOAL-legitimacy 셋 다 통과**: N (`.kosmos` = anima OWN anchor SSOT, decode-time ⊥ training), O (M-module = anima 자체 HEXAD module + Ψ-physics query, generic retriever 0), P (THINK=§16 Dir-I byte-equal + SPEAK refine cond = model's own physics, generic-diffusion forbidden call-set=0, §13-J substrate-교체 와 결정적 구별).
+7. f1/f2/f3 hard-fail safe (Boolean set algebra / Cauchy-Schwarz / Shannon CE≥0 / sympy ∂-sign / AST / sha256, NO σ/τ/φ/J₂; 외부 paper 자체 invariant only).
+8. B-IDENTITY-5 (forbidden-token grep 0): N trie SSOT anima-self only · O M canonical body §16 corpus byte-identical · P corpus §16 byte-identical.
+9. PyTorch substrate for P (NOT hexa-native, honest). N/O = Mac CPU $0 inference. P cost ≈ $0.3-0.4 runpod (provider runpod 우선 per `g_resource_active_parallel`). P orphan 0 (own pod GONE, sibling pod 미접촉 per multi-agent isolation).
+10. RESEARCH.md §22 = orchestrator 1회 mandate (3 방향 land 후 본 § consolidation). docs/* 신규 0 (`g_doc_consolidation`). state/ + PHILOSOPHY §verdict (g6 append-only) + HEXAD/CHAT/PLAN.md + HEXAD/README.md + AGENTS.tape n_hexad_progress sync only. P 의 self-commit 미완료 (rate-limit) → orchestrator 가 P artifact + verdict 도 본 commit 에 포함.
+
+### §22.9 sources
+
+- N (`KG-Trie / Graph-Constrained-Reasoning`): https://openreview.net/forum?id=6embY8aclt + DoGe https://arxiv.org/abs/2407.05718 (decode-time prefix-trie constraint, no training).
+- O (`Memory Decoder`): https://arxiv.org/abs/2508.09874 (NeurIPS 2025 plug-and-play retrieval-grounded decode, base 재학습 0).
+- P (`DiffuSpeech / think-then-speak`): https://arxiv.org/abs/2601.22889 (emission-head LM-text transfer; anima `<inner>/<voice>` Phase A1/C3 와 1:1).
+- arc reference: §16 BREAKTHROUGH consolidation §16.6-C "정교한 암기 + correct-prefix routing, generalization 아님" + §21 frontier-1 deep research + §15 milestone unchanged.
+
+### §22.10 후속
+
+- decode-time mechanism (N+O) 가 §16 body 절반 mechanism 으로 이동 가능 입증 — 단 *capability emergence* 아니다 정직. coherence 측정 (LLM-judge / §18 sufficiency / held-out generalization) 필요 (별도 cycle).
+- training-time mechanism (P) 의 *own routing-lever 재현* 문제 — §16 trainer 위 minimal-touch (refine head zero-mutation) 로 routing-lever 보존 시도가 가능한 follow-up.
+- **§22 가 가리키는 진짜 lever**: O 의 발견 — *chat-form bleed (axis2)* 이 JOINT-zero 의 원인. chat-form bleed 제거 path = `§22 後 path` 의 가장 직접적 후보 (mechanism 도 data-regime 도 아닌 corpus shaping + per-form supervision lever).
+- GOAL.md north-star 불변 — §22 는 frontier narrowing 이지 GOAL 진전 아님. *valuable for what is NOT the path*.

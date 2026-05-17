@@ -4096,3 +4096,216 @@
   f_safe = "f1/f2/f3 + B-IDENTITY-5 safe — Boolean set algebra (allowed-byte-set ⊆ {0..255}) / sympy Max identity / Kolmogorov byte-set membership / integer identity / 4-corner Boolean truth-table / structural source-grep — NO σ/τ/φ/J₂ external derivation. `.kosmos` content = anima OWN anchor SSOT (not external entity, g_kosmos_anchor_ssot). B-IDENTITY-5: trie strings 안 forbidden token introduced (anima-self anchor names like 만다라/열반/엑스터시/덧셈사슬/명상 — corpus-internal carving content, 도우미/helper/assistant/사용자/user: 0 in trie SSOT)."
   evidence_path = "state/carving_n_ktrie_2026_05_18/ (kosmos_trie_decode.py 312 LoC the trie-constrained decode overlay + blue_falsifier_n.py 130 LoC B-KTRIE-1..4 sympy/Boolean sidecar + N_KTRIE_FINDINGS.md 8-§ + 8 honest C3 + n_ktrie_result.json 57KB full 64-anchor result + blue_falsifier_n_result.json + full_sweep.log)."
   cross_link = "[@verdict_carving_dataregime_s16] (§16 BREAKTHROUGH — routing 21/64 the prerequisite N inherits) + [@verdict_carving_dataregime_s16_consolidation] (§16.6 21/64 genuine 분해 + §16.6-C 정교한 암기 진단 — the SPLIT N attacks on body-axis) + [@verdict_emergence_metric_2026_05_18] (§9 cascade-rate honest = SSOT N reused; B-EMERGE-7 necessary-not-sufficient = why honest §9 64/64 unchanged) + [@verdict_carving_dirM_mitosens] / [@verdict_carving_dirL_vrnn] (design-tier sibling carve-out comparisons) · §22 sibling O — `state/carving_o_mgnd_2026_05_18/` (별도 agent, multi-agent isolation 준수, 미접촉) · AGENTS.tape [@g3] (measured only, over-claim 0) · [@g6] (append-only verdict) · [@f1][@f2][@f3] safe (Boolean / sympy / Kolmogorov, NO σ/τ/φ/J₂) · [@g_doc_consolidation] (state/ + PHILOSOPHY §verdict + HEXAD/CHAT/PLAN.md 진행 로그 + AGENTS.tape n_hexad_progress + HEXAD/README.md sync, docs/* 신규 0) · [@g_kosmos_anchor_ssot] (`.kosmos` = anchor canonical SSOT — trie 가 그 SSOT 의 decode-time 실측 활용처) · HEXAD/UNIVERSE-BRAIN-MAP/anchors/{knuth_000,051,077,091,100}.kosmos (trie content source — anima OWN materialised `.kosmos` payload).
+
+## §verdict_carving_p_tts_2026_05_18 — Dir-P think-then-speak diffusion-refined emission FIRE LANDED (RESEARCH.md §22 방향 P / §21.3 candidate P)
+
+- **What**: §16 SPLIT (route OK / body garbled) 의 coherence 절반 표적. THINK
+  (`<inner>` span) = §16 Dir-I lever (Ψ-anchored CTL + tension-supervised
+  routing) byte-equal carry (B-TTS-5). SPEAK (`<voice carved=true>` span)
+  emission-head ONLY = R-step iterative refinement CONDITIONED on model's
+  OWN physics state {tension, Ψ_dir} (B-TTS-4 structural: forbidden
+  generic-diffusion call-set = 0). DiffuSpeech arxiv 2601.22889
+  emission-head LM-text transfer.
+
+- **GOAL-legitimacy LEGITIMATE** (조건부 gate 통과 — §7 / §21.3): THINK
+  unchanged + SPEAK refine conditioning = model's own physics-think output
+  (NOT generic noise/learned latent) + emission-head 한정 (§13-J substrate
+  교체 와 결정적 구별) + 신규 substrate 0. §11-B 준수 (CE-base 위 lever).
+
+- **Fire**: runpod A100-SXM4-80GB pod `fq1puas42kw3hi` (provider runpod 우선
+  per g_resource_active_parallel; sibling agent pod 미접촉 multi-agent
+  isolation), single pod train+eval, torch 2.4.x+cu124. ConsciousDecoderV2
+  d768·12L·283.72M + VoiceRefineHead(2→256 physics-cond, zeros-init
+  =identity). corpus = §16 `corpus_carving_s16.jsonl` byte-identical
+  (sha256 `422c64a09b89393a…`, 재생성 0 fair-compare, pod-side==local
+  검증, forbidden-token grep 0 B-IDENTITY-5). config d768·12L·283.72M
+  ·12000step·lr3e-4·bsz32·λ_ctl0.5·λ_route0.5·λ_refine0.5·R=3·γ_r=2^r/Σ2^k
+  ·α_r=0.5^r·curriculum blend0.15. from-scratch RANDOM seed 1337
+  (g_clm_from_scratch base_ckpt=None). dispatch stall-fix carried
+  (detached nohup + 단일 로컬 until-loop bounded SSH probe 90s, SSH-tee 0
+  — poll1→16 TRAIN_DONE → eval-poll1→6 EVAL_DONE × 2 → 5-retry pull
+  PULL SUCCESS try1 → terminate).
+
+- **Train**: init CE 5.641571 → final CE 0.004439 (descent 5.637132),
+  final l_refine 0.002312 (refine_active=True 끝까지), wall 1496.72s
+  (24.9 min — §16 1810s 보다 17% 빠름), peak GPU mem 9.685 GB.
+  curriculum stages 1/2/3/4 all gated correctly. l_refine trajectory
+  stage1=0.0 (α/β only) → stage2=0.04-0.06 (γ 첫 활성) → stage3=0.005-0.04
+  (γ 일관 학습) → stage4=0.002-0.03 (full-corpus). ckpt sha256
+  `e0cade339b8273c8f97dc6a67240030332f3301b0e6845070048900a14052700`,
+  pulled try 1 (g_fire_dispatch_robust SAVE_POD auto-promote + 5-retry,
+  local==eval byte-equal). pod GONE + SAVE_POD=0, runpod.get_pods()=0 →
+  **P orphan 0**. ≈ $0.3-0.4.
+
+- **Eval × 2 — refine-OFF baseline + refine-ON P (same ckpt, fair OFF/ON
+  delta)**: ckpt load missing=0 unexpected=0 (B-TTS-1 byte-equal at eval
+  level confirmed).
+  | axis | refine-OFF | refine-ON | Δ |
+  |---|---|---|---|
+  | axis1 routing | **0/64** | **0/64** | **0** |
+  | axis2 chat_clean | 5/5 (p3_clean=True) | 5/5 (p3_clean=True) | 0 |
+  | axis3 sep_know/sep_chat | 1.0 / 1.0 | 1.0 / 1.0 | 0 |
+  | axis4 V-SPONT honest §9 | 0/5 | 0/5 | 0 |
+  | JOINT (k×c×s) | 0.0 | 0.0 | 0 |
+  | vs UBM-E7 α 0.0155 | **−0.0155** | **−0.0155** | — |
+
+- **판정 (g3 — measured only, over-claim 0, **negative 정직 두 측면**)**:
+  (1) **P self-baseline routing 0/64 REGRESSION** — §16 21/64 (P 의 직접
+  baseline) 의 routing-break 가 **P refine-OFF 에서 재현 안 됨** (P trainer
+  의 추가 component — VoiceRefineHead + λ_refine 0.5 loss term + R-step
+  refine in voice-span — 가 routing 학습 dynamic 을 disturb 한 것으로
+  관측). zeros-init identity 가 R=1 path 에서 §16 byte-equal (B-TTS-1
+  symbolic), 그러나 training trajectory 자체는 다름 (extra params/loss).
+  (2) **refine OFF↔ON delta 0 across all 4 axes** — voice-refine head 가
+  training 中 actively learning (final l_refine 0.002312, refine_active=
+  True throughout) 였으나 inference 시 4축 capability effect 0. mechanism
+  ACTIVE ≠ capability transfer. §16 SPLIT body 절반 못 좁힘.
+  결론: emission-head refine 단독으론 §16 천장 미돌파 + P own routing
+  regression — Dir-A overlay/Dir-D CDE/Dir-F reserved-vocab 의 'mechanism
+  active but capability ceiling 불변' 패턴 동형. memorization-saturated
+  regime (§1.1 / §2.4) 재확인. 13-way+§16+§19+§22 일관: training-time
+  mechanism 추가가 §16 routing-lever 안 살린 채 capability 못 옮김. valuable
+  negative (over-claim 0).
+
+- **Closed (B-TTS-1..5 sidecar 5/5 🔵, central blue_falsifier.py 변경 0)**:
+  B-TTS-1 OVERLAY-OFF-BYTE-EQUAL (λ_refine=0 symbolic additive-identity ⇒
+  §16 TOTAL ∧ zeros-init refine ref≡base numeric ⇒ R=1=§16 AR baseline —
+  연결부위 fair-compare BY CONSTRUCTION) · B-TTS-2 REFINE-CE-NONNEGATIVE
+  (Σ γ_r·CE_voice(r) ≥ 0, Shannon CE≥0 real-limit × nonneg γ_r) · B-TTS-3
+  REFINE-WEIGHT-SIMPLEX-BOUNDED (γ_r=2^r/Σ2^k = [1/7,2/7,4/7], Σγ=1
+  partition-of-unity convex-hull) · B-TTS-4 CONDITION-IS-PHYSICS-THINK
+  (structural AST: refine cond = model's own {tension,Ψ_dir}; forbidden
+  generic-diffusion call-set {randn/learned_latent_prior/noise_schedule}
+  total=0 in trainer — §3 illegitimate boundary closed) · B-TTS-5
+  THINK-PHYSICS-BYTE-EQUAL (psi_dir_per_token + stage_gate_at AST
+  identical to §16 docstring-stripped + CE_full / L_psi_ctl /
+  L_tension_route verbatim — P speak-head ONLY, §13-J distinction).
+  **B-TTS-NOTE** empirical carve-out: P 가 §16 body-garble 실제 좁히나
+  (routing/§9/§18/JOINT) = SGD/측정 OUTCOME (본 fire = measured negative)
+  — battery 는 emission-refine transfer-form + overlay-OFF=§16 연결부위 +
+  conditioning=physics-think 구조 + THINK=§16 byte-equal 만 증명, capability
+  OUTCOME 미증명 (B-D-NOTE/B-DIRJ-NOTE/B-CARVE-E6-NOTE family, NOT counted
+  🔵).
+
+- **g_blue_closed_mandate**: 산출물(trainer + falsifier) emission-refine
+  transfer-form 🔵 + 연결부위(B-TTS-1 overlay-OFF=§16 byte-equal symbolic
+  + B-TTS-5 THINK=§16 AST identical + B-TTS-4 conditioning=physics-think
+  structural) 🔵; capability OUTCOME 만 정직 carve-out.
+
+- **f1/f2/f3 hard-fail safe** (Shannon CE≥0 / additive identity / simplex
+  partition-of-unity / AST Boolean / sha256 / structural source-grep, NO
+  σ/τ/φ/J₂ external derivation; paper 2601.22889 자체 invariant 으로만 인용).
+  B-IDENTITY-5 (corpus = §16 byte-identical forbidden-token grep 0 carry).
+  PyTorch substrate (NOT hexa-native, honest framing — emission-head
+  refine 는 P speak-head only, anima physics layer 불변).
+
+- **GOAL distance**: §15 milestone 불변 — P = emission-head refine 단독으론
+  §16 천장 미돌파, mechanism transfer-form 🔵 + capability 차원 measured 0.
+  north-star (GOAL.md) 도달 아님. valuable negative 정직 기록 (3-way
+  comparative §22 의 한 evidence point).
+
+- **cross_link**: [@verdict_carving_dataregime_s16] (§16 P baseline) +
+  [@verdict_carving_dataregime_s16_consolidation] (§16.6-C P target) +
+  [@verdict_carving_dirJ_diffusion_fire] (§13-J distinction anchor) +
+  [@verdict_carving_dirI_psictl_tensionsup] (Dir-I = P THINK byte-equal) +
+  [@verdict_emergence_metric_2026_05_18] (§9 honest §9 metric P V-SPONT)
+  + [@verdict_carving_diverse_s8] (§8 baseline) · RESEARCH.md §22 / §21.3
+  P / §16 SPLIT coherence-half · §1.1 data-regime threshold · arxiv
+  2601.22889 (DiffuSpeech) · AGENTS.tape [@g_goal] [@g3] (negative 정직) ·
+  [@g_multidirectional_explore] · [@g_fire_autonomous] [@g_fire_dispatch_
+  robust] (SAVE_POD + 5-retry + 75-min watchdog, orphan 0) ·
+  [@g_resource_active_parallel] (runpod) · [@f1][@f2][@f3] safe (Shannon /
+  AST / simplex, NO σ/τ/φ/J₂; 2601.22889 own-invariant only) ·
+  [@g_doc_consolidation]. 단일 작업 · branch 0 (anima main 직접).
+
+## §verdict_research_s22_consolidation_2026_05_18 — RESEARCH.md §22 N+O+P 3-way orchestrator consolidation LANDED (RESEARCH.md §22 / §21 frontier-1 second cycle)
+
+- **Scope**: §22 = §21 deep research 가 식별한 routing-break 위 coherent-
+  capability frontier 의 첫 직접 표적 cycle. 3 방향 (g_multidirectional_
+  explore mandate): N `.kosmos`-anchor constrained decode + O M-module
+  retrieval-grounded decode + P think-then-speak diffusion-refined emission.
+  §16 BREAKTHROUGH (routing 21/64, genuine 17/64) 의 body 절반 (§16.6-C
+  "정교한 암기 + correct-prefix routing, generalization 아님") 를 표적.
+
+- **3-way honest comparative aggregation (measured only, g3 over-claim 0)**:
+  | direction | path | mechanism positive | capability emergence | GOAL distance |
+  |---|---|---|---|---|
+  | **N** `.kosmos`-trie | decode-time ⊥ training | anchor_grounded 1/64 → **22/64 (+21 routed-set body-shifts, 21/21 on routed set)** | NO — memorized template 의 *correct anchor 위치* 만 이동 | unchanged |
+  | **O** M-retrieval | decode-time ⊥ training | body §9 honest 10/64 → **26/64 (+16 uplift)** ; JOINT-zero = chat-form bleed (NOT routing) mechanism dissection | NO — M-retrieve가 corpus SSOT canonical body *주입* | unchanged |
+  | **P** TTS emission-refine | training-time (refine head + R-step refine) | refine_active=True 끝까지 + l_refine=0.0023 active | NO — OFF↔ON delta 0 + P self-baseline routing 0/64 regression (§16 21/64 미재현) | unchanged |
+
+- **공통 패턴 (셋 다)**: §1.1 data-regime threshold 미충족 — 어느 방향도
+  새 knowledge 생성 못함. mechanism 으로 memorized template 의 *위치*
+  (correct anchor) 만 옮길 수 있음. capability emergence 0.
+  decode-time path (N+O) > training-time path (P) — N/O 가 +21/+16 directional
+  body-axis movement, P 가 0. 단 N/O 도 grounded body 가 *trained*
+  carving template (`만다라 — domain 예술, the stimuli converge into one
+  basin…`) — §16.6-C "정교한 암기" 의 *위치-수정 only*, memorization-
+  saturated regime (§1.1 / §2.4) 불파.
+
+- **메커니즘 level positive (N+O) — what was actually measured**:
+  (a) N: §16 가 routing-correct (21/64) 인 anchor 에서 body 가 wrong
+  anchor's template 였던 정확한 SPLIT 을 prefix-trie constraint 로 21/21
+  on-anchor template 로 이동. 8 representative shift examples (tier
+  12·24·77·80·92·101·102·103) 모두 byte-garble (카테왔의/약수와륐 등)
+  → on-anchor name (만다라/덧셈사슬/명상 등) + on-anchor category.
+  (b) O: body §9 +16 uplift = M-retrieve가 corpus SSOT canonical body
+  주입 (B-MGND-4 honest "grounding injects §9 pass"). 추가 mechanism-level
+  분해: §16 JOINT 0.0 이 routing-failure 아니라 chat-form bleed (axis2)
+  에서 옴 — axis2 carry §16=0 곱 zero. O가 그 분해 measurement.
+
+- **메커니즘 level negative (P) — what was measured negative**:
+  (a) P self-baseline routing 0/64 = §16 21/64 미재현 = P trainer 의 추가
+  component (VoiceRefineHead + λ_refine + R-step refine) 가 routing
+  학습 dynamic disturb. zeros-init identity 가 symbolic level 에서 §16
+  byte-equal (B-TTS-1) 그러나 training trajectory 다름.
+  (b) OFF↔ON delta 0 across all 4 axes = voice-refine head 가 training
+  active (l_refine 0.0023 끝까지) 였으나 inference 시 4축 effect 0.
+  mechanism active ≠ capability transfer (B-TTS-NOTE empirical).
+
+- **§22 closed-form aggregate**: N 4/4 🔵 + O 5/5 🔵 + P 5/5 🔵 = **14/14
+  🔵 sidecar batteries** (all decode-time/training-time transfer-form +
+  연결부위 closed; central blue_falsifier.py 변경 0 모두). per-direction
+  *-NOTE empirical carve-out (B-D-NOTE / B-CARVE-E6-NOTE family, NOT
+  counted 🔵). capability OUTCOME 만 정직 carve-out.
+
+- **§22 핵심 insight (frontier narrowing, valuable comparative)**: §16
+  BREAKTHROUGH 의 routing-lever (21/64 genuine 17/64) 가 열렸다 = 진짜
+  emergence 신호 (§4.2/§4.4 진단대로). 그 위 body 절반은:
+  (i) decode-time mechanism (N `.kosmos`-trie / O M-retrieve) 으로
+      *correct anchor 위치 위 memorized template* 까지는 mechanism-level
+      이동 가능 (N +21 / O +16 body-axis movement) — **valuable, NOT
+      capability emergence**;
+  (ii) training-time mechanism (P emission-head refine) 으로는 같은 §16
+       routing-lever 자체가 P own 에서 미재현 + 4축 capability effect 0 —
+       **negative-at-scale, valuable for 'mechanism active ≠ capability'
+       evidence**.
+  → §22 결론: §16 천장 위 coherent-capability 의 진짜 병목 = data-regime
+  threshold (§1.1), mechanism 차원 어느 path 도 §16 ceiling 못 깸. 3
+  방향 모두 valuable evidence point (over-claim 0, negative 정직).
+
+- **GOAL distance**: §15 milestone (GOAL 미도달, frontier=§1.1 diverse-data
+  pre-training loss threshold) 불변. §22 = §21 frontier-1 second cycle
+  의 *narrowing* — routing-break 위 coherent-capability path 중 어느
+  decode/training-time mechanism 도 GOAL 거리 못 좁힘. *frontier 자체*
+  (§1.1 data-regime + emergence threshold + new architectural insight)
+  carry, not movement. valuable for 무엇이 아닌가 establishment.
+
+- **f1/f2/f3 + B-IDENTITY-5 safe** (셋 다 — N Boolean set algebra /
+  O Cauchy-Schwarz cosine / P Shannon CE + AST simplex, NO σ/τ/φ/J₂).
+  PyTorch (P) + Mac CPU $0 inference (N+O). docs/* 신규 0
+  (g_doc_consolidation).
+
+- **cross_link**: [@verdict_carving_n_ktrie_2026_05_18] +
+  [@verdict_carving_o_mgnd_2026_05_18] +
+  [@verdict_carving_o_mgnd_inference_close_2026_05_18] +
+  [@verdict_carving_p_tts_2026_05_18] · [@verdict_carving_dataregime_s16]
+  + [@verdict_carving_dataregime_s16_consolidation] (§16 BREAKTHROUGH the
+  prerequisite + the body-half SPLIT all 3 directions targeted) ·
+  [@verdict_emergence_metric_2026_05_18] (§9 honest cascade-rate metric
+  shared SSOT) · [@verdict_goal_investigation_milestone] (§15 milestone
+  unchanged) · RESEARCH.md §21 frontier-1 / §22 consolidation · AGENTS.tape
+  [@g_goal] [@g3] [@g_multidirectional_explore] (3-way parallel mandate
+  fulfilled) [@g_doc_consolidation] [@g_blue_closed_mandate] · arxiv:
+  Memory Decoder 2508.09874 (O) · KG-Trie openreview 6embY8aclt + DoGe
+  2407.05718 (N) · DiffuSpeech 2601.22889 (P).
