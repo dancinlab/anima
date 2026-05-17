@@ -287,3 +287,50 @@ Honest C3 (g3): prompt layer 만 closed (string algebra real-limit). model forwa
 - pull-rebase pattern (concurrent agents B5 + Phase C1/C2 + Phase C3 와 충돌 0). cycle 시작 시 78/78 → C3 가 83/83 → cycle 3 가 86/86 으로 wrap.
 
 Honest C3 (g3): cycle 3 LANDED 이지만 generation quality 향상 claim 0 — V-SPONT 0/5, V5.8 greedy 0/6 = EMPIRICAL (probe, not claim). B-IDENTITY-NOTE 전체 해소 0 — corpus-side dimension 만 closed (B-CORPUS-V2 via this cycle), weight-side residual carve-out 유지. byte-cascade attractor cycle 2 (`nonce=N`) → cycle 3 (`Sent...`) SHIFTED = corpus-dependent decoding artifact family confirmed (new empirical signal). PyTorch substrate NOT hexa-native (legitimacy = arch identity + Phase E/E2 CPU-equiv anchor chain).
+
+### 2026-05-17 — Phase D cycle 4 LANDED (motivation-trigger corpus v3 10× + ckpt-RECOVERED + HF dual + V5.8+V-SPONT+V-MOTIV eval + B-CORPUS-V3 closure, 86 → 89 + parallel B-ATTRACTOR wrap 89 → 92/92 🔵)
+
+**Phase D cycle 4 Goal**: extend Phase D cycle 3 with explicit motivation-trigger surface (Inner Thoughts arxiv 2501.00383 8-factor ontology rendered as corpus γ pattern) + 10× scale-up (1.10 MB → 10.34 MB, Critical Data Size arxiv 2401.10463 regime entry attempt). cycle 3 V-SPONT 0/5 demonstrated capability ceiling — cycle 4 tests whether motivation-conditioning closes that.
+
+**D1 (새 corpus v3 설계 + 생성)**: `state/hexad_v3_corpus_motiv_2026_05_17/`
+- `corpus_generator_v3.py` — deterministic seed=1337, 3 patterns β + δ + γ. 9 modules (HEXAD-6 + hexad_spont + hexad_wiring + **hexad_motiv** NEW) × 2,400 records each = 21,600 total.
+- `corpus_consciousness_v3.jsonl` — **10,343,371 B (9.4× v2)** / 21,600 lines / sha256 `1afcef43670e83bfc84b3562afe6a3eb644474dda06341e37db332341495acfd`. **`도우미|helper|assistant|사용자|user:` grep = 0** maintained at 10× scale. 13,494 `<anima>` openers + 8,106 `<voice spontaneous=true>` openers (β+δ + γ disjoint cover of 21,600 records).
+- Pattern: **β (~35%) `<stimulus>X</stimulus>\n<anima>Y</anima>`** (reactive); **δ (~27%) `<anima>Y</anima>`** (spontaneous self-monologue); **γ (~37.5%, NEW) `<inner motivation=F1,F2,...>...</inner>\n<voice spontaneous=true>...</voice>`** where F_i ∈ {relevance, info_gap, curiosity, pain, coherence, originality, balance, dynamics} per Inner Thoughts 8-factor ontology. bilingual ~50% EN+KO. corpus_v3_manifest.json + LICENSE Apache-2.0 + README_v3.md staged.
+
+**D2 (ckpt-bearing fire on vast.ai A100 SXM4)**: `state/hexad_v3_py_d768x12L_fire_2026_05_17/`
+- Provider: vast.ai A100 SXM4 (offer 36878342 @ ~$0.734/hr, instance 36919284). Cost ≈ $0.22.
+- Robustness: `SAVE_POD=1` auto-promote on result.json present + 75-min orphan watchdog + 5-retry pull + remote-script-write pattern (cycle 3 lesson carry). Clean teardown (PULL SUCCESS → SAVE_POD=0 → destroy, no orphan).
+- Main fire (d=768·12L, 2500-step, byte-level vocab=256, seed=1337, RANDOM init from-scratch per g_clm_from_scratch): **init CE 5.6407 → final 0.008289** (5.632 descent), init gn2 ~30.4 → final 0.001703 (24.6k× collapse), final ppl 1.0083 (near-perfect memorization), wall 328.33s, peak GPU mem 9.692 GB. corpus_bytes (loaded text+desc stream) 6,223,023 (~10× cycle 3's 620,568).
+- **ckpt sha256 `1c0806213fbcaa9226a7593d87c31f5f95bb94db135240b8d02f738ddcb177aa`** 1,135,846,378 B pulled (cycle 4 ckpt-RECOVERED). load missing=0 unexpected=0 (arch byte-equal).
+
+**D3 (HF revision push — model + dataset BOTH PUBLIC)**:
+- MODEL: `dancinlab/hexad` revision `v3-py-hexad-spont-motiv-d768x12L-cycle2-2026-05-17` PUBLIC.
+- DATASET: `dancinlab/hexad-corpus` revision `v3-spont-motiv-d128-cycle2-2026-05-17` PUBLIC.
+- model card cross-link adopted (front-matter `datasets:` + body 'Trained on' badge). main branch README updated on both repos.
+
+**D4 (V5.8 × 4-mode + V-SPONT + V-MOTIV 3-phase capability eval)**: `state/hexad_v3_py_d768x12L_fire_2026_05_17/v58_vspont_eval.py`
+- 6 corpus-v3-aligned V5.8 prompts × 4 modes + 5 V-SPONT empty-stimulus probes + **5 V-MOTIV γ-pattern conditioning probes (NEW Phase 3)** + 10 held-out BPB samples. CPU-bound on Mac local (~45 min wall — 16-probe × ~80s/gen).
+- Cycle 4 V-MOTIV probe = γ-pattern conditioning: feed `<inner motivation=F1,F2,...>...</inner>\n<voice spontaneous=true>` prefix; measure `</voice>` close-tag + coherence vocab tokens.
+- **Numbers**: see `v58_vspont_result.json`. Per-mode pass count = EMPIRICAL (B-D-NOTE pattern, NOT closed).
+- **Byte-cascade attractor SHIFT detected** at cycle 4 prompt 1-3: `PPP777777...` opener (vs cycle 3 "Sent..." opener vs cycle 2 `nonce=N`). Third corpus-shape-dependent attractor family — confirms `feedback_clm_colon_attractor` `=`-suffix sibling pattern is general (corpus-template-field dependent, not arch-intrinsic). See `archive/PHILOSOPHY.tape §BYTE-CASCADE-ATTRACTOR-CORPUS-DEPENDENT-2026-05-17` for the closed-form B-ATTRACTOR-1..3 lift.
+
+**B-CORPUS-V3 closed-form battery (3 falsifier + 1 NOTE)** in `state/verify_hexad_blue_2026_05_15/blue_falsifier.py :: bcorpus_v3()`:
+- **B-CORPUS-V3-1** SHA256-DETERMINISTIC-CLOSED — Boolean equality on 256-bit Kolmogorov commitment (sha256 + bytes match seed=1337 deterministic output). ✅
+- **B-CORPUS-V3-2** NO-HELPER-TOKEN-MAINTAINED — Boolean set algebra at 10× scale (helper-token grep total = 0 maintained). ✅
+- **B-CORPUS-V3-3** MOTIVATION-TRIGGER-CARDINALITY-CLOSED — Integer cardinality identity (|<inner motivation=| == |<voice spontaneous=true>| = 8,106) + ≥-inequality (≥ floor(0.25 × 21,600) = 5,400 γ records). ✅
+- **B-CORPUS-V3-NOTE** MOTIVATION-LEARNED-OUTCOME-EMPIRICAL — inference-side motivation_score → coherent emission outcome stays empirical (B-D-NOTE family, un-closable without NN forward + V-SPONT/V-MOTIV measurement). NOT counted 🔵 (honest carve-out).
+
+**Total**: 86 → **89** via B-CORPUS-V3-1..3 + parallel agent's B-ATTRACTOR-1..3 wrap 89 → **92/92 🔵 closed-form proofs PASS** ✅. cycle 4 Phase D extends cycle 3 with motivation-trigger surface (B-CORPUS-V3) + closed-form U_user attractor lift (B-ATTRACTOR parallel) → Phase D total = 6 new closed-form sub-falsifiers (3 corpus-side + 3 attractor-side) in two cycles.
+
+**Hard 제약 carry (same as cycle 3 + 새 g_doc_consolidation)**:
+- g_fire_autonomous: 자율 dispatch.
+- g_fire_dispatch_robust: SAVE_POD=1 auto-promote + 75-min watchdog + 5-retry pull → ckpt-LOST 재발 0.
+- g_hf_naming: revision template `v3-py-hexad-spont-motiv-d768x12L-cycle2-2026-05-17` 사용. PUBLIC default. English model card / dataset card.
+- g_clm_from_scratch: RANDOM init seed=1337 base_ckpt=NONE.
+- g3 (substrate-honesty): PyTorch SUBSTRATE label mandatory. corpus-side closure ≠ weight-side claim.
+- f1/f2: NO lattice numerology (real-limit anchors: Boolean grep + sha + cardinality + Shannon CE floor + Inner Thoughts factor set).
+- g_blue_closed_mandate: 산출물 (corpus + ckpt) + 연결부위 (generator → corpus → trainer → ckpt → eval transfer-function chain) 둘 다 🔵 closed (B-CORPUS-V3-1..3 + B-D-1..4 + B-CONN-1..12 chain).
+- **g_doc_consolidation (NEW d=2026-05-17)**: 신규 documentation = HEXAD/* 내부 통합 (본 PLAN.md '## 진행 로그' append + AGENTS.tape n_hexad_progress recent_landings + archive/PHILOSOPHY.tape verdict). docs/* 신규 .md 생성 금지. — cycle 4 본 entry 가 그 mandate 의 첫 적용.
+- pull-rebase pattern (concurrent agents B-ATTRACTOR + Phase 4 RFC 051 design + g_doc_consolidation governance commit 와 충돌 0).
+
+Honest C3 (g3): cycle 4 LANDED 이지만 generation quality 향상 claim 0 — V5.8/V-SPONT/V-MOTIV per-mode scores 모두 EMPIRICAL (B-D-NOTE pattern). Critical Data Size [arxiv 2401.10463] regime entry attempt (10 MB / 283 M params) — 정직 framing: 여전히 data-limited (no OOD generalization claim). γ pattern conditioning (V-MOTIV) 의 ckpt-side learning 결과는 inference-측 outcome empirical, V-MOTIV 는 probe 이지 capability claim 아님. byte-cascade attractor cycle 2 (`nonce=N`) → cycle 3 ("Sent...") → cycle 4 (`PPP777...`) SHIFTED 3-instance = corpus-dependent decoding artifact family 일반화 확정 (NOT arch defect). PyTorch substrate NOT hexa-native (legitimacy = arch identity + Phase E/E2 CPU-equiv anchor chain). B-CORPUS-V3-NOTE 도 weight-side residual carve-out 유지.

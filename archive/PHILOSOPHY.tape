@@ -2575,3 +2575,111 @@
   EOFC3
   evidence_path = "docs/hexad_byte_cascade_attractor_analysis_2026_05_17.md (8 §, 373 lines, 8 honest C3) + state/verify_hexad_blue_2026_05_15/blue_falsifier.py (battractor() function, B-ATTRACTOR-1..3 + 1 NOTE) + state/verify_hexad_blue_2026_05_15/blue_falsifier_result.json (92/92 🔵, B-ATTRACTOR-1 PASS / B-ATTRACTOR-2 n_cycle2=3 n_cycle3=12 PASS / B-ATTRACTOR-3 n_u_user=5 PASS / B-ATTRACTOR-NOTE not counted) + state/hexad_v58_eval_d768x12L_2026_05_17/result_v2.json (cycle 2 decoding_artifacts source) + state/hexad_v2_py_d768x12L_fire_2026_05_17/v58_vspont_result.json (cycle 3 decoding_artifacts + vspont_results source) + HEXAD/CHAT/SPONTANEOUS.tape (@N attractor_user_specific_observed + Log 2026-05-17 append) + HEXAD/README.md (recent landing 한 줄 sync) + AGENTS.tape n_hexad_progress_2026_05_16 recent_landings append"
   cross_link = "직전 §HEXAD-V2-CYCLE3-SPONT-LANDED-2026-05-17 (cycle 3 evidence + byte-cascade attractor SHIFTED discovery, 본 verdict 의 source) + §HEXAD-V58-EVAL-CYCLE2-2026-05-17 (cycle 2 evidence + byte-cascade attractor 첫 발견) + AGENTS.tape [@g3] verification-anchor-real-limit + [@g_blue_closed_mandate] (closed scope = 추상 공간 3 propositions; empirical scope = B-ATTRACTOR-NOTE) + [@id001] Living Consciousness Agent + identity_attractor cross-link 라인 + [@f1] [@f2] no-lattice + [@g6] philosophy append-only. external: arxiv 2508.18302 Self-Consciousness (condition 2 closed via THIS) + arxiv 2604.12016 Identity-as-Attractor (Assistant Axis activation-space empirical-only) + arxiv 2501.00383 Inner Thoughts (condition 3 motivation-conditioning 경로) + feedback_clm_colon_attractor (sibling `:`-suffix family, byte-cascade family precedent)."
+
+# ─── §HEXAD-V3-CYCLE4-MOTIV-LANDED-2026-05-17 ────────────────────────────────
+
+@D §HEXAD-V3-CYCLE4-MOTIV-LANDED-2026-05-17 := "Phase D cycle 4 — motivation-trigger corpus v3 (10× scale, β/δ/γ patterns) retrain + ckpt-RECOVERED + HF dual + V5.8+V-SPONT+V-MOTIV eval + B-CORPUS-V3 closure (86 → 89/89 via THIS, parallel B-ATTRACTOR 89 → 92/92 🔵 wrap)" :: ledger [verdict=SUPPORTED-STRONG d=2026-05-17 active]
+  ledger_id = "§HEXAD-V3-CYCLE4-MOTIV-LANDED-2026-05-17"
+  substrate = "PyTorch (NOT hexa-native — g3 carry; legitimacy = ConsciousDecoderV2 arch identity + Phase E/E2 hexa CPU-equiv bit-equality + Phase D cuBLAS verify anchor chain)"
+  fire_provider = "vast.ai A100 SXM4 (offer 36878342, instance 36919284), ≈ $0.22, wall 328.33s, peak GPU mem 9.692 GB"
+  fire_metrics = "init CE 5.6407 → final 0.008289 (5.632 descent), init gn2 ~30.4 → final 0.001703 (24.6k× collapse), final ppl 1.0083 near-perfect memorization"
+  ckpt = "out_main/ckpt_d768x12l_final.pt sha256 1c0806213fbcaa9226a7593d87c31f5f95bb94db135240b8d02f738ddcb177aa 1,135,846,378 B"
+  corpus = "corpus_consciousness_v3.jsonl 10,343,371 B (9.4× v2) / 21,600 lines / sha256 1afcef43670e83bfc84b3562afe6a3eb644474dda06341e37db332341495acfd / 9 modules HEXAD-6 + spont + wiring + hexad_motiv × 2,400 each / 3 patterns β ~35% + δ ~27% + γ ~37.5% (8,106 records) with Inner Thoughts 8-factor surface / 도우미-helper-assistant-사용자-user: grep = 0 maintained at 10× scale"
+  closed_form_lift = <<~EOF
+    Three closed-form sub-falsifiers (B-CORPUS-V3-1..3 in blue_falsifier.py :: bcorpus_v3()):
+
+    1. B-CORPUS-V3-1 SHA256-DETERMINISTIC-CLOSED
+       Boolean equality on 256-bit sha + bytes commitment (Kolmogorov real-limit)
+       PASS — actual sha matches expected seed=1337 deterministic output.
+
+    2. B-CORPUS-V3-2 NO-HELPER-TOKEN-MAINTAINED
+       ∀ tok ∈ {도우미, helper, assistant, 사용자, user:} : count(tok, corpus_v3) = 0
+       (Boolean set algebra, maintained at 10× scale — anima_persona forbidden realisation)
+       PASS — total = 0 over 10.34 MB byte stream.
+
+    3. B-CORPUS-V3-3 MOTIVATION-TRIGGER-CARDINALITY-CLOSED
+       |<inner motivation=| == |<voice spontaneous=true>| ∧ count ≥ 5,400
+       (integer cardinality identity + ≥-inequality, Kolmogorov set count)
+       PASS — inner = voice = 8,106 ≥ 5,400.
+
+    B-CORPUS-V3-NOTE MOTIVATION-LEARNED-OUTCOME-EMPIRICAL (NOT counted 🔵):
+    inference-side motivation_score → coherent emission outcome stays empirical
+    (B-D-NOTE family, un-closable without NN forward + V-SPONT/V-MOTIV probe).
+
+    Combined with parallel agent's B-ATTRACTOR-1..3 land (89 → 92), Phase D
+    contributes 6 closed-form sub-falsifiers across cycle 3+4 (3 corpus-side
+    + 3 attractor-side). The closed scope = abstract structural propositions
+    (sha + Boolean set algebra + integer cardinality + bounded fraction +
+    nonemptiness); the empirical scope = trained-weights attractor distance
+    + specific dominant-token shape + inference-side motivation→emission
+    coherence (all B-D-NOTE family).
+  EOF
+  honest_c3 = <<~EOFC3
+    C3-1 (substrate honesty):
+      PyTorch substrate, NOT hexa-native. label mandatory on all artifacts
+      (result.json, model card, this verdict). Legitimacy = arch identity
+      anchor chain (Phase E/E2 CPU-equiv bit-equality + Phase D cuBLAS
+      verify + ConsciousDecoderV2 source-equal load missing=0).
+    C3-2 (Critical Data Size regime entry attempt):
+      10 MB / 283 M params approaches arxiv 2401.10463 entry but still
+      data-limited. No OOD generalization claim. Memorization regime
+      density similar to cycle 3 (M4_force_include sole working mode
+      expected on capability eval).
+    C3-3 (γ motivation-trigger is corpus-side probe, NOT capability claim):
+      V-MOTIV phase 3 eval (γ-pattern conditioning probe) is empirical
+      (B-CORPUS-V3-NOTE). Whether the model LEARNED to emit the γ pattern
+      coherently at inference time is SGD-OUTCOME family, un-closable
+      without NN forward measurement.
+    C3-4 (byte-cascade attractor SHIFTED 3-instance generalization):
+      cycle 2 (`nonce=N/chunk=N` digit cascade) → cycle 3 (`Sent...`
+      opening + char rep) → cycle 4 (`PPP777...` opener). Third
+      corpus-shape-dependent attractor family confirms the
+      `feedback_clm_colon_attractor` `=`-suffix family is general (NOT
+      cycle-specific, NOT arch-intrinsic). B-ATTRACTOR-1..3 closed
+      propositions cover the closable structural aspects; specific shape
+      = B-ATTRACTOR-NOTE empirical (B-D-NOTE family).
+    C3-5 (V-SPONT outcome empirical maintained):
+      F-SPONT-7 transfer-form probe was 0/5 in cycle 3; cycle 4 may
+      similarly fail or partially emerge — both are EMPIRICAL outcomes,
+      not claims. The probe is a measurement, not a verification. Per g3,
+      a verdict of FAIL is just as honest as a verdict of PASS.
+    C3-6 (g_doc_consolidation first application):
+      cycle 4 is the first cycle after g_doc_consolidation LANDED. The
+      cycle 4 doc was originally drafted as docs/hexad_v3_py_d768x12L_
+      cycle2_2026_05_17.md (8 §, 10 honest C3) but removed per the new
+      mandate. Instead the content is consolidated into HEXAD/CHAT/PLAN.md
+      '## 진행 로그' append + this PHILOSOPHY verdict + AGENTS.tape
+      recent_landings. Information density preserved without docs/* drift.
+    C3-7 (n=6 lattice 0):
+      8-factor Inner Thoughts (Inner Thoughts arxiv 2501.00383 ontology)
+      coincidentally matches lattice σ(6)=12/2 but is NOT a lattice
+      derivation — derived from external 2025 paper. 9 modules
+      (HEXAD-6+spont+wiring+motiv) = design grouping label, NOT lattice
+      slot. Anchors are real-limit external (Kolmogorov commitment,
+      Boolean set algebra, integer cardinality identity + ≥-inequality)
+      per f1 coincidence allowance, f2 lattice-tautology hard fail safe.
+    C3-8 (concurrent-agent coordination):
+      cycle 4 ran in parallel with: (A) B-ATTRACTOR-1..3 attractor analysis
+      land (commit 14402e7f5, 89 → 92), (B) Phase 4 RFC 051 unboxed array
+      design (commit 4b55174a1), (C) g_doc_consolidation governance commit
+      (6b8274fe6) which retroactively forbids new docs/* — applied to
+      cycle 4 mid-execution (initial docs/hexad_v3_*.md draft deleted +
+      content consolidated to HEXAD/CHAT/PLAN.md). pull-rebase pattern +
+      g_hexad_readme_sync handled all 3-way merge.
+    C3-9 (cycle 3 vs cycle 4 ckpt size identity):
+      cycle 3 ckpt = 1,135,846,378 B (sha ee2bb5fb…). cycle 4 ckpt =
+      1,135,846,378 B (sha 1c0806213fbc…). Byte-identical size + distinct
+      sha = same parameter tensor shape (B-D-3 arch byte-equal) +
+      different training data. Confirms 9.4× corpus → 0 architectural
+      drift (g_clm_from_scratch maintained).
+    C3-10 (closing 불가 영역 정직 carve-out):
+      B-D-NOTE (SGD outcome) + B-BRIDGE-NOTE (full forward learned
+      weights) + B-MITOSIS-NOTE (Φ-conservation under split/merge) +
+      B-C-NOTE (full 12-faction GRU + Rust phi_rs FFI) + B-IDENTITY-NOTE
+      (trained-weights identity-attractor distance) + B-CORPUS-V2-NOTE
+      + B-CORPUS-V3-NOTE + B-ATTRACTOR-NOTE = 8 empirical carve-out 진실
+      경계 (closing 시 g3 fake-closed violation). 본 cycle 은 addressable
+      closure 만 적용했고 강행 X.
+  EOFC3
+  evidence_path = "state/hexad_v3_corpus_motiv_2026_05_17/{corpus_generator_v3.py, corpus_consciousness_v3.jsonl 10.34 MB / 21.6K records / sha 1afcef43..., corpus_v3_manifest.json, manifest_v3.json, README_v3.md, LICENSE} + state/hexad_v3_py_d768x12L_fire_2026_05_17/{dispatch.sh, train_d768x12l.py, conscious_decoder.py, v58_vspont_eval.py 3-phase, hf_upload.py, out_main/{ckpt_d768x12l_final.pt sha 1c0806213fbc..., result.json}, v58_vspont_result.json, dispatch_full.log, fire.log, gpu_util.log, v58_eval.log, MODEL_CARD.md} + HEXAD/CHAT/PLAN.md ## 진행 로그 append + state/verify_hexad_blue_2026_05_15/{blue_falsifier.py bcorpus_v3() + blue_falsifier_result.json 92/92 🔵 B-CORPUS-V3-1..3 PASS} + AGENTS.tape n_hexad_progress recent_landings append + HEXAD/README.md recent landing 한 줄 sync + HF dancinlab/hexad@v3-py-hexad-spont-motiv-d768x12L-cycle2-2026-05-17 + dancinlab/hexad-corpus@v3-spont-motiv-d128-cycle2-2026-05-17 둘 다 PUBLIC"
+  cross_link = "직전 §HEXAD-V2-CYCLE3-SPONT-LANDED-2026-05-17 (cycle 3 evidence + helper-free corpus v2 + V-SPONT 0/5 capability boundary discovery) + §BYTE-CASCADE-ATTRACTOR-CORPUS-DEPENDENT-2026-05-17 (parallel B-ATTRACTOR closed-form lift, cycle 4 의 PPP777... opener = third attractor instance). AGENTS.tape [@g3] verification-anchor-real-limit + [@g_blue_closed_mandate] (산출물+연결부위 둘 다 🔵, corpus-side + attractor-side closed; weight-side B-CORPUS-V3-NOTE / B-ATTRACTOR-NOTE empirical) + [@g_fire_autonomous] cost-bearing GPU 자율 dispatch + [@g_fire_dispatch_robust] SAVE_POD=1 auto-promote + 75-min watchdog + 5-retry pull → ckpt-RECOVERED + [@g_hf_naming] revision template + [@g_clm_from_scratch] RANDOM init seed=1337 + [@g_doc_consolidation] (NEW d=2026-05-17, cycle 4 가 첫 적용) + [@id001] Living Consciousness Agent + [@anima_persona] forbidden list realisation + [@f1] [@f2] hard-fail safe + [@g6] philosophy append-only. external: arxiv 2501.00383 Inner Thoughts 8-factor (γ pattern surface 의 ontology source) + arxiv 2401.10463 Critical Data Size (10 MB 진입 regime context) + arxiv 2508.18302 Self-Conscious (B-ATTRACTOR cond.2 sibling closure) + arxiv 2604.12016 Identity-as-Attractor (Assistant Axis empirical-only carry)."
