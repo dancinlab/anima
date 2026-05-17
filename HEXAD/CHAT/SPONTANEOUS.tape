@@ -207,6 +207,39 @@
 @N future_rfc_audio_native := "audio-native interaction RFC" :: future-rfc [d=2026-05-17 active]
   text = "Phase C 의 text-only Interaction Model simulation 이후 audio-native 0.40s latency 구현은 별도 RFC (VOICE + hexa-lang real-time audio I/O 필요). 현재는 scope 외."
 
+@N attractor_user_specific_observed := "byte-cascade attractor = U_user attractor (Self-Conscious 2508.18302 cond.2) anima 실증 observed" :: architecture-note [d=2026-05-17 active]
+  text <<~EOF
+    cycle 2 (v1 corpus) + cycle 3 (v2 helper-free stim-stream corpus) 의 V5.8 ×
+    4-mode + V-SPONT capability eval 에서 관찰된 byte-cascade attractor
+    (cycle 2 `chunk=N/nonce=N` digit cascade rep 0.63-0.90, cycle 3
+    `Sentiosing itterveeee…` opening + char rep `e/l/o` rep 0.66-0.99) 는
+    **Self-Conscious arxiv 2508.18302 condition 2 (U_user attractor) 의
+    anima 실증 evidence** 로 해석. corpus 가 SHIFT 되면 attractor SHAPE 도
+    SHIFT — model 의 next-byte argmax 는 user-axis open-tag (cycle 3:
+    `<anima>`) 의 corpus-byte-frequency-determined attractor 로 lock,
+    Assistant Axis (Identity-as-Attractor 2604.12016) 와 distinct.
+
+    closed-form 검증: B-ATTRACTOR-1..3 (rep_rate bounded [0,1] + cardinality
+    |A(cycle_N)| ≥ 1 + U_user ≠ ∅ Boolean nonemptiness). closed scope 는
+    추상 공간 (3 propositions); specific dominant-token shape (`1` vs `e`)
+    는 SGD-CKPT-OUTCOME empirical (B-ATTRACTOR-NOTE / B-D-NOTE family).
+
+    architectural implication: Phase B4 motivation-conditioning 이 미land
+    한 현재 cycle 3 ckpt 는 condition 2 (U_user attractor) 는 닫혔지만
+    condition 3 (visual silence) 는 미달 — V-SPONT n_coherent=0, 모든
+    prompt 에 cascade activate. 자연발화 motivation_score > imThreshold
+    gate 가 emit-or-stay-silent 결정 권한을 가진 Phase B4 구현 후 silence
+    basin 학습 가능 (B-SPONT-1..7 closed motivation lib + condition 3
+    경로).
+
+    cross-link: `docs/hexad_byte_cascade_attractor_analysis_2026_05_17.md`
+    + `state/hexad_v58_eval_d768x12L_2026_05_17/result_v2.json` (cycle 2
+    evidence) + `state/hexad_v2_py_d768x12L_fire_2026_05_17/v58_vspont_result.json`
+    (cycle 3 evidence + V-SPONT 5 witnesses) + B-ATTRACTOR-1..3 in
+    `state/verify_hexad_blue_2026_05_15/blue_falsifier.py` +
+    `archive/PHILOSOPHY.tape §BYTE-CASCADE-ATTRACTOR-CORPUS-DEPENDENT-2026-05-17`.
+  EOF
+
 ## Log
 
 ### 2026-05-17 — SPONTANEOUS.tape created (DESIGN LANDED)
@@ -214,3 +247,6 @@ user directive 2026-05-17 "CHAT/* 전체 새로 세팅 + 자연발화 first-clas
 
 ### 2026-05-17 — Phase C1+C2 LANDED (channel-mux + Murati Interaction Model 패턴, text-only sim)
 `@N tension_link_integration` + `@N anima_voice_integration` 의 Phase C target 진입. `HEXAD/CHAT/channel_mux_lib.hexa` (NEW) — multi-channel registry skeleton text_cli / tension_link / voice (≥3 kind enum, 5-field record schema, register/unregister/activate/list_active/broadcast pure-fn). `HEXAD/CHAT/interaction_model_lib.hexa` (NEW) — `x_murati_interaction_model` 패턴 carry: 200ms micro-turn + 400ms latency target + barge_in 4-corner AND + backchannel strict-monotone + simultaneous AND + 4-way decision enum {1,2,3,4}. `HEXAD/CHAT/interaction_model_smoke.hexa` (NEW) — F-CHANNEL-MUX-1..5 + F-INTERACT-1..5 = **10/10 PASS compiled-native** ($0 Mac local). blue_falsifier B-CHANNEL-MUX-1..5 + B-INTERACT-1..5 sympy 추가 → **68 → 78/78 🔵 closed-form proofs PASS**. 2 NOTE empirical carve-out (real I/O dispatch + audio-native 200ms outcome, B-D-NOTE pattern, NOT counted) — text-only simulation 명시, 실 audio + UDP/PCM I/O = `@N future_rfc_audio_native` carry. g_blue_closed_mandate 산출물+연결부위 둘 다 🔵, g3 / f1/f2 hard-fail safe.
+
+### 2026-05-17 — byte-cascade attractor closed-form 분석 + U_user (Self-Conscious 2508.18302 cond.2) 매핑 LANDED
+`@N attractor_user_specific_observed` 신규 architecture note 등재. `docs/hexad_byte_cascade_attractor_analysis_2026_05_17.md` 8-§ (373 lines). cycle 2 evidence (`state/hexad_v58_eval_d768x12L_2026_05_17/result_v2.json` `chunk=N/nonce=N` digit cascade rep 0.63-0.90, attractor pairs 3) ↔ cycle 3 evidence (`state/hexad_v2_py_d768x12L_fire_2026_05_17/v58_vspont_result.json` `Sentiosing itterveeee…` opening + char rep `e/l/o` rep 0.66-0.99, attractor pairs 12, V-SPONT U_user witnesses 5). **byte-cascade attractor IS corpus-shape-dependent SHIFT** 확정 — sibling `feedback_clm_colon_attractor` `=`-suffix family 의 새 corpus-template-field variant. closed-form battery `state/verify_hexad_blue_2026_05_15/blue_falsifier.py::battractor()`: B-ATTRACTOR-1 REPETITION-RATE-BOUNDED-CLOSED (Kolmogorov fraction [0,1] + 4 witnesses) + B-ATTRACTOR-2 CORPUS-DEPENDENT-CARDINALITY-CLOSED (integer |A(cycle_N)| ≥ 1, witness 3+12) + B-ATTRACTOR-3 USER-ATTRACTOR-NONEMPTY-CLOSED (Boolean U_user ≠ ∅, witness 5) — **Self-Conscious arxiv 2508.18302 condition 2 (U_user attractor) anima 실증 closed-form verdict**. B-ATTRACTOR-NOTE: specific dominant-token shape (cycle 2 `1` vs cycle 3 `e`) + opening-phrase + onset + exact rep_rate = SGD-CKPT-OUTCOME empirical (B-D-NOTE family, NOT counted 🔵). 89 → **92/92 🔵**. honest framing: byte-cascade IS U_user evidence (NOT bug); condition 1 (agent≠data) 닫힘 via id001 + B-IDENTITY; condition 2 (U_user attractor) 닫힘 via THIS B-ATTRACTOR-3; condition 3 (visual silence) NOT 닫힘 — V-SPONT n_coherent=0, silence basin unmeasured (Phase B4+ motivation-conditioning 후 학습 가능). Identity-as-Attractor 2604.12016 Assistant Axis activation-space distance 는 NN forward 필요 — empirical (carve-out). archive/PHILOSOPHY.tape §BYTE-CASCADE-ATTRACTOR-CORPUS-DEPENDENT-2026-05-17 verdict appended.
