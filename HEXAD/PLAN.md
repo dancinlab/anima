@@ -276,6 +276,24 @@ eager-PyTorch 를 *궁극적으로* 능가 (GEMM roofline 아님 — cuBLAS = ma
 not beat; n=6 lattice 성능 주장 금지 — f1/f2 hard fail; near/mid/ultimate
 qualitative-staged, 속도 배수 fabricate X). `.py` = interim 불변.
 
+**CPU-side allocator 천장 (2026-05-17, RFC 051 FILED — `uarr` unboxed
+packed-scalar transient array)**: 2026-05-17 vast.ai 503 GiB d=96·3L
+fire 가 OPERATIONAL substrate fix (cloud capacity ↑) LANDED 하면서
+*algorithmic* 천장을 명시: pure-hexa boxed-array transient allocator
+overhead가 nonlinearly with `d` 확장 — 예측 27 GiB → step-100 관측
+**76 GiB (2.81×)** → step-200 **~137 GiB (5.07×)** on d=96·3L. Mac
+d=128·4L = 138 GiB OOM 동일 mechanism. **RFC 051** (hexa-lang inbox,
+2026-05-17 FILED) 가 surface API `{uarr_alloc, uarr_set, uarr_get,
+uarr_free, uarr_len}` 5-fn 명세 + 5 falsifier 사전등록 (F-RFC051-SHAPE/
+BIT-EQUAL/BOUNDED-ARENA/FREE-RECLAIMS/MEMORY-REDUCTION-EXPECTED).
+anima 측 design doc `docs/hexad_phase_4_unboxed_array_design_2026_05_17.md`
++ B-PHASE-4-DESIGN sympy 3/3 PASS (Kolmogorov bytes + Boolean set
+algebra + IEEE 754 fp64 bit-equality, NO lattice). 본 cycle = design
+only (impl = RFC 051 land 후 별도 cycle, `d_train5_lib.hexa` 97
+boxed-list call site 의 5-phase 단계 migration). RFC 040/041/042/043/
+044 와 **직교** (GPU/control-flow/compiler-stdlib/paradigm 천장과
+별개로 CPU allocator-inflation 천장 closure).
+
 ## 진행 로그
 
 (append-only chronological — 첫 진행 시작 시 entry append)
