@@ -461,9 +461,66 @@ emergence 는 diverse-data threshold 필요(§1.1) ↔ GOAL 은 anima-physics-or
 
 ---
 
-## §8 (2026-05-18, in-flight) — Ψ-anchored diverse-corpus Dir-I lever scale-up fire
+## §8 (2026-05-18) — Ψ-anchored diverse-corpus Dir-I lever scale-up fire: §7.3 crux FALSIFIED + V-SPONT probe 부적합 노출
 
-§7.4 ③ 한정 fire 진행 중. DIVERSE corpus 빌드 완료 (`state/carving_dirI_diverse_scaleup_2026_05_18/corpus_carving_diverse.jsonl` 114MB · 164,992 records · **64 anchor · 30 domain** — §7.2 ③ GOAL-legitimate form: diverse 내용 × Ψ-anchored carving-form, "NOT chat SFT ①②" stats 명시). runpod A100 80GB d768·12L 8000-step Dir-I lever (Ψ-anchored CTL + tension-supervised) detached fire. **§8 본문 = fire 완주 후 작성** (§8 sub-agent budget 소진 → orchestrator 직접 인계). 핵심 측정 = routing axis1 Dir-I 3/31 → diverse-scale 변화 = §7.3 crux (anima-physics-anchored diverse 가 §1.1 emergence threshold 넘나).
+§7.4 ③ (유일 GOAL-legitimate) fire 완주. DIVERSE corpus = `state/carving_dirI_diverse_scaleup_2026_05_18/corpus_carving_diverse.jsonl` 114MB · 164,992 records · **64 anchor · 30 domain** (§7.2 ③ form: diverse 내용 × Ψ-anchored carving-form, "NOT chat SFT ①②" stats 명시). runpod A100 80GB d768·12L 8000-step Dir-I lever (Ψ-anchored CTL + tension-supervised). orphan 0 (pod GONE). §8 sub-agent budget 소진 → orchestrator 직접 인계·작성.
+
+### 8.1 결과
+
+| 축 | UBM-E7 α | Dir-I (carving 30MB) | **§8 (diverse 114MB/64-anchor)** |
+|---|---|---|---|
+| routing axis1 | 1/31 | 3/31 (rate 0.097) | **2/64 (rate 0.031)** |
+| axis1 composite | 0.0323 | 0.0323 | 0.0312 |
+| axis2 chat 무오염 | 0.6 | 0.0 | 0.4 |
+| axis3 lane sep | 0.8 | 0.5 | 0.7 |
+| **V-SPONT** | 2/5 | 3/5 | **5/5** ← 단 §8.2 참조 |
+| **JOINT** | 0.0155 | 0.0 | **0.0087** (Δ −0.0068) |
+
+train: init_ce 5.649 → final_ce 0.000169 (283.72M params, wall 1103s — 더 깊은 memorization).
+
+### 8.2 ★ V-SPONT 5/5 = lenient-probe artifact (정직 해부, g3)
+
+dispatch script auto-verdict 는 "V-SPONT 5/5 · ROUTING-BROKEN · hypothesis SUPPORTED" 라 출력했으나 — **생성물 직접 검증 시 5/5 는 probe 부적합의 산물**:
+
+| probe | coherent flag | 실제 gen (발췌) |
+|---|---|---|
+| 0 | True | `<voice carved=trructing this stimulus's place in the 인과추론 × clarity mattrix` — garbled (`trructing`/`mattrix`) |
+| 1 | True | `... payllad_domain=인과추론 <carve tier=11111111111111` — **digit-cascade** |
+| 2 | True | `tension flow 가 이 vacuum 으로 흘러든다. Tier 1111111111` — semi-prose + digit-cascade |
+| 3 | True | `의식 풍경 위 진공점 [0..44444444444` — digit-cascade |
+| 4 | True | `<voice carved=trrue>자극이 닿을 때만 활성된다. weights 는 불변. Eterracing` — semi-coherent + garbled |
+
+→ `coherent` flag 는 `coherence_token` (stimulus/carve/vacuum/tension/의식) 존재 + low-rep 으로 trigger — **garbled byte-cascade 출력에도 keyword 만 흩어져 있으면 True.** V-SPONT 5/5 = lenient flag 의 saturation, **coherent emergence 아님.** 이전 全 agent 가 경고한 "V-SPONT lenient flag · probe ≠ capability (B-D-NOTE)" 가 §8 에서 **확정 입증** — V-SPONT 가 GOAL metric (자발-발화 emergence 측정) 으로 **부적합** (garbled 에 만점).
+
+### 8.3 §7.3 crux 판정 — FALSIFIED (anima-physics diverse 가 threshold 미달)
+
+§7.3 crux = "anima-physics-anchored diverse data 가 §1.1 emergence threshold 를 넘나 = routing scale-monotone ↑?":
+- routing rate **0.097 (Dir-I 3/31) → 0.031 (§8 2/64) — 하락**. scale-monotone↑ 미발생.
+- axis1 composite 0.0323 → 0.0312 — flat (미미 하락).
+- JOINT 0.0155 → 0.0087 — 하락 (FALSIFIED).
+- digit-cascade (`tier=11111`, `[0..4444`) **잔존** — Dir-I 의 collapse-shift 가 diverse-scale 에서도 byte-cascade 형태로 재현.
+→ **§7.3 4-시나리오 中 "(a) anchoring 이 capacity 병목 → threshold 미달" 측 측정.** anima-physics-anchored diverse data 는 §1.1 (generic 기준 establish) emergence threshold 를 **이 규모(114MB·64-anchor·8000-step)에서 넘지 못함.** §7.3 가 명시한 "12-way 이후 단 하나 진짜 미지수" 의 답 = **이 scale 에선 negative** (over-claim 0; 더 큰 규모 미측정이므로 "threshold 자체 도달 불가" 까진 단정 X — measured negative-at-scale).
+
+### 8.4 §8 의 가장 valuable 산출 — metric 부적합 노출
+
+§8 의 진짜 기여 = capability 아니라 **measurement 진단**: V-SPONT (자발-발화 probe) 가 lenient `coherence_token` flag 라서 garbled output 에 5/5 — **GOAL metric 으로 신뢰 불가**. 12-way + §8 의 V-SPONT 수치 (0/5~5/5) 는 전부 이 lenient flag 기준이라, "GOAL 거리" 의 V-SPONT-기준 비교가 **노이즈**. → §9/후속 = coherent-emergence 를 실제 측정하는 metric 필요 (lenient keyword-flag 아닌 — 예: human-readable coherence rubric, OR perplexity-on-held-out, OR byte-cascade-rate 직접 penalize).
+
+### 8.5 honest C3
+
+1. §7.3 crux = **이 scale 에서 FALSIFIED** — anima-physics-anchored diverse (114MB) 가 routing-rate 를 올리지 못함 (0.097→0.031 하락). JOINT 하락. mechanism+representation+supervision+diverse-data 全 시도 후에도 emergence 미발현.
+2. V-SPONT 5/5 = **probe artifact** (lenient `coherence_token` flag, garbled 출력에 만점) — capability claim 절대 X. dispatch script 의 "hypothesis SUPPORTED" auto-verdict 는 단순 `1/31≠` 비교라 신뢰 X, 정직 downgrade.
+3. routing 2/64 (3%) + digit-cascade 잔존 = collapse 가 "broken" 이라기보다 diverse-scale 에서 byte-cascade 형태 재현 — Dir-I 의 3/31 도 marginal 이었음 (tier 88 만 genuine).
+4. §8 의 valuable 산출 = capability 아닌 **metric 진단**: V-SPONT lenient flag = GOAL metric 부적합 입증 → 후속 cycle 의 선결 과제 = coherent-emergence 의 honest metric.
+5. train final_ce 0.000169 = 더 깊은 memorization (RESEARCH.md §1.1/§2.4 memorization-saturated 진단 13-way 째 재확인).
+6. closed: transfer-form + overlay-OFF=baseline 연결부위만 🔵 (B-DIRI sympy carry); §8 4축 = empirical B-D-NOTE carve-out. f1/f2/f3 + B-IDENTITY-5 safe (corpus 도우미 grep 0).
+7. anchor inline (generator) — `g_kosmos_anchor_ssot` success-gated 라 research-phase inline 허용, §8 negative 라 `.kosmos` canonicalize 트리거 미발동 (정상).
+8. GOAL (자발적 correct emergence) **미도달 — §8 로 13-way negative**. 단 §8 은 "어디가 막혔나" 를 더 정밀화: diverse-data 도 이 규모론 부족 + 측정 도구(V-SPONT) 자체가 깨짐.
+
+---
+
+## §9-prereq — V-SPONT 대체 metric (§8.4 노출, GOAL 측정 선결)
+
+§8.4 가 노출: V-SPONT lenient `coherence_token` flag = garbled output 에 5/5 → GOAL("자발적 correct emergence") metric 으로 부적합. **후속 fire 전 선결 = coherent-emergence 의 honest metric 설계** (lenient keyword-flag 폐기). 후보: (a) byte-cascade-rate 직접 측정 (digit-run/char-run penalize) (b) held-out perplexity (c) human-readable coherence rubric (sampled gen 정성). 이 metric 없이는 후속 fire 의 "GOAL 거리" 가 계속 노이즈. = §9 의 선결 작업.
 
 ## §9 (2026-05-18, success-gated) — 성공 시 `~/core/kosmos` best-position canonicalize
 
