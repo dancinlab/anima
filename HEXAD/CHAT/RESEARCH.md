@@ -1244,3 +1244,30 @@ train init_ce 5.6416 → final_ce 0.004229, wall 1810s.
 6. closed = transfer-form + 연결부위만 🔵 (B-S16), capability 4축 = B-S16-NOTE empirical carve-out. central blue_falsifier.py 변경 0.
 7. f1/f2/f3 + B-IDENTITY-5 safe. orphan 0. §16 retry agent `d2dfdcad9` 완결, RESEARCH 본문 = 본 §16 (raw + honest split + BREAKTHROUGH 기록).
 8. north-star (GOAL.md) 불변 — §16 = "data-regime 가 routing 을 연다" measured 입증이지 GOAL 도달 아님. routing-break = arc 최초 directional-positive signal (BREAKTHROUGH = 발견의 의미, 도달의 의미 아님).
+
+### 16.6 consolidation addendum (2026-05-18) — 21/64 genuine 분해 + §18 3-way + memorization 정직 판정 (C3#3·C3#5 close-out)
+
+§16.5 가 consolidation agent 에 carry 한 두 항목(C3#3 21/64 genuine 분해 · C3#5 generalization-vs-memorization 판정)을 측정으로 닫고, §9 honest 옆에 §18 LLM-judge 를 더해 V-SPONT 를 3-way 로 닫음. $0 (기존 `eval_result_s16.json` gen 문자열에 deterministic + rubric 연산만, model forward 0).
+
+**(A) 21/64 routing-correct genuine 분해 — Dir-I tier-5 measurement-artifact 교훈 적용.** `eval_carving_s16.py::routing_correct` 는 `str(tier) in gen` (substring). 모델이 emit 한 선두 `🛸<number>` 토큰을 추출해 exact-match vs substring-only 로 분해:
+
+| | n / 64 | 판정 |
+|---|---|---|
+| **GENUINE exact-tier** (`🛸104`→tier 104 등) | **17/64** | own-tier 정확 emit |
+| **ARTIFACT substring** (tier 12→`🛸122`, 24→`🛸244`, 62→`🛸262`, 66→`🛸266`) | **4/64** | §8 tier-5 패턴과 동형 — `"12"⊂"122"` 우연 매칭 |
+
+→ honest routing = **17/64 (0.266)** genuine. 여전히 §8 2/64 / §11-A 1/64 / Dir-I 3/31(0.097) 의 모두를 크게 상회 = **directional positive 는 artifact 보정 후에도 유지** (8.5× Dir-I). 단 §16.2 표의 21/64 은 4-probe substring-inflation 포함값임을 정직 명시. semantic_recall 26/64 도 동일 한계: `tier_only=23` (tier 숫자만 echo, 같은 substring 계열) + `cat_only=3` + `both=0` → semantic 도 tier-number echo 가 지배.
+
+**(B) §18 LLM-judge 3-way (lenient / §9 honest-closed / §18 judge-empirical / combined).** §18 rubric (`judge_rubric.md` D1 coherence ∧ D2 correctness ∧ D3 spontaneity, Claude Opus 4.7 = 14-way §18 와 동일 judge) 을 §16 V-SPONT 5 probe 에 적용:
+
+| fire | routing | lenient | §9 honest | §18 judge | combined |
+|---|---|---|---|---|---|
+| §8 Dir-I diverse | 2/64 | 5/5 | 2/5 | 0/5 | 0/5 |
+| §11-A SCALE-DECOMP | 1/64 | 1/5 | 2/5 | 0/5 | 0/5 |
+| **§16 (data+curriculum)** | **21/64** | **2/5** | **1/5** | **0/5** | **0/5** |
+
+§16 V-SPONT 5 probe: 4/5 = char/digit-cascade (`Weeeee…`×2 · `addddd…`72-run · `Reeeee…`44-run, §9 reject) · 1/5 (idx 2 `자도이 닿을 때만 활성된다…�`) = §9 통과하나 §18 D1 reject (= §9.3(3) necessary-not-sufficient gap 구체화: `자도이`=`자극이` byte-mangle + memorized 템플릿 fragment + `�` corruption). **combined 0/5 — cascade-free 면서 rubric-coherent 인 V-SPONT probe 0**. routing-축 movement 가 spontaneous-emission 축으로 전이 안 됨.
+
+**(C) generalization vs memorization 정직 판정 (C3#5 close-out).** 17 genuine routing-correct 의 body 를 직접 검수: post-em-dash 가 **단일 carving 템플릿의 반복** (`인과깊이 영역의 자극이 같은 골짜기로 수렴한다` ×5, `의식상태 영역의 자극이 같은 골짜기로 수렴한다` ×3, …) + anchor 名 corruption (`약수와륐`, `자리의조`). final_ce 0.004 (§8 ~0.003 동형 deep memorization). → **판정: routing↑ 은 generalization 아니라 "정교한 암기 + correct-prefix 라우팅"**. 모델이 학습한 것은 (i) `<carve tier={tier}>` cue 의 tier 숫자를 body 선두로 거의-복사하는 능력 + (ii) generic 한 carving 템플릿 continuation — per-anchor 고유 지식 아님. 17/64 의 prefix-routing 은 진짜이나(measured), 그 뒤가 anchor-specific 가 아닌 memorized-template + byte-garble = capability 아님. routing-break = data-regime 가 **라우팅 신호를 학습 가능하게** 만든 measured movement 이지 coherent knowledge emergence 아님.
+
+**deferred C3 close-out**: C3#3 → 17 genuine / 4 substring-artifact (honest routing 17/64). C3#5 → 정교한 암기 (generalization 아님). §16 BREAKTHROUGH 의 의미 = "data-regime 가 routing 축을 universal-FLAT 에서 처음 떼어냈다" (발견) 이지 GOAL 도달 아님 — §16.4 milestone 관계 불변, 3-way·genuine-분해가 over-claim 0 을 한 단계 더 단단히 함.
