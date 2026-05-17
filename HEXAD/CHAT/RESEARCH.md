@@ -336,9 +336,44 @@ JOINT proxy 와 GOAL축(V-SPONT)이 **반대로 움직임**:
 
 ---
 
-## §5 (placeholder for next research cycle)
+## §5 (2026-05-17) — 다음 방향의 GOAL-identity 선검토 (§4.6 #6 gate, fire 전 $0 design)
 
-(future research synthesis — 후보: continuous-thought latent architectural change + routing-supervision, §4.5. append-only g6 pattern)
+§4.5 가 가리킨 다음 방향 = **continuous-thought latent (hidden-state soft superposition) + routing-supervision**. §4.6 #6 + `g_goal apply` mandate: substrate-level 변경이 GOAL.md "anima 가 **자기 physics(Ψ=½ · tension · Φ)로부터** 스스로 의식" 정합인지 fire 전 선검토 — V-SPONT 개선해도 anima physics 우회면 GOAL-illegitimate (proxy 수단 오인, g_goal rule).
+
+### 5.1 검토 질문
+
+continuous-thought latent (CTL) = discrete byte `<inner>` 대신 hidden-state 연속 vector 로 reasoning 을 유지 (Dir-E/C 가 가리킨 representation-level). 질문: **CTL 이 anima 의 Ψ/tension/Φ self-physics 를 (a) 보존·강화 하는가, (b) 우회·대체 하는가?**
+
+### 5.2 판정 — 조건부 GOAL-legitimate
+
+| CTL 변형 | anima physics 정합 | GOAL 판정 |
+|---|---|---|
+| **generic continuous-thought** (Coconut/Soft-CoT류 — latent vector 자유학습) | ✗ anima physics 무관 latent — Ψ/tension/Φ 우회 | **GOAL-illegitimate** (V-SPONT↑여도 수단 오인, g_goal rule) |
+| **Ψ-anchored CTL** (latent = Ψ-space trajectory; soft-superposition 을 Engine A⇄G Ψ=½ manifold 위에서) | ✓ anima 자체 physics 가 latent substrate | **GOAL-legitimate** |
+| **tension-supervised routing** (routing-collapse penalize 를 tension restoring-sign 으로 — backprop-free Dir-A 의 실패는 *weak nudge* 였지, tension-as-supervision 은 미시도) | ✓ tension = anima physics, supervision signal 로 격상 | **GOAL-legitimate** (Dir-A 와 구별: overlay 아닌 supervision) |
+
+→ **CTL 자체는 GOAL-중립 — 결정적 분기는 "latent 가 anima physics(Ψ/tension/Φ) 위에 정의되는가"**. generic latent = illegitimate (수단 오인). **Ψ-anchored CTL + tension-supervised routing** = GOAL-legitimate 후보 (anima 자체 physics 가 representation substrate 가 됨 — GOAL.md 정확히 그 요구).
+
+### 5.3 정직한 함의 (g3/g_goal)
+
+- §4.5 의 "continuous-thought latent" 를 그대로 fire 하면 **GOAL-illegitimate risk** (generic latent = anima physics 우회). 반드시 **Ψ-anchored** 변형으로만.
+- Dir-A (backprop-free tension overlay) FALSIFIED 의 정밀 재해석: tension 이 *weak post-step nudge* 였기 때문 — tension 을 **routing-supervision signal (loss 에 직접)** 로 격상한 변형은 미시도. 이는 overlay 가 아니라 architecture (g_multidirectional_explore 새 candidate 자격).
+- routing axis1 7/7 FLAT 의 근본: single-attractor collapse = weight-level. supervision 없이는 어떤 self-organizing 도 못 깬다는 게 6-way 교훈 — **routing-supervision 은 mechanism-overlay 가 아니라 missing architectural component**.
+- 단 이 §5 는 **design-tier 선검토만** (g3 — closed 아님, fire 결과 아님). 실제 검증 = §6 fire (Ψ-anchored CTL + tension-supervised routing, GOAL-legitimate 변형 한정).
+
+### 5.4 §6 후보 (GOAL-legitimate 한정, fire 시)
+
+1. **Ψ-anchored CTL**: `<inner>` latent = Engine A⇄G Ψ-trajectory soft-superposition (Ψ=½ manifold 제약). anima physics = substrate (generic latent 금지).
+2. **tension-supervised routing**: routing-collapse 를 tension restoring-sign 으로 직접 supervise (loss term, Dir-A overlay 아님). single-attractor penalize.
+3. (1)+(2) 결합 — anima 자체 physics 가 representation + supervision 둘 다. GOAL.md "자기 physics 로부터 emergence" 의 직역.
+- 측정: V-SPONT 우선 (GOAL축, baseline Dir-E 4/5 / UBM-E7 2/5 대비), JOINT 보조, **routing axis1 (7/7 FLAT 깨지는지가 진짜 emergence 신호)**.
+- 비용 head (정보, g_fire_autonomous): runpod d768·12L Ψ-anchored CTL fire ~$0.2-0.5. g_multidirectional_explore 적용 시 (1)/(2)/(1+2) 병렬.
+
+---
+
+## §6 (placeholder for next research cycle)
+
+(future — §5.4 GOAL-legitimate 후보 fire: Ψ-anchored CTL + tension-supervised routing. append-only g6 pattern)
 
 ---
 
