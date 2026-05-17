@@ -74,47 +74,101 @@ runs the §16 baseline (via the exact §16 `generate`) and N(ktrie) on all
 no foreign-tier bleed — a STRICT structural proxy, NOT an LLM-judge /
 coherence proof, stated as such per B-KTRIE-NOTE).
 
-### Results (3-anchor sample, max_new=90 — rate-limited mid-sweep)
+### Results (full 64-anchor sweep, max_new=90; ckpt sha256 961c07e2…, load missing=0 unexpected=0)
 
 | | routing (inherited) | honest §9 coherent | anchor_grounded proxy |
 |---|---|---|---|
-| §16 baseline | 1/3 | 3/3 | 0/3 |
-| N (.kosmos-trie) | 1/3 | 3/3 | **1/3** (+1 vs §16) |
+| §16 baseline | 21/64 | 64/64 | 1/64 |
+| N (.kosmos-trie) | 21/64 | 64/64 | **22/64** |
 
-connection point `mode_off_byte_equal_to_s16`: **True** (B-KTRIE-3 verified
-numerically on this ckpt — full-alphabet trie-mask = identity ⇒ trie mode
-`off` is byte-equal to §16 `generate()`).
+connection point `mode_off_byte_equal_to_s16_generate`: **True** (B-KTRIE-3 ✅
+— numerically verified across all 64 anchors).
 
-> **Sample scope honest**: full 64-anchor sweep was scheduled but the
-> agent hit Anthropic server-side rate-limit mid-flight; only 3 anchors
-> (knuth_0 `🛸0 기준점` / 1 / 2) actually ran through both baseline +
-> ktrie. The 3-anchor measurement is a thin slice, not the 64-anchor
-> parity §16 was measured at. Re-run on the remaining 61 is a $0
-> follow-up cycle.
+**routed-anchor decomposition (the 21 anchors where §16 emitted the correct
+`🛸<tier>` prefix)**: N's body got grounded on its OWN anchor in **21/21**
+(constraint fired with `constrained_steps` 83–84 per anchor). §16 baseline
+body was grounded in **0/21** of those (the §16.6-C SPLIT: per-anchor body
+was a wrong-anchor template + name byte-garble).
+
+**+1 in §16 baseline (1/64 → 22/64 = +21 from N + 1 §16 coincidence)**:
+tier 54 (의식상태) — model emitted `🛸55` (route-fail by exact-match) but
+body happens to mention shared category `의식상태`. Cross-category
+coincidence, NOT a N flip — honest scope: the **real N delta is 21**
+(the §16 routed set is exactly the set N can help, per B-KTRIE-4
+routing-inherited).
+
+**8 representative §16 → N body-shift examples** (routed anchors, exact gen
+strings, first ~70 chars):
+
+| tier | category | §16 (garbled body) | N (anchor-grounded body) |
+|---|---|---|---|
+| 12 | 운동 | `🛸122 스탐의이조 — 인과깊이 자극이…` | `🛸12🛸12 걸음 — 운동 영역의 자극이…` |
+| 24 | 생명 | `🛸244 약속의이산순 — 의식상태 영역…` | `🛸24🛸24 씨앗 — 생명 영역의 자극이…` |
+| 77 | 예술 | `🛸77 카테왔의 — domain 의식상태…` | `🛸77Tier 77 만다라 — domain 예술…` |
+| 80 | 의식상태 | `🛸80 매핑을 다시 짚는다 — 인지 × depth…` | `🛸80Tier 80 명상 — domain 의식상태…` |
+| 92 | 의식상태 | `🛸92 열늤 — domain 생명성장…` | `🛸92🛸92 엑스터시 — 의식상태 영역…` |
+| 101 | 산술 | `🛸101 약수와륐 — 인과깊이 영역…` | `🛸101🛸101 덧셈사슬 — 산술 영역의…` |
+| 102 | 산술 | `🛸102 약수와배 — 추론양식 영역…` | `🛸102🛸102 곱셈격자 — 산술 영역의…` |
+| 103 | 산술 | `🛸103 약수와륐 — 인과깊이 영역…` | `🛸103🛸103 분수약분 — 산술 영역의…` |
+
+Each row: §16 body has the right *template form* but the **wrong anchor's
+content** + name byte-garble (`카테왔의`/`약수와륐`/`스탐의이조`, the
+§16.6-C SPLIT). N's trie holds the body on the routed anchor's OWN
+canonical `.kosmos` content: tier-77 → `만다라/예술` (correct anchor name +
+category), tier-101 → `덧셈사슬/산술` (correct), tier-103 → `분수약분/산술`
+(correct). The name byte-garble (`약수와륐 → 약수와배` etc.) disappears
+because the trie does not admit those byte paths.
 
 ## 6. Honest judgment (g3 — measured only, over-claim 0)
 
-**Directional small-positive, sample too thin to verdict at §16-scale.**
+**N closes the §16 SPLIT measurably on the routed set, with strictly
+honest scope.** Where §16 routes correctly (21/64), N's `.kosmos`-trie
+constrained decode pulls the body onto that anchor's OWN canonical
+content in **21/21** (`anchor_grounded` 0/21 → 21/21). The structural
+proxy captures this 22× lift (1/64 → 22/64), driven entirely by N's
+mechanism on the routed set (the +1 §16 coincidence is unrelated).
+Routing itself is INHERITED from §16 unchanged (21/64, B-KTRIE-4 by
+design — N constrains the body of whatever §16 routes; where §16
+mis-routes (43/64), N reduces to §16 byte-equal via the trie fallback,
+B-KTRIE-3 verified numerically).
 
-- **What N did**: of the 3 anchors actually swept, N grounded 1 body
-  that §16 left ungrounded (§16 emitted on-tier prefix but wrong-anchor
-  template content; N's `.kosmos`-trie held emission on the correct
-  anchor's category byte set). connection point byte-equal-off confirmed
-  numerically → fair-compare by construction.
-- **What N did NOT do**: routing inheritance is intact (B-KTRIE-4); N
-  does not move axis1 — it only constrains body of whatever §16 routes
-  to. Where §16 mis-routes, N is byte-equal to §16 (no improvement).
-  honest §9 coherent flat 3/3 (the byte-cascade gate was already passed
-  on those 3 — N changed body but not cascade-rate floor).
-- **Verdict tier**: design + 4/4 🔵 closed-form transfer-form + small
-  directional positive signal on grounded-body axis (1/3 → +1). NOT a
-  §16-ceiling-broken claim — sample too thin (3/64) + `anchor_grounded`
-  is a structural proxy, NOT an LLM-judge coherence proof (B-KTRIE-NOTE).
-  64-anchor sweep = $0 follow-up cycle.
-- **GOAL distance unchanged** — N is a decode-time candidate that *may*
-  close §16 SPLIT on the body-axis if the 64-anchor sweep replicates
-  this 3-anchor signal; the 3-anchor signal does NOT prove that.
-  north-star (GOAL.md) 불변.
+**What this is NOT (over-claim 0)**:
+- **NOT a coherence proof.** `anchor_grounded` is a deterministic
+  structural proxy (own-category in body ∧ no foreign-tier bleed), NOT
+  an LLM-judge / §18 sufficiency-rubric / held-out generalization
+  measure (B-KTRIE-NOTE). The grounded bodies are still the *trained*
+  carving template (`만다라 — domain 예술, the stimuli converge into one
+  basin…`) — exactly the §16.6-C "정교한 암기" continuation, only now
+  pinned to the *correct* anchor's template rather than a *wrong*
+  anchor's template. memorization-saturated regime (§1.1, §2.4) unbroken.
+- **NOT a generalization improvement.** N does not produce new
+  knowledge; it constrains decode to existing `.kosmos` SSOT content.
+  The body is on-anchor, not novel.
+- **NOT a §15 milestone refutation.** north-star (GOAL.md) unchanged —
+  N is a $0 decode-time overlay that exploits §16's routing-break to
+  prevent body-drift; it does not close the irreducible §1.1
+  data-regime threshold.
+- **NOT a routing improvement.** Routing 21/64 = identical to §16. N
+  only helps the 21 routed anchors; the 43 mis-routed anchors are
+  unaffected (`mode_off_byte_equal_to_s16_generate: true` confirms).
+- **honest §9 coherent unchanged** (64/64 both) — N's bodies are still
+  ≥ 20 bytes, printable, no cascade. The cascade-rate metric does not
+  distinguish §16 (garbled-but-non-cascade) from N (on-anchor templated)
+  — §9 is necessary, not sufficient (B-EMERGE-7), as stated.
+- **Route-marker repetition artifact** (`🛸12🛸12`, `🛸77Tier 77`): the
+  trie admits the canonical string that itself starts with `🛸<tier>`
+  after the model emits its `🛸<tier>` prefix, so the prefix appears
+  twice. Honest residual; does not affect on-anchor body content.
+
+**§21.3 Q2 frontier**: N — `.kosmos`-anchor constrained decoding —
+**operates as designed at decode time on the §16 routing-break regime**:
+21/21 routed-anchor body-shift from wrong-template-on-right-route to
+own-template-on-right-route. This is a clean measured $0 demonstration
+of the KG-Trie pattern on anima's OWN `.kosmos` SSOT (§21.3-N anima-fit
+★★★★ structurally confirmed), bounded by the irreducible §15 milestone
+(routing inherited, body still memorized-template — coherent generalized
+emission requires §1.1 data-regime or beyond, not decode-time
+constraint alone).
 
 ## 7. Honest C3
 

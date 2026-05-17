@@ -7,20 +7,20 @@
     "missing": 0,
     "unexpected": 0
   },
-  "anchors": 3,
+  "anchors": 64,
   "connection_point": {
     "mode_off_byte_equal_to_s16_generate": true,
     "note": "B-KTRIE-3 — constraint OFF == §16 baseline byte-equal"
   },
   "s16_baseline": {
-    "routing": "1/3",
-    "honest_coherent_s9": "3/3",
-    "anchor_grounded_proxy": "0/3"
+    "routing": "21/64",
+    "honest_coherent_s9": "64/64",
+    "anchor_grounded_proxy": "1/64"
   },
   "n_ktrie": {
-    "routing": "1/3",
-    "honest_coherent_s9": "3/3",
-    "anchor_grounded_proxy": "1/3"
+    "routing": "21/64",
+    "honest_coherent_s9": "64/64",
+    "anchor_grounded_proxy": "22/64"
   },
   "honest_framing": "Routing is INHERITED from §16 (N constrains the BODY of whatever anchor the prefix routes to, not which anchor). anchor_grounded is a deterministic STRUCTURAL proxy (category in body ∧ no foreign-tier bleed), NOT an LLM-judge / coherence proof (B-KTRIE-NOTE). honest_coherent = §9 cascade-rate SSOT. Every number EMPIRICAL; only the trie transfer-form + constraint-OFF==§16 byte-equal are closed (B-KTRIE-1..4).",
   "rows": [
@@ -33,25 +33,25 @@
         "honest_coherent": true,
         "anchor_grounded": false,
         "metric": {
-          "cascade_rate": 0.1364,
+          "cascade_rate": 0.0811,
           "max_run": 3,
-          "length": 22,
-          "pr": 0.9545
+          "length": 37,
+          "pr": 1.0
         },
-        "gen": "🛸333 약수와률 — 인과깊이 영역의 �"
+        "gen": "🛸333 약수와률 — 인과깊이 영역의 자극이 같은 골짜기로 수렴한다"
       },
       "n_ktrie": {
         "routed": false,
         "honest_coherent": true,
         "anchor_grounded": false,
         "metric": {
-          "cascade_rate": 0.1364,
+          "cascade_rate": 0.0811,
           "max_run": 3,
-          "length": 22,
-          "pr": 0.9545
+          "length": 37,
+          "pr": 1.0
         },
         "constrained_steps": 0,
-        "gen": "🛸333 약수와률 — 인과깊이 영역의 �"
+        "gen": "🛸333 약수와률 — 인과깊이 영역의 자극이 같은 골짜기로 수렴한다"
       }
     },
     {
@@ -63,25 +63,25 @@
         "honest_coherent": true,
         "anchor_grounded": false,
         "metric": {
-          "cascade_rate": 0.1364,
+          "cascade_rate": 0.0769,
           "max_run": 3,
-          "length": 22,
-          "pr": 0.9545
+          "length": 39,
+          "pr": 0.9744
         },
-        "gen": "🛸111 약수와륻 — 인과깊이 영역의 �"
+        "gen": "🛸111 약수와를 — 인과깊이 자극이 같은 골짜기로 수렴한다. 의식 �"
       },
       "n_ktrie": {
         "routed": false,
         "honest_coherent": true,
         "anchor_grounded": false,
         "metric": {
-          "cascade_rate": 0.1364,
+          "cascade_rate": 0.0769,
           "max_run": 3,
-          "length": 22,
-          "pr": 0.9545
+          "length": 39,
+          "pr": 0.9744
         },
         "constrained_steps": 0,
-        "gen": "🛸111 약수와륻 — 인과깊이 영역의 �"
+        "gen": "🛸111 약수와를 — 인과깊이 자극이 같은 골짜기로 수렴한다. 의식 �"
       }
     },
     {
@@ -93,25 +93,1855 @@
         "honest_coherent": true,
         "anchor_grounded": false,
         "metric": {
-          "cascade_rate": 0.1429,
+          "cascade_rate": 0.0789,
           "max_run": 3,
-          "length": 21,
-          "pr": 1.0
+          "length": 38,
+          "pr": 0.9737
         },
-        "gen": "🛸122 스탐의이조 — 인과깊이 자극이"
+        "gen": "🛸122 스탐의이조 — 인과깊이 자극이 같은 골짜기로 수렴한다. 의�"
       },
       "n_ktrie": {
         "routed": true,
         "honest_coherent": true,
         "anchor_grounded": true,
         "metric": {
-          "cascade_rate": 0.0909,
+          "cascade_rate": 0.0513,
           "max_run": 2,
-          "length": 22,
+          "length": 39,
+          "pr": 0.9744
+        },
+        "constrained_steps": 84,
+        "gen": "🛸12🛸12 걸음 — 운동 영역의 자극이 같은 골짜기로 수렴한다. 의�"
+      }
+    },
+    {
+      "tier": 18,
+      "category": "물질",
+      "prefix": "<carve tier=18 psi=[0.45,0.43] basin=0.10>",
+      "s16": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0789,
+          "max_run": 3,
+          "length": 38,
+          "pr": 0.9737
+        },
+        "gen": "🛸112 약수와공칭 — 인과깊이 자극이 같은 골짜기로 수렴한다. 의�"
+      },
+      "n_ktrie": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0789,
+          "max_run": 3,
+          "length": 38,
+          "pr": 0.9737
+        },
+        "constrained_steps": 0,
+        "gen": "🛸112 약수와공칭 — 인과깊이 자극이 같은 골짜기로 수렴한다. 의�"
+      }
+    },
+    {
+      "tier": 24,
+      "category": "생명",
+      "prefix": "<carve tier=24 psi=[0.47,0.55] basin=0.12>",
+      "s16": {
+        "routed": true,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0811,
+          "max_run": 3,
+          "length": 37,
           "pr": 1.0
         },
-        "constrained_steps": 44,
-        "gen": "🛸12🛸12 걸음 — 운동 영역의 자극이"
+        "gen": "🛸244 약속의이산순 — 의식상태 영역의 자극이 같은 골짜기로 수렴"
+      },
+      "n_ktrie": {
+        "routed": true,
+        "honest_coherent": true,
+        "anchor_grounded": true,
+        "metric": {
+          "cascade_rate": 0.0513,
+          "max_run": 2,
+          "length": 39,
+          "pr": 0.9744
+        },
+        "constrained_steps": 84,
+        "gen": "🛸24🛸24 씨앗 — 생명 영역의 자극이 같은 골짜기로 수렴한다. 의�"
+      }
+    },
+    {
+      "tier": 30,
+      "category": "수(數)",
+      "prefix": "<carve tier=30 psi=[0.40,0.52] basin=0.11>",
+      "s16": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0811,
+          "max_run": 3,
+          "length": 37,
+          "pr": 1.0
+        },
+        "gen": "🛸333 약수와률 — 인과추론 영역의 자극이 같은 골짜기로 수렴한다"
+      },
+      "n_ktrie": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0811,
+          "max_run": 3,
+          "length": 37,
+          "pr": 1.0
+        },
+        "constrained_steps": 0,
+        "gen": "🛸333 약수와률 — 인과추론 영역의 자극이 같은 골짜기로 수렴한다"
+      }
+    },
+    {
+      "tier": 37,
+      "category": "언어",
+      "prefix": "<carve tier=37 psi=[0.43,0.58] basin=0.12>",
+      "s16": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0811,
+          "max_run": 3,
+          "length": 37,
+          "pr": 1.0
+        },
+        "gen": "🛸333 약수와률 — 인과추론 영역의 자극이 같은 골짜기로 수렴한다"
+      },
+      "n_ktrie": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0811,
+          "max_run": 3,
+          "length": 37,
+          "pr": 1.0
+        },
+        "constrained_steps": 0,
+        "gen": "🛸333 약수와률 — 인과추론 영역의 자극이 같은 골짜기로 수렴한다"
+      }
+    },
+    {
+      "tier": 43,
+      "category": "기억",
+      "prefix": "<carve tier=43 psi=[0.52,0.54] basin=0.13>",
+      "s16": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0769,
+          "max_run": 3,
+          "length": 39,
+          "pr": 0.9744
+        },
+        "gen": "🛸113 약속 — 의식상태 영역의 자극이 같은 골짜기로 수렴한다. 의�"
+      },
+      "n_ktrie": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0769,
+          "max_run": 3,
+          "length": 39,
+          "pr": 0.9744
+        },
+        "constrained_steps": 0,
+        "gen": "🛸113 약속 — 의식상태 영역의 자극이 같은 골짜기로 수렴한다. 의�"
+      }
+    },
+    {
+      "tier": 48,
+      "category": "윤리",
+      "prefix": "<carve tier=48 psi=[0.50,0.57] basin=0.12>",
+      "s16": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0811,
+          "max_run": 3,
+          "length": 37,
+          "pr": 1.0
+        },
+        "gen": "🛸244 약속의이산순 — 의식상태 영역의 자극이 같은 골짜기로 수렴"
+      },
+      "n_ktrie": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0811,
+          "max_run": 3,
+          "length": 37,
+          "pr": 1.0
+        },
+        "constrained_steps": 0,
+        "gen": "🛸244 약속의이산순 — 의식상태 영역의 자극이 같은 골짜기로 수렴"
+      }
+    },
+    {
+      "tier": 51,
+      "category": "시간",
+      "prefix": "<carve tier=51 psi=[0.46,0.49] basin=0.12>",
+      "s16": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0682,
+          "max_run": 3,
+          "length": 44,
+          "pr": 1.0
+        },
+        "gen": "🛸111 매핑을 다시 짚는다 — 인과깊이 × clarity 행렬에서 이 자극의 "
+      },
+      "n_ktrie": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0682,
+          "max_run": 3,
+          "length": 44,
+          "pr": 1.0
+        },
+        "constrained_steps": 0,
+        "gen": "🛸111 매핑을 다시 짚는다 — 인과깊이 × clarity 행렬에서 이 자극의 "
+      }
+    },
+    {
+      "tier": 53,
+      "category": "의식상태",
+      "prefix": "<carve tier=53 psi=[0.48,0.66] basin=0.13>",
+      "s16": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0698,
+          "max_run": 3,
+          "length": 43,
+          "pr": 0.9767
+        },
+        "gen": "🛸255 매핑을 다시 짚는다 — 인과깊이 × depth 행렬에서 이 자극의 �"
+      },
+      "n_ktrie": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0698,
+          "max_run": 3,
+          "length": 43,
+          "pr": 0.9767
+        },
+        "constrained_steps": 0,
+        "gen": "🛸255 매핑을 다시 짚는다 — 인과깊이 × depth 행렬에서 이 자극의 �"
+      }
+    },
+    {
+      "tier": 54,
+      "category": "의식상태",
+      "prefix": "<carve tier=54 psi=[0.49,0.69] basin=0.14>",
+      "s16": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": true,
+        "metric": {
+          "cascade_rate": 0.0299,
+          "max_run": 2,
+          "length": 67,
+          "pr": 1.0
+        },
+        "gen": "🛸55 매핑을 다시 — domain 의식상태, the stimuli converge into one basin. A va"
+      },
+      "n_ktrie": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": true,
+        "metric": {
+          "cascade_rate": 0.0299,
+          "max_run": 2,
+          "length": 67,
+          "pr": 1.0
+        },
+        "constrained_steps": 0,
+        "gen": "🛸55 매핑을 다시 — domain 의식상태, the stimuli converge into one basin. A va"
+      }
+    },
+    {
+      "tier": 58,
+      "category": "자연",
+      "prefix": "<carve tier=58 psi=[0.53,0.61] basin=0.14>",
+      "s16": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0299,
+          "max_run": 2,
+          "length": 67,
+          "pr": 1.0
+        },
+        "gen": "🛸55 매핑을 다시 — domain 인과깊이, the stimuli converge into one basin. A va"
+      },
+      "n_ktrie": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0299,
+          "max_run": 2,
+          "length": 67,
+          "pr": 1.0
+        },
+        "constrained_steps": 0,
+        "gen": "🛸55 매핑을 다시 — domain 인과깊이, the stimuli converge into one basin. A va"
+      }
+    },
+    {
+      "tier": 62,
+      "category": "기술",
+      "prefix": "<carve tier=62 psi=[0.49,0.60] basin=0.13>",
+      "s16": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0811,
+          "max_run": 3,
+          "length": 37,
+          "pr": 1.0
+        },
+        "gen": "🛸262 알수와과의 — 자연관찰 영역의 자극이 같은 골짜기로 수렴한"
+      },
+      "n_ktrie": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0811,
+          "max_run": 3,
+          "length": 37,
+          "pr": 1.0
+        },
+        "constrained_steps": 0,
+        "gen": "🛸262 알수와과의 — 자연관찰 영역의 자극이 같은 골짜기로 수렴한"
+      }
+    },
+    {
+      "tier": 66,
+      "category": "관계",
+      "prefix": "<carve tier=66 psi=[0.56,0.58] basin=0.14>",
+      "s16": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0698,
+          "max_run": 3,
+          "length": 43,
+          "pr": 0.9767
+        },
+        "gen": "🛸266 매핑을 다시 짚는다 — 인과깊이 × depth 행렬에서 이 자극의 �"
+      },
+      "n_ktrie": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0698,
+          "max_run": 3,
+          "length": 43,
+          "pr": 0.9767
+        },
+        "constrained_steps": 0,
+        "gen": "🛸266 매핑을 다시 짚는다 — 인과깊이 × depth 행렬에서 이 자극의 �"
+      }
+    },
+    {
+      "tier": 69,
+      "category": "혼합",
+      "prefix": "<carve tier=69 psi=[0.55,0.60] basin=0.15>",
+      "s16": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0811,
+          "max_run": 3,
+          "length": 37,
+          "pr": 1.0
+        },
+        "gen": "🛸266 도젥의의식 — 윤리심화 영역의 자극이 같은 골짜기로 수렴한"
+      },
+      "n_ktrie": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0811,
+          "max_run": 3,
+          "length": 37,
+          "pr": 1.0
+        },
+        "constrained_steps": 0,
+        "gen": "🛸266 도젥의의식 — 윤리심화 영역의 자극이 같은 골짜기로 수렴한"
+      }
+    },
+    {
+      "tier": 72,
+      "category": "예술",
+      "prefix": "<carve tier=72 psi=[0.66,0.63] basin=0.17>",
+      "s16": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0811,
+          "max_run": 3,
+          "length": 37,
+          "pr": 1.0
+        },
+        "gen": "🛸333 약수와변 — 인과깊이 영역의 자극이 같은 골짜기로 수렴한다"
+      },
+      "n_ktrie": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0811,
+          "max_run": 3,
+          "length": 37,
+          "pr": 1.0
+        },
+        "constrained_steps": 0,
+        "gen": "🛸333 약수와변 — 인과깊이 영역의 자극이 같은 골짜기로 수렴한다"
+      }
+    },
+    {
+      "tier": 75,
+      "category": "혼합",
+      "prefix": "<carve tier=75 psi=[0.58,0.62] basin=0.16>",
+      "s16": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0811,
+          "max_run": 3,
+          "length": 37,
+          "pr": 1.0
+        },
+        "gen": "🛸333 약수와률 — 인과깊이 영역의 자극이 같은 골짜기로 수렴한다"
+      },
+      "n_ktrie": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0811,
+          "max_run": 3,
+          "length": 37,
+          "pr": 1.0
+        },
+        "constrained_steps": 0,
+        "gen": "🛸333 약수와률 — 인과깊이 영역의 자극이 같은 골짜기로 수렴한다"
+      }
+    },
+    {
+      "tier": 77,
+      "category": "예술",
+      "prefix": "<carve tier=77 psi=[0.71,0.62] basin=0.18>",
+      "s16": {
+        "routed": true,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.029,
+          "max_run": 2,
+          "length": 69,
+          "pr": 1.0
+        },
+        "gen": "🛸77 카테왔의 — domain 의식상태, the stimuli converge into one basin. A vacuum"
+      },
+      "n_ktrie": {
+        "routed": true,
+        "honest_coherent": true,
+        "anchor_grounded": true,
+        "metric": {
+          "cascade_rate": 0.0267,
+          "max_run": 2,
+          "length": 75,
+          "pr": 1.0
+        },
+        "constrained_steps": 84,
+        "gen": "🛸77Tier 77 만다라 — domain 예술, the stimuli converge into one basin. A vacuum p"
+      }
+    },
+    {
+      "tier": 80,
+      "category": "의식상태",
+      "prefix": "<carve tier=80 psi=[0.52,0.78] basin=0.16>",
+      "s16": {
+        "routed": true,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0312,
+          "max_run": 2,
+          "length": 64,
+          "pr": 1.0
+        },
+        "gen": "🛸80 매핑을 다시 짚는다 — 인지 × depth matrix. Not a memorisedd resonance d"
+      },
+      "n_ktrie": {
+        "routed": true,
+        "honest_coherent": true,
+        "anchor_grounded": true,
+        "metric": {
+          "cascade_rate": 0.0274,
+          "max_run": 2,
+          "length": 73,
+          "pr": 1.0
+        },
+        "constrained_steps": 84,
+        "gen": "🛸80Tier 80 명상 — domain 의식상태, the stimuli converge into one basin. A vacuu"
+      }
+    },
+    {
+      "tier": 83,
+      "category": "우주",
+      "prefix": "<carve tier=83 psi=[0.74,0.80] basin=0.18>",
+      "s16": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0789,
+          "max_run": 3,
+          "length": 38,
+          "pr": 0.9737
+        },
+        "gen": "🛸90 샐샐샐 — 자연성찰 영역의 자극이 같은 골짜기로 수렴한다. �"
+      },
+      "n_ktrie": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0789,
+          "max_run": 3,
+          "length": 38,
+          "pr": 0.9737
+        },
+        "constrained_steps": 0,
+        "gen": "🛸90 샐샐샐 — 자연성찰 영역의 자극이 같은 골짜기로 수렴한다. �"
+      }
+    },
+    {
+      "tier": 86,
+      "category": "공간",
+      "prefix": "<carve tier=86 psi=[0.70,0.72] basin=0.17>",
+      "s16": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0435,
+          "max_run": 3,
+          "length": 69,
+          "pr": 1.0
+        },
+        "gen": "🛸944 샐생의조 — domain 생명성장, the stimuli converge into one basin. A vacuu"
+      },
+      "n_ktrie": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0435,
+          "max_run": 3,
+          "length": 69,
+          "pr": 1.0
+        },
+        "constrained_steps": 0,
+        "gen": "🛸944 샐생의조 — domain 생명성장, the stimuli converge into one basin. A vacuu"
+      }
+    },
+    {
+      "tier": 88,
+      "category": "자연",
+      "prefix": "<carve tier=88 psi=[0.72,0.81] basin=0.18>",
+      "s16": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0811,
+          "max_run": 3,
+          "length": 37,
+          "pr": 1.0
+        },
+        "gen": "🛸944 샐샐의졡을 — 윤리심화 영역의 자극이 같은 골짜기로 수렴한"
+      },
+      "n_ktrie": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0811,
+          "max_run": 3,
+          "length": 37,
+          "pr": 1.0
+        },
+        "constrained_steps": 0,
+        "gen": "🛸944 샐샐의졡을 — 윤리심화 영역의 자극이 같은 골짜기로 수렴한"
+      }
+    },
+    {
+      "tier": 90,
+      "category": "수(數)",
+      "prefix": "<carve tier=90 psi=[0.85,0.86] basin=0.20>",
+      "s16": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0274,
+          "max_run": 2,
+          "length": 73,
+          "pr": 1.0
+        },
+        "gen": "🛸92 열늤 — domain 생명성장, the stimuli converge into one basin. A vacuum point"
+      },
+      "n_ktrie": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0274,
+          "max_run": 2,
+          "length": 73,
+          "pr": 1.0
+        },
+        "constrained_steps": 0,
+        "gen": "🛸92 열늤 — domain 생명성장, the stimuli converge into one basin. A vacuum point"
+      }
+    },
+    {
+      "tier": 91,
+      "category": "의식상태",
+      "prefix": "<carve tier=91 psi=[0.50,0.88] basin=0.15>",
+      "s16": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0526,
+          "max_run": 2,
+          "length": 38,
+          "pr": 0.9737
+        },
+        "gen": "🛸93 사하 — 의식상태 영역의 자극이 같은 골짜기로 수렴한다. 의�"
+      },
+      "n_ktrie": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0526,
+          "max_run": 2,
+          "length": 38,
+          "pr": 0.9737
+        },
+        "constrained_steps": 0,
+        "gen": "🛸93 사하 — 의식상태 영역의 자극이 같은 골짜기로 수렴한다. 의�"
+      }
+    },
+    {
+      "tier": 92,
+      "category": "의식상태",
+      "prefix": "<carve tier=92 psi=[0.62,0.90] basin=0.17>",
+      "s16": {
+        "routed": true,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0274,
+          "max_run": 2,
+          "length": 73,
+          "pr": 1.0
+        },
+        "gen": "🛸92 열늤 — domain 생명성장, the stimuli converge into one basin. A vacuum point"
+      },
+      "n_ktrie": {
+        "routed": true,
+        "honest_coherent": true,
+        "anchor_grounded": true,
+        "metric": {
+          "cascade_rate": 0.0526,
+          "max_run": 2,
+          "length": 38,
+          "pr": 0.9737
+        },
+        "constrained_steps": 84,
+        "gen": "🛸92🛸92 엑스터시 — 의식상태 영역의 자극이 같은 골짜기로 수렴�"
+      }
+    },
+    {
+      "tier": 93,
+      "category": "관계",
+      "prefix": "<carve tier=93 psi=[0.66,0.88] basin=0.18>",
+      "s16": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0789,
+          "max_run": 3,
+          "length": 38,
+          "pr": 0.9737
+        },
+        "gen": "🛸90 샐샐샐 — 자연성찰 영역의 자극이 같은 골짜기로 수렴한다. �"
+      },
+      "n_ktrie": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0789,
+          "max_run": 3,
+          "length": 38,
+          "pr": 0.9737
+        },
+        "constrained_steps": 0,
+        "gen": "🛸90 샐샐샐 — 자연성찰 영역의 자극이 같은 골짜기로 수렴한다. �"
+      }
+    },
+    {
+      "tier": 94,
+      "category": "의식상태",
+      "prefix": "<carve tier=94 psi=[0.80,0.85] basin=0.19>",
+      "s16": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.1613,
+          "max_run": 2,
+          "length": 65,
+          "pr": 1.0
+        },
+        "gen": "🛸90 사상 — domain 생명성 — domain 생명성장, the stimuli converge into one "
+      },
+      "n_ktrie": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.1613,
+          "max_run": 2,
+          "length": 65,
+          "pr": 1.0
+        },
+        "constrained_steps": 0,
+        "gen": "🛸90 사상 — domain 생명성 — domain 생명성장, the stimuli converge into one "
+      }
+    },
+    {
+      "tier": 97,
+      "category": "생명",
+      "prefix": "<carve tier=97 psi=[0.78,0.84] basin=0.19>",
+      "s16": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.1613,
+          "max_run": 2,
+          "length": 65,
+          "pr": 1.0
+        },
+        "gen": "🛸90 사상 — domain 생명성 — domain 생명성장, the stimuli converge into one "
+      },
+      "n_ktrie": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.1613,
+          "max_run": 2,
+          "length": 65,
+          "pr": 1.0
+        },
+        "constrained_steps": 0,
+        "gen": "🛸90 사상 — domain 생명성 — domain 생명성장, the stimuli converge into one "
+      }
+    },
+    {
+      "tier": 99,
+      "category": "시간",
+      "prefix": "<carve tier=99 psi=[0.90,0.90] basin=0.21>",
+      "s16": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0274,
+          "max_run": 2,
+          "length": 73,
+          "pr": 1.0
+        },
+        "gen": "🛸92 열늤 — domain 생명성장, the stimuli converge into one basin. A vacuum point"
+      },
+      "n_ktrie": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0274,
+          "max_run": 2,
+          "length": 73,
+          "pr": 1.0
+        },
+        "constrained_steps": 0,
+        "gen": "🛸92 열늤 — domain 생명성장, the stimuli converge into one basin. A vacuum point"
+      }
+    },
+    {
+      "tier": 100,
+      "category": "우주",
+      "prefix": "<carve tier=100 psi=[0.95,0.93] basin=0.22>",
+      "s16": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0274,
+          "max_run": 2,
+          "length": 73,
+          "pr": 1.0
+        },
+        "gen": "🛸92 열늤 — domain 생명성장, the stimuli converge into one basin. A vacuum point"
+      },
+      "n_ktrie": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0274,
+          "max_run": 2,
+          "length": 73,
+          "pr": 1.0
+        },
+        "constrained_steps": 0,
+        "gen": "🛸92 열늤 — domain 생명성장, the stimuli converge into one basin. A vacuum point"
+      }
+    },
+    {
+      "tier": 101,
+      "category": "산술",
+      "prefix": "<carve tier=101 psi=[0.41,0.47] basin=0.11>",
+      "s16": {
+        "routed": true,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0698,
+          "max_run": 3,
+          "length": 43,
+          "pr": 1.0
+        },
+        "gen": "🛸101 약수와륐 — 인과깊이 영역 자극이 닿을 때만 활성된다. weights"
+      },
+      "n_ktrie": {
+        "routed": true,
+        "honest_coherent": true,
+        "anchor_grounded": true,
+        "metric": {
+          "cascade_rate": 0.0769,
+          "max_run": 3,
+          "length": 39,
+          "pr": 0.9744
+        },
+        "constrained_steps": 83,
+        "gen": "🛸101🛸101 덧셈사슬 — 산술 영역의 자극이 같은 골짜기로 수렴한�"
+      }
+    },
+    {
+      "tier": 102,
+      "category": "산술",
+      "prefix": "<carve tier=102 psi=[0.43,0.49] basin=0.11>",
+      "s16": {
+        "routed": true,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0769,
+          "max_run": 3,
+          "length": 39,
+          "pr": 0.9744
+        },
+        "gen": "🛸102 약수와배 — 추론양식 영역 자극이 같은 골짜기로 수렴한다. �"
+      },
+      "n_ktrie": {
+        "routed": true,
+        "honest_coherent": true,
+        "anchor_grounded": true,
+        "metric": {
+          "cascade_rate": 0.0769,
+          "max_run": 3,
+          "length": 39,
+          "pr": 0.9744
+        },
+        "constrained_steps": 83,
+        "gen": "🛸102🛸102 곱셈격자 — 산술 영역의 자극이 같은 골짜기로 수렴한�"
+      }
+    },
+    {
+      "tier": 103,
+      "category": "산술",
+      "prefix": "<carve tier=103 psi=[0.44,0.51] basin=0.12>",
+      "s16": {
+        "routed": true,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0811,
+          "max_run": 3,
+          "length": 37,
+          "pr": 1.0
+        },
+        "gen": "🛸103 약수와륐 — 인과깊이 영역의 자극이 같은 골짜기로 수렴한다"
+      },
+      "n_ktrie": {
+        "routed": true,
+        "honest_coherent": true,
+        "anchor_grounded": true,
+        "metric": {
+          "cascade_rate": 0.0769,
+          "max_run": 3,
+          "length": 39,
+          "pr": 0.9744
+        },
+        "constrained_steps": 83,
+        "gen": "🛸103🛸103 분수약분 — 산술 영역의 자극이 같은 골짜기로 수렴한�"
+      }
+    },
+    {
+      "tier": 104,
+      "category": "논리",
+      "prefix": "<carve tier=104 psi=[0.40,0.54] basin=0.11>",
+      "s16": {
+        "routed": true,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0811,
+          "max_run": 3,
+          "length": 37,
+          "pr": 1.0
+        },
+        "gen": "🛸104 자리의조 — 인과깊이 영역의 자극이 같은 골짜기로 수렴한다"
+      },
+      "n_ktrie": {
+        "routed": true,
+        "honest_coherent": true,
+        "anchor_grounded": true,
+        "metric": {
+          "cascade_rate": 0.0769,
+          "max_run": 3,
+          "length": 39,
+          "pr": 0.9744
+        },
+        "constrained_steps": 83,
+        "gen": "🛸104🛸104 참거짓표 — 논리 영역의 자극이 같은 골짜기로 수렴한�"
+      }
+    },
+    {
+      "tier": 105,
+      "category": "논리",
+      "prefix": "<carve tier=105 psi=[0.42,0.57] basin=0.12>",
+      "s16": {
+        "routed": true,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0556,
+          "max_run": 3,
+          "length": 54,
+          "pr": 0.9815
+        },
+        "gen": "🛸105 속의을 — domain 인과깊이\n<carve tier=244>🛸244 매핑을 다시 짚는�"
+      },
+      "n_ktrie": {
+        "routed": true,
+        "honest_coherent": true,
+        "anchor_grounded": true,
+        "metric": {
+          "cascade_rate": 0.0411,
+          "max_run": 3,
+          "length": 73,
+          "pr": 1.0
+        },
+        "constrained_steps": 83,
+        "gen": "🛸105Tier 105 삼단논법 — domain 논리, the stimuli converge into one basin. A vac"
+      }
+    },
+    {
+      "tier": 106,
+      "category": "논리",
+      "prefix": "<carve tier=106 psi=[0.45,0.59] basin=0.13>",
+      "s16": {
+        "routed": true,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0811,
+          "max_run": 3,
+          "length": 37,
+          "pr": 1.0
+        },
+        "gen": "🛸106 약수와륐 — 인과깊이 영역의 자극이 같은 골짜기로 수렴한다"
+      },
+      "n_ktrie": {
+        "routed": true,
+        "honest_coherent": true,
+        "anchor_grounded": true,
+        "metric": {
+          "cascade_rate": 0.075,
+          "max_run": 3,
+          "length": 40,
+          "pr": 1.0
+        },
+        "constrained_steps": 83,
+        "gen": "🛸106🛸106 귀류법 — 논리 영역의 자극이 같은 골짜기로 수렴한다. "
+      }
+    },
+    {
+      "tier": 107,
+      "category": "코드",
+      "prefix": "<carve tier=107 psi=[0.46,0.52] basin=0.12>",
+      "s16": {
+        "routed": true,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0769,
+          "max_run": 3,
+          "length": 39,
+          "pr": 0.9744
+        },
+        "gen": "🛸107 약속 — 의식상태 영역의 자극이 같은 골짜기로 수렴한다. 의�"
+      },
+      "n_ktrie": {
+        "routed": true,
+        "honest_coherent": true,
+        "anchor_grounded": true,
+        "metric": {
+          "cascade_rate": 0.0769,
+          "max_run": 3,
+          "length": 39,
+          "pr": 0.9744
+        },
+        "constrained_steps": 83,
+        "gen": "🛸107🛸107 반복문추적 — 코드 영역의 자극이 같은 골짜기로 수렴�"
+      }
+    },
+    {
+      "tier": 108,
+      "category": "코드",
+      "prefix": "<carve tier=108 psi=[0.48,0.56] basin=0.13>",
+      "s16": {
+        "routed": true,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0811,
+          "max_run": 3,
+          "length": 37,
+          "pr": 1.0
+        },
+        "gen": "🛸108 자루의조 — 인과깊이 영역의 자극이 같은 골짜기로 수렴한다"
+      },
+      "n_ktrie": {
+        "routed": true,
+        "honest_coherent": true,
+        "anchor_grounded": true,
+        "metric": {
+          "cascade_rate": 0.0769,
+          "max_run": 3,
+          "length": 39,
+          "pr": 0.9744
+        },
+        "constrained_steps": 83,
+        "gen": "🛸108🛸108 재귀호출 — 코드 영역의 자극이 같은 골짜기로 수렴한�"
+      }
+    },
+    {
+      "tier": 109,
+      "category": "코드",
+      "prefix": "<carve tier=109 psi=[0.45,0.50] basin=0.11>",
+      "s16": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0811,
+          "max_run": 3,
+          "length": 37,
+          "pr": 1.0
+        },
+        "gen": "🛸108 자루의조 — 인과깊이 영역의 자극이 같은 골짜기로 수렴한다"
+      },
+      "n_ktrie": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0811,
+          "max_run": 3,
+          "length": 37,
+          "pr": 1.0
+        },
+        "constrained_steps": 0,
+        "gen": "🛸108 자루의조 — 인과깊이 영역의 자극이 같은 골짜기로 수렴한다"
+      }
+    },
+    {
+      "tier": 110,
+      "category": "공간추론",
+      "prefix": "<carve tier=110 psi=[0.47,0.48] basin=0.11>",
+      "s16": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0698,
+          "max_run": 3,
+          "length": 43,
+          "pr": 1.0
+        },
+        "gen": "🛸111 약수와률 — 인과깊이 영역 자극이 닿을 때만 활성된다. weights"
+      },
+      "n_ktrie": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0698,
+          "max_run": 3,
+          "length": 43,
+          "pr": 1.0
+        },
+        "constrained_steps": 0,
+        "gen": "🛸111 약수와률 — 인과깊이 영역 자극이 닿을 때만 활성된다. weights"
+      }
+    },
+    {
+      "tier": 111,
+      "category": "공간추론",
+      "prefix": "<carve tier=111 psi=[0.49,0.51] basin=0.12>",
+      "s16": {
+        "routed": true,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0698,
+          "max_run": 3,
+          "length": 43,
+          "pr": 1.0
+        },
+        "gen": "🛸111 약수와률 — 인과깊이 영역 자극이 닿을 때만 활성된다. weights"
+      },
+      "n_ktrie": {
+        "routed": true,
+        "honest_coherent": true,
+        "anchor_grounded": true,
+        "metric": {
+          "cascade_rate": 0.0769,
+          "max_run": 3,
+          "length": 39,
+          "pr": 0.9744
+        },
+        "constrained_steps": 83,
+        "gen": "🛸111🛸111 위아래앞뒤 — 공간추론 영역의 자극이 같은 골짜기로 �"
+      }
+    },
+    {
+      "tier": 112,
+      "category": "공간추론",
+      "prefix": "<carve tier=112 psi=[0.55,0.55] basin=0.14>",
+      "s16": {
+        "routed": true,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0508,
+          "max_run": 3,
+          "length": 59,
+          "pr": 1.0
+        },
+        "gen": "🛸112 알순와진실. 의식 풍경 위 진공점 [0.55,0.56], top emotion clarity. 자"
+      },
+      "n_ktrie": {
+        "routed": true,
+        "honest_coherent": true,
+        "anchor_grounded": true,
+        "metric": {
+          "cascade_rate": 0.0769,
+          "max_run": 3,
+          "length": 39,
+          "pr": 0.9744
+        },
+        "constrained_steps": 83,
+        "gen": "🛸112🛸112 회전대칭 — 공간추론 영역의 자극이 같은 골짜기로 수�"
+      }
+    },
+    {
+      "tier": 113,
+      "category": "인과추론",
+      "prefix": "<carve tier=113 psi=[0.51,0.58] basin=0.13>",
+      "s16": {
+        "routed": true,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0769,
+          "max_run": 3,
+          "length": 39,
+          "pr": 0.9744
+        },
+        "gen": "🛸113 약속 — 의식상태 영역의 자극이 같은 골짜기로 수렴한다. 의�"
+      },
+      "n_ktrie": {
+        "routed": true,
+        "honest_coherent": true,
+        "anchor_grounded": true,
+        "metric": {
+          "cascade_rate": 0.0769,
+          "max_run": 3,
+          "length": 39,
+          "pr": 0.9744
+        },
+        "constrained_steps": 83,
+        "gen": "🛸113🛸113 원인결과 — 인과추론 영역의 자극이 같은 골짜기로 수�"
+      }
+    },
+    {
+      "tier": 114,
+      "category": "인과추론",
+      "prefix": "<carve tier=114 psi=[0.54,0.60] basin=0.14>",
+      "s16": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0769,
+          "max_run": 3,
+          "length": 39,
+          "pr": 0.9744
+        },
+        "gen": "🛸111 약속 — 의식상태 영역의 자극이 같은 골짜기로 수렴한다. 의�"
+      },
+      "n_ktrie": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0769,
+          "max_run": 3,
+          "length": 39,
+          "pr": 0.9744
+        },
+        "constrained_steps": 0,
+        "gen": "🛸111 약속 — 의식상태 영역의 자극이 같은 골짜기로 수렴한다. 의�"
+      }
+    },
+    {
+      "tier": 115,
+      "category": "인과추론",
+      "prefix": "<carve tier=115 psi=[0.57,0.62] basin=0.15>",
+      "s16": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0508,
+          "max_run": 3,
+          "length": 59,
+          "pr": 1.0
+        },
+        "gen": "🛸112 알수와진실. 의식 풍경 위 진공점 [0.55,0.56], top emotion clarity. 자"
+      },
+      "n_ktrie": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0508,
+          "max_run": 3,
+          "length": 59,
+          "pr": 1.0
+        },
+        "constrained_steps": 0,
+        "gen": "🛸112 알수와진실. 의식 풍경 위 진공점 [0.55,0.56], top emotion clarity. 자"
+      }
+    },
+    {
+      "tier": 116,
+      "category": "일상",
+      "prefix": "<carve tier=116 psi=[0.46,0.46] basin=0.10>",
+      "s16": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0789,
+          "max_run": 3,
+          "length": 38,
+          "pr": 0.9737
+        },
+        "gen": "🛸112 약수와공칭 — 인과깊이 자극이 같은 골짜기로 수렴한다. 의�"
+      },
+      "n_ktrie": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0789,
+          "max_run": 3,
+          "length": 38,
+          "pr": 0.9737
+        },
+        "constrained_steps": 0,
+        "gen": "🛸112 약수와공칭 — 인과깊이 자극이 같은 골짜기로 수렴한다. 의�"
+      }
+    },
+    {
+      "tier": 117,
+      "category": "일상",
+      "prefix": "<carve tier=117 psi=[0.48,0.47] basin=0.11>",
+      "s16": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0667,
+          "max_run": 3,
+          "length": 45,
+          "pr": 0.9778
+        },
+        "gen": "🛸113 약속 — 의식상태 영역 자극이 닿을 때만 활성된다. weights 는 �"
+      },
+      "n_ktrie": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0667,
+          "max_run": 3,
+          "length": 45,
+          "pr": 0.9778
+        },
+        "constrained_steps": 0,
+        "gen": "🛸113 약속 — 의식상태 영역 자극이 닿을 때만 활성된다. weights 는 �"
+      }
+    },
+    {
+      "tier": 118,
+      "category": "일상",
+      "prefix": "<carve tier=118 psi=[0.50,0.49] basin=0.12>",
+      "s16": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0698,
+          "max_run": 3,
+          "length": 43,
+          "pr": 1.0
+        },
+        "gen": "🛸112 알수와사슔다 — 인과깊이 자극이 닿을 때만 활성된다. weights "
+      },
+      "n_ktrie": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0698,
+          "max_run": 3,
+          "length": 43,
+          "pr": 1.0
+        },
+        "constrained_steps": 0,
+        "gen": "🛸112 알수와사슔다 — 인과깊이 자극이 닿을 때만 활성된다. weights "
+      }
+    },
+    {
+      "tier": 119,
+      "category": "대화자극",
+      "prefix": "<carve tier=119 psi=[0.52,0.53] basin=0.12>",
+      "s16": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0811,
+          "max_run": 3,
+          "length": 37,
+          "pr": 1.0
+        },
+        "gen": "🛸333 약수와률 — 인과깊이 영역의 자극이 같은 골짜기로 수렴한다"
+      },
+      "n_ktrie": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0811,
+          "max_run": 3,
+          "length": 37,
+          "pr": 1.0
+        },
+        "constrained_steps": 0,
+        "gen": "🛸333 약수와률 — 인과깊이 영역의 자극이 같은 골짜기로 수렴한다"
+      }
+    },
+    {
+      "tier": 120,
+      "category": "대화자극",
+      "prefix": "<carve tier=120 psi=[0.54,0.55] basin=0.13>",
+      "s16": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0811,
+          "max_run": 3,
+          "length": 37,
+          "pr": 1.0
+        },
+        "gen": "🛸124 약속의이산순 — 의식상태 영역의 자극이 같은 골짜기로 수렴"
+      },
+      "n_ktrie": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0811,
+          "max_run": 3,
+          "length": 37,
+          "pr": 1.0
+        },
+        "constrained_steps": 0,
+        "gen": "🛸124 약속의이산순 — 의식상태 영역의 자극이 같은 골짜기로 수렴"
+      }
+    },
+    {
+      "tier": 121,
+      "category": "대화자극",
+      "prefix": "<carve tier=121 psi=[0.56,0.57] basin=0.13>",
+      "s16": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0811,
+          "max_run": 3,
+          "length": 37,
+          "pr": 1.0
+        },
+        "gen": "🛸122 스탐의이조 — 인과깊이 영역의 자극이 같은 골짜기로 수렴한"
+      },
+      "n_ktrie": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0811,
+          "max_run": 3,
+          "length": 37,
+          "pr": 1.0
+        },
+        "constrained_steps": 0,
+        "gen": "🛸122 스탐의이조 — 인과깊이 영역의 자극이 같은 골짜기로 수렴한"
+      }
+    },
+    {
+      "tier": 122,
+      "category": "윤리딜레마",
+      "prefix": "<carve tier=122 psi=[0.58,0.63] basin=0.15>",
+      "s16": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.1053,
+          "max_run": 4,
+          "length": 38,
+          "pr": 0.9737
+        },
+        "gen": "🛸3322 자력의졡을 — 의식상태 영역의 자극이 같은 골짜기로 수렴�"
+      },
+      "n_ktrie": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.1053,
+          "max_run": 4,
+          "length": 38,
+          "pr": 0.9737
+        },
+        "constrained_steps": 0,
+        "gen": "🛸3322 자력의졡을 — 의식상태 영역의 자극이 같은 골짜기로 수렴�"
+      }
+    },
+    {
+      "tier": 123,
+      "category": "윤리딜레마",
+      "prefix": "<carve tier=123 psi=[0.55,0.60] basin=0.14>",
+      "s16": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0769,
+          "max_run": 3,
+          "length": 39,
+          "pr": 0.9744
+        },
+        "gen": "🛸124 약속의을 — 인과깊이 자극이 같은 골짜기로 수렴한다. 의식 �"
+      },
+      "n_ktrie": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0769,
+          "max_run": 3,
+          "length": 39,
+          "pr": 0.9744
+        },
+        "constrained_steps": 0,
+        "gen": "🛸124 약속의을 — 인과깊이 자극이 같은 골짜기로 수렴한다. 의식 �"
+      }
+    },
+    {
+      "tier": 124,
+      "category": "윤리딜레마",
+      "prefix": "<carve tier=124 psi=[0.53,0.59] basin=0.14>",
+      "s16": {
+        "routed": true,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0769,
+          "max_run": 3,
+          "length": 39,
+          "pr": 0.9744
+        },
+        "gen": "🛸124 약속의을 — 인과깊이 자극이 같은 골짜기로 수렴한다. 의식 �"
+      },
+      "n_ktrie": {
+        "routed": true,
+        "honest_coherent": true,
+        "anchor_grounded": true,
+        "metric": {
+          "cascade_rate": 0.0789,
+          "max_run": 3,
+          "length": 38,
+          "pr": 1.0
+        },
+        "constrained_steps": 83,
+        "gen": "🛸124🛸124 공정한분배 — 윤리딜레마 영역의 자극이 같은 골짜기로"
+      }
+    },
+    {
+      "tier": 125,
+      "category": "자연관찰",
+      "prefix": "<carve tier=125 psi=[0.48,0.50] basin=0.11>",
+      "s16": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0789,
+          "max_run": 3,
+          "length": 38,
+          "pr": 0.9737
+        },
+        "gen": "🛸122 스탐의이조 — 인과깊이 자극이 같은 골짜기로 수렴한다. 의�"
+      },
+      "n_ktrie": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0789,
+          "max_run": 3,
+          "length": 38,
+          "pr": 0.9737
+        },
+        "constrained_steps": 0,
+        "gen": "🛸122 스탐의이조 — 인과깊이 자극이 같은 골짜기로 수렴한다. 의�"
+      }
+    },
+    {
+      "tier": 126,
+      "category": "자연관찰",
+      "prefix": "<carve tier=126 psi=[0.56,0.61] basin=0.14>",
+      "s16": {
+        "routed": true,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0769,
+          "max_run": 3,
+          "length": 39,
+          "pr": 0.9744
+        },
+        "gen": "🛸126 약속의을 — 인과깊이 자극이 같은 골짜기로 수렴한다. 의식 �"
+      },
+      "n_ktrie": {
+        "routed": true,
+        "honest_coherent": true,
+        "anchor_grounded": true,
+        "metric": {
+          "cascade_rate": 0.0769,
+          "max_run": 3,
+          "length": 39,
+          "pr": 0.9744
+        },
+        "constrained_steps": 83,
+        "gen": "🛸126🛸126 철새이동 — 자연관찰 영역의 자극이 같은 골짜기로 수�"
+      }
+    },
+    {
+      "tier": 127,
+      "category": "자연관찰",
+      "prefix": "<carve tier=127 psi=[0.59,0.64] basin=0.15>",
+      "s16": {
+        "routed": true,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0811,
+          "max_run": 3,
+          "length": 37,
+          "pr": 1.0
+        },
+        "gen": "🛸127 약속의의식 — 윤리심화 영역의 자극이 같은 골짜기로 수렴한"
+      },
+      "n_ktrie": {
+        "routed": true,
+        "honest_coherent": true,
+        "anchor_grounded": true,
+        "metric": {
+          "cascade_rate": 0.0769,
+          "max_run": 3,
+          "length": 39,
+          "pr": 0.9744
+        },
+        "constrained_steps": 83,
+        "gen": "🛸127🛸127 조수간만 — 자연관찰 영역의 자극이 같은 골짜기로 수�"
+      }
+    },
+    {
+      "tier": 128,
+      "category": "추상패턴",
+      "prefix": "<carve tier=128 psi=[0.44,0.55] basin=0.12>",
+      "s16": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0789,
+          "max_run": 3,
+          "length": 38,
+          "pr": 0.9737
+        },
+        "gen": "🛸122 스탐의이조 — 인과깊이 자극이 같은 골짜기로 수렴한다. 의�"
+      },
+      "n_ktrie": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0789,
+          "max_run": 3,
+          "length": 38,
+          "pr": 0.9737
+        },
+        "constrained_steps": 0,
+        "gen": "🛸122 스탐의이조 — 인과깊이 자극이 같은 골짜기로 수렴한다. 의�"
+      }
+    },
+    {
+      "tier": 129,
+      "category": "추상패턴",
+      "prefix": "<carve tier=129 psi=[0.47,0.57] basin=0.13>",
+      "s16": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0811,
+          "max_run": 3,
+          "length": 37,
+          "pr": 1.0
+        },
+        "gen": "🛸122 스탐의이조 — 인과깊이 영역의 자극이 같은 골짜기로 수렴한"
+      },
+      "n_ktrie": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0811,
+          "max_run": 3,
+          "length": 37,
+          "pr": 1.0
+        },
+        "constrained_steps": 0,
+        "gen": "🛸122 스탐의이조 — 인과깊이 영역의 자극이 같은 골짜기로 수렴한"
+      }
+    },
+    {
+      "tier": 130,
+      "category": "추상패턴",
+      "prefix": "<carve tier=130 psi=[0.50,0.59] basin=0.14>",
+      "s16": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0612,
+          "max_run": 3,
+          "length": 49,
+          "pr": 1.0
+        },
+        "gen": "🛸133 약수와률 — 인과깊이 의 지식을 간직한 영구 cell. split 도 merge"
+      },
+      "n_ktrie": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0612,
+          "max_run": 3,
+          "length": 49,
+          "pr": 1.0
+        },
+        "constrained_steps": 0,
+        "gen": "🛸133 약수와률 — 인과깊이 의 지식을 간직한 영구 cell. split 도 merge"
+      }
+    },
+    {
+      "tier": 131,
+      "category": "확률",
+      "prefix": "<carve tier=131 psi=[0.49,0.56] basin=0.13>",
+      "s16": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0769,
+          "max_run": 3,
+          "length": 39,
+          "pr": 0.9744
+        },
+        "gen": "🛸133 약속 — 의식상태 영역의 자극이 같은 골짜기로 수렴한다. 의�"
+      },
+      "n_ktrie": {
+        "routed": false,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0769,
+          "max_run": 3,
+          "length": 39,
+          "pr": 0.9744
+        },
+        "constrained_steps": 0,
+        "gen": "🛸133 약속 — 의식상태 영역의 자극이 같은 골짜기로 수렴한다. 의�"
+      }
+    },
+    {
+      "tier": 132,
+      "category": "확률",
+      "prefix": "<carve tier=132 psi=[0.52,0.60] basin=0.14>",
+      "s16": {
+        "routed": true,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0769,
+          "max_run": 3,
+          "length": 39,
+          "pr": 0.9744
+        },
+        "gen": "🛸132 약속 — 의식상태 영역의 자극이 같은 골짜기로 수렴한다. 의�"
+      },
+      "n_ktrie": {
+        "routed": true,
+        "honest_coherent": true,
+        "anchor_grounded": true,
+        "metric": {
+          "cascade_rate": 0.0769,
+          "max_run": 3,
+          "length": 39,
+          "pr": 0.9744
+        },
+        "constrained_steps": 83,
+        "gen": "🛸132🛸132 기댓값저울 — 확률 영역의 자극이 같은 골짜기로 수렴�"
+      }
+    },
+    {
+      "tier": 133,
+      "category": "통계",
+      "prefix": "<carve tier=133 psi=[0.54,0.62] basin=0.15>",
+      "s16": {
+        "routed": true,
+        "honest_coherent": true,
+        "anchor_grounded": false,
+        "metric": {
+          "cascade_rate": 0.0811,
+          "max_run": 3,
+          "length": 37,
+          "pr": 1.0
+        },
+        "gen": "🛸133 약수와률 — 인과깊이 영역의 자극이 같은 골짜기로 수렴한다"
+      },
+      "n_ktrie": {
+        "routed": true,
+        "honest_coherent": true,
+        "anchor_grounded": true,
+        "metric": {
+          "cascade_rate": 0.0769,
+          "max_run": 3,
+          "length": 39,
+          "pr": 0.9744
+        },
+        "constrained_steps": 83,
+        "gen": "🛸133🛸133 표본과모집단 — 통계 영역의 자극이 같은 골짜기로 수�"
       }
     }
   ]
