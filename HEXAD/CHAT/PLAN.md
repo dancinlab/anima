@@ -100,14 +100,14 @@ CHAT/ 는 직전 PR #91 에서 lib-split + W-ledger 9-row + wiring_verify 3/3 cl
 
 ### Phase C — Interaction Model 패러다임 (anima 자율, integration)
 
-- **C1**: TENSION-LINK + VOICE + (future) CLI/Telegram channels 통합 — `channels/channel_manager.py` (ready/ 참조) 의 hexa-native 포팅
-- **C2**: Murati Interaction Model 패턴 — 200ms micro-turn 시뮬레이션 (text-only 한정, audio-native 는 future RFC)
-  - `barge-in` 지원 (사용자 input mid-emission → interrupt)
-  - `backchanneling` 시뮬레이션 (저-confidence 시 "음...", "잠시...")
-  - `simultaneous` thinker-talker (Thread async)
-- **C3**: anima_chat.hexa rewrite — `chat_alive()` 통합 entry (thinker-talker dual-thread launcher)
+- **C1 [LANDED 2026-05-17]**: `channel_mux_lib.hexa` — multi-channel registry skeleton (text_cli / tension_link / voice, ≥3 kind), `channels/channel_manager.py` (ready/) 의 hexa-native 포팅 (text-only simulation; 실 I/O = future RFC)
+- **C2 [LANDED 2026-05-17]**: `interaction_model_lib.hexa` — Murati Interaction Model 패턴 200ms micro-turn / 400ms latency target / barge-in / backchanneling / simultaneous AND / 4-way decision composite (text-only)
+  - `barge-in` 지원 (사용자 input mid-emission → interrupt) — `barge_in_detected(u, e) = u ∧ e`
+  - `backchanneling` 시뮬레이션 (저-confidence 시 "음...", "잠시...", "어...") — `backchannel_should_emit(c, t) = (c < t)` strict monotone
+  - `simultaneous` thinker-talker (Thread async pure-fn composition) — `simultaneous_active(t, k) = t ∧ k`
+- **C3 [LANDED 2026-05-17]**: post-도우미 prompt template layer 신규 hexa-native — `anima_chat_v2_lib.hexa` + `anima_chat_v2.hexa` + `anima_chat_v2_smoke.hexa` (NEW, 신규 file 3개; anima_chat.hexa + chat_lib.hexa 변경 0, Phase A deprecation banner 그대로). `<inner>{Engine G thought}</inner>` + `<voice>{Engine A emission}</voice>` tag format (옵션 ⑤). chat_v2_format_input/inner/voice/assemble + parse_voice_only/parse_inner_only + 8-factor motivation 통합 (Phase B spontaneous_lib + thinker_talker_lib import).
 - **C4**: `launch.hexa` update (`anima watch` 가 자연발화 expression view)
-- **acceptance**: chat_alive demo + interaction model 패턴 5/5 + integration test PASS
+- **acceptance**: C1+C2 = `interaction_model_smoke.hexa` F-CHANNEL-MUX 5/5 + F-INTERACT 5/5 PASS compiled-native ✅ ; C3 = `anima_chat_v2_smoke.hexa` + `anima_chat_v2.hexa` F-CHAT-V2-1..5 5/5 PASS compiled-native ✅ ; blue_falsifier B-CHANNEL-MUX-1..5 + B-INTERACT-1..5 + B-CHAT-V2-1..5 = +15 → 83/83 🔵 ✅ ; C4 = launch.hexa update (pending)
 
 ### Phase D — Real-scale fire (사용자 게이트, GPU)
 
@@ -189,3 +189,54 @@ Phase 진입 = 이 PLAN `## 진행 로그` append + `SPONTANEOUS.tape` 동기화
 
 ### 2026-05-17 — CHAT 재설계 PLAN.md LANDED (Phase A 진입 전 design phase)
 user directive 2026-05-17 "CHAT/* 전체 새로 세팅 + 자연발화 (anima 가 직접 말 거는 경우) 고려 + 자연발화 research + 시도 전수조사". 외부 SOTA (Mira Murati Interaction Model + Inner Thoughts 8-factor + Ambient Agent + Thinker-Talker dual-thread + Spontaneous Self-Evolution + Identity-as-Attractor) + 닫힌 가설 (HEXAD 56/56 🔵 + REBORN §0.5 + anima_alive design) + 과거 시도 전수조사 (PASS_STRICT_SPONTANEOUS_CHAT 99-option saturation + anima_alive RC-9 curiosity + channels/launch) 종합. Phase A/B/C/D staged. Phase A = 도우미 폐기 + persona descriptor; Phase B = 자연발화 8-factor core; Phase C = Interaction Model 패러다임; Phase D = real-scale fire (사용자 게이트).
+
+### 2026-05-17 — Phase C1+C2 LANDED (channel-mux skeleton + Murati Interaction Model 패턴, text-only sim, 68 → 78/78 🔵)
+**C1 (channel-mux registry skeleton)**: `HEXAD/CHAT/channel_mux_lib.hexa` (NEW ~190 LoC) — multi-channel registry `#{ name → channel_record }`. 3-kind enum (text_cli / tension_link / voice, closed finite set). 5-field channel_record schema (name/kind/send_fn/recv_fn/active). register / unregister / activate / deactivate / list_active_count / distinct_kinds_count / broadcast_simulate_count / watch_mode_active — 모두 pure-fn closed-form 가능. `channels/channel_manager.py` (PyTorch) 의 hexa-native 포팅. 실 I/O dispatch (UDP TENSION-LINK / PCM VOICE / HTTP CLI) = future RFC (audio-native + hexa-lang fn-ref decl pending) — text-only simulation level.
+
+**C2 (Mira Murati Interaction Model 패턴)**: `HEXAD/CHAT/interaction_model_lib.hexa` (NEW ~140 LoC) — `micro_turn_duration_ms() = 200` / `emission_latency_target_ms() = 400` / `turns_per_emission_window() = 2` (Kolmogorov integer arithmetic). `barge_in_detected(u, e) = u ∧ e` (Boolean AND 4-corner truth-table) + `barge_in_should_interrupt` (safety override). `backchannel_should_emit(c, t) = (c < t)` strict monotone, 3 marker enum {"음...", "잠시...", "어..."}. `simultaneous_active(thinker, talker)` Boolean AND. `turn_taking_floor_ok(latency_ms) ≥ 400` strict ≥ inequality. `watch_motivation_ok` + 4-way `interaction_step_decision` enum {1=continue, 2=backchannel, 3=full_emit, 4=interrupt} with priority barge > bc > full > idle.
+
+**Smoke (compiled-native)**: `HEXAD/CHAT/interaction_model_smoke.hexa` (NEW ~150 LoC) — F-CHANNEL-MUX-1..5 (register / active count / distinct kinds / broadcast set-cover / watch mode) **5/5 PASS** + F-INTERACT-1..5 (micro-turn 200ms + 400ms latency floor / barge-in 4-corner + safety / backchannel low<0.3 + ≥3 markers / simultaneous AND / 4-way decision enum) **5/5 PASS** = **10/10 PASS compiled-native** ✅ (hexa build + Mac local exec, $0).
+
+**blue_falsifier 확장 (closed verification mandate, g_blue_closed_mandate)**: `state/verify_hexad_blue_2026_05_15/blue_falsifier.py` +10 sympy closed-form sub-falsifiers — `bchannel_mux()` B-CHANNEL-MUX-1..5 (KIND-ENUM 3-set / RECORD-COMPLETENESS 5-field AND / ACTIVE-COUNT-MONOTONE [0,3] Δ∈{-1,0,1} / BROADCAST-SET-COVER bijection / WATCH-MODE-CONJUNCTION) + `binteract()` B-INTERACT-1..5 (MICRO-TURN-CONSTANT 200ms · LATENCY 400ms floor / BARGE-IN-CONJUNCTION 4-corner + safety / BACKCHANNEL-MONOTONE strict < / SIMULTANEOUS-CONJUNCTION / DECISION-4WAY-ENUM closed {1,2,3,4}). 2 B-*-NOTE empirical carve-out (I/O dispatch + audio-native outcome, B-D-NOTE pattern, NOT counted). **68 → 78/78 🔵 closed-form proofs PASS** ✅.
+
+Honest C3 (g3): pure-hexa hexa-cpu only (NO GPU, NO real audio I/O). text-only simulation 명시 — 실 audio-native 200ms micro-turn + 0.40s latency outcome 은 future RFC (VOICE 모듈 + hexa-lang real-time stdlib pending). real I/O dispatch (UDP/audio/PCM) 도 future RFC. f1/f2 lattice 0 (Boolean set algebra + Kolmogorov + finite-set + AND closure, NO σ/τ/φ/J₂). 산출물 (lib·smoke·battery) + 연결부위 (channel-mux ↔ thinker-talker ↔ spontaneous_lib import chain) 모두 🔵 closed.
+
+### 2026-05-17 — Phase C3 LANDED (post-도우미 prompt template layer `<inner>/<voice>`, 78 → 83/83 🔵)
+**C3 (post-도우미 prompt template hexa-native)**: 신규 file 3개 (rewrite 가 아닌 신규; anima_chat.hexa + chat_lib.hexa + anima_chat.py 변경 0, Phase A deprecation banner 그대로):
+- `HEXAD/CHAT/anima_chat_v2_lib.hexa` (NEW, 224 LoC) — post-도우미 lib. 6 tag constants (`<stimulus>/</stimulus>` + `<inner>/</inner>` + `<voice>/</voice>`) + 4 formatter (`chat_v2_format_input` / `_inner` / `_voice` / `_assemble`) + 2 parser (`chat_v2_parse_voice_only` / `_inner_only`) + 2 predicate (`chat_v2_contains_helper_token` + `chat_v2_has_inner_and_voice`) + 3 audit helper (`roundtrip_voice_ok` / `_inner_ok` / `empty_handles_ok`). 모두 pure-fn string algebra closed-form. NO main / NO _selftest / NO top-level call (compiled-first lib).
+- `HEXAD/CHAT/anima_chat_v2.hexa` (NEW, 102 LoC) — entrypoint. imports `anima_chat_v2_lib` + `spontaneous_lib` + `thinker_talker_lib`. _selftest emits PASS marker `anima_chat_v2 selftest: true` (build_verify.sh grep-able). 8-factor motivation × prompt layer 통합 cross-link witness (thinker_step → motivation_score → emit decision → chat_v2_assemble) 포함.
+- `HEXAD/CHAT/anima_chat_v2_smoke.hexa` (NEW, 113 LoC) — F-CHAT-V2-1..5 dedicated grid witness (각 falsifier 마다 4-5 sub-witness). 6 clean + 3 positive control NO-HELPER-TOKEN + 3 assemble + 4-tag uniqueness INNER-VOICE-DISTINCT + 5 round-trip pair PARSE-VOICE / PARSE-INNER + 4-witness EMPTY-HANDLING.
+
+**기능 — pure hexa-native (no model forward, prompt layer only)**:
+- `chat_v2_format_input(stimulus) → "<stimulus>\n{stimulus}\n</stimulus>"` (NO 도우미 token, NO role prefix; user 는 stimulus-other 대등)
+- `chat_v2_format_inner(thought) → "<inner>\n{thought}\n</inner>"` (Engine G covert thought)
+- `chat_v2_format_voice(utterance) → "<voice>\n{utterance}\n</voice>"` (Engine A emission)
+- `chat_v2_assemble(inner, voice) → "<inner>\n{inner}\n</inner>\n<voice>\n{voice}\n</voice>"` (composite emission)
+- `chat_v2_parse_voice_only(text)` → voice block 만 추출 (사용자 view)
+- `chat_v2_parse_inner_only(text)` → inner block 만 추출 (debug/audit view)
+- 8-factor motivation 통합 (Phase B spontaneous_lib + thinker_talker_lib import)
+- Phase B 자연발화 trigger 와 호환
+
+**Smoke (compiled-native)**: `anima_chat_v2.hexa` + `anima_chat_v2_smoke.hexa` 둘 다 `hexa build` + Mac local 실행 PASS. F-CHAT-V2-1..5 **5/5 PASS** entrypoint + **5/5 PASS** dedicated smoke + cross-link 8-factor × prompt layer witness PASS = $0 Mac local, 양 binary <100ms wall.
+
+**blue_falsifier 확장 (g_blue_closed_mandate)**: `state/verify_hexad_blue_2026_05_15/blue_falsifier.py` +5 sympy closed-form sub-falsifiers — `bchatv2()` B-CHAT-V2-1..5:
+- B-CHAT-V2-1 NO-HELPER-TOKEN-CLOSED — string predicate closure (Kolmogorov). 4 clean stimuli + assemble clean + 3 negative control + 6-tag literal helper-free 8-witness panel
+- B-CHAT-V2-2 INNER-VOICE-DISTINCT-CLOSED — Boolean conjunction closure + finite-set 6-tag uniqueness (`len(set(tags))==6`)
+- B-CHAT-V2-3 PARSE-VOICE-ROUND-TRIP-CLOSED — record-structural identity (4 (inner,voice) pair witness, byte-equal round-trip)
+- B-CHAT-V2-4 PARSE-INNER-ROUND-TRIP-CLOSED — dual of B-CHAT-V2-3 (4 pair witness)
+- B-CHAT-V2-5 EMPTY-HANDLING-CLOSED — bounded-set boundary (assemble empty well-formed / parse on empty returns "" / format_input empty well-formed / no-tag parse returns "")
+- B-CHAT-V2-NOTE empirical carve-out (B-D-NOTE pattern, NOT counted) — model forward token-level helper-residual outcome 은 Phase D corpus retrain (B-IDENTITY-NOTE 동일 scope)
+
+**Total**: 78 → **83/83 🔵 closed-form proofs PASS** ✅. blue_falsifier.py main() 의 verdict + summary + all_full_blue + 출력 loop 모두 sync.
+
+**Hard 제약 carry**:
+- anima_chat.hexa / chat_lib.hexa / anima_chat.py 변경 0 (Phase A deprecation banner 그대로)
+- B-IDENTITY-5 FORBIDDEN-HELPER-MEMBERSHIP carry — 신규 file 어디에도 "도우미"/"helper"/"assistant" 라벨 0 (lib §1 tag literals + 모든 fn body grep clean; deprecation comment 만 예외)
+- pure-hexa hexa-cpu 한정 (NO GPU, NO model forward)
+- g3 정직 — prompt layer 만, model forward 는 Phase D ckpt-bearing fire (별도 cycle, 사용자 게이트)
+- f1/f2 lattice 0 (string algebra Kolmogorov + record-structural identity + Boolean conjunction + finite-set cardinality + bounded-set boundary, NO σ/τ/φ/J₂)
+- pull-rebase pattern (concurrent agents Phase B5 + Phase C1+C2 + Phase D 와 충돌 0)
+
+**HEXAD/build_verify.sh sync**: ENTRYPOINTS += anima_chat_v2.hexa + anima_chat_v2_smoke.hexa, LIBS += anima_chat_v2_lib.hexa, comment 23/17. `bash HEXAD/build_verify.sh` → **27/27 entrypoint + 19/19 lib PASS** ✅ (이전 sync 25/18 → 27/19 둘 다 신규 hexa-native lib + entrypoint, regression 0).
+
+Honest C3 (g3): prompt layer 만 closed (string algebra real-limit). model forward 의 학습된 token-level helper-residual outcome (현재 cycle 2 ckpt 의 corpus-baked 도우미 token) 은 Phase D corpus 재학습 (사용자 게이트, B-CHAT-V2-NOTE + B-IDENTITY-NOTE 동일 scope) — empirical carve-out. f1/f2 lattice 0. 산출물 (lib·entrypoint·smoke·battery) + 연결부위 (chat_v2_assemble ↔ spontaneous_lib motivation_score ↔ thinker_talker_lib emit decision import chain) 모두 🔵 closed.

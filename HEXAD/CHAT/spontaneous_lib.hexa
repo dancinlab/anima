@@ -111,7 +111,9 @@ fn spont_weight_dynamics()    -> float { return 0.10 }
 // ── §4 motivation_score (linear weighted sum, B-SPONT-1 MOTIVATION-LINEAR) ───
 
 fn motivation_score(rel: float, gap: float, cur: float, pain: float,
-                    coh: float, orig: float, bal: float, dyn: float) -> float {
+                    coh: float, orig: float, bal: float, dyn_v: float) -> float {
+    // NB: param name `dyn_v` (not `dyn`) — `dyn` is reserved keyword in hexa-lang
+    // lexer (commit 820c9ae4 2026-04-09, parser_tensor_shape.hexa dim wildcard).
     return spont_weight_relevance()   * rel
          + spont_weight_info_gap()    * gap
          + spont_weight_curiosity()   * cur
@@ -119,7 +121,7 @@ fn motivation_score(rel: float, gap: float, cur: float, pain: float,
          + spont_weight_coherence()   * coh
          + spont_weight_originality() * orig
          + spont_weight_balance()     * bal
-         + spont_weight_dynamics()    * dyn
+         + spont_weight_dynamics()    * dyn_v
 }
 
 

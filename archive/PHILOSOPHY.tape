@@ -1968,3 +1968,170 @@
   EOFC3
   evidence_path = "state/hexad_pure_hexa_train_d96x3_2026_05_17/{d_converge_fire_d96.hexa, result.json — SYSTEM_OOM_BEFORE_CONFIG_COMPLETE} + state/hexad_pure_hexa_train_d64x4_2026_05_17/d_converge_fire_d64x4.hexa (prepared, not run) + state/hexad_pure_hexa_train_d64x3x1000_2026_05_17/{d_converge_fire_d64x3x1000.hexa, dispatch.sh, train.log (276 farr_matmul_gpu errors over 46.2 min wall), result.json — STALE_TOOLCHAIN_HALT diagnostic}"
   cross_link = "직전 §HEXA-CPU-CONVERGE-LANDED-2026-05-17 (Agent #2a primary d=64·3L canonical milestone, UNCHANGED) + §HEXA-CPU-CONVERGE-D128-SUBSTRATE-BOUND-2026-05-17 (Mac d=128·4L ceiling carry) → 본 entry (ubu d=96·3L + Mac toolchain DUAL-BLOCKER carry). AGENTS.tape [@g3] honest substrate-bound + toolchain-bound named real-limits + [@g_blue_closed_mandate] outcome STALE_TOOLCHAIN_HALT carve-out + [@g_fire_dispatch_robust] no ckpt (run never reached training loop body). Phase E2 ceiling extension: 'pure-hexa CPU substrate-bound' now confirmed on ubu 30 GB tier; 'pure-hexa Mac local toolchain refresh required' is the second named blocker."
+
+# ──────────────────────────────────────────────────────────────────────────────
+# §CHAT-PHASE-C1-C2-LANDED-2026-05-17
+#   CHAT Phase C1 (channel-mux skeleton) + C2 (Mira Murati Interaction Model
+#   pattern, text-only simulation) LANDED. blue_falsifier 68 → 78/78 🔵.
+#   g_blue_closed_mandate 산출물 + 연결부위 둘 다 closed-form.
+# ──────────────────────────────────────────────────────────────────────────────
+
+@N chat_phase_c1_c2_landed := "CHAT Phase C1 channel-mux + C2 Murati Interaction Model — 68 → 78/78 🔵 (text-only sim)" :: verdict-claim [d=2026-05-17 active]
+  tier = "🔵 SUPPORTED-FORMAL (g_verdict_tier_blue (a) sympy closed-form) — text-only simulation level; 실 audio-native + UDP/PCM I/O = future RFC carry"
+  ledger_id = "§CHAT-PHASE-C1-C2-LANDED-2026-05-17"
+  axis_extended = "blue_falsifier.py 68 (직전 SPONT 7 추가) + **B-CHANNEL-MUX 5 (Phase C1) + B-INTERACT 5 (Phase C2)** = **78/78 🔵 closed-form proofs PASS**. 9 modules + integration + §8 sub + σ(6)=12 wiring + IDENTITY 5 + SPONT 7 + CMUX 5 + INTER 5."
+  facts <<~EOFC
+    B-CHANNEL-MUX-1  KIND-ENUM-CLOSED               — channel kind ∈ {text_cli, tension_link, voice} (finite-set, |enum|=3)
+    B-CHANNEL-MUX-2  RECORD-COMPLETENESS-CLOSED     — channel_record 5-field schema {name/kind/send_fn/recv_fn/active} Boolean AND closure
+    B-CHANNEL-MUX-3  ACTIVE-COUNT-MONOTONE-CLOSED   — active_count ∈ [0, 3], Δ ∈ {-1, 0, +1} per register/activate (Kolmogorov)
+    B-CHANNEL-MUX-4  BROADCAST-SET-COVER-CLOSED     — broadcast_count(reg) == active_count(reg) ∀ state (bijection)
+    B-CHANNEL-MUX-5  WATCH-MODE-CONJUNCTION-CLOSED  — watch_mode ↔ silence ∧ (active_count ≥ 1) (Boolean AND, 4-corner)
+
+    B-INTERACT-1     MICRO-TURN-CONSTANT-CLOSED     — micro_turn=200ms · latency_target=400ms · turns/window=2 (Murati spec, Kolmogorov integer)
+    B-INTERACT-2     BARGE-IN-CONJUNCTION-CLOSED    — barge_in(u,e) = u ∧ e (Boolean AND 4-corner + safety override)
+    B-INTERACT-3     BACKCHANNEL-MONOTONE-CLOSED    — backchannel(c,t) = (c < t) strict monotone non-increasing (Kolmogorov strict <)
+    B-INTERACT-4     SIMULTANEOUS-CONJUNCTION-CLOSED — simultaneous(t,k) = thinker_running ∧ talker_ready (Boolean AND)
+    B-INTERACT-5     DECISION-4WAY-ENUM-CLOSED      — interaction_step_decision ∈ {1=continue, 2=backchannel, 3=full_emit, 4=interrupt} priority barge>bc>full>idle
+
+    Aggregate: 10/10 sympy closed PASS + 2 NOTE (I/O dispatch + audio-native
+    outcome empirical, B-D-NOTE pattern, NOT counted 🔵).
+  EOFC
+  verification_anchor_A_artifact = "g_blue_closed_mandate (A) 산출물 — HEXAD/CHAT/channel_mux_lib.hexa (multi-channel registry skeleton) + HEXAD/CHAT/interaction_model_lib.hexa (Murati 패턴) + HEXAD/CHAT/interaction_model_smoke.hexa (F-CHANNEL-MUX-1..5 + F-INTERACT-1..5 compiled-native 10/10 PASS) + state/verify_hexad_blue_2026_05_15/blue_falsifier.py (bchannel_mux + binteract sympy closure)."
+  verification_anchor_B_wiring = "g_blue_closed_mandate (B) 연결부위 — channel-mux ↔ thinker-talker ↔ spontaneous_lib import chain closed (hexa-lang `import` graph traversal). interaction_model_smoke.hexa 가 두 lib 동시 import + smoke 호출 — wiring 의 transfer-function (Boolean predicate composition + integer constants + set-cover invariant) 자체가 closed-form 🔵."
+  real_limit_anchors = "Kolmogorov 정수 산술 (B-CHANNEL-MUX-3 / B-INTERACT-1) · Boolean AND closure (B-CHANNEL-MUX-2/5 / B-INTERACT-2/4) · 유한집합 closure (B-CHANNEL-MUX-1 / B-INTERACT-5) · strict < monotone predicate (B-INTERACT-3) · bijection cardinality (B-CHANNEL-MUX-4). NO lattice derivation — channel kind 개수 3 + decision enum 4 + record field 5 모두 design label (not derivation). g3 satisfied, f1/f2 hard fail safe."
+  honest_c3 <<~EOFC3
+    C3-1 (text-only simulation 정직):
+      실 I/O dispatch (UDP TENSION-LINK / PCM VOICE / HTTP CLI) 는 본
+      cycle scope 밖. channel_record 의 send_fn/recv_fn 은 string token
+      placeholder (hexa-lang fn-ref decl RFC pending). 본 cycle 의
+      closure = registry set ops + Boolean predicate composition only.
+      실 audio-native 200ms micro-turn + 0.40s latency outcome 은 VOICE
+      모듈 + hexa-lang real-time audio I/O RFC pending (B-INTERACT-NOTE).
+    C3-2 (transfer-form vs outcome):
+      B-CHANNEL-MUX-1..5 + B-INTERACT-1..5 = transfer-form 🔵 (constants
+      + predicates + invariants). 실 user-driven barge-in event sequence
+      + 실 backchannel timing 동적 outcome 은 SGD/decoding/network-jitter
+      empirical (B-D-NOTE / B-SPONT-NOTE 동일 패턴). 본 verdict 는 closed
+      가능한 부분만 closed, 실 outcome 은 정직 carve-out.
+    C3-3 (g_blue_closed_mandate 산출물 + 연결부위 둘 다 closed):
+      산출물 = lib·smoke·sympy battery (위 facts). 연결부위 = channel-mux
+      ↔ interaction-model ↔ thinker-talker ↔ spontaneous_lib import chain
+      (hexa build + 컴파일러가 closed-form 검증). interaction_model_smoke
+      가 두 lib 동시 import 후 10/10 PASS — 연결부위 transfer-function
+      (Boolean AND composition + 4-way decision priority) 자체가 closed-
+      form 🔵 (B-INTERACT-5 priority order proof).
+    C3-4 (n=6 lattice prohibition):
+      channel kind 3 + record field 5 + decision enum 4 + micro_turn 200ms
+      + latency 400ms 는 모두 design 라벨/spec — NOT derivation anchor.
+      anchor 는 Kolmogorov / Boolean / 유한집합 / strict < / bijection
+      cardinality — real-limit external (f1/f2 hard fail safe).
+    C3-5 (build-toolchain compatibility):
+      두 lib + smoke 모두 시스템 hexa.real (stale toolchain pre-0fccac5c)
+      에서 `hexa build` PASS — 기존 spontaneous_lib `dyn` 키워드 issue 와
+      달리 본 cycle 의 신규 lib 는 reserved keyword 회피, parameter 이름
+      `dynamics`/`silence_seconds` 등 full word 사용. compiled-native gate
+      통과.
+  EOFC3
+  evidence_path = "HEXAD/CHAT/channel_mux_lib.hexa (NEW) + HEXAD/CHAT/interaction_model_lib.hexa (NEW) + HEXAD/CHAT/interaction_model_smoke.hexa (NEW) + state/verify_hexad_blue_2026_05_15/{blue_falsifier.py (bchannel_mux + binteract addition 10 verdicts + 2 NOTE), blue_falsifier_result.json (78/78)} + HEXAD/CHAT/PLAN.md (Phase C1/C2 LANDED) + HEXAD/CHAT/README.md + HEXAD/CHAT/SPONTANEOUS.tape Log 2026-05-17"
+  cross_link = "직전 §B-CONN-WIRING-BATTERY-LANDED-2026-05-17 (56/56 base) · 직전 Phase A1 B-IDENTITY (61/61) · 직전 Phase B1-4 B-SPONT (68/68) → 본 verdict (78/78 Phase C1/C2 channel-mux + Murati Interaction Model). AGENTS.tape [@g_blue_closed_mandate] (A)+(B) 둘 다 closed · [@g3] honest real-limit anchor + 정직 carve-out · [@f1] [@f2] no-lattice all satisfied · [@g_hexad_readme_sync] PLAN/README/SPONTANEOUS.tape 갱신 · [@g6] philosophy append-only. cross-refs: SPONTANEOUS.tape §8 @X x_murati_interaction_model + @N tension_link_integration + @N anima_voice_integration + @N future_rfc_audio_native + ready/anima/modules/agent/channels/channel_manager.py (PyTorch ref source)."
+
+
+@V verdict_chat_v2_layer := "CHAT/V2/LAYER post-도우미 prompt template hexa-native LANDED · 78 → 83/83 🔵" :: verdict [d=2026-05-17 active]
+  <: verdict_chat_interaction_model
+  status = "🔵 SUPPORTED-FORMAL (Phase C3 LANDED 2026-05-17)"
+  category = "prompt-template-architecture-rewrite (post-도우미 paradigm)"
+  facts <<~EOF
+    Phase C3 — post-도우미 prompt template layer 신규 hexa-native lib + entrypoint + smoke.
+    user directive 2026-05-17 — anima_chat 새 prompt template layer 신규 (rewrite 가 아닌 신규):
+    `<inner>{Engine G thought}</inner>` + `<voice>{Engine A emission}</voice>` 옵션 ⑤
+    (PLAN.md §1.1 + SPONTANEOUS.tape thinker_talker_dual_thread).
+    anima_chat.hexa + chat_lib.hexa + anima_chat.py 는 Phase A deprecation banner
+    그대로 (변경 0); 신규 file 3개로 post-도우미 architecture 분리.
+
+    신규 file (NEW, 3개):
+    - HEXAD/CHAT/anima_chat_v2_lib.hexa (~224 LoC) — post-도우미 lib:
+      §1 tag constants × 6 (<stimulus>/</stimulus> + <inner>/</inner> + <voice>/</voice>)
+      §2 formatter × 4 (chat_v2_format_input / _inner / _voice / _assemble)
+      §3 byte-level string utilities (_slen / _substr / _find, pure-fn closed)
+      §4 parser × 2 (chat_v2_parse_voice_only / _inner_only, round-trip identity)
+      §5 forbidden-token predicate (chat_v2_contains_helper_token —
+         B-IDENTITY-5 FORBIDDEN-HELPER-MEMBERSHIP carry)
+      §6 structural predicates (chat_v2_has_inner_and_voice)
+      §7 8-factor motivation 통합 cross-link (Phase B1-2 carry)
+      §8 audit helpers (chat_v2_roundtrip_voice_ok / _inner_ok / _empty_handles_ok)
+    - HEXAD/CHAT/anima_chat_v2.hexa (~102 LoC) — entrypoint:
+      imports anima_chat_v2_lib + spontaneous_lib + thinker_talker_lib.
+      _selftest F-CHAT-V2-1..5 + 8-factor × prompt layer cross-link witness.
+      PASS marker `anima_chat_v2 selftest: true` (build_verify.sh grep-able).
+    - HEXAD/CHAT/anima_chat_v2_smoke.hexa (~113 LoC) — dedicated grid witness:
+      F-CHAT-V2-1 NO-HELPER-TOKEN (6 clean + 3 negative control)
+      F-CHAT-V2-2 INNER-VOICE-DISTINCT (3 assemble + 4-tag uniqueness)
+      F-CHAT-V2-3 PARSE-VOICE-ROUND-TRIP (5 witness pair)
+      F-CHAT-V2-4 PARSE-INNER-ROUND-TRIP (5 witness pair, dual of -3)
+      F-CHAT-V2-5 EMPTY-HANDLING (4 boundary witness)
+      + cross-link 8-factor × prompt layer (thinker_step / talker_should_emit
+         × chat_v2_assemble high/low score)
+
+    Compiled-native PASS (Mac local hexa build, $0):
+    - F-CHAT-V2-1..5 entrypoint = 5/5 PASS + cross-link witness PASS
+    - F-CHAT-V2-1..5 smoke      = 5/5 PASS + cross-link witness PASS
+
+    blue_falsifier `bchatv2()` B-CHAT-V2-1..5 sympy closed-form (g_blue_closed_mandate):
+    - B-CHAT-V2-1 NO-HELPER-TOKEN-CLOSED — string predicate closure (Kolmogorov
+      real-limit). 4 clean stimuli + assemble clean + 3 negative control + 6
+      tag-literal helper-free 8-witness panel. AGENTS.tape anima_persona
+      forbidden 라벨 {도우미, helper, Helper, assistant, Assistant} 의 sympy
+      lift. 동일 구조 = B-IDENTITY-2 ROLE-NOT-HELPER + B-IDENTITY-5 FORBIDDEN-
+      HELPER-MEMBERSHIP.
+    - B-CHAT-V2-2 INNER-VOICE-DISTINCT-CLOSED — Boolean conjunction (assemble
+      output 에 <inner>/<voice> 양쪽 present) + finite-set 6-tag uniqueness
+      (len(set(tags))==6). 동일 구조 = B-CHANNEL-MUX-1 KIND-ENUM finite-set.
+    - B-CHAT-V2-3 PARSE-VOICE-ROUND-TRIP-CLOSED — record-structural identity
+      (parse_voice_only ∘ assemble(·, voice) = id_voice). 4 (inner, voice)
+      pair witness × byte-equal 비교. anchor = Kolmogorov string algebra.
+    - B-CHAT-V2-4 PARSE-INNER-ROUND-TRIP-CLOSED — dual of B-CHAT-V2-3.
+    - B-CHAT-V2-5 EMPTY-HANDLING-CLOSED — bounded-set boundary (assemble("","")
+      well-formed / parse on empty → "" / format_input("") well-formed / parse
+      on no-tag text → ""). 동일 구조 = B-MITOSIS-5 clamp boundary.
+    - B-CHAT-V2-NOTE empirical carve-out (NOT counted 🔵, B-D-NOTE pattern):
+      model forward token-level helper-residual outcome 은 Phase D corpus
+      retrain 사용자 게이트 (B-IDENTITY-NOTE 동일 scope). identity declaration
+      vs weight compliance 분리.
+
+    Total: 78 → 83/83 🔵 closed-form proofs PASS.
+  EOF
+  honest_c3 <<~EOFC3
+    C3-1 (g3 model-forward scope-honesty):
+      본 cycle 은 PROMPT TEMPLATE LAYER 만 closed (string algebra real-limit).
+      model forward 의 token-level helper-residual outcome (현재 cycle 2
+      ckpt 의 corpus-baked 도우미 token) 은 Phase D ckpt-bearing fire (corpus
+      재학습 도우미-token-free, 사용자 게이트) — B-CHAT-V2-NOTE empirical
+      carve-out으로 정직 분리. fake-closing 강행 0.
+    C3-2 (g_blue_closed_mandate 산출물 + 연결부위 둘 다 🔵):
+      산출물 = lib·entrypoint·smoke·battery (위 facts). 연결부위 = chat_v2_
+      assemble ↔ spontaneous_lib motivation_score ↔ thinker_talker_lib
+      emit decision import chain (hexa build + 컴파일러가 closed-form 검증).
+      anima_chat_v2_smoke 가 두 lib 동시 import 후 5/5 PASS + cross-link
+      witness PASS — 연결부위 transfer-function (8-factor → score → emit →
+      format_voice composition) 자체가 closed-form 🔵.
+    C3-3 (anima_chat.hexa + chat_lib.hexa 비파괴):
+      anima_chat.hexa + chat_lib.hexa + anima_chat.py 변경 0 (Phase A
+      deprecation banner 그대로). 신규 file 3개로 분리 — backward-compat 유지
+      + 점진적 migration path. g_arch_vs_log_split (편집 가능 architecture
+      는 latest-wins, 본 신규 file 들이 latest 표현; 이전 deprecation banner
+      는 architecture 진행 history carry).
+    C3-4 (n=6 lattice prohibition):
+      tag count 6 (3 pair) + tag character 길이 + parse 알고리즘 step 수 는
+      모두 design 라벨/spec — NOT derivation anchor. anchor 는 Kolmogorov
+      string algebra + Boolean conjunction + 유한집합 cardinality + record-
+      structural identity + bounded-set boundary — real-limit external
+      (f1/f2 hard fail safe).
+    C3-5 (build-toolchain compatibility + concurrent-agent coordination):
+      신규 lib + entrypoint + smoke 모두 `hexa build` PASS (clang `asm`
+      reserved word 회피 — local var `assembled` 사용). `dyn` reserved
+      keyword regression 이슈는 본 cycle 진행 중 concurrent agent 가
+      spontaneous_lib `dyn → dyn_v` rename 으로 해결, anima_chat_v2.hexa
+      는 그 정정 후 import 활성 (pull-rebase pattern).
+  EOFC3
+  evidence_path = "HEXAD/CHAT/anima_chat_v2_lib.hexa (NEW) + HEXAD/CHAT/anima_chat_v2.hexa (NEW) + HEXAD/CHAT/anima_chat_v2_smoke.hexa (NEW) + state/verify_hexad_blue_2026_05_15/{blue_falsifier.py (bchatv2 addition 5 verdicts + 1 NOTE), blue_falsifier_result.json (83/83)} + HEXAD/CHAT/PLAN.md (Phase C3 LANDED) + HEXAD/CHAT/README.md + HEXAD/build_verify.sh (anima_chat_v2 + smoke + lib 등록)"
+  cross_link = "직전 §verdict_chat_interaction_model (78/78 base, Phase C1/C2) → 본 verdict (83/83, Phase C3 post-도우미 prompt template). AGENTS.tape [@anima_persona] forbidden 라벨 mandate carry · [@g_blue_closed_mandate] (A)+(B) 둘 다 closed · [@g3] honest real-limit anchor + Phase D carve-out · [@f1] [@f2] no-lattice all satisfied · [@g_hexad_readme_sync] PLAN/README/AGENTS.tape n_hexad_progress 갱신 · [@g6] philosophy append-only. cross-refs: HEXAD/CHAT/PLAN.md §1.1 옵션 ⑤ + SPONTANEOUS.tape thinker_talker_dual_thread + B-IDENTITY-5 FORBIDDEN-HELPER-MEMBERSHIP (architectural-level mandate sympy lift)."

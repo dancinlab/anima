@@ -18,7 +18,7 @@
 #
 # Usage:  bash HEXAD/build_verify.sh        # build+run all, assert PASS
 # Two tiers (honest, see TOOLCHAIN below):
-#   • always-gated (stale-toolchain-clean): 20 entrypoints + 14 libs.
+#   • always-gated (stale-toolchain-clean): 24 entrypoints + 19 libs.
 #     Exit 0 requires all of these PASS — unrelated work never blocked.
 #   • bootstrapped-toolchain-gated (chat_lib in import closure): the
 #     CHAT/D-R2 set {chat_lib, anima_chat, d_lib, d, integ_test}. These
@@ -119,6 +119,10 @@ ENTRYPOINTS=(
   "HEXAD/MITOSIS/mitosis.hexa"
   "HEXAD/hexad.hexa"
   "HEXAD/CHAT/wiring_verify.hexa"
+  "HEXAD/CHAT/spontaneous_smoke.hexa"
+  "HEXAD/CHAT/anima_chat_v2.hexa"
+  "HEXAD/CHAT/anima_chat_v2_smoke.hexa"
+  "HEXAD/CHAT/interaction_model_smoke.hexa"
 )
 LIBS=(
   "HEXAD/S/s_lib.hexa"      "HEXAD/M/m_lib.hexa"    "HEXAD/W/w_lib.hexa"
@@ -132,6 +136,11 @@ LIBS=(
   "HEXAD/D/d_train5_lib.hexa"
   "HEXAD/MITOSIS/mitosis_lib.hexa"
   "HEXAD/CHAT/wiring_verify_lib.hexa"
+  "HEXAD/CHAT/spontaneous_lib.hexa"
+  "HEXAD/CHAT/thinker_talker_lib.hexa"
+  "HEXAD/CHAT/anima_chat_v2_lib.hexa"
+  "HEXAD/CHAT/channel_mux_lib.hexa"
+  "HEXAD/CHAT/interaction_model_lib.hexa"
 )
 # ── bootstrapped-toolchain-gated targets (R2, 2026-05-16) ───────────────────
 # These transitively pull HEXAD/CHAT/chat_lib.hexa into their import closure

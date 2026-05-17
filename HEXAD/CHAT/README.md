@@ -115,6 +115,15 @@
 - `anima_chat.py` (37K, v2 commit 106319863) — multi-turn state + KoNLPy + stream/batch. **Phase A 폐기**
 - `anima_chat_aot.hexa` (187K) — AOT compiled variant carry
 - `wiring_verify.hexa` + `wiring_verify_lib.hexa` (4.5K + 19K) — F-WIRE-W5/W6/W8 3/3 (✅ Phase A 무영향 carry)
+- `spontaneous_lib.hexa` (8.6K) — 8-factor motivation calculator (Phase B1 LANDED)
+- `thinker_talker_lib.hexa` (5.6K) — Thinker-Talker dual-thread composition (Phase B2 LANDED)
+- `spontaneous_smoke.hexa` (7.7K) — F-SPONT-1..7 compiled-native witness (Phase B3 LANDED, 7/7 🔵 carry)
+- `channel_mux_lib.hexa` (~7K) — multi-channel registry skeleton: text_cli / tension_link / voice (Phase C1 LANDED 2026-05-17)
+- `interaction_model_lib.hexa` (~6K) — Mira Murati Interaction Model 패턴: 200ms micro-turn / 400ms latency / barge-in / backchanneling / 4-way decision (Phase C2 LANDED 2026-05-17, text-only simulation)
+- `interaction_model_smoke.hexa` (~9K) — F-CHANNEL-MUX 5/5 + F-INTERACT 5/5 compiled-native witness (Phase C1+C2 LANDED 2026-05-17, 10/10 🔵)
+- `anima_chat_v2_lib.hexa` (~8K) — post-도우미 prompt template lib: `<inner>{Engine G thought}</inner>` + `<voice>{Engine A emission}</voice>` format + parse + helper-token predicate (Phase C3 LANDED 2026-05-17)
+- `anima_chat_v2.hexa` (~5K) — Phase C3 entrypoint (imports anima_chat_v2_lib + spontaneous_lib + thinker_talker_lib); F-CHAT-V2-1..5 _selftest emit PASS marker `anima_chat_v2 selftest: true`
+- `anima_chat_v2_smoke.hexa` (~6K) — F-CHAT-V2-1..5 dedicated grid witness (Phase C3 LANDED 2026-05-17, 5/5 🔵; 8-factor × prompt layer cross-link 포함)
 - `CHAT.tape` (48K) — daemon-centric SSOT (carry, post-Phase A redirect SPONTANEOUS.tape)
 - `CHAT-QUALITY.tape` (8.4K) — quality criteria sibling axis carry
 - `tests/` · `tool/` · `docs/` — carry
@@ -133,6 +142,24 @@ Phase B 진입 후:
 ```bash
 ./_hexa_build/HEXAD_CHAT_spontaneous_smoke     # F-SPONT-1..7 PASS (자연발화 7-criteria)
 ./_hexa_build/HEXAD_CHAT_thinker_talker_smoke  # F-INTERACT-1..5 PASS (dual-thread)
+```
+
+Phase C1+C2 LANDED (2026-05-17):
+```bash
+hexa build HEXAD/CHAT/interaction_model_smoke.hexa -o /tmp/im_smoke && /tmp/im_smoke
+# F-CHANNEL-MUX 5/5 + F-INTERACT 5/5 = 10/10 PASS compiled-native (text-only sim)
+python3 state/verify_hexad_blue_2026_05_15/blue_falsifier.py
+# 68 → 78/78 🔵 (B-CHANNEL-MUX-1..5 + B-INTERACT-1..5 추가)
+```
+
+Phase C3 LANDED (2026-05-17):
+```bash
+hexa build HEXAD/CHAT/anima_chat_v2.hexa -o /tmp/acv2 && /tmp/acv2
+# F-CHAT-V2-1..5 = 5/5 PASS compiled-native (post-도우미 <inner>/<voice> prompt layer)
+hexa build HEXAD/CHAT/anima_chat_v2_smoke.hexa -o /tmp/acv2_smoke && /tmp/acv2_smoke
+# F-CHAT-V2-1..5 = 5/5 PASS dedicated grid witness + 8-factor × prompt layer cross-link
+python3 state/verify_hexad_blue_2026_05_15/blue_falsifier.py
+# 78 → 83/83 🔵 (B-CHAT-V2-1..5 추가, model forward = Phase D B-CHAT-V2-NOTE empirical carve-out)
 ```
 
 ## 7. Honest C3

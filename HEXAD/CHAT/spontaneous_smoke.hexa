@@ -112,7 +112,8 @@ fn _selftest() {
     print("  F-SPONT-7 ≥30s interval + 5-chain (transfer-form 🔵; outcome NOTE): " + to_string(f7_pass))
 
     let all_ok = f1_pass && f2_pass && f3_pass && f4_pass && f5_pass && f6_pass && f7_pass
-    print("=== F-SPONT-1..7 compiled-native: " + to_string(all_ok) + " (7/7) ===")
+    // PASS_MARKER 패턴 매치 (build_verify.sh expects "selftest: true" or "7/7 cross-file")
+    print("=== F-SPONT-1..7 compiled-native selftest: " + to_string(all_ok) + " (7/7) ===")
     print("    canonical 🔵 sympy : blue_falsifier.py bspont() (B-SPONT-1..7)")
     print("    pass_strict carry  : PASS_STRICT_SPONTANEOUS_CHAT.md (2026-05-12)")
     print("    B-SPONT-NOTE       : emission coherence outcome empirical")

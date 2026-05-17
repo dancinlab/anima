@@ -35,8 +35,10 @@ fn thinker_step(phi: float, retrieve_sim: float, curiosity_ema: float,
     let coh = factor_coherence(bridge_gate_value)
     let orig = factor_originality(split_event_recent)
     let bal = factor_balance(phi, ratchet)
-    let dyn = factor_dynamics(silence_seconds)
-    return motivation_score(rel, gap, cur, pn, coh, orig, bal, dyn)
+    // NB: var name `dyn_v` (not `dyn`) — `dyn` is reserved keyword in hexa-lang
+    // (lexer.hexa:71, commit 820c9ae4 2026-04-09).
+    let dyn_v = factor_dynamics(silence_seconds)
+    return motivation_score(rel, gap, cur, pn, coh, orig, bal, dyn_v)
 }
 
 
