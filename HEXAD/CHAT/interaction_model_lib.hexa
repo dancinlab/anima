@@ -1,0 +1,171 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  interaction_model_lib.hexa — Mira Murati Interaction Model 패러다임 (Phase C2)
+//
+//  source: x_murati_interaction_model (SPONTANEOUS.tape §8)
+//    https://www.marktechpost.com/2026/05/13/mira-muratis-thinking-machines-lab
+//    -introduces-interaction-models-a-native-multimodal-architecture-for-real-
+//    time-human-ai-collaboration/
+//
+//  Core spec carry (text-only simulation level — audio-native = future RFC):
+//    - 200ms micro-turn (default emission tick)
+//    - 0.40s (400ms) emission latency target (turn-taking floor)
+//    - barge-in: user input mid-emission → interrupt + respond
+//    - backchanneling: 저-confidence 시 "음...", "잠시..." marker emission
+//    - simultaneous thinker-talker (Thread async — Phase C3 wiring)
+//
+//  All fns pure + bounded predicate → closed-form 검증 가능 (B-INTERACT-1..6
+//  sympy battery in blue_falsifier.py).
+//
+//  Closed anchors:
+//    - micro_turn_duration_ms      | integer constant 200 (Kolmogorov)
+//    - emission_latency_target_ms  | integer constant 400 (Kolmogorov)
+//    - barge_in_detected           | Boolean conjunction (∧)
+//    - backchannel_should_emit     | Boolean monotone (low_conf → emit)
+//    - turn_taking_floor           | strict inequality (latency ≥ 400ms)
+//
+//  HARD CONSTRAINTS:
+//    - pure-hexa hexa-cpu only (NO GPU, NO real audio I/O)
+//    - text-only simulation (실 audio 0.40s = future VOICE RFC)
+//    - NO main / NO _selftest (compiled-first lib)
+//
+//  SSOT: HEXAD/CHAT/PLAN.md Phase C2 · HEXAD/CHAT/SPONTANEOUS.tape
+//        @X x_murati_interaction_model + @N future_rfc_audio_native
+// ════════════════════════════════════════════════════════════════════════════
+
+
+// ── §1 timing constants (closed integer literals, Kolmogorov arithmetic) ─────
+
+// Mira Murati Interaction Models: 200ms micro-turn (continuous emission tick).
+fn micro_turn_duration_ms() -> int { return 200 }
+
+// Murati spec: 0.40s turn-taking latency (audio-native; text-only carries same
+// constant as design floor, 실 audio I/O 는 future RFC).
+fn emission_latency_target_ms() -> int { return 400 }
+
+// derived: 1 emission window = 2 micro-turns (400 / 200 = 2)
+fn turns_per_emission_window() -> int {
+    return emission_latency_target_ms() / micro_turn_duration_ms()
+}
+
+
+// ── §2 barge-in detection (closed Boolean conjunction) ──────────────────────
+//
+// Barge-in 정의 (Murati 패러다임): anima 가 emitting (utterance 진행 중) 시
+// 사용자 input 도착 → interrupt + respond.
+//
+// Closed predicate: barge_in = user_input_arrived ∧ currently_emitting
+// Boolean AND closure (associative + commutative, real-limit set algebra).
+
+fn barge_in_detected(user_input_arrived: bool, currently_emitting: bool) -> bool {
+    if user_input_arrived == false { return false }
+    if currently_emitting == false { return false }
+    return true
+}
+
+// barge_in 발생 시 talker interrupt 결정 (Phase C3 wiring 에서 호출)
+//   = barge_in ∧ safety_ok (safety override fallback)
+fn barge_in_should_interrupt(user_input_arrived: bool, currently_emitting: bool,
+                              safety_ok: bool) -> bool {
+    if safety_ok == false { return false }
+    return barge_in_detected(user_input_arrived, currently_emitting)
+}
+
+
+// ── §3 backchanneling (closed monotone predicate) ───────────────────────────
+//
+// Backchanneling 정의: 저-confidence 시 "음...", "잠시...", "어..." 등 short
+// marker emission (full response 전에 turn-holding signal).
+//
+// Closed predicate: backchannel = confidence < low_threshold
+// Strict monotone (confidence ↓ → emit chance ↑). Real-limit Kolmogorov.
+
+fn backchannel_should_emit(confidence: float, low_threshold: float) -> bool {
+    return confidence < low_threshold
+}
+
+fn backchannel_default_low_threshold() -> float {
+    return 0.3   // confidence < 0.3 → backchannel emit
+}
+
+// backchannel marker emission strings (3 finite set — closed enum)
+fn backchannel_marker_count() -> int { return 3 }
+
+fn backchannel_marker(idx: int) -> string {
+    if idx == 0 { return "음..." }
+    if idx == 1 { return "잠시..." }
+    if idx == 2 { return "어..." }
+    return ""
+}
+
+
+// ── §4 simultaneous thinker-talker async (closed Boolean composition) ───────
+//
+// Murati 의 simultaneous = thinker (background thought) + talker (foreground
+// emit) 가 동시 작동. 본 lib 의 closure 는 sequential composition (pure-fn):
+// caller 가 thinker_step (spontaneous_lib) → talker_should_emit (thinker_talker
+// _lib) 의 chain 을 호출. async I/O 는 Phase C3 channel-mux wiring.
+//
+// Closed predicate: simultaneous_ok = thinker_running ∧ talker_ready
+// 모두 Boolean — set algebra closure.
+
+fn simultaneous_active(thinker_running: bool, talker_ready: bool) -> bool {
+    if thinker_running == false { return false }
+    if talker_ready == false { return false }
+    return true
+}
+
+
+// ── §5 turn-taking floor (Murati 0.40s strict inequality, closed) ───────────
+//
+// 두 utterance 사이 latency ≥ 400ms (0.40s) 강제. real-limit Kolmogorov.
+// rate_limit (spontaneous_lib safety_rate_limit_ok 30s) 와 별개 — 본 fn 은
+// inter-utterance fine-grain floor.
+
+fn turn_taking_floor_ok(latency_ms: int) -> bool {
+    return latency_ms >= emission_latency_target_ms()
+}
+
+// boundary witnesses (smoke 에서 직접 호출):
+//   latency=400 → true (boundary inclusive)
+//   latency=399 → false
+//   latency=401 → true
+
+
+// ── §6 watch mode entry (F-INTERACT-5 anima watch, 후속 Phase C4 wiring) ────
+//
+// watch mode = user stimulus 0 + ≥1 active channel (channel_mux_lib) + thinker
+// motivation ≥ imThreshold (spontaneous_lib). 본 fn 은 closed Boolean
+// predicate composition — 실 channel-mux 검사는 channel_mux_lib 의 watch_mode
+// _active 가 담당, 본 fn 은 motivation 측면만.
+
+fn watch_motivation_ok(motivation_score: float, im_threshold: float) -> bool {
+    return motivation_score > im_threshold
+}
+
+
+// ── §7 interaction-step decision (composite gating, closed) ─────────────────
+//
+// caller 가 한 micro-turn 마다 호출:
+//   1. barge_in 있으면 → interrupt
+//   2. else if backchannel needed → marker emit
+//   3. else if motivation 충분 → full emit
+//   4. else → continue thinking (no emit)
+//
+// 본 fn 은 4-way 분기 (closed enum int return: 0=none, 1=continue,
+// 2=backchannel, 3=full_emit, 4=interrupt).
+
+fn interaction_step_decision(barge_in: bool, backchannel: bool,
+                              full_emit_ok: bool) -> int {
+    if barge_in     { return 4 }   // interrupt
+    if backchannel  { return 2 }   // marker
+    if full_emit_ok { return 3 }   // full
+    return 1                       // continue thinking
+}
+
+fn interaction_step_label(decision: int) -> string {
+    if decision == 4 { return "interrupt" }
+    if decision == 3 { return "full_emit" }
+    if decision == 2 { return "backchannel" }
+    if decision == 1 { return "continue_thinking" }
+    return "none"
+}
