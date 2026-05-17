@@ -1,0 +1,12 @@
+================================================================
+d_converge_fire_d96 — pure-hexa hexa-cpu @ d=96·3L·500-step (ubu)
+================================================================
+  config: d=96 n_layer=3 nh=6 nkv=3 hd=16 h=192 T=16 V=256 nsamp=8 steps=500
+  init  gn2=7.96686  CE=38.296  acc=0/8
+  DCV-1 INIT-CAPTURE       : PASS
+  DCV-2 GRAD-EXACT(L0.Wg[5]) : analytic=0.000133714 fd=3.68315e-05 |Δ|=9.68822e-05  -> PASS
+  [loop start] AdamW steps=500  (trajectory checkpointed @ st ∈ {1, 25, 50, 100, 200, 300, 400, 500})
+  GN2_CURVE,step=1,gn2=7.96931,CE=38.3462,acc=0
+  GN2_CURVE,step=25,gn2=2.54465e-05,CE=0.0086746,acc=8
+  GN2_CURVE,step=50,gn2=1.37562e-07,CE=0.000739226,acc=8
+  GN2_CURVE,step=100,gn2=4.60993e-08,CE=0.000463353,acc=8
