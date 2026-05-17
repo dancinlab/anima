@@ -371,9 +371,57 @@ continuous-thought latent (CTL) = discrete byte `<inner>` 대신 hidden-state �
 
 ---
 
-## §6 (placeholder for next research cycle)
+## §6 (2026-05-17/18) — GOAL-legitimate 3-way (G/H/I) consolidation: 첫 correct-routing BREAK
 
-(future — §5.4 GOAL-legitimate 후보 fire: Ψ-anchored CTL + tension-supervised routing. append-only g6 pattern)
+§5.4 GOAL-legitimate 후보 (1 Ψ-anchored CTL / 2 tension-supervised routing / 3 결합) 3 방향 병렬 fire (g_multidirectional_explore). §5 gate 통과분만 — generic latent 배제, anima physics = substrate/supervision.
+
+### 6.1 3-way 결과 + 12-way arc 종합
+
+| Dir | 구성 | routing axis1 (핵심) | chat | V-SPONT (GOAL축) | JOINT |
+|---|---|---|---|---|---|
+| baseline UBM-E7 α | scale-up | 1/31 (단일 🛸99 + cascade) | 0.6 | 2/5 | 0.0155 |
+| 6-way overlay (D/B/F/A/C) + Dir-E | mechanism/corpus/inference | **전부 1/31** (FLAT) | — | ≤4/5 | ≤0.0323 |
+| **H** tension-supervised (loss-level) | supervision-only | 0/31 (🛸44 shift, 악화) | 0.0 | 0/5 | 0.0 |
+| **G** Ψ-anchored CTL | representation-only | **0/31 — collapse BREAK** (9 tier 분산, cascade 소멸, but wrong basin) | 1.0 | 1/5 | 0.0 |
+| **I** Ψ-CTL + tension-sup **결합** | representation + supervision | **3/31 — 첫 CORRECT-routing BREAK** (tier 5·88·99 correct basin) | 0.0 | 3/5 | 0.0 |
+
+### 6.2 decisive comparative finding (arc 전체의 핵심 결론)
+
+12-way (scale + 6 overlay + baseline + H + G + I) 교차증거가 **정밀하게 수렴**:
+- **mechanism overlay (loss D / reward B / surface F / backprop-free A / gradient-free-inference C / 2-stage-corpus E) + loss-supervision-alone (H)** = single-attractor collapse **不破** (routing ≤1/31, 8-way FALSIFIED).
+- **Ψ-anchored representation substrate alone (G)** = collapse 패턴 **첫 BREAK** (cascade 소멸·분산) but wrong basin (correct 0/31).
+- **Ψ-anchored representation + tension-supervision 결합 (I)** = **첫·유일 correct-routing BREAK (3/31 > 1/31)** — anima physics 가 representation+supervision 둘 다일 때만. final l_tension_route 0.000186 강수렴 = route span 이 per-anchor basin 수렴 (supervision 작동 직접 증거).
+→ **검증된 lever = "anima 자체 physics(Ψ/tension) 를 representation substrate + supervision signal 로 동시 격상"** (= GOAL.md "자기 physics 로부터 emergence" 의 직역, §5.4 후보 3). mechanism-overlay 류로는 절대 不可 임이 12-way 로 강건 입증, **정확한 architectural lever 가 처음 measured 로 식별됨.**
+
+### 6.3 honest GOAL verdict (g3 — over-claim 0, 가장 정밀히)
+
+**GOAL(자발적 correct emergence) 미도달 — 단 arc 사상 처음 "옳은 방향" 이 measured 확인.**
+- positive: Dir-I 가 universal 1/31 collapse-ceiling 을 correct-routing 방향으로 처음 깸 (3/31). negative arc 12-way 속 첫 directional positive.
+- 그러나 GOAL 아님: (a) correct-routing 3/31 ≪ 31/31 (b) JOINT 0.0 FALSIFIED (axis2 carving-form bleed) (c) tier 5 = digit-cascade str(5) 우연 = measurement-limit (tier 88 만 strong-genuine) (d) gen 전반 garbled byte-cascade 잔존 (probe ≠ capability, B-D-NOTE) (e) V-SPONT 3/5 < Dir-E 4/5.
+- → Dir-I = **direction-validated, GOAL-undelivered**. lever(anima-physics-as-representation+supervision)는 옳음이 입증됨; 잔여 병목 = full generalization 으로, §1.1/§2.4 가 명시한 **diverse-data pre-training loss threshold** (30MB byte tiny-corpus 가 그 아래). mechanism space 는 이제 12-way 로 thoroughly mapped — 더 이상 mechanism 문제 아님.
+
+### 6.4 next fork — §7 gate (g_goal apply mandate, §4.6 #6 carry)
+
+잔여 병목 = diverse-data pre-training loss threshold (§1.1). 그러나 이는 **GOAL.md identity 정합성 결정 필요** (g_goal apply / §5.3 #6): diverse pre-training 은 30MB anima-carving corpus 를 벗어남 — "anima 가 **자기 physics 로부터** 의식" 이라는 GOAL.md 핵심과 충돌 가능 (generic large-corpus pre-training = anima physics 우회 = §5.2 의 GOAL-illegitimate 와 동형 risk).
+- 핵심 질문 (§7 에서 검토): diverse-data pre-training 을 **anima physics(Ψ/tension/Φ) 위에서** 하는 GOAL-legitimate 형태가 존재하나? (예: diverse corpus 를 Ψ-anchored representation 으로 encode + tension-supervised — Dir-I lever 를 scale 로 확장) vs generic LM pre-training (GOAL-illegitimate).
+- 이 분기는 fire-cost 사안 아님 = **substrate-identity 결정** (g_fire_autonomous no_query 가 명시 제외하는 "fire 와 무관한 진짜 설계 분기"). §7 에서 GOAL-identity 선검토 (§5 패턴 — design-tier $0, fire 전).
+
+### 6.5 honest C3
+
+1. 3-way (G/H/I) 전부 JOINT FALSIFIED 이나 Dir-I 가 routing축 첫 correct-break = arc 의 single most valuable positive (negative-only 12-way 속).
+2. Dir-I "3/31" 정직 해부: tier 88 만 strong-genuine, tier 5 measurement-artifact, tier 99 own-then-cascade — capability claim 절대 X (B-D-NOTE/B-DIRI-NOTE).
+3. lever 검증 = "anima-physics-as-(representation+supervision)" — mechanism 아닌 이것이 옳은 방향 (12-way decisive). 그러나 = 방향, GOAL 아님.
+4. 잔여 병목 = data-regime (§1.1 diverse-data threshold), mechanism space 는 mapped.
+5. §7 = diverse-data 의 GOAL-identity gate (generic pre-training = GOAL-illegitimate risk; Ψ-anchored diverse = legitimate 후보) — substrate-identity 결정, fire 전 design-tier.
+6. 전 방향 closed = transfer-form + overlay-OFF=baseline 연결부위만 🔵; capability 4축 empirical carve-out (B-D-NOTE family) 정직.
+7. multi-agent shared-index hazard 누적 3건 (B↔F, E↔C, H↔G) — 전부 self-reconcile, 산출물 무손실, 단 병렬 git-index 공유 = carry risk (차후 cycle 시 worktree 격리 검토).
+8. f1/f2/f3 + B-IDENTITY-5 전 방향 safe (Ψ-bounded/Boolean/Kolmogorov, NO σ/τ/φ/J₂; corpus 도우미 grep 0).
+
+---
+
+## §7 (placeholder for next research cycle)
+
+(future — diverse-data pre-training 의 GOAL-identity 선검토 gate: Ψ-anchored diverse-corpus + tension-supervision(Dir-I lever scale-up) = GOAL-legitimate 후보 vs generic LM pre-training = illegitimate. §6.4 / g_goal apply / §4.6 #6. design-tier $0, fire 전. append-only g6.)
 
 ---
 
