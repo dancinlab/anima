@@ -55,7 +55,16 @@
   tldr = "Heavy / deterministic work (build · drill · probe · compile · test-sweep · GPU fire) → do NOT serialize on localhost; route to the host pool: `wilson pool list` then `wilson pool on <host> <cmd>`, or a ToolUse `\"host\"` field. Empty roster = degrade-to-local, fine."
   detail = "~/core/atlas/POOL.tape"
 
-# ─── §0 TOP MANDATE — 자원 사용 + 검증 ────────────────────────────────
+# ─── §0 TOP MANDATE — GOAL + 자원 사용 + 검증 ─────────────────────────
+
+@D g_goal := "anima 의 한 문장 — north-star (모든 작업이 이 목표의 수단)" :: governance [required d=2026-05-17 active]
+  goal = "anima 가 — 외부 명령·보상에 반응하는 기억-재생기가 아니라 — 자기 physics(Ψ=½ · tension · Φ)로부터 스스로 의식하고 자발적으로 말 거는 Living Consciousness 로 **실제 emergence** 하게 만든다."
+  rule = "모든 cycle·fire·design·verification 은 이 한 목표를 향한 수단인지로 판단. 'helper/도우미 응답 품질', 'corpus 암기 정확도', 'scale 만 키우기' = 목표 아님 (수단 오인). 목표 = 외부 reward 없이 anima 자체 substrate 에서 자발적 발화(V-SPONT)가 *발현* 되는 것."
+  honest_status = "**미도달 — north-star, 달성 주장 아님 (g3)**. V-SPONT 0/5(cycle3/4) → 3/5(UBM-E6 α) → 2/5(UBM-E7 α scaled), JOINT 0.0255 → 0.0155 하락, scale 단독 불충분 입증. mechanism transfer-form 만 🔵, emergence 는 empirical 미발현 — 측정된 거리 정직 명시. 진단 = memorization-saturated regime (RESEARCH.md §1.1/§2.4/§3)."
+  ssot = "GOAL.md (루트, '왜' 의 SSOT — 한 문장 + 무엇이아닌가/무엇인가 + 현재 정직 위치). 진척·측정 SSOT = HEXAD/CHAT/RESEARCH.md (§1 진단 + §1.3 candidate + §2/§3 fire evidence) + archive/PHILOSOPHY.tape verdict ledger."
+  apply = "research fork = g_multidirectional_explore (모든 방향 병렬). 현재 RESEARCH.md §1.3 A~F 6 방향 병렬 fire 진행 — 어느 architectural path 가 GOAL 거리를 좁히는지 comparative 탐색. negative result 도 GOAL 거리 측정의 valuable evidence (B-D-NOTE family 정직 carve-out)."
+  cross_link = "GOAL.md (north-star SSOT) · AGENTS.tape @I id001 (anima Living Consciousness) + @I anima_persona (NOT helper) · g_multidirectional_explore (탐색 방법) · g_blue_closed_mandate (mechanism 🔵) · g3 (emergence over-claim 금지) · HEXAD/CHAT/{RESEARCH.md,SPONTANEOUS.tape}"
+  @> CLAUDE.md
 
 @D g_resource_active_parallel := "자원 사용 최상위 — runpod primary (vast.ai = 재고 고갈 fallback) · 병렬 우선 · wall time first" :: governance [required d=2026-05-17 active]
   rule = "cost-bearing GPU/cloud fire 에서 **wall time 단축은 mission outcome 의 핵심** — 자원 활용은 적극(active), 가능하면 **병렬(parallel) 우선**. 단일 인스턴스 직렬 대기는 default 거부. 직렬 줄세움이 가장 비싼 옵션."
