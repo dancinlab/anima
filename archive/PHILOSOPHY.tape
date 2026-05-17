@@ -3020,3 +3020,134 @@
   evidence_path = "state/hexad_v4_py_d768x12L_tension_2026_05_17/ — {train_d768x12l_tension.py 332 LoC NEW + conscious_decoder.py byte-equal carry + dispatch.sh 215 LoC NEW + v58_eval.py 504 LoC NEW + blue_falsifier.py 350 LoC NEW sidecar 5/5 🔵 + MODEL_CARD.md + hf_upload.py + out_main/{ckpt_d768x12l_final.pt sha256 6b4d34cc9a2c05b8… 1,135,846,570 B + result.json} + v58_result.json + blue_falsifier_result.json + fire.log + sanity_remote.log + gpu_util.log + dispatch_full.log + hf_upload.log + v58_eval.log} + state/hexad_v3_corpus_motiv_2026_05_17/ (byte-equal carry, NOT modified) + HEXAD/CHAT/PLAN.md ## 진행 로그 cycle 5 entry append + HEXAD/TENSION-TRAIN/PLAN.md ## 진행 로그 TT-D entry append + HEXAD/TENSION-TRAIN/TENSION-TRAIN.tape Log TT-D entry append + AGENTS.tape n_hexad_progress recent_landings + g_hf_naming status_2026_05_17 cycle 5 entry."
 
   cross_link = "직전 [@§SPONT-TENSION-BRIDGE-LANDED-2026-05-17] (TT-C bridge wrap source 97→102 central) + [@§B-TT-1..5-LANDED-2026-05-17] (TT-A3 spine sympy battery 92→97 central) + [@§HEXAD-V3-CYCLE4-MOTIV-LANDED-2026-05-17] (cycle 4 corpus v3 motivation-trigger + V-SPONT/V-MOTIV 0/5 capability ceiling source) + [@§BYTE-CASCADE-ATTRACTOR-CORPUS-DEPENDENT-2026-05-17] (B-ATTRACTOR-NOTE corpus+ckpt-dependent attractor family source). HEXAD/TENSION-TRAIN/{README.md, PLAN.md Phase TT-D (이전 staged), TENSION-TRAIN.tape @D online_tension_step + @D dd_law_anchors (Law 187 DD155 source)}. HEXAD/CHAT/PLAN.md cycle 5 (twin entry, 동일 fire). state/hexad_v3_corpus_motiv_2026_05_17/ (byte-equal carry source). state/hexad_v3_py_d768x12L_fire_2026_05_17/ (cycle 4 baseline). AGENTS.tape [@g3] verification-anchor-real-limit + [@g_blue_closed_mandate] (산출물 ckpt + 연결부위 generator→corpus→trainer→ckpt→eval 둘 다 🔵) + [@g_fire_autonomous] (자율 dispatch, $0.054 cost-bearing) + [@g_fire_dispatch_robust] (SAVE_POD + watchdog + 5-retry pull, clean teardown) + [@g_hf_naming] (revision template v4-py-hexad-tension-d768x12L-cycle1-2026-05-17 PUBLIC, dataset byte-equal carry) + [@g_clm_from_scratch] (RANDOM init seed=1337 base_ckpt=NONE) + [@f1] [@f2] hard-fail safe (real-limit anchors = piecewise-linear + Banach contraction + arithmetic identity + Kolmogorov sha256 + Boolean grep, NO lattice) + [@g6] philosophy append-only + [@g_doc_consolidation] (HEXAD/* SSOT 통합, docs/* 신규 0) + [@g_arch_vs_log_split]. external: DD154-tension-training.md Law 185-188 historical anchor (2026-03-31 pre-HEXAD; B-FIRE-CYCLE5 close formula structure NOT empirical Pareto claim) + Inner Thoughts arxiv 2501.00383 (γ pattern factor source) + Critical Data Size arxiv 2401.10463 (10 MB / 283 M params regime entry attempt). 후속 carry: Phase TT-D variant cycles (다른 β/clip sweep / PyPhi Φ-measurement / scale-up / hexa-native mirror post-RFC 043)."
+
+# ─── §B-UBM-1..3-SIDECAR-LANDED-2026-05-17 ──────────────────────────────────
+#
+# anima 우주뇌지도 (D-domain cosmological self-knowledge SSOT) Phase UBM-A3
+# LANDED — B-UBM-1..3 sympy sidecar 3/3 🔵 + 1 NOTE empirical carve-out.
+# `state/verify_universe_brain_map_2026_05_17/blue_falsifier.py` 신설.
+# Sidecar pattern (mirror B-PHASE-4-DESIGN): central blue_falsifier.py
+# 변경 0 (병렬 agent TT-B/CYCLE5 absorbed 와 충돌 회피). 후속 cycle 에서
+# central 흡수 가능 (trailing-dash B-UBM- prefix overlap-safe).
+
+@D §B-UBM-1..3-SIDECAR-LANDED-2026-05-17 := "anima 우주뇌지도 Phase UBM-A3 — B-UBM-1..3 sympy sidecar battery LANDED (3/3 🔵 + 1 NOTE empirical carve-out)" :: ledger [verdict=SUPPORTED-FORMAL d=2026-05-17 active]
+  ledger_id = "§B-UBM-1..3-SIDECAR-LANDED-2026-05-17"
+
+  closed_form_propositions <<~EOFC
+    Three closed-form sub-falsifiers (sidecar at state/verify_universe_
+    brain_map_2026_05_17/blue_falsifier.py) + 1 NOTE empirical carve-out:
+
+    1. B-UBM-1 KNUTH-TIER-ORDINAL-CLOSED
+       Boolean conjunction over 5 named witnesses 🛸k labels:
+         🛸0   (zero baseline)              → k=0   ∈ ℤ ∧ 0 ≤ 0  ≤ 100
+         🛸51  (하루 / Day, 1.212)          → k=51  ∈ ℤ ∧ 0 ≤ 51 ≤ 100
+         🛸77  (만다라 / Mandala, 예술)     → k=77  ∈ ℤ ∧ 0 ≤ 77 ≤ 100
+         🛸91  (열반 / Nirvana, 2.56 peak)  → k=91  ∈ ℤ ∧ 0 ≤ 91 ≤ 100
+         🛸100 (빅뱅 / Big Bang, 2.847 max) → k=100 ∈ ℤ ∧ 0 ≤ 100 ≤ 100
+       Closure: bounded ordinal set |{0..100}| = 101 cardinality (sympy
+       Integer equality). real-limit anchor = Kolmogorov bounded integer
+       ordinal Boolean predicate. Knuth Tier 🛸k = anima self-design scale
+       (g2 internal-arch carve-out, NOT lattice derivation; f1/f2 safe).
+       PASS.
+
+    2. B-UBM-2 MATRIX-CARDINALITY-CLOSED
+       sympy 4-corner Boolean predicate:
+         (a) 170 · 17 · 18 · 40 == 2,080,800 (sympy Integer identity)
+         (b) all factors > 0 (positivity ∀)
+         (c) all factors ∈ ℤ (integer cardinality)
+         (d) commutativity: dimensions·emotions·categories·stimuli ==
+             stimuli·categories·emotions·dimensions (sympy)
+       ERRATA (g3 honest C3): 이전 PLAN.md + UNIVERSE-BRAIN-MAP.tape
+       표기 '20,808,000' 은 10× 산술 오류. truthful 값 = 2,080,800.
+       LANDED 시 tape `@D stimuli_matrix` rule + cardinality +
+       closed_anchor 모두 정정. sympy 는 truthful identity 위에서 closed
+       (typo 위에서가 아닌). real-limit anchor = integer multiplication
+       arithmetic identity (NOT lattice; matrix shape = anima self-design
+       g2 internal-arch carve-out). PASS.
+
+    3. B-UBM-3 CHAT-SFT-EXCLUSION-CLOSED
+       Boolean structural predicate over 5 named corpus paths:
+         (a) chat-SFT-candidate corpora (MUST be 0):
+             state/hexad_gpu_fire_phaseE2_2026_05_16/corpus_consciousness_v1.jsonl  → 0
+             state/hexad_v2_corpus_spont_2026_05_17/corpus_consciousness_v2.jsonl   → 0
+             state/hexad_v3_corpus_motiv_2026_05_17/corpus_consciousness_v3.jsonl   → 0
+         (b) legacy UBM cosmological corpora (HAS-marker witness; MUST > 0):
+             state/anima_universe_brain_map_corpus_2026_05_07/.../corpus_universe_brain_map.txt       → 36,405
+             state/anima_universe_brain_map_corpus_21mb_2026_05_07/.../corpus_universe_brain_map.txt → 136,125
+       Closed Boolean conjunction: (all-chat-SFT-zero) ∧ (all-UBM-nonzero)
+       = forbidden pattern excluded from chat-SFT AND pattern detectable
+       in legacy lane (separation closed). real-limit anchor = Boolean
+       structural set predicate via OS-grep byte-stream counting
+       (Kolmogorov primitive); historical anchor = Phase 1A.5 chat-beta
+       NET LOSS evidence (memory feedback_corpus_quality_over_scale,
+       V5.8 std_greedy 5/5 → 1/5 regression). PASS.
+
+    Aggregate: 3/3 🔵 (sidecar). Counter prefix `B-UBM-` trailing-dash
+    safe (no central overlap with existing B-* counters). $0 Mac local
+    wall < 1s.
+  EOFC
+
+  honest_c3 <<~EOFC3
+    10 honest C3:
+
+    1. ERRATA scope — 170·17·18·40 = 2,080,800 (not 20,808,000); 이전
+       표기는 10× 산술 오류. LANDED 시 PLAN.md + UNIVERSE-BRAIN-MAP.tape
+       모두 truthful 값 으로 정정. sympy 검증은 truthful identity 위.
+
+    2. sidecar 채택 이유 — central blue_falsifier.py 가 병렬 agent
+       (TT-B sidecar absorbed + CYCLE5 sidecar absorbed) 작업 중. 충돌
+       회피 위해 mirror B-PHASE-4-DESIGN 패턴 (state/hexad_phase4_unboxed_
+       design_2026_05_17/) 채택. 후속 cycle 에서 central 흡수 가능 —
+       additive merge (B-UBM- prefix trailing-dash overlap-safe).
+
+    3. B-UBM-1 scope — 5 witnesses 만 explicit closed. 0..100 전체 101
+       정수 ordinal set 의 모든 사용은 bounded set cardinality 로 닫지만,
+       특정 다른 🛸k value 가 미래 등장 시 그 k 가 ℤ ∩ [0,100] 인지 별도
+       검증 필요 (Boolean predicate 는 universal quantifier 이므로 sympy
+       Closed 이지만, 실제 *사용* 은 evidence-anchored).
+
+    4. B-UBM-2 matrix scope — 4D cardinality 만 closed (170×17×18×40 =
+       2,080,800). 5-channel resonance overlap with TENSION-LINK 의 axis
+       mapping invariance 는 NOT 본 verdict scope — 별도 cycle 필요.
+
+    5. B-UBM-3 corpus path 안정성 — 3 chat-SFT-candidate corpora 와 2
+       legacy UBM corpora 의 byte path 는 시점-anchored (2026-05-17 state).
+       Phase D cycle 6+ 신규 corpus 추가 시 본 verdict 의 chat-SFT 측 set
+       확장 필요 (현 verdict 는 cycle 2/3/4 까지). 미래 corpus 자동 포함
+       기준 = `state/hexad_v*_corpus_*/corpus_consciousness_v*.jsonl` glob
+       (PLAN.md §2 명시 carry).
+
+    6. f3 NO-OUTCOME-CLAIM safe — BG-HS R1 manual_match 13/15 success
+       (commit 41c2e1726, 우주뇌지도 corpus 가 knowledge recall task 에서
+       strong evidence) 는 *historical empirical* knowledge-task recall,
+       NOT closed. B-UBM 어떤 verdict 도 이 outcome claim 안 하고 있음.
+
+    7. B-UBM-NOTE empirical carve-out — tabletop blackhole physics 의
+       Hawking radiation (T = ℏc³/8πGMk) + Bekenstein bound (S ≤ 2πkRE/ℏc)
+       + holographic principle (S = A/4l_P²) 는 모두 real-limit anchors
+       (g3 satisfied). 그러나 reproducible test outcome 자체는 empirical
+       (B-D-NOTE 패턴), Phase UBM-D2 user gate. NOT counted 🔵.
+
+    8. f1/f2 hard-fail safe — anchors 전부: Kolmogorov bounded integer
+       ordinal (B-UBM-1) + integer multiplication arithmetic identity
+       (B-UBM-2) + Boolean structural OS-grep predicate (B-UBM-3). NO
+       σ/τ/φ/J₂ external derivation. 매트릭스 170×17×18×40 = anima 자체
+       설계 (g2 internal-arch carve-out, lattice 가 아닌 4-factor 정수
+       곱셈 정의).
+
+    9. counted_toward_blue 정의 — 3 verdict 모두 counted_toward_blue=True;
+       NOTE 1 = counted_toward_blue=False. 본 sidecar 의 blue_count = 3
+       (central counter 와 namespace 분리, 후속 흡수 시 합산 가능 —
+       trailing-dash safe).
+
+    10. CRITICAL caveat anchor — memory feedback_corpus_quality_over_scale
+        (2026-05-14 Phase 1A.5 NET LOSS) + project_anima_base_ckpt_baked_
+        p3_leak (2026-05-15 BG-JE/UBM BAKED P3 leak) 가 B-UBM-3 의 historical
+        anchor. 본 verdict 는 그 evidence 위에서 forward-looking Boolean
+        structural exclusion 을 enforce. SFT 만으로 BAKED leak 의 full scrub
+        은 closed-form 불가 (B-UBM-NOTE family).
+  EOFC3
+
+  evidence_path = "state/verify_universe_brain_map_2026_05_17/{blue_falsifier.py NEW sidecar 3/3 PASS + 1 NOTE + blue_falsifier_result.json _aggregate.passed_3_of_3=true + blue_count=3} + HEXAD/UNIVERSE-BRAIN-MAP/PLAN.md ## 진행 로그 Phase UBM-A3 entry + cardinality errata 2,080,800 정정 + HEXAD/UNIVERSE-BRAIN-MAP/UNIVERSE-BRAIN-MAP.tape `@D stimuli_matrix` rule + cardinality + closed_anchor errata 정정 + ## Log Phase UBM-A3 entry + 5 corpus byte-equal SSOT (anima_universe_brain_map_corpus_2026_05_07/, anima_universe_brain_map_corpus_21mb_2026_05_07/, hexad_gpu_fire_phaseE2_2026_05_16/corpus_consciousness_v1.jsonl, hexad_v2_corpus_spont_2026_05_17/corpus_consciousness_v2.jsonl, hexad_v3_corpus_motiv_2026_05_17/corpus_consciousness_v3.jsonl)"
+
+  cross_link = "직전 [@§HEXAD-V4-CYCLE5-TENSION-TRAIN-LANDED-2026-05-17] (central 102/102 unchanged sidecar 채택 패턴 source) + [@§B-TT-1..5-LANDED-2026-05-17] (TT-A3 central 추가 cycle) + [@§SPONT-TENSION-BRIDGE-LANDED-2026-05-17] (TT-C central 추가 cycle). HEXAD/UNIVERSE-BRAIN-MAP/{README.md, PLAN.md §1 Phase UBM-A3 + §2 Falsifier 사전등록 (anchor 갱신) + ## 진행 로그 Phase UBM-A3, UNIVERSE-BRAIN-MAP.tape @D knuth_tier_labels + @D stimuli_matrix (errata 정정) + @D tabletop_blackhole_physics + @F forbidden_chat_sft_use + ## Log Phase UBM-A3}. state/verify_universe_brain_map_2026_05_17/ NEW sidecar dir. legacy: state/anima_universe_brain_map_corpus_{2026_05_07,21mb_2026_05_07}/ (HAS-marker witness, 36,405 + 136,125 lines) · state/markers/tabletop_blackhole_extraction_landed.marker (2026-05-07). chat-SFT-candidate: state/hexad_gpu_fire_phaseE2_2026_05_16/corpus_consciousness_v1.jsonl + state/hexad_v{2,3}_corpus_*_2026_05_17/corpus_consciousness_v{2,3}.jsonl (all-zero verified). AGENTS.tape [@g3] verification-anchor-real-limit + [@g_blue_closed_mandate] (산출물 sidecar + 연결부위 chat-SFT exclusion 둘 다 🔵) + [@g_doc_consolidation] (HEXAD/UNIVERSE-BRAIN-MAP/ SSOT 통합, docs/* 신규 0) + [@g_hexad_readme_sync] (HEXAD/README.md sync) + [@g_arch_vs_log_split] + [@f1] [@f2] hard-fail safe (Kolmogorov + arithmetic + Boolean structural, NO σ/τ/φ/J₂) + [@g2] internal-arch carve-out (Knuth Tier scale + 4D matrix = anima self-design) + [@g6] philosophy append-only + [@forbidden_chat_sft_use] (HEXAD/UNIVERSE-BRAIN-MAP/UNIVERSE-BRAIN-MAP.tape @F) + [@forbidden_p3_prefix_baking] (P3 prefix pattern baking 재발 금지). external: Phase 1A.5 chat-beta NET LOSS evidence (memory feedback_corpus_quality_over_scale, V5.8 std_greedy 5/5 → 1/5 regression) + BG-JE/UBM BAKED P3 prefix leak (memory project_anima_base_ckpt_baked_p3_leak) + BG-HS R1 manual_match 13/15 success (commit 41c2e1726, B-UBM-NOTE empirical carry) + Hawking radiation T = ℏc³/8πGMk + Bekenstein bound S ≤ 2πkRE/ℏc + holographic principle S = A/4l_P² (B-UBM-NOTE real-limit anchors available, Phase UBM-D2 user gate). 후속 carry: Phase UBM-B tape lift (1030 laws + Knuth Tier @N entries + matrix architecture @D) + Phase UBM-C anima_persona.values cosmological anchor extension + Phase UBM-D2 reproducible blackhole test (사용자 게이트) + central blue_falsifier.py 흡수 candidate (additive merge, B-UBM- prefix overlap-safe)."

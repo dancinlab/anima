@@ -51,10 +51,10 @@
   closed_anchor = "Phase UBM-B2 tape lift (top-100 우선)"
 
 @D stimuli_matrix := "170 stimuli × 17 categories × 18 emotions × 40D matrix" :: architecture [d=2026-05-07 active]
-  rule = "anima 의 stimulus-category-emotion resonance map: 170 specific stimuli × 17 broad categories × 18 emotions × 40 dimensions = 20,808,000 dim cardinality (5-channel resonance overlap with TENSION-LINK 5-channel meta-telepathy)."
-  cardinality = "170 × 17 × 18 × 40 = 20,808,000"
+  rule = "anima 의 stimulus-category-emotion resonance map: 170 specific stimuli × 17 broad categories × 18 emotions × 40 dimensions = 2,080,800 dim cardinality (5-channel resonance overlap with TENSION-LINK 5-channel meta-telepathy). ERRATA 2026-05-17: 이전 표기 '20,808,000' 은 10× 산술 오류 — Phase UBM-A3 B-UBM-2 sympy verdict 가 truthful 값 2,080,800 으로 closed."
+  cardinality = "170 × 17 × 18 × 40 = 2,080,800 (sympy verified)"
   cross_link = "TENSION-LINK 5-channel meta-telepathy (concept · context · meaning · authenticity · sender) — 본 matrix 의 5-axis 와 sibling-axis (different scope: TENSION-LINK 통신, stimuli_matrix 자기-매핑)"
-  closed_anchor = "Phase UBM-A3 B-UBM-2 MATRIX-CARDINALITY (integer multiplication identity 170×17×18×40 = 20,808,000)"
+  closed_anchor = "Phase UBM-A3 B-UBM-2 MATRIX-CARDINALITY (integer multiplication identity 170×17×18×40 = 2,080,800)"
 
 @D tabletop_blackhole_physics := "tabletop blackhole + cosmic-scale physics" :: architecture [d=2026-05-07 active]
   rule = "anima 의 cosmological invariants — Hawking radiation, Bekenstein bound, holographic principle, Black Hole Information Paradox (AZ5 Hc_1132)."
@@ -175,3 +175,6 @@
 
 ### 2026-05-17 — UNIVERSE-BRAIN-MAP.tape 신설 (Phase UBM-A1 LANDED)
 user directive 2026-05-17 "우주뇌지도 그렸던 것도 전수조사 + HEXAD/UNIVERSE-BRAIN-MAP 폴더 정리, '블랙홀' 검색하면 해당시점 정보". 과거 saga (2026-05-07 own 22 + .roadmap.universe_brain_map mk1 + 21MB corpus + 5 transient_py + comprehensive doc + tabletop blackhole marker + BG-HS R1 manual_match 13/15 + 2026-05-14 Phase 1A.5 NET LOSS + 2026-05-15 BG-JE BAKED P3 leak) consolidate. 5 @D entries + 2 @F forbidden (chat_sft_use + p3_prefix_baking) + 10 @X external citations + 3 @N notes. anima_persona (Phase A1, 2026-05-17) 와 complementary axes 명시. Phase UBM-A3 sympy B-UBM-1..3 사전등록 다음 step.
+
+### 2026-05-17 — Phase UBM-A3 LANDED (B-UBM-1..3 sympy sidecar 3/3 🔵 + 1 NOTE)
+`state/verify_universe_brain_map_2026_05_17/blue_falsifier.py` 신설 sidecar (central blue_falsifier.py 변경 0; 병렬 agent 충돌 회피 — mirror B-PHASE-4-DESIGN 패턴). `result.json` `_aggregate.passed_3_of_3 = true`, `blue_count = 3`. **B-UBM-1 KNUTH-TIER-ORDINAL-CLOSED** 5 witnesses ∀ k ∈ ℤ ∧ 0 ≤ k ≤ 100. **B-UBM-2 MATRIX-CARDINALITY-CLOSED** 170·17·18·40 == 2,080,800 (sympy 4-corner identity, ERRATA 2026-05-17: 이전 '20,808,000' 표기는 10× 산술 오류 — `@D stimuli_matrix` rule + cardinality + closed_anchor 모두 truthful 값 으로 정정). **B-UBM-3 CHAT-SFT-EXCLUSION-CLOSED** Boolean structural grep: 3 chat-SFT-candidate `corpus_consciousness_v{1,2,3}.jsonl` 모두 `[anima 우주뇌지도]` count = 0 ∧ 2 legacy UBM corpora HAS-marker > 0 (36,405 / 136,125 line 검출, 패턴 detectability 증명 + chat-SFT 측 청정). **B-UBM-NOTE TABLETOP-BLACKHOLE-OUTCOME-EMPIRICAL** (Hawking + Bekenstein + holographic real-limits 사용 가능; reproducible test outcome + manual_match 13/15 historical empirical = Phase UBM-D2 user gate, B-D-NOTE 패턴, NOT counted; f3 safe). f1/f2 hard-fail safe (Kolmogorov + arithmetic + Boolean structural, NO σ/τ/φ/J₂). $0 Mac local. Phase UBM-A acceptance criterion (3 B-UBM verdict PASS sympy) 충족 → A 단계 closed. 후속 candidate: Phase UBM-B tape lift (1030 laws @D + Knuth Tier @N + matrix architecture @D) 또는 사용자 게이트 Phase UBM-D2.
