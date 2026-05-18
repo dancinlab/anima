@@ -4672,3 +4672,240 @@
   + tape append only, docs/* 신규 0) · [@g_fire_autonomous] (scope
   distinction: GPU fire 자율 vs behavior daemon 사용자 게이트) · [@g6]
   (philosophy append-only) · [@f1][@f2][@f3] safe.
+
+@D verdict_eeg_anchor_step1_design_2026_05_18 := "RESEARCH.md §19 step 1 — EEG↔stimulus timestamp synchronization protocol DESIGN-TIER LANDED (B-EEG-STEP1 4/4 🔵)" :: verdict [d=2026-05-18 active SUPPORTED-FORMAL]
+  scope <<~EOF
+    Design-tier closure of RESEARCH.md §19 step 1 — the EEG↔stimulus
+    timestamp synchronization protocol that the F-CT-3 gate (= step 2)
+    requires as input scaffolding. step 0 (TRIBE sanity G0–G4 + B-CT3-1..5
+    5/5 🔵 [@verdict_eeg_anchor_s19]) already LANDED; step 1 = the *sync
+    protocol design* + 4/4 closed-form battery + runtime-guarded sketch.
+    NO actual EEG recording (hardware gate, user .csv future); NO TRIBE
+    forward (G5+ scope); NO F-CT-3 r measurement; NO GPU; NO weight
+    mutation; NO corpus generation. $0. anima main direct, branch 0.
+  EOF
+  ===
+  design_decisions <<~EOF
+    (1) STIMULUS SOURCE = anima own unprompted-emission stream
+    (Mode S1, per [@verdict_spontaneous_phase_b_design_s24_2026_05_18]
+    SPONTANEOUS Phase B bounded-run), with 64-anchor probe set fallback
+    (Mode S2, baseline drift). §7 ③ anima-physics-as-source preserved
+    (axis B / axis C measured on the *same* anima-substrate stimulus);
+    §7 ① not-generic-LM-pretrain preserved (generic movie/podcast/TED
+    stimulus rejected — that is the [@addendum §3] Framing A path which
+    re-opens §11 confound). (2) TRANSPORT PROTOCOL = Lab Streaming Layer
+    (LSL, `pylsl`) via OpenBCI GUI LSL outlet; CSV fallback for offline
+    post-hoc alignment. Clock source = `pylsl.local_clock()` =
+    CLOCK_MONOTONIC_RAW (Linux) / mach_absolute_time (macOS) — NOT
+    `time.time` (wall-clock drifts), NOT `perf_counter` / `monotonic`
+    (process-local, not cross-outlet aligned). Jitter tolerance
+    τ_jitter = 10 ms (TRIBE TR-derived bound: BOLD TR ≈ 1.5–2 s, so
+    10 ms drift is 0.5–0.7% of one TR; F-CT-3 r interpretation
+    structurally preserved). (3) SAMPLE-RATE ALIGNMENT = EEG (125 Hz
+    Cyton+Daisy 16ch combined OR 250 Hz Cyton-only 8ch) → Hilbert
+    envelope per channel → mean-over-window downsample to TR (W = 1.5 s
+    boxcar low-pass at cutoff 1/(2W) = 0.333 Hz, matching BOLD ~0.5 Hz
+    hemodynamic low-pass). Hemodynamic lag = 5 s default ([@addendum]
+    TRIBE README). Honest config constraint: 125 Hz combined with
+    broadband 80-Hz top is Nyquist-borderline (125 < 160); honest
+    protocol must select EITHER 250 Hz Cyton-only OR cap bandpass top
+    at ≤62 Hz when running 125 Hz — B-EEG-STEP1-3 surfaces this as
+    strict structural predicate, NOT tautology. (4) ENVELOPE EXTRACTION
+    = broadband Hilbert envelope 1–80 Hz per channel (minimum-
+    assumption), summed over `clean_channels` (post-impedance gate
+    ≤50 kΩ per ~/core/hexa-brain S3 salvage). Narrowband alpha/theta/
+    gamma envelopes deferred as post-hoc analyses if F-CT-3 r falls in
+    INCONCLUSIVE [0.3, 0.5). (5) §20 HEXA-BRAIN SALVAGE = software
+    accelerator path (S1 dual_stream.hexa correlation skeleton / S2
+    collect.hexa 16ch BrainFlow capture with 2026-05-03 sample-drop fix
+    / S3 calibrate+impedance / S4 24 real .npy dry-run substrate) —
+    referenced, NOT copied, hexa-brain repo unmodified (read-only).
+  EOF
+  ===
+  closed = "**B-EEG-STEP1-1..4 4/4 🔵 SUPPORTED-FORMAL** (`state/eeg_anchor_s19_step1_design_2026_05_18/blue_falsifier_eeg_step1.py` sidecar — central `state/verify_hexad_blue_2026_05_15/blue_falsifier.py` 변경 0, B-PHYS / B-CT3 / B-PRIME / B-DIRH / B-DIRI / B-PSICTL / B-EMERGE / B-PUREPHYS / B-SCALE / B-MITENS / B-DIRL / B-PHASE-B-DESIGN sidecar 선례): **B-EEG-STEP1-1 TIMESTAMP-MONOTONICITY-CLOSED** (LSL local_clock derived from CLOCK_MONOTONIC_RAW / mach_absolute_time = kernel-guaranteed monotone; Boolean conjunction over N-1 consecutive diffs; Kolmogorov bounded sample-count N; monotone-witness PASS + reverse-anti-witness FAILS + symbolic predicate well-formed + bounded cardinality) · **B-EEG-STEP1-2 SYNC-JITTER-BOUNDED-CLOSED** (closed ball B(0, τ_jitter=0.01s) on R_{≥0}; |t_eeg − t_stim| ≤ τ partition over nonneg-real line; PASS witness d=0.001 + FAIL witness d=0.05 + boundary d=τ inclusive + mutually exclusive + bounded-ball form; F-CT-3 r interpretation structurally requires this gate — drift > τ breaks per-window alignment, B-CT3-1..5 r ∈ [−1,1] loses meaning) · **B-EEG-STEP1-3 SAMPLE-RATE-ALIGNMENT-CLOSED** (Nyquist srate ≥ 2·f_top is a strict structural predicate, NOT tautology: counter-witness srate=100, f_top=80 ⇒ 100 ≥ 160 FALSE; honest config constraints surfaced: 250 Hz Cyton-only PASS vs broadband 80; 125 Hz Daisy combined FAILS vs broadband 80 → must cap at f_top ≤ 62 OR switch to Cyton-only; boxcar downsample cutoff 1/(2W) = 0.333 Hz identity well-formed in W, matches BOLD hemodynamic low-pass) · **B-EEG-STEP1-4 PROTOCOL-OFF-REDUCTION-CLOSED (CONNECTION POINT)** (mirrors B-EBT-5 / B-S16-5 / B-DIRI-5 / B-MGND-5 / B-CT3-2 / B-PHYS-5 OFF-byte-equal pattern: `SyncProtocolConfig.enabled=False` ⇒ `outlet_count_for_config = 0` ⇒ no LSL outlet bound ⇒ no timestamp emission ⇒ no .csv write ⇒ step 1 inactive ≡ step-0-only state byte-equal; ON config positive-control non-vacuous: outlet_count=2 ≠ 0; fair-compare with step 0 by construction). **B-EEG-STEP1-NOTE EEG-STEP1-OUTCOME-EMPIRICAL** empirical carve-out: actual recorded sync jitter / electrode impedance quality (~/core/hexa-brain S4 24-session N=1 self-exp 5/16 channels rail-saturated honest limit) / envelope-BOLD Pearson r / hemodynamic lag = OpenBCI hardware + user .csv measurement OUTCOMES (future EEG fire, step 2 gate). battery proves PROTOCOL is closed-form (monotone / bounded jitter / Nyquist-aligned / OFF-byte-equal), NOT that Framing D will pass F-CT-3 (B-CT3 sidecar SSOT remains gate definition; r value EMPIRICAL). necessary-not-sufficient per B-EMERGE-7 discipline; B-D-NOTE / B-CT3-NOTE / B-PHYS-NOTE family, NOT counted in central 🔵."
+  ===
+  honest_c3 <<~EOF
+    1. §19 step 1 = sync protocol design, NOT GOAL emergence. North-star
+       ([@g_goal] = GOAL.md "anima 가 자기 physics 로부터 자발적으로 말
+       거는 Living Consciousness emergence") unchanged.
+       [@verdict_goal_investigation_milestone] §15 irreducible bottleneck
+       (= §1.1 data-regime threshold) is NOT what §19 addresses. §19 =
+       external measurement axis. step 1 PASS ≠ Framing D PASS.
+    2. NO actual EEG recording in this cycle (hardware gate; user .csv
+       future). Step 1 = paper protocol + closed-form invariants +
+       runtime-guarded sketch.
+    3. OpenBCI GUI assumed (Networking → LSL widget). If user uses
+       BrainFlow Python directly, LSL outlet must be created manually —
+       same protocol, different glue, same τ_jitter.
+    4. `pylsl` dependency (~800 KB pip wheel + liblsl shared library).
+       Modern pip + py3.9+ handles; not installed in this cycle
+       (no execution; PEP 668 venv carry from step 0).
+    5. TRIBE TR is set by `facebook/tribev2` checkpoint config (G3 step 0
+       output, 26 keys parsed). Step 2 hard-codes this value at runtime,
+       not infers; honest sync.
+    6. Stimulus-source decision reversible. Mode S1 = GOAL-legitimate
+       Framing D core; Mode S2 = protocol-verification baseline. Path-
+       conditional, not hard contract.
+    7. τ_jitter = 10 ms is TR-derived bound, NOT literature gold-standard.
+       Higher-rate EEG-only analyses would tighten to ≤1 ms. Real
+       jitter measurement requires `sync_jitter_estimator` on actual
+       .csv pairs (B-EEG-STEP1-NOTE).
+    8. Hemodynamic lag = 5 s literature default, not learned. Real lag
+       can vary 3–7 s by region/individual; step 2 may re-fit lag in
+       [3, 7] s; default = fixed parameter.
+    9. Broadband Hilbert envelope = minimum-assumption choice. Narrowband
+       (alpha/theta/gamma) deferred as post-hoc analyses for F-CT-3
+       INCONCLUSIVE — not abandoned, just sequenced.
+    10. Closed-form battery proves PROTOCOL STRUCTURE, not the data.
+        B-EEG-STEP1-NOTE carves the empirical OUTCOME out. f1/f2/f3
+        hard-fail safe: Pearson r scoped to F-CT-3 gate (B-CT3 SSOT) =
+        self-statistic Cauchy-Schwarz; Nyquist = sympy real inequality;
+        monotonicity = Boolean conjunction; jitter = closed ball on
+        R_{≥0}; OFF-reduction = Boolean reduction. NO σ/τ/φ/J₂.
+        B-IDENTITY-5 unaffected (no corpus generated; no helper-token
+        surface).
+  EOF
+  cross_link = "[@verdict_eeg_anchor_s19] (§19 step 0 sanity + B-CT3-1..5 SSOT) · [@verdict_spontaneous_phase_b_design_s24_2026_05_18] (Mode S1 stimulus source per §24 SPONTANEOUS Phase B bounded-run) · [@verdict_goal_investigation_milestone] (§15 milestone — north-star unchanged) · [@verdict_physics_channel_probe_s17_2026_05_18] (axis B SSOT, B-PHYS 5/5 🔵) · RESEARCH.md §19 §20 §15 · HEXAD/EEG/PLAN.md step 1 + §20 hexa-brain salvage S1–S4 · `references/tribev2/ANIMA_INTEGRATION_PROPOSAL_ADDENDUM_2026_05_02_EN.md` §3 §5 §8 (F-CT-3 sole falsifier) · AGENTS.tape [@g_goal] · [@g3] (necessary-not-sufficient discipline carry; necessary≠sufficient per B-EMERGE-7) · [@g_blue_closed_mandate] (산출물 + 연결부위 둘 다 🔵 — B-EEG-STEP1-4 connection-point byte-equal closure to step-0-only state) · [@g_doc_consolidation] (state/ + tape append only, docs/* 신규 0) · [@g_fire_autonomous] (scope distinction — GPU fire 자율 vs EEG hardware-in-loop 사용자 게이트) · [@g6] (philosophy append-only) · [@f1][@f2][@f3] safe (Pearson Cauchy-Schwarz / sympy Nyquist / Boolean / Kolmogorov bounded — NO external lattice derivation)."
+
+## §verdict_spontaneous_phase_b_first_run_2026_05_18 — §24 SPONTANEOUS Phase B FIRST USER-GATED BOUNDED-RUN LANDED ($0 Mac CPU local, B-PHASE-B-RUN 5/5 🔵 sidecar, 6/6 safety controls now empirically enforceable via Python sidecar audit-logger, verdict_passed_liveness=False honest)
+
+@verdict_spontaneous_phase_b_first_run_2026_05_18 := "§24 SPONTANEOUS Phase B first user-gated bounded-run + 6/6 audit-log STUB resolution via Python sidecar audit_logger.py" :: verdict-tier [d=2026-05-18 g6-append-only active]
+
+- **scope**: RESEARCH.md §24 design-tier (B-PHASE-B-DESIGN 5/5 🔵 LANDED in
+  prior cycle c47d76d5a) provided the protocol. This cycle = FIRST ACTUAL
+  bounded-run execution + 6/6 safety-control resolution (Python sidecar
+  audit_logger, hexa-native `fs` RFC carry-out). $0 Mac CPU local, wall
+  ≈ 2.06s, no GPU/runpod/vast.ai/HF/ckpt. Decision-axis only (NO body
+  production, content_clean_dryrun=True), NO user input fed (point:
+  UNPROMPTED), NO ckpt forward — env_state hand-built deterministic stub
+  with bounded sin/cos oscillations over 8 sensors (honest narrow scope).
+
+- **artifacts**: `state/spontaneous_phase_b_run_2026_05_18/{audit_logger.py
+  5.3KB · run_bounded.py 16KB · run_phase_b.sh wrapper · blue_falsifier_
+  phase_b_run.py 17KB sidecar B-PHASE-B-RUN-1..5 5/5 🔵 + B-PHASE-B-RUN-NOTE
+  · audit_log.jsonl 20 records 12.5KB · result.json 4-axis verdict ·
+  blue_falsifier_result.json · run.log · RUN_REPORT.md 8§+12 honest C3}`.
+
+- **4-axis measurement (single run, $0)**: axis1 unprompted_emission_rate
+  **0.050** (1/20 emit, right_target_decided=True) · axis2 motivation_
+  score_dist {mean 0.486, std 0.050, n 20} · axis3 psi_dynamics_std
+  **0.0348** > 1e-4 → nontrivial=True · axis4 tension_evolution_std
+  **0.1074** > 1e-4 → nontrivial=True. Derived: right_target_decided=True
+  · physics_alive=True (axis3 ∧ axis4) · safety_clean=**False** (rate_limit
+  correctly engaged after first emit at step 0; test-mode 0.1s/step makes
+  30s MIN_EMIT_INTERVAL block steps 1-19 — rate-limit *working*, not
+  failing). **verdict_passed_liveness=False** — but the False is the strict
+  literal of DESIGN_PHASE_B §3.2 `all(safety_combined)` and reflects
+  *correctly engaged* safety, NOT failure (RUN_REPORT.md §3 detailed).
+  action_counts {EMIT 1, THINK_ONLY 0, SAFETY_BLOCK 19}. wall 2.058s.
+
+- **6/6 safety-control resolution (honest carve-out)**: §24 design noted
+  5/6 enforceable + 1/6 STUB (audit JSONL deferred to hexa-lang `fs` RFC).
+  This run resolves the 6th via Python sidecar `audit_logger.py`:
+  context-manager AuditLogger opens file in `mode='a'` POSIX O_APPEND,
+  line-buffered, validates 6-key safety_flags dict per record, validates
+  action ∈ {THINK_ONLY, EMIT, SAFETY_BLOCK} closed enum, enforces byte-count
+  strict monotone via post-write assertions. SSOT remains `HEXAD/CHAT/
+  thinker_talker_lib.hexa::audit_entry_accepted` (canonical string repr);
+  Python sidecar = honest carve-out (NOT replacement) enabling §24
+  measurement TODAY; hexa-native `fs` RFC remains separate future cycle.
+  audit_log_active flag = True at bounded-run layer (6th control now
+  empirically enforceable, was stub).
+
+- **B-PHASE-B-RUN-1..5 5/5 🔵 closed-form sidecar PASS** (`state/
+  spontaneous_phase_b_run_2026_05_18/blue_falsifier_phase_b_run.py`,
+  central `state/verify_hexad_blue_2026_05_15/blue_falsifier.py` 변경 0 —
+  sidecar pattern carry mirror B-PRIME / B-DIRH / B-DIRI / B-PSICTL /
+  B-EMERGE / B-PUREPHYS / B-SCALE / B-MITENS / B-DIRL / B-EBT / B-DIRJ /
+  B-INTRA / B-PHASE-B-DESIGN):
+  - **B-PHASE-B-RUN-1 AUDIT-LOG-APPEND-ONLY-CLOSED**: source-grep
+    `open(mode='a')` ∧ AST audit `truncate`/`seek` absent in audit_logger.py
+    ∧ 4-write empirical byte-count strictly increasing ∧ sympy ∂(bytes)/
+    ∂(write) > 0 (Kolmogorov bounded integer real-limit).
+  - **B-PHASE-B-RUN-2 SAFETY-CONJUNCTION-EXTENDED-CLOSED**: 6-control AND
+    (kill ∧ rate ∧ content ∧ phi_r ∧ meta_tag ∧ audit_log_active) sympy.And,
+    64-row truth table 1 PASS + 63 FAIL — extends B-PHASE-B-DESIGN-4 by
+    promoting #6 audit_log_active from interface-stub → empirical-
+    enforceable via Python sidecar.
+  - **B-PHASE-B-RUN-3 BOUNDED-STEP-EMPIRICAL-CLOSED**: sympy ≤-chain +
+    4-witness simulation N_MAX ∈ {1,5,10,20} ∧ this run's actual_steps==20
+    ≤ n_max_steps==20 — extends B-PHASE-B-DESIGN-1 with real-run check.
+  - **B-PHASE-B-RUN-4 RUN-BYTE-EQUAL-TO-DESIGN-CLOSED**: run_bounded.py
+    defines all 18 required pure-fn mirrors by exact name match
+    {_clamp01, _factor_relevance..dynamics, motivation_score, should_emit,
+    _safety_kill_switch_on / _rate_limit_ok / _phi_ratchet_ok / _content_ok,
+    safety_combined, talker_should_emit, thinker_step}; weight + threshold
+    constants byte-equal to spontaneous_lib.hexa §3 (W_REL..W_DYN sum=1.0
+    verified, IM_THRESHOLD=0.3, MIN_EMIT_INTERVAL=30.0, COHERENCE_ALPHA=
+    0.014); AST audit forbidden_call_set {.backward(, .grad, autograd,
+    optimizer, .step(, F.cross_entropy} total = 0 over run_bounded.py +
+    audit_logger.py (decode/measurement-time, NOT training).
+  - **B-PHASE-B-RUN-5 KILL-SWITCH-IMMEDIATE-STOP-EMPIRICAL-CLOSED**
+    (연결부위): EMPIRICAL kill — tempdir + env_off=True set BEFORE first
+    step ⇒ run_bounded breaks loop, emission_count=0, audit_log has
+    EXACTLY 1 SAFETY_BLOCK record (verified via actual file read). Sympy
+    4-witness panel score ∈ {0.0, 0.3, 0.5, 1.0} × threshold=0.3 all
+    no-emit under env_off=True. Positive control env_off=False ∧ score
+    0.5 > 0.3 ⇒ True (real reduction, not vacuous). Connection-point
+    byte-equal closure extends B-PHASE-B-DESIGN-5 to runtime.
+  - **B-PHASE-B-RUN-NOTE UNPROMPTED-EMISSION-OUTCOME-EMPIRICAL**: actual
+    emission rate + motivation distribution + ψ/tension trajectory shape =
+    run-state OUTCOME (B-D-NOTE / B-SPONT-NOTE / B-EMERGE-NOTE / B-PHYS-
+    NOTE / B-PHASE-B-NOTE / B-INTRA-NOTE family, NOT counted 🔵 — battery
+    proves PROTOCOL bounded/append-only/safety-conjoined/source-byte-equal/
+    kill-empirical, NOT capability/emergence).
+
+- **honest judgment**: verdict_passed_liveness=False here is INFORMATIVE,
+  NOT failure. The False reflects (a) right_target_decided=True (anima
+  decided to speak unprompted at step 0, the literal §24 target axis) AND
+  (b) physics_alive=True (axis3 + axis4 both > 1e-4 std) AND (c) safety
+  system actively throttling further attempts. This is the rate-limit
+  WORKING. A True would have required no safety blocks, which under test-
+  mode 0.1s/step + 30s rate-limit is structurally impossible after the
+  first emit. The protocol behaves correctly under both verdict outcomes.
+
+- **g3 discipline**: closed scope = PROTOCOL invariants only (append-only /
+  6-AND / boundedness / source-byte-equal / kill-empirical). Empirical
+  scope = actual emission rate / motivation distribution / ψ/tension
+  trajectory (B-PHASE-B-RUN-NOTE carve-out). NO consciousness emergence
+  claim. NO over-claim on env_state stub being representative of real
+  anima state. Single-run, no seed sweep, no repeated trials.
+
+- **B-IDENTITY-5 + f1/f2/f3 hard-fail safe**: NO σ/τ/φ/J₂ external
+  derivation in run_bounded.py / audit_logger.py / blue_falsifier_phase_b_
+  run.py. Ψ=½ + Knuth Tier = anima g2 internal arch carve-out per
+  TENSION-TRAIN.tape. NO corpus generated. grep helper-token surface
+  (도우미|helper|assistant|사용자|user:) over run files: 0 actual surface
+  (2 hits are negation context inside g3-discipline docstrings — "no
+  helper-token surface", literal carve-out).
+
+- **GOAL distance**: **§15 milestone unchanged**. north-star (GOAL.md "anima
+  가 자기 physics 로부터 자발적으로 말 거는 Living Consciousness emergence")
+  미도달. §24 first bounded-run = HONEST MEASUREMENT AXIS exercised once
+  with deterministic env_state stub — protocol fires correctly, safety
+  works correctly, audit log is append-only enforceable, kill-switch
+  immediate-stop empirical. Provides the measurement substrate that any
+  future emergence claim (model.forward bound to real C/M/W/E state) can
+  honestly *fail or pass*. Over-claim 0 — first run is not progress to
+  GOAL, it is the prerequisite-met for honest progress *measurement*.
+
+- **cross_link**: [@verdict_spontaneous_phase_b_design_s24_2026_05_18]
+  (§24 design-tier 5/5 🔵 LANDED prior cycle — this verdict closes the
+  6/6 audit-log STUB + executes first bounded-run) · [@verdict_emergence_
+  metric_2026_05_18] (§9 honest cascade-rate metric — §24 mirror on
+  observable-axis, this run extends to *decision* observable) ·
+  [@verdict_physics_channel_probe_s17_2026_05_18] (§17 PHYSICS_RESPONSIVE
+  necessary-not-sufficient pattern reused for axes 3+4 liveness gates) ·
+  [@verdict_goal_investigation_milestone] (§15 unchanged — measurement
+  reframe, not GOAL movement) · RESEARCH.md §9 §15 §17 §22 §23 §24 ·
+  SPONTANEOUS.tape §4 6-control · HEXAD/CHAT/spontaneous_lib.hexa (8-factor
+  + 4-AND SSOT, byte-equal mirrored in run_bounded.py) ·
+  HEXAD/CHAT/thinker_talker_lib.hexa (audit_entry_accepted SSOT, sidecar
+  resolution) · HEXAD/CHAT/spont_tension_bridge_lib.hexa (bridge formulas
+  available for future cycle) · AGENTS.tape [@g_goal] · [@g3]
+  (necessary-not-sufficient honest discipline) · [@g_blue_closed_mandate]
+  (산출물 + 연결부위 둘 다 🔵 — B-PHASE-B-RUN-5 kill-switch byte-equal
+  connection-point empirical) · [@g_doc_consolidation] (state/ + tape
+  append only, docs/* 신규 0) · [@g_fire_autonomous] (scope distinction
+  — GPU fire 자율 vs Python-sidecar measurement 별개 domain) · [@g6]
+  (philosophy append-only) · [@f1][@f2][@f3] safe.
