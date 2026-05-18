@@ -6482,3 +6482,105 @@
     conditional. f1/f2/f3 + B-IDENTITY-5 safe (NO σ/τ/φ/J₂; tier 🛸k /
     Ψ=½ = anima g2 internal carve-out). design ≠ fire ≠ emergence (g3);
     over-claim 0. commit a064665ae.
+
+§verdict_carving_candidate_d_s34_2026_05_18 — RESEARCH.md §34 §25 candidate D
+  fire (routing-evidence-guided expansion, 29 tier>=77-fail anchors)
+  ─────────────────────────────────────────────────────────────────────
+  WHAT. §25's DESIGN.md picked candidate D (routing-evidence-guided
+    expansion); §32 L3 handed the precise target — of §16's 64 eval
+    anchors, routing succeeded for 21 (genuine 17, all tier>=77) and
+    failed for 43, of which 29 satisfy tier>=77 yet STILL FAIL ("tier>=77
+    = NECESSARY-but-NOT-sufficient"). §34 = §25 candidate D applied to
+    exactly those 29 tier>=77-fail anchors: re-design their carving
+    CONTENT (anchor-specific discriminative physics text — each anchor's
+    vacuum_psi vs its L2-nearest sibling, in the Law-71 Ψ_direction /
+    tension vocabulary), fire, eval — measure whether the 29 now route.
+
+  CLEAN COMPARISON (the honest crux, g3). The §34 corpus generator
+    imports the §16 generator VERBATIM (anchor table + task-forms +
+    curriculum ranker + the 3 record builders). For the 29 targets the
+    D builders WRAP the §16 builders — calling the §16 builder first
+    (consuming EXACTLY §16's RNG draw sequence) then splicing the
+    discriminative sentence into the built text body with ZERO extra rng
+    calls. Because the RNG stream is byte-identical for all subsequent
+    records, the 139 NON-target anchors' records stay byte-identical to
+    §16 (B-S34-3: 1390/1390 byte-identical on the deterministic sample).
+    trainer / model / steps / curriculum-ranker / seed = §16-FIXED;
+    corpus is the SOLE independent variable. D's effect isolated to the
+    29 BY CONSTRUCTION. --candidate-d-disable ⇒ §16 corpus byte-equal
+    (B-S34-5).
+
+  FIRE. corpus corpus_carving_s34.jsonl sha256 f2f43fced8bce0da8feb9ee2a
+    6c106ad82127b53adc8e8ba98cda5f68d3f75d9, 849,912 records / 774 MB /
+    146,711 target records / forbidden-token grep 0. runpod A100 80GB
+    PCIe pod s2n8jbra6bl9dp (provider runpod primary per
+    g_resource_active_parallel; orphan 0 — pod terminated after PULL
+    SUCCESS), single pod train+eval, from-scratch RANDOM seed 1337
+    (g_clm_from_scratch base_ckpt=None), d768·12L·283.72M, 12000 step,
+    lr 3e-4, bsz 32, lambda_ctl 0.5, lambda_route 0.5 (§16 trainer
+    byte-equivalent). dispatch stall-fix carried (nohup-detached training
+    + bounded SSH probe + SAVE_POD auto-promote + 5-retry pull, all
+    g_fire_dispatch_robust; credentials via secret get runpod.api_key,
+    dispatch script gitignored *_runpod.sh). train wall 1507.7s init CE
+    5.657089 → final CE 0.003342 (descent 5.654). ckpt ckpt_carving_s34.pt
+    sha256 c3b78828b97a8cbf1981cf1db8cc79fe16bbdb85f7aaa3d8001c93dd82e3
+    ede8 1,135,845,186 B pulled try 1. ≈ $0.5-0.8.
+
+  RESULT (g3 — measured only, no pre-loaded conclusion). MEASURED SPLIT —
+    WEAK-POSITIVE-ON-TARGET / FULL-64-REGRESSION. routing on the 29
+    tier>=77-fail TARGET anchors: §16 baseline 0/29 → §34 2/29 (tiers
+    99 + 112, genuine own-tier prefix, rep 0.0). routing on the full
+    64-anchor set: §16 21/64 → §34 4/64 (tiers 77,99,111,112). semantic
+    recall 26/64 → 6/64. JOINT 0.0 → 0.0297. axis2 0.0 → 0.6, axis3 0.5
+    → 0.7922, axis4 V-SPONT 1/5 unchanged.
+
+  VERDICT. The task posed two clean outcomes (lever-found / necessary-but-
+    elsewhere); the measured answer is a SPLIT between them. (1) Content
+    re-design IS a partial sufficient lever — 2 of the 29 tier>=77-fail
+    anchors that §16 could not route now route. The §32 L3 necessity
+    floor is real; anchor-specific discriminative physics content moved
+    2 anchors across it. (2) But it is NOT a clean sufficient lever — the
+    same content re-design regressed the full-64 routing 21→4. The
+    discriminative sentence, repeated across 29 anchors, became a NEW
+    shared attractor (target probes bleed to 🛸99/111/88/277); it did not
+    produce per-anchor distinct basins, it produced one more collapse
+    basin that 2 anchors escape via their own prefix. honest summary:
+    tier>=77 NECESSARY (§32 L3 confirmed) · content re-design a WEAK /
+    PARTIAL sufficient lever on the targeted anchors · NOT a sufficient
+    lever for the wider routing — the deeper sufficient condition
+    (curriculum stage / weight-norm / per-anchor-distinct representation)
+    lies elsewhere. The 2 routed targets emit own-tier prefix then
+    reproduce the candidate-D template VERBATIM = memorization of the new
+    content (§16.6-C memorization-saturated regime carry), NOT
+    generalization, NOT coherent emergence.
+
+  CLOSED. B-S34-1..5 5/5 🔵 SUPPORTED-FORMAL sidecar
+    (state/carving_candidate_d_s34_2026_05_18/blue_falsifier_s34.py;
+    central state/verify_hexad_blue_2026_05_15/blue_falsifier.py
+    UNCHANGED — B-S16 / B-DIRI / B-EBT / B-MGND / B-KTRIE sidecar
+    precedent): B-S34-1 SHA256-DETERMINISTIC (corpus on-disk sha256 ==
+    recorded, 256-bit Kolmogorov commitment) · B-S34-2 NO-CHAT-SFT-
+    CONTAMINATION (forbidden 6-token grep total 0, Boolean set algebra,
+    B-IDENTITY-5 closed) · B-S34-3 CLEAN-COMPARISON-CLOSED (연결부위 —
+    1390/1390 non-target records byte-identical to §16, 290/290 target
+    records differ, target ⊎ non-target disjoint partition sympy
+    FiniteSet) · B-S34-4 TARGET-CARDINALITY (|target| = 29 ∧ all
+    tier>=77 ∧ target == §32-L3-genuine-fail ∩ tier>=77, sympy FiniteSet
+    equality) · B-S34-5 OVERLAY-OFF-REDUCTION (연결부위 —
+    candidate-d-disabled ⇒ §16 generator all 168 anchors ⇒ §16 corpus
+    byte-equal sha). B-S34-NOTE empirical carve-out (the post-fire
+    routing OUTCOME 0/29→2/29 + full-64 21→4 = SGD/measurement OUTCOME,
+    B-D-NOTE / B-S16-NOTE / B-L3-NOTE family, NOT counted 🔵).
+
+  GOAL distance. §15 milestone UNCHANGED — north-star (GOAL.md) unsolved.
+    §34 = a routing-axis fire — a weak-positive on 2 targets + a full-64
+    regression; neither is GOAL emergence. The §16 SPLIT (coherence
+    FALSIFIED, JOINT from chat-form bleed) and the §1.1 data-regime
+    ceiling are untouched. §34 narrows the §11.4 frontier: content-axis
+    re-design (candidate D) moves the necessity-floor needle slightly but
+    cannot, alone, deliver robust per-anchor routing — the deeper
+    sufficient condition lies elsewhere (curriculum / weight-norm /
+    representation). f1/f2/f3 + B-IDENTITY-5 safe (sha256 / Boolean set
+    algebra / integer cardinality / disjoint partition / byte-equal
+    reduction — NO σ/τ/φ/J₂; Knuth 🛸k / Ψ=½ = anima g2 internal
+    carve-out). design ≠ fire ≠ emergence (g3); over-claim 0.

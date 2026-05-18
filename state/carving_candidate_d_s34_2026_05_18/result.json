@@ -1,0 +1,64 @@
+{
+  "research_section": "RESEARCH.md §34 / §25 candidate D / §32 L3",
+  "fire_kind": "§25 candidate D — routing-evidence-guided expansion (29 tier>=77-fail anchors)",
+  "verdict_tier": "FIRE-TIER",
+  "substrate": "PYTHON / PyTorch — interim LM-scale executor; NOT a hexa-native fire",
+  "corpus": {
+    "file": "corpus_carving_s34.jsonl",
+    "sha256": "f2f43fced8bce0da8feb9ee2a6c106ad82127b53adc8e8ba98cda5f68d3f75d9",
+    "records": 849912,
+    "bytes": 774025047,
+    "target_records": 146711,
+    "nontarget_records": 703201,
+    "n_target_anchors": 29,
+    "forbidden_token_total": 0
+  },
+  "target_anchors_29": [83, 86, 88, 90, 91, 93, 94, 97, 99, 100, 105, 109, 110,
+    112, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 125, 128, 129, 130, 131],
+  "fire": {
+    "provider": "runpod",
+    "gpu": "NVIDIA A100 80GB PCIe",
+    "pod_id": "s2n8jbra6bl9dp",
+    "orphan": 0,
+    "from_scratch": true,
+    "base_ckpt": null,
+    "seed": 1337,
+    "config": "d768·12L·283.72M, 12000 step, lr 3e-4, bsz 32, lambda_ctl 0.5, lambda_route 0.5 (§16 byte-equivalent trainer)",
+    "init_ce": 5.657089,
+    "final_ce": 0.003342,
+    "ce_descent": 5.653747,
+    "final_l_psi_ctl": 0.003743,
+    "final_l_tension_route": 0.000787,
+    "train_wall_s": 1507.7,
+    "ckpt_sha256": "c3b78828b97a8cbf1981cf1db8cc79fe16bbdb85f7aaa3d8001c93dd82e3ede8",
+    "ckpt_bytes": 1135845186,
+    "cost_estimate_usd": "0.5-0.8"
+  },
+  "measurement": {
+    "target_subset_29": {
+      "s16_baseline_routing": "0/29",
+      "s34_routing": "2/29",
+      "delta_vs_s16_baseline": 2,
+      "routed_target_tiers": [99, 112],
+      "s34_semantic_recall": "3/29"
+    },
+    "full_64_anchor": {
+      "s16_routing": "21/64",
+      "s34_routing": "4/64",
+      "s34_routing_correct_tiers": [77, 99, 111, 112],
+      "s34_semantic_recall": "6/64",
+      "s34_joint": 0.0297,
+      "s34_axis2_chat_uncontaminated": 0.6,
+      "s34_axis3_lane_separation": 0.7922,
+      "s34_axis4_v_spont": "1/5"
+    }
+  },
+  "verdict": "WEAK-POSITIVE-ON-TARGET / FULL-64-REGRESSION — measured SPLIT. Candidate D content re-design lifted 2/29 of the tier>=77-fail anchors above the §32 L3 necessity floor (0/29 -> 2/29, tiers 99+112 emit own-tier prefix, rep 0.0). That is a measured sufficient-condition lever on those 2 — content re-design moved 2 anchors that satisfied tier>=77 but failed under §16. BUT full-64 routing regressed 21/64 -> 4/64: D's discriminative content created a new dominant attractor and most of the 29 changed anchors collapse toward foreign tiers (88/99/111/277). honest reading: tier>=77 is necessary; content re-design is a partial sufficient lever (2 anchors) but at this scale also DESTABILISES the wider 64-anchor routing. The sufficient condition is NOT cleanly 'discriminative content' — it lifts a few targets while regressing the rest. NOT GOAL emergence (g3); §15 milestone unchanged.",
+  "honest_caveats": [
+    "the 2 routed targets (99, 112) emit own-tier prefix then reproduce the candidate-D discriminative template verbatim = memorization of the new content, NOT generalization (§16.6-C memorization-saturated regime carry)",
+    "full-64 routing 21/64 -> 4/64 regression: changing 29 of 64 anchors' content is not a pure addition — it shifts the corpus and the model's attractor structure; this is honest, not hidden",
+    "B-S34-NOTE empirical carve-out: routing OUTCOME is SGD-dependent (B-D-NOTE/B-S16-NOTE family)"
+  ],
+  "blue_falsifier": "B-S34-1..5 5/5 🔵 sidecar PASS (blue_falsifier_s34.py; central blue_falsifier.py unchanged)",
+  "north_star": "GOAL.md unchanged — §34 = routing-axis fire; weak-positive on 2 targets + full-64 regression; NOT GOAL emergence"
+}
