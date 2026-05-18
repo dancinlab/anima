@@ -6984,3 +6984,99 @@
     partition / Boolean biconditional / 4-row truth table; NO σ/τ/φ/J₂;
     no corpus, no model forward, no helper-token surface). $0 design-tier.
     decision doc ≠ governance change (g3); over-claim 0.
+
+
+§verdict_tier77_microanalysis_s42_2026_05_18
+
+  RESEARCH.md §42 — tier ≥ 77 17-vs-29 distinguishing-structure
+    micro-analysis (§32 L3-v2). $0 Mac CPU local, deterministic (3× bit-
+    identical SHA256), NO model forward, NO training, NO RNG. extends
+    §32 L3 (tier ≥ 77 = NECESSARY condition for §16 routing success,
+    purity 1.0, exclusion 0.383) + §35 (tier-itself causal, curriculum-
+    stage refuted) by asking: within the 46-anchor tier ≥ 77 band, what
+    distinguishing feature separates 17 routing-success from 29 routing-
+    fail? Whatever it is = sufficient-condition lever §34 was missing.
+
+  METHOD. Partition 46 band anchors (success_n=17, fail_n=29; verified
+    17 + 29 = 46 ∧ success ∩ fail = ∅ ∧ floor 77 holds ∀ band). For
+    each anchor: 13 numeric features (Ψ-space — vacuum_psi_x/y,
+    vacuum_psi_dev_from_half, psi_quadrant; basin — basin_radius,
+    basin_overlap_count_within_band, basin_bucket; intrinsic — tier,
+    score; textual — name_char_len, name_byte_len, korean_byte_ratio;
+    relation — nearest_psi_dist, same_domain_count, tier_neighbor_count)
+    + 5 categorical (domain, top_emotion, psi_quadrant_id, basin_bucket,
+    psi_quadrant_x_basin). Separation: threshold_separation_acc,
+    |Cohen's d|, rank_auc, necessary_condition_lift (purity/exclusion).
+    Floors (anti-padding): purity ≥ 0.9 ∧ exclusion ≥ 0.5.
+
+  VERDICT. structure_found_within_tier77 = **False**. No closed
+    anchor-property feature separates the 17 success from 29 fail at
+    honest sufficient-condition floors. Top-3 features (ranked by
+    threshold-separation-acc, tie-break |d| then nc-lift): #1
+    basin_overlap_count_within_band acc=0.6739 |d|=0.648 AUC=0.6592
+    nc-lift=0.207 thr≥17.5; #2 vacuum_psi_x acc=0.6739 |d|=0.645
+    AUC=0.6602 nc-lift=0.241 thr<0.715; #3 tier_neighbor_count_within_band
+    acc=0.6739 |d|=0.140 AUC=0.5203 nc-lift=0.000. Base rate (constant-
+    predict-fail) = 0.6304; top acc 0.6739 = +4.3% over base; top nc-lift
+    0.241 is far below 0.5 floor. Within the already-necessary band, the
+    17-vs-29 split looks like **SGD-trajectory lottery** — consistent
+    with §35's "tier-itself causal but not fully sufficient" finding.
+
+  SECONDARY CATEGORICAL (correlation-vulnerable, low N, NOT closed).
+    psi_quadrant_x_basin q1_large (basin ≥ 0.18 ∧ both Ψ-axes ≥ 0.5 =
+    "cosmic large-basin") succeeds 1/9 (11%) vs base 37%; q1_medium 7/15
+    (47%); q2_small 6/12 (50%). top_emotion awe 0/4, vastness 0/2,
+    peace/serenity/longing 0/1 each — "cosmic/sublime" emotions all
+    fail; clarity 6/10 (60%), stillness 3/4 (75%) succeed. domain 산술
+    3/3, 예술 1/1, 통계 1/1, 논리 2/3, 자연관찰 2/3, 코드 2/3 succeed
+    ≥ 67%; 대화자극 0/3, 일상 0/3, 추상패턴 0/3, 우주 0/2 all fail.
+    Pattern: cosmic-large-basin-awe fails, precise-small-basin-clarity-
+    math-code succeeds (consistent with §16 memorization-saturated
+    regime). N too small for closed-form claim — listed as honest
+    secondary findings only.
+
+  IMPLICATION §40 / §43. §40 (§34-v2 targeted expansion of 29 tier ≥ 77-
+    fail anchors): NO clean lever — §34's weak-positive (2/29) likely
+    picked up band-mean tendency not sufficient-condition signal;
+    promise should be reframed as band-level memorization re-distribution,
+    NOT closed sufficient-condition lever. §43 (routing-via-relation):
+    within-band relation features fail to separate too (tier_neighbor_count
+    nc-lift 0, same_domain_count weak). §37 L6 generalisation positive
+    (held-out-pair relation acc 0.99) is relation CLASSIFICATION
+    generalisation, NOT routing-into-correct-basin generalisation —
+    §43 should be reframed. §16: irreducible bottleneck (§11.4 / §15
+    data-regime threshold §1.1) reinforced.
+
+  CLOSED. B-S42-1..3 3/3 🔵 SUPPORTED-FORMAL sidecar (state/tier77_
+    microanalysis_s42_2026_05_18/blue_falsifier_s42.py; central state/
+    verify_hexad_blue_2026_05_15/blue_falsifier.py UNCHANGED): B-S42-1
+    TIER77-PARTITION-EXHAUSTIVE-DISJOINT (sympy 17 + 29 = 46 integer +
+    Boolean disjoint success ∩ fail = ∅ + union covers band + floor
+    holds ∀ band) · B-S42-2 SEPARATION-METRIC-BOUNDED (closed-form
+    intervals acc ∈ [0,1] ∧ |d| ≥ 0 ∧ auc ∈ [0.5,1.0] ∧ purity/exclusion/
+    lift ∈ [0,1] ∀ feature, sympy) · B-S42-3 ANALYSIS-DETERMINISTIC
+    (3× bit-identical SHA256 60ab07eeb445f6f27e87bf07bd79beda92638ec3
+    be46994ecdd301447f9d0956 + AST forbidden-call grep {torch, .backward,
+    F.cross_entropy, random.*, np.random, openai, anthropic} total=0 +
+    no RNG / no seed). B-S42-NOTE empirical carve-out: sufficient-
+    condition lever inferred from §42 is HYPOTHESIS; promotion to
+    causal lever requires §43/§40-style ablation fire varying candidate
+    feature while holding all others fixed. The SGD-lottery verdict is
+    itself a testable hypothesis (predicts re-firing §16 with a
+    different seed re-shuffles which 17 of 46 land in success set,
+    testable $0.5-0.8). B-D-NOTE / B-L3-NOTE / B-S35-NOTE family, NOT
+    counted 🔵.
+
+  GOAL distance. §15 milestone UNCHANGED — north-star (GOAL.md) unsolved.
+    §42 = diagnostic / negative-space identifier, NOT north-star
+    progress. Work it does: prevents confident §34-v2 with the wrong
+    framing (band-level content expansion would chase noise); honestly
+    distinguishes "relation classification accuracy" (§37 L6 high) from
+    "routing-into-correct-basin accuracy" (no closed lever here);
+    rules out anchor-property-based sufficient condition within the
+    already-necessary band. The lever §34 missed *may not exist as an
+    anchor property* — may be SGD seed / batch-order / gradient
+    trajectory (untestable from a single fire's output). f1/f2/f3 + B-
+    IDENTITY-5 safe (Boolean / integer / Kolmogorov bounded / Shannon-
+    class; NO σ/τ/φ/J₂; no corpus, no model forward, no helper-token
+    surface). $0. correlation ≠ causation (g3); over-claim 0.
