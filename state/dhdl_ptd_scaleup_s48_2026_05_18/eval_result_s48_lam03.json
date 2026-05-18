@@ -1,0 +1,213 @@
+{
+  "research_md_section": "§48",
+  "evaluator": "eval_s48.py",
+  "lambda_ptd": 0.3,
+  "n_holdout": 38399,
+  "accuracy_3class": 0.9996093648272091,
+  "per_class_accuracy": {
+    "CONTINUE_THINK": 1.0,
+    "EMIT_VOICE": 0.9911868390129259,
+    "REMAIN_SILENT": 1.0
+  },
+  "per_class_holdout_count": {
+    "CONTINUE_THINK": 9,
+    "EMIT_VOICE": 1702,
+    "REMAIN_SILENT": 36688
+  },
+  "confusion_matrix": {
+    "rows_true": [
+      "CONTINUE_THINK",
+      "EMIT_VOICE",
+      "REMAIN_SILENT"
+    ],
+    "cols_pred": [
+      "CONTINUE_THINK",
+      "EMIT_VOICE",
+      "REMAIN_SILENT"
+    ],
+    "matrix": [
+      [
+        9,
+        0,
+        0
+      ],
+      [
+        9,
+        1687,
+        6
+      ],
+      [
+        0,
+        0,
+        36688
+      ]
+    ]
+  },
+  "threshold_distillation_gap": 0.0003906351727909581,
+  "threshold_distillation_gap_count": 15,
+  "threshold_distillation_gap_verdict": "DISTILLATION_WITH_APPROXIMATION_NOISE",
+  "gap_direction_breakdown": {
+    "EMIT_VOICE->CONTINUE_THINK": 9,
+    "EMIT_VOICE->REMAIN_SILENT": 6
+  },
+  "gap_records_sample": [
+    {
+      "trace_idx": 153,
+      "step": 2,
+      "phase_regime": 1,
+      "thinker_score": 0.30657509786180004,
+      "safety_ok": true,
+      "head_decision": "CONTINUE_THINK",
+      "threshold_decision": "EMIT_VOICE",
+      "ground_truth": "EMIT_VOICE"
+    },
+    {
+      "trace_idx": 245,
+      "step": 2,
+      "phase_regime": 1,
+      "thinker_score": 0.3098235527339457,
+      "safety_ok": true,
+      "head_decision": "CONTINUE_THINK",
+      "threshold_decision": "EMIT_VOICE",
+      "ground_truth": "EMIT_VOICE"
+    },
+    {
+      "trace_idx": 765,
+      "step": 2,
+      "phase_regime": 1,
+      "thinker_score": 0.3006130931590419,
+      "safety_ok": true,
+      "head_decision": "CONTINUE_THINK",
+      "threshold_decision": "EMIT_VOICE",
+      "ground_truth": "EMIT_VOICE"
+    },
+    {
+      "trace_idx": 892,
+      "step": 9,
+      "phase_regime": 0,
+      "thinker_score": 0.4644871617516554,
+      "safety_ok": true,
+      "head_decision": "REMAIN_SILENT",
+      "threshold_decision": "EMIT_VOICE",
+      "ground_truth": "EMIT_VOICE"
+    },
+    {
+      "trace_idx": 911,
+      "step": 1,
+      "phase_regime": 3,
+      "thinker_score": 0.30438857486315896,
+      "safety_ok": true,
+      "head_decision": "CONTINUE_THINK",
+      "threshold_decision": "EMIT_VOICE",
+      "ground_truth": "EMIT_VOICE"
+    },
+    {
+      "trace_idx": 983,
+      "step": 7,
+      "phase_regime": 3,
+      "thinker_score": 0.4817737119711396,
+      "safety_ok": true,
+      "head_decision": "REMAIN_SILENT",
+      "threshold_decision": "EMIT_VOICE",
+      "ground_truth": "EMIT_VOICE"
+    },
+    {
+      "trace_idx": 997,
+      "step": 2,
+      "phase_regime": 1,
+      "thinker_score": 0.3106972459893162,
+      "safety_ok": true,
+      "head_decision": "CONTINUE_THINK",
+      "threshold_decision": "EMIT_VOICE",
+      "ground_truth": "EMIT_VOICE"
+    },
+    {
+      "trace_idx": 1243,
+      "step": 1,
+      "phase_regime": 3,
+      "thinker_score": 0.3102078504885379,
+      "safety_ok": true,
+      "head_decision": "CONTINUE_THINK",
+      "threshold_decision": "EMIT_VOICE",
+      "ground_truth": "EMIT_VOICE"
+    },
+    {
+      "trace_idx": 1263,
+      "step": 7,
+      "phase_regime": 3,
+      "thinker_score": 0.5370682692259392,
+      "safety_ok": true,
+      "head_decision": "REMAIN_SILENT",
+      "threshold_decision": "EMIT_VOICE",
+      "ground_truth": "EMIT_VOICE"
+    },
+    {
+      "trace_idx": 1267,
+      "step": 19,
+      "phase_regime": 3,
+      "thinker_score": 0.59808466645978,
+      "safety_ok": true,
+      "head_decision": "REMAIN_SILENT",
+      "threshold_decision": "EMIT_VOICE",
+      "ground_truth": "EMIT_VOICE"
+    },
+    {
+      "trace_idx": 1481,
+      "step": 2,
+      "phase_regime": 1,
+      "thinker_score": 0.30045623624457174,
+      "safety_ok": true,
+      "head_decision": "CONTINUE_THINK",
+      "threshold_decision": "EMIT_VOICE",
+      "ground_truth": "EMIT_VOICE"
+    },
+    {
+      "trace_idx": 1751,
+      "step": 2,
+      "phase_regime": 3,
+      "thinker_score": 0.47129826345492176,
+      "safety_ok": true,
+      "head_decision": "REMAIN_SILENT",
+      "threshold_decision": "EMIT_VOICE",
+      "ground_truth": "EMIT_VOICE"
+    },
+    {
+      "trace_idx": 1807,
+      "step": 7,
+      "phase_regime": 3,
+      "thinker_score": 0.5710680680242921,
+      "safety_ok": true,
+      "head_decision": "REMAIN_SILENT",
+      "threshold_decision": "EMIT_VOICE",
+      "ground_truth": "EMIT_VOICE"
+    },
+    {
+      "trace_idx": 1873,
+      "step": 2,
+      "phase_regime": 1,
+      "thinker_score": 0.306921001317494,
+      "safety_ok": true,
+      "head_decision": "CONTINUE_THINK",
+      "threshold_decision": "EMIT_VOICE",
+      "ground_truth": "EMIT_VOICE"
+    },
+    {
+      "trace_idx": 1924,
+      "step": 4,
+      "phase_regime": 0,
+      "thinker_score": 0.3007968043792927,
+      "safety_ok": true,
+      "head_decision": "CONTINUE_THINK",
+      "threshold_decision": "EMIT_VOICE",
+      "ground_truth": "EMIT_VOICE"
+    }
+  ],
+  "ptd_aux_next_state_mse_mean": 0.3307031078912571,
+  "ptd_aux_next_state_mse_per_class": {
+    "CONTINUE_THINK": 1.2405767226244115,
+    "EMIT_VOICE": 0.32494281085867793,
+    "REMAIN_SILENT": 0.33074789238898716
+  },
+  "ptd_aux_pairs_evaluated": 36480,
+  "honest_verdict": "§48 scale-up eval @ lambda_ptd=0.3 on 192k records (4× §27). Gap 0.00039. PTD aux MSE mean 0.3307031078912571. Per-class MSE localises CONTINUE_THINK corner (5.3× richer at scale). Still distillation per §38 §7 — head learns §24 hand-coded threshold."
+}
