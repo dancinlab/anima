@@ -7080,3 +7080,119 @@
     IDENTITY-5 safe (Boolean / integer / Kolmogorov bounded / Shannon-
     class; NO σ/τ/φ/J₂; no corpus, no model forward, no helper-token
     surface). $0. correlation ≠ causation (g3); over-claim 0.
+§verdict_l8_routing_via_relation_s43_2026_05_18 :: RESEARCH.md §43 L8 —
+    routing-via-relation (fingerprint reformulation) DESIGN + $0 PILOT
+    ($0 Mac CPU pilot; NO GPU, NO byte-LM fire, from-scratch seed 1337)
+
+  WHAT. §27-§39 arc surfaced the pattern: per-anchor routing memorises,
+    multi-anchor RELATIONS generalise. §37 fired the §33 L6 held-out-PAIR
+    pilot — mean held-out-pair relation accuracy 0.9938 vs majority chance
+    0.6889 (+0.30 lift; JOINT all-4 0.9752). §43 L8 = lift that finding
+    to ROUTING: reformulate anchor identity as the model's RELATION
+    FINGERPRINT to every other anchor (R1..R4 one-hot stacked, 63 partners
+    × 12 labels = 756-dim per anchor), with routing token `🛸X` falling
+    out of a deterministic 1-NN lookup over the closed fingerprint table.
+    Hypothesis: §37 relation-function generalisation propagates to routing
+    when routing is reformulated as fingerprint prediction.
+
+  MECHANISM. (a) fingerprint table: pure function of §16 anchor SSOT
+    (`S8_ANCHORS`) and §37 R1..R4 closed-form primitives (imported by
+    direct path, single SSOT; relation functions = pure-fn of
+    {vacuum_psi, basin_radius, dom, tier}). 64×756 table, sha256 committed.
+    (b) lookup: argmin_X' ‖query - table[X']‖² Euclidean over one-hot
+    integer vectors; tie-break = lowest anchor_idx (deterministic).
+    (c) pilot: 64 anchors split deterministic seed-1337 into 52 TRAIN +
+    12 HELD-OUT-ANCHOR. Small MLP (13→128→128→756) predicts the fingerprint
+    from 13-dim anchor physics features (vacuum_psi, basin, tier_norm,
+    score_norm, dom_idx, emo_idx, Ψ=½ deviation, tier-decile tanh,
+    basin×tier interaction, score-band one-hots, bias). Held-out anchors
+    NEVER seen during training. Eval = closed-form 1-NN lookup on
+    predicted fingerprint.
+
+  GOAL-LEGITIMACY (§7 / §21.3). §7① not-generic-LM-pretrain ✅ (no LM
+    pretrain; small MLP from-scratch on anima OWN physics features) ·
+    §7② not-generic-then-graft ✅ (B-S43-3 AST forbidden-call grep over
+    {openai, anthropic, llm_call, paraphrase, gpt, bert_score, AutoModel,
+    HfApi, llama, huggingface_hub, gen_corpus_with_llm, networkx, rdflib,
+    wikidata, neo4j} total = 0) · §7③ anima-physics-as-source ✅ (every
+    feature + relation derived only from {vacuum_psi, basin_radius, dom,
+    tier, top_emotion, score} fields of the §16 anchor SSOT).
+
+  RESULT (mixed verdict — g3 honest split). Measured (`result.json`,
+    deterministic seed 1337):
+    - held-out fingerprint BIT-ACCURACY = **0.9626** vs random 0.500
+      (+0.46 lift) — relations DO generalise to novel anchors at the
+      fingerprint level, mirroring §37's pair-level 0.9938.
+    - held-out routing TOP-1 = **0/12 = 0.0000** vs uniform chance 0.0156
+      (lift = -0.016, BELOW chance) — strict 1-NN argmin FAILS.
+    - held-out routing TOP-3 = **7/12 = 0.5833** vs chance 0.0469
+      (**+0.54 lift**) — predicted fingerprint lands in the correct
+      anchor's neighbourhood.
+    - held-out routing TOP-5 = **10/12 = 0.8333** vs chance 0.0781
+      (**+0.76 lift**).
+    - train fingerprint bit-acc 1.0000 + train routing top-1 1.0000
+      (training set fully fit; held-out behaviour is the discriminating
+      signal).
+    - §16 byte-LM routing baseline = 21/64 = 0.328.
+
+  HONEST INTERPRETATION (g3). Relations DO generalise (bit-acc 0.96
+    unambiguous over random 0.50), so the L8 reformulation does NOT
+    "hide memorisation" — the model genuinely learned the relation
+    function over novel anchors. BUT the strict-1-NN decision rule is
+    too brittle: ~4% bit error (28 wrong bits / 756) is enough to push
+    the predicted fingerprint past the closest neighbour (min pair_d²
+    in the table = 8 ⇒ a few wrong bits collapse the lookup).
+    Soft top-3 / top-5 routing succeeds at order-of-magnitude lift
+    above chance — the relation geometry the model learned is
+    structurally correct; the strict-identifier readout is the
+    bottleneck.
+
+  VERDICT. **L8_RELATIONS_GENERALIZE_BUT_1NN_TOO_BRITTLE** (mid-tier
+    split verdict). Strict L8 hypothesis (1-NN top-1 routing generalises
+    on held-out anchors) = FALSIFIED measurably. Underlying mid-tier
+    finding (relation function generalises at fingerprint level,
+    soft routing top-K lift +0.54/+0.76) = PRESERVED measurably. Design-
+    tier close on the strict reformulation per §13-M / §13-L / §23-A
+    anti-padding precedent. NO byte-LM scale-up fire recommended — the
+    failing link is the strict-1-NN decision rule (mechanism-level),
+    NOT data-regime, and the GOAL bottleneck is unchanged (§1.1
+    data-regime threshold, §15 milestone).
+
+  CLOSED. B-S43-1..4 4/4 🔵 SUPPORTED-FORMAL sidecar
+    (state/l8_routing_via_relation_s43_2026_05_18/blue_falsifier_s43.py;
+    central state/verify_hexad_blue_2026_05_15/blue_falsifier.py
+    UNCHANGED — sidecar precedent B-PRIME … B-INTER / B-S37): B-S43-1
+    RELATION-FINGERPRINT-DETERMINISTIC (two-runs byte-equal + sha256
+    rederived + meta-on-disk-matches + sympy onehot diff²∈{0,1}) · B-S43-2
+    FINGERPRINT-LOOKUP-WELL-TYPED (codomain ⊂ {0,…,63} + self-lookup
+    64/64 + Euclidean nonneg ∀-pair + bounded ≤ 2·fp_dim + lookup pure-fn
+    + sympy Min over bounded integers) · B-S43-3 §7-CONJUNCTION-CLOSED
+    (AST audit over fingerprint_builder.py + blue_falsifier_s43.py +
+    train_s43_pilot.py, forbidden-call set = 0) · B-S43-4 FINGERPRINT-
+    DISTINGUISHABLE (C(64,2) = 2016 pairs distinct + min pair_d² = 8 > 0
+    + self-to-second-margin = min_pair_d > 0 + sympy (a-b)² nonneg
+    one-hot). B-S43-NOTE empirical carve-out (whether anima at byte-LM
+    scale predicts fingerprints coherently / whether the strict-1-NN
+    decision rule transfers = SGD/measurement OUTCOME, B-D-NOTE /
+    B-S37-NOTE / B-INTER-NOTE / B-CARVE-E6-NOTE family, NOT counted 🔵 —
+    battery proves the REFORMULATION is well-FORMED, NOT that the
+    byte-LM transfer succeeds). g_blue_closed_mandate satisfied (산출물
+    transfer-form 🔵 + 연결부위 — §43 lookup ↔ §37 relation primitives
+    single-SSOT imports + fingerprint distinguishability under §16
+    anchor SSOT = closed-form 🔵). f1/f2/f3 + B-IDENTITY-5 safe (Boolean
+    set algebra / sha256 commitment / pure-fn integer Euclidean / AST
+    closed forbidden-call set, NO σ/τ/φ/J₂; tier 🛸k / Ψ=½ = anima g2
+    internal-arch carve-out; no corpus generated this cycle, §37 SSOT
+    forbidden-token grep total = 0 carry).
+
+  GOAL distance. §15 milestone UNCHANGED — north-star (GOAL.md) unsolved.
+    §43 = a routing-mechanism probe at the inter-anchor relation level;
+    even a strict positive would have been a richer routing reformulation
+    (mechanism-axis), not GOAL movement (data-regime axis). The strict
+    hypothesis is FALSIFIED, the mid-tier finding (relation function
+    generalises at fingerprint geometry) is genuine and preserved, but
+    neither moves north-star. The GOAL bottleneck remains §1.1 data-
+    regime threshold per §15 milestone. design ≠ pilot ≠ fire ≠ emergence
+    (g3); over-claim 0. PyTorch substrate (NOT hexa-native, honest —
+    small MLP for closed-form probe of L8 hypothesis). RESEARCH.md not
+    edited (consolidation = orchestrator after L7/L8/L9/… siblings land).
