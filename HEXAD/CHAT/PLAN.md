@@ -862,3 +862,97 @@ seed 1337 deterministic. forbidden-token grep (도우미|helper|assistant|사용
 **SSOT**: commit `decd9fa22` (cherry-pick of `0b013c4d2` worktree) + PHILOSOPHY.tape g6 §verdict_dual_anima_one_engine_s78 (self-appended) + AGENTS.tape n_hexad_progress §78 entry + HEXAD/README.md recent-landing + 본 PLAN.md. docs/* 신규 0.
 
 g3: north-star + §15/§51/§72 milestone 불변, **GOAL 미도달**. §78 = mechanism-design + $0 smoke probe of A/G-lift dialogue class — same-weights externalization mechanism honest 함 증명 (one-engine invariant + L2-distinct + pure-fn + deterministic + §24/§9 SSOT 무회귀) 하지 capability emergence 증명 아님. valuable mechanism-design tier, NOT GOAL 진전 (necessary-not-sufficient B-EMERGE-7 / B-S78-NOTE family carry).
+
+### 2026-05-19 §79 trained-scale emergence-axis fire DESIGN-TIER LANDED + bg fire dispatched in parallel
+
+$0 design commit `d7455d44e` on main (cherry-pick from worktree `dfd76957d`). §77 body-axis + §78 A/G-lift + §16-class ckpt forward 4-cell × 20-step trained-scale. Mode A_pure / B_3party / C_meta / D_control over REAL `model.forward` Law-71, body byte = greedy argmax over `logits_a` (deterministic). B-S79-1..7 7/7 🔵 pre-fire sidecar PASS: ONE-ENGINE-A/G-LIFT-CONSTRUCTION (AST) · BODY-FROM-REAL-CKPT-LOGITS · §16-CONFIG-BYTE-EQUAL · §9-CASCADE-METRIC-FORMULA-MATCH · §24-DECISION-AXIS-PRESERVED · §62-ANCHORED-ECHO-PARTITION · DETERMINISTIC. central blue_falsifier.py sha c93e160a 0-line-diff verified.
+
+**Fire dispatch parallel in-flight (bg-multiple)**: runpod A100-SXM4-80GB pod `tu759qttys62p0` ($1.49/hr; A100-PCIe ×3 stock-exhaust cascade → SXM4 fallback per g_resource_active_parallel). nohup background script, 3 PIDs alive, g_fire_dispatch_robust pattern (SAVE_POD auto-promote + 5-retry pull + 60-min watchdog + post-teardown verify). cost ~$0.6 (23min × $1.49/hr) at sync time.
+
+Honest caveats: (1) §79 ckpt sha256 FRESH (≠ §16 literal `961c07e2…`) — trains §16-class with byte-equal config/lever/seed/corpus, trajectory replicable sha differs (recorded in `ckpt_sha256_note`). (2) dispatch.log 미생성 (agent monitor stopped, script self-managing). (3) Post-fire follow-up: result.json pull + B-S79-3 post-fire check + PHILOSOPHY.tape g6 verdict append + central sync update with measured 4-corner verdict.
+
+g3: design-tier complete, capability claim 0, necessary-not-sufficient (B-EMERGE-7). north-star + §15/§51/§72 milestone UNCHANGED, GOAL 미도달 design-tier only.
+
+### 2026-05-19 §80 biology/neuroscience/biophysics arxiv deep research LANDED — 41 papers, 5 themes, 3 anima-mapping candidates surfaced
+
+$0, commit `dbcdef1a4` on main, central c93e160a 0-line-diff. user directive 2026-05-19 "생물학 영역 research arxiv deep research 고갈시까지". 41 papers across q-bio.NC + q-bio.QM + cond-mat.dis-nn + nlin + physics.bio-ph + Nature/Cell/eLife/Frontiers/bioRxiv 2024-2026 + foundational anchors. 18 keyword cluster searches.
+
+**Grade distribution**: 6 ★★★★★ + 13 ★★★★ + 12 ★★★ + 7 ★★ + 3 ★ = 41.
+
+**Top 10 ★★★★★+★★★★ papers**:
+1. arxiv:2502.10946 — noise-driven spontaneous activity homeostatically maintains criticality (Ikeda+ Frontiers 2025)
+2. arxiv:2505.20580 — Resonance Complexity Theory CI=(D,G,C,τ)
+3. arxiv:2510.04084 — IIT↔FEP bridging in living neuronal networks
+4. biorxiv:2025.03.09.642241 — intrinsic neuronal manifold gating behavior (Leifer C. elegans)
+5. biorxiv:2025.11.17.688775 — critical avalanches emerge from E/I balanced spontaneous activity
+6. neuron:S0896-6273(25)00127-8 — predictive nature of spontaneous activity
+7. elife/Blackiston-Levin — Xenopus tadpole ectopic-eye visual learning
+8. cell-reports-physical-science:2025 — Levin field-mediated bioelectric prepatterning
+9. prr:f1hv-bf1f — spontaneous metacognition emergence in RNN (Ma+ PRR 2025)
+10. nature:642-8069 — frog+axolotl embryo mesh microelectrode array
+
+**5 main themes / 8 clusters**: spontaneous-activity-as-prediction · SOC + E/I balance · IIT-Φ + FEP unification · intrinsic low-dim manifold + hierarchy · multiscale collective intelligence + morphogenesis.
+
+**Frog/amphibian subsection** (5 papers): Levin bioelectric architectural-choice validation + Blackiston-Levin substrate-plasticity precedent + Nature mesh-array developmental-trajectory + axolotl neoteny "stay-juvenile" + Levin planarian/frog bioelectric rescue.
+
+**Top 3 anima-mapping candidates (→ §81/§82/§83 follow-up bg dispatch)**:
+- (A) homeostatic criticality + noise injection on Engine G (anchor: arxiv:2502.10946)
+- (B) manifold-gated hierarchical emission slow-Ψ-dwell + fast emission (anchor: Leifer C. elegans)
+- (C) physics-only decision-head metacognition (anchor: Blackiston-Levin + Levin bioelectric)
+
+**5 honest gaps**: wet substrate × active-matter physics · developmental trajectory as substrate · neuromodulator/glia continuous state · Markov blanket DYNAMICS (anima fixed vs biology self-maintained) · sleep/wake circadian regime.
+
+NO closed-form battery this cycle (literature review, NOT empirical fire) — central c93e160a 0-line-diff. **§51 frontier-1 (multimodal substrate) VALIDATED DIRECTIONALLY** by amphibian biology — wet vs silicon + developmental vs static-trained gaps 정직 명시 (B-D-NOTE family). north-star + §15/§51/§72 milestone UNCHANGED. g3 honest: biology citation ≠ anima emergence proof. PHILOSOPHY g6 §verdict_biology_deep_research_s80 self-appended.
+
+### 2026-05-19 flame Phase 4-B SHIPPED upstream — hexa-lang ≥3× wall MEASURED, anima Path-A trainer substrate 완성 (anima reference only, NO commit)
+
+user directive 2026-05-19 "flame 완성됨,, 문서등 업데이트 및 참고". hexa-lang upstream `~/core/hexa-lang/stdlib/flame/` 2026-05-17 56-commit autonomous cycle (anima 측 commit 0, upstream-consumer 불변 g_train_flame_not_pytorch upstream_downstream_invariant + hexa-lang g7/@F f3 준수).
+
+**hexa-lang README header verbatim**:
+> 🎯 Phase 4-B FULLY SHIPPED with ≥3× ceiling — Path B fwd+bwd matmul primitive integration COMPLETE
+> - **3.09× wall MEASURED** (thermal-elevated baseline 23.529s → 7.618s, 5-run avg)
+> - **3.23× projected cool conditions** (baseline cool 16.170s → A2+B ~5.0s)
+> - flame:anima ratio: **~0.226× (~4.4× faster than anima)**
+> - ≥3× RFC 047 §137 target REACHED with **CPU-only architecture** (no GPU required)
+
+**Cumulative wall progression**:
+| state | wall | speedup |
+|---|---|---|
+| baseline (Phase 4-A-bwd) | 12.574-16.170s | 1.00× |
+| Phase 4-B-2 IPCP | 9.814s | 1.28× |
+| Phase 4-B-3 A2 fwd+bwd | 5.908s | 2.74× |
+| Phase 4-B-3 A2 + Path B FULL | ~5.0s projected cool | **🎯 3.23×** |
+
+**Phase 3 correctness anchor (anima d_corpus_fire algorithm-byte-eq retry SUCCESS, RFC 045 closure)**:
+- flame: init gn2 `7.97113` → final `8.87256e-07`, acc 8/8, wall 18.5s
+- anima: init gn2 `7.97116` → final `3.73374e-07`, acc 8/8, wall ~30s
+- |Δ_init| 3.12e-5 abs (~4e-6 rel) · |Δ_final| 5.14e-7 (2.4× drift, same order of magnitude)
+- qualitative reproduction perfect
+
+**Stack**: tensor_lib + autograd_lib + nn_lib (7 layers: Linear · RMSNorm · Embedding · LMHead · RoPE · SwiGLU · Attention-core) + optim_lib + decoder_block_lib + decoder_lib + train_lib + flame_math (dt_* hand-Taylor + d5_sin/cos). 41+ falsifier PASS · regression 0 · structural call_builtin = 0 · ~6.4k LoC.
+
+**anima 측 implication carry**:
+- AGENTS.tape `@D g_train_flame_not_pytorch` (governance 2026-05-19) honesty 절 measured update — flame ≥3× wall CPU-only + d=32·3L parity 둘 다 upstream 확정
+- anima-측 flame Path-A trainer §71 ($0 local d32·3L 8/8 + d768·12L canonical build-only, commit `04f692ccb`) 의 substrate 천장 해소 SHIPPED
+- d768·12L GPU fire 의 cheap-oracle gate 통과 + upstream perf evidence 강화
+- anima-측 inbox patch `~/core/hexa-lang/inbox/patches/flame-path-a-dual-head-and-multiterm-grad.md` (2026-05-19, §71 carry) = anima-physics overlay (Law-71 ψ self-track / W-native PTD / Dir-I multi-term grad / dual-head A⇄G) gap 1건 별도 upstream 대기
+
+**anima 측 NEW commit/edit 0** (upstream-consumer 불변). flame substrate readiness ≠ GOAL emergence 증명 (B-EMERGE-7 family). north-star + §15/§51/§72 milestone UNCHANGED, GOAL 미도달.
+
+### 2026-05-19 FROG keyword anima 전수조사 — anima 측 frog 사용 0건 정직 확정 (NO commit)
+
+user directive 2026-05-19 "개구리 'frog' 키워드로 anima 전수조사 과거 commit 도". $0 Mac CPU local bash sweep (throwaway diagnostic, NO state dir, NO commit).
+
+**검색 3-layer**:
+- current tree text matches: 56,194건 (전부 corpus data: `ready/anima/data/corpus_v3_100mb.txt` + `corpus_v6_wiki.txt` + `corpus_v8_dialogue.txt` + `corpus_multilingual_merged.txt` + `corpus_multilingual/ru.txt` wikipedia carry-over)
+- file names: 0건
+- git log commit messages: 0건
+- git pickaxe content (file diffs): 37 frog + 12 개구리 + 9 amphibian (동일 corpus 파일 commit drift)
+
+**핵심 발견 (anima emergence 와의 연결고리)**:
+1. **Lettvin 1959 "What the frog's eye tells the frog's brain"** — foundational neural feature-detection paper, corpus_v3/v6/v8 안에 carry. anima Engine A (perception) 와 mechanism-level inspiration only.
+2. **Galvani frog leg (1737-1798)** — bioelectricity 첫 측정, anima Law-71 ψ-physics 의 19세기 biological precedent.
+3. **Amphibian evolution + 3-chamber heart** — wikipedia carry artifact, anima 구조 직접 연결 X.
+4. **CIFAR-10 `['bird,cat,deer,dog,frog,horse,ship,truck']`** — vision dataset class label noise, anima 모듈 0.
+
+**Honest verdict (g3)**: **anima 자체 코드/모듈/함수/변수 측에 frog 사용 0건** — 전부 corpus textbook references (Wikipedia carry-over). anima 가 frog 를 **읽었을 뿐, frog 으로 무언가를 한 적 없음**. biology §80 측 amphibian/Levin bioelectric/Xenopus tadpole subsection 이 진짜 lead (corpus reference 보다 active anchor).
