@@ -1,0 +1,49 @@
+{
+  "seed": 1337,
+  "n_anchors": 64,
+  "n_ordered_pairs": 4032,
+  "holdout_frac": 0.2,
+  "n_holdout_pairs": 806,
+  "n_train_pairs": 3226,
+  "n_repeat": 6,
+  "n_train_records": 19356,
+  "corpus_bytes": 4266636,
+  "corpus_sha256": "4c38e108bcb789f9c1c7ebec317fb67ee78efa22739a82a09aba6110daf9cb2f",
+  "forbidden_token_counts": {
+    "도우미": 0,
+    "helper": 0,
+    "assistant": 0,
+    "사용자": 0,
+    "user:": 0,
+    "[anima": 0
+  },
+  "forbidden_token_total": 0,
+  "relation_label_set": [
+    "different_domain",
+    "disjoint",
+    "far",
+    "i_contains_j",
+    "i_deeper",
+    "i_eq_j",
+    "i_shallower",
+    "j_contains_i",
+    "mid",
+    "near",
+    "overlap",
+    "same_domain"
+  ],
+  "label_distribution": {
+    "near": 10813,
+    "overlap": 15434,
+    "different_domain": 19609,
+    "i_shallower": 10011,
+    "i_deeper": 10151,
+    "mid": 6696,
+    "same_domain": 553,
+    "disjoint": 4635,
+    "far": 2653,
+    "i_contains_j": 49,
+    "j_contains_i": 44
+  },
+  "holdout_train_disjoint": true
+}

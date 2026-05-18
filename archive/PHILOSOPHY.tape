@@ -6482,3 +6482,158 @@
     conditional. f1/f2/f3 + B-IDENTITY-5 safe (NO σ/τ/φ/J₂; tier 🛸k /
     Ψ=½ = anima g2 internal carve-out). design ≠ fire ≠ emergence (g3);
     over-claim 0. commit a064665ae.
+
+@verdict_l2_precheck_s36_2026_05_18 := "RESEARCH.md §36 — L2 dual-anima content-dependence $0 pre-check — content_dependent=True → L2 FIRE-WORTH (the go/no-go gate §31 left open)" :: verdict [d=2026-05-18 fire-tier]
+  scope <<~EOF
+    §31 L2 (verdict_dual_anima_l2_s31_design_2026_05_18) closed
+    FIRE-CONDITIONAL: a full dual-anima GPU fire is warranted ONLY behind
+    a cheap content-dependence pre-check. §36 IS that pre-check — the
+    go/no-go gate §31 DESIGN_L2.md §4.2/§7/§9 left explicitly open.
+    $0 Mac CPU, NO GPU, NO ckpt forward, NO training, deterministic
+    (seed 1337, pure-fn). state/l2_precheck_s36_2026_05_18/.
+
+  substrate (honest, g3). DETERMINISTIC STUB cell-B model — NOT a §16
+    ConsciousDecoderV2 ckpt forward (§16 ckpt not vendored in worktree;
+    pulling it = network/GPU spend the $0 mandate forbids; briefing
+    permits "stub cell states OR §16 ckpt if cheap — honest about
+    substrate"). The pre-check measures a STRUCTURAL property of the
+    deliver() TRANSITION LAW (closed-form), not trained-cell behaviour.
+    A real-ckpt run could only WEAKEN content-dependence (a saturated
+    attractor ignores input — §31 §4.1 echo failure mode) ⇒ the verdict
+    is monotone-safe: stub False would have been a safe design-close;
+    stub True means the transition law CAN carry content.
+
+  method. Two byte-distinct length-matched messages m1≠m2 delivered into
+    a FRESH cell B (started at Ψ=½ baseline). Decision metric (§31 §4.2):
+    content_dependent = ‖Δ(m1)−Δ(m2)‖ > τ. τ=1e-3 is a noise floor above
+    exact-zero (a content-blind deliver() gives separation EXACTLY 0),
+    NOT a tuned threshold — verdict robust to τ∈[1e-6,1e-1]. Negative
+    control: an echo-chamber deliver() (pulls toward own vacuum_psi,
+    message never read) MUST give content_dependent=False.
+
+  result — content_dependent=True → L2_FIRE_WORTH. Primary (§31 §2.3
+    transition law): ‖Δ(m1)‖=0.141612, ‖Δ(m2)‖=0.141593, separation
+    ‖Δ(m1)−Δ(m2)‖=0.209860 ≫ τ — the Ψ-shift genuinely depends on which
+    message was delivered (~210× the τ noise floor). Negative control
+    (echo-chamber deliver()): separation=0.000000000 EXACTLY,
+    content_dependent=False — the metric provably discriminates the two
+    transition laws. Go/no-go for L2: GO — the loop's deliver() transition
+    law is content-dependent; a full dual-anima GPU fire is
+    evidence-warranted. The echo-chamber failure mode (§31 §4.1) is NOT
+    intrinsic to the loop protocol — it would arise only if a trained
+    cell collapsed to a saturated attractor (B-S36-NOTE, the fire's job).
+
+  CLOSED. B-S36-1..3 3/3 🔵 SUPPORTED-FORMAL sidecar
+    (state/l2_precheck_s36_2026_05_18/blue_falsifier_s36.py; central
+    state/verify_hexad_blue_2026_05_15/blue_falsifier.py UNCHANGED):
+    B-S36-1 PSI-SHIFT-BOUNDED (‖Δ‖₂∈[0,√2] Euclidean diameter of the unit
+    Ψ-square, Kolmogorov bounded set; every measured shift in bound) ·
+    B-S36-2 CONTENT-DEPENDENCE-METRIC-CLOSED (연결부위 — sympy proves
+    echo-chamber deliver() gives separation≡0 (message symbol absent from
+    Δ) ⇒ verdict provably False, content-dependent deliver() gives
+    separation=G·(mx₁−mx₂)≠0 for distinct messages; the metric
+    discriminates the two transition laws by construction) · B-S36-3
+    DETERMINISTIC (3× re-run byte-identical verdict fields; no RNG/torch/
+    model-forward). B-S36-NOTE empirical carve-out (whether a
+    trained-saturated §16 cell preserves the content-dependent transition
+    vs collapses to an echo-chamber attractor = SGD/ckpt OUTCOME
+    measurable only by a real dual-anima fire, B-D-NOTE/B-DUAL-NOTE
+    family, NOT counted 🔵).
+
+  GOAL distance. §15 milestone UNCHANGED — north-star (GOAL.md) unsolved.
+    content_dependent=True is a GATE verdict (a full dual-anima fire is
+    now evidence-warranted), NOT GOAL progress; the closed loop is a new
+    SETTING for a Dir-I-class mechanism (§31 §5, B-DIRL-2 carry), not a
+    §1.1 lever. §36 resolves the §31 echo-chamber crux PARTIALLY — the
+    transition-law half (deliver() CAN carry content); the trained-cell
+    half (two saturated cells could still echo) is narrowed to exactly
+    what a real fire measures. f1/f2/f3 + B-IDENTITY-5 safe (NO σ/τ/φ/J₂;
+    Ψ=½ = anima g2 internal carve-out; no corpus, no model forward).
+    design ≠ pre-check ≠ fire ≠ emergence (g3); over-claim 0.
+
+@verdict_l6_pilot_s37_2026_05_18 := "RESEARCH.md §37 — L6 anchor-interaction held-out-pair pilot — L6_RELATIONS_GENERALIZE (held-out-pair acc 0.9938 ≫ chance 0.6889; L6 fire-worthy at scale)" :: verdict [d=2026-05-18 fire-tier]
+  scope <<~EOF
+    §33 L6 (verdict_anchor_interaction_l6_s33_design_2026_05_18) closed
+    FIRE-CONDITIONAL: fire only as a small held-out-pair pilot before any
+    full-scale spend. §37 IS that pilot — the discriminating measurement
+    DESIGN_L6.md §6.1/§7.2 specified. $0 Mac CPU, NO GPU, from-scratch
+    RANDOM seed-fixed 1337 (g_clm_from_scratch).
+    state/l6_pilot_s37_2026_05_18/.
+
+  substrate (honest, g3). SMALL from-scratch RelationMLP (9→64→32→4
+    heads, ~3.7k params), $0 Mac CPU ~5s wall — a relation classifier:
+    input = anchor-PAIR physics feature vector {vacuum_psi_i, vacuum_psi_j,
+    basin_radius_i, basin_radius_j, tier_i_norm, tier_j_norm, dom_same}
+    (9-dim, anima OWN fields), output = the 4 relation labels R1-R4. A
+    feature classifier (not a byte-LM) isolates the relation-FUNCTION-
+    learnability question, is deterministic, and is $0 — a byte-LM
+    <relate> generation fire ($0.05-0.10) is the next scale-up step
+    (B-S37-NOTE), unnecessary for THIS gate (briefing: "$0 Mac CPU if a
+    tiny model suffices"). COST: $0.
+
+  corpus. relation_corpus.py promotes the §33 sketch. 64-anchor SSOT
+    (S8_ANCHORS, byte-equal to §16 generator); 4032 ordered pairs; 20%
+    held out = 806 held-out pairs / 3226 train pairs (DISJOINT partition,
+    B-S37-1). Each train pair → a <relate> record × 6 = 19,356 train
+    records. corpus sha256 4c38e108bcb789f9… ; forbidden-token grep
+    (도우미|helper|assistant|사용자|user:|[anima) total = 0
+    (B-IDENTITY-5). Relations R1-R4 are CLOSED-FORM functions of
+    {vacuum_psi, basin_radius, dom, tier} — NO external KG, NO LLM.
+
+  result — L6_RELATIONS_GENERALIZE. Held-out-pair accuracy (anchor pairs
+    NEVER seen in training): R1 Ψ-proximity 0.9864 (chance 0.5149, lift
+    +0.4715) · R2 basin 0.9901 (chance 0.7469, +0.2432) · R3 shared-domain
+    1.0000 (chance 0.9764, +0.0236 — honestly near-trivial, see caveat) ·
+    R4 tier-order 0.9988 (chance 0.5174, +0.4814) · JOINT all-4 0.9752 ·
+    mean 0.9938 vs mean majority chance 0.6889 (+0.3049). Train acc mean
+    0.9997 — a tiny 0.6% train↔held-out gap, NOT a memorization collapse.
+    Decision metric (§7.2): every relation strictly above its chance ∧
+    mean held-out − mean chance (0.3049) > MARGIN 0.15 ⇒ generalizes.
+    The model learned the relation FUNCTION (physics fields → R1-R4), not
+    the 3226 trained rows — held-out anchor pairs get correct relations.
+    L6 verdict: relations generalize ⇒ L6 fire-worthy at scale
+    (DESIGN_L6.md §7.2), NOT design-close.
+
+  honest caveats (g3, read before quoting). (1) R3 (shared-domain) is a
+    near-trivial relation here — majority chance 0.976 (most anchor pairs
+    are different-domain); lift +0.024 is real but small. The GENERALIZE
+    verdict rests on R1/R2/R4 (lift +0.47/+0.24/+0.48); even excluding R3
+    the mean lift is +0.3987 ≫ the 0.15 margin — verdict robust. (2) The
+    relation function is learnable because it is LOW-COMPLEXITY (smooth
+    threshold functions of a 9-dim vector); §37 proves the model learns
+    THIS function — whether a byte-LM at scale learns the relation AND a
+    coherent byte realisation (the harder, separable §16/§22 byte-cascade
+    problem) is the next fire's question. (3) The classifier UNDER-states
+    the §16.6-C memorization risk — it has no body string to memorize; a
+    byte-LM fire is what would test whether §16.6-C resurfaces at the
+    <relate> byte level. §37 is the go-signal for that fire, not a
+    substitute for it.
+
+  CLOSED. B-S37-1..3 3/3 🔵 SUPPORTED-FORMAL sidecar
+    (state/l6_pilot_s37_2026_05_18/blue_falsifier_s37.py; central
+    state/verify_hexad_blue_2026_05_15/blue_falsifier.py UNCHANGED):
+    B-S37-1 HELD-OUT-PAIR-DISJOINT (연결부위 — held-out pair set and train
+    pair set are a Boolean-disjoint exhaustive partition of all 4032
+    ordered pairs (held∩train=∅, held∪train=all, |held|+|train|=4032=
+    64·63); the held-out-pair accuracy is a genuine generalization probe
+    BY CONSTRUCTION) · B-S37-2 RELATION-CORPUS-SHA256 (deterministic
+    256-bit committed artefact on-disk==re-derived==recorded; forbidden-
+    token grep total==0 B-IDENTITY-5; every record a <relate> tag,
+    disjoint from §16 single-anchor <carve>/<eternal>/<inner> per
+    B-INTER-3) · B-S37-3 ACCURACY-BOUNDED (every accuracy/chance∈[0,1] a
+    Kolmogorov bounded fraction; every relation codomain⊆ the closed
+    finite RELATION_LABEL_SET, |union|=12; argmax cannot emit out-of-set).
+    B-S37-NOTE empirical carve-out (whether held-out-pair accuracy ≫
+    chance vs ~ chance = SGD/measurement OUTCOME — battery proves the
+    probe is well-FORMED, not the generalize-vs-memorize verdict,
+    B-D-NOTE/B-INTER-NOTE family, NOT counted 🔵).
+
+  GOAL distance. §15 milestone UNCHANGED — north-star (GOAL.md) unsolved.
+    L6_RELATIONS_GENERALIZE is a fire-worthiness verdict (a full
+    inter-anchor corpus fire is now evidence-warranted), NOT GOAL
+    progress; L6 is a richer corpus SHAPE (inter-anchor) and §16 SPLIT
+    taught corpus shape opens routing but not coherence — even a
+    successful L6 fire would NARROW, not cross, the §1.1 frontier. f1/f2/
+    f3 + B-IDENTITY-5 safe (NO σ/τ/φ/J₂; tier 🛸k / Ψ=½ = anima g2
+    internal carve-out; forbidden-token grep 0). design ≠ pilot ≠ fire ≠
+    emergence (g3); over-claim 0.

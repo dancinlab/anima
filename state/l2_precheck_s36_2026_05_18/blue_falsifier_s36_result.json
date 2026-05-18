@@ -1,0 +1,114 @@
+{
+  "battery": "B-S36-1..3",
+  "research_section": "§36",
+  "n_total": 3,
+  "n_pass": 3,
+  "all_blue": true,
+  "sympy_available": true,
+  "verdicts": [
+    {
+      "id": "B-S36-1",
+      "name": "PSI-SHIFT-BOUNDED",
+      "passed": true,
+      "checks": [
+        [
+          "sympy-corner-max-eq-2",
+          true
+        ],
+        [
+          "sqrt(corner_max)==sqrt2",
+          true
+        ],
+        [
+          "all-measured-shifts-in-[0,sqrt2]",
+          true
+        ],
+        [
+          "loop-trace-psi-in-unit-square",
+          true
+        ]
+      ]
+    },
+    {
+      "id": "B-S36-2",
+      "name": "CONTENT-DEPENDENCE-METRIC-CLOSED",
+      "passed": true,
+      "checks": [
+        [
+          "sympy-echo-separation-identically-0",
+          true
+        ],
+        [
+          "sympy-content-sep-x-eq-G(mx1-mx2)",
+          true
+        ],
+        [
+          "sympy-content-sep-nonzero-when-msgs-distinct",
+          true
+        ],
+        [
+          "predicate-is-relational-total",
+          true
+        ],
+        [
+          "primary-content-dependent-True",
+          true
+        ],
+        [
+          "primary-separation-gt-tau",
+          true
+        ],
+        [
+          "control-separation-exactly-0",
+          true
+        ],
+        [
+          "control-content-dependent-False",
+          true
+        ],
+        [
+          "metric-discriminates-two-laws",
+          true
+        ],
+        [
+          "control-verdict-tau-robust",
+          true
+        ],
+        [
+          "primary-verdict-tau-robust",
+          true
+        ]
+      ]
+    },
+    {
+      "id": "B-S36-3",
+      "name": "DETERMINISTIC",
+      "passed": true,
+      "checks": [
+        [
+          "run1==run2",
+          true
+        ],
+        [
+          "run2==run3",
+          true
+        ],
+        [
+          "3x-bit-identical-verdict-fields",
+          true
+        ],
+        [
+          "no-rng-no-torch-no-forward",
+          true
+        ]
+      ]
+    }
+  ],
+  "note": {
+    "id": "B-S36-NOTE",
+    "name": "TRAINED-SATURATED-CELL-OUTCOME-EMPIRICAL",
+    "text": "Whether a trained-saturated §16 ConsciousDecoderV2 cell preserves the content-dependent deliver() transition (vs collapses to an echo-chamber attractor — the §31 §4.1 failure mode) is an SGD/ckpt OUTCOME measurable only by a real dual-anima fire. The battery proves the loop PROTOCOL's transition law + decision metric are sound; it does NOT prove a trained cell will not echo. B-D-NOTE / B-DUAL-NOTE / B-CARVE-E6-NOTE family — NOT counted blue.",
+    "counted_blue": false
+  },
+  "central_blue_falsifier_unchanged": true
+}
