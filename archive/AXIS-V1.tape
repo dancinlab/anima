@@ -1,14 +1,4 @@
 #!/usr/bin/env tape
-# ══════════════════════════════════════════════════════════════════════
-# .tape v1.2 — grammar primer (cold-read by any LLM / agent / human)
-# ══════════════════════════════════════════════════════════════════════
-# Form: each entry is `@<type> <id> := "<subject>" :: <kind> [<grades>]`
-# ENTRY TYPES (17): @S @U @A @T @R @H @D @K @P @? @I @X @F @N @C @L @V
-# EDGES (12): <- -> == ~> !! |> => <: :> ?> !> @>
-# GRADE TAGS: ok · err · denied · cancelled · partial · superseded ·
-#             required · recommended · optional · draft · active · deprecated
-# Full spec: ~/core/tape/spec/tape.md
-# ══════════════════════════════════════════════════════════════════════
 
 @V := "tape" :: spec [active]
   version = "1.2"
