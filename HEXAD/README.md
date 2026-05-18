@@ -159,6 +159,71 @@ E 윤리:     Φ 보존 위반 시 training step 차단 (gate 권한)
 
 이 HEXAD/ 트리는 위 검증의 **canonical hexa-native 구현체**입니다 (Python 은 evidence anchor 로 보존). 검증·실행 기준 = **compiled `hexa build` native binary** (user directive "컴파일 버전에 해야되 · 인터프리터 폐기 예정").
 
+## HEXAD-KICK-SWEEP gap-map (§63 · 2026-05-18)
+
+> 🔍 **HEXAD-KICK-SWEEP** — "끊어진 연결고리 대규모 탐지기"
+>
+> - 하는 일: 16 모듈 전 쌍 + 선언된 모든 wiring 을 closed-form
+>   connection-point 술어에 통과시켜 3분류
+> - 비유: 회로 기판을 멀티미터로 핀 하나하나 다 찍어서 "여기 납땜 빠짐,
+>   여기 단선" 표시
+> - §58 의 일반화: §58 = 부품 1개 ↔ 12 connection-point 역추적(점),
+>   §63 = 전 모듈쌍 ↔ 전 wiring 전수 sweep(면)
+>
+> `hexa kick`/`drill` 은 §63 dispatch 시점엔 stub 였어서 그 *의도*를
+> 프로젝트 자체 B-CONN closed 술어 + 구조 source 분석으로 실현
+> (이후 toolchain rebuild 로 real Mk.IX engine 가용 → §69 가 실 engine
+> 으로 본 closed-form 지도를 교차검증). g3: 본 지도는 STRUCTURAL
+> discovery 이지 fire/GOAL 진전 아님 (B-S63-NOTE — 어느 gap 이 병목인지는
+> future-fire EMPIRICAL). north-star·§15/§51 milestone 불변.
+
+```
+범례:  ✅ = B-CONN closed-wired (transfer-fn + invariant 둘 다 closed)
+       ⚠️ = 선언/스펙엔 있으나 closed 술어 없음 · 실증 끊김
+       🕳️ = GOAL 상 있어야 하는데 connection-point 자체 부재 (§58 형 new TYPE)
+
+실측 §63 (total 19 pair · A 12 ✅ / B 3 ⚠️ / C 4 🕳️ · sweep sha256 ab3a190f…)
+
+  ── A: 12 ✅ BLUE-CLOSED-WIRED (= σ(6)=12 B-CONN-1..12) ──
+       from →  to     B-CONN   transfer-fn          invariant
+       S    →  C       1       shape-preservation   dim-equality (Kolmogorov)
+       C    →  BRIDGE  2       detach-nograd        AD ∂(detach)/∂x=0
+       BRIDGE→ D       3       clamp-preserved      Law-70 Ψ-coupling clamp
+       M    →  C       4       store/retrieve       identity round-trip
+       W    →  C       5       read-no-mutation     observe-only (no write)
+       W    →  D       6       lr-modulation        Law-79 ln2 lr ceiling
+       E    →  C       7       phi-observe          IIT Φ ≥ 0 axiom
+       E    →  W       8       satisfaction-gate    Boolean gate
+       E    →  D       9       trainstep-gate       Boolean veto
+       D    →  loss   10       CE-readout           Shannon CE ≥ 0
+       M    →  D      11       retrieve-determ      deterministic retrieve
+       S    →  W      12       pain-monotone        monotone composition
+
+  ── B: 3 ⚠️ DECLARED-BUT-EMPIRICALLY-BROKEN (스펙엔 있으나 closed 술어 부재) ──
+       C → D                  HEXAD.tape W7 — integrated CE-descent OUTCOME (SGD)
+       E → TRINITY-INTEGRATED hexad_caveat_v5 — ethics gate (integrated dynamics)
+       W → E                  HEXAD.tape §3 ascii — W ◄── CE/Φ ──► E
+
+  ── C: 4 🕳️ MISSING-TYPE / GAP (GOAL-rank 순 · §58 "new TYPE" 일반화) ──
+   #1 THINKER → TALKER    self-triggered emission-decision controller
+                          (closed-loop control)   ← SPONTANEOUS.tape dual-thread
+   #2 W → W@t+1           temporal-self-prediction (forward-model class,
+                          §58 generalized)         ← GOAL-REQUIRED (§59 표적)
+   #3 D@emit → S@t+1      action-perception consequence loop
+                          (§13-L closed-loop)      ← GOAL-REQUIRED
+   #4 E → D@content       Φ-as-generative-content-conditioning
+                          (NOT Boolean veto)       ← GOAL-REQUIRED
+
+  → 이 gap-map = 다음 fire 들의 표적 지도. 🕳️#1/#2 = §59(W-native PTD)·
+    §68(timing-only)·§61(THINKER↔TALKER dual-anima) 가 직접 겨냥.
+```
+
+SSOT: `state/hexad_kick_sweep_s63_2026_05_18/{kick_sweep_s63.py,
+kick_sweep_s63_result.json, FINDINGS.md, blue_falsifier_s63.py}` ·
+B-S63 sidecar (central `blue_falsifier.py` 0-diff) ·
+§69 = 실 `hexa kick`/`drill` Mk.IX 6-stage engine 으로 본 지도 교차검증
+(drill 제안 → closed 술어 확정/반증).
+
 ## hexa-native impl status (2026-05-16 기준)
 
 > 검증·실행 = **compiled** (`hexa build` → native binary). 아래 "compiled run" =
