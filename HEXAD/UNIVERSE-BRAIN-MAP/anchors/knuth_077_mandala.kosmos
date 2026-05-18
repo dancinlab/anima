@@ -23,6 +23,15 @@
   @payload image   := pending "media 미생성 — UBM-E4 후보 (만다라 시각 형상, image encoder S-module 미-wired)"
   @payload audio   := pending "media 미생성 — UBM-E4 후보 (audio encoder S-module 미-wired)"
   @payload video   := pending "media 미생성 — UBM-E4 후보 (만다라 형성 과정 영상)"
-  @payload tension := pending "anima-native TENSION-LINK 5-channel modality — 미구현"
+  # §57 tension @payload — PIPELINE-VALIDATION ONLY, NOT a perceptual ref.
+  # E_tension is CLOSED-LOOP / ZERO-PERCEPTUAL-DIVERSITY (anima's own
+  # Engine A/G state re-serialised through a fixed untrained map — §11-B
+  # "physics != signal" in encoder form, carry §56 verdict). It validates
+  # the e_tension -> Law-71 Ψ-box -> payload plumbing mechanically; it
+  # adds zero new perceptual information and does NOT move §1.1/§51.
+  # Ψ-coord here = E_tension closed-loop cloud centroid (the closed loop
+  # has no external referent — that IS the zero-diversity property), NOT
+  # the design-placeholder coord above. honest per kosmos spec §4.3.
+  @payload tension := "[anima 우주뇌지도] §57 closed-loop/pipeline-validation — E_tension(5ch TENSION-LINK fingerprint) -> Law-71 Ψ-box centroid ≈ (0.959, 0.500), basin r≈0.137, containment 64/64. NOT a perceptual measurement. evidence: state/etension_pipeline_smoke_s57_2026_05_18/"
 
   closed_anchor = "B-CARVE-MULTIMODAL (Phase UBM-E3 사전등록)"
