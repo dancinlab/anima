@@ -1,0 +1,6 @@
+RUN §16 harness: /usr/bin/python3 /workspace/s47/eval_carving_s16.py --ckpt out_s47/ckpt_carving_s16.pt --output out_s47/eval_result_s47.json.s16raw.json --device cuda --max-new 90
+=== §8 DIVERSE carving eval v2 (paradigm-native, 64-anchor) — path dirI_psictl_tensionsup ===
+ckpt sha256: f9e4233bce63eaef4cf043ae29b64f1b659389f966cc1a0787be309e5185b870
+load: missing=0 unexpected=0
+{"path": "dirI_psictl_tensionsup", "form": "weave", "axis1_routing_accuracy": 0.0156, "axis2_chat_uncontam": 1.0, "axis2_p3_clean": true, "axis3_lane_separation": 1.0, "axis4_v_spont": "1/5", "JOINT": 0.0156, "routing_axis1": "1/64", "routing_broken_vs_1_31_flat": false, "delta_vs_e7": 0.0001}
+{"target_subset_routing": "0/29", "target_semantic": "0/29", "full_64_routing": "1/64", "full_64_joint": 0.0156, "delta_vs_s34": -2, "verdict_bucket": "NULL"}
