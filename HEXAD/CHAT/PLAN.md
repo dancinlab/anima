@@ -706,3 +706,14 @@ g_multidirectional_explore 4 background agents, **`isolation: worktree`** (§33 
 **SSOT (g_doc_consolidation 준수)**: 4 agent commit + 4 merge commit + new PHILOSOPHY.tape verdicts (g6, worktree isolation 누락 0) + AGENTS.tape n_hexad_progress 6 entries + HEXAD/README.md 6 + 본 PLAN.md. docs/* 신규 0.
 
 **honest 종합 (§40-§45 cycle)**: §42 가 cycle 의 reframe lens (within-band 17-vs-29 = SGD-lottery), §43 가 §37 generalize 의 task-vs-decision distinction 실측 확정, §44/§45 가 측정가능한 mechanism-level positive. §40 미land + §41 measured carry = honest infrastructure debt. **8-agent burst dispatch 가 Anthropic rate-limit 의 새 boundary 노출** — 차후 cycle 은 wave-based (3 max parallel) 또는 sequential 권장. **GOAL distance**: §15 milestone 불변 — north-star 미도달. §42 finding ("lever 가 anchor property 아님 — SGD-init/batch-order = §1.1") 가 §1.1 data-regime threshold bottleneck 의 *왜* 를 한 단계 더 깊이 명시.
+
+### 2026-05-18 — 3-track wave §46-§48 (rate-limit 교훈 적용 wave-based ≤3): landed 1.5/3, infrastructure 1/3, §47 rate-limited
+**wave-based ≤3 parallel** 적용 — rate-limit 빈도 감소했으나 long-monitor-context 패턴은 여전 (§46 orphan, §47 rate-limited).
+
+- **§46 SGD-trajectory variance** (`state/sgd_trajectory_variance_s46_2026_05_18/`, commit 8ec287f2c): infrastructure landed (dispatch_s46.sh 2-seed sequential + eval_s46.py set-comparison + B-S46 4/4 🔵 synthetic-PASS sidecar). runpod H100 fire ~70min orphan (agent 30min 초과). post-fire carry: orchestrator 가 runpod result.json pull + eval + verdict band 결정.
+- **§47 §40 small-scope retry**: NOT LANDED (rate-limit 4번째 on §40). pattern 확정 — agent + long-monitor-context 패턴이 §40 anchor-distinct measurement 를 막음. differently dispatched 필요.
+- **§48 §44 PTD-aux scale-up** (`state/dhdl_ptd_scaleup_s48_2026_05_18/`, commit eda40d227, $0 Mac CPU 255s): **PTD-AUX-SIGNAL-HOLDS-AT-SCALE** — 4× corpus (48k→192k), gap-delta direction preserved, PTD MSE drop **15.1×→19.5× STRONGER**. §44 mechanism real, NOT small-corpus artifact. CONTINUE_THINK/REMAIN_SILENT ratio 7.3→3.75× honest recalibration. 여전히 distillation NOT GOAL emergence. B-S48 4/4 🔵.
+
+**SSOT (g_doc_consolidation 준수)**: 2 agent commit (§46 + §48) + 2 merge commit + 1 PHILOSOPHY.tape verdict (§48 only — §46 verdict deferred post-fire per g3) + AGENTS.tape 3 recent_landings + HEXAD/README.md 3 + 본 PLAN.md. docs/* 신규 0.
+
+**honest 종합 (§46-§48 cycle)**: §48 = cycle 의 유일 clean positive (mechanism scale-validation). §46 가 §42 SGD-lottery hypothesis 의 직접 측정 시도 — infrastructure landed 단 verdict orphan. §47 rate-limit 패턴 = 차후 cycle 은 $0 Mac CPU 만 OR sequential dispatch 권장. **GOAL distance**: §15 milestone 불변 — §48 가 PTD-aux 라는 *honest substrate component* 확정. §46 verdict (post-fire pull 시) 가 §42 hypothesis 의 final answer 가능.
