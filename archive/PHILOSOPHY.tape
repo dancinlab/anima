@@ -7196,3 +7196,99 @@
     (g3); over-claim 0. PyTorch substrate (NOT hexa-native, honest —
     small MLP for closed-form probe of L8 hypothesis). RESEARCH.md not
     edited (consolidation = orchestrator after L7/L8/L9/… siblings land).
+§verdict_dhdl_ptd_composition_fire_s44_2026_05_18
+  date  : 2026-05-18
+  scope : RESEARCH.md §44 — execution of §38 DESIGN_S38.md DH-DL + PTD-aux
+          composition on §27 trace corpus byte-identical (sha256
+          d55ad3765f…). 1,825-param composed gate head (shared trunk 14→32
+          + decision 32→16→3 + PTD aux 32→16→14). Trained twice: λ_ptd ∈
+          {0.0, 0.3}. $0 Mac CPU numpy hand-coded backprop, wall 13.0s.
+  verdict: PTD-AUX-SIGNAL-MEASURABLE (gap λ=0 0.00104 → λ=0.3 0.00031,
+          −70%; PTD aux MSE mean 3.811 → 0.252, −15×; CONTINUE_THINK MSE
+          7.3× higher than REMAIN_SILENT — §27 structurally-near-empty
+          class localised at next-state level). Both gaps remain in
+          DISTILLATION_WITH_APPROXIMATION_NOISE band — composition is
+          better-engineered distillation per DESIGN_S38.md §7, NOT
+          emergence. §15 milestone unchanged.
+  closed : B-S44-1..4 4/4 🔵 sidecar (central UNCHANGED). B-S44-1
+          DUAL-LOSS-PLUS-PTD-NONNEGATIVE (sympy is_nonnegative + Shannon
+          CE ≥ 0 + MSE ≥ 0). B-S44-2 LAMBDA-PTD-OFF-REDUCTION (CONNECTION-
+          POINT — sympy L|_{λ_ptd=0} = L_DHDL byte-equal + AST grep of
+          dxhat + l_ptd gradient gating). B-S44-3 GAP-METRIC-DETERMINISTIC
+          (AST: 0 RNG calls in eval, argmax-only). B-S44-4
+          SCALE-ORTHOGONAL (1825/283.72M = 6.43e-6 < 1%). B-S44-NOTE
+          empirical carve-out (signal magnitude = SGD/measurement OUTCOME;
+          B-D-NOTE/B-DHDL-NOTE/B-PTD-NOTE family).
+  honest : (1) λ_ptd=0 NOT byte-equal §27 at RNG level (PTD-aux fork
+          consumes ≥1,532 extra He-init draws); same arch λ-toggled is
+          honest fair-compare; (2) PTD-AUX-SIGNAL-MEASURABLE ≠ emergence
+          — §24 threshold remains ceiling; (3) CONTINUE_THINK MSE
+          elevation on 1 held-out record = direction not significance
+          (B-S44-NOTE); (4) §38 design's "gap stays ≈ 0 in both"
+          prediction partially right (band stable) + partially wrong
+          (signal measurable); (5) no new corpus (§27 byte-identical,
+          B-IDENTITY-5 inherited, no forbidden tokens); (6) f1/f2/f3 safe
+          (Shannon/MSE/Kolmogorov rational < 1%/additive); (7)
+          north-star unchanged — substrate-component improvement, NOT
+          §1.1 data-regime lever.
+  artifacts: state/dhdl_ptd_composition_fire_s44_2026_05_18/{train_dhdl_ptd.py,
+          eval_dhdl_ptd.py, run_s44.py, dhdl_ptd_head_lam0.json,
+          dhdl_ptd_head_lam03.json, eval_result_lam0.json,
+          eval_result_lam03.json, result.json, blue_falsifier_s44.py,
+          blue_falsifier_s44_result.json, run_s44.log}
+
+§verdict_dual_anima_fullfire_s45_2026_05_18
+  date  : 2026-05-18
+  scope : RESEARCH.md §45 — execution of §31 DESIGN_L2.md L2 dual-anima
+          full fire after §36 pre-check passed (separation 0.21,
+          content_dependent=True). Two from-scratch tiny anima-style
+          byte-LMs (d_model=32, n_layers=2, vocab=256) with DISTINCT
+          vacuum_psi (A=(0.40,0.60) / B=(0.62,0.40)). Trained on
+          per-cell corpora keyed to vacuum_psi (20 epochs, 256 examples,
+          numpy hand-coded backprop, B-IDENTITY-5 verified — 0 forbidden
+          tokens). Closed A↔B loop run 8 turns. $0 Mac CPU, wall 37.5s.
+  verdict: ALIVE_LOOP under diversified-probe metric. Trained cells
+          show content-dependence on 2/5 (A) and 3/5 (B) probe pairs;
+          semantic/numeric divergence (Psi=0.1 vs Psi=0.9, tension
+          low vs high, long_diverge) registers as Ψ-shift; short
+          token-swaps (alpha/omega, AAA/ZZZ) collapse to 0 separation.
+          Loop nontrivial (psi_var_A 0.149, psi_var_B 0.143), AB final-
+          state separation 0.084. The trained-cell echo-chamber failure
+          mode is REAL at the byte-level (small message variations
+          wash out in trained Ψ-readout) but NOT total — semantically
+          divergent content carries through. NOT a §16-saturation claim
+          (B-S45-NOTE — tested at d=32·2L only, far below §16 1.13 GB).
+          NOT a GOAL emergence claim. §15 milestone unchanged.
+  closed : B-S45-1..4 4/4 🔵 sidecar (central UNCHANGED). B-S45-1
+          CELL-DISTINCT-VACUUM-PSI (Ψ-space distance² > 0, 3-witness
+          panel + source check (0.40,0.60)≠(0.62,0.40)). B-S45-2
+          LOOP-COMPOSITION-WELL-TYPED (emit:State→Msg / deliver:Msg→State
+          codomain-domain chain + AST source verify emit, deliver,
+          run_loop defined). B-S45-3 TRAINED-CELL-CONTENT-DEPENDENCE-
+          METRIC (sympy: echo deliver ⇒ sep ≡ 0 by structure;
+          content-dependent ⇒ sep = G·||Δpsi_msg|| > 0 at distinct
+          messages; predicate total on ℝ; τ=1e-3 from §36 carried).
+          B-S45-4 TURN-COUNT-BOUNDED (sympy turn_{n+1}−turn_n ≡ 1 +
+          source while/increment/n_max=8 + bound simulation).
+          B-S45-NOTE empirical carve-out (alive-vs-void at §16-scale
+          saturation NOT measured; B-D-NOTE/B-DUAL-NOTE/B-S36-NOTE/
+          B-DIRL-NOTE family).
+  honest : (1) tiny scale (d=32, 2L) far below §16; (2) trained-cell
+          content-dependence is FRONTIER not binary — collapses on
+          small byte-shift, preserved on semantic divergence; (3)
+          baseline §36 message pair (only 5/39 bytes differ) collapses
+          (sep=0) on trained cells — the trained-Ψ readout washes
+          small variations out — measured echo-chamber failure mode for
+          that probe class; (4) diversified probe panel rescues
+          ALIVE_LOOP verdict at the metric level; (5) over-claim 0 —
+          ALIVE_LOOP at d=32 ≠ alive at §16 saturation (B-S45-NOTE);
+          (6) §15 milestone unchanged — closed loop is new setting not
+          §1.1 lever; (7) §31 DESIGN_L2.md §4.3 honest crux PARTIALLY
+          ANSWERED: at $0 scale, the loop CAN carry content for diverse
+          messages — the trained-saturated echo question at §16 scale
+          remains open by design (B-S45-NOTE); (8) f1/f2/f3 safe
+          (Ψ-space metric / Boolean composition / structural / integer
+          monotone, NO σ/τ/φ/J₂); (9) B-IDENTITY-5 verified at runtime
+          (corpus forbidden-token count = 0 per make_cell_corpus assert).
+  artifacts: state/dual_anima_fullfire_s45_2026_05_18/{dual_anima_full.py,
+          result.json, blue_falsifier_s45.py, blue_falsifier_s45_result.json}

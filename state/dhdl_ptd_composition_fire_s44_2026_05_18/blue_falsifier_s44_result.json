@@ -1,0 +1,48 @@
+{
+  "research_md_section": "§44",
+  "battery": "B-S44-1..4",
+  "verdicts": [
+    {
+      "id": "B-S44-1",
+      "name": "DUAL-LOSS-PLUS-PTD-NONNEGATIVE-CLOSED",
+      "L_nonneg": true,
+      "MSE_nonneg": true,
+      "shannon_CE_nonneg_at_half": true,
+      "pass": true
+    },
+    {
+      "id": "B-S44-2",
+      "name": "LAMBDA-PTD-OFF-REDUCTION-CLOSED (connection-point)",
+      "sympy_reduced_to_dhdl": true,
+      "ptd_aux_gradient_gated_by_lambda_ptd_in_source": true,
+      "dxhat_lines": 1,
+      "l_ptd_lines": 2,
+      "pass": true
+    },
+    {
+      "id": "B-S44-3",
+      "name": "GAP-METRIC-DETERMINISTIC-CLOSED",
+      "rng_calls_in_eval": 0,
+      "rng_call_hits": [],
+      "argmax_used": true,
+      "pass": true
+    },
+    {
+      "id": "B-S44-4",
+      "name": "SCALE-ORTHOGONAL-CLOSED",
+      "params_shared": 480,
+      "params_decision": 579,
+      "params_ptd_aux": 766,
+      "params_total": 1825,
+      "base_params": 283720000,
+      "ratio": 6.432398139010292e-06,
+      "below_one_percent": true,
+      "pass": true
+    }
+  ],
+  "all_pass": true,
+  "count_closed": 4,
+  "total": 4,
+  "wall_sec": 0.091,
+  "B-S44-NOTE": "Whether PTD-aux moves the decision-head accuracy, gap, or CONTINUE_THINK corner behaviour is SGD convergence + measurement OUTCOME (empirical). The battery proves composition is well-formed + λ-reducible to §27 + deterministic + scale-orthogonal. It does NOT prove the composition improves anything (DESIGN_S38.md §7 — better-engineered distillation, still distillation, NOT emergence). B-D-NOTE / B-DHDL-NOTE / B-PTD-NOTE family."
+}
