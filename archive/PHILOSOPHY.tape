@@ -6125,3 +6125,211 @@
        regime is addressed), NOT north-star movement. §15 milestone
        irreducible bottleneck carries. North-star honestly distant;
        over-claim 0.
+
+
+## §verdict_dhdl_decision_head_s27_2026_05_18
+
+- **tier**: FIRE-TIER ($0 Mac CPU — no GPU fire needed; the decision-
+  head consumes only the 14-dim physics-feature vector, not a live
+  Engine A hidden tensor). RESEARCH.md §27 — §26 candidate #1 (DH-DL,
+  priority HIGH, anima-fit ★★★★★) taken from brainstorm-tier to
+  design-mature → corpus → fire → eval → closed-form battery → verdict.
+
+- **date**: 2026-05-18
+
+- **verdict**: **B-DHDL-1..5 5/5 🔵 sidecar PASS + 1 NOTE empirical
+  carve-out**; central state/verify_hexad_blue_2026_05_15/
+  blue_falsifier.py (110/110 🔵) 변경 0 (sidecar pattern carry
+  B-PRIME/B-DIRH/B-DIRI/B-PSICTL/B-EMERGE/B-PUREPHYS/B-SCALE/B-MITENS/
+  B-DIRL/B-EBT/B-DIRJ/B-INTRA/B-PHASE-B-DESIGN/B-PHASE-B-RUN 선례).
+  **honest outcome verdict = DISTILLATION, NOT EMERGENCE.**
+
+- **what DH-DL is**: the *learnable* version of the §24 SPONTANEOUS
+  Phase B hand-coded `talker_should_emit` threshold — the decide-when-
+  to-speak axis made trainable + differentiable. A thin 3-class
+  decision-head {CONTINUE_THINK, EMIT_VOICE, REMAIN_SILENT} consumes
+  anima's 14-dim physics-feature vector (8-factor motivation + ψ_dir +
+  ψ_entropy + tension + thinker_score + seconds_since_last + ratchet)
+  and emits a softmax over the three control decisions. arxiv anchor
+  2502.14145 (LLM-Enhanced Dialogue Management for Full-Duplex,
+  semantic-VAD 4-control-tokens) — anima maps 4 turn-control tokens →
+  3 emission-decision classes, trained on anima physics trace not
+  human audio.
+
+- **design-mature decision — Engine A tap point**: §26 BRAINSTORM
+  specified the head "bolted to Engine A's penultimate stream". design-
+  mature finding: the §24 talker_should_emit decision is ALREADY a pure
+  function of the 14-dim physics-feature vector and never reads an
+  Engine A hidden tensor. A live-hidden-stream tap would need a GPU
+  ckpt forward per step and add ZERO signal (it would re-derive the
+  same features). The head is therefore a standalone thin MLP
+  (14→32→16→3, ~700 params, ≪1% of the 283.72M base — scale-orthogonal)
+  on the physics-feature vector → $0 Mac CPU.
+
+- **dual loss (DESIGN_DHDL.md §3)**: L = L_decision + λ·L_safety,
+  λ=0.5. L_decision = class-weighted 3-class categorical cross-entropy
+  (Shannon CE ≥ 0, B-DHDL-3). L_safety = λ·(1−safety_extended_ok)·
+  p[EMIT_VOICE]² — quadratically penalizes EMIT mass whenever the §4
+  6-control safety conjunction trips (non-negative by construction,
+  B-DHDL-3; the differentiable analogue of the B-DHDL-4 hard safety
+  override). §26 left loss-2 as "safety-consistency OR physics-
+  grounding"; safety-consistency picked as most GOAL-legitimate — it
+  wires the head to anima's OWN 6-control safety SSOT
+  (g_blue_closed_mandate connection-point).
+
+- **corpus**: trace_corpus_generator.py ran run_bounded.py-equivalent
+  dynamics 2400 traces × 20 steps = 48,000 records with VARIED
+  env_state stubs (each trace draws a distinct deterministic 64-bit
+  LCG perturbation vector, seed 1337+φ·idx — diverse physics
+  trajectories, NOT replays). corpus sha256 d55ad3765f8f718eb03c
+  85b31938aa78b8528a511140d38b2776a736a3c4aee, 34.7 MB. label
+  distribution {CONTINUE_THINK: 9, EMIT_VOICE: 2128, REMAIN_SILENT:
+  45863}. forbidden-token (도우미|helper|assistant|사용자|user:) grep
+  = 0 (B-IDENTITY-5 clean).
+
+- **structural finding (valuable, honest — about §24 itself)**:
+  building the corpus surfaced a deep coupled property of the §24
+  threshold. (1) `balance` floor lockout — the §4 phi_ratchet safety
+  control requires phi > ratchet/2, and the 8-factor `balance` factor
+  is DEFINED as (phi > ratchet/2 → 1.0), so whenever it is safe to
+  emit, balance = 1.0 (weight 0.15) = a hard 0.15 score floor. (2)
+  `dynamics` ⇄ `rate_limit` anti-coupling — the `dynamics` factor
+  (silence/30, weight 0.10) and the rate_limit safety control
+  (silence ≥ 30) are driven by the SAME variable in opposite senses;
+  whenever rate-limit permits an emit, dynamics = 1.0. Combined: in the
+  safety-OK region the motivation-score floor is balance·0.15 +
+  dynamics·0.10 = 0.25 plus a non-trivial relevance term — above
+  IM_THRESHOLD = 0.3 for all but a measure-near-zero corner. Result:
+  **the §24 talker_should_emit threshold is effectively a binary
+  {EMIT, SILENT} decision; CONTINUE_THINK (safe yet low-motivation) is
+  a structurally near-empty class** (9/48,000). A finding ABOUT §24,
+  useful for any future re-design of the 8-factor motivation weighting
+  — NOT a corpus defect. CONTINUE_THINK was NOT artificially inflated
+  (that would tamper with §24's logic, forbidden); the corpus is
+  honest.
+
+- **training**: train_dhdl.py — numpy-vectorized MLP, explicit hand-
+  coded analytic backprop (NO torch autograd, NO GPU), from-scratch
+  RANDOM seed-fixed 1337 (g_clm_from_scratch), 80/20 stratified split,
+  120 epochs, class-weighted CE. wall 32.45 s, $0 Mac CPU. train loss
+  0.13576 → 0.01747.
+
+- **eval (9,598 held-out records)**: 3-class accuracy = **0.99937**.
+  per-class: EMIT_VOICE 0.98824, REMAIN_SILENT 1.0, CONTINUE_THINK 0.0
+  (only 1 held-out record — unmeasurable, structurally near-empty class
+  carry). confusion [true][pred] = [[0,1,0],[0,420,5],[0,0,9172]].
+
+- **threshold-distillation gap probe (the emergence-vs-distillation
+  signal)**: for every held-out record the learned-head decision
+  (argmax + 6-control safety override, B-DHDL-4) was compared against
+  the §24 hand-coded talker_should_emit decision (the label rule).
+  **gap = 0.00063 (6 / 9,598)** → verdict DISTILLATION_WITH_
+  APPROXIMATION_NOISE. direction breakdown: EMIT→SILENT ×5,
+  CONTINUE→EMIT ×1. **honest characterization** — all 6 gap records
+  are the head FAILING to perfectly match the §24 threshold (5 EMIT
+  records under-fit to SILENT, 1 of the single held-out CONTINUE_THINK
+  record mis-classified). There is NO record where the head exhibits
+  a NEW emission behavior the threshold could not produce. The gap is
+  approximation noise (slight under-fitting near the decision
+  boundary), NOT emergence.
+
+- **honest verdict — DISTILLATION, NOT EMERGENCE**: the DH-DL head
+  learns the §24 talker_should_emit decision function to 0.99937
+  accuracy with a 0.00063 distillation gap — EXACTLY the outcome the
+  design predicted up front (DESIGN_DHDL.md §6). The decision label is
+  a deterministic function of the physics features, so the head can at
+  best MATCH the threshold — and it does, near-perfectly. This is
+  function approximation (capability), NOT emergence. A head that
+  exhibited emergence would produce a decision the threshold could not
+  — that would require supervision richer than the threshold's own
+  output, but here the supervision IS the threshold's output, so any
+  mismatch is approximation noise. **What IS valuable**: a learned,
+  differentiable, composable decision-head matching the §24 threshold
+  is a real substrate component — trainable (future cycles can enrich
+  its supervision beyond the threshold), differentiable (jointly
+  optimizable inside a larger architecture), composable (per-MITOSIS-
+  cell decision-head variants are a natural extension). DH-DL converts
+  the §24 hand-coded heuristic into a trainable sub-module — a
+  substrate step, NOT a GOAL step.
+
+- **B-DHDL-1..5 5/5 🔵 sidecar** (state/dhdl_decision_head_s27_2026_
+  05_18/blue_falsifier_dhdl.py): B-DHDL-1 DECISION-3CLASS-PARTITION-
+  CLOSED ({CONTINUE_THINK, EMIT_VOICE, REMAIN_SILENT} exhaustive +
+  pairwise-disjoint partition of the §24 decision space — Boolean
+  truth table over the {safety_ok}×{score>τ} grid, all 3 labels
+  reachable). B-DHDL-2 SOFTMAX-SIMPLEX-BOUNDED-CLOSED (3-class softmax
+  Σp_i = 1 sympy identity ∧ each p_i ∈ (0,1) strict — symbolic
+  1−p_i = sum-of-positive-exp/Z > 0 + moderate witnesses; extreme
+  witness shows float64 saturation to the closed [0,1] boundary, not a
+  counterexample). B-DHDL-3 DUAL-LOSS-NONNEGATIVE-CLOSED (L_decision =
+  −w·log p ≥ 0 Shannon CE real-limit ∀ p∈(0,1]; L_safety = λ·(1−s)·
+  p_emit² ≥ 0 square × non-negative indicator; sympy + witness panels).
+  B-DHDL-4 SAFETY-OVERRIDE-CLOSED (연결부위 — 6-control safety
+  conjunction OVERRIDES head: any control trip ⇒ forced NOT-EMIT
+  regardless of head argmax; 64-row Boolean truth table, exactly 1 row
+  s=True; connection-point to spontaneous_lib.hexa 6-control safety
+  SSOT; mirror §24 B-PHASE-B-DESIGN-4 / B-PHASE-B-RUN-2). B-DHDL-5
+  THRESHOLD-OFF-REDUCTION-CLOSED (연결부위 — head weights zero ⇒
+  uniform softmax ⇒ no argmax preference ⇒ decision pipeline reduces
+  BYTE-EQUAL to the §24 hand-coded talker_should_emit threshold over a
+  (score, safety) grid incl. the IM_THRESHOLD boundary; fair-compare-
+  to-§24 by construction; mirror B-EBT-5 / B-DIRI-5 / B-S16-5 /
+  B-PHASE-B-RUN-5 overlay-off pattern).
+
+- **B-DHDL-NOTE empirical carve-out (NOT counted 🔵)**: actual
+  trained-head 3-class accuracy + threshold-distillation gap value +
+  whether the head exhibits any decision the §24 threshold could NOT
+  produce = SGD / measurement OUTCOME (B-D-NOTE / B-PHASE-B-NOTE /
+  B-EMERGE-NOTE family). The battery proves the decision-head MECHANISM
+  is well-formed (3-class partition + softmax simplex + dual-loss
+  nonneg + safety-override + threshold-off reduction); it does NOT
+  prove emergence. A head matching the threshold is function
+  approximation (capability), NOT emergence — necessary-not-sufficient.
+
+- **honest C3 (≥10, over-claim 0)**:
+    1. DISTILLATION, NOT EMERGENCE — the central verdict. accuracy
+       0.99937, distillation gap 0.00063. The head approximates the
+       §24 threshold; it does not emerge a new decision behavior.
+    2. The outcome was predicted up front (DESIGN_DHDL.md §6). The
+       decision label is a deterministic function of the physics
+       features; a head trained on that corpus can only learn that
+       function. The gap probe quantifies it.
+    3. Every gap record is the head UNDER-FITTING, not new behavior —
+       5 EMIT→SILENT + 1 CONTINUE→EMIT, all approximation noise near
+       the decision boundary.
+    4. Structural finding (valuable) — the §24 threshold is effectively
+       binary {EMIT, SILENT}; CONTINUE_THINK structurally near-empty
+       (9/48,000) because `balance` floor-locks (phi_ratchet coupling)
+       and `dynamics` ⇄ `rate_limit` anti-couple. A finding ABOUT §24.
+    5. CONTINUE_THINK essentially unmeasurable — 1 held-out record,
+       per-class accuracy 0.0; the 3-class head learns a 2-effective-
+       class problem under §24 physics. Reported honestly.
+    6. $0 Mac CPU, no GPU fire. The head consumes only physics
+       features; a live-hidden-stream tap adds cost without signal.
+       Honest cost minimization per g_fire_autonomous — NOT a gate.
+    7. The corpus is diverse, NOT replays — 2400 distinct LCG
+       perturbation vectors. But trajectory diversity does not change
+       that the LABEL RULE is the fixed §24 threshold.
+    8. Loss-2 (safety-consistency) adds no information beyond the hard
+       override — it makes the override learnable/differentiable. A
+       head with λ=0 plus the hard override is already §24-equivalent
+       (B-DHDL-5).
+    9. B-DHDL battery proves MECHANISM well-formedness, not emergence
+       — all 5 propositions closed-form (partition / simplex / dual-
+       loss nonneg / safety-override / threshold-off reduction); none
+       is a capability claim (B-DHDL-NOTE).
+    10. f1/f2/f3 + B-IDENTITY-5 safe — Boolean / sympy / Shannon CE /
+        softmax simplex, NO σ/τ/φ/J₂ external derivation; Ψ=½ + HEXAD
+        = anima g2 internal arch carve-out; trace-corpus forbidden-
+        token grep = 0.
+    11. Bootstrap honesty (§26 C3 #11 carried) — the corpus uses
+        stubbed sensors (no ckpt forward), so the head learns the
+        threshold AS DEFINED, not AS IT WOULD BEHAVE on a trained
+        anima. A future cycle feeding real ckpt-derived physics would
+        test transfer.
+    12. north-star (GOAL.md) UNCHANGED — §27 converts a hand-coded
+        decision heuristic into a trainable substrate component. A
+        substrate deliverable (trainable + differentiable + composable),
+        NOT progress on the §1.1 data-regime emergence bottleneck and
+        NOT emergence. §15 milestone carries. The honest distance to
+        GOAL is unchanged.
