@@ -1,0 +1,39 @@
+{
+  "research_md_section": "§48",
+  "generator": "multi_run_trace_generator.py",
+  "n_traces": 9600,
+  "n_phase_regimes": 4,
+  "regime_trace_counts": [
+    2400,
+    2400,
+    2400,
+    2400
+  ],
+  "steps_per_trace": 20,
+  "record_count": 192000,
+  "sha256": "e34b45522b76e99e8036d7fb71f070cf0b6eab3efa88cca17ad5fd7ad607b7b9",
+  "bytes": 140915479,
+  "seed": 1337,
+  "label_distribution": {
+    "CONTINUE_THINK": 48,
+    "EMIT_VOICE": 8510,
+    "REMAIN_SILENT": 183442
+  },
+  "label_fractions": {
+    "CONTINUE_THINK": 0.00025,
+    "EMIT_VOICE": 0.044323,
+    "REMAIN_SILENT": 0.955427
+  },
+  "forbidden_token_hits": {
+    "도우미": 0,
+    "helper": 0,
+    "assistant": 0,
+    "사용자": 0,
+    "user:": 0
+  },
+  "forbidden_token_total": 0,
+  "b_identity_5_clean": true,
+  "feature_dim": 14,
+  "scale_vs_s27": 4.0,
+  "honest_note": "§48 scale-up corpus = §27 LCG amplitude/baseline perturbation × K=4 phase regimes (sensor schedule axis). decision_label is the DETERMINISTIC §24 hand-coded talker_should_emit (byte-equal). The corpus tests whether §44's PTD-aux signal HOLDS at 4× scale + broader phase regime coverage, or NOISES OUT as small-corpus artifact. NO model.forward, NO autograd, NO GPU. $0 Mac CPU. B-IDENTITY-5 clean by construction (no text payload)."
+}
