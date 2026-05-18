@@ -956,3 +956,39 @@ user directive 2026-05-19 "개구리 'frog' 키워드로 anima 전수조사 과�
 4. **CIFAR-10 `['bird,cat,deer,dog,frog,horse,ship,truck']`** — vision dataset class label noise, anima 모듈 0.
 
 **Honest verdict (g3)**: **anima 자체 코드/모듈/함수/변수 측에 frog 사용 0건** — 전부 corpus textbook references (Wikipedia carry-over). anima 가 frog 를 **읽었을 뿐, frog 으로 무언가를 한 적 없음**. biology §80 측 amphibian/Levin bioelectric/Xenopus tadpole subsection 이 진짜 lead (corpus reference 보다 active anchor).
+
+### 2026-05-19 flame mk2 generic ag_tape closure SHIPPED upstream — d=768·12L·T=1024 1-step wall 114s = PyTorch eager 2.95× faster MEASURED at A100 real fire (anima reference only)
+
+User-relayed handoff `/Users/ghost/core/hexa-lang-flame-wt/state/anima_handoff_2026_05_19.md` 2026-05-19. hexa-lang upstream `~/core/hexa-lang/stdlib/flame/` commit `e030fa31` mk2 closure code + `971bff41` PLAN. anima 측 NEW commit/edit 0 (upstream-consumer 불변 g_train_flame_not_pytorch upstream_downstream_invariant + hexa-lang g7/@F f3); 본 cycle = AGENTS.tape `@D g_train_flame_not_pytorch` perf_claim_honesty 절 UPDATED + n_hexad_progress recent_landings entry append + HEXAD/README + 본 PLAN — central docs sync only.
+
+**3-tier benchmark (A100 real fire, no fabrication)**:
+
+| substrate | wall/step | speedup |
+|---|---|---|
+| PyTorch eager baseline | 336.85s | 1.00× |
+| flame Path A hand-fused option B (`28e9d648`, §71 carry) | 191-268s | 1.26-1.76× |
+| **flame mk2 generic ag_tape (`e030fa31`)** | **114s** | **2.95× ★ NEW** |
+| F-RFC046-AGTAPE-WALL ceiling | ≤437.9s | (PASS huge margin) |
+
+**핵심 발견**: **Path B mk2 generic > Path A hand-fused** at d=768·12L (114s < 191-268s). 이전 g_train_flame_not_pytorch perf_claim_honesty 의 "generic ag_tape 대형(d=768·12L) 느림 (step/900s 미완)" 절 폐기 (mk2 closure resolved). anima 학습 substrate 권장 = **generic ag_tape mk2** (가장 빠름 + 더 유연 + 다른 arch 호환).
+
+**Integration guide (handoff 5-step)**:
+1. `_agt_decoder_step` 구조 채택. signature: `fn step(M, MgOut, idsf, target, cos_tab, sin_tab, T, d, nh, nkv, h, V, n_layer) -> gn2(float)`. `M` = flat model weights farr (104M doubles for d768·12L), `MgOut` = grad farr (fresh, _agt_decoder_step zero-fills), `idsf` = token ids, `target` = next-token int, 반환 gn2 = ‖softmax(logits) − onehot‖² scalar (loss surrogate).
+2. `_local_decoder_init` driver-local helper (path-resolution issue 회피 — main repo stdlib train_lib.hexa win, worktree win when driver-local).
+3. `farr_set_out_disposition(1)` device-resident 유지 — 모든 forge op 출력 device-resident, 다음 op `_h2d` §6.1 skip path 우회. host `farr_get` 시만 lazy D2H (RFC 056 §6.4).
+4. Grad accumulator: `farr_zero_slice_gpu(Mg_acc, 0, m_size)` 초기화 후 sample 마다 `farr_add_inplace_gpu(Mg_acc, Mg, m_size)`.
+5. Optimizer: `nn_decoder_adamw_step(M, Mg_acc, Mm, Mv, m_size, lr, b1, b2, eps_a, wd, step)` device-resident.
+
+**5 NEW C5 builtins** (`self/{runtime.c, runtime.h, cuda/runtime_cuda.c}`): `farr_copy_slice_gpu` · `farr_transpose_2d_gpu` · `farr_zero_slice_gpu` · `farr_add_inplace_gpu` · `farr_fill_dt_lcg_gpu`.
+
+**byte-eq verification (transcendental hazard)**: 모든 `dt_sqrt` / `dt_exp` path = device + host bit-exact mirror. proven recipe (4× verified): `__dmul_rn/__ddiv_rn/__dadd_rn` on device + `#pragma STDC FP_CONTRACT OFF` on host. 새 forge 커널 추가 시 cheap `.cu` oracle 먼저 (heavy fire 전 게이트). pattern: `tool/cuda_test_{silu_gate,rmsnorm_mh,attn_dt_fwd,attn_dt_bwd}.cu` 참조.
+
+**빌드 / 발사**:
+- 로컬 (Mac, no CUDA): `hexa parse` (parse-gate) / `hexa build` (compiled but no GPU dispatch — CPU fallback only)
+- 원격 (A100 SXM4 via vast.ai): `bash tool/dispatch_agtape_d768_fire.sh`. 필요 자료: TRAINER_C (`build/artifacts/flame_d768_agtape.c` regen via `HEXA_TRANSPILE_ONLY=1 hexa build stdlib/flame/flame_d768_12L_agtape_fire.hexa`), self/{runtime.c,runtime.h,cuda/runtime_cuda.c}, corpus.
+
+**anima 측 handoff 요청 (TODO future cycle)**: byte-eq falsifier 1-2개 정의 — flame mk2 gradient vs anima prior trainer gradient comparison (loss curve, weight diff norm) → 측정 후 anima-측 perf claim 가능 (현재는 unmeasured anima-측 perf claim 금지 carry).
+
+**g3 / over-claim 0**: 측정 안 된 모델 형태로 옮길 때 새 측정 발사 필요. d768·12L 측정값 다른 config (d1024·24L 등) 에 일반화 금지. byte-eq oracle 한 번 더 돌리는 비용은 일반화 주장 비용 대비 무시.
+
+**GOAL distance**: flame mk2 substrate 가 anima Path-A trainer §71 보다 1.7× 더 빠른 path 제공 = anima 학습 cost-bearing fire perf ceiling 다시 한 단계 해소. 단 mk2 readiness ≠ GOAL emergence (B-EMERGE-7 family). north-star + §15/§51/§72 milestone UNCHANGED, GOAL 미도달. PHILOSOPHY.tape entry 없음 (anima-측 commit 0, upstream reference only).
