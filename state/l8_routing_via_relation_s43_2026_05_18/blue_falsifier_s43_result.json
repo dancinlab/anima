@@ -1,0 +1,173 @@
+{
+  "battery": "B-S43-1..4",
+  "research_section": "§43",
+  "n_total": 4,
+  "n_pass": 4,
+  "all_blue": true,
+  "sympy_available": true,
+  "verdicts": [
+    {
+      "id": "B-S43-1",
+      "name": "RELATION-FINGERPRINT-DETERMINISTIC",
+      "passed": true,
+      "checks": [
+        [
+          "two-runs-byte-equal",
+          true
+        ],
+        [
+          "two-runs-table-equal",
+          true
+        ],
+        [
+          "sha256-rederived-matches",
+          true
+        ],
+        [
+          "meta-on-disk",
+          true
+        ],
+        [
+          "table-on-disk",
+          true
+        ],
+        [
+          "meta-sha256-matches",
+          true
+        ],
+        [
+          "§37-relation-fns-present",
+          true
+        ],
+        [
+          "sympy-onehot-diff-sq-in-{0,1}",
+          true
+        ]
+      ]
+    },
+    {
+      "id": "B-S43-2",
+      "name": "FINGERPRINT-LOOKUP-WELL-TYPED",
+      "passed": true,
+      "checks": [
+        [
+          "lookup-codomain-in-[0,64)",
+          true
+        ],
+        [
+          "self-lookup-64/64",
+          true
+        ],
+        [
+          "euclidean-nonneg-∀-pair",
+          true
+        ],
+        [
+          "euclidean-bounded-by-fingerprint-dim",
+          true
+        ],
+        [
+          "lookup-pure-fn-two-calls-equal",
+          true
+        ],
+        [
+          "sympy-min-over-bounded-integers-well-typed",
+          true
+        ]
+      ]
+    },
+    {
+      "id": "B-S43-3",
+      "name": "§7-CONJUNCTION-CLOSED",
+      "passed": true,
+      "checks": [
+        [
+          "audited-file-count",
+          3
+        ],
+        [
+          "total-forbidden-call-hits-eq-0",
+          true
+        ],
+        [
+          "file-fingerprint_builder.py-forbidden-hits-eq-0",
+          true
+        ],
+        [
+          "file-blue_falsifier_s43.py-forbidden-hits-eq-0",
+          true
+        ],
+        [
+          "file-train_s43_pilot.py-forbidden-hits-eq-0",
+          true
+        ],
+        [
+          "§7-trinity-conjunction-holds",
+          true
+        ]
+      ],
+      "per_file_audit": [
+        {
+          "file": "fingerprint_builder.py",
+          "hits": [],
+          "n_hits": 0
+        },
+        {
+          "file": "blue_falsifier_s43.py",
+          "hits": [],
+          "n_hits": 0
+        },
+        {
+          "file": "train_s43_pilot.py",
+          "hits": [],
+          "n_hits": 0
+        }
+      ]
+    },
+    {
+      "id": "B-S43-4",
+      "name": "FINGERPRINT-DISTINGUISHABLE",
+      "passed": true,
+      "checks": [
+        [
+          "anchor-count-eq-64",
+          true
+        ],
+        [
+          "total-pairs-eq-2016",
+          true
+        ],
+        [
+          "pairwise-distinct-count-eq-total",
+          true
+        ],
+        [
+          "all-pairs-distinct",
+          true
+        ],
+        [
+          "min-pair-distance-sq-gt-0",
+          true
+        ],
+        [
+          "self-to-second-margin-eq-min_pair_d",
+          true
+        ],
+        [
+          "sympy-(a-b)^2-nonneg-onehot",
+          true
+        ]
+      ],
+      "n_distinct_pairs": 2016,
+      "total_pairs": 2016,
+      "min_pair_distance_sq": 8
+    }
+  ],
+  "note": {
+    "id": "B-S43-NOTE",
+    "name": "ROUTING-VIA-RELATION-OUTCOME-EMPIRICAL",
+    "text": "Whether anima at byte-LM scale learns to PREDICT a target anchor's fingerprint coherently (and so the §16 routing ceiling is broken when routing is reformulated as fingerprint prediction → 1-NN lookup) is an SGD/measurement OUTCOME. The battery proves the REFORMULATION is well-FORMED: deterministic table (B-S43-1), 1-NN lookup well-typed (B-S43-2), no-external-KG / no-LLM (B-S43-3), fingerprints pairwise distinguishable (B-S43-4). It does NOT decide whether the byte-LM transfer succeeds — that is a separate (small) fire's measured result. B-D-NOTE / B-S37-NOTE / B-INTER-NOTE / B-CARVE-E6-NOTE family — NOT counted blue. Honest crux per DESIGN_S43.md §6: §37 generalisation may be a property of the LOW-COMPLEXITY classifier (smooth-threshold 9-dim → R1..R4); whether a byte-LM emits a 756-dim fingerprint coherently is a separable question that this design does NOT answer.",
+    "counted_blue": false
+  },
+  "central_blue_falsifier_unchanged": true
+}
