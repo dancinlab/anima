@@ -1,0 +1,277 @@
+{
+  "research_md_section": "\u00a782",
+  "title": "Manifold-gated hierarchical emission \u2014 \u00a780 biology anchor (Leifer C. elegans biorxiv:2025.03.09.642241) applied to anima \u03a8-state; \u00a775-FIRE A-only extension",
+  "biology_anchor": "biorxiv:2025.03.09.642241 (Leifer C. elegans intrinsic neuronal manifold gating)",
+  "cost": "$0 Mac CPU local \u00b7 NO GPU \u00b7 NO model.forward \u00b7 NO autograd \u00b7 NO weight mutation \u00b7 NO dispatch \u00b7 orphan 0",
+  "north_star_unchanged": true,
+  "milestone_unchanged": "\u00a715 + \u00a751 + \u00a772 (GOAL \ubbf8\ub3c4\ub2ec)",
+  "capability_claim": 0,
+  "g3_honest_framing": "\u00a782 = $0 stub manifold-gating mechanism probe \u2014 NOT GOAL emergence, NOT real-ckpt PCA, NOT C. elegans neural recording. \u03c8-state is LCG-driven 14-dim STUB; PCA over 30 turns is small-N. The biology anchor is hierarchical-mechanism inspiration only \u2014 no claim that anima \u03c8-state = C. elegans manifold. cell1 byte-equal mirror is *code-byte-equal* to \u00a775 cell1, NOT numeric-byte-equal at smaller N. necessary-not-sufficient (B-EMERGE-7) carries throughout.",
+  "constants": {
+    "PSI_VAC": 0.5,
+    "BASIN_RADIUS": 0.05,
+    "LAMBDA_STD": 0.5,
+    "EMA_BETA": 0.9,
+    "SEED": 1337,
+    "N_LOOP_STEPS": 30,
+    "TAU_NONDEG": 0.0001,
+    "MAJ_COLLAPSE": 0.95,
+    "IM_THRESHOLD_S24": 0.3,
+    "TAU_SLOW": 0.05,
+    "TAU_FAST": 0.12,
+    "N_DWELL_MIN": 3,
+    "TAU_ALIGN": 0.5,
+    "PSI_STATE_DIM": 14
+  },
+  "warmup_capture": {
+    "n_warmup": 10,
+    "tension_mean": 0.3991915735720618
+  },
+  "decomposition_table": {
+    "cell0_\u00a724_baseline": {
+      "controller_class": "\u00a724 scalar threshold, no manifold",
+      "pca_lambda_ratio": 9.137891863934515,
+      "pca_top2_captured": 0.9563842625619517,
+      "slow_dwell_count": 0,
+      "fast_crossing_count": 28,
+      "interval_var": 0.0,
+      "emit_rate": 0.06666666666666667,
+      "n_emit": 2,
+      "majority_fraction": 0.9333333333333333,
+      "non_degenerate": false,
+      "alignment_cos_mean": 0.3731324444603385,
+      "raw": {
+        "n_steps": 30,
+        "n_emit": 2,
+        "emit_rate": 0.06666666666666667,
+        "decision_var": 0.062222222222222255,
+        "majority_fraction": 0.9333333333333333,
+        "interval_var": 0.0,
+        "n_intervals": 1,
+        "non_degenerate": false,
+        "pca": {
+          "lambda_1": 0.6273973985888339,
+          "lambda_2": 0.06865887755413802,
+          "lambda_ratio": 9.137891863934515,
+          "top2_captured": 0.9563842625619517,
+          "n_points": 30,
+          "dim": 14,
+          "total_variance": 0.7277998011786434
+        },
+        "dwell": {
+          "slow_dwell_count": 0,
+          "slow_runs": [],
+          "fast_crossing_count": 28,
+          "mean_delta": 0.4844165464416908,
+          "max_delta": 1.1775990088298598,
+          "min_delta": 0.03913643429780273
+        },
+        "alignment": {
+          "n_emits": 2,
+          "alignment_cos_mean": 0.3731324444603385,
+          "n_aligned_above_tau": 0
+        },
+        "honest_coherent_stub_NA": true
+      }
+    },
+    "cell1_\u00a775_FIRE_A_only_mirror": {
+      "controller_class": "\u00a775 cell1 A-only state-derived (code byte-equal, N=30 not 600)",
+      "pca_lambda_ratio": 8.964244971054146,
+      "pca_top2_captured": 0.9406354240959821,
+      "slow_dwell_count": 0,
+      "fast_crossing_count": 28,
+      "interval_var": 0.0,
+      "emit_rate": 0.06666666666666667,
+      "n_emit": 2,
+      "majority_fraction": 0.9333333333333333,
+      "non_degenerate": false,
+      "alignment_cos_mean": 0.7160499623341865,
+      "s75_cell1_reference_int_var_at_n600": 6.378772,
+      "raw": {
+        "n_steps": 30,
+        "n_emit": 2,
+        "emit_rate": 0.06666666666666667,
+        "decision_var": 0.06222222222222224,
+        "majority_fraction": 0.9333333333333333,
+        "interval_var": 0.0,
+        "n_intervals": 1,
+        "non_degenerate": false,
+        "pca": {
+          "lambda_1": 0.6294590494529589,
+          "lambda_2": 0.07021885853025031,
+          "lambda_ratio": 8.964244971054146,
+          "top2_captured": 0.9406354240959821,
+          "n_points": 30,
+          "dim": 14,
+          "total_variance": 0.7438353798504344
+        },
+        "dwell": {
+          "slow_dwell_count": 0,
+          "slow_runs": [],
+          "fast_crossing_count": 28,
+          "mean_delta": 0.4850098608244643,
+          "max_delta": 1.232563763206708,
+          "min_delta": 0.05644918926310156
+        },
+        "alignment": {
+          "n_emits": 2,
+          "alignment_cos_mean": 0.7160499623341865,
+          "n_aligned_above_tau": 1
+        },
+        "honest_coherent_stub_NA": true
+      }
+    },
+    "cell2_manifold_only": {
+      "controller_class": "PCA detect + slow-dwell awareness, no fast-crossing gate",
+      "pca_lambda_ratio": 8.964244971054146,
+      "pca_top2_captured": 0.9406354240959821,
+      "slow_dwell_count": 0,
+      "fast_crossing_count": 28,
+      "interval_var": 0.0,
+      "emit_rate": 0.06666666666666667,
+      "n_emit": 2,
+      "majority_fraction": 0.9333333333333333,
+      "non_degenerate": false,
+      "alignment_cos_mean": 0.7160499623341865,
+      "raw": {
+        "n_steps": 30,
+        "n_emit": 2,
+        "emit_rate": 0.06666666666666667,
+        "decision_var": 0.06222222222222224,
+        "majority_fraction": 0.9333333333333333,
+        "interval_var": 0.0,
+        "n_intervals": 1,
+        "non_degenerate": false,
+        "pca": {
+          "lambda_1": 0.6294590494529589,
+          "lambda_2": 0.07021885853025031,
+          "lambda_ratio": 8.964244971054146,
+          "top2_captured": 0.9406354240959821,
+          "n_points": 30,
+          "dim": 14,
+          "total_variance": 0.7438353798504344
+        },
+        "dwell": {
+          "slow_dwell_count": 0,
+          "slow_runs": [],
+          "fast_crossing_count": 28,
+          "mean_delta": 0.4850098608244643,
+          "max_delta": 1.232563763206708,
+          "min_delta": 0.05644918926310156
+        },
+        "alignment": {
+          "n_emits": 2,
+          "alignment_cos_mean": 0.7160499623341865,
+          "n_aligned_above_tau": 1
+        },
+        "honest_coherent_stub_NA": true
+      }
+    },
+    "cell3_fast_crossing_only": {
+      "controller_class": "Fast-crossing gate only, no slow-dwell history",
+      "pca_lambda_ratio": 4.8204898051835565,
+      "pca_top2_captured": 0.9628943146884674,
+      "slow_dwell_count": 0,
+      "fast_crossing_count": 27,
+      "interval_var": 0.07100591715976336,
+      "emit_rate": 0.9,
+      "n_emit": 27,
+      "majority_fraction": 0.9,
+      "non_degenerate": true,
+      "alignment_cos_mean": -0.1313736900776881,
+      "raw": {
+        "n_steps": 30,
+        "n_emit": 27,
+        "emit_rate": 0.9,
+        "decision_var": 0.08999999999999987,
+        "majority_fraction": 0.9,
+        "interval_var": 0.07100591715976336,
+        "n_intervals": 26,
+        "non_degenerate": true,
+        "pca": {
+          "lambda_1": 0.6146547205316814,
+          "lambda_2": 0.12750876889537915,
+          "lambda_ratio": 4.8204898051835565,
+          "top2_captured": 0.9628943146884674,
+          "n_points": 30,
+          "dim": 14,
+          "total_variance": 0.7707631856432535
+        },
+        "dwell": {
+          "slow_dwell_count": 0,
+          "slow_runs": [],
+          "fast_crossing_count": 27,
+          "mean_delta": 0.49154127283792376,
+          "max_delta": 1.1775990088298598,
+          "min_delta": 0.028011058242179768
+        },
+        "alignment": {
+          "n_emits": 27,
+          "alignment_cos_mean": -0.1313736900776881,
+          "n_aligned_above_tau": 4
+        },
+        "honest_coherent_stub_NA": true
+      }
+    },
+    "cell4_full_hierarchical": {
+      "controller_class": "Full: slow-dwell + fast-crossing + emission-direction-aligned",
+      "pca_lambda_ratio": 8.624636580756453,
+      "pca_top2_captured": 0.9758406578034666,
+      "slow_dwell_count": 0,
+      "fast_crossing_count": 28,
+      "interval_var": 0.0,
+      "emit_rate": 0.0,
+      "n_emit": 0,
+      "majority_fraction": 1.0,
+      "non_degenerate": false,
+      "alignment_cos_mean": 0.0,
+      "raw": {
+        "n_steps": 30,
+        "n_emit": 0,
+        "emit_rate": 0.0,
+        "decision_var": 0.0,
+        "majority_fraction": 1.0,
+        "interval_var": 0.0,
+        "n_intervals": 0,
+        "non_degenerate": false,
+        "pca": {
+          "lambda_1": 0.621083490019343,
+          "lambda_2": 0.0720127142986086,
+          "lambda_ratio": 8.624636580756453,
+          "top2_captured": 0.9758406578034666,
+          "n_points": 30,
+          "dim": 14,
+          "total_variance": 0.7102555102367343
+        },
+        "dwell": {
+          "slow_dwell_count": 0,
+          "slow_runs": [],
+          "fast_crossing_count": 28,
+          "mean_delta": 0.38170239393045696,
+          "max_delta": 0.6046720910501631,
+          "min_delta": 0.05644918926310156
+        },
+        "alignment": {
+          "n_emits": 0,
+          "alignment_cos_mean": 0.0
+        },
+        "honest_coherent_stub_NA": true
+      }
+    }
+  },
+  "verdict_4corner": {
+    "alpha_manifold_adds_differential": false,
+    "beta_manifold_but_gate_collapses": true,
+    "gamma_subaxis_mixed": true,
+    "delta_cell1_mirror_maintained": false
+  },
+  "honest_caveats": [
+    "Stub \u03c8-state (LCG) NOT real model.forward",
+    "C. elegans biology \u2260 anima 14-dim \u03c8-state \u2014 analogy only",
+    "PCA over 30 turns is small-N; eigenvalue ordering bounded",
+    "Manifold-as-mechanism is measurement-derived, not cell-state",
+    "\u00a775-FIRE cell1 stub mirror = code-byte-equal NOT numeric",
+    "Necessary-not-sufficient (B-EMERGE-7) \u2014 emission gate \u2260 emergence",
+    "No body production, honest \u00a79 not applicable (B-S82-NOTE)"
+  ]
+}
