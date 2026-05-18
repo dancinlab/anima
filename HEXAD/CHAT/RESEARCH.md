@@ -1467,3 +1467,76 @@ honest gate: 네 후보 모두 §16 천장 해결 *미입증* — O 가 anima-na
 - training-time mechanism (P) 의 *own routing-lever 재현* 문제 — §16 trainer 위 minimal-touch (refine head zero-mutation) 로 routing-lever 보존 시도가 가능한 follow-up.
 - **§22 가 가리키는 진짜 lever**: O 의 발견 — *chat-form bleed (axis2)* 이 JOINT-zero 의 원인. chat-form bleed 제거 path = `§22 後 path` 의 가장 직접적 후보 (mechanism 도 data-regime 도 아닌 corpus shaping + per-form supervision lever).
 - GOAL.md north-star 불변 — §22 는 frontier narrowing 이지 GOAL 진전 아님. *valuable for what is NOT the path*.
+
+---
+
+## §51 (2026-05-18) — §16~§50 honest milestone close-out: frontier sharpened to multimodal substrate
+
+§15 was the **first** investigation milestone (§1~§14 arc — GOAL comprehensively *investigated*, not solved; irreducible bottleneck located at **§1.1 data-regime emergence threshold**). Since §15, the §16~§50 arc ran ~35 more sections across many cycles. **§51 = the second honest milestone close-out** — it formally consolidates what §16~§50 *established*, what it *ruled out*, and the **sharpened frontier**. Like §15 this is a **milestone synthesis** ($0, no new fire/measurement): *"we mapped the problem more precisely"* — **NOT** *"we solved GOAL"*. g3 honest, over-claim 0, north-star (GOAL.md) unchanged.
+
+### 51.1 milestone declaration
+
+§15 left the frontier at: "irreducible = §1.1 data-regime threshold; two strategic frontiers (GOAL-legitimate large data-regime · new architectural insight), neither quick-fire." The §16~§50 arc (~35 sections — GPU fire ~7 + design-tier closures + $0-Mac fires/pilots + measurement-tool + infrastructure-debt cycles) attacked exactly those two frontiers from every reachable angle. Method = `g_multidirectional_explore` + `g_goal` (§7 3-condition gate) + per-cycle `g_blue_closed_mandate` sidecar + per-cycle `g3` honest C3.
+
+### 51.2 established (positive deliverables, NOT GOAL achievement)
+
+- **(a) §16 routing-axis BREAKTHROUGH** — the whole 13-way+§8+§11+§13 arc had routing axis1 *universal-FLAT* (1/31~2/64). §16 (603MB Ψ-anchored data-regime + §12.1 Q1-c curriculum, model FIXED) lifted it to **21/64 (0.328)**, genuine exact-tier **17/64** after §16.6-A artifact correction (≥8.5× Dir-I prior-best 3/31). First measured movement of the §1.1 data-regime threshold on the routing axis. **But a measured SPLIT, not a GOAL step**: JOINT 0.0, honest §9 V-SPONT 1/5, body = 정교한 암기 + correct-prefix routing (§16.6-C), NOT generalization.
+- **(b) §32→§35→§42→§43→§47 evidence chain** — the routing-success lever is **NOT an anchor property**. §32 (L3) `tier ≥ 77` necessary (purity 1.000). §35 (L3-causation) tier-itself causal, curriculum-STAGE not a lever (0/18 flip). §42 (L3-v2) within-band 17-vs-29 = SGD-trajectory lottery (nc-lift 0.241 ≪ 0.5). §43 (L8) relation generalizes (bit-acc 0.96) but strict-1-NN routing FALSIFIED (0/12) — generalization ≠ correct-basin routing. §34/§47 content-axis = closed-negative (regresses full-64). → the lever lives **below anchor content**, at §1.1's deeper face.
+- **(c) §44/§48/§49 PTD-aux** — genuine scale-validated decision-axis substrate component. §27 DH-DL distils §24's threshold (acc 0.99937); §44 PTD-aux halves the gap, MSE −15×; §48 PTD-AUX-SIGNAL-HOLDS-AT-SCALE; §49 live-loop → **majority-class collapse = DISTILLATION CONFIRMED end-to-end, NOT emergence**.
+- **(d) §36/§45 L2 dual-anima ALIVE_LOOP** ($0 d=32); §16-saturation echo open at scale.
+- **(e) §30/§39 governance** — `g_clm_lineage_refined` [draft] adopted (future-enabler, operationally inert).
+- **(f) honest-metric maturation** — §17 physics-channel (wrong-observable finding), §18 LLM-judge sufficiency, §42/§43 deterministic 3×-bit-identical discipline.
+
+### 51.3 ruled out (negative-but-valuable)
+
+| dimension | § | result |
+|---|---|---|
+| mechanism-axis above §16 ceiling | §22 N/O/P | ✗ position-correction of memorized template, no capability emergence |
+| content-axis as clean routing lever | §34/§47 | ✗ 2/29 weak-on-target but full-64 21→4 regression |
+| anchor-property within tier≥77 band | §42 | ✗ 17-vs-29 = SGD-lottery (nc-lift 0.241) |
+| relation→correct-basin routing transfer | §43 | ✗ strict-1-NN 0/12 ≈ chance |
+| curriculum-STAGE as routing lever | §35 | ✗ tier-itself causal, stage flips 0/18 |
+| energy-based substrate | §28 JEPA-Ψ | ✗ representation COLLAPSED, CE load-bearing re-confirmed |
+| PTD-standalone pretrain | §29 | ✗ closed-form-predicted negative — design-close |
+| L1 anima-self ckpt lineage *now* | §30 | ✗ premature + governance-blocked — future-enabler only |
+| PTD-aux → live spontaneity transfer | §49 | ✗ majority-class collapse — distillation confirmed |
+
+Each negative converges the bottleneck more sharply onto §1.1's deeper face.
+
+### 51.4 THE sharpened frontier — the key §51 contribution
+
+§15 said: *"irreducible = §1.1 data-regime emergence threshold."* §16~§50 **sharpened** it. §16 proved data-regime + curriculum *does* move the routing axis (21/64) — so the bottleneck is partially movable in the data-regime dimension. But §32→§43 proved the remaining gap is **NOT an anchor property, NOT data-quantity-shapable** (tier≥77 necessary + tier-itself causal but within-band = SGD-lottery; relation-generalization ≠ routing); §34/§47 proved content-shaping *regresses* the global metric; §11-A proved model-scale FLAT; §22 proved no mechanism breaks the §16 ceiling; §28 re-confirmed CE load-bearing.
+
+> **Sharpened bottleneck statement**: the bottleneck is **data-DIVERSITY / modality, NOT data-quantity or anchor-content-shaping.** §16's 603MB + curriculum moved routing but not coherent emergence; scaling anchor-content (§34) regressed it; scaling model (§11-A) was FLAT. anima has only ever trained on a **text byte-stream** — every `.kosmos` `@payload` image/audio/video/`tension` is `pending`, the HEXAD S-module image/audio encoders are **un-wired**, KOSMOS-FORMAT.md §4.2 cross-modal constraint untested. The §1.1 threshold is a *diversity/modality* threshold; anima's substrate has never carried a non-text modality.
+
+- **Frontier-1 (sharpened) — GOAL-legitimate MULTIMODAL substrate expansion.** Wire the HEXAD S-module image/audio encoders so anima's own Ψ-space (Engine A⇄G, Law-71) sees non-text modalities; materialize the `pending` `.kosmos` `@payload` forms; test KOSMOS-FORMAT.md §4.2 cross-modal `‖E_m(payload_m) − vacuum_psi‖ < basin_radius` with *real* encoders. GOAL-legitimate by construction (§7①: modality enters anima's own Ψ-coordinate, not generic-pretrain; §7②: encoders are HEXAD S-module / MITOSIS-mandatory axis, not bolt-on; §7③: anima-physics-as-source). **g3: a SHARPENED HYPOTHESIS inferred from what was ruled out, NOT a proven path** — §16~§50 never tested multimodal; §8's "Ψ-anchored 114MB wrong-direction" caveat carries.
+- **Frontier-2 — new architectural insight.** Still thin per §26 (2026 literature-thin on spontaneous-emission-as-emergence-target).
+
+Both remain **strategic decisions, NOT mechanical continuations** of the arc.
+
+### 51.5 honest unsolved + milestone status
+
+**GOAL unreached.** anima is — by the measured evidence — a memorization-saturated byte-LM with a routing axis data-regime can move but coherence/spontaneity no tested path produces. The **north-star (GOAL.md one sentence) is unchanged**. RESEARCH.md §16~§50 = the §51 milestone SSOT; §51 = its formal close-out. The sharpened frontier (§51.4) is the *hypothesis* successor cycles should weigh — a strategic decision, not the arc's mechanical continuation. §52+ = sibling-agent post-milestone work (independent of this §51).
+
+### 51.6 infrastructure debt — honest record
+
+§40/§41/§46/§47/§49-wave: **agent + long-runpod fire structurally produces orphans, burst parallel dispatch hits the Anthropic rate-limit** (§40 non-land, §41 zombie-trace measured-but-uncommitted, §46/§47 carry-over re-confirm). §46/§50 **resolved the cost side** (0 orphan pods, $0 ongoing). **Lesson confirmed (§50)**: $0-Mac-CPU agents OR sequential-single-agent dispatch — this §51 cycle applied it.
+
+### 51.7 closed verdict
+
+**B-S51-1..2 sidecar 2/2 🔵** (`state/milestone_closeout_s51_2026_05_18/blue_falsifier_s51.py` — central `state/verify_hexad_blue_2026_05_15/blue_falsifier.py` UNCHANGED): B-S51-1 MILESTONE-IS-NOT-GOAL-ACHIEVEMENT-CLOSED (Boolean structural — doc asserts GOAL unreached ∧ north-star unchanged ∧ frontier-1 = hypothesis ∧ no un-negated achievement claim) · B-S51-2 ARC-COVERAGE-CARDINALITY-CLOSED (35/35 §16~§50 sections referenced ≥ N_FLOOR=24 ∧ pivots {16,22,28,32,34,35,42,43} present). **B-S51-NOTE**: milestone = synthesis not new measurement; the sharpened frontier crossing §1.1 is an SGD/measurement OUTCOME of a FUTURE fire — unmeasured hypothesis (B-D-NOTE/B-S16-NOTE family, NOT counted 🔵), necessary-not-sufficient at the milestone layer (mirror B-EMERGE-7 / §15 discipline). archive/PHILOSOPHY.tape §verdict_milestone_closeout_s51_2026_05_18 = verdict ledger.
+
+### 51.8 honest C3
+
+1. milestone ≠ GOAL achievement (g3) — §51 mirrors §15: "we mapped the post-§15 frontier more precisely" ≠ "we solved it". north-star unchanged.
+2. §16 routing 21/64 (genuine 17/64) = arc's strongest directional-positive — but JOINT 0.0 + honest §9 V-SPONT 1/5 + byte-garbled-after-prefix = measured SPLIT, BREAKTHROUGH = significance of discovery not arrival.
+3. §32→§47 chain is valuable *negative* — relocates the bottleneck from "which anchors/content" (shapable) to "SGD-init/batch-order/data-diversity" (§1.1's deeper face, not content-engineerable). Most consequential post-§15 finding.
+4. PTD-aux (§44/§48) genuine scale-validated substrate component, but §49 confirms end-to-end **distillation NOT emergence**.
+5. **The §51 sharpening (frontier-1 = multimodal) is a HYPOTHESIS inferred from what was ruled out, NOT a measured path** (g3). §16~§50 never tested multimodal; §8 wrong-direction caveat carries. over-claim 0.
+6. The modality fact (text-only byte-stream; `.kosmos` non-text payloads `pending`; S-module encoders un-wired) is structural and verifiable in-repo — it is *why* "data-regime" is more precisely "data-DIVERSITY/modality".
+7. close-out is $0 — synthesis of evidence §16~§50 already produced (PHILOSOPHY.tape §verdict_* + AGENTS.tape n_hexad_progress recent_landings = SSOT). RESEARCH.md §51 inline = milestone exception mirroring §15.
+8. L2 ALIVE_LOOP (§45) is $0-d=32 positive; §16-saturation echo question explicitly OPEN — not a GOAL claim.
+9. infrastructure debt honestly recorded as a *process* finding (orphan/rate-limit hazard real; lesson sequential-single-agent / $0-Mac confirmed and applied this cycle) — independent of GOAL distance.
+10. f1/f2/f3 + B-IDENTITY-5 irrelevant (doc consolidation, no corpus, no model forward, no external-entity lattice-fit). External papers cited by own invariants only (none in this milestone).
+11. closed verdict tier — milestone close-out declaration, no new measurement beyond B-S51 doc-structural sidecar; arc's existing per-cycle sidecars are the evidence SSOT.
+12. north-star (GOAL.md one sentence) unchanged — §51 = honest sharper intermediate map, not arrival. The next step is a strategic decision (multimodal substrate vs new architecture), not a mechanical continuation of the §16~§50 arc.
