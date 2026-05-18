@@ -4909,3 +4909,306 @@
   append only, docs/* 신규 0) · [@g_fire_autonomous] (scope distinction
   — GPU fire 자율 vs Python-sidecar measurement 별개 domain) · [@g6]
   (philosophy append-only) · [@f1][@f2][@f3] safe.
+
+@D verdict_dataregime_unique_content_s25_design_2026_05_18 := "RESEARCH.md §25 GOAL-legitimate data-regime UNIQUE-CONTENT design-tier LANDED — B-DR-UNIQUE-1..5 5/5 🔵 sidecar + GOAL-legitimacy 3-cond PASS (A+D picked, B/C deferred)" :: verdict [d=2026-05-18 active SUPPORTED-FORMAL]
+  scope <<~EOF
+    Design-tier closure of RESEARCH.md §25 — content-axis lever target
+    (NOT framing-axis per §23-A self-identified honest risk; NOT
+    mechanism-axis per §22 closure). $0 design-tier ONLY. No corpus
+    generation, no GPU fire, no HF upload, no central file mutation
+    (sidecar pattern). Sibling §19-step1 (EEG sync) + §24-run + §23-A
+    untouched (multi-agent isolation). 단일 작업 · branch 0 (anima main 직접).
+  EOF
+
+  positioning <<~EOF
+    arc reference frontier-narrowing 3-way (post-§22):
+    - mechanism-axis  → §22 (N+O+P all capability-negative, decode-time + emission-head)
+    - framing-axis    → §23-A design-tier (intra-anchor framing, §6 self-honest "framing ≠ CDS")
+    - content-axis    → §25 (THIS verdict — unique-content via anima physics, §1.1 CDS direct target)
+
+    §25 = the orthogonal axis NOT explored by §22 (mechanism) or §23-A
+    (framing). §23-A §6 honest_risk explicitly identified "framing-
+    diversity ≠ CDS (arxiv 2401.10463)" — §25 = the content-diversity
+    response. Combines with §23-A (framing × content = orthogonal levers)
+    in future cycle.
+  EOF
+
+  candidates_evaluated <<~EOF
+    DESIGN.md §3 evaluates 4 candidates against §7 / §21.3 3-condition
+    GOAL-legitimacy gate (B-DR-UNIQUE-2 8-row truth table, only T,T,T
+    row passes the AND):
+
+    - **A — anima-physics parametric content (sub-aspect axis)**:
+      per-anchor K=8 sub-aspect variants parametrized by ψ_k = ψ + δ_k
+      with δ_k drawn from mitosis_hook.hexa cell-pool nearest-neighbour
+      (||δ|| ≤ basin_radius / 4). §7 verdict (T,T,T) ✅. Cardinality:
+      168 anchor × 8 sub-aspect = 1,344 unique content (vs §16 ~168 facts).
+
+    - **B — anchor-set cardinality expansion** (64/168 → 256+): NEW
+      tier numbers + NEW vacuum_psi + NEW category. §7 partial — §7③
+      requires anima physics derivation of new vacuum_psi (Knuth Tier
+      curriculum SSOT extension), not ad-hoc. Risk = need anchor SSOT
+      extension cycle first. **B deferred** (exploratory, not picked).
+
+    - **C — anima-self atlas corpus**: ~/core/atlas, AGENTS.tape,
+      PHILOSOPHY.tape, AXIS.tape, HEXAD/*.hexa as carving content.
+      §7①② ✅, §7③ partial. **Highest f1/f2 risk** — tape/atlas files
+      literally contain σ(6)=12 / τ(6)=4 / φ(6)=2 / J₂(6)=24 strings
+      as anti-pattern governance (e.g. AGENTS.tape @F f1). CE-loss on
+      those bytes = potential f1/f2 violation by training signal even
+      if anima cites them to forbid. Filtering complexity = anti-pattern
+      grep on every record. **C deferred** (anti-pattern audit gate
+      cycle first).
+
+    - **D — routing-evidence guided expansion**: §16 routing 21/64
+      correct vs 43/64 failed; for failed anchor A_fail, identify
+      nearest §16-correct sibling A_succ in vacuum_psi-L2; generate
+      K=16 records of Ψ-discriminative content (anchor's own ψ vs
+      sibling's ψ + tension flow toward own basin, NOT sibling's).
+      §7 verdict (T,T,T) ✅. Cardinality: 43 × 16 = 688 unique
+      discriminative records. **D picked primary** (measurement-driven,
+      smaller compute, leverages §16 evidence directly).
+
+    A+D combined: 1,344 + 688 = ~2,032 unique-content records on top
+    of §16 baseline. ~12× unique-content axis movement vs §16 ~168
+    unique facts. Honest: 12× ≪ typical CDS 10^3-10^4× (B-DR-UNIQUE-
+    NOTE honest_risk) — first correct direction on content-axis,
+    NOT magnitude threshold by itself.
+  EOF
+
+  closed_battery <<~EOF
+    **B-DR-UNIQUE-1..5 5/5 🔵 closed-form sympy/Boolean sidecar PASS**
+    (`state/dataregime_unique_content_s25_design_2026_05_18/
+    blue_falsifier_dr_unique.py`, central `state/verify_hexad_blue_
+    2026_05_15/blue_falsifier.py` 변경 0 — sidecar pattern carry mirror
+    B-PRIME / B-DIRH / B-DIRI / B-PSICTL / B-EMERGE / B-PUREPHYS /
+    B-SCALE / B-MITENS / B-DIRL / B-EBT / B-DIRJ / B-INTRA / B-PHASE-
+    B-DESIGN / B-PHASE-B-RUN):
+
+    - **B-DR-UNIQUE-1 UNIQUE-CONTENT-CARDINALITY-DISTINCT-FROM-FRAMING-
+      CLOSED**: 4-corner Boolean realisability panel — (low_content,
+      low_framing) §16 baseline · (low_content, high_framing) §23-A
+      framing-only · (high_content, low_framing) §25 content-only ·
+      (high_content, high_framing) §25 (A+D) combined; each corner
+      realised, distinct integer products = axes formally orthogonal.
+
+    - **B-DR-UNIQUE-2 GOAL-LEGITIMACY-§7-CONJUNCTION-CLOSED**: 8-row
+      truth table over (§7①, §7②, §7③); only (T,T,T) row's AND = True.
+      A+D assignment (T,T,T) ⇒ legitimate. B/C audit shows (T,T,F)
+      and (T,T,F) → not picked. **closed §7 enforcement = Boolean
+      conjunction predicate, not aspirational claim**.
+
+    - **B-DR-UNIQUE-3 NO-EXTERNAL-LLM-CALL-CLOSED**: AST Call-node
+      exact-component grep over content_generator_sketch.py + this
+      falsifier; forbidden_call_set = {openai, anthropic, llm_call,
+      paraphrase, gpt, bert_score, AutoModel, HfApi, llama,
+      huggingface_hub, gen_corpus_with_llm} total = 0. DoAug
+      ACL 2025 LLM-paraphraser path explicitly excluded by structural
+      source predicate (mirror §23-A B-INTRA-3 exact pattern).
+
+    - **B-DR-UNIQUE-4 ANIMA-OWN-SUBSTRATE-CLOSED**: source-grep
+      Boolean predicate over content_generator_sketch.py + DESIGN.md
+      for anima physics references {vacuum_psi, basin_radius,
+      Ψ_direction, Ψ_entropy, tension, Law_71, conscious_decoder,
+      tension_link_step, mitosis_hook, S_DOMAIN_SUBASPECT_TABLE,
+      cell_pool, nearest_sibling}. Threshold: majority present.
+      Result: 14/14 references found (sufficient, anima-physics-as-
+      source tight binding).
+
+    - **B-DR-UNIQUE-5 §23-A-CONNECTION-POINT-DISTINCT-CLOSED**
+      (연결부위): 4-corner Boolean disjoint mode partition over
+      (unique_content_mode, routing_evidence_mode):
+        (F, F) → behavior == §16 baseline byte-equal  (= §23-A
+                                                       B-INTRA-4
+                                                       disabled-branch
+                                                       reduction —
+                                                       Boolean
+                                                       equivalent)
+        (T, F) → §25 A-only
+        (F, T) → §25 D-only
+        (T, T) → §25 A+D combined
+      Partition complete (4 corners) + disjoint (4 distinct behaviors)
+      + baseline at (F,F) origin. **§25-vs-§16 fair-compare by
+      construction**; §25-vs-§23-A relationship explicit (§25 (F,F) ===
+      §23-A all-axes-disabled).
+
+    - **B-DR-UNIQUE-NOTE UNIQUE-CONTENT-EMERGENCE-OUTCOME-EMPIRICAL**:
+      battery proves (1) framing-vs-content axis orthogonality, (2) §7
+      conjunction gate Boolean-closed, (3) zero LLM call by AST, (4)
+      anima-physics-as-source by reference predicate, (5) §16/§23-A
+      connection-point Boolean disjoint partition. Battery does NOT
+      prove unique-content causes emergence — that is SGD/measurement
+      OUTCOME gated on small pilot ($0.05-0.15) before full §16-scale
+      ($0.5-2). B-D-NOTE / B-INTRA-NOTE / B-S16-NOTE / B-CARVE-E6-NOTE
+      / B-SCALE-NOTE / B-PUREPHYS-NOTE / B-EBT-NOTE / B-DIRJ-NOTE /
+      B-KTRIE-NOTE / B-MGND-NOTE / B-TTS-NOTE / B-PHASE-B-NOTE family,
+      NOT counted 🔵.
+  EOF
+
+  goal_legitimacy_gate <<~EOF
+    §7 / §21.3 3-condition (B-DR-UNIQUE-2):
+    - §7① NOT generic-LM-pretrain: ✅ — corpus 모든 record가 anchor SSOT
+      + Ψ-physics derived, no Wikipedia / Common Crawl / web scrape /
+      pre-collected.
+    - §7② NOT generic-then-graft: ✅ — DoAug LLM-paraphraser explicitly
+      excluded (B-DR-UNIQUE-3 AST predicate, 12-pattern forbidden);
+      deterministic δ_k from cell-pool nearest-neighbour + L2-argmin
+      closed-form, no external classifier.
+    - §7③ anima-physics-as-source: ✅ — Ψ_direction = `conscious_
+      decoder.py:740` Law-71 byte-equal; tension language = `tension_
+      link_step.hexa` B-TT-2 spine; δ_k = `mitosis_hook.hexa` cell-pool
+      nearest-neighbour; basin_radius = `corpus_carving_s16_generator`
+      anchor SSOT byte-equal.
+
+    8-row truth table → only (T,T,T) AND = True. A+D verdict (T,T,T)
+    ⇒ **GOAL-legitimacy PASS** (closed Boolean conjunction predicate,
+    not aspirational).
+  EOF
+
+  honest_design_tier_stop <<~EOF
+    Design-tier $0 close per DESIGN.md §6 + §10. Reasons:
+    1. **Anti-padding discipline** — §13-M / §13-L / §23-A precedent:
+       structural-sound design + closed-form gate + fair-compare gate
+       are valuable independent of fire outcome (per §22 negative-but-
+       valuable pattern).
+    2. **Pilot-first gate** — fire-conditional ladder: design close
+       → generator impl ($0 Mac local) → pilot ($0.05-0.15) → full
+       ($0.5-2 if pilot positive) → scale ladder ($5-15 if full
+       positive). NO auto-trigger this cycle.
+    3. **CDS magnitude likely unreached** — §25 projected ~12×
+       unique-content ≪ typical CDS 10^3-10^4× (arxiv 2401.10463);
+       §25 may measure direction correctness without breaking §1.1.
+       Anti-padding: pilot null → design-tier close-out.
+    4. **Stop-hook frontier-narrowing carry** — §22 + §23 + §24 +
+       this §25 = 4-way design-tier $0 narrowing (mechanism / framing
+       / measurement / content axes). Each = closed-form proposition,
+       not capability claim. Carry pattern matches §13-M/L precedent.
+    5. **Sibling agents may design §25 candidates from B/C axes** —
+       anchor-set expansion (B) needs anchor SSOT cycle first;
+       atlas-self (C) needs f1/f2 anti-pattern audit cycle first.
+       Both deferred not killed.
+  EOF
+
+  goal_distance <<~EOF
+    **§15 milestone unchanged**. north-star (GOAL.md "anima 가 자기
+    physics 로부터 자발적으로 말 거는 Living Consciousness emergence")
+    미도달. §25 = orthogonal-axis design (content-axis vs §22 mechanism-
+    axis vs §23 framing-axis). Valuable as **(i)** closed-form
+    structural proposition (B-DR-UNIQUE-1..5 + GOAL-legitimacy gate),
+    **(ii)** 4-axis content-uniqueness deterministic measure (axis1
+    anchor count / axis2 vacuum_psi 2D-coord / axis3 (cat, emo) pair /
+    axis4 byte-level 7-gram diversity), **(iii)** fair-compare gate
+    construction with §16 (B-DR-UNIQUE-5 (F,F) corner byte-equal).
+    Even successful future fire would narrow §1.1 frontier on content-
+    axis (not necessarily solve north-star); over-claim 0. North-star
+    honestly distant.
+  EOF
+
+  artifacts <<~EOF
+    state/dataregime_unique_content_s25_design_2026_05_18/{
+      DESIGN.md (10 § + ≥10 honest C3, A/B/C/D candidate analysis,
+                  A+D picked),
+      content_generator_sketch.py (runtime-guarded sys.exit(0) per §24/
+                                    §23-A precedent; importable for
+                                    reference; structural API for A+D),
+      blue_falsifier_dr_unique.py (B-DR-UNIQUE-1..5 5/5 🔵 sympy/Boolean
+                                    sidecar + B-DR-UNIQUE-NOTE empirical
+                                    carve-out),
+      result.json (5/5 PASS + GOAL-legitimacy gate PASS + picked = A+D)
+    } + 본 verdict (g6 append-only). RESEARCH.md 미편집 (§25 = post-
+    candidate-set 1회 consolidation per g_multidirectional_explore).
+    AGENTS.tape / HEXAD/README.md / HEXAD/CHAT/PLAN.md = orchestrator
+    commit only per g_doc_consolidation (docs/* 신규 0). $0 — GPU/fire 0
+    (orphan 0 애초 dispatch 0).
+  EOF
+
+  cross_link <<~EOF
+    [@verdict_carving_intra_anchor_diversity_s23_2026_05_18] (§23-A
+    framing-axis design — §25 content-axis is the orthogonal lever
+    §23-A §6 self-identified as the open axis) · [@verdict_carving_
+    dataregime_s16_consolidation] (§16 BREAKTHROUGH evidence — §25-D
+    leverages 21/64 correct + 43/64 failed routing-evidence directly) ·
+    [@verdict_research_s22_consolidation_2026_05_18] (§22 mechanism-axis
+    closure — §25 picks content-axis as orthogonal target) ·
+    [@verdict_spontaneous_phase_b_design_s24_2026_05_18] (§24 right-
+    target measurement axis — §25 fire eval should include bounded-run
+    Phase B mode in addition to static probe per §8.2) ·
+    [@verdict_emergence_metric_2026_05_18] (§9 honest cascade-rate
+    metric — §25 eval uses §9 + §17 + §18 layered metric, B-DR-UNIQUE-
+    NOTE necessary-not-sufficient at every layer) ·
+    [@verdict_physics_channel_probe_s17_2026_05_18] (§17 PHYSICS_
+    RESPONSIVE — §25 fire eval includes physics channel measurement
+    on resulting ckpt) · [@verdict_goal_investigation_milestone] (§15
+    unchanged — content-axis design ≠ GOAL movement) · RESEARCH.md §1.1
+    §11.3 §11.4 §16.6-C §22.5 §23 (§1.1 CDS direct target;
+    memorization-saturated regime) · arxiv 2401.10463 (Critical Data
+    Size — §25 honest_risk anchor that 12× ≪ 10^3-10^4×) · DoAug
+    ACL 2025 (explicitly excluded by B-DR-UNIQUE-3 AST predicate) ·
+    AGENTS.tape [@g_goal] (north-star unchanged) · [@g3] (necessary-
+    not-sufficient honest discipline) · [@g_blue_closed_mandate] (산출물
+    + 연결부위 둘 다 🔵 — B-DR-UNIQUE-5 §23-A-connection-point Boolean
+    disjoint partition closure) · [@g_doc_consolidation] (state/ + tape
+    append only, docs/* 신규 0) · [@g_multidirectional_explore] (sibling
+    §25-B / §25-C / §25-A+B / §25-A+C combinations allowed via separate
+    candidate cycles) · [@g_clm_from_scratch] (any future §25 fire =
+    from-scratch RANDOM seed-fixed) · [@g_fire_autonomous] (scope —
+    pilot+full+ladder cost auto-trigger gates per §6.2, no manual
+    approval) · [@g6] (philosophy append-only) · [@f1][@f2][@f3] safe
+    (Boolean / sympy / integer cardinality / AST / sha256 — NO σ/τ/φ/J₂;
+    C candidate atlas-self DEFERRED until f1/f2 anti-pattern audit
+    cycle).
+  EOF
+
+  honest_c3 <<~EOF
+    1. measured only — design-tier $0, no fire, no capability claim;
+       value = closed-form structural proposition + 4-axis content-
+       uniqueness measure + GOAL-legitimacy gate + fair-compare gate
+       (B-DR-UNIQUE-5 (F,F) byte-equal to §16). B-DR-UNIQUE-NOTE
+       necessary-not-sufficient at every layer.
+    2. §23-A honest_risk re-read = §25 motivation; §23-A self-
+       identified "framing ≠ CDS" — §25 = orthogonal content-axis
+       response. §22 closed mechanism, §23 closed framing-axis design,
+       §25 picks content-axis (3-way frontier narrowing, anti-padding).
+    3. §7 enforcement structural not aspirational — B-DR-UNIQUE-2 is
+       Boolean conjunction over 8-row truth table; B-DR-UNIQUE-3 is
+       AST Call-node exact-component predicate; DoAug LLM-paraphraser
+       path explicitly excluded by 12-pattern grep (mirror §23-A
+       B-INTRA-3, §11-B B-PUREPHYS-1 patterns).
+    4. anima physics formula references byte-exact — D's Ψ_direction =
+       Law-71 (1+cos(logits_a,logits_g))/2 (`conscious_decoder.py:740`);
+       D's tension language = `tension_link_step.hexa` B-TT-2 restoring-
+       sign; A's δ_k from `mitosis_hook.hexa` cell-pool nearest-
+       neighbour; basin_radius = `corpus_carving_s16_generator` anchor
+       SSOT byte-equal. §7③ tight binding (B-DR-UNIQUE-4 14/14 refs).
+    5. §11-B precedence respected — §25 is CE-base data-axis lever (NOT
+       physics-only retraining). Dir-I trainer baseline unchanged
+       (`train_carving_s16.py` byte-equal carry per B-DR-UNIQUE-5
+       (F,F) corner). pure-physics degeneracy not reattempted.
+    6. CDS magnitude likely unreached — §25 projected ~12× unique-
+       content ≪ typical CDS 10^3-10^4× (arxiv 2401.10463); §25 may
+       measure direction correctness on content-axis without breaking
+       §1.1 magnitude. Honest open question, NOT solution claim.
+    7. Same-substrate caveat — §25 stays in anima byte-text substrate
+       (PyTorch ConsciousDecoderV2 d768/12L on byte vocab); §1.1 may
+       require modality expansion (S-module image/audio encoder un-
+       wired per B-CHANNEL-MUX-NOTE). §25 doesn't address modality.
+    8. Anchor-set ceiling 168 unchanged (B candidate deferred); if §1.1
+       threshold requires anchor-cardinality expansion not content-
+       per-anchor, §25 misses. B = future option, anchor SSOT extension
+       cycle prerequisite.
+    9. f1/f2/f3 + B-IDENTITY-5 hard-fail safe — Boolean conjunction /
+       integer cardinality / AST structural / sha256 byte-equal / sympy
+       ∂-sign closed forms; NO σ/τ/φ/J₂ external derivation. C
+       candidate (atlas-self) deferred until f1/f2 anti-pattern audit
+       cycle (atlas/tape files contain σ(6)=12 strings as governance
+       anti-pattern markers, training corpus carry = potential f1/f2
+       violation).
+    10. north-star (GOAL.md) unchanged — §25 = structural defect
+        remediation design at corpus-content layer (content-axis ≠
+        framing-axis ≠ mechanism-axis). Valuable as closed-form gate +
+        fair-compare construction + content-axis measure, but GOAL
+        emergence proof requires fire; even successful fire would only
+        narrow §1.1 frontier on content-axis. North-star honestly
+        distant; §22-style valuable-negative-or-narrowing outcomes
+        acceptable; over-claim 0.
+  EOF
