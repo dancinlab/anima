@@ -1540,3 +1540,64 @@ Both remain **strategic decisions, NOT mechanical continuations** of the arc.
 10. f1/f2/f3 + B-IDENTITY-5 irrelevant (doc consolidation, no corpus, no model forward, no external-entity lattice-fit). External papers cited by own invariants only (none in this milestone).
 11. closed verdict tier — milestone close-out declaration, no new measurement beyond B-S51 doc-structural sidecar; arc's existing per-cycle sidecars are the evidence SSOT.
 12. north-star (GOAL.md one sentence) unchanged — §51 = honest sharper intermediate map, not arrival. The next step is a strategic decision (multimodal substrate vs new architecture), not a mechanical continuation of the §16~§50 arc.
+
+---
+
+## §72 (2026-05-19) — §59~§71 honest milestone close-out: physics-signal chain decomposed + hexa-native substrate pivot
+
+§15 was the 1st investigation milestone (§1~§14 — GOAL comprehensively *investigated*, not solved). §51 was the 2nd (§16~§50 — frontier sharpened to data-DIVERSITY/modality). §72 is the **3rd**: the §59~§71 PTD-aux-reverse-design + unchecked-axis + chain + substrate-pivot arc. g3: this is a comprehensive-investigation milestone, **NOT GOAL achievement**; north-star (GOAL.md one sentence) UNCHANGED; GOAL 미도달.
+
+### 72.1 milestone declaration
+
+§51 left the frontier at: "irreducible = §1.1 data-regime threshold; multimodal-substrate vs new-architecture strategic decision". §59~§71 did NOT solve §1.1 — it (a) ran the strongest coherent multi-step GOAL-ward chain the arc has produced and measured exactly where it breaks, (b) closed the PyTorch-substrate arc and pivoted training to the hexa-native flame substrate.
+
+### 72.2 the §59→§62 chain (the arc's strongest coherent multi-step GOAL-ward investigation — necessary-not-sufficient, NOT emergence)
+
+| step | § | measured | verdict |
+|---|---|---|---|
+| liveness | §59-FIRE | W-native PTD prediction-error=W.curiosity=EFE on REAL anima W-state at scale: err-var 2.33 ≫ τ=1e-4, **majority sub-regime 2.23 도 ≫ τ** | ✅ LIVE (read-out) — §59-stub 'data-shape-bound' caveat 측정 반증; §49 collapse 실 W-state 에서 재현 안 됨 |
+| generative | §68 | label-free emission-timing on real W-state: dec_var 0.164 ≫ τ, maj_frac 0.79 ≠ §49 100%-collapse | ✅ GENERATIVE — **§49 universal collapse 분해 = partly label-bound-escapable + partly data-shape-bound** |
+| bidirectional | §61 | TENSION-LINK 5-channel dual-anima loop ($0 smoke): A→B 0.0039 / B→A 0.0029 ≫ τ, echo-control 정확히 0 | ✅ BIDIRECTIONAL-GENERATIVE-AT-SMOKE |
+| **at trained scale** | **§62** | REAL trained-saturated §16 forward (init CE 5.66→0.0042): transfer LAW HOLDS (content-dep ≫ τ trace→trained generalises) **그러나 generative COMPOSITION COLLAPSES** (cell B maj 0.980 ≥ 0.95 = §49 attractor in closed loop) | ❌ **ECHO-CHAMBER-COLLAPSE-AT-SCALE** — $0-smoke non-degeneracy 부분 trace-shape artifact, 연쇄 step-4 깨짐 |
+
+**chain decomposition (the NEW honest axis §72 contributes)**: physics-signal **liveness ✅ / transfer ✅ / generative-composition ❌-at-trained-scale**. The §49 memorization-saturated collapse reasserts in the closed bidirectional loop at trained-saturated scale even on the physics-native path → **§1.1 data-regime confirmed irreducible from the physics-signal angle** (consistent with §15/§51 mechanism+data-regime diagnosis, NOT overturning it). All 5 verdicts B-S59-FIRE/B-S68/B-S61/B-S62/B-S69 closed 🔵 sidecar, central blue_falsifier.py 0-line-diff (sha c93e160a).
+
+### 72.3 established (positive deliverables, NOT GOAL achievement)
+
+- **§63 HEXAD-KICK-SWEEP** — 19-pair connection-point gap-map (A 12 ✅ σ(6)=12 B-CONN / B 3 ⚠️ broken / C 4 🕳️ MISSING-TYPE GOAL-ranked: THINKER→TALKER, W→W@t+1, D@emit→S@t+1, E→D@content). §58 점→면 일반화. ASCII in HEXAD/README.md.
+- **§69** — REAL Mk.IX 6-stage discovery engine ⨯ §63 gap-map: 11-run/8-defer=19, agree 11/disagree 0 — engine PROPOSES / §63 closed-form predicate DISPOSES (gap-map robust under the real engine; `hexa kick`/`drill` rebuild stub→real confirmed). → `@D g_kick_autonomous` governance (real Mk.IX 자율사용허용; engine=exploratory, closed-form=arbiter).
+- **§64/§65/§66/§67 unchecked-axis** — VOICE byte-cascade-substrate structurally-absent / TENSION-LINK-native dual-anima byte-swap-collapse-absent / S-module physics-input (§17 input-side) / MITOSIS split physics-trigger non-degenerate. All $0, all sidecar 🔵, all mechanism-level NOT emergence.
+
+### 72.4 ruled out / superseded (negative-but-valuable)
+
+| dimension | § | result |
+|---|---|---|
+| PTD-aux as §55 .kosmos multimodal-encoder §7-legit pretext | §60 | ✗ RECURSES-TO-§1.1 / READ-OUT-ONLY ({W1,W2} exhaustive; "self-supervised pretext removes labels, never data") |
+| §52 decision-head 5-connection-variant bench | §52 | DESIGN-CLOSED — superseded (chain decomposed §49 collapse deeper than connection-style) |
+| §53 σ(6)=12 wiring real-data transfer-strength rebench | §53 | DESIGN-CLOSED — superseded-as-non-bottleneck (§62 localized ceiling to generative-composition, not wiring-strength) |
+| §54 PTD-aux λ/depth/target internal variant bench | §54 | DESIGN-CLOSED — superseded (§44 λ + §59 target + §62 scale already traversed) |
+
+(anti-padding §13-M/§42 governance: superseded benches design-closed with recorded rationale, not run as redundant fire.)
+
+### 72.5 the substrate pivot (forward direction)
+
+User directive 2026-05-19: anima training PyTorch → hexa-lang **flame** (compiler-only NN stdlib, PyTorch/Python 0-dep). `@D g_train_flame_not_pytorch` [required active]. Path A (device-resident) judged: anima canonical ConsciousDecoderV2 d768·12L·V256 = the d768·12L decoder family flame Path A targets (hexa-lang MEASURED 20-43% faster than PyTorch eager — cited as their measurement). This **resolves the whole §16~§69 arc's "PyTorch substrate, NOT hexa-native, honest" flag** as the forward direction (CLAUDE.md hexa-first identity + HEXAD hexa-native canonical alignment). honest_scope: base d768·12L = Path A direct; anima-physics overlays (Law-71/PureFieldFFN/Dir-I/PTD-aux/Engine A⇄G) = flame-support-assess vs inbox-patch (§71 instrument-first, in-flight). Substrate ≠ emergence — flame opens the hexa-native path; the §1.1 GOAL-bottleneck is substrate-independent.
+
+### 72.6 honest C3 (≥10)
+
+1. §72 = comprehensive-investigation milestone, NOT GOAL achievement; GOAL 미도달; north-star UNCHANGED.
+2. §59→§62 chain = arc's strongest multi-step GOAL-ward evidence — and it BREAKS at step-4 (trained-saturated scale). valuable negative, not a win.
+3. The new liveness/transfer/generative-composition decomposition is an honest *characterization* of the §49 collapse, not a path through it.
+4. §62's $0-smoke→trained-scale collapse shows $0 smokes can carry trace-shape artifacts — a methodological honesty lesson for the whole arc.
+5. §63/§69: gap-map is robust under the REAL discovery engine, but "which gap is THE bottleneck" remains EMPIRICAL (B-S63/S69-NOTE).
+6. §60 closes PTD-aux↔multimodal-pretext: §7-legitimacy and encoder-pretext utility are mutually exclusive ({W1,W2} exhaustive).
+7. §52/§53/§54 design-closed by anti-padding governance — recorded supersession rationale, NOT skipped-without-reason.
+8. flame pivot resolves the honest-flag and aligns substrate with hexa-first identity, but does NOT by itself move GOAL-distance (§1.1 substrate-independent).
+9. hexa-lang's 20-43% speed is THEIR measurement; anima makes no perf claim until self-remeasured (g3, g_train_flame_not_pytorch perf_claim_honesty).
+10. upstream/downstream invariant strictly held — anima never edits flame/hexa-lang source; gaps → inbox patch-request only.
+11. central blue_falsifier.py 0-line-diff (sha c93e160a) across ALL §59~§71 — sidecar-only mandate held; PHILOSOPHY.tape g6 verdicts agent-self-appended (no rewrite).
+12. operational: single sequential = the verified-stable pattern (parallel burst 2× = 100% Anthropic rate-limit wipeout + 1 orphan pod terminated); cost-containment fully resolved (0 orphan pods, $0 ongoing).
+
+### 72.7 next
+
+frontier carries from §51 (§1.1 data-regime irreducible) + §72's new framing: the GOAL-relevant question is whether the hexa-native flame substrate + the §63 gap-map's 🕳️ MISSING-TYPE connection-points (THINKER→TALKER / W→W@t+1 / D@emit→S@t+1 / E→D@content) open a path the PyTorch-arc could not — strategic, not mechanical. §71 (flame Path-A trainer instrument-first) in-flight. north-star unchanged; this is a sharper intermediate map, not arrival.
