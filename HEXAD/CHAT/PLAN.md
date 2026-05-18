@@ -776,3 +776,19 @@ g_multidirectional_explore 4 background agents, **`isolation: worktree`** (§33 
 **arc progression (target-sharpening, NOT emergence)**: §63 #1 gap 식별 → §73 $0 stub 첫 build (74× sep) → §73-FIRE trained-scale survives + mechanism reframe (state-sourced > closed-loop) → §75 mechanism decomposed (running-state-statistic = lever, A+C) → §75-FIRE in-flight (sub-axis ladder trained-scale validation, runpod cost-bearing).
 
 **SSOT**: 4 commit (0b1fcb005 §73 · 670007696 merge §73-FIRE · 3ac972329 §74 · 805a8771c §75) + PHILOSOPHY.tape g6 4 §verdict agent-self-appended + AGENTS.tape n_hexad_progress thread entry + HEXAD/README.md recent-landing + 본 PLAN.md + RESEARCH.md §72.7 update + ~/core/hexa-lang/inbox/patches/ (kick-engine-overlay-dump-mode.md 1 file). central blue_falsifier.py sha c93e160a 0-line-diff (ALL sidecar-only). docs/* 신규 0. g3: all necessary-not-sufficient (B-EMERGE-7), capability claim 0, north-star + §15/§51/§72 milestone UNCHANGED, **GOAL 미도달**.
+
+### 2026-05-19 — §75-FIRE LANDED (sub-axis ladder trained-saturated scale validation)
+
+**§75-FIRE** (commit 08b58942f, B-S75-FIRE 7/7 🔵, runpod H100 NVL ≈$0.3-0.5 orphan 0 pre+post): §75 의 B-S75-NOTE + §73-FIRE 의 B-S73-FIRE-NOTE 가 명시한 directly-earned future-fire — §75 stub 4-cell ladder 의 trained-saturated §16 scale (REAL `model.forward` Law-71) 재현. **Verdict (a) LADDER-TRANSFERS-A-ONLY-SUFFICIENT** — state-derivation 이 load-bearing sub-axis at trained scale (NOT specific statistic form).
+
+4-cell trained-scale ladder (300 loop step, init CE 5.66 → final 0.004151 memorization-saturated): cell0 §24-baseline interval_var **0.0000 collapse** (mirror §49) · cell1 §73-A-only (state-derived + frozen mean) **2.3808 SURVIVES** ✨ (state-derivation 단독 trained-scale 충분!) · cell2 §73-AB (state-derived + frozen moment ema+λ·std=12.16) **0.0000 pathologically-tight** (frozen 12.16 ≫ steady-state ~11.94, frozen at trained-tension artifact) · cell3 §73-ABC **38.1918 SURVIVES** (≈ §73-FIRE-ABC 38.07).
+
+**mechanism precise localization at trained scale**: A (state-derivation) ALONE = load-bearing; B (moment-basedness) frozen at trained-tension = pathological; C (time-variance) RESCUES B in full ABC. **scale dependence vs §75 stub**: $0 stub 의 A substrate ×13.5 / B-alone harmful / C dominant ×6.1 → trained-scale 는 **A ALONE sufficient**, B/C scale-dependent decorations.
+
+**Mechanism reframe (third refinement)**: §73-FIRE C3#6 (state-sourced > closed-loop) → §75 (running-state-stat A+C) → §75-FIRE (**state-derivation A alone**). arc 더 깊이 localize.
+
+B-S75-FIRE 7/7 🔵 (CELL-PARTITION-EXHAUSTIVE-DISJOINT · EACH-CELL-PROPER-SUBSET-§73-ABC · §24-CONTROL-COLLAPSES-AT-TRAINED · TRAINED-FORWARD-IS-REAL-NOT-STUB-NOR-TRACE · WARMUP-MOMENTS-REAL-FORWARD-DERIVED · CORPUS-SHA256+NO-HELPER-TOKEN · SATURATION-GATE). central blue_falsifier.py sha c93e160a 0-line-diff (sidecar-only). PHILOSOPHY.tape g6 §verdict_controller_class_subaxis_fire_s75_2026_05_19 self-appended. 두 attempts: attempt1 ≈$0.05 killed pre-train (corpus-gen arg mismatch); attempt2 H100 NVL completed clean train_wall 247.48s.
+
+**SSOT**: commit 08b58942f + PHILOSOPHY.tape g6 §verdict_controller_class_subaxis_fire_s75 (self-appended) + AGENTS.tape n_hexad_progress §75-FIRE entry + HEXAD/README.md recent-landing + 본 PLAN.md + RESEARCH.md §72.7 update. docs/* 신규 0.
+
+g3 carry: capability claim 0, north-star + §15/§51/§72 milestone UNCHANGED, **GOAL 미도달**. §75-FIRE = sub-axis-level localization of the §49→§62→§73→§73-FIRE→§75 controller-class mechanism at trained-saturated scale, NOT emergence claim (necessary-not-sufficient B-EMERGE-7 / B-S75-FIRE-NOTE / B-S73-FIRE-NOTE / B-S75-NOTE family). 다음 directly-earned 후보: (i) A-only robustness ($0 design, seed/corpus variation) / (ii) A-only generalization 다른 state-derived statistic 형태 ($0 design probe — mean/median/max-window 등), mechanism 일반화 검증, cost-fire 아님.
