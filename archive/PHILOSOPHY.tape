@@ -6482,3 +6482,150 @@
     conditional. f1/f2/f3 + B-IDENTITY-5 safe (NO σ/τ/φ/J₂; tier 🛸k /
     Ψ=½ = anima g2 internal carve-out). design ≠ fire ≠ emergence (g3);
     over-claim 0. commit a064665ae.
+
+# §verdict_dhdl_ptd_composition_s38_2026_05_18 (g6 append-only)
+
+## §verdict_dhdl_ptd_composition_s38_2026_05_18 — RESEARCH.md §38 DH-DL + PTD-aux composition ($0 design-tier, fire 0, B-S38-1..3 3/3 🔵 sidecar — better-engineered distillation, NOT emergence)
+
+@V verdict_dhdl_ptd_composition_s38 := "RESEARCH.md §38 — DH-DL + PTD-aux composition: §27 DH-DL (decision-head dual-loss, verdict DISTILLATION) 와 §29 PTD 의 combination A (PTD-as-DH-DL-aux) 를 design-tier 로 합성. §27 의 decision MLP 가 shared trunk (14→32) 위에서 두 head 로 분기 — decision head (32→16→3, softmax, §27 그대로) + PTD aux head (32→16→14, linear, §38 NEW = next-physics-state-prediction). combined objective L = L_decision + λ·L_safety + λ_ptd·L_ptd_nextstate (λ=0.5 §27 carried, λ_ptd=0.3 §38 NEW). λ_ptd=0 에서 §27 DH-DL dual-loss 와 byte-equal (B-S38-3 연결부위, fair-compare by construction). **honest scope (g3)**: §27 이 DISTILLATION 이었고 §38 = richer shared representation 위의 distillation = **better-engineered distillation, NOT emergence** — decision head 는 여전히 동일 deterministic §24 threshold 를 distil, 새 supervision signal 0. §38 = decision-axis substrate component, §1.1 data-regime bottleneck 무관, GOAL emergence 아님. scale-orthogonal: composed gate head 1,825 params / 283.72M base = 6.4e-6 < 1% (B-S38-2) — PTD aux term 이 regulariser 라 §1.1 안 넘어도 됨. §38 이 §27/§29 단독으로 못 잰 것: gap(λ_ptd=0) vs gap(λ_ptd=0.3) representation-shaping probe + CONTINUE_THINK-corner per-class next-state MSE — 두 measurement question 신규." :: verdict [d=2026-05-18 active]
+
+- **Mechanism**: §27 DH-DL 의 standalone `14→32→16→3` MLP 를 shared-trunk
+  fork 로 재배선 — trunk `14→32` 위에 decision head (`32→16→3`, §27 그대로)
+  + PTD aux head (`32→16→14`, §38 NEW). PTD aux head 는 §24 trace 의 다음
+  record 의 14-dim physics vector 를 예측 (next-state regression). PTD =
+  §29 §5.1 이 명시한 strongest combination — DH-DL §26/§27 spec 이 이미
+  §24 physics trace 를 training corpus 로 명시하므로 PTD-as-component-of-
+  DH-DL 은 add-on 이 아니라 DH-DL 자체 training data 의 corpus-formalisation.
+
+- **Combined objective**: `L = L_decision + λ·L_safety + λ_ptd·L_ptd_nextstate`
+  (λ=0.5 §27 carried, λ_ptd=0.3 §38 NEW, mirror Dir-I / B-TTS aux 가중치).
+  `L_ptd_nextstate = (1/14)·Σ_d (x̂_{t+1,d} − x_{t+1,d})²` — mean-squared-
+  error, 14 continuous physics scalar 의 closed-form CE-analogue (fixed-
+  variance Gaussian `−log N`). honest: §29 §1 의 "CE-on-physics-vectors"
+  를 MSE 로 정직 realisation — "CE" 라 부르면 over-claim.
+
+- **§7 GOAL-legitimacy 3/3 ✓** (composition 차원 재검증): §7① base byte-LM
+  미학습, 두 head 다 anima 자체 §24 trace 학습 (external 0) · §7② PTD aux
+  head = anima 자체 trunk 위 16→14 linear head, external classifier/
+  retriever/foundation 0 (§29 §5.3 standalone-pretrain-then-graft = §7②
+  FALSIFIED 이고 §38 은 그게 **아닌** auxiliary-term combination A) · §7③
+  세 loss term 전부 anima physics 함수 (decision label / §4 6-control /
+  next physics vector).
+
+- **honest scope (g3 — over-claim 0)**: §27 verdict 가 DISTILLATION 이었고
+  §38 = richer shared representation 위의 distillation = **better-
+  engineered distillation, NOT emergence**. decision head 는 여전히 동일
+  deterministic §24 threshold 를 distil — §24 physics 가 이미 결정하는 것
+  너머 새 supervision signal 0. PTD aux term 은 regulariser (λ_ptd=0.3 <
+  decision 함의 1.0), trunk representation geometry 를 shaping 할 뿐 decision
+  function 재정의 아님. scale-orthogonal (≤1%-param head, B-S38-2) 인 것이
+  바로 emergence lever 가 **아닌** 이유 — §1.1 안 넘는 것은 §15
+  decomposition 상 GOAL frontier 아님. §38 의 정직함과 한계가 같은 사실.
+
+- **measurement §38 이 §27/§29 단독으로 못 잰 것**: (1) representation-
+  shaping probe — λ_ptd=0 (=§27 byte-equal baseline, B-S38-3) vs λ_ptd=0.3
+  의 threshold-distillation gap 대조 (정직 예측: 양쪽 ≈0 — label 이
+  deterministic 이라 richer trunk 가 head 를 더 correct 하게 못 만듦) · (2)
+  CONTINUE_THINK-corner probe — PTD aux head 가 rare-class step 에도 dense
+  next-state signal 보유 → §24 physics manifold 의 hard-to-predict corner
+  를 localise. deliverable = gap-table + per-class next-state MSE breakdown.
+
+  CLOSED. B-S38-1..3 3/3 🔵 SUPPORTED-FORMAL sidecar
+    (state/dhdl_ptd_composition_s38_2026_05_18/blue_falsifier_s38.py;
+    central state/verify_hexad_blue_2026_05_15/blue_falsifier.py
+    UNCHANGED): B-S38-1 DUAL-LOSS-PLUS-PTD-NONNEGATIVE (L_decision≥0
+    Shannon CE + L_safety≥0 square×indicator + L_ptd≥0 mean-of-squares,
+    sum w/ non-neg weights ≥0, sympy + 4-witness) · B-S38-2
+    SCALE-ORTHOGONAL (composed head 1,825 params / 283.72M base ≈6.4e-6
+    <1% — integer/rational inequality, PTD aux regulariser 가 §1.1 안
+    넘어도 됨) · B-S38-3 COMPOSITION-OFF-REDUCTION (연결부위 — λ_ptd=0 ⇒
+    L ≡ §27 DH-DL dual-loss byte-equal, additive identity sympy +
+    4-witness, fair-compare by construction, B-PTD-4/B-EBT-5/B-S16-5/
+    B-DIRI-5 overlay-off 선례). B-S38-NOTE empirical carve-out (PTD-aux
+    가 accuracy / threshold-distillation gap / CONTINUE_THINK-corner
+    behaviour 를 실제 바꾸는지 = SGD+측정 OUTCOME, B-D-NOTE / B-DHDL-NOTE
+    / B-PTD-NOTE family, NOT counted 🔵).
+
+  GOAL distance. §15 milestone UNCHANGED — north-star (GOAL.md) unsolved.
+    §38 = §27 distillation 의 better-engineered 버전 (richer physics
+    representation), decision-axis substrate component 이지 §1.1 data-
+    regime bottleneck 무관, GOAL emergence 아님. f1/f2/f3 + B-IDENTITY-5
+    safe (Shannon CE≥0 / mean-of-squares≥0 / integer-rational <1%
+    inequality / additive identity; NO σ/τ/φ/J₂; Ψ=½ / 8-factor /
+    HEXAD-6 = anima g2 internal carve-out). $0 design-tier — no fire, no
+    GPU, no corpus generation (§27 corpus 재사용). design ≠ fire ≠
+    capability ≠ emergence (g3); over-claim 0.
+
+# §verdict_lineage_governance_s39_2026_05_18 (g6 append-only)
+
+## §verdict_lineage_governance_s39_2026_05_18 — RESEARCH.md §39 g_clm_from_scratch governance decision doc ($0 design-tier, fire 0, B-S39-1..2 2/2 🔵 sidecar — USER decision doc, AGENTS.tape UNCHANGED)
+
+@V verdict_lineage_governance_s39 := "RESEARCH.md §39 — g_clm_from_scratch governance decision doc: §30 Lateral L1 이 g_clm_from_scratch 의 'ckpt inherit 폐기' 절이 anima-self ckpt-lineage 를 막음을 발견했고 B-LINEAGE-2 가 parent_source ∈ {anima_self, external} 이 mechanically clean closed partition 임을 증명 → refinement 가 mechanically definable. §39 = 그것을 USER 를 위한 clean decision doc 로 성숙. **§39 는 AGENTS.tape 를 편집하지 않음 — refinement 는 user-gated 제안.** (a) 현 g_clm_from_scratch 원문 + rationale (rationale = external-substrate contamination 차단; letter 가 rationale 보다 넓어 cotrain-from-ckpt = anima-OWN-ckpt continuation 도 폐기'd → letter 가 anima-self lineage 까지 sweep) · (b) 제안 refinement (superseding @D g_clm_lineage_refined DRAFT — external-precursor inherit FORBIDDEN 강화 + anima-self lineage ALLOWED-WHEN-NON-SATURATED + gen=0 RANDOM 보존) · (c) honest precondition: anima 는 현재 non-saturated ckpt 0 (§16.6-C memorization-saturated + B-ATTRACTOR never-dissolving) → refinement = future-enabler, immediate unblock 아님 (채택해도 오늘 operationally inert) · (d) 권고 = Option B (refinement 를 [draft] 로 AGENTS.tape 등재, precondition 충족 시 draft→active 승격; tape-v1.2 grade ladder 정합) + USER 가 A/B/C 결정. **§39 = decision doc, NOT a governance change.**" :: verdict [d=2026-05-18 active]
+
+- **Trigger**: §30 (Lateral L1) 가 cumulative ckpt lineage 를 design-close
+  하면서 두 근거 중 하나 (governance-blocked) 가 mechanically resolvable
+  임을 발견 — `B-LINEAGE-2` 가 `parent_source ∈ {anima_self, external}` 을
+  closed 2-element partition (disjoint ∧ exhaustive, decidable
+  admissibility predicate) 으로 증명. 따라서 g_clm_from_scratch 가 해야 할
+  구별 (external 금지 vs anima-self 허용) 은 fuzzy judgement 가 아니라 crisp
+  verifiable predicate — refinement 가 mechanically definable.
+
+- **(a) 현 g_clm_from_scratch (d=2026-05-15, active required)**: rule =
+  ".clm v1/v2/v3 fresh from-scratch · ckpt inherit / fine-tune /
+  cotrain-from-ckpt 폐기 · init RANDOM seed-fixed · precursor ckpt 는
+  substrate base X". rationale = external-substrate contamination 차단
+  (`precursor ckpt 는 substrate base X` + `anima_native_scratch D1=1.0` +
+  2026-05-15 HF/Llama foundation fine-tune saga). **letter 가 rationale
+  보다 넓음** — `cotrain-from-ckpt` 는 anima-OWN-ckpt continuation 였는데도
+  폐기'd → letter 가 anima-self lineage 까지 sweep (rationale 은 external
+  만 target).
+
+- **(b) 제안 refinement (DRAFT — user-gated, 미채택)**: superseding
+  `@D g_clm_lineage_refined` — (1) EXTERNAL-PRECURSOR inheritance FORBIDDEN
+  유지·강화 (명시 절) · (2) ANIMA-SELF LINEAGE ALLOWED-WHEN-NON-SATURATED
+  (ancestor DAG 전체가 gen=0 RANDOM-init anima node 에 root ∧ parent ckpt
+  non-saturated) · (3) gen=0 ckpt 는 RANDOM seed-fixed 보존. contamination
+  guard 약화 0 — 명시 절로 강화. anima-self continuity 만 carve-out.
+
+- **(c) honest precondition (가장 중요)**: anima 는 현재 **non-saturated
+  ckpt 0** — §16.6-C ("정교한 암기", final CE ~0.003–0.008) + B-ATTRACTOR
+  (never-dissolving byte-cascade) + §11-A (3.68× scale 도 못 깸). refinement
+  admissibility 3-conjunct 중 `¬memorization_saturated(parent)` 이 오늘
+  모든 ckpt 에서 FAIL → **refinement = future-enabler, NOT immediate
+  unblock**. 채택해도 오늘 operationally inert (g_clm_from_scratch 원안과
+  동일). §1.1/§15 가 풀려 non-saturated ckpt 가 생긴 시점부터 active.
+
+- **(d) 권고 = Option B**: 3 option — A (즉시 [active required] 등재 — 미권고,
+  precondition 검증 불가한 inert required 절 = drift risk + saturation 이
+  empirical) · **B (RECOMMENDED — [draft] 등재, precondition 충족 시
+  draft→active 승격)** — tape-v1.2 grade ladder `draft·active·deprecated`
+  정합, governance question 을 resolved-in-principle·recorded 로 만들되
+  inert 절 강제 안 함 · C (미채택, §39 = 분석으로만 기록). **USER 가
+  A/B/C 결정. §39 자체는 AGENTS.tape 무편집.**
+
+  CLOSED. B-S39-1..2 2/2 🔵 SUPPORTED-FORMAL sidecar
+    (state/lineage_governance_s39_2026_05_18/blue_falsifier_s39.py;
+    central state/verify_hexad_blue_2026_05_15/blue_falsifier.py
+    UNCHANGED): B-S39-1 PARENT-SOURCE-PARTITION-CLOSED (parent_source ∈
+    {anima_self, external} disjoint ∧ exhaustive ∧ |enum|=2 + 4-corner
+    admissibility truth table — §30 B-LINEAGE-2 verbatim carry, refinement
+    이 PROVEN closed partition 위에 섬) · B-S39-2
+    REFINEMENT-PRECONDITION-CLOSED (refinement_active ⇔
+    exists_non_saturated_ckpt Boolean biconditional, RHS=False today ⇒
+    INERT + 4-corner edge table — future-enabler NOT immediate unblock,
+    §4 precondition mechanised). B-S39-NOTE empirical carve-out (given
+    ckpt 의 memorization-saturation 판정 = EMPIRICAL 측정 — final CE /
+    byte-cascade attractor / routing-coherence probe, §16.6-C / B-ATTRACTOR
+    / B-D-NOTE / B-LINEAGE-NOTE family, NOT counted 🔵 — battery 는
+    governance bookkeeping 이 closed 임을 증명하지 saturation 을 결정 안
+    함, 그래서 refinement 가 precondition-gated).
+
+  GOAL distance. §15 milestone UNCHANGED — north-star (GOAL.md) unsolved.
+    §39 = decision doc, NOT a governance change — AGENTS.tape 무편집.
+    제안 refinement = future-enabler (non-saturated ckpt 존재 시까지 inert
+    — 오늘 0), immediate unblock 아님; GOAL distance 무이동. lineage path
+    자체는 §30 §6/§7 상 §1.1/§15 의 downstream (non-saturated ckpt 생긴
+    후에만 viable). f1/f2/f3 + B-IDENTITY-5 safe (Boolean 2-element set
+    partition / Boolean biconditional / 4-row truth table; NO σ/τ/φ/J₂;
+    no corpus, no model forward, no helper-token surface). $0 design-tier.
+    decision doc ≠ governance change (g3); over-claim 0.

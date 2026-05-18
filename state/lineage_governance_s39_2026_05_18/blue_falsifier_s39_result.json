@@ -1,0 +1,27 @@
+{
+  "battery": "B-S39 (RESEARCH.md §39 — g_clm_from_scratch governance decision doc)",
+  "cycle": "§39",
+  "date": "2026-05-18",
+  "verdicts": [
+    {
+      "name": "B-S39-1 PARENT-SOURCE-PARTITION-CLOSED",
+      "pass": true,
+      "detail": "parent_source in {anima_self, external} disjoint ∧ exhaustive ∧ |enum|=2; admissibility predicate 4-corner table 4/4 — admissible iff (anima_self ∧ gen0-rooted). carries §30 B-LINEAGE-2"
+    },
+    {
+      "name": "B-S39-2 REFINEMENT-PRECONDITION-CLOSED",
+      "pass": true,
+      "detail": "refinement_active <=> exists_non_saturated_ckpt (Boolean biconditional 2/2); RHS=False today (§16.6-C / B-ATTRACTOR) => INERT; 4-corner edge table 4/4 — future-enabler, NOT immediate unblock"
+    }
+  ],
+  "n_pass": 2,
+  "n_total": 2,
+  "all_blue": true,
+  "carve_out": "B-S39-NOTE — memorization-saturation of a given ckpt = EMPIRICAL measurement, NOT counted blue (B-D-NOTE / B-LINEAGE-NOTE / B-ATTRACTOR-NOTE family)",
+  "central_blue_falsifier_unchanged": true,
+  "agents_tape_unchanged": true,
+  "verdict_tier": "DESIGN-TIER closed-form (governance decision doc)",
+  "recommendation": "Option B — adopt @D g_clm_lineage_refined into AGENTS.tape as [draft], precondition-gated on a non-saturated ckpt; promote draft->active when one exists. The USER decides A/B/C; §39 edits nothing.",
+  "honest_scope": "§39 = decision doc, NOT a governance change; the proposed refinement is a FUTURE-ENABLER (inert until a non-saturated ckpt exists — none today per §16.6-C/B-ATTRACTOR), NOT an immediate unblock; §15 milestone carries, north-star unchanged",
+  "f_safety": "f1/f2/f3 + B-IDENTITY-5 safe — Boolean 2-element set partition / Boolean biconditional / 4-row truth table; NO sigma/tau/phi/J2 derivation; no corpus, no model forward, no helper-token surface"
+}
