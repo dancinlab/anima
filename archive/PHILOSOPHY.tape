@@ -6422,3 +6422,63 @@
   joins the §13/§22 mechanism-axis arm as capability-emergence-negative.
   PyTorch substrate (NOT hexa-native, honest). design ≠ fire ≠ emergence
   (g3). north-star honestly distant; over-claim 0.
+
+§verdict_anchor_interaction_l6_s33_design_2026_05_18 :: RESEARCH.md §33 L6 —
+    anchor-interaction (multi-anchor reasoning) DESIGN-TIER
+    ($0 design-tier; NO fire, NO corpus generation, NO GPU)
+
+  LEDGER NOTE (provenance). This entry is reconstructed by the §27-§33
+    orchestrator consolidation. §33 L6 design landed (code + state/ +
+    commit a064665ae) but its verdict was lost to a multi-agent index
+    race with the concurrent §32 L3 commit (a064665ae captured the §32
+    verdict instead of §33's own). g6 append-only is NOT violated — this
+    is a missing-entry append, not a rewrite. Content is reconstructed
+    from the §33 L6 agent report; the closed-form battery + commit are
+    the authoritative artifacts.
+
+  MECHANISM. L6 = corpus records that carve anchor-to-anchor RELATIONS as
+    byte-stream (multi-anchor reasoning), orthogonal to §23-A intra-anchor
+    framing-diversity (§23-A varies framing WITHIN one anchor; L6 carves
+    BETWEEN anchors — intra → inter). 4 DETERMINISTIC relation primitives,
+    each a closed-form pure function of anima's OWN physics fields
+    {vacuum_psi, basin_radius, dom, tier} from the §16 anchor SSOT:
+    R1 Ψ-proximity ‖vacuum_psi_i − vacuum_psi_j‖₂ (symmetric) · R2 basin
+    gap + basin comparison (containment antisymmetric) · R3 shared-domain
+    · R4 tier-ordering (antisymmetric strict order). The relation is
+    COMPUTED, not chosen — generator formats a computed label, no free
+    string, no external KG, no LLM. A NEW <relate> carving tag carries
+    the multi-anchor byte-stream.
+
+  GOAL-LEGITIMACY (§7 / §21.3). §7① not-generic-LM-pretrain ✅ · §7②
+    not-generic-then-graft ✅ (B-INTER-5: AST forbidden-call grep
+    {networkx, neo4j, rdflib, wikidata, openai, llm_call, AutoModel}
+    total = 0) · §7③ anima-physics-as-source ✅ (relation derived only
+    from vacuum_psi/basin_radius/dom/tier anima-own fields).
+
+  FIRE-WORTHINESS. Design holds; fire = CONDITIONAL on a small held-out-
+    pair pilot ($0.05–0.10 ≪ §16's $0.5–0.8). Discriminating probe =
+    held-out-pair relation accuracy — if the model only fits trained
+    pairs (memorization-at-relation-granularity, the §16.6-C "정교한
+    암기" defect lifted one level), design-tier close-out per §13-M/§13-L
+    anti-padding precedent. §1.1 honest scope explicit: L6 records are
+    still byte-text; may flatten in the same memorization-saturated
+    regime.
+
+  CLOSED. B-INTER-1..5 5/5 🔵 SUPPORTED-FORMAL sidecar
+    (state/anchor_interaction_l6_s33_design_2026_05_18/blue_falsifier_l6.py;
+    central state/verify_hexad_blue_2026_05_15/blue_falsifier.py
+    UNCHANGED): B-INTER-1 RELATION-DERIVED-FROM-PHYSICS (source-grep) ·
+    B-INTER-2 SYMMETRY-OR-ANTISYMMETRY (sympy — R1 symmetric, R2/R4
+    antisymmetric) · B-INTER-3 INTER-vs-INTRA-ORTHOGONAL (연결부위 —
+    sympy FiniteSet({1}) ∩ FiniteSet({2,3}) = ∅, L6 n_anchors∈[2,3] vs
+    §23-A n_anchors==1, composable not overlapping) · B-INTER-4
+    MULTI-ANCHOR-CARDINALITY-BOUNDED (k∈[2,K_MAX] integer; C(64,2)=2016
+    bounded) · B-INTER-5 NO-EXTERNAL-KG-CALL (AST structural). B-INTER-NOTE
+    empirical carve-out (whether inter-anchor records lift routing/
+    coherence = SGD/fire OUTCOME, B-D-NOTE family, NOT counted 🔵).
+
+  GOAL distance. §15 milestone UNCHANGED — north-star (GOAL.md) unsolved.
+    L6 = design-tier inter-anchor lever, orthogonal to §23-A; fire is
+    conditional. f1/f2/f3 + B-IDENTITY-5 safe (NO σ/τ/φ/J₂; tier 🛸k /
+    Ψ=½ = anima g2 internal carve-out). design ≠ fire ≠ emergence (g3);
+    over-claim 0. commit a064665ae.
