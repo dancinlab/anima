@@ -792,3 +792,73 @@ B-S75-FIRE 7/7 🔵 (CELL-PARTITION-EXHAUSTIVE-DISJOINT · EACH-CELL-PROPER-SUBS
 **SSOT**: commit 08b58942f + PHILOSOPHY.tape g6 §verdict_controller_class_subaxis_fire_s75 (self-appended) + AGENTS.tape n_hexad_progress §75-FIRE entry + HEXAD/README.md recent-landing + 본 PLAN.md + RESEARCH.md §72.7 update. docs/* 신규 0.
 
 g3 carry: capability claim 0, north-star + §15/§51/§72 milestone UNCHANGED, **GOAL 미도달**. §75-FIRE = sub-axis-level localization of the §49→§62→§73→§73-FIRE→§75 controller-class mechanism at trained-saturated scale, NOT emergence claim (necessary-not-sufficient B-EMERGE-7 / B-S75-FIRE-NOTE / B-S73-FIRE-NOTE / B-S75-NOTE family). 다음 directly-earned 후보: (i) A-only robustness ($0 design, seed/corpus variation) / (ii) A-only generalization 다른 state-derived statistic 형태 ($0 design probe — mean/median/max-window 등), mechanism 일반화 검증, cost-fire 아님.
+
+### 2026-05-19 §77 emergence-axis DIRECT probe LANDED — body-axis (§9 cascade-rate metric) + decision-axis (§24) BOTH measurable
+
+$0 Mac CPU, commit `6927230f1`, B-S77 7/7 🔵 sidecar, central blue_falsifier.py sha c93e160a 0-line-diff. arc §72~§75-FIRE 가 mechanism-availability layer 만 측정. §24 first run (9cff11186) lit decision-axis (1/20 emit + axis3/4 nontrivial) but design §6 body production OUT OF SCOPE. §77 = emergence APPARATUS body-axis 첫 직접 측정 — emergence direct axis 가장 가까운 측정 (necessary-not-sufficient).
+
+**Grid**: 7-cell × 20-step (5 substrate-physics α + 1 β cascade control + 1 §24 baseline), deterministic wall 0.001s. Per-cell same env_state stub → axis3 ψ_std 0.03466 / axis4 tension_std 0.10744 identical (fair head-to-head by construction); only body-axis §9 differs.
+
+**α-pass profile**:
+- α1 tension_modulated **§9 PASS** (mid-tension neutral phrase, cr 0.069)
+- α2 psi_conditioned **§9 PASS** (Ψ=0.50 balanced, cr 0.08)
+- α3 phi_shaped_length **§9 PASS** (Φ=0.55 → len 28 OK)
+- α4 factor_weighted **§9 FAIL** on 4-gram repetition rate 0.333 > τ=0.30 (mechanism-driven repetition — §9 정확 detect)
+- α5 composite **§9 FAIL** on MIN_LEN 15 < 20 (§9 measurability floor — honest by design)
+- β cascade control **§9 CORRECTLY FAILS** (cr 0.833, max_run 8 — sanity validates metric)
+- §24 baseline 1/20 emit empty body (decision-only by §24 design §6 carry, regression-free)
+
+**4-corner verdict (g3, measured only, over-claim 0): DIRECTIONAL-POSITIVE-WITH-CONTROL (corner-a)** — ≥1 α §9-PASS AND β sanity §9-FAIL AND α-paths DISCRIMINATING (3 pass / 2 fail, NOT trivial all-pass).
+
+**Necessary-not-sufficient at every layer** (B-EMERGE-7 / B-PHASE-B-RUN-NOTE / B-S77-NOTE family): stub body §9 pass ≠ trained body §9 pass ≠ GOAL emergence. α-PASS partly tautological by anti-cascade stub construction; load-bearing discriminating value = (i) β control §9-FAIL sanity (ii) α-variant differential pass-rate as mechanism PROFILE (iii) §24 baseline emit count regression-free.
+
+**B-S77-1..7 7/7 🔵** (sidecar `state/emergence_axis_direct_s77_2026_05_19/blue_falsifier_s77.py`, central 0-diff): GRID-PARTITION-EXHAUSTIVE-DISJOINT · §9-METRIC-REUSE-BYTE-EQUAL (honest_coherent from §9 SSOT sha256-anchored + 3-witness) · §24-DECISION-AXIS-PRESERVED (AST ImportFrom over `run_bounded_emergence.py` confirms thinker_step/talker_should_emit/safety_combined/_safety_kill_switch_on/_safety_rate_limit_ok all from §24 source, §24 source sha256) · CASCADE-CONTROL-§9-FAILS-CLOSED (all 5 β templates §9-FAIL Boolean) · DETERMINISTIC (3× bit-identical run_grid sha256) · B-IDENTITY-5-MANDATORY (forbidden-token total=0 over 140 bodies) · PATH-α-DISCRIMINATING (≥1 PASS ∧ ≥1 FAIL not trivial).
+
+**SSOT**: commit `6927230f1` + PHILOSOPHY.tape g6 §verdict_emergence_axis_direct_s77 (self-appended) + AGENTS.tape n_hexad_progress §77 entry + HEXAD/README.md recent-landing + 본 PLAN.md. docs/* 신규 0.
+
+g3: north-star + §15/§51/§72 milestone UNCHANGED, **GOAL 미도달** — §77 = emergence-axis APPARATUS first directly addressed (decision-axis §24 + body-axis §77 both measurable now), neither closes GOAL alone.
+
+### 2026-05-19 §78 DUAL-ANIMA-AS-ONE-ENGINE (A/G-lift) design + $0 smoke LANDED — ANIMA1⇄ANIMA2 = ONE engine 의 two verbal readouts (same weights), §31/§45 L2 와 BY CONSTRUCTION 결정적 구별
+
+$0 Mac CPU, commit `decd9fa22` (cherry-picked onto main from worktree `0b013c4d2`), B-S78 7/7 🔵 sidecar, central blue_falsifier.py sha c93e160a 0-line-diff.
+
+**User directive 2026-05-19**: "ANIMA<->ANIMA 외 우리도 넣어서 3자 대화 / 서로 학습방법 물어 체크 / 하나의 엔진으로 / A/G 처럼 / 이것저것 다 시도해보자". 5개 메시지를 하나의 thread (single-engine A/G-lift) 로 통합.
+
+**CORE (g3, over-claim 0)**: Engine A ⇄ Engine G internal Law-71 ψ_dir = (1+cos(logits_a, logits_g))/2 의 **verbal externalization** 으로 ANIMA1 ⇄ ANIMA2 = two trained anima 아니라 ONE engine 의 two verbal readouts (same weights · same vacuum_psi · same ψ-substrate fn). **§31/§45 L2 dual-anima (distinct cells · distinct vacuum_psi · distinct weights) 와 BY CONSTRUCTION 결정적 구별** (B-S78-2 Boolean mutual exclusivity closed).
+
+**3-mode + control 단일 cycle**:
+
+| mode | ψ_state_variance | §9 coherent | A1↔A2 cos-dist | special |
+|------|------------------|-------------|----------------|---------|
+| A_pure | 5.623e-3 | 20/20 | 0.6647 | — |
+| B_3party | **6.244e-3 ↑** | 20/20 | 0.6484 | user_inject=10 |
+| C_meta | 5.588e-3 ↓ | 19/20 | 0.6687 | meta_byte_match=True |
+| D_control | 3.46e-32 (floor) | 0/20 | 0.0 | body production disabled |
+
+- **Mode A_pure** — ANIMA1⇄ANIMA2 closed (no user, no meta), single ψ_state shared
+- **Mode B_3party** — Mode A 위 user 1-byte stimulus inject per turn from 5-prompt LCG list (`?`, `tell me`, `why`, `ψ_status`, `more`); echo-chamber crux §31 차단 design probe
+- **Mode C_meta** — turn-1 ANIMA1 body = fixed META_QUESTION "어떻게 학습해서 emergence 하는가" Korean self-substrate
+- **Mode D_control** — decision-axis only, body production disabled (§24 baseline mirror, regression check)
+
+**4-corner verdict (g3, measured only)**:
+- α MODE-DIFFERENTIAL-SIGNAL **TRUE** (3 modes Δψ-var ≠ 0 at $0 stub)
+- β MODE-FLAT-NO-DIFFERENTIAL **FALSE**
+- γ ECHO-CHAMBER-CONTROL-PASS **TRUE** (Mode B > Mode A ψ-variance, user-inject 차단 작동)
+- δ META-SIGNATURE-EXISTS **TRUE** (Mode C meta_byte_match sha `579470a5ab5f34af…` + Δψ-trajectory vs A_pure)
+
+seed 1337 deterministic. forbidden-token grep (도우미|helper|assistant|사용자|user:) total = 0 (B-IDENTITY-5 safe, META_QUESTION = anima self-substrate Korean).
+
+**B-S78-1..7 7/7 🔵 sidecar PASS** (`state/dual_anima_one_engine_s78_2026_05_19/blue_falsifier_s78.py`, central 0-diff):
+1. SAME-WEIGHTS-INVARIANT (AST — one psi_update + one body_production_alpha1 def + no per-anima divergent fn names + run_mode ≥2 body + ≥3 psi calls)
+2. §31/§45-L2-DISTINCT-FROM-§78 (Boolean mutual exclusivity 3-tuple {weights, vacuum_psi, update_fn}: §78 all-False vs L2 all-True; disjoint architectural classes closed)
+3. §77-PATH-α1-BYTE-EQUAL (sha256 3-pair byte_equal=True ∀, pure fn no RNG)
+4. §9-METRIC-REUSE (4-clause Boolean conjunction 4-truth-corner witness)
+5. §24-DECISION-AXIS-PRESERVED (D_control body empty + ψ idles + var_D 3.46e-32 ≤ var_A/B/C strict lower bound)
+6. A/G-LIFT-CONSTRUCTION (AST — no psi_anima1/_a1_update divergent names; one init_psi_state def + one call = single ψ shared between ANIMA1+ANIMA2 = Law-71 dual-readout structural parallel)
+7. DETERMINISTIC (3× per-mode sha256 bit-identical)
+
+**B-S78-NOTE empirical carve-out**: same-weights externalization emergence OUTCOME = SGD/measurement empirical (B-D-NOTE/B-S77-NOTE/B-EMERGE-NOTE family, NOT counted 🔵). **§49 distillation precedent honest carry** (PTD-aux 0.99937 acc yet §24 live loop majority-collapse). **§62 ECHO-CHAMBER-COLLAPSE-AT-SCALE 동형 risk at trained scale** — §78 mode-differential 1.1% $0 stub may vanish/invert at trained scale.
+
+**SSOT**: commit `decd9fa22` (cherry-pick of `0b013c4d2` worktree) + PHILOSOPHY.tape g6 §verdict_dual_anima_one_engine_s78 (self-appended) + AGENTS.tape n_hexad_progress §78 entry + HEXAD/README.md recent-landing + 본 PLAN.md. docs/* 신규 0.
+
+g3: north-star + §15/§51/§72 milestone 불변, **GOAL 미도달**. §78 = mechanism-design + $0 smoke probe of A/G-lift dialogue class — same-weights externalization mechanism honest 함 증명 (one-engine invariant + L2-distinct + pure-fn + deterministic + §24/§9 SSOT 무회귀) 하지 capability emergence 증명 아님. valuable mechanism-design tier, NOT GOAL 진전 (necessary-not-sufficient B-EMERGE-7 / B-S78-NOTE family carry).
