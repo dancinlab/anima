@@ -1,0 +1,196 @@
+{
+  "battery": "B-S41-1..5",
+  "research_section": "§41",
+  "n_total": 5,
+  "n_pass": 5,
+  "all_blue": true,
+  "sympy_available": true,
+  "verdicts": [
+    {
+      "id": "B-S41-1",
+      "name": "RELATION-CORPUS-SHA256-DETERMINISTIC",
+      "passed": true,
+      "checks": [
+        [
+          "on-disk-sha256-matches-recorded",
+          true
+        ],
+        [
+          "corpus-bytes-matches-recorded",
+          true
+        ],
+        [
+          "forbidden-token-total-eq-0",
+          true
+        ],
+        [
+          "recorded-forbidden-total-eq-0",
+          true
+        ],
+        [
+          "re-derived-sha256-matches",
+          true
+        ],
+        [
+          "all-records-are-relate-tag",
+          true
+        ]
+      ]
+    },
+    {
+      "id": "B-S41-2",
+      "name": "HELD-OUT-PAIR-DISJOINT-CARDINALITY",
+      "passed": true,
+      "checks": [
+        [
+          "held-train-disjoint",
+          true
+        ],
+        [
+          "held-union-train-eq-all",
+          true
+        ],
+        [
+          "held-plus-train-card-eq-all",
+          true
+        ],
+        [
+          "ordered-pair-count-64x63",
+          true
+        ],
+        [
+          "intersection-empty",
+          true
+        ],
+        [
+          "s41-holdout-byte-equal-to-s37-holdout",
+          true
+        ],
+        [
+          "corpus-stats-holdout-byte-equal-flag-true",
+          true
+        ],
+        [
+          "corpus-stats-holdout-train-disjoint-true",
+          true
+        ],
+        [
+          "sympy-finiteset-slice-disjoint",
+          true
+        ]
+      ]
+    },
+    {
+      "id": "B-S41-3",
+      "name": "ACCURACY-BOUNDED",
+      "passed": true,
+      "checks": [
+        [
+          "result-json-not-yet-written-pre-fire",
+          true
+        ],
+        [
+          "sympy-mean-of-indicators-bounded",
+          true
+        ],
+        [
+          "R1-codomain-subset-of-label-set",
+          true
+        ],
+        [
+          "R2-codomain-subset-of-label-set",
+          true
+        ],
+        [
+          "R3-codomain-subset-of-label-set",
+          true
+        ],
+        [
+          "R4-codomain-subset-of-label-set",
+          true
+        ],
+        [
+          "union-of-codomains-eq-RELATION_LABEL_SET",
+          true
+        ],
+        [
+          "codomain-cardinality-3+4+2+3-eq-12",
+          true
+        ]
+      ]
+    },
+    {
+      "id": "B-S41-4",
+      "name": "SCALE-MATCHES-§16-±20%",
+      "passed": true,
+      "checks": [
+        [
+          "result-json-not-yet-written-pre-fire",
+          true
+        ],
+        [
+          "integer-interval-well-formed",
+          true
+        ],
+        [
+          "s16-in-interval",
+          true
+        ],
+        [
+          "train-default-d-model-768",
+          true
+        ],
+        [
+          "train-default-n-layer-12",
+          true
+        ]
+      ]
+    },
+    {
+      "id": "B-S41-5",
+      "name": "GENERALIZATION-vs-MEMORIZATION-METRIC",
+      "passed": true,
+      "checks": [
+        [
+          "partition-union-eq-reals",
+          true
+        ],
+        [
+          "partition-pairwise-disjoint",
+          true
+        ],
+        [
+          "witness-gen-0.95",
+          true
+        ],
+        [
+          "witness-partial-0.70",
+          true
+        ],
+        [
+          "witness-gift-0.30",
+          true
+        ],
+        [
+          "boundary-gap-0.20-strict-is-partial",
+          true
+        ],
+        [
+          "boundary-gap-0.50-strict-is-gift",
+          true
+        ],
+        [
+          "result-json-not-yet-written-pre-fire",
+          true
+        ]
+      ]
+    }
+  ],
+  "note": {
+    "id": "B-S41-NOTE",
+    "name": "GENERALIZATION-AT-SCALE-OUTCOME-EMPIRICAL",
+    "text": "Whether held-out-pair accuracy survives the 75 000× scale-up to a §16-size byte-LM is an SGD/measurement OUTCOME. The battery proves the probe is well-FORMED at scale (corpus deterministic B-S41-1, partition disjoint AND byte-equal to §37 B-S41-2, accuracy bounded B-S41-3, scale in §16 ±20% band B-S41-4, verdict partition closed B-S41-5); it does NOT decide GENERALIZES_AT_SCALE vs SMALL_MODEL_GIFT — that is the eval's measured result. B-D-NOTE / B-S37-NOTE / B-S16-NOTE family — NOT counted blue.",
+    "counted_blue": false
+  },
+  "central_blue_falsifier_unchanged": true
+}
