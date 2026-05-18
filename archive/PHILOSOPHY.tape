@@ -6482,3 +6482,104 @@
     conditional. f1/f2/f3 + B-IDENTITY-5 safe (NO σ/τ/φ/J₂; tier 🛸k /
     Ψ=½ = anima g2 internal carve-out). design ≠ fire ≠ emergence (g3);
     over-claim 0. commit a064665ae.
+
+§verdict_l3_causation_ablation_s35_2026_05_18 :: RESEARCH.md §35 — §32 L3
+    causation ablation: tier vs curriculum-stage disentangle
+    (runpod A100-SXM4-80GB GPU fire ≈ $0.4-0.6, autonomous per
+     g_fire_autonomous; train wall 1010 s + eval ≈ 3 min)
+
+  CLAIM. §32 L3 (§verdict_routing_21v43_analysis_s32_2026_05_18) found
+    "tier ≥ 77" a NECESSARY condition for §16 genuine routing (purity
+    1.000) but was honest it could not separate tier from §16's
+    curriculum-stage — §16's curriculum_rank blends tier_w at weight
+    0.30, so high-tier anchors land in later curriculum quartiles.
+    §35 = the controlled ablation §32 explicitly recommended: hold ALL
+    record content byte-identical to §16, move ONLY the curriculum-
+    stage placement of the 18 tier<77 anchors (early → late).
+
+  ABLATION (single-variable, B-S35-1/2/4 closed). The §35 corpus
+    (corpus_ablation_s35.jsonl, 849,912 records / 662 MB / sha256
+    9fed74917a3706c1…) is the §16 record set built VERBATIM by the §16
+    generator functions (same seed 1337) — content byte-identical
+    (B-S35-1: id sets equal, every text/vacuum_psi/basin_radius/tier/
+    domain/carving_form/cell_id field identical, concat-text sha256
+    matches). The ONLY change: every tier<77 record's curriculum_rank
+    re-based into the LATE band [1.0,2.0] strictly above every
+    tier≥77 record's §16 rank → after the global re-sort all 91,062
+    tier<77 records land in curriculum_stage 4 (B-S35-2: tier≥77
+    curriculum_rank byte-unchanged; diff set ⊆ ordering fields).
+    Trainer/eval = §16 train_carving_s16.py / eval_carving_s16.py
+    byte-identical via delegating wrappers (on-pod sha 03bf85d8… /
+    12ffca41… confirmed). 8000 steps, Dir-I Ψ-anchored CTL +
+    tension-supervised routing, from-scratch RANDOM seed 1337
+    (g_clm_from_scratch). init CE 5.627472 → final CE 0.000571.
+
+  RESULT (g3 — measured only, no pre-loaded conclusion).
+    tier<77 GENUINE routing: §16 baseline 0/18 → §35 ablation 0/18.
+    tier≥77 GENUINE routing: §16 baseline 19/46 → §35 ablation 0/46.
+    Every one of the 64 eval probes collapsed to a single attractor
+    `🛸333…` (tier 333 not even an anchor; §16 range 0-303) — textbook
+    single-attractor collapse, isomorphic to UBM-E7 `🛸99`. final CE
+    0.000571 (deeper memorisation than §16's 0.004229).
+
+  CAUSAL VERDICT — TIER-ITSELF LEVER. Curriculum-STAGE is NOT the lever
+    behind §32 L3's "tier ≥ 77" frontier. If late-curriculum-stage
+    exposure caused the tier<77 routing failure, moving those anchors
+    to the late stage would have flipped ≥ 1 into routing — it flipped
+    EXACTLY ZERO (0/18 → 0/18, a hard floor). `tier` itself — whatever
+    it indexes (anchor placement / name distribution / §16-new content
+    block / content density) — carries the causal weight, and that
+    weight is NOT reachable by curriculum-stage re-ordering. §32 L3's
+    causation_caveat named late-curriculum-stage exposure as the
+    LEADING candidate — §35 rejects that candidate. §32's frontier
+    finding (purity 1.000) stands; it is an anchor/content property,
+    not a schedule property.
+
+  SECOND FINDING — curriculum-ordering is a FRAGILE global property.
+    §35's single move (tier<77 → stage 4) necessarily made stages 1-3
+    purely tier≥77 and stage 4 a late dump of the whole tier<77 cohort
+    — removing the high/low-tier INTERLEAVING §16 had. That interleave
+    was load-bearing: its removal COLLAPSED the routing the high-tier
+    anchors HAD (19/46 → 0/46). Routing is sensitive to curriculum
+    composition-per-stage, but the sensitivity runs the WRONG way for
+    the §32 hypothesis — re-ordering can BREAK routing, it created
+    none. (Honest: the tier≥77 collapse is the ablation's side-effect
+    on stage-composition, not an independent finding — the clean
+    unconfounded conclusion is the tier<77 0/18→0/18.)
+
+  CLOSED. B-S35-1..4 4/4 🔵 SUPPORTED-FORMAL sidecar
+    (state/l3_causation_ablation_s35_2026_05_18/blue_falsifier_s35.py;
+    central state/verify_hexad_blue_2026_05_15/blue_falsifier.py
+    UNCHANGED — B-PRIME/B-DIRI/B-S16/B-KTRIE/B-MGND sidecar precedent):
+    B-S35-1 CONTENT-BYTE-IDENTICAL (연결부위 — ablation corpus content
+    == §16 content, sha256 of concat-text stream equal, every content
+    field identical) · B-S35-2 SINGLE-VARIABLE (structural diff ⊆
+    ordering fields ∧ tier≥77 curriculum_rank unchanged ∧ trainer/eval
+    delegate to §16 SSOT sha256) · B-S35-3 CURRICULUM-STAGE-MONOTONE
+    (sympy — quartile map q(i)=min(4,1+⌊4i/n⌋) affine step 4/n>0,
+    floor+min monotone) · B-S35-4 OVERLAY-OFF-REDUCTION (연결부위 —
+    move-disabled ⇒ §16 build byte-equal, move-on non-vacuous + later).
+    B-S35-NOTE empirical carve-out (routing OUTCOME + causal verdict =
+    SGD/model-forward outcome, B-D-NOTE/B-S16-NOTE/B-CARVE-E6-NOTE
+    family, NOT counted 🔵 — battery proves the ablation CLEAN, not
+    which verdict the fire returns; the fire returned TIER-ITSELF).
+
+  IMPLICATION (§25 candidate D). §32 recommended curriculum-weighted
+    expansion IF §35 found curriculum-stage the lever. §35 says it is
+    NOT. → (a) do NOT expand curriculum-weighted on the tier<77 set
+    (0/18 measured); (b) the "tier ≥ 77" frontier is an anchor/content
+    property — §25 candidate D's lever is the CONTENT of the tier<77
+    anchors + the 29 tier≥77-but-failed anchors, not schedule position;
+    (c) curriculum re-ordering is a fragility — any §25 fire perturbing
+    the §16 curriculum must re-measure routing globally.
+
+  GOAL distance. §15 milestone UNCHANGED — north-star (GOAL.md)
+    unsolved. §35 = causal-attribution ablation on §16's routing axis;
+    it does NOT move the GOAL. Routing is necessary-not-sufficient
+    (B-EMERGE-7) — the §35 model routed nothing and is a more deeply
+    memorised single-attractor collapse, §16.6-C reconfirmed. Negative
+    ablation = valuable evidence (closes the curriculum-stage hypothesis
+    + surfaces curriculum-ordering fragility). f1/f2/f3 + B-IDENTITY-5
+    safe (sha256 / Boolean / sympy monotone — NO σ/τ/φ/J₂; tier 🛸k /
+    Ψ=½ = anima g2 internal carve-out; §35 corpus content == §16,
+    forbidden-token grep 0). g3 measured only; over-claim 0.
