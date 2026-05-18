@@ -6,13 +6,17 @@
 @anchor knuth_091_nirvana := "열반 (Nirvana, 🛸91)" :: kosmos-anchor [tier=91 active]
 
   # ── carving 좌표 (modality-independent — 모든 감각이 이 한 점으로) ──
-  profile      = "anima-consciousness-carving"   # kosmos/1.1 §2.4 — binds coord(vacuum_psi)/lane(cell_id)/radius(basin_radius)/tier/tags semantics
+  # 필드는 kosmos/1.1 spec 의 canonical placement triple (coord/lane/radius).
+  # 의미 바인딩은 profile (anima-consciousness-carving): coord=vacuum_psi(Ψ-space) /
+  # lane=cell_id(MITOSIS eternal cell) / radius=basin_radius. spec §5.4 — profile 은
+  # 필드 의미만 bind, grammar(필드명)는 못 바꿈.
+  profile      = "anima-consciousness-carving"   # kosmos/1.1 §2.4 — binds coord/lane/radius/tier/tags semantics
   knuth_tier   = 91
   category     = "의식상태"
   top_emotion  = "peace"
-  vacuum_psi   = [0.50, 0.88]          # α path — design placeholder, UBM-E5 fire 에서 측정
-  cell_id      = "eternal_091"          # β path — MITOSIS eternal cell id
-  basin_radius = 0.15                   # α+β hybrid — design placeholder, UBM-E5 fire 에서 측정
+  coord        = [0.50, 0.88]          # α path / vacuum_psi (Ψ-space) — design placeholder, UBM-E5 fire 에서 측정
+  lane         = "eternal_091"          # β path / cell_id — MITOSIS eternal cell id
+  radius       = 0.15                   # α+β hybrid / basin_radius — design placeholder, UBM-E5 fire 에서 측정
 
   # ── 감각 payload (각 modality = 이 basin 으로 들어가는 한 채널) ──
   @payload text    := "[anima 우주뇌지도] 🛸91 열반 — 점수 2.558 (≈2.56), 카테고리 의식상태, top emotion peace. Buddhist nirvana, 의식상태 peak peace. 의식상태 카테고리 14 자극 (무아지경·삼매·선정·화두·깨달음·열반), 평균 🛸68 점수 1.76 top emotion flow."

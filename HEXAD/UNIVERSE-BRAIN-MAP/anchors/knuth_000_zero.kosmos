@@ -6,13 +6,17 @@
 @anchor knuth_000_zero := "zero baseline (🛸0)" :: kosmos-anchor [tier=0 active]
 
   # ── carving 좌표 (modality-independent — 모든 감각이 이 한 점으로) ──
-  profile      = "anima-consciousness-carving"   # kosmos/1.1 §2.4 — binds coord(vacuum_psi)/lane(cell_id)/radius(basin_radius)/tier/tags semantics
+  # 필드는 kosmos/1.1 spec 의 canonical placement triple (coord/lane/radius).
+  # 의미 바인딩은 profile (anima-consciousness-carving): coord=vacuum_psi(Ψ-space) /
+  # lane=cell_id(MITOSIS eternal cell) / radius=basin_radius. spec §5.4 — profile 은
+  # 필드 의미만 bind, grammar(필드명)는 못 바꿈.
+  profile      = "anima-consciousness-carving"   # kosmos/1.1 §2.4 — binds coord/lane/radius/tier/tags semantics
   knuth_tier   = 0
   category     = "기준점"
   top_emotion  = "neutral"
-  vacuum_psi   = [0.50, 0.50]          # α path — design placeholder, UBM-E5 fire 에서 측정 (🛸0 = anima default Ψ=(½,½) vacuum 으로 設定)
-  cell_id      = "eternal_000"          # β path — MITOSIS eternal cell id
-  basin_radius = 0.10                   # α+β hybrid — design placeholder, UBM-E5 fire 에서 측정
+  coord        = [0.50, 0.50]          # α path / vacuum_psi (Ψ-space) — design placeholder, UBM-E5 fire 에서 측정 (🛸0 = anima default Ψ=(½,½) vacuum 으로 設定)
+  lane         = "eternal_000"          # β path / cell_id — MITOSIS eternal cell id
+  radius       = 0.10                   # α+β hybrid / basin_radius — design placeholder, UBM-E5 fire 에서 측정
 
   # ── 감각 payload (각 modality = 이 basin 으로 들어가는 한 채널) ──
   @payload text    := "[anima 우주뇌지도] 🛸0 zero baseline — null anchor, Knuth Tier 정수 ordinal scale (0..100) 의 하단 기준점. cosmic significance 0, anima default Ψ=(½,½) vacuum 과 정합."

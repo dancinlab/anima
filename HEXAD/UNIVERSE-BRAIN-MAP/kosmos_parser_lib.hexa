@@ -5,14 +5,22 @@
 //  파싱하여 anchor record (carving 좌표 6 field) + `@payload` 3-form (inline /
 //  ref / pending) 을 추출.
 //
-//  `.kosmos` = tape v1.2 superset:
+//  `.kosmos` = tape v1.2 superset. The file uses kosmos/1.1 spec's CANONICAL
+//  placement triple (coord/lane/radius); this parser is a PROFILE-AWARE loader
+//  (profile = anima-consciousness-carving) — it reads the spec field names and
+//  exposes them under the anima profile-bound record keys (coord→vacuum_psi,
+//  lane→cell_id, radius→basin_radius). Per spec §5.4 a profile binds field
+//  *semantics* only, never the grammar — so the file MUST use coord/lane/radius
+//  and the profile binding lives here (the loader) + the profile doc, not in
+//  renamed file fields.
 //    @anchor <id> := "<name>" :: kosmos-anchor [tier=N active]
+//      profile      = "<profile-id>"  # kosmos/1.1 §2.4 self-identification
 //      knuth_tier   = <int>          # carving 좌표 (modality-independent)
 //      category     = "<str>"
 //      top_emotion  = "<str>"
-//      vacuum_psi   = [x, y]         # α path
-//      cell_id      = "<str>"        # β path
-//      basin_radius = <float>        # α+β hybrid
+//      coord        = [x, y]         # spec triple — α path (profile: vacuum_psi)
+//      lane         = "<str>"        # spec triple — β path (profile: cell_id)
+//      radius       = <float>        # spec triple — α+β hybrid (profile: basin_radius)
 //      @payload <modality> := "<inline>"                       (a) inline
 //      @payload <modality> := ref "<path>" sha256=<h> bytes=<N> (b) ref
 //      @payload <modality> := pending "<reason>"                (c) pending
@@ -22,7 +30,6 @@
 //    - pure-hexa only (NO GPU, NO PyTorch import)
 //    - NO main / NO _selftest (compiled-first lib)
 //    - hexa-lang syntax: dict literal `#{}`, missing key → `void`
-//    - 5 .kosmos anchor file + KOSMOS-FORMAT.md 변경 0 (UBM-E2 무회귀)
 //    - f1/f2 safe: Knuth Tier 🛸k = anima self-design (g2 internal carve-out)
 //
 //  SSOT: HEXAD/UNIVERSE-BRAIN-MAP/KOSMOS-FORMAT.md (포맷 spec)
@@ -116,8 +123,8 @@ fn kosmos_field_value(line: string) -> string {
     let eq = line.index_of("=")
     if eq < 0 { return "" }
     let raw = line.substring(eq + 1, len(line))
-    // strip trailing inline `# comment` (KOSMOS-FORMAT.md allows comments
-    // after vacuum_psi / basin_radius). only strip a `#` that is NOT inside
+    // strip trailing inline `# comment` (kosmos spec allows comments after
+    // coord / radius placeholder fields). only strip a `#` that is NOT inside
     // a quoted string — coord values are never quoted-with-#, so a plain
     // first-# strip is safe for coord fields.
     let hash = raw.index_of("#")
@@ -326,15 +333,20 @@ fn kosmos_load(path: string) -> any {
                     if m == "video"   { rec["payload_video_form"] = f }
                     if m == "tension" { rec["payload_tension_form"] = f }
                 } else {
-                    // coord-field key=value line
+                    // coord-field key=value line.
+                    // the file uses kosmos/1.1 spec's canonical placement
+                    // triple (coord/lane/radius); this profile-aware loader
+                    // maps them to the anima profile-bound record keys
+                    // (coord→vacuum_psi / lane→cell_id / radius→basin_radius).
+                    // spec §5.4: a profile binds field semantics, not grammar.
                     let key = kosmos_field_key(t)
                     let val = kosmos_field_value(t)
                     if key == "knuth_tier"   { rec["knuth_tier"] = to_int(val) }
                     if key == "category"     { rec["category"] = kosmos_unquote(val) }
                     if key == "top_emotion"  { rec["top_emotion"] = kosmos_unquote(val) }
-                    if key == "vacuum_psi"   { rec["vacuum_psi"] = kosmos_parse_psi(val) }
-                    if key == "cell_id"      { rec["cell_id"] = kosmos_unquote(val) }
-                    if key == "basin_radius" { rec["basin_radius"] = to_float(val) }
+                    if key == "coord"        { rec["vacuum_psi"] = kosmos_parse_psi(val) }
+                    if key == "lane"         { rec["cell_id"] = kosmos_unquote(val) }
+                    if key == "radius"       { rec["basin_radius"] = to_float(val) }
                     if key == "closed_anchor" { rec["closed_anchor"] = kosmos_unquote(val) }
                 }
             }

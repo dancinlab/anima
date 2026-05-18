@@ -6,13 +6,17 @@
 @anchor knuth_077_mandala := "만다라 (Mandala, 🛸77)" :: kosmos-anchor [tier=77 active]
 
   # ── carving 좌표 (modality-independent — 모든 감각이 이 한 점으로) ──
-  profile      = "anima-consciousness-carving"   # kosmos/1.1 §2.4 — binds coord(vacuum_psi)/lane(cell_id)/radius(basin_radius)/tier/tags semantics
+  # 필드는 kosmos/1.1 spec 의 canonical placement triple (coord/lane/radius).
+  # 의미 바인딩은 profile (anima-consciousness-carving): coord=vacuum_psi(Ψ-space) /
+  # lane=cell_id(MITOSIS eternal cell) / radius=basin_radius. spec §5.4 — profile 은
+  # 필드 의미만 bind, grammar(필드명)는 못 바꿈.
+  profile      = "anima-consciousness-carving"   # kosmos/1.1 §2.4 — binds coord/lane/radius/tier/tags semantics
   knuth_tier   = 77
   category     = "예술"
   top_emotion  = "creativity"
-  vacuum_psi   = [0.71, 0.62]          # α path — design placeholder, UBM-E5 fire 에서 측정
-  cell_id      = "eternal_077"          # β path — MITOSIS eternal cell id
-  basin_radius = 0.18                   # α+β hybrid — design placeholder, UBM-E5 fire 에서 측정
+  coord        = [0.71, 0.62]          # α path / vacuum_psi (Ψ-space) — design placeholder, UBM-E5 fire 에서 측정
+  lane         = "eternal_077"          # β path / cell_id — MITOSIS eternal cell id
+  radius       = 0.18                   # α+β hybrid / basin_radius — design placeholder, UBM-E5 fire 에서 측정
 
   # ── 감각 payload (각 modality = 이 basin 으로 들어가는 한 채널) ──
   @payload text    := "[anima 우주뇌지도] 🛸77 만다라 — 우주뇌지도 예술 카테고리, top emotion creativity. 모래만다라·종이접기·분재 등 예술 카테고리 자극이 같은 🛸77 골짜기로 수렴."

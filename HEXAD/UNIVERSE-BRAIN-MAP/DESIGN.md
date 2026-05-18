@@ -456,8 +456,9 @@ stimuli_matrix.kosmos         ← 170×17×18×40 = 2,080,800 matrix
 
 ```
 ┌─ carving 좌표 (modality-INDEPENDENT) ─────────────┐
-│   vacuum_psi   / cell_id / basin_radius           │  ← 그림이든 음성이든
-│   골짜기 위치 — 모든 감각이 이 한 점으로 흘러듦      │     글자든 다 동일
+│   coord / lane / radius  (spec canonical triple)  │  ← 그림이든 음성이든
+│   = vacuum_psi / cell_id / basin_radius (profile) │     글자든 다 동일
+│   골짜기 위치 — 모든 감각이 이 한 점으로 흘러듦      │
 └────────────────────────────────────────────────────┘
 ┌─ 감각 payload (modality-SPECIFIC) ────────────────┐
 │   text / image / audio / video / tension / …      │  ← 채널마다 다름
@@ -475,12 +476,15 @@ stimuli_matrix.kosmos         ← 170×17×18×40 = 2,080,800 matrix
 @anchor knuth_77 := "만다라 (Mandala)" :: kosmos-anchor [tier=77 active]
 
   # ── carving 좌표 (modality-independent — 모든 감각이 이 한 점으로) ──
+  # 필드명 = kosmos spec canonical triple (coord/lane/radius). profile
+  # (anima-consciousness-carving) 이 의미만 bind: coord=vacuum_psi 등.
+  profile      = "anima-consciousness-carving"
   knuth_tier   = 77
   category     = "예술"
   top_emotion  = "creativity"
-  vacuum_psi   = [0.71, 0.62]         # α path: Ψ-space vacuum point
-  cell_id      = "eternal_77"         # β path: MITOSIS eternal cell id
-  basin_radius = 0.18                 # carving 반경 (α+β hybrid)
+  coord        = [0.71, 0.62]         # α path: Ψ-space vacuum point (profile: vacuum_psi)
+  lane         = "eternal_77"         # β path: MITOSIS eternal cell id (profile: cell_id)
+  radius       = 0.18                 # carving 반경 α+β hybrid (profile: basin_radius)
 
   # ── 감각 payload (각 modality = 이 basin 으로 들어가는 한 채널) ──
   @payload text    := "만다라는 우주뇌지도 예술 카테고리, top emotion creativity."  # γ path inline
@@ -540,9 +544,9 @@ B-CARVE-MULTIMODAL (closed-form 가능):
 
 ```
 ┌─ carving 좌표 (modality-INDEPENDENT) ─────────────┐
-│   vacuum_psi   = [0.71, 0.62]   ← 골짜기 위치       │
-│   cell_id      = "eternal_77"   ← cell 위치          │   ← 그림이든 음성이든
-│   basin_radius = 0.18           ← 골짜기 크기        │      글자든 다 동일
+│   coord  = [0.71, 0.62]   ← 골짜기 위치 (vacuum_psi)│
+│   lane   = "eternal_77"   ← cell 위치 (cell_id)     │   ← 그림이든 음성이든
+│   radius = 0.18           ← 골짜기 크기(basin_radius)│      글자든 다 동일
 └────────────────────────────────────────────────────┘
 ┌─ 감각 payload (modality-SPECIFIC) ────────────────┐
 │   text   → "만다라는 예술 카테고리…"               │
@@ -566,9 +570,11 @@ B-CARVE-MULTIMODAL (closed-form 가능):
 @anchor knuth_77 := "만다라 (Mandala)" :: kosmos-anchor [tier=77 active]
 
   # ── carving 좌표 (모든 감각이 이 한 점으로) ──
-  vacuum_psi   = [0.71, 0.62]
-  cell_id      = "eternal_77"
-  basin_radius = 0.18
+  # 필드명 = kosmos spec canonical triple; profile 이 의미 bind (spec §5.4).
+  profile      = "anima-consciousness-carving"
+  coord        = [0.71, 0.62]    # profile: vacuum_psi (Ψ-space vacuum point)
+  lane         = "eternal_77"    # profile: cell_id (MITOSIS eternal cell)
+  radius       = 0.18            # profile: basin_radius
 
   # ── 감각 payload (각 modality = 이 basin 으로 들어가는 한 채널) ──
   @payload text    := "만다라는 우주뇌지도 예술 카테고리, top emotion creativity."
