@@ -177,6 +177,19 @@ E 윤리:     Φ 보존 위반 시 training step 차단 (gate 권한)
 > discovery 이지 fire/GOAL 진전 아님 (B-S63-NOTE — 어느 gap 이 병목인지는
 > future-fire EMPIRICAL). north-star·§15/§51 milestone 불변.
 
+**개념 도식 (읽기용 schematic — 셀값은 예시, 실측 19-pair 는 바로 아래):**
+
+```
+        S  C  M  W  E  D  BR MI  …16 모듈
+      S  ·  ✅ ·  ·  ·  ·  ·  ·     ✅ = B-CONN 닫힘
+      C  ·  ·  ✅ ⚠️ ✅ ·  ✅ ·     ⚠️ = 선언/스펙엔 있는데 closed 술어 없음·끊김
+      M  ·  ✅ ·  ·  ·  ✅ ·  ·     🕳️ = GOAL 상 있어야 하는데 connection-point 자체 부재
+      W  ·  🕳️ ·  ·  ·  ✅ ·  ·         (= §58 PTD-aux "new TYPE" 의 일반화)
+      …                              → 대규모 gap-map = 다음 fire 들의 표적 지도
+```
+
+**실측 §63 (아래가 진짜 측정값):**
+
 ```
 범례:  ✅ = B-CONN closed-wired (transfer-fn + invariant 둘 다 closed)
        ⚠️ = 선언/스펙엔 있으나 closed 술어 없음 · 실증 끊김
