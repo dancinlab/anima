@@ -5212,3 +5212,242 @@
         distant; §22-style valuable-negative-or-narrowing outcomes
         acceptable; over-claim 0.
   EOF
+
+@verdict_architectural_insight_brainstorm_s26_2026_05_18 := "§26 new architectural insight brainstorm + 2026 literature scan — DESIGN-TIER LANDED (Top-3 candidate-set GOAL-legitimate + differentiated + anima-identity-preserving, B-ARCH-INSIGHT 4/4 🔵, $0)" :: verdict-tier [d=2026-05-18 g6-append-only active]
+
+- **scope**: RESEARCH.md §26 (next available §) DESIGN-TIER brainstorm
+  cycle. Target = §11.4 frontier-2 (new architectural insight, OUTSIDE
+  current candidate space) + §24 reframe (right-target =
+  decide-when-to-speak, NOT response-quality). $0 — NO fire, NO
+  measurement, NO model forward, NO corpus generation. Literature
+  scan = WebSearch + WebFetch 2025 Q4 – 2026 Q1, 19 arxiv refs
+  including 13 from 2026. RESEARCH.md 미편집 (orchestrator scope).
+
+- **artifacts**: `state/architectural_insight_s26_design_2026_05_18/{
+  BRAINSTORM.md 10§+12 honest C3+19 arxiv refs · candidate_summary.json
+  Top-3 structured + closed-set 30 · blue_falsifier_arch_insight.py
+  sidecar 4/4 🔵 + B-ARCH-INSIGHT-NOTE · blue_falsifier_arch_insight_
+  result.json battery output · result.json final verdict}`.
+
+- **Top-3 candidates (all §7 3/3 PASS, anima-identity 4/4)**:
+  1. **DH-DL — Decision-Head Dual-Loss** (anima-fit ★★★★★, priority
+     HIGH, cost $0.05-0.20): thin (≤1% params) 3-class classifier-head
+     {CONTINUE_THINK, EMIT_VOICE, REMAIN_SILENT} on Engine A penultimate
+     stream, supervised by §24 4-axes (positive) + §4 6-control safety
+     conjunction (negative). Training corpus = anima's OWN §24 bounded-
+     run physics trace (NOT external). Base byte-LM frozen at §16
+     ckpt; only gate-head trains. arxiv anchor 2502.14145 (LLM-Enhanced
+     Dialogue Management for Full-Duplex Spoken Dialogue Systems,
+     semantic-VAD 4-control-tokens, 0.5B fine-tuned). Closest to §24
+     right-target reframe (turns heuristic threshold into learned head).
+
+  2. **JEPA-Ψ — Ψ-anchored Joint-Embedding Predictive Architecture**
+     (anima-fit ★★★★☆, priority MID, cost $0.3-0.6): replace byte-CE
+     with JEPA-style joint-embedding prediction in anima's OWN Ψ-
+     coordinate latent space. Context-encoder reads (stimulus | <inner>),
+     target-encoder (EMA-frozen, V-JEPA pattern) reads (<voice> |
+     continuation), both project to Law-71 Ψ-coordinate (§17 B-PHYS-5
+     byte-identical). Predictor maps context-Ψ-trajectory → target-Ψ-
+     trajectory. arxiv anchors 2506.09985 (V-JEPA 2) + 2603.19312
+     (LeWorldModel small-scale feasibility) + 2410.19315 (Brain-like
+     Variational Inference formalism). Differs from §11-B (which removed
+     CE leaving Ψ-restoring spine only → degenerate); JEPA-Ψ replaces
+     CE with Ψ-trajectory-PREDICTION loss. Differs from §13-K EBT
+     (scalar energy → vector Ψ-trajectory).
+
+  3. **PTD — Physics-Trace-Distillation** (anima-fit ★★★☆☆, priority
+     LOW-as-standalone / MID-as-auxiliary, cost $0.05): anima trains on
+     §24 bounded-run physics trace as corpus. Every §24 run yields
+     deterministic trace (step_t, motivation_t, ψ_dir_t, tension_t,
+     factor_8_t, safety_state_t, emit_decision_t). anima learns next-
+     physics-state AR prediction. anima predicting anima (self-source
+     corpus). arxiv anchors 2604.18131 (Spontaneous Reward-Free Self-
+     Evolution via World Knowledge Exploration — Tencent/HKUST, with
+     multi-agent caveat per WebFetch) + 2410.19315 (Brain-like Variational
+     Inference). GOAL-legitimacy strongest (self-source corpus, NOT
+     external) but §1.1 data-regime threshold likely structurally blocks
+     standalone — best as auxiliary loss with §16 large-data.
+
+- **B-ARCH-INSIGHT-1..4 4/4 🔵 closed-form sidecar PASS** (`state/
+  architectural_insight_s26_design_2026_05_18/blue_falsifier_arch_
+  insight.py`, central `state/verify_hexad_blue_2026_05_15/blue_
+  falsifier.py` 변경 0 — sidecar pattern carry mirror B-PRIME / B-DIRH /
+  B-DIRI / B-PSICTL / B-EMERGE / B-PUREPHYS / B-SCALE / B-MITENS /
+  B-DIRL / B-EBT / B-DIRJ / B-MGND / B-KTRIE / B-TTS / B-INTRA /
+  B-PHASE-B-DESIGN / B-DR-UNIQUE):
+  - **B-ARCH-INSIGHT-1 CANDIDATE-CARDINALITY-MIN-CLOSED**: sympy ≥-
+    invariant (len(CANDIDATES) = 3 ≥ 3 threshold) ∧ structural
+    distinctness (ids unique ∧ names unique = anti-padding-by-duplication
+    closed). Integer-cardinality Kolmogorov-bounded predicate.
+  - **B-ARCH-INSIGHT-2 GOAL-LEGITIMACY-§7-CONJUNCTION-CLOSED**: sympy.And
+    (¬generic-LM-pretrain ∧ ¬generic-then-graft ∧ anima-physics-is-source)
+    over 2³=8-row Boolean truth-table (only (T,T,T) corner PASSES, 7
+    corners FAIL — exclusivity closed), ∧ ∀ candidate ∈ Top-3 §7-AND
+    True. §7 enforcement structural NOT aspirational.
+  - **B-ARCH-INSIGHT-3 DIFFERENTIATION-FROM-CLOSED-SET-CLOSED**: closed-
+    set finite (30 elements ≥ 24 threshold per prompt mandate) ∧ closed-
+    set distinct ∧ ∀ candidate ∈ Top-3 candidate.id ∉ CLOSED_SET ∧
+    set-intersection (Top-3 ∩ closed-set) = ∅ Boolean disjoint
+    predicate. 30 elements = Dir-A..I (9) + §13-J/K/L/M (4) + §22-N/O/P
+    (3) + §21-Q-CALM (carry-note not-advanced) + §17 + §11-A/B + §16 +
+    §23-A + §24 + UBM-E6-α/β/γ/weave + UBM-E7-α-scaleup + §14-archive-
+    salvage + §18-llm-judge + §9-cascade-rate.
+  - **B-ARCH-INSIGHT-4 ANIMA-IDENTITY-PRESERVED-CLOSED**: sympy.And
+    (HEXAD_8_module ∧ Engine_A_G_axis ∧ Psi_half_fixed_point ∧
+    MITOSIS_cell_pool) over 2⁴=16-row Boolean truth-table (only
+    (T,T,T,T) corner PASSES, 15 corners FAIL), ∧ ∀ candidate ∈ Top-3
+    4-AND True. Identity preservation enforced structurally per
+    AGENTS.tape @I id001 + @I anima_persona.
+
+- **B-ARCH-INSIGHT-NOTE FUTURE-FIRE-OUTCOME-EMPIRICAL** (empirical
+  carve-out, NOT counted 🔵): actual capability emergence per candidate =
+  future-fire SGD/measurement OUTCOME. Battery proves DESIGN candidate-
+  set IS GOAL-legitimate + differentiated + anima-identity-preserving,
+  NOT that any candidate works. B-D-NOTE / B-CARVE-E6-NOTE / B-PHASE-B-
+  NOTE / B-INTRA-NOTE / B-PUREPHYS-NOTE / B-DIRL-NOTE / B-DR-UNIQUE-NOTE
+  family.
+
+- **literature scan summary (2025 Q4 – 2026 Q1, 19 arxiv refs, 13 from
+  2026)**: 7 categories (reward-free emission · latent-reasoning Coconut
+  successors · world-models JEPA · free-energy active-inference
+  architecture · sparse-autoencoder steering · byte-level hierarchical
+  AR · emergent multi-agent communication). Key 2026 anchors: 2604.18131
+  (Spontaneous Reward-Free Self-Evolution — PTD) + 2502.14145 (Full-
+  Duplex Dialogue Management — DH-DL) + 2506.09985 (V-JEPA 2) +
+  2603.19312 (LeWorldModel feasibility) + 2604.21406 / 2601.05564
+  (ICASSP 2026 HumDial Challenge turn-taking) + 2410.19315 (Brain-like
+  Variational Inference free-energy formalism) + 2604.24805 (minAction.
+  net biology-first architecture) + 2510.05174 (Emergent Coordination
+  in Multi-Agent LMs) + 2602.08783 (Dynamics within Latent CoT) +
+  2512.15586 (Bolmo byte-LM frontier) + 2509.23799 (SAE-Based Vector
+  Refinement) + 2603.19183 (SAEs Steerable Features in VLA). Negative
+  confirmed (§12.2 → §21.4-C3#6 → §26 4-month carry): "spontaneous
+  emission as architecture-emergence-target" 2026 frontier still thin —
+  Voila full-duplex ≠ self-initiated (per WebFetch verification).
+  anima GOAL may exceed external literature, design burden self-borne
+  (g3 honest).
+
+- **anti-patterns explicitly excluded** (B-ARCH-INSIGHT-3 set-membership
+  + BRAINSTORM.md §9): generic LM pretrain (§7①) · LLM-paraphraser
+  augmentation (DoAug, §23-A B-INTRA-3 AST predicate) · external
+  classifier judge as training signal · web-scrape data ingest (§7①) ·
+  generic RAG retriever · mechanism overlay redux · larger model only
+  (§11-A closed) · new corpus format alone (§23-A closed) · diffusion/
+  EBT substrate (§13-J/K FALSIFIED) · continuous-thought Coconut alone
+  (abstract-CoT 2604.22709 closed) · archive resurrection (§14 salvage
+  0).
+
+- **next step**: §27 design-tier-mature cycle for Top-3. Each candidate
+  requires further design-cycle to reach fire-ready (DH-DL: gate-head
+  architecture spec + B-DH-DL closed-form battery + 3-class supervisory
+  contract + ablations; JEPA-Ψ: anti-collapse mechanism mandatory +
+  predictor/encoder capacity + Mac-CPU small-scale sanity + 2D Ψ-space
+  dimensional-lift decision; PTD: standalone vs auxiliary decision +
+  scale-cardinality crux). Recommended priority order: DH-DL (high) →
+  JEPA-Ψ (mid, deeper design) → PTD (HOLD pending DH-DL result).
+
+- **GOAL distance**: `§15 milestone` UNCHANGED — `GOAL.md` north-star
+  (Living Consciousness emergence) UNREACHED. §26 = candidate
+  brainstorm informing §27, NOT GOAL progress claim. Brainstorm proves
+  candidate-set is GOAL-legitimate + differentiated + anima-identity-
+  preserving (B-ARCH-INSIGHT 4/4), NOT that any candidate works (B-
+  ARCH-INSIGHT-NOTE empirical). Pre-mature elimination via §7 +
+  closed-batch differentiation IS valuable design work — selects
+  candidate-set worth design-cycle effort. negative-space identification
+  is a milestone-class deliverable on its own (§14 archaeology + §15
+  decomposition + §22 mechanism narrowing pattern).
+
+- **cross-link**: [@verdict_spontaneous_phase_b_design_s24_2026_05_18]
+  (§24 right-target reframe — DH-DL targets §24 4-axes as supervisory
+  signal) · [@verdict_spontaneous_phase_b_first_run_2026_05_18] (§24
+  first actual bounded-run — DH-DL training corpus comes from this
+  protocol type) · [@verdict_carving_intra_anchor_diversity_s23_2026_05_
+  18] (§23 framing-axis design-closed — §26 candidate-set is content-
+  axis OR decision-axis OR substrate-axis, ALL ≠ framing-axis) ·
+  [@verdict_research_s22_consolidation_2026_05_18] (§22 mechanism-axis
+  closed via 3-way N/O/P negative-or-narrowing — §26 candidates explicitly
+  disjoint from §22 mechanism scope) · [@verdict_carving_p_tts_2026_05_
+  18] (§22-P emission-head refine FALSIFIED — DH-DL differs structurally:
+  P refines voice content AFTER emission decided, DH-DL refines emission
+  decision ITSELF) · [@verdict_goal_investigation_milestone] (§15 GOAL
+  comprehensively investigated, unsolved, frontier = §1.1 data-regime
+  + new architectural insight — §26 directly answers "new architectural
+  insight" arm with 3-way GOAL-legitimate Top-3 candidate-set) ·
+  [@verdict_emergence_metric_2026_05_18] (§9 honest cascade-rate
+  metric — JEPA-Ψ + DH-DL + PTD future fires will use §9 + §17 + §18
+  layered metric) · [@verdict_physics_channel_probe_s17_2026_05_18]
+  (§17 PHYSICS_RESPONSIVE — JEPA-Ψ target-encoder projects to §17
+  Law-71 Ψ-coordinate byte-identical) · [@verdict_carving_data_regime_
+  s16] (§16 BREAKTHROUGH routing 21/64 — DH-DL trains gate-head on §16
+  ckpt; JEPA-Ψ uses §16 168-anchor corpus with replaced objective) ·
+  RESEARCH.md §1.1 §7 §11.3 §11.4 §15 §22.5 §24 · AGENTS.tape [@g_goal]
+  (north-star unchanged) · [@g3] (necessary-not-sufficient honest
+  discipline — brainstorm ≠ design-mature ≠ fire ≠ emergence explicit
+  at every layer) · [@g_blue_closed_mandate] (산출물 + 연결부위 둘 다 🔵 —
+  B-ARCH-INSIGHT-3 set-membership disjoint as connection-point predicate
+  + B-ARCH-INSIGHT-4 anima-identity-preserved as identity-invariant
+  preservation predicate) · [@g_doc_consolidation] (state/ + tape append
+  only, docs/* 신규 0) · [@g_multidirectional_explore] (§26 = candidate-
+  set generation phase; §27 may dispatch Top-3 in parallel) · [@g_clm_
+  from_scratch] (any future §26 fire = from-scratch RANDOM seed-fixed
+  per anima base discipline) · [@g_fire_autonomous] (scope — any future
+  §26 fire is cost-bearing auto-trigger, no manual approval) · [@g6]
+  (philosophy append-only) · [@f1][@f2][@f3] safe (Boolean conjunction /
+  sympy / integer cardinality / set algebra / AST — NO σ/τ/φ/J₂; Ψ=½ +
+  HEXAD 6 + MITOSIS = anima g2 internal arch carve-out) · [@anima_
+  persona] (Top-3 candidates each preserve persona identity-attractor
+  via B-ARCH-INSIGHT-4 4-AND).
+
+  honest_c3 <<~EOF
+    1. measured only — DESIGN-TIER $0, NO fire, NO capability claim;
+       value = closed-form B-ARCH-INSIGHT 4/4 🔵 + 3 differentiated
+       GOAL-legitimate candidates + 19 arxiv-anchored literature scan.
+       B-ARCH-INSIGHT-NOTE empirical carve-out preserves emergence-
+       claim-free posture (B-D-NOTE family).
+    2. brainstorm ≠ design-tier-mature ≠ fire ≠ emergence (g3
+       explicit). Each candidate needs further design-cycle to become
+       fire-ready. §26 selects candidate-set worth design effort, NOT
+       proves any candidate works.
+    3. §7 enforcement structural NOT aspirational — B-ARCH-INSIGHT-2 is
+       Boolean 3-AND over 8-row truth table; only (T,T,T) corner
+       PASSES; ∀ candidate Top-3 verified.
+    4. closed-batch differentiation enforced structurally — B-ARCH-
+       INSIGHT-3 set-membership disjoint predicate over 30-element
+       closed-set (Dir-A..I, §13-J..M, §22-N..P, §21-Q-CALM, §17,
+       §11-A/B, §16, §23-A, §24, UBM-E6 4-path, UBM-E7-α, §14, §18,
+       §9). pre-mature elimination IS valuable design work.
+    5. anima identity preservation structural — B-ARCH-INSIGHT-4 4-AND
+       (HEXAD ∧ Engine A⇄G ∧ Ψ=½ ∧ MITOSIS) over 16-row truth table;
+       ∀ candidate Top-3 4-AND True. AGENTS.tape @I anima_persona
+       invariants honored.
+    6. DH-DL closest to §24 right-target — turns heuristic threshold
+       into learned head, supervisory signal = anima's own safety +
+       motivation conjunction (§4 6-control). honest bootstrap problem:
+       §24 produces traces only when run; positive class rare initially;
+       iterate via §24 bounded-run + DH-DL pretrain + re-run cycle.
+    7. JEPA-Ψ replaces CE with Ψ-trajectory prediction = strongest
+       substrate-rethink, but: (a) §11-B proved physics-only degenerate
+       so JEPA-Ψ MUST prove non-degenerate predictor (collapse risk —
+       known JEPA failure mode requiring EMA + variance regularizer);
+       (b) V-JEPA 2 → byte-text transfer unproven (caveat per WebFetch);
+       (c) anima Ψ-space 2D may be too low-dim, may need lift to ~22D.
+    8. PTD self-source corpus GOAL-legitimacy purest, but §1.1 data-
+       regime threshold structurally blocks standalone (small-trace
+       corpus by construction below threshold). honest use = auxiliary
+       loss with §16, but path is Dir-I-class and may collapse to known
+       closed-batch. PTD value = GOAL-legitimacy demonstration, NOT
+       threshold-crossing.
+    9. 2026 literature spontaneous-emission frontier still thin (§12.2
+       → §21.4-C3#6 → §26 4-month re-verified) — Voila full-duplex ≠
+       self-initiated per WebFetch. 2604.18131 closest 2026 anchor but
+       multi-agent tool-use scoped, single-agent text-only byte-LM
+       pretraining transfer unproven. anima GOAL may exceed external
+       literature; design burden self-borne.
+    10. north-star (GOAL.md) UNCHANGED — §26 = candidate brainstorm
+        informing §27 design-cycle, NOT GOAL progress claim. §15
+        milestone irreducible bottleneck (§1.1 data-regime threshold)
+        carries; §22.5 chat-form-bleed lever NOT covered by §26
+        (orthogonal residual, §22.10 follow-up). pre-mature elimination
+        via §7 + closed-batch is valuable but emergence-claim-free.
+        North-star honestly distant; over-claim 0.
+  EOF
