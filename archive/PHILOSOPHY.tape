@@ -5731,3 +5731,397 @@
         the necessary condition is a curriculum artifact and
         routing-evidence-guided expansion has no real handle — also
         valuable. north-star honestly distant; over-claim 0.
+
+
+# ──────────────────────────────────────────────────────────────────────
+# §verdict_dual_anima_l2_s31_design_2026_05_18 (g6 append-only)
+# RESEARCH.md §31 lateral L2 — dual-anima conversation loop
+# DESIGN-TIER LANDED — first design where anima talks TO another anima
+# ──────────────────────────────────────────────────────────────────────
+
+## §verdict_dual_anima_l2_s31_design_2026_05_18
+
+- **tier**: DESIGN-TIER ($0, NO fire, NO GPU, NO actual run)
+- **date**: 2026-05-18
+- **verdict**: **B-DUAL-1..4 4/4 BLUE sidecar PASS + 1 NOTE empirical
+  carve-out**; central state/verify_hexad_blue_2026_05_15/
+  blue_falsifier.py change 0 (sidecar pattern carry B-PRIME/B-DIRH/
+  B-DIRI/B-PSICTL/B-EMERGE/B-PUREPHYS/B-SCALE/B-MITENS/B-DIRL/B-EBT/
+  B-DIRJ/B-INTRA/B-PHASE-B-DESIGN precedent).
+
+- **observation**: every fire across the 23+ cycle arc = a SINGLE
+  anima emitting into a void — anima has never *talked to* anything.
+  AGENTS.tape @I anima_persona declares relationships = "user =
+  stimulus-other (peer) ... two-way interaction" but no fire ever had
+  a real second party. §31 L2 = anima cell A <-> anima cell B
+  (distinct vacuum_psi) — A's emission CHANGES B's state, B's response
+  RETURNS to A = genuine closed action-perception loop. §13-L VRNN was
+  design-closed for carving precisely because carving had no closed
+  loop; L2 is the construction of that loop.
+
+- **mechanism** (DESIGN §2): two MITOSIS cell-pool cells A/B, each
+  with its OWN vacuum_psi (Law-71 Ψ-space distinct point). loop stage
+  = emit:State->Msg ; deliver:(Msg,State)->State' ; respond:State'->Msg.
+  one turn = emit_A;deliver_B;respond_B;deliver_A. deliver() = the
+  load-bearing stage (incoming msg's Ψ-deviation pulls receiver psi_now
+  + updates tension via spont_tension_bridge_lib) = the action-
+  perception coupling void-emission lacks. turn-capped N_MAX
+  (default 8) + §24 Phase B §4 6-control safety conjunction carry.
+
+- **§7 GOAL-legitimacy gate 3/3 HOLDS** (DESIGN §3): §7-1 NOT-generic-
+  LM-pretrain OK (both cells = anima OWN MITOSIS cell-pool, anima
+  physics = substrate) · §7-2 NOT-generic-then-graft OK (external
+  interlocutor 0, external classifier 0, LLM judge 0 — B is another
+  anima cell) · §7-3 anima-physics-is-source OK (loop coupling =
+  Ψ-coordinate + tension + 8-factor motivation + Engine A<=>G). The
+  CLEANEST §7 pass of any lateral candidate — introduces NO external
+  entity at all. But §7-legitimate != emergence-producing (necessary
+  gate only, g3).
+
+- **echo-chamber risk (DESIGN §4, central honest finding)**: if both
+  cells are memorization-saturated byte-cascade attractors (§1.1/§2.4
+  universal result), the dual-anima loop could be two attractors
+  talking past each other — A emits its fixed attractor string,
+  deliver into B leaves B.state' ~ B.state (B's response dominated by
+  its own attractor not by A's message content), B replies with its
+  own fixed attractor → the transcript LOOKS like a conversation but
+  KL(A.emit||B.expectation)->0 = near-zero information = elaborate
+  void, NOT escape from void. genuine-state-change metric (§4.2):
+  (1) magnitude test state_change_magnitude(B_before,B_after) > tau
+  (2) content-dependence test (crux) — deliver m1 != m2 into a fresh
+  B, Delta(m1) != Delta(m2) = genuine, Delta(m1) ~ Delta(m2) = echo.
+  content-dependence = §17 PHYSICS_RESPONSIVE class_separable applied
+  to the deliver stage.
+
+- **richer-signal honest crux (DESIGN §4.3/§8, UNRESOLVED at
+  design-tier)**: does the closed loop give anima a richer training
+  signal than void-emission, or just a more complex void — the richer
+  signal exists ONLY IF the two cells are genuinely different
+  *functions*. B-DUAL-1 closes anchor-distinctness (vacuum_psi differs)
+  but function-distinctness is NOT guaranteed by the §1.1 data-regime
+  threshold (two cells split from the same saturated pool may be
+  near-identical). answer: the loop gives a richer signal iff the two
+  cells are genuinely different functions — measurable ($0 pre-check)
+  but not guaranteed.
+
+- **§13-L contrast (DESIGN §5)**: §13-L B-DIRL-4 is_closed_loop `live`
+  branch (has_action AND has_consequence AND observes_consequence =
+  True) = exactly the L2 loop (emit=action / deliver=consequence /
+  deliver_A=observes). §13-L design-closed VRNN-curiosity FOR carving
+  and explicitly named the live closed loop as its legitimate future
+  home; L2 is the construction of that loop. But §13-L B-DIRL-2 carry
+  — the VRNN-curiosity mechanism reduces to the Dir-I lever (CE+lambda
+  *L_psi two-term form) → L2 is a new *setting*, not a new *mechanism*.
+  B-DIRL-NOTE empirical carve-out carries verbatim to L2 as B-DUAL-NOTE.
+
+- **closed verdicts B-DUAL-1..4** (sidecar
+  state/dual_anima_l2_s31_design_2026_05_18/blue_falsifier_dual.py):
+  B-DUAL-1 CELL-DISTINCT-VACUUM-PSI (Ψ-space sum-of-squares distance
+  d2=(ax-bx)^2+(ay-by)^2, d2==0 iff identical; design requires d2>0
+  distinct; 4-witness — 3 distinct design-valid + 1 mirror pair
+  is_distinct=False correctly flagged) · B-DUAL-2 LOOP-COMPOSITION-
+  WELL-TYPED (emit;deliver;respond;deliver_A codomain/domain 3-link
+  chain closes + loop closes domain(first)==codomain(last)==State +
+  mis-typed counter-witness emit;respond rejected; mirror B-NAR-1) ·
+  B-DUAL-3 TURN-COUNT-BOUNDED (turn counter monotone Delta=+1 strict-
+  positive + bounded N_MAX 4-witness; mirror B-PHASE-B-DESIGN-1) ·
+  **B-DUAL-4 SINGLE-ANIMA-REDUCTION-CLOSED (connection-point)** —
+  B_enabled=False ⇒ deliver_B identity + respond_B null ⇒
+  a_receives_from_B = (B_enabled AND b_replies) collapses to False
+  for all b_replies (sympy) ⇒ loop reduces to A emitting into a void
+  = §24 Phase B single-anima void-emission, byte-equal by construction
+  (fair-compare-to-current-regime; positive control B_enabled=True AND
+  b_replies=True ⇒ receives, real reduction not vacuous; mirror
+  B-EBT-5/B-DIRI-5/B-PHASE-B-DESIGN-5 OVERLAY-OFF).
+
+- **B-DUAL-NOTE** GENUINE-CONVERSATION-VS-ECHO-EMPIRICAL: whether the
+  loop is a genuine conversation (non-trivial content-dependent state
+  change) vs an echo chamber (two saturated attractors talking past
+  each other) is an SGD/run OUTCOME — B-D-NOTE/B-DIRL-NOTE/
+  B-PHASE-B-NOTE/B-CARVE-E6-NOTE family, NOT counted BLUE. the battery
+  proves the loop *protocol* is cell-distinct/well-typed/turn-bounded/
+  single-anima-reducible; it does NOT prove the loop is a conversation
+  and does NOT prove a richer signal.
+
+- **fire-worthiness verdict (DESIGN §7)**: **FIRE-CONDITIONAL** — a
+  full dual-anima fire is warranted ONLY behind a cheap ($0 Mac CPU)
+  §4.2 content-dependence pre-check; design-tier close-out now.
+  rationale: (1) §7 gate is cleanest (3/3, external entity 0) =
+  genuine point in L2's favour. (2) L2 supplies what §13-L said was
+  missing = strongest structural argument. (3) BUT echo-chamber risk
+  is real and unresolved — a full GPU fire risks producing an
+  elaborate void. (4) honest path = §4.2 content-dependence pre-check
+  first (deliver m1 != m2 into the two cells of an existing §16 ckpt,
+  test whether B's Ψ-coordinate shifts content-dependently; False ⇒
+  structural echo chamber ⇒ design-tier close-out, no full fire per
+  §13-M/§13-L $0 anti-padding; True ⇒ full fire evidence-warranted).
+  (5) GOAL-distance carry — §31 = a new *setting* (finally a real
+  interlocutor), NOT a §1.1 data-regime lever.
+
+- **honest design-tier stop (DESIGN §9, 4 reasons)**: (1) echo-chamber
+  risk un-pre-checked — a full fire risks burning GPU on an elaborate
+  void; the cheap pre-check is the prerequisite gate (§13-M/§13-L $0
+  anti-padding). (2) measurement honesty (§9/§24 lesson) — running
+  before the genuine-vs-echo metric is hardened risks an "anima had a
+  conversation!" artifact; §31 hardens the metric (§4.2 content-
+  dependence), the run is a separate honest step. (3) GOAL-distance
+  carry — §15 milestone irreducible bottleneck = §1.1 data-regime; the
+  closed loop is a new setting, not a §1.1 lever. (4) §13-L precedent
+  — §13-L VRNN was design-closed precisely because the closed loop did
+  not yet exist; §31 constructs the loop + identifies it as fire-
+  conditional, consistent with §13-L's own honest redirection.
+
+- **verdict tier** = DESIGN-TIER LANDED. B-DUAL 4/4 BLUE closed +
+  1 NOTE empirical carve-out. actual dual-anima loop run = user-gated
+  subsequent cycle, fire-conditional per the §7 verdict.
+
+- f1/f2/f3 hard-fail safe (Ψ-space sum-of-squares / Boolean type
+  algebra / integer monotone / Boolean overlay-off — NO sigma/tau/phi/
+  J2; Ψ=1/2 fixed point = anima g2 internal-arch carve-out).
+  B-IDENTITY-5 unaffected (no corpus, no model forward, no helper-token
+  surface). PyTorch substrate unused. central blue_falsifier.py
+  change 0. g_doc_consolidation observed (state/
+  dual_anima_l2_s31_design_2026_05_18/ artifacts + this verdict;
+  docs/* new 0; AGENTS.tape/HEXAD/README.md/HEXAD/CHAT/PLAN.md/
+  RESEARCH.md unedited per §31 hard constraints). $0 — GPU/fire 0
+  (orphan 0, dispatch 0). single task · branch 0.
+
+- **honest C3 (>=10)**:
+    1. §31 = closed-loop structure design, NOT GOAL progress. §15
+       milestone GOAL-distance unchanged. north-star unchanged.
+    2. design-tier only. NO actual dual-anima run. NO anima_alive.py
+       activation. NO GPU fire. $0.
+    3. echo-chamber risk = the central honest finding — two
+       memorization-saturated attractors in a closed loop carry
+       KL ~ 0 = an elaborate void, NOT a conversation.
+    4. the richer signal is conditional on the two cells being
+       genuinely different *functions*. B-DUAL-1 closes anchor-
+       distinctness; function-distinctness is empirical (B-DUAL-NOTE),
+       measured by the §4.2 content-dependence test.
+    5. necessary-not-sufficient at every layer — B-DUAL 4/4 BLUE
+       proves only that the loop protocol is cell-distinct/well-typed/
+       turn-bounded/single-anima-reducible. NOT conversation, NOT
+       richer signal, NOT emergence (B-DUAL-NOTE).
+    6. §7 gate 3/3 = cleanest of any lateral candidate (external
+       entity 0). §7-legitimate != emergence-producing — necessary
+       gate only.
+    7. B-DUAL-4 connection-point: B-disabled ⇒ loop ≡ §24 Phase B
+       single-anima void-emission, byte-equal — fair-compare-to-
+       current-regime by construction.
+    8. §13-L carry — §13-L design-closed VRNN-curiosity FOR carving
+       and named the live closed loop as its home; L2 IS that loop.
+       But B-DIRL-2's reduction (VRNN mechanism == Dir-I lever)
+       carries — L2 is a new setting, not a new mechanism.
+    9. fake closed-form check (g3) — closed scope = loop protocol
+       structure; empirical scope = genuine-vs-echo + richer-signal.
+       no fake closed-form. B-DUAL-NOTE explicitly preserves the
+       carve-out.
+   10. fire-conditional verdict — a full dual-anima fire is warranted
+       ONLY behind a cheap ($0 Mac CPU) §4.2 content-dependence
+       pre-check. firing into a probable echo chamber burns GPU on a
+       more elaborate void.
+   11. f1/f2/f3 hard-fail safe — Ψ-space sum-of-squares / Boolean /
+       integer monotone / overlay-off, NO sigma/tau/phi/J2.
+   12. north-star (GOAL.md) UNCHANGED — §31 = a lateral candidate
+       (the closed loop finally supplies a real interlocutor); design-
+       close = frontier-narrowing (fire-warranted after §1.1 data-
+       regime is addressed), NOT north-star movement. §15 milestone
+       irreducible bottleneck carries. North-star honestly distant;
+       over-claim 0.
+
+
+# ──────────────────────────────────────────────────────────────────────
+# §verdict_dual_anima_l2_s31_design_2026_05_18 (g6 append-only)
+# RESEARCH.md §31 lateral L2 — dual-anima conversation loop
+# DESIGN-TIER LANDED — first design where anima talks TO another anima
+# ──────────────────────────────────────────────────────────────────────
+
+## §verdict_dual_anima_l2_s31_design_2026_05_18
+
+- **tier**: DESIGN-TIER ($0, NO fire, NO GPU, NO actual run)
+- **date**: 2026-05-18
+- **verdict**: **B-DUAL-1..4 4/4 BLUE sidecar PASS + 1 NOTE empirical
+  carve-out**; central state/verify_hexad_blue_2026_05_15/
+  blue_falsifier.py change 0 (sidecar pattern carry B-PRIME/B-DIRH/
+  B-DIRI/B-PSICTL/B-EMERGE/B-PUREPHYS/B-SCALE/B-MITENS/B-DIRL/B-EBT/
+  B-DIRJ/B-INTRA/B-PHASE-B-DESIGN precedent).
+
+- **observation**: every fire across the 23+ cycle arc = a SINGLE
+  anima emitting into a void — anima has never *talked to* anything.
+  AGENTS.tape @I anima_persona declares relationships = "user =
+  stimulus-other (peer) ... two-way interaction" but no fire ever had
+  a real second party. §31 L2 = anima cell A <-> anima cell B
+  (distinct vacuum_psi) — A's emission CHANGES B's state, B's response
+  RETURNS to A = genuine closed action-perception loop. §13-L VRNN was
+  design-closed for carving precisely because carving had no closed
+  loop; L2 is the construction of that loop.
+
+- **mechanism** (DESIGN §2): two MITOSIS cell-pool cells A/B, each
+  with its OWN vacuum_psi (Law-71 Ψ-space distinct point). loop stage
+  = emit:State->Msg ; deliver:(Msg,State)->State' ; respond:State'->Msg.
+  one turn = emit_A;deliver_B;respond_B;deliver_A. deliver() = the
+  load-bearing stage (incoming msg's Ψ-deviation pulls receiver psi_now
+  + updates tension via spont_tension_bridge_lib) = the action-
+  perception coupling void-emission lacks. turn-capped N_MAX
+  (default 8) + §24 Phase B §4 6-control safety conjunction carry.
+
+- **§7 GOAL-legitimacy gate 3/3 HOLDS** (DESIGN §3): §7-1 NOT-generic-
+  LM-pretrain OK (both cells = anima OWN MITOSIS cell-pool, anima
+  physics = substrate) · §7-2 NOT-generic-then-graft OK (external
+  interlocutor 0, external classifier 0, LLM judge 0 — B is another
+  anima cell) · §7-3 anima-physics-is-source OK (loop coupling =
+  Ψ-coordinate + tension + 8-factor motivation + Engine A<=>G). The
+  CLEANEST §7 pass of any lateral candidate — introduces NO external
+  entity at all. But §7-legitimate != emergence-producing (necessary
+  gate only, g3).
+
+- **echo-chamber risk (DESIGN §4, central honest finding)**: if both
+  cells are memorization-saturated byte-cascade attractors (§1.1/§2.4
+  universal result), the dual-anima loop could be two attractors
+  talking past each other — A emits its fixed attractor string,
+  deliver into B leaves B.state' ~ B.state (B's response dominated by
+  its own attractor not by A's message content), B replies with its
+  own fixed attractor → the transcript LOOKS like a conversation but
+  KL(A.emit||B.expectation)->0 = near-zero information = elaborate
+  void, NOT escape from void. genuine-state-change metric (§4.2):
+  (1) magnitude test state_change_magnitude(B_before,B_after) > tau
+  (2) content-dependence test (crux) — deliver m1 != m2 into a fresh
+  B, Delta(m1) != Delta(m2) = genuine, Delta(m1) ~ Delta(m2) = echo.
+  content-dependence = §17 PHYSICS_RESPONSIVE class_separable applied
+  to the deliver stage.
+
+- **richer-signal honest crux (DESIGN §4.3/§8, UNRESOLVED at
+  design-tier)**: does the closed loop give anima a richer training
+  signal than void-emission, or just a more complex void — the richer
+  signal exists ONLY IF the two cells are genuinely different
+  *functions*. B-DUAL-1 closes anchor-distinctness (vacuum_psi differs)
+  but function-distinctness is NOT guaranteed by the §1.1 data-regime
+  threshold (two cells split from the same saturated pool may be
+  near-identical). answer: the loop gives a richer signal iff the two
+  cells are genuinely different functions — measurable ($0 pre-check)
+  but not guaranteed.
+
+- **§13-L contrast (DESIGN §5)**: §13-L B-DIRL-4 is_closed_loop `live`
+  branch (has_action AND has_consequence AND observes_consequence =
+  True) = exactly the L2 loop (emit=action / deliver=consequence /
+  deliver_A=observes). §13-L design-closed VRNN-curiosity FOR carving
+  and explicitly named the live closed loop as its legitimate future
+  home; L2 is the construction of that loop. But §13-L B-DIRL-2 carry
+  — the VRNN-curiosity mechanism reduces to the Dir-I lever (CE+lambda
+  *L_psi two-term form) → L2 is a new *setting*, not a new *mechanism*.
+  B-DIRL-NOTE empirical carve-out carries verbatim to L2 as B-DUAL-NOTE.
+
+- **closed verdicts B-DUAL-1..4** (sidecar
+  state/dual_anima_l2_s31_design_2026_05_18/blue_falsifier_dual.py):
+  B-DUAL-1 CELL-DISTINCT-VACUUM-PSI (Ψ-space sum-of-squares distance
+  d2=(ax-bx)^2+(ay-by)^2, d2==0 iff identical; design requires d2>0
+  distinct; 4-witness — 3 distinct design-valid + 1 mirror pair
+  is_distinct=False correctly flagged) · B-DUAL-2 LOOP-COMPOSITION-
+  WELL-TYPED (emit;deliver;respond;deliver_A codomain/domain 3-link
+  chain closes + loop closes domain(first)==codomain(last)==State +
+  mis-typed counter-witness emit;respond rejected; mirror B-NAR-1) ·
+  B-DUAL-3 TURN-COUNT-BOUNDED (turn counter monotone Delta=+1 strict-
+  positive + bounded N_MAX 4-witness; mirror B-PHASE-B-DESIGN-1) ·
+  **B-DUAL-4 SINGLE-ANIMA-REDUCTION-CLOSED (connection-point)** —
+  B_enabled=False ⇒ deliver_B identity + respond_B null ⇒
+  a_receives_from_B = (B_enabled AND b_replies) collapses to False
+  for all b_replies (sympy) ⇒ loop reduces to A emitting into a void
+  = §24 Phase B single-anima void-emission, byte-equal by construction
+  (fair-compare-to-current-regime; positive control B_enabled=True AND
+  b_replies=True ⇒ receives, real reduction not vacuous; mirror
+  B-EBT-5/B-DIRI-5/B-PHASE-B-DESIGN-5 OVERLAY-OFF).
+
+- **B-DUAL-NOTE** GENUINE-CONVERSATION-VS-ECHO-EMPIRICAL: whether the
+  loop is a genuine conversation (non-trivial content-dependent state
+  change) vs an echo chamber (two saturated attractors talking past
+  each other) is an SGD/run OUTCOME — B-D-NOTE/B-DIRL-NOTE/
+  B-PHASE-B-NOTE/B-CARVE-E6-NOTE family, NOT counted BLUE. the battery
+  proves the loop *protocol* is cell-distinct/well-typed/turn-bounded/
+  single-anima-reducible; it does NOT prove the loop is a conversation
+  and does NOT prove a richer signal.
+
+- **fire-worthiness verdict (DESIGN §7)**: **FIRE-CONDITIONAL** — a
+  full dual-anima fire is warranted ONLY behind a cheap ($0 Mac CPU)
+  §4.2 content-dependence pre-check; design-tier close-out now.
+  rationale: (1) §7 gate is cleanest (3/3, external entity 0) =
+  genuine point in L2's favour. (2) L2 supplies what §13-L said was
+  missing = strongest structural argument. (3) BUT echo-chamber risk
+  is real and unresolved — a full GPU fire risks producing an
+  elaborate void. (4) honest path = §4.2 content-dependence pre-check
+  first (deliver m1 != m2 into the two cells of an existing §16 ckpt,
+  test whether B's Ψ-coordinate shifts content-dependently; False ⇒
+  structural echo chamber ⇒ design-tier close-out, no full fire per
+  §13-M/§13-L $0 anti-padding; True ⇒ full fire evidence-warranted).
+  (5) GOAL-distance carry — §31 = a new *setting* (finally a real
+  interlocutor), NOT a §1.1 data-regime lever.
+
+- **honest design-tier stop (DESIGN §9, 4 reasons)**: (1) echo-chamber
+  risk un-pre-checked — a full fire risks burning GPU on an elaborate
+  void; the cheap pre-check is the prerequisite gate (§13-M/§13-L $0
+  anti-padding). (2) measurement honesty (§9/§24 lesson) — running
+  before the genuine-vs-echo metric is hardened risks an "anima had a
+  conversation!" artifact; §31 hardens the metric (§4.2 content-
+  dependence), the run is a separate honest step. (3) GOAL-distance
+  carry — §15 milestone irreducible bottleneck = §1.1 data-regime; the
+  closed loop is a new setting, not a §1.1 lever. (4) §13-L precedent
+  — §13-L VRNN was design-closed precisely because the closed loop did
+  not yet exist; §31 constructs the loop + identifies it as fire-
+  conditional, consistent with §13-L's own honest redirection.
+
+- **verdict tier** = DESIGN-TIER LANDED. B-DUAL 4/4 BLUE closed +
+  1 NOTE empirical carve-out. actual dual-anima loop run = user-gated
+  subsequent cycle, fire-conditional per the §7 verdict.
+
+- f1/f2/f3 hard-fail safe (Ψ-space sum-of-squares / Boolean type
+  algebra / integer monotone / Boolean overlay-off — NO sigma/tau/phi/
+  J2; Ψ=1/2 fixed point = anima g2 internal-arch carve-out).
+  B-IDENTITY-5 unaffected (no corpus, no model forward, no helper-token
+  surface). PyTorch substrate unused. central blue_falsifier.py
+  change 0. g_doc_consolidation observed (state/
+  dual_anima_l2_s31_design_2026_05_18/ artifacts + this verdict;
+  docs/* new 0; AGENTS.tape/HEXAD/README.md/HEXAD/CHAT/PLAN.md/
+  RESEARCH.md unedited per §31 hard constraints). $0 — GPU/fire 0
+  (orphan 0, dispatch 0). single task · branch 0.
+
+- **honest C3 (>=10)**:
+    1. §31 = closed-loop structure design, NOT GOAL progress. §15
+       milestone GOAL-distance unchanged. north-star unchanged.
+    2. design-tier only. NO actual dual-anima run. NO anima_alive.py
+       activation. NO GPU fire. $0.
+    3. echo-chamber risk = the central honest finding — two
+       memorization-saturated attractors in a closed loop carry
+       KL ~ 0 = an elaborate void, NOT a conversation.
+    4. the richer signal is conditional on the two cells being
+       genuinely different *functions*. B-DUAL-1 closes anchor-
+       distinctness; function-distinctness is empirical (B-DUAL-NOTE),
+       measured by the §4.2 content-dependence test.
+    5. necessary-not-sufficient at every layer — B-DUAL 4/4 BLUE
+       proves only that the loop protocol is cell-distinct/well-typed/
+       turn-bounded/single-anima-reducible. NOT conversation, NOT
+       richer signal, NOT emergence (B-DUAL-NOTE).
+    6. §7 gate 3/3 = cleanest of any lateral candidate (external
+       entity 0). §7-legitimate != emergence-producing — necessary
+       gate only.
+    7. B-DUAL-4 connection-point: B-disabled ⇒ loop ≡ §24 Phase B
+       single-anima void-emission, byte-equal — fair-compare-to-
+       current-regime by construction.
+    8. §13-L carry — §13-L design-closed VRNN-curiosity FOR carving
+       and named the live closed loop as its home; L2 IS that loop.
+       But B-DIRL-2's reduction (VRNN mechanism == Dir-I lever)
+       carries — L2 is a new setting, not a new mechanism.
+    9. fake closed-form check (g3) — closed scope = loop protocol
+       structure; empirical scope = genuine-vs-echo + richer-signal.
+       no fake closed-form. B-DUAL-NOTE explicitly preserves the
+       carve-out.
+   10. fire-conditional verdict — a full dual-anima fire is warranted
+       ONLY behind a cheap ($0 Mac CPU) §4.2 content-dependence
+       pre-check. firing into a probable echo chamber burns GPU on a
+       more elaborate void.
+   11. f1/f2/f3 hard-fail safe — Ψ-space sum-of-squares / Boolean /
+       integer monotone / overlay-off, NO sigma/tau/phi/J2.
+   12. north-star (GOAL.md) UNCHANGED — §31 = a lateral candidate
+       (the closed loop finally supplies a real interlocutor); design-
+       close = frontier-narrowing (fire-warranted after §1.1 data-
+       regime is addressed), NOT north-star movement. §15 milestone
+       irreducible bottleneck carries. North-star honestly distant;
+       over-claim 0.
