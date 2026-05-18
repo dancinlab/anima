@@ -1,0 +1,34 @@
+{
+  "research_md_section": "§44",
+  "title": "DH-DL + PTD-aux composition fire (§38 design execution)",
+  "$cost": "$0 Mac CPU (numpy hand-coded backprop, no GPU)",
+  "wall_sec": 13.03,
+  "baseline_s27_gap": 0.000625130235465722,
+  "baseline_s27_accuracy": 0.9993748697645343,
+  "lambda_ptd_0": {
+    "accuracy_3class": 0.9989581162742238,
+    "gap": 0.0010418837257762034,
+    "gap_verdict": "DISTILLATION_WITH_APPROXIMATION_NOISE",
+    "ptd_mse_mean": 3.8106658489917304,
+    "ptd_mse_per_class": {
+      "CONTINUE_THINK": 3.7759000666951286,
+      "EMIT_VOICE": 2.7420638598204383,
+      "REMAIN_SILENT": 3.8625329916268676
+    }
+  },
+  "lambda_ptd_03": {
+    "accuracy_3class": 0.9996874348822672,
+    "gap": 0.000312565117732861,
+    "gap_verdict": "DISTILLATION_WITH_APPROXIMATION_NOISE",
+    "ptd_mse_mean": 0.2519132147691955,
+    "ptd_mse_per_class": {
+      "CONTINUE_THINK": 1.8195272190996372,
+      "EMIT_VOICE": 0.3156152606714885,
+      "REMAIN_SILENT": 0.2486412334724619
+    }
+  },
+  "delta_gap_03_minus_0": -0.0007293186080433424,
+  "delta_accuracy_03_minus_0": 0.0007293186080433722,
+  "representation_shaping_verdict": "PTD-AUX-SIGNAL-MEASURABLE",
+  "honest_note": "DESIGN_S38.md §5 honest prediction: 'gap stays ≈ 0 in both — decision label is deterministic function of features, PTD aux term shapes representation geometry not decision function.' Measured delta tells whether the auxiliary signal moves the decision-axis behaviour vs. noise. PTD aux MSE per-class localises the structurally-near-empty CONTINUE_THINK corner (§27 found ≈9 records). Composition is BETTER-ENGINEERED DISTILLATION not emergence (DESIGN_S38.md §7)."
+}
