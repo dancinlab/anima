@@ -5451,3 +5451,182 @@
         via §7 + closed-batch is valuable but emergence-claim-free.
         North-star honestly distant; over-claim 0.
   EOF
+
+## §verdict_ptd_physics_trace_distillation_s29_2026_05_18 — RESEARCH.md §29 PTD Physics-Trace-Distillation ($0 design-tier, fire 0, B-PTD-1..4 4/4 🔵 sidecar — PTD-standalone DESIGN-CLOSE + PTD-as-component 2 GOAL-legitimate combinations)
+
+@V verdict_ptd_physics_trace_distillation_s29 := "RESEARCH.md §29 — PTD (Physics-Trace-Distillation): §26 candidate #3 (★★★☆☆ LOW-as-standalone) 를 design-tier verdict 까지 성숙. PTD = anima 가 자기 §24 Phase B physics trace 를 corpus 로 학습 (self-source distillation, anima 가 anima 를 예측). **PTD-standalone = DESIGN-CLOSE, fire 0** — B-PTD-2 가 standalone corpus (20·N records, §24 bounded-run) 가 §1.1 data-regime emergence threshold 보다 10³–10⁴×+ 아래임을 closed-form 으로 증명 + unique-content 가 N 으로 안 자람 (data-processing inequality: corpus K-complexity ≤ 손-코딩 bounded-run generator K-complexity). standalone fire = closed-form 예측된 negative (anti-padding, §13-M/§13-L design-close 선례). bootstrap circularity 가 두 번째 독립 blocker (§24 first run = 95% one class, 19 SAFETY_BLOCK / 1 EMIT). **PTD GOAL-legitimacy = §7 3/3 ✓ — §7③ purest of §26 top-3** (corpus IS the trace, provenance transformation 0; B-PTD-1 Boolean schema membership closed). **PTD-as-component = 2 GOAL-legitimate combinations**: A (PTD-as-DH-DL-aux, §26 #1 host) = strongest, gated on §27 DH-DL design landing; B (PTD-as-JEPA-Ψ-target, §26 #2 host) = conditional within §28 JEPA-Ψ design; C (standalone-pretrain-then-graft) = §7② FALSIFIED rejected. B-PTD-1..4 4/4 🔵 transfer-form closed (sidecar, central blue_falsifier.py 변경 0)." :: verdict [d=2026-05-18 active]
+  tier = "DESIGN-TIER closed-form ($0 — NO fire, NO corpus generation, NO GPU)"
+  battery = "B-PTD-1..4 4/4 🔵 SUPPORTED-FORMAL sidecar (state/ptd_physics_trace_distillation_s29_2026_05_18/blue_falsifier_ptd.py) + B-PTD-NOTE empirical carve-out — central state/verify_hexad_blue_2026_05_15/blue_falsifier.py UNCHANGED (task mandate, B-MITENS/B-DIRL/B-PRIME/B-DIRI/B-PSICTL/B-EMERGE/B-PUREPHYS/B-SCALE/B-EBT sidecar 선례)"
+  b_ptd_1 = "B-PTD-1 SELF-SOURCE-§7③-CLOSED — ∀ field ∈ §24-record-schema : field ∈ anima_physics_channels (8-factor ∪ 6-control ∪ Ψ-axes ∪ decision) exhaustive Boolean schema membership + external-field negative control — PTD corpus provenance anima-internal, §7③ purest"
+  b_ptd_2 = "B-PTD-2 TRACE-CORPUS-CARDINALITY-BOUNDED — corpus(N)=20·N integer cardinality, sympy strict inequality 20·N < CDS_FLOOR=1e4 ⇔ N<500 (4 witnesses N∈{1,10,100,499}), §16 record-count needs N=38,850 runs AND unique-content non-growth (data-processing inequality) — standalone scale ≪ §1.1 threshold by construction (closed)"
+  b_ptd_3 = "B-PTD-3 DISTILLATION-LOSS-NONNEGATIVE — L_ptd = CE(pred,target) + λ_psi·(ψ−½)²: Shannon CE −p·logq ≥ 0 floor (q∈(0,1], 0 at q=1) + Ψ=½ pull (ψ−½)² ≥ 0 ∀ψ ⇒ sum of non-negatives ≥ 0; CE load-bearing (§11-B) on anima physics vectors"
+  b_ptd_4 = "B-PTD-4 COMPONENT-COMPOSABILITY-CLOSED (연결부위) — L = L_host + λ_ptd·L_ptd, λ_ptd=0 ⇒ L≡L_host byte-equal additive identity (sympy) + non-vacuous positive control + ∂L/∂λ_ptd=L_ptd marginal + 200-sample numeric — mirror B-EBT-5/B-S16-5/B-DIRI-5 overlay-off connection-point, PTD-as-component fair-compare-by-construction"
+  b_ptd_note = "B-PTD-NOTE COMPONENT-IMPROVEMENT-EMPIRICAL — whether PTD-as-component actually improves a host objective (DH-DL gate accuracy / JEPA-Ψ anti-collapse) is an SGD/measurement OUTCOME, NOT counted 🔵 (B-D-NOTE / B-MITENS-NOTE / B-SCALE-NOTE / B-PUREPHYS-NOTE / B-EBT-NOTE family — true of every stochastic optimiser, NOT a PTD-specific defect)"
+  artifacts = "state/ptd_physics_trace_distillation_s29_2026_05_18/{DESIGN_PTD.md 9§ + 12 honest C3, ptd_sketch.py runtime-guarded design-tier sketch (SystemExit(0) on direct invocation, mirror §24 measurement_protocol.py), blue_falsifier_ptd.py B-PTD-1..4 4/4 🔵 + B-PTD-NOTE, blue_falsifier_ptd_result.json, result.json}"
+  safety = "f1/f2/f3 + B-IDENTITY-5 hard-fail safe — NO σ/τ/φ/J₂ derivation (anchors = Boolean schema membership, integer cardinality + sympy inequality vs §1.1 CDS floor, Shannon CE≥0, additive identity; Ψ=½ + 8-factor + HEXAD-6 = anima g2 internal-arch carve-out); NO outcome/capability claim (PTD-standalone closed with closed-form-predicted negative, PTD-as-component improvement explicitly B-PTD-NOTE empirical); $0 design-tier, NO corpus generated, NO model forward, NO helper-token surface"
+  goal_distance = "§15 milestone UNCHANGED — irreducible bottleneck = §1.1 data-regime threshold. §29 design-closes PTD-standalone (does NOT address that bottleneck — it IS a sub-threshold corpus) + identifies 2 GOAL-legitimate component combinations for future cycles. frontier-narrowing work, NOT GOAL progress. north-star (GOAL.md) UNCHANGED."
+  honest_c3 <<~EOF
+    1. Design-tier ≠ fire ≠ emergence. §29 outputs a design verdict + a
+       4/4 🔵 battery proving PTD's transfer-form — proves nothing about
+       whether PTD-as-component works (B-PTD-NOTE empirical, future-cycle).
+    2. PTD-standalone design-close is a closed-form PREDICTED negative,
+       not a measured one. B-PTD-2 proves the corpus is 10³–10⁴×+ sub-§1.1
+       by construction. We do NOT fire — design-close because the fire
+       outcome is closed-form predictable (§13-M honest-stop precedent).
+    3. The §1.1 block is DIVERSITY, not just count. Even N=38,850 runs
+       (to reach §16 record-count) does NOT rescue PTD-standalone — N
+       copies of the same low-entropy hand-coded 20-step process; corpus
+       K-complexity ≤ generator K-complexity (data-processing inequality).
+    4. Bootstrap circularity is a second INDEPENDENT blocker — §24 first
+       run was 95% one class (19 SAFETY_BLOCK / 1 EMIT). A self-distillation
+       corpus this class-imbalanced cannot teach a non-degenerate
+       distribution. PTD-standalone blocked by §1.1 AND by bootstrap.
+    5. PTD-as-DH-DL-aux (combination A) is the strongest use — DH-DL's §26
+       §4 spec already names the §24 physics trace as its training data,
+       so PTD-as-component is the corpus-formalisation of DH-DL's own data,
+       not an add-on. ≤1%-param gate head is scale-orthogonal, does NOT
+       need to cross §1.1. Gated on §27 DH-DL design landing first.
+    6. PTD-as-JEPA-Ψ-target (combination B) is conditional — supplies a
+       real but short (20-step) recorded Ψ-trajectory as anti-collapse
+       anchor. 20-step adequacy is a §28 JEPA-Ψ-design-cycle question.
+    7. §7③ purest claim is a structural argument (B-PTD-1 Boolean schema
+       membership), NOT an emergence prediction — PTD's corpus IS the
+       trace with zero provenance transformation.
+    8. CDS_FLOOR=1e4 is a deliberately generous lower bound — §1.1 /
+       arxiv 2401.10463 typically cites 1e6–1e8 unique tokens. PTD fails
+       the block even against the most charitable threshold — robust.
+    9. §22.5 chat-form-bleed lever NOT addressed by §29 (orthogonal
+       residual, §22.10 follow-up). §29 makes no claim on chat-form-bleed.
+    10. north-star (GOAL.md) unchanged. §29 design-closes PTD-standalone
+        + identifies 2 GOAL-legitimate component combinations. Anti-padding
+        honest (g3): a "fire-tier" verdict via a 500-run corpus was the
+        padding option; §29 names the structural block instead — the more
+        honest and more valuable verdict. design-close is valid + valuable
+        (§13-M / §13-L precedent). PTD GOAL-legitimacy affirmed 3/3;
+        only standalone fire-worthiness closed-out. over-claim 0.
+  EOF
+  cross_link = "[@verdict_carving_dirM_mitosens] (§13-M — design-close anti-padding precedent: fire info value overlaps already-measured axis) + [@verdict_carving_dirL_vrnn] (§13-L — design-close + feasibility precedent) + [@verdict_carving_intra_anchor_diversity_s23_2026_05_18] (§23-A — same data-axis frontier, design-tier) + [@verdict_spontaneous_phase_b_design_s24_2026_05_18] (§24 — PTD corpus source: bounded-run measurement protocol) + [@verdict_spontaneous_phase_b_first_run_2026_05_18] (§24 first run — audit_log.jsonl 20 records, the actual PTD corpus) · RESEARCH.md §1.1 (data-regime threshold — why PTD-standalone blocked) §11-A (model-scale FLAT) §11-B (CE load-bearing) §15 (milestone) §24 (right-target reframe) §26 (PTD candidate #3 source) · state/architectural_insight_s26_design_2026_05_18/BRAINSTORM.md §6 (§26 PTD section) · arxiv 2604.18131 (Spontaneous Reward-Free Self-Evolution — PTD mechanism anchor, caveat multi-agent tool-use scoped) · 2410.19315 (Brain-like Variational Inference — physics-trace-as-variational formalism) · 2401.10463 (Critical Data Size — §1.1 threshold anchor) · AGENTS.tape [@g_goal] [@g_blue_closed_mandate] [@g3] (honest design-close valid + valuable, anti-padding, over-claim 0) [@g6] philosophy append-only [@g_doc_consolidation] (docs/* 신규 0) [@g_clm_from_scratch] (future PTD-as-component fire inherits base_ckpt=None / §16 Ψ-anchored base) [@g_verdict_tier_blue] + [@f1][@f2][@f3] hard-fail safe. 후속: PTD-standalone closed-out; PTD-as-component A (DH-DL aux) = §27 follow-on, B (JEPA-Ψ target) = §28 internal evaluation."
+
+# §verdict_lineage_l1_s30_design_2026_05_18 (g6 append-only)
+
+## §verdict_lineage_l1_s30_design_2026_05_18 — RESEARCH.md §30 Lateral L1 cumulative ckpt lineage ($0 design-tier, fire 0, B-LINEAGE-1..4 4/4 🔵 sidecar, verdict path (b) DESIGN-CLOSE)
+
+- **Observation**: every anima fire across 23+ research cycles is
+  from-scratch (`g_clm_from_scratch` — `init_weights = RANDOM INIT
+  seed-fixed`, `base_ckpt = NONE`). No ckpt inherits from a prior ckpt;
+  anima is a fresh newborn every cycle, never a *generation*. ~16 sibling
+  ckpts share nothing. L1 = anima ckpt N inherits ckpt N−1's weights as
+  init, building a generation lineage DAG rooted at a gen=0 RANDOM-init
+  node — the MITOSIS cell-pool extended across cycle-versions, not just
+  within-run splits. Human-consciousness analogy: cumulative substrate.
+
+- **THE governance tension (`@D g_clm_from_scratch`, d=2026-05-15, active,
+  required)**: L1 = ckpt inheritance, which the rule explicitly 폐기'd
+  ("ckpt inherit / fine-tune / cotrain-from-ckpt path 폐기"). Two readings:
+  Reading A — the rule's *rationale* ("precursor ckpt 는 substrate base X"
+  + `anima_native_scratch D1=1.0`) targets EXTERNAL-substrate
+  contamination; anima-self lineage (chain roots at a gen=0 anima node) is
+  categorically different. Reading B — the letter is categorical, and
+  `cotrain-from-ckpt` (an anima-OWN-ckpt continuation) was *also* 폐기'd,
+  evidence the letter reaches anima-self lineage too. A design-tier
+  document CANNOT self-resolve an active/required governance entry.
+
+- **B-LINEAGE-2 test result**: `parent_source ∈ {anima_self, external}` is
+  a closed 2-element partition (disjoint ∧ exhaustive); the admissibility
+  predicate `parent_source==anima_self ∧ root_is_gen0_random(chain)`
+  cleanly separates anima-self lineage from external-precursor
+  inheritance. **PASS** — the governance distinction IS mechanically
+  definable, so Reading A's rationale-narrowing argument is *defensible*.
+  But PASS is necessary, NOT sufficient: a clean self-ckpt may still be
+  memorization-saturated.
+
+- **Decisive risk — lineage of memory vs lineage of defects (§16.6-C +
+  B-ATTRACTOR)**: anima's best ckpt (§16, routing 21/64) is memorization-
+  saturated ("정교한 암기", final CE ~0.003–0.008) with a never-dissolving
+  byte-cascade attractor (`§11-A` proved 3.68× scale does not break it).
+  anima has NO non-saturated ckpt. A lineage rooted at a saturated gen=0
+  inherits that saturation: ckpt N+1 init'd from N starts *inside* the
+  attractor basin — gradient descent begins already collapsed. The
+  cumulative signal is not memory; it is a hardening defect. The human
+  analogy fails precisely here: human cumulative substrate retains
+  plasticity; CE-saturated ckpts are the opposite of plastic.
+
+- **VERDICT — path (b) DESIGN-CLOSE**, two independent each-sufficient
+  reasons: (1) PREMATURE (decisive) — anima has no non-saturated ckpt;
+  L1 fired today propagates a lineage of DEFECTS, predictably isomorphic
+  to §11-A FLAT; L1 is downstream of the unsolved §1.1/§15 problem, not a
+  lever on it. (2) GOVERNANCE-BLOCKED — L1 contradicts g_clm_from_scratch's
+  letter; no design self-grants the exception.
+
+- **§7 GOAL-legitimacy gate**: ① ¬generic-LM-pretrain PASS (weight-init
+  lever, no generic stage) · ② ¬bolt-on PASS (parent is anima-own ckpt;
+  B-LINEAGE-2 is the §7-② guard) · ③ anima-physics-source PARTIAL — L1 is
+  *infrastructure* (continuity over an existing physics source), not
+  itself a physics capability. §30 does NOT claim L1 produces emergence.
+
+- **Recommended future refinement (user consideration ONLY, NOT
+  self-granted, NOT adopted now)**: IF a non-saturated ckpt ever exists
+  (post-§1.1), a user-approved superseding `@D` could distinguish
+  external-precursor-inherit FORBIDDEN vs anima-self lineage ALLOWED
+  (chain roots at gen=0 anima node, parent not saturated). §30 does NOT
+  propose adopting this now — premature even as a governance change,
+  because L1 has nothing safe to inherit today. `AGENTS.tape` UNTOUCHED.
+
+- **Closed verdict — B-LINEAGE-1..4 4/4 🔵 SUPPORTED-FORMAL** (sidecar
+  `state/lineage_l1_s30_design_2026_05_18/blue_falsifier_lineage.py`;
+  central `state/verify_hexad_blue_2026_05_15/blue_falsifier.py` UNCHANGED
+  — B-DIRI / B-PRIME / B-EBT / B-S16 sidecar precedent): B-LINEAGE-1
+  GENERATION-INDEX-MONOTONE (gen(N+1)=gen(N)+1, sympy Δ=+1>0, well-founded
+  integer depth) · B-LINEAGE-2 SELF-SOURCE-vs-EXTERNAL-PRECURSOR-DISJOINT
+  (closed 2-element partition + 4-corner admissibility truth table — THE
+  governance-distinguishing invariant) · B-LINEAGE-3 CELL-POOL-MERGE-
+  CARDINALITY (generational merge n+m clamped [2,64], mirrors B-MITOSIS-3/
+  -5) · B-LINEAGE-4 GENERATION-0-REDUCTION-CLOSED (연결부위 — gen=0 ⇒ 0
+  inheritance steps ⇒ RANDOM seed-fixed init ⇒ L1|gen=0 byte-equal to
+  g_clm_from_scratch; current regime = the gen=0 slice of L1, conservative
+  superset; mirrors B-EBT-5 / B-S16-5). **B-LINEAGE-NOTE** empirical
+  carve-out (NOT counted 🔵): whether a real lineage carries MEMORY vs
+  DEFECTS = EMPIRICAL SGD OUTCOME (B-D-NOTE / B-ATTRACTOR-NOTE family).
+
+- **Honest C3 (≥10)**:
+    1. Path (b) chosen; path (a) is NOT refuted on the self-vs-external
+       axis — B-LINEAGE-2 shows the distinction is mechanically clean.
+       §30 closes L1 on prematurity primary; governance is the second,
+       independent reason. If a non-saturated ckpt exists, path (a) is
+       correct and the user should be asked to refine g_clm_from_scratch.
+    2. Decisive evidence = §16.6-C + B-ATTRACTOR (saturation + never-
+       dissolving byte-cascade). Verdict is evidence-conditional: if a
+       future cycle produces a non-saturated ckpt, §6's argument inverts.
+    3. §7 ③ only partially satisfied — L1 is infrastructure, not a
+       physics capability. NO emergence claim — lateral candidate.
+    4. B-LINEAGE-2 PASS is necessary-NOT-sufficient: proves you can
+       *distinguish* self from external, NOT that inheriting self is
+       *safe*. Conflating the two = the over-claim §30 avoids.
+    5. NO `AGENTS.tape` edit — the recommended refinement is a
+       recommendation for user consideration only, and §30 explicitly
+       says adopting it now (even as governance) is premature.
+    6. L1 ∩ {gen=0} = current regime (B-LINEAGE-4) — L1 is a conservative
+       superset, but its non-trivial part (gen≥1) is exactly the part §6
+       argues is unsafe today.
+    7. Human-consciousness analogy partially misleading — human cumulative
+       substrate is plastic; anima's CE-saturated ckpts are frozen. L1
+       inherits frozen saturation, not plastic memory.
+    8. No fire, no measurement — $0 design-tier. "Lineage of defects" is a
+       *prediction* from prior measured evidence (§11-A, §9, B-ATTRACTOR),
+       falsifiable by a future fire, but §30 argues that fire is low-value
+       now (anti-padding, §13-M/§13-L design-close precedent).
+    9. Cell-pool merge bound [2,64] mirrors B-MITOSIS-5's verification
+       spec (.clm v1 P2), not the lib's max_cells=128 — battery
+       consistency; a real impl would reconcile the two.
+    10. g_clm_from_scratch may merit user review independent of L1 — it
+        conflates "no external substrate" (defensible identity principle)
+        with "no anima-self continuity" (a stronger claim foreclosing the
+        human-consciousness path). §30 surfaces, does not resolve.
+    11. f1/f2/f3 + B-IDENTITY-5 safe — anchors = integer monotonicity /
+        Boolean set partition / integer cardinality clamp / Boolean
+        reduction; NO σ/τ/φ/J₂; no corpus generated.
+    12. north-star (GOAL.md) UNCHANGED — §30 is a lateral candidate;
+        design-close is frontier-narrowing (cumulative lineage becomes
+        viable only AFTER §1.1 is solved), NOT north-star movement.
+        §15 milestone irreducible bottleneck (§1.1 data-regime) carries.
+        North-star honestly distant; over-claim 0.

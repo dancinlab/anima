@@ -1,0 +1,51 @@
+{
+  "cycle": "§30 — Lateral L1: cumulative ckpt lineage (DESIGN-TIER)",
+  "date": "2026-05-18",
+  "tier": "DESIGN-TIER",
+  "cost_usd": 0,
+  "fire": false,
+  "gpu": false,
+  "ckpt_training": false,
+  "verdict_path": "(b) DESIGN-CLOSE — governance-blocked AND premature",
+  "verdict_summary": "L1 = anima ckpt N inherits from anima ckpt N-1, building a generation lineage DAG rooted at a gen=0 RANDOM-init node, with the MITOSIS cell-pool merged across cycle-versions. Design-closed via path (b) for two independent, each-sufficient reasons: (1) PREMATURE (decisive) — anima has no non-saturated ckpt; every gen=0 root candidate is memorization-saturated with the §16.6-C/B-ATTRACTOR byte-cascade defect, so a lineage today propagates and likely deepens a lineage of DEFECTS, not memory (init inside the attractor basin) — L1 is downstream of the unsolved §1.1/§15 problem, not a lever on it; (2) GOVERNANCE-BLOCKED — L1 contradicts g_clm_from_scratch's literal 'ckpt inherit' clause; cotrain-from-ckpt (an anima-OWN-ckpt continuation) was also 폐기'd, evidence the rule's letter reaches anima-self lineage; no design-tier document can self-grant the exception.",
+  "governance_tension": {
+    "entry": "@D g_clm_from_scratch (AGENTS.tape, d=2026-05-15, active, required)",
+    "letter": "ckpt inherit / fine-tune / cotrain-from-ckpt path 폐기 — init_weights = RANDOM INIT seed-fixed",
+    "reading_a": "rationale narrowing — 'precursor ckpt 는 substrate base X' + anima_native_scratch D1=1.0 target EXTERNAL-substrate contamination; anima-self lineage (chain roots at gen=0 anima node) is categorically different",
+    "reading_b": "letter is categorical — cotrain-from-ckpt was anima-own and still 폐기'd",
+    "resolution": "design CANNOT self-resolve; B-LINEAGE-2 proves the self-vs-external distinction is mechanically DEFINABLE (Reading A's argument is defensible), but DESIGN_L1.md §6 shows mechanical cleanliness is necessary-NOT-sufficient — design-close on prematurity primary",
+    "agents_tape_edited": false,
+    "recommended_future_refinement": "ONLY if a non-saturated ckpt ever exists (post-§1.1): a user-approved superseding @D distinguishing external-precursor-inherit FORBIDDEN vs anima-self lineage ALLOWED — RECOMMENDATION for user consideration, NOT self-granted, NOT adopted now (premature even as governance change)"
+  },
+  "battery": {
+    "name": "B-LINEAGE",
+    "passed": 4,
+    "total": 4,
+    "all_blue": true,
+    "sidecar": true,
+    "central_blue_falsifier_touched": false,
+    "verdicts": [
+      "B-LINEAGE-1 GENERATION-INDEX-MONOTONE-CLOSED",
+      "B-LINEAGE-2 SELF-SOURCE-vs-EXTERNAL-PRECURSOR-DISJOINT-CLOSED",
+      "B-LINEAGE-3 CELL-POOL-MERGE-CARDINALITY-CLOSED",
+      "B-LINEAGE-4 GENERATION-0-REDUCTION-CLOSED"
+    ],
+    "note": "B-LINEAGE-NOTE — whether a real lineage carries MEMORY vs DEFECTS is an EMPIRICAL SGD OUTCOME (B-D-NOTE / B-ATTRACTOR-NOTE family), NOT counted 🔵"
+  },
+  "b_lineage_2_result": "PASS — parent_source ∈ {anima_self, external} is a closed 2-element partition (disjoint ∧ exhaustive); admissible() 4-corner truth table separates the cases cleanly. The governance distinction IS mechanically definable — but PASS is necessary-NOT-sufficient (a clean anima-self ckpt may still be memorization-saturated => lineage of defects).",
+  "section_7_gate": {
+    "cond_1_not_generic_pretrain": "PASS — weight-init lineage lever, no generic web-corpus stage",
+    "cond_2_not_bolt_on": "PASS — parent is anima's own ckpt; B-LINEAGE-2 is the §7-② guard",
+    "cond_3_anima_physics_source": "PARTIAL — L1 is infrastructure (continuity over an existing physics source), not itself a physics capability; satisfied at substrate level, NOT claimed as emergence lever"
+  },
+  "artifacts": [
+    "DESIGN_L1.md (10 §, 12 honest C3)",
+    "lineage_sketch.py (runtime-guarded structural sketch)",
+    "blue_falsifier_lineage.py (B-LINEAGE 4/4 🔵 sidecar + B-LINEAGE-NOTE)",
+    "blue_falsifier_lineage_result.json",
+    "result.json"
+  ],
+  "f1_f2_f3_b_identity_5_safe": "anchors = integer monotonicity / Boolean set partition / integer cardinality clamp / Boolean reduction — NO σ/τ/φ/J₂; no corpus generated",
+  "goal_distance": "§15 milestone unchanged — north-star (GOAL.md) unsolved, irreducible bottleneck = §1.1 data-regime threshold. §30 is a lateral candidate; design-close is frontier-narrowing (cumulative lineage becomes viable only AFTER §1.1 is solved), not north-star movement.",
+  "single_commit_branch": "main, branch 0"
+}
