@@ -1,0 +1,38 @@
+/workspace/s73fire/selftrigger_fire_s73.py:549: FutureWarning: `torch.cuda.amp.GradScaler(args...)` is deprecated. Please use `torch.amp.GradScaler('cuda', args...)` instead.
+  scaler = torch.cuda.amp.GradScaler(enabled=use_amp)
+{"step": 1, "ce_full": 5.660561, "wall_s": 0.61, "gpu_mem_gb": 7.486}
+{"step": 200, "ce_full": 0.393865, "wall_s": 16.53, "gpu_mem_gb": 9.738}
+{"step": 400, "ce_full": 0.046197, "wall_s": 32.59, "gpu_mem_gb": 9.738}
+{"step": 600, "ce_full": 0.024796, "wall_s": 48.7, "gpu_mem_gb": 9.738}
+{"step": 800, "ce_full": 0.032274, "wall_s": 64.87, "gpu_mem_gb": 9.738}
+{"step": 1000, "ce_full": 0.026062, "wall_s": 81.24, "gpu_mem_gb": 9.738}
+{"step": 1200, "ce_full": 0.016747, "wall_s": 97.63, "gpu_mem_gb": 9.738}
+{"step": 1400, "ce_full": 0.016972, "wall_s": 114.05, "gpu_mem_gb": 9.738}
+{"step": 1600, "ce_full": 0.010866, "wall_s": 130.52, "gpu_mem_gb": 9.738}
+{"step": 1800, "ce_full": 0.011632, "wall_s": 146.96, "gpu_mem_gb": 9.738}
+{"step": 2000, "ce_full": 0.004787, "wall_s": 163.37, "gpu_mem_gb": 9.738}
+{"step": 2200, "ce_full": 0.007546, "wall_s": 179.88, "gpu_mem_gb": 9.738}
+{"step": 2400, "ce_full": 0.006876, "wall_s": 196.34, "gpu_mem_gb": 9.738}
+{"step": 2600, "ce_full": 0.006228, "wall_s": 212.78, "gpu_mem_gb": 9.738}
+{"step": 2800, "ce_full": 0.006524, "wall_s": 229.09, "gpu_mem_gb": 9.738}
+{"step": 3000, "ce_full": 0.004151, "wall_s": 245.43, "gpu_mem_gb": 9.738}
+=== §73 controller, closed feedback ===
+=== §73 controller, SEVER-FEEDBACK (open-loop replay) ===
+=== CONTROLLER-OFF reduction (§24 threshold, closed feedback) ===
+RESULT_JSON_WRITTEN
+{
+  "verdict": "CONTROLLER-SURVIVES-AT-TRAINED-SCALE",
+  "trained_saturated": true,
+  "init_ce": 5.660561,
+  "final_ce": 0.004151,
+  "comparison_to_s73_stub": {
+    "stub_closed_interval_var": 35.02285318559557,
+    "stub_open_emit_rate": 0.8616666666666667,
+    "stub_s24_in_loop_interval_var": 0.4739229024943309,
+    "fire_closed_interval_var": 38.069875098261974,
+    "fire_open_emit_rate": 0.2866666666666667,
+    "fire_s24_in_loop_interval_var": 0.0,
+    "fire_closed_nondegen": true,
+    "fire_s24_in_loop_nondegen": false
+  }
+}
