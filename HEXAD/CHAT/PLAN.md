@@ -717,3 +717,16 @@ g_multidirectional_explore 4 background agents, **`isolation: worktree`** (§33 
 **SSOT (g_doc_consolidation 준수)**: 2 agent commit (§46 + §48) + 2 merge commit + 1 PHILOSOPHY.tape verdict (§48 only — §46 verdict deferred post-fire per g3) + AGENTS.tape 3 recent_landings + HEXAD/README.md 3 + 본 PLAN.md. docs/* 신규 0.
 
 **honest 종합 (§46-§48 cycle)**: §48 = cycle 의 유일 clean positive (mechanism scale-validation). §46 가 §42 SGD-lottery hypothesis 의 직접 측정 시도 — infrastructure landed 단 verdict orphan. §47 rate-limit 패턴 = 차후 cycle 은 $0 Mac CPU 만 OR sequential dispatch 권장. **GOAL distance**: §15 milestone 불변 — §48 가 PTD-aux 라는 *honest substrate component* 확정. §46 verdict (post-fire pull 시) 가 §42 hypothesis 의 final answer 가능.
+
+### 2026-05-18 — sequential cycle §49→§50→§51 + §52-§54 bench queue (rate-limit 표준 적용)
+§50 패턴 (sequential single-agent, $0-Mac-CPU OR pull-only) 확정 후 §49/§50/§51 전부 belated/sequential land — burst-wave 의 §49/§50/§51 "NOT LANDED" entry supersede.
+
+- **§50** (commit ae7ff90b1+2274ee546): §46 ORPHAN-LOST + orphan pod audit = **0 pods, $0 ongoing** (§40/§41/§46/§47 누적 cost 우려 전부 해소). §42 seed-variance path open 단 §47 content-axis 로 이미 confirmed (distinct falsifier).
+- **§49** (commit febf1493f, merge fdd81e287): PTD-aux head ↔ §24 loop wire → **DISTILLATION CONFIRMED end-to-end** (learned-head 0/20 emission, majority-class collapse, §27/§48 corpus 95% REMAIN_SILENT). §44/§48 valuable mechanism 이 §24 right-target 으론 transfer 안 됨.
+- **§51** (commit f7a751749): 2nd milestone close-out. **frontier sharpened: §1.1 data-regime → data-DIVERSITY/modality**. Frontier-1 = MULTIMODAL substrate expansion (S-module encoder wire). established vs ruled-out 전수 정리. RESEARCH.md §51 작성.
+
+**SSOT**: §49+§50+§51 commit + merge + 3 PHILOSOPHY.tape verdict (g6) + AGENTS.tape recent_landings (§50 sync + §49/§51 sync) + HEXAD/README.md + RESEARCH.md §51 + 본 PLAN.md. docs/* 신규 0.
+
+**§52-§54 bench queue (sequential, $0 Mac CPU)**: §49 의 "부품 진짜인데 실전 collapse" 반전 → 원인 축 3-way 정밀 분해. §52 decision-head 연결 5종 (raw/class-balance/blend/safety-gate/calibrate) · §53 σ(6)=12 wiring real-data transfer 강도 · §54 PTD-aux λ/depth/target variant. 연결 vs wiring vs 부품설계 분리 진단.
+
+**honest 종합**: sequential single-agent = burst rate-limit 의 검증된 대안 (이 3-section 전부 clean land). cost-containment 완전 해소. §51 milestone 이 §16~§50 arc 정식 마감 — north-star 불변, GOAL 미도달, frontier = multimodal substrate (sharpened hypothesis).
