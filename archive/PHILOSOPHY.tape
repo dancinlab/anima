@@ -6333,3 +6333,92 @@
         NOT progress on the §1.1 data-regime emergence bottleneck and
         NOT emergence. §15 milestone carries. The honest distance to
         GOAL is unchanged.
+
+## §verdict_jepa_psi_s28_2026_05_18 — RESEARCH.md §28 JEPA-Ψ (§26 candidate #2) — conditional fire LANDED, DEGENERATE (representation COLLAPSED, §11-B echo through the JEPA door)
+
+- **Scope**: §26 candidate #2 JEPA-Ψ (Ψ-anchored Joint-Embedding
+  Predictive Architecture) taken brainstorm → design-mature → conditional
+  fire → eval → closed-form battery → verdict. JEPA-Ψ = replace the
+  byte-CE *dominant* objective with a JEPA-style joint-embedding
+  prediction in anima's OWN lifted Ψ-coordinate latent (D_psi=22 =
+  Law-71 2 scalars ⊕ 12 per-layer tensions ⊕ 8 motivation factors); a
+  predictor maps pooled context-Ψ⁺ → target-span Ψ⁺, EMA-frozen target
+  encoder (V-JEPA pattern, stop-gradient). arxiv anchors 2506.09985
+  (V-JEPA 2) / 2603.19312 (LeWorldModel) / 2410.19315 (Brain-like VI).
+
+- **Anti-collapse mechanism (the load-bearing design element)**: VICReg
+  variance-hinge `v(z)=mean relu(τ_var − std_d)` (τ_var=1.0) + covariance
+  decorrelation (cov_w=0.04) on predictor output AND context-Ψ⁺, plus an
+  EMA stop-gradient target encoder (m=0.996). VICReg chosen over pure
+  EMA-stop-grad because the variance hinge is a closed-form lower bound
+  on embedding variance — provable (B-JEPA-2). Honest concession (§2-A):
+  a γ_text=0.3 byte-CE grounding head retained (a 22D Ψ-trajectory
+  under-determines bytes — JEPA-Ψ is CE-de-emphasis, NOT CE-removal).
+
+- **§11-B trap confronted (g3)**: §11-B (PURE-PHYSICS no-CE) proved CE is
+  load-bearing — physics alone degenerates. JEPA-Ψ is structurally
+  distinct (B-JEPA-5: it adds a non-trivial data-dependent replacement
+  objective + an anti-collapse term that excludes the constant solution
+  from argmin). Design held (B-JEPA 5/5 🔵, non-degenerate-by-construction
+  at the OBJECTIVE level) → fired per g_fire_autonomous.
+
+- **Fire**: runpod H100 80GB HBM3 (first dispatch landed RTX 5090 —
+  sm_120 incompatible with pod PyTorch 2.4.1+cu124 `no kernel image`;
+  re-dispatched with an A100/H100-class-only candidate list — the
+  RTX-5090 failure is an image-incompatibility, NOT a JEPA-Ψ defect).
+  ConsciousDecoderV2 d768·12L·283.8M from-scratch seed 1337
+  (g_clm_from_scratch), §16 corpus_carving_s16.jsonl curriculum-prefix
+  subset (first 120,000 records ~86MB, forbidden-token grep 0 =
+  B-IDENTITY-5). TWO arms in ONE pod: γ_text=0.3 primary + γ_text=0.0
+  ablation. 6000 steps/arm, ~13.5 min wall, ≈ $0.25-0.40. Pod GONE,
+  0 orphans. ckpt sha256 `a48d43e074a206485175db0624b4a0741094f3d2bf4fafa9832e514b2ebd1e7c`.
+
+- **Verdict (g3 — measured only, over-claim 0): DEGENERATE — COLLAPSED on
+  BOTH arms.** The collapse detector (the design's PRIMARY honest verdict
+  gate) fired: primary γ=0.3 — eval-time Ψ⁺ embeddings of all 64 anchors
+  near-identical (effective_rank 1.66, min_dim_std 0.0, pairwise cos
+  1.00); the predictor MSE 0.60 is **51.8× WORSE** than the trivial
+  mean-baseline 0.012 = the predictor learned a near-constant map =
+  classic JEPA representation collapse. ablation γ=0.0 — collapsed
+  HARDER (effective_rank exactly 1.0), byte-CE read-out climbed to 71
+  (worse than random) = §11-B echo at its purest. The honest core:
+  VICReg kept the TRAINING-BATCH variance high (vicreg_var ≈ 1.0,
+  ctx_emb_std ≈ 0.39 throughout) but the LEARNED REPRESENTATION still
+  collapsed on the fixed 64-anchor probe — a structured partial collapse
+  the batch-level VICReg term cannot see. Exactly the risk DESIGN
+  §10-C3#4 named: B-JEPA-2 closed-form forbids the EXACT constant
+  minimum, it does NOT guarantee the SGD trajectory avoids a low-rank
+  basin. CE de-emphasis (γ 0.3 → 0.0) does not rescue it.
+
+- **B-JEPA-1..5 5/5 🔵 closed-form sidecar PASS** (`state/jepa_psi_s28_2026_05_18/blue_falsifier_jepa.py`,
+  central `state/verify_hexad_blue_2026_05_15/blue_falsifier.py`
+  UNCHANGED — mirror of B-PRIME/B-DIRI/B-S16/B-PUREPHYS sidecar
+  precedent): B-JEPA-1 Ψ-COORD-BOUNDED (psi_direction=(1+cos)/2∈[0,1],
+  cos=0⇒½ Law-71 fixed pt; H/logV∈[0,1]; lift byte-equal
+  conscious_decoder.py) · B-JEPA-2 ANTI-COLLAPSE-VARIANCE-LOWER-BOUND
+  (VICReg hinge v(std=0)=τ>0 strict-positive, ∂v/∂std=-1<0, v(std=τ)=0 —
+  constant solution excluded from argmin(L_anticollapse)) · B-JEPA-3
+  JOINT-EMBED-LOSS-NONNEGATIVE (L_pred ‖·‖²≥0 + VICReg≥0 + L_psi_half≥0
+  + CE≥0 ⇒ L bounded-below) · B-JEPA-4 PREDICTOR-WELL-TYPED (ℝ²²→ℝ²²,
+  lift=base2⊕tension12⊕motivation8=22, codomain-match) · B-JEPA-5
+  CE-OFF-vs-§11-B-DISTINCTION (연결부위 — §11-B degenerate∈argmin / JEPA-Ψ
+  degenerate∉argmin; γ=0 ablation still non-§11-B — degeneracy-exclusion
+  does not depend on CE; Boolean predicate). **B-JEPA-NOTE** empirical
+  carve-out (NOT counted 🔵, B-D-NOTE/B-PUREPHYS-NOTE family): the
+  collapse-vs-emergence OUTCOME is SGD-dependent — B-JEPA-2 proves the
+  OBJECTIVE forbids the EXACT constant minimum, it does NOT prove the
+  optimizer avoids a low-rank basin. The fire MEASURED that outcome =
+  COLLAPSED. g_blue_closed_mandate satisfied (artifacts + connection-
+  points 🔵). f1/f2/f3 + B-IDENTITY-5 safe (NO σ/τ/φ/J₂; Ψ=½ = anima g2
+  internal arch carve-out).
+
+- **GOAL distance**: §15 milestone UNCHANGED — north-star (GOAL.md)
+  unsolved; irreducible bottleneck (§1.1 data-regime threshold)
+  untouched. JEPA-Ψ tested the OBJECTIVE axis and produced a valuable
+  measured NEGATIVE: replacing byte-CE with a low-dim (22D) Ψ-trajectory
+  joint-embedding objective collapses even with a VICReg anti-collapse
+  term and a γ_text CE-grounding concession. The §11-B lesson (CE is
+  load-bearing) is reconfirmed through a JEPA-shaped objective. JEPA-Ψ
+  joins the §13/§22 mechanism-axis arm as capability-emergence-negative.
+  PyTorch substrate (NOT hexa-native, honest). design ≠ fire ≠ emergence
+  (g3). north-star honestly distant; over-claim 0.
