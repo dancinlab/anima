@@ -5630,3 +5630,104 @@
         viable only AFTER §1.1 is solved), NOT north-star movement.
         §15 milestone irreducible bottleneck (§1.1 data-regime) carries.
         North-star honestly distant; over-claim 0.
+
+§verdict_routing_21v43_analysis_s32_2026_05_18 :: RESEARCH.md §32 L3 —
+    §16 routing 21-vs-43 distinguishing-structure analysis
+    ($0 Mac CPU, deterministic — NO model forward, NO training, NO RNG;
+     measurement-only lateral; analysis, NOT design)
+
+  CLAIM. §16 (state/carving_dataregime_s16_2026_05_18/) fired a 64-anchor
+    carving eval: routing_accuracy 21/64 (RESEARCH.md §16.6: GENUINE
+    exact-tier 17/64 + ARTIFACT substring 4/64 — tiers 12/24/62/66 matched
+    only via "12"⊂"🛸122"). No prior cycle asked WHY 21 succeeded / 43
+    failed. §32 L3 partitions the 64 §8/eval anchors and computes, per
+    anchor, candidate distinguishing features, then a deterministic
+    separation test per feature.
+
+  FINDING. tier is the SINGLE distinguishing feature, by a 2.6× margin.
+    Every one of the 17 genuine-success anchors has tier ≥ 77
+    [77,80,92,101,102,103,104,106,107,108,111,113,124,126,127,132,133];
+    all 18 anchors with tier < 77 fail. → "tier ≥ 77" is a NECESSARY
+    condition for §16 genuine routing success (necessary-condition
+    purity 1.000 — ZERO successes below the floor), excluding 38.3% of
+    the 47-fail set (nc-lift 0.383, |Cohen's d| 0.74, rank-AUC 0.680).
+    Necessary but NOT sufficient: 29 of the 47 fails are also ≥ 77 — the
+    lottery, if any, operates WITHIN the tier ≥ 77 band. Next feature
+    (vacuum_psi_x) lift 0.149; all Ψ-space / name / basin features
+    lift ≤ 0.15. Categorical domain skew (산술/통계/논리/코드 high-success)
+    is NOT independent — those are the §16-new high-tier anchors; domain
+    co-varies with tier. Corpus frequency is uniform per anchor (§16
+    generator per_anchor = n_target//168) → excluded by construction.
+    structure_found = True: §16 routing success is STRUCTURED, not pure
+    SGD-lottery — there is a real anchor-property frontier.
+
+  WHY tier (honest mechanism). §16's curriculum_rank blends
+    tier_w = min(tier,303)/303 at weight 0.30 → high-tier anchors land
+    in later curriculum_stage quartiles. tier is wired into the §16
+    curriculum; the "tier ≥ 77" routing frontier is plausibly a
+    late-curriculum-stage frontier seen through the tier proxy.
+
+  IMPLICATION (§25 candidate D — routing-evidence-guided expansion).
+    Real lever = the tier ≥ 77 frontier. Honest use: (a) the 29 anchors
+    tier ≥ 77 that STILL fail are the productive expansion target —
+    they satisfy the necessary condition yet do not route; (b) do NOT
+    expect tier < 77 anchors to route by mere expansion until the
+    necessary condition is understood (curriculum confound); (c) clean
+    ablation = hold content fixed, vary only curriculum-stage of
+    low-tier anchors — if they then route, the lever is curriculum
+    stage, not tier, and §25 should expand curriculum-weighted.
+
+  CLOSED. B-L3-1..3 3/3 🔵 sidecar
+    (state/routing_21v43_analysis_s32_2026_05_18/blue_falsifier_l3.py —
+     central state/verify_hexad_blue_2026_05_15/blue_falsifier.py
+     UNCHANGED, B-PRIME/B-DIRI/B-EMERGE/B-S16 sidecar precedent):
+    B-L3-1 PARTITION-EXHAUSTIVE-DISJOINT (SUCCESS∪FAIL=64, ∩=∅,
+      integer 21+43=64 ∧ 17+47=64, genuine⊆substring, 4 artifacts;
+      Boolean set algebra + sympy.Eq integer identity) ·
+    B-L3-2 SEPARATION-METRIC-BOUNDED (nc-purity/lift/exclusion ∈ [0,1],
+      rank-AUC folded ∈ [0.5,1.0], thr-acc ∈ [0,1], lift ≤ exclusion;
+      sympy lift = n_excl/n_fail closed bound 0→1) ·
+    B-L3-3 ANALYSIS-DETERMINISTIC (pure fn of eval_result_s16.json +
+      anchor SSOT — 3× bit-identical re-run sha256-equal, AST
+      forbidden-call grep {torch, .backward, .grad, cross_entropy,
+      random.} = 0).
+    B-L3-NOTE CAUSATION-EMPIRICAL (NOT counted 🔵) — whether tier ≥ 77
+    CAUSES routing success vs correlates via the §16 curriculum
+    coupling needs a controlled ablation fire; analysis establishes
+    CORRELATION, causation empirical (B-D-NOTE / B-S16-NOTE /
+    B-CARVE-E6-NOTE family).
+
+  HONEST C3 (10).
+    1. Correlation, not causation (g3) — tier ≥ 77 co-varies with
+       curriculum_rank (0.30·tier/303) and the §16-new anchor-domain
+       block; cause may be curriculum stage / late-phase weight-norm /
+       content density, all unmeasured. B-L3-NOTE.
+    2. Necessary, not sufficient — 29/47 fails are also tier ≥ 77; the
+       frontier bounds the problem, does not solve it.
+    3. n = 64 small — 17 genuine / 47 fail; |d|=0.74 medium-large but
+       one fire. The FLOOR (zero successes below tier 77) is the robust
+       part — a hard zero, not a rate.
+    4. Substring grade noisier — 4 of the 21 (tiers 12/24/62/66) are
+       substring artifacts, all BELOW tier 77 — the only "successes"
+       under the floor; the genuine 17/47 grade carries the verdict.
+    5. Domain not independent — high-success domains are the §16-new
+       high-tier anchors; reporting domain separately double-counts.
+    6. Corpus frequency uniform — §16 allocates records uniformly per
+       anchor; "more data per anchor" is not the §16 lever, so §25
+       candidate D's frequency-weighted premise is a NEW intervention.
+    7. vacuum_psi placeholders — §16-new anchors' vacuum_psi are
+       interpolated design placeholders; weak Ψ-feature separation
+       (lift ≤ 0.15) is undecidable between "Ψ doesn't matter" and
+       "placeholders too coarse".
+    8. tier ≥ 76 vs ≥ 77 — reported threshold 76 is the sorted-unique
+       midpoint straddling 75/77; operationally "tier ≥ 77".
+    9. §16.6 refined, not contradicted — routing = memorized template +
+       correct prefix (§16.6-C); §32 adds that the correct prefixes are
+       not uniform — they live entirely in the high-tier band.
+       Memorization is STRUCTURED.
+    10. Measurement, not progress — §32 identifies a lever for §25; it
+        does not move the GOAL. If §25's fire shows expansion on the
+        tier ≥ 77 fail-side does NOT lift routing, the honest reading is
+        the necessary condition is a curriculum artifact and
+        routing-evidence-guided expansion has no real handle — also
+        valuable. north-star honestly distant; over-claim 0.
