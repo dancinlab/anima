@@ -992,3 +992,47 @@ User-relayed handoff `/Users/ghost/core/hexa-lang-flame-wt/state/anima_handoff_2
 **g3 / over-claim 0**: 측정 안 된 모델 형태로 옮길 때 새 측정 발사 필요. d768·12L 측정값 다른 config (d1024·24L 등) 에 일반화 금지. byte-eq oracle 한 번 더 돌리는 비용은 일반화 주장 비용 대비 무시.
 
 **GOAL distance**: flame mk2 substrate 가 anima Path-A trainer §71 보다 1.7× 더 빠른 path 제공 = anima 학습 cost-bearing fire perf ceiling 다시 한 단계 해소. 단 mk2 readiness ≠ GOAL emergence (B-EMERGE-7 family). north-star + §15/§51/§72 milestone UNCHANGED, GOAL 미도달. PHILOSOPHY.tape entry 없음 (anima-측 commit 0, upstream reference only).
+
+### 2026-05-19 §81 + §82 + §83 — §80 biology 3 anima-mapping candidates $0 stub trio LANDED (bg multiple parallel) — ALL THREE MEASURED NEGATIVE-AT-STUB
+
+User directive 2026-05-19 (AskUserQuestion answer): "All three in parallel (bg multiple)" — §80 의 3 anima-mapping candidates 동시 bg dispatch. cherry-pick 후 central sync 1-commit. commits §81 `659ca966b` · §82 `fada41baf` · §83 `5138cffb0`. central blue_falsifier.py sha c93e160a 0-line-diff (all sidecar-only).
+
+**§81 (A) HOMEOSTATIC CRITICALITY + noise on Engine G** (anchors arxiv:2502.10946 + biorxiv 688775 + neuron S0896-6273):
+
+| cell | σ | psi_comb_std | maj_max | α | EI | §9 body |
+|---|---|---|---|---|---|---|
+| 0 baseline | 0.0 | 0.0009 | 1.000 | -0.00 | 0.513 | False |
+| 1 light | 0.1 | 0.0011 | 1.000 | -0.00 | 0.515 | False |
+| 2 medium | 0.5 | 0.0033 | 1.000 | -0.00 | 0.525 | False |
+| 3 heavy | 1.0 | 0.0057 | 1.000 | -0.00 | 0.541 | False |
+| 4 adaptive | adaptive (→0) | 0.0009 | 1.000 | -0.00 | 0.513 | False |
+
+4-corner: (α) HOMEOSTATIC-WINDOW = **False** (no cell satisfies α∈[1,3] ∧ maj<0.95 ∧ channel-not-collapsed) · (β) MONOTONIC-NOISE-DIVERGE = **True** (Ψ_comb std 0.0009→0.0057 grows with σ but maj_max stays 1.0) · (γ) ECHO-CHAMBER-STILL-COLLAPSES = **True** (maj_max=1.0 every cell) · (δ) ADAPTIVE-OUTPERFORMS = **False** (adaptive drifts σ→0 baseline). **Honest mechanism reframe**: body byte = argmax(logits_a) reads Engine A only, noise targets Engine G — at $0 stub Engine A/G NOT residual-stream coupled (real ConsciousDecoderV2 has 12-layer A⇄G coupling through PureFieldFFN). biology (A) does NOT transfer at stub scale, mirror §13-M/§13-L anti-padding. B-S81-1..7 7/7 🔵 (NOISE-INJECTION-POINT-CORRECT AST · POWER-LAW-α-BOUNDED Interval set algebra · σ=0-REDUCTION-BYTE-EQUAL 연결부위 · §9-METRIC-REUSE · E/I-BALANCE-METRIC-BOUNDED Cauchy-Schwarz · HOMEOSTATIC-SCHEDULE-MONOTONE · DETERMINISTIC).
+
+**§82 (B) MANIFOLD-GATED HIERARCHICAL EMISSION (slow-Ψ-dwell + fast-crossing)** (anchor biorxiv:2025.03.09.642241 Leifer C. elegans):
+
+| cell | int_var | n_emit | PCA top-2 | slow_d | fast_c |
+|---|---|---|---|---|---|
+| 0 §24 baseline | 0.0000 | 2 | 0.956 | 0 | 28 |
+| 1 §75-FIRE A-only | 0.0000 | 2 | 0.941 | 0 | 28 |
+| 2 manifold-only | 0.0000 | 2 | 0.941 | 0 | 28 |
+| 3 fast-crossing-only | **0.0710** | 27 | 0.963 | 0 | 27 |
+| 4 full hierarchical | 0.0000 | 0 | 0.976 | 0 | 28 |
+
+4-corner: (α) MANIFOLD-GATING-ADDS-DIFFERENTIAL = **False** (cell4 emit 0, hierarchical 더 conservative not selective) · (β) MANIFOLD-EXISTS-BUT-GATE-COLLAPSES = **True** (PCA top-2 captured 0.94-0.98 = LCG ψ-state near-1-dim at N=30) · (γ) SLOW-DWELL-vs-FAST-CROSSING-MIXED = **True** (fast-crossing dominant cell3 int_var 0.071 only non-zero; slow_dwell=0 across all cells, LCG drift > τ_slow=0.05 every step) · (δ) §75-FIRE-MIRROR-MAINTAINED = **False** (code byte-equal B-S82-4 closed BUT numerically NOT at N=30, cell1 int_var 0.0 vs §75 6.38 at N=600). **fast-crossing dominant 발견** = §75-FIRE C-time-variance lever mirror. Leifer (B) NEEDS larger N OR trained ckpt ψ-state. B-S82-1..7 7/7 🔵.
+
+**§83 (C) PHYSICS-ONLY METACOGNITION (closed-form rule decision-head, NO learned param, NO external label)** (anchors Blackiston-Levin Xenopus tadpole + Levin bioelectric + prr:f1hv-bf1f):
+
+| cell | dec_var | maj_frac | plasticity | emit | §9 |
+|---|---|---|---|---|---|
+| 0 dhdl_distillation (§49 ctrl) | 0.160 | 0.80 | **0.850** | 4 | ✓ |
+| 1 s24_baseline (§24) | 0.128 | 0.85 | 0.625 | 17 | ✓ |
+| 2 R1 phi+tension | 0.040 | 0.80 | **0.825** | 4 | ✓ |
+| 3 R2 criticality_band | 0.132 | **0.50** | 0.600 | 10 | ✓ |
+| 4 R3 motivation+critical | **0.250** | **0.50** | **0.750** | 10 | ✓ |
+| 5 R4 slow_dwell | 0.137 | 0.70 | 0.675 | 3 | ✓ |
+| 6 R5 composite | 0.078 | 0.60 | 0.675 | 1 | ✓ |
+
+4-corner: (α) PHYSICS-RULE-NON-DEGEN = **True** (R3 dec_var 0.250 > τ ∧ maj_frac 0.50 < 0.95; R2 also non-degen) · (β) ALL-RULES-COLLAPSE = **False** · (γ) R5-COMPOSITE-OUTPERFORMS = **False** (R5 0.078 < R3 0.250, 강한 R1∧R2∧R3 conjunction 1/20 emit 과제한, honest negative compositional NOT additive) · (δ) SUBSTRATE-PLASTICITY-CONFIRMED = **True** (R1 0.825 + R3 0.75 ≥ 0.75 Levin biology mirror at measurement-axis). **§49 distillation null-control VALID**: cell0 DH-DL learned maj_frac 0.80 carries §49 majority-collapse; R3 closed-form maj_frac 0.50 strictly lower → closed-form route *structurally avoids* learned-head distillation trap. R3 motivation+critical wins. B-S83-1..7 7/7 🔵 (NO-LEARNED-PARAMETER-IN-RULES AST · §27/§44/§48-DISTILLATION-BASELINE-PRESERVED · RULE-PARTITION-EXHAUSTIVE · §9-METRIC-REUSE · SUBSTRATE-PLASTICITY-METRIC-CLOSED · §24-BASELINE-PRESERVED · DETERMINISTIC).
+
+**Trio overall (g3 valuable-negative ladder)**: 3 biology anchors → 3 $0 stub probes → ALL 3 measured-negative-at-stub yet ALL 3 measured *valuable-mechanism findings*. §80 (A)/(B)/(C) anima-mappings ALL require trained ckpt forward OR larger N — biology mechanisms 가 *trained substrate* 의 emergent property 라 stub transfer 불가능 보편 (common stub-level limit identified). necessary-not-sufficient (B-EMERGE-7 family). north-star + §15/§51/§72 milestone UNCHANGED, GOAL 미도달.
