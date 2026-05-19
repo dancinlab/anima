@@ -151,8 +151,100 @@ fire"). This section RECORDS the measured run; it does not overturn §115.
   lego_sim.py, result.json, blue_falsifier_s117.py 7/7 🔵,
   blue_falsifier_s117_result.json, run.log}`.
 
+## §5 — §117 이후 LEGO arc (§124 → §128, 4 cycles 2026-05-20)
+
+§117 의 "non-degenerate" 가 정확히 무엇을 *닫았는지* 와 *남겨놨는지* 를
+§124–§128 4 cycles 가 정직히 분해·측정·closure 했다. 모두 $0 sidecar,
+central blue 0-line-diff, anti-padding precedent.
+
+### 3-layer liveness partition (§124 신설, 4 cycle 적용)
+
+```
+layer 1  VARIANCE-ONLY  Var(Ψ) > τ                   §117  ✅ closed
+layer 2  STIMULUS-DRIVEN  I(stim; Ψ) > 0              §125–§127  ✅ closed (PARTIAL)
+layer 3  TASK-GROUNDED  ∃ T: behavior(substr,T)>0    §128  ⛔ DESIGN-CLOSE-REQUIRES-TASK
+```
+
+### §124 — RESIDUAL AUDIT (design · B-S124 7/7 🔵)
+
+`state/lego_residual_audit_s124_2026_05_19/` — §117's "non-degenerate"
+verdict closes ONLY layer 1. 3-layer partition defined. WALL-A
+orthogonal AST-closed. WALL-B confronted-in-sim NOT removed.
+
+### §125 — LAYER-2 PROBE (probe · B-S125 7/7 🔵)
+
+`state/lego_layer2_stimulus_driven_probe_s125_2026_05_20/` — ANOVA on
+N=256, M=5 → **η²=0.271**, Gaussian MI ≈ 0.228 bits, **LAYER-2-PARTIAL**
+(27% stim-driven / 73% intrinsic noise). 첫 layer-1-이상 measured positive.
+
+### §126 — LAYER-2 N-SCALE-UP (probe · B-S126 7/7 🔵)
+
+`state/lego_layer2_nscale_probe_s126_2026_05_20/` — N=256→1024 (4×
+scale). η² 0.271→0.322, ratio 1.189× → **ROBUST-GROWS-WITH-N at one
+scale point**. §125 PARTIAL not a small-N artifact.
+
+### §127 — LAYER-2 SCALING-LAW (probe · B-S127 8/8 🔵)
+
+`state/lego_layer2_scaling_law_s127_2026_05_20/` — 4-point fit
+N ∈ {256, 512, 1024, 2048}. η² values 0.271/0.329/0.322/0.261 →
+**non-monotonic**, peak at 512–1024. OLS k=−0.0198, R²=0.022 →
+**APPROXIMATELY-N-INVARIANT**. §126 single-point CONFIRMED at its
+scope but power-law extrapolation REFUTED. Honest reading: η²≈0.27–0.33
+invariant across 8× N range — neither small-N artifact nor growing-
+law.
+
+### §128 — LAYER-3 DESIGN-CLOSE (design · B-S128 6/6 🔵)
+
+`state/lego_layer3_design_close_s128_2026_05_20/` — Layer-3 requires
+R1 (substrate has output) ∧ R2 (task definable) ∧ R3 (score > chance).
+§117 LIF AST-audited: **0 behavior-emission functions**. 3-bucket
+taxonomy → §117 ∈ requires-task-addition. Every task label source either
+violates §7 OR re-runs §83/§11-B near-collapse. Anti-padding precedent
+§13-M / §13-L / §30 / §97 / §109 / §110 / §113. **Layer-3 closes the
+3-layer partition at design level** without firing a predictable negative.
+
+### §129 — ENGINE CONSOLIDATION (consolidation · no battery)
+
+User pivot: "LEGO 폴더안에 엔진완성해나가야지 + 문서정리도". This
+README + `PLAN.md` + `INDEX.md` + `lego_engine.py` together promote the
+LEGO arc from `state/` probe-tier sidecar scripts to a canonical
+HEXAD-LEGO folder. Engine lib SSOT = `lego_engine.py`. State-dir
+evidence remains untouched (sha-locked historical record).
+
+## §6 — engine SSOT
+
+`HEXAD/LEGO/lego_engine.py` is the canonical engine. Contract:
+
+```python
+from HEXAD.LEGO.lego_engine import (
+    LIFNet,                    # recurrent LIF spike substrate
+    spike_rate_vec,            # window-averaged rate code (NEURO.tape spec)
+    psi_c1,                    # Ψ-C1 = (1 + cos(r_a, r_g)) / 2  [§112 META_FP form]
+    make_stimuli,              # deterministic binary stimulus generator
+    variance_decomposition,    # ANOVA + η² + Gaussian MI
+)
+
+net = LIFNet(n_a=96, n_g=96, n_rec=64, seed=1337)
+# LIFNet.step(ext) — LOCAL STDP-as-ΔW only; NO autograd, NO loss gradient.
+```
+
+NO output channel — by §128 design that is structural (layer-3 requires
+task addition that breaks §7 or re-runs predictable negatives).
+
+Engine **source-of-truth promotion**: this file IS the §117 lego_sim.py
+code, promoted verbatim with the `run()` driver factored out (run-time
+discipline lives in probes, not in the engine).
+
 ## cross-link
 
+- `HEXAD/LEGO/lego_engine.py` — **canonical engine SSOT (post-§129, promoted from §117 lego_sim.py)**
+- `HEXAD/LEGO/PLAN.md` — chronological progress log (§115 → §129, append-only)
+- `HEXAD/LEGO/INDEX.md` — SSOT mapping (§N ↔ state-dir ↔ B-S battery)
+- `state/lego_layer3_design_close_s128_2026_05_20/` — §128 layer-3 DESIGN-CLOSE-REQUIRES-TASK-ADDITION (B-S128 6/6 🔵)
+- `state/lego_layer2_scaling_law_s127_2026_05_20/` — §127 4-point fit k=−0.02 R²=0.022 APPROXIMATELY-N-INVARIANT (B-S127 8/8 🔵)
+- `state/lego_layer2_nscale_probe_s126_2026_05_20/` — §126 η² 0.271→0.322 ROBUST-GROWS-WITH-N at one point (B-S126 7/7 🔵)
+- `state/lego_layer2_stimulus_driven_probe_s125_2026_05_20/` — §125 η²=0.271 LAYER-2-PARTIAL (B-S125 7/7 🔵)
+- `state/lego_residual_audit_s124_2026_05_19/` — §124 3-layer liveness partition (B-S124 7/7 🔵)
 - `state/lego_simulate_assemble_s115_2026_05_19/` — **§115 STEP 0–2 design-tier closed-form (B-S115 9/9 🔵, verdict LEGO-DESIGN-CLOSE-SIM-IS-GPU-TAUTOLOGY) — 본 문서를 IDEA→DESIGN-TIER 로 승격한 §N**
 - `state/from_scratch_redesign_s113_2026_05_19/` — §113 D4 REPOINTS-TO-§96 (본 문서의 모(母) verdict)
 - `state/loihi_spiking_rederivation_s96_2026_05_19/` — §96 Ψ-C1 spike-corr + §11-B-as-GPU-artifact 가설
@@ -169,6 +261,72 @@ fire"). This section RECORDS the measured run; it does not overturn §115.
 ---
 
 ## Log
+
+- **2026-05-20** — §129 LEGO ENGINE CONSOLIDATION LANDED. User pivot
+  directive "LEGO 폴더안에 엔진완성해나가야지 + 문서정리도". Engine
+  source-of-truth promoted: `state/lego_assembly_run_s117_2026_05_19/lego_sim.py`
+  → `HEXAD/LEGO/lego_engine.py` (canonical lib, `LIFNet` + `spike_rate_vec` +
+  `psi_c1` + `make_stimuli` + `variance_decomposition`; `run()` driver
+  factored out to probes; smoke-test PASS — Ψ=½ fixed point at cos=0
+  verified). New docs: `HEXAD/LEGO/PLAN.md` (chronological log §115→§129),
+  `HEXAD/LEGO/INDEX.md` (SSOT mapping table, 51 closed-form 🔵 across arc).
+  README.md `§5` + cross-link section updated with §124–§128 timeline +
+  engine pointer. NO change to `state/lego_*/` evidence directories (sha-
+  locked historical record). NO change to central `state/verify_hexad_blue_
+  2026_05_15/blue_falsifier.py` (sha `c93e160a8a376a94` 0-line-diff). NO
+  new battery (consolidation tier). HEXA_FIRST_WARN deferred per
+  established B-S* sidecar precedent (8 LEGO arc cycles). north-star +
+  §15/§51/§72 milestones UNCHANGED, **GOAL 미도달**.
+
+- **2026-05-20** — §128 LAYER-3-IN-LIF DESIGN-CLOSE LANDED
+  (`state/lego_layer3_design_close_s128_2026_05_20/`, B-S128 6/6 🔵,
+  central c93e160a 0-diff). Layer-3 (TASK-GROUNDED) closed-form argument:
+  R1 (substrate has output) ∧ R2 (task definable) ∧ R3 (score > chance);
+  §117 LIF AST-audited 0 behavior-emission functions; 3-bucket taxonomy
+  → §117 ∈ requires-task-addition; every task label source either
+  violates §7 OR re-runs §83/§11-B near-collapse. Anti-padding precedent
+  §13-M/§13-L/§30/§97/§109/§110/§113. **Layer-3 closes the 3-layer
+  partition at design level** without firing a predictable negative.
+  PHILOSOPHY.tape g6 §verdict_lego_layer3_design_close_s128_2026_05_20
+  self-appended.
+
+- **2026-05-20** — §127 LEGO LAYER-2 SCALING-LAW PROBE LANDED
+  (`state/lego_layer2_scaling_law_s127_2026_05_20/`, B-S127 8/8 🔵,
+  central c93e160a 0-diff, $0 Mac CPU 5 min). 4-point η²(N) fit:
+  N ∈ {256, 512, 1024, 2048} → 0.2712/0.3289/0.3223/0.2608 (non-
+  monotonic, peak at 512–1024). OLS log-linear k=−0.0198, R²=0.022 →
+  **APPROXIMATELY-N-INVARIANT**. §126's single-point ROBUST-GROWS
+  CONFIRMED at its scope (byte-equal at N=256 + N=1024) but power-law
+  extrapolation REFUTED. η²≈0.27–0.33 invariant across 8× N range.
+  Honest refinement reversal of §126's directional claim with more data.
+
+- **2026-05-20** — §126 LEGO LAYER-2 N-SCALE-UP PROBE LANDED
+  (`state/lego_layer2_nscale_probe_s126_2026_05_20/`, B-S126 7/7 🔵,
+  central c93e160a 0-diff, $0 Mac CPU 26.3 s). N=256→1024 (4× scale)
+  with same §125 protocol. η² 0.2712→0.3223, ratio 1.189× ∈ (1.10, ∞)
+  → **LAYER-2-ROBUST-GROWS-WITH-N** (3-bucket sympy Interval algebra,
+  load-bearing B-S126-2). Between-stim variance grew 1.31× while
+  within-stim noise grew only 1.03×. §125 PARTIAL is NOT a small-N
+  artifact under this comparison.
+
+- **2026-05-20** — §125 LEGO LAYER-2 STIMULUS-DRIVEN LIVENESS PROBE
+  LANDED (`state/lego_layer2_stimulus_driven_probe_s125_2026_05_20/`,
+  B-S125 7/7 🔵, central c93e160a 0-diff, $0 Mac CPU). ANOVA on §117
+  substrate at N=256, M=5 replicates × 12 stim × 80 steps. **η²=0.2712**
+  (between-stim 27.1% / within-stim 72.9%), Gaussian MI ≈ 0.228 bits.
+  Pre-registered 3-bucket → **LAYER-2-PARTIAL**. First measured positive
+  on any §117 layer beyond bare variance.
+
+- **2026-05-20** — §124 LEGO RESIDUAL AUDIT LANDED
+  (`state/lego_residual_audit_s124_2026_05_19/`, B-S124 7/7 🔵, central
+  c93e160a 0-diff, $0). §117's "non-degenerate" verdict pinned as
+  variance-only liveness (layer 1 of **3-layer liveness partition**
+  {DEAD / VARIANCE-ONLY / STIMULUS-DRIVEN / TASK-GROUNDED}). WALL-A
+  orthogonal AST-closed; WALL-B confronted-in-sim NOT removed; §115
+  verdict NOT reversed; §17 PHYSICS_RESPONSIVE mirror structurally
+  isomorphic. Number collision detected mid-cycle (sibling §120
+  spiking_attention_replacement) → renamed §120 → §124. Anti-padding
+  §13-M / §30 / §97 / §98 / §114 precedent.
 
 - **2026-05-19** — 파일 이동 `HEXAD/LEGO.md` → `HEXAD/LEGO/README.md`
   (사용자 directive "LEGO.md => LEGO/README.md" / "HEXAD/LEGO/* 에 모두 정리";
