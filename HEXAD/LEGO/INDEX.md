@@ -69,8 +69,29 @@
 | file                                  | role                                                  |
 |---------------------------------------|-------------------------------------------------------|
 | `HEXAD/LEGO/lego_engine.py`           | **canonical engine lib** (LIFNet · spike_rate_vec · psi_c1 · make_stimuli · variance_decomposition) |
+| `HEXAD/LEGO/lego_engine.hexa`         | **hexa-native engine** (§140) — `lego_*` pub fns, `use`s PR#77 spiking_lib · algorithmic-equivalent (NOT byte-equal numpy) |
+| `HEXAD/LEGO/lego_engine_smoke.hexa`   | F-S140 1..4 smoke (4/4 PASS, `hexa build` clean) |
 | `state/lego_assembly_run_s117_2026_05_19/lego_sim.py` | original §117 source · sha-locked historical evidence · still importlib-loadable by probes |
 | `state/verify_hexad_blue_2026_05_15/blue_falsifier.py` | central blue battery — 0-line-diff invariant across LEGO arc (sha `c93e160a8a376a94`) |
+
+## cross-repo — hexa-lang flame contributions
+
+> The LEGO arc's hexa-native path (§138→§141) produced upstream work in the
+> **separate `~/core/hexa-lang` repo** (anima = downstream-consumer; files
+> live there, NOT in anima). anima `lego_engine.hexa` `use`s these. Tracked
+> here so the cross-repo side is not lost.
+
+| hexa-lang artifact | commit | LEGO §N | status |
+|---|---|---|---|
+| `inbox/patches/flame-spiking-substrate-primitives.md` | `9ff3083f` | §139 | filed (request) |
+| `stdlib/flame/spiking_lib.hexa` + `flame_spiking_test.hexa` (F-SPIKE 4/4 PASS) | `4426d4e4` | (PR #77 impl) | **PR #77 OPEN** — not merged |
+| `inbox/patches/flame-stdp-pair-gpu-kernel.md` | `74d4c6f8` | §141 | filed (GPU device-kernel request) |
+
+- PR #77 `dancinlab/hexa-lang` branch `flame-spiking-substrate-primitives`
+  — title *"feat(flame): spiking-substrate primitives"*, OPEN. The branch
+  is shared/busy (58 files, 10.5k additions); anima's contribution is the
+  4 flame/inbox files above. `lego_engine.hexa` builds against this branch
+  worktree until merge; no anima-side change needed at merge.
 
 ## cross-arc anchors
 
