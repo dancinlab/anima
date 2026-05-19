@@ -167,3 +167,27 @@ compute.
   adds physical SPONTANEITY not a physical SUBSTRATE. §97 GOAL-ORTHOGONAL
   inherited — moves no GOAL distance. design/run ≠ fire ≠ emergence, capability
   claim 0, GOAL not reached, milestones unchanged.
+- **2026-05-19** — §118 Track 0 in-silico LANDED ($0 CPU, single sequential,
+  orphan 0; `state/track0_insilico_s118_2026_05_19/`, B-S118-1..9 **9/9 🔵**,
+  central blue 0-diff `c93e160a8a376a94`). Executes the $0-simulatable subset of
+  `TRACK0_INSILICO.md` — the §96 §4.5 distinguishing cells in a tiny 240-unit
+  LIF/numpy rig (4 cells, seed 1337, base_ckpt=None). §3 pre-registered closed
+  predicate `NON_DEGENERATE := byte_acc>1/256 ∧ physics_not_frozen ∧
+  honest_§9_coherent≥1/5` (§9 `emergence_metric.py` SSOT-imported). Measured,
+  3× bit-identical: **GPU-CE** (CE-gradient on a readout head) byte_acc 0.500,
+  head_drift 0.00276 → NON_DEGEN True · **GPU-noCE** (no learning) byte_acc 0.0
+  → False (§11-B re-confirmed) · **SIM-noCE-STDP** (decisive cell — event-local
+  STDP only, AST-audited 0 CE/backprop) byte_acc 0.0, W_drift 0.235, §9 5/5
+  → **False** (W moves + emission diverse but task-blind) · **SIM-CE** VOID
+  guard byte_acc 0.500 → True (rig SOUND). **VERDICT =
+  `SIM-IS-GPU-TAUTOLOGY-CONFIRMED-LEARNING-HALF`** (§3 middle outcome) — a
+  clocked-sim event-local-plasticity channel does NOT, on this rig, escape the
+  §11-B "physics-only learning is task-blind" outcome; cannot disambiguate
+  substrate-independent vs sim-artifact without async hardware. HEADLINE: §96
+  design-open #1 (softmax attention SPIKING-INCOMPATIBLE → must be REPLACED) is
+  a BLOCKING design-open — the rig confronts the §11-B LEARNING-CHANNEL half
+  ONLY; the full spiking-anima instantiation stays gated on the attention
+  replacement, the async-substrate half stays WALL-B (Loihi/SpiNNaker, §117
+  INHERITED). SIM-noCE-STDP §9=5/5 is substrate liveness, NOT capability, NOT
+  GOAL. design/run ≠ fire ≠ emergence, capability claim 0, GOAL not reached,
+  milestones unchanged.
