@@ -1,0 +1,114 @@
+{
+  "preconditions": [
+    {
+      "name": "B-S125-6 CENTRAL-BLUE-0-LINE-DIFF",
+      "passed": true,
+      "evidence": {
+        "expected_sha256_prefix16": "c93e160a8a376a94",
+        "observed_sha256_prefix16": "c93e160a8a376a94",
+        "match": true
+      }
+    },
+    {
+      "name": "B-S125-7 NO-FORBIDDEN-CALL-AST",
+      "passed": true,
+      "evidence": {
+        "forbidden_imports_hit": [],
+        "forbidden_calls_hit": []
+      }
+    }
+  ],
+  "closed_propositions": [
+    {
+      "name": "B-S125-1 ETA-SQUARED-BOUNDED-CLOSED",
+      "passed": true,
+      "evidence": {
+        "sympy_corner_zero": "0",
+        "sympy_corner_one": "1",
+        "sympy_corner_mid": "1/4",
+        "measured_eta_squared": 0.2712195360968856,
+        "measured_in_unit_interval": true
+      }
+    },
+    {
+      "name": "B-S125-2 GAUSSIAN-MI-IDENTITY-CLOSED",
+      "passed": true,
+      "evidence": {
+        "sympy_derivative_simplified": "-1/(2*e - 2)",
+        "I_at_eta_sq_zero": 0.0,
+        "I_at_eta_sq_half_equals_half_log2": true,
+        "measured_mi_bits": 0.22822190445977122,
+        "rederived_mi_bits_from_eta": 0.22822190445977122,
+        "rederive_match_within_1e9": true
+      }
+    },
+    {
+      "name": "B-S125-3 SS-DECOMPOSITION-IDENTITY-CLOSED",
+      "passed": true,
+      "evidence": {
+        "ss_between": 4.437673619937387,
+        "ss_within": 11.924251054810792,
+        "ss_total": 16.36192467474818,
+        "ss_between_plus_within_equals_total": true,
+        "sympy_structural": "True"
+      }
+    },
+    {
+      "name": "B-S125-4 DETERMINISTIC-3X-BIT-IDENTICAL",
+      "passed": true,
+      "evidence": {
+        "three_run_sha256_prefixes": [
+          "0b6b15f345a3a1d3",
+          "0b6b15f345a3a1d3",
+          "0b6b15f345a3a1d3"
+        ],
+        "all_equal": true
+      }
+    },
+    {
+      "name": "B-S125-5 §117-LIF-SIM-IMPORT-BYTE-EQUAL",
+      "passed": true,
+      "evidence": {
+        "s117_lego_sim_sha256_prefix16": "190e6e7d408b7494",
+        "probe_references_s117_symbol": true,
+        "probe_uses_importlib": true
+      }
+    },
+    {
+      "name": "B-S125-6 CENTRAL-BLUE-0-LINE-DIFF",
+      "passed": true,
+      "evidence": {
+        "expected_sha256_prefix16": "c93e160a8a376a94",
+        "observed_sha256_prefix16": "c93e160a8a376a94",
+        "match": true
+      }
+    },
+    {
+      "name": "B-S125-7 NO-FORBIDDEN-CALL-AST",
+      "passed": true,
+      "evidence": {
+        "forbidden_imports_hit": [],
+        "forbidden_calls_hit": []
+      }
+    }
+  ],
+  "empirical_carve_out": {
+    "name": "B-S125-NOTE EMPIRICAL-CARVE-OUT (NOT counted 🔵)",
+    "carve_out_kind": "measurement-outcome-not-emergence",
+    "family": "B-EMERGE-7 / B-S117-NOTE / B-S124-NOTE / B-PHYS-NOTE",
+    "honest_scope": "η²=0.271 OUTCOME measures stimulus-driven Ψ-C1 variance fraction on §117's specific LIF parametrisation (N=256, M=5 replicates, 12 stimuli). Generalisation to other parametrisations / scales / substrates is NOT proven. Layer-3 task-grounded liveness REMAINS OPEN. necessary-not-sufficient at every layer (B-EMERGE-7); GOAL 미도달; north-star + §15/§51/§72 milestones UNCHANGED."
+  },
+  "summary": {
+    "preconditions_passed": true,
+    "closed_propositions_passed": "7/7",
+    "all_closed_pass": true,
+    "measured_eta_squared": 0.2712195360968856,
+    "measured_gaussian_mi_bits": 0.22822190445977122,
+    "probe_verdict": "LAYER-2-PARTIAL",
+    "battery_verdict": "LAYER-2-PARTIAL-CLOSED-7-7-🔵",
+    "empirical_carve_out_NOT_counted_🔵": true,
+    "necessary_not_sufficient_B_EMERGE_7": true,
+    "north_star_unchanged": true,
+    "goal_unreached": true
+  }
+}
