@@ -1,0 +1,116 @@
+{
+  "battery_id": "B-S126",
+  "cycle": "\u00a7126 PCN-C4 (1-step PCN on anima)",
+  "sidecar": true,
+  "central_zero_diff_check": true,
+  "results": [
+    {
+      "battery": "B-S126-1 NO-CE-INVARIANT-AST",
+      "pass_": true,
+      "forbidden_call_hits": [],
+      "forbidden_class_hits": [],
+      "mse_loss_used": true
+    },
+    {
+      "battery": "B-S126-2 NO-GLOBAL-BACKWARD-INVARIANT-AST",
+      "pass_": true,
+      "backward_callers": [
+        "L_head",
+        "L_i"
+      ],
+      "forbidden_matches": []
+    },
+    {
+      "battery": "B-S126-3 MSE-NONNEGATIVE-AND-CONVEX",
+      "pass_": true,
+      "hessian": "2/N",
+      "min_at_target": "0"
+    },
+    {
+      "battery": "B-S126-4 PCN-LOCAL-TARGET-DETACHED-AST",
+      "pass_": true,
+      "detach_call_count": 5,
+      "no_grad_context_present": true,
+      "t_i_local_target_assignment": true
+    },
+    {
+      "battery": "B-S126-5 PER-BLOCK-OPTIMIZER-COUNT",
+      "pass_": true,
+      "adamw_call_count": 2,
+      "global_parameters_seen": false
+    },
+    {
+      "battery": "B-S126-6 FROM-SCRATCH-RANDOM-INIT-NO-BASE-CKPT",
+      "pass_": true,
+      "forbidden_attrs": [],
+      "forbidden_full": [],
+      "seed_calls_seen": [
+        "random.seed",
+        "torch.cuda.manual_seed_all",
+        "torch.manual_seed"
+      ]
+    },
+    {
+      "battery": "B-S126-7 \u00a711-B-CONNECTION-POINT-WELL-FORMED",
+      "pass_": true,
+      "random_floor": true,
+      "deg_ceiling": true,
+      "supp_floor": true,
+      "sample_classification": [
+        [
+          0.0,
+          "S11B_LIKE_DEGENERATE"
+        ],
+        [
+          0.00390625,
+          "S11B_LIKE_DEGENERATE"
+        ],
+        [
+          0.0078125,
+          "S11B_LIKE_DEGENERATE"
+        ],
+        [
+          0.01,
+          "PARTIAL_AMBIGUOUS"
+        ],
+        [
+          0.05,
+          "S96_Q2_SUPPORTED (if psi)"
+        ],
+        [
+          0.1,
+          "S96_Q2_SUPPORTED (if psi)"
+        ],
+        [
+          1.0,
+          "S96_Q2_SUPPORTED (if psi)"
+        ]
+      ]
+    },
+    {
+      "battery": "B-S126-8 \u00a7125-\u00a7126-JOINT-READING-COMPATIBLE",
+      "pass_": true,
+      "labels_present": [
+        "PARTIAL_AMBIGUOUS",
+        "S11B_LIKE_DEGENERATE",
+        "S96_Q2_SUPPORTED"
+      ],
+      "joint_table_size": 9
+    },
+    {
+      "battery": "CENTRAL-BLUE-FALSIFIER-0-LINE-DIFF",
+      "pass_": true,
+      "sha256": "c93e160a8a376a940942332cad13e652df9a03e97ccab708542a126eefc70b73",
+      "expected_prefix": "c93e160a8a376a94"
+    }
+  ],
+  "empirical_carve_out": {
+    "battery": "B-S126-NOTE empirical carve-out",
+    "pass_": null,
+    "note": "\u00a7126 fire OUTCOME = SGD/measurement empirical. '1-step PCN' \u2260 PCN-converged (Whittington-Bogacz N\u2192\u221e). Verdict applies to this algorithm point, not full PCN. B-EMERGE-7 / B-D-NOTE / B-S125-NOTE family \u2014 necessary-not-sufficient."
+  },
+  "summary": "9/9 \ud83d\udd35 (PASS)",
+  "wall_s": 0.10304999351501465,
+  "north_star_unchanged": true,
+  "s15_s51_s72_milestones_unchanged": true
+}

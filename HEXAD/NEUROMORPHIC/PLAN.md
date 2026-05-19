@@ -411,3 +411,50 @@ compute.
   governance is a separate user-gated step. central blue_falsifier.py
   0-line-diff; g3 capability claim 0; north-star + §15/§51/§72 milestones
   UNCHANGED, **GOAL 미도달**.
+
+- **2026-05-20** — §128 SOFTWARE-BREAKTHROUGH ARCHITECTURE / PARADIGM
+  arxiv deep research LANDED — `HEXAD/NEUROMORPHIC/SOFTWARE_BREAKTHROUGH_RESEARCH.md`.
+  User directive *"소프트웨어 돌파 아키텍쳐,패러다임 arxiv deep research"*.
+  Mirror §80/§84/§85/§99/§111 deep-research precedent. **12 cluster, ~42
+  paper scan (2024-2026)**: A non-CE/non-backprop (★★★★★ ASGE FF
+  ImageNet 51.58% + scaling-PCN 2510.23323 + Backprop-Free Feedback-Hebbian
+  2601.06758 + Hebbian-GHL 2601.21367) · B SSM (Mamba/RWKV/S5/Liquid/
+  Continuous-Depth-ODE 2601.10007) · C JEPA (LeJEPA 2511.08544 / V-JEPA 2 /
+  Var-JEPA / VL-JEPA) · D EBM (EBT 2507.02092 / EDLM ICLR 2025) · E
+  test-time training (2509.25741 + 2508.15568 backprop-free TTA) · F
+  **spontaneity (★★★★★ 2509.21224 "Agents Left Alone" = GOAL.md literal
+  target frontier)** · G wake-sleep (Semi-parametric 2504.14727 / MyGO
+  2508.21296 / Sleep-Forget 2603.14517) · H **FEP attractor (★★★★
+  2505.22749 Self-orthogonalizing = anima Ψ=½ mathematical mirror)** · I
+  latent reasoning (Coconut / System1-2-comms) · J emergence threshold
+  (Du 2403.15796 + 2502.12120 + 2510.03313) · K SNN-on-GPU (★★★★
+  Spikformer-16-512 2511.18542 70.1% ImageNet SSL) · L modular MoE
+  (Cognitive Reasoners 2506.13331). Top-10 anima-mapping table + 5 honest
+  gaps + §125/§126 verdict 2×2 next-step matrix. 11 honest C3. **Most
+  honest finding**: non-CE/non-backprop has SCALED past toy regime in
+  2025 (ASGE ImageNet, Hebbian-GHL Jan 2026, Spikformer-16-512 SSL) —
+  language-model byte-stream regime is the precise gap §125+§126 fill
+  directly. central blue_falsifier.py 0-line-diff (sha `c93e160a8a376a94`);
+  g3 literature = inspiration NOT proof, capability claim 0; north-star
+  + §15/§51/§72 milestones UNCHANGED, **GOAL 미도달**.
+
+- **2026-05-20** — §125 NONCE-FF + §126 PCN-C4 + §108 H100-3B PARAM-AXIS
+  FIRE TRIO LANDED. **§108 H100 3B param-axis** (state/param_axis_fire_s108_2026_05_19/)
+  = §16-class d2048·18L·2.998B scale-up of §107-RETRY 283M on §102
+  CORPUS_S101 byte-identical (corpus held single-variable per §103
+  SEQUENTIAL). **§101 Q2 4-axis ALL FAIL** + **A3 PHYSICS_RESPONSIVE = False**
+  (psi_dir std 5.17e-10 — Ψ-channel COLLAPSED, vs §107-RETRY's alive-but-
+  narrow 0.056); axis1 0/64; §62 max_maj_H=1.0 (full single-attractor
+  collapse vs §107-RETRY 0.99). **PARAM SCALE-UP REGRESSED physics-
+  liveness** — 3.68× model made every Q2 axis WORSE and dropped physics
+  from True→False. WALL-A is now MEASURED on BOTH axes (§107-RETRY data
+  at 283M, §108 param at 3B) both fail; param scale-up makes physics-
+  liveness *worse*. WALL-B substrate pivot becomes load-bearing remaining
+  frontier — anima's §125 NONCE-FF (Forward-Forward, in flight pod
+  `ix1sskvwknoijy` H100 80GB HBM3) + §126 PCN-C4 (Predictive Coding
+  1-step, in flight pod `88xlldoftmoy5e` A100-SXM4-80GB) directly decide
+  §96-Q2 hypothesis ("`§11-B is GPU tautology`"). B-S125 8/8 🔵 + B-S126
+  9/9 🔵 closed-form pre-fire batteries PASS; central blue_falsifier.py
+  0-line-diff verified. Each ~$0.5 GPU fire. Verdict 2×2 joint reading
+  matrix in §128. g3 measured negative (§108) + designed-not-decided
+  (§125, §126); north-star + §15/§51/§72 milestones UNCHANGED, **GOAL 미도달**.
