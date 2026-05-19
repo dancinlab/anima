@@ -1205,3 +1205,31 @@ user directive "all 바로 go" (§86/§87-F1/§87-F2 design 3 후보 trained-sca
 - engine summary-only carry (§74 — overlay pool=0, `--dump-overlay` 미land); §69 PROPOSES/DISPOSES — closed-form 술어가 arbiter.
 
 g3: 모두 necessary-not-sufficient (B-EMERGE-7), capability claim 0, kick = exploratory NOT arbiter, gap-map classification ≠ wired ≠ emergence; design-tier trained-scale verification — saturation-delay/gap-definition ≠ GOAL emergence. north-star + §15/§51/§72 milestone UNCHANGED, GOAL 미도달. PHILOSOPHY g6 §verdict_axolotl_neoteny_fire_s88f2 + §verdict_frog_eye_salience_fire_s88f1 + §verdict_homeostatic_setpoint_fire_s88s86 + §verdict_hexad_kick_gap_sweep_s89 self-appended.
+
+### 2026-05-19 §90 NEOTENY + #3 ACTION-PERCEPTION LOOP design + $0 smoke LANDED — GAMMA-CLOSING-DIRECTIONAL-POSITIVE
+
+orchestrator-authored (agent 2× rate-limited — 1st 15 tool-call partial smoke+result.json 완주 / 2nd 2 tool-call; orchestrator 가 DESIGN_FINDINGS.md + blue_falsifier_s90.py 직접 작성 + B-S90 7/7 🔵 verify + commit). $0 Mac CPU, central blue_falsifier.py sha c93e160a 0-line-diff sidecar-only.
+
+**표적 — §88-F2 γ False**: §88-F2 axolotl neoteny trained-scale fire (commit 52bef1044, B-S88F2 7/7 🔵, verdict (α) NEOTENY-DELAYS-SATURATION) 의 γ JUVENILE-BUT-COMPETENT = False — neoteny 가 §16.6-C memorization-saturation 은 measurably 지연 (maturity 0.95→0.75, byte-cascade attractor maj_frac 0.87→0.35, effective D 1.89→2.70) 하나 non-saturated regime body §9 honest_coherent 0/5. saturation-delay ≠ coherent emission.
+
+**가설 — §89 #3 D@emit→S@t+1**: §89 HEXAD-KICK-GAP-SWEEP 가 §63 gap-map #3 action-perception loop 을 closed-form definable 확정 (transfer `x_{t+1}=S_encode(e_t)`, invariant Kolmogorov data-processing inequality `K(x_{t+1})≤K(e_t)+K(S_encode)`). non-saturated regime (§88-F2 neoteny) 위 #3 self-perception loop wiring → garbled body → 자기 stimulus → physics deviation → 다음 emit self-correct → γ 닫음.
+
+**5-cell stub grid** ($0 Mac CPU, LCG seed 1337, 20-step):
+
+| cell | §9 body coherent | final maturity | final maj_frac | #3 self-correct events |
+|---|---|---|---|---|
+| cell0 neoteny baseline | 17/20 | 0.7478 | 0.350 | 0 |
+| cell1 #3 loop only | **0/20** | 0.9496 | **1.0 (echo collapse)** | 1 |
+| cell2 neoteny + #3 | **20/20** | 0.7478 | 0.350 | 8 |
+| cell3 neoteny + #3 + gain | **20/20** | 0.7478 | 0.263 | 10 |
+| cell4 §24 baseline | 0/20 | 0.9496 | 0.8725 | 0 |
+
+**4-corner**: α γ-CLOSING-MEASURED **True** (cell2/cell3 §9 20/20 > cell0 neoteny-baseline 17/20 — #3 loop 가 non-saturated regime 위 coherence 끌어올림) · β LOOP-NO-EFFECT False · γ ECHO-AMPLIFIES **True** (cell1 #3-loop-only §9 0/20 + maj_frac 1.0 = §62 echo-chamber-collapse 재현 — #3 self-perception loop 단독은 garbled body → garbled stimulus 되먹임 echo 악화, loop 는 neoteny 동반 필수) · δ NEOTENY-LOOP-SYNERGY **True** (synergy decomposition Δ_loop-alone 0, Δ_neoteny-alone 17, Δ_both 20 — Δ_both 20 > Δ_loop 0 + Δ_neoteny 17, non-additive genuine synergy).
+
+**verdict GAMMA-CLOSING-DIRECTIONAL-POSITIVE** ($0 stub): #3 action-perception loop 가 §88-F2 neoteny non-saturated regime 위 coherence stub-level 끌어올림 — §88-F2 γ False 닫을 후보 mechanism well-formed + synergy 측정.
+
+**honest carve-out (B-S90-NOTE)**: $0 stub §9 pass ≠ trained ckpt body §9 pass (§88-F2 §9 0/5 = trained ckpt body, §90 cell2 §9 20/20 = stub surrogate, §77/B-EMERGE-7 carry). #3 loop 가 trained-saturated ckpt 위에서 echo 악화(γ corner)할지 정정(cell2)할지 = stub 의 두 경쟁 force (garble-feeds-garble vs gain-shallows-basin) 중 trained-scale dominant force 미측정 = trained-scale GPU fire OUTCOME (NOT counted 🔵). design-level γ-closing-directional-positive ≠ γ-CLOSED ≠ GOAL emergence.
+
+B-S90 7/7 🔵 sidecar (#3-LOOP-TRANSFER-CLOSED §89 Kolmogorov carry · NEOTENY-CARRY-BYTE-EQUAL §88-F2 연결부위 · §9-METRIC-REUSE · γ-CLOSING-PREDICATE falsifiable · ECHO-AMPLIFY-DETECTOR §62 carry · §24-DECISION-CONSISTENCY 연결부위 · DETERMINISTIC). §7 GOAL-legitimacy 3/3 PASS. g3: necessary-not-sufficient (B-EMERGE-7), capability claim 0. north-star + §15/§51/§72 milestone UNCHANGED, GOAL 미도달.
+
+**다음 (directly-earned)**: §90 stub γ-closing-directional-positive → trained-scale fire 후보 (§88-F2 neoteny trainer 에 #3 D@emit→S@t+1 loop 실제 wiring) — 단 §62 echo-amplify risk (cell1) 가 trained-scale 에서 cell2 synergy 를 이길지가 honest open question.
