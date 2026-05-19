@@ -1,0 +1,135 @@
+{
+  "section": "§127",
+  "title": "LEGO LAYER-2 SCALING-LAW PROBE",
+  "tier": "probe-tier",
+  "cost_usd": 0.0,
+  "gpu": false,
+  "runpod": false,
+  "fire": false,
+  "model_forward_byte_lm": false,
+  "corpus": false,
+  "dispatch": false,
+  "orphan": 0,
+  "wall_sec_total": 305.9814851284027,
+  "central_blue_falsifier_sha256_prefix16_expected": "c93e160a8a376a94",
+  "parent": [
+    "§117 LIF substrate (layer-1 variance-only liveness)",
+    "§124 3-layer liveness partition",
+    "§125 layer-2 PARTIAL (η²=0.271 at N=256)",
+    "§126 N-scale-up single-point (η²=0.322 at N=1024, ratio 1.189×)"
+  ],
+  "method": {
+    "N_points": [
+      256,
+      512,
+      1024,
+      2048
+    ],
+    "M_replicates": 5,
+    "seeds": [
+      1337,
+      1338,
+      1339,
+      1340,
+      1341
+    ],
+    "n_stim": 12,
+    "steps_per_stim": 80,
+    "window": 40,
+    "ratio_preserved_n_a_n_g_n_rec": "3N/8 : 3N/8 : N/4",
+    "imports_s117_lego_sim_byte_identical": true,
+    "no_fork_no_reimplementation": true
+  },
+  "per_N_measurements": [
+    {
+      "eta_squared": 0.2712195360968856,
+      "gaussian_mi_bits": 0.22822190445977122,
+      "ss_between": 4.437673619937387,
+      "ss_within": 11.924251054810792,
+      "ss_total": 16.36192467474818,
+      "N_total": 256,
+      "n_a": 96,
+      "n_g": 96,
+      "n_rec": 64,
+      "wall_sec": 14.10897421836853
+    },
+    {
+      "eta_squared": 0.3288615858243288,
+      "gaussian_mi_bits": 0.28765887969172066,
+      "ss_between": 4.725139109952342,
+      "ss_within": 9.643030702609519,
+      "ss_total": 14.36816981256186,
+      "N_total": 512,
+      "n_a": 192,
+      "n_g": 192,
+      "n_rec": 128,
+      "wall_sec": 24.114988088607788
+    },
+    {
+      "eta_squared": 0.3223496304618351,
+      "gaussian_mi_bits": 0.2806934905822345,
+      "ss_between": 4.912780404193027,
+      "ss_within": 10.327753289468768,
+      "ss_total": 15.240533693661796,
+      "N_total": 1024,
+      "n_a": 384,
+      "n_g": 384,
+      "n_rec": 256,
+      "wall_sec": 54.78463315963745
+    },
+    {
+      "eta_squared": 0.26082583969794654,
+      "gaussian_mi_bits": 0.21800688514872066,
+      "ss_between": 3.527647417686633,
+      "ss_within": 9.997267988593205,
+      "ss_total": 13.524915406279838,
+      "N_total": 2048,
+      "n_a": 768,
+      "n_g": 768,
+      "n_rec": 512,
+      "wall_sec": 212.97223806381226
+    }
+  ],
+  "power_law_fit": {
+    "k_scaling_exponent": -0.01979770608621152,
+    "log_a_intercept": -1.092875597308272,
+    "a_intercept": 0.33525105922809717,
+    "r_squared": 0.022489477706909233,
+    "log_N_values": [
+      5.545177444479562,
+      6.238324625039508,
+      6.931471805599453,
+      7.6246189861593985
+    ],
+    "log_eta_values": [
+      -1.304826689754869,
+      -1.1121183285209515,
+      -1.1321185136141436,
+      -1.3439023752411783
+    ],
+    "log_eta_predicted": [
+      -1.2026573905499678,
+      -1.2163801147051798,
+      -1.2301028388603918,
+      -1.2438255630156039
+    ],
+    "log_residuals": [
+      -0.10216929920490125,
+      0.10426178618422832,
+      0.09798432524624823,
+      -0.10007681222557441
+    ]
+  },
+  "verdict": "APPROXIMATELY-N-INVARIANT",
+  "verdict_note": "Scaling exponent k=-0.020 |k| ≤ 0.10 — η² is approximately N-invariant; §125→§126 1.189× was within natural variation.",
+  "honest_inheritance": {
+    "layer_1_variance_only": "§117 CLOSED",
+    "layer_2_partial_at_N256": "§125 CLOSED (η²=0.271)",
+    "layer_2_n_scale_single_point": "§126 CLOSED (ROBUST-GROWS at one point)",
+    "layer_2_scaling_law": "APPROXIMATELY-N-INVARIANT",
+    "layer_3_task_grounded": "OPEN",
+    "wall_a": "§97 ORTHOGONAL inherited",
+    "wall_b": "§115/§117/§124 INHERITED — sim-on-GPU confronted-not-removed"
+  },
+  "g3": "probe ≠ fire ≠ emergence; necessary-not-sufficient (B-EMERGE-7); capability claim 0; GOAL 미도달."
+}

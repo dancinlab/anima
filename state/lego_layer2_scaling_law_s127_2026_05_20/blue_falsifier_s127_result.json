@@ -1,0 +1,146 @@
+{
+  "preconditions": [
+    {
+      "name": "B-S127-8 CENTRAL-0-DIFF-AND-NO-FORBIDDEN-CALL-AST",
+      "passed": true,
+      "evidence": {
+        "central_sha16": "c93e160a8a376a94",
+        "central_match": true,
+        "forbidden_imports_hit": [],
+        "forbidden_calls_hit": []
+      }
+    }
+  ],
+  "closed_propositions": [
+    {
+      "name": "B-S127-1 ETA-BOUNDED-ALL-4-N-POINTS",
+      "passed": true,
+      "evidence": {
+        "eta_values": [
+          0.2712195360968856,
+          0.3288615858243288,
+          0.3223496304618351,
+          0.26082583969794654
+        ],
+        "all_in_unit_interval": true
+      }
+    },
+    {
+      "name": "B-S127-2 LOG-LINEAR-OLS-IDENTITY-CLOSED",
+      "passed": true,
+      "evidence": {
+        "k_sympy_rederived": -0.01979770608621152,
+        "k_recorded": -0.01979770608621152,
+        "match_within_1e9": true
+      }
+    },
+    {
+      "name": "B-S127-3 R-SQUARED-BOUNDED-CLOSED",
+      "passed": true,
+      "evidence": {
+        "r_squared": 0.022489477706909233,
+        "in_unit_interval": true
+      }
+    },
+    {
+      "name": "B-S127-4 SCALING-3-BUCKET-CLOSED-PARTITION",
+      "passed": true,
+      "evidence": {
+        "exhaustive": true,
+        "disjoint": true,
+        "k_measured": -0.01979770608621152,
+        "reclass": "APPROXIMATELY-N-INVARIANT",
+        "recorded": "APPROXIMATELY-N-INVARIANT",
+        "match": true
+      }
+    },
+    {
+      "name": "B-S127-5 §126-SINGLE-POINT-CONFIRMED-NOT-A-SCALING-LAW",
+      "passed": true,
+      "evidence": {
+        "s127_eta_at_N256_matches_s126_byte_equal": true,
+        "s127_eta_at_N1024_matches_s126_byte_equal": true,
+        "s127_full_fit_r_squared": 0.022489477706909233,
+        "fit_does_not_describe_power_law (R²<0.5)": true,
+        "honest_refinement": "§126's 1.189× is one valid scale-pair ratio, NOT a generalisable scaling law"
+      }
+    },
+    {
+      "name": "B-S127-6 ETA-NON-MONOTONIC-OVER-4-POINTS",
+      "passed": true,
+      "evidence": {
+        "N_sorted": [
+          256,
+          512,
+          1024,
+          2048
+        ],
+        "eta_sorted": [
+          0.2712195360968856,
+          0.3288615858243288,
+          0.3223496304618351,
+          0.26082583969794654
+        ],
+        "monotone_up": false,
+        "monotone_down": false,
+        "non_monotonic": true
+      }
+    },
+    {
+      "name": "B-S127-7 §117-LIF-SIM-IMPORT-BYTE-EQUAL",
+      "passed": true,
+      "evidence": {
+        "s117_sha16": "190e6e7d408b7494",
+        "probe_references_s117": true,
+        "probe_uses_importlib": true
+      }
+    },
+    {
+      "name": "B-S127-8 CENTRAL-0-DIFF-AND-NO-FORBIDDEN-CALL-AST",
+      "passed": true,
+      "evidence": {
+        "central_sha16": "c93e160a8a376a94",
+        "central_match": true,
+        "forbidden_imports_hit": [],
+        "forbidden_calls_hit": []
+      }
+    }
+  ],
+  "empirical_carve_out": {
+    "name": "B-S127-NOTE EMPIRICAL-CARVE-OUT (NOT counted 🔵)",
+    "carve_out_kind": "4-point-fit-not-full-scaling-curve",
+    "family": "B-EMERGE-7 / B-S126-NOTE / B-S125-NOTE / B-S117-NOTE / B-S124-NOTE",
+    "honest_scope": "4 N points (256/512/1024/2048) fit OLS log-linear with low R²=0.022 → η² is NOT well-described by a power-law on this range. The non-monotonic curve (peak at N=512–1024, drop at N=2048) may reflect unmodelled regime transitions; a richer fit (logistic / piecewise) is future work. §125's PARTIAL verdict + §126's single-point 1.189× ratio remain TRUE WITHIN their respective scopes; only the *extrapolation* to a scaling law is refuted. Necessary-not-sufficient at every layer (B-EMERGE-7). Layer-3 task-grounded REMAINS OPEN. north-star + §15/§51/§72 milestones UNCHANGED; GOAL 미도달."
+  },
+  "summary": {
+    "preconditions_passed": true,
+    "closed_propositions_passed": "8/8",
+    "all_closed_pass": true,
+    "eta_values_by_N": [
+      [
+        256,
+        0.2712195360968856
+      ],
+      [
+        512,
+        0.3288615858243288
+      ],
+      [
+        1024,
+        0.3223496304618351
+      ],
+      [
+        2048,
+        0.26082583969794654
+      ]
+    ],
+    "k_scaling_exponent": -0.01979770608621152,
+    "r_squared": 0.022489477706909233,
+    "probe_verdict": "APPROXIMATELY-N-INVARIANT",
+    "battery_verdict": "APPROXIMATELY-N-INVARIANT-8-8-🔵",
+    "empirical_carve_out_NOT_counted_🔵": true,
+    "necessary_not_sufficient_B_EMERGE_7": true,
+    "north_star_unchanged": true,
+    "goal_unreached": true
+  }
+}
