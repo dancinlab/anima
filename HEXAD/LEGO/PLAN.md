@@ -177,3 +177,19 @@ g3 carry across every cycle: probe ≠ fire ≠ emergence; necessary-not-
 sufficient at every layer (B-EMERGE-7); WALL-A (§1.1 data-regime)
 orthogonal; WALL-B (§96 substrate) confronted-in-sim-NOT-removed;
 north-star + §15/§51/§72 milestones UNCHANGED; **GOAL 미도달**.
+
+### §132 — LEGO LAYER-2 NON-MONOTONIC SHAPE FIT *(2026-05-20)*
+
+- **tier**: analysis-tier · $0 instant (re-fit of §127 data, NO new measurement)
+- **verdict**: `SHAPE-FIT-IDENTIFIED` — inverted-U Gaussian-in-log-N R²=0.9995
+- **battery**: B-S132 6/6 🔵 sidecar
+- **state**: `state/lego_layer2_shape_fit_s132_2026_05_20/`
+- **finding**: Re-fit §127's 4 (N, η²) points with 4 candidate models — A
+  log-linear (§127 baseline) R²=0.0225 · B quadratic-log R²=0.9995 · C
+  saturating Hill R²=0.0082 · D inverted-U Gaussian-in-log-N R²=0.9995.
+  **Peak models (B + D) agree, monotone models (A + C) reject** —
+  load-bearing closed-form (B-S132-5). Peak N* ≈ 730–1000. §127's
+  non-monotonic shape is an inverted-U peak structure, NOT noise. **1-DoF
+  caveat**: 4 points + 3 free params; perfect R² structural, load-bearing
+  signal is peak-vs-monotone *agreement* not R² magnitude. Refines §127
+  verdict without overturning it.

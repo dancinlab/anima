@@ -1,0 +1,118 @@
+{
+  "section": "§132",
+  "title": "LEGO LAYER-2 NON-MONOTONIC SHAPE FIT",
+  "tier": "analysis-tier (re-fit of §127 data)",
+  "cost_usd": 0.0,
+  "gpu": false,
+  "runpod": false,
+  "fire": false,
+  "model_forward_byte_lm": false,
+  "corpus": false,
+  "dispatch": false,
+  "orphan": 0,
+  "central_blue_falsifier_sha256_prefix16_expected": "c93e160a8a376a94",
+  "parent": [
+    "§127 4-point η²(N) fit (OLS log-linear R²=0.022 → APPROXIMATELY-N-INVARIANT)",
+    "§127 honest residual: 'logistic / piecewise / saturating = future work'"
+  ],
+  "method": {
+    "n_points": 4,
+    "N_values": [
+      256.0,
+      512.0,
+      1024.0,
+      2048.0
+    ],
+    "eta_values": [
+      0.2712195360968856,
+      0.3288615858243288,
+      0.3223496304618351,
+      0.26082583969794654
+    ],
+    "candidate_models": [
+      "A_log_linear",
+      "B_quadratic_log",
+      "C_saturating_hill",
+      "D_inverted_u_gaussian"
+    ]
+  },
+  "fits": {
+    "A_log_linear": {
+      "model": "log_linear",
+      "n_params": 2,
+      "coefficients": {
+        "log_a": -1.0928755973082707,
+        "k": -0.019797706086211626
+      },
+      "log_eta_predicted": [
+        -1.2026573905499671,
+        -1.2163801147051791,
+        -1.2301028388603912,
+        -1.2438255630156032
+      ],
+      "r_squared": 0.022489477706909233,
+      "fits_peak_or_drop": false
+    },
+    "B_quadratic_log": {
+      "model": "quadratic_log",
+      "n_params": 3,
+      "coefficients": {
+        "c0": -10.092827555964474,
+        "c1": 2.752107182912186,
+        "c2": -0.2104743914302069
+      },
+      "log_eta_predicted": [
+        -1.3037804462651308,
+        -1.1152570589898922,
+        -1.1289797831451367,
+        -1.3449486187308677
+      ],
+      "r_squared": 0.999477093270533,
+      "fits_peak_or_drop": true,
+      "has_max": true,
+      "peak_log_N": 6.5378670635681155,
+      "peak_N_estimate": 690.8115484043237
+    },
+    "C_saturating_hill": {
+      "model": "saturating_hill",
+      "n_params": 2,
+      "coefficients": {
+        "eta_max": 0.29794785365012694,
+        "K": 9.71729218162873
+      },
+      "eta_predicted": [
+        0.28705188852479957,
+        0.2923983991999963,
+        0.2951470430506476,
+        0.2965408351253723
+      ],
+      "r_squared": 0.008157191603197944,
+      "fits_peak_or_drop": false
+    },
+    "D_inverted_u_gaussian": {
+      "model": "inverted_u_gaussian",
+      "n_params": 3,
+      "coefficients": {
+        "log_eta_peak": -1.0963721026790694,
+        "log_N_peak": 6.537867063568115,
+        "sigma": 1.5412935853330347
+      },
+      "log_eta_predicted": [
+        -1.303780446265131,
+        -1.1152570589898927,
+        -1.128979783145139,
+        -1.3449486187308695
+      ],
+      "r_squared": 0.9994770932705332,
+      "fits_peak_or_drop": true,
+      "peak_N_estimate": 690.8115484043232
+    }
+  },
+  "best_model": "D_inverted_u_gaussian",
+  "best_r_squared": 0.9994770932705332,
+  "log_linear_r_squared_baseline": 0.022489477706909233,
+  "delta_r_squared_over_baseline": 0.976987615563624,
+  "verdict": "SHAPE-FIT-IDENTIFIED",
+  "verdict_note": "best R² 0.999 ≥ 0.80 — a non-linear model fits η²(N) at this resolution.",
+  "g3": "analysis ≠ measurement ≠ fire ≠ emergence; capability claim 0; GOAL 미도달."
+}
