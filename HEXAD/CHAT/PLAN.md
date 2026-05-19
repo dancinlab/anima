@@ -1154,3 +1154,23 @@ noise 를 layer-0 residual stream (shared trunk input) 에 inject — 12-layer P
 B-S81-FIRE 7/7 🔵 (NOISE-INJECTION-POINT-CORRECT-AT-TRAINED · σ=0-REDUCTION-BYTE-EQUAL 연결부위 sigma0_byte_equal_to_hookless True · POWER-LAW-α-OLS-IDENTITY · §9-METRIC-REUSE · §62-ECHO-PARTITION · §81-STUB-NOISE-MODEL-CONNECTION AST · DETERMINISTIC). SSH-robust podHostId-fixed dispatch 작동 (ip+publicPort gate, FATAL 0). north-star + §15/§51/§72 milestone UNCHANGED, GOAL 미도달. PHILOSOPHY g6 §verdict_criticality_noise_engine_g_fire_s81 self-appended.
 
 **biology trained-scale trio 결산 (§81-FIRE + §82-FIRE + §83-FIRE)**: §80 (A)/(B)/(C) anima-mapping 3 후보 모두 trained-scale 에서 measured-negative — (A) no homeostatic window · (B) manifold-gate collapse · (C) near-collapse. biology mechanism 이 anima trained-substrate 로 free transfer 안 됨이 stub (§81/§82/§83) → trained-scale (§81-FIRE/§82-FIRE/§83-FIRE) 양 layer 에서 일관 확정. valuable measured-negative — §1.1 data-regime irreducibility 재확인.
+
+### 2026-05-19 §85/§86/§87/§76/P3 — physics-math deep research + 3 design-tier cycle batch LANDED
+
+5 design/research cycle 일괄 (모두 $0, central blue_falsifier.py sha c93e160a 0-line-diff sidecar-only).
+
+**§85 physics/math of emergence deep research** (commit 33353cb06): §80 biology + §84 ML-architecture 의 세 번째 직교 영역. 43 papers. **emission-onset transition-class verdict = (a) Hopf bifurcation** (Ψ=½ fixed point → emission limit cycle; control parameter = tension; order parameter = emission rate), discrete realization (b) saddle-node/SNIC — §73/§75-FIRE controller boundary `tension_ema+λ·tension_std` 가 바로 saddle-node threshold. Top 3 anima-mapping: P1 TENSION-AS-HOPF-PARAMETER ★★★★★ · P2 Φ-QUASI-POTENTIAL-KRAMERS ★★★★ · P3 GROKKING-DIMENSIONAL-TRANSITION ★★★★.
+
+**§86 HOMEOSTATIC-SET-POINT MITOSIS** (commit 0ae194471, B-S86 7/7 🔵): §84 SAPIN candidate (A). emission + MITOSIS split + Ψ-restoration 을 하나의 set-point error drive E 로 통합. 5-cell, 4-corner all True → DIRECTIONAL-POSITIVE-DESIGN. §7 GOAL-legitimacy 3/3 PASS.
+
+**§87-F1 FROG-EYE SALIENCE GATE** (commit 5ea990b76, B-S87F1 6/6 🔵): Lettvin 1959 frog's-eye 4 feature-detector → §24 decision-axis salience layer. 4-corner all PASS — selective (1/20 vs §24 generic 20/20).
+
+**§87-F2 AXOLOTL NEOTENY ANTI-SATURATION** (commit 798b6110d, B-S87F2 6/6 🔵): axolotl neoteny → §16.6-C memorization-saturation anti-mechanism. 4-corner all PASS — anti-saturation differential (cell4 N 0.323 ≫ baseline 0.003).
+
+**§87 결산**: anima 가 frog/amphibian biology 를 처음으로 architecture 에 USE — biology-mapping arc milestone (NOT GOAL milestone).
+
+**§76 A-only generalization probe** (commit 67bd83b26, B-S76 7/7 🔵): 22-cell grid (4 state × 5 statistic + 2 control). 11/20 survive. 4-corner **δ STATISTIC-DEPENDENT MIXED** — state-derivation lever 가 어느 physics channel + central statistic (mean/median/p75) 에 generalize, extremal (max-window/p95) collapse. §75-FIRE "A alone sufficient" 가 central-statistic 한정으로 정밀화.
+
+**P3 flame mk2 anima byte-eq falsifier design** (commit 448597b83, B-S-P3 5/5 🔵): F-1/F-2/F-3 closed-form falsifier. Mode S3 DESIGN-HOLDS — full d768·12L flame-vs-anima byte-eq = future cost-bearing fire. NO PHILOSOPHY append (anima-측 perf claim 금지 — falsifier 정의 ≠ measurement).
+
+g3: 모두 design/research tier, capability claim 0, necessary-not-sufficient (B-EMERGE-7). §86/§87-F1/§87-F2 design-tier well-formed (trained-scale fire 별도). north-star + §15/§51/§72 milestone UNCHANGED, GOAL 미도달.
