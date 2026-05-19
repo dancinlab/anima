@@ -27,10 +27,11 @@
 | 138  | 2026-05-20 | design · $0     | HEXA-NATIVE-ENGINE-DESIGN-CLOSE-UPSTREAM-GAP-NAMED — 3 flame spiking primitives gapped | B-S138 5/5 🔵 | `HEXAD/LEGO/state/lego_hexa_native_design_s138_2026_05_20/`            | engine design-spec |
 | S121 | 2026-05-20 | design · $0     | LOIHI-SPEC-DESIGN-CLOSE-ACCESS-WALLED-READABLE-ONLY — Lava mapping spec | B-S121 5/5 🔵 | `HEXAD/LEGO/state/lego_loihi_spec_s121_2026_05_20/`                    | engine→Loihi spec |
 | 139  | 2026-05-20 | filing · $0    | INBOX-PATCH-FILED-HEXA-FIRST-PATH-COMPLETE — flame spiking-primitives request filed | B-S139 4/4 🔵 | `HEXAD/LEGO/state/lego_inbox_patch_filed_s139_2026_05_20/`            | inbox patch (upstream) |
+| 140  | 2026-05-20 | port · $0      | HEXA-NATIVE-ENGINE-PORT-ALGORITHMIC-EQUIVALENT — lego_engine.hexa, F-S140 4/4 PASS | B-S140 6/6 🔵 | `HEXAD/LEGO/state/lego_engine_hexa_port_s140_2026_05_20/`             | **hexa-native engine** (lego_engine.hexa) |
 
 ## battery sum
 
-- 78 (§115-§135) + B-S136 5 + B-S137 5 + B-S138 5 + B-S121 5 + B-S139 4 = **102 closed-form propositions 🔵** across the arc (16 cycles).
+- 78 (§115-§135) + B-S136 5 + B-S137 5 + B-S138 5 + B-S121 5 + B-S139 4 + B-S140 6 = **108 closed-form propositions 🔵** across the arc (17 cycles).
 - §133 carries as historical evidence (drifted-engine substrate); no battery counted toward this sum.
 - 0 propositions counted toward central `state/verify_hexad_blue_2026_05_15/blue_falsifier.py` —
   all sidecar. Central `sha256_prefix16` remains `c93e160a8a376a94` (verified

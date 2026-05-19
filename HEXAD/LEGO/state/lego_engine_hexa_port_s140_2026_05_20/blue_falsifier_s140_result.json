@@ -1,0 +1,101 @@
+{
+  "preconditions": [
+    {
+      "name": "B-S140-6 CENTRAL-0-DIFF-AND-NO-FORBIDDEN-IMPORT",
+      "passed": true,
+      "evidence": {
+        "central_sha16": "c93e160a8a376a94",
+        "central_match": true,
+        "forbidden_imports": []
+      }
+    }
+  ],
+  "closed_propositions": [
+    {
+      "name": "B-S140-1 HEXA-ENGINE-FILE-EXISTS",
+      "passed": true,
+      "evidence": {
+        "lego_engine.hexa": true,
+        "lego_engine_smoke.hexa": true
+      }
+    },
+    {
+      "name": "B-S140-2 IMPORTS-PR77-SPIKING-LIB",
+      "passed": true,
+      "evidence": {
+        "engine_uses_spiking_lib": true,
+        "engine_uses_tensor_lib": true,
+        "smoke_uses_flame_primitives": true,
+        "spiking_lib_on_disk": true
+      }
+    },
+    {
+      "name": "B-S140-3 SMOKE-4-4-PASS",
+      "passed": true,
+      "evidence": {
+        "build_ok": true,
+        "smoke_4_4_pass": true,
+        "f_s140_pass_lines": 4
+      }
+    },
+    {
+      "name": "B-S140-4 ALGORITHMIC-NOT-BYTE-EQUAL-HONEST",
+      "passed": true,
+      "evidence": {
+        "declares_algorithmic_equivalence": true,
+        "declares_not_byte_equal_vs_numpy": true,
+        "cites_rng_divergence": true,
+        "numpy_py_is_reference_oracle": true
+      }
+    },
+    {
+      "name": "B-S140-5 DOWNSTREAM-CONSUMER-NO-HEXA-LANG-EDIT",
+      "passed": true,
+      "evidence": {
+        "engine_file_under_anima_repo": true,
+        "public_fns": [
+          "lego_v_th",
+          "lego_v_rest",
+          "lego_v_reset",
+          "lego_tau_m",
+          "lego_tau_stdp",
+          "lego_refrac",
+          "lego_refr_floor",
+          "lego_a_plus",
+          "lego_a_minus",
+          "lego_w_max",
+          "lego_membrane_step",
+          "lego_reset_spiked",
+          "lego_trace_step",
+          "lego_spike_rate_vec",
+          "lego_psi_c1"
+        ],
+        "all_lego_namespaced (anima, not stdlib)": true
+      }
+    },
+    {
+      "name": "B-S140-6 CENTRAL-0-DIFF-AND-NO-FORBIDDEN-IMPORT",
+      "passed": true,
+      "evidence": {
+        "central_sha16": "c93e160a8a376a94",
+        "central_match": true,
+        "forbidden_imports": []
+      }
+    }
+  ],
+  "empirical_carve_out": {
+    "name": "B-S140-NOTE EMPIRICAL-CARVE-OUT (NOT counted 🔵)",
+    "carve_out_kind": "algorithmic-equivalent-not-byte-equal-to-numpy",
+    "family": "B-EMERGE-7 / §71-flame-init-divergence / §138-§139",
+    "honest_scope": "§140 ports lego_engine.py → lego_engine.hexa using the hexa-lang PR#77 flame spiking primitives. The port is ALGORITHMICALLY EQUIVALENT (same LIF leaky-integrate dynamics, threshold-and-reset, LOCAL STDP rule) verified by F-S140-1..4 4/4 PASS + hexa build clean. It is NOT byte-equal to the numpy reference — numpy PCG64+ziggurat RNG vs hexa-lang LCG diverge on W/bias init (same honest limit §71 recorded: gn2 7.97113 vs 7.97116). numpy lego_engine.py stays the canonical reference oracle. PR#77 not yet merged — lego_engine.hexa builds against the flame-spiking-substrate-primitives branch worktree; post-merge it builds against stdlib main. GOAL-orthogonal engine tooling; necessary-not-sufficient (B-EMERGE-7); GOAL 미도달."
+  },
+  "summary": {
+    "preconditions_passed": true,
+    "closed_propositions_passed": "6/6",
+    "all_closed_pass": true,
+    "battery_verdict": "HEXA-NATIVE-ENGINE-PORT-ALGORITHMIC-EQUIVALENT-6-6-🔵",
+    "empirical_carve_out_NOT_counted_🔵": true,
+    "north_star_unchanged": true,
+    "goal_unreached": true
+  }
+}

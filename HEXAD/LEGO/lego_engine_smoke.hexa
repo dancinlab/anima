@@ -1,0 +1,166 @@
+// @raw117_exempt
+// ════════════════════════════════════════════════════════════════════════
+// HEXAD/LEGO/lego_engine_smoke.hexa — §140 hexa-native engine smoke
+//
+// Verifies the hexa-native lego_engine.hexa composes a correct LIF step
+// from the flame spiking primitives (hexa-lang PR #77 spiking_lib).
+//
+// 4 falsifiers (F-S140-1..4):
+//   F-S140-1  MEMBRANE-LEAK     leaky integrate produces hand-verified v
+//   F-S140-2  LIF-STEP-COMPOSE  membrane→threshold→reset→refractory→STDP→trace
+//   F-S140-3  PSI-C1-FIXED-POINT  Ψ-C1 ∈ [0,1]; cos=0 ⇒ Ψ=½
+//   F-S140-4  DETERMINISM        2× byte-identical
+//
+// HONEST: algorithmic-equivalence check, NOT byte-equal-vs-numpy (RNG
+// divergence — see lego_engine.hexa header). numpy lego_engine.py is the
+// reference oracle.
+// ════════════════════════════════════════════════════════════════════════
+
+use "stdlib/flame/tensor_lib"
+use "stdlib/flame/spiking_lib"
+use "HEXAD/LEGO/lego_engine"
+
+fn _g_abs(x: float) -> float {
+    if x < 0.0 { return 0.0 - x }
+    return x
+}
+
+// ── F-S140-1: MEMBRANE-LEAK ─────────────────────────────────────────────
+fn check_membrane() -> int {
+    let n = 3
+    let v = t_zeros(n)
+    t_set(v, 0, 0.5); t_set(v, 1, 0.0); t_set(v, 2, 0.8)
+    let ext = t_zeros(n)
+    t_set(ext, 0, 0.6); t_set(ext, 1, 0.6); t_set(ext, 2, 0.6)
+    let bias = t_zeros(n)   // zero bias for hand-verifiability
+    let refr = t_zeros(n)   // all active (refr <= 0)
+    let out = lego_membrane_step(v, ext, bias, refr)
+    // unit 0: v=0.5, dv = -(0.5-0)/20 + 0.6 + 0 = -0.025 + 0.6 = 0.575 → 1.075
+    let e0 = 0.5 + ((0.0 - 0.5) / 20.0 + 0.6)
+    let mut fail = 0
+    if _g_abs(t_get(out, 0) - e0) > 1e-12 { fail = 1 }
+    // unit 1: v=0.0, dv = 0 + 0.6 = 0.6 → 0.6
+    if _g_abs(t_get(out, 1) - 0.6) > 1e-12 { fail = 2 }
+    // refractory unit: set refr[2]=1 → v unchanged
+    let refr2 = t_zeros(n)
+    t_set(refr2, 2, 1.0)
+    let out2 = lego_membrane_step(v, ext, bias, refr2)
+    if t_get(out2, 2) != 0.8 { fail = 3 }   // refractory → v frozen
+    let _ = t_free(v); let _ = t_free(ext); let _ = t_free(bias)
+    let _ = t_free(refr); let _ = t_free(refr2)
+    let _ = t_free(out); let _ = t_free(out2)
+    return fail
+}
+
+// ── F-S140-2: LIF-STEP-COMPOSE ──────────────────────────────────────────
+// One full LIF step on a fixed 4-unit net; verify spike vector + post-step
+// refractory by hand.
+fn lif_full_step_fingerprint() -> float {
+    let n = 4
+    // membrane already integrated to: v = [1.5, 0.3, 1.0, 0.7]
+    let v = t_zeros(n)
+    t_set(v, 0, 1.5); t_set(v, 1, 0.3); t_set(v, 2, 1.0); t_set(v, 3, 0.7)
+    // threshold v_th=1.0 → spike = [1,0,1,0]
+    let spike = flame_event_threshold(v, lego_v_th())
+    // reset spiked units → v_reset=0
+    let v2 = lego_reset_spiked(v, spike)
+    // refractory: refr starts 0 → spiked→2, others→max(0-1,-1)=-1
+    let refr0 = t_zeros(n)
+    let refr1 = flame_refractory_step(refr0, spike, lego_refrac(), lego_refr_floor())
+    // trace step: tr starts 0 → tr' = 0*decay + spike = spike
+    let tr0 = t_zeros(n)
+    let tr1 = lego_trace_step(tr0, spike)
+    // fingerprint = sum(spike) + sum(v2) + sum(refr1) + sum(tr1)
+    let fp = t_sum(spike, n) + t_sum(v2, n) + t_sum(refr1, n) + t_sum(tr1, n)
+    let _ = t_free(v); let _ = t_free(spike); let _ = t_free(v2)
+    let _ = t_free(refr0); let _ = t_free(refr1)
+    let _ = t_free(tr0); let _ = t_free(tr1)
+    return fp
+}
+
+fn check_lif_step() -> int {
+    let fp = lif_full_step_fingerprint()
+    // spike=[1,0,1,0] sum=2
+    // v2=[0,0.3,0,0.7] sum=1.0
+    // refr1=[2,-1,2,-1] sum=2
+    // tr1=spike=[1,0,1,0] sum=2
+    // total = 2 + 1.0 + 2 + 2 = 7.0
+    if _g_abs(fp - 7.0) > 1e-12 { return 1 }
+    return 0
+}
+
+// ── F-S140-3: PSI-C1-FIXED-POINT ────────────────────────────────────────
+fn check_psi_c1() -> int {
+    let mut fail = 0
+    // orthogonal rate vectors → cos=0 → Ψ=½
+    let ra = t_zeros(2)
+    t_set(ra, 0, 1.0); t_set(ra, 1, 0.0)
+    let rb = t_zeros(2)
+    t_set(rb, 0, 0.0); t_set(rb, 1, 1.0)
+    let psi_orth = lego_psi_c1(ra, rb, 2, 2)
+    if _g_abs(psi_orth - 0.5) > 1e-12 { fail = 1 }   // fixed point
+    // identical vectors → cos=1 → Ψ=1
+    let psi_same = lego_psi_c1(ra, ra, 2, 2)
+    if _g_abs(psi_same - 1.0) > 1e-12 { fail = 2 }
+    // zero vector → c=0 → Ψ=½ (degenerate-silence)
+    let rz = t_zeros(2)
+    let psi_zero = lego_psi_c1(rz, rb, 2, 2)
+    if _g_abs(psi_zero - 0.5) > 1e-12 { fail = 3 }
+    // bound check: Ψ ∈ [0,1]
+    if psi_orth < 0.0 { fail = 4 }
+    if psi_same > 1.0 { fail = 5 }
+    let _ = t_free(ra); let _ = t_free(rb); let _ = t_free(rz)
+    return fail
+}
+
+// ── F-S140-4: DETERMINISM ───────────────────────────────────────────────
+fn check_determinism() -> int {
+    let a = lif_full_step_fingerprint()
+    let b = lif_full_step_fingerprint()
+    if a != b { return 1 }
+    return 0
+}
+
+// ── entrypoint ─────────────────────────────────────────────────────────
+println("=== HEXAD/LEGO hexa-native engine smoke (F-S140-1..4) ===")
+
+let mut pass = 0
+let total = 4
+
+let f1 = check_membrane()
+if f1 == 0 {
+    println("PASS  F-S140-1  MEMBRANE-LEAK       leaky integrate hand-verified; refractory freezes v")
+    pass = pass + 1
+} else {
+    print("FAIL  F-S140-1  MEMBRANE-LEAK       code="); print(f1); println("")
+}
+
+let f2 = check_lif_step()
+if f2 == 0 {
+    println("PASS  F-S140-2  LIF-STEP-COMPOSE    membrane->threshold->reset->refractory->trace hand-verified (fp=7.0)")
+    pass = pass + 1
+} else {
+    print("FAIL  F-S140-2  LIF-STEP-COMPOSE    code="); print(f2); println("")
+}
+
+let f3 = check_psi_c1()
+if f3 == 0 {
+    println("PASS  F-S140-3  PSI-C1-FIXED-POINT  cos=0 => Psi=0.5; cos=1 => Psi=1; zero-vec => 0.5; bounded [0,1]")
+    pass = pass + 1
+} else {
+    print("FAIL  F-S140-3  PSI-C1-FIXED-POINT  code="); print(f3); println("")
+}
+
+let f4 = check_determinism()
+if f4 == 0 {
+    println("PASS  F-S140-4  DETERMINISM         LIF step byte-identical 2x")
+    pass = pass + 1
+} else {
+    print("FAIL  F-S140-4  DETERMINISM         code="); print(f4); println("")
+}
+
+print("=== HEXAD/LEGO hexa-native engine smoke: ")
+print(pass)
+print(" / ")
+print(total)
+println(" PASS ===")

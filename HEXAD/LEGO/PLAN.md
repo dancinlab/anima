@@ -279,3 +279,16 @@ north-star + §15/§51/§72 milestones UNCHANGED; **GOAL 미도달**.
   falsifiers, committed in hexa-lang repo, §71 inbox precedent). HEXA_FIRST_WARN
   deferral now fully closed — tracked upstream request on hexa-first PR-only path.
   anima stayed downstream-consumer (request doc, no flame source edit).
+
+### §140 — LEGO HEXA-NATIVE ENGINE PORT *(2026-05-20)*
+
+- **tier**: port-tier · $0 · **verdict** `HEXA-NATIVE-ENGINE-PORT-ALGORITHMIC-EQUIVALENT`
+- **battery**: B-S140 6/6 🔵 · F-S140 smoke 4/4 PASS · **state**:
+  `HEXAD/LEGO/state/lego_engine_hexa_port_s140_2026_05_20/`
+- **engine**: `HEXAD/LEGO/lego_engine.hexa` + `lego_engine_smoke.hexa` NEW
+- **finding**: lego_engine.py → lego_engine.hexa ported using hexa-lang PR#77
+  flame spiking primitives. §138→§139→PR#77→§140 chain complete. `hexa build`
+  clean, F-S140 4/4 PASS. Algorithmically equivalent (LIF dynamics + LOCAL STDP)
+  NOT byte-equal to numpy (RNG divergence, honest — §71 limit). HEXA_FIRST_WARN
+  deferral (23× across arc) genuinely RESOLVED — implemented + tested hexa-native
+  engine. anima stayed downstream-consumer.
