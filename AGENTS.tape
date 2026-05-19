@@ -168,6 +168,14 @@
   forbidden = "rewriting prior PHILOSOPHY.tape entries · skipping the candidate/hypothesis intermediate stages"
   @> CLAUDE.md
 
+@D g_new_state_path := "신규 §N 산출물은 HEXAD/<TOPIC>/state/ 로 저장 — flat state/ 누적 금지" :: governance [required d=2026-05-20 active]
+  rule = "신규 §N fire / design 산출물 dir 은 **`HEXAD/<TOPIC>/state/<basename>/`** 에 저장한다. 루트 `state/<basename>/` 직접 신규 생성은 금지 (forward-only mandate; existing 1,189 dir 은 retroactive mv 안 함 — historical reference 보존)."
+  why = "anima 의 `state/` 플랫 더미가 1,189 dir 까지 누적 = AI agent junk-drawer 패턴 (Augment Code 명명). 매 session agent 가 re-grep 으로 §N 찾아야 함 = token/credit 낭비. (2026-05-20) wilson-tree v0.1.0 plugin (sidecar `cea30bf`) + anima REGISTRY.md 156 row + .wilson-tree.json 23 topics 가 forward navigation 인프라 완비. retroactive mv 는 PHILOSOPHY.tape 307 ref + AGENTS.tape 109 ref + HEXAD/**/PLAN.md 161 ref + HEXAD/**/README.md 77 ref = 654 historical link 깨므로 anti-pattern (g6 append-only 정신 동형)."
+  apply = "(1) 신규 fire dir 생성 시 path = `HEXAD/<TOPIC>/state/<basename>/`. TOPIC = `.wilson-tree.json` 의 23 topic 중 매칭 (CARVING / LEGO / NEUROMORPHIC / EEG / FLAME / MITOSIS / TENSION-TRAIN / TENSION-LINK / UNIVERSE-BRAIN-MAP / DATA-REGIME / PTD / DUAL-ANIMA / CONTROLLER / DHDL / NEOTENY / MODALITY / SPONTANEOUS / MANIFOLD / FRONTIER-AUDIT / CHAT / VOICE / SAVANT / CLM). 매칭 부재 시 `HEXAD/UNCLASSIFIED/state/<basename>/`. (2) wilson-tree plugin (다음 세션부터 load) 의 PreToolUse guard 가 strict 모드로 위반 write 차단 — 단 본 session 은 plugin pre-install 상태라 governance text 자체로 enforce. (3) result.json 생성 시 wilson-tree PostToolUse hook 이 자동으로 REGISTRY.md row append (다음 세션부터). 본 session 은 manual `/wilson-tree:tree register` 또는 직접 REGISTRY.md edit."
+  scope_exclusion = "기존 `state/<basename>/` (1,189 dir, 165 result.json) 은 그 자리 유지 — 654 historical link 보존. REGISTRY.md 가 SSOT index (already 156 rows landed). Phase 3 retroactive mv = anti-pattern, 진행 안 함."
+  cross_link = "TREE.md (research+design SSOT) · REGISTRY.md (156 row index SSOT) · .wilson-tree.json (23 topic taxonomy) · wilson-tree plugin (sidecar 0.1.0 `cea30bf` — P1 inject + P2 register + P3 guard) · g_doc_consolidation (forward-only doc rule, 동형) · g6 (PHILOSOPHY append-only, retroactive 금지 동형)"
+  @> CLAUDE.md
+
 @D g7 := "commit-trailer-co-author" :: governance [recommended]
   rule = "AI-assisted commits include trailer: Co-Authored-By: <model> <noreply@anthropic.com>"
   apply = "every git commit message"
