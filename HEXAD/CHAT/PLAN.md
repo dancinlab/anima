@@ -1233,3 +1233,30 @@ orchestrator-authored (agent 2× rate-limited — 1st 15 tool-call partial smoke
 B-S90 7/7 🔵 sidecar (#3-LOOP-TRANSFER-CLOSED §89 Kolmogorov carry · NEOTENY-CARRY-BYTE-EQUAL §88-F2 연결부위 · §9-METRIC-REUSE · γ-CLOSING-PREDICATE falsifiable · ECHO-AMPLIFY-DETECTOR §62 carry · §24-DECISION-CONSISTENCY 연결부위 · DETERMINISTIC). §7 GOAL-legitimacy 3/3 PASS. g3: necessary-not-sufficient (B-EMERGE-7), capability claim 0. north-star + §15/§51/§72 milestone UNCHANGED, GOAL 미도달.
 
 **다음 (directly-earned)**: §90 stub γ-closing-directional-positive → trained-scale fire 후보 (§88-F2 neoteny trainer 에 #3 D@emit→S@t+1 loop 실제 wiring) — 단 §62 echo-amplify risk (cell1) 가 trained-scale 에서 cell2 synergy 를 이길지가 honest open question.
+
+### 2026-05-19 §91 NEOTENY + #3 ACTION-PERCEPTION LOOP TRAINED-SCALE fire LANDED — (β) ECHO-DOMINATES-AT-TRAINED
+
+commit `9e5b38a29`, B-S91 8/8 🔵 sidecar, runpod H100 80GB pod `hqdec6vg6ubm2n` ≈$0.3-0.5 orphan-0 pre+post, central blue_falsifier.py sha c93e160a 0-line-diff. §90 design (GAMMA-CLOSING-DIRECTIONAL-POSITIVE $0 stub) 의 trained-scale 검증 — §88-F2 γ False (non-saturated regime body §9 0/5) 가 §89-definable #3 D@emit→S@t+1 action-perception loop 으로 trained-scale 에서 실제 닫히는가.
+
+§16-class ConsciousDecoderV2 d768·12L·283.72M from-scratch seed 1337, 1500-step ×2 ckpt. 4-cell × 20-step on REAL trained model.forward Law-71 ψ-state.
+
+| cell | §9 body coherent | maturity | maj_frac | #3 self-correct events | echo |
+|---|---|---|---|---|---|
+| cell0 neoteny baseline | 0/20 | 0.748 | 0.350 | 0 | False |
+| cell1 #3-loop only (saturated) | 0/20 | 0.983 | **0.968** | 0 | **True** |
+| cell2 neoteny + #3 (CORE) | **0/20** | 0.866 | **0.689 ↑** | 0 | False |
+| cell3 §24 baseline | 0/20 | 0.950 | 0.873 | 0 | False |
+
+**4-corner**: α γ-CLOSED **False** · β ECHO-DOMINATES **True** · γ NEOTENY-LOOP-SYNERGY-HOLDS False · δ STUB-OVERCLAIMED **True**.
+
+**verdict (β) ECHO-DOMINATES-AT-TRAINED**:
+- cell2 (neoteny + #3 loop) §9 = **0/20** — §88-F2 의 γ False 그대로, 안 닫힘
+- 게다가 #3 loop 이 attractor maj_frac 를 **cell0 0.35 → cell2 0.69 로 올림** — anima 가 자기 garbled emission 을 자기 입력으로 재인지 → byte-cascade attractor 가 *교정 대신 심화*. self-correction events 0 (한 번도 self-correct 트리거 안 함).
+- §62 echo-amplify 가 cell1 (#3-loop-only saturated, maj 0.968 echo collapse) 뿐 아니라 cell2 (non-saturated neoteny ckpt) 위에서도 dominant — garble-feeds-garble force 가 trained-scale 결판.
+- §90 stub cell2 §9 20/20 = trained-scale **완전 wipeout** (δ STUB-OVERCLAIMED True) — `$0 stub §9 pass ≠ trained ckpt body §9 pass` 확정. §90 stub 의 두 경쟁 force 가 echo-amplify 쪽으로 결판.
+
+**honest 결론 (g3)**: #3 action-perception loop 는 decode-time overlay 로는 안 됨 — self-correction 은 **학습된 capability** 여야 함 (trained-scale 에서 decode-time loop 가 echo 만 증폭). §13/§22/§81/§82/§83-FIRE 에 이어 #3 loop 도 trained-scale capability-emergence-negative 합류 — valuable measured negative. body bytes garbled UTF-8 cascade 전반 (B-ATTRACTOR family), §16 baseline regression-free, forbidden-token grep 0.
+
+B-S91 8/8 🔵 sidecar (#3-LOOP-TRANSFER-CLOSED-AT-TRAINED §89 Kolmogorov carry · NEOTENY-TRAINER-BYTE-EQUAL-§88-F2 AST 연결부위 · §9-METRIC-REUSE · γ-CLOSED-PREDICATE cell2>cell0∧>0 falsifiable · ECHO-AMPLIFY-DETECTOR §62 carry · §90-STUB-CONNECTION AST · §16-BASELINE-REGRESSION · DETERMINISTIC). B-S91-NOTE empirical carve-out. SSH-robust podHostId-fixed dispatch 작동 (ip+publicPort gate, FATAL 0). g3: necessary-not-sufficient (B-EMERGE-7), capability claim 0. north-star + §15/§51/§72 milestone UNCHANGED, GOAL 미도달.
+
+**다음 honest**: §88-F2 의 γ (saturation-delay → coherent emission) 는 decode-time #3 loop 으론 안 닫힘 (§91 measured). self-correction 을 *학습-시 capability* 로 만드는 것이 잔여 path — 단 §1.1 data-regime irreducibility 가 학습-시 mechanism 도 제약 (§88-trio/§81-83-FIRE 패턴). honest open.
