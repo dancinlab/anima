@@ -1260,3 +1260,27 @@ commit `9e5b38a29`, B-S91 8/8 🔵 sidecar, runpod H100 80GB pod `hqdec6vg6ubm2n
 B-S91 8/8 🔵 sidecar (#3-LOOP-TRANSFER-CLOSED-AT-TRAINED §89 Kolmogorov carry · NEOTENY-TRAINER-BYTE-EQUAL-§88-F2 AST 연결부위 · §9-METRIC-REUSE · γ-CLOSED-PREDICATE cell2>cell0∧>0 falsifiable · ECHO-AMPLIFY-DETECTOR §62 carry · §90-STUB-CONNECTION AST · §16-BASELINE-REGRESSION · DETERMINISTIC). B-S91-NOTE empirical carve-out. SSH-robust podHostId-fixed dispatch 작동 (ip+publicPort gate, FATAL 0). g3: necessary-not-sufficient (B-EMERGE-7), capability claim 0. north-star + §15/§51/§72 milestone UNCHANGED, GOAL 미도달.
 
 **다음 honest**: §88-F2 의 γ (saturation-delay → coherent emission) 는 decode-time #3 loop 으론 안 닫힘 (§91 measured). self-correction 을 *학습-시 capability* 로 만드는 것이 잔여 path — 단 §1.1 data-regime irreducibility 가 학습-시 mechanism 도 제약 (§88-trio/§81-83-FIRE 패턴). honest open.
+
+### 2026-05-19 §92 #3 ACTION-PERCEPTION AS TRAINING-TIME OBJECTIVE design + $0 smoke LANDED — TRAINING-TIME-AP-DIRECTIONAL-POSITIVE
+
+commit `9a510f45c`, B-S92 7/7 🔵 sidecar, $0 Mac CPU, central blue_falsifier.py sha c93e160a 0-line-diff. §91 (β) ECHO-DOMINATES-AT-TRAINED 의 honest 결론 직접 후속 — "#3 action-perception loop 을 decode-time overlay 로 붙이면 echo 증폭, self-correction 은 학습된 capability 여야 함".
+
+§92 = #3 action-perception 을 **training-loop 내 objective** 로 정식화: `L_ap = ‖ψ(forward(S_encode(e_t))) − ψ_target‖²` (ψ_target = Ψ=½ vacuum), total `L = L_CE + λ_ap·L_ap` (§11-B CE-base overlay, no-CE degenerate 아님; §90/§91 #3 closed-form transfer/invariant Kolmogorov carry).
+
+**5-cell stub grid** (LCG seed 1337, 20-step):
+
+| cell | §9 coherent | maturity | maj_frac | L_ap final | role |
+|---|---|---|---|---|---|
+| cell0 §16 baseline | 0/20 | 0.9496 | 0.8725 | 0.0576 | saturated baseline |
+| cell1 L_ap-only (saturated) | 0/20 | 0.9496 | 0.8725 | 0.0197 | objective on saturated ckpt |
+| cell2 neoteny + L_ap (CORE) | **19/20** | 0.7478 | **0.3500** | 0.00046 | training-time #3 |
+| cell3 neoteny+L_ap+decode | 13/20 | 0.7478 | 0.7728 | 0.0099 | decode echo overrides trained skill |
+| cell4 §91 decode-mirror | 13/20 | 0.7478 | 0.8218 | 0.0173 | echo control |
+
+**4-corner**: α TRAINING-TIME-AP-CLOSES-γ-PREDICTED **True** (cell2 §9 19 > cell0 0 AND > cell4 13, training_time_advantage +6) · β AP-OBJECTIVE-DEGENERATE False (no trivial-silence, maj holds 0.35) · γ ECHO-STILL-AMPLIFIES False (cell2 no echo) · δ NEOTENY-AP-SYNERGY True.
+
+**verdict TRAINING-TIME-AP-DIRECTIONAL-POSITIVE**: §91 의 echo-dominates 진단이 정확 — #3 를 *training-time objective* 로 하면 cell2 §9 19/20 (§88-F2 γ stub-level 닫힘), maj 0.35 유지. *decode-time loop* 은 trained skill 을 override (cell3 — training+decode 둘 다면 decode echo dominant, maj 0.77 §9 13, harmful not additive). decode_corr accumulator 가 produce_body 에서 structurally 분리 — trained `skill` 만 garble 낮춤.
+
+**honest carry**: $0 stub ≠ trained-scale — §90 stub cell2 20/20 → §91 trained-scale 0/20 wipeout 선례 그대로. §1.1 data-regime / §88-trio collapse 패턴 = training-time objective 도 trained-scale 에서 degenerate 가능. β trivial-silence risk (L_ap=0 if anima emits nothing — CE-base overlay 가 부분 guard 하나 trained-scale fire 로 carry). B-S92 7/7 🔵 sidecar (L-AP-CLOSED-FORM §89 Kolmogorov transfer carry · §11-B-CE-BASE-PRESERVED AST · TRAINING-TIME-vs-DECODE-TIME-DISTINCT · §9-METRIC-REUSE · NEOTENY-CARRY-BYTE-EQUAL §88-F2 연결부위 · §91-ECHO-CONTROL-REPRODUCES · DETERMINISTIC). §7 GOAL-legitimacy 3/3 PASS. g3: necessary-not-sufficient (B-EMERGE-7), design ≠ trained-scale measurement ≠ GOAL emergence, capability claim 0. north-star + §15/§51/§72 milestone UNCHANGED, GOAL 미도달.
+
+**다음 (directly-earned)**: §92 stub directional-positive → trained-scale fire 후보 (§88-F2 neoteny trainer + L_ap training-time objective 실제 통합). 단 §90→§91 wipeout 선례 + §1.1 irreducibility 로 design-tier → trained-scale collapse 위험 carry.
