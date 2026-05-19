@@ -1,0 +1,89 @@
+{
+  "section": "§137",
+  "title": "LEGO (N, n_stim) CROSS-MATRIX",
+  "tier": "probe-tier",
+  "cost_usd": 0.0,
+  "gpu": false,
+  "runpod": false,
+  "fire": false,
+  "model_forward_byte_lm": false,
+  "corpus": false,
+  "dispatch": false,
+  "orphan": 0,
+  "wall_sec_total": 534.7982270717621,
+  "central_blue_falsifier_sha256_prefix16_expected": "c93e160a8a376a94",
+  "parent": [
+    "§127 η²(N) APPROXIMATELY-N-INVARIANT",
+    "§131 η²(n_stim) STRONGLY-NSTIM-DEPENDENT",
+    "§134/§135 canonical engine"
+  ],
+  "method": {
+    "N_points": [
+      256,
+      1024
+    ],
+    "nstim_points": [
+      4,
+      12,
+      24
+    ],
+    "M_replicates": 3,
+    "seeds": [
+      1337,
+      1338,
+      1339
+    ],
+    "n_stim_fixed": false,
+    "engine": "HEXAD/LEGO/lego_engine.py canonical"
+  },
+  "cells": [
+    {
+      "N": 256,
+      "n_stim": 4,
+      "eta_squared": 0.30657595561842793,
+      "wall_sec": 25.248748064041138
+    },
+    {
+      "N": 256,
+      "n_stim": 12,
+      "eta_squared": 0.2930393952923926,
+      "wall_sec": 49.60368776321411
+    },
+    {
+      "N": 256,
+      "n_stim": 24,
+      "eta_squared": 0.29333526389534076,
+      "wall_sec": 61.68467307090759
+    },
+    {
+      "N": 1024,
+      "n_stim": 4,
+      "eta_squared": 0.5552954731941637,
+      "wall_sec": 23.537950038909912
+    },
+    {
+      "N": 1024,
+      "n_stim": 12,
+      "eta_squared": 0.35101361461681235,
+      "wall_sec": 109.13681292533875
+    },
+    {
+      "N": 1024,
+      "n_stim": 24,
+      "eta_squared": 0.23242348556511203,
+      "wall_sec": 265.58605694770813
+    }
+  ],
+  "peak_by_N": {
+    "256": {
+      "peak_n_stim": 4,
+      "peak_eta": 0.30657595561842793
+    },
+    "1024": {
+      "peak_n_stim": 4,
+      "peak_eta": 0.5552954731941637
+    }
+  },
+  "verdict": "PEAK-N-STIM-N-INVARIANT",
+  "g3": "probe ≠ fire ≠ emergence; necessary-not-sufficient (B-EMERGE-7); GOAL 미도달."
+}

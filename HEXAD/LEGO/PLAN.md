@@ -243,3 +243,29 @@ north-star + §15/§51/§72 milestones UNCHANGED; **GOAL 미도달**.
   self-detected its own instrument bias. 78 closed-form 🔵 + B-S136 5 = 83
   total across 12 cycles. GOAL 미도달 — LEGO arc adds the honest-cartography
   layer "what an in-silico §96 substrate simulation can and cannot tell you."
+
+### §137 — LEGO (N, n_stim) CROSS-MATRIX *(2026-05-20)*
+
+- **tier**: probe-tier · $0 · 8m55s Mac CPU · **verdict** `PEAK-N-STIM-N-INVARIANT`
+- **battery**: B-S137 5/5 🔵 · **state**: `HEXAD/LEGO/state/lego_n_nstim_cross_s137_2026_05_20/`
+- **finding**: 2×3 grid. Peak n_stim=4 at both N=256 and N=1024. Bonus: n_stim-gradient
+  steepens with N (range 1.05× at N=256 → 2.39× at N=1024) — N and n_stim are NOT
+  separable axes, genuine interaction effect. Carrier-capacity-dilution N-dependent.
+
+### §138 — LEGO HEXA-NATIVE ENGINE DESIGN *(2026-05-20)*
+
+- **tier**: design-tier · $0 · **verdict** `HEXA-NATIVE-ENGINE-DESIGN-CLOSE-UPSTREAM-GAP-NAMED`
+- **battery**: B-S138 5/5 🔵 · **state**: `HEXAD/LEGO/state/lego_hexa_native_design_s138_2026_05_20/`
+- **finding**: Closes the 20×+ HEXA_FIRST_WARN deferral pattern with a precise design.
+  The gap = exactly 3 flame-stdlib spiking primitives (G1 event-threshold / G2
+  refractory / G3 STDP-pair), located upstream in hexa-lang not anima. Resolution =
+  inbox patch (hexa-first PR-only path, §71 precedent), not anima-side rewrite.
+
+### S121 — LEGO LOIHI-SPEC *(2026-05-20)*
+
+- **tier**: design-tier · $0 · **verdict** `LOIHI-SPEC-DESIGN-CLOSE-ACCESS-WALLED-READABLE-ONLY`
+- **battery**: B-S121 5/5 🔵 · **state**: `HEXAD/LEGO/state/lego_loihi_spec_s121_2026_05_20/`
+- **finding**: lego_engine LIFNet → Loihi 2 Lava mapping fully specifiable. Every
+  component → native Lava primitive; STDP → on-chip learning_rule (the §11-B-as-GPU
+  escape made concrete). Loihi access INRC-walled (soft wall) → readable blueprint
+  only, NOT fireable. Honors LEGO.md STEP-3 fence.

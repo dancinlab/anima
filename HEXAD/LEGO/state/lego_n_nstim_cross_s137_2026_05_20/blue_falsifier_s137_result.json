@@ -1,0 +1,85 @@
+{
+  "preconditions": [
+    {
+      "name": "B-S137-5 CENTRAL-0-DIFF-AND-NO-FORBIDDEN-CALL-AST",
+      "passed": true,
+      "evidence": {
+        "central_sha16": "c93e160a8a376a94",
+        "central_match": true,
+        "forbidden_imports": [],
+        "forbidden_calls": []
+      }
+    }
+  ],
+  "closed_propositions": [
+    {
+      "name": "B-S137-1 ETA-BOUNDED-ALL-6-CELLS",
+      "passed": true,
+      "evidence": {
+        "eta_values": [
+          0.30657595561842793,
+          0.2930393952923926,
+          0.29333526389534076,
+          0.5552954731941637,
+          0.35101361461681235,
+          0.23242348556511203
+        ],
+        "cell_count": 6,
+        "all_in_unit_interval": true
+      }
+    },
+    {
+      "name": "B-S137-2 PEAK-N-STIM-INVARIANT-CLOSED",
+      "passed": true,
+      "evidence": {
+        "peak_n_stim_per_N": [
+          4,
+          4
+        ],
+        "invariant": true,
+        "recorded_verdict": "PEAK-N-STIM-N-INVARIANT"
+      }
+    },
+    {
+      "name": "B-S137-3 NSTIM-GRADIENT-STEEPENS-WITH-N-CLOSED",
+      "passed": true,
+      "evidence": {
+        "range_ratio_N256": 1.0461936536298426,
+        "range_ratio_N1024": 2.3891538836706805,
+        "gradient_steepens_with_N": true
+      }
+    },
+    {
+      "name": "B-S137-4 ENGINE-CANONICAL-POST-S134",
+      "passed": true,
+      "evidence": {
+        "imports_canonical_lego_engine": true
+      }
+    },
+    {
+      "name": "B-S137-5 CENTRAL-0-DIFF-AND-NO-FORBIDDEN-CALL-AST",
+      "passed": true,
+      "evidence": {
+        "central_sha16": "c93e160a8a376a94",
+        "central_match": true,
+        "forbidden_imports": [],
+        "forbidden_calls": []
+      }
+    }
+  ],
+  "empirical_carve_out": {
+    "name": "B-S137-NOTE EMPIRICAL-CARVE-OUT (NOT counted 🔵)",
+    "carve_out_kind": "2x3-grid-M3-not-full-surface",
+    "family": "B-EMERGE-7 / B-S127-NOTE / B-S131-NOTE / B-S135-NOTE",
+    "honest_scope": "§137 measured a 2×3 (N, n_stim) cross-matrix at M=3 (reduced from §125–§135's M=5 for speed — wider SE). Peak n_stim=4 invariant at both N; n_stim-gradient steepens 1.05×→2.39× from N=256→N=1024 = N and n_stim interact, not separable axes. A full (N, n_stim) surface would need a 4×5 grid (not pursued, diminishing ROI). Qualitative verdict robust to M; exact η² has wider CI. GOAL-orthogonal layer-2 geometry; necessary-not-sufficient (B-EMERGE-7); GOAL 미도달."
+  },
+  "summary": {
+    "preconditions_passed": true,
+    "closed_propositions_passed": "5/5",
+    "all_closed_pass": true,
+    "battery_verdict": "PEAK-N-STIM-N-INVARIANT-5-5-🔵",
+    "empirical_carve_out_NOT_counted_🔵": true,
+    "north_star_unchanged": true,
+    "goal_unreached": true
+  }
+}
