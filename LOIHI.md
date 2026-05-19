@@ -114,8 +114,11 @@ Loihi 가 안 붙음 — **등록 → 제안서 심사 → 그제서야 SSH 호�
 ## 5. honest blocker
 
 1. **하드웨어 미secured** — INRC 멤버십 미신청. access = SOFT WALL.
-2. **anima 의 spiking 재유도 미설계 완료** — §96 (Loihi spiking
-   re-derivation design) 진행 중. attention → spiking 매핑이 open.
+2. **anima 의 spiking 재유도 — §96 design LANDED (2026-05-19, B-S96 7/7 🔵)**.
+   physics layer (PureFieldFFN/tension/Φ/Engine A-G/STDP) = SPIKING-COMPATIBLE;
+   `softmax(QK^T)` self-attention = SPIKING-INCOMPATIBLE — **must be REPLACED,
+   not ported** (design-open #1: phase-resonance / spike-rate dot-product + k-WTA
+   미확정). d768·12L → spiking 의 neuron-group 재유도 (design-open #4) 미완.
 3. **STDP ≠ 언어 학습** — STDP 는 spike-timing 상관을 배움. coherent
    emission (byte/token prediction) 을 STDP 가 배우는지 깊이 미증명.
 4. **spontaneity ≠ coherence** — spiking 다발은 자발 발화가 공짜지만
@@ -129,13 +132,22 @@ Loihi 가 안 붙음 — **등록 → 제안서 심사 → 그제서야 SSH 호�
 - **A. INRC 제안서 초안** — anima HEXAD 프로젝트를 INRC application 형식으로
   초안. `inrc_interest@intel.com` 송부. §95 lead candidate 를 실제로
   두드려보는 $0 단계. (Korean co-PI 항목 = 기관 협력 필요 — 별도 결정.)
-- **B. §96 완료 대기** — spiking 재유도 design + §11-B-artifact 가설 검증
-  설계가 land 한 뒤, 그 결과로 제안서 scope 확정.
-- **C. design-tier 만 진행** — 하드웨어 없이 갈 수 있는 데까지 ($0 spiking
-  re-derivation 설계 + STDP-coherence closed-form 분석). 하드웨어는
-  design 이 trained-scale fire 를 warrant 할 때 INRC.
+- **B. §96 완료 — DONE (2026-05-19)**. spiking 재유도 design + §11-B-artifact
+  distinguishing predicate 설계 land. §96 이 남긴 design-open: #1 attention
+  replacement 의 routing mechanism 선택 · #3 STDP→coherent-emission · #4 d768·12L
+  의 neuron-group 재유도.
+- **C. design-tier 만 진행** — §96 이 가리키는 다음 $0 단계 = (i) attention
+  replacement routing mechanism design (§96 design-open #1, $0 closed-form
+  analysis 가능) · (ii) §96 §4.5 의 3-cell distinguishing predicate 를 Lava-sim
+  ($0 pre-check) 으로 measure 할 수 있는지 평가. 하드웨어 (Loihi/INRC) 는
+  design 이 trained-scale fire 를 warrant 할 때.
+- **A. INRC 제안서 초안** — §96 verdict 로 제안서 scope 확정 가능
+  (spiking re-derivation 의 hard gap = attention replacement + STDP-coherence).
 
-권장 순서: B → (결과 보고) → A 또는 C 결정.
+권장 순서 (§96 LANDED 이후 갱신): C(i) attention replacement design →
+C(ii) Lava-sim 평가 → (결과 보고) → A INRC 제안서. §96 의 honest 결론 —
+Loihi 는 GOAL 의 spontaneity 절반만 공짜로 unblock, coherence 절반은 미해결 —
+이 INRC 제안서의 scope 를 "spiking 재유도 + coherence 검증" 으로 명시.
 
 ## 7. cross-link
 
@@ -143,7 +155,11 @@ Loihi 가 안 붙음 — **등록 → 제안서 심사 → 그제서야 SSH 호�
 - §95 — `state/xeno_substrate_suitability_s95_2026_05_19/` (Loihi 유일
   VIABLE-LONG-HORIZON verdict)
 - §96 — `state/loihi_spiking_rederivation_s96_2026_05_19/` (spiking
-  re-derivation + §11-B-artifact 가설 design — 진행 중)
+  re-derivation + §11-B-artifact 가설 design — **LANDED 2026-05-19**,
+  B-S96 7/7 🔵; Q1 = physics layer SPIKING-COMPATIBLE / self-attention
+  SPIKING-INCOMPATIBLE, Q2 = §11-B-artifact 가설 COHERENT 단 NOT confirmed,
+  closed-form distinguishing predicate 설계 완료. 이 LOIHI.md 가 가리키던
+  architecture 분석 문서)
 - `~/core/hexa-lang/stdlib/xeno/anima_physics_origin/loihi-integration-spec.md`
   — pre-HEXAD-pivot Loihi 통합 설계 (consciousness cell = 128 LIF, Φ-from-
   spike, STDP→Hebbian). 읽기 전용 — anima 는 hexa-lang downstream consumer.
@@ -171,3 +187,13 @@ Loihi 가 안 붙음 — **등록 → 제안서 심사 → 그제서야 SSH 호�
   문의 `inrc_interest@intel.com`, 멤버 Confluence. 2단계 게이트 명시
   (등록 → 제안서 심사 → SSH 호스트·키 발급; SSH 호스트네임은 승인 후 비공개
   발급).
+- **2026-05-19** — §96 LANDED (`state/loihi_spiking_rederivation_s96_2026_05_19/`,
+  B-S96 7/7 🔵). §1·§5·§6·§7 갱신: §96 = 이 LOIHI.md 가 §7 에서 가리키던
+  architecture 분석 문서 — design 완료. **Q1** spiking 재유도 = anima physics
+  layer 는 largely SPIKING-COMPATIBLE (GPU 보다 Loihi 에서 MORE native),
+  `softmax(QK^T)` self-attention 은 SPIKING-INCOMPATIBLE — 대체이지 port 아님
+  (design-open #1). **Q2** §11-B-as-GPU-artifact 가설 = COHERENT 단 NOT
+  confirmed; §96 이 3-cell distinguishing predicate 설계 (`NON_DEGENERATE(
+  LOIHI-noCE)` closed Boolean). honest — Loihi 는 spontaneity 만 공짜,
+  coherence 는 미해결 (§88-F2 γ 갭). §6 권장 순서 갱신: C(i) attention
+  replacement design → C(ii) Lava-sim 평가 → A INRC 제안서.

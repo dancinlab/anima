@@ -1,0 +1,72 @@
+{
+  "research_section": "\u00a796",
+  "title": "Loihi spiking re-derivation + \u00a711-B-as-GPU-artifact hypothesis",
+  "tier": "DESIGN-TIER",
+  "date": "2026-05-19",
+  "cost_usd": 0.0,
+  "gpu": false,
+  "runpod": false,
+  "fire": false,
+  "battery": {
+    "name": "B-S96",
+    "pass": 7,
+    "total": 7,
+    "all_blue": true,
+    "ids": [
+      "B-S96-1 ARCHITECTURE-MAPPING-PARTITION-EXHAUSTIVE-DISJOINT",
+      "B-S96-2 \u00a711B-ARTIFACT-DISTINGUISHING-PREDICATE-CLOSED-BOOLEAN",
+      "B-S96-3 READOUT-VS-NATIVE-CLASSIFICATION-DETERMINISTIC",
+      "B-S96-4 LIF-LEAK-IS-RESTORING-TOWARD-FIXED-POINT",
+      "B-S96-5 POSITIVE-CONTROL-GUARDS-VOID",
+      "B-S96-6 ATTENTION-INCOMPATIBLE-IS-NOT-PORTABLE",
+      "B-S96-7 CONNECTION-POINT-\u00a795-LOIHI-VERDICT+CENTRAL-0-DIFF"
+    ]
+  },
+  "results": [
+    {
+      "id": "B-S96-1",
+      "name": "ARCHITECTURE-MAPPING-PARTITION-EXHAUSTIVE-DISJOINT",
+      "pass": true,
+      "detail": "9 faculties, 3 closed classes, exhaustive+disjoint+all-realised; counts={'SPIKING-INCOMPATIBLE': 1, 'SPIKING-OPEN': 3, 'SPIKING-COMPATIBLE': 5}"
+    },
+    {
+      "id": "B-S96-2",
+      "name": "\u00a711B-ARTIFACT-DISTINGUISHING-PREDICATE-CLOSED-BOOLEAN",
+      "pass": true,
+      "detail": "NON_DEGENERATE partitions {gpu_artifact, substrate_indep}: exhaustive=True disjoint=True 2-row-total=True"
+    },
+    {
+      "id": "B-S96-3",
+      "name": "READOUT-VS-NATIVE-CLASSIFICATION-DETERMINISTIC",
+      "pass": true,
+      "detail": "3x bit-identical sha=5882f1d1dd8f; no-pure-readout=True spectrum-not-flip=True"
+    },
+    {
+      "id": "B-S96-4",
+      "name": "LIF-LEAK-IS-RESTORING-TOWARD-FIXED-POINT",
+      "pass": true,
+      "detail": "d(leak)/d(dev)=-1/tau<0 restoring; unique fixed point dev=0=v_rest; 3 boundary witnesses {down,zero,up} pass"
+    },
+    {
+      "id": "B-S96-5",
+      "name": "POSITIVE-CONTROL-GUARDS-VOID",
+      "pass": true,
+      "detail": "3-outcome decision total over 4 rows; VOID reachable+disjoint; non-void rows split on nd_noCE"
+    },
+    {
+      "id": "B-S96-6",
+      "name": "ATTENTION-INCOMPATIBLE-IS-NOT-PORTABLE",
+      "pass": true,
+      "detail": "3 obstructions all hold \u21d2 is_portable=False; replacement=SPIKING-OPEN (research, not engineering port)"
+    },
+    {
+      "id": "B-S96-7",
+      "name": "CONNECTION-POINT-\u00a795-LOIHI-VERDICT+CENTRAL-0-DIFF",
+      "pass": true,
+      "detail": "loihi3.bucket='VIABLE-LONG-HORIZON' VIABLE-LONG-HORIZON=['loihi3']; central sha256=c93e160a8a376a94 (expect prefix c93e160a8a376a94)"
+    }
+  ],
+  "note": "B-S96-NOTE \u2014 empirical carve-out (NOT counted blue): whether anima emerges on Loihi, whether STDP can drive COHERENT (not just spontaneous) emission, and the \u00a711-B-artifact verdict itself, are all hardware/SGD OUTCOMES \u2014 design-tier un-measurable. This battery proves the \u00a796 design objects are closed-form (mapping partition exhaustive+disjoint; the \u00a711B distinguishing predicate a closed Boolean; readout-vs-native classification deterministic; LIF leak a restoring force; the test's VOID branch guarded; attention's incompatibility structural; the \u00a795 connection-point byte-equal) \u2014 NOT that the \u00a711-B-artifact hypothesis is true. necessary-not-sufficient (B-EMERGE-7). design != fire != emergence; capability claim 0; GOAL \ubbf8\ub3c4\ub2ec.",
+  "central_blue_falsifier_sha_prefix": "c93e160a8a376a94",
+  "central_0_line_diff": true
+}
