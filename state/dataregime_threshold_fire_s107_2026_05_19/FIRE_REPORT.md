@@ -321,3 +321,38 @@ verbatim). The §8 post-fire checklist above is now actionable on §107-RETRY.
 - §79-RETRY-attempt2 ip+publicPort SSH gate (NOT podHostId false-blocker).
 - §101 Q2 A1∧A2∧A3∧A4 evaluator + §102 CORPUS_S101 @283M +
   single-variable G5 levers preserved (exactly the original §107 design).
+
+## §11 — §107-RETRY dispatch saga (2026-05-19, IN-FLIGHT — NO VERDICT)
+
+> **status**: this section is an honest *in-flight* record, NOT a verdict.
+> At the time of writing, §107-RETRY attempt-4 is **training** on the pod
+> (`TRAIN_PID 264`, corpus sha VERIFIED). `result.json` does not yet exist,
+> so `THRESHOLD_CROSSED` (§101 Q2 A1∧A2∧A3∧A4) is **not evaluated**. The
+> §107-RETRY verdict lands in a separate close-out once `result.json` is
+> pulled. g3: a fire that has not produced a result yields no verdict.
+
+The §107-RETRY re-dispatch surfaced **4 distinct bugs**, each diagnosed and
+fixed, each confirmed by the next attempt progressing strictly further. None
+were emergence-relevant — all were dispatch-infrastructure faults. Recorded
+here so the next cost-bearing fire inherits the fixed pattern.
+
+| # | failure | root cause | fix | confirmed by |
+|---|---|---|---|---|
+| §107 orig | NEVER-TRAINED | `train_s107.py:28` `import train_main` (non-existent — §16 trainer exposes `run(cfg)` only) | `from train_carving_s16 import run as _s16_run`; both call sites `_s16_run(cfg)`; `py_compile OK`; cfg-keys verified `run()`-compatible | salvage (§10) |
+| attempt-1 | SSH handshake never `SSH_UP` | ip+publicPort gate passed but the 30×5s=150s handshake window was too short | unified SSH-readiness loop: 90×10s=900s, polls port **and** an actual `ssh echo SSH_UP` | attempt-2 reached SSH-poll stage |
+| attempt-2 | sshd never accepting (10+ min) | `podFindAndDeployOnDemand` did **not** inject the SSH public key — without `PUBLIC_KEY` env, sshd has no `authorized_keys` | added `PUBKEY="$(cat ~/.ssh/id_ed25519.pub)"` + `env:[{key:"PUBLIC_KEY",value:"$PUBKEY"}]` in the deploy mutation | attempt-3 SSH **WORKED** |
+| attempt-3 | pod-side corpus build wrong `ROOT` | `build_corpus_s101.py` does `ROOT=Path(__file__).resolve().parents[2]`; staged at a flat `.../build/` dir, `parents[2]` resolved to `/workspace` not the repo root | mirror the real repo layout under `$S107R=/workspace/s107r`: stage the build script at `$S107R/state/corpus_s101_build_s102_2026_05_19/` so `parents[2]==$S107R` | attempt-4 corpus sha **VERIFIED** |
+
+**attempt-4 (in-flight, healthy)**: pod created with `PUBLIC_KEY` env, SSH up,
+pod-side corpus rebuilt and `sha256 == 39d581da209615468c1c41e07aa8662ef1074bc5be49a666f8f861753dd5810e`
+(§107 design corpus, byte-identical), training launched —
+`[train] §16-class d768·12L·283M from-scratch seed 1337, 6000 steps`.
+The hard infrastructure (SSH key injection + pod-side corpus build) is fully
+behind §107-RETRY; only train → eval → pull remains.
+
+**honest carry**: the orphan cycle's two user-side prereqs (runpod key,
+zombie pod) plus four code/infra bugs are all resolved; the §107-RETRY
+fire-decision was never substrate-mysterious — it was a chain of fixable
+dispatch faults. The result, when `result.json` lands, is the first MEASURED
+test of WALL-A (§1.1 data-regime, `n_priority_1_gap`). Until then: north-star
+unchanged, §15/§51/§72 milestones unchanged, GOAL 미도달, WALL-A UNTESTED.
