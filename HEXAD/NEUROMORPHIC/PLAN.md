@@ -365,3 +365,49 @@ compute.
   the half it cannot honestly fill. central blue_falsifier.py 0-line-diff;
   g3 design ≠ fire ≠ emergence, capability claim 0; north-star + §15/§51/
   §72 milestones UNCHANGED, **GOAL 미도달**.
+
+- **2026-05-20** — **AKD1000 concrete spec sheet** consolidated into
+  `HEXAD/NEUROMORPHIC/AKD1000.md` (web-research, 10 primary sources).
+  Triggered by the user acquiring the Raspberry Pi 5 + AKD1000 M.2 Dev Kit
+  ($1,495). Pins concrete numbers from BrainChip's own Product Brief v2.3
+  and disambiguates AKD1000 (1st-gen, 2022, CNN-only) from AKD2000 (2nd-gen,
+  ViT-accelerated). The §95 `INFERENCE-ONLY-BLOCKED` verdict is verified
+  and *tightened*: AKD1000's "on-device learning" is the narrowest possible
+  kind — last fully-connected layer only, binary weights, binary inputs —
+  not from-scratch training, not backprop. §97 4-coupling map: in-hand
+  AKD1000 honestly classifies as inference/display + NEURO-MIRROR anchor
+  ($97 GOAL-orthogonal); does NOT host §11-B-as-substrate or §16/§108-scale
+  transformer. NEURO-MIRROR's `confronts()` contract can upgrade from
+  "mirror only" to "mirror + 1 real chip on the inference half" when the
+  hardware arrives — a genuine modest step that does NOT crack WALL-B's
+  emergence half. central blue_falsifier.py 0-line-diff; g3 capability
+  claim 0; **GOAL 미도달**.
+
+- **2026-05-20** — **WALL-B sustainability brainstorm** consolidated into
+  `HEXAD/NEUROMORPHIC/WALL_B_SUSTAINABILITY.md` per user directive
+  *"이메일로 성공한다고 해서 지속가능성이 낮아서"*. Exhaustive option-space
+  enumeration (31 options across 6 categories): own hardware (A1-A7),
+  DIY/FPGA (B1-B4), software-only (C1-C8), email-gated (D, the closed
+  category), paid cloud (E), wait-and-see (F), reframe/meta (G), closed
+  long-shots (H). The single load-bearing brainstorm output is **G1: split
+  WALL-B into two structurally separable halves** — B-i (learning-channel;
+  GPU's only update channel is backprop/CE, so "CE is load-bearing" might
+  be a GPU tautology per §96-Q2) and B-ii (async-substrate / physical
+  event vs polled boolean per §115/§95). The split unlocks: B-i is
+  **software-attackable on GPU** via any non-CE training algorithm
+  (Forward-Forward, EqProp, Predictive Coding, Target Prop, PEPITA, DFA,
+  STDP-in-simulation, Lava-on-CPU) — sustainability VERY HIGH, cost ≈ $0;
+  B-ii needs owned hardware (incoming AKD1000 for inference half; SynSense
+  Speck / DYNAP-SE2 / SpinnCloud single-board / FPGA SNN for the harder
+  programmable-plasticity half) — sustainability HIGH if purchased outright
+  (which is structurally different from email-gated access; *contact for
+  pricing ≠ ask permission*). Top picks: **★1 G1+C1** = Forward-Forward
+  on anima at $0 to decide §96-Q2 hypothesis; **★4 A3** = SynSense Speck
+  retail purchase; **★10 G2** = 12-month hybrid roadmap with **zero
+  email-gated dependency at any step**. Anti-padding (mirror §13-M / §30 /
+  §97 / §98 / §113 / §115): brainstorm maps the option space, does NOT
+  solve GOAL — ★1 a future fire would decide *frontier classification*,
+  not GOAL distance. AGENTS.tape UNCHANGED — promoting the G1 split into
+  governance is a separate user-gated step. central blue_falsifier.py
+  0-line-diff; g3 capability claim 0; north-star + §15/§51/§72 milestones
+  UNCHANGED, **GOAL 미도달**.
