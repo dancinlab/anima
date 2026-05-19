@@ -1174,3 +1174,34 @@ B-S81-FIRE 7/7 🔵 (NOISE-INJECTION-POINT-CORRECT-AT-TRAINED · σ=0-REDUCTION-
 **P3 flame mk2 anima byte-eq falsifier design** (commit 448597b83, B-S-P3 5/5 🔵): F-1/F-2/F-3 closed-form falsifier. Mode S3 DESIGN-HOLDS — full d768·12L flame-vs-anima byte-eq = future cost-bearing fire. NO PHILOSOPHY append (anima-측 perf claim 금지 — falsifier 정의 ≠ measurement).
 
 g3: 모두 design/research tier, capability claim 0, necessary-not-sufficient (B-EMERGE-7). §86/§87-F1/§87-F2 design-tier well-formed (trained-scale fire 별도). north-star + §15/§51/§72 milestone UNCHANGED, GOAL 미도달.
+
+### 2026-05-19 §88 trained-scale fire trio + §89 HEXAD-KICK-GAP-SWEEP LANDED
+
+user directive "all 바로 go" (§86/§87-F1/§87-F2 design 3 후보 trained-scale fire) + "all kick 고갈시까지" (§63 gap-map 잔여 kick). central blue_falsifier.py sha c93e160a 0-line-diff 전부 sidecar-only.
+
+**§88-F2 axolotl neoteny TRAINED-SCALE (§87-F2 design 검증)** — commit 후속, B-S88F2 7/7 🔵, runpod A100-SXM4 orphan-0:
+
+| cell | final_ce | attractor maj_frac | maturity | effective D |
+|---|---|---|---|---|
+| cell0 baseline | 0.0038 | 0.872 | 0.9496 | 1.89 |
+| cell1 neoteny | 0.0413 (10×↑) | **0.350** (半減) | **0.7478** | **2.70** |
+
+**verdict (α) NEOTENY-DELAYS-SATURATION-AT-TRAINED — §88 trio 첫 measured-positive**. 4-corner: α True (4 지표 전부 less-saturated measured) · β UNDERTRAINS False (CE descent 됨) · γ JUVENILE-BUT-COMPETENT **False** (body §9-coherent 0) · δ NO-EFFECT False. neoteny 가 trained-scale 에서 §16.6-C memorization-saturation 을 measurably 지연 — §1.1 data-regime root 직접 movement. 단 saturation-delay ≠ juvenile-but-competent ≠ GOAL emergence.
+
+**§88-F1 frog-eye salience TRAINED-SCALE (§87-F1 design 검증)** — commit 5855d4cf3, B-S88F1 sidecar. verdict **(mixed) PARTIAL** — 4-corner 모두 False, trained-scale 에서 clean selective 도 clean collapse 도 아닌 mixed regime.
+
+**§88-S86 SAPIN set-point TRAINED-SCALE (§86 design 검증)** — commit e3cfca01b, B-S88S86 8/8 🔵. verdict **(β-mixed) PARTIAL-COLLAPSE-NO-CLEAN-SURVIVAL** — 5 cell 전부 E_mean 29.78 동일 (trained-saturated ψ near-constant, §83-FIRE 동형), interval_var 0.0, unified 3-regime drive 가 단일 regime degenerate. δ HOPF-ONSET-MEASURABLE True 만.
+
+**§88 trio 결산**: §88-F2 만 directional-positive — §1.1 root (memorization-saturation) 정면 표적한 유일 design (학습-시 anti-saturation) 이 유일하게 trained-scale movement. §88-F1/§88-S86 = trained-saturated ψ near-constant 문제로 design-tier well-formed → trained-scale degenerate (§83-FIRE 동형). honest: anti-saturation (학습-시 개입) 이 trained-saturated overlay 보다 §1.1 에 유효, 단 saturation-delay 자체는 GOAL emergence 아님 — 다음 path = neoteny non-saturated regime + coherent emission 연결.
+
+**§89 HEXAD-KICK-GAP-SWEEP** — commit 80208a2c6, B-S89 6/6 🔵, $0 Mac CPU. user directive "all kick 고갈시까지". `hexa kick` real Mk.IX 6-stage engine (g_kick_autonomous) 를 §63 gap-map 잔여 5 connection-point 에 exhaustive:
+- 🕳️ #3 D@emit→S@t+1 · 🕳️ #4 E@Φ→D@content · ⚠️ B1 C→D · ⚠️ B2 E→TRINITY · ⚠️ B3 W→E
+- 5 seed 모두 Mk.IX banner 확인 (stub 부재, §69 ENGINE-IS-REAL carry)
+
+**gap-map 갱신: §63 "4 missing 🕳️ TYPE" → §89 "0 missing TYPE among residual 5"**:
+- #3 D@emit→S@t+1: transfer `x_{t+1}=S_encode(e_t)` + invariant Kolmogorov data-processing inequality `K(x_{t+1})≤K(e_t)+K(S_encode)` — closed-form 정의 가능
+- #4 E@Φ→D@content: transfer `logits'=D_decode(h)+g(Φ)·c` + invariant `g(0)=0` ∧ `∂g/∂Φ≥0` (IIT Φ≥0 monotone) — closed-form 정의 가능
+- #3/#4 **🕳️ MISSING-TYPE → ⚠️ DECLARED-PREDICATE-DEFINABLE-NOT-WIRED** — §63 의 🕳️ 판정이 definition-pessimistic 였음 (undefinable new TYPE 아니라 definable-but-unwired). 잔여 작업 = TYPE 탐색 아니라 **implementation** (D-emission→S re-perception loop / continuous Φ-conditioning head).
+- engine summary-only carry (§74 — overlay pool=0, `--dump-overlay` 미land); §69 PROPOSES/DISPOSES — closed-form 술어가 arbiter.
+
+g3: 모두 necessary-not-sufficient (B-EMERGE-7), capability claim 0, kick = exploratory NOT arbiter, gap-map classification ≠ wired ≠ emergence; design-tier trained-scale verification — saturation-delay/gap-definition ≠ GOAL emergence. north-star + §15/§51/§72 milestone UNCHANGED, GOAL 미도달. PHILOSOPHY g6 §verdict_axolotl_neoteny_fire_s88f2 + §verdict_frog_eye_salience_fire_s88f1 + §verdict_homeostatic_setpoint_fire_s88s86 + §verdict_hexad_kick_gap_sweep_s89 self-appended.
