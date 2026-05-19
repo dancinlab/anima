@@ -202,7 +202,7 @@ REPOINTS-TO-§96-SUBSTRATE-FIRST**. anima 를 "처음부터 새로 설계" 해�
 
 ### 8.1 LEGO (§115) = D4 의 물리-commit-이전 in-silico confront
 
-`HEXAD/LEGO.md` + §115 (design-tier $0, in-flight) = D4 의 "다른 땅"을
+`HEXAD/LEGO/README.md` + §115/§117 (design-tier $0, LANDED) = D4 의 "다른 땅"을
 **물리 commit 전에 in-silico 시뮬레이션으로 먼저 조립**해 보는 길 —
 §95 의 access/ethics wall 을 시뮬 먼저로 우회. §115 가 닫을 핵심 crux =
 **"GPU 위 spike 시뮬이 §11-B tautology 를 *재현* 하나 *마주보나*"**
