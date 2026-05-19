@@ -17,7 +17,7 @@
 >   J₂(6)=24 lattice-fit on external entities — OpenBCI / ESP32 engineering specs
 >   observation-only) · downstream-consumer (hexa-lang / hexa-bio read-only,
 >   never edited) · central `blue_falsifier.py` sidecar-only (0-line-diff,
->   actual SHA `ad1881eaa7fd5041`).
+>   actual SHA `c93e160a8a376a94`).
 
 ---
 
@@ -600,7 +600,7 @@ emergence. necessary-not-sufficient (B-EMERGE-7).
   the existing EEG tool (`tool/anima_eeg_to_akida_spike.hexa`) both exist on disk
   (the §97 analysis cites real artifacts, not invented ones); AND the central
   `state/verify_hexad_blue_2026_05_15/blue_falsifier.py` SHA is unchanged
-  (0-line-diff mandate, actual SHA `ad1881eaa7fd5041`).
+  (0-line-diff mandate, actual SHA `c93e160a8a376a94`).
 - **B-S97-NOTE** — empirical carve-out: *whether any hardware coupling actually
   helps anima emerge* (EEG anchor cross-validating real emergence, QRNG entropy
   enabling genuine spontaneity, actuator displaying a genuine spontaneous
