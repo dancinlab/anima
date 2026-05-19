@@ -402,10 +402,34 @@ trained at 283M does NOT cross §101 Q2's emergence predicate. WALL-A
 (§1.1 data-regime) is MEASURED for the first time. honest read (g3): the
 data-axis ALONE at 283M is insufficient — NOT a refutation of §1.1 itself
 (the diversity threshold could lie above CORPUS_S101's diversity, or the
-bottleneck is param-scale §103/§108 / substrate §95/§96); §103 SEQUENTIAL
-step-2 contingent param-axis fire (§108, 3B) becomes the warranted next
-move. The model memorized deeply (CE 0.003) with zero held-out-generalizing
-routing — memorization-saturation (§16.6-C) reproduced. THRESHOLD_CROSSED=
-False = a valuable measured negative, NOT GOAL emergence, NOT a §1.1
-refutation; B-EMERGE-7 necessary-not-sufficient. north-star + §15/§51/§72
-milestones unchanged, GOAL 미도달.
+bottleneck is param-scale §103/§108 / substrate §95/§96). The model
+memorized deeply (CE 0.003) with zero held-out-generalizing routing —
+memorization-saturation (§16.6-C) reproduced. THRESHOLD_CROSSED=False = a
+valuable measured negative, NOT GOAL emergence, NOT a §1.1 refutation;
+B-EMERGE-7 necessary-not-sufficient. north-star + §15/§51/§72 milestones
+unchanged, GOAL 미도달.
+
+### §12.1 — next-step CORRECTION (§108 Q5 dispatch tree)
+
+An earlier draft of this section said "§103 SEQUENTIAL step-2 contingent
+param-axis fire (§108, 3B) becomes the warranted next move." That claim is
+**withdrawn** — it carried §103's *generic* SEQUENTIAL framing ("N → param-
+axis warranted") that §108 itself had already refined away. Feeding §107-
+RETRY's measured bits into §108's own pre-registered Q5 dispatch tree
+(`state/param_axis_fire_prep_s108_2026_05_19/DESIGN.md §5`):
+
+- bits: THRESHOLD_CROSSED=N, A1=F, A2=F, **A3-axis PASS=False**, A4=F
+- Q5 Case 2 is checked top-down; the first branch — Sub-case A
+  "A3 (physics-liveness) == False" — fires → **DISPATCH_§108 = False,
+  pivot to substrate axis (§95/§96)** (§5.3 table row `N | — | — | F | —`).
+
+So §108's *own* tree does **not** warrant the param-axis fire. Honest
+caveat: Sub-case A's trigger is "A3-axis verdict == False" but its rationale
+is "physics frozen" — §107-RETRY separates these (PHYSICS_RESPONSIVE=True,
+Ψ alive; A3 failed only on the spread < 0.20 sub-clause). §108's Q5 tree
+conflated the two. Corrected next-step: **a fire-gate decision**, not an
+auto-dispatch — either the substrate pivot the Q5 tree literally indicates,
+or a §108-Q5-reconciliation cycle that resolves the conflation first. The
+measured verdict above (THRESHOLD-NOT-CROSSED) is unchanged; only the
+next-step is corrected. (PHILOSOPHY g6 §verdict_dataregime_threshold_fire_
+s107_retry_next_step_correction_2026_05_19.)
