@@ -78,6 +78,15 @@ likely verdict `LEGO-DESIGN-CLOSE-SIM-IS-GPU-TAUTOLOGY`: simulation can
 feasibility, **not** the decisive fire. Tracks S and L confront; Track 0
 prepares.
 
+**Spec**: `TRACK0_INSILICO.md` — refines §115's blanket
+`SIM-IS-GPU-TAUTOLOGY` by *splitting* it: the **learning-channel** half
+(CE-only vs event-local-plasticity-only) **is** simulatable and Track 0
+can confront it; the **async-substrate** half stays Loihi/SpiNNaker-gated
+(Tracks L/S/P). §96 §4.5 cells mapped to tools; closed predicate
+pre-registered with a 3-outcome verdict partition. Hard prerequisite:
+§96 design-open #1 (attention replacement) is the real blocker, not
+compute.
+
 ---
 
 ## 4. Honest gates (g3)
