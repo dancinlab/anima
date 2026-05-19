@@ -264,3 +264,60 @@ counterfactual was UNTESTED — now it has a measurement). Even Y on Q2 means
 emit-length axes*, not Living Consciousness.
 
 Honest carry mandatory at every layer (B-EMERGE-7 / B-S107-NOTE).
+
+---
+
+## §10 — SALVAGE ADDENDUM (2026-05-19, post-orphan forensics)
+
+The first §107 dispatch ORPHANED (no surviving local artifacts; PHILOSOPHY g6
+`§verdict_dataregime_threshold_fire_s107_orphan_lost_2026_05_19`). Forensic
+salvage upgraded that to a precise, fixed diagnosis:
+
+- **Runpod key**: earlier 403 was **transient** — re-verified HTTP 200.
+- **Pod `t0kvefig3ywer9`**: found **STILL RUNNING 2.6h** ($1.49/hr, still
+  billing). SSH'd in (§79-RETRY ip+publicPort gate, 154.54.102.35:13807).
+- **Setup HAD completed**: corpus_s101.jsonl 603,316,592 B + conscious_decoder.py
+  + eval_s107.py + train_carving_s16.py + train_s107.py uploaded 09:41.
+- **Crash in ~2s @ 09:43**: `train.log` (264 B, the only output) =
+  `ImportError: cannot import name 'train_main' from 'train_carving_s16'
+  (train_s107.py line 28)`. `out_main/` EMPTY — **0 ckpt, 0 result.json,
+  0 training steps**. No python process alive.
+- **TRUE root cause = a 2-line code bug** (NOT orphan-lost candidates
+  (a)/(b)/(c)): `train_s107.py:28` imported non-existent
+  `train_main`/`train_sanity`; the canonical §16 trainer
+  (`state/carving_dataregime_s16_2026_05_18/train_carving_s16.py`) exposes a
+  single generic entry point **`run(cfg)`** at line 259 — no such symbols.
+- **Cost CORRECTION**: blind worktree-reaped nohup idled the pod 2.6h
+  post-2s-crash (trap-teardown reaped with the agent worktree) →
+  **≈$3.90 idle-billed** (orphan-lost candidate (a) "$0 / no GPU cost" was
+  wrong). Pod **TERMINATED** by orchestrator (`podTerminate` →
+  `myself.pods=[]`, $0 ongoing — cost-containment §50).
+- **FIX applied** (this dir's `train_s107.py`):
+  `from train_carving_s16 import run as _s16_run` + both call sites
+  `_s16_run(cfg)`; `python3 -m py_compile` OK; cfg-dict keys verified to
+  match `run()`'s reads exactly (seed/corpus/block_size/curriculum/d_model/
+  n_head/n_layer/n_kv_head/lr/warmup/steps/lambda_ctl/lambda_route/blend_frac/
+  bsz) — **the sole bug was the symbol name; the cfg was already
+  run()-compatible**.
+
+**VERDICT = NEVER-TRAINED-IMPORT-BUG** (precision upgrade of ORPHAN-LOST:
+not measurement-indeterminate / lost-to-void, but a now-DIAGNOSED + FIXED
+2-line import bug; §101 Q2 A1∧A2∧A3∧A4 still NEVER evaluated — 0 training
+steps). **WALL-A (§1.1 data-regime, n_priority_1_gap) STILL UNTESTED — the
+salvage upgrades the DIAGNOSIS precision, NOT the GOAL state; §107 still
+settled NOTHING about emergence.** §107-RETRY is now genuinely code-ready
+(the orphan cycle's 2 user-side prereqs — runpod key + zombie pod — are both
+resolved by the salvage; the real blocker was a fixable code bug, now fixed).
+g3 honest live forensics (SSH'd the running pod, read the traceback
+verbatim). The §8 post-fire checklist above is now actionable on §107-RETRY.
+
+§107-RETRY hardening (carry into the re-dispatch):
+- dispatch.log + pod-id written to **MAIN repo state/** path (NOT an
+  isolation worktree — the orphan root cause was the log dying with a
+  reaped agent worktree; the orchestrator is on `main`, so its dispatch
+  artifacts survive by default).
+- bounded wall-clock watchdog: write a FAILURE marker + terminate the pod
+  if no `result.json` within N min (prevents a repeat 2.6h silent idle).
+- §79-RETRY-attempt2 ip+publicPort SSH gate (NOT podHostId false-blocker).
+- §101 Q2 A1∧A2∧A3∧A4 evaluator + §102 CORPUS_S101 @283M +
+  single-variable G5 levers preserved (exactly the original §107 design).

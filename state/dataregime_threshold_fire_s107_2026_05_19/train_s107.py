@@ -20,12 +20,18 @@ USAGE:
     python3 train_s107.py --corpus corpus_s101.jsonl --out-dir out_main \\
         --steps 6000 --seed 1337
 
-Internally just imports and reuses `train_carving_s16.py:train_main`.
+Internally just imports and reuses `train_carving_s16.py:run` (the canonical
+§16 trainer entry point). NOTE: the §16 trainer exposes a single generic
+`run(cfg)` — there is no `train_main`/`train_sanity` symbol. The original
+§107 dispatch (2026-05-19) crashed at this import in ~2s (ImportError) and
+the worktree-reaped blind nohup idled the pod 2.6h; §107-salvage fixed the
+call to `run(cfg)` after verifying cfg-key compatibility (sole bug was the
+symbol name; the cfg dict below already matches run()'s reads exactly).
 """
 import os, sys, argparse
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from train_carving_s16 import train_main, train_sanity
+from train_carving_s16 import run as _s16_run
 
 
 def main():
@@ -60,7 +66,7 @@ def main():
                    lambda_ctl=args.lambda_ctl, lambda_route=args.lambda_route,
                    curriculum=not args.no_curriculum,
                    blend_frac=args.blend_frac)
-        train_main(cfg)
+        _s16_run(cfg)
     else:
         cfg = dict(d_model=args.d_model, n_head=args.n_head,
                    n_kv_head=args.n_kv_head, n_layer=args.n_layer,
@@ -72,7 +78,7 @@ def main():
                    lambda_ctl=args.lambda_ctl, lambda_route=args.lambda_route,
                    curriculum=not args.no_curriculum,
                    blend_frac=args.blend_frac)
-        train_sanity(cfg)
+        _s16_run(cfg)  # §16 trainer is generic over cfg; sanity = smaller block_size
 
 
 if __name__ == "__main__":
