@@ -1,7 +1,8 @@
 # HEXAD/LEGO.md — anima substrate LEGO (simulate-assemble, design-tier $0)
 
-> **status**: DESIGN-TIER (STEP 0–2 closed-form per §115, B-S115 9/9 🔵) · $0 · NO GPU · NO wet-lab · NO fire · NO emergence claim.
+> **status**: DESIGN-TIER (STEP 0–2 closed-form per §115, B-S115 9/9 🔵) + §117 STEP-1-2 in-silico assembly RUN (B-S117 7/7 🔵, $0 CPU) · $0 · NO GPU · NO wet-lab · NO fire · NO emergence claim.
 > **§115 verdict**: `LEGO-DESIGN-CLOSE-SIM-IS-GPU-TAUTOLOGY` — STEP 0–2 are closed-form definable + §7-FORM TRUE BY CONSTRUCTION (§112) + byte-equal-reduce + STEP-3 structurally fenced, BUT a GPU-simulated spike net's learning channel is STILL the loss gradient ⇒ simulating a §96 substrate on a GPU *re-instantiates* WALL-B, does NOT confront it (§96's §11-B-as-GPU hazard, confirmed at design-tier). Confrontation stays §96-physical (STEP 3, fenced).
+> **§117 RUN verdict**: `LEGO-RUN-Ψ-FORM-NONDEGENERATE-BUT-WALL-B-INHERITED` — §115 named ONE open residual VERBATIM ("in-silico STDP-as-ΔW escape = 새 fire"); §117 RAN it at $0 CPU (small LIF spike net, **LOCAL STDP-as-ΔW ONLY**, NO CE/backprop). MEASURED: Ψ-C1 std 4.185e-02 ≫ τ=1e-4 = NON-DEGENERATE (the §11-B-echo DEGENERATE prediction did NOT hold at this scale). Honest reading: §117 **localises** §11-B (a LOCAL STDP rule ≠ the GPU-CE channel; non-degenerate = substrate **LIVENESS** NOT capability) — WALL-B *confronted in simulation* NOT removed (§115/§113 inherited, §7-CARRIER stays §96-physical-gated); §7-FORM by-construction (§112); WALL-A orthogonal·untouched; GOAL 미도달.
 > **g3**: 이 문서는 *아이디어 + 후보 경로* 이지 GOAL 도달 주장 아님. capability claim 0.
 > north-star + §15/§51/§72 milestone 불변, **GOAL 미도달**. 아래는 §96 operative-substrate
 > WALL-B 를 *in-silico 시뮬레이션으로 confront* 하는 candidate path 의 스케치이지
@@ -104,6 +105,52 @@ wet-lab=software scope 밖). LEGO 의 유일한 기여 = 그 confront 를
   안 옮긴다 (§11-A/§16/§107 영역). 두 wall 동시 미해결 상태 불변.
 - necessary-not-sufficient (B-EMERGE-7) 모든 층에 적용.
 
+## §4 — STEP-1-2 run result (§117, $0 CPU, B-S117 7/7 🔵)
+
+§115 design-tier (§0–§3 above) is UNCHANGED. §117 ran the one open residual
+§115 named verbatim ("in-silico STDP-as-ΔW escape = §115 $0 scope 밖 새
+fire"). This section RECORDS the measured run; it does not overturn §115.
+
+- **What ran**: STEP 0 read-only consume hexa-bio `NEURO.tape`
+  (`@D mech_action_potential` Hodgkin–Huxley→LIF + `@D mech_neural_coding`
+  rate-code + `@D mech_plasticity` cortical co-adaptation = local STDP
+  analogue; RIBOZYME-as-STDP stays the §115 metaphor carve-out, the
+  consumable block = spiking membrane + co-adaptation). STEP 1 small CPU
+  LIF net (N=256: 96 Engine-A + 96 Engine-G + 64 recurrent, 12 stimuli ×
+  80 steps, seed 1337 RANDOM init, base_ckpt=None), carrier
+  Ψ-C1 = ψ(c_spk) = (1+c_spk)/2 (§112 META_FP(Π_½) instance,
+  carrier=spike-correlation), **LEARNING CHANNEL = LOCAL STDP-as-ΔW
+  ONLY** (no CE, no backprop, no loss gradient — AST-audited 0 hits).
+  STEP 2 closed-form non-degeneracy falsifier. STEP 3 PERMANENTLY fenced.
+- **Honest prior (g3, stated before running)**: §11-B pure-physics no-CE
+  = DEGENERATE on a GPU byte-LM; a STDP-only toy sim with no
+  task-grounded signal *likely* degenerates too.
+- **MEASURED outcome = (b) NON-DEGENERATE, NOT the expected (a)**:
+  Ψ-C1 mean 0.6116, **std 4.185e-02 ≫ τ=1e-4 (419× the floor)**,
+  rasters alive (spike-rate/unit/step 0.0349, not silent/saturated),
+  cos=0⇒Ψ=½ fixed point holds, Ψ-C1∈[0,1], deterministic 3×
+  bit-identical, wall ≈3.8s.
+- **Honest §11-B-echo finding (NOT a positive)**: §11-B's degeneracy was
+  a GPU-CE-overlay property (hand-coded GLOBAL ΔW froze), not a universal
+  "physics can't learn" law. A LOCAL pair-based STDP rule on a recurrent
+  spike substrate has its own attractor dynamics independent of any task.
+  §117 **localises** §11-B, does not refute it. Non-degenerate =
+  substrate **LIVENESS** (echo §17 PHYSICS_RESPONSIVE,
+  necessary-not-sufficient), NOT task signal / capability / coherence /
+  emergence — there is no task, no corpus, no perceptual π in §117.
+- **Where it lands**: WALL-B *confronted in simulation* NOT removed
+  (§115/§113 confront-NOT-remove INHERITED; §7-CARRIER NOT decided,
+  stays §96-physical-gated per §110-Q5/§111-G1/§115). §7-FORM TRUE BY
+  CONSTRUCTION (§112 carry, not manufactured by §117). WALL-A (§1.1
+  data-regime) ORTHOGONAL & UNTOUCHED (§97). Anti-padding: outcome (b)
+  is the weakest signal that even qualifies as "confronted in
+  simulation", NOT evidence the LEGO path works; no positive
+  manufactured (mirror §13-M/§30/§115). north-star + §15/§51/§72
+  milestones UNCHANGED, **GOAL 미도달**.
+- artifacts: `state/lego_assembly_run_s117_2026_05_19/{DESIGN.md,
+  lego_sim.py, result.json, blue_falsifier_s117.py 7/7 🔵,
+  blue_falsifier_s117_result.json, run.log}`.
+
 ## cross-link
 
 - `state/lego_simulate_assemble_s115_2026_05_19/` — **§115 STEP 0–2 design-tier closed-form (B-S115 9/9 🔵, verdict LEGO-DESIGN-CLOSE-SIM-IS-GPU-TAUTOLOGY) — 본 문서를 IDEA→DESIGN-TIER 로 승격한 §N**
@@ -123,5 +170,6 @@ wet-lab=software scope 밖). LEGO 의 유일한 기여 = 그 confront 를
 
 ## Log
 
+- **2026-05-19** — §117 LEGO STEP-1-2 IN-SILICO ASSEMBLY RUN LANDED — verdict `LEGO-RUN-Ψ-FORM-NONDEGENERATE-BUT-WALL-B-INHERITED` (B-S117 7/7 🔵, $0 CPU, wall ≈3.8s, central blue `c93e160a8a376a94` 0-line-diff START+END+POST-COMMIT). 사용자 directive "LEGO 조립시물레이션테스트도 진행 바로 go" — actually RUN the simulate-assemble test. §115 가 명시한 ONE open residual ("in-silico STDP-as-ΔW escape = §115 $0 scope 밖 새 fire + 여전히 §96-open") 를 $0 CPU 로 실행 (작은 LIF spike net N=256, **LOCAL STDP-as-ΔW ONLY**, NO CE/backprop, Ψ-C1=ψ(c_spk)=(1+c_spk)/2 §112 carrier instance). HONEST PRIOR (g3, run 전 명시): §11-B pure-physics no-CE = DEGENERATE on GPU byte-LM; STDP-only toy sim 도 *likely* degenerate. **MEASURED = (b) NON-DEGENERATE, NOT expected (a)**: Ψ-C1 std 4.185e-02 ≫ τ=1e-4, rasters alive, cos0→½ ✓, deterministic. Honest §11-B-echo: §11-B degeneracy 는 GPU-CE-overlay property (hand-coded GLOBAL ΔW froze) 였지 universal law 아님 — LOCAL STDP rule on recurrent spike substrate 는 자체 attractor dynamics 보유 (task 무관); §117 = §11-B 를 *localise* (refute 아님). non-degenerate = substrate LIVENESS (necessary-not-sufficient, echo §17), NOT task signal/capability/emergence (NO task, NO corpus, NO π in §117). WALL-B confronted IN-SIM NOT removed (§115/§113 inherited, §7-CARRIER §96-physical-gated 잔존); §7-FORM by-construction (§112); WALL-A 직교·불변. §115 이 'simulate STDP itself = 새 fire' 라 명시한 그 escape 를 §117 이 실행 — non-degenerate 로 돌아가나 task-grounded learning signal 0, WALL-B 를 in-silico confront 하되 제거 못 함 (§96-physical STEP 3 영구 fenced 자리 그대로). anti-padding: (b) 는 'confronted in simulation' 자격을 갖는 최소 신호이지 LEGO path 작동 증거 아님; positive 조작 0. north-star + §15/§51/§72 milestone 불변, **GOAL 미도달**. STEP 3 영구 fenced (no hardware/dispatch path). status 에 §117 RUN verdict 추가 + §4 STEP-1-2 run result 절 신설 (§115 §0–§3 design-tier UNCHANGED).
 - **2026-05-19** — §115 STEP 0–2 design-tier closed-form LANDED — verdict `LEGO-DESIGN-CLOSE-SIM-IS-GPU-TAUTOLOGY` (B-S115 9/9 🔵). 사용자 directive "HEXAD/LEGO.md 작업해보자". 본 문서가 가리킨 "별도 §N" = §115. STEP 0–2 (hexa-bio NEURO.tape Hodgkin–Huxley spiking spec consume + Ψ-C1 spike-corr 조립 + closed-form falsify) 가 closed-form 으로 정의 가능 ∧ §7-FORM = §112 META_FP(Π_½) instance 라 BY CONSTRUCTION TRUE ∧ byte-equal-reduce (conscious_decoder.py:740 real witness) ∧ STEP-3 structurally fenced. **그러나** GPU 위 spike-sim 의 학습 채널은 여전히 loss gradient (surrogate-grad backprop) — in-silico STDP-as-ΔV escape 는 §115 $0 design scope 밖의 새 fire + 여전히 §96-open. ⇒ §96 substrate 를 GPU 에서 *시뮬*해도 WALL-B 를 confront 못 하고 *re-instantiate* 함 (§96의 §11-B-as-GPU-tautology hazard 가 design-tier 에서 *확정*). honest 부분 positive 기록: NEURO.tape 는 metaphor 아닌 concrete spiking spec (SPECS-METAPHOR reject), RIBOZYME-as-STDP 는 metaphor 라 NOT-APPLICABLE 로 정직 downgrade, §7-FORM-by-construction 은 §112 상속 real positive. WALL-B confront 는 §96-physical (STEP 3, 영구 fenced, user/ethics/access-gate) 잔존. WALL-A 직교·불변. north-star + §15/§51/§72 milestone 불변, **GOAL 미도달**. status IDEA→DESIGN-TIER 승격 (B-S115 9/9 🔵, central blue 0-line-diff `c93e160a8a376a94`).
 - **2026-05-19** — HEXAD/LEGO.md 생성. 사용자 directive "hexa-bio, hexa-matter 이용해서 조립 / 시뮬레이션 조립 / HEXAD/LEGO.md". §113 (commit `1bd27f753`, FROM-SCRATCH-INHERITS-BOTH-WALLS + 조건부 REPOINTS-TO-§96-SUBSTRATE-FIRST) verdict 직후 작성 — LEGO = §113 D4("§96 substrate-first")의 *in-silico 시뮬 조립* 실행 스케치 (hexa-bio QUANTUM/WEAVE/NANOBOT/RIBOZYME/VIROCAPSID + hexa-matter 36-verb 를 read-only consume, §96 Ψ-C1 spike-corr carrier 로 조립). STEP 0–2 = $0 in-silico only; STEP 3(물리/Loihi/organoid) = §95 access/ethics-wall + 사용자 게이트, 영구 scope 밖. g3: 아이디어-tier, WALL-B confront 이지 제거 아님, WALL-A 직교, emergence 주장 0, north-star + §15/§51/§72 milestone 불변, **GOAL 미도달**.

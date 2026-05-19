@@ -1863,3 +1863,72 @@ read-only). $0 single sequential no-dispatch orphan-0. north-star + §15/§51/
 §72 milestones UNCHANGED, GOAL 미도달. PHILOSOPHY.tape g6
 §verdict_hexa_tech_review_s116_2026_05_19 self-appended.
 state/hexa_tech_review_s116_2026_05_19/.
+
+### 2026-05-19 §117 LEGO STEP-1-2 IN-SILICO ASSEMBLY RUN — LEGO-RUN-Ψ-FORM-NONDEGENERATE-BUT-WALL-B-INHERITED
+
+$0 CPU experiment (tiny LIF spiking sim with LOCAL STDP-as-ΔW plasticity).
+NO GPU/runpod/fire/model.forward(byte-LM)/corpus/dispatch. orphan 0. wall ≈3.8s.
+B-S117-1..7 7/7 🔵 sidecar
+`state/lego_assembly_run_s117_2026_05_19/blue_falsifier_s117.py` + B-S117-NOTE
+empirical carve-out (NOT counted 🔵). central
+`state/verify_hexad_blue_2026_05_15/blue_falsifier.py` sha256 prefix
+`c93e160a8a376a94` 0-line-diff verified START+END+POST-COMMIT.
+
+User directive 2026-05-19 "LEGO 조립시물레이션테스트도 진행 바로 go" — actually
+RUN the LEGO simulate-assemble test. §115 (`LEGO-DESIGN-CLOSE-SIM-IS-GPU-
+TAUTOLOGY`, B-S115 9/9 🔵) closed the DESIGN tier and named ONE concrete open
+residual VERBATIM: "in-silico STDP-as-ΔW escape = §115 $0 scope 밖 새 fire +
+여전히 §96-open". §117 = running exactly that residual at $0 CPU; INHERITS
+§115's verdict, does NOT re-litigate.
+
+STEP 0 = read-only consume hexa-bio NEURO.tape `@D mech_action_potential`
+(Hodgkin–Huxley→LIF) + `@D mech_neural_coding` (rate code) + `@D
+mech_plasticity` (cortical co-adaptation = local STDP analogue; §115 honest
+carry: RIBOZYME-as-STDP was a metaphor, the consumable block is the spiking
+membrane + co-adaptation) — downstream-consumer, 0 edits.
+STEP 1 = small CPU LIF net (N=256: 96 Engine-A + 96 Engine-G + 64 recurrent,
+12 stimuli × 80 steps, seed 1337 RANDOM init, base_ckpt=None per
+g_clm_from_scratch), carrier Ψ-C1 = ψ(c_spk) = (1+c_spk)/2, c_spk = cosine of
+binned spike-rate vectors A vs G (= §112 META_FP(Π_½) instance,
+carrier=spike-correlation, cos=0⇒½ fixed point preserved), LEARNING CHANNEL =
+LOCAL STDP-as-ΔW ONLY (pair-based exponential STDP; AST-audited 0 hits over
+{.backward(, cross_entropy, CrossEntropyLoss, optimizer.step, .zero_grad,
+autograd}, no torch import — mirror §11-B B-PUREPHYS-1).
+STEP 2 = closed-form non-degeneracy falsifier.
+STEP 3 (physical Loihi/organoid) PERMANENTLY out of scope (LEGO.md §2 + §95 +
+§115 B-S115-5 structural no-STEP2→STEP3; no hardware/dispatch path).
+
+HONEST PRIOR stated BEFORE run (g3, not pre-loaded): §11-B pure-physics no-CE
+= DEGENERATE on a GPU byte-LM (byte_acc<random, physics froze ~step 800); a
+STDP-only toy sim with NO task-grounded signal *likely* degenerates.
+MEASURED OUTCOME = (b) NON-DEGENERATE, NOT the expected (a): Ψ-C1 mean=0.6116
+std=4.185e-02 ≫ τ=1e-4 (419× the floor), c_spk std=8.37e-2,
+spike-rate/unit/step=0.0349 (rasters ALIVE — not silent/saturated),
+cos=0⇒Ψ=½ fixed point holds, Ψ-C1∈[0,1] bounded, deterministic 3×
+bit-identical.
+
+Honest §11-B-echo finding (NOT a positive): §11-B degeneracy was a
+GPU-CE-overlay property (hand-coded GLOBAL ΔW, froze), NOT a universal
+"physics can't learn" law — a LOCAL pair-based STDP rule on a recurrent
+spike substrate has its own attractor dynamics independent of any task; §117
+LOCALISES §11-B, does NOT refute it. Non-degenerate = substrate LIVENESS
+(echo §17 PHYSICS_RESPONSIVE necessary-not-sufficient), NOT task signal /
+capability / coherence / emergence (NO task, NO corpus, NO perceptual π in
+§117). Strictly = WALL-B confronted IN SIMULATION NOT removed (§115/§113
+confront-NOT-remove INHERITED; §7-CARRIER NOT decided, stays
+§96-physical-gated per §110-Q5/§111-G1/§115); §7-FORM TRUE BY CONSTRUCTION
+(§112 carry, NOT manufactured by §117); WALL-A (§1.1 data-regime) ORTHOGONAL
+& UNTOUCHED (§97 — a toy STDP spike sim moves no data threshold); NOT GOAL
+emergence. Anti-padding: outcome (b) is the weakest signal that even
+qualifies as "confronted in simulation", NOT evidence the LEGO path works;
+no positive manufactured (mirror §13-M/§30/§115).
+
+g3: run ≠ fire ≠ emergence, capability claim 0, necessary-not-sufficient
+(B-EMERGE-7). f1/f2 safe (LIF/STDP cited by hexa-bio NEURO.tape OWN
+invariants + standard neuroscience, NO σ(6)=12/τ(6)=4/φ(6)=2/J₂(6)=24
+derivation; Ψ=½ = anima g2 internal-arch carve-out). downstream-consumer:
+~/core/hexa-bio|hexa-lang|hexa-matter read-only, 0 edits. $0 single
+sequential no-dispatch orphan-0. north-star + §15/§51/§72 milestones
+UNCHANGED, GOAL 미도달. PHILOSOPHY.tape g6
+§verdict_lego_assembly_run_s117_2026_05_19 self-appended.
+state/lego_assembly_run_s117_2026_05_19/.
