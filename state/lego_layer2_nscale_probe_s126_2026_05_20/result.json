@@ -1,0 +1,69 @@
+{
+  "section": "§126",
+  "title": "LEGO LAYER-2 N-SCALE-UP PROBE",
+  "tier": "probe-tier",
+  "cost_usd": 0.0,
+  "gpu": false,
+  "runpod": false,
+  "fire": false,
+  "model_forward_byte_lm": false,
+  "corpus": false,
+  "dispatch": false,
+  "orphan": 0,
+  "wall_sec": 26.26793098449707,
+  "central_blue_falsifier_sha256_prefix16_expected": "c93e160a8a376a94",
+  "parent": [
+    "§117 (LIF substrate, layer-1 variance-only liveness)",
+    "§124 (3-layer liveness partition)",
+    "§125 (layer-2 PARTIAL, η²=0.271 at N=256)"
+  ],
+  "method": {
+    "n_a": 384,
+    "n_g": 384,
+    "n_rec": 256,
+    "N_total": 1024,
+    "scale_factor_vs_s125": 4.0,
+    "M_replicates": 5,
+    "seeds": [
+      1337,
+      1338,
+      1339,
+      1340,
+      1341
+    ],
+    "n_stim": 12,
+    "steps_per_stim": 80,
+    "window": 40,
+    "imports_s117_lego_sim_byte_identical": true,
+    "no_fork_no_reimplementation": true
+  },
+  "variance_decomposition_s126": {
+    "n_stim": 12,
+    "n_samples_per_stim": 400,
+    "grand_mean": 0.650233591183125,
+    "ss_between": 4.912780404193027,
+    "ss_within": 10.327753289468768,
+    "ss_total": 15.240533693661796,
+    "eta_squared": 0.3223496304618351,
+    "gaussian_mi_nats": 0.1945619015986054,
+    "gaussian_mi_bits": 0.2806934905822345
+  },
+  "pooled_psi_c1_std": 0.05634812495708746,
+  "comparator_s125": {
+    "eta_squared_s125": 0.2712195360968856,
+    "gaussian_mi_bits_s125": 0.22822190445977122,
+    "N_total_s125": 256
+  },
+  "verdict": "LAYER-2-ROBUST-GROWS-WITH-N",
+  "ratio_eta_s126_over_s125": 1.1885192162067733,
+  "verdict_note": "η² grew 1.189× under 4× network scale — stimulus-driven signal is robust and (at least within tested range) GROWS with substrate size.",
+  "honest_inheritance": {
+    "layer_1_variance_only": "§117 CLOSED",
+    "layer_2_stimulus_driven_at_N256": "§125 PARTIAL (η²=0.271)",
+    "layer_2_n_scale_robustness": "LAYER-2-ROBUST-GROWS-WITH-N",
+    "layer_3_task_grounded": "OPEN",
+    "wall_a": "§97 ORTHOGONAL inherited",
+    "wall_b": "§115/§117/§124 INHERITED — sim-on-GPU confronted-not-removed"
+  },
+  "g3": "probe ≠ fire ≠ emergence; necessary-not-sufficient (B-EMERGE-7); capability claim 0; north-star + §15/§51/§72 milestones UNCHANGED; GOAL 미도달."
+}

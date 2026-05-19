@@ -1,0 +1,110 @@
+{
+  "preconditions": [
+    {
+      "name": "B-S126-6 CENTRAL-BLUE-0-LINE-DIFF",
+      "passed": true,
+      "evidence": {
+        "expected": "c93e160a8a376a94",
+        "observed": "c93e160a8a376a94",
+        "match": true
+      }
+    },
+    {
+      "name": "B-S126-7 NO-FORBIDDEN-CALL-AST",
+      "passed": true,
+      "evidence": {
+        "forbidden_imports_hit": [],
+        "forbidden_calls_hit": []
+      }
+    }
+  ],
+  "closed_propositions": [
+    {
+      "name": "B-S126-1 ETA-SQUARED-BOUNDED-CLOSED-AT-N1024",
+      "passed": true,
+      "evidence": {
+        "measured_eta": 0.3223496304618351,
+        "in_unit_interval": true,
+        "sympy_corners_match": true
+      }
+    },
+    {
+      "name": "B-S126-2 RATIO-3-BUCKET-CLOSED-PARTITION",
+      "passed": true,
+      "evidence": {
+        "sympy_exhaustive_over_positive_reals": true,
+        "pairwise_disjoint": true,
+        "ratio": 1.1885192162067733,
+        "reclassified_verdict": "LAYER-2-ROBUST-GROWS-WITH-N",
+        "recorded_verdict": "LAYER-2-ROBUST-GROWS-WITH-N",
+        "match": true
+      }
+    },
+    {
+      "name": "B-S126-3 SS-DECOMPOSITION-IDENTITY-CLOSED-AT-N1024",
+      "passed": true,
+      "evidence": {
+        "ss_between": 4.912780404193027,
+        "ss_within": 10.327753289468768,
+        "ss_total": 15.240533693661796,
+        "anova_identity_holds": true
+      }
+    },
+    {
+      "name": "B-S126-4 N-SCALE-UP-EXACT-4X-CLOSED",
+      "passed": true,
+      "evidence": {
+        "N_total_s126": 1024,
+        "N_total_s125": 256,
+        "scale_factor": 4.0,
+        "exact_4x": true
+      }
+    },
+    {
+      "name": "B-S126-5 §117-LIF-SIM-IMPORT-BYTE-EQUAL-AT-N1024",
+      "passed": true,
+      "evidence": {
+        "s117_lego_sim_sha256_prefix16": "190e6e7d408b7494",
+        "probe_references_s117_symbol": true,
+        "probe_uses_importlib": true
+      }
+    },
+    {
+      "name": "B-S126-6 CENTRAL-BLUE-0-LINE-DIFF",
+      "passed": true,
+      "evidence": {
+        "expected": "c93e160a8a376a94",
+        "observed": "c93e160a8a376a94",
+        "match": true
+      }
+    },
+    {
+      "name": "B-S126-7 NO-FORBIDDEN-CALL-AST",
+      "passed": true,
+      "evidence": {
+        "forbidden_imports_hit": [],
+        "forbidden_calls_hit": []
+      }
+    }
+  ],
+  "empirical_carve_out": {
+    "name": "B-S126-NOTE EMPIRICAL-CARVE-OUT (NOT counted 🔵)",
+    "carve_out_kind": "single-scale-point-not-full-scaling-law",
+    "family": "B-EMERGE-7 / B-S125-NOTE / B-S117-NOTE / B-S124-NOTE",
+    "honest_scope": "η²(N=1024) = 0.322 vs η²(N=256) = 0.271, ratio 1.189× — ROBUST-GROWS-WITH-N at ONE scale point. Three-bucket classification is exhaustive over the 256→1024 comparison; NOT a full η²(N) scaling law (would need N ∈ {256, 512, 1024, 2048+}). η² still in PARTIAL range (0.322 < 0.50). NOT GOAL emergence (necessary-not-sufficient B-EMERGE-7). Layer-3 task-grounded liveness REMAINS OPEN. north-star + §15/§51/§72 milestones UNCHANGED; GOAL 미도달."
+  },
+  "summary": {
+    "preconditions_passed": true,
+    "closed_propositions_passed": "7/7",
+    "all_closed_pass": true,
+    "measured_eta_s126": 0.3223496304618351,
+    "measured_eta_s125": 0.2712195360968856,
+    "ratio": 1.1885192162067733,
+    "probe_verdict": "LAYER-2-ROBUST-GROWS-WITH-N",
+    "battery_verdict": "LAYER-2-ROBUST-GROWS-WITH-N-7-7-🔵",
+    "empirical_carve_out_NOT_counted_🔵": true,
+    "necessary_not_sufficient_B_EMERGE_7": true,
+    "north_star_unchanged": true,
+    "goal_unreached": true
+  }
+}
