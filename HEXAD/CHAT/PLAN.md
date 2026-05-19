@@ -1559,3 +1559,39 @@ precondition 으로 re-localise). north-star + §15/§51/§72 UNCHANGED, GOAL �
 g3 design ≠ fire ≠ emergence, capability claim 0. central blue_falsifier.py
 sha `c93e160a8a376a94` 0-line-diff. downstream-consumer 0 edit
 (hexa-lang/hexa-bio/kosmos read-only). state/c06_multimodality_design_s109_2026_05_19/.
+
+### 2026-05-19 §110 MODALITY-NATIVE Ψ DEFINITION — DESIGN-CLOSE-WITH-RELOCATION
+
+§109 (commit 410de2968) closed C06 multimodality DESIGN-CLOSE-WITH-NARROW-OPEN;
+its user-approved honest finding re-localised frontier-1's multimodal arm to
+"first design a modality-native Ψ definition (research precondition, NOT a
+fire)". §110 IS that precondition — design-tier $0, ⊥ §107 (data-axis fire in
+flight). §109's closed findings inherited verbatim, NOT re-litigated; §110 is
+strictly one level below C06.
+
+- Q1 — byte-LM dependency DEP = EXACTLY the carrier ℝ^{V=256} of psi_direction
+  & psi_entropy (head_a/head_g project residual onto the 256-byte vocab);
+  psi_tension (CV of per-layer energy) is ALREADY substrate-general. The
+  dependency is the *carrier space*, NOT the cos=0⇒½ fixed-point semantics.
+- Q2 — candidate set {Ψ-C0,Ψ-C1,Ψ-C2,Ψ-C3,Ψ-C4} exhaustive + pairwise-disjoint
+  by carrier. Ψ-C2 (Engine-A⇄G cosine on the modality-agnostic residual ℝ^d,
+  byte head = special case) = UNIQUE §7-admissible + $0-design-reachable +
+  byte-reducible. Ψ-C1 (spike-correlation, §96) §7-clean but substrate-gated;
+  Ψ-C3 (generic latent) = §109 P3-leak FAIL; Ψ-C4 (tension-only) = Ψ erased FAIL.
+- Q3 — §7 8-row truth table: Ψ-C2-with-anima-OWN-π PASSES at the DEFINITION
+  layer (UNLIKE §109 which had no §7-clean route — this is a real positive).
+- Q4 — π:=head_a/head_g ⇒ Ψ-C2 ≡ Ψ-C0 ≡ Law-71 psi_direction
+  (conscious_decoder.py:740) byte-equal, NON-vacuous connection-point.
+- Q5 — MODALITY_PRECONDITION_SATISFIED closed: definitional wall REMOVED (Ψ no
+  longer by-definition byte-LM), operative wall RELOCATED to §96 — a §7①②-clean
+  non-byte π is non-degenerate ONLY on the §96 spike-correlation/Loihi substrate
+  (Ψ-C1 branch); on GPU byte-LM it is §11-B/§56/§57 degenerate OR §7① generic
+  perceptual pretrain.
+
+verdict = **DESIGN-CLOSE-WITH-RELOCATION** — definitional positive REAL,
+operative wall relocation HONEST, NO positive manufactured (anti-padding per
+§13-M/§30). B-S110-1..10 10/10 🔵 sidecar + B-S110-NOTE empirical carve-out
+(NOT counted 🔵). g3 design ≠ fire ≠ emergence, capability claim 0. central
+blue_falsifier.py sha `c93e160a8a376a94` 0-line-diff. downstream-consumer 0
+edit (hexa-lang/hexa-bio/kosmos read-only). north-star + §15/§51/§72 milestones
+UNCHANGED, GOAL 미도달. state/modality_native_psi_design_s110_2026_05_19/.
