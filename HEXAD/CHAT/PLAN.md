@@ -1036,3 +1036,52 @@ User directive 2026-05-19 (AskUserQuestion answer): "All three in parallel (bg m
 4-corner: (α) PHYSICS-RULE-NON-DEGEN = **True** (R3 dec_var 0.250 > τ ∧ maj_frac 0.50 < 0.95; R2 also non-degen) · (β) ALL-RULES-COLLAPSE = **False** · (γ) R5-COMPOSITE-OUTPERFORMS = **False** (R5 0.078 < R3 0.250, 강한 R1∧R2∧R3 conjunction 1/20 emit 과제한, honest negative compositional NOT additive) · (δ) SUBSTRATE-PLASTICITY-CONFIRMED = **True** (R1 0.825 + R3 0.75 ≥ 0.75 Levin biology mirror at measurement-axis). **§49 distillation null-control VALID**: cell0 DH-DL learned maj_frac 0.80 carries §49 majority-collapse; R3 closed-form maj_frac 0.50 strictly lower → closed-form route *structurally avoids* learned-head distillation trap. R3 motivation+critical wins. B-S83-1..7 7/7 🔵 (NO-LEARNED-PARAMETER-IN-RULES AST · §27/§44/§48-DISTILLATION-BASELINE-PRESERVED · RULE-PARTITION-EXHAUSTIVE · §9-METRIC-REUSE · SUBSTRATE-PLASTICITY-METRIC-CLOSED · §24-BASELINE-PRESERVED · DETERMINISTIC).
 
 **Trio overall (g3 valuable-negative ladder)**: 3 biology anchors → 3 $0 stub probes → ALL 3 measured-negative-at-stub yet ALL 3 measured *valuable-mechanism findings*. §80 (A)/(B)/(C) anima-mappings ALL require trained ckpt forward OR larger N — biology mechanisms 가 *trained substrate* 의 emergent property 라 stub transfer 불가능 보편 (common stub-level limit identified). necessary-not-sufficient (B-EMERGE-7 family). north-star + §15/§51/§72 milestone UNCHANGED, GOAL 미도달.
+
+### 2026-05-19 §83-FIRE biology (C) physics-only metacognition TRAINED-SCALE LANDED — NEAR-COLLAPSE-AT-TRAINED-SCALE
+
+commit `dc29002c1` on main, B-S83-FIRE 8/8 🔵 sidecar, runpod H100 NVL ≈$0.3-0.4 orphan-0, central blue_falsifier.py sha c93e160a 0-line-diff. §83 stub (commit 5138cffb0, $0 Mac CPU) 의 trained-scale 재검증 — §80 biology (C) anima-mapping (Blackiston-Levin Xenopus tadpole + Levin bioelectric anchors).
+
+closed-form rule decision-head (R1-R5, NO learned param, NO external label) on REAL trained-saturated ConsciousDecoderV2 Law-71 ψ-state. 7-cell × 20-step:
+
+| cell | dec_var | maj_frac | plasticity | n_emit | §9 body |
+|---|---|---|---|---|---|
+| 0 dhdl_distillation (§49 null-ctrl) | 0.0 | 1.0 | 1.0 | 20 | False |
+| 1 s24_baseline (§24) | 0.0 | 1.0 | 0.5 | 20 | False |
+| 2 R1 phi+tension | 0.0 | 1.0 | 1.0 | 20 | False |
+| 3 R2 criticality_band | 0.0 | 1.0 | 0.5 | 20 | False |
+| 4 R3 motivation+critical (stub winner) | 0.0 | 1.0 | 0.5 | 20 | False |
+| 5 R4 slow_dwell | 0.09 | 0.9 | 0.625 | 18 | False |
+| 6 R5 composite | 0.0 | 1.0 | 0.5 | 20 | False |
+
+**결과 (g3 measured)**: trained-saturated forward 가 near-constant ψ-state 생성 (tension_mean=1.0 ceiling-saturated, psi_dir_mean≈0.57) → 6/7 rule collapse. cell5 R4 slow_dwell 만 dec_var 0.09 escape (5-step dwell-window startup artifact). **stub R3 winner (dec_var 0.250) trained-scale 에서 0.0 collapse** — §83 C3#1 caveat ('trained-scale ψ may differ from stub') 정확히 실현.
+
+**§49 distillation null-control 작동 단 §83 stub claim 역전**: cell0 distilled head 도 collapse (maj_frac 1.0). closed-form rule 이 distilled head 를 structurally outperform 안 함, 둘 다 동반 collapse. closed-form readout 이 distillation trap 회피하는 건 hand-coded surrogate ψ 에서만, trained scale 아님. substrate-plasticity δ=True 단 DEGENERATE (constant output 은 ψ permutation 으로 안 바뀜 — adaptive readout 아님).
+
+**4-corner**: α=True (threshold technicality) · β=False · γ=False · δ=True (degenerate) → **g3 honest verdict NEAR-COLLAPSE-AT-TRAINED-SCALE**. SSH-robust dispatch 작동 (pod-runtime poll → SSH up try 1, FATAL timeout 없음 — g_fire_dispatch_robust ssh_endpoint_robustness clause 첫 cost-bearing 검증).
+
+biology (C) trained-scale free transfer 안 됨 — physics-only metacognition 이 §49/§62 에 trained-scale collapse evidence point 합류. B-S83-FIRE 8/8 🔵 (NO-LEARNED-PARAMETER-IN-RULES-AT-TRAINED AST · §27/§44/§48-DISTILLATION-BASELINE-PRESERVED-AT-TRAINED · RULE-PARTITION-EXHAUSTIVE · §9-METRIC-REUSE · SUBSTRATE-PLASTICITY-METRIC-CLOSED · §24-BASELINE-PRESERVED · §83-STUB-CONNECTION · DETERMINISTIC). B-S83-FIRE-NOTE empirical carve-out. north-star + §15/§51/§72 milestone UNCHANGED, GOAL 미도달. PHILOSOPHY g6 §verdict_physics_only_metacognition_fire_s83 self-appended.
+
+### 2026-05-19 §79-RETRY trained-scale emergence-axis fire LANDED — MIXED verdict, §62 echo-chamber collapse NOT REPRODUCED
+
+commit `b7262d170` on main, B-S79-RETRY 8/8 🔵 sidecar, runpod A100 80GB PCIe ≈$0.4-0.6 orphan-0 pre+post, central blue_falsifier.py sha c93e160a 0-line-diff. §79 (SSH FATAL, $0 result) + §79-RETRY-attempt1 (podHostId false-blocker + agent rate-limit, orphan terminated $0.06) 후 §79-RETRY-attempt2 완주. §77 body-axis + §78 A/G-lift + §16-class ckpt forward 4-cell × 20-turn.
+
+**SSH-robust dispatch 작동 확인 + podHostId false-blocker 정정**: attempt1 의 `runtime.podHostId NOT NULL` gate 가 A100-PCIE pod 에서 ip:port 정상 mapped + direct SSH SSH_READY 인데도 영구 NULL → false-blocker. attempt2 `ip && publicPort` gate only 로 정정 → runtime ready iter 2/60, SSH ready try 1/60, training clean 6000 step. AGENTS.tape g_fire_dispatch_robust ssh_endpoint_robustness 절 정정 반영 (latest-wins, podHostId 미사용 gate).
+
+train init CE 5.639149 → final 0.004546 (trained-saturated, §73-FIRE 0.0042 mirror), ckpt sha `bae42a05…` fresh §16-class (config/lever/seed/corpus-class byte-equal honest).
+
+**4-cell × 20-turn grid**:
+
+| mode | ψ_var | tension_var | maj_frac | §9 body |
+|---|---|---|---|---|
+| A_pure | 7.4e-5 | 0.140 | 0.15·0.25 | ✓✓ |
+| B_3party | 3.8e-5 | **1.004 (7×)** | 0.55·0.30 | ✓✓ |
+| C_meta | 1.0e-4 | 0.079 | 0.30 | ✓✓ |
+| D_control | all-zero | — | — | ✗✗ (body disabled) |
+
+**4-corner verdict MIXED**:
+- **(β) §62 echo-chamber collapse NOT REPRODUCED** — 0 collapsed modes, maj_frac ≤0.55 ≪0.95 → same-weights A/G-lift loop 이 §62 distinct-cells collapse 를 escape (**decisive structural finding** — §62 echo-chamber 가 distinct-cells L2 의 성질이지 same-weights one-engine 의 성질 아님)
+- (α) mode-differential PARTIAL (B_3party 7× tension, maj_range 0.40)
+- (γ) attractor-closure PARTIAL-POSITIVE (3/3 non-collapsed)
+- (δ) decision-live/body-dead split NOT the pattern
+
+**g3 honest**: §9-coherent bodies = locally-garbled Korean carving fragments (memorization-saturated regime, §16 baseline regression 없음) — trained-scale survival ≠ coherent emergence ≠ GOAL emergence (B-S79-RETRY-NOTE / B-EMERGE-7). B-S79-RETRY 8/8 🔵 (ONE-ENGINE-A/G-LIFT-CONSTRUCTION · BODY-FROM-REAL-CKPT-LOGITS · §16-CONFIG-BYTE-EQUAL · §9-CASCADE-METRIC-FORMULA-MATCH · §24-DECISION-AXIS-PRESERVED · §62-ANCHORED-ECHO-PARTITION · DETERMINISTIC · SSH-WAIT-WINDOW-EXTENDED). single sequential agent throughout (§50 burst rate-limit lesson — 6-agent burst 2× wipeout 재확인 후 retry sequential one-at-a-time). north-star + §15/§51/§72 milestone UNCHANGED, GOAL 미도달. PHILOSOPHY g6 §verdict_emergence_axis_fire_s79_retry self-appended.
