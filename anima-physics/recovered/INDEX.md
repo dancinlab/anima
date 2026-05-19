@@ -103,3 +103,13 @@ Final counts: chip-architecture 98 · consciousness-chip 6 · samsung-issues 175
 
 Final: chip-architecture 98 · consciousness-chip 6 · samsung-issues 175 ·
 ai-company-issues 21 = 300 files, 16 MB.
+
+## BG8 closed — chip-architecture.md 6 commit-snapshots all adj8=17
+
+`domains/compute/chip-architecture/chip-architecture.md` exists in echoes git
+history as **6 distinct blob snapshots** (296a99d5, 117fa9123, 537abf4b,
+668cf3f4, 66a904e3, 67426eb5) — all carry the same adj8=17 master 144-SM box
+diagram. 2 representative versions kept (`__adj8-17-version` + `__adj8-17-v2`);
+the other 4 are content-equivalent commit snapshots (not duplicated here to
+keep the collection lean). Every unique chip-arch path has ≥1 box-richest
+version in `chip-architecture/`. Sweep fully closed — no further unique hits.
