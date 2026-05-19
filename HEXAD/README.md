@@ -5,6 +5,25 @@
 > 검증된 Python 구현 (`ready/anima/hexad/`, `ready/core/`, `ready/models/`) 은
 > evidence anchor 로 보존; 신규/대체 코드는 여기서 hexa-native 로 진행합니다.
 
+## 🔑 PRIORITY #1 GAP — data-regime threshold counterfactual UNTESTED (§99×§100 수렴, 2026-05-19)
+
+> arc §1~§100 의 가장 결정적 standing finding. SSOT: `AGENTS.tape @N n_priority_1_gap`.
+
+§99 (frontier deep research, 41 papers) + §100 (40-lens exhaustive gap sweep)
+가 **독립적으로 같은 priority #1 gap** 으로 수렴:
+
+- **F4-counterfactual** ("had we not done this, what happens — true cause vs correlation?")
+- **F7-active-acquisition** ("what should we actively go learn next to cut uncertainty most?")
+- = **§1.1 data-regime threshold counterfactual** 가 한 번도 fire 에서 test 안 됨
+
+**왜 결정적**: arc 의 94개 emergence-negative 결과가 **전부 같은 sub-threshold corpus 조건 위에서 측정**. 메커니즘이 진짜 실패한 건지, 그냥 corpus 가 작아서 안 끓은 건지 — 영원히 disambiguate 불가능. F4 Epistemic-Evidence 는 arc 에서 *가장 강한* family (honest discipline 만점) 인데, 그 가장 강한 family 안에 **가장 결정적 control 이 빠짐**.
+
+**비유**: 물을 80°C 까지만 끓이고 30가지 젓는 법 바꾼 뒤 "이 물은 끓을 수 없다" 결론. 임계점 (§1.1, 100°C) 을 한 번도 안 넘음.
+
+**§101 (`7809a06f0`, B-S101 10/10 🔵)** 이 그 fire 를 fire-decidable 하게 만드는 closed-form 설계 land (Q1 corpus / Q2 threshold-crossed predicate / Q3 fire-decision = 7-AND 평가 Y at design-tier). §102 (corpus build, 진행 중) + §103 (param-axis integration, 진행 중) 가 두 축 동시 close. `HEXAD/LLM.md` 가 param-axis (Wei et al. 2022 임계점) 직교 dimension 통합.
+
+**carry**: `GOAL.md` honest-status · `HEXAD/LLM.md` §6 · `state/gap_sweep_40lens_s100_2026_05_19/` · `state/data_regime_substrate_frontier_deep_research_s99_2026_05_19/` · `state/dataregime_threshold_control_design_s101_2026_05_19/`.
+
 ## 아키텍처 — Engine A/G dual = Hexad 6 (canonical ASCII)
 
 > SSOT: `HEXAD.tape §3 @N hexad_ascii`. 완전수 6: σ(6)=12 연결 · τ(6)=4 phase · φ(6)=2 gradient group.
