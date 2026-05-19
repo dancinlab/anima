@@ -1,0 +1,57 @@
+[cscs_runner] cond.13 / F-QM-2-CSCS-13 production run
+date: 2026-05-04
+substrate: Aer state-vector (qiskit_aer 0.17.2 + qiskit 2.4.1) via /Users/ghost/etc/anima-quantum/.venv
+config: n_pairs=3, n_shots_per_setting=1024, n_trials=30, seed=20260504, engine=aer
+total Aer joint-6q shots: 4 settings * 1024 shots * 30 trials = 122880 (each contributes one outcome to ALL 3 pairs simultaneously => 368640 per-pair-equivalent samples)
+runner: /Users/ghost/core/qmirror/modules/_python_bridge/cscs_runner.py
+hexa wrapper: /Users/ghost/core/qmirror/modules/cscs.hexa
+SSOT: /Users/ghost/core/anima/state/qmirror_phase1_staging_2026_05_03/_python_bridge/chsh_circuits.py
+   used: SETTINGS (4 canonical CHSH angles), make_bell_chsh (Ry(-theta) recipe), correlator (agreement counting)
+   overridden: compute_S (replaced with canonical CHSH formula; see verdict.json caveat #3)
+
+CSCS construction (chained sequential, single 6-qubit Aer job per setting):
+  pair 0 -> qubits (0, 1)
+  pair 1 -> qubits (2, 3)
+  pair 2 -> qubits (4, 5)
+  per pair k: H(2k) -> CX(2k, 2k+1) -> Ry(-theta_a, 2k) -> Ry(-theta_b, 2k+1)
+  all pairs share the same (theta_a, theta_b) within one setting; 4 settings per trial:
+    setting 1: (a=0,    b=pi/4)   -> circuit_a_b
+    setting 2: (a=0,    b'=-pi/4) -> circuit_a_bprime
+    setting 3: (a'=pi/2, b=pi/4)  -> circuit_aprime_b
+    setting 4: (a'=pi/2, b'=-pi/4) -> circuit_aprime_bprime
+  measurement: measure all 6 qubits in Z basis; per-pair counts via classical-bit slicing
+
+per-pair CHSH S statistics (mean over 30 trials, n_shots=1024 per setting):
+  S_pair_0 = 2.8194 +/- 0.0426  (qubits 0,1; min=2.7129, max=2.8848; band [2.7,2.85])
+  S_pair_1 = 2.8174 +/- 0.0473  (qubits 2,3; min=2.7051, max=2.8887; band [2.7,2.85])
+  S_pair_2 = 2.8266 +/- 0.0414  (qubits 4,5; min=2.7480, max=2.9180; band [2.7,2.85])
+  Tsirelson bound (per pair) = 2.8284
+  classical bound (per pair) = 2.0
+
+aggregate witness W (= mean over pairs of S_pair, then averaged over 30 trials):
+  W_mean = 2.8211 +/- 0.0280
+  W_violation_above_classical = 0.8211   (~161 sigma at SEM=W_std/sqrt(30))
+
+independence test (chi-squared, conditional-on-setting, adjacent-pair):
+  per-trial: 4 settings * (n_pairs-1)=2 adjacent pairs = 8 conditional 4x4 chi-squared tests; report MIN
+  total tests: 240 (8 per trial * 30 trials)
+  indep_pvalue_mean = 0.1120  (>= 0.05 required; expected ~1/9=0.111 under true null with MIN-of-8)
+  indep_pvalue_min  = 0.00026 (240-test multiple-testing artifact; expected min-of-240 uniform ~0.004; not a falsifier)
+
+falsifier band check (F-QM-2-CSCS-13):
+  min(S_per_pair_mean) >= 2.7?  YES (2.8174)
+  W_mean >= 2.7?                YES (2.8211)
+  indep_pvalue_mean >= 0.05?    YES (0.1120)
+  => verdict = PASS
+
+cost: $0 (Aer local, no QPU)
+optional: $25 IBM Heron 2-pair anchor was DECLINED (default closure path is $0 per spec §2 axis 5)
+wall: 41 s observed (368640 noiseless 6-qubit shots; 30 trials * 4 settings = 120 Aer jobs)
+
+raw#9 ok: cscs_runner.py is 3rd .py under qmirror standalone modules (after aer_runner.py, ghz_mermin_runner.py); cscs.hexa is hexa-strict
+raw#15 ok: bridge path resolved via NEXUS_QMIRROR_BRIDGE_PATH / CHSH_CIRCUITS_SSOT env or HOME-relative fallback; no personal paths in module bodies
+raw#10 ok: 4 caveats embedded in verdict.json:
+  1. Noiseless Aer reproduces near-Tsirelson per pair S~2.82; real hardware would show fidelity decay + chained-register decoherence; optional $25 IBM Heron anchor DECLINED
+  2. CSCS chain construction is "register-isolation" (3 pairs in one statevector); "temporal-sequential" (3 pairs back-to-back on 2 qubits with reset) is OUT OF SCOPE
+  3. S formula deviation: SSOT compute_S uses S=E_ab-E_abp+E_apb+E_apbp which gives S~0 on noiseless Aer with the canonical (0,pi/2,pi/4,-pi/4) angles; cscs_runner uses canonical S=E_ab+E_abp+E_apb-E_apbp giving S~+2.83. SSOT works only for cond.3 hardware sign pattern, needs amendment in sister cycle.
+  4. indep_pvalue_min=0.00026 is a multiple-testing artifact (240 tests under null), NOT an independence failure; only indep_pvalue_mean is the falsifier-bearing statistic

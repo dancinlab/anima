@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "cond_id": "qmirror.2.cond.11",
+  "falsifier_id": "F-QM-2-STAB-11",
+  "falsifier_statement": "Repeated Z⊗Z stabilizer measurements on a 2-qubit Bell state |Φ+> return eigenvalue +1 with probability >= 0.99 across 1024 trials, AND post-measurement state remains |Φ+> at fidelity >= 0.99.",
+  "verdict": "PASS",
+  "verdict_reason": "syndrome_plus_ratio=1.0000 >= 0.99 AND post_fidelity=1.0000 >= 0.99",
+  "syndrome_plus_ratio": 1.0,
+  "syndrome_zz_plus_ratio": 1.0,
+  "syndrome_xx_plus_ratio": 1.0,
+  "post_fidelity": 1.0,
+  "post_fidelity_analytic": 1.0,
+  "fidelity_threshold": 0.99,
+  "syndrome_threshold": 0.99,
+  "n_trials": 1024,
+  "n_per_basis_post": 256,
+  "n_total_shots": 1792,
+  "n_data_qubits": 2,
+  "n_ancilla_qubits": 2,
+  "n_qubits_total": 4,
+  "stabilizers": ["ZZ", "XX"],
+  "seed": 20260504,
+  "engine": "qiskit_aer",
+  "substrate": "Aer state-vector (4 qubits = 2 data + 2 ancilla) + numpy_native fallback path",
+  "circuit": "Bell prep H_0+CNOT_01 -> Z⊗Z gadget (H_a0; CNOT_q0,a0; CNOT_q1,a0; H_a0; meas_a0) -> X⊗X gadget (H_a1; CNOT_a1,q0; CNOT_a1,q1; H_a1; meas_a1) -> per-trial post-tomography rotation (ZZ/XX/YY) + data readout",
+  "post_basis_E": {
+    "ZZ": 1.0,
+    "XX": 1.0,
+    "YY": -1.0
+  },
+  "post_basis_E_analytic": {
+    "ZZ": 1.0,
+    "XX": 1.0,
+    "YY": -1.0
+  },
+  "post_fidelity_formula": "F(|Phi+>) = (1 + <ZZ> + <XX> - <YY>) / 4",
+  "cost_usd": 0.0,
+  "wall_seconds_estimate": "~3 s for 1792 noiseless 4-qubit shots on Mac (Aer SV)",
+  "raw9_disclosure": "stabilizer_runner.py is the FOURTH .py file under qmirror standalone modules (after aer_runner.py, ghz_mermin_runner.py, process_tomography_runner.py); hexa-strict module is stabilizer.hexa",
+  "raw15_compliance": "no personal paths in artifact bodies; bridge resolved via NEXUS_QMIRROR_BRIDGE_PATH env or HOME-relative fallback",
+  "raw10_caveats": [
+    "Noiseless Aer state-vector reproduces analytic syndrome_plus_ratio=1.0 and post_fidelity=1.0 exactly because |Phi+> is a simultaneous +1 eigenstate of the two commuting stabilizers Z⊗Z and X⊗X, and the ancilla-CNOT gadgets implement an exact projective non-destructive measurement on the +1 eigenspace. Real-hardware (IBM/IonQ/Rigetti) would exhibit two-qubit-gate infidelity, ancilla T1/T2 decay, and SPAM error, requiring readout-correction + dynamic-circuit post-selection to clear the >=0.99 threshold; expected hardware regime is syndrome_plus_ratio in [0.85, 0.97] / post_fidelity in [0.80, 0.95] without QEC.",
+    "Post-fidelity is reconstructed via the 3-Pauli Bell witness F(|Phi+>) = (1 + <ZZ> + <XX> - <YY>)/4 conditioned on syndrome=(+1,+1). This is a TIGHT lower bound for any 2-qubit state (because <ZZ>=<XX>=1 and <YY>=-1 already saturate the Bell-witness). It is NOT a full process-tomography reconstruction (cond.9 process_tomography would be required for the full Choi-matrix verification path).",
+    "The two stabilizers are measured SEQUENTIALLY (Z⊗Z first via ancilla a0, then X⊗X via ancilla a1) on the SAME data register. They commute, so the order is physically irrelevant on the |Phi+> eigenstate. On non-stabilizer states the residual (+1,-1) etc. outcomes would project onto the corresponding error syndrome subspace; cond.12 (surface-code) builds on this primitive with simultaneous d=3 syndrome readout.",
+    "$0 default substrate is Aer-only; no QPU shots submitted. Cross-tech reproduction (cond.7-style multi-vendor anchor) is OUT OF SCOPE for cond.11 by design (qmirror_2_axes_spec §2 axis 3). The cond.11 primitive is a *foundational* QEC stabilizer building block; QPU validation is a separate cond.12 sister cycle (surface-code distance-3 toy on Aer first, then optional IBM Heron sweep)."
+  ]
+}

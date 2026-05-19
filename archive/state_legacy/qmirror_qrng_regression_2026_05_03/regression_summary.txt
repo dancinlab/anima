@@ -1,0 +1,60 @@
+========================================================================
+qmirror QRNG drop-in regression vs HMAC-DRBG (legacy)
+========================================================================
+
+[hmac_drbg_legacy_1024] n_bytes=1024
+  chi2_uniform_256  =   227.50  p=0.8915
+  mean              = 131.0059  (uniform expect 127.5)
+  variance          = 5697.63  (uniform expect 5461.25)
+  bit_entropy       = 0.999758 bits/bit
+  byte_entropy      = 7.8296 bits/byte (max 8)
+  autocorr_lag1     = -0.1009
+  monobit_p         = 0.0975
+  runs_p            = 0.0261
+
+[qmirror_qrng_mock_1024] n_bytes=1024
+  chi2_uniform_256  =     0.00  p=1.0000
+  mean              = 127.5000  (uniform expect 127.5)
+  variance          = 5461.25  (uniform expect 5461.25)
+  bit_entropy       = 1.000000 bits/bit
+  byte_entropy      = 8.0000 bits/byte (max 8)
+  autocorr_lag1     = -0.0502
+  monobit_p         = 1.0000
+  runs_p            = 1.0000
+
+[hmac_drbg_legacy] n_bytes=8192
+  chi2_uniform_256  =   279.31  p=0.1415
+  mean              = 128.3459  (uniform expect 127.5)
+  variance          = 5519.09  (uniform expect 5461.25)
+  bit_entropy       = 1.000000 bits/bit
+  byte_entropy      = 7.9753 bits/byte (max 8)
+  autocorr_lag1     = +0.0102
+  monobit_p         = 0.9377
+  runs_p            = 0.0240
+
+[qmirror_qrng_mock] n_bytes=8192
+  chi2_uniform_256  =     0.00  p=1.0000
+  mean              = 127.5000  (uniform expect 127.5)
+  variance          = 5461.25  (uniform expect 5461.25)
+  bit_entropy       = 1.000000 bits/bit
+  byte_entropy      = 8.0000 bits/byte (max 8)
+  autocorr_lag1     = -0.0496
+  monobit_p         = 1.0000
+  runs_p            = 1.0000
+
+Drift (two-sample chi-square between streams):
+  n=1024: chi2=120.02  p=1.0000  pass(α=0.01)=True
+  n=8192: chi2=140.35  p=1.0000  pass(α=0.01)=True
+
+Per-stream verdicts (alpha=0.01, NIST tier-0 + mean/entropy/autocorr):
+  hmac_drbg_legacy   n=1024: FAIL
+  qmirror_qrng_mock  n=1024: PASS
+  hmac_drbg_legacy   n=8192: PASS
+  qmirror_qrng_mock  n=8192: FAIL
+
+  DROP-IN REGRESSION (overall): PARTIAL
+  cond.4 recommendation: partially_met
+
+Fail notes:
+  - hmac_drbg_1024: |lag-1 autocorr|=0.1009 > 99%-CI threshold 0.0805 (Bartlett, n=1024)
+  - qmirror_mock: |lag-1 autocorr|=0.0496 > 99%-CI threshold 0.0285 (Bartlett, n=8192)

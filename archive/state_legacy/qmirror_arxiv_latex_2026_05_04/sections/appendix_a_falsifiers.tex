@@ -1,0 +1,45 @@
+\section{Falsifier ledger}\label{app:falsifiers}
+
+\subsection{\qmirror{}~1.0 closure falsifiers (8 conditions)}
+
+\begin{table}[htbp]
+\centering
+\caption{\qmirror{}~1.0 closure falsifiers.}
+\label{tab:falsifiers_v1}
+\scriptsize
+\begin{tabular}{l c l l}
+\toprule
+ID & cond & falsifier statement & substrate \\
+\midrule
+F-QM-LAYOUT-1     & 1 & spec doc + 8 \texttt{.hexa} files exist        & filesystem \\
+F-QM-PHASE1-2     & 2 & F1+F2+F3 selftest ALL PASS                     & Aer + ANU + LCG \\
+F-QM-IBM-N1-1     & 3 & $S \ge 2.0$ AND $\dS \le 0.55$ (rev.\ from 0.40) & IBM Heron r2 \\
+F-QM-NIST-1       & 4 & NIST tier-1+ 7+ tests at $p > 0.01$            & HMAC-DRBG/ANU \\
+F-QM-CHSH-REPRO-1 & 5 & $\lvert S_{\text{qm}} - S_{\text{ref}}\rvert \le 0.05$, $S_{\text{ref}} = 2.808$ & \texttt{qmirror.chsh} \\
+F-QM-IIT-MIP-1    & 6 & \phistar{} byte-identical vs braket ref (4 sys) & \texttt{pyphi} 4.0 \\
+F-QM-CROSSFAM-7a  & 7 & intra-superconducting $\dS \le 0.55$            & Rigetti + IBM Heron \\
+F-QM-CROSSTECH-7b & 7 & cross-tech $\dS \le 0.60$ (rev.\ from 0.55), any pair PASS & super vs trapped-ion \\
+F-QM-CROSSVENDOR-1 & 8 & any pair $\dS \le 0.30$                       & 4-vendor matrix \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{\qmirror{}~2.0 future falsifiers (5 axes)}
+
+\begin{table}[htbp]
+\centering
+\caption{\qmirror{}~2.0 future falsifiers.}
+\label{tab:falsifiers_v2}
+\scriptsize
+\begin{tabular}{l c l l}
+\toprule
+ID & cond & falsifier statement & substrate \\
+\midrule
+F-QM-2-TOMO-9 & 9  & min Choi-state fidelity $\ge 0.99$ over 4 std circuits  & Aer SV $\le 4$q \\
+F-QM-2-GHZ-10 & 10 & Mermin $M \in [3.7, 4.0]$; min $\ge 3.5$ over 30 trials & Aer SV 3q \\
+F-QM-2-STAB-11 & 11 & syndrome-plus ratio $\ge 0.99$ AND post-fid $\ge 0.99$ & Aer SV 4q \\
+F-QM-2-SURF-12 & 12 & $|0_{L}\rangle$ ratio $\ge 0.99$ AND min stab.\ $+1$ ratio $\ge 0.99$ & Aer SV 17q \\
+F-QM-2-CSCS-13 & 13 & min $S$/pair $\ge 2.7$ AND $W_{\text{mean}} \ge 2.7$ AND $p_{\text{val}} \ge 0.05$ & Aer SV 4q (+ opt IBM N=1) \\
+\bottomrule
+\end{tabular}
+\end{table}

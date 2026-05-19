@@ -1,0 +1,161 @@
+{
+  "schema_version": 1,
+  "doc_date": "2026-05-03",
+  "parent_draft": "anima/docs/qmirror_arxiv_draft_2026_05_03.md",
+  "purpose": "Outline figures to be prepared for arXiv version (LaTeX) of the qmirror preprint. This file is the source-of-truth for figure intent; actual figures are deferred until LaTeX conversion.",
+  "figures": [
+    {
+      "id": "fig:arch",
+      "label": "Figure 1: qmirror four-tier architecture",
+      "caption_draft": "Architecture of the qmirror substrate. Tier 0 (HMAC-DRBG SHA-256, NIST SP 800-90A keyed by ANU bytes) is the deterministic regression default; Tier 1 (ANU QRNG keyed REST API) is the live quantum-entropy path; Tier 2 (ANU QRNG keyless legacy endpoint) is the courtesy fallback; Tier 3 (mock LCG) is the CI-deterministic invariance path. Aer (or Cirq) provides exact unitary evolution; the entropy stream feeds CDF inversion at the measurement collapse step. The substitution of pseudo-random Mersenne Twister by ANU bytes (or HMAC-DRBG keyed by ANU) is the only material substrate-honesty change.",
+      "kind": "block_diagram",
+      "suggested_tool": "TikZ or draw.io export to PDF",
+      "estimated_size": "single column, half page",
+      "blocks": [
+        "qmirror.api (qrng/chsh/iit/tomography/circuit/phi)",
+        "qmirror.engine (Aer | Cirq)",
+        "qmirror.entropy (4-tier ANU)",
+        "qmirror.sampler (CDF inversion)",
+        "ANU QRNG REST",
+        "HMAC-DRBG SHA-256"
+      ],
+      "arrows": [
+        "api -> engine (call)",
+        "engine -> api (amplitudes p_i)",
+        "api -> entropy (wants randomness)",
+        "entropy -> sampler (bytes)",
+        "sampler -> api (outcome index)",
+        "entropy <-> ANU QRNG (HTTPS)",
+        "entropy <-> HMAC-DRBG (in-process keyed expansion)"
+      ]
+    },
+    {
+      "id": "fig:xvendor_heatmap",
+      "label": "Figure 2: Cross-vendor |Delta S| concordance heatmap",
+      "caption_draft": "Pairwise absolute CHSH-S deviation across four QPU vendors (IonQ Aria-1, IonQ Forte-1, Rigetti Cepheus 108Q, IBM Heron r2 ibm_fez). Single-batch N = 1 measurements, no run-to-run repeats. Color scale: green |Delta S| <= 0.30 (cond.8 letter band), yellow 0.30 < |Delta S| <= 0.55 (cond.7 same-class band), orange 0.55 < |Delta S| <= 0.60 (cond.7 cross-tech revised band), red |Delta S| > 0.60. Bold cells (0.112, 0.084) are the closure load-bearers.",
+      "kind": "heatmap",
+      "suggested_tool": "matplotlib pcolor or seaborn heatmap, exported to PDF",
+      "estimated_size": "single column, third page",
+      "data_source": "anima/state/qmirror_chsh_xvendor_2026_05_03/verdict.json + anima/state/nexus_qmirror_ibm_2026_05_03/verdict.json",
+      "matrix_4x4": {
+        "row_labels": ["IonQ Aria-1", "IonQ Forte-1", "Rigetti Cepheus 108Q", "IBM Heron r2 ibm_fez"],
+        "col_labels": ["IonQ Aria-1", "IonQ Forte-1", "Rigetti Cepheus 108Q", "IBM Heron r2 ibm_fez"],
+        "values": [
+          [0.000, 0.112, 0.535, 0.451],
+          [0.112, 0.000, 0.647, 0.563],
+          [0.535, 0.647, 0.000, 0.084],
+          [0.451, 0.563, 0.084, 0.000]
+        ]
+      }
+    },
+    {
+      "id": "fig:cost_bar",
+      "label": "Figure 3: Cost-per-CHSH-battery comparison",
+      "caption_draft": "Per-battery cost (USD, log scale) for a 4-circuit CHSH benchmark across qmirror and four real-QPU vendors. qmirror's cost is the floor (USD 0). Real-QPU costs reflect single-batch observed billing across the closure cycle: IBM Heron r2 USD 3.20 (1024 shots/setting), Rigetti Cepheus USD 2.94 (1024 shots/setting), IonQ Forte-1 USD 33.20 (100 shots/setting), IonQ Aria-1 USD 81.20 (250 shots/setting; reference baseline from prior cycle). Batch-size-normalized cost shown in inset.",
+      "kind": "bar_chart_log_scale",
+      "suggested_tool": "matplotlib bar with log y-axis, exported to PDF",
+      "estimated_size": "single column, third page",
+      "data": {
+        "x_labels": ["qmirror", "IBM Heron r2", "Rigetti Cepheus", "IonQ Forte-1", "IonQ Aria-1"],
+        "y_values_usd": [0.0, 3.20, 2.94, 33.20, 81.20],
+        "y_axis_label": "USD per 4-circuit CHSH battery (log scale)"
+      },
+      "inset_normalized": {
+        "metric": "USD per 1000 shots",
+        "values": [0.0, 0.78, 0.72, 83.0, 81.2]
+      }
+    },
+    {
+      "id": "fig:closure_evidence_flow",
+      "label": "Figure 4: Per-condition evidence flow",
+      "caption_draft": "Evidence flow for the 8 closure conditions. Each condition (cond.1-cond.8) maps to a verifier (jq expression or hexa CLI), an evidence file (state/qmirror_*/verdict.json or selftest_results.json), and a landed handoff doc. Two post-hoc band revisions (cond.3 and cond.7) and one spirit-paper-analysis (cond.7) are highlighted with selection-bias disclosure tags.",
+      "kind": "directed_graph",
+      "suggested_tool": "graphviz dot, exported to PDF",
+      "estimated_size": "full column, half page",
+      "nodes": ["cond.1", "cond.2", "cond.3", "cond.4", "cond.5", "cond.6", "cond.7", "cond.8", "verifier", "evidence_json", "handoff_doc"],
+      "highlight_revisions": ["cond.3 (band 0.40 -> 0.55)", "cond.7 (band 0.55 -> 0.60)"],
+      "highlight_spirit": ["cond.7 (paper-analysis substitute)"]
+    },
+    {
+      "id": "fig:per_correlator",
+      "label": "Figure 5 (optional): Per-correlator E values across vendors",
+      "caption_draft": "Per-correlator expectation values E(a,b), E(a,b'), E(a',b), E(a',b') across four QPU vendors. Error bars are sigma_E. Demonstrates the canonical antisymmetric pattern (E(a,b'), E(a,b'), E(a',b), E(a',b')) in (+, -, +, +) layout that yields S >= 2.0.",
+      "kind": "grouped_bar_chart_with_error_bars",
+      "suggested_tool": "matplotlib bar with yerr, exported to PDF",
+      "estimated_size": "single column, half page",
+      "optional": true,
+      "data_source": "Appendix B per-vendor raw correlators"
+    }
+  ],
+  "tables_to_typeset_in_latex": [
+    {
+      "id": "tab:cond_status",
+      "ref_section": "4.1",
+      "rows": 8,
+      "columns": 5,
+      "title": "Per-condition status table"
+    },
+    {
+      "id": "tab:vendor_S",
+      "ref_section": "4.2",
+      "rows": 4,
+      "columns": 6,
+      "title": "Per-vendor S values"
+    },
+    {
+      "id": "tab:xvendor_matrix",
+      "ref_section": "4.2",
+      "rows": 4,
+      "columns": 5,
+      "title": "Pairwise |Delta S| matrix (lower-triangle)"
+    },
+    {
+      "id": "tab:cost_per_substrate",
+      "ref_section": "5.1",
+      "rows": 5,
+      "columns": 3,
+      "title": "Per-substrate cost comparison"
+    },
+    {
+      "id": "tab:calibration_lineitems",
+      "ref_section": "5.2",
+      "rows": 6,
+      "columns": 2,
+      "title": "One-time calibration line items"
+    },
+    {
+      "id": "tab:falsifiers_v1",
+      "ref_section": "Appendix A.1",
+      "rows": 9,
+      "columns": 5,
+      "title": "qmirror 1.0 closure falsifiers"
+    },
+    {
+      "id": "tab:falsifiers_v2",
+      "ref_section": "Appendix A.2",
+      "rows": 5,
+      "columns": 5,
+      "title": "qmirror 2.0 future falsifiers"
+    },
+    {
+      "id": "tab:correlators_per_vendor",
+      "ref_section": "Appendix B.1",
+      "rows": 16,
+      "columns": 4,
+      "title": "Per-vendor raw correlators"
+    },
+    {
+      "id": "tab:pairwise_delta_falsifier_assessment",
+      "ref_section": "Appendix B.2",
+      "rows": 6,
+      "columns": 8,
+      "title": "Pairwise |Delta S| with falsifier band assessment"
+    }
+  ],
+  "deferred_to_post_arxiv": [
+    "Phase-2 process-tomography Choi-state visualization (cond.9 future)",
+    "GHZ-3 Mermin witness time-series (cond.10 future)",
+    "Surface-code d=3 lattice diagram (cond.12 future)",
+    "Architecture diagram for qmirror 2.0 axes overlay"
+  ]
+}

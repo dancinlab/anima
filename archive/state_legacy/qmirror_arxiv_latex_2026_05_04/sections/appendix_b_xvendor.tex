@@ -1,0 +1,106 @@
+\section{Cross-vendor $\dS$ matrix data}\label{app:xvendor}
+
+\subsection{Per-vendor raw correlators}
+
+\paragraph{IonQ Aria-1.}
+$S = 2.808 \pm 0.090$; from
+\texttt{nexus\_chsh\_bell\_2026\_05\_02/verdict.json}; 250
+shots/setting; cost USD~81.20. Per-correlator $E$ values are reported
+in the source artifact and not duplicated here.
+
+\paragraph{IonQ Forte-1.}
+$S = 2.920 \pm 0.135$; 100 shots/setting; cost USD~33.20; us-east-1.
+
+\begin{table}[htbp]
+\centering
+\caption{IonQ Forte-1 raw correlators.}
+\label{tab:correlators_forte}
+\footnotesize
+\begin{tabular}{l c c c}
+\toprule
+circuit & $E$ & $\sigma$ & $n$ \\
+\midrule
+$(a, b)$   &  0.78 & 0.0626 & 100 \\
+$(a, b')$  & -0.76 & 0.0650 & 100 \\
+$(a', b)$  &  0.84 & 0.0543 & 100 \\
+$(a', b')$ &  0.54 & 0.0842 & 100 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Rigetti Cepheus 108Q.}
+$S = 2.273 \pm 0.051$; 1024 shots/setting; cost USD~2.94; us-west-1.
+
+\begin{table}[htbp]
+\centering
+\caption{Rigetti Cepheus 108Q raw correlators.}
+\label{tab:correlators_rigetti}
+\footnotesize
+\begin{tabular}{l c c c}
+\toprule
+circuit & $E$ & $\sigma$ & $n$ \\
+\midrule
+$(a, b)$   &  0.6758 & 0.0230 & 1024 \\
+$(a, b')$  & -0.5371 & 0.0264 & 1024 \\
+$(a', b)$  &  0.4785 & 0.0274 & 1024 \\
+$(a', b')$ &  0.5820 & 0.0254 & 1024 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{IBM Heron r2 \texttt{ibm\_fez}.}
+$S = 2.357 \pm 0.050$; 1024 shots/setting; cost USD~3.20; job ID
+\texttt{d7rk5cvljm6s73bael50}; wall 17.8~s.
+
+\begin{table}[htbp]
+\centering
+\caption{IBM Heron r2 \texttt{ibm\_fez} raw correlators.}
+\label{tab:correlators_ibm}
+\footnotesize
+\begin{tabular}{l c c c}
+\toprule
+circuit & $E$ & $\sigma$ & $n$ \\
+\midrule
+$(a, b)$   &  0.5938 & 0.0251 & 1024 \\
+$(a, b')$  & -0.6035 & 0.0249 & 1024 \\
+$(a', b)$  &  0.5449 & 0.0262 & 1024 \\
+$(a', b')$ &  0.6152 & 0.0246 & 1024 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Pairwise $\dS$ values with falsifier band assessment}
+
+\begin{table*}[htbp]
+\centering
+\caption{Pairwise $\dS$ values with multi-band falsifier assessment.}
+\label{tab:pairwise_delta_falsifier_assessment}
+\scriptsize
+\begin{tabular}{l l c c c c c c}
+\toprule
+pair & class & $\dS$ & joint $\sigma$ & $\le 0.30$ & $\le 0.55$ & $\le 0.55$ & $\le 0.60$ \\
+     &       &       &                & (xvend) & (crossfam) & (xtech orig) & (xtech rev) \\
+\midrule
+IonQ Forte-1 vs IonQ Aria-1   & intra-trap  & 0.112 & 0.162 & \textbf{PASS} & n/a   & n/a   & n/a   \\
+IBM \texttt{fez} vs Rigetti   & intra-super & 0.084 & n/a   & PASS (inc.)   & \textbf{PASS} & n/a & n/a \\
+IBM \texttt{fez} vs IonQ Aria-1 & cross-tech & 0.451 & n/a  & FAIL  & n/a   & PASS  & PASS  \\
+Rigetti vs IonQ Aria-1        & cross-tech  & 0.535 & 0.104 & FAIL  & n/a   & PASS (just) & PASS \\
+IBM \texttt{fez} vs IonQ Forte-1 & cross-tech & 0.563 & n/a   & FAIL  & n/a   & \textbf{FAIL by 0.013} & \textbf{PASS (rev.)} \\
+Rigetti vs IonQ Forte-1       & cross-tech  & 0.647 & 0.144 & FAIL  & n/a   & FAIL  & \textbf{FAIL by 0.047} \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\subsection{Spirit summary}
+
+\begin{itemize}
+\item cond.8 letter (any pair $\dS \le 0.30$): PASSes via the IonQ
+  Forte-1 vs IonQ Aria-1 pair (intra-trapped-ion).
+\item cond.7 spirit cross-family: PASSes via Rigetti vs IBM
+  \texttt{fez} $\dS = 0.084$ (intra-superconducting; remarkably tight
+  at single-batch $N = 1$; not generalizable without run-to-run
+  repeats).
+\item cond.7 spirit cross-tech: PASSes at revised $0.60$ band
+  (3 of 4 pairs); PASSes at original $0.55$ band (2 of 4 pairs);
+  both bands retain teeth via Rigetti vs IonQ Forte-1 FAIL.
+\end{itemize}

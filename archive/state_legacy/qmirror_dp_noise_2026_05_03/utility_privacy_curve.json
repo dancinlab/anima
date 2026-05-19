@@ -1,0 +1,145 @@
+{
+  "epsilon": 1.0,
+  "per_seed_points": [
+    {
+      "seed": 0,
+      "epsilon": 1.0,
+      "classical_test_acc": 0.885,
+      "classical_mia_advantage": 0.05048750000000002,
+      "qmirror_test_acc": 0.88,
+      "qmirror_mia_advantage": 0.050237499999999935,
+      "non_private_test_acc": 0.885,
+      "non_private_mia_advantage": 0.05036250000000009
+    },
+    {
+      "seed": 1,
+      "epsilon": 1.0,
+      "classical_test_acc": 0.87,
+      "classical_mia_advantage": 0.019987500000000047,
+      "qmirror_test_acc": 0.87,
+      "qmirror_mia_advantage": 0.019874999999999865,
+      "non_private_test_acc": 0.87,
+      "non_private_mia_advantage": 0.0199125
+    },
+    {
+      "seed": 2,
+      "epsilon": 1.0,
+      "classical_test_acc": 0.83,
+      "classical_mia_advantage": 0.02476250000000002,
+      "qmirror_test_acc": 0.83,
+      "qmirror_mia_advantage": 0.024699999999999944,
+      "non_private_test_acc": 0.83,
+      "non_private_mia_advantage": 0.02476250000000002
+    },
+    {
+      "seed": 3,
+      "epsilon": 1.0,
+      "classical_test_acc": 0.95,
+      "classical_mia_advantage": 0.04731249999999998,
+      "qmirror_test_acc": 0.95,
+      "qmirror_mia_advantage": 0.04744999999999999,
+      "non_private_test_acc": 0.95,
+      "non_private_mia_advantage": 0.04741249999999997
+    },
+    {
+      "seed": 4,
+      "epsilon": 1.0,
+      "classical_test_acc": 0.985,
+      "classical_mia_advantage": 0.048012500000000014,
+      "qmirror_test_acc": 0.985,
+      "qmirror_mia_advantage": 0.048037499999999955,
+      "non_private_test_acc": 0.985,
+      "non_private_mia_advantage": 0.04808749999999995
+    },
+    {
+      "seed": 5,
+      "epsilon": 1.0,
+      "classical_test_acc": 0.865,
+      "classical_mia_advantage": 0.03850000000000009,
+      "qmirror_test_acc": 0.865,
+      "qmirror_mia_advantage": 0.03832499999999994,
+      "non_private_test_acc": 0.865,
+      "non_private_mia_advantage": 0.03838750000000002
+    },
+    {
+      "seed": 6,
+      "epsilon": 1.0,
+      "classical_test_acc": 0.95,
+      "classical_mia_advantage": 0.08209999999999984,
+      "qmirror_test_acc": 0.945,
+      "qmirror_mia_advantage": 0.08220000000000005,
+      "non_private_test_acc": 0.945,
+      "non_private_mia_advantage": 0.08221250000000002
+    },
+    {
+      "seed": 7,
+      "epsilon": 1.0,
+      "classical_test_acc": 0.965,
+      "classical_mia_advantage": 0.02958749999999999,
+      "qmirror_test_acc": 0.965,
+      "qmirror_mia_advantage": 0.029549999999999965,
+      "non_private_test_acc": 0.965,
+      "non_private_mia_advantage": 0.029637499999999872
+    },
+    {
+      "seed": 8,
+      "epsilon": 1.0,
+      "classical_test_acc": 0.945,
+      "classical_mia_advantage": 0.02583750000000007,
+      "qmirror_test_acc": 0.945,
+      "qmirror_mia_advantage": 0.0258624999999999,
+      "non_private_test_acc": 0.945,
+      "non_private_mia_advantage": 0.025912500000000005
+    },
+    {
+      "seed": 9,
+      "epsilon": 1.0,
+      "classical_test_acc": 0.845,
+      "classical_mia_advantage": 0.009587500000000082,
+      "qmirror_test_acc": 0.845,
+      "qmirror_mia_advantage": 0.009475000000000011,
+      "non_private_test_acc": 0.845,
+      "non_private_mia_advantage": 0.009399999999999853
+    }
+  ],
+  "aggregate": {
+    "classical": {
+      "test_acc_mean": 0.909,
+      "test_acc_se": 0.017619433715203345,
+      "train_acc_mean": 0.912875,
+      "train_acc_se": 0.015441477782618833,
+      "mia_auc_mean": 0.48566624999999997,
+      "mia_auc_se": 0.005202740513822175,
+      "mia_advantage_mean": 0.03761750000000001,
+      "mia_advantage_se": 0.006508247491964823
+    },
+    "qmirror": {
+      "test_acc_mean": 0.908,
+      "test_acc_se": 0.017578395831246943,
+      "train_acc_mean": 0.912875,
+      "train_acc_se": 0.015441477782618833,
+      "mia_auc_mean": 0.485671875,
+      "mia_auc_se": 0.0051998135525134674,
+      "mia_advantage_mean": 0.03757124999999996,
+      "mia_advantage_se": 0.006523053416005089
+    },
+    "non_private_ref": {
+      "test_acc_mean": 0.9085000000000001,
+      "test_acc_se": 0.01749682510882728,
+      "train_acc_mean": 0.912875,
+      "train_acc_se": 0.015441477782618833,
+      "mia_auc_mean": 0.48566312500000003,
+      "mia_auc_se": 0.005205573472951054,
+      "mia_advantage_mean": 0.03760874999999998,
+      "mia_advantage_se": 0.006525962585980037
+    },
+    "paired_diff_qmirror_minus_classical": {
+      "test_acc_diff_mean": -0.0010000000000000009,
+      "test_acc_diff_se": 0.0006666666666666674,
+      "mia_auc_diff_mean": 5.6250000000035435e-06,
+      "mia_auc_diff_se": 2.0591302438448386e-05,
+      "mia_advantage_diff_mean": -4.625000000005874e-05,
+      "mia_advantage_diff_se": 3.837181039949646e-05
+    }
+  }
+}

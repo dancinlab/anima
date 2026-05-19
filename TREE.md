@@ -75,6 +75,8 @@ Sources:
 
 ## Log
 
+- 2026-05-20 — **state/ result-less backlog 정리 LANDED** — 990 result-less dir (>=3일 미수정) → `archive/state_legacy/` symlink-preserving 이동. 최근 3일 수정분 13 dir 은 in-flight 가능성으로 state/ 보존. state/ 최종: 13 active real dir + 1,181 symlink (전부 canonical 가리킴). archive/state_legacy/ 73 GB — `.gitignore` 에 binary 패턴 (*.pt/*.safetensors/corpus*/*.jsonl 등) 추가, text evidence 만 추적. result-bearing §N 은 이미 HEXAD/<TOPIC>/state/ + REGISTRY (Phase C/후속).
+
 - 2026-05-20 — **Phase C 후속 fix LANDED** — Phase C 의 `.gitignore` 회귀 (`HEXAD/*/state/` 가 전 topic 을 ignore, LEGO/NEUROMORPHIC 만 negate) 가 1,109 §N evidence 파일을 git 에서 탈락시킴. line 396 blanket-ignore 제거 (module-level state dir 0개 = 정당 대상 부재), binary-only excludes 유지. result.json gitignored 156→0. commit `e0c708912`.
 - 2026-05-20 — **Sprawl-2 dep scan + anima 전체 정리 LANDED**. (조사) 84 root dir inbound-ref scan → 진짜 orphan 4개뿐 (build_v3o2/v6/v6_gated + hypotheses_burst), `anima-hexad` 24-ref 라 "HEXAD 중복" 단정 철회. (정리) state/ 1,025 result-less dir triage → 21개가 누락된 real §N work (DESIGN.md/blue_falsifier 보유, result.json 만 없음) → HEXAD/<TOPIC>/state/ 마이그 + REGISTRY 등재 (185 rows). orphan 4 + hypotheses snapshot 3 → archive/{legacy_dirs,hypotheses_snapshots}/ (symlink-preserved). empty dir 1 삭제. (parser fix) wilson-tree `_tree.py::parse_registry` 가 §N-only regex 라 basename-id orphan 67행 drop → REGISTRY 166→120 truncate 버그 발견·수정 (basename-form id 허용). 잔여 state/ ~1,003 result-less scratch dir = ambiguous, REGISTRY 가 이미 navigation 해결하므로 bulk-archive 보류 (Phase C 교훈 — 무판단 bulk 금지).
 

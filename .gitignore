@@ -542,3 +542,20 @@ HEXAD/*/state/*/trace_corpus_*.jsonl
 HEXAD/*/state/*/big_corpus.txt
 HEXAD/*/state/*/runs/
 HEXAD/*/state/*/results/
+
+# === 2026-05-20 archive/state_legacy/ — legacy result-less state dirs ===
+# 990 result-less state/ dirs relocated here (symlink-preserved at old
+# state/ path). Text evidence tracked; the large binaries below ignored
+# (73 GB of ckpt/corpus — regenerable, R2/HF-distributed).
+archive/state_legacy/**/*.pt
+archive/state_legacy/**/*.safetensors
+archive/state_legacy/**/*.gz
+archive/state_legacy/**/*.bin
+archive/state_legacy/**/*.gguf
+archive/state_legacy/**/*.wav
+archive/state_legacy/**/corpus*.txt
+archive/state_legacy/**/corpus*.jsonl
+archive/state_legacy/**/big_corpus.txt
+archive/state_legacy/**/*_corpus.jsonl
+archive/state_legacy/**/slice_*.jsonl
+archive/state_legacy/**/*.jsonl

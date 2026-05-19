@@ -1,0 +1,79 @@
+\section{Future work}\label{sec:future}
+
+The \qmirror{}~2.0 axes (specified in
+\texttt{anima/docs/qmirror\_2\_axes\_spec\_2026\_05\_03.md} and ranked
+in \texttt{state/qmirror\_2\_axes\_2026\_05\_03/ranked\_axes.json})
+extend the substrate to:
+
+\begin{itemize}
+\item \textbf{cond.9 process tomography} (rank~1, USD~0). Reconstruct
+  Choi-state $\rho$ via $4^{n}$ Pauli POVMs on Aer state-vector at
+  $\le 4$ qubits; fidelity threshold $\ge 0.99$ across
+  $\{$Hadamard~1q, CNOT~2q, Toffoli~3q, QFT~3q$\}$. Compressed-sensing
+  variant per Flammia--Gross~\cite{Flammia-Gross-2012} optional.
+\item \textbf{cond.10 GHZ-3 + Mermin witness} (rank~2, USD~0).
+  Generate 3-qubit GHZ~\cite{GHZ-1989} on Aer; measure
+  Mermin-3~\cite{Mermin-1990}
+  $M = \langle XYY\rangle + \langle YXY\rangle + \langle YYX\rangle
+   - \langle XXX\rangle$;
+  classical bound $\lvert M\rvert \le 2$, quantum bound
+  $\lvert M\rvert \le 4$, GHZ analytic $\lvert M\rvert = 4$.
+  Falsifier band: $M \in [3.7, 4.0]$, $\min(M) \ge 3.5$ across
+  30 trials.
+\item \textbf{cond.11 stabilizer measurement primitive} (rank~3,
+  USD~0). Non-destructive $Z\!\otimes\!Z$ and $X\!\otimes\!X$ parity
+  via ancilla + CNOT gadgets on 4 qubits (2 data + 2 ancilla);
+  foundational for QEC. Falsifier: syndrome-plus ratio $\ge 0.99$
+  plus post-state fidelity $\ge 0.99$.
+\item \textbf{cond.12 surface code distance-3 toy} (rank~4, USD~0).
+  17-qubit (9 data + 8 ancilla) $3 \times 3$ lattice; weight-4 $X$-
+  and $Z$-stabilizers per Kitaev~\cite{Kitaev-2003} and
+  Fowler--Mariantoni--Martinis--Cleland~\cite{Surface-Code-2012};
+  logical $|0_{L}\rangle$ prep + 1 round of stabilizer measurement
+  + logical $Z_{L}$ destructive readout. \textbf{Not fault tolerance}:
+  no decoder, no error model, no logical Cliffords (a la
+  Knill--Laflamme~\cite{Knill-Laflamme-1998}).
+\item \textbf{cond.13 chained sequential CHSH} (rank~5, USD~0--25).
+  Two sequential Bell pairs on the same backend with controlled time
+  gap; pair-pair statistical independence ($\chi^{2}$ $p$-value
+  $\ge 0.05$); aggregate witness $W = (S_{1} + S_{2})/2 \ge 2.7$ with
+  $\sigma \le 0.10$. Optional USD~25 IBM Heron 2-pair anchor.
+\end{itemize}
+
+\begin{figure}[htbp]
+\centering
+\begin{lstlisting}[basicstyle=\ttfamily\tiny,frame=single,framesep=4pt]
+*** Figure 5 placeholder (5-axis qmirror 2.0 progression) ***
+
+                       [feasibility = days]
+                                ^
+  cond.13 chained CHSH          |    *    (rank 5, 0-25 USD)
+  cond.12 surface d=3 toy       |   *     (rank 4, USD 0)
+  cond.11 stabilizer            |  *      (rank 3, USD 0)
+  cond.10 GHZ + Mermin          | *       (rank 2, USD 0)
+  cond. 9 process tomography    |*        (rank 1, USD 0)
+                                +-------------------> [impact = downstream]
+\end{lstlisting}
+\caption{Five-axis \qmirror{}~2.0 progression (cond.9--cond.13).
+Replace with two-axis bubble plot (impact $\times$ feasibility,
+bubble area = days) for camera-ready.}
+\label{fig:qmirror2_axes}
+\end{figure}
+
+Deferred axes (impact $\times$ feasibility scored low):
+
+\begin{itemize}
+\item Variational quantum classifier (VQC, $I\!\times\!F = 9$): no
+  \texttt{anima}/\texttt{nexus} downstream consumer yet identified.
+\item Magic-state distillation~\cite{Bravyi-Kitaev-2005}
+  ($I\!\times\!F = 10$): requires $\ge 30$ qubits for non-trivial
+  yield; saturates Aer ceiling.
+\item Random-circuit sampling / quantum supremacy
+  ($I\!\times\!F = 8$): metric meaning is INVERTED for \qmirror{},
+  whose entire premise is classical simulation. Loophole-free
+  Bell~\cite{Hensen-2015} is also out of scope (no spacelike
+  separation in classical simulator).
+\end{itemize}
+
+Total \qmirror{}~2.0 wall: 9 days sequential or 5 days two-lane
+parallel; total cost USD~0 floor, USD~25 ceiling.

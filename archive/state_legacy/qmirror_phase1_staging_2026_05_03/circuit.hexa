@@ -1,0 +1,305 @@
+#!hexa strict
+// nexus/modules/qmirror/circuit.hexa - public arbitrary-circuit exec API
+//
+// @tool(slug="qmirror_circuit", desc="Execute an arbitrary Qiskit OpenQASM 3.0 circuit (or a named qmirror circuit) and return a count histogram. State-vector evolution by engine_aer; measurement randomness from qmirror.entropy via the sampler.")
+// @usage(hexa run nexus/modules/qmirror/circuit.hexa --selftest)
+// @sentinel(__QMIRROR_CIRCUIT__ <PASS|FAIL>)
+// @resolver-bypass(reason="Selftest exercises numpy-native named circuits; QASM3 mode is opt-in (requires qiskit + qiskit-aer in the python bridge env).")
+//
+// Spec ref: docs/nexus_qmirror_spec_2026_05_03.md §3.5 (qmirror.circuit)
+//
+// Public surface:
+//   circuit_exec_named(name, n_qubits, n_shots) -> CountsResult
+//   circuit_exec_qasm(qasm, n_shots)            -> CountsResult
+
+struct CountsResult {
+    ok:        int,
+    counts:    map,         // bitstring -> count
+    n_shots:   int,
+    n_qubits:  int,
+    engine:    str,
+    message:   str
+}
+
+fn counts_fail(reason: str) -> CountsResult {
+    return CountsResult {
+        ok: 0, counts: json_parse("{}"), n_shots: 0,
+        n_qubits: 0, engine: "none", message: reason
+    }
+}
+
+// Inlined helpers shared with engine_aer.hexa / sampler.hexa - keeping
+// the module standalone avoids `use` module-loader path during selftest.
+
+fn _circ_env(name: str) -> str {
+    return exec("printenv " + name + " 2>/dev/null || true").trim()
+}
+
+fn _circ_bridge_path() -> str {
+    let override = _circ_env("NEXUS_QMIRROR_BRIDGE_PATH")
+    if len(override) > 0 { return override }
+    let home = _circ_env("HOME")
+    return home + "/core/nexus/modules/qmirror/_python_bridge/aer_runner.py"
+}
+
+fn _circ_proc_run_with_stdin(cmd: str, stdin_str: str) -> str {
+    let now = exec("date +%s").trim()
+    let nonce = now + "_" + str(len(stdin_str))
+    let tmp = "/tmp/hexa_circ_stdin_" + nonce + ".txt"
+    write_file(tmp, stdin_str)
+    let out = exec(cmd + " < '" + tmp + "' 2>&1")
+    let _drop = exec("rm -f '" + tmp + "'")
+    return out
+}
+
+fn _circ_proc_json_bridge(cmd: str, payload) {
+    let stdin_str = json_stringify(payload)
+    let stdout = _circ_proc_run_with_stdin(cmd, stdin_str)
+    let head_len = if len(stdout) < 200 { len(stdout) } else { 200 }
+    let head = stdout.substring(0, head_len)
+    let last_open = stdout.last_index_of("{")
+    let last_close = stdout.last_index_of("}")
+    if last_open < 0 || last_close < 0 || last_close < last_open {
+        let err = json_parse("{}")
+        err["ok"] = 0
+        err["error"] = "bridge: stdout has no JSON object; got " + head
+        return err
+    }
+    let candidate = stdout.substring(last_open, last_close + 1)
+    let parsed = json_parse(candidate)
+    if type_of(parsed) != "map" {
+        let err = json_parse("{}")
+        err["ok"] = 0
+        err["error"] = "bridge: stdout was not JSON map; got " + head
+        return err
+    }
+    return parsed
+}
+
+fn _circ_lcg_bytes(n_bytes: int, seed: int) -> [int] {
+    let mut s = if seed > 0 { seed } else { 12345 }
+    let mut bytes_ = []
+    let mut i = 0
+    while i < n_bytes {
+        s = (1664525 * s + 1013904223) % 4294967296
+        bytes_ = bytes_.push(s % 256)
+        i = i + 1
+    }
+    return bytes_
+}
+
+fn _circ_bytes_to_unit_float(bytes_: [int]) -> float {
+    if len(bytes_) < 8 { return 0.0 }
+    let mut u = 0.0
+    let mut scale = 1.0 / 256.0
+    let mut i = 0
+    while i < 8 {
+        u = u + to_float(bytes_[i]) * scale
+        scale = scale / 256.0
+        i = i + 1
+    }
+    return u
+}
+
+fn _circ_amp_prob(re: float, im: float) -> float {
+    return re * re + im * im
+}
+
+fn _circ_build_cdf(amps_re: [float], amps_im: [float]) -> [float] {
+    let n = len(amps_re)
+    if n < 1 { return [] }
+    let mut cum = []
+    let mut acc = 0.0
+    let mut i = 0
+    while i < n {
+        acc = acc + _circ_amp_prob(amps_re[i], amps_im[i])
+        cum = cum.push(acc)
+        i = i + 1
+    }
+    let total = cum[n - 1]
+    if total <= 0.0 { return [] }
+    let mut renorm = []
+    let mut j = 0
+    while j < n {
+        renorm = renorm.push(cum[j] / total)
+        j = j + 1
+    }
+    return renorm
+}
+
+fn _circ_search_ge(cum: [float], u: float) -> int {
+    let n = len(cum)
+    if n < 1 { return -1 }
+    let mut lo = 0
+    let mut hi = n - 1
+    while lo < hi {
+        let mid = (lo + hi) / 2
+        if cum[mid] >= u {
+            hi = mid
+        } else {
+            lo = mid + 1
+        }
+    }
+    return lo
+}
+
+fn _circ_index_to_bitstring(k: int, n_qubits: int) -> str {
+    if n_qubits < 1 { return "" }
+    let mut bits = ""
+    let mut v = k
+    let mut i = 0
+    while i < n_qubits {
+        let b = v % 2
+        bits = bits + (if b == 1 { "1" } else { "0" })
+        v = v / 2
+        i = i + 1
+    }
+    let mut out = ""
+    let mut j = n_qubits - 1
+    while j >= 0 {
+        out = out + bits.substring(j, j + 1)
+        j = j - 1
+    }
+    return out
+}
+
+fn _circ_run_shots(amps_re: [float], amps_im: [float],
+                   n_qubits: int, n_shots: int, seed: int) -> map {
+    let cum = _circ_build_cdf(amps_re, amps_im)
+    let mut counts = json_parse("{}")
+    if len(cum) < 1 { return counts }
+    let mut s = 0
+    let mut seed_acc = seed
+    while s < n_shots {
+        let bs = _circ_lcg_bytes(8, seed_acc)
+        seed_acc = seed_acc + 1
+        let u = _circ_bytes_to_unit_float(bs)
+        let k = _circ_search_ge(cum, u)
+        let key = _circ_index_to_bitstring(k, n_qubits)
+        if has_key(counts, key) {
+            counts[key] = counts[key] + 1
+        } else {
+            counts[key] = 1
+        }
+        s = s + 1
+    }
+    return counts
+}
+
+// Internal: invoke the python bridge with a payload, return AerResult-shaped map.
+fn _circ_invoke_bridge(payload) -> map {
+    let bridge = _circ_bridge_path()
+    let exists = exec("test -f '" + bridge + "' && echo y || echo n").trim()
+    if exists != "y" {
+        let err = json_parse("{}")
+        err["ok"] = 0
+        err["message"] = "circuit: bridge not found at " + bridge
+        return err
+    }
+    let cmd = "python3 '" + bridge + "'"
+    return _circ_proc_json_bridge(cmd, payload)
+}
+
+// Public: run a NAMED circuit + n_shots Born-rule samples.
+fn circuit_exec_named(name: str, n_qubits: int, n_shots: int) -> CountsResult {
+    if n_shots < 1 { return counts_fail("circuit: n_shots >= 1 required") }
+    let payload = json_parse("{}")
+    payload["mode"] = "named"
+    payload["circuit"] = name
+    payload["n_qubits"] = n_qubits
+    let resp = _circ_invoke_bridge(payload)
+    if !has_key(resp, "ok") { return counts_fail("circuit: bridge missing ok key") }
+    if resp["ok"] != 1 {
+        let m = if has_key(resp, "message") { resp["message"] } else { "bridge error" }
+        return counts_fail("circuit: " + m)
+    }
+    let amps_re_raw = resp["amps_re"]
+    let amps_im_raw = resp["amps_im"]
+    let mut amps_re = []
+    let mut amps_im = []
+    let n = len(amps_re_raw)
+    let mut i = 0
+    while i < n {
+        amps_re = amps_re.push(to_float(amps_re_raw[i]))
+        amps_im = amps_im.push(to_float(amps_im_raw[i]))
+        i = i + 1
+    }
+    let nq = to_int(resp["n_qubits"])
+    let counts = _circ_run_shots(amps_re, amps_im, nq, n_shots, 12345)
+    return CountsResult {
+        ok: 1, counts: counts, n_shots: n_shots,
+        n_qubits: nq, engine: to_string(resp["engine"]),
+        message: "circuit: " + str(n_shots) + " shots ok"
+    }
+}
+
+// Public: run a QASM3 circuit + n_shots Born-rule samples.
+fn circuit_exec_qasm(qasm: str, n_shots: int) -> CountsResult {
+    if n_shots < 1 { return counts_fail("circuit: n_shots >= 1 required") }
+    let payload = json_parse("{}")
+    payload["mode"] = "qasm"
+    payload["circuit"] = qasm
+    payload["n_qubits"] = 0
+    let resp = _circ_invoke_bridge(payload)
+    if !has_key(resp, "ok") { return counts_fail("circuit: bridge missing ok key") }
+    if resp["ok"] != 1 {
+        let m = if has_key(resp, "message") { resp["message"] } else { "bridge error" }
+        return counts_fail("circuit: " + m)
+    }
+    let amps_re_raw = resp["amps_re"]
+    let amps_im_raw = resp["amps_im"]
+    let mut amps_re = []
+    let mut amps_im = []
+    let n = len(amps_re_raw)
+    let mut i = 0
+    while i < n {
+        amps_re = amps_re.push(to_float(amps_re_raw[i]))
+        amps_im = amps_im.push(to_float(amps_im_raw[i]))
+        i = i + 1
+    }
+    let nq = to_int(resp["n_qubits"])
+    let counts = _circ_run_shots(amps_re, amps_im, nq, n_shots, 12345)
+    return CountsResult {
+        ok: 1, counts: counts, n_shots: n_shots,
+        n_qubits: nq, engine: to_string(resp["engine"]),
+        message: "circuit: " + str(n_shots) + " QASM shots ok"
+    }
+}
+
+fn _selftest() -> int {
+    // Bell circuit, 200 shots: only "00" and "11" outcomes, ~ 100 each.
+    let r1 = circuit_exec_named("bell", 2, 200)
+    if r1.ok != 1 { return 0 }
+    if r1.n_shots != 200 { return 0 }
+    if r1.n_qubits != 2 { return 0 }
+    let n_00 = if has_key(r1.counts, "00") { r1.counts["00"] } else { 0 }
+    let n_11 = if has_key(r1.counts, "11") { r1.counts["11"] } else { 0 }
+    let n_01 = if has_key(r1.counts, "01") { r1.counts["01"] } else { 0 }
+    let n_10 = if has_key(r1.counts, "10") { r1.counts["10"] } else { 0 }
+    if n_01 != 0 { return 0 }
+    if n_10 != 0 { return 0 }
+    if (n_00 + n_11) != 200 { return 0 }
+    if n_00 < 75 { return 0 }
+    if n_00 > 125 { return 0 }
+    // GHZ circuit, 100 shots: only "000" and "111" outcomes.
+    let r2 = circuit_exec_named("ghz", 3, 100)
+    if r2.ok != 1 { return 0 }
+    let g_000 = if has_key(r2.counts, "000") { r2.counts["000"] } else { 0 }
+    let g_111 = if has_key(r2.counts, "111") { r2.counts["111"] } else { 0 }
+    if (g_000 + g_111) != 100 { return 0 }
+    // Bad input gate.
+    let r3 = circuit_exec_named("bell", 2, 0)
+    if r3.ok != 0 { return 0 }
+    return 1
+}
+
+fn main() {
+    println("[qmirror/circuit] arbitrary-circuit exec API")
+    if _selftest() == 1 {
+        println("[qmirror/circuit] SELFTEST PASS")
+        println("__QMIRROR_CIRCUIT__ PASS")
+    } else {
+        println("[qmirror/circuit] SELFTEST FAIL")
+        println("__QMIRROR_CIRCUIT__ FAIL")
+    }
+}

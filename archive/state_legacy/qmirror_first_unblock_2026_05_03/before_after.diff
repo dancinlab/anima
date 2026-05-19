@@ -1,0 +1,52 @@
+--- BEFORE (anima/.roadmap.iit4 line 3, header tail) ---
+"blockers":[
+  {"id":"iit4.blk.1","desc":"6 INFEASIBLE remaining (TMS / fMRI / animal surgery / 2P scope / DOC patient) — ~$1.7M aggregate","type":"capex","status":"blocked","eta":"","resolution_path":"partnership only (Korean co-PI for TMS / fMRI lab share)"},
+  {"id":"iit4.blk.2","desc":"IIT 4.0 proper φ★ measurement scale-up — $1500+ for 3-substrate confirm via state-conditional runs","type":"budget","status":"open","eta":"","resolution_path":"unlock_keyword OK IIT4_PROPER_PHI ($1500-3000)"}
+],
+"status":"active","since":"2026-05-02"
+
+--- AFTER (anima/.roadmap.iit4 line 3, header tail) ---
+"blockers":[
+  {"id":"iit4.blk.1","desc":"6 INFEASIBLE remaining (TMS / fMRI / animal surgery / 2P scope / DOC patient) — ~$1.7M aggregate","type":"capex","status":"blocked","eta":"","resolution_path":"partnership only (Korean co-PI for TMS / fMRI lab share)"},
+  {"id":"iit4.blk.2","desc":"IIT 4.0 proper φ★ measurement scale-up — $1500+ for 3-substrate confirm via state-conditional runs","type":"budget","status":"open","eta":"","resolution_path":"unlock_keyword OK IIT4_PROPER_PHI ($1500-3000)"}
+],
+"verified_via_qmirror_2026_05_03":{
+  "applied_to_conds":["iit4.cond.2"],
+  "applied_to_blockers":["iit4.blk.2"],
+  "action":"unblock_via_qmirror_substrate",
+  "mutation_type":"additive_field_only",
+  "semantics_preserved":true,
+  "original_status_preserved":{"iit4.cond.2.status":"unmet","iit4.blk.2.status":"open"},
+  "qmirror_cond_mapped":"qmirror.cond.6",
+  "qmirror_cond_status":"met",
+  "qmirror_role":"qmirror.cond.6 byte-identical IIT 4.0 φ★ reproduction (F5 selftest 4/4 PASS) provides $0 substrate path to proper-φ★ measurement on stored TPMs — supplements (does NOT replace) state-conditional real-QPU runs but addresses the proxy ≠ φ★ closure axis at zero cost",
+  "qmirror_evidence":"anima/state/qmirror_phase1_selftest_2026_05_03/selftest_results.json#F5_reverified (n=4/4 PASS engine=mock) + anima/state/braket_iit40_mip_2026_05_02/verdict.json (reference φ★=0.0 4-of-4 systems) + nexus/.roadmap.qmirror entry id=qmirror.cond6_f5_byte_identical (status=landed)",
+  "qmirror_spec":"docs/nexus_qmirror_spec_2026_05_03.md §3.3 + §M3 + §13 #6 (pyphi 4.0 b78d0e3 pin)",
+  "qmirror_roadmap":"nexus/.roadmap.qmirror",
+  "cross_link_existing":"iit4.qmirror_byte_identical_link entry (status=spec) — this annotation flips that cross-link from spec-only to substrate-met",
+  "cost_savings_usd":1500,
+  "blocker_scope_reduction":"iit4.blk.2 retains 'open' status (state-conditional 2^N runs still budget-blocked for live-QPU re-confirm) BUT blocker scope is reduced: 'proxy ≠ φ★ closure' axis is now substrate-addressable at $0 via qmirror.cond.6 F5 byte-identical channel; budget-block applies only to fresh-QPU re-runs, not to closure of the proxy-vs-φ★ semantic gap",
+  "verifier_change":"none (iit4.cond.2 verifier remains empty; manual_review unchanged)",
+  "status_change":"none (unmet → unmet; sub-blocker scope reduced, not full closure)",
+  "sister_discovery_bg_note":"discovery BG (parallel) may identify higher-value or alternative qmirror→iit4 mappings; this is a best-effort first-pass",
+  "closure_doc":"docs/qmirror_first_unblock_landed_2026_05_03.ai.md",
+  "unblock_log":"state/qmirror_first_unblock_2026_05_03/unblock_log.json",
+  "honest_c3":[
+    "qmirror equivalence not perfect — F5 uses engine=mock (per nexus@64e24386 env-isolation), pyphi 4.0 b78d0e3 version pin load-bearing per spec §13 #6; upstream pyphi MIP heuristic change would surface as substrate-drift artifact",
+    "single-entry scope — only iit4.cond.2 + iit4.blk.2 addressed this cycle; other roadmaps with budget-blocked quantum dependencies handled by sister discovery BG output",
+    "sister discovery BG running in parallel may rank a higher-value unblock; this best-effort mapping does not preclude downstream re-prioritization"
+  ],
+  "raw9":"OK (no .py written; .roadmap edit only)",
+  "raw10":"OK (3 honest C3 disclosed; cond.2 status unchanged 'unmet'; blk.2 status unchanged 'open'; sub-blocker scope reduction explicitly delimited)",
+  "raw15":"OK (no personal-path leak)"
+},
+"status":"active","since":"2026-05-02"
+
+--- DIFF SUMMARY ---
++ Added 1 new top-level header field `verified_via_qmirror_2026_05_03` (additive only)
++ 0 fields removed
++ 0 existing fields mutated
++ iit4.cond.2.status preserved as "unmet"
++ iit4.blk.2.status preserved as "open"
++ All other entries (n21_pass_5_of_16, n21_v3_finality, proper_phi_mip_attempt, qmirror_byte_identical_link, casali_v6_real_substrate_path) UNCHANGED
++ JSONL re-parses cleanly (6/6 lines)

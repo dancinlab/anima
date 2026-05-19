@@ -1,0 +1,96 @@
+\section{Cost analysis}\label{sec:cost}
+
+\subsection{Per-second cost comparison}
+
+\begin{table}[htbp]
+\centering
+\caption{Per-substrate cost comparison.}
+\label{tab:cost_per_substrate}
+\footnotesize
+\begin{tabular}{l r r}
+\toprule
+substrate & USD/QPU-sec & USD/CHSH battery \\
+          &             & (4 circuits, 1024 shots) \\
+\midrule
+\qmirror{} (Aer + ANU)         & \textbf{0.00} & \textbf{0.00} \\
+IBM Heron r2 \texttt{ibm\_fez} & 1.60--2.30    & 3.20 (observed) \\
+IonQ Aria-1                    & n/a (per-shot) & 81.20 (250 sh/set) \\
+IonQ Forte-1                   & n/a (per-shot) & 33.20 (100 sh/set) \\
+Rigetti Cepheus 108Q           & n/a (per-shot) & 2.94  (1024 sh/set) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[htbp]
+\centering
+\begin{lstlisting}[basicstyle=\ttfamily\tiny,frame=single,framesep=4pt]
+*** Figure 3 placeholder (cost-per-battery, log scale) ***
+
+USD per 4-circuit CHSH battery (log10 axis)
+  100 +                          ##  IonQ Aria-1 (81.20)
+       |                         ##
+   10  +              ##         ##  IonQ Forte-1 (33.20)
+       |              ##         ##
+    1  +    ##  ##    ##         ##  Rigetti (2.94)
+       |    ##  ##                  IBM Heron (3.20)
+   0.1 +
+       |
+   0   +##                         qmirror = 0.00 (floor)
+       +-----+-----+-----+-----+-----+
+        qmir  IBM   Rig  Forte  Aria
+\end{lstlisting}
+\caption{Per-battery cost (USD, log scale) for a 4-circuit CHSH
+benchmark across \qmirror{} and four real-QPU vendors. \qmirror{}'s
+cost is the floor (USD~0). Replace with \texttt{matplotlib} \texttt{semilogy} bar
+chart for camera-ready.}
+\label{fig:cost_bar}
+\end{figure}
+
+\qmirror{}'s marginal compute cost is the CPU time of Aer
+state-vector evolution plus the ANU REST round-trip. At 4 qubits the
+Aer cost is negligible (sub-millisecond); at 17 qubits (the
+\qmirror{}~2.0 surface code toy) it is approximately 30 seconds
+total. ANU REST cost is nonzero in latency (approximately
+100--500~ms per request) but zero in USD.
+
+\subsection{One-time calibration cost}
+
+Total calibration spend across the closure cycle was
+\textbf{USD 41.34}:
+
+\begin{table}[htbp]
+\centering
+\caption{One-time calibration line items.}
+\label{tab:calibration_lineitems}
+\footnotesize
+\begin{tabular}{l r}
+\toprule
+line item & USD \\
+\midrule
+Rigetti Cepheus 108Q (cond.8 $\beta$)        & 2.94  \\
+IonQ Forte-1 (cond.8 $\beta$)                & 33.20 \\
+IBM Heron r2 \texttt{ibm\_fez} (cond.3)      & 3.20  \\
+ANU QRNG                                     & 0.00 (free tier) \\
+Aer simulation                               & 0.00 (CPU) \\
+\midrule
+\textbf{total}                               & \textbf{39.34} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Note: the IonQ Aria-1 reference $S = 2.808$ from
+\texttt{nexus\_chsh\_bell\_2026\_05\_02} (USD~81.20) was a
+prior-cycle investment and is not counted in \qmirror{} calibration
+spend; we reuse it as the on-disk reference baseline. The full
+disclosed total of USD~41.34 in the abstract includes \$2.00 of
+exploratory Braket cost folded in for completeness; the line-item
+table totals USD~39.34 of CHSH-attributable spend.
+
+\subsection{Permanent zero-cost operation}
+
+After calibration, \qmirror{} operates at USD~0 per call indefinitely
+within the simulator-tractable regime. Quarterly IonQ anchor
+refreshes (approximately USD~80 per quarter for a single Bell-pair
+re-baseline) are recommended in the future-work roadmap
+(Section~\ref{sec:future}) as drift estimation, not as ongoing
+operating cost.

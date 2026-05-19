@@ -1,0 +1,83 @@
+{
+  "schema": "anima/qmirror_v2_release_executed/1",
+  "ts_utc": "2026-05-04T05:00:00Z",
+  "retry": 3,
+  "prior_attempts": ["a0a7b0363", "a1e80cd6", "a0a526df"],
+  "prior_failure_mode": "anthropic_quota_throttle",
+  "user_authorized": true,
+  "step_status": {
+    "1_verify_synth_tool_and_5_cond_verdicts": {
+      "status": "PASS",
+      "synth_tool": "tool/qmirror_2_closure_synth.hexa",
+      "watchdog_tool": "tool/qmirror_2_closure_watchdog.hexa",
+      "cond_9_verdict": "PASS",
+      "cond_10_verdict": "PASS",
+      "cond_11_verdict": "PASS",
+      "cond_12_verdict": "PASS",
+      "cond_13_verdict": "PASS",
+      "n_pass": 5,
+      "n_total": 5
+    },
+    "2_hexa_run_watchdog_once_apply_bump": {
+      "status": "ALREADY_EXECUTED_BY_PRIOR_RETRY",
+      "evidence": "state/qmirror_2_closure_2026_05_04/verdict.json synth_rc=0 applied=true",
+      "ts_first_run": "2026-05-04T04:53:35Z",
+      "composite": "FULL",
+      "watchdog_log": "state/qmirror_2_closure_2026_05_04/watchdog_log.jsonl"
+    },
+    "3_verify_mutations": {
+      "status": "VERIFIED",
+      "hexa_toml_version": "2.0.0",
+      "hexa_toml_path": "/Users/ghost/core/qmirror/hexa.toml",
+      "registry_tsv_version": "2.0.0",
+      "registry_tsv_path": "/Users/ghost/core/hexa-lang/tool/pkg/registry.tsv",
+      "changelog_entry": "[2.0.0] — 2026-05-04 (qmirror 2.0 axes closure — 5/5 conds met)",
+      "changelog_path": "/Users/ghost/core/qmirror/CHANGELOG.md",
+      "closure_doc": "docs/qmirror_2_closure_2026_05_04.md",
+      "closure_marker": "state/markers/qmirror_2_closure_landed.marker"
+    },
+    "4_git_commit_qmirror_and_push": {
+      "status": "PASS_THIS_RETRY",
+      "commit_hash": "3703a42",
+      "commit_message": "feat(qmirror 2.0): v2.0.0 release — 5/5 axes closure (cond.9-13 PASS)",
+      "files_changed": 8,
+      "insertions": 2338,
+      "deletions": 8,
+      "push_target": "origin/main",
+      "push_range": "788c6fa..3703a42"
+    },
+    "5_gh_release_create_v2_0_0": {
+      "status": "ALREADY_PUBLISHED_BY_PRIOR_RETRY",
+      "tag": "v2.0.0",
+      "name": "qmirror v2.0.0 (qmirror 2.0 axes closure)",
+      "published_at": "2026-05-04T04:47:13Z",
+      "url": "https://github.com/dancinlab/qmirror/releases/tag/v2.0.0",
+      "draft": false,
+      "prerelease": false
+    },
+    "6_hexa_lang_registry_bump": {
+      "status": "VERIFIED_AT_2_0_0",
+      "registry_path": "/Users/ghost/core/hexa-lang/tool/pkg/registry.tsv",
+      "before": "1.0.0",
+      "after": "2.0.0",
+      "applied_by": "watchdog --bump (prior retry)"
+    },
+    "7_verify_all": {
+      "status": "PASS",
+      "checks": {
+        "hexa_toml_at_2_0_0": true,
+        "registry_tsv_at_2_0_0": true,
+        "changelog_has_2_0_0": true,
+        "github_release_v2_0_0_published": true,
+        "qmirror_repo_committed_and_pushed": true,
+        "anima_closure_verdict_FULL_applied": true,
+        "anima_closure_marker_landed": true,
+        "5_cond_verdicts_all_PASS": true
+      }
+    }
+  },
+  "final_version": "2.0.0",
+  "github_release_url": "https://github.com/dancinlab/qmirror/releases/tag/v2.0.0",
+  "summary": "qmirror v2.0.0 release LANDED. Synth + watchdog ran via prior retries (mutations applied), gh release published. This retry committed + pushed final qmirror repo state (commit 3703a42).",
+  "tools_used_this_retry": "approx 13"
+}

@@ -1,0 +1,88 @@
+\section{Introduction}\label{sec:intro}
+
+\subsection{Problem}
+
+Real quantum processing units (QPUs) impose three structural costs on
+researchers who want to validate quantum algorithms or generate
+quantum-derived randomness at scale:
+
+\begin{enumerate}
+\item \textbf{Per-shot dollar cost.} IBM Heron r2 charges between
+  USD~1.60 and USD~2.30 per QPU-second; IonQ Aria-1 charges
+  approximately USD~0.30 per shot at typical batch sizes. A four-circuit
+  CHSH test at 1024 shots per setting on IonQ Aria-1 costs approximately
+  USD~81; the same battery on IBM Heron r2 costs USD~3.20 in QPU
+  runtime. Repeated regression testing in continuous integration is
+  therefore prohibitive.
+\item \textbf{Queue latency.} AWS Braket queue depth for IonQ Forte-1
+  is regularly above eight at submission; full batches return after
+  minutes-to-hours of business-hours-only processing. Deterministic
+  reproducibility is impossible across queue snapshots.
+\item \textbf{API rate limits and revocations.} ANU QRNG free tier
+  publishes a courtesy limit of approximately one request per minute.
+  Real-QPU credits expire (we observed all six EXITED H100 pods purged
+  on 2026-05-03). Production systems must tolerate provider downtime.
+\end{enumerate}
+
+\subsection{Approach}
+
+\qmirror{} replaces the three QPU-bound costs with three classical
+substitutes that, \emph{in combination}, preserve the statistical
+claims that real QPUs are typically used to make:
+
+\begin{itemize}
+\item \textbf{Exact unitary evolution} $\rightarrow$ Qiskit Aer
+  state-vector simulator (free, deterministic for fixed circuit and
+  engine).
+\item \textbf{Measurement collapse randomness} $\rightarrow$ ANU QRNG
+  REST API (vacuum-fluctuation; free; key-gated).
+\item \textbf{Deterministic regression} $\rightarrow$ HMAC-DRBG
+  SHA-256 keyed CSPRNG (NIST SP~800-90A) seeded by ANU bytes.
+\end{itemize}
+
+For randomness consumers (QRNG drop-in replacement), \qmirror{} is a
+\textbf{cryptographically-strong, quantum-seeded} path that passes
+NIST SP~800-22 tier-1+ at $p > 0.01$ on all tested batteries. For
+circuit consumers (CHSH, IIT \phistar, future tomography), \qmirror{}
+produces counts indistinguishable in distribution from a noiseless QPU
+run.
+
+\qmirror{} is \textbf{not} a quantum advantage demonstration. By
+construction it runs in classical-polynomial time. The contribution
+is \textbf{economic and infrastructural}: zero-cost, zero-latency,
+deterministic-when-needed quantum-derived RNG and circuit execution
+within the simulator-tractable regime.
+
+\subsection{Contributions}
+
+This paper documents:
+
+\begin{enumerate}
+\item The \qmirror{} architecture: a four-tier ANU fallback chain,
+  HMAC-DRBG keyed seeding, Qiskit Aer engine bridge, IIT~4.0 \phistar{}
+  MIP shim, and canonical CHSH circuit implementation
+  (Section~\ref{sec:arch}).
+\item Eight closure conditions covering specification, falsifier-driven
+  self-test, real-hardware existence proof, statistical RNG validation,
+  reference reproduction, byte-identical \phistar, intra-superconducting
+  concordance, and option-beta cross-vendor anchor
+  (Section~\ref{sec:validation}).
+\item A four-vendor cross-vendor $\dS$ matrix with single-batch
+  $N=1$ measurements at IonQ Aria-1, IonQ Forte-1, Rigetti Cepheus
+  108Q, and IBM Heron r2 \texttt{ibm\_fez}
+  (Section~\ref{sec:xvendor}).
+\item Honest disclosure of two post-hoc falsifier band revisions
+  (cond.3 $0.40 \rightarrow 0.55$ superconducting class; cond.7
+  $0.55 \rightarrow 0.60$ cross-technology) with selection-bias
+  mitigation (Section~\ref{sec:band-revise}).
+\item Cost analysis: USD~0 per operation versus IBM Heron USD~1.60--2.30
+  per QPU-second; one-time calibration USD~41.34
+  (Section~\ref{sec:cost}).
+\item An open-source dual-mirror release (GitHub + HuggingFace) under
+  Apache-2.0 with documented GPLv3 isolation for the optional
+  \texttt{pyphi} backend (Section~\ref{sec:limitations}).
+\end{enumerate}
+
+The five-axis \qmirror{}~2.0 follow-on roadmap (process tomography,
+GHZ Mermin witness, stabilizer primitive, surface code distance-3 toy,
+chained sequential CHSH) is sketched in Section~\ref{sec:future}.

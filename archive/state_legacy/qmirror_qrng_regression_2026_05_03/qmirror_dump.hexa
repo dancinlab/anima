@@ -1,0 +1,38 @@
+#!hexa strict
+// @resolver-bypass(reason="Read-only LCG byte dump; no fs writes; no host mutations. Mirrors qmirror.qrng MOCK fixture for statistical regression vs HMAC-DRBG.")
+// Driver: dump qmirror.qrng_bits(N) bytes as decimal (one byte per line).
+// Inlines the same LCG used by qmirror/qrng.hexa _qrng_lcg_bytes(seed=12345)
+// when NEXUS_QMIRROR_MOCK=1. Source identical to lines 29-39 of
+// state/qmirror_phase1_staging_2026_05_03/qrng.hexa.
+//
+// Use: QMIRROR_DUMP_N=1024 hexa run state/qmirror_qrng_regression_2026_05_03/qmirror_dump.hexa
+//
+// This driver is read-only (no source modifications to qmirror.qrng); it
+// reproduces the public mock fixture so we can byte-compare against the
+// nexus.qrng (HMAC-DRBG) reference seed in
+// state/nexus_qrng_quantum_seed_2026_05_02/hmac_drbg_seed.json.
+
+fn lcg_bytes(n_bytes: int, seed: int) -> [int] {
+    let mut s = if seed > 0 { seed } else { 12345 }
+    let mut bytes_ = []
+    let mut i = 0
+    while i < n_bytes {
+        s = (1664525 * s + 1013904223) % 4294967296
+        bytes_ = bytes_.push(s % 256)
+        i = i + 1
+    }
+    return bytes_
+}
+
+fn main() {
+    // Hardcoded N=8192 (8× HMAC-DRBG seed.bin contract size, gives ~64k bits
+    // for tighter NIST 800-22 monobit/runs CIs). Avoid exec() to keep the
+    // driver fork-safe under docker resolver routing.
+    let n = 8192
+    let bs = lcg_bytes(n, 12345)
+    let mut i = 0
+    while i < len(bs) {
+        println(str(bs[i]))
+        i = i + 1
+    }
+}

@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "metric": "logical_zero_ratio",
+  "definition": "fraction of n_shots where Z_L = X0 X1 X2 destructive readout yields +1 (= parity(dat[0],dat[1],dat[2]) = 0 after H rotation on q0,q1,q2)",
+  "spec_threshold": 0.99,
+  "observed_value": 1.0,
+  "observed_count": 1024,
+  "n_shots": 1024,
+  "shot_noise_std_estimate": 0.0,
+  "verdict_component": "PASS",
+  "logical_operator_used": "Z_L = X0 X1 X2 (Shor [[9,1,3]] code logical Z representative)",
+  "measurement_protocol": [
+    "After encoding |0_L> = (|000>+|111>)^3 / 2sqrt(2) via 3 GHZ-3 encoders,",
+    "and after measuring all 8 stabilizer ancillae,",
+    "apply Hadamard to data qubits 0, 1, 2 (rotates X-eigenstates to Z-eigenstates),",
+    "measure all 9 data qubits in Z basis,",
+    "compute Z_L bit = dat[0] XOR dat[1] XOR dat[2] (parity over block-1 X-rotated qubits)",
+    "Z_L = 0 means logical |0_L> (eigenvalue +1 of X0X1X2)"
+  ],
+  "expected_distribution_noiseless": {
+    "Z_L=0_probability": 1.0,
+    "Z_L=1_probability": 0.0,
+    "rationale": "|0_L> is exact +1 eigenstate of X_L_dual = X0X1X2; Born rule -> deterministic outcome"
+  },
+  "raw10_caveat": "logical_zero_ratio = 1.0 is the noiseless-Aer DETERMINISTIC outcome; real hardware would show 1 - logical_zero_ratio in [0.02, 0.15] typical due to CNOT + readout noise. Toy demonstration only."
+}

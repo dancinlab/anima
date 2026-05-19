@@ -1,0 +1,37 @@
+{
+  "file": "/Users/ghost/core/hexa-lang/tool/pkg/registry.tsv",
+  "operation": "append-after-line-21",
+  "before": {
+    "line_count": 21,
+    "last_data_line": "yoga\t3.2.1\tbuild/yoga-cli\thttps://github.com/facebook/yoga\t/Users/ghost/Dev/hexa-lang/lib/yoga\tFacebook Flexbox layout engine — JSON CLI wrapper (echo spec | yoga-cli layout)",
+    "qmirror_present": false
+  },
+  "after": {
+    "line_count": 22,
+    "added_line": "qmirror\t1.0.0\tcli/qmirror.hexa\thttps://github.com/dancinlab/qmirror\t\tQuantum Mirror — classical-CPU + ANU QRNG + Aer simulator. 8/8 closure cond met (CHSH/IIT/NIST/cross-vendor). Apache-2.0.",
+    "added_at_line": 22,
+    "qmirror_present": true,
+    "field_count": 6,
+    "field_breakdown": {
+      "1_name": "qmirror",
+      "2_version": "1.0.0",
+      "3_entry": "cli/qmirror.hexa",
+      "4_repo": "https://github.com/dancinlab/qmirror",
+      "5_local": "",
+      "6_desc": "Quantum Mirror — classical-CPU + ANU QRNG + Aer simulator. 8/8 closure cond met (CHSH/IIT/NIST/cross-vendor). Apache-2.0."
+    }
+  },
+  "diff_unified": [
+    "--- registry.tsv.before",
+    "+++ registry.tsv.after",
+    "@@ -21,1 +21,2 @@",
+    " yoga\t3.2.1\tbuild/yoga-cli\thttps://github.com/facebook/yoga\t/Users/ghost/Dev/hexa-lang/lib/yoga\tFacebook Flexbox layout engine — JSON CLI wrapper (echo spec | yoga-cli layout)",
+    "+qmirror\t1.0.0\tcli/qmirror.hexa\thttps://github.com/dancinlab/qmirror\t\tQuantum Mirror — classical-CPU + ANU QRNG + Aer simulator. 8/8 closure cond met (CHSH/IIT/NIST/cross-vendor). Apache-2.0."
+  ],
+  "verify": {
+    "wc_l": 22,
+    "grep_count_qmirror": 1,
+    "awk_field_count": 6,
+    "tab_separated": true
+  }
+}

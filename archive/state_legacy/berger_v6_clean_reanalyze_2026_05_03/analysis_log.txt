@@ -1,0 +1,27 @@
+v6 clean-channel reanalyze | fs=120.0Hz | HPF=0.5Hz/order4
+clean_channels (1-indexed)=[2, 3, 4, 7, 9, 10, 11, 12, 13, 14, 15]  railed=[1, 5, 6, 8, 16]
+EC npy: anima-eeg/recordings/sessions/berger_ec_60s_v6_2026_05_03.npy
+EO npy: anima-eeg/recordings/sessions/berger_eo_60s_v6_2026_05_03.npy
+EC shape=(32, 7496)  EO shape=(32, 7487)
+EC clean shape=(11, 7496)  EO clean shape=(11, 7487)
+N samples EC=7496 (62.47s)  EO=7487 (62.39s)
+Welch nperseg=128 noverlap=64  freq bins=65 df=0.9375Hz  fmax=60.00Hz
+  alpha row 2 (Fp2): EC=1.5469e+01  EO=3.3132e+00  ratio=4.669
+  alpha row 3 ( C3): EC=1.8065e+02  EO=1.9383e+02  ratio=0.932
+  alpha row 4 ( C4): EC=1.6707e+02  EO=1.7852e+02  ratio=0.936
+  alpha row 7 ( O1): EC=6.4072e+01  EO=6.5589e+01  ratio=0.977
+  alpha row 9 ( F7): EC=1.3283e+04  EO=1.1695e+04  ratio=1.136
+  alpha row10 ( F8): EC=1.2335e+04  EO=1.0770e+04  ratio=1.145
+  alpha row11 ( F3): EC=8.8785e+03  EO=6.5968e+03  ratio=1.346
+  alpha row12 ( F4): EC=1.3076e+04  EO=1.1513e+04  ratio=1.136
+  alpha row13 ( T3): EC=1.3591e+04  EO=1.2002e+04  ratio=1.132
+  alpha row14 ( T4): EC=1.3558e+04  EO=1.1962e+04  ratio=1.133
+  alpha row15 ( P3): EC=1.1485e+04  EO=1.0058e+04  ratio=1.142
+--- F1 (alpha peak) ---
+F1: O1 EC peak=12.19Hz psd=1.508e+01 band_med=1.394e+01 prominent=False
+--- F2 (occipital > frontal) ---
+F2: occ_alpha_mean(['O1'])=6.4072e+01 front_alpha_mean(['Fp2'])=1.5469e+01 ratio=4.142 -> PASS
+--- F3 (alpha-blocking EC > EO * 2) ---
+F3: O1 EC=6.4072e+01 EO=6.5589e+01 ratio=0.977 threshold=2.0 pass=False
+=== TIER (rail-corrected): analog ===
+verdicts: F1=FAIL  F2=PASS  F3=FAIL

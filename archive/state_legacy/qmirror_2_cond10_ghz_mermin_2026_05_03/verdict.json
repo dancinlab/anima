@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "cond_id": "qmirror.2.cond.10",
+  "falsifier_id": "F-QM-2-GHZ-10",
+  "falsifier_statement": "qmirror.ghz.run(3, 1024) returns M in [3.7, 4.0] over 30 trials AND M_min >= 3.5",
+  "verdict": "PASS",
+  "verdict_reason": "M_mean=4.0000 in [3.7,4.0] AND M_min=4.0000 >= 3.5",
+  "M_mean": 4.0,
+  "M_std": 0.0,
+  "M_min": 4.0,
+  "M_max": 4.0,
+  "M_analytic": 4.0,
+  "classical_bound": 2.0,
+  "quantum_bound": 4.0,
+  "n_shots_per_basis": 1024,
+  "n_trials": 30,
+  "n_total_shots": 122880,
+  "seed": 20260503,
+  "engine": "qiskit_aer",
+  "substrate": "Aer state-vector (3 qubits) + numpy_native fallback path",
+  "circuit": "GHZ-3 = H_0 + CNOT_01 + CNOT_12 (then per-basis rotation: H for X, S^dag+H for Y)",
+  "mermin_operator": "M = <XXX> - <XYY> - <YXY> - <YYX>  (task-spec convention)",
+  "per_basis_E_mean": {
+    "XXX": 1.0,
+    "XYY": -1.0,
+    "YXY": -1.0,
+    "YYX": -1.0
+  },
+  "cost_usd": 0.0,
+  "wall_seconds_estimate": "~2 s for 30k shots on Mac (Aer SV)",
+  "raw9_disclosure": "ghz_mermin_runner.py is the SECOND .py file under qmirror standalone modules (after aer_runner.py); hexa-strict module is ghz_mermin.hexa",
+  "raw15_compliance": "no personal paths in artifact bodies; bridge resolved via NEXUS_QMIRROR_BRIDGE_PATH env or HOME-relative fallback",
+  "raw10_caveats": [
+    "Noiseless Aer SV reproduces analytic M=4.0 exactly because GHZ is a perfect simultaneous +/-1 eigenstate of XXX/XYY/YXY/YYX; shot noise is zero on Pauli eigenstates. Real-hardware (IBM/IonQ/Rigetti) would exhibit finite-fidelity decay (M_observed in [3.0, 3.8] typical) requiring readout-correction + ZNE to clear the >=3.7 threshold.",
+    "Mermin-3 witness is a *necessary* but not *sufficient* genuine-3-partite-entanglement witness; M>=2 already certifies non-biseparability but does NOT distinguish GHZ from W-state mixtures at the witness-only granularity. A full GHZ-fidelity certificate requires state tomography (cond.9 process tomography in qmirror 2.0).",
+    "Convention choice: this run uses the task-spec sign convention M = <XXX> - <XYY> - <YXY> - <YYX> (analytic +4); the qmirror_2_axes_spec doc writes M = <XYY>+<YXY>+<YYX>-<XXX> (analytic -4). Same |M|=4; verdict band [3.7,4.0] is on signed M per task spec. Cross-doc readers must check sign convention before comparing.",
+    "$0 default substrate is Aer-only; no QPU shots submitted. Cross-tech reproduction (cond.7-style) is OUT OF SCOPE for cond.10 by design (qmirror_2_axes_spec \u00a77 caveat #2). A future hardware-anchor sister cycle is the only path to elevate this to a hardware-witnessed claim."
+  ]
+}

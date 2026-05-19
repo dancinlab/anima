@@ -1,0 +1,80 @@
+% qmirror arXiv preprint - LaTeX skeleton
+% Source: docs/qmirror_arxiv_draft_2026_05_03.md (v0.1, 759 LoC)
+% Date: 2026-05-04
+% Status: LaTeX conversion v0.1; figures = text-flowchart placeholders;
+%         peer review pending; license counsel sign-off pending;
+%         revtex4-2 vs article choice = revtex4-2 (physics target).
+% Build:  pdflatex qmirror_arxiv.tex && bibtex qmirror_arxiv \
+%         && pdflatex qmirror_arxiv.tex && pdflatex qmirror_arxiv.tex
+%
+% NOTE: revtex4-2 is the chosen class for arXiv physics submission.
+%       Switch to \documentclass{article} if targeting cs.LG / cs.AR instead.
+
+\documentclass[aps,prl,reprint,amsmath,amssymb,floatfix,nofootinbib]{revtex4-2}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{listings}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!60!black,
+  citecolor=blue!60!black,
+  urlcolor=blue!60!black,
+  pdftitle={qmirror: A Classical-CPU Mirror of a Quantum Processing Unit Using Real Quantum Entropy},
+  pdfauthor={dancinlab}
+}
+
+\lstset{
+  basicstyle=\ttfamily\footnotesize,
+  breaklines=true,
+  frame=single,
+  framesep=4pt,
+  xleftmargin=4pt,
+  xrightmargin=4pt
+}
+
+\newcommand{\qmirror}{\texttt{qmirror}}
+\newcommand{\dS}{\lvert\Delta S\rvert}
+\newcommand{\phistar}{\ensuremath{\varphi^{\star}}}
+
+\begin{document}
+
+\title{\qmirror: A Classical-CPU Mirror of a Quantum Processing Unit\\Using Real Quantum Entropy}
+
+\author{dancinlab}
+\affiliation{Independent (preprint, not peer-reviewed)}
+\email{contact@dancinlab}
+
+\date{2026-05-04 (LaTeX v0.1, draft)}
+
+\begin{abstract}
+\input{sections/abstract}
+\end{abstract}
+
+\maketitle
+
+\input{sections/intro}
+\input{sections/related_work}
+\input{sections/architecture}
+\input{sections/validation}
+\input{sections/cost}
+\input{sections/limitations}
+\input{sections/future}
+\input{sections/conclusion}
+
+\bibliographystyle{apsrev4-2}
+\bibliography{bibliography}
+
+\appendix
+\input{sections/appendix_a_falsifiers}
+\input{sections/appendix_b_xvendor}
+\input{sections/appendix_c_arxiv_readiness}
+
+\end{document}

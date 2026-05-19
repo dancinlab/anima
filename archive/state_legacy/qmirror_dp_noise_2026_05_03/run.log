@@ -1,0 +1,24 @@
+[GATE] dispatch=local cmd="python3 state/qmirror_dp_noise_2026_05_03/run_dp_compare.py"
+[07:08:02] Running F-QDP-1: seeds=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9] eps=1.0
+  seed=0  classical: acc=0.8850 mia_adv=0.0505  qmirror: acc=0.8800 mia_adv=0.0502
+  seed=1  classical: acc=0.8700 mia_adv=0.0200  qmirror: acc=0.8700 mia_adv=0.0199
+  seed=2  classical: acc=0.8300 mia_adv=0.0248  qmirror: acc=0.8300 mia_adv=0.0247
+  seed=3  classical: acc=0.9500 mia_adv=0.0473  qmirror: acc=0.9500 mia_adv=0.0474
+  seed=4  classical: acc=0.9850 mia_adv=0.0480  qmirror: acc=0.9850 mia_adv=0.0480
+  seed=5  classical: acc=0.8650 mia_adv=0.0385  qmirror: acc=0.8650 mia_adv=0.0383
+  seed=6  classical: acc=0.9500 mia_adv=0.0821  qmirror: acc=0.9450 mia_adv=0.0822
+  seed=7  classical: acc=0.9650 mia_adv=0.0296  qmirror: acc=0.9650 mia_adv=0.0295
+  seed=8  classical: acc=0.9450 mia_adv=0.0258  qmirror: acc=0.9450 mia_adv=0.0259
+  seed=9  classical: acc=0.8450 mia_adv=0.0096  qmirror: acc=0.8450 mia_adv=0.0095
+
+========================================================================
+FALSIFIER F-QDP-1 verdict: FALSIFIED
+Reason: qmirror utility worse by 0.0010 ± 0.0007 (1 SE upper bound < 0)
+========================================================================
+
+utility (test_acc):  classical=0.9090±0.0176   qmirror=0.9080±0.0176   non-priv ref=0.9085
+privacy (mia_adv):   classical=0.0376±0.0065   qmirror=0.0376±0.0065   non-priv ref=0.0376
+paired diff (qm-cl): util=-0.0010±0.0007   mia_adv=-0.0000±0.0000
+
+elapsed: 5.1s
+outputs: /Users/ghost/core/anima/state/qmirror_dp_noise_2026_05_03/verdict.json, /Users/ghost/core/anima/state/qmirror_dp_noise_2026_05_03/utility_privacy_curve.json

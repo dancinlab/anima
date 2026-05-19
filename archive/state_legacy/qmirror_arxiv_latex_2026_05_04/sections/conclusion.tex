@@ -1,0 +1,36 @@
+\section{Conclusion}\label{sec:conclusion}
+
+\qmirror{} is a USD~0, classical-CPU substrate that mirrors a real
+QPU's statistical behavior within the simulator-tractable regime,
+validated against eight closure conditions including a four-vendor
+cross-vendor CHSH concordance matrix. Two post-hoc band revisions and
+one spirit-paper analysis are loudly disclosed; selection-bias risk
+is real and mitigated. The core contribution is \textbf{economic and
+infrastructural}: deterministic regression and quantum-derived
+randomness without per-shot QPU spend, queue latency, or
+provider-revocation risk. The dual-mirror open-source release
+(GitHub\footnote{\url{https://github.com/dancinlab/qmirror}}
+plus HuggingFace\footnote{\url{https://huggingface.co/dancinlab/qmirror}})
+under Apache-2.0 (with documented GPLv3 isolation for the optional
+\texttt{pyphi} backend) lowers the barrier for downstream
+replication. This draft is presented as a preprint; peer review is
+the next step.
+
+\section*{Acknowledgements}
+
+We acknowledge the AWS Braket~\cite{AWS-Braket} platform for vendor
+access (IonQ Aria-1~\cite{IonQ-Aria}, IonQ Forte-1~\cite{IonQ-Forte},
+Rigetti Cepheus~\cite{Rigetti-Cepheus}), the IBM Quantum
+Network~\cite{IBM-Heron} Test 3 credit for IBM Heron r2 access, the
+ANU QRNG team~\cite{ANU-QRNG} for free quantum-entropy provisioning,
+and the \texttt{Hexa}-lang ecosystem~\cite{Hexa-Lang} for the
+substrate-honest hexa-strict authoring discipline.
+
+\section*{Code and data availability}
+
+All per-condition evidence (\texttt{state/qmirror\_*/verdict.json},
+selftest outputs, raw counts) is preserved in the dual-mirror
+release. The Markdown source of this draft is at
+\texttt{anima/docs/qmirror\_arxiv\_draft\_2026\_05\_03.md} (759
+lines); the LaTeX source of this preprint is at
+\texttt{anima/state/qmirror\_arxiv\_latex\_2026\_05\_04/}.

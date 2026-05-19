@@ -1,0 +1,58 @@
+{
+  "caveats_raw10": [
+    "(1) Linear inversion only; no MLE/projected-CP. Shot noise can produce small negative Choi eigenvalues (warnings suppressed).",
+    "(2) Pauli-product POVM cap at n<=4 qubits (4^n preps * 3^n meas).",
+    "(3) Choi data persisted as choi_matrices.npz (re/im float arrays); hexa wrapper does NOT load matrix back, only fidelity scalars.",
+    "(4) Aer noiseless validates pipeline only; QPU calibration is a separate cond (qmirror.cond12_surface / roadmap.ionq)."
+  ],
+  "cond": "qmirror.cond9_tomography",
+  "date_utc": "2026-05-04T02:03:04.944981+00:00",
+  "engine": "qiskit_aer",
+  "falsifier_id": "F-QM-2-TOMO-9",
+  "fidelity_mean": 1.0002287710304494,
+  "fidelity_min": 0.9991811450881435,
+  "fidelity_threshold": 0.99,
+  "gates_failed": [],
+  "gates_passed": [
+    "H",
+    "X",
+    "Y",
+    "Z",
+    "S",
+    "T",
+    "CNOT"
+  ],
+  "message": "7/7 gates PASS at shots=8000; fidelity_min=0.99918 >= 0.99",
+  "method": "linear-inversion process tomography (Aer noiseless)",
+  "n_pass": 7,
+  "n_shots": 8000,
+  "n_total": 7,
+  "ok": 1,
+  "paths": {
+    "bridge": "/Users/ghost/core/qmirror/modules/_python_bridge/process_tomography_runner.py",
+    "bridge_mirror": "/Users/ghost/core/nexus/modules/qmirror/_python_bridge/process_tomography_runner.py",
+    "choi_npz": "/Users/ghost/core/anima/state/qmirror_2_cond9_tomography_2026_05_03/choi_matrices.npz",
+    "hexa": "/Users/ghost/core/qmirror/modules/process_tomography.hexa",
+    "hexa_mirror_nexus": "/Users/ghost/core/nexus/modules/qmirror/process_tomography.hexa",
+    "log": "/Users/ghost/core/anima/state/qmirror_2_cond9_tomography_2026_05_03/run.log",
+    "per_gate": "/Users/ghost/core/anima/state/qmirror_2_cond9_tomography_2026_05_03/per_gate_fidelity.json"
+  },
+  "provenance": {
+    "numpy": "2.4.4",
+    "python": "3.14.4",
+    "qiskit": "2.4.1",
+    "qiskit_aer": "0.17.2"
+  },
+  "reproduce": {
+    "bridge_invocation": "echo '{\"mode\": \"sweep\", \"gates\": [\"H\", \"X\", \"Y\", \"Z\", \"S\", \"T\", \"CNOT\"], \"n_shots\": 8000, \"seed\": 2026}' | /Users/ghost/etc/anima-quantum/.venv/bin/python3 /Users/ghost/core/qmirror/modules/_python_bridge/process_tomography_runner.py",
+    "verifier": "jq '.fidelity_min >= 0.99 and .ok == 1' /Users/ghost/core/anima/state/qmirror_2_cond9_tomography_2026_05_03/verdict.json"
+  },
+  "seed": 2026,
+  "sha256": {
+    "bridge": "b25b1702d627e2626f277faa6b95f3b1aa09ce76004fd9bd7be3ccdf1748f916",
+    "hexa": "4c2fbfc96d5b4ee000df9e7269fc9a1a77372937202aac2e5ea73ad94cc5dbe8"
+  },
+  "spec": "docs/qmirror_2_axes_spec_2026_05_03.md",
+  "verdict": "PASS",
+  "wall_seconds_total": 8.682072162628174
+}

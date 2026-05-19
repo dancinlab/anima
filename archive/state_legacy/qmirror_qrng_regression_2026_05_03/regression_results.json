@@ -1,0 +1,102 @@
+{
+  "test": "qmirror_qrng_drop_in_regression_vs_hmac_drbg",
+  "date": "2026-05-03",
+  "alpha": 0.01,
+  "n_bytes_per_stream": 8192,
+  "streams_8192": {
+    "hmac_drbg_legacy": {
+      "name": "hmac_drbg_legacy",
+      "n_bytes": 8192,
+      "n_bits": 65536,
+      "chi2_uniform_256": 279.3125,
+      "chi2_uniform_p_value": 0.14150413810974158,
+      "mean": 128.345947265625,
+      "variance": 5519.091013848782,
+      "shannon_bit_entropy_bits_per_bit": 0.9999999328192759,
+      "shannon_byte_entropy_bits_per_byte": 7.975319662444831,
+      "autocorrelation_lag1": 0.01022848578610845,
+      "nist_monobit_p_value": 0.937728620843449,
+      "nist_runs_p_value": 0.023958825551016402
+    },
+    "qmirror_qrng_mock": {
+      "name": "qmirror_qrng_mock",
+      "n_bytes": 8192,
+      "n_bits": 65536,
+      "chi2_uniform_256": 0.0,
+      "chi2_uniform_p_value": 1.0,
+      "mean": 127.5,
+      "variance": 5461.25,
+      "shannon_bit_entropy_bits_per_bit": 1.0,
+      "shannon_byte_entropy_bits_per_byte": 8.0,
+      "autocorrelation_lag1": -0.04957876941054875,
+      "nist_monobit_p_value": 1.0,
+      "nist_runs_p_value": 1.0
+    }
+  },
+  "streams_1024": {
+    "hmac_drbg_legacy": {
+      "name": "hmac_drbg_legacy_1024",
+      "n_bytes": 1024,
+      "n_bits": 8192,
+      "chi2_uniform_256": 227.5,
+      "chi2_uniform_p_value": 0.8915478457819197,
+      "mean": 131.005859375,
+      "variance": 5697.634731292725,
+      "shannon_bit_entropy_bits_per_bit": 0.999758135880956,
+      "shannon_byte_entropy_bits_per_byte": 7.8295629687795865,
+      "autocorrelation_lag1": -0.10093367025986431,
+      "nist_monobit_p_value": 0.09746257205513464,
+      "nist_runs_p_value": 0.026128072419916163
+    },
+    "qmirror_qrng_mock": {
+      "name": "qmirror_qrng_mock_1024",
+      "n_bytes": 1024,
+      "n_bits": 8192,
+      "chi2_uniform_256": 0.0,
+      "chi2_uniform_p_value": 1.0,
+      "mean": 127.5,
+      "variance": 5461.25,
+      "shannon_bit_entropy_bits_per_bit": 1.0,
+      "shannon_byte_entropy_bits_per_byte": 8.0,
+      "autocorrelation_lag1": -0.05023509920748455,
+      "nist_monobit_p_value": 1.0,
+      "nist_runs_p_value": 1.0
+    }
+  },
+  "verdicts": {
+    "hmac_drbg_legacy_8192": "PASS",
+    "qmirror_qrng_mock_8192": "FAIL",
+    "hmac_drbg_legacy_1024": "FAIL",
+    "qmirror_qrng_mock_1024": "PASS",
+    "drop_in_regression": "PARTIAL",
+    "cond4_recommendation": "partially_met"
+  },
+  "drift_two_sample_chi2_8192": {
+    "chi2": 140.3518037869774,
+    "p_value": 0.9999999994146866,
+    "pass_at_alpha_0_01": true,
+    "note": "Two-sample chi-square comparing byte distributions of the two streams (n=8192)."
+  },
+  "drift_two_sample_chi2_1024": {
+    "chi2": 120.02077922077919,
+    "p_value": 0.9999999999999669,
+    "pass_at_alpha_0_01": true,
+    "note": "Two-sample chi-square at canonical contract size (n=1024)."
+  },
+  "fail_notes_8192": [
+    "qmirror_mock: |lag-1 autocorr|=0.0496 > 99%-CI threshold 0.0285 (Bartlett, n=8192)"
+  ],
+  "fail_notes_1024": [
+    "hmac_drbg_1024: |lag-1 autocorr|=0.1009 > 99%-CI threshold 0.0805 (Bartlett, n=1024)"
+  ],
+  "sources": {
+    "hmac_drbg_path": "/Users/ghost/core/anima/state/nexus_qrng_quantum_seed_2026_05_02/hmac_drbg_seed.json",
+    "qmirror_mock_path": "/Users/ghost/core/anima/state/qmirror_qrng_regression_2026_05_03/qmirror_mock_bytes_8192.txt",
+    "hmac_drbg_8192_path": "/Users/ghost/core/anima/state/qmirror_qrng_regression_2026_05_03/hmac_drbg_legacy_bytes_8192.txt"
+  },
+  "honest_caveats": [
+    "Tier-0 NIST 800-22 only (monobit + runs + chi-uniform); Tier-1+ tests (block frequency, FFT spectral, longest-run, BBT, serial, approximate entropy, Maurer's universal, linear complexity, cumulative sums, random excursions, random excursions variant) NOT executed at this size \u2014 1024 bytes (8192 bits) is below the recommended n>=1e6 bits for full SP 800-22 battery.",
+    "MOCK fixture (LCG seed=12345) is byte-deterministic and shares no entropy with live ANU vacuum-fluctuation source. Live-vs-live comparison requires NEXUS_QMIRROR_LIVE=1 + NEXUS_QMIRROR_ANU_KEY and a fresh IonQ HMAC-DRBG instantiation; this run is the canonical CI regression check only.",
+    "Statistical equivalence is NOT cryptographic equivalence: HMAC-DRBG provides forward/backward security under SHA-256 PRF assumption; qmirror MOCK is a Park-Miller-class LCG with trivial state recovery and zero crypto strength. The drop-in claim is for distributional shape only, not for keying material."
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "task": "qmirror_dp_noise_compare",
+  "date": "2026-05-03",
+  "falsifier": {
+    "falsifier_id": "F-QDP-1",
+    "verdict": "FALSIFIED",
+    "reason": "qmirror utility worse by 0.0010 \u00b1 0.0007 (1 SE upper bound < 0)",
+    "criteria": {
+      "utility_better_qmirror_minus_classical_test_acc": -0.0010000000000000009,
+      "utility_better_qmirror_minus_classical_test_acc_se": 0.0006666666666666674,
+      "privacy_better_qmirror_minus_classical_mia_advantage": -4.625000000005874e-05,
+      "privacy_better_qmirror_minus_classical_mia_advantage_se": 3.837181039949646e-05
+    },
+    "absolute_means": {
+      "qmirror_test_acc": 0.908,
+      "classical_test_acc": 0.909,
+      "qmirror_mia_advantage": 0.03757124999999996,
+      "classical_mia_advantage": 0.03761750000000001
+    }
+  },
+  "n_seeds": 10,
+  "epsilon": 1.0,
+  "aggregate": {
+    "classical": {
+      "test_acc_mean": 0.909,
+      "test_acc_se": 0.017619433715203345,
+      "train_acc_mean": 0.912875,
+      "train_acc_se": 0.015441477782618833,
+      "mia_auc_mean": 0.48566624999999997,
+      "mia_auc_se": 0.005202740513822175,
+      "mia_advantage_mean": 0.03761750000000001,
+      "mia_advantage_se": 0.006508247491964823
+    },
+    "qmirror": {
+      "test_acc_mean": 0.908,
+      "test_acc_se": 0.017578395831246943,
+      "train_acc_mean": 0.912875,
+      "train_acc_se": 0.015441477782618833,
+      "mia_auc_mean": 0.485671875,
+      "mia_auc_se": 0.0051998135525134674,
+      "mia_advantage_mean": 0.03757124999999996,
+      "mia_advantage_se": 0.006523053416005089
+    },
+    "non_private_ref": {
+      "test_acc_mean": 0.9085000000000001,
+      "test_acc_se": 0.01749682510882728,
+      "train_acc_mean": 0.912875,
+      "train_acc_se": 0.015441477782618833,
+      "mia_auc_mean": 0.48566312500000003,
+      "mia_auc_se": 0.005205573472951054,
+      "mia_advantage_mean": 0.03760874999999998,
+      "mia_advantage_se": 0.006525962585980037
+    },
+    "paired_diff_qmirror_minus_classical": {
+      "test_acc_diff_mean": -0.0010000000000000009,
+      "test_acc_diff_se": 0.0006666666666666674,
+      "mia_auc_diff_mean": 5.6250000000035435e-06,
+      "mia_auc_diff_se": 2.0591302438448386e-05,
+      "mia_advantage_diff_mean": -4.625000000005874e-05,
+      "mia_advantage_diff_se": 3.837181039949646e-05
+    }
+  },
+  "elapsed_seconds": 5.149881958990591,
+  "honest_caveats": [
+    "qmirror MOCK source = Park-Miller LCG (seed=12345, a=1664525, c=1013904223, m=2^32). This is statistically uniform per the regression battery (qmirror_qrng_regression_2026_05_03/regression_summary.txt PARTIAL: PASS at n=1024, FAIL at n=8192 for lag-1 autocorr) but contains ZERO true entropy. True quantum entropy from ANU live source was not used in this run \u2014 the F-QDP-1 verdict therefore tests the inverse-CDF transform pipeline against torch's classical Laplace, not LCG vs true QRNG. Live ANU substitution is a one-line change (replace QmirrorByteStream with anu_fetch_bytes) but requires NEXUS_QMIRROR_ANU_KEY + ~10s rate-limited HTTPS per 8KB.",
+    "Privacy bound is empirical (Yeom MIA loss-threshold AUC) not a formal (eps, delta)-DP accountant. Per-step epsilon=1.0 with 30*12=360 steps composes (under simple sequential composition) to eps_total=360 \u2014 i.e., NO meaningful end-to-end DP guarantee. The comparison is purely about whether QRNG-sourced noise is empirically equivalent to PRNG-sourced noise at fixed scale. RDP/PRV accounting + amplification-by-subsampling would be needed for a deployable bound.",
+    "n=10 seeds is small; paired-difference SE bands are wide. A definitive utility/privacy ordering at fixed scale would require (a) \u2265100 seeds, (b) cross-validated MIA threshold rather than AUC, (c) shadow-model MIA (Shokri 2017) which is the state-of-the-art empirical bound. The CONSISTENT_BUT_WEAK / INCONCLUSIVE band of the verdict reflects this small-sample regime by design."
+  ]
+}
