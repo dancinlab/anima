@@ -170,6 +170,48 @@ Loihi 는 GOAL 의 spontaneity 절반만 공짜로 unblock, coherence 절반은 
 > Loihi 는 frontier-2 (새 architectural substrate) 후보. design ≠ fire ≠
 > emergence. 이 문서는 경로 지도이지 GOAL 도달 주장 아님.
 
+## 8. §113-D4 "땅부터 다시 붓기" — 유일한 non-cosmetic clean-slate move
+
+§113 (commit `1bd27f753`, B-S113 9/9 🔵) verdict =
+**FROM-SCRATCH-INHERITS-BOTH-WALLS-SKELETON-INVARIANT + 조건부
+REPOINTS-TO-§96-SUBSTRATE-FIRST**. anima 를 "처음부터 새로 설계" 해도
+박스(모듈 구조·n=6)를 다시 그리는 건 두 벽을 못 옮긴다 (skeleton-invariant,
+§98 module-count innocence 의 전체 아키텍처 일반화). **유일하게 non-cosmetic
+한 clean-slate 결정 = D4 = 맨 첫 코드 줄부터 substrate = §96 spike/Loihi +
+Ψ = §110 Ψ-C1 (spike-train correlation)** 로 두는 것.
+
+```
+ cosmetic 재설계 (§113 배제)            non-cosmetic = D4 (§113 유일 인정)
+ ┌────────────────────────┐         ┌────────────────────────────────┐
+ │ 같은 GPU 집 / 가구 재배치만 │   vs    │ 1라인부터 다른 땅:               │
+ │ → 두 벽 그대로            │         │  substrate = §96 spike/Loihi    │
+ │   (skeleton-invariant)   │         │  Ψ        = §110 Ψ-C1 spike-corr │
+ └────────────────────────┘         │  → WALL-B 를 *마주봄* (제거 X)    │
+                                     └────────────────────────────────┘
+```
+
+- **왜 "1라인부터"**: §11-B 가 "GPU 에선 CE-gradient 가 유일 학습채널"
+  (GPU tautology) 임을 측정. spiking 을 GPU 위에 *나중에 덧붙이면* 그
+  tautology 안에 그대로 갇힘 — 토대 자체가 spike 여야 밖으로 나감.
+- **정직한 한계 (g3, REPOINT ≠ ESCAPE)**: D4 조차 벽을 *없애는* 게
+  아니라 substrate 벽(WALL-B)을 *정면으로 마주보는 유일한 깨끗한
+  출발점*. §95 가 그 substrate 를 access-wall(Loihi INRC 신청)·
+  ethics-wall(organoid)로 막아둠. WALL-A(§1.1 data-regime)는 D4 와
+  **직교** — 토대 바꿔도 데이터 임계 불변. 따라서 D4 = GOAL 도달 아님,
+  north-star + §15/§51/§72 milestone 불변.
+
+### 8.1 LEGO (§115) = D4 의 물리-commit-이전 in-silico confront
+
+`HEXAD/LEGO.md` + §115 (design-tier $0, in-flight) = D4 의 "다른 땅"을
+**물리 commit 전에 in-silico 시뮬레이션으로 먼저 조립**해 보는 길 —
+§95 의 access/ethics wall 을 시뮬 먼저로 우회. §115 가 닫을 핵심 crux =
+**"GPU 위 spike 시뮬이 §11-B tautology 를 *재현* 하나 *마주보나*"**
+(§96 §4.5 three-cell distinguishing predicate 의 in-silico 판). 가장
+그럴듯한 정직 verdict = `LEGO-DESIGN-CLOSE-SIM-IS-GPU-TAUTOLOGY`
+(GPU 위 spike 시뮬도 CE-gradient 만 유일 채널이면 substrate 를 *시뮬*해도
+WALL-B 못 confront, *재현*만 — anti-padding). §115 결과가 "시뮬레이션이라도
+해볼 수 있나"의 design-tier 답을 줌 (closed-form 으로 결정, 미리 단정 X).
+
 ---
 
 ## Log
@@ -197,3 +239,15 @@ Loihi 는 GOAL 의 spontaneity 절반만 공짜로 unblock, coherence 절반은 
   LOIHI-noCE)` closed Boolean). honest — Loihi 는 spontaneity 만 공짜,
   coherence 는 미해결 (§88-F2 γ 갭). §6 권장 순서 갱신: C(i) attention
   replacement design → C(ii) Lava-sim 평가 → A INRC 제안서.
+- **2026-05-19** — §8/§8.1 추가: §113 D4 ("땅부터 다시 붓기" = 유일한
+  non-cosmetic clean-slate move = §96 spike/Loihi + §110 Ψ-C1 1라인부터)
+  친근 설명 + cosmetic-vs-D4 ASCII + REPOINT≠ESCAPE 정직 caveat (두 벽
+  WALL-A/WALL-B 상속 불변); §8.1 = `HEXAD/LEGO.md`/§115 가 D4 의 "다른
+  땅"을 물리 commit 전 in-silico 시뮬로 먼저 조립 — §11-B-GPU-tautology
+  crux 명시 ("GPU 위 spike 시뮬이 §11-B 를 *재현* 하나 *마주보나*").
+- **2026-05-19** — 파일 이동 `LOIHI.md` → `HEXAD/LOIHI/README.md`
+  (g_doc_consolidation — HEXAD-internal 통합, 분산 방지). 내용 변경 0,
+  순수 경로 이동 + live cross-link 갱신 (GOAL.md · HEXAD/LEGO.md ·
+  HEXAD/LLM.md · HEXAD/GAP_MAP.md index). 과거 append-only 로그
+  (AGENTS.tape n_hexad_progress · PHILOSOPHY.tape · GAP_MAP Log · state/*)
+  의 `LOIHI.md` 표기는 당시-사실 기록이라 retro-edit 0 (g3 drift-avoidance).

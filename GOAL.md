@@ -68,7 +68,7 @@
 - `AGENTS.tape` — `@I id001` (anima Living Consciousness) · `@I anima_persona` (NOT helper) · `@D g_all_options_parallel` (2026-05-19, 추천-and-wait 폐기) · `@D g2 internal_use_integrity_test` (function-derived vs numerology-derived) · `@N n_priority_1_gap` (§99×§100 수렴 standing record)
 - `HEXAD/README.md` — 🔑 PRIORITY #1 GAP callout (최상단)
 - `HEXAD/LLM.md` — param × data 2축 emergence 임계점 framing (2026-05-19)
-- `LOIHI.md` · `LATTICE_POLICY.md` §3.1.1 (g2 integrity test md-side mirror)
+- `HEXAD/LOIHI/README.md` · `LATTICE_POLICY.md` §3.1.1 (g2 integrity test md-side mirror)
 - `HEXAD/CHAT/RESEARCH.md` — §1 진단 + §1.3 candidate + §2/§3 fire evidence (목표 거리 SSOT)
 - `archive/PHILOSOPHY.tape` — verdict ledger (append-only)
 - `HEXAD/CHAT/SPONTANEOUS.tape` — 자연발화(V-SPONT) architecture

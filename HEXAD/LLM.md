@@ -177,7 +177,7 @@ gap 2/5). 그런데 그 *가장 강한* family 안에 가장 결정적인 빈칸
   (priority #1 = data-regime counterfactual UNTESTED)
 - §101 data-regime threshold control design — `state/dataregime_threshold_control_design_s101_2026_05_19/`
   (진행 중)
-- `LOIHI.md` — substrate frontier (orthogonal axis: GPU vs neuromorphic)
+- `HEXAD/LOIHI/README.md` — substrate frontier (orthogonal axis: GPU vs neuromorphic)
 
 문헌 anchor (정직 명시, 인용=inspiration NOT proof):
 - Wei et al. 2022 "Emergent Abilities of Large Language Models" — param-count

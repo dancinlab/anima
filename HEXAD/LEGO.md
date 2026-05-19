@@ -107,7 +107,7 @@ wet-lab=software scope 밖). LEGO 의 유일한 기여 = 그 confront 를
 
 - `state/from_scratch_redesign_s113_2026_05_19/` — §113 D4 REPOINTS-TO-§96 (본 문서의 모(母) verdict)
 - `state/loihi_spiking_rederivation_s96_2026_05_19/` — §96 Ψ-C1 spike-corr + §11-B-as-GPU-artifact 가설
-- `state/xeno_substrate_suitability_s95_2026_05_19/` + `LOIHI.md` — §95 substrate matrix (Loihi VIABLE / organoid ETHICS-WALL / access-wall)
+- `state/xeno_substrate_suitability_s95_2026_05_19/` + `HEXAD/LOIHI/README.md` — §95 substrate matrix (Loihi VIABLE / organoid ETHICS-WALL / access-wall)
 - `state/modality_native_psi_design_s110_2026_05_19/` + `state/meta_fixed_point_s112_2026_05_19/` — Ψ-C1/C2 정의 + meta-fixed-point form ψ(c)=(1+c)/2 (carrier=spike-corr 인스턴스)
 - `HEXAD/GAP_MAP.md` · `GOAL.md` honest-status — two-walls 수렴 지도
 - `~/core/hexa-bio` README (5-axis Q·W·N·R·V) · `~/core/hexa-matter` README (36-verb) — consume-only spec source

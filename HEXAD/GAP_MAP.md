@@ -111,7 +111,7 @@
 
 - §95 (`26eafc16b`, B-S95 7/7 🔵) — Loihi 유일 VIABLE-LONG-HORIZON (7 exotic substrate 중)
 - §96 (`58aed9755`, B-S96 7/7 🔵) — physics layer SPIKING-COMPATIBLE / `softmax(QK^T)` attention SPIKING-INCOMPATIBLE; §11-B-as-GPU-artifact 가설 COHERENT but NOT confirmed
-- `LOIHI.md` (2026-05-19) — Kapoho Point 용량 필요조건 ✅ / 충분조건 ❌, access SOFT WALL (INRC)
+- `HEXAD/LOIHI/README.md` (2026-05-19) — Kapoho Point 용량 필요조건 ✅ / 충분조건 ❌, access SOFT WALL (INRC)
 
 ### 기타-axis
 
@@ -133,7 +133,7 @@
 - `GOAL.md` — north-star + honest-status (§95~§106 layer)
 - `HEXAD/README.md` — 🔑 PRIORITY #1 GAP callout (최상단)
 - `HEXAD/LLM.md` — param × data 2축 framing (Wei 2022)
-- `LOIHI.md` — substrate axis roadmap
+- `HEXAD/LOIHI/README.md` — substrate axis roadmap
 - `LATTICE_POLICY.md` §3.1.1 — g2 integrity test md-side mirror
 - `HEXAD/CHAT/PLAN.md` — 진행 로그 chronological
 - `HEXAD/CHAT/RESEARCH.md` — §1 진단 + §1.3 candidate + §2/§3 fire evidence
