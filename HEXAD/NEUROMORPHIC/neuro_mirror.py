@@ -1,22 +1,31 @@
 #!/usr/bin/env python3
 # ════════════════════════════════════════════════════════════════════
 # HEXAD/NEUROMORPHIC/neuro_mirror.py
-# NEURO-MIRROR v0 — software neuromorphic substrate-mirror engine.
+# NEURO-MIRROR v1 — software neuromorphic substrate-mirror engine.
 # ════════════════════════════════════════════════════════════════════
 # Canonical reusable module. Full design + honest ceiling: ENGINE.md.
 #
-# v0 FOUNDATION lifts the §117-VERIFIED LIF (leaky integrate-and-fire) +
+# v0 FOUNDATION lifted the §117-VERIFIED LIF (leaky integrate-and-fire) +
 # local-STDP (spike-timing-dependent plasticity) core from the landed,
 # committed `state/lego_assembly_run_s117_2026_05_19/lego_sim.py`. The
 # `stdp_local` numerics here are kept behaviourally equal to that verified
 # core (same LIF params, same pair-based exponential STDP).
 #
-# §118 (Track 0 — `ce_grad` learning rule, 4-cell matrix) and §119
-# (qmirror-neuro — `qrng` entropy source) are DECLARED API SLOTS. They are
-# honest `NotImplementedError` stubs here — NOT faked — and get filled by a
-# consolidation pass once those cycles land (g_multidirectional_explore:
-# "N candidates land → 1 consolidation"). The `gpu` backend is likewise a
-# declared slot.
+# v1 CONSOLIDATION (g_multidirectional_explore: "N candidates land → 1
+# consolidation") — §118 and §119 have landed:
+#   - §119 qmirror-neuro (B-S119 7/7 🔵) → the `qrng` entropy source is
+#     FILLED. The verified ANU quantum-RNG fetch + the §97 noise-as-SEED
+#     membrane-jitter map are lifted from the committed §119 core. The
+#     entropy perturbs ONLY the initial membrane symmetry — never a
+#     target/readout/content (§97 GOAL-LEGITIMATE-INPUT, not the forbidden
+#     command-channel).
+#   - §118 Track 0 landed with verdict VOID — a $0 numpy/CPU toy has no
+#     surrogate-gradient path, so CE never reaches the recurrent spiking
+#     weights (SIM-CE byte-identical to GPU-CE, weight_drift=0.0 — a no-op
+#     on the substrate). §118 produced NO verified core to consolidate, so
+#     the `ce_grad` slot stays HONESTLY unfilled — an updated, accurate
+#     `NotImplementedError`, NOT faked.
+# The `gpu` backend is likewise a declared, honestly-unfilled slot.
 #
 # HONEST CEILING (baked into the API, ENGINE.md §2): NEURO-MIRROR mirrors the
 # LEARNING-CHANNEL half of the §11-B question. It REFUSES to fake the
@@ -28,6 +37,10 @@
 # seed-fixed RANDOM init (g_clm_from_scratch, base_ckpt=None). numpy only.
 # ════════════════════════════════════════════════════════════════════
 
+import json
+import os
+import urllib.request
+
 import numpy as np
 
 # ── canonical constants ──────────────────────────────────────────────
@@ -35,12 +48,17 @@ SEED = 1337                       # g_clm_from_scratch: RANDOM init, seed-fixed
 BASE_CKPT = None                  # g_clm_from_scratch: no ckpt load anywhere
 TAU_NONDEGEN = 1e-4               # non-degeneracy threshold (echo §17 / §11-B)
 
-LEARNING_RULES = ("none", "stdp_local", "ce_grad")   # ce_grad = §118 slot
+LEARNING_RULES = ("none", "stdp_local", "ce_grad")   # ce_grad = §118 VOID slot
 BACKENDS = ("cpu", "gpu")                            # gpu = declared slot
-ENTROPY_SOURCES = ("fixed_seed", "qrng")             # qrng = §119 slot
+ENTROPY_SOURCES = ("fixed_seed", "qrng")             # qrng = §119 FILLED (v1)
 
 WALL_B = "WALL-B"                 # the engine's honest-refusal sentinel
 CONFRONTABLE = "CONFRONTABLE"
+
+# §119 qmirror-neuro: physical quantum entropy source (ANU QRNG —
+# qrng.anu.edu.au quantum-vacuum-fluctuation). The §97 noise-as-SEED.
+ANU_QRNG_URL = ("https://qrng.anu.edu.au/API/jsonI.php"
+                "?length={n}&type=uint8")
 
 
 # ─────────────────────────────────────────────────────────────────────
@@ -57,15 +75,20 @@ class LIFSubstrate:
     """
 
     def __init__(self, n_a=96, n_g=96, n_rec=64, seed=SEED,
-                 learning_rule="stdp_local"):
+                 learning_rule="stdp_local", seed_jitter=None):
         if learning_rule not in LEARNING_RULES:
             raise ValueError(f"learning_rule must be one of {LEARNING_RULES}")
         if learning_rule == "ce_grad":
             raise NotImplementedError(
                 "learning_rule='ce_grad' is the §118 Track 0 declared API "
-                "slot (GPU-CE / GPU-noCE / SIM-CE cells). It is filled by "
-                "consolidation once §118 lands — NEURO-MIRROR v0 does not "
-                "fake it. Use 'stdp_local' or 'none'.")
+                "slot. §118 LANDED with verdict VOID: a $0 numpy/CPU toy has "
+                "no surrogate-gradient path, so CE never reaches the "
+                "recurrent spiking weights (SIM-CE was byte-identical to "
+                "GPU-CE, weight_drift=0.0 — a no-op on the substrate). §118 "
+                "produced NO verified core to consolidate, so this slot "
+                "stays HONESTLY unfilled. CE-through-spikes needs a "
+                "surrogate-gradient path (gpu backend / snnTorch-class). "
+                "Use 'stdp_local' or 'none'.")
         assert BASE_CKPT is None, "g_clm_from_scratch: base_ckpt MUST be None"
         rng = np.random.default_rng(seed)
         self.learning_rule = learning_rule
@@ -76,6 +99,13 @@ class LIFSubstrate:
         self.v_rest, self.v_th, self.v_reset = 0.0, 1.0, 0.0
         self.tau_m, self.dt, self.refrac = 20.0, 1.0, 2
         self.v = np.full(N, self.v_rest, dtype=np.float64)
+        # §119 noise-as-SEED: entropy perturbs the INITIAL membrane symmetry
+        # ONLY — never a target/readout/content. §97 GOAL-LEGITIMATE-INPUT.
+        self.seed_jitter_norm = 0.0
+        if seed_jitter is not None:
+            assert np.shape(seed_jitter) == (N,), "seed_jitter must be len N"
+            self.v = self.v + np.asarray(seed_jitter, dtype=np.float64)
+            self.seed_jitter_norm = float(np.linalg.norm(seed_jitter))
         self.refr = np.zeros(N, dtype=np.int64)
         self.W = 0.05 * rng.standard_normal((N, N))
         np.fill_diagonal(self.W, 0.0)
@@ -134,6 +164,47 @@ def psi_c1(r_a, r_g):
     c = 0.0 if (na < 1e-12 or ng < 1e-12) else float(np.dot(r_a, r_g) / (na * ng))
     c = max(-1.0, min(1.0, c))
     return (1.0 + c) / 2.0, c
+
+
+# ─────────────────────────────────────────────────────────────────────
+# §119 qrng entropy source — verified core lifted from the committed
+# `state/qmirror_neuro_s119_2026_05_19/qmirror_neuro_sim.py` (B-S119 7/7 🔵).
+# ─────────────────────────────────────────────────────────────────────
+def fetch_quantum_entropy(n_bytes, timeout=20):
+    """Fetch n_bytes of genuine physical quantum entropy from the ANU QRNG
+    (qrng.anu.edu.au — quantum vacuum fluctuation). Returns
+    (bytes_array, source_label). Falls back to a CLEARLY-LABELLED local
+    CSPRNG (os.urandom) if the network is unavailable — the label records
+    HONESTLY which source actually ran. The §97 noise-as-SEED legitimacy is
+    structural / source-independent; physical entropy makes it real rather
+    than a simulation of spontaneity."""
+    try:
+        url = ANU_QRNG_URL.format(n=n_bytes)
+        req = urllib.request.Request(url, headers={"User-Agent": "neuro-mirror"})
+        with urllib.request.urlopen(req, timeout=timeout) as resp:
+            payload = json.loads(resp.read().decode("utf-8"))
+        if payload.get("success") and isinstance(payload.get("data"), list) \
+                and len(payload["data"]) == n_bytes:
+            return np.array(payload["data"], dtype=np.uint8), \
+                "ANU_QUANTUM_RNG_qrng.anu.edu.au"
+        raise ValueError("ANU response malformed: " + str(payload)[:120])
+    except Exception as e:                       # network down / API change
+        arr = np.frombuffer(os.urandom(n_bytes), dtype=np.uint8)
+        return arr, f"LOCAL_CSPRNG_os.urandom_FALLBACK(anu_failed:{e})"
+
+
+def entropy_to_jitter(ent_bytes, N):
+    """Map raw entropy bytes → a zero-mean membrane-jitter vector of length N.
+    The §97 noise-as-SEED injection point: the entropy ONLY perturbs the
+    initial membrane-potential symmetry — it NEVER becomes a target, a
+    readout, or content the net reads as instruction. GIVEN a fixed entropy
+    byte stream this map is a pure function, so replaying the same stream
+    reproduces the run bit-identically."""
+    ent_bytes = np.asarray(ent_bytes, dtype=np.uint8)
+    if len(ent_bytes) < N:
+        ent_bytes = np.tile(ent_bytes, (N // len(ent_bytes)) + 1)
+    e = ent_bytes[:N].astype(np.float64) / 255.0 - 0.5   # ∈ [-0.5, 0.5]
+    return 0.10 * e                                       # small jitter
 
 
 # ─────────────────────────────────────────────────────────────────────
@@ -196,15 +267,21 @@ def run(n_stim=12, steps_per_stim=80, window=40, learning_rule="stdp_local",
             "CE channel — backend is not substrate-class.")
     if entropy_source not in ENTROPY_SOURCES:
         raise ValueError(f"entropy_source must be one of {ENTROPY_SOURCES}")
-    if entropy_source == "qrng":
-        raise NotImplementedError(
-            "entropy_source='qrng' is the §119 qmirror-neuro declared API "
-            "slot (ANU quantum-RNG as the §97 noise-as-SEED, never content). "
-            "Filled at consolidation once §119 lands — v0 does not fake it. "
-            "Use 'fixed_seed'.")
 
-    net = LIFSubstrate(seed=seed, learning_rule=learning_rule)
+    # §119 qrng — FILLED (v1 consolidation). The entropy is the §97
+    # noise-as-SEED: it perturbs ONLY the initial membrane symmetry, it is
+    # NEVER a target/readout/content (that would be the §97-forbidden
+    # command-channel). 'fixed_seed' = the deterministic baseline.
+    N_units = 96 + 96 + 64                       # LIFSubstrate default N
+    seed_jitter, entropy_label = None, "fixed_seed_deterministic"
+    if entropy_source == "qrng":
+        ent_bytes, entropy_label = fetch_quantum_entropy(N_units)
+        seed_jitter = entropy_to_jitter(ent_bytes, N_units)
+
+    net = LIFSubstrate(seed=seed, learning_rule=learning_rule,
+                       seed_jitter=seed_jitter)
     N = net.N
+    assert N == N_units, "LIFSubstrate N must match jitter length"
     rng = np.random.default_rng(seed + 1)
     stim_set = 0.30 * rng.standard_normal((n_stim, N))   # NOT a corpus/label
 
@@ -235,9 +312,12 @@ def run(n_stim=12, steps_per_stim=80, window=40, learning_rule="stdp_local",
     all_saturated = bool((spike_arr >= N).all())
     overall_rate = spike_total / (total_steps * N)
     return {
-        "engine": "NEURO-MIRROR", "version": "v0",
+        "engine": "NEURO-MIRROR", "version": "v1",
         "backend": backend, "learning_rule": learning_rule,
-        "entropy_source": entropy_source, "seed": seed, "base_ckpt": BASE_CKPT,
+        "entropy_source": entropy_source,
+        "entropy_source_label": entropy_label,
+        "seed_jitter_norm": round(net.seed_jitter_norm, 6),
+        "seed": seed, "base_ckpt": BASE_CKPT,
         "N": N, "n_stim": n_stim, "steps_per_stim": steps_per_stim,
         "psi_c1_per_stim": [round(x, 6) for x in psi_per_stim],
         "c_spk_per_stim": [round(x, 6) for x in c_per_stim],
@@ -272,16 +352,24 @@ def _smoke():
     c = confronts({"half": "async_substrate"})
     print(f"  confronts  : learning_channel={a}  async={b}/{c}")
     ok &= (a == CONFRONTABLE and b == WALL_B and c == WALL_B)
-    # 4. declared slots are HONEST stubs (must raise, not fake)
-    for kw, label in [(dict(learning_rule="ce_grad"), "ce_grad(§118)"),
-                      (dict(backend="gpu"), "gpu-backend"),
-                      (dict(entropy_source="qrng"), "qrng(§119)")]:
+    # 4. §119 qrng entropy source — FILLED (v1): runs; entropy is the §97
+    #    noise-as-SEED (perturbs the initial membrane symmetry only).
+    trq = run(learning_rule="stdp_local", entropy_source="qrng")
+    vq = verdict(trq)
+    physical = trq["entropy_source_label"].startswith("ANU_QUANTUM_RNG")
+    print(f"  qrng(§119) : source={'PHYSICAL-ANU' if physical else 'CSPRNG-fallback'}"
+          f"  jitter_norm={trq['seed_jitter_norm']:.4f}"
+          f"  non_degenerate={vq['non_degenerate']}")
+    ok &= vq["psi_bounded_0_1"]
+    # 5. remaining declared slots stay HONEST stubs (must raise, not fake)
+    for kw, label in [(dict(learning_rule="ce_grad"), "ce_grad(§118-VOID)"),
+                      (dict(backend="gpu"), "gpu-backend")]:
         try:
             (LIFSubstrate(**kw) if "learning_rule" in kw else run(**kw))
             print(f"  !!! slot {label} did NOT raise — FAIL"); ok = False
         except NotImplementedError:
             print(f"  slot       : {label} → honest NotImplementedError ✅")
-    print(f"NEURO-MIRROR v0 smoke: {'OK' if ok else 'FAIL'}")
+    print(f"NEURO-MIRROR v1 smoke: {'OK' if ok else 'FAIL'}")
     return ok
 
 

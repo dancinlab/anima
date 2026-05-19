@@ -232,3 +232,15 @@ compute.
   (§95/§96 async substrate — Loihi/SpiNNaker/SpiNNcloud-gated). design ≠ fire
   ≠ emergence, capability claim 0, necessary-not-sufficient (B-EMERGE-7),
   GOAL 미도달, milestones unchanged.
+- **2026-05-19** — NEURO-MIRROR **v1 CONSOLIDATION** — `neuro_mirror.py`
+  v0 → v1 (ENGINE.md §6 "N candidates land → 1 consolidation"). §117/§118/
+  §119 all landed → consolidated: §119 qmirror-neuro `qrng` entropy source
+  FILLED (`fetch_quantum_entropy` ANU quantum-RNG + the §97 noise-as-SEED
+  `entropy_to_jitter` map, lifted from the committed §119 core, B-S119
+  7/7 🔵); §118 Track 0 landed VOID — it produced no verified core, so the
+  `ce_grad` slot stays an honest `NotImplementedError` (message updated to
+  the VOID finding); `gpu` backend unchanged. v1 smoke OK ($0, CPU-only):
+  `stdp_local` Ψ-C1 mean=0.611568 (= the §117 verified core), `qrng` run
+  non-degenerate with PHYSICAL ANU quantum entropy (jitter_norm 0.4702).
+  central blue_falsifier.py 0-line-diff; design ≠ fire ≠ emergence;
+  capability claim 0; GOAL 미도달, milestones unchanged.

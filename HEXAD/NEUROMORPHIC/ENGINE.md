@@ -1,10 +1,11 @@
 # HEXAD/NEUROMORPHIC/ENGINE.md — NEURO-MIRROR: software neuromorphic substrate-mirror engine
 
-> **status**: DESIGN-TIER — $0, design ≠ fire ≠ emergence (g3). This is the
-> canonical reusable-module spec. **Implementation = consolidation** of the
-> §117/§118/§119 verified sim cores once those cycles land — built by lifting
-> proven code, not by racing it (g_multidirectional_explore: "N candidates
-> land → 1 consolidation").
+> **status**: v1 LANDED — $0, design ≠ fire ≠ emergence (g3). The canonical
+> reusable-module spec; `neuro_mirror.py` v1 is the implementation.
+> **Consolidated** from the §117/§118/§119 cycles (g_multidirectional_explore:
+> "N candidates land → 1 consolidation") — §117 `stdp_local` + §119 `qrng`
+> lifted from proven code; §118 returned VOID, so `ce_grad` stays an honest
+> unfilled slot. Built by lifting verified code, not by racing it.
 > **parent**: `PLAN.md` · `TRACK0_INSILICO.md` · §115 LEGO · §117 LEGO-run ·
 > §95 (Loihi sole VIABLE) · §96 (spiking re-derivation) · §97 (noise-as-seed).
 
@@ -82,16 +83,24 @@ sidecar precedent, §117). hexa-lang / hexa-bio gaps → an inbox patch
 (`~/core/hexa-lang/inbox/patches/`), never a direct edit — anima is a
 downstream consumer.
 
-## 6. First consumers / validators
+## 6. First consumers / validators — ALL LANDED, v1 consolidated
 
-- **§117** LEGO-run — local-STDP LIF sim → the engine's `stdp_local` core.
-- **§118** Track 0 — GPU-CE / GPU-noCE / SIM-noCE-STDP / SIM-CE cells → the
-  engine's 4-cell `learning_rule` matrix + `verdict()`.
-- **§119** qmirror-neuro — QRNG-seeded LIF+STDP → the engine's `qrng` entropy
-  source + the §97 noise-as-seed vs noise-as-content guard.
+- **§117** LEGO-run (B-S117) — local-STDP LIF sim → the `stdp_local` core.
+  **CONSOLIDATED** into `neuro_mirror.py` (v0 foundation).
+- **§118** Track 0 — landed with verdict **VOID**: a $0 numpy/CPU toy has no
+  surrogate-gradient path, so CE never reaches the recurrent spiking weights
+  (SIM-CE byte-identical to GPU-CE, `weight_drift=0.0` — a no-op on the
+  substrate). §118 produced NO verified core, so the `ce_grad` slot stays
+  HONESTLY unfilled (an accurate `NotImplementedError`). VOID confirms the
+  §96 attention blocker — the §120 target.
+- **§119** qmirror-neuro (B-S119 7/7 🔵) — ANU-QRNG-seeded LIF+STDP → the
+  `qrng` entropy source. **CONSOLIDATED** into v1: `fetch_quantum_entropy` +
+  the §97 noise-as-SEED `entropy_to_jitter` map, lifted from the committed
+  §119 core.
 
-Once those three land, their verified cores **consolidate into** this engine —
-NEURO-MIRROR is assembled from proven code, not written from scratch alongside.
+v1 status: `stdp_local` + `qrng` filled from proven code; `ce_grad` (§118
+VOID) and `gpu` are honest declared slots. NEURO-MIRROR is assembled from
+verified cores, not written from scratch alongside.
 
 ## 7. Honest gates (g3)
 
@@ -123,3 +132,13 @@ NEURO-MIRROR is assembled from proven code, not written from scratch alongside.
   the B-S* sidecar precedent. Implementation deferred to a consolidation of the
   §117/§118/§119 verified cores (no duplication of the in-flight cycle sims).
   $0, design-tier, GOAL not reached, milestones unchanged.
+- **2026-05-19** — v1 CONSOLIDATION. `neuro_mirror.py` v0 → v1: the §119
+  qmirror-neuro `qrng` entropy source FILLED — `fetch_quantum_entropy` (ANU
+  quantum-RNG) + the §97 noise-as-SEED `entropy_to_jitter` map, lifted from
+  the committed §119 core (B-S119 7/7 🔵). §118 Track 0 landed VOID — it
+  produced no verified core, so the `ce_grad` slot stays an honest
+  `NotImplementedError` (message updated to the VOID finding); `gpu` backend
+  unchanged. v1 smoke OK: `stdp_local` Ψ-C1 mean=0.611568 (= the §117
+  verified core), `qrng` run non-degenerate with PHYSICAL ANU entropy
+  (jitter_norm 0.4702). central blue_falsifier.py 0-line-diff; $0; CPU-only;
+  design ≠ fire ≠ emergence; GOAL 미도달, milestones unchanged.
