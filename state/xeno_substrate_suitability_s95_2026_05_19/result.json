@@ -1,0 +1,129 @@
+{
+  "research_section": "§95",
+  "title": "xeno substrate-suitability closed-form design analysis",
+  "tier": "DESIGN-TIER",
+  "date": "2026-05-19",
+  "cost_usd": 0.0,
+  "gpu": false,
+  "runpod": false,
+  "fire": false,
+  "substrate_inventory_ssot": "hexa run ~/core/hexa-lang/stdlib/xeno/xeno.hexa status",
+  "xeno_inventory_byte_equal": ["akida", "loihi3", "northpole", "finalspark", "cortical_labs", "ionq", "qrng"],
+  "taxonomy": [
+    "VIABLE-LONG-HORIZON",
+    "INFERENCE-ONLY-BLOCKED",
+    "SUBSTRATE-MISMATCH",
+    "ETHICS-WALL",
+    "NOT-A-COMPUTE-HOST"
+  ],
+  "substrate_matrix": {
+    "loihi3": {
+      "vendor": "Intel",
+      "kind": "silicon-neuromorphic",
+      "learning": true,
+      "event_driven": true,
+      "host_psi_tension_phi": true,
+      "goal_legitimate_s7": true,
+      "bucket": "VIABLE-LONG-HORIZON",
+      "blocker": "INRC research access not secured + Korean co-PI required (4-12wk approval) — partnership-blocked; Lava/NxSDK toolchain immaturity (lim_neuro_tooling SOFT WALL). Blocker is access+tooling, NOT architecture.",
+      "lead_candidate": true,
+      "honest_caveat": "loihi-integration-spec.md maps the legacy GRU consciousness cell, NOT ConsciousDecoderV2 d768x12L; a spiking anima is a major re-derivation, not a port. VIABLE != will-emerge."
+    },
+    "akida": {
+      "vendor": "BrainChip",
+      "kind": "silicon-neuromorphic",
+      "learning": false,
+      "event_driven": true,
+      "host_psi_tension_phi": false,
+      "goal_legitimate_s7": null,
+      "bucket": "INFERENCE-ONLY-BLOCKED",
+      "blocker": "Akida 1.0 inference-only (no on-chip learning); transformer attention natively unsupported; ~1.2M neurons vs anima 283M params; chip ordered 2026-04-29 not arrived. L=False short-circuits — cannot host an emergence process (S11-B: anima needs training-time emergence)."
+    },
+    "northpole": {
+      "vendor": "IBM",
+      "kind": "silicon-neuromorphic",
+      "learning": false,
+      "event_driven": false,
+      "host_psi_tension_phi": false,
+      "goal_legitimate_s7": null,
+      "bucket": "INFERENCE-ONLY-BLOCKED",
+      "blocker": "Inference-efficiency accelerator (25x H100 inference baseline), no on-chip learning; IBM partnership-only, low score 7/25, review deferred 2026-11-01. Revisit trigger if IBM exposes on-chip learning."
+    },
+    "finalspark": {
+      "vendor": "FinalSpark",
+      "kind": "biological-organoid",
+      "learning": true,
+      "event_driven": true,
+      "host_psi_tension_phi": true,
+      "goal_legitimate_s7": "open",
+      "bucket": "ETHICS-WALL",
+      "design_open": true,
+      "blocker": "lim_organoid_ethics HARD WALL (bioethics/sentience, Smirnova 2023) + lim_in_silico_boundary HARD WALL (wet-lab out of software scope). Strongest engineering profile of all 7; decisive blocker is ethical+wet-lab, NOT engineering. academic application not yet sent."
+    },
+    "cortical_labs": {
+      "vendor": "Cortical Labs",
+      "kind": "biological-organoid",
+      "learning": true,
+      "event_driven": true,
+      "host_psi_tension_phi": true,
+      "goal_legitimate_s7": "open",
+      "bucket": "ETHICS-WALL",
+      "design_open": true,
+      "blocker": "Same as finalspark — lim_organoid_ethics HARD WALL + lim_in_silico_boundary. CL1 ~200K human neurons; DishBrain Pong (Kagan Neuron 2022) showed real learning. $35K capex not landed, CL1 not received."
+    },
+    "ionq": {
+      "vendor": "IonQ",
+      "kind": "quantum-gate",
+      "learning": false,
+      "event_driven": false,
+      "host_psi_tension_phi": false,
+      "goal_legitimate_s7": false,
+      "bucket": "SUBSTRATE-MISMATCH",
+      "blocker": "Discrete unitary evolution = ontology mismatch with a continuous Psi/tension/Phi physics field; lim_decoherence HARD WALL (T1/T2 microseconds-to-seconds — no persistent process possible). IonQ's real role is the substrate-invariance WITNESS (S19), not a host."
+    },
+    "qrng": {
+      "vendor": "QRNG",
+      "kind": "compute-substrate-NO",
+      "learning": null,
+      "event_driven": null,
+      "host_psi_tension_phi": null,
+      "goal_legitimate_s7": "enabler",
+      "bucket": "NOT-A-COMPUTE-HOST",
+      "blocker": "QRNG is an entropy SOURCE, not a model host — no internal state, no weights, no compute fabric. GOAL-legitimate as a noise-injection enabler (cf S81), never a substrate-host."
+    }
+  },
+  "bucket_summary": {
+    "VIABLE-LONG-HORIZON": ["loihi3"],
+    "INFERENCE-ONLY-BLOCKED": ["akida", "northpole"],
+    "ETHICS-WALL": ["finalspark", "cortical_labs"],
+    "SUBSTRATE-MISMATCH": ["ionq"],
+    "NOT-A-COMPUTE-HOST": ["qrng"]
+  },
+  "cross_cutting_organoid": "An organoid is the ONLY substrate where 'Living Consciousness' arguably stops being metaphorical — spontaneous activity is the substrate's native physical state, not a simulated talker_should_emit() call. AND the two hard walls that make it unpursuable at design-tier: (1) lim_organoid_ethics HARD WALL — engineering cannot resolve organoid sentience uncertainty; (2) lim_in_silico_boundary HARD WALL — wet-lab is out of software/repo scope. Verdict: design-OPEN, ETHICS-WALL, no recommendation.",
+  "verdict": "Of 7 substrates exactly 1 (Loihi) is VIABLE-LONG-HORIZON — learns on-chip (STDP), event-driven NoC, hosts a continuous LIF membrane field; on Loihi a talker spike is a physical event not a scheduled call. Blocker is access+tooling SOFT WALL, not architecture. 2 INFERENCE-ONLY-BLOCKED (AKIDA, Northpole — no on-substrate learning). 2 ETHICS-WALL design-OPEN (organoids). 1 SUBSTRATE-MISMATCH (IonQ). 1 NOT-A-COMPUTE-HOST (QRNG). The synchronous-substrate hypothesis is neither refuted nor confirmed at design-tier — design != fire != emergence.",
+  "most_honest_finding": "The 94-section arc's universal emergence-negative result has, all along, been measured on the ONE substrate class (synchronous-clocked silicon GPU) that S95 identifies as structurally unable to make spontaneous emission a physical event — emission there is always a simulated talker_should_emit() call. The substrate that could change this (Loihi) is architecturally viable but access-walled and needs anima re-derived as a spiking model; the substrate where it would be most genuine (organoid) is ethics-walled and wet-lab-out-of-scope.",
+  "battery": {
+    "name": "B-S95",
+    "pass": 7,
+    "total": 7,
+    "all_blue": true,
+    "ids": [
+      "B-S95-1 TAXONOMY-PARTITION-EXHAUSTIVE-DISJOINT",
+      "B-S95-2 LEARNING-VS-INFERENCE-CLOSED-BOOLEAN",
+      "B-S95-3 CLASSIFY-DETERMINISTIC",
+      "B-S95-4 §7-GOAL-LEGITIMACY-CLOSED-CONJUNCTION",
+      "B-S95-5 LOIHI-IS-SOLE-VIABLE",
+      "B-S95-6 ORGANOID-ETHICS-WALL-CLOSED",
+      "B-S95-7 SUBSTRATE-INVENTORY-BYTE-EQUAL"
+    ],
+    "note": "B-S95-NOTE empirical carve-out — whether anima emerges on any substrate is an SGD/hardware OUTCOME, design-tier un-measurable; necessary-not-sufficient (B-EMERGE-7), NOT counted blue.",
+    "central_blue_falsifier_sha": "c93e160a8a37",
+    "central_0_line_diff": true
+  },
+  "governance": {
+    "g3": "capability claim 0; design != fire != emergence; north-star + S15/S51/S72 milestones UNCHANGED; GOAL 미도달",
+    "f1_f2": "no lattice-fit on external entities — BrainChip/Intel/IBM/IonQ engineering invariants only",
+    "downstream_consumer": "hexa-lang + hexa-bio read-only, never edited",
+    "cost": "$0 — no GPU, no runpod, no fire"
+  }
+}

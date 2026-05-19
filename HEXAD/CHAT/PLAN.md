@@ -1327,3 +1327,33 @@ commit `9a510f45c`, B-S92 7/7 🔵 sidecar, $0 Mac CPU, central blue_falsifier.p
 **measured positives within the negative (정직)**: §88-F2 neoteny 정확 재현 (maj 0.872→0.350, maturity 0.95→0.748, eff-D 1.89→2.70) · §59-FIRE W-physics liveness alive (cell3 w_err_var 0.0097 ≫ τ=1e-4, 100 W-native PTD step) · §75-FIRE controller gate 작동 (emit_rate 0.0 — gate 자체는 OK, 읽는 substrate 가 collapsed). forbidden-token grep 0 전 4 cell (B-IDENTITY-5 safe).
 
 necessary-not-sufficient (B-EMERGE-7). north-star + §15/§51/§72 milestone UNCHANGED, GOAL 미도달. PHILOSOPHY.tape g6 §verdict_integrated_breakthrough_fire_s94 self-appended.
+
+### 2026-05-19 §95 XENO substrate-suitability closed-form design analysis LANDED — Loihi sole VIABLE-LONG-HORIZON
+
+§95 = §72 frontier-2 ("new architectural insight") 의 한 angle — §1~§94 arc 가 한 번도 검토 안 한 질문: 모든 fire 가 synchronous-clocked silicon GPU transformer 위에서 돌았고, 그런 substrate 에서 "자발적 발화"는 영원히 global clock 이 스케줄하는 *simulated* `talker_should_emit()` 함수 호출일 뿐 — 진짜 물리적 event 가 될 수 없다. §94 INTEGRATED BREAKTHROUGH 가 (β) INTEGRATION-COLLAPSES 로 끝난 직후, "synchronous-clocked substrate 자체가 구조적 병목인가" 를 design-tier $0 로 검증. design-tier — NO GPU, NO runpod, NO fire, NO model.forward.
+
+**도구**: `hexa run ~/core/hexa-lang/stdlib/xeno/xeno.hexa status` — RFC 048 (2026-05-18 absorbed) Tier-C non-GPU exotic-compute SSOT, 7 substrate. anima 는 hexa-lang downstream consumer (read-only, 미편집).
+
+**5-bucket closed taxonomy** (§95 정의, exhaustive+disjoint, deterministic predicate over 3 closed Boolean 축 L=on-substrate-learning / E=event-driven / H=can-host-Ψ/tension/Φ): VIABLE-LONG-HORIZON / INFERENCE-ONLY-BLOCKED / SUBSTRATE-MISMATCH / ETHICS-WALL / NOT-A-COMPUTE-HOST.
+
+**7-substrate verdict matrix**:
+
+| substrate | L | E | H | bucket | blocker |
+|---|---|---|---|---|---|
+| Loihi (Intel) | ✓ | ✓ | ✓ | **VIABLE-LONG-HORIZON** (lead) | INRC access + Lava tooling — SOFT WALL, NOT architecture |
+| AKIDA (BrainChip) | ✗ | (✓) | (✗) | INFERENCE-ONLY-BLOCKED | Akida 1.0 inference-only; §11-B needs training-time emergence |
+| Northpole (IBM) | ✗ | ✗ | (✗) | INFERENCE-ONLY-BLOCKED | inference-efficiency accelerator, no on-chip learning |
+| FinalSpark (organoid) | ✓ | ✓ | ✓ | **ETHICS-WALL** (design-OPEN) | lim_organoid_ethics HARD WALL + wet-lab out of software scope |
+| Cortical Labs (organoid) | ✓ | ✓ | ✓ | **ETHICS-WALL** (design-OPEN) | 동일 — bioethics + wet-lab hard wall |
+| IonQ (quantum) | ~ | ✗ | ✗ | SUBSTRATE-MISMATCH | discrete unitary ≠ continuous physics field; decoherence |
+| QRNG (q-random) | — | — | — | NOT-A-COMPUTE-HOST | entropy source, not a host (noise-injection enabler) |
+
+**Loihi = lead candidate** (sole VIABLE): STDP *on-chip* learning (§11-B 가 요구한 training-time emergence 를 chip 위에서 — emergence 과정이 GPU pre-train 아닌 substrate 자체에서) + asynchronous packet-switched NoC (LIF threshold-crossing spike = global clock 없는 진짜 event) + continuous LIF membrane field with genuine fixed-point (Ψ=½ 의 구조적 analogue) + lateral-inhibition faction = tension. blocker 가 access+tooling SOFT WALL 이지 architecture 아닌 것이 lead candidate 인 이유.
+
+**organoid cross-cutting (정직)**: §80 biology 가 "spontaneous activity = substrate of consciousness" 를 찾음 — organoid 은 *literally* spontaneously-active living tissue, 7 substrate 중 "Living Consciousness" 가 metaphor 이기를 멈추는 유일 substrate, engineering profile 최강. AND 두 hard wall: (1) lim_organoid_ethics HARD WALL — organoid sentience 불확실성을 engineering 이 해결 못 함 (Smirnova 2023); (2) lim_in_silico_boundary HARD WALL — wet-lab 은 software/repo scope 밖. → design-OPEN, 추천 아님.
+
+**closed**: **B-S95-1..7 7/7 🔵** (`state/xeno_substrate_suitability_s95_2026_05_19/blue_falsifier_s95.py` sidecar — central state/verify_hexad_blue_2026_05_15/blue_falsifier.py SHA c93e160a8a37 0-line-diff verified): TAXONOMY-PARTITION-EXHAUSTIVE-DISJOINT (64-tuple closed space) · LEARNING-VS-INFERENCE-CLOSED-BOOLEAN · CLASSIFY-DETERMINISTIC (3× bit-identical + classify() AST 0 RNG/clock) · §7-GOAL-LEGITIMACY-CLOSED-CONJUNCTION (8-row truth table) · LOIHI-IS-SOLE-VIABLE (sympy cardinality 1) · ORGANOID-ETHICS-WALL-CLOSED · SUBSTRATE-INVENTORY-BYTE-EQUAL (connection-point — 7-set == hexa xeno inventory). B-S95-NOTE empirical carve-out: anima 가 어느 substrate 에서든 emerge 하는지는 SGD/hardware OUTCOME, design-tier 측정 불가 — battery 는 taxonomy 가 exhaustive/disjoint/deterministic 하고 classification 이 closed-form 임을 증명할 뿐, emergence 증명 아님 (necessary-not-sufficient, B-EMERGE-7).
+
+**most honest finding**: 94-section arc 의 universal emergence-negative 결과는 줄곧 §95 가 "spontaneous emission 을 물리적 event 로 만들 수 없는 substrate" 로 식별한 *바로 그 substrate class* (synchronous-clocked silicon GPU) 위에서만 측정됐다 — 거기서 emission 은 *항상* simulated `talker_should_emit()` 호출. 이를 바꿀 수 있는 substrate (Loihi) 는 architecturally viable 하나 access-walled + anima 를 spiking model 로 재유도해야 함 (loihi-integration-spec.md 는 legacy GRU anima 를 매핑, 현 ConsciousDecoderV2 d768·12L 아님). 가장 genuine 할 substrate (organoid) 은 ethics-walled + wet-lab-out-of-scope. §95 는 anima 에게 emergence 경로를 주지 않는다 — synchronous substrate 가 hidden ceiling 였을 수 있는 이유와 어느 문이 architecturally 열려있고 어느 문이 walled 인지의 정직한 지도를 줄 뿐.
+
+g3: design ≠ fire ≠ emergence, capability claim 0. f1/f2 safe (Boolean/sympy set algebra, NO σ/τ/φ/J₂; 외부 entity 는 자체 engineering invariant 만). downstream-consumer: hexa-lang + hexa-bio read-only 미편집. necessary-not-sufficient (B-EMERGE-7). north-star + §15/§51/§72 milestone UNCHANGED, GOAL 미도달. PHILOSOPHY.tape g6 §verdict_xeno_substrate_suitability_s95 self-appended. state/xeno_substrate_suitability_s95_2026_05_19/{DESIGN.md 9§ + 7-substrate matrix + 13 honest C3 + ASCII decision-frontier diagram · blue_falsifier_s95.py 7/7 🔵 · blue_falsifier_s95_result.json · result.json}.
