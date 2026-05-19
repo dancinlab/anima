@@ -1595,3 +1595,30 @@ operative wall relocation HONEST, NO positive manufactured (anti-padding per
 blue_falsifier.py sha `c93e160a8a376a94` 0-line-diff. downstream-consumer 0
 edit (hexa-lang/hexa-bio/kosmos read-only). north-star + §15/§51/§72 milestones
 UNCHANGED, GOAL 미도달. state/modality_native_psi_design_s110_2026_05_19/.
+
+### 2026-05-19 §111 MODALITY-NATIVE / SUBSTRATE-GENERAL Ψ-FIXED-POINT deep research
+
+LITERATURE-REVIEW tier, $0, NO GPU/runpod/fire/model.forward/corpus. §110's
+literature scan (does NOT re-derive §110). 42 papers (★★★★★ 8 · ★★★★ 16 ·
+★★★ 13 · ★★ 4 · ★ 1), 10 clusters (JEPA / deep-equilibrium / predictive-coding
+/ spiking / liquid-time-constant / residual-stream-geometry / Perceiver-ImageBind
+/ equilibrium-propagation / physics-driven-SSL / binding-problem).
+
+**VERDICT = LITERATURE-SUPPORTS-Ψ-C2-DEFINITION-CONFIRMS-§110-RELOCATION.** The
+2023-2026 literature SUPPORTS §110's Ψ-C2 as a *definitional target*: JEPA
+proves the modality-agnostic two-stream predictive comparison is buildable +
+LLM-JEPA confirms text is one instance (byte-reduction); Transformer-Dynamics
+(arxiv:2502.12131) independently validates the residual-stream cosine as a real
+structured dynamical observable (DIRECT Ψ-C2 carrier support); DEQ/PCN formalise
+the substrate-general fixed point. It does NOT REMOVE the wall — it CONFIRMS
+§110's relocation: every built modality-native predictive system gets its
+perceptual signal from a generic pretrain or graft (§7①/② FAIL, G1); the only
+§7③-clean realisations (spike-corr/EqProp/LTC) are substrate-gated to §95/§96
+(G2). Top-3 OPEN candidates: M1 Ψ-C2-residual-realisation ($0-design + data-gated
+π) · M2 §96-Ψ-C1 spike-corr (substrate-gated Loihi) · M3 Ψ-C2-as-$0-measurement
+(cheapest live next step, mirrors §17 observable-axis). 가능성 경로 ALL OPEN,
+none closed (B-S111-3). B-S111-1..4 4/4 🔵 light sidecar + B-S111-NOTE. central
+blue_falsifier.py sha `c93e160a8a376a94` 0-line-diff. downstream-consumer 0
+edit. g3 literature=inspiration NOT proof, capability claim 0,
+necessary-not-sufficient B-EMERGE-7. north-star + §15/§51/§72 milestones
+UNCHANGED, GOAL 미도달. state/modality_native_psi_deep_research_s111_2026_05_19/.
