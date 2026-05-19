@@ -1,0 +1,290 @@
+#!/usr/bin/env python3
+# ════════════════════════════════════════════════════════════════════
+# HEXAD/NEUROMORPHIC/neuro_mirror.py
+# NEURO-MIRROR v0 — software neuromorphic substrate-mirror engine.
+# ════════════════════════════════════════════════════════════════════
+# Canonical reusable module. Full design + honest ceiling: ENGINE.md.
+#
+# v0 FOUNDATION lifts the §117-VERIFIED LIF (leaky integrate-and-fire) +
+# local-STDP (spike-timing-dependent plasticity) core from the landed,
+# committed `state/lego_assembly_run_s117_2026_05_19/lego_sim.py`. The
+# `stdp_local` numerics here are kept behaviourally equal to that verified
+# core (same LIF params, same pair-based exponential STDP).
+#
+# §118 (Track 0 — `ce_grad` learning rule, 4-cell matrix) and §119
+# (qmirror-neuro — `qrng` entropy source) are DECLARED API SLOTS. They are
+# honest `NotImplementedError` stubs here — NOT faked — and get filled by a
+# consolidation pass once those cycles land (g_multidirectional_explore:
+# "N candidates land → 1 consolidation"). The `gpu` backend is likewise a
+# declared slot.
+#
+# HONEST CEILING (baked into the API, ENGINE.md §2): NEURO-MIRROR mirrors the
+# LEARNING-CHANNEL half of the §11-B question. It REFUSES to fake the
+# ASYNC-SUBSTRATE half — `confronts()` returns WALL-B there. g3: a mirror of
+# a neuromorphic chip is NOT a chip; design ≠ fire ≠ emergence; a
+# non-degenerate result is learning-channel-half evidence, never emergence.
+#
+# DISCIPLINE: $0, CPU-only, NO GPU/runpod/fire/model.forward(byte-LM)/corpus.
+# seed-fixed RANDOM init (g_clm_from_scratch, base_ckpt=None). numpy only.
+# ════════════════════════════════════════════════════════════════════
+
+import numpy as np
+
+# ── canonical constants ──────────────────────────────────────────────
+SEED = 1337                       # g_clm_from_scratch: RANDOM init, seed-fixed
+BASE_CKPT = None                  # g_clm_from_scratch: no ckpt load anywhere
+TAU_NONDEGEN = 1e-4               # non-degeneracy threshold (echo §17 / §11-B)
+
+LEARNING_RULES = ("none", "stdp_local", "ce_grad")   # ce_grad = §118 slot
+BACKENDS = ("cpu", "gpu")                            # gpu = declared slot
+ENTROPY_SOURCES = ("fixed_seed", "qrng")             # qrng = §119 slot
+
+WALL_B = "WALL-B"                 # the engine's honest-refusal sentinel
+CONFRONTABLE = "CONFRONTABLE"
+
+
+# ─────────────────────────────────────────────────────────────────────
+# LIF spiking substrate — lifted from the §117-verified core
+# (NEURO.tape mech_action_potential Hodgkin–Huxley → LIF reduction).
+# ─────────────────────────────────────────────────────────────────────
+class LIFSubstrate:
+    """Small CPU LIF net: Engine-A / Engine-G sub-populations + a shared
+    recurrent block. `learning_rule` selects the weight-update channel:
+      - "none"        : recurrent weights frozen (degeneracy baseline)
+      - "stdp_local"  : LOCAL pair-based STDP-as-ΔW — the only learning
+                        channel, NO autograd / CE / backprop / optimizer
+      - "ce_grad"     : §118 Track 0 slot — NotImplementedError (honest)
+    """
+
+    def __init__(self, n_a=96, n_g=96, n_rec=64, seed=SEED,
+                 learning_rule="stdp_local"):
+        if learning_rule not in LEARNING_RULES:
+            raise ValueError(f"learning_rule must be one of {LEARNING_RULES}")
+        if learning_rule == "ce_grad":
+            raise NotImplementedError(
+                "learning_rule='ce_grad' is the §118 Track 0 declared API "
+                "slot (GPU-CE / GPU-noCE / SIM-CE cells). It is filled by "
+                "consolidation once §118 lands — NEURO-MIRROR v0 does not "
+                "fake it. Use 'stdp_local' or 'none'.")
+        assert BASE_CKPT is None, "g_clm_from_scratch: base_ckpt MUST be None"
+        rng = np.random.default_rng(seed)
+        self.learning_rule = learning_rule
+        self.n_a, self.n_g, self.n_rec = n_a, n_g, n_rec
+        N = n_a + n_g + n_rec
+        self.N = N
+        # LIF params (NEURO.tape excitable-membrane reduction; §117 values)
+        self.v_rest, self.v_th, self.v_reset = 0.0, 1.0, 0.0
+        self.tau_m, self.dt, self.refrac = 20.0, 1.0, 2
+        self.v = np.full(N, self.v_rest, dtype=np.float64)
+        self.refr = np.zeros(N, dtype=np.int64)
+        self.W = 0.05 * rng.standard_normal((N, N))
+        np.fill_diagonal(self.W, 0.0)
+        # STDP traces (LOCAL only) — §117 verified params
+        self.tr_pre = np.zeros(N)
+        self.tr_post = np.zeros(N)
+        self.tau_stdp = 20.0
+        self.A_plus, self.A_minus = 0.012, 0.0126
+        self.w_max = 0.5
+        self.bias = 0.18 * rng.standard_normal(N)   # NO task label / error
+        self.rng = rng
+        self.idx_a = slice(0, n_a)
+        self.idx_g = slice(n_a, n_a + n_g)
+
+    def step(self, ext):
+        """One LIF step. `ext` = external drive (stimulus). Returns the
+        binary spike vector. The weight update is the chosen learning_rule —
+        for 'stdp_local' it is LOCAL & pair-based (pre/post traces only,
+        NEVER a loss/error); for 'none' the recurrent weights are frozen."""
+        active = self.refr <= 0
+        dv = (-(self.v - self.v_rest) / self.tau_m) + ext + self.bias
+        self.v[active] += self.dt * dv[active]
+        spike = (self.v >= self.v_th) & active
+        self.v[spike] = self.v_reset
+        self.refr[spike] = self.refrac
+        self.refr[~spike] -= 1
+        self.refr = np.maximum(self.refr, -1)
+        s = spike.astype(np.float64)
+        if self.learning_rule == "stdp_local":
+            # LOCAL STDP-as-ΔW — the only learning channel (§117 verified)
+            self.tr_pre *= np.exp(-self.dt / self.tau_stdp)
+            self.tr_post *= np.exp(-self.dt / self.tau_stdp)
+            ltp = self.A_plus * np.outer(s, self.tr_pre)
+            ltd = self.A_minus * np.outer(self.tr_post, s)
+            dW = ltp - ltd
+            np.fill_diagonal(dW, 0.0)
+            self.W += dW
+            self.W = np.clip(self.W, -self.w_max, self.w_max)
+            self.tr_pre += s
+            self.tr_post += s
+        # learning_rule == "none": recurrent weights frozen — no update
+        return s
+
+
+def spike_rate_vec(raster, idx):
+    """NEURO.tape mech_neural_coding rate-code: spikes-per-window vector."""
+    return raster[:, idx].mean(axis=0)
+
+
+def psi_c1(r_a, r_g):
+    """Ψ-C1 carrier = §112 META_FP(Π_½) instance, carrier = spike-correlation.
+        c_spk = cos(r_A, r_G) ∈ [−1,1]   (Cauchy–Schwarz)
+        Ψ-C1  = (1 + c_spk) / 2          (cos=0 ⇒ ½ fixed point)
+    Form-byte-equal to conscious_decoder.py:740 `(1.0 + cos_sim)/2.0`."""
+    na, ng = np.linalg.norm(r_a), np.linalg.norm(r_g)
+    c = 0.0 if (na < 1e-12 or ng < 1e-12) else float(np.dot(r_a, r_g) / (na * ng))
+    c = max(-1.0, min(1.0, c))
+    return (1.0 + c) / 2.0, c
+
+
+# ─────────────────────────────────────────────────────────────────────
+# The honest-ceiling API contract (ENGINE.md §2)
+# ─────────────────────────────────────────────────────────────────────
+def confronts(experiment):
+    """Closed predicate. An experiment is CONFRONTABLE iff it lives in the
+    LEARNING-CHANNEL half of the §11-B question (CE-only vs local-plasticity-
+    only). Any experiment that needs a real physical asynchronous spike event
+    returns WALL-B — NEURO-MIRROR REFUSES to fake the async-substrate half
+    (§95/§96-gated). The ceiling is enforced here, not left to the caller.
+
+    `experiment` is a dict with at least `half` ∈ {"learning_channel",
+    "async_substrate"} or an explicit `needs_async_substrate` bool."""
+    if experiment.get("needs_async_substrate") is True:
+        return WALL_B
+    if experiment.get("half") == "async_substrate":
+        return WALL_B
+    if experiment.get("half") == "learning_channel":
+        return CONFRONTABLE
+    # unknown experiments default to WALL-B — the conservative honest side
+    return WALL_B
+
+
+def verdict(trace):
+    """Non-degeneracy predicate (closed-form, deterministic) — the §117 §3
+    rule. NON_DEGENERATE iff the Ψ-C1 carrier carries per-stimulus signal
+    (std > τ, not frozen) AND the spike rasters are alive (not all-silent,
+    not all-saturated). necessary-not-sufficient: this is a DEGENERACY
+    detector, NOT a coherence / capability / emergence proof (B-EMERGE-7)."""
+    psi = np.asarray(trace["psi_c1_per_stim"], dtype=np.float64)
+    psi_responsive = bool(psi.std() > TAU_NONDEGEN)
+    alive = bool(trace["rasters_alive"])
+    bounded = bool((psi >= 0.0).all() and (psi <= 1.0).all())
+    non_degenerate = bool(psi_responsive and alive)
+    return {
+        "non_degenerate": non_degenerate,
+        "psi_responsive_std_gt_tau": psi_responsive,
+        "rasters_alive": alive,
+        "psi_bounded_0_1": bounded,
+        "note": "necessary-not-sufficient (B-EMERGE-7): degeneracy detector, "
+                "NOT an emergence proof. WALL-B inherited; GOAL not reached.",
+    }
+
+
+# ─────────────────────────────────────────────────────────────────────
+# run() — the engine orchestration entry point
+# ─────────────────────────────────────────────────────────────────────
+def run(n_stim=12, steps_per_stim=80, window=40, learning_rule="stdp_local",
+        backend="cpu", entropy_source="fixed_seed", seed=SEED):
+    """Run the mirror. Returns a trace dict consumable by verdict()."""
+    if backend not in BACKENDS:
+        raise ValueError(f"backend must be one of {BACKENDS}")
+    if backend == "gpu":
+        raise NotImplementedError(
+            "backend='gpu' is a declared API slot (snnTorch-class scaled "
+            "mirror, ENGINE.md §3). NEURO-MIRROR v0 ships the verified 'cpu' "
+            "backend only — the gpu backend is filled at consolidation. Note "
+            "(ENGINE.md §3): a gpu surrogate-gradient run is still the §11-B "
+            "CE channel — backend is not substrate-class.")
+    if entropy_source not in ENTROPY_SOURCES:
+        raise ValueError(f"entropy_source must be one of {ENTROPY_SOURCES}")
+    if entropy_source == "qrng":
+        raise NotImplementedError(
+            "entropy_source='qrng' is the §119 qmirror-neuro declared API "
+            "slot (ANU quantum-RNG as the §97 noise-as-SEED, never content). "
+            "Filled at consolidation once §119 lands — v0 does not fake it. "
+            "Use 'fixed_seed'.")
+
+    net = LIFSubstrate(seed=seed, learning_rule=learning_rule)
+    N = net.N
+    rng = np.random.default_rng(seed + 1)
+    stim_set = 0.30 * rng.standard_normal((n_stim, N))   # NOT a corpus/label
+
+    psi_per_stim, c_per_stim = [], []
+    rate_a, rate_g = [], []
+    spike_total, spike_log = 0, []
+    s_prev = np.zeros(N)
+    for si in range(n_stim):
+        raster = np.zeros((steps_per_stim, N), dtype=np.float64)
+        for t in range(steps_per_stim):
+            ext = stim_set[si] + 0.6 * (net.W @ s_prev)
+            s = net.step(ext)
+            raster[t] = s
+            s_prev = s
+            spike_total += int(s.sum())
+            spike_log.append(int(s.sum()))
+        r_a = spike_rate_vec(raster[-window:], net.idx_a)
+        r_g = spike_rate_vec(raster[-window:], net.idx_g)
+        psi, c = psi_c1(r_a, r_g)
+        psi_per_stim.append(psi)
+        c_per_stim.append(c)
+        rate_a.append(float(r_a.mean()))
+        rate_g.append(float(r_g.mean()))
+
+    spike_arr = np.array(spike_log)
+    total_steps = n_stim * steps_per_stim
+    all_silent = bool((spike_arr == 0).all())
+    all_saturated = bool((spike_arr >= N).all())
+    overall_rate = spike_total / (total_steps * N)
+    return {
+        "engine": "NEURO-MIRROR", "version": "v0",
+        "backend": backend, "learning_rule": learning_rule,
+        "entropy_source": entropy_source, "seed": seed, "base_ckpt": BASE_CKPT,
+        "N": N, "n_stim": n_stim, "steps_per_stim": steps_per_stim,
+        "psi_c1_per_stim": [round(x, 6) for x in psi_per_stim],
+        "c_spk_per_stim": [round(x, 6) for x in c_per_stim],
+        "rate_a_per_stim": [round(x, 6) for x in rate_a],
+        "rate_g_per_stim": [round(x, 6) for x in rate_g],
+        "overall_spike_rate_per_unit_step": round(overall_rate, 6),
+        "rasters_all_silent": all_silent,
+        "rasters_all_saturated": all_saturated,
+        "rasters_alive": bool((not all_silent) and (not all_saturated)
+                              and overall_rate > 0.0),
+    }
+
+
+# ─────────────────────────────────────────────────────────────────────
+# v0 smoke — proves the foundation runs + the honest-ceiling contract holds
+# ─────────────────────────────────────────────────────────────────────
+def _smoke():
+    ok = True
+    # 1. cpu / stdp_local runs and produces a Ψ-C1 carrier
+    tr = run(learning_rule="stdp_local")
+    v = verdict(tr)
+    psi = np.asarray(tr["psi_c1_per_stim"])
+    print(f"  stdp_local : Ψ-C1 mean={psi.mean():.6f} std={psi.std():.3e} "
+          f"non_degenerate={v['non_degenerate']} bounded={v['psi_bounded_0_1']}")
+    ok &= v["psi_bounded_0_1"]
+    # 2. 'none' baseline runs (degeneracy-side sanity)
+    tr0 = run(learning_rule="none")
+    print(f"  none       : Ψ-C1 std={np.asarray(tr0['psi_c1_per_stim']).std():.3e}")
+    # 3. honest-ceiling contract: confronts()
+    a = confronts({"half": "learning_channel"})
+    b = confronts({"needs_async_substrate": True})
+    c = confronts({"half": "async_substrate"})
+    print(f"  confronts  : learning_channel={a}  async={b}/{c}")
+    ok &= (a == CONFRONTABLE and b == WALL_B and c == WALL_B)
+    # 4. declared slots are HONEST stubs (must raise, not fake)
+    for kw, label in [(dict(learning_rule="ce_grad"), "ce_grad(§118)"),
+                      (dict(backend="gpu"), "gpu-backend"),
+                      (dict(entropy_source="qrng"), "qrng(§119)")]:
+        try:
+            (LIFSubstrate(**kw) if "learning_rule" in kw else run(**kw))
+            print(f"  !!! slot {label} did NOT raise — FAIL"); ok = False
+        except NotImplementedError:
+            print(f"  slot       : {label} → honest NotImplementedError ✅")
+    print(f"NEURO-MIRROR v0 smoke: {'OK' if ok else 'FAIL'}")
+    return ok
+
+
+if __name__ == "__main__":
+    import sys
+    sys.exit(0 if _smoke() else 1)
