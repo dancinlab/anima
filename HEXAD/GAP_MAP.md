@@ -111,7 +111,7 @@
 
 - §95 (`26eafc16b`, B-S95 7/7 🔵) — Loihi 유일 VIABLE-LONG-HORIZON (7 exotic substrate 중)
 - §96 (`58aed9755`, B-S96 7/7 🔵) — physics layer SPIKING-COMPATIBLE / `softmax(QK^T)` attention SPIKING-INCOMPATIBLE; §11-B-as-GPU-artifact 가설 COHERENT but NOT confirmed
-- `HEXAD/LOIHI/README.md` (2026-05-19) — Kapoho Point 용량 필요조건 ✅ / 충분조건 ❌, access SOFT WALL (INRC)
+- `HEXAD/NEUROMORPHIC/README.md` (2026-05-19) — Kapoho Point 용량 필요조건 ✅ / 충분조건 ❌, access SOFT WALL (INRC)
 - §113 (`1bd27f753`, B-S113 9/9 🔵) — from-scratch INHERITS-BOTH-WALLS-SKELETON-INVARIANT; D4 = §96 spike/Loihi + §110 Ψ-C1 1라인부터 = 유일 non-cosmetic move (confront NOT escape)
 - §115 (B-S115 9/9 🔵) — `HEXAD/LEGO/README.md` LEGO simulate-assemble STEP 0–2 design-tier; verdict **LEGO-DESIGN-CLOSE-SIM-IS-GPU-TAUTOLOGY** (GPU 위 spike-sim 학습채널 = 여전히 loss gradient ⇒ §96 substrate 시뮬해도 WALL-B RE-INSTANTIATE, confront 못함; §11-B-as-GPU hazard design-tier 확정). WALL-B confront = §96-physical (STEP 3 영구 fenced)
 - §117 (B-S117 7/7 🔵) — `HEXAD/LEGO/README.md` §4 STEP-1-2 in-silico RUN; verdict **LEGO-RUN-Ψ-FORM-NONDEGENERATE-BUT-WALL-B-INHERITED** ($0 CPU LIF spike net, LOCAL STDP-only no-CE/backprop; Ψ-C1 std 4.19e-2 ≫ τ=1e-4 = NON-degenerate, §11-B-echo did NOT hold — §117 *localises* §11-B not refutes; liveness ≠ capability, WALL-B confronted-in-sim NOT removed §115/§113 inherited, WALL-A 직교·불변, GOAL 미도달)
@@ -138,7 +138,7 @@
 - `GOAL.md` — north-star + honest-status (§95~§106 layer)
 - `HEXAD/README.md` — 🔑 PRIORITY #1 GAP callout (최상단)
 - `HEXAD/LLM.md` — param × data 2축 framing (Wei 2022)
-- `HEXAD/LOIHI/README.md` — substrate axis roadmap
+- `HEXAD/NEUROMORPHIC/README.md` — substrate axis roadmap
 - `LATTICE_POLICY.md` §3.1.1 — g2 integrity test md-side mirror
 - `HEXAD/CHAT/PLAN.md` — 진행 로그 chronological
 - `HEXAD/CHAT/RESEARCH.md` — §1 진단 + §1.3 candidate + §2/§3 fire evidence

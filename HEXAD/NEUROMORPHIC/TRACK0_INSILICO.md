@@ -1,4 +1,4 @@
-# HEXAD/LOIHI/TRACK0_INSILICO.md — Lava / NengoLoihi in-silico execution spec
+# HEXAD/NEUROMORPHIC/TRACK0_INSILICO.md — Lava / NengoLoihi in-silico execution spec
 
 > **status**: DESIGN-TIER — $0, on the GPU already rented, no new gate.
 > **g3**: design ≠ fire ≠ emergence. capability claim 0. north-star +

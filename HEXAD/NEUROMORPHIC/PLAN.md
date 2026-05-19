@@ -1,4 +1,4 @@
-# HEXAD/LOIHI/PLAN.md — substrate access + in-silico confront plan
+# HEXAD/NEUROMORPHIC/PLAN.md — substrate access + in-silico confront plan
 
 > **status**: PREP — design-tier, $0, hardware not secured, fire 0.
 > **g3**: this is a path plan, not a capability claim. design ≠ fire ≠
@@ -131,3 +131,14 @@ compute.
   for "use now"; EBRAINS SpiNNaker is the headline parallel track.
   $0, design-tier, hardware not secured, GOAL not reached, milestones
   unchanged.
+
+- **2026-05-19** — Folder renamed `HEXAD/LOIHI` → `HEXAD/NEUROMORPHIC`
+  (broader scope: Loihi · SpiNNaker · Akida · in-silico — not Loihi
+  alone). `git mv` preserved history for PLAN/README/TRACK0; gitignored
+  PII files moved local-only; `.gitignore` PII patterns moved to the new
+  path with the old patterns retained as defence-in-depth; a
+  `HEXAD/LOIHI/README.md` forwarding stub keeps the already-sent INRC
+  application URL (`/tree/main/HEXAD/LOIHI`) resolving instead of 404.
+  Two in-silico directions resumed in parallel (per "2개방향진행"):
+  Track 0 §96 §4.5 controls+harness, and the qmirror-style
+  QRNG-entropy-seeded LIF+STDP sim. $0, design-tier, GOAL not reached.

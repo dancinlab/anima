@@ -156,7 +156,7 @@ fire"). This section RECORDS the measured run; it does not overturn §115.
 - `state/lego_simulate_assemble_s115_2026_05_19/` — **§115 STEP 0–2 design-tier closed-form (B-S115 9/9 🔵, verdict LEGO-DESIGN-CLOSE-SIM-IS-GPU-TAUTOLOGY) — 본 문서를 IDEA→DESIGN-TIER 로 승격한 §N**
 - `state/from_scratch_redesign_s113_2026_05_19/` — §113 D4 REPOINTS-TO-§96 (본 문서의 모(母) verdict)
 - `state/loihi_spiking_rederivation_s96_2026_05_19/` — §96 Ψ-C1 spike-corr + §11-B-as-GPU-artifact 가설
-- `state/xeno_substrate_suitability_s95_2026_05_19/` + `HEXAD/LOIHI/README.md` — §95 substrate matrix (Loihi VIABLE / organoid ETHICS-WALL / access-wall)
+- `state/xeno_substrate_suitability_s95_2026_05_19/` + `HEXAD/NEUROMORPHIC/README.md` — §95 substrate matrix (Loihi VIABLE / organoid ETHICS-WALL / access-wall)
 - `state/modality_native_psi_design_s110_2026_05_19/` + `state/meta_fixed_point_s112_2026_05_19/` — Ψ-C1/C2 정의 + meta-fixed-point form ψ(c)=(1+c)/2 (carrier=spike-corr 인스턴스)
 - `HEXAD/GAP_MAP.md` · `GOAL.md` honest-status — two-walls 수렴 지도
 - `~/core/hexa-bio` README (5-axis Q·W·N·R·V) · `~/core/hexa-matter` README (36-verb) — consume-only spec source
@@ -172,10 +172,10 @@ fire"). This section RECORDS the measured run; it does not overturn §115.
 
 - **2026-05-19** — 파일 이동 `HEXAD/LEGO.md` → `HEXAD/LEGO/README.md`
   (사용자 directive "LEGO.md => LEGO/README.md" / "HEXAD/LEGO/* 에 모두 정리";
-  `LOIHI.md`→`HEXAD/LOIHI/README.md` 와 동일 패턴, g_doc_consolidation
+  `LOIHI.md`→`HEXAD/NEUROMORPHIC/README.md` 와 동일 패턴, g_doc_consolidation
   HEXAD-internal 통합). 내용 변경 0 (title 줄 1개만 경로 갱신) + live
   cross-link repoint (HEXAD/GAP_MAP.md substrate-axis index ·
-  HEXAD/LOIHI/README.md §8.1). 과거 append-only 로그 (AGENTS.tape
+  HEXAD/NEUROMORPHIC/README.md §8.1). 과거 append-only 로그 (AGENTS.tape
   n_hexad_progress · archive/PHILOSOPHY.tape g6 · GAP_MAP/CHAT-PLAN Log
   narrative) 의 `HEXAD/LEGO.md` 표기는 당시-사실 기록이라 retro-edit 0
   (g3 drift-avoidance, LOIHI 이동과 동일 처리). §115/§117 state 증거
