@@ -75,6 +75,8 @@ Sources:
 
 ## Log
 
+- 2026-05-20 — **cleanup-session 100% closure** (`/goal` 추천순 자율 마감). 5 잔여 항목 전부 closure: ① `anima-agent*` 7 dir — 전부 active (참조 4-48), 의도적 모듈 분리로 판정 → **유지** (병합 시 import-link 수십 곳 깨짐, ROI 음수). ② `anima-hexad` (27-file prototype, untracked, stale 2026-04-21, HEXAD/ 와 공통파일 1개뿐 = 중복 아님) → `archive/anima-hexad/` 이동 + symlink (root declutter). ③ naming-dup 3쌍 검증 — `test/`(flat smoke) vs `tests/`(structured) 의도적 구분 · `verify/`(atlas_check) vs `verifier/`(an11) 다른 verifier · `edu/`(curriculum) vs `edu_new/`(tension-drop sim) 완전히 다른 내용 → **3쌍 다 실제 중복 아님, 병합 안 함** (구조-only 추측이 틀렸음, anima-hexad 와 같은 패턴). ④ `archive/state_legacy/` 73 GB → **archive 보존** (이력 보존 > 디스크, binary 는 이미 gitignore). ⑤ hexa-lang `tmp_*.hexa` → hexa-lang in-flight 미커밋 작업 (10건 dirty) 으로 **deferred** (tree 깨끗할 때 별도, closure-failure 아닌 외부 blocker). cleanup-session 종결: state/ junk-drawer 1,189 해소 + cruft 33k 삭제 + REGISTRY/wilson-tree forward 자동화.
+
 - 2026-05-20 — **state/ result-less backlog 정리 LANDED** — 990 result-less dir (>=3일 미수정) → `archive/state_legacy/` symlink-preserving 이동. 최근 3일 수정분 13 dir 은 in-flight 가능성으로 state/ 보존. state/ 최종: 13 active real dir + 1,181 symlink (전부 canonical 가리킴). archive/state_legacy/ 73 GB — `.gitignore` 에 binary 패턴 (*.pt/*.safetensors/corpus*/*.jsonl 등) 추가, text evidence 만 추적. result-bearing §N 은 이미 HEXAD/<TOPIC>/state/ + REGISTRY (Phase C/후속).
 
 - 2026-05-20 — **Phase C 후속 fix LANDED** — Phase C 의 `.gitignore` 회귀 (`HEXAD/*/state/` 가 전 topic 을 ignore, LEGO/NEUROMORPHIC 만 negate) 가 1,109 §N evidence 파일을 git 에서 탈락시킴. line 396 blanket-ignore 제거 (module-level state dir 0개 = 정당 대상 부재), binary-only excludes 유지. result.json gitignored 156→0. commit `e0c708912`.
