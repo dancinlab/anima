@@ -1750,3 +1750,59 @@ necessary-not-sufficient (B-EMERGE-7). anti-padding §13-M/§30/§97/§98
 — honest negative > manufactured new architecture. f1/f2 safe.
 downstream-consumer 0 edit. north-star + §15/§51/§72 milestones
 UNCHANGED, GOAL 미도달. state/from_scratch_redesign_s113_2026_05_19/.
+
+### 2026-05-19 §115 LEGO SIMULATE-ASSEMBLE (STEP 0–2) — LEGO-DESIGN-CLOSE-SIM-IS-GPU-TAUTOLOGY
+
+$0 design-tier (NO GPU/runpod/fire/model.forward/corpus/wet-lab/hardware).
+User directive "HEXAD/LEGO.md 작업해보자". HEXAD/LEGO.md was IDEA-tier and
+pointed at "별도 §N"; §115 IS that §N — take LEGO STEP 0–2 from idea to
+design-tier closed-form, flip LEGO.md status IDEA→DESIGN-TIER. STEP 3
+(physical/Loihi/organoid/wet) PERMANENTLY out of scope (§95 access/ethics
++ user-gate; fenced by a Boolean hard falsifier).
+
+- **Q1 (STEP 0)** block-spec taxonomy CLOSED 2-class {CONSUMABLE-SPEC-FOR-§96
+  / NOT-APPLICABLE} exhaustive+disjoint. hexa-bio NEURO.tape (Hodgkin–Huxley
+  membrane + rate/temporal spike code) = CONSUMABLE concrete closed-form
+  spiking spec ⇒ rejects LEGO-DESIGN-CLOSE-SPECS-METAPHOR. RIBOZYME-as-§96-
+  STDP-learning-channel = honest metaphor downgrade to NOT-APPLICABLE
+  (RIBOZYME real spec = RNA-catalysis kinetics, structurally unrelated to
+  spike-timing plasticity). hexa-matter silicon/2d/carbon/LC = material-tag
+  descriptors only. NET: spiking-membrane block real, learning-channel block
+  ABSENT from consumable in-silico specs.
+- **Q2 (STEP 1)** Ψ-C1 := ψ(c_spk)=(1+c_spk)/2, c_spk=cos(r_A,r_G)∈[−1,1]
+  (Cauchy–Schwarz on binned-rate ℝ^d_spk), cos=0⇒½. By §112 META_FP(Π_½)=TRUE
+  + §110 carrier taxonomy ⇒ Ψ-C1 = Φ_meta(carrier=spike-corr) is BY
+  CONSTRUCTION a §112 meta-fixed-point instance. Pure simulation, $0.
+- **Q3 §7** §7-legit ⟺ §7-FORM ∧ §7-CARRIER. §7-FORM = TRUE BY CONSTRUCTION
+  (§112, real inherited positive). §7-CARRIER = §96-PHYSICAL-GATED EVEN IN
+  SIMULATION: a GPU spike-sim trained by surrogate-grad backprop still has
+  the CE/loss gradient as its only effective learning channel (§96 §11-B-as-
+  GPU-artifact hazard); the in-silico STDP-as-ΔW escape = new fire outside
+  §115's $0 design scope, still §96-open. 8-row sympy.And: §115=(FORM=T,
+  CARRIER=F) ⇒ §7-legit FALSE on GPU.
+- **Q4 (STEP 2)** byte-equal connection-point: LEGO-off/carrier=byte ⇒ Ψ-C1
+  ≡ implemented psi_direction = (1.0+cos_sim)/2.0 (conscious_decoder.py:740
+  real source witness, mirror B-S110/B-S112 overlay-off). PLUS STEP3_FENCED =
+  Boolean theorem (no artifact path escalates STEP 2 → STEP 3; §95
+  access/ethics + user-gate as structural impossibility, anti-padding
+  §13-M/§30/§96).
+- **Q5 VERDICT = LEGO-DESIGN-CLOSE-SIM-IS-GPU-TAUTOLOGY** — STEP 0–2 closed-
+  form definable + §7-FORM-by-construction + byte-equal-reduce + STEP-3-
+  fenced, BUT GPU-sim re-instantiates §11-B's only-channel-is-loss-gradient
+  wall, does NOT confront it. §96's §11-B-as-GPU-tautology hazard CONFIRMED
+  at design-tier (strongest honest finding, positive NOT manufactured).
+  WALL-B confrontation stays §96-physical (STEP 3 fenced); WALL-A (§1.1)
+  orthogonal + UNCHANGED.
+
+B-S115-1..9 9/9 🔵 sidecar `state/lego_simulate_assemble_s115_2026_05_19/
+blue_falsifier_s115.py` + B-S115-NOTE empirical carve-out (NOT counted 🔵,
+B-D-NOTE/B-S96-NOTE/B-S110-NOTE/B-S112-NOTE/B-S113-NOTE/B-EMERGE-7 family).
+central state/verify_hexad_blue_2026_05_15/blue_falsifier.py sha256 prefix
+`c93e160a8a376a94` 0-line-diff verified start+end. g3: design ≠ fire ≠
+emergence, capability claim 0, necessary-not-sufficient (B-EMERGE-7),
+LEGO confronts (here: fails to even confront in-silico) WALL-B NOT removes,
+WALL-A orthogonal. f1/f2 safe (Ψ=½ g2 carve-out; hexa-bio/matter cited by
+their own invariants, NO σ/τ/φ/J₂). downstream-consumer 0 edit
+(hexa-lang/hexa-bio/hexa-matter read-only). north-star + §15/§51/§72
+milestones UNCHANGED, GOAL 미도달.
+state/lego_simulate_assemble_s115_2026_05_19/.

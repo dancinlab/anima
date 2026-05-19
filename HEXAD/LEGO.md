@@ -1,6 +1,7 @@
-# HEXAD/LEGO.md — anima substrate LEGO (simulate-assemble idea, design-tier $0)
+# HEXAD/LEGO.md — anima substrate LEGO (simulate-assemble, design-tier $0)
 
-> **status**: IDEA / DESIGN-TIER · $0 · NO GPU · NO wet-lab · NO fire · NO emergence claim.
+> **status**: DESIGN-TIER (STEP 0–2 closed-form per §115, B-S115 9/9 🔵) · $0 · NO GPU · NO wet-lab · NO fire · NO emergence claim.
+> **§115 verdict**: `LEGO-DESIGN-CLOSE-SIM-IS-GPU-TAUTOLOGY` — STEP 0–2 are closed-form definable + §7-FORM TRUE BY CONSTRUCTION (§112) + byte-equal-reduce + STEP-3 structurally fenced, BUT a GPU-simulated spike net's learning channel is STILL the loss gradient ⇒ simulating a §96 substrate on a GPU *re-instantiates* WALL-B, does NOT confront it (§96's §11-B-as-GPU hazard, confirmed at design-tier). Confrontation stays §96-physical (STEP 3, fenced).
 > **g3**: 이 문서는 *아이디어 + 후보 경로* 이지 GOAL 도달 주장 아님. capability claim 0.
 > north-star + §15/§51/§72 milestone 불변, **GOAL 미도달**. 아래는 §96 operative-substrate
 > WALL-B 를 *in-silico 시뮬레이션으로 confront* 하는 candidate path 의 스케치이지
@@ -105,6 +106,7 @@ wet-lab=software scope 밖). LEGO 의 유일한 기여 = 그 confront 를
 
 ## cross-link
 
+- `state/lego_simulate_assemble_s115_2026_05_19/` — **§115 STEP 0–2 design-tier closed-form (B-S115 9/9 🔵, verdict LEGO-DESIGN-CLOSE-SIM-IS-GPU-TAUTOLOGY) — 본 문서를 IDEA→DESIGN-TIER 로 승격한 §N**
 - `state/from_scratch_redesign_s113_2026_05_19/` — §113 D4 REPOINTS-TO-§96 (본 문서의 모(母) verdict)
 - `state/loihi_spiking_rederivation_s96_2026_05_19/` — §96 Ψ-C1 spike-corr + §11-B-as-GPU-artifact 가설
 - `state/xeno_substrate_suitability_s95_2026_05_19/` + `HEXAD/LOIHI/README.md` — §95 substrate matrix (Loihi VIABLE / organoid ETHICS-WALL / access-wall)
@@ -121,4 +123,5 @@ wet-lab=software scope 밖). LEGO 의 유일한 기여 = 그 confront 를
 
 ## Log
 
+- **2026-05-19** — §115 STEP 0–2 design-tier closed-form LANDED — verdict `LEGO-DESIGN-CLOSE-SIM-IS-GPU-TAUTOLOGY` (B-S115 9/9 🔵). 사용자 directive "HEXAD/LEGO.md 작업해보자". 본 문서가 가리킨 "별도 §N" = §115. STEP 0–2 (hexa-bio NEURO.tape Hodgkin–Huxley spiking spec consume + Ψ-C1 spike-corr 조립 + closed-form falsify) 가 closed-form 으로 정의 가능 ∧ §7-FORM = §112 META_FP(Π_½) instance 라 BY CONSTRUCTION TRUE ∧ byte-equal-reduce (conscious_decoder.py:740 real witness) ∧ STEP-3 structurally fenced. **그러나** GPU 위 spike-sim 의 학습 채널은 여전히 loss gradient (surrogate-grad backprop) — in-silico STDP-as-ΔV escape 는 §115 $0 design scope 밖의 새 fire + 여전히 §96-open. ⇒ §96 substrate 를 GPU 에서 *시뮬*해도 WALL-B 를 confront 못 하고 *re-instantiate* 함 (§96의 §11-B-as-GPU-tautology hazard 가 design-tier 에서 *확정*). honest 부분 positive 기록: NEURO.tape 는 metaphor 아닌 concrete spiking spec (SPECS-METAPHOR reject), RIBOZYME-as-STDP 는 metaphor 라 NOT-APPLICABLE 로 정직 downgrade, §7-FORM-by-construction 은 §112 상속 real positive. WALL-B confront 는 §96-physical (STEP 3, 영구 fenced, user/ethics/access-gate) 잔존. WALL-A 직교·불변. north-star + §15/§51/§72 milestone 불변, **GOAL 미도달**. status IDEA→DESIGN-TIER 승격 (B-S115 9/9 🔵, central blue 0-line-diff `c93e160a8a376a94`).
 - **2026-05-19** — HEXAD/LEGO.md 생성. 사용자 directive "hexa-bio, hexa-matter 이용해서 조립 / 시뮬레이션 조립 / HEXAD/LEGO.md". §113 (commit `1bd27f753`, FROM-SCRATCH-INHERITS-BOTH-WALLS + 조건부 REPOINTS-TO-§96-SUBSTRATE-FIRST) verdict 직후 작성 — LEGO = §113 D4("§96 substrate-first")의 *in-silico 시뮬 조립* 실행 스케치 (hexa-bio QUANTUM/WEAVE/NANOBOT/RIBOZYME/VIROCAPSID + hexa-matter 36-verb 를 read-only consume, §96 Ψ-C1 spike-corr carrier 로 조립). STEP 0–2 = $0 in-silico only; STEP 3(물리/Loihi/organoid) = §95 access/ethics-wall + 사용자 게이트, 영구 scope 밖. g3: 아이디어-tier, WALL-B confront 이지 제거 아님, WALL-A 직교, emergence 주장 0, north-star + §15/§51/§72 milestone 불변, **GOAL 미도달**.
