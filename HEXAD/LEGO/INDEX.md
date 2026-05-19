@@ -5,6 +5,12 @@
 > Architecture & overview in `README.md`; chronological log in `PLAN.md`;
 > canonical engine in `lego_engine.py`.
 
+> **⚠ §N collision** — the LEGO arc `§N` is LEGO-local. sibling arcs
+> (main-path / NEUROMORPHIC) reuse `§108`/`§125`/`§126`/`§128` for different
+> work, both landed. retro-rename is forbidden (g6 append-only). LEGO rows
+> here are unambiguous via the **state-dir basename (`lego_*`)** column —
+> that is the collision-free key, not the bare `§N`.
+
 ## arc cycles
 
 | §N   | date       | tier            | verdict                                                    | battery       | state-dir                                                            | engine touch |

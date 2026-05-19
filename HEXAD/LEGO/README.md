@@ -151,11 +151,22 @@ fire"). This section RECORDS the measured run; it does not overturn §115.
   lego_sim.py, result.json, blue_falsifier_s117.py 7/7 🔵,
   blue_falsifier_s117_result.json, run.log}`.
 
-## §5 — §117 이후 LEGO arc (§124 → §128, 4 cycles 2026-05-20)
+## §5 — §117 이후 LEGO arc (§124 → §142, 19-cycle arc 2026-05-19→20)
 
 §117 의 "non-degenerate" 가 정확히 무엇을 *닫았는지* 와 *남겨놨는지* 를
-§124–§128 4 cycles 가 정직히 분해·측정·closure 했다. 모두 $0 sidecar,
-central blue 0-line-diff, anti-padding precedent.
+§124–§142 19-cycle arc 가 정직히 분해·측정·closure 했다. 모두 $0 sidecar,
+central blue 0-line-diff (sha `c93e160a8a376a94`), anti-padding precedent.
+per-cycle 상세 = `INDEX.md` (19-row 표, 118 🔵) · `PLAN.md` (chronological);
+아래 §5 는 overview 만.
+
+> **⚠ §N 번호공간 충돌 (honest)** — LEGO arc 의 `§124–§142` 와 sibling arc
+> (main-path / NEUROMORPHIC) 의 `§108`(3B param fire) · `§125`(NONCE-FF) ·
+> `§126`(PCN) · `§128`(software-breakthrough research) 가 같은 `§N` 을
+> *다른 의미*로 쓴다. 두 arc 모두 landed·pushed — retro-rename 안 함
+> (g6 append-only · g_new_state_path scope_exclusion: 사후 mv = anti-pattern).
+> LEGO arc 식별자는 항상 **state-dir basename (`lego_*`) 또는 `B-S<N>`
+> battery** 로 disambiguate — 그 둘은 충돌 없음 (`lego_layer2_*_s125` ≠
+> sibling `nonce_ff_fire_s125`).
 
 ### 3-layer liveness partition (§124 신설, 4 cycle 적용)
 
@@ -205,11 +216,59 @@ violates §7 OR re-runs §83/§11-B near-collapse. Anti-padding precedent
 
 ### §129 — ENGINE CONSOLIDATION (consolidation · no battery)
 
-User pivot: "LEGO 폴더안에 엔진완성해나가야지 + 문서정리도". This
-README + `PLAN.md` + `INDEX.md` + `lego_engine.py` together promote the
-LEGO arc from `state/` probe-tier sidecar scripts to a canonical
-HEXAD-LEGO folder. Engine lib SSOT = `lego_engine.py`. State-dir
-evidence remains untouched (sha-locked historical record).
+LEGO arc 를 `state/` probe-tier sidecar 에서 canonical `HEXAD/LEGO/`
+folder 로 승격 — engine lib SSOT = `lego_engine.py` (+ `lego_engine.hexa`
+hexa-native, §140). state-dir evidence 불변 (sha-locked historical record).
+
+### §131–§137 — LAYER-2 정밀화 + 엔진 무결성 자가검출
+
+- **§131** `STRONGLY-NSTIM-DEPENDENT` — η² 가 자극 개수(n_stim)에 강하게
+  의존 (range ratio 2.199×, peak @ n_stim=4). B-S131 7/7 🔵.
+- **§132** `SHAPE-FIT-IDENTIFIED` — §127 비단조 η²(N) 가 log-N Gaussian
+  inverted-U, R²=0.9995, peak N* ≈ 730–1000. B-S132 6/6 🔵.
+- **§133→§134→§135** — *한 측정이 자기 계측기의 편향을 스스로 검출* :
+  §133 이 §127 대비 pooled η² drift 를 감지 → §134 가 §129 의 engine
+  promote 가 byte-equal 이 아니었음을 AST diff 로 확인 → `lego_engine.py`
+  를 §117 source 와 byte-equal 재작성, 재검증이 §127 과 일치
+  (`ENGINE-BYTE-EQUALITY-RESTORED-AND-VALIDATED`, B-S134 7/7 🔵) → §135
+  canonical engine 위 per-N SE 재측정 `MONOTONE-DECREASE-SURVIVES-CANONICAL`
+  (B-S135 7/7 🔵).
+- **§137** `PEAK-N-STIM-N-INVARIANT` — (N, n_stim) cross-matrix, peak
+  n_stim=4 가 N 무관 (B-S137 5/5 🔵).
+
+### §136 — LEGO ARC MILESTONE (doc-tier · B-S136 5/5 🔵)
+
+§115→§135 11-cycle close-out (mirror §15/§51). 핵심 정직 finding: *측정이
+자기 계측기 편향(engine drift)을 자가검출* (§133→§134). LEGO arc 는
+design-level 에서 닫혔다 — §96 substrate 를 in-silico 로 confront 완료,
+GOAL 도달 아님.
+
+### §138–§141 — hexa-native engine chain (HEXA_FIRST_WARN 구조적 closure)
+
+LEGO arc 가 23× 미뤄온 HEXA_FIRST_WARN 을 *deferral 이 아니라 실제
+hexa-native engine* 으로 닫음:
+
+```
+§138 design ─→ §139 inbox patch ─→ hexa-lang PR #77 ─→ §140 port ─→ §141 GPU gap
+"3 primitive   filed (hexa-first    spiking_lib.hexa   lego_engine    flame_stdp_pair_gpu
+ gapped"        path)               4/4 PASS impl      .hexa 4/4 PASS  device kernel 명명
+```
+
+- **§138** `HEXA-NATIVE-ENGINE-DESIGN-CLOSE` — 3 flame spiking primitive
+  gap 명명. **S121** Loihi Lava mapping spec (access-walled, readable-only).
+- **§139** flame spiking-primitives inbox patch FILED (hexa-first PR-only).
+- **§140** `lego_engine.hexa` — anima 첫 hexa-native LEGO engine, `hexa
+  build` clean, F-S140 4/4 PASS. numpy 와 algorithmic-equivalent (byte-equal
+  아님 — RNG divergence honest).
+- **§141** `GPU-SPIKING-DESIGN-CLOSE` — LEGO GPU fire 는 2 upstream step
+  남음 (`flame_stdp_pair_gpu` O(N²) CUDA device kernel 필요).
+
+### §142 — LEGO→MAIN-PATH SUBSTRATE PIVOT BRIDGE (design · B-S142 5/5 🔵)
+
+LEGO arc 의 *바깥으로 나가는 다리* — 18 LEGO cycle 이 main-path 의 WALL-B
+substrate 결정에 무엇을 건네는지 명세. 3 옵션 (P1 GPU-유지 / P2 Loihi-물리-
+pivot / P3 in-silico-spiking-main-path) 각각 gate 와 함께, **cheap winner
+없음** 정직 명시. pivot 은 strategic 결정이지 $0 cycle 아님.
 
 ## §6 — engine SSOT
 
@@ -237,9 +296,10 @@ discipline lives in probes, not in the engine).
 
 ## cross-link
 
-- `HEXAD/LEGO/lego_engine.py` — **canonical engine SSOT (post-§129, promoted from §117 lego_sim.py)**
-- `HEXAD/LEGO/PLAN.md` — chronological progress log (§115 → §129, append-only)
-- `HEXAD/LEGO/INDEX.md` — SSOT mapping (§N ↔ state-dir ↔ B-S battery)
+- `HEXAD/LEGO/lego_engine.py` — **canonical engine SSOT (post-§134, byte-equal §117 lego_sim.py)**
+- `HEXAD/LEGO/lego_engine.hexa` — **hexa-native engine (§140)** — algorithmic-equivalent, F-S140 4/4 PASS
+- `HEXAD/LEGO/PLAN.md` — chronological progress log (§115 → §142, append-only)
+- `HEXAD/LEGO/INDEX.md` — SSOT mapping (§N ↔ state-dir ↔ B-S battery, 118 🔵 / 19 cycles)
 - `state/lego_layer3_design_close_s128_2026_05_20/` — §128 layer-3 DESIGN-CLOSE-REQUIRES-TASK-ADDITION (B-S128 6/6 🔵)
 - `state/lego_layer2_scaling_law_s127_2026_05_20/` — §127 4-point fit k=−0.02 R²=0.022 APPROXIMATELY-N-INVARIANT (B-S127 8/8 🔵)
 - `state/lego_layer2_nscale_probe_s126_2026_05_20/` — §126 η² 0.271→0.322 ROBUST-GROWS-WITH-N at one point (B-S126 7/7 🔵)
@@ -261,6 +321,34 @@ discipline lives in probes, not in the engine).
 ---
 
 ## Log
+
+- **2026-05-20** — §142 LEGO→MAIN-PATH SUBSTRATE PIVOT BRIDGE LANDED
+  (`HEXAD/LEGO/state/lego_substrate_pivot_bridge_s142_2026_05_20/`,
+  B-S142 5/5 🔵). LEGO arc 의 bridge-OUT — 3 substrate-pivot 옵션
+  (P1 GPU-유지 / P2 Loihi / P3 in-silico-spiking-main-path) 각 gate
+  명세, no cheap winner. **"3 all go" option B.**
+
+- **2026-05-20** — §138–§141 hexa-native engine chain LANDED.
+  §138 design → §139 inbox patch → hexa-lang **PR #77**
+  (`stdlib/flame/spiking_lib.hexa`, F-SPIKE 4/4 PASS) → §140
+  `lego_engine.hexa` (anima 첫 hexa-native LEGO engine, F-S140 4/4
+  PASS) → §141 GPU `flame_stdp_pair_gpu` device-kernel gap 명명. S121
+  Loihi Lava spec (access-walled). HEXA_FIRST_WARN 의 23× deferral 이
+  *구조적으로* 닫힘. B-S138/S121/S139/S140/S141 = 25 🔵.
+
+- **2026-05-20** — §136 LEGO ARC MILESTONE LANDED
+  (`HEXAD/LEGO/state/lego_arc_milestone_s136_2026_05_20/`, B-S136
+  5/5 🔵). §115→§135 11-cycle close-out (mirror §15/§51). 핵심:
+  §133→§134 에서 *측정이 자기 계측기 편향(engine drift)을 자가검출* —
+  §129 engine promote 가 byte-equal 이 아니었음을 §133 η² drift 가
+  탐지, §134 가 §117 source 와 byte-equal 재작성으로 수정.
+
+- **2026-05-20** — §131–§137 LAYER-2 정밀화 LANDED. §131
+  STRONGLY-NSTIM-DEPENDENT (η² range 2.199×) · §132 SHAPE-FIT
+  inverted-U log-N Gaussian R²=0.9995 · §133→§134→§135 engine
+  byte-equality drift detect+fix+re-validate · §137 (N,n_stim)
+  cross-matrix PEAK-N-STIM-N-INVARIANT. B-S131/132/134/135/137 = 32 🔵
+  (§133 historical, no battery).
 
 - **2026-05-20** — §129 LEGO ENGINE CONSOLIDATION LANDED. User pivot
   directive "LEGO 폴더안에 엔진완성해나가야지 + 문서정리도". Engine
