@@ -142,3 +142,10 @@ compute.
   Two in-silico directions resumed in parallel (per "2개방향진행"):
   Track 0 §96 §4.5 controls+harness, and the qmirror-style
   QRNG-entropy-seeded LIF+STDP sim. $0, design-tier, GOAL not reached.
+- **2026-05-19** — `HEXAD/LOIHI` forwarding stub README replaced with a
+  symbolic link `HEXAD/LOIHI → NEUROMORPHIC` (per user "심볼릭링크해두자
+  일단"). Old shared links (`/tree/main/HEXAD/LOIHI`, e.g. the already-sent
+  INRC email) resolve via the symlink locally + in git; GitHub web tree
+  rendering of a directory symlink is not guaranteed — temporary measure.
+  Side benefit: git refuses to stage paths "beyond a symbolic link", so
+  PII under NEUROMORPHIC/ is structurally unreachable via the LOIHI path.
