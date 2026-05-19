@@ -55,9 +55,9 @@
       "name": "B-S107-5",
       "kind": "CONNECTION-CITE-CORPUS-TRAINER-SHA",
       "pass": true,
-      "corpus_sha_local": "39d581da209615468c1c41e07aa8662ef1074bc5be49a666f8f861753dd5810e",
+      "corpus_connection": "pod-side build sha-VERIFIED",
       "corpus_sha_expected": "39d581da209615468c1c41e07aa8662ef1074bc5be49a666f8f861753dd5810e",
-      "trainer_sha_local": "03bf85d8dcfe7a433e781eb001e2ec2545dd7fb921929c7b9e36ac6d2cd4fc28",
+      "trainer_sha_s16_ssot": "03bf85d8dcfe7a433e781eb001e2ec2545dd7fb921929c7b9e36ac6d2cd4fc28",
       "trainer_sha_expected": "03bf85d8dcfe7a433e781eb001e2ec2545dd7fb921929c7b9e36ac6d2cd4fc28"
     },
     {
@@ -71,7 +71,14 @@
       "name": "B-S107-7",
       "kind": "THRESHOLD-CROSSED-CONJUNCTION-SOUND",
       "pass": true,
-      "details": "pre-fire: structural pass (predicate well-formed in source)"
+      "expected": false,
+      "actual": false,
+      "per_axis": {
+        "A1": false,
+        "A2": false,
+        "A3": false,
+        "A4": false
+      }
     },
     {
       "name": "B-S107-8",

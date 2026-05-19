@@ -138,27 +138,41 @@ def b_s107_4_five_lever_preserved():
 
 # === B-S107-5: connection-cite §102 corpus + §16 trainer sha ===
 def b_s107_5_connection_cite():
-    """Connection-point: §107 uses §102's CORPUS_S101 byte-identical (sha
-    `39d581da2096…`) and §16 trainer source byte-identical (sha
-    `03bf85d8dcfe…`). Local files must hash to these values.
+    """Connection-point: §107 trained on §102's CORPUS_S101 byte-identical
+    (sha `39d581da2096…`) and the §16 trainer source byte-identical (sha
+    `03bf85d8dcfe…`).
+
+    The §107-RETRY dispatch builds CORPUS_S101 pod-side DETERMINISTICALLY
+    (no fragile 603MB local→pod scp — see the dispatch header) and asserts
+    the sha THERE. The connection-point evidence is therefore the dispatch
+    log's pod-side `corpus sha = … (expect …)` + `CORPUS_S101 sha VERIFIED`
+    line, NOT a local 603MB file. The §16 trainer is verified at its §16
+    SSOT path (G5 single-variable: §107 trainer source == §16 byte-equal).
     """
-    corpus_path = HERE / "corpus_s101.jsonl"
-    trainer_path = HERE / "train_carving_s16.py"
+    # corpus connection: pod-side deterministic build, sha-VERIFIED in log
+    log_path = HERE / "dispatch_retry.log"
     corpus_ok = False
-    trainer_ok = False
-    corpus_sha = None
+    corpus_evidence = None
+    if log_path.exists():
+        txt = log_path.read_text(errors="ignore")
+        want = ("corpus sha = %s  (expect %s)"
+                % (CORPUS_S101_SHA, CORPUS_S101_SHA))
+        corpus_ok = (want in txt) and ("CORPUS_S101 sha VERIFIED" in txt)
+        corpus_evidence = ("pod-side build sha-VERIFIED" if corpus_ok
+                           else "no pod-side sha-VERIFIED line in dispatch log")
+    # trainer connection: §16 SSOT path byte-identical
+    trainer_path = (HERE.parent / "carving_dataregime_s16_2026_05_18"
+                    / "train_carving_s16.py")
     trainer_sha = None
-    if corpus_path.exists():
-        corpus_sha = file_sha256(str(corpus_path))
-        corpus_ok = (corpus_sha == CORPUS_S101_SHA)
+    trainer_ok = False
     if trainer_path.exists():
         trainer_sha = file_sha256(str(trainer_path))
         trainer_ok = (trainer_sha == S16_TRAINER_SHA)
     return {"name": "B-S107-5", "kind": "CONNECTION-CITE-CORPUS-TRAINER-SHA",
             "pass": corpus_ok and trainer_ok,
-            "corpus_sha_local": corpus_sha,
+            "corpus_connection": corpus_evidence,
             "corpus_sha_expected": CORPUS_S101_SHA,
-            "trainer_sha_local": trainer_sha,
+            "trainer_sha_s16_ssot": trainer_sha,
             "trainer_sha_expected": S16_TRAINER_SHA}
 
 

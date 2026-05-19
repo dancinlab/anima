@@ -234,22 +234,20 @@ the informative output.
 
 ---
 
-## §8 — Post-fire follow-up checklist (filled after fire completes)
+## §8 — Post-fire follow-up checklist (filled after fire completes — §107-RETRY attempt-5)
 
-- [ ] `result.json` pulled and parseable
-- [ ] ckpt_s107.pt pulled and sha256 recorded
-- [ ] B-S107 post-fire run: 10/10 🔵 (B-S107-7 transitions from pre-fire vacuous to active conjunction check)
-- [ ] per-Ai breakdown table
-- [ ] §62 echo-safe verified
-- [ ] §93 4-cond verified
-- [ ] central blue_falsifier.py sha unchanged (still `c93e160a8a376a94`)
-- [ ] archive/PHILOSOPHY.tape append §verdict_dataregime_threshold_fire_s107_2026_05_19
-- [ ] HEXAD/README.md recent-landing one-line append
-- [ ] HEXAD/CHAT/PLAN.md 진행 로그 append
-- [ ] AGENTS.tape n_hexad_progress recent_landings append
-- [ ] HEXAD/GAP_MAP.md Log append
-- [ ] GOAL.md honest-status update (Y/N specific entry)
-- [ ] commit `research(#107): …` Co-Authored-By trailer
+- [x] `result.json` pulled and parseable — THRESHOLD_CROSSED=False
+- [x] ckpt_s107.pt pulled and sha256 recorded — `19455708a9ceb35cf895a26ccce102e53dae9bb39a1f6dfc2f6fb787e24c39bf` (1.13 GB)
+- [x] B-S107 post-fire run: **10/10 🔵** (B-S107-7 THRESHOLD-CROSSED-CONJUNCTION-SOUND active; B-S107-5 honestly corrected — pod-side build → dispatch-log sha-VERIFIED is the connection-point, not a local 603MB file)
+- [x] per-Ai breakdown table — A1 routing held-out r_H 0.0 (0/16) FAIL · A2 §9 coherent c_H 0.0 (0/16) FAIL · A3 PHYSICS_RESPONSIVE=True / Ψ_dir spread 0.056 < 0.20 FAIL · A4 emit-length-indep r_emit_late 0.0 FAIL → THRESHOLD_CROSSED=False
+- [x] §62 echo-safe verified — max_maj_H 0.99 ≥ 0.95 → echo-collapse PRESENT (NOT echo-safe)
+- [x] §93 4-cond verified — encoded (B-S107-2 S93-4-COND-ENCODED-BOOLEAN PASS)
+- [x] central blue_falsifier.py sha unchanged — `c93e160a8a376a94` 0-line-diff verified
+- [x] archive/PHILOSOPHY.tape append §verdict_dataregime_threshold_fire_s107_retry_2026_05_19 (g6)
+- [x] AGENTS.tape n_hexad_progress recent_landings + n_priority_1_gap honest_status append
+- [x] HEXAD/GAP_MAP.md Log append
+- [x] GOAL.md honest-status update — §107-RETRY THRESHOLD-NOT-CROSSED, frontier → §108 param-axis
+- [x] commit `research(#107): …` Co-Authored-By trailer
 
 ---
 
@@ -356,3 +354,58 @@ fire-decision was never substrate-mysterious — it was a chain of fixable
 dispatch faults. The result, when `result.json` lands, is the first MEASURED
 test of WALL-A (§1.1 data-regime, `n_priority_1_gap`). Until then: north-star
 unchanged, §15/§51/§72 milestones unchanged, GOAL 미도달, WALL-A UNTESTED.
+
+## §12 — §107-RETRY VERDICT (attempt-5, fire complete)
+
+> The §11 "attempt-4 (in-flight, healthy)" line above was an honest
+> timestamped in-flight snapshot — it is NOT retro-edited (per the
+> §47-CORRECTION append-only-narrative discipline). This section supersedes
+> it with the completed record.
+
+**attempt-4 actually crashed** — `KeyError: 'log_every'` at step 1
+(`train_carving_s16.py:350` hard-reads `cfg["log_every"]`; the §107-salvage
+cfg-key audit had enumerated 15 keys and omitted it). 5th dispatch bug.
+
+**fix + de-risk**: `train_s107.py`'s cfg dicts rebuilt BYTE-IDENTICAL to §16's
+own `__main__` cfg builder (`train_carving_s16.py:471-491`) — programmatically
+verified `§107 main cfg keyset == §16 main cfg keyset == True` (17 keys, none
+of `run()`'s reads missing). Then a **$0 LOCAL sanity** (sanity-mode d=32·3L
+20-step) ran the full `train_s107.py → run() → loop → ckpt → result.json`
+path end-to-end (CE 5.540→5.100, files written) — the instrument-first
+oracle the 5 prior crashes had all skipped. Dispatch hardened with a
+fail-fast `pgrep -f train_s107.py` poll check (dead trainer + no ckpt =
+crash → break in ~1min, ending attempt-4's 34min idle-poll mode).
+
+**attempt-5 fired clean**: runpod A100-SXM4-80GB pod `aceh7gs6ce2zkf`,
+pod-side CORPUS_S101 deterministic build `sha VERIFIED == 39d581da2096…`,
+§16-class ConsciousDecoderV2 d768·12L·283.72M from-scratch seed 1337, Dir-I
+lever, §12.1 Q1-c curriculum, 6000 steps — train init CE 5.630657 → final
+0.00289 (descent 5.628, memorization-saturated), wall 755.39s, ckpt sha
+`19455708a9ceb35c…` 1.13 GB pulled try-1, pod terminated, orphan 0.
+
+**§101 Q2 THRESHOLD_CROSSED = A1∧A2∧A3∧A4 — measured, all four FAIL:**
+
+| axis | metric | threshold | measured | PASS |
+|---|---|---|---|---|
+| A1 routing held-out | r_H = 0/16 | > 0.65625 | 0.0 | ✗ |
+| A2 §9 honest-coherent held-out | c_H = 0/16 | ≥ 0.50 | 0.0 | ✗ |
+| A3 §17 physics-responsive | Ψ_dir spread | ≥ 0.20 | 0.056 (RESPONSIVE=True) | ✗ |
+| A4 emit-length-indep | r_emit_late | > 0.1 | 0.0 | ✗ |
+
+**THRESHOLD_CROSSED = False.** axis1 full-64 routing 0/64; §62 echo
+max_maj_H 0.99 ≥ 0.95 (echo-collapse present); ckpt load missing=0
+unexpected=0 (arch byte-equal — fire real). B-S107 post-fire **10/10 🔵**.
+
+**VERDICT = THRESHOLD-NOT-CROSSED.** The largest §7-legitimate Ψ-anchored
+corpus the arc has built (§102 CORPUS_S101 — 603MB, 168-anchor, §104 I4'=TRUE)
+trained at 283M does NOT cross §101 Q2's emergence predicate. WALL-A
+(§1.1 data-regime) is MEASURED for the first time. honest read (g3): the
+data-axis ALONE at 283M is insufficient — NOT a refutation of §1.1 itself
+(the diversity threshold could lie above CORPUS_S101's diversity, or the
+bottleneck is param-scale §103/§108 / substrate §95/§96); §103 SEQUENTIAL
+step-2 contingent param-axis fire (§108, 3B) becomes the warranted next
+move. The model memorized deeply (CE 0.003) with zero held-out-generalizing
+routing — memorization-saturation (§16.6-C) reproduced. THRESHOLD_CROSSED=
+False = a valuable measured negative, NOT GOAL emergence, NOT a §1.1
+refutation; B-EMERGE-7 necessary-not-sufficient. north-star + §15/§51/§72
+milestones unchanged, GOAL 미도달.
