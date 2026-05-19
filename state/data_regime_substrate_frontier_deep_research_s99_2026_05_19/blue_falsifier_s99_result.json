@@ -1,0 +1,59 @@
+{
+  "battery": "B-S99 (§99 data-regime/substrate/spontaneity-vs-coherence frontier deep research sidecar)",
+  "tier": "literature-review (light battery — document-well-formedness only)",
+  "central_blue_falsifier_sha": "c93e160a8a376a94 (0-line-diff — sidecar only, central untouched)",
+  "verdicts": {
+    "B-S99-1": {
+      "name": "THREE-ARM-PARTITION-CLOSED",
+      "statement": "the frontier is partitioned into exactly 3 arms {DATA-REGIME, SUBSTRATE, SPONTANEITY-vs-COHERENCE}; every candidate maps to exactly one arm (exhaustive + disjoint).",
+      "n_arms": 3,
+      "exhaustive": true,
+      "disjoint": true,
+      "anchor": "set-algebra partition closure (Kolmogorov)",
+      "closed": true,
+      "tier": "a-closed",
+      "passed": true
+    },
+    "B-S99-2": {
+      "name": "CANDIDATE-TAXONOMY-EXHAUSTIVE-DISJOINT",
+      "statement": "the 7 kept-OPEN candidate paths have unique IDs and each carries a well-typed (arm, status) pair; status drawn from a closed 2-set {DESIGN-TESTABLE, NEEDS-FIRE}.",
+      "n_candidates": 7,
+      "unique_ids": true,
+      "well_typed": true,
+      "anchor": "integer cardinality + Boolean well-typedness (Kolmogorov)",
+      "closed": true,
+      "tier": "a-closed",
+      "passed": true
+    },
+    "B-S99-3": {
+      "name": "NO-CANDIDATE-CLOSED-INVARIANT",
+      "statement": "per the directive '가능성 경로는 열어두자' every candidate's status starts with OPEN; no status contains CLOSED/DEAD/REFUTED/FALSIFIED. §99 maps OPEN paths, does not close any.",
+      "any_closed": false,
+      "all_open": true,
+      "anchor": "Boolean set non-membership (Kolmogorov)",
+      "closed": true,
+      "tier": "a-closed",
+      "passed": true
+    },
+    "B-S99-4": {
+      "name": "CONNECTION-POINT-CITES-S98-S96",
+      "statement": "§99 cites §98's actual verdict bucket 'c' (MIXED — n=6 innocent) and §96's actual finding 'self-attention SPIKING-INCOMPATIBLE'; candidate C4 (softmax-free spiking attention) exists precisely as the §96-finding's resolution path.",
+      "s98_verdict_bucket": "c",
+      "s96_self_attention": "SPIKING-INCOMPATIBLE",
+      "c4_present": true,
+      "anchor": "byte-literal citation of §98/§96 result.json verdicts (connection-point)",
+      "closed": true,
+      "tier": "a-closed",
+      "passed": true
+    }
+  },
+  "note": {
+    "name": "B-S99-NOTE",
+    "kind": "empirical-carve-out",
+    "statement": "§99 is a LITERATURE-REVIEW section. This light battery proves the §99 DOCUMENT is well-formed (3-arm partition closed, 7-candidate taxonomy exhaustive+disjoint, NO path closed, §98/§96 cited byte-literal). It does NOT prove any candidate path works, NOT that anima emerges, NOT that the GOAL is reached. Whether C1..C7 move the GOAL is EMPIRICAL — future design+fire cycles. literature = inspiration NOT proof. necessary-not-sufficient (B-EMERGE-7). B-D-NOTE / B-S95-NOTE / B-S96-NOTE / B-S98-NOTE family — NOT counted as a closed capability verdict."
+  },
+  "all_passed": true,
+  "n_passed": 4,
+  "n_total": 4,
+  "g3": "literature review NOT empirical; capability claim 0; arxiv = inspiration NOT proof; north-star + §15/§51/§72 UNCHANGED; GOAL 미도달"
+}
