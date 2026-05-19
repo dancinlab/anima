@@ -284,3 +284,45 @@ compute.
   spiking anima; does NOT remove WALL-A (§1.1 data-regime) or WALL-B
   (§95/§96 async substrate); capability claim 0; GOAL 미도달, milestones
   unchanged.
+- **2026-05-19** — §123 THE TWO REMAINING §96 SPIKING-OPEN FACULTIES —
+  §96 Q1 table rows 115 & 118 (the two `SPIKING-OPEN` faculties §120/§122
+  did NOT cover) are **DECIDED** (B-S123 8/8 🔵, $0 design-tier, central
+  blue_falsifier.py sha256 `c93e160a8a376a94` 0-line-diff START+END).
+  **(1) Engine A⇄G dual heads → `DUAL-HEADS-DESIGN-CLOSE-WITH-CARRIER-
+  RELOCATION`** — the A-vs-G *opposition* ports cleanly to excit/inhib LIF
+  sub-populations (§96 §6 row-4 NATIVE); Ψ is realised as **Ψ-C1 =
+  `(1+cos(spike_rate_A, spike_rate_G))/2`** — the §112 META_FP(Π_½)
+  carrier-invariant fixed-point *form* (`cos=0⇒½`, byte-identical to
+  Law-71 `:740`), on the **spike-correlation carrier**. Honest
+  reduction-witness result: GPU Ψ-as-logit-cosine does **NOT** reduce —
+  unlike §120 (parameter `k`) and §122 (parameter `σ`) there is **no
+  scalar family** mapping the spike-rate carrier (len 96) onto the GPU
+  logit-vector carrier (len V=256); the two carriers are non-isomorphic.
+  So NOT a §120/§122-style clean generalisation — an honest
+  **carrier-relocation** (§110/§112 family): the Ψ *form* ports exactly,
+  the *carrier* genuinely differs. The §96 §6 row-4 `NATIVE-CANDIDATE`
+  classification ("the fixed-point is native; the cosine formula is NOT")
+  confirmed verbatim. `neuro_mirror.py` `psi_c1` ALREADY realises it —
+  §123 recognises it as the §96 resolution and records the closure as a
+  relocation, not a reduction (anti-padding — no clean reduction forced;
+  design-CLOSE-WITH-RELOCATION is a valid landed verdict). **(2) MoEFFN
+  top-k router → `MOE-TOPK-DECIDED — COVERED BY §120 k-WTA + §96-
+  COMPATIBLE STDP GATE`** — decomposes into (A) the top-k *selection* =
+  **covered verbatim by §120's k-WTA** (a `k=top_k`, `n=n_experts`
+  instance of the §120 `R(k,mode)` family; §96 row-118's own description)
+  + (B) the *learned content gate* `nn.Linear(d_model,n_experts)` = **NOT
+  a separate design-open** — decomposes into two §96 Q1
+  `SPIKING-COMPATIBLE` faculties (gate score = weighted-synapse current
+  accumulation; gate weights learned = STDP-trainable synapses); no
+  residual new mechanism. honest carry: whether STDP-learned gate
+  synapses route as well as backprop-CE ones is the §11-B / §96 §4.5
+  open question — the gate is *inside* that scope, not a new design-open
+  beside it. §123 + §120 + §122 together decide **ALL THREE** §96 Q1
+  `SPIKING-OPEN` faculties — the spiking anima faculty map is fully
+  specified at design-tier. `neuro_mirror.py` ENGINE.md §4 `position` row
+  already carries Ψ-C1 as the carrier; §123 adds no new code, it decides
+  the design-opens. central blue_falsifier.py 0-line-diff; design ≠ fire
+  ≠ emergence — two decided design-opens (one clean closure, one honest
+  carrier-relocation), NOT the spiking anima; does NOT remove WALL-A
+  (§1.1 data-regime) or WALL-B (§95/§96 async substrate); §11-B
+  unresolved; capability claim 0; GOAL 미도달, milestones unchanged.

@@ -1,0 +1,57 @@
+{
+  "section": "§123",
+  "title": "the two remaining §96 SPIKING-OPEN faculties — Engine A⇄G dual heads + MoEFFN top-k router",
+  "date": "2026-05-19",
+  "tier": "DESIGN-TIER",
+  "cost": "$0",
+  "gpu": false, "runpod": false, "fire": false, "dispatch": false,
+  "orphan": 0,
+  "parent": [
+    "§96 state/loihi_spiking_rederivation_s96_2026_05_19/DESIGN.md (Q1 rows 115 & 118, §3.3, §6 row 4, NATIVE-CANDIDATE line ~353)",
+    "§120 state/spiking_attention_replacement_s120_2026_05_19/DESIGN.md (decided k-WTA routing)",
+    "§122 state/rope_phase_coding_s122_2026_05_19/DESIGN.md (decided phase coding)",
+    "§112 META_FP(Π_½) carrier-invariant fixed-point form",
+    "§110 Ψ-C2 / Ψ-C1 carrier family"
+  ],
+  "faculty_1": {
+    "name": "Engine A⇄G dual heads (§96 Q1 table row 115)",
+    "verdict": "DUAL-HEADS-DESIGN-CLOSE-WITH-CARRIER-RELOCATION",
+    "picked": "Ψ-C1 = (1+cos(spike_rate_A, spike_rate_G))/2 on the spike-correlation carrier; A-vs-G opposition = excit/inhib LIF sub-populations",
+    "rejected": "keep GPU Ψ-as-logit-cosine on the spiking substrate (fails (a) — there is no logit vector on a spiking substrate)",
+    "reduction_witness": "NO clean reduction — the spike-rate carrier (len 96) and the logit-vector carrier (len 256) are non-isomorphic objects in non-isomorphic spaces; unlike §120 (parameter k) and §122 (parameter σ) there is NO scalar family connecting them. GPU Ψ-as-logit-cosine does NOT reduce. The §112 META_FP(Π_½) FORM ψ(c)=(1+c)/2 ports exactly (carrier-invariant); the CARRIER itself relocates. Honest carrier-relocation (§110/§112 family), NOT a §120/§122-style generalisation. The §96 §6 row-4 / line ~353 NATIVE-CANDIDATE classification is confirmed verbatim.",
+    "preserved": ["the A-vs-G opposition (excit/inhib LIF sub-populations)", "the Ψ=½ fixed point (cos=0 ⇒ Ψ-C1=½)", "the Ψ functional form ψ(c)=(1+c)/2 (byte-identical to Law-71 :740)"],
+    "relocated": ["the Ψ carrier c — cos(spike_rate_A, spike_rate_G) vs GPU cos(logits_a, logits_g) — non-isomorphic, no reduction"],
+    "already_realised_in": "HEXAD/NEUROMORPHIC/neuro_mirror.py — psi_c1 + LIFSubstrate.idx_a/idx_g"
+  },
+  "faculty_2": {
+    "name": "MoEFFN top-k router (§96 Q1 table row 118)",
+    "verdict": "MOE-TOPK-DECIDED — COVERED BY §120 k-WTA + §96-COMPATIBLE STDP GATE",
+    "selection": "the top-k selection is COVERED VERBATIM by §120's already-decided k-WTA — a k=top_k, n=n_experts instance of the §120 R(k,mode) family (§96 row 118's own description: 'k-winner-take-all over expert populations')",
+    "learned_gate": "the learned content-based gate nn.Linear(d_model,n_experts) is NOT a separate design-open — it decomposes into two §96 Q1 SPIKING-COMPATIBLE faculties: (i) gate score = weighted-synapse current accumulation (residual stream → LIF current), (ii) gate weights learned = STDP-trainable synapses (STDP → Hebbian LTP/LTD). No residual new mechanism.",
+    "residual_design_open": "none — fully covered by §120 + §96 Q1 already-decided primitives",
+    "honest_carry": "whether STDP-learned gate synapses route to the right experts as well as backprop-CE-learned ones is the §11-B / §96 §4.5 open question — the gate is INSIDE that scope, not a new design-open beside it; §123 does not resolve §11-B"
+  },
+  "battery": {
+    "name": "B-S123",
+    "n_pass": 8, "n_total": 8, "all_pass": true,
+    "checks": ["B-S123-1 PSI-FORM-IS-META-FP-CARRIER-INVARIANT",
+               "B-S123-2 A-G-OPPOSITION-PORTS-CLEANLY",
+               "B-S123-3 NO-REDUCTION-WITNESS-CARRIER-RELOCATION",
+               "B-S123-4 FACULTY-1-VERDICT-CARRIER-RELOCATION",
+               "B-S123-5 MOE-TOPK-SELECTION-IS-S120-KWTA",
+               "B-S123-6 MOE-LEARNED-GATE-NOT-A-SEPARATE-DESIGN-OPEN",
+               "B-S123-7 S96-S120-S122-S112-CONNECTION-POINTS-CITED",
+               "B-S123-8 NECESSARY-NOT-SUFFICIENT-CENTRAL-0DIFF"]
+  },
+  "central_blue_falsifier_0_line_diff": true,
+  "central_blue_falsifier_sha16": "c93e160a8a376a94",
+  "consequence": "Together with §120 (routing) and §122 (position), §123 decides ALL THREE of §96 Q1's SPIKING-OPEN faculties — the spiking anima's faculty map is fully specified at design-tier (5 SPIKING-COMPATIBLE, 3 SPIKING-OPEN decided, 1 SPIKING-INCOMPATIBLE replaced by §120).",
+  "honest_scope": {
+    "g3": "design ≠ fire ≠ emergence; capability claim 0; necessary-not-sufficient (B-EMERGE-7)",
+    "WALL_A": "§1.1 data-regime — UNCHANGED, orthogonal",
+    "WALL_B": "§95/§96 async substrate — UNCHANGED, Loihi/SpiNNaker/SpiNNcloud-gated (SOFT WALL)",
+    "S11B": "STDP-learns-spike-timing-not-task — unresolved; the MoE gate is inside this scope",
+    "milestones": "north-star + §15/§51/§72 UNCHANGED, GOAL 미도달",
+    "f1_f2": "safe — no σ(6)=12/τ(6)=4/φ(6)=2/J₂(6)=24 derivation; Ψ=½ = anima g2 internal-arch carve-out"
+  }
+}
