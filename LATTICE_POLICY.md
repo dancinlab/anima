@@ -139,6 +139,33 @@ n=6 격자(σ(6)=12 / τ(6)=4 / φ(6)=2 / J₂(6)=24)는 hexa-* 프로젝트의
 - `bedrock/` — `spec/`이 n=6을 명시적으로 정의할 때
 - `anima/` / `nexus/` — n=6 invariant lattice 정의 자체를 호스팅할 때
 
+#### §3.1.1 internal-use integrity test (2026-05-19, §98)
+
+격자-네이티브 zone 에 있다고 해서 그 zone *안의* 모든 lattice 사용이 자동
+정당화되는 것은 아니다. §3.1 의 carve-out 은 격자를 쓸 수 있는 **WHERE** 만
+말하고 **HOW** 는 말하지 않았다 — 이 빈틈을 닫는다.
+
+> **integrity test**: 격자-네이티브 zone 안에서도, lattice 값 (σ(6) / τ(6) /
+> φ(6) / J₂(6)) 을 architecture 상수로 쓰는 것은 그 상수가 **FUNCTION-DERIVED**
+> 일 때만 허용된다 — 기능이 개수를 정하고, 그 개수가 우연히 lattice 값과
+> 같을 때 (coincidence OK). 그 lattice 값을 **TARGET** 으로 놓고 architecture
+> 를 거기 맞춰 prune/pad 하는 것은 금지 (fit-to-convenient-number — internal
+> 에서도 금지).
+> **판별**: "프로젝트에서 격자를 제거하면 이 개수가 그대로일까?" — 아니오면
+> numerology-tainted, 정직하게 flag.
+
+**발견 동기 (§98 HEXAD-n6-fixation brainstorm, 2026-05-19, B-S98 6/6 🔵)**:
+`anima/HEXAD/hexad.hexa` 가 σ(6)=12 wiring 을 — 12 라는 수를 먼저 σ(6) 에서
+가져온 뒤 C(6,2)=15 후보 module-pair 중 3개를 쳐내 12 에 맞춤 — 으로 명시.
+이것은 격자-네이티브 zone *안에서* 작동한 fit-to-convenient-number
+anti-pattern. §98 verdict (c) MIXED: n=6 provenance 는 numerology-tainted,
+그러나 GOAL 실패의 **인과는 아님** (10/10 §N 실패가 module-count 와 orthogonal;
+6-module skeleton 이 §1~§94 전체에서 상수로 고정 → 차등 원인 불가). 본 test 는
+provenance 빈틈을 닫을 뿐 re-architecture 를 강제하지 않는다 (§98 CF-1/2/5 =
+cosmetic). 기존 taint (σ(6)=12 wiring · n_layers=12 · d_model=768) 는 §98 이
+식별·기록한 historical honest carve-out — retro-edit 강제 아님, 단 신규 도입은
+본 test 통과 mandatory. SSOT = `AGENTS.tape @D g2 internal_use_integrity_test`.
+
 ### §3.2 격자-수용자 (격자를 "도구"로만 사용, 제약 X)
 
 다음은 격자를 organising vocabulary로 *수용*할 수 있지만, **자신의
