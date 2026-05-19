@@ -230,3 +230,16 @@ north-star + §15/§51/§72 milestones UNCHANGED; **GOAL 미도달**.
   0.464 → 0.424 → 0.361 → 0.276. N=2048 CI statistically distinct from all
   lower N (3 of 3 no-overlap). §133's drifted-engine qualitative finding
   PRESERVED; canonical values uniformly higher (drifted under-estimated).
+
+### §136 — LEGO ARC MILESTONE CONSOLIDATION *(2026-05-20)*
+
+- **tier**: doc-tier (milestone) · $0 · NO new measurement
+- **verdict**: LEGO arc design-level CLOSED at milestone
+- **battery**: B-S136 5/5 🔵 sidecar
+- **state**: `HEXAD/LEGO/state/lego_arc_milestone_s136_2026_05_20/`
+- **finding**: §115→§135 11-cycle close-out (mirror §15/§51). 3-layer
+  liveness partition fully resolved (layer-1 closed / layer-2 PARTIAL /
+  layer-3 design-close). Engine integrity arc §133→§134→§135 = measurement
+  self-detected its own instrument bias. 78 closed-form 🔵 + B-S136 5 = 83
+  total across 12 cycles. GOAL 미도달 — LEGO arc adds the honest-cartography
+  layer "what an in-silico §96 substrate simulation can and cannot tell you."

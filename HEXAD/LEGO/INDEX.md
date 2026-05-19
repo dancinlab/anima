@@ -22,6 +22,7 @@
 | 133  | 2026-05-20 | probe · $0      | per-N η² SE measured · monotone-decrease per-rep mean · drifted-engine | (carried as historical) | `state/lego_layer2_per_n_se_s133_2026_05_20/`                            | engine import (drifted) |
 | 134  | 2026-05-20 | fix + probe · $0 | ENGINE-BYTE-EQUALITY-RESTORED-AND-VALIDATED · §127 confirmed · §131 verdict survives | B-S134 7/7 🔵 | **`HEXAD/LEGO/state/lego_engine_byte_equal_fix_s134_2026_05_20/`** (first under `g_new_state_path`) | **engine rewrite byte-equal §117** |
 | 135  | 2026-05-20 | probe · $0      | MONOTONE-DECREASE-SURVIVES-CANONICAL · 4-of-4 pooled byte-equal §127 · N=2048 CI distinct | B-S135 7/7 🔵 | `HEXAD/LEGO/state/lego_layer2_per_n_se_canonical_s135_2026_05_20/`     | canonical engine post-§134 |
+| 136  | 2026-05-20 | doc-tier (milestone) | LEGO ARC DESIGN-LEVEL CLOSED — §115→§135 11-cycle close-out (mirror §15/§51) | B-S136 5/5 🔵 | `HEXAD/LEGO/state/lego_arc_milestone_s136_2026_05_20/`                 | no engine touch |
 
 ## battery sum
 
