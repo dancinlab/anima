@@ -17,10 +17,11 @@
 | 127  | 2026-05-20 | probe · $0      | APPROXIMATELY-N-INVARIANT (k=−0.0198, R²=0.022)            | B-S127 8/8 🔵 | `state/lego_layer2_scaling_law_s127_2026_05_20/`                      | engine importlib |
 | 128  | 2026-05-20 | design          | LAYER-3-DESIGN-CLOSE-REQUIRES-TASK-ADDITION                | B-S128 6/6 🔵 | `state/lego_layer3_design_close_s128_2026_05_20/`                     | engine spec-cite |
 | 129  | 2026-05-20 | consolidation   | LEGO ENGINE LIB + docs promoted to `HEXAD/LEGO/`           | (no battery)   | (this folder)                                                         | **lib promote**   |
+| 131  | 2026-05-20 | probe · $0      | STRONGLY-NSTIM-DEPENDENT (η² range ratio 2.199×, peak @ n_stim=4) | B-S131 7/7 🔵 | `state/lego_layer2_nstim_cardinality_s131_2026_05_20/`               | **first canonical-lib import** |
 
 ## battery sum
 
-- 9 + 7 + 7 + 7 + 7 + 8 + 6 = **51 closed-form propositions 🔵** across the arc.
+- 9 + 7 + 7 + 7 + 7 + 8 + 6 + 7 = **58 closed-form propositions 🔵** across the arc.
 - 0 propositions counted toward central `state/verify_hexad_blue_2026_05_15/blue_falsifier.py` —
   all sidecar. Central `sha256_prefix16` remains `c93e160a8a376a94` (verified
   START+END of every cycle).

@@ -131,6 +131,22 @@
   `spike_rate_vec(raster, idx)` · `psi_c1(r_a, r_g)` ·
   `make_stimuli(d, n_stim, seed)` · `variance_decomposition(values)`.
 
+### §131 — LEGO LAYER-2 STIMULUS-CARDINALITY PROBE *(2026-05-20)*
+
+- **tier**: probe-tier · $0 · 7m 14s Mac CPU
+- **verdict**: `STRONGLY-NSTIM-DEPENDENT` — η² range ratio 2.199×
+- **battery**: B-S131 7/7 🔵 sidecar
+- **state**: `state/lego_layer2_nstim_cardinality_s131_2026_05_20/`
+- **finding**: N=256 fixed (orthogonal to §127), n_stim ∈ {4, 12, 24, 48},
+  M=5 each. η² values 0.308 / 0.218 / 0.140 / 0.153 — **peak at lowest
+  n_stim=4**, mostly monotone decrease 4→24, slight rise 24→48. Range
+  ratio 2.199× > 1.50 → STRONGLY. **n_stim is a stronger η² lever than
+  N** (n_stim range 2.20× vs N range 1.26× from §127). §125's n_stim=12
+  was mid-range mediocre — arc would have measured stronger PARTIAL at
+  n_stim=4. Carrier-capacity dilution hypothesis consistent (Ψ-C1 ∈ [0,1]
+  bounded). **First LEGO probe written against post-§129 canonical engine
+  SSOT** `HEXAD/LEGO/lego_engine.py` (B-S131-4 AST verified).
+
 ---
 
 ## LEGO arc — summary verdict ladder
