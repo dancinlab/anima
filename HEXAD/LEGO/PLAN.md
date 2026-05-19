@@ -269,3 +269,13 @@ north-star + §15/§51/§72 milestones UNCHANGED; **GOAL 미도달**.
   component → native Lava primitive; STDP → on-chip learning_rule (the §11-B-as-GPU
   escape made concrete). Loihi access INRC-walled (soft wall) → readable blueprint
   only, NOT fireable. Honors LEGO.md STEP-3 fence.
+
+### §139 — LEGO flame spiking-primitives inbox patch FILED *(2026-05-20)*
+
+- **tier**: filing-tier · $0 · **verdict** `INBOX-PATCH-FILED-HEXA-FIRST-PATH-COMPLETE`
+- **battery**: B-S139 4/4 🔵 · **state**: `HEXAD/LEGO/state/lego_inbox_patch_filed_s139_2026_05_20/`
+- **finding**: §138's named follow-up completed. Filed `~/core/hexa-lang/inbox/
+  patches/flame-spiking-substrate-primitives.md` (3 primitives, F-SPIKE-1..4
+  falsifiers, committed in hexa-lang repo, §71 inbox precedent). HEXA_FIRST_WARN
+  deferral now fully closed — tracked upstream request on hexa-first PR-only path.
+  anima stayed downstream-consumer (request doc, no flame source edit).
