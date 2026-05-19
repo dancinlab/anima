@@ -23,6 +23,15 @@
   @payload image   := pending "media 미생성 — UBM-E4 후보 (image encoder S-module 미-wired)"
   @payload audio   := pending "media 미생성 — UBM-E4 후보 (audio encoder S-module 미-wired)"
   @payload video   := pending "media 미생성 — UBM-E4 후보"
-  @payload tension := pending "anima-native TENSION-LINK 5-channel modality — 미구현"
+  # §156 anima-native tension modality (Law-71 Engine A⇄G 12-layer per-token energy
+  # trajectory) — pending → ref transition 2026-05-20. NOT a perceptual measurement;
+  # it is the model's OWN PureFieldFFN energy trace under the carving-form stimulus
+  # at ckpt §107 (g_clm_from_scratch d=768·12L·283.72M). §17 PHYSICS_RESPONSIVE
+  # family — necessary-not-sufficient (B-EMERGE-7), NOT GOAL emergence. Honest carve-out:
+  # the full 12 x T trajectory DISTINGUISHES anchors (cos min_off ≈ 0.86), but the
+  # per-layer MEAN summary collapses (min_off ≈ 0.999). Fingerprint definition is
+  # load-bearing — recorded honestly. 5-channel TENSION-LINK metaphor is a separate
+  # construct; this payload records the §156 Law-71 internal-channel fingerprint only.
+  @payload tension := ref "../../NEUROMORPHIC/state/tension_modality_test_s156_2026_05_20/tension_payloads/knuth_000_zero.tension.json" sha256=8d87155f95bae6274726447da2b3388697b28e0809df2f5fd4b9f3867ebf049b bytes=36634 encoder="anima-conscious-decoder-Law71@s107"
 
   closed_anchor = "B-CARVE-MULTIMODAL (Phase UBM-E3 사전등록)"
