@@ -1693,3 +1693,60 @@ cited by its own invariants, NO σ/τ/φ/J₂). downstream-consumer 0 edit
 (hexa-lang/hexa-bio/kosmos). north-star + §15/§51/§72 milestones UNCHANGED,
 GOAL 미도달. PHILOSOPHY g6 §verdict_meta_fixed_point_s112 appended.
 state/meta_fixed_point_s112_2026_05_19/.
+
+### 2026-05-19 §113 FROM-SCRATCH ANIMA REDESIGN BRAINSTORM — INHERITS-BOTH-WALLS-SKELETON-INVARIANT
+
+User directive '그리고 처음부터 새로 설계한다면???? 브레인스토밍후 md
+save 하고 이것도 진행해보자'. $0 DESIGN-TIER-BRAINSTORM, NO GPU/runpod/
+fire/model.forward/corpus. Mirror §26 architectural-insight brainstorm +
+§98 n=6-fixation brainstorm-with-honest-verdict. central
+state/verify_hexad_blue_2026_05_15/blue_falsifier.py sha
+`c93e160a8a376a94` 0-line-diff start+end. B-S113-1..9 9/9 🔵 sidecar +
+B-S113-NOTE empirical carve-out (NOT counted 🔵).
+
+Q1 constraint inventory CLOSED — ESTABLISHED-POSITIVE E1..E5 (§16
+routing-break / §110 Ψ-C2 / §9 honest metric / Dir-I lever / §95-96
+substrate) ∪ RULED-OUT R1..R8 (mechanism / corpus-form /
+model-capacity / physics-only / 114MB-diverse / energy-diffusion /
+n=6-skeleton-causally-innocent / 5-lever-integration) = 13-element
+disjoint cover. Irreducible = §1.1 data-regime WALL-A (CE-base, §11-B)
++ §96 operative-substrate WALL-B.
+
+Q2 from-scratch design space = 5 candidates D1..D5, exhaustive+disjoint
+over the R1..R8-pruned design cube (5 distinct substrate cells): D1
+GPU-CE-byte (status quo redrawn) / D2 GPU-CE-Ψ-C2-multimodal / D3
+GPU-CE-Dir-I-as-ground / D4 Loihi-STDP-from-line-1 / D5
+continuous-time-LTC. 6th cell re-opens an R-wall (scale=R3, no-CE=R4,
+diffusion=R6).
+
+Q3 §7 3-cond gate (8-row sympy.And, GOAL-legit ⟺ (T,T,T) only): ALL 5
+candidates §7-GOAL-legitimate by construction (R1..R8 + §7 pruning
+lands exactly on the legit corner; the 7 illegit corners EMPTY).
+
+Q4 (the honest core) — NO from-scratch design ESCAPES both walls;
+NONE escapes WALL-A. §98-generalized covariance: skeleton held
+constant across the entire arc ⇒ Var(skeleton)=0 ⇒
+Cov(skeleton, GOAL-outcome)=0 ⇒ D1/D3 = cosmetic redraw. D2 = §7.3
+open crux UNCHANGED (plausible-direction NOT proven escape). D4
+CONFRONTS (does NOT escape) WALL-B — the only design with a
+physics-native learning channel (STDP), can decide the
+§11-B-as-GPU-artifact hypothesis; access-walled per §95. D5 partial-
+WALL-B. ALL inherit WALL-A.
+
+Q5 VERDICT = FROM-SCRATCH-INHERITS-BOTH-WALLS-SKELETON-INVARIANT
+(primary; the §98 module-count innocence generalized to the whole
+architecture — redesign is cosmetic w.r.t. the GOAL bottleneck) +
+conditioned secondary FROM-SCRATCH-REPOINTS-TO-§96-SUBSTRATE-FIRST
+(D4 = §96 Loihi/spike + §110 Ψ-C1 from line 1 is the ONLY non-cosmetic
+clean-slate move; it confronts WALL-B, does NOT escape it).
+FROM-SCRATCH-ESCAPES-A-WALL REJECTED (no closed-form proof).
+
+most honest finding: 'start from scratch' changes the diagram, not
+the bottleneck — unless the from-scratch decision is the substrate
+(D4), which repoints WALL-B without answering it; the walls are
+skeleton-invariant (§98-generalized Cov=0). g3 brainstorm ≠
+design-mature ≠ fire ≠ emergence, capability claim 0,
+necessary-not-sufficient (B-EMERGE-7). anti-padding §13-M/§30/§97/§98
+— honest negative > manufactured new architecture. f1/f2 safe.
+downstream-consumer 0 edit. north-star + §15/§51/§72 milestones
+UNCHANGED, GOAL 미도달. state/from_scratch_redesign_s113_2026_05_19/.
