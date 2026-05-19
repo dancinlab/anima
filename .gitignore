@@ -394,6 +394,10 @@ state/**/hexa_full_singletu.c
 
 # HEXAD module transient state (per-module runtime markers, not architecture)
 HEXAD/*/state/
+# §134 (2026-05-20) — @D g_new_state_path governance: new §N artifacts at
+# HEXAD/<TOPIC>/state/<basename>/ are SSOT-tracked. Un-ignore explicitly per topic.
+!HEXAD/LEGO/state/
+!HEXAD/LEGO/state/**
 
 # runpod/vast dispatch scripts may embed API keys — never commit (keys → env/keyfile)
 *_runpod.sh

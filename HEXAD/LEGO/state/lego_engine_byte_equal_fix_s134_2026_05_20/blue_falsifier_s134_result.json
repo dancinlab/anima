@@ -1,0 +1,105 @@
+{
+  "preconditions": [
+    {
+      "name": "B-S134-7 CENTRAL-0-DIFF-AND-NO-FORBIDDEN-CALL-AST",
+      "passed": true,
+      "evidence": {
+        "central_sha16": "c93e160a8a376a94",
+        "central_match": true,
+        "forbidden_imports_hit": [],
+        "forbidden_calls_hit": []
+      }
+    }
+  ],
+  "closed_propositions": [
+    {
+      "name": "B-S134-1 ENGINE-DRIFT-MEASURED-NONZERO",
+      "passed": true,
+      "evidence": {
+        "drift_s131_to_canonical": 0.05346349142326004,
+        "drift_s133_to_canonical": 0.05346349142326004,
+        "both_above_1e_3": true
+      }
+    },
+    {
+      "name": "B-S134-2 LIFNET-AST-BYTE-EQUAL-S117-CLOSED",
+      "passed": true,
+      "evidence": {
+        "both_ast_unparse_strings_equal": true,
+        "s117_lifnet_hash": "52907dca62904528",
+        "engine_lifnet_hash": "52907dca62904528"
+      }
+    },
+    {
+      "name": "B-S134-3 80-STEP-RUNTIME-BYTE-EQUAL-CLOSED",
+      "passed": true,
+      "evidence": {
+        "init_W_byte_equal": true,
+        "init_v_byte_equal": true,
+        "init_bias_byte_equal": true,
+        "post_80step_spike_byte_equal": true,
+        "post_80step_W_byte_equal": true,
+        "all_byte_equal": true
+      }
+    },
+    {
+      "name": "B-S134-4 CANONICAL-MATCHES-S127-CLOSED",
+      "passed": true,
+      "evidence": {
+        "s131_revalidated_matches_s127": true,
+        "s133_revalidated_matches_s127": true
+      }
+    },
+    {
+      "name": "B-S134-5 S131-VERDICT-SURVIVES-FIX-CLOSED",
+      "passed": true,
+      "evidence": {
+        "canonical_eta_values": [
+          0.3092896958399242,
+          0.2712195360968856,
+          0.24388622542761698,
+          0.16967287352576438
+        ],
+        "canonical_range_ratio": 1.8228588307190978,
+        "drifted_range_ratio": 2.199,
+        "STRONGLY_threshold": 1.5,
+        "both_above_threshold": true
+      }
+    },
+    {
+      "name": "B-S134-6 G-NEW-STATE-PATH-COMPLIANT-CLOSED",
+      "passed": true,
+      "evidence": {
+        "expected_prefix": "/Users/ghost/core/anima/HEXAD/LEGO/state",
+        "actual_parent": "/Users/ghost/core/anima/HEXAD/LEGO/state",
+        "compliant": true
+      }
+    },
+    {
+      "name": "B-S134-7 CENTRAL-0-DIFF-AND-NO-FORBIDDEN-CALL-AST",
+      "passed": true,
+      "evidence": {
+        "central_sha16": "c93e160a8a376a94",
+        "central_match": true,
+        "forbidden_imports_hit": [],
+        "forbidden_calls_hit": []
+      }
+    }
+  ],
+  "empirical_carve_out": {
+    "name": "B-S134-NOTE EMPIRICAL-CARVE-OUT (NOT counted 🔵)",
+    "carve_out_kind": "fix-detected-and-validated-but-NOT-GOAL",
+    "family": "B-EMERGE-7 / B-S133-NOTE / B-S131-NOTE / B-S125-NOTE",
+    "honest_scope": "§134 closes engine-integrity drift detection + fix + re-validation. It does NOT close: (a) §133's monotone-decrease per-rep mean finding for the canonical engine at all 4 N points (only N=256 + N=1024 subset checked); (b) layer-3 task-grounded liveness (§128 DESIGN-CLOSE carry); (c) GOAL emergence. §131/§132/§133 measurements remain valid as historical evidence of drifted-engine substrate (state-dir sha-locked); §134's canonical engine is what new probes import. The drift was 0.0535 at N=256 — material but not catastrophic; qualitative findings survived. Instrument integrity is a measurable arc property: §133's measurement detected the drift, not code review."
+  },
+  "summary": {
+    "preconditions_passed": true,
+    "closed_propositions_passed": "7/7",
+    "all_closed_pass": true,
+    "battery_verdict": "ENGINE-BYTE-EQUALITY-RESTORED-AND-VALIDATED-7-7-🔵",
+    "empirical_carve_out_NOT_counted_🔵": true,
+    "necessary_not_sufficient_B_EMERGE_7": true,
+    "north_star_unchanged": true,
+    "goal_unreached": true
+  }
+}

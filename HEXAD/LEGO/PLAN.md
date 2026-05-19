@@ -193,3 +193,26 @@ north-star + §15/§51/§72 milestones UNCHANGED; **GOAL 미도달**.
   caveat**: 4 points + 3 free params; perfect R² structural, load-bearing
   signal is peak-vs-monotone *agreement* not R² magnitude. Refines §127
   verdict without overturning it.
+
+### §134 — LEGO ENGINE BYTE-EQUALITY RESTORE + §131/§133 RE-VALIDATION *(2026-05-20)*
+
+- **tier**: fix-tier + probe-tier · $0 · 13m 40s Mac CPU
+- **verdict**: `ENGINE-BYTE-EQUALITY-RESTORED-AND-VALIDATED`
+- **battery**: B-S134 7/7 🔵 sidecar
+- **state**: `HEXAD/LEGO/state/lego_engine_byte_equal_fix_s134_2026_05_20/`
+  (first §N landed under `g_new_state_path` governance 2026-05-20)
+- **finding**: §133 measurement detected drift between §127 pooled η²
+  (0.271 at N=256) and §131/§133's measurement (0.218 at N=256). AST diff
+  confirmed §129 promote of LIFNet was **NOT byte-equal** to §117 source —
+  v init (deterministic vs random Gaussian), dtypes (float64 vs float32),
+  RNG consumption order, **missing bias term**, different STDP rates,
+  different w_max. §134 rewrote `lego_engine.py` byte-equal §117. Smoke:
+  init W/v/bias + 80-step spike/W byte-equal verified. §131 re-validation:
+  STRONGLY-NSTIM-DEPENDENT verdict survives (canonical range ratio 1.823×
+  > 1.50 threshold; drifted was 2.199×). §133 2-point subset re-validation:
+  η²(N=256, pooled) = 0.2712 **byte-equal §127** · η²(N=1024, pooled) =
+  0.3223 **byte-equal §127**. §127's published values CONFIRMED on
+  canonical engine post-§134. §131/§132/§133 originals carried as
+  drifted-engine substrate historical evidence (state-dir sha-locked).
+  **Instrument integrity is a measurable arc property** — measurement
+  detected the drift, not code review.
