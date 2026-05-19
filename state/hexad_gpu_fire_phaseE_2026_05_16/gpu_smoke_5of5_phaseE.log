@@ -1,8 +1,0 @@
-PASS  F-RFC040-GPU-AVAIL  cuda_available=1 device_count=1 (real CUDA host)
-PASS  F-RFC040-GPU-TODEVICE  farr_to_device=1 farr_to_host=1 round-trip exact (real H2D/D2H)
-PASS  F-RFC040-GPU-EQUIV-SMALL  cuBLAS Dgemm == CPU oracle == [[4,5],[10,11]] (max|Δ|=0.0 < 1e-9)
-PASS  F-RFC040-GPU-EQUIV-RAND  cuBLAS == CPU on 64x96@96x48 LCG-random (max|Δ|=4.44089e-15 < TOL_MATMUL 1e-9)
-PASS  F-RFC040-GPU-DETERMINISM  3x cuBLAS Dgemm byte-identical (Δ_12=0.0 Δ_23=0.0)
-
-=== RFC040 GPU smoke: 5/5 PASS ===
-PASS — anima RFC 040 Phase D real-cuBLAS LANDED (HEXA_CUDA build, real GPU, cuBLAS==CPU within 1e-9)

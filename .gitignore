@@ -398,6 +398,8 @@ HEXAD/*/state/
 # HEXAD/<TOPIC>/state/<basename>/ are SSOT-tracked. Un-ignore explicitly per topic.
 !HEXAD/LEGO/state/
 !HEXAD/LEGO/state/**
+!HEXAD/NEUROMORPHIC/state/
+!HEXAD/NEUROMORPHIC/state/**
 
 # runpod/vast dispatch scripts may embed API keys — never commit (keys → env/keyfile)
 *_runpod.sh
@@ -527,3 +529,15 @@ state/pcn_fire_s126_2026_05_20/s126_pod_id.txt
 state/pcn_fire_s126_2026_05_20/S126_FAILURE.txt
 state/pcn_fire_s126_2026_05_20/s126_train.log
 state/pcn_fire_s126_2026_05_20/s126_eval.log
+
+# === 2026-05-20 Phase C migration — HEXAD/<TOPIC>/state/ family ===
+# Mirror of state/ binary rules above, now at the canonical post-mv location.
+HEXAD/*/state/*/ckpt_*.pt
+HEXAD/*/state/**/ckpt_*.pt
+HEXAD/*/state/*/ckpts/
+HEXAD/*/state/*/corpus_*.jsonl
+HEXAD/*/state/*/corpus_*.txt
+HEXAD/*/state/*/trace_corpus_*.jsonl
+HEXAD/*/state/*/big_corpus.txt
+HEXAD/*/state/*/runs/
+HEXAD/*/state/*/results/
