@@ -1,0 +1,39 @@
+{
+  "battery": "B-S97-1..7 (RESEARCH.md §97 hardware coupling design, sidecar)",
+  "central_blue_falsifier_changed": 0,
+  "central_blue_falsifier_sha_expect": "ad1881eaa7fd5041",
+  "result": "7/7 closed-form PASS",
+  "all_closed": true,
+  "verdicts": {
+    "B-S97-1": {
+      "pass": true,
+      "detail": "cube_cardinality=8==2^3(True) exhaustive_all_tuples_map_to_a_bucket=True all_4_buckets_covered=True per_tuple_exactly_one_bucket=True (the 4-bucket §97 taxonomy partitions the (DRIVES_STATE,PHYSICS_SOURCED,ANCHOR_ONLY) Boolean cube exhaustively + disjointly)"
+    },
+    "B-S97-2": {
+      "pass": true,
+      "detail": "truth_table_classify==(D∧¬P)=True unique_illegit_cell=[(True, False)]==[(True, False)](True) closed_conjunction_form=True (GOAL-ILLEGITIMATE-COMMAND-CHANNEL ⇔ DRIVES_STATE∧¬PHYSICS_SOURCED — the unique §7-forbidden externally-commanded shape)"
+    },
+    "B-S97-3": {
+      "pass": true,
+      "detail": "3x_bit_identical_sha256=True digest=d6031c7ec2dc2442 source_no_rng_no_clock=True (classify_coupling is a deterministic pure function)"
+    },
+    "B-S97-4": {
+      "pass": true,
+      "detail": "de_morgan_legit_a==legit_b=True legit==¬illegit_over_table=True legit_cell_count=3/4 (§7 legitimacy = ¬(DRIVES_STATE∧¬PHYSICS_SOURCED) = ¬DRIVES_STATE∨PHYSICS_SOURCED — closed Boolean)"
+    },
+    "B-S97-5": {
+      "pass": true,
+      "detail": "classified={'1a_EEG_stimulus': 'GOAL-ILLEGITIMATE-COMMAND-CHANNEL', '1b_EEG_anchor': 'MEASUREMENT-ANCHOR-ONLY', '2_QRNG_seed': 'GOAL-LEGITIMATE-INPUT', '3_actuator': 'DESIGN-OPEN'} matches_§5_matrix=True each_bucket_cardinality==1=True (the 4 §97 candidate couplings classify to exactly the §5 matrix — 1a illegitimate / 1b anchor / 2 legitimate-input / 3 design-open)"
+    },
+    "B-S97-6": {
+      "pass": true,
+      "detail": "qrng_seed(is_content=False)→PHYSICS_SOURCED=True→GOAL-LEGITIMATE-INPUT(True) qrng_content(is_content=True)→PHYSICS_SOURCED=False→GOAL-ILLEGITIMATE-COMMAND-CHANNEL(True) physics_sourced_rule_table={False: True, True: False}(True) (noise-as-spontaneity-seed vs noise-as-content = closed Boolean: content-free entropy = legitimate ingredient, content-bearing entropy = command channel)"
+    },
+    "B-S97-7": {
+      "pass": true,
+      "detail": "§19_F_CT_3_gate_exists=True anima_eeg_to_akida_spike.hexa_exists=True eeg_tool_is_structural_encoder(forward+raster)=True central_blue_falsifier_sha=ad1881eaa7fd5041 0-line-diff_vs_ad1881eaa7fd5041=True (CONNECTION-POINT — §97 cites the real §19 F-CT-3 gate + the real EEG tool; central battery untouched, sidecar-only)"
+    }
+  },
+  "B-S97-NOTE": "S97-COUPLING-OUTCOME-EMPIRICAL — whether any hardware coupling actually helps anima emerge (an EEG anchor cross-validating a genuine emergence, QRNG physical entropy enabling genuine spontaneity, an actuator displaying a genuine spontaneous emission) is an SGD / hardware OUTCOME, un-measurable at design-tier. This battery proves the §97 coupling TAXONOMY is exhaustive / disjoint / deterministic and the legitimate-anchor-vs-illegitimate-command PREDICATE is a closed Boolean conjunction. It does NOT prove any coupling yields emergence — §97 §4.4 explicitly finds hardware coupling GOAL-ORTHOGONAL (it addresses neither the §1.1 data-regime ceiling nor the §95 substrate ceiling). B-D-NOTE / B-EMERGE-NOTE / B-CT3-NOTE / B-S95-NOTE family, NOT counted in central 🔵, necessary-not-sufficient (B-EMERGE-7).",
+  "f_safe": "NO σ/τ/φ/J₂ external derivation; OpenBCI / ESP32 engineering specs observation-only (f1/f2 — external entities); Ψ=½ is anima internal architecture (g2 internal carve-out); taxonomy = Boolean cube partition; legitimacy = closed Boolean conjunction; classify = deterministic pure function. f1/f2/f3 hard-fail safe. B-IDENTITY-5 unaffected (no corpus generated)."
+}
