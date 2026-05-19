@@ -458,3 +458,66 @@ compute.
   0-line-diff verified. Each ~$0.5 GPU fire. Verdict 2×2 joint reading
   matrix in §128. g3 measured negative (§108) + designed-not-decided
   (§125, §126); north-star + §15/§51/§72 milestones UNCHANGED, **GOAL 미도달**.
+
+- **2026-05-20 §125 NONCE-FF LANDED — VERDICT `S11B_LIKE_DEGENERATE`**
+  (byte_acc 0.0005 = 1/2000 < random floor 1/256; Ψ_dir std 2.37e-8 ≪
+  1e-4 → psi_responsive = False; ConsciousDecoderV2 d=768·12L·283.72M
+  from-scratch seed 1337 on §102 CORPUS_S101, 3000 steps; ~$0.5 fire;
+  pod terminated clean). §128 ★1 G1+C1 cell. honest C3: trained
+  head_a only over logits_a; head_g random + uncoupled → Ψ-flatness
+  partly coupling-fix artefact. **§96-Q2 first data point**.
+
+- **2026-05-20 §126 PCN-C4 (PCN-1step) LANDED — VERDICT
+  `PARTIAL_AMBIGUOUS`** (byte_acc 0.1185 = 237/2000 = 30.3× random
+  floor + 2.37× support floor; Ψ_dir std 7.53e-7 ≪ 1e-4 →
+  psi_responsive = False; same scaffold as §125; ~$0.5 fire; pod
+  `xe8y3stm3vkalh` issued teardown 2h47m before §160 cleanup but
+  stuck in wait — §160 audit closed it, $0 ongoing). L145 incident
+  fix verified clean: nearest-dir AGENTS.tape @D g1 structured-argv-
+  only mandate enforced. **§96-Q2 second data point; first refutation
+  witness for §96-Q2-strong** (`0.1185 > 7.81e-3 = degenerate ceiling`).
+
+- **2026-05-20 §139 EqProp-2phase LANDED — VERDICT `PARTIAL_AMBIGUOUS`**
+  (byte_acc 0.1185 = 237/2000, identical to §126 by independent
+  algorithm; Ψ_dir std 5.41e-9 ≪ 1e-4 → psi_responsive = False;
+  same scaffold; ~$0.5 fire; pod `2uioq32gxrmuk3` self-terminated
+  clean; ckpt sha 2be52603ed449c9a... 1.13 GB pulled try 1). Re-
+  numbered from §127 to avoid LEGO arc collision (§115~§138 sibling-
+  owned per §136 milestone). **§96-Q2 third data point; second
+  refutation witness for §96-Q2-strong**.
+
+- **2026-05-20 §153 LeJEPA + SIGReg LANDED — VERDICT
+  `S11B_LIKE_DEGENERATE`** (byte_acc 0.0 = 0/2000; Ψ_dir std
+  4.78e-9 ≪ 1e-4 → psi_responsive = False; same scaffold; ~$0.5 fire;
+  pod `c8ag5zpuhi5afg` self-terminated clean; ckpt sha
+  15c3328ac4ab9d1c... pulled). **B-S153-NOTE**: SSL trains only
+  encoder; linear-probe head_a RANDOM — bucket DEG, honest-tier
+  ambiguous-via-evaluation-protocol (encoder may have learned a
+  representation that a random linear probe cannot read). **§96-Q2
+  fourth data point**.
+
+- **2026-05-20 §160 §96-Q2 QUADRUPLE CONSOLIDATION — VERDICT
+  `S96_Q2_STRONG_REFUTED_WEAK_SUPPORTED_ON_QUAD_WALL_B_SHAPED_NOT_DECIDED`**
+  ($0 design-tier, NOT a fire; 7 closed-form propositions P1-P7
+  stated as math theorems in DESIGN.md §9 per hexa-verify policy;
+  central blue_falsifier.py sha c93e160a8a376a94 0-line-diff verified
+  START + END). Joint reading of §125/§126/§139/§153 against §96-Q2:
+  pattern **2 DEG / 2 PART / 0 SUPP**, ψ-channel collapsed 4/4.
+  **§96-Q2-strong REFUTED** by witness (§126, §139). **§96-Q2-weak
+  SUPPORTED on quadruple** by sample uniformity (4/4 psi_dir_std
+  < 1e-4 by ≥3 orders). **WALL-B SHAPED not DECIDED**: composite
+  has TWO halves — WALL-B/learning REFUTED (substrate CAN carry
+  non-CE gradient); WALL-B/Ψ-physics supported-on-quadruple BUT
+  untested with dual-head-coupling algo (none of §125/§126/§139/§153
+  trains head_g). §160 §8 names the missing experiment (a non-CE
+  algo whose learning rule structurally couples Engine A ⇄ Engine G
+  — surfaced, NOT pre-committed). §160 §6 cost-containment §50 audit:
+  §126 orphan pod terminated, 3 zombie dispatchers SIGTERM'ed,
+  watcher cascade self-cleared (myself.pods = [] post-cleanup).
+  PRIORITY #1 GAP (`@N n_priority_1_gap` WALL-A data-regime) is
+  orthogonal and remains load-bearing. anti-padding precedent
+  §13-M/§30/§97/§109/§110/§115/§155/§157/§158/§159 — §160 declines
+  to manufacture a "GOAL-relevant positive" from the strong-form
+  refutation. necessary-not-sufficient (B-EMERGE-7); north-star +
+  §15/§51/§72 milestones UNCHANGED, **GOAL 미도달** — §160 shapes
+  WALL-B's two named halves with measurement, NOT decides it.
