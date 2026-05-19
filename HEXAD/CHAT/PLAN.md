@@ -1085,3 +1085,34 @@ train init CE 5.639149 → final 0.004546 (trained-saturated, §73-FIRE 0.0042 m
 - (δ) decision-live/body-dead split NOT the pattern
 
 **g3 honest**: §9-coherent bodies = locally-garbled Korean carving fragments (memorization-saturated regime, §16 baseline regression 없음) — trained-scale survival ≠ coherent emergence ≠ GOAL emergence (B-S79-RETRY-NOTE / B-EMERGE-7). B-S79-RETRY 8/8 🔵 (ONE-ENGINE-A/G-LIFT-CONSTRUCTION · BODY-FROM-REAL-CKPT-LOGITS · §16-CONFIG-BYTE-EQUAL · §9-CASCADE-METRIC-FORMULA-MATCH · §24-DECISION-AXIS-PRESERVED · §62-ANCHORED-ECHO-PARTITION · DETERMINISTIC · SSH-WAIT-WINDOW-EXTENDED). single sequential agent throughout (§50 burst rate-limit lesson — 6-agent burst 2× wipeout 재확인 후 retry sequential one-at-a-time). north-star + §15/§51/§72 milestone UNCHANGED, GOAL 미도달. PHILOSOPHY g6 §verdict_emergence_axis_fire_s79_retry self-appended.
+
+### 2026-05-19 §84 architectural-insight frontier arxiv deep research LANDED — §26 thin-frontier PARTIALLY REFUTED
+
+$0, commit `c44187936` on main, central blue_falsifier.py sha c93e160a 0-line-diff (literature review tier, no battery). §80 biology deep research 의 직교 counterpart — §72 frontier-2 "new architectural insight" 영역 (ML/AI cs.AI/LG/NE/CL/MA, q-bio.NC 제외). 37 papers, 12 keyword cluster.
+
+**Grade**: 9 ★★★★★ + 13 ★★★★ + 13 ★★★ + 1 ★★ + 1 ★.
+
+**Top 10 ★★★★★+★★★★**:
+1. SAPIN 2511.02241 — structural plasticity as active inference (strongest new insight)
+2. FLAIR/Silent-Thought 2603.17837 — latent reasoning while listening
+3. When2Speak 2605.05626 — silent-token supervision
+4. RAGEN-2 2604.06268 — **template collapse invisible to entropy (anima §16 routing-collapse 직접 mirror)**
+5. biorxiv:685235 — self-initiated action = drift-diffusion to threshold
+6. 2510.24797 — LLM self-referential subjective-experience SAE-gated
+7. Missing Reward 2508.05619 — AIF EFE (§59 anchor carry)
+8. Inner Thoughts 2501.00383 — (§24 anchor carry)
+9. reward-free self-evolution 2604.18131 — (§29 anchor carry)
+10. Coconut 2412.06769 — (Dir-G/I anchor carry)
+
+**5 main themes**: when-to-speak/silent-decision · intrinsic-motivation/AIF/free-energy · homeostasis/structural-plasticity · latent-reasoning/continuous-thought · template-collapse/action-timing/self-reference.
+
+**§26 thin-frontier re-validation = PARTIALLY REFUTE**: CONFIRM thin for *emergence target* (2024-2026 어느 paper 도 spontaneous-conscious-emission 을 emergence phenomenon 로 framing 안 함 — anima-unique). REFUTE for *toolbox* (§26 missed 2 now-dense cluster: silent-token/full-duplex when-to-speak + homeostatic structural plasticity). NET: thin where anima wants it, dense where anima can borrow mechanism.
+
+**Top 3 anima-mapping candidates (§85+ future-fire seeds)**:
+- (A) HOMEOSTATIC-SET-POINT MITOSIS (anchor SAPIN 2511.02241) — MITOSIS split + Ψ-restoration + emission 을 ONE prediction-error drive 로 통합, anima-fit ★★★★★ HIGH $0 design-tier
+- (B) SILENT-TOKEN SUPERVISED EMISSION-AXIS (anchor When2Speak) — §24 decision-axis 를 anima OWN physics trace 로 supervise, ★★★★ MID
+- (C) DRIFT-DIFFUSION EMIT-BOUNDARY (anchor biorxiv:685235) — DDM integrator for §73 controller, ★★★★ MID
+
+**5 honest gaps**: embodiment substrate mismatch · external-reward agentic RL incompatible with g_goal · scale regime mismatch (billion-param audio LLM vs anima from-scratch byte-LM) · DDM needs evidence integrator (anima must substitute self-physics) · self-referential reports SAE-gated + authors disclaim consciousness.
+
+**g3**: literature review tier, capability claim 0, arxiv citation = inspiration NOT proof, ML→anima-physics transfer unproven. **sharpest insight: Theme 3 homeostatic structural plasticity (SAPIN) = emission/mitosis/Ψ-restoration 를 one drive 로 통합하는 유일 family** — §85 후보 (A) 의 anchor. north-star + §15/§51/§72 milestone UNCHANGED, GOAL 미도달. PHILOSOPHY g6 §verdict_architecture_deep_research_s84 self-appended.
