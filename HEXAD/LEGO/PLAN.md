@@ -292,3 +292,14 @@ north-star + §15/§51/§72 milestones UNCHANGED; **GOAL 미도달**.
   NOT byte-equal to numpy (RNG divergence, honest — §71 limit). HEXA_FIRST_WARN
   deferral (23× across arc) genuinely RESOLVED — implemented + tested hexa-native
   engine. anima stayed downstream-consumer.
+
+### §141 — LEGO GPU SPIKING PRIMITIVE DESIGN *(2026-05-20)*
+
+- **tier**: design-tier · $0 · **verdict** `GPU-SPIKING-DESIGN-CLOSE-DEVICE-KERNEL-GAP-NAMED`
+- **battery**: B-S141 5/5 🔵 · **state**: `HEXAD/LEGO/state/lego_gpu_spiking_design_s141_2026_05_20/`
+- **finding**: Names the LEGO GPU fire prerequisite. Unlike §138's pure-hexa CPU
+  primitives, GPU spiking needs **device CUDA kernels** (runtime_cuda.c) — deeper
+  upstream change. Only `flame_stdp_pair` (O(N²)) genuinely needs GPU; O(N) ops
+  stay CPU. inbox patch `flame-stdp-pair-gpu-kernel.md` filed (runtime-kernel tier).
+  **LEGO GPU fire = 2 upstream steps away**, NOT fire-ready — fire-gate discipline
+  forbids firing on unmet prerequisite. The honest answer to "GPU fire go".
