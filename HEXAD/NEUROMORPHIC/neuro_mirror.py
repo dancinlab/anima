@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # ════════════════════════════════════════════════════════════════════
 # HEXAD/NEUROMORPHIC/neuro_mirror.py
-# NEURO-MIRROR v1 — software neuromorphic substrate-mirror engine.
+# NEURO-MIRROR v2 — software neuromorphic substrate-mirror engine.
 # ════════════════════════════════════════════════════════════════════
 # Canonical reusable module. Full design + honest ceiling: ENGINE.md.
 #
@@ -26,6 +26,15 @@
 #     the `ce_grad` slot stays HONESTLY unfilled — an updated, accurate
 #     `NotImplementedError`, NOT faked.
 # The `gpu` backend is likewise a declared, honestly-unfilled slot.
+#
+# v2 CONSOLIDATION — §120 spiking-attention replacement decided + lifted:
+#   - §120 (B-S120 8/8 🔵) decided §96 design-open #1: the spiking
+#     replacement for `softmax(QK^T)` self-attention = spike-rate
+#     dot-product scoring + k-WTA routing. The verified `R(k,mode)` core is
+#     lifted here as `spiking_routing` + its reduction target
+#     `softmax_attention`. byte-vocab attention is the `k=T` / soft-readout
+#     corner — a generalisation, not a graft (§7-clean). design ≠ fire ≠
+#     emergence: a routing-rule mirror, not the spiking anima.
 #
 # HONEST CEILING (baked into the API, ENGINE.md §2): NEURO-MIRROR mirrors the
 # LEARNING-CHANNEL half of the §11-B question. It REFUSES to fake the
@@ -208,6 +217,59 @@ def entropy_to_jitter(ent_bytes, N):
 
 
 # ─────────────────────────────────────────────────────────────────────
+# §120 spiking routing — the decided replacement for softmax(QK^T) self-
+# attention. Verified core lifted from the committed §120 decision
+# `state/spiking_attention_replacement_s120_2026_05_19/` (B-S120 8/8 🔵).
+# §96 design-open #1: softmax attention is SPIKING-INCOMPATIBLE — the
+# decided replacement = spike-rate dot-product scoring + k-WTA routing.
+# ─────────────────────────────────────────────────────────────────────
+def softmax_attention(q, k, v):
+    """Byte-vocab causal self-attention — the §120 reduction TARGET (the
+    thing being replaced). ATTN(i) = Σ_{j≤i} softmax_j(q_i·k_j/√d) · v_j."""
+    d, T = q.shape[-1], q.shape[0]
+    score = (q @ k.T) / np.sqrt(d)
+    mask = np.tril(np.ones((T, T), dtype=bool))
+    score = np.where(mask, score, -1e30)
+    score = score - score.max(axis=-1, keepdims=True)
+    w = np.exp(score)
+    w = w / w.sum(axis=-1, keepdims=True)
+    return w @ v
+
+
+def spiking_routing(q, k, v, kk, mode="hard"):
+    """The decided §120 routing family R(k, mode). score = spike-rate
+    dot-product (rate-coded coincidence = async LOCAL accumulation — kills
+    §96 obstructions 1 all-pairs + 3 instantaneous); selection = k-WTA
+    top-k (lateral inhibition = a LOCAL competition, NOT a global softmax —
+    kills obstruction 2).
+      mode='hard' → strict k-WTA, the spiking corner.
+      mode='soft' → softmax over the k winners.
+    REDUCTION (§120 §3, B-S120-3): R(k=T, mode='soft') ≡ softmax_attention
+    byte-equal — byte-vocab attention is the k=T soft-readout SPECIAL CASE,
+    so this is a generalisation not a graft (§7-clean). A⇄G enter as
+    excit/inhib drives; their k-WTA tie is the Ψ=½ fixed point
+    (psi_c1(drive_a, drive_g), cos=0 ⇒ ½)."""
+    d, T = q.shape[-1], q.shape[0]
+    score = (q @ k.T) / np.sqrt(d)                # rate-coded dot-product
+    mask = np.tril(np.ones((T, T), dtype=bool))   # causal
+    out = np.zeros_like(v)
+    for i in range(T):
+        valid = np.where(mask[i])[0]
+        sc = score[i, valid]
+        kw = min(kk, len(valid))
+        win = valid[np.argsort(sc)[-kw:]]         # k-WTA: top-k winners
+        sw = score[i, win]
+        if mode == "soft":
+            e = np.exp(sw - sw.max())
+            w = e / e.sum()
+        else:                                     # hard k-WTA
+            w = np.zeros(len(win))
+            w[np.argmax(sw)] = 1.0
+        out[i] = (w[:, None] * v[win]).sum(axis=0)
+    return out
+
+
+# ─────────────────────────────────────────────────────────────────────
 # The honest-ceiling API contract (ENGINE.md §2)
 # ─────────────────────────────────────────────────────────────────────
 def confronts(experiment):
@@ -361,7 +423,21 @@ def _smoke():
           f"  jitter_norm={trq['seed_jitter_norm']:.4f}"
           f"  non_degenerate={vq['non_degenerate']}")
     ok &= vq["psi_bounded_0_1"]
-    # 5. remaining declared slots stay HONEST stubs (must raise, not fake)
+    # 5. §120 spiking routing — byte-attention reduction byte-equal:
+    #    R(k=T, soft) ≡ softmax_attention (§7-clean reduction witness),
+    #    and hard k-WTA is genuinely distinct (not a trivial copy).
+    rg = np.random.default_rng(SEED)
+    T, d = 8, 6
+    q, k, v = (rg.standard_normal((T, d)) for _ in range(3))
+    y_soft = spiking_routing(q, k, v, kk=T, mode="soft")
+    y_byte = softmax_attention(q, k, v)
+    y_hard = spiking_routing(q, k, v, kk=2, mode="hard")
+    red = float(np.max(np.abs(y_soft - y_byte)))
+    hard_distinct = float(np.max(np.abs(y_hard - y_byte))) > 1e-6
+    print(f"  §120 route : R(k=T,soft) vs softmax-attn max|Δ|={red:.2e} "
+          f"byte-equal={red < 1e-9}  hard-k-WTA distinct={hard_distinct}")
+    ok &= (red < 1e-9 and hard_distinct)
+    # 6. remaining declared slots stay HONEST stubs (must raise, not fake)
     for kw, label in [(dict(learning_rule="ce_grad"), "ce_grad(§118-VOID)"),
                       (dict(backend="gpu"), "gpu-backend")]:
         try:
@@ -369,7 +445,7 @@ def _smoke():
             print(f"  !!! slot {label} did NOT raise — FAIL"); ok = False
         except NotImplementedError:
             print(f"  slot       : {label} → honest NotImplementedError ✅")
-    print(f"NEURO-MIRROR v1 smoke: {'OK' if ok else 'FAIL'}")
+    print(f"NEURO-MIRROR v2 smoke: {'OK' if ok else 'FAIL'}")
     return ok
 
 

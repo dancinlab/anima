@@ -244,3 +244,15 @@ compute.
   non-degenerate with PHYSICAL ANU quantum entropy (jitter_norm 0.4702).
   central blue_falsifier.py 0-line-diff; design ≠ fire ≠ emergence;
   capability claim 0; GOAL 미도달, milestones unchanged.
+- **2026-05-19** — NEURO-MIRROR **v2 CONSOLIDATION** — `neuro_mirror.py`
+  v1 → v2: the §120 spiking-attention replacement consolidated.
+  `spiking_routing` (the decided `R(k,mode)` family = spike-rate
+  dot-product scoring + k-WTA routing) + its reduction target
+  `softmax_attention` are lifted from the committed §120 core (B-S120
+  8/8 🔵); the §4 API surface gains the `routing` row. v2 smoke OK ($0,
+  CPU-only): `R(k=T,soft)` ≡ `softmax_attention` byte-equal
+  (max|Δ|=2.22e-16 — the §7-clean reduction witness, byte-attention is the
+  `k=T` corner), hard k-WTA genuinely distinct, all four cycles
+  (§117/§118-VOID-slot/§119/§120) consistent. central blue_falsifier.py
+  0-line-diff; design ≠ fire ≠ emergence — a routing-rule mirror, NOT the
+  spiking anima; capability claim 0; GOAL 미도달, milestones unchanged.

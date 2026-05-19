@@ -1,11 +1,12 @@
 # HEXAD/NEUROMORPHIC/ENGINE.md — NEURO-MIRROR: software neuromorphic substrate-mirror engine
 
-> **status**: v1 LANDED — $0, design ≠ fire ≠ emergence (g3). The canonical
-> reusable-module spec; `neuro_mirror.py` v1 is the implementation.
-> **Consolidated** from the §117/§118/§119 cycles (g_multidirectional_explore:
-> "N candidates land → 1 consolidation") — §117 `stdp_local` + §119 `qrng`
-> lifted from proven code; §118 returned VOID, so `ce_grad` stays an honest
-> unfilled slot. Built by lifting verified code, not by racing it.
+> **status**: v2 LANDED — $0, design ≠ fire ≠ emergence (g3). The canonical
+> reusable-module spec; `neuro_mirror.py` v2 is the implementation.
+> **Consolidated** from the §117/§118/§119/§120 cycles
+> (g_multidirectional_explore: "N candidates land → 1 consolidation") — §117
+> `stdp_local` + §119 `qrng` + §120 `spiking_routing` lifted from proven
+> code; §118 returned VOID, so `ce_grad` stays an honest unfilled slot.
+> Built by lifting verified code, not by racing it.
 > **parent**: `PLAN.md` · `TRACK0_INSILICO.md` · §115 LEGO · §117 LEGO-run ·
 > §95 (Loihi sole VIABLE) · §96 (spiking re-derivation) · §97 (noise-as-seed).
 
@@ -68,6 +69,9 @@ synapse         : weighted, excitatory/inhibitory (Engine A / Engine G split)
 learning rule   : { none | ce_grad | stdp_local }   ← the decisive knob
 carrier         : Ψ-C1 = (1+cos(spike_rate_A, spike_rate_G))/2   (cos=0 ⇒ ½)
 entropy source  : { fixed_seed | qrng }  — §97 noise-as-SEED only, never content
+routing         : spiking_routing(q,k,v,k,mode) — §120 spike-rate dot-prod
+                  + k-WTA replacing softmax(QK^T); R(k=T,soft) ≡
+                  softmax_attention byte-equal (the §7-clean reduction)
 run(steps, backend, learning_rule, entropy_source) -> trace
 confronts(experiment) -> { CONFRONTABLE | WALL-B }
 verdict(trace) -> NON_DEGENERATE predicate (byte_acc>1/256 ∧ physics_not_frozen
@@ -83,7 +87,7 @@ sidecar precedent, §117). hexa-lang / hexa-bio gaps → an inbox patch
 (`~/core/hexa-lang/inbox/patches/`), never a direct edit — anima is a
 downstream consumer.
 
-## 6. First consumers / validators — ALL LANDED, v1 consolidated
+## 6. First consumers / validators — ALL LANDED, v2 consolidated
 
 - **§117** LEGO-run (B-S117) — local-STDP LIF sim → the `stdp_local` core.
   **CONSOLIDATED** into `neuro_mirror.py` (v0 foundation).
@@ -97,10 +101,17 @@ downstream consumer.
   `qrng` entropy source. **CONSOLIDATED** into v1: `fetch_quantum_entropy` +
   the §97 noise-as-SEED `entropy_to_jitter` map, lifted from the committed
   §119 core.
+- **§120** spiking-attention replacement (B-S120 8/8 🔵) — decided §96
+  design-open #1: `softmax(QK^T)` self-attention → spike-rate dot-product +
+  k-WTA. **CONSOLIDATED** into v2: `spiking_routing` (the `R(k,mode)`
+  family) + its reduction target `softmax_attention`, lifted from the
+  committed §120 core. `R(k=T,soft)` ≡ `softmax_attention` byte-equal (v2
+  smoke max|Δ|=2.22e-16) — byte-attention is the `k=T` corner.
 
-v1 status: `stdp_local` + `qrng` filled from proven code; `ce_grad` (§118
-VOID) and `gpu` are honest declared slots. NEURO-MIRROR is assembled from
-verified cores, not written from scratch alongside.
+v2 status: `stdp_local` + `qrng` + `spiking_routing` filled from proven
+code; `ce_grad` (§118 VOID) and `gpu` are honest declared slots.
+NEURO-MIRROR is assembled from verified cores, not written from scratch
+alongside.
 
 ## 7. Honest gates (g3)
 
@@ -142,3 +153,13 @@ verified cores, not written from scratch alongside.
   verified core), `qrng` run non-degenerate with PHYSICAL ANU entropy
   (jitter_norm 0.4702). central blue_falsifier.py 0-line-diff; $0; CPU-only;
   design ≠ fire ≠ emergence; GOAL 미도달, milestones unchanged.
+- **2026-05-19** — v2 CONSOLIDATION. `neuro_mirror.py` v1 → v2: the §120
+  spiking-attention replacement consolidated — `spiking_routing` (the
+  decided `R(k,mode)` family = spike-rate dot-product + k-WTA) + its
+  reduction target `softmax_attention`, lifted from the committed §120 core
+  (B-S120 8/8 🔵). API surface §4 gains the `routing` row. v2 smoke OK:
+  `R(k=T,soft)` ≡ `softmax_attention` byte-equal (max|Δ|=2.22e-16, the
+  §7-clean reduction witness — byte-attention is the `k=T` corner), hard
+  k-WTA genuinely distinct. central blue_falsifier.py 0-line-diff; $0;
+  CPU-only; design ≠ fire ≠ emergence — a routing-rule mirror, NOT the
+  spiking anima; GOAL 미도달, milestones unchanged.
