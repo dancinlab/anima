@@ -1,0 +1,79 @@
+#!/usr/bin/env python3
+"""§107 trainer — Dir-I lever (§16 byte-equal carry) on §102's CORPUS_S101.
+
+This is `train_carving_s16.py` invoked with §107-specific arguments. The
+trainer source is BYTE-IDENTICAL to §16 (G5 single-variable preserve per
+§101). The corpus is §102's BUILT CORPUS_S101 (sha256
+`39d581da209615468c1c41e07aa8662ef1074bc5be49a666f8f861753dd5810e`,
+777,845 records, 603MB, §104-refined I4' = TRUE byte-identical).
+
+5 levers preserved (§101 G5 single-variable):
+- §16 routing CARVING corpus  → baseline (Dir-I trainer carries)
+- §59-FIRE W-native PTD       → side READ-OUT only, NOT objective (G5 carry)
+- §75-FIRE state-derived ctrl → A4 emit-length-indep probe (eval-side)
+- §88-F2 neoteny              → AVAILABLE-flag-NOT-ENABLED this cycle (G5)
+- §92 L_ap                    → AVAILABLE-flag-NOT-ENABLED this cycle (G5)
+
+corpus is sole variable; trainer is Dir-I/§16 lever exactly.
+
+USAGE:
+    python3 train_s107.py --corpus corpus_s101.jsonl --out-dir out_main \\
+        --steps 6000 --seed 1337
+
+Internally just imports and reuses `train_carving_s16.py:train_main`.
+"""
+import os, sys, argparse
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from train_carving_s16 import train_main, train_sanity
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--mode", default="main", choices=["main", "sanity"])
+    ap.add_argument("--corpus", required=True)
+    ap.add_argument("--out-dir", required=True)
+    ap.add_argument("--steps", type=int, default=6000)
+    ap.add_argument("--lr", type=float, default=3e-4)
+    ap.add_argument("--bsz", type=int, default=32)
+    ap.add_argument("--seed", type=int, default=1337)
+    ap.add_argument("--d-model", type=int, default=768)
+    ap.add_argument("--n-layer", type=int, default=12)
+    ap.add_argument("--n-head", type=int, default=12)
+    ap.add_argument("--n-kv-head", type=int, default=4)
+    ap.add_argument("--lambda-ctl", type=float, default=0.5)
+    ap.add_argument("--lambda-route", type=float, default=0.5)
+    ap.add_argument("--blend-frac", type=float, default=0.15)
+    ap.add_argument("--no-curriculum", action="store_true",
+                    help="overlay-OFF connection point: curriculum-OFF == "
+                         "Dir-I shuffled sampling byte-equal (B-S16-6)")
+    args = ap.parse_args()
+
+    if args.mode == "main":
+        cfg = dict(d_model=args.d_model, n_head=args.n_head,
+                   n_kv_head=args.n_kv_head, n_layer=args.n_layer,
+                   block_size=128, lr=args.lr, bsz=args.bsz,
+                   steps=args.steps, warmup=max(20, args.steps // 20),
+                   weight_decay=0.0, eps=1e-8,
+                   corpus=args.corpus, out_dir=args.out_dir,
+                   seed=args.seed,
+                   lambda_ctl=args.lambda_ctl, lambda_route=args.lambda_route,
+                   curriculum=not args.no_curriculum,
+                   blend_frac=args.blend_frac)
+        train_main(cfg)
+    else:
+        cfg = dict(d_model=args.d_model, n_head=args.n_head,
+                   n_kv_head=args.n_kv_head, n_layer=args.n_layer,
+                   block_size=64, lr=args.lr, bsz=args.bsz,
+                   steps=args.steps, warmup=max(10, args.steps // 10),
+                   weight_decay=0.0, eps=1e-8,
+                   corpus=args.corpus, out_dir=args.out_dir,
+                   seed=args.seed,
+                   lambda_ctl=args.lambda_ctl, lambda_route=args.lambda_route,
+                   curriculum=not args.no_curriculum,
+                   blend_frac=args.blend_frac)
+        train_sanity(cfg)
+
+
+if __name__ == "__main__":
+    main()
