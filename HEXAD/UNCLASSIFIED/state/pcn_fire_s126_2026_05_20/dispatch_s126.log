@@ -1,0 +1,45 @@
+=== §125 PCN-C4 dispatch start 2026-05-19T19:14:28Z ===
+[create] trying GPU: NVIDIA A100-SXM4-80GB
+[create] resp: {"data":{"podFindAndDeployOnDemand":{"id":"9kwzdrv6p5r5b4","machineId":"spaf035exhj2"}}}
+[create] pod 9kwzdrv6p5r5b4 on NVIDIA A100-SXM4-80GB
+[ssh-ready] iter 3: 154.54.102.51:19241 — port mapped AND handshake OK
+Warning: Permanently added '[154.54.102.51]:19241' (ED25519) to the list of known hosts.
+Warning: Permanently added '[154.54.102.51]:19241' (ED25519) to the list of known hosts.
+Warning: Permanently added '[154.54.102.51]:19241' (ED25519) to the list of known hosts.
+Warning: Permanently added '[154.54.102.51]:19241' (ED25519) to the list of known hosts.
+Warning: Permanently added '[154.54.102.51]:19241' (ED25519) to the list of known hosts.
+Warning: Permanently added '[154.54.102.51]:19241' (ED25519) to the list of known hosts.
+Warning: Permanently added '[154.54.102.51]:19241' (ED25519) to the list of known hosts.
+[build] pod-side deterministic CORPUS_S101 build (seed 1337, --s1-n 777000)
+Warning: Permanently added '[154.54.102.51]:19241' (ED25519) to the list of known hosts.
+    "I7_external_grep": {
+      "corpus": {
+        "openai.com": 0,
+        "anthropic.com": 0,
+        "huggingface.co/": 0,
+        "wikipedia.org": 0,
+        "commoncrawl": 0,
+        "https://": 0,
+        "http://": 0
+      },
+      "s1_only": {
+        "openai.com": 0,
+        "anthropic.com": 0,
+        "huggingface.co/": 0,
+        "wikipedia.org": 0,
+        "commoncrawl": 0,
+        "https://": 0,
+        "http://": 0
+      },
+      "corpus_total": 0,
+      "PASS": true,
+      "honest_caveat": "external-grep is a proxy over 7 surface tokens; exhaustive provenance audit requires source-attribution tracking, NOT in $0 build scope. §16 generator is anima-OWN substrate, S2 uses anima Ψ-fields only, S5 uses anima-OWN .kosmos files. NO external API calls in build_corpus_s101.py (audit-grep this file)."
+    }
+  }
+}
+Warning: Permanently added '[154.54.102.51]:19241' (ED25519) to the list of known hosts.
+[build] corpus sha = 39d581da209615468c1c41e07aa8662ef1074bc5be49a666f8f861753dd5810e  (expect 39d581da209615468c1c41e07aa8662ef1074bc5be49a666f8f861753dd5810e)
+[build] CORPUS_S101 sha VERIFIED == §107 design corpus byte-identical
+[train] §125 NONCE-FF d768·12L·283M from-scratch seed 1337, 3000 steps
+Warning: Permanently added '[154.54.102.51]:19241' (ED25519) to the list of known hosts.
+TRAIN_PID 252
