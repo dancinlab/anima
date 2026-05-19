@@ -21,10 +21,11 @@
 | 132  | 2026-05-20 | analysis · $0  | SHAPE-FIT-IDENTIFIED (inverted-U Gaussian-in-log-N, R²=0.9995, 1-DoF) | B-S132 6/6 🔵 | `state/lego_layer2_shape_fit_s132_2026_05_20/`                          | re-fit of §127 data (no new measurement) |
 | 133  | 2026-05-20 | probe · $0      | per-N η² SE measured · monotone-decrease per-rep mean · drifted-engine | (carried as historical) | `state/lego_layer2_per_n_se_s133_2026_05_20/`                            | engine import (drifted) |
 | 134  | 2026-05-20 | fix + probe · $0 | ENGINE-BYTE-EQUALITY-RESTORED-AND-VALIDATED · §127 confirmed · §131 verdict survives | B-S134 7/7 🔵 | **`HEXAD/LEGO/state/lego_engine_byte_equal_fix_s134_2026_05_20/`** (first under `g_new_state_path`) | **engine rewrite byte-equal §117** |
+| 135  | 2026-05-20 | probe · $0      | MONOTONE-DECREASE-SURVIVES-CANONICAL · 4-of-4 pooled byte-equal §127 · N=2048 CI distinct | B-S135 7/7 🔵 | `HEXAD/LEGO/state/lego_layer2_per_n_se_canonical_s135_2026_05_20/`     | canonical engine post-§134 |
 
 ## battery sum
 
-- 9 + 7 + 7 + 7 + 7 + 8 + 6 + 7 + 6 + 7 = **71 closed-form propositions 🔵** across the arc (10 cycles).
+- 9 + 7 + 7 + 7 + 7 + 8 + 6 + 7 + 6 + 7 + 7 = **78 closed-form propositions 🔵** across the arc (11 cycles).
 - §133 carries as historical evidence (drifted-engine substrate); no battery counted toward this sum.
 - 0 propositions counted toward central `state/verify_hexad_blue_2026_05_15/blue_falsifier.py` —
   all sidecar. Central `sha256_prefix16` remains `c93e160a8a376a94` (verified

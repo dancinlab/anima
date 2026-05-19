@@ -216,3 +216,17 @@ north-star + §15/§51/§72 milestones UNCHANGED; **GOAL 미도달**.
   drifted-engine substrate historical evidence (state-dir sha-locked).
   **Instrument integrity is a measurable arc property** — measurement
   detected the drift, not code review.
+
+### §135 — LEGO LAYER-2 PER-N SE CANONICAL *(2026-05-20)*
+
+- **tier**: probe-tier · $0 · 16m Mac CPU
+- **verdict**: `MONOTONE-DECREASE-SURVIVES-CANONICAL`
+- **battery**: B-S135 7/7 🔵 sidecar
+- **state**: `HEXAD/LEGO/state/lego_layer2_per_n_se_canonical_s135_2026_05_20/`
+  (second §N under `g_new_state_path`)
+- **finding**: §134's named open closed. Full 4-point canonical re-run.
+  **All 4 pooled η² byte-equal §127**: 0.2712 / 0.3289 / 0.3223 / 0.2608 →
+  final 4-of-4 cross-verification. **Per-rep mean monotonically decreases**:
+  0.464 → 0.424 → 0.361 → 0.276. N=2048 CI statistically distinct from all
+  lower N (3 of 3 no-overlap). §133's drifted-engine qualitative finding
+  PRESERVED; canonical values uniformly higher (drifted under-estimated).
