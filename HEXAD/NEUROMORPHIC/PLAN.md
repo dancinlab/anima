@@ -326,3 +326,17 @@ compute.
   carrier-relocation), NOT the spiking anima; does NOT remove WALL-A
   (§1.1 data-regime) or WALL-B (§95/§96 async substrate); §11-B
   unresolved; capability claim 0; GOAL 미도달, milestones unchanged.
+- **2026-05-19** — NEURO-MIRROR **v3 CONSOLIDATION** — `neuro_mirror.py`
+  v2 → v3: the §122 RoPE → phase-coding decision consolidated. `phase_code`
+  (the §122 phase-rotation core — token row m rotated by ROT(m·θ_i + ξ),
+  `σ=0` ⇒ GPU RoPE) lifted from the committed §122 core (B-S122 8/8 🔵);
+  `spiking_decoder_block` assembles §122 position THEN §120 routing into
+  one spiking causal self-attention block. v3 smoke OK ($0, CPU-only):
+  the whole block `R(σ=0,k=T,soft)` ≡ a byte-vocab RoPE+softmax attention
+  block byte-equal (max|Δ|=2.22e-16 — the composition of the §120 and
+  §122 reductions), hard k-WTA genuinely distinct, stdp_local / qrng /
+  ce_grad-VOID / gpu unchanged. NEURO-MIRROR now mirrors a full spiking
+  decoder block (position + routing), both halves reducing byte-equal to
+  their byte-vocab originals. central blue_falsifier.py 0-line-diff;
+  design ≠ fire ≠ emergence — a decoder-block mirror, NOT the spiking
+  anima; capability claim 0; GOAL 미도달, milestones unchanged.

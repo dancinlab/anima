@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # ════════════════════════════════════════════════════════════════════
 # HEXAD/NEUROMORPHIC/neuro_mirror.py
-# NEURO-MIRROR v2 — software neuromorphic substrate-mirror engine.
+# NEURO-MIRROR v3 — software neuromorphic substrate-mirror engine.
 # ════════════════════════════════════════════════════════════════════
 # Canonical reusable module. Full design + honest ceiling: ENGINE.md.
 #
@@ -35,6 +35,18 @@
 #     `softmax_attention`. byte-vocab attention is the `k=T` / soft-readout
 #     corner — a generalisation, not a graft (§7-clean). design ≠ fire ≠
 #     emergence: a routing-rule mirror, not the spiking anima.
+#
+# v3 CONSOLIDATION — §122 spiking position code + the §120/§122 decoder
+# block assembled:
+#   - §122 (B-S122 8/8 🔵) decided §96 design-open #2: RoPE → relative-
+#     phase / spike-time coding. The verified phase-rotation core is lifted
+#     here as `phase_code`. byte-vocab RoPE is the `σ=0` (zero spike-time
+#     jitter) corner — a one-parameter reduction, cleaner than §120's.
+#   - `spiking_decoder_block` assembles §122 position THEN §120 routing
+#     into one spiking self-attention block. REDUCTION: σ=0 ∧ k=T ∧ soft
+#     ≡ a byte-vocab RoPE+softmax attention block (byte-equal) — the
+#     composition of the §120 and §122 reductions. Still design ≠ fire ≠
+#     emergence: a decoder-block mirror, NOT the spiking anima.
 #
 # HONEST CEILING (baked into the API, ENGINE.md §2): NEURO-MIRROR mirrors the
 # LEARNING-CHANNEL half of the §11-B question. It REFUSES to fake the
@@ -270,6 +282,47 @@ def spiking_routing(q, k, v, kk, mode="hard"):
 
 
 # ─────────────────────────────────────────────────────────────────────
+# §122 spiking position code + the §120/§122 decoder block. Verified core
+# lifted from the committed §122 decision
+# `state/rope_phase_coding_s122_2026_05_19/` (B-S122 8/8 🔵). §96
+# design-open #2: RoPE → relative-phase / spike-time coding. RoPE is
+# already a rotation = a phase, so byte-vocab RoPE is the σ=0 corner.
+# ─────────────────────────────────────────────────────────────────────
+def phase_code(x, thetas, sigma=0.0, rng=None):
+    """§122 relative-phase / spike-time position code. x[T,d]: token row m
+    is rotated by its position — dims paired (2i,2i+1) as the in-phase /
+    quadrature of a θ_i-frequency oscillator, each pair rotated by
+    ROT(m·θ_i + ξ), ξ ~ σ·N(0,1) spike-time jitter. sigma=0 ⇒ exactly
+    ROT(m·θ_i) = GPU RoPE (the byte-RoPE limit, §122 reduction witness —
+    one-parameter, cleaner than §120's). q·k then depends only on (n−m)."""
+    T, d = x.shape
+    out = np.empty_like(x)
+    for m in range(T):
+        for i in range(d // 2):
+            j = (sigma * rng.standard_normal()
+                 if (sigma > 0 and rng is not None) else 0.0)
+            a = m * thetas[i] + j
+            c, s = np.cos(a), np.sin(a)
+            x0, x1 = x[m, 2 * i], x[m, 2 * i + 1]
+            out[m, 2 * i] = c * x0 - s * x1
+            out[m, 2 * i + 1] = s * x0 + c * x1
+    return out
+
+
+def spiking_decoder_block(x, thetas, kk, mode="hard", sigma=0.0, rng=None):
+    """One spiking self-attention block — §122 position THEN §120 routing.
+    `phase_code` rotates q/k by token position FIRST; then `spiking_routing`
+    does spike-rate dot-product + k-WTA (q=k=position-rotated x, v=x,
+    causal self-attention). REDUCTION: sigma=0 ∧ kk=T ∧ mode='soft' ≡ a
+    byte-vocab RoPE+softmax attention block (byte-equal) — the whole block
+    is the σ=0 / k=T / soft corner, the composition of the §120 and §122
+    reductions. design ≠ fire ≠ emergence: a decoder-block mirror, NOT the
+    spiking anima."""
+    qk = phase_code(x, thetas, sigma=sigma, rng=rng)   # position BEFORE routing
+    return spiking_routing(qk, qk, x, kk, mode=mode)
+
+
+# ─────────────────────────────────────────────────────────────────────
 # The honest-ceiling API contract (ENGINE.md §2)
 # ─────────────────────────────────────────────────────────────────────
 def confronts(experiment):
@@ -437,7 +490,22 @@ def _smoke():
     print(f"  §120 route : R(k=T,soft) vs softmax-attn max|Δ|={red:.2e} "
           f"byte-equal={red < 1e-9}  hard-k-WTA distinct={hard_distinct}")
     ok &= (red < 1e-9 and hard_distinct)
-    # 6. remaining declared slots stay HONEST stubs (must raise, not fake)
+    # 6. §122 + §120 spiking decoder block — full-block reduction:
+    #    block(σ=0, k=T, soft) ≡ byte-vocab RoPE+softmax attention block.
+    Tb, db = 8, 6
+    xb = rg.standard_normal((Tb, db))
+    thetas = 1.0 / (10000.0 ** (np.arange(db // 2) / (db // 2)))
+    qk0 = phase_code(xb, thetas, sigma=0.0)            # σ=0 = GPU RoPE
+    y_blk_byte = softmax_attention(qk0, qk0, xb)        # byte RoPE+softmax
+    y_blk_soft = spiking_decoder_block(xb, thetas, kk=Tb, mode="soft", sigma=0.0)
+    y_blk_hard = spiking_decoder_block(xb, thetas, kk=2, mode="hard", sigma=0.0)
+    blk_red = float(np.max(np.abs(y_blk_soft - y_blk_byte)))
+    blk_distinct = float(np.max(np.abs(y_blk_hard - y_blk_byte))) > 1e-6
+    print(f"  §120+§122  : decoder-block R(σ=0,k=T,soft) vs byte RoPE-attn "
+          f"max|Δ|={blk_red:.2e} byte-equal={blk_red < 1e-9}  "
+          f"hard distinct={blk_distinct}")
+    ok &= (blk_red < 1e-9 and blk_distinct)
+    # 7. remaining declared slots stay HONEST stubs (must raise, not fake)
     for kw, label in [(dict(learning_rule="ce_grad"), "ce_grad(§118-VOID)"),
                       (dict(backend="gpu"), "gpu-backend")]:
         try:
@@ -445,7 +513,7 @@ def _smoke():
             print(f"  !!! slot {label} did NOT raise — FAIL"); ok = False
         except NotImplementedError:
             print(f"  slot       : {label} → honest NotImplementedError ✅")
-    print(f"NEURO-MIRROR v2 smoke: {'OK' if ok else 'FAIL'}")
+    print(f"NEURO-MIRROR v3 smoke: {'OK' if ok else 'FAIL'}")
     return ok
 
 

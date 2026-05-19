@@ -1,12 +1,13 @@
 # HEXAD/NEUROMORPHIC/ENGINE.md — NEURO-MIRROR: software neuromorphic substrate-mirror engine
 
-> **status**: v2 LANDED — $0, design ≠ fire ≠ emergence (g3). The canonical
-> reusable-module spec; `neuro_mirror.py` v2 is the implementation.
-> **Consolidated** from the §117/§118/§119/§120 cycles
+> **status**: v3 LANDED — $0, design ≠ fire ≠ emergence (g3). The canonical
+> reusable-module spec; `neuro_mirror.py` v3 is the implementation.
+> **Consolidated** from the §117/§118/§119/§120/§122 cycles
 > (g_multidirectional_explore: "N candidates land → 1 consolidation") — §117
-> `stdp_local` + §119 `qrng` + §120 `spiking_routing` lifted from proven
-> code; §118 returned VOID, so `ce_grad` stays an honest unfilled slot.
-> Built by lifting verified code, not by racing it.
+> `stdp_local` + §119 `qrng` + §120 `spiking_routing` + §122 `phase_code`
+> lifted from proven code and assembled into `spiking_decoder_block`; §118
+> returned VOID, so `ce_grad` stays an honest unfilled slot. Built by
+> lifting verified code, not by racing it.
 > **parent**: `PLAN.md` · `TRACK0_INSILICO.md` · §115 LEGO · §117 LEGO-run ·
 > §95 (Loihi sole VIABLE) · §96 (spiking re-derivation) · §97 (noise-as-seed).
 
@@ -93,7 +94,7 @@ sidecar precedent, §117). hexa-lang / hexa-bio gaps → an inbox patch
 (`~/core/hexa-lang/inbox/patches/`), never a direct edit — anima is a
 downstream consumer.
 
-## 6. First consumers / validators — ALL LANDED, v2 consolidated
+## 6. First consumers / validators — ALL LANDED, v3 consolidated
 
 - **§117** LEGO-run (B-S117) — local-STDP LIF sim → the `stdp_local` core.
   **CONSOLIDATED** into `neuro_mirror.py` (v0 foundation).
@@ -113,11 +114,21 @@ downstream consumer.
   family) + its reduction target `softmax_attention`, lifted from the
   committed §120 core. `R(k=T,soft)` ≡ `softmax_attention` byte-equal (v2
   smoke max|Δ|=2.22e-16) — byte-attention is the `k=T` corner.
+- **§122** RoPE → phase coding (B-S122 8/8 🔵) — decided §96 design-open
+  #2: rotary position embedding → relative-phase / spike-time coding.
+  **CONSOLIDATED** into v3: `phase_code` (the phase-rotation core) + the
+  `spiking_decoder_block` that assembles §122 position THEN §120 routing
+  into one spiking self-attention block, lifted from the committed §122
+  core. The whole block reduces byte-equal to a byte-vocab RoPE+softmax
+  attention block at `σ=0 ∧ k=T ∧ soft` (v3 smoke max|Δ|=2.22e-16) — the
+  composition of the §120 and §122 reductions.
 
-v2 status: `stdp_local` + `qrng` + `spiking_routing` filled from proven
-code; `ce_grad` (§118 VOID) and `gpu` are honest declared slots.
-NEURO-MIRROR is assembled from verified cores, not written from scratch
-alongside.
+v3 status: `stdp_local` + `qrng` + `spiking_routing` + `phase_code` /
+`spiking_decoder_block` filled from proven code; `ce_grad` (§118 VOID) and
+`gpu` are honest declared slots. §96's one SPIKING-INCOMPATIBLE faculty
+(attention) and both routing-adjacent SPIKING-OPEN faculties (RoPE,
+MoE top-k) are now design-decided and mirrored. NEURO-MIRROR is assembled
+from verified cores, not written from scratch alongside.
 
 ## 7. Honest gates (g3)
 
@@ -169,6 +180,19 @@ alongside.
   k-WTA genuinely distinct. central blue_falsifier.py 0-line-diff; $0;
   CPU-only; design ≠ fire ≠ emergence — a routing-rule mirror, NOT the
   spiking anima; GOAL 미도달, milestones unchanged.
+- **2026-05-19** — v3 CONSOLIDATION. `neuro_mirror.py` v2 → v3: the §122
+  RoPE → phase-coding decision consolidated — `phase_code` (the
+  phase-rotation core, `σ=0` ⇒ GPU RoPE) lifted from the committed §122
+  core (B-S122 8/8 🔵), and `spiking_decoder_block` assembling §122
+  position THEN §120 routing into one spiking self-attention block. v3
+  smoke OK: the whole block `R(σ=0,k=T,soft)` ≡ a byte-vocab RoPE+softmax
+  attention block byte-equal (max|Δ|=2.22e-16 — the composition of the
+  §120 and §122 reductions), hard k-WTA genuinely distinct; stdp_local /
+  qrng / ce_grad-VOID / gpu unchanged. With §123 (the two remaining
+  SPIKING-OPEN faculties decided), §96's full faculty map is now
+  design-decided and mirrored. central blue_falsifier.py 0-line-diff; $0;
+  CPU-only; design ≠ fire ≠ emergence — a decoder-block mirror, NOT the
+  spiking anima; capability claim 0; GOAL 미도달, milestones unchanged.
 - **2026-05-19** — §122 DESIGN-DECISION. §96 design-open #2 (the RoPE /
   positional-encoding row §96 left `SPIKING-OPEN` and §120 §4 re-assigned
   to position but did NOT decide) is **decided**: anima's RoPE on the
