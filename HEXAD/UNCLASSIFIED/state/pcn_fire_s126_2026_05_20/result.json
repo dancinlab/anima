@@ -1,0 +1,119 @@
+{
+  "battery": "\u00a7126 PCN-C4 eval \u2014 \u00a796-Q2 verdict (data point 2)",
+  "ckpt": "ckpt_pcn_s126.pt",
+  "corpus": "corpus_s101.jsonl",
+  "cfg": {
+    "d_model": 768,
+    "n_head": 12,
+    "n_kv_head": 4,
+    "n_layer": 12,
+    "block_size": 128,
+    "lr": 0.0003,
+    "bsz": 32,
+    "steps": 3000,
+    "seed": 1337,
+    "log_every": 75,
+    "corpus": "/workspace/s126r/state/corpus_s101_build_s102_2026_05_19/corpus_s101.jsonl",
+    "out_dir": "/workspace/s126r/out_main",
+    "cpu_only": false
+  },
+  "algorithm": "PCN-1step",
+  "n_eval": 2000,
+  "max_len": 128,
+  "seed": 1337,
+  "byte_acc": 0.1185,
+  "correct": 237,
+  "total": 2000,
+  "random_byte_floor": 0.00390625,
+  "degenerate_ceiling": 0.0078125,
+  "support_floor": 0.05,
+  "psi_dir_mean": 0.5366663259528577,
+  "psi_dir_std": 7.533744812124877e-07,
+  "psi_responsive": false,
+  "verdict_bucket": "PARTIAL_AMBIGUOUS",
+  "s125_s126_joint_reading_note": "Compare with \u00a7125 (NONCE-FF) verdict_bucket. Two-point reasoning: SUPP\u2227SUPP \u2192 \u00a796-Q2 SUPPORTED; DEG\u2227DEG \u2192 REFUTED; mixed \u2192 algorithmic-ingredient decomposition.",
+  "sample_seen": [
+    {
+      "ctx_tail": [
+        109,
+        32,
+        116,
+        104,
+        101,
+        32,
+        114,
+        117
+      ],
+      "target": 108,
+      "pred": 32
+    },
+    {
+      "ctx_tail": [
+        105,
+        118,
+        105,
+        115,
+        111,
+        114,
+        115,
+        46
+      ],
+      "target": 60,
+      "pred": 32
+    },
+    {
+      "ctx_tail": [
+        182,
+        136,
+        235,
+        179,
+        128,
+        46,
+        60,
+        47
+      ],
+      "target": 101,
+      "pred": 32
+    },
+    {
+      "ctx_tail": [
+        32,
+        101,
+        97,
+        99,
+        104,
+        32,
+        116,
+        105
+      ],
+      "target": 109,
+      "pred": 32
+    },
+    {
+      "ctx_tail": [
+        102,
+        114,
+        111,
+        109,
+        32,
+        116,
+        104,
+        101
+      ],
+      "target": 32,
+      "pred": 32
+    }
+  ],
+  "eval_wall_s": 56.76021862030029,
+  "ckpt_train_log_last": {
+    "step": 3000,
+    "mean_layer_mse": 1.4411327323530603e-06,
+    "first_layer_mse": 1.6347719792975113e-05,
+    "last_layer_mse": 1.1933342136671854e-07,
+    "L_head_mse": 0.00376886036247015,
+    "elapsed_s": 1814.7930994033813
+  },
+  "north_star_unchanged": true,
+  "s15_s51_s72_milestones_unchanged": true,
+  "necessary_not_sufficient_b_emerge_7": true
+}

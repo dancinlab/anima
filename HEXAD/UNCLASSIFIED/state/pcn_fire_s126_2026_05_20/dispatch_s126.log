@@ -43,3 +43,22 @@ Warning: Permanently added '[154.54.102.51]:19241' (ED25519) to the list of know
 [train] §125 NONCE-FF d768·12L·283M from-scratch seed 1337, 3000 steps
 Warning: Permanently added '[154.54.102.51]:19241' (ED25519) to the list of known hosts.
 TRAIN_PID 252
+[train] done iter 1
+[eval] §125 §96-Q2 verdict eval
+Warning: Permanently added '[154.54.102.51]:19241' (ED25519) to the list of known hosts.
+Warning: Permanently added '[154.54.102.51]:19241' (ED25519) to the list of known hosts.
+Warning: Permanently added '[154.54.102.51]:19241' (ED25519) to the list of known hosts.
+Warning: Permanently added '[154.54.102.51]:19241' (ED25519) to the list of known hosts.
+Warning: Permanently added '[154.54.102.51]:19241' (ED25519) to the list of known hosts.
+[pull] success try 1
+[pull] result.json present locally — SAVE_POD=0, pod will terminate
+69235b14c88081db271ec92e2bad1026001f75c3657a0e4155def4a95394f8d5  /Users/ghost/core/anima/state/pcn_fire_s126_2026_05_20/ckpt_s126.pt
+69235b14c88081db271ec92e2bad1026001f75c3657a0e4155def4a95394f8d5  /Users/ghost/core/anima/state/pcn_fire_s126_2026_05_20/ckpt_s126.pt
+VERDICT= PARTIAL_AMBIGUOUS  byte_acc= 0.1185  psi_responsive= False
+=== §125 NONCE-FF pipeline complete 2026-05-19T19:50:48Z ===
+dispatch_s126_runpod.sh: line 217:  7353 Terminated: 15          ( sleep "$WATCHDOG_SEC"; if [ ! -s "$S126_DIR/result.json" ]; then
+    echo "WATCHDOG FIRED $(date -u +%FT%TZ): no result.json after ${WATCHDOG_SEC}s — terminating pod ${POD_ID:-?}" > "$FAIL_MARKER"; [ -n "$POD_ID" ] && gql "{\"query\":\"mutation { podTerminate(input:{podId:\\\"$POD_ID\\\"}) }\"}" > /dev/null; pkill -P $$ 2> /dev/null;
+fi )
+[teardown] terminating pod 9kwzdrv6p5r5b4 (rc=0, SAVE_POD=0)
+[teardown] myself.pods = {"data":{"myself":{"pods":[]}}}
+=== §125 PCN-C4 dispatch end 2026-05-19T19:50:52Z rc=0 ===
