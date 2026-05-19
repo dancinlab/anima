@@ -183,3 +183,86 @@ Whichever quadrant lands, the 2-paper-axis-of-decomposition is what §128 contri
 **Orphan**: 0
 **Central blue_falsifier**: 0-line-diff verified (sha `c93e160a8a376a94`)
 **docs/* 신규**: 0 (g_doc_consolidation — saved under HEXAD/NEUROMORPHIC/ per WALL-B work co-location)
+
+---
+
+## §8 — ADDENDUM 2026-05-20: arc-state + FEP-attractor design insight + prioritized next-list
+
+> $0 design-tier addendum (no new top-level §N — §128's own continuation, §N-race
+> safe). Written while §139 EqProp is in flight. g3: literature-derived hypothesis,
+> NOT measured; necessary-not-sufficient (B-EMERGE-7).
+
+### §8.1 — §96-Q2 non-CE arc state (live)
+
+| cycle | algorithm | verdict | byte_acc | psi_responsive |
+|-------|-----------|---------|----------|----------------|
+| §125 | NONCE-FF (Hinton goodness-contrast) | `S11B_LIKE_DEGENERATE` | 0.0005 (< random 0.0039) | False |
+| §126 | PCN-C4 (1-step top-down predict-error) | `PARTIAL_AMBIGUOUS` | 0.1185 (30× random, 15× degen ceiling) | False (psi_std 7.5e-7) |
+| §139 | EqProp-C2 (2-phase free/nudge local) | IN FLIGHT | — | — |
+
+**Joint reading so far (FF=DEG, PCN=PARTIAL)**: §126 PCN's top-down-prediction-error
+local rule (no cross-entropy, no global backward) genuinely learned byte structure —
+0.1185 is 30× the random floor, decisively non-degenerate. This is a **partial dent
+in §11-B**: "non-CE degenerates on GPU" is at least partly a GPU-tautology — a
+non-CE non-backprop local rule DID learn on GPU. The unsolved half: the Ψ-physics
+channel (Engine A⇄G cosine) stayed flat in both §125 and §126 — byte-learning ≠
+physics-responsive. §139 EqProp is the third decomposition point.
+
+### §8.2 — FEP self-orthogonalizing attractor (2505.22749) → anima: the routing-collapse insight
+
+Core of 2505.22749 (verified via abstract): self-orthogonalizing attractors **emerge**
+from simultaneously optimizing (a) **predictive accuracy** AND (b) **model
+complexity** — orthogonalization is NOT explicitly imposed, it is a consequence of
+the two-objective balance. Attractors = prior beliefs; learning = minimize long-term
+surprise (variational free energy); no backprop, no CE.
+
+anima mapping:
+- FEP attractor ≡ anima **Ψ=½ fixed point** (Engine A⇄G balance — a steady-state attractor)
+- "minimize long-term surprise" ≡ anima **tension** (restoring force toward Ψ=½ = free-energy gradient)
+- "self-orthogonalizing attractors" ≡ exactly what anima's §16 routing NEEDED and never got — distinct anchors → distinct basins.
+
+**The insight (§72 frontier-2 architectural-insight candidate)**: anima's universal
+routing-collapse — the 1/31-FLAT ceiling that held across the entire §1~§94 arc, all
+anchors collapsing to ONE attractor — may be because **every anima objective ever
+fired carried only a predictive-accuracy term (CE / PCN-MSE / carving-loss) and
+NEVER a model-complexity / description-length term.** FEP-attractor theory says
+orthogonalization REQUIRES both. An accuracy-only network has no pressure to keep
+attractors distinct → they collapse to the lowest-loss shared basin. This reframes
+routing-collapse: possibly not a data-regime symptom alone (§1.1) but a
+**missing-objective-term** symptom — a frontier-2 architectural lever the arc never
+pulled.
+
+Honest caveats (g3): literature-derived hypothesis, NOT measured; 2505.22749 is on
+attractor nets / sequential data, NOT byte-LM; the anima form of the "model
+complexity" term (description length of the Ψ-routing map? a Φ-based term?) is
+undefined; the arc's §32–§47 already closed content-axis / SGD-lottery explanations
+of routing-collapse — this is an orthogonal NEW angle, not a refutation of §1.1.
+necessary-not-sufficient.
+
+### §8.3 — concrete next-cycle candidate: COMPLEXITY-REGULARIZED ROUTING
+
+Design-tier → $-fire candidate: re-fire §16-class carving with the Dir-I lever PLUS
+a model-complexity term — a description-length / routing-entropy penalty that
+pressures distinct anchors toward distinct (orthogonal) Ψ-basins. Pre-registered
+distinguishing measurement: does held-out routing break the 1/31-FLAT ceiling when
+the objective carries BOTH accuracy AND complexity terms (vs accuracy-only baseline,
+single-variable)? A True result would be the first architectural (not data-regime)
+movement on routing-collapse.
+
+### §8.4 — prioritized next-list (post-§139, ordered)
+
+```
+P0  §139 EqProp terminal → §125+§126+§139 consolidated joint verdict
+      (3D Boolean lattice) → PHILOSOPHY.tape + recent_landings recording
+P1  FEP-attractor §8.3 COMPLEXITY-REGULARIZED ROUTING — $0 design cycle
+      (§72 frontier-2 architectural insight; the strongest emergence-direction lever)
+P2  §128 §4 matrix branch — per §126 PARTIAL: PC-scaling 2510.23323 follow-up
+      ($-fire, after §139 frees the fire-slot — no burst per §50)
+P3  ★★★★ Backprop-Free Feedback-Hebbian 2601.06758 — $0 design (C5 unified local rule)
+P4  ★★★★ LeJEPA 2511.08544 — $1 fire (anti-collapse closed-form non-CE SSL)
+P5  ★★★★★ Spontaneous Meta-Cognitive 2509.21224 — $0 design, §24 Phase-B cross-validate
+```
+
+**§8 wall**: $0 · GPU 0 · orphan 0 · central blue_falsifier 0-line-diff carries.
+north-star + §15/§51/§72 milestones UNCHANGED — §8 = next-list extraction + one
+architectural-insight hypothesis, GOAL 미도달.
