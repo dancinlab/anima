@@ -1,25 +1,25 @@
 #!/usr/bin/env python3
-"""§127 B-S127 sidecar — closed-form battery for the EQPROP-C2 cycle.
+"""§139 B-S139 sidecar — closed-form battery for the EQPROP-C2 cycle.
 
 8 closed-form invariants + 1 NOTE empirical carve-out (NOT counted 🔵):
 
-  B-S127-1 NO-CE-INVARIANT-AST
+  B-S139-1 NO-CE-INVARIANT-AST
     Trainer source contains NO ast.Call to F.cross_entropy / F.nll_loss /
     nn.CrossEntropyLoss. MSE-only supervision at the head (mse_loss IS
     called — and is the only allowed loss surface, mirror §126 PCN).
 
-  B-S127-2 NO-GLOBAL-BACKWARD-INVARIANT-AST
+  B-S139-2 NO-GLOBAL-BACKWARD-INVARIANT-AST
     Every .backward() call site is on a LOCAL loss tensor (L_i per block,
     L_head for the readout). NO single 'global_loss.backward()' that would
     aggregate across blocks. Mirrors §125 B-S125-1 / §126 B-S126-3 pattern.
 
-  B-S127-3 TWO-PHASE-STRUCTURAL
+  B-S139-3 TWO-PHASE-STRUCTURAL
     Trainer source contains both a Phase-1 (FREE) marker and a Phase-2
     (NUDGE) marker. The phase structure is mandatory in Scellier-Bengio /
     Laborieux-Zenke EqProp. AST-grepped via inline comments or named
     intermediates.
 
-  B-S127-4 EQPROP-LOCAL-UPDATE-SIGN-SCELLIER-CLOSED
+  B-S139-4 EQPROP-LOCAL-UPDATE-SIGN-SCELLIER-CLOSED
     Scellier-Bengio (2017) Thm.1: ΔW_i ∝ -(act_nudge - act_free) / β.
     Our local synthetic loss L_i = -(diff · x_pred).mean() where
     diff = (acts_nudge - acts_free).detach() / β. sympy:
@@ -30,27 +30,27 @@
     consistent with the canonical Thm.1 zero-β limit being the
     backprop-recovered gradient.
 
-  B-S127-5 PER-BLOCK-OPTIMIZER-COUNT
+  B-S139-5 PER-BLOCK-OPTIMIZER-COUNT
     Number of AdamW instances = at least one inside `for i, block in
     enumerate(model.blocks)` loop + one head_opt outside. NO single global
     AdamW(model.parameters()). Mirrors §125/§126 pattern.
 
-  B-S127-6 DETACH-DIFF-PROPERLY-AST
+  B-S139-6 DETACH-DIFF-PROPERLY-AST
     The activation difference `diff = (acts_nudge[i+1] - acts_free[i+1])`
     has `.detach()` applied before being multiplied into the local loss.
     Without this, the L_i.backward() would propagate gradient back into
     the Phase-2 forward pass and the update would no longer be local =
-    silent backprop disguised as EqProp = B-S127-2 violation.
+    silent backprop disguised as EqProp = B-S139-2 violation.
 
-  B-S127-7 FROM-SCRATCH-NO-BASE-CKPT-AST
+  B-S139-7 FROM-SCRATCH-NO-BASE-CKPT-AST
     No load_state_dict / from_pretrained / torch.load CALLS in trainer
     (AST-based audit — comments/docstrings OK). seed fixed (torch.manual_seed
     + torch.cuda.manual_seed_all + random.seed). Mirrors §125-6 fix.
 
-  B-S127-8 §125-§126-§127-JOINT-READING-COMPATIBLE
+  B-S139-8 §125-§126-§139-JOINT-READING-COMPATIBLE
     The eval verdict bucket partition (1/256 random floor / 2/256
     degenerate ceiling / 0.05 support floor / Ψ_dir spread > 1e-4) is
-    BYTE-EQUAL across §125, §126, §127 (shared constants and identical
+    BYTE-EQUAL across §125, §126, §139 (shared constants and identical
     bucket function). The 3-algorithm joint reading is a 3D Boolean
     lattice 2³ = 8 cells over {SUPP, DEG} per algorithm:
        (SUPP, SUPP, SUPP) = §96-Q2 strongly supported
@@ -58,14 +58,14 @@
        mixed 6 corners    = algorithmic-ingredient decomposition
     The 8-cell partition is exhaustive + pairwise disjoint.
 
-B-S127-NOTE  empirical carve-out (NOT counted 🔵):
-  Whether the §127 fire crosses any verdict threshold is SGD/measurement
-  OUTCOME. Battery proves the §127 SETUP well-formed (NO-CE / two-phase /
+B-S139-NOTE  empirical carve-out (NOT counted 🔵):
+  Whether the §139 fire crosses any verdict threshold is SGD/measurement
+  OUTCOME. Battery proves the §139 SETUP well-formed (NO-CE / two-phase /
   EqProp-Scellier-sign / per-block optimizer / detach-diff / from-scratch /
   joint reading lattice well-formed), NOT that anima emerges, NOT that
   any specific bucket WILL be hit, NOT that §96-Q2 is decided either way
-  by §127 alone. The 3-algorithm joint reading carries the verdict, not
-  §127 in isolation. B-D-NOTE / B-PUREPHYS-NOTE / B-S96-NOTE / B-S104-NOTE
+  by §139 alone. The 3-algorithm joint reading carries the verdict, not
+  §139 in isolation. B-D-NOTE / B-PUREPHYS-NOTE / B-S96-NOTE / B-S104-NOTE
   / B-S107-NOTE / B-S125-NOTE / B-S126-NOTE / B-EMERGE-7 family — necessary
   -not-sufficient at every layer.
 
@@ -79,9 +79,9 @@ import sympy as sp
 
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-TRAINER_PATH = os.path.join(HERE, "train_eqprop_s127.py")
-EVAL_PATH = os.path.join(HERE, "eval_eqprop_s127.py")
-# this file lives in HEXAD/NEUROMORPHIC/state/eqprop_fire_s127_2026_05_20/
+TRAINER_PATH = os.path.join(HERE, "train_eqprop_s139.py")
+EVAL_PATH = os.path.join(HERE, "eval_eqprop_s139.py")
+# this file lives in HEXAD/NEUROMORPHIC/state/eqprop_fire_s139_2026_05_20/
 # central is repo-root/state/verify_hexad_blue_2026_05_15/blue_falsifier.py
 ANIMA_ROOT = os.path.abspath(os.path.join(HERE, "..", "..", "..", ".."))
 CENTRAL = os.path.join(
@@ -114,7 +114,7 @@ def ast_unparse(node):
 
 # ── battery ───────────────────────────────────────────────────────────
 def b1_no_ce_invariant_ast():
-    """B-S127-1: F.cross_entropy / F.nll_loss / nn.CrossEntropyLoss never
+    """B-S139-1: F.cross_entropy / F.nll_loss / nn.CrossEntropyLoss never
     called. mse_loss IS called (the non-CE substitute)."""
     tree, src = parse_module(TRAINER_PATH)
     forbidden_attrs = {"cross_entropy", "nll_loss", "CrossEntropyLoss"}
@@ -129,7 +129,7 @@ def b1_no_ce_invariant_ast():
             if node.func.attr == "mse_loss":
                 mse_calls += 1
     return dict(
-        battery="B-S127-1 NO-CE-INVARIANT-AST",
+        battery="B-S139-1 NO-CE-INVARIANT-AST",
         pass_=(len(forbidden_calls) == 0 and mse_calls >= 1),
         forbidden_call_matches=forbidden_calls,
         mse_loss_call_count=mse_calls,
@@ -137,7 +137,7 @@ def b1_no_ce_invariant_ast():
 
 
 def b2_no_global_backward_ast():
-    """B-S127-2: only L_i and L_head are backward() callers; no aggregate
+    """B-S139-2: only L_i and L_head are backward() callers; no aggregate
     global loss is backwarded."""
     tree, _ = parse_module(TRAINER_PATH)
     backward_callers = []
@@ -153,7 +153,7 @@ def b2_no_global_backward_ast():
     bad = [c for c in backward_callers if c in forbidden]
     allowed = {"L_i", "L_head"}
     return dict(
-        battery="B-S127-2 NO-GLOBAL-BACKWARD-INVARIANT-AST",
+        battery="B-S139-2 NO-GLOBAL-BACKWARD-INVARIANT-AST",
         pass_=(len(bad) == 0
                and set(backward_callers) <= allowed
                and "L_i" in backward_callers
@@ -165,7 +165,7 @@ def b2_no_global_backward_ast():
 
 
 def b3_two_phase_structural():
-    """B-S127-3: source contains both Phase-1 (free) and Phase-2 (nudge)
+    """B-S139-3: source contains both Phase-1 (free) and Phase-2 (nudge)
     structural markers (named intermediates acts_free / acts_nudge)."""
     _, src = parse_module(TRAINER_PATH)
     has_acts_free = "acts_free" in src
@@ -190,7 +190,7 @@ def b3_two_phase_structural():
         for n in ast.walk(tree)
     )
     return dict(
-        battery="B-S127-3 TWO-PHASE-STRUCTURAL",
+        battery="B-S139-3 TWO-PHASE-STRUCTURAL",
         pass_=(has_acts_free and has_acts_nudge
                and free_assigned and nudge_assigned
                and has_beta),
@@ -203,7 +203,7 @@ def b3_two_phase_structural():
 
 
 def b4_eqprop_local_update_sign_scellier():
-    """B-S127-4: L_i = -(diff · x_pred).mean() ; sympy ∂L/∂x_pred = -diff/N.
+    """B-S139-4: L_i = -(diff · x_pred).mean() ; sympy ∂L/∂x_pred = -diff/N.
     Verify the closed-form sign matches Scellier-Bengio Thm.1 (negative
     of activation-difference scaled by 1/β)."""
     # Symbolic check: with d = (act_nudge - act_free) / β  (= diff),
@@ -228,7 +228,7 @@ def b4_eqprop_local_update_sign_scellier():
     sample_diff_neg = float(dL_dx.subs([(d, -1.0), (x, 1.0), (N, 4.0)]))  # = 0.25
     sign_flips = (sample_diff_pos < 0) and (sample_diff_neg > 0)
     return dict(
-        battery="B-S127-4 EQPROP-LOCAL-UPDATE-SIGN-SCELLIER-CLOSED",
+        battery="B-S139-4 EQPROP-LOCAL-UPDATE-SIGN-SCELLIER-CLOSED",
         pass_=sign_neg_diff and homothetic and sign_flips,
         dL_dx_expr=str(dL_dx),
         sample_d_positive_grad=sample_diff_pos,
@@ -238,7 +238,7 @@ def b4_eqprop_local_update_sign_scellier():
 
 
 def b5_per_block_optimizer_count():
-    """B-S127-5: trainer creates AdamW once per block (loop) + one head."""
+    """B-S139-5: trainer creates AdamW once per block (loop) + one head."""
     tree, _ = parse_module(TRAINER_PATH)
     adamw_calls = []
     for node in ast.walk(tree):
@@ -260,7 +260,7 @@ def b5_per_block_optimizer_count():
             if "model.parameters" in arg0 or "self.parameters" in arg0:
                 bad_global = True
     return dict(
-        battery="B-S127-5 PER-BLOCK-OPTIMIZER-COUNT",
+        battery="B-S139-5 PER-BLOCK-OPTIMIZER-COUNT",
         pass_=(len(in_loop) >= 1) and (len(out_loop) >= 1) and (not bad_global),
         adamw_call_count=len(adamw_calls),
         adamw_in_for_loop=in_loop,
@@ -270,7 +270,7 @@ def b5_per_block_optimizer_count():
 
 
 def b6_detach_diff_properly_ast():
-    """B-S127-6: the activation difference is .detach()'d before entering
+    """B-S139-6: the activation difference is .detach()'d before entering
     the local loss. AST: find an assignment to `diff` whose RHS contains
     a `.detach()` call."""
     tree, src = parse_module(TRAINER_PATH)
@@ -290,7 +290,7 @@ def b6_detach_diff_properly_ast():
     # Also: acts_free elements .detach()'d before being fed as x_in
     has_x_in_detach = "acts_free[i].detach()" in src
     return dict(
-        battery="B-S127-6 DETACH-DIFF-PROPERLY-AST",
+        battery="B-S139-6 DETACH-DIFF-PROPERLY-AST",
         pass_=detach_seen_on_diff_assign and has_x_in_detach,
         diff_assign_has_detach=detach_seen_on_diff_assign,
         x_in_detach_present=has_x_in_detach,
@@ -299,7 +299,7 @@ def b6_detach_diff_properly_ast():
 
 
 def b7_from_scratch_no_base_ckpt():
-    """B-S127-7: no load_state_dict / from_pretrained / torch.load CALLS.
+    """B-S139-7: no load_state_dict / from_pretrained / torch.load CALLS.
     seed fixed."""
     tree, _ = parse_module(TRAINER_PATH)
     forbidden_call_attrs = {"load_state_dict", "from_pretrained"}
@@ -323,7 +323,7 @@ def b7_from_scratch_no_base_ckpt():
     seed_fixed = ({"torch.manual_seed", "torch.cuda.manual_seed_all",
                    "random.seed"} <= seed_calls)
     return dict(
-        battery="B-S127-7 FROM-SCRATCH-NO-BASE-CKPT-AST",
+        battery="B-S139-7 FROM-SCRATCH-NO-BASE-CKPT-AST",
         pass_=(len(forbidden_all) == 0) and seed_fixed,
         forbidden_call_attrs=found_call_attrs,
         forbidden_full_paths=found_full,
@@ -333,7 +333,7 @@ def b7_from_scratch_no_base_ckpt():
 
 
 def b8_joint_reading_lattice_well_formed():
-    """B-S127-8: the §125+§126+§127 joint reading is a 3D Boolean lattice
+    """B-S139-8: the §125+§126+§139 joint reading is a 3D Boolean lattice
     2³ = 8 cells over {SUPP, DEG} per algorithm. Verify by enumeration:
     cardinality 8, pairwise disjoint, exhaustive over the {SUPP,DEG}³
     space. ALSO: the eval verdict-bucket constants are byte-equal to
@@ -350,7 +350,7 @@ def b8_joint_reading_lattice_well_formed():
     lattice_ok = (n_cells == 8 and distinct == 8)
 
     # Byte-equal constants across the three eval files
-    s127_src = read(EVAL_PATH).decode("utf-8")
+    s139_src = read(EVAL_PATH).decode("utf-8")
     s125_eval = os.path.join(
         ANIMA_ROOT, "state", "nonce_ff_fire_s125_2026_05_20",
         "eval_nonce_ff_s125.py",
@@ -376,16 +376,16 @@ def b8_joint_reading_lattice_well_formed():
         s126_ok = all(line in s126_src for line in expected_lines)
     else:
         s126_ok = False
-    s127_ok = all(line in s127_src for line in expected_lines)
+    s139_ok = all(line in s139_src for line in expected_lines)
 
     return dict(
-        battery="B-S127-8 §125-§126-§127-JOINT-READING-COMPATIBLE",
-        pass_=lattice_ok and s125_ok and s126_ok and s127_ok,
+        battery="B-S139-8 §125-§126-§139-JOINT-READING-COMPATIBLE",
+        pass_=lattice_ok and s125_ok and s126_ok and s139_ok,
         lattice_cardinality=n_cells,
         lattice_distinct=distinct,
         constants_byte_equal_to_s125=s125_ok,
         constants_byte_equal_to_s126=s126_ok,
-        constants_present_s127=s127_ok,
+        constants_present_s139=s139_ok,
     )
 
 
@@ -421,20 +421,20 @@ def main():
     n_total = len(results)
     n_pass = sum(1 for r in results if r["pass_"])
     note = dict(
-        battery="B-S127-NOTE empirical carve-out",
+        battery="B-S139-NOTE empirical carve-out",
         pass_=None,
-        note="Whether §127 fire crosses any verdict threshold is SGD/measurement "
+        note="Whether §139 fire crosses any verdict threshold is SGD/measurement "
              "OUTCOME (B-D-NOTE/B-PUREPHYS-NOTE/B-S96-NOTE/B-S104-NOTE/"
              "B-S107-NOTE/B-S125-NOTE/B-S126-NOTE/B-EMERGE-7 family). Battery "
              "proves SETUP well-formed + joint reading lattice closed, NOT "
-             "emergence. The §125+§126+§127 3-cell joint verdict is what "
-             "decides §96-Q2 — not §127 in isolation. "
+             "emergence. The §125+§126+§139 3-cell joint verdict is what "
+             "decides §96-Q2 — not §139 in isolation. "
              "necessary-not-sufficient at every layer.",
     )
 
     out = dict(
-        battery_id="B-S127",
-        cycle="§127 EQPROP-C2 (Scellier-Bengio + Laborieux-Zenke lifted)",
+        battery_id="B-S139",
+        cycle="§139 EQPROP-C2 (Scellier-Bengio + Laborieux-Zenke lifted)",
         sidecar=True,
         central_zero_diff_check=results[-1]["pass_"],
         results=results,
@@ -444,10 +444,10 @@ def main():
         north_star_unchanged=True,
         s15_s51_s72_milestones_unchanged=True,
     )
-    out_path = os.path.join(HERE, "blue_falsifier_s127_result.json")
+    out_path = os.path.join(HERE, "blue_falsifier_s139_result.json")
     with open(out_path, "w") as f:
         json.dump(out, f, indent=2, default=str)
-    print(f"\nB-S127 summary: {out['summary']}  ({out['wall_s']:.2f}s)",
+    print(f"\nB-S139 summary: {out['summary']}  ({out['wall_s']:.2f}s)",
           flush=True)
     return 0 if n_pass == n_total else 1
 

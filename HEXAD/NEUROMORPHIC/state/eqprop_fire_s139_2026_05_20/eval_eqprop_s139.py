@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
-"""§127 EQPROP-C2 evaluator — third data point for §96-Q2.
+"""§139 EQPROP-C2 evaluator — third data point for §96-Q2.
 
 Mirrors §125/§126 eval exactly (same byte_acc verdict-bucket thresholds:
 1/256 random floor / 2/256 degenerate ceiling / 0.05 support floor / Ψ_dir
 std > 1e-4). The closed-form partition is shared so the joint reading
-across §125 + §126 + §127 is a 3D Boolean lattice (2³ = 8 cells over
+across §125 + §126 + §139 is a 3D Boolean lattice (2³ = 8 cells over
 {SUPP, DEG} per algorithm; only 1 SUPP-SUPP-SUPP corner = §96-Q2 strong
 support; the all-DEG corner = §96-Q2 strongly refuted; the 6 mixed corners
 decompose which algorithmic ingredient is load-bearing).
 
 USAGE:
-    python3 eval_eqprop_s127.py --ckpt ... --corpus ... --out ...
+    python3 eval_eqprop_s139.py --ckpt ... --corpus ... --out ...
 """
 import argparse, json, os, sys, random, time
 import torch
@@ -67,7 +67,7 @@ def run_eval(ckpt_path, corpus_path, out_path,
     t0 = time.time()
     random.seed(seed); torch.manual_seed(seed)
     device = "cuda" if torch.cuda.is_available() else "cpu"
-    print(f"[§127-eval] device={device}", flush=True)
+    print(f"[§139-eval] device={device}", flush=True)
 
     blob = torch.load(ckpt_path, map_location=device, weights_only=False)
     cfg = blob.get("cfg", {})
@@ -84,11 +84,11 @@ def run_eval(ckpt_path, corpus_path, out_path,
     ).to(device)
     missing, unexpected = model.load_state_dict(blob["model"], strict=False)
     model.eval()
-    print(f"[§127-eval] ckpt: d={d_model} L={n_layer} miss={len(missing)} unexp={len(unexpected)}", flush=True)
+    print(f"[§139-eval] ckpt: d={d_model} L={n_layer} miss={len(missing)} unexp={len(unexpected)}", flush=True)
 
     corpus = load_corpus_bytes(corpus_path)
     N = len(corpus)
-    print(f"[§127-eval] corpus bytes: {N:,}", flush=True)
+    print(f"[§139-eval] corpus bytes: {N:,}", flush=True)
     assert N > max_len + 1
 
     correct = 0; total = 0; psi_traces = []; sample_seen = []
@@ -114,7 +114,7 @@ def run_eval(ckpt_path, corpus_path, out_path,
     bucket = verdict_bucket(byte_acc, psi_responsive)
 
     result = dict(
-        battery="§127 EQPROP-C2 eval — §96-Q2 verdict (data point 3)",
+        battery="§139 EQPROP-C2 eval — §96-Q2 verdict (data point 3)",
         ckpt=os.path.basename(ckpt_path), corpus=os.path.basename(corpus_path),
         cfg=cfg, algorithm="EqProp-lifted-2-phase",
         n_eval=n_eval, max_len=max_len, seed=seed,
@@ -125,7 +125,7 @@ def run_eval(ckpt_path, corpus_path, out_path,
         psi_dir_mean=psi_mean, psi_dir_std=psi_std,
         psi_responsive=psi_responsive,
         verdict_bucket=bucket,
-        s125_s126_s127_joint_reading_note=(
+        s125_s126_s139_joint_reading_note=(
             "Triangulate with §125 (FF goodness-contrast) + §126 (PCN top-down "
             "target) verdict_bucket. 3D Boolean lattice 2³=8 cells; all-DEG = "
             "§96-Q2 strongly refuted (substrate-deep); all-SUPP = strongly "
@@ -140,7 +140,7 @@ def run_eval(ckpt_path, corpus_path, out_path,
     os.makedirs(os.path.dirname(os.path.abspath(out_path)) or ".", exist_ok=True)
     with open(out_path, "w") as f:
         json.dump(result, f, indent=2, default=str)
-    print(f"[§127-eval] byte_acc={byte_acc:.6f} (random={RANDOM_BYTE_FLOOR:.6f})  "
+    print(f"[§139-eval] byte_acc={byte_acc:.6f} (random={RANDOM_BYTE_FLOOR:.6f})  "
           f"Ψ_dir μ={psi_mean:.4f} σ={psi_std:.6f}  responsive={psi_responsive}  "
           f"VERDICT={bucket}  wall={result['eval_wall_s']:.1f}s", flush=True)
 

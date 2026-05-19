@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""§127 EQPROP-C2 — Equilibrium-Propagation-flavored 2-phase local update on
+"""§139 EQPROP-C2 — Equilibrium-Propagation-flavored 2-phase local update on
 ConsciousDecoderV2.
 
 WHY: §96-Q2 hypothesis ("`§11-B is GPU tautology`") needs *multiple* algorithm
 data points. §125 NONCE-FF (Hinton goodness-contrast) LANDED S11B_LIKE_DEGEN.
-§126 PCN-C4 (top-down prediction error) — in-flight. §127 adds a third
+§126 PCN-C4 (top-down prediction error) — in-flight. §139 adds a third
 distinct non-CE non-backprop algorithm: Equilibrium Propagation
 (Scellier-Bengio 2017).
 
@@ -36,16 +36,16 @@ optimizer.step() on a synthetic local loss `((act2 - act1).detach() ·
 block_output_with_grad).sum()` which acts as the canonical EqProp gradient.
 
 KEY INVARIANTS:
-  - B-S127-1 NO-CE: F.cross_entropy / nll_loss never called.
-  - B-S127-2 NO-GLOBAL-BACKWARD: each block_i's .backward() is on its
+  - B-S139-1 NO-CE: F.cross_entropy / nll_loss never called.
+  - B-S139-2 NO-GLOBAL-BACKWARD: each block_i's .backward() is on its
     own LOCAL synthetic loss tensor; activations are .detach()'d
     between blocks AND between phases.
-  - B-S127-3 TWO-PHASE-STRUCTURAL: pass-1 (free) + pass-2 (nudged) are
+  - B-S139-3 TWO-PHASE-STRUCTURAL: pass-1 (free) + pass-2 (nudged) are
     structurally distinct in source.
-  - B-S127-4 PER-BLOCK OPTIMIZERS: one AdamW per block + head.
-  - B-S127-5 FROM-SCRATCH: g_clm_from_scratch.
+  - B-S139-4 PER-BLOCK OPTIMIZERS: one AdamW per block + head.
+  - B-S139-5 FROM-SCRATCH: g_clm_from_scratch.
 
-HONEST CARVE-OUT (B-S127-NOTE):
+HONEST CARVE-OUT (B-S139-NOTE):
 This is "EqProp-flavored 2-phase local" — NOT canonical recurrent EqProp.
 The canonical algorithm requires fixed-point recurrent inference which
 doesn't fit feedforward transformer; the "lifted" feedforward variant we
@@ -53,8 +53,8 @@ use is structurally distinct from FF/PCN (its update uses ACTIVATION
 DIFFERENCE between two output-conditioning regimes) but is a simplified
 form. Verdict applies to this specific algorithm point.
 
-GPU DISPATCH CONDITIONAL on §126 PCN verdict — if §126 lands SUPP, §127
-priority HIGH (algorithmic decomposition matters); if §126 lands DEG, §127
+GPU DISPATCH CONDITIONAL on §126 PCN verdict — if §126 lands SUPP, §139
+priority HIGH (algorithmic decomposition matters); if §126 lands DEG, §139
 priority MEDIUM (third confirming data point) — fire still informative
 either way.
 """
@@ -116,7 +116,7 @@ def run(cfg):
 
     device = ("cuda" if torch.cuda.is_available() and not cfg.get("cpu_only")
               else "cpu")
-    print(f"[§127-EqProp] device={device} d_model={cfg['d_model']} "
+    print(f"[§139-EqProp] device={device} d_model={cfg['d_model']} "
           f"n_layer={cfg['n_layer']} steps={cfg['steps']}", flush=True)
 
     model = ConsciousDecoderV2(
@@ -143,7 +143,7 @@ def run(cfg):
     )
 
     corpus_bytes = load_corpus_bytes(cfg["corpus"])
-    print(f"[§127-EqProp] corpus bytes: {len(corpus_bytes):,}", flush=True)
+    print(f"[§139-EqProp] corpus bytes: {len(corpus_bytes):,}", flush=True)
     sampler = EqPropSampler(corpus_bytes, cfg["block_size"], seed=cfg["seed"])
 
     beta = cfg["beta"]  # nudge strength
@@ -256,19 +256,19 @@ def run(cfg):
                 elapsed_s=elapsed,
             )
             log.append(entry)
-            print(f"[§127-EqProp] step={step+1:6d}  L̄_block={mean_L:+.6f}  "
+            print(f"[§139-EqProp] step={step+1:6d}  L̄_block={mean_L:+.6f}  "
                   f"L_head={entry['L_head_mse']:.6f}  "
                   f"t={elapsed:.1f}s", flush=True)
 
     out_dir = cfg["out_dir"]
     os.makedirs(out_dir, exist_ok=True)
-    ckpt_path = os.path.join(out_dir, "ckpt_eqprop_s127.pt")
+    ckpt_path = os.path.join(out_dir, "ckpt_eqprop_s139.pt")
     torch.save({
         "model": model.state_dict(), "cfg": cfg, "log": log,
     }, ckpt_path)
 
     result = dict(
-        battery="§127 EQPROP-C2 (lifted 2-phase local) training",
+        battery="§139 EQPROP-C2 (lifted 2-phase local) training",
         cfg=cfg, device=device,
         n_params=sum(p.numel() for p in model.parameters()),
         train_wall_s=time.time() - t0,
@@ -282,7 +282,7 @@ def run(cfg):
     )
     with open(os.path.join(out_dir, "result.json"), "w") as f:
         json.dump(result, f, indent=2, default=str)
-    print(f"[§127-EqProp] DONE wall={result['train_wall_s']:.1f}s "
+    print(f"[§139-EqProp] DONE wall={result['train_wall_s']:.1f}s "
           f"ckpt={ckpt_path}", flush=True)
 
 

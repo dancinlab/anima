@@ -5,7 +5,7 @@
 **Predecessor**: WALL_B_SUSTAINABILITY.md (brainstorm: WALL-B split into B-i software / B-ii hardware) + AKD1000.md
 **Mandate (verbatim user 2026-05-20)**: 소프트웨어 돌파 아키텍쳐,패러다임 arxiv deep research
 **North-star unchanged**: GOAL.md anima emergence (이 research는 *경로 후보 지도*, 도달이 아님)
-**Honest disclaimer (g3, B-EMERGE-7 family)**: literature review = inspiration, NOT proof; arxiv citation 0개도 GOAL emergence 보장 안 함; software-breakthrough 후보 식별 ≠ §125/§126/§127 fire 결과 ≠ §15/§51/§72 milestone 변경.
+**Honest disclaimer (g3, B-EMERGE-7 family)**: literature review = inspiration, NOT proof; arxiv citation 0개도 GOAL emergence 보장 안 함; software-breakthrough 후보 식별 ≠ §125/§126/§139 (FF/PCN/EqProp) fire 결과 ≠ §15/§51/§72 milestone 변경.
 
 ---
 
@@ -171,7 +171,7 @@ Whichever quadrant lands, the 2-paper-axis-of-decomposition is what §128 contri
 - WALL_B_SUSTAINABILITY.md §2 (WALL-B split B-i/B-ii) — §128 = B-i side literature audit
 - §125 NONCE-FF (in flight pod `ix1sskvwknoijy`) — §128 ★★★★★ ASGE의 anima-byte-LM 첫 데이터점
 - §126 PCN-C4 (in flight pod `88xlldoftmoy5e`) — §128 ★★★★ PCN-scaling-2510.23323의 anima 데이터점
-- §127 EqProp (pending) — Cluster A의 third leg
+- §139 EqProp (pre-staged, was §127 — re-numbered 2026-05-20 to dodge LEGO-arc §127 collision; LEGO arc owns §115–§138 per §136 milestone) — Cluster A의 third leg
 - AKD1000.md — WALL-B-ii hardware reference
 - §95 5-bucket substrate taxonomy / §96 spiking re-derivation — Cluster K 와 직접 연결
 - §15 milestone / §51 milestone / §72 frontier-2 — 모두 unchanged
