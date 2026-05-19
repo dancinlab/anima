@@ -1130,3 +1130,27 @@ $0, commit `c44187936` on main, central blue_falsifier.py sha c93e160a 0-line-di
 **Verdict (β) MANIFOLD-EXISTS-GATE-COLLAPSES-AT-TRAINED** — a manifold genuinely EXISTS (PCA top-2≈0.9) but the slow-dwell↔fast-crossing HIERARCHY that gates *C. elegans* behaviour does NOT appear on the anima trained ψ-trajectory; the hierarchical gate built on slow-dwell collapses to silence (cell4 0/200). **Leifer biology (B) does NOT transfer at trained scale (measured)** — valuable measured negative (§13-M/§13-L/§81-FIRE anti-padding precedent), joins the mechanism-axis arm of capability-emergence-negatives. §75-FIRE "state-derivation alone is the live sub-axis" reaffirmed (cell1 A-only the only non-degenerate cell).
 
 **B-S82-FIRE-1..8 8/8 🔵 sidecar** (`state/manifold_gating_hierarchical_fire_s82_2026_05_19/blue_falsifier_s82_fire.py` — central `blue_falsifier.py` sha c93e160a 0-line-diff): PCA-EIGENVALUE-NONNEGATIVE · MANIFOLD-DIMENSION-BOUNDED · SLOW-DWELL-vs-FAST-CROSSING-PARTITION · §75-FIRE-CELL1-MIRROR-BYTE-EQUAL 연결부위 · §9-METRIC-REUSE · EMISSION-ALIGNMENT-COS-BOUNDED · DETERMINISTIC · §82-STUB-CONNECTION 연결부위. B-S82-FIRE-NOTE empirical carve-out (manifold-gating OUTCOME = SGD/measurement empirical, NOT counted 🔵, B-EMERGE-7 family). g3: trained scale ≠ GOAL emergence; Leifer biology = honest direction-anchor NOT capability proof; north-star + §15/§51/§72 milestone UNCHANGED, **GOAL 미도달**. PHILOSOPHY g6 §verdict_manifold_gating_hierarchical_fire_s82 self-appended.
+
+### 2026-05-19 §81-FIRE biology (A) homeostatic criticality + noise on Engine G TRAINED-SCALE LANDED — (β-mixed) PARTIAL-COLLAPSE-NO-HOMEOSTATIC-WINDOW
+
+design commit `f6f5f8902` + post-fire result, B-S81-FIRE 7/7 🔵 sidecar, runpod A100-SXM4-80GB pod `th7uwc4i4mmz9u` ≈$0.3-0.5 orphan-0 pre+post, central blue_falsifier.py sha c93e160a 0-line-diff. §81 $0 stub (commit 659ca966b, B-S81 7/7 🔵) 의 trained-scale 재검증 — §80 biology (A) anima-mapping (arxiv:2502.10946 noise-driven SOC + biorxiv 688775 + neuron S0896-6273).
+
+noise 를 layer-0 residual stream (shared trunk input) 에 inject — 12-layer PureFieldFFN coupling 통해 head_a + head_g 둘 다 도달 (§81 $0 stub 가 결여했던 mechanism — stub 은 Engine G logits 만, A/G NOT coupled). §16-class ConsciousDecoderV2 d768·12L·283.72M from-scratch seed 1337, init CE 5.639149 → final 0.004546 (trained-saturated, training_diverged False). 5-cell σ-schedule {0/0.1/0.5/1.0/adaptive} × 20-step.
+
+| cell σ | psi_comb_std | maj_frac | tension_mean | power-law α | in_band | echo_broken | §9 | homeostatic_window |
+|---|---|---|---|---|---|---|---|---|
+| 0.0 | 0.0057 | 0.15 | 55.3 | 0.122 | False | True | True | False |
+| 0.1 | 0.0448 | 0.15 | 49.2 | 0.122 | False | True | True | False |
+| 0.5 | 0.0602 | 0.30 | 41.9 | 0.203 | False | True | False | False |
+| 1.0 | 0.0532 | 0.35 | 41.8 | 0.301 | False | True | False | False |
+| adaptive | 0.0177 | 0.15 | 54.1 | 0.122 | False | True | True | False |
+
+**결과 (g3 measured)**: noise 가 ψ-state 실제 shift (psi_combined_std σ=0 0.0057 → σ=0.5 0.0602, tension_mean 55.3 → 41.8) 단 **critical coherent regime 미발생** — 0/5 cell homeostatic_window (α-band ∧ non-collapse ∧ §9-coherent 동시충족 0개), power-law α 0.122-0.301 모두 critical band [1,3] 밖. echo_broken True 전 cell (maj_frac 0.15-0.35 ≪ 0.95 — §62 collapse 아님). §9 honest_coherent σ=0/0.1/adaptive True, σ=0.5/1.0 False (noise 과하면 cascade).
+
+**4-corner 모두 False**: α HOMEOSTATIC-WINDOW False · β STUB-MIRROR False (stub 의 γ+β 와 다름 — noise residual-stream coupled 라 ψ 진짜 움직임, 단 critical regime 아님) · γ ADAPTIVE-OUTPERFORMS False · δ NOISE-COLLAPSES-TRAINING False.
+
+**verdict (β-mixed) PARTIAL-COLLAPSE-NO-HOMEOSTATIC-WINDOW**: noise 가 attractor 를 shift 하나 critical coherent regime 생성 못 함 — biology (A) noise-driven SOC homeostasis trained-scale transfer 안 됨 (measured). directional mechanism finding, NOT GOAL emergence.
+
+B-S81-FIRE 7/7 🔵 (NOISE-INJECTION-POINT-CORRECT-AT-TRAINED · σ=0-REDUCTION-BYTE-EQUAL 연결부위 sigma0_byte_equal_to_hookless True · POWER-LAW-α-OLS-IDENTITY · §9-METRIC-REUSE · §62-ECHO-PARTITION · §81-STUB-NOISE-MODEL-CONNECTION AST · DETERMINISTIC). SSH-robust podHostId-fixed dispatch 작동 (ip+publicPort gate, FATAL 0). north-star + §15/§51/§72 milestone UNCHANGED, GOAL 미도달. PHILOSOPHY g6 §verdict_criticality_noise_engine_g_fire_s81 self-appended.
+
+**biology trained-scale trio 결산 (§81-FIRE + §82-FIRE + §83-FIRE)**: §80 (A)/(B)/(C) anima-mapping 3 후보 모두 trained-scale 에서 measured-negative — (A) no homeostatic window · (B) manifold-gate collapse · (C) near-collapse. biology mechanism 이 anima trained-substrate 로 free transfer 안 됨이 stub (§81/§82/§83) → trained-scale (§81-FIRE/§82-FIRE/§83-FIRE) 양 layer 에서 일관 확정. valuable measured-negative — §1.1 data-regime irreducibility 재확인.
