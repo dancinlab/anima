@@ -255,6 +255,9 @@ state/.welch_to_bandpower_*
 # P9 / qmirror domain-specific transient state (heavy jsonl, regenerable)
 state/p9_p0_*/
 state/qmirror_*/
+# §119 qmirror-neuro: trackable design+battery artifacts (no heavy jsonl) —
+# negate the broad qmirror-* pattern for this section's deliverables.
+!state/qmirror_neuro_s119_2026_05_19/
 
 # BG-φ Phase 4 symmetry fix (ref commit b4e1570c0): callers 3+4 .py.txt parking.
 # Narrow to .py / .py.txt only (NOT bare dir) so verdict.json + trajectory.json

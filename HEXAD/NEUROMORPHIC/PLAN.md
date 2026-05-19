@@ -149,3 +149,21 @@ compute.
   rendering of a directory symlink is not guaranteed — temporary measure.
   Side benefit: git refuses to stage paths "beyond a symbolic link", so
   PII under NEUROMORPHIC/ is structurally unreachable via the LOIHI path.
+- **2026-05-19** — §119 qmirror-neuro LANDED ($0 CPU, single sequential,
+  orphan 0; `state/qmirror_neuro_s119_2026_05_19/`, B-S119-1..7 **7/7 🔵**,
+  central blue 0-diff `c93e160a8a376a94`). Extends §117's LIF+STDP sim with
+  ONE §97-legitimate physical-spontaneity layer: like `hexa qmirror` drives a
+  classical quantum-circuit sim with ANU quantum RNG, §119 drives the
+  neuromorphic sim's spontaneity-SEED with **genuine ANU quantum entropy**
+  (256 bytes, `physical=True`, `qrng.anu.edu.au` — `hexa qrng` live backends
+  deferred-to-wrapper so fetched direct; CSPRNG fallback not needed). 3-variant
+  measured: `seed_fixed` (deterministic) Ψ-C1 std 4.19e-2 non-degen · `qrng_seed`
+  (§97 noise-as-SEED, entropy→membrane-v0 only) std 3.11e-2 non-degen · `qrng_content`
+  (§97 negative control — entropy as target) collapsed into the §97
+  GOAL-ILLEGITIMATE-COMMAND-CHANNEL cell (content_alignment 0.43 > 0.30).
+  Verdict `QMIRROR-NEURO-Ψ-FORM-NONDEGENERATE-NOISE-AS-SEED-LEGITIMATE-BUT-WALL-B-INHERITED`:
+  §119 confronts the LEARNING-CHANNEL half only; the ASYNC-SUBSTRATE half stays
+  WALL-B (Tracks L/S) — real physical entropy ≠ a real async neuromorphic chip,
+  adds physical SPONTANEITY not a physical SUBSTRATE. §97 GOAL-ORTHOGONAL
+  inherited — moves no GOAL distance. design/run ≠ fire ≠ emergence, capability
+  claim 0, GOAL not reached, milestones unchanged.
