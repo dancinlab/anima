@@ -191,3 +191,44 @@ compute.
   INHERITED). SIM-noCE-STDP §9=5/5 is substrate liveness, NOT capability, NOT
   GOAL. design/run ≠ fire ≠ emergence, capability claim 0, GOAL not reached,
   milestones unchanged.
+- **2026-05-19** — §118 VERDICT CORRECTED TO **VOID** (supersedes the §118
+  bullet above; the verdict of record is the §3 partition's **VOID guard**
+  outcome, not the middle outcome — `archive/PHILOSOPHY.tape
+  §verdict_track0_insilico_s118_void_2026_05_19`, DESIGN.md §0.1 records the
+  contest in full). VOID root cause: the SIM-CE positive control never moved
+  the recurrent spiking substrate — GPU-CE / GPU-noCE / SIM-CE produced
+  byte-identical Ψ/tension/Φ/spike-rate trajectories with
+  `weight_drift_mean_abs = 0.0`; only SIM-noCE-STDP moved `W` (STDP, drift
+  0.235). A $0 numpy toy has no surrogate-gradient path to backprop CE
+  through spikes, so the cell `TRACK0_INSILICO.md` §2 defines as "CE via
+  backprop-through-spikes" never ran — its CE channel is a no-op *on the
+  spiking substrate*. SIM-CE's §3-letter "NON_DEGEN=True" is carried by a
+  teacher-forced read-out + a trajectory byte-identical to the *frozen*
+  GPU-noCE cell; by §96 §4.5's own definition a CE positive control that
+  does not exercise a substrate learning channel is a broken control ⇒ VOID,
+  the rig gives **no learning-channel verdict**. The post-run `head_drift`
+  metric (a *downstream readout-head*, added by a post-run rig edit) does
+  not rescue the verdict — `W` stayed frozen; re-rigging after the run is
+  the f2 result-fit `TRACK0_INSILICO.md` §3 forbids. VOID is HONEST + FINAL,
+  and *valuable*: it confirms `TRACK0_INSILICO.md` §4 — the learning-channel
+  confront needs the REAL spiking anima, BLOCKED on §96 design-open #1.
+- **2026-05-19** — §120 spiking attention replacement DECIDED — §96
+  design-open #1 moves *undecided design-open → decided design-tier*
+  ($0, `state/spiking_attention_replacement_s120_2026_05_19/`, B-S120-1..8
+  **8/8 🔵**, central blue 0-diff `c93e160a8a376a94`). Closed-form decision:
+  the spiking replacement for `softmax(QK^T)` self-attention =
+  **spike-rate dot-product scoring + k-WTA routing**. Justification —
+  (a) dissolves all 3 §96 §3.3 obstructions (rate-coded coincidence
+  detection = async local accumulation; k-WTA via lateral inhibition = local
+  competition, not global softmax); (b) preserves Engine-A⇄G (excit/inhib
+  drives) + the Ψ=½ fixed point (the k-WTA neutral point, Law-71 form
+  re-hosted, §112 carrier-invariance); (c) `R(k=T, soft-readout)` reduces
+  **byte-equal** to `softmax`-attention (B-S120-3 max|Δ|=3.33e-16) ⇒ a
+  GENERALISATION not a graft (§7-clean — byte-attention is the `k=T` corner).
+  Rejected candidate (phase-resonance routing) fails (c) — no limit recovers
+  `softmax(q·k/√d)` — and is re-assigned to position/RoPE coding (a separate
+  §96 design-open). "돌파" = design-open → design-DECIDED; does NOT implement
+  the spiking anima, does NOT remove WALL-A (§1.1 data-regime) or WALL-B
+  (§95/§96 async substrate — Loihi/SpiNNaker/SpiNNcloud-gated). design ≠ fire
+  ≠ emergence, capability claim 0, necessary-not-sufficient (B-EMERGE-7),
+  GOAL 미도달, milestones unchanged.
