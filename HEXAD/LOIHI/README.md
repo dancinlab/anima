@@ -251,3 +251,16 @@ WALL-B 못 confront, *재현*만 — anti-padding). §115 결과가 "시뮬레�
   HEXAD/LLM.md · HEXAD/GAP_MAP.md index). 과거 append-only 로그
   (AGENTS.tape n_hexad_progress · PHILOSOPHY.tape · GAP_MAP Log · state/*)
   의 `LOIHI.md` 표기는 당시-사실 기록이라 retro-edit 0 (g3 drift-avoidance).
+- **2026-05-19** — INRC application package landed (user directive
+  "신청해줘 / 영어로"): `INRC_APPLICATION.md` (honest two-part blocker +
+  inquiry email §2 with public-record GitHub reference + vLab form
+  field map), `inrc_vlab_form.txt` (copy-paste field values; the two
+  Engagement/Sponsor fields = LEAVE EMPTY, Intel-assigned), and
+  `inrc_followup_github.txt` (GitHub-reference reply snippet).
+  Dedicated ed25519 keypair generated and stored in the secret vault
+  (`inrc.vlab.ssh_priv` / `inrc.vlab.ssh_pub`; only the public key goes
+  on the form — private key never leaves the vault). User sent the §2
+  inquiry email manually (Postmark account still pending-approval, so
+  the automated send was blocked cross-domain — honest). $0,
+  design-tier, hardware not secured; access = SOFT WALL (§95).
+  north-star + §15/§51/§72 milestones unchanged, GOAL not reached.
