@@ -392,14 +392,14 @@ state/**/vast_ssh.txt
 # Transpiled hexa single-translation-unit C (1.5MB+, regeneratable from .hexa source)
 state/**/hexa_full_singletu.c
 
-# HEXAD module transient state (per-module runtime markers, not architecture)
-HEXAD/*/state/
-# §134 (2026-05-20) — @D g_new_state_path governance: new §N artifacts at
-# HEXAD/<TOPIC>/state/<basename>/ are SSOT-tracked. Un-ignore explicitly per topic.
-!HEXAD/LEGO/state/
-!HEXAD/LEGO/state/**
-!HEXAD/NEUROMORPHIC/state/
-!HEXAD/NEUROMORPHIC/state/**
+# HEXAD/<TOPIC>/state/<basename>/ = §N evidence SSOT — TRACKED (text only).
+# The old blanket `HEXAD/*/state/` ignore (was for per-module transient
+# runtime markers) is REMOVED 2026-05-20 — 0 module-level state dir exists,
+# and the §134/Phase-C per-topic migration made HEXAD/<TOPIC>/state/ the
+# canonical §N evidence location. Blanket-ignoring it silently dropped
+# 1,266 evidence files (149 dirs) from git. Only the large binaries below
+# (lines ~535+) stay ignored; result.json / DESIGN.md / blue_falsifier /
+# *.md / *.log are tracked.
 
 # runpod/vast dispatch scripts may embed API keys — never commit (keys → env/keyfile)
 *_runpod.sh

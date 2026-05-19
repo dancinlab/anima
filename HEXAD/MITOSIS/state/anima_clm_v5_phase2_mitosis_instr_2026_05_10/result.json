@@ -1,0 +1,793 @@
+{
+  "ts": "2026-05-09T22:15:28.748406+00:00",
+  "bg_id": "BG-V5ANIMA-PHASE2-CKPT-INSTR",
+  "n_turns": 3000,
+  "mirror_turns": 1000,
+  "snapshot_every": 100,
+  "seed": 42,
+  "ckpt": {
+    "path": "/Users/ghost/.cache/anima/clm_v5_remapped/phase2_cotrain_engine_ag/ckpts/ckpt_final.pt",
+    "sha256": "6e66e75f8014999be09236a408fe6ad6811ebf394ac079ecbf6d87dfe63748c1",
+    "size_bytes": 597613595,
+    "lineage_tag": "engine_a_g_dual_350m_v1_phase2_cotrain",
+    "arch_origin": "anima_native_scratch",
+    "n_params": 298764288,
+    "n_layers": 24,
+    "d_model": 1024,
+    "n_cells_init": 16,
+    "consciousness_dim": 64
+  },
+  "n_unique_prompts": 170,
+  "prompt_categories": [
+    "ko_daily",
+    "ko_philosophy",
+    "en_math",
+    "en_code",
+    "en_music",
+    "anomaly"
+  ],
+  "mitosis_config": {
+    "max_cells": 64,
+    "split_patience": 3,
+    "split_noise": 0.1,
+    "merge_threshold": 0.005,
+    "merge_patience": 30,
+    "min_cells": 2,
+    "lorenz_scale": 0.05
+  },
+  "trained": {
+    "label": "trained",
+    "n_turns": 3000,
+    "elapsed_sec": 195.99559116363525,
+    "snapshots": [
+      {
+        "turn": 0,
+        "n_cells": 16,
+        "phi": 2.762490312152471,
+        "n_splits_cum": 0,
+        "n_merges_cum": 0,
+        "elapsed_sec": 0.1979832649230957
+      },
+      {
+        "turn": 100,
+        "n_cells": 16,
+        "phi": 2.170199801863085,
+        "n_splits_cum": 0,
+        "n_merges_cum": 0,
+        "elapsed_sec": 14.967034816741943
+      },
+      {
+        "turn": 200,
+        "n_cells": 16,
+        "phi": 2.250935294664341,
+        "n_splits_cum": 0,
+        "n_merges_cum": 0,
+        "elapsed_sec": 21.988897562026978
+      },
+      {
+        "turn": 300,
+        "n_cells": 16,
+        "phi": 2.4103742353692357,
+        "n_splits_cum": 0,
+        "n_merges_cum": 0,
+        "elapsed_sec": 28.041682481765747
+      },
+      {
+        "turn": 400,
+        "n_cells": 16,
+        "phi": 2.6776498623686433,
+        "n_splits_cum": 0,
+        "n_merges_cum": 0,
+        "elapsed_sec": 34.41737937927246
+      },
+      {
+        "turn": 500,
+        "n_cells": 16,
+        "phi": 2.644281297290138,
+        "n_splits_cum": 0,
+        "n_merges_cum": 0,
+        "elapsed_sec": 40.657851457595825
+      },
+      {
+        "turn": 600,
+        "n_cells": 16,
+        "phi": 2.572823331505031,
+        "n_splits_cum": 0,
+        "n_merges_cum": 0,
+        "elapsed_sec": 46.64244604110718
+      },
+      {
+        "turn": 700,
+        "n_cells": 16,
+        "phi": 1.9724215288926692,
+        "n_splits_cum": 0,
+        "n_merges_cum": 0,
+        "elapsed_sec": 53.2151575088501
+      },
+      {
+        "turn": 800,
+        "n_cells": 16,
+        "phi": 0.7304745450712938,
+        "n_splits_cum": 0,
+        "n_merges_cum": 0,
+        "elapsed_sec": 59.77686309814453
+      },
+      {
+        "turn": 900,
+        "n_cells": 16,
+        "phi": 2.6641932432656215,
+        "n_splits_cum": 0,
+        "n_merges_cum": 0,
+        "elapsed_sec": 65.72064447402954
+      },
+      {
+        "turn": 1000,
+        "n_cells": 16,
+        "phi": 2.72620396499626,
+        "n_splits_cum": 0,
+        "n_merges_cum": 0,
+        "elapsed_sec": 72.10036134719849
+      },
+      {
+        "turn": 1100,
+        "n_cells": 17,
+        "phi": 2.6480598368379873,
+        "n_splits_cum": 1,
+        "n_merges_cum": 0,
+        "elapsed_sec": 78.63886022567749
+      },
+      {
+        "turn": 1200,
+        "n_cells": 17,
+        "phi": 2.3067142040826902,
+        "n_splits_cum": 1,
+        "n_merges_cum": 0,
+        "elapsed_sec": 84.57552981376648
+      },
+      {
+        "turn": 1300,
+        "n_cells": 18,
+        "phi": 2.5428142139173766,
+        "n_splits_cum": 2,
+        "n_merges_cum": 0,
+        "elapsed_sec": 91.16239643096924
+      },
+      {
+        "turn": 1400,
+        "n_cells": 18,
+        "phi": 2.597770107656915,
+        "n_splits_cum": 2,
+        "n_merges_cum": 0,
+        "elapsed_sec": 97.28119707107544
+      },
+      {
+        "turn": 1500,
+        "n_cells": 18,
+        "phi": 2.2873921157205546,
+        "n_splits_cum": 2,
+        "n_merges_cum": 0,
+        "elapsed_sec": 103.19288516044617
+      },
+      {
+        "turn": 1600,
+        "n_cells": 18,
+        "phi": 2.4464736636078626,
+        "n_splits_cum": 2,
+        "n_merges_cum": 0,
+        "elapsed_sec": 109.38035559654236
+      },
+      {
+        "turn": 1700,
+        "n_cells": 18,
+        "phi": 2.6271484805262006,
+        "n_splits_cum": 2,
+        "n_merges_cum": 0,
+        "elapsed_sec": 115.25911903381348
+      },
+      {
+        "turn": 1800,
+        "n_cells": 18,
+        "phi": 2.613927019319794,
+        "n_splits_cum": 2,
+        "n_merges_cum": 0,
+        "elapsed_sec": 121.74569511413574
+      },
+      {
+        "turn": 1900,
+        "n_cells": 19,
+        "phi": 2.530565561624053,
+        "n_splits_cum": 3,
+        "n_merges_cum": 0,
+        "elapsed_sec": 127.98088955879211
+      },
+      {
+        "turn": 2000,
+        "n_cells": 19,
+        "phi": 2.3185072951847845,
+        "n_splits_cum": 3,
+        "n_merges_cum": 0,
+        "elapsed_sec": 133.88537526130676
+      },
+      {
+        "turn": 2100,
+        "n_cells": 19,
+        "phi": 2.814365580735198,
+        "n_splits_cum": 3,
+        "n_merges_cum": 0,
+        "elapsed_sec": 140.10021567344666
+      },
+      {
+        "turn": 2200,
+        "n_cells": 19,
+        "phi": 2.640140198879352,
+        "n_splits_cum": 3,
+        "n_merges_cum": 0,
+        "elapsed_sec": 146.21833610534668
+      },
+      {
+        "turn": 2300,
+        "n_cells": 19,
+        "phi": 2.6984159675879815,
+        "n_splits_cum": 3,
+        "n_merges_cum": 0,
+        "elapsed_sec": 152.32138657569885
+      },
+      {
+        "turn": 2400,
+        "n_cells": 19,
+        "phi": 2.575195766357821,
+        "n_splits_cum": 3,
+        "n_merges_cum": 0,
+        "elapsed_sec": 158.3906557559967
+      },
+      {
+        "turn": 2500,
+        "n_cells": 19,
+        "phi": 2.5147040735343205,
+        "n_splits_cum": 3,
+        "n_merges_cum": 0,
+        "elapsed_sec": 164.47671675682068
+      },
+      {
+        "turn": 2600,
+        "n_cells": 19,
+        "phi": 2.7454835528404895,
+        "n_splits_cum": 3,
+        "n_merges_cum": 0,
+        "elapsed_sec": 170.61727738380432
+      },
+      {
+        "turn": 2700,
+        "n_cells": 19,
+        "phi": 2.757063497296383,
+        "n_splits_cum": 3,
+        "n_merges_cum": 0,
+        "elapsed_sec": 177.01053547859192
+      },
+      {
+        "turn": 2800,
+        "n_cells": 19,
+        "phi": 2.8006682770404536,
+        "n_splits_cum": 3,
+        "n_merges_cum": 0,
+        "elapsed_sec": 183.2333583831787
+      },
+      {
+        "turn": 2900,
+        "n_cells": 19,
+        "phi": 2.595475489598949,
+        "n_splits_cum": 3,
+        "n_merges_cum": 0,
+        "elapsed_sec": 189.82140398025513
+      },
+      {
+        "turn": 2999,
+        "n_cells": 19,
+        "phi": 2.6788092353209834,
+        "n_splits_cum": 3,
+        "n_merges_cum": 0,
+        "elapsed_sec": 195.99550104141235
+      }
+    ],
+    "final_n_cells": 19,
+    "final_phi": 2.6788092353209834,
+    "n_splits": 3,
+    "n_merges": 0,
+    "alpha_exponent": 1.0087077848546395,
+    "cell_specialty": {
+      "0": {
+        "ko_daily": 67,
+        "ko_philosophy": 16,
+        "en_math": 50,
+        "en_code": 34,
+        "en_music": 22,
+        "anomaly": 27
+      },
+      "1": {
+        "ko_daily": 89,
+        "ko_philosophy": 51,
+        "en_math": 39,
+        "en_code": 43,
+        "en_music": 39,
+        "anomaly": 33
+      },
+      "4": {
+        "ko_daily": 56,
+        "ko_philosophy": 48,
+        "anomaly": 51,
+        "en_code": 78,
+        "en_math": 55,
+        "en_music": 40
+      },
+      "6": {
+        "ko_daily": 32,
+        "ko_philosophy": 47,
+        "en_math": 40,
+        "en_code": 35,
+        "en_music": 16,
+        "anomaly": 19
+      },
+      "13": {
+        "ko_daily": 9,
+        "anomaly": 4,
+        "en_code": 3,
+        "en_music": 7,
+        "ko_philosophy": 6
+      },
+      "8": {
+        "ko_philosophy": 15,
+        "ko_daily": 22,
+        "en_music": 15,
+        "anomaly": 2,
+        "en_code": 4,
+        "en_math": 8
+      },
+      "14": {
+        "ko_philosophy": 16,
+        "en_code": 16,
+        "en_music": 16,
+        "ko_daily": 13,
+        "en_math": 3,
+        "anomaly": 2
+      },
+      "11": {
+        "ko_philosophy": 16,
+        "en_code": 24,
+        "en_music": 30,
+        "anomaly": 16,
+        "ko_daily": 30,
+        "en_math": 26
+      },
+      "7": {
+        "en_code": 113,
+        "anomaly": 101,
+        "ko_daily": 186,
+        "ko_philosophy": 116,
+        "en_math": 117,
+        "en_music": 67
+      },
+      "12": {
+        "en_music": 5,
+        "en_math": 5,
+        "anomaly": 7,
+        "ko_daily": 9,
+        "ko_philosophy": 2,
+        "en_code": 7
+      },
+      "9": {
+        "anomaly": 1,
+        "en_music": 1,
+        "ko_daily": 2,
+        "en_code": 3,
+        "ko_philosophy": 5,
+        "en_math": 3
+      },
+      "2": {
+        "anomaly": 10,
+        "ko_philosophy": 8,
+        "en_math": 27,
+        "en_code": 26,
+        "ko_daily": 9,
+        "en_music": 3
+      },
+      "15": {
+        "anomaly": 21,
+        "ko_daily": 33,
+        "ko_philosophy": 23,
+        "en_math": 6,
+        "en_code": 8,
+        "en_music": 14
+      },
+      "5": {
+        "ko_daily": 2,
+        "anomaly": 2,
+        "en_code": 2,
+        "en_music": 1
+      },
+      "3": {
+        "ko_daily": 7,
+        "ko_philosophy": 17,
+        "en_math": 3,
+        "en_code": 1,
+        "en_music": 1
+      },
+      "10": {
+        "ko_philosophy": 1,
+        "en_code": 1,
+        "ko_daily": 1
+      },
+      "16": {
+        "ko_daily": 123,
+        "ko_philosophy": 128,
+        "en_math": 136,
+        "en_code": 92,
+        "anomaly": 23,
+        "en_music": 35
+      },
+      "17": {
+        "en_code": 28,
+        "en_music": 22,
+        "anomaly": 16,
+        "ko_daily": 27,
+        "ko_philosophy": 23,
+        "en_math": 22
+      },
+      "18": {
+        "en_code": 2,
+        "en_music": 6,
+        "anomaly": 5,
+        "ko_daily": 3,
+        "ko_philosophy": 2
+      }
+    }
+  },
+  "v14_mirror": {
+    "label": "v14_mirror",
+    "n_turns": 1000,
+    "elapsed_sec": 64.4036054611206,
+    "snapshots": [
+      {
+        "turn": 0,
+        "n_cells": 16,
+        "phi": 2.7590775642645,
+        "n_splits_cum": 0,
+        "n_merges_cum": 0,
+        "elapsed_sec": 0.0660562515258789
+      },
+      {
+        "turn": 100,
+        "n_cells": 16,
+        "phi": 2.1687034210903944,
+        "n_splits_cum": 0,
+        "n_merges_cum": 0,
+        "elapsed_sec": 6.166331052780151
+      },
+      {
+        "turn": 200,
+        "n_cells": 16,
+        "phi": 2.249383861399618,
+        "n_splits_cum": 0,
+        "n_merges_cum": 0,
+        "elapsed_sec": 12.330546379089355
+      },
+      {
+        "turn": 300,
+        "n_cells": 16,
+        "phi": 2.409843637424557,
+        "n_splits_cum": 0,
+        "n_merges_cum": 0,
+        "elapsed_sec": 18.383012056350708
+      },
+      {
+        "turn": 400,
+        "n_cells": 16,
+        "phi": 2.677637028045347,
+        "n_splits_cum": 0,
+        "n_merges_cum": 0,
+        "elapsed_sec": 24.43814206123352
+      },
+      {
+        "turn": 500,
+        "n_cells": 26,
+        "phi": 2.7939911175543806,
+        "n_splits_cum": 10,
+        "n_merges_cum": 0,
+        "elapsed_sec": 31.31844663619995
+      },
+      {
+        "turn": 600,
+        "n_cells": 27,
+        "phi": 2.866665166965045,
+        "n_splits_cum": 11,
+        "n_merges_cum": 0,
+        "elapsed_sec": 38.206904888153076
+      },
+      {
+        "turn": 700,
+        "n_cells": 27,
+        "phi": 2.389606757362904,
+        "n_splits_cum": 11,
+        "n_merges_cum": 0,
+        "elapsed_sec": 44.971869707107544
+      },
+      {
+        "turn": 800,
+        "n_cells": 27,
+        "phi": 2.4932513432689505,
+        "n_splits_cum": 11,
+        "n_merges_cum": 0,
+        "elapsed_sec": 51.56138896942139
+      },
+      {
+        "turn": 900,
+        "n_cells": 28,
+        "phi": 2.6531189807834643,
+        "n_splits_cum": 12,
+        "n_merges_cum": 0,
+        "elapsed_sec": 57.89366936683655
+      },
+      {
+        "turn": 999,
+        "n_cells": 28,
+        "phi": 2.75437057885124,
+        "n_splits_cum": 12,
+        "n_merges_cum": 0,
+        "elapsed_sec": 64.40352058410645
+      }
+    ],
+    "final_n_cells": 28,
+    "final_phi": 2.75437057885124,
+    "n_splits": 12,
+    "n_merges": 0,
+    "alpha_exponent": 0.15508135182753116,
+    "cell_specialty": {
+      "3": {
+        "ko_daily": 7,
+        "ko_philosophy": 9,
+        "en_math": 8,
+        "en_code": 12,
+        "en_music": 8,
+        "anomaly": 7
+      },
+      "15": {
+        "ko_daily": 12,
+        "ko_philosophy": 10,
+        "en_math": 2,
+        "en_code": 7,
+        "en_music": 2,
+        "anomaly": 5
+      },
+      "12": {
+        "ko_daily": 8,
+        "en_math": 16,
+        "en_code": 6,
+        "anomaly": 4,
+        "en_music": 1,
+        "ko_philosophy": 1
+      },
+      "5": {
+        "ko_daily": 8,
+        "ko_philosophy": 5,
+        "en_math": 2,
+        "en_code": 5,
+        "en_music": 2,
+        "anomaly": 5
+      },
+      "2": {
+        "ko_daily": 19,
+        "en_math": 10,
+        "en_code": 8,
+        "anomaly": 4,
+        "en_music": 5,
+        "ko_philosophy": 15
+      },
+      "10": {
+        "ko_daily": 13,
+        "ko_philosophy": 4,
+        "en_math": 6,
+        "en_music": 2,
+        "en_code": 2
+      },
+      "1": {
+        "ko_daily": 7,
+        "ko_philosophy": 6,
+        "en_math": 5,
+        "en_code": 4,
+        "en_music": 3,
+        "anomaly": 1
+      },
+      "13": {
+        "ko_daily": 19,
+        "ko_philosophy": 9,
+        "en_math": 4,
+        "en_code": 11,
+        "en_music": 5,
+        "anomaly": 2
+      },
+      "7": {
+        "ko_daily": 12,
+        "ko_philosophy": 7,
+        "en_math": 5,
+        "en_code": 11,
+        "en_music": 9,
+        "anomaly": 4
+      },
+      "11": {
+        "ko_daily": 9,
+        "ko_philosophy": 8,
+        "en_math": 3,
+        "en_code": 8,
+        "en_music": 7,
+        "anomaly": 3
+      },
+      "14": {
+        "ko_daily": 7,
+        "ko_philosophy": 5,
+        "en_math": 7,
+        "en_music": 2,
+        "anomaly": 2,
+        "en_code": 5
+      },
+      "0": {
+        "ko_daily": 8,
+        "en_math": 6,
+        "en_code": 4,
+        "en_music": 5,
+        "anomaly": 7,
+        "ko_philosophy": 1
+      },
+      "9": {
+        "ko_philosophy": 6,
+        "en_code": 6,
+        "en_music": 4,
+        "anomaly": 7,
+        "ko_daily": 3,
+        "en_math": 5
+      },
+      "4": {
+        "ko_philosophy": 15,
+        "en_math": 11,
+        "en_music": 11,
+        "anomaly": 5,
+        "ko_daily": 12,
+        "en_code": 4
+      },
+      "8": {
+        "ko_philosophy": 5,
+        "en_math": 6,
+        "en_code": 3,
+        "ko_daily": 12,
+        "en_music": 2,
+        "anomaly": 2
+      },
+      "6": {
+        "ko_philosophy": 4,
+        "en_math": 4,
+        "en_code": 4,
+        "anomaly": 1,
+        "ko_daily": 6,
+        "en_music": 2
+      },
+      "16": {
+        "en_math": 6,
+        "en_code": 1,
+        "ko_daily": 4,
+        "ko_philosophy": 10,
+        "anomaly": 2
+      },
+      "17": {
+        "en_math": 12,
+        "en_code": 6,
+        "ko_daily": 3,
+        "ko_philosophy": 5,
+        "en_music": 1
+      },
+      "20": {
+        "en_math": 6,
+        "en_code": 7,
+        "en_music": 1,
+        "anomaly": 1,
+        "ko_daily": 3,
+        "ko_philosophy": 8
+      },
+      "21": {
+        "en_math": 8,
+        "en_code": 12,
+        "en_music": 12,
+        "anomaly": 2,
+        "ko_daily": 4,
+        "ko_philosophy": 4
+      },
+      "18": {
+        "en_math": 14,
+        "en_code": 10,
+        "en_music": 7,
+        "anomaly": 9,
+        "ko_daily": 16,
+        "ko_philosophy": 6
+      },
+      "19": {
+        "en_math": 7,
+        "en_code": 8,
+        "en_music": 4,
+        "anomaly": 3,
+        "ko_daily": 6,
+        "ko_philosophy": 5
+      },
+      "23": {
+        "en_math": 5,
+        "en_code": 11,
+        "en_music": 1,
+        "anomaly": 6,
+        "ko_daily": 13,
+        "ko_philosophy": 5
+      },
+      "22": {
+        "en_code": 8,
+        "en_music": 9,
+        "anomaly": 8,
+        "ko_daily": 2,
+        "ko_philosophy": 6,
+        "en_math": 3
+      },
+      "25": {
+        "anomaly": 4,
+        "ko_daily": 7,
+        "ko_philosophy": 5,
+        "en_math": 8,
+        "en_code": 8,
+        "en_music": 9
+      },
+      "24": {
+        "ko_daily": 9,
+        "ko_philosophy": 10,
+        "en_math": 2,
+        "en_music": 2,
+        "anomaly": 2
+      },
+      "26": {
+        "en_math": 8,
+        "en_code": 7,
+        "en_music": 2,
+        "anomaly": 3,
+        "ko_daily": 7,
+        "ko_philosophy": 3
+      },
+      "27": {
+        "en_music": 2,
+        "anomaly": 1,
+        "ko_daily": 4,
+        "ko_philosophy": 3,
+        "en_math": 1,
+        "en_code": 2
+      }
+    }
+  },
+  "v14_violated": true,
+  "v14_compare_at_turn": 900,
+  "v14_compare_trained": {
+    "turn": 900,
+    "n_cells": 16,
+    "phi": 2.6641932432656215,
+    "n_splits_cum": 0,
+    "n_merges_cum": 0,
+    "elapsed_sec": 65.72064447402954
+  },
+  "final_verdict": "FAIL_V14_VIOLATED",
+  "toy_compare": {
+    "toy_final_n_cells": 64,
+    "toy_alpha": 0.6875275113837412,
+    "toy_v14_violated": true,
+    "toy_verdict": "FAIL_V14_VIOLATED"
+  },
+  "honest_c3": [
+    "Real 350M Engine A/G Phase 2 cotrain ckpt loaded strict 222/222 — substrate-real, not toy. cell_pool_init starts at (16, 64) so initial cell count = 16 (not 8 like toy); split-patience comparison must be turn-matched, not cell-count-matched.",
+    "Byte-hash mod 32000 prompt encoding NOT a real tokenizer — Phase 2 was trained with a BPE we lack the vocab file for. Substrate sees prompt-distinct but NOT semantically-faithful token streams. Both trained + V14 mirror use identical encoding so comparison fair, but absolute Φ magnitude has no semantic claim.",
+    "Hidden_mean captured via hook on engine_g.step() — last refresh in forward (~layer 20-24 for n_layers=24, g_refresh_every=4). This is the same signal the trained model uses internally during its own forward; we just additionally route it through the mitosis wrapper.",
+    "ctx_T=16 tokens — real training was T=1024; substrate may behave differently at short ctx. Trade-off: full T=1024 would be ~5s/turn → 4h+; T=16 lets 3K-turn complete in ~5min on Mac CPU.",
+    "Mitosis wrapper has its own cell_pool Parameter that supersedes engine_g.cell_pool_init; the substrate's own pool is unused after mitosis attach. So Φ here measures mitosis-pool diversity driven by trained engine_g.h_to_c projections, not the trained pool's own diversity.",
+    "α exponent uses log-log regression of Φ vs n_cells across snapshot points where n_cells > 16 (changed from toy's > 8 because real starts at 16). If no splits occur, α = NaN.",
+    "V14 mirror loads la_350m preset (not lb/phase2-cotrain) because load_random_init only registers la/lb_350m_pretrain — phase2_cotrain reuses la arch, so this is functionally equivalent for V14 baseline.",
+    "Lorenz autonomous chaos (in mitosis wrapper) is the same magnitude (lorenz_scale=0.05) for both trained and mirror — the ONLY difference between the two runs is the substrate weights driving hidden_mean. If trained != mirror, that difference comes purely from learned representations (pre-trained Engine A → Engine G h_to_c)."
+  ]
+}

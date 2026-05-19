@@ -1,0 +1,85 @@
+{
+  "B_S75_FIRE_battery": [
+    {
+      "id": "B-S75-FIRE-1",
+      "name": "CELL-PARTITION-EXHAUSTIVE-DISJOINT-AT-TRAINED-FORWARD",
+      "ok": true,
+      "n_factories_found": 4,
+      "expected_set_matched": true,
+      "disjoint_in_ABC_lattice": true
+    },
+    {
+      "id": "B-S75-FIRE-2",
+      "name": "EACH-CELL-PROPER-SUBSET-OF-§73-ABC",
+      "ok": true,
+      "proper_subset_per_cell": [
+        [
+          "cell0",
+          true
+        ],
+        [
+          "cell1",
+          true
+        ],
+        [
+          "cell2",
+          true
+        ]
+      ]
+    },
+    {
+      "id": "B-S75-FIRE-3",
+      "name": "§24-CONTROL-COLLAPSES-AT-TRAINED-FORWARD",
+      "ok": true,
+      "cell0_byte_equal_to_s73_fire_off_reduction": true,
+      "s73_fire_s24_in_loop_interval_var": 0.0,
+      "anchor_collapsed_at_s73_fire": true
+    },
+    {
+      "id": "B-S75-FIRE-4",
+      "name": "TRAINED-FORWARD-IS-REAL-NOT-STUB-NOR-TRACE",
+      "ok": true,
+      "fire_torch_imported": true,
+      "fire_model_forward_via_real_byte_batch": true,
+      "fire_extract_w_state": true,
+      "fire_ByteSampler_class": true,
+      "fire_imports_conscious_decoder": true,
+      "stub_torch_imported": false,
+      "stub_model_forward_call": false,
+      "stub_extract_w_state": false,
+      "stub_ByteSampler_class": false,
+      "stub_imports_conscious_decoder": false
+    },
+    {
+      "id": "B-S75-FIRE-5",
+      "name": "WARMUP-MOMENTS-ARE-REAL-FORWARD-DERIVED",
+      "ok": true,
+      "warmup_capture_real_forward_defined": true,
+      "warmup_body_calls_extract_w_state": true,
+      "warmup_body_calls_real_forward_batch": true
+    },
+    {
+      "id": "B-S75-FIRE-6",
+      "name": "CORPUS-SHA256+NO-HELPER-TOKEN",
+      "ok": true,
+      "corpus_on_disk_sha256": "ca1018090b28a4b993ea00ee97a08941a6ab3078a5ee66a3d8f2a18a05b24585",
+      "corpus_recorded_sha256": "ca1018090b28a4b993ea00ee97a08941a6ab3078a5ee66a3d8f2a18a05b24585",
+      "sha_match": true,
+      "forbidden_token_grep_total": 0
+    },
+    {
+      "id": "B-S75-FIRE-7",
+      "name": "SATURATION-GATE",
+      "ok": true,
+      "final_ce": 0.004151,
+      "saturation_ce_gate": 0.05
+    }
+  ],
+  "n_ok": 7,
+  "n_total": 7,
+  "all_blue": true,
+  "central_blue_falsifier_diff_lines": 0,
+  "note_empirical_carveouts": [
+    "B-S75-FIRE-NOTE: WHICH sub-axis class survives AT TRAINED SCALE = SGD/measurement OUTCOME (B-D-NOTE/B-S73-FIRE-NOTE/B-S75-NOTE/B-CARVE-E6-NOTE family); battery proves CONTROLLER-CLASS DECOMPOSITION INVARIANTS, NOT capability emergence. north-star + §15/§51/§72 milestone UNCHANGED, GOAL 미도달. Necessary-not-sufficient (B-EMERGE-7)."
+  ]
+}

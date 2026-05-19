@@ -1,0 +1,41 @@
+{
+  "section": "§66",
+  "battery": "B-S66-1..4 + B-S66-NOTE",
+  "central_blue_falsifier_unchanged": true,
+  "n_pass": 4,
+  "n_total": 4,
+  "all_pass": true,
+  "verdict": "4/4 🔵 PASS",
+  "results": [
+    {
+      "id": "B-S66-1",
+      "title": "S-TO-C-SHAPE-PRESERVATION-CLOSED (carries B-CONN-1)",
+      "pass": true,
+      "detail": "sympy: dim_out≡dim (column-mean = one mean/column, simplify(dim_out-dim)=0)=True; numeric BOTH arms: |T|=|P|=|δT|=|δP|=18 len_ok=True; C⊕δ shape closure |row⊕δ|=|row|=18 both arms=True. S→C transfer is input-content-AGNOSTIC (pure column-mean delta, B-S-1 linear) ⇒ B-CONN-1 shape(C⊕δ)=shape(C) holds for physics P iff for byte T. B-CONN-1 REUSED not re-proven (prior 🔵 SSOT, anchor B-S-2)."
+    },
+    {
+      "id": "B-S66-2",
+      "title": "PHYSICS-INPUT-WELL-FORMED-CLOSED (Boolean+AST; §55-C1+§7②)",
+      "pass": true,
+      "detail": "sympy: psi_dir(c=-1)=0 psi_dir(c=0)=1/2(Ψ=½ fp) psi_dir(c=1)=1 (c∈[-1,1] clamp+Cauchy-Schwarz); psi_ent(H=0)=0 psi_ent(H=logV)=1 (Shannon 0≤H≤logV) ⟹ codomain ⊆ [0,1]^dim = vacuum_psi box (§55-C1). numeric: all 18 coords ∈[0,1] coord_ok=True. AST forbidden |F|=26 hits=0 (must 0) ⟹ §7② no-graft by construction. hits=[]"
+    },
+    {
+      "id": "B-S66-3",
+      "title": "RESPONSE-SEPARATION-METRIC-DETERMINISTIC-CLOSED",
+      "pass": true,
+      "detail": "3× bit-identical=True; AST RNG/forward/training |R|=9 hits=0 ⟹ pure-fn=True; neg-control closed: spread([s,s,s])=Max−Min=0≡0 (True), L2(s−s)=0≡0 (True), runtime neg_control_ok=True ⟹ metric PROVABLY discriminates (not trivially always-positive, mirror §17/§36)."
+    },
+    {
+      "id": "B-S66-4",
+      "title": "S-DISABLED-REDUCTION-CLOSED (connection-point fair-cmp)",
+      "pass": true,
+      "detail": "sympy: after≡before ⇒ δ=mean(A)−mean(B)=0≡0 (B-S-3 ZERO-CHANGE, Law 50) s_off_zero=True; C⊕0−C=0≡0 identity=True; numeric δ_off all|·|<1e-15 (True) row⊕0 byte-equal row (True) ⟹ S-disabled = existing byte-text path byte-equal, BOTH arms ⟹ §66 fair-compare BY CONSTRUCTION, introduces nothing changing the prior path."
+    }
+  ],
+  "note": {
+    "id": "B-S66-NOTE",
+    "title": "PHYSICS-INPUT-EMERGENCE-EMPIRICAL (necessary-not-sufficient)",
+    "pass": null,
+    "detail": "Whether physics-native input changes emergence AT SCALE = a future trained-ckpt input-side fire OUTCOME (feed P vs T into a carving ckpt, read Law-71 like §17). The §66 pilot proves ONLY that (1) the physics-input form is well-formed + §55-C1/§7²/B-CONN-1-compliant, (2) the separation metric is deterministic + negative-control-valid, (3) at the CLOSED-FORM substrate level physics-native input is directionally more discriminative (1.47×/2.13×, modest NOT 81×). Constraint/well-formedness/metric-validity + a directional substrate signal are NECESSARY, not sufficient, for GOAL (mirror §17 B-PHYS-NOTE: Ψ_dir alive but in_basin 0/31 — more separable ≠ correct ≠ emergent). B-D-NOTE / B-PHYS-NOTE / B-EMERGE-7 / B-S56-NOTE family, NOT counted 🔵. north-star + §15 milestone UNCHANGED."
+  }
+}

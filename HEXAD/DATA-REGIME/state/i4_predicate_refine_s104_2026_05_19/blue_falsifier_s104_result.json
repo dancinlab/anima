@@ -1,0 +1,161 @@
+{
+  "section": "§104",
+  "title": "I4 PREDICATE REFINEMENT · design-tier $0",
+  "n_total": 8,
+  "n_pass": 8,
+  "all_pass": true,
+  "checks": [
+    {
+      "name": "Q1-I4-STRICTNESS-AUDIT-CLOSED-BOOLEAN",
+      "statement": "I4 (whole-corpus n-gram concentration ratio ↑↑) is NEITHER necessary NOR sufficient for fire-tier emergence-threshold crossing: (a) Raventós task-diversity can cross without byte-diversity lifting (¬necessary); (b) uniform random bytes satisfy I4 with zero learning (¬sufficient). I4 is a build-tier proxy, not a fire-tier predicate.",
+      "is_necessary": false,
+      "is_sufficient": false,
+      "verdict_bucket": "NEITHER",
+      "literature_anchors": {
+        "Du_2403.15796": "emergence-as-pre-training-loss (loss threshold, NOT n-gram threshold)",
+        "Raventos_2306.15063": "task-diversity threshold (NOT byte-diversity)",
+        "Hoffmann_2022_Chinchilla": "compute-optimal scaling (param × data jointly)"
+      },
+      "anchor": "Boolean 2-dim taxonomy, total over 4 corners; literature-anchored",
+      "closed": true,
+      "tier": "a-closed",
+      "passed": true
+    },
+    {
+      "name": "Q2-CANDIDATE-I4-REFINEMENTS-CLOSED-FORM",
+      "statement": "Four candidate refinements of I4 are each closed-form Boolean predicates with literature anchors. Each addresses the §102 S1-mass-dominance failure mode. Truth-table aligned (2 rows × 4 candidates = 8 corners), all closed.",
+      "n_candidates": 4,
+      "truth_table_aligned": true,
+      "candidates": {
+        "I4a-per-source": {
+          "closed_form": "AND of three real-valued > comparisons",
+          "literature": "Raventos_2306.15063 (regional task-diversity)",
+          "addresses_S102_S1_mass_dominance": "yes — drops mass-weighted whole-corpus comparison",
+          "changes_Q1_Y_at_design": false,
+          "evaluable_on_S102_built": true
+        },
+        "I4b-fire-tier-deferral": {
+          "closed_form": "AND of held-out loss ratio + held-out c_H lift",
+          "literature": "Du_2403.15796 (loss-threshold)",
+          "addresses_S102_S1_mass_dominance": "yes — by deferring measurement to fire-tier",
+          "changes_Q1_Y_at_design": false,
+          "evaluable_on_S102_built": false
+        },
+        "I4c-multi-resolution": {
+          "closed_form": "AND of (whole-corpus floor + tail-region lift + held-out gap)",
+          "literature": "Du + Raventos + Hoffmann (Chinchilla joint)",
+          "addresses_S102_S1_mass_dominance": "yes — relaxes whole-corpus from ↑↑ to ≥ floor",
+          "changes_Q1_Y_at_design": false,
+          "evaluable_on_S102_built": "partial — first two clauses Yes, third Yes-after-fire"
+        },
+        "I4d-task-diversity": {
+          "closed_form": "single integer cardinality > floor",
+          "literature": "Raventos_2306.15063 (direct surrogate)",
+          "addresses_S102_S1_mass_dominance": "yes — task-template-count is mass-independent",
+          "changes_Q1_Y_at_design": false,
+          "evaluable_on_S102_built": true
+        }
+      },
+      "anchor": "closed-form Boolean conjunctions; per-candidate 2-row truth-table",
+      "closed": true,
+      "tier": "a-closed",
+      "passed": true
+    },
+    {
+      "name": "Q3-CHOSEN-I4-PRIME-CLOSED-PREDICATE",
+      "statement": "Chosen I4' = conjunction of three build-tier-evaluable refinements: I4a per-source (tail > S1) ∧ I4c build-tier clauses (whole ≥ S1 floor; tail > S1) ∧ I4d task-template-cardinality > §16-baseline. I4b deferred to fire-tier (Q2 A1-A4 already carries it). Per g_all_options_parallel: 3-way design-OPEN, all build-tier evaluable candidates carried forward.",
+      "chosen_candidates": [
+        "I4a-per-source",
+        "I4c-multi-resolution-build-tier",
+        "I4d-task-diversity"
+      ],
+      "evaluated_on_S102_built": {
+        "S102_S1_eff_4grams": 539.196,
+        "S102_tail_eff_4grams": 941.19,
+        "S102_whole_corpus_eff_4grams_sameprefix": 539.196,
+        "I4a_pass": true,
+        "I4c_build_clauses_pass": true,
+        "I4d_pass": true,
+        "I4_prime_pass": true,
+        "G2_prime_pass": true
+      },
+      "anchor": "Boolean conjunction over 3 closed candidates; values are §102 measured",
+      "closed": true,
+      "tier": "a-closed",
+      "passed": true
+    },
+    {
+      "name": "Q3-PRIME-ON-S102-BUILT-CLOSED-BOOLEAN",
+      "statement": "Q3' = G1 ∧ G2' ∧ G3 ∧ G4 ∧ G5 ∧ G6 ∧ G7 on §102's BUILT corpus, where G2 → G2' under chosen I4' (§104 Q3 §3). Each G_i is a closed Boolean carried verbatim from §102's measured artifact (G2 is the single replaced clause; all six others byte-equal to §102).",
+      "g_values": {
+        "G1": true,
+        "G2_prime": true,
+        "G3": true,
+        "G4": true,
+        "G5": true,
+        "G6": true,
+        "G7": true
+      },
+      "S102_built_corpus_sha256": "39d581da209615468c1c41e07aa8662ef1074bc5be49a666f8f861753dd5810e",
+      "Q3_prime_on_S102_built": true,
+      "S102_original_Q3_on_built": false,
+      "anchor": "Boolean 7-AND on closed predicate values",
+      "closed": true,
+      "tier": "a-closed",
+      "passed": true
+    },
+    {
+      "name": "CONNECTION-POINT-CITES-REAL-§101-§102-§16",
+      "statement": "§104 cites §101 DESIGN.md (Q3 G5 + Q1.I4 structural mentions present), §101 sidecar battery (parseable + sha-real), §16 corpus stats (sha byte-equal + records byte-equal); §102 measured values are carried as constants in this file (S102_* anchors) and re-attested in result.json.",
+      "s101_design_md_structural_present": true,
+      "s101_battery_parseable_real": true,
+      "s16_corpus_sha_byte_equal": true,
+      "anchor": "byte-equal file content + structural substring match (Kolmogorov)",
+      "closed": true,
+      "tier": "a-closed",
+      "passed": true
+    },
+    {
+      "name": "CENTRAL-BLUE-ZERO-LINE-DIFF",
+      "statement": "central state/verify_hexad_blue_2026_05_15/blue_falsifier.py sha256 prefix matches `c93e160a8a376a94` — §104 is sidecar-only, no central touch (mandate from §59~§103).",
+      "central_sha_prefix_match": true,
+      "anchor": "SHA-256 prefix byte-equal",
+      "closed": true,
+      "tier": "a-closed",
+      "passed": true
+    },
+    {
+      "name": "NECESSARY-NOT-SUFFICIENT-INVARIANT-STRUCTURAL",
+      "statement": "§104 records 6 structural invariants: refined I4 ≠ emergence guarantee · Q3' Y is design-tier · future fire OUTCOME is empirical · north-star unchanged · §15/§51/§72 milestones unchanged · predicate refinement ≠ capability proof. All True ⇒ honesty preserved.",
+      "invariants": {
+        "refined_I4_does_not_guarantee_emergence": true,
+        "Q3_prime_Y_is_design_tier_not_fire": true,
+        "future_fire_result_is_empirical_OUTCOME": true,
+        "north_star_unchanged": true,
+        "s15_s51_s72_milestones_unchanged": true,
+        "predicate_refinement_is_not_capability_proof": true
+      },
+      "all_present": true,
+      "anchor": "B-EMERGE-7 / B-S101-9 / B-S102-NOTE family carry; structural assertion",
+      "closed": true,
+      "tier": "a-closed",
+      "passed": true
+    },
+    {
+      "name": "NO-FORBIDDEN-CALL-AST-AUDIT",
+      "statement": "§104 sidecar AST audit finds ZERO references to {ML training libs, gradient calls, external LLM clients, subprocess, os.system} — §104 is design-only, NO mechanism overlay or fire-stub.",
+      "forbidden_hits": [],
+      "n_hits": 0,
+      "anchor": "AST Call-node walk + Import/ImportFrom audit",
+      "closed": true,
+      "tier": "a-closed",
+      "passed": true
+    }
+  ],
+  "empirical_carve_out": {
+    "name": "B-S104-NOTE",
+    "tier": "empirical-carve-out",
+    "statement": "Whether the refined I4' actually correlates with fire-tier emergence is an empirical OUTCOME (SGD / measurement / future-fire dependent), NOT proven by §104. Whether a future fire on CORPUS_S101 (built per §102) under Q3'=Y will cross THRESHOLD_CROSSED (§101 Q2) is further still in the empirical OUTCOME family. §104's battery proves the ANALYSIS is well-formed: Q1 strictness audit closed-Boolean, Q2 candidates closed-form predicates, Q3' chosen via g_all_options_parallel (all build-tier evaluable candidates carried forward, not recommend-and-wait), connection-points cite real §101 / §102 / §16, central 0-line-diff held. The battery is necessary, not sufficient. Family: B-D-NOTE / B-S101-NOTE / B-S102-NOTE / B-EMERGE-7. NOT counted in the pass-count for any closed-tier claim about emergence."
+  },
+  "verdict": "DESIGN-WELL-FORMED — §104 establishes Q1 (I4 NEITHER necessary NOR sufficient, literature-anchored), Q2 (four closed-form candidate refinements I4a/I4b/I4c/I4d), Q3 (3-way design-OPEN over build-tier-evaluable candidates per g_all_options_parallel; chosen I4' lets §102's built corpus pass G2'). Q3' = T on §102's built artifact. Capability claim 0. north-star + §15/§51/§72 milestones UNCHANGED, GOAL 미도달."
+}

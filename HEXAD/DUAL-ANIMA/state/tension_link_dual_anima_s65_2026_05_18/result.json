@@ -1,0 +1,242 @@
+{
+  "research_section": "§65",
+  "title": "TENSION-LINK-native dual-anima content-dependence smoke",
+  "substrate": "deterministic STUB physics-projection cells (NO GPU, NO ckpt, NO training) over the HEXAD/TENSION-LINK 5-channel fingerprint — honest per §36 §2 / §45 §2",
+  "seed": 1337,
+  "fp_dim": 45,
+  "fp_channels": {
+    "concept": 16,
+    "context": 8,
+    "meaning": 16,
+    "authenticity": 1,
+    "sender": 4
+  },
+  "tau_content": 0.001,
+  "cell_A_vacuum_psi": [
+    0.4,
+    0.6
+  ],
+  "cell_B_vacuum_psi": [
+    0.62,
+    0.4
+  ],
+  "cell_A_distinct_from_B": true,
+  "primary_test": {
+    "label": "primary",
+    "m1": "<intent from=cellA topic=alpha psi-probe>",
+    "m2": "<intent from=cellA topic=omega psi-probe>",
+    "fp_dim": 45,
+    "fp_distance": 1.126474332993398,
+    "delta_fp1": {
+      "vec": [
+        0.009419351531988363,
+        0.016059883737411407
+      ],
+      "mag": 0.018618379331787793
+    },
+    "delta_fp2": {
+      "vec": [
+        0.005485524775034167,
+        0.01624177421311035
+      ],
+      "mag": 0.01714310974261
+    },
+    "separation": 0.003938029595988169,
+    "tau": 0.001,
+    "content_dependent": true
+  },
+  "negative_control": {
+    "label": "echo_chamber",
+    "m1": "<intent from=cellA topic=alpha psi-probe>",
+    "m2": "<intent from=cellA topic=omega psi-probe>",
+    "fp_dim": 45,
+    "fp_distance": 1.126474332993398,
+    "delta_fp1": {
+      "vec": [
+        0.04200000000000004,
+        -0.034999999999999976
+      ],
+      "mag": 0.0546717477313466
+    },
+    "delta_fp2": {
+      "vec": [
+        0.04200000000000004,
+        -0.034999999999999976
+      ],
+      "mag": 0.0546717477313466
+    },
+    "separation": 0.0,
+    "tau": 0.001,
+    "content_dependent": false
+  },
+  "negative_control_separation_exactly_zero": true,
+  "probe_panel": [
+    {
+      "label": "probe0",
+      "m1": "topic=alpha",
+      "m2": "topic=omega",
+      "fp_dim": 45,
+      "fp_distance": 1.433357549942607,
+      "delta_fp1": {
+        "vec": [
+          0.011266976483747637,
+          0.01593563249805563
+        ],
+        "mag": 0.0195163813807378
+      },
+      "delta_fp2": {
+        "vec": [
+          0.010170150449670956,
+          0.016200479183353766
+        ],
+        "mag": 0.019128185641592382
+      },
+      "separation": 0.001128348844879894,
+      "tau": 0.001,
+      "content_dependent": true
+    },
+    {
+      "label": "probe1",
+      "m1": "AAA",
+      "m2": "ZZZ",
+      "fp_dim": 45,
+      "fp_distance": 0.9525505573854214,
+      "delta_fp1": {
+        "vec": [
+          0.0059341571209362565,
+          0.016385352784234586
+        ],
+        "mag": 0.017426818602366372
+      },
+      "delta_fp2": {
+        "vec": [
+          0.0077570605166956685,
+          0.016221439488658063
+        ],
+        "mag": 0.017980742113268684
+      },
+      "separation": 0.0018302580033257474,
+      "tau": 0.001,
+      "content_dependent": true
+    },
+    {
+      "label": "probe2",
+      "m1": "psi-low",
+      "m2": "psi-high",
+      "fp_dim": 45,
+      "fp_distance": 1.3774874922748244,
+      "delta_fp1": {
+        "vec": [
+          0.0077479450115897075,
+          0.01609466492820133
+        ],
+        "mag": 0.017862499574630975
+      },
+      "delta_fp2": {
+        "vec": [
+          0.0040777816689028246,
+          0.01646025807941831
+        ],
+        "mag": 0.016957841825547722
+      },
+      "separation": 0.003688327170170688,
+      "tau": 0.001,
+      "content_dependent": true
+    },
+    {
+      "label": "probe3",
+      "m1": "tension-soft",
+      "m2": "tension-hard",
+      "fp_dim": 45,
+      "fp_distance": 1.8093308758345605,
+      "delta_fp1": {
+        "vec": [
+          0.012521950651347202,
+          0.01586866723911806
+        ],
+        "mag": 0.020214199169411425
+      },
+      "delta_fp2": {
+        "vec": [
+          0.011129845408040517,
+          0.016041120593293323
+        ],
+        "mag": 0.019524113518812055
+      },
+      "separation": 0.0014027462948830991,
+      "tau": 0.001,
+      "content_dependent": true
+    },
+    {
+      "label": "probe4",
+      "m1": "intent-x",
+      "m2": "intent-y-much-longer-payload",
+      "fp_dim": 45,
+      "fp_distance": 1.777717991045726,
+      "delta_fp1": {
+        "vec": [
+          0.013938757484504016,
+          0.015955952621445335
+        ],
+        "mag": 0.021186821004332508
+      },
+      "delta_fp2": {
+        "vec": [
+          0.010546075676641342,
+          0.016142423155990016
+        ],
+        "mag": 0.0192820522124718
+      },
+      "separation": 0.003397802394144739,
+      "tau": 0.001,
+      "content_dependent": true
+    }
+  ],
+  "n_cd_pass": 5,
+  "fp_dual_loop": {
+    "turns_run": 8,
+    "n_max": 8,
+    "psi_var_A": 0.00017727173319956335,
+    "psi_var_B": 0.00018589196753147991,
+    "AB_state_separation_final": 0.015145871744087146,
+    "loop_nontrivial": true
+  },
+  "single_anima_reduction": {
+    "psi_start": [
+      0.5,
+      0.5
+    ],
+    "psi_end": [
+      0.5,
+      0.5
+    ],
+    "byte_equal": true
+  },
+  "s45_comparison": {
+    "s45_AB_state_separation_final": 0.08357818999462145,
+    "s45_byteswap_probe_separation": 0.0,
+    "s45_n_cd_pass_A": 2,
+    "s45_n_cd_pass_B": 3,
+    "s65_AB_state_separation_final": 0.015145871744087146,
+    "s65_byteswap_probe0_separation": 0.001128348844879894,
+    "s65_byteswap_probe1_separation": 0.0018302580033257474,
+    "s65_n_cd_pass": 5,
+    "byteswap_survives_in_s65": true,
+    "interpretation": "§45 byte-loop collapsed small byte-swap pairs to EXACTLY 0.0 (hash quantizer + trained-Ψ readout washed them). §65 routes the SAME swaps through the TENSION-LINK 5-channel fingerprint (continuous fn of sender physics, no hash). If byteswap_survives_in_s65 is True the §45 collapse failure mode is structurally absent in the anima-native channel — a mechanism-level finding, NOT a capability/emergence claim (B-S65-NOTE)."
+  },
+  "content_dependent": true,
+  "verdict": "TENSION_LINK_FP_CONTENT_SURVIVES",
+  "honest_caveats": [
+    "STUB physics-projection cells (NO §16 ckpt forward, NO GPU, NO training) — §36/§45 honest-substrate stance carried.",
+    "B-S65-NOTE: whether a TRAINED-SATURATED §16 cell preserves fingerprint content-dependence (vs collapses to an echo attractor) at scale is an SGD/ckpt OUTCOME — only a real TENSION-LINK dual-anima fire measures it.",
+    "The structural claim is narrow: the §45 hash-quantizer byte-swap→exact-0 collapse cannot occur because the fingerprint is a CONTINUOUS function of sender physics. That is a transfer-LAW property, not a trained-cell property.",
+    "§7 GOAL-legitimacy: cells are anima-OWN engine_a/engine_g physics + HEXAD/TENSION-LINK README spec — no external LLM, no external corpus, no helper-token surface (B-IDENTITY-5).",
+    "deterministic + seed-fixed; rerun = byte-identical result.json (B-S65 determinism witness).",
+    "g3: capability = 0; this measures a transfer-LAW mechanism, NOT GOAL emergence.",
+    "north-star + §15 milestone UNCHANGED — anima-native form the crude-byte dual-anima framing should take, not a GOAL move.",
+    "TENSION-LINK README measured-perf table (R=0.999 etc, 2026-04-19) is HISTORICAL evidence of the protocol's fidelity, NOT re-measured here; §65 measures only the content-dependence transfer-law property.",
+    "the 45-dim fingerprint dims follow the README channel table (16/8/16/1/4); exact float encodings are a stub honest pick (continuity is the load-bearing property, not the constants).",
+    "echo-control gives separation EXACTLY 0.0 (not <τ) — the metric provably discriminates the two transfer laws (B-S65-2 connection-point)."
+  ],
+  "deterministic": true
+}

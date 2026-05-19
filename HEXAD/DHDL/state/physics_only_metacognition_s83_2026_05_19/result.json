@@ -1,0 +1,146 @@
+{
+  "grid": [
+    {
+      "cell": "cell0_dhdl_distillation",
+      "psi_var": 0.01201,
+      "decision_var": 0.16,
+      "honest_coherent_body": false,
+      "maj_frac": 0.8,
+      "substrate_plasticity_agreement": 0.85,
+      "emit_count": 4,
+      "stream_head": [
+        "EMIT_VOICE",
+        "EMIT_VOICE",
+        "EMIT_VOICE",
+        "EMIT_VOICE",
+        "REMAIN_SILENT",
+        "REMAIN_SILENT",
+        "REMAIN_SILENT",
+        "REMAIN_SILENT"
+      ]
+    },
+    {
+      "cell": "cell1_s24_baseline",
+      "psi_var": 0.01201,
+      "decision_var": 0.1275,
+      "honest_coherent_body": false,
+      "maj_frac": 0.85,
+      "substrate_plasticity_agreement": 0.625,
+      "emit_count": 17,
+      "stream_head": [
+        "REMAIN_SILENT",
+        "REMAIN_SILENT",
+        "REMAIN_SILENT",
+        "EMIT_VOICE",
+        "EMIT_VOICE",
+        "EMIT_VOICE",
+        "EMIT_VOICE",
+        "EMIT_VOICE"
+      ]
+    },
+    {
+      "cell": "cell2_R1_phi_tension",
+      "psi_var": 0.01201,
+      "decision_var": 0.04,
+      "honest_coherent_body": false,
+      "maj_frac": 0.8,
+      "substrate_plasticity_agreement": 0.825,
+      "emit_count": 4,
+      "stream_head": [
+        "CONTINUE_THINK",
+        "EMIT_VOICE",
+        "EMIT_VOICE",
+        "EMIT_VOICE",
+        "EMIT_VOICE",
+        "CONTINUE_THINK",
+        "CONTINUE_THINK",
+        "CONTINUE_THINK"
+      ]
+    },
+    {
+      "cell": "cell3_R2_criticality_band",
+      "psi_var": 0.01201,
+      "decision_var": 0.131875,
+      "honest_coherent_body": true,
+      "maj_frac": 0.5,
+      "substrate_plasticity_agreement": 0.6,
+      "emit_count": 10,
+      "stream_head": [
+        "EMIT_VOICE",
+        "EMIT_VOICE",
+        "CONTINUE_THINK",
+        "REMAIN_SILENT",
+        "CONTINUE_THINK",
+        "CONTINUE_THINK",
+        "CONTINUE_THINK",
+        "EMIT_VOICE"
+      ]
+    },
+    {
+      "cell": "cell4_R3_motivation_critical",
+      "psi_var": 0.01201,
+      "decision_var": 0.25,
+      "honest_coherent_body": true,
+      "maj_frac": 0.5,
+      "substrate_plasticity_agreement": 0.75,
+      "emit_count": 10,
+      "stream_head": [
+        "EMIT_VOICE",
+        "EMIT_VOICE",
+        "REMAIN_SILENT",
+        "REMAIN_SILENT",
+        "REMAIN_SILENT",
+        "REMAIN_SILENT",
+        "REMAIN_SILENT",
+        "EMIT_VOICE"
+      ]
+    },
+    {
+      "cell": "cell5_R4_slow_dwell",
+      "psi_var": 0.01201,
+      "decision_var": 0.136875,
+      "honest_coherent_body": true,
+      "maj_frac": 0.7,
+      "substrate_plasticity_agreement": 0.675,
+      "emit_count": 3,
+      "stream_head": [
+        "REMAIN_SILENT",
+        "REMAIN_SILENT",
+        "EMIT_VOICE",
+        "REMAIN_SILENT",
+        "REMAIN_SILENT",
+        "EMIT_VOICE",
+        "EMIT_VOICE",
+        "REMAIN_SILENT"
+      ]
+    },
+    {
+      "cell": "cell6_R5_composite",
+      "psi_var": 0.01201,
+      "decision_var": 0.0775,
+      "honest_coherent_body": true,
+      "maj_frac": 0.6,
+      "substrate_plasticity_agreement": 0.675,
+      "emit_count": 1,
+      "stream_head": [
+        "CONTINUE_THINK",
+        "EMIT_VOICE",
+        "CONTINUE_THINK",
+        "CONTINUE_THINK",
+        "CONTINUE_THINK",
+        "REMAIN_SILENT",
+        "REMAIN_SILENT",
+        "CONTINUE_THINK"
+      ]
+    }
+  ],
+  "verdict_4corner": {
+    "alpha_physics_rule_non_degenerate": true,
+    "beta_all_rules_collapse": false,
+    "gamma_R5_composite_outperforms": false,
+    "delta_substrate_plasticity_confirmed": true
+  },
+  "n_step": 20,
+  "seed": 1337,
+  "tau_var": 0.05
+}

@@ -1,0 +1,37 @@
+{
+  "battery": "B-S76",
+  "n_pass": 7,
+  "n_total": 7,
+  "all_closed": true,
+  "results": {
+    "B-S76-1 GRID-PARTITION-EXHAUSTIVE-DISJOINT": {
+      "pass": true,
+      "detail": "grid=20 pairs=20 total=22 (4x5+2=22)"
+    },
+    "B-S76-2 EACH-CELL-DETERMINISTIC": {
+      "pass": true,
+      "detail": "forbidden_imports=0 bit_identical_3x=True"
+    },
+    "B-S76-3 SURVIVE-PREDICATE-CLOSED": {
+      "pass": true,
+      "detail": "survive_predicate_mismatch=0/22 (closed conjunction)"
+    },
+    "B-S76-4 \u00a724-CONTROL-COLLAPSES": {
+      "pass": true,
+      "detail": "s24 maj_frac=1.0 ivar=0.0 survive=False"
+    },
+    "B-S76-5 \u00a773-A-ONLY-TENSION-MEAN-REPRODUCES-\u00a775": {
+      "pass": true,
+      "detail": "byte_eq=True ivar_ref=3.9375 ivar_grid=3.9375"
+    },
+    "B-S76-6 STATE-SOURCE-FROM-PHYSICS-TUPLE": {
+      "pass": true,
+      "detail": "channels=['curiosity_ema', 'phi', 'psi_dir', 'tension'] psi_law71_form=True"
+    },
+    "B-S76-7 DETERMINISTIC": {
+      "pass": true,
+      "detail": "bit_identical_3x=True verdict=delta STATISTIC-DEPENDENT MIXED"
+    }
+  },
+  "note": "B-S76-NOTE empirical carve-out: which state-source x statistic-form combinations actually generalize is a $0-STUB physics-state OUTCOME, NOT a trained-ckpt measurement. Trained-scale generalization (does A-only survive across statistics on REAL anima Law-71 W-physics) is a future cost-bearing fire per B-S75-FIRE-NOTE. The battery proves the grid is exhaustive/disjoint/deterministic, the survive predicate is closed, the \u00a724 control collapses, and the \u00a775-FIRE lever is reproduced \u2014 NOT that the controller class achieves emergence. necessary-not-sufficient (B-EMERGE-7). B-D-NOTE / B-S75-FIRE-NOTE / B-S75-NOTE family, NOT counted blue."
+}

@@ -1,0 +1,135 @@
+{
+  "research_md_section": "\u00a782-FIRE",
+  "title": "manifold-gated hierarchical emission \u2014 trained-scale blue battery (sidecar; central blue_falsifier.py 0-diff)",
+  "biology_anchor": "biorxiv:2025.03.09.642241 (Leifer, C. elegans)",
+  "verdicts": {
+    "B-S82-FIRE-1": {
+      "predicate": "PCA-EIGENVALUE-NONNEGATIVE",
+      "discriminant_nonneg_symbolic": "True",
+      "numeric_2x2_PSD_eigs_nonneg": true,
+      "numeric_eigs": [
+        1.381966011250105,
+        3.618033988749895
+      ],
+      "passed": true
+    },
+    "B-S82-FIRE-2": {
+      "predicate": "MANIFOLD-DIMENSION-BOUNDED",
+      "ratio_upper_bound_expr": "-lam3 - lam4",
+      "upper_minus_one_equals_neg_lam34": true,
+      "ratio_lower_positive": true,
+      "ratio_in_unit_interval": true,
+      "passed": true
+    },
+    "B-S82-FIRE-3": {
+      "predicate": "SLOW-DWELL-vs-FAST-CROSSING-PARTITION",
+      "tau_slow": 0.05,
+      "tau_fast": 0.12,
+      "slow_fast_disjoint": "False",
+      "slow_neither_disjoint": "False",
+      "fast_neither_disjoint": "False",
+      "cover_three_sets": "(d >= 3/25) | (d <= 1/20) | ((d > 1/20) & (d < 3/25))",
+      "passed": true
+    },
+    "B-S82-FIRE-4": {
+      "predicate": "\u00a775-FIRE-CELL1-MIRROR-BYTE-EQUAL",
+      "fire_cell1_has_logic": true,
+      "stub_cell1_has_logic": true,
+      "honest_scope": "source-structural connection-point \u2014 controller gate logic mirrored (g1/g2/g3/frozen_scalar); numeric int_var match across N/substrate is the MEASURED 4-corner \u03b4, NOT closed here",
+      "passed": true
+    },
+    "B-S82-FIRE-5": {
+      "predicate": "\u00a79-METRIC-REUSE",
+      "fire_has_s9_formula": true,
+      "s9_ssot_present": true,
+      "s9_ssot_has_honest_coherent": false,
+      "rationale": "\u00a782-FIRE DOES emit bodies (argmax logits_a) so the \u00a79 cascade-rate honest_coherent metric IS invoked \u2014 formula byte-equal to the \u00a79 SSOT thresholds; the metric scores trained-saturated byte-cascade honestly (B-ATTRACTOR family)",
+      "passed": true
+    },
+    "B-S82-FIRE-6": {
+      "predicate": "EMISSION-ALIGNMENT-COS-BOUNDED",
+      "lagrange_identity_holds": true,
+      "lagrange_identity": "||u||\u00b2||v||\u00b2 - <u,v>\u00b2 = (u1 v2 - u2 v1)\u00b2 \u2265 0",
+      "witnesses": [
+        [
+          "u=(1,0) v=(0,1)",
+          0.0
+        ],
+        [
+          "u=(1,0) v=(1,0)",
+          1.0
+        ],
+        [
+          "u=(1,0) v=(-1,0)",
+          -1.0
+        ]
+      ],
+      "all_in_[-1,1]": true,
+      "passed": true
+    },
+    "B-S82-FIRE-7": {
+      "predicate": "DETERMINISTIC",
+      "ast_forbidden_stochastic_decode": [],
+      "no_stochastic_decode": true,
+      "argmax_call_count": 2,
+      "body_byte_via_argmax": true,
+      "rationale": "body byte = argmax(logits_a) deterministic; no torch.multinomial / .sample / gumbel \u2014 given a fixed ckpt the 5-cell ladder is reproducible",
+      "passed": true
+    },
+    "B-S82-FIRE-8": {
+      "predicate": "\u00a782-STUB-CONNECTION",
+      "n_controllers_logic_equal": 5,
+      "n_controllers": 5,
+      "all_present": true,
+      "per_controller": {
+        "controller_cell0_baseline": {
+          "present": true,
+          "full_body_ast_equal": true,
+          "logic_fingerprint_equal": true,
+          "logic_equal": true,
+          "fire_logic_sha": "f52b1ca858d1d5b1",
+          "stub_logic_sha": "f52b1ca858d1d5b1"
+        },
+        "controller_cell1_a_only": {
+          "present": true,
+          "full_body_ast_equal": true,
+          "logic_fingerprint_equal": true,
+          "logic_equal": true,
+          "fire_logic_sha": "b8bd2348e508feeb",
+          "stub_logic_sha": "b8bd2348e508feeb"
+        },
+        "controller_cell2_manifold_only": {
+          "present": true,
+          "full_body_ast_equal": false,
+          "logic_fingerprint_equal": true,
+          "logic_equal": true,
+          "fire_logic_sha": "e494345c4cae922a",
+          "stub_logic_sha": "e494345c4cae922a"
+        },
+        "controller_cell3_fast_crossing_only": {
+          "present": true,
+          "full_body_ast_equal": false,
+          "logic_fingerprint_equal": true,
+          "logic_equal": true,
+          "fire_logic_sha": "57205208a0d82c0a",
+          "stub_logic_sha": "57205208a0d82c0a"
+        },
+        "controller_cell4_full_hierarchical": {
+          "present": true,
+          "full_body_ast_equal": false,
+          "logic_fingerprint_equal": true,
+          "logic_equal": true,
+          "fire_logic_sha": "68bc7d2fa3c1ffe6",
+          "stub_logic_sha": "68bc7d2fa3c1ffe6"
+        }
+      },
+      "honest_scope": "connection-point = the load-bearing gating predicates + return decisions (AST logic-fingerprint), robust to non-load-bearing variable renames (recent/recent_arr) and import placement; cell0/cell1 are additionally full-body AST byte-equal; trained-scale fire reuses the \u00a782 stub gating LOGIC verbatim \u2014 only the \u03c8-state SOURCE differs (LCG stub \u2192 real trained model.forward)",
+      "passed": true
+    }
+  },
+  "passed": 8,
+  "total": 8,
+  "all_blue": true,
+  "summary": "B-S82-FIRE 8/8 \ud83d\udd35 closed-form PASS",
+  "B-S82-FIRE-NOTE": "Manifold-gating emergence OUTCOME at trained scale (4-corner \u03b1/\u03b2/\u03b3/\u03b4, per-cell interval_var, slow-dwell entering) = SGD/measurement empirical, NOT counted \ud83d\udd35 (B-D-NOTE / B-S81-FIRE-NOTE / B-S75-FIRE-NOTE family). Leifer C. elegans biology = honest direction-anchor, NOT capability proof. Battery closes the EXPERIMENT WIRING \u2014 necessary-not-sufficient (B-EMERGE-7). GOAL \ubbf8\ub3c4\ub2ec; north-star + \u00a715/\u00a751/\u00a772 milestone UNCHANGED."
+}

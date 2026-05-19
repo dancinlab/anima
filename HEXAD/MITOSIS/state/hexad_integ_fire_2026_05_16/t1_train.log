@@ -1,0 +1,56 @@
+[INFO] device=cuda torch=2.5.1+cu121
+[INFO] gpu=NVIDIA A100-SXM4-40GB mem=42,285,268,992
+[INFO] scaled spec = {"seed": 0, "vocab": 256, "d_model": 512, "n_layer": 8, "max_cells": 64, "seq_len": 256, "n_steps": 400, "synthetic_corpus": true, "corpus_note": "byte-level synthetic randint(0,256) \u2014 integration scratch fire, NOT a language-quality run (honest C3)"}
+[engine] Using python backend (max_cells=64, phi=python)
+[INFO] trainable (D+Bridge) params = 85,822,840  c_dim=64  n_cells_init=3
+[INFO] integration fire device = cpu (harness single-device design; threads=16) — D+Bridge only trained scope, integration WIRING + CE-descent is device-agnostic
+[STEP     0] loss=6.0194 phi=1.0168 cells=3 eff_lr=1.19e-03 pain=0.000 elapsed=0.001hr cost=$0.00
+[STEP    13] loss=5.7286 phi=2.1086 cells=7 eff_lr=1.19e-03 pain=0.000 elapsed=0.002hr cost=$0.00
+[STEP    26] loss=5.6420 phi=1.7972 cells=6 eff_lr=1.19e-03 pain=0.000 elapsed=0.003hr cost=$0.00
+[STEP    39] loss=5.6452 phi=2.2929 cells=6 eff_lr=1.19e-03 pain=0.000 elapsed=0.005hr cost=$0.00
+[STEP    52] loss=5.6095 phi=0.8114 cells=5 eff_lr=1.19e-03 pain=0.000 elapsed=0.006hr cost=$0.00
+[STEP    65] loss=5.5726 phi=2.3657 cells=7 eff_lr=1.19e-03 pain=0.000 elapsed=0.007hr cost=$0.00
+[STEP    78] loss=5.6014 phi=1.5149 cells=6 eff_lr=1.19e-03 pain=0.000 elapsed=0.009hr cost=$0.01
+[STEP    91] loss=5.6269 phi=4.0625 cells=9 eff_lr=1.19e-03 pain=0.000 elapsed=0.010hr cost=$0.01
+[STEP   104] loss=5.6480 phi=0.2167 cells=3 eff_lr=7.17e-04 pain=0.743 elapsed=0.011hr cost=$0.01
+[STEP   117] loss=5.5805 phi=2.1481 cells=6 eff_lr=1.19e-03 pain=0.000 elapsed=0.013hr cost=$0.01
+[STEP   130] loss=5.6099 phi=1.7084 cells=5 eff_lr=1.19e-03 pain=0.001 elapsed=0.014hr cost=$0.01
+[STEP   143] loss=5.5707 phi=2.3755 cells=6 eff_lr=1.19e-03 pain=0.058 elapsed=0.016hr cost=$0.01
+[STEP   156] loss=5.5719 phi=1.7793 cells=7 eff_lr=1.19e-03 pain=0.000 elapsed=0.017hr cost=$0.01
+[STEP   169] loss=5.5934 phi=2.2168 cells=6 eff_lr=1.19e-03 pain=0.000 elapsed=0.018hr cost=$0.01
+[STEP   182] loss=5.5892 phi=1.5747 cells=5 eff_lr=1.19e-03 pain=0.000 elapsed=0.020hr cost=$0.01
+[STEP   195] loss=5.6113 phi=1.5826 cells=6 eff_lr=1.19e-03 pain=0.000 elapsed=0.021hr cost=$0.01
+[STEP   208] loss=5.5635 phi=3.5726 cells=9 eff_lr=1.19e-03 pain=0.000 elapsed=0.022hr cost=$0.01
+[STEP   221] loss=5.5729 phi=3.4747 cells=8 eff_lr=1.19e-03 pain=0.144 elapsed=0.024hr cost=$0.01
+[STEP   234] loss=5.5814 phi=1.8939 cells=6 eff_lr=1.19e-03 pain=0.062 elapsed=0.025hr cost=$0.01
+[STEP   247] loss=5.6053 phi=1.5124 cells=6 eff_lr=1.19e-03 pain=0.000 elapsed=0.026hr cost=$0.02
+[STEP   260] loss=5.6030 phi=1.2072 cells=5 eff_lr=1.19e-03 pain=0.067 elapsed=0.028hr cost=$0.02
+[STEP   273] loss=5.5898 phi=2.5414 cells=7 eff_lr=1.19e-03 pain=0.000 elapsed=0.029hr cost=$0.02
+[STEP   286] loss=5.5753 phi=0.0291 cells=5 eff_lr=5.29e-04 pain=0.966 elapsed=0.030hr cost=$0.02
+[STEP   299] loss=5.5574 phi=0.3156 cells=10 eff_lr=8.16e-04 pain=0.000 elapsed=0.032hr cost=$0.02
+[STEP   312] loss=5.5668 phi=0.7635 cells=3 eff_lr=1.19e-03 pain=1.000 elapsed=0.033hr cost=$0.02
+[STEP   325] loss=5.5805 phi=3.2193 cells=8 eff_lr=1.19e-03 pain=0.000 elapsed=0.034hr cost=$0.02
+[STEP   338] loss=5.5621 phi=4.1487 cells=9 eff_lr=1.19e-03 pain=0.000 elapsed=0.036hr cost=$0.02
+[STEP   351] loss=5.5701 phi=3.4910 cells=8 eff_lr=1.19e-03 pain=0.122 elapsed=0.037hr cost=$0.02
+[STEP   364] loss=5.5777 phi=1.3190 cells=6 eff_lr=1.19e-03 pain=0.000 elapsed=0.038hr cost=$0.02
+[STEP   377] loss=5.5862 phi=1.5506 cells=7 eff_lr=1.19e-03 pain=0.237 elapsed=0.040hr cost=$0.02
+[STEP   390] loss=5.5964 phi=2.1493 cells=6 eff_lr=1.19e-03 pain=0.107 elapsed=0.041hr cost=$0.02
+[STEP   399] loss=5.5795 phi=1.2581 cells=5 eff_lr=1.19e-03 pain=0.000 elapsed=0.042hr cost=$0.03
+[INFO] drive done — wall=151.2s (0.042hr) cost=$0.03  steps=400
+[CKPT] saved /workspace/anima/output/ckpts/ckpt_hexad_integ_final.pt (345,504,632 bytes)
+[engine] Using python backend (max_cells=64, phi=python)
+
+=== R3 HEXAD integration fire — falsifier battery ===
+  F-INTEG-1 SINGLE-FORWARD-WIRED: PASS
+  F-INTEG-2 GRADIENT-BARRIER-CLEAN: PASS
+  F-INTEG-3 SCRATCH-INIT-SEED-FIXED: PASS
+  F-INTEG-4 MITOSIS-WIRING-LIVE: PASS
+  F-INTEG-5 CE-DESCENT-WITH-ALL-6: PASS
+  F-V5MIT-1 SPLIT-NOGRAD: PASS
+  F-V5MIT-2 MERGE-WEIGHT: PASS
+  F-V5MIT-3 PHI-CONSERVATION: PASS
+  F-PRIN3 NO-PERSONA-INJECTION: PASS
+
+=== AGGREGATE 9/9 SUPPORTED-STRONG (F-INTEG 5/5 carry, added 4/4) ===
+loss 5.6425→5.5743  cells 3→5  phi_best=4.4153  wall=151.2s  cost=$0.03
+saved /workspace/anima/output/result.json

@@ -1,0 +1,53 @@
+=== BG-PARADIGM-J-CROSS-LANE-V14 — 2026-05-10T23:51:36.249821+00:00 ===
+$0 local CPU only (own 16). raw#15 read-only.
+
+=== Substrate audit: /Users/ghost/.cache/anima/clm_v4_remapped/paradigm_j ===
+  adapter_config.json: size=1164 sha256=031e9bbca74d4996...
+  adapter_model.safetensors: size=152091192 sha256=6f1cf277fb76c923...
+  jvae_heads.pt: size=4338101 sha256=06be05c505bb4f95...
+  jvae_heads_step50k_backup.pt: size=4338421 sha256=78d3c3be888ed3cc...
+  REMAP_SOURCE.json: size=1388 sha256=6a81ea8f90423f38...
+  README.md: size=2933 sha256=443f370f688dc6c0...
+
+  adapter_config: peft_type=LORA r=128 alpha=128 target_modules=['k_proj', 'down_proj', 'up_proj', 'v_proj', 'o_proj', 'gate_proj', 'q_proj']
+  base_model_class=ConsciousDecoderV2 parent_library=conscious_decoder
+
+  safetensors keys: total=352
+  first 3: ['base_model.model.decoder.blocks.0.attn.k_proj.lora_A.weight', 'base_model.model.decoder.blocks.0.attn.k_proj.lora_B.weight', 'base_model.model.decoder.blocks.0.attn.o_proj.lora_A.weight']
+  last 3: ['base_model.model.decoder.blocks.9.ffn.gate_proj.lora_B.weight', 'base_model.model.decoder.blocks.9.ffn.up_proj.lora_A.weight', 'base_model.model.decoder.blocks.9.ffn.up_proj.lora_B.weight']
+  v2-d384 mitosis marker hits: {'cell_pool': 0, 'spawner': 0, 'merge_head': 0, 'lorenz': 0, 'block.0.attn.W_qkv': 0, 'blocks.0.attn.W_qkv': 0}
+  EngineAG marker hits: {'engine_a.': 0, 'engine_g.': 0, 'engine_ag.': 0, 'GQA': 0}
+  clm-v4 LoRA marker hits: {'base_model.model.decoder.blocks': 352, 'lora_A.weight': 176, 'lora_B.weight': 176}
+
+=== §55 V14 pipeline compatibility check ===
+  paradigm-j schema verdict: clm_v4_lora
+  §55 expects: v2_d384
+  compatible? False
+
+  DIAGNOSIS: paradigm-j cannot be loaded into MitosisModelEngine.
+  - init_engine_from_v2(cfg, sd) expects keys like blocks.{i}.attn.W_qkv
+  - paradigm-j has 352 LoRA keys (base_model.model.decoder.blocks.*.lora_A/B.weight)
+  - HIDDEN_DIM=768 (clm-v4) != d_model=384 (v2)
+  - NO mitosis cellpool, NO split/merge dynamics, NO dispersion-trigger
+  → §55 V14 strict 5-tuple metric (phi_final + phi_per_cell_final) is
+    NOT_MEASURABLE on paradigm-j substrate.
+
+=== §64 arch-aware 3-rule classification ===
+  paradigm-j arch class: clm_v4_lora
+  classification: NEW_arch
+
+  paradigm-j falls OUTSIDE §64 tested envelope (v2 ∪ EngineAG).
+  §64 rule already routes this to UNKNOWN (else branch).
+
+  PROPOSED 3rd row extension (post-§55 confirmed empirical):
+    if arch == 'clm_v4_consciousdecoder':
+        return PASS if v5_2_4_gate_adaptive_floor else VIOLATED
+  - paradigm-j has v5.2 4/4 gates PASS (own 14 verbatim PUBLIC PROMOTE)
+  - paradigm-j has V14_VIOLATED at PPR_v3 metric (random_init 0.5517 > 0.2845)
+  - paradigm-j EMERGE lives in adaptive-floor metric, NOT cellpool Φ
+  → metric-conditional, not just arch-conditional
+
+[saved] /Users/ghost/core/anima/state/anima_paradigm_j_cross_lane_v14_2026_05_11/result.json
+
+runtime: 6.2s (0.10 min)
+cost: $0.00 (local CPU)

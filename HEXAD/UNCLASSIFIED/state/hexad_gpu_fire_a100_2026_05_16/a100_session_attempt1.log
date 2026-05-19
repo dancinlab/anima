@@ -1,0 +1,91 @@
+Warning: Permanently added '[38.64.63.84]:10305' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+=== nvidia-smi ===
+NVIDIA A100-PCIE-40GB, 40960 MiB, 580.126.09
+=== nvcc ===
+Cuda compilation tools, release 12.1, V12.1.105
+Build cuda_12.1.r12.1/compiler.32688072_0
+/usr/local/cuda/include/cublas_v2.h
+CUBLAS_H_OK
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+native
+runtime.c
+runtime.h
+runtime_hi_gen.c
+7936:HexaFarrEntry* _hx_farr_table = NULL;
+7937:int64_t _hx_farr_count = 0;
+=== build hexa interp -DHEXA_CUDA (single-TU hexa_full + runtime_cuda) ===
+RUNTIME_CUDA_OBJ_RC=0
+-rw-r--r-- 1 root root 8008 May 16 10:57 runtime_cuda.o
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+ 4914 |     fread(buf, 1, len, f);
+      |     ^~~~~~~~~~~~~~~~~~~~~
+runtime.c: In function 'rt_read_file_bytes':
+runtime.c:5017:5: warning: ignoring return value of 'fread' declared with attribute 'warn_unused_result' [-Wunused-result]
+ 5017 |     fread(buf, 1, len, f);
+      |     ^~~~~~~~~~~~~~~~~~~~~
+In file included from runtime.c:12601,
+                 from hexa_full_singletu.c:2:
+native/signal_flock.c: In function '__hexa_sig_trampoline':
+native/signal_flock.c:66:15: warning: ignoring return value of 'write' declared with attribute 'warn_unused_result' [-Wunused-result]
+   66 |         (void)write(g_sig_pipe[1], &b, 1);
+      |               ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+INTERP_OBJ_RC=0
+-rw-r--r-- 1 root root 3864800 May 16 10:58 hexa_full.o
+LINK_RC=0
+-rwxr-xr-x 1 root root 1782752 May 16 10:58 /workspace/cuda_fire/hexa_cuda
+=== F-RFC040 real-GPU smoke (nvidia-smi sampled) ===
+error: auto-invoke conflict — `fn main()` is auto-called by hexa-strict
+       AND a top-level `main()` call was found, which would run main() twice
+       in the interp path (codegen suppresses but interp deliberately double-calls).
+hint: remove the explicit `main()` call (auto-invoke handles it)
+hint: OR add `@manual_main` attribute on `fn main` to opt out of auto-invoke
+ref: silent-failure-enforcement Class 1 (doc/audit/silent_failure_enforcement_audit.md)
+SMOKE_RC=1
+=== smoke nvidia-smi peak (util desc top5) ===
+=== d_corpus_fire_a100 d=384x6L seed=43 (nvidia-smi sampled) ===
+bash: line 51: /usr/bin/time: No such file or directory
+FIRE_RC=127
+=== fire nvidia-smi peak (util desc top8) ===
+ALLDONE
+sort: cannot read: smi_fire.csv: No such file or directory

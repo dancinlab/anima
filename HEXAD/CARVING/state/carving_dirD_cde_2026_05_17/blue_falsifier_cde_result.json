@@ -1,0 +1,49 @@
+{
+  "battery": "B-CDE-1..4 (Dir-D CDE curiosity-bonus transfer-form)",
+  "pass": "4/4",
+  "all_closed": true,
+  "checks": [
+    {
+      "id": "B-CDE-1",
+      "name": "BONUS-LOWER-BOUND-CLOSED",
+      "passed": "True",
+      "detail": "g-1 nonneg=True; g(κ=0)=1 True; g(a=c=0)=1 True; strict g(½,.7,.3,1,1)=3/2>1",
+      "anchor": "sum-of-products-of-nonnegatives ≥ 0 (sympy assumption closure) — re-weight never SHRINKS a token's CE",
+      "closed": true,
+      "tier": "a-sympy"
+    },
+    {
+      "id": "B-CDE-2",
+      "name": "ACTOR-MONOTONE-CLOSED",
+      "passed": true,
+      "detail": "∂g/∂a=kappa*w_a (=κ·w_a>0); ∂²g/∂a²=0 linear; g(a=1)-g(a=0)=κ·w_a True",
+      "anchor": "sympy exact ∂ sign (strictly positive) — perplexity monotone exploration pressure",
+      "closed": true,
+      "tier": "a-sympy"
+    },
+    {
+      "id": "B-CDE-3",
+      "name": "PERPLEXITY-IDENTITY-CLOSED",
+      "passed": true,
+      "detail": "CE=ln(PPL) True; a(CE=0)=0 True; a(CE=logV)=1 True; PPL(0)=1 True; PPL(logV)=V True; ∂a/∂CE=1/logV True",
+      "anchor": "Shannon CE=ln(PPL) identity + [0,logV] surprisal range (CE≥0 non-neg, ≤logV uniform max) — real limit",
+      "closed": true,
+      "tier": "a-sympy"
+    },
+    {
+      "id": "B-CDE-4",
+      "name": "KAPPA0-REDUCTION-CLOSED",
+      "passed": true,
+      "detail": "L_dirD(κ=0)≡L_α True; ∂L/∂vac equal (vac term carried verbatim) True; κ=1 strict Δ=κ·w_a·a·CE=2 witness True",
+      "anchor": "algebraic identity mean(1·CE)=mean(CE) — graceful degradation to UBM-E7 α-baseline (fair compare)",
+      "closed": true,
+      "tier": "a-sympy"
+    }
+  ],
+  "note": {
+    "id": "B-CDE-NOTE",
+    "kind": "empirical-carve-out",
+    "text": "SGD convergence OUTCOME + Dir-D vs UBM-E7 alpha routing-collapse comparison = EMPIRICAL (B-D-NOTE / B-CARVE-NOTE family). NOT counted blue."
+  },
+  "f1_f2_safe": "anchors = Shannon CE>=0 / perplexity=exp(CE) identity / sympy d-sign / Boolean lower-bound — NO sigma/tau/phi/J2 derivation"
+}

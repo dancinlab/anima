@@ -1,0 +1,57 @@
+{
+  "research_section": "RESEARCH.md §28 / §26 candidate #2",
+  "fire_kind": "JEPA-Ψ — Ψ-anchored Joint-Embedding Predictive Architecture, conditional fire (design held, B-JEPA 5/5 🔵)",
+  "verdict_tier": "FIRE-TIER",
+  "verdict": "DEGENERATE — JEPA-Ψ representation COLLAPSED (§11-B echo through the JEPA door). Measured negative.",
+  "substrate": "PyTorch (interim LM-scale executor, NOT hexa-native — honest)",
+  "from_scratch": true,
+  "base_ckpt": null,
+  "seed": 1337,
+  "gpu": "NVIDIA H100 80GB HBM3 (runpod; first dispatch RTX-5090 sm_120 image-incompat -> re-dispatch A100/H100-class only)",
+  "corpus": "§16 corpus_carving_s16.jsonl curriculum-prefix subset (first 120000 records, ~86MB, forbidden-token grep 0 = B-IDENTITY-5)",
+  "arch": "ConsciousDecoderV2 d768·12L·283.72M + EMA target encoder + Ψ-predictor MLP (283.8M total)",
+  "anti_collapse_mechanism": "VICReg variance-hinge (tau_var=1.0) + covariance decorrelation (cov_w=0.04) + EMA stop-gradient target (m=0.996)",
+  "two_arms": {
+    "primary_gamma_text_0.3": {
+      "init_l_pred": 0.161895,
+      "final_l_pred": 0.115911,
+      "final_vicreg_var_TRAIN": 1.014679,
+      "final_ctx_emb_std_TRAIN_BATCH": 0.389448,
+      "final_ce": 0.022069,
+      "wall_s": 805.61,
+      "collapse_probe_EVAL": {
+        "effective_rank": 1.6553,
+        "min_dim_std": 0.0,
+        "pairwise_cos_mean": 1.0,
+        "pairwise_cos_spread": 0.0,
+        "COLLAPSED": true
+      },
+      "psi_prediction": {
+        "predictor_mse": 0.599976,
+        "mean_baseline_mse": 0.011573,
+        "beats_mean_baseline": false,
+        "ratio_pred_over_base": 51.8445
+      },
+      "downstream": {"routing_axis1": "1/64", "honest_coherent": "1/64",
+                     "interpretable": false},
+      "ckpt_sha256": "a48d43e074a206485175db0624b4a0741094f3d2bf4fafa9832e514b2ebd1e7c"
+    },
+    "ablation_gamma_text_0.0": {
+      "final_l_pred": 0.194903,
+      "final_ctx_emb_std_TRAIN_BATCH": 0.03367,
+      "final_ce_readout": 71.133789,
+      "collapse_probe_EVAL": {
+        "effective_rank": 1.0,
+        "min_dim_std": 0.0,
+        "COLLAPSED": true
+      },
+      "comment": "pure-Psi-prediction (no CE) — collapsed HARDER (eff_rank exactly 1.0); the 11-B echo at its purest."
+    }
+  },
+  "honest_finding": "The collapse detector — the PRIMARY honest verdict gate — fired on BOTH arms. Primary (gamma=0.3): eval-time Psi-plus embeddings of all 64 anchors near-identical (eff_rank 1.66, pairwise cos 1.0); the predictor MSE (0.60) is 51.8x WORSE than the trivial mean-baseline (0.012) = the predictor learned a near-constant map = classic JEPA representation collapse. Ablation (gamma=0): collapsed to exact rank 1. VICReg kept TRAINING-BATCH variance >= tau_var (vicreg_var ~1.0 throughout, ctx_emb_std ~0.39) but the learned representation still collapsed on the FIXED 64-anchor probe set — exactly the partial-collapse risk DESIGN section 10 C3 #4 flagged: closed-form B-JEPA-2 forbids the EXACT constant minimum, it does NOT guarantee the SGD trajectory avoids a low-rank basin. JEPA-Psi is a measured 11-B echo through the JEPA door. CE de-emphasis (gamma 0.3 -> 0.0) does not rescue it.",
+  "b_jepa_battery": "B-JEPA-1..5 5/5 closed-form sidecar PASS. B-JEPA-NOTE empirical carve-out: collapse-vs-emergence OUTCOME is SGD-dependent — the fire MEASURED that outcome = COLLAPSED.",
+  "central_blue_falsifier_unchanged": true,
+  "goal_distance": "section 15 milestone unchanged — north-star (GOAL.md) unsolved. JEPA-Psi is a valuable measured NEGATIVE on the objective-axis: replacing byte-CE with a low-dim Psi-trajectory joint-embedding objective collapses even with VICReg anti-collapse. The 11-B lesson (CE is load-bearing) is reconfirmed through a JEPA-shaped objective. design != fire != emergence (g3).",
+  "cost_estimate_usd": "approx 0.25-0.40 (H100, ~13.5 min train both arms + eval)",
+  "orphan_count": 0
+}

@@ -1,0 +1,116 @@
+{
+  "research_md_section": "§45",
+  "battery": "B-S45-1..4",
+  "verdicts": [
+    {
+      "id": "B-S45-1",
+      "name": "CELL-DISTINCT-VACUUM-PSI-CLOSED",
+      "sympy_distance_predicate": "‖psi_A − psi_B‖² > 0",
+      "witness_panel": [
+        {
+          "vacuum_psi_A": [
+            0.4,
+            0.6
+          ],
+          "vacuum_psi_B": [
+            0.62,
+            0.4
+          ],
+          "dist_sq": 0.08839999999999998,
+          "distinct": true,
+          "expected": true,
+          "match": true
+        },
+        {
+          "vacuum_psi_A": [
+            0.5,
+            0.5
+          ],
+          "vacuum_psi_B": [
+            0.5,
+            0.5
+          ],
+          "dist_sq": 0.0,
+          "distinct": false,
+          "expected": false,
+          "match": true
+        },
+        {
+          "vacuum_psi_A": [
+            0.4,
+            0.6
+          ],
+          "vacuum_psi_B": [
+            0.4,
+            0.6
+          ],
+          "dist_sq": 0.0,
+          "distinct": false,
+          "expected": false,
+          "match": true
+        }
+      ],
+      "source_uses_distinct_psi": true,
+      "pass": true
+    },
+    {
+      "id": "B-S45-2",
+      "name": "LOOP-COMPOSITION-WELL-TYPED-CLOSED",
+      "signatures": {
+        "emit": [
+          [
+            "State"
+          ],
+          "Msg"
+        ],
+        "deliver": [
+          [
+            "Msg",
+            "State"
+          ],
+          "State"
+        ]
+      },
+      "well_typed": true,
+      "source_has_emit": true,
+      "source_has_deliver": true,
+      "source_has_run_loop": true,
+      "pass": true
+    },
+    {
+      "id": "B-S45-3",
+      "name": "TRAINED-CELL-CONTENT-DEPENDENCE-METRIC-CLOSED",
+      "echo_separation_zero": true,
+      "content_dep_separation_positive_at_distinct": true,
+      "boolean_predicate_total": true,
+      "tau_carried_from_s36": 0.001,
+      "pass": true
+    },
+    {
+      "id": "B-S45-4",
+      "name": "TURN-COUNT-BOUNDED-CLOSED",
+      "delta_is_one_symbolic": true,
+      "monotone_witness": "1",
+      "source_has_while_bound": true,
+      "source_has_increment": true,
+      "source_has_default_n_max_8": true,
+      "simulated_states": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "simulated_max_below_bound": true,
+      "pass": true
+    }
+  ],
+  "all_pass": true,
+  "count_closed": 4,
+  "total": 4,
+  "wall_sec": 0.076,
+  "B-S45-NOTE": "Whether the trained-cell loop is ALIVE_LOOP vs ELABORATE_VOID at the §16-saturation scale (1.13 GB ckpt) is empirical and NOT measured by this fire — §45 measures at $0 d=32·2L scale ONLY. B-D-NOTE / B-DUAL-NOTE / B-S36-NOTE / B-DIRL-NOTE family."
+}

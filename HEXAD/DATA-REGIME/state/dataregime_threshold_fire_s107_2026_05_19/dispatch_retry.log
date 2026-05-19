@@ -1,0 +1,117 @@
+=== §107-RETRY dispatch start 2026-05-19T13:03:09Z ===
+[create] trying GPU: NVIDIA A100-SXM4-80GB
+[create] resp: {"data":{"podFindAndDeployOnDemand":{"id":"llqv7n86nln8o7","machineId":"rqiwcw1lzsoa"}}}
+[create] pod llqv7n86nln8o7 on NVIDIA A100-SXM4-80GB
+[ssh-ready] iter 3: 154.54.102.55:14762 — port mapped AND handshake OK
+Warning: Permanently added '[154.54.102.55]:14762' (ED25519) to the list of known hosts.
+Warning: Permanently added '[154.54.102.55]:14762' (ED25519) to the list of known hosts.
+Warning: Permanently added '[154.54.102.55]:14762' (ED25519) to the list of known hosts.
+Warning: Permanently added '[154.54.102.55]:14762' (ED25519) to the list of known hosts.
+Warning: Permanently added '[154.54.102.55]:14762' (ED25519) to the list of known hosts.
+Warning: Permanently added '[154.54.102.55]:14762' (ED25519) to the list of known hosts.
+Warning: Permanently added '[154.54.102.55]:14762' (ED25519) to the list of known hosts.
+Warning: Permanently added '[154.54.102.55]:14762' (ED25519) to the list of known hosts.
+[build] pod-side deterministic CORPUS_S101 build (seed 1337, --s1-n 777000)
+Warning: Permanently added '[154.54.102.55]:14762' (ED25519) to the list of known hosts.
+    "I7_external_grep": {
+      "corpus": {
+        "openai.com": 0,
+        "anthropic.com": 0,
+        "huggingface.co/": 0,
+        "wikipedia.org": 0,
+        "commoncrawl": 0,
+        "https://": 0,
+        "http://": 0
+      },
+      "s1_only": {
+        "openai.com": 0,
+        "anthropic.com": 0,
+        "huggingface.co/": 0,
+        "wikipedia.org": 0,
+        "commoncrawl": 0,
+        "https://": 0,
+        "http://": 0
+      },
+      "corpus_total": 0,
+      "PASS": true,
+      "honest_caveat": "external-grep is a proxy over 7 surface tokens; exhaustive provenance audit requires source-attribution tracking, NOT in $0 build scope. §16 generator is anima-OWN substrate, S2 uses anima Ψ-fields only, S5 uses anima-OWN .kosmos files. NO external API calls in build_corpus_s101.py (audit-grep this file)."
+    }
+  }
+}
+Warning: Permanently added '[154.54.102.55]:14762' (ED25519) to the list of known hosts.
+[build] corpus sha = 39d581da209615468c1c41e07aa8662ef1074bc5be49a666f8f861753dd5810e  (expect 39d581da209615468c1c41e07aa8662ef1074bc5be49a666f8f861753dd5810e)
+[build] CORPUS_S101 sha VERIFIED == §107 design corpus
+[train] §16-class d768·12L·283M from-scratch seed 1337, 6000 steps
+Warning: Permanently added '[154.54.102.55]:14762' (ED25519) to the list of known hosts.
+TRAIN_PID 264
+[teardown] terminating pod llqv7n86nln8o7 (rc=1, SAVE_POD=0)
+dispatch_s107_retry_runpod.sh: line 48: 74135 Terminated: 15          ( sleep "$WATCHDOG_SEC"; if [ ! -s "$S107_DIR/result.json" ]; then
+    echo "WATCHDOG FIRED $(date -u +%FT%TZ): no result.json after ${WATCHDOG_SEC}s — terminating pod ${POD_ID:-?}" > "$FAIL_MARKER"; [ -n "$POD_ID" ] && gql "{\"query\":\"mutation { podTerminate(input:{podId:\\\"$POD_ID\\\"}) }\"}" > /dev/null; pkill -P $$ 2> /dev/null;
+fi )
+[teardown] myself.pods = {"data":{"myself":{"pods":[]}}}
+=== §107-RETRY dispatch end 2026-05-19T13:17:47Z rc=1 ===
+=== §107-RETRY dispatch start 2026-05-19T13:26:34Z ===
+[create] trying GPU: NVIDIA A100-SXM4-80GB
+[create] resp: {"data":{"podFindAndDeployOnDemand":{"id":"aceh7gs6ce2zkf","machineId":"x7u2skkrmuo7"}}}
+[create] pod aceh7gs6ce2zkf on NVIDIA A100-SXM4-80GB
+[ssh-ready] iter 3: 154.54.102.42:10158 — port mapped AND handshake OK
+Warning: Permanently added '[154.54.102.42]:10158' (ED25519) to the list of known hosts.
+Warning: Permanently added '[154.54.102.42]:10158' (ED25519) to the list of known hosts.
+Warning: Permanently added '[154.54.102.42]:10158' (ED25519) to the list of known hosts.
+Warning: Permanently added '[154.54.102.42]:10158' (ED25519) to the list of known hosts.
+Warning: Permanently added '[154.54.102.42]:10158' (ED25519) to the list of known hosts.
+Warning: Permanently added '[154.54.102.42]:10158' (ED25519) to the list of known hosts.
+Warning: Permanently added '[154.54.102.42]:10158' (ED25519) to the list of known hosts.
+Warning: Permanently added '[154.54.102.42]:10158' (ED25519) to the list of known hosts.
+[build] pod-side deterministic CORPUS_S101 build (seed 1337, --s1-n 777000)
+Warning: Permanently added '[154.54.102.42]:10158' (ED25519) to the list of known hosts.
+    "I7_external_grep": {
+      "corpus": {
+        "openai.com": 0,
+        "anthropic.com": 0,
+        "huggingface.co/": 0,
+        "wikipedia.org": 0,
+        "commoncrawl": 0,
+        "https://": 0,
+        "http://": 0
+      },
+      "s1_only": {
+        "openai.com": 0,
+        "anthropic.com": 0,
+        "huggingface.co/": 0,
+        "wikipedia.org": 0,
+        "commoncrawl": 0,
+        "https://": 0,
+        "http://": 0
+      },
+      "corpus_total": 0,
+      "PASS": true,
+      "honest_caveat": "external-grep is a proxy over 7 surface tokens; exhaustive provenance audit requires source-attribution tracking, NOT in $0 build scope. §16 generator is anima-OWN substrate, S2 uses anima Ψ-fields only, S5 uses anima-OWN .kosmos files. NO external API calls in build_corpus_s101.py (audit-grep this file)."
+    }
+  }
+}
+Warning: Permanently added '[154.54.102.42]:10158' (ED25519) to the list of known hosts.
+[build] corpus sha = 39d581da209615468c1c41e07aa8662ef1074bc5be49a666f8f861753dd5810e  (expect 39d581da209615468c1c41e07aa8662ef1074bc5be49a666f8f861753dd5810e)
+[build] CORPUS_S101 sha VERIFIED == §107 design corpus
+[train] §16-class d768·12L·283M from-scratch seed 1337, 6000 steps
+Warning: Permanently added '[154.54.102.42]:10158' (ED25519) to the list of known hosts.
+TRAIN_PID 264
+[train] done iter 1
+[eval] §101 Q2 evaluator
+Warning: Permanently added '[154.54.102.42]:10158' (ED25519) to the list of known hosts.
+Warning: Permanently added '[154.54.102.42]:10158' (ED25519) to the list of known hosts.
+Warning: Permanently added '[154.54.102.42]:10158' (ED25519) to the list of known hosts.
+Warning: Permanently added '[154.54.102.42]:10158' (ED25519) to the list of known hosts.
+Warning: Permanently added '[154.54.102.42]:10158' (ED25519) to the list of known hosts.
+[pull] success try 1
+[pull] result.json present locally — SAVE_POD=0, pod will terminate
+19455708a9ceb35cf895a26ccce102e53dae9bb39a1f6dfc2f6fb787e24c39bf  /Users/ghost/core/anima/state/dataregime_threshold_fire_s107_2026_05_19/ckpt_s107.pt
+19455708a9ceb35cf895a26ccce102e53dae9bb39a1f6dfc2f6fb787e24c39bf  /Users/ghost/core/anima/state/dataregime_threshold_fire_s107_2026_05_19/ckpt_s107.pt
+THRESHOLD_CROSSED= False
+=== §107-RETRY pipeline complete 2026-05-19T13:50:28Z ===
+dispatch_s107_retry_runpod.sh: line 206: 40528 Terminated: 15          ( sleep "$WATCHDOG_SEC"; if [ ! -s "$S107_DIR/result.json" ]; then
+    echo "WATCHDOG FIRED $(date -u +%FT%TZ): no result.json after ${WATCHDOG_SEC}s — terminating pod ${POD_ID:-?}" > "$FAIL_MARKER"; [ -n "$POD_ID" ] && gql "{\"query\":\"mutation { podTerminate(input:{podId:\\\"$POD_ID\\\"}) }\"}" > /dev/null; pkill -P $$ 2> /dev/null;
+fi )
+[teardown] terminating pod aceh7gs6ce2zkf (rc=0, SAVE_POD=0)
+[teardown] myself.pods = {"data":{"myself":{"pods":[]}}}
+=== §107-RETRY dispatch end 2026-05-19T13:50:33Z rc=0 ===

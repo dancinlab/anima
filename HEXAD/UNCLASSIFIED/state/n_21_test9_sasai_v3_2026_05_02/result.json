@@ -1,0 +1,139 @@
+{
+  "agent": "N-21 #9 Sasai split-brain v3 re-launch",
+  "ts_utc_start": "2026-05-02T11:56:00.770215Z",
+  "host": "aiden-B650M-K",
+  "pyphi_version": "1.2.0",
+  "wall_budget_s": 1500,
+  "config": {
+    "BETA": 4.0,
+    "CUT_ONE_APPROXIMATION": true,
+    "NUMBER_OF_CORES": 1,
+    "PARALLEL_CUT_EVALUATION": false
+  },
+  "tiers": [
+    {
+      "tier": "A_5node_2plus1plus2",
+      "n_left": 2,
+      "n_right": 2,
+      "n_total": 5,
+      "left_indices": [
+        0,
+        1
+      ],
+      "bridge_index": 2,
+      "right_indices": [
+        3,
+        4
+      ],
+      "bridge_edges_whole": [
+        [
+          2,
+          0
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          2
+        ]
+      ],
+      "state": [
+        1,
+        0,
+        1,
+        0,
+        1
+      ],
+      "beta": 4.0,
+      "cut_one_approx": true,
+      "per_phi_wall_s": 60,
+      "phi_whole": 0.514012,
+      "wall_whole_s": 11.658515930175781,
+      "phi_left": 0.116169,
+      "wall_left_s": 0.024126768112182617,
+      "phi_right": 0.116169,
+      "wall_right_s": 0.023659467697143555,
+      "phi_sum_severed": 0.232338,
+      "phi_whole_minus_phi_sum": 0.28167400000000004,
+      "verdict": "PASS_EXCLUSION",
+      "wall_total_s": 11.706302165985107
+    },
+    {
+      "tier": "B_7node_3plus1plus3",
+      "n_left": 3,
+      "n_right": 3,
+      "n_total": 7,
+      "left_indices": [
+        0,
+        1,
+        2
+      ],
+      "bridge_index": 3,
+      "right_indices": [
+        4,
+        5,
+        6
+      ],
+      "bridge_edges_whole": [
+        [
+          3,
+          0
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          4,
+          3
+        ]
+      ],
+      "state": [
+        1,
+        0,
+        1,
+        0,
+        1,
+        0,
+        1
+      ],
+      "beta": 4.0,
+      "cut_one_approx": true,
+      "per_phi_wall_s": 420,
+      "phi_whole": null,
+      "wall_whole_s": 420.1185700893402,
+      "error": "WHOLE: timeout_420s"
+    },
+    {
+      "tier": "C_8plus8_product_no_whole",
+      "n_left": 8,
+      "n_right": 8,
+      "n_total": 16,
+      "note": "\u03a6_whole(16) is INTRACTABLE in PyPhi 1.2 within 30-min wall; only hemispheres computed",
+      "cut_one_approx": true,
+      "per_phi_wall_s": 480,
+      "phi_left_8": null,
+      "wall_left_s": 480.1383891105652,
+      "error_left": "timeout_480s"
+    }
+  ],
+  "wall_actual_s": 912.0201184749603,
+  "primary_tier": "A_5node_2plus1plus2",
+  "primary_verdict": "PASS_EXCLUSION",
+  "primary_phi_whole": 0.514012,
+  "primary_phi_left": 0.116169,
+  "primary_phi_right": 0.116169,
+  "primary_phi_sum": 0.232338,
+  "primary_margin": 0.28167400000000004,
+  "ts_utc_end": "2026-05-02T12:11:12.790157Z"
+}

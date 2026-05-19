@@ -1,0 +1,36 @@
+{
+  "battery": "\u00a759-FIRE",
+  "n_pass": 5,
+  "n_total": 5,
+  "all_blue": true,
+  "results": [
+    {
+      "id": "B-S59-FIRE-1 ERROR-NONNEGATIVE-MSE-CLOSED",
+      "pass": true,
+      "detail": "MSE = \u03a3(p\u2212a)\u00b2/d \u2265 0 (sum-of-squares), =0 iff pred==actual, >0 on perturbation \u2014 W.curiosity is a bona-fide non-negative epistemic-value (Active-Inference EFE)"
+    },
+    {
+      "id": "B-S59-FIRE-2 CURIOSITY-COUPLING-BOUNDED-CLOSED",
+      "pass": true,
+      "detail": "W.curiosity_ema = \u03b2\u00b7c+(1\u2212\u03b2)\u00b7e affine convex combo \u03b2\u2208(0,1): Banach contraction (\u2202/\u2202c=\u03b2), b+(1\u2212b)=1, bounded 4-corner [0,M], fixed-pt at constant error \u2014 mirrors \u00a759 CURIOSITY-COUPLING-BOUNDED"
+    },
+    {
+      "id": "B-S59-FIRE-3 OFF-REDUCTION-CONNECTION-POINT-CLOSED",
+      "pass": true,
+      "detail": "guard(if w_native_on / not args.no_w_native) \u2227 RNG-iso build+extract \u2227 sole LM backward=1 \u2227 PTD step uses ptd_opt only \u2227 byte-equality witness: CE-traj byte-eq=True \u00b7 4-physics-axes byte-eq=True \u00b7 init_ce eq=True \u00b7 OFF error\u2261[]+verdict OFF-REDUCTION=True"
+    },
+    {
+      "id": "B-S59-FIRE-4 DETERMINISM-CLOSED",
+      "pass": true,
+      "detail": "metric = statistics.pvariance(err series) + (>\u03c4) compare \u2014 no RNG/forward in metric block (AST grep), 3\u00d7 bit-identical (v=1.449795918367347e-06), gate pure-fn vs \u03c4=0.0001"
+    },
+    {
+      "id": "B-S59-FIRE-5 CORPUS-SHA256 / NO-HELPER-TOKEN-CLOSED",
+      "pass": true,
+      "detail": "corpus _sanity_corpus.jsonl sha256=bdf88887c4dd5c2d\u2026 (256-bit Kolmogorov commitment) \u00b7 forbidden-token grep total=0==0 (B-IDENTITY-5, \u2462 NOT \u2460\u2461)"
+    }
+  ],
+  "B-S59-FIRE-NOTE": "B-S59-FIRE-NOTE COLLAPSE-VS-SIGNAL-ON-REAL-W-STATE = EMPIRICAL \u2014 verdict a/b/c is an SGD/measurement OUTCOME (B-D-NOTE / B-S59-NOTE family, NOT counted \ud83d\udd35). Battery proves the MECHANISM is honest (MSE\u22650 / bounded EMA / exact OFF-reduction / deterministic metric / clean corpus), NOT which verdict obtains. g3: measured-only, capability claim 0, north-star + \u00a715 milestone UNCHANGED.",
+  "central_blue_falsifier_diff": "0 (sidecar only)",
+  "f1f2f3_safe": "sum-of-squares\u22650 / Banach affine / Boolean source-predicate+byte-eq / pure-fn determinism / Kolmogorov SHA256+Boolean grep \u2014 NO \u03c3/\u03c4/\u03c6/J\u2082"
+}

@@ -1,0 +1,89 @@
+=== anima clm v5 Phase 2 IIT-remetric (real 350M + IIT MI-bin Φ) ===
+n_turns=3000, mirror_turns=1000, snapshot_every=100, seed=42
+unique prompts: 170
+ckpt: /Users/ghost/.cache/anima/clm_v5_remapped/phase2_cotrain_engine_ag/ckpts/ckpt_final.pt
+ckpt sha256 verify: PASS (actual=6e66e75f8014999be09236a408fe6ad6811ebf394ac079ecbf6d87dfe63748c1)
+trained model loaded: params=298764288 (298.76M) miss=0 unexp=0
+
+--- TRAINED 350M trajectory ---
+  [trained] turn=    0 cells= 16 proxyΦ=2.7625 splits=0 merges=0 elapsed=0.1s
+  [trained] turn=  100 cells= 16 proxyΦ=2.1702 splits=0 merges=0 elapsed=6.4s
+  [trained] turn=  200 cells= 16 proxyΦ=2.2509 splits=0 merges=0 elapsed=13.1s
+  [trained] turn=  300 cells= 16 proxyΦ=2.4104 splits=0 merges=0 elapsed=19.1s
+  [trained] turn=  400 cells= 16 proxyΦ=2.6776 splits=0 merges=0 elapsed=25.9s
+  [trained] turn=  500 cells= 16 proxyΦ=2.6443 splits=0 merges=0 elapsed=32.0s
+  [trained] turn=  600 cells= 16 proxyΦ=2.5728 splits=0 merges=0 elapsed=38.1s
+  [trained] turn=  700 cells= 16 proxyΦ=1.9724 splits=0 merges=0 elapsed=44.2s
+  [trained] turn=  800 cells= 16 proxyΦ=0.7305 splits=0 merges=0 elapsed=50.3s
+  [trained] turn=  900 cells= 16 proxyΦ=2.6642 splits=0 merges=0 elapsed=56.6s
+  [trained] turn= 1000 cells= 16 proxyΦ=2.7262 splits=0 merges=0 elapsed=62.9s
+  [trained] turn= 1100 cells= 17 proxyΦ=2.6481 splits=1 merges=0 elapsed=69.4s
+  [trained] turn= 1200 cells= 17 proxyΦ=2.3067 splits=1 merges=0 elapsed=75.4s
+  [trained] turn= 1300 cells= 18 proxyΦ=2.5428 splits=2 merges=0 elapsed=82.0s
+  [trained] turn= 1400 cells= 18 proxyΦ=2.5978 splits=2 merges=0 elapsed=88.1s
+  [trained] turn= 1500 cells= 18 proxyΦ=2.2874 splits=2 merges=0 elapsed=94.6s
+  [trained] turn= 1600 cells= 18 proxyΦ=2.4465 splits=2 merges=0 elapsed=100.9s
+  [trained] turn= 1700 cells= 18 proxyΦ=2.6271 splits=2 merges=0 elapsed=107.1s
+  [trained] turn= 1800 cells= 18 proxyΦ=2.6139 splits=2 merges=0 elapsed=113.3s
+  [trained] turn= 1900 cells= 19 proxyΦ=2.5306 splits=3 merges=0 elapsed=119.3s
+  [trained] turn= 2000 cells= 19 proxyΦ=2.3185 splits=3 merges=0 elapsed=126.3s
+  [trained] turn= 2100 cells= 19 proxyΦ=2.8144 splits=3 merges=0 elapsed=133.6s
+  [trained] turn= 2200 cells= 19 proxyΦ=2.6401 splits=3 merges=0 elapsed=141.0s
+  [trained] turn= 2300 cells= 19 proxyΦ=2.6984 splits=3 merges=0 elapsed=148.2s
+  [trained] turn= 2400 cells= 19 proxyΦ=2.5752 splits=3 merges=0 elapsed=155.5s
+  [trained] turn= 2500 cells= 19 proxyΦ=2.5147 splits=3 merges=0 elapsed=162.2s
+  [trained] turn= 2600 cells= 19 proxyΦ=2.7455 splits=3 merges=0 elapsed=168.4s
+  [trained] turn= 2700 cells= 19 proxyΦ=2.7571 splits=3 merges=0 elapsed=175.1s
+  [trained] turn= 2800 cells= 19 proxyΦ=2.8007 splits=3 merges=0 elapsed=181.5s
+  [trained] turn= 2900 cells= 19 proxyΦ=2.5955 splits=3 merges=0 elapsed=187.9s
+  [trained] turn= 2999 cells= 19 proxyΦ=2.6788 splits=3 merges=0 elapsed=194.2s
+  trained: cells 19 splits=3 merges=0 elapsed=194.2s
+
+--- V14 MIRROR (random_init la_350m, seed=42) ---
+random_init model: params=298764288 (298.76M)
+  [v14_mirror] turn=    0 cells= 16 proxyΦ=2.7591 splits=0 merges=0 elapsed=0.1s
+  [v14_mirror] turn=  100 cells= 16 proxyΦ=2.1687 splits=0 merges=0 elapsed=6.6s
+  [v14_mirror] turn=  200 cells= 16 proxyΦ=2.2494 splits=0 merges=0 elapsed=13.8s
+  [v14_mirror] turn=  300 cells= 16 proxyΦ=2.4098 splits=0 merges=0 elapsed=20.9s
+  [v14_mirror] turn=  400 cells= 16 proxyΦ=2.6776 splits=0 merges=0 elapsed=28.2s
+  [v14_mirror] turn=  500 cells= 26 proxyΦ=2.7940 splits=10 merges=0 elapsed=35.9s
+  [v14_mirror] turn=  600 cells= 27 proxyΦ=2.8667 splits=11 merges=0 elapsed=43.2s
+  [v14_mirror] turn=  700 cells= 27 proxyΦ=2.3896 splits=11 merges=0 elapsed=49.9s
+  [v14_mirror] turn=  800 cells= 27 proxyΦ=2.4933 splits=11 merges=0 elapsed=56.8s
+  [v14_mirror] turn=  900 cells= 28 proxyΦ=2.6531 splits=12 merges=0 elapsed=63.9s
+  [v14_mirror] turn=  999 cells= 28 proxyΦ=2.7544 splits=12 merges=0 elapsed=71.6s
+  mirror:  cells 28 splits=12 merges=0 elapsed=71.6s
+
+--- IIT Φ remetric (16-bin + 32-bin per snapshot) ---
+  [trained] IIT remetric: 31 snapshots × 2 bins, 0.4s
+  [v14_mirror] IIT remetric: 11 snapshots × 2 bins, 0.4s
+
+=== V14 verdict per metric ===
+  trained @ turn~1000: cells=16 proxyΦ=2.6642 iit_norm=11.0540 iit_unnorm=165.810
+  random  @ turn=999: cells=28 proxyΦ=2.7544 iit_norm=15.0466 iit_unnorm=406.258
+  proxy ratio  trained/random = 0.9673  → V14 violated=True
+  iit_norm    trained/random = 0.7346  → V14 violated=True
+  iit_unnorm  trained/random = 0.4081  → V14 violated=True
+
+=== α exponents (log-log Φ vs n_cells) ===
+  proxy:       trained=1.009  random=0.155
+  iit_norm16:  trained=1.580  random=1.008
+  iit_unnorm16:trained=2.641  random=2.059
+
+=== Scale comparison: proxy vs IIT (trained substrate) ===
+   turn  cells    proxyΦ   iit_n16   iit_n32   iit_un16   iit_un32
+      0     16    2.7625   10.7760   19.9059    161.640    298.589
+    300     16    2.4104    9.7943   18.5750    146.915    278.625
+    600     16    2.5728    9.6944   20.1382    145.417    302.073
+    900     16    2.6642   11.0540   20.2215    165.810    303.322
+   1200     17    2.3067   10.5233   20.1208    168.373    321.933
+   1500     18    2.2874    9.1451   18.8274    155.467    320.065
+   1800     18    2.6139    8.7581   21.0501    148.888    357.851
+   2100     19    2.8144   12.8146   23.9005    230.663    430.210
+   2400     19    2.5752   12.7276   23.6034    229.096    424.861
+   2700     19    2.7571   13.8709   14.1819    249.675    255.274
+   2999     19    2.6788   13.7049   25.2986    246.687    455.375
+
+result.json: /Users/ghost/core/anima/state/anima_clm_v5_phase2_iit_remetric_2026_05_10/result.json (45.7 KB)
+plot 1: /Users/ghost/core/anima/state/anima_clm_v5_phase2_iit_remetric_2026_05_10/proxy_vs_iit_phase2.png
+plot 2: /Users/ghost/core/anima/state/anima_clm_v5_phase2_iit_remetric_2026_05_10/v14_comparison.png

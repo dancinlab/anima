@@ -1,0 +1,41 @@
+{
+  "test_id": "n_21_test8_boly_fmri_diff",
+  "ts": "2026-05-01",
+  "agent": "N-21 #8 EXEC",
+  "host": "ubu1",
+  "category": "ANALOGIZE",
+  "substrate": "synthetic BOLD AR(1), 16 ROI, NOT real fMRI",
+  "awake": {
+    "condition": "awake",
+    "n_roi": 16,
+    "t_steps": 2400,
+    "n_epochs": 24,
+    "differentiation_index": 5.075502033743303,
+    "state_repertoire_size": 1470,
+    "lz_normalized": 0.5516480937104107,
+    "phi_geometric_mi": 2.2079901499541874,
+    "phi_pyphi_4node": 0.483453,
+    "wall_clock_s": 22.88717269897461
+  },
+  "sleep": {
+    "condition": "sleep",
+    "n_roi": 16,
+    "t_steps": 2400,
+    "n_epochs": 24,
+    "differentiation_index": 0.6669709578915934,
+    "state_repertoire_size": 1136,
+    "lz_normalized": 0.7328868994801143,
+    "phi_geometric_mi": 1.6164798916783403,
+    "phi_pyphi_4node": 1.280884,
+    "wall_clock_s": 21.866071701049805
+  },
+  "delta_differentiation": 4.40853107585171,
+  "delta_lz": -0.18123880576970364,
+  "delta_phi_geometric": 0.5915102582758471,
+  "delta_phi_pyphi_4node": -0.7974309999999999,
+  "cohen_d_differentiation": 18.019236378138764,
+  "falsifier_F5_threshold": 0.5,
+  "falsifier_F5_status": "NOT_TRIGGERED",
+  "verdict": "PASS",
+  "honest_c3": "ANALOGIZE only \u2014 substrate is synthetic AR(1), not 3T fMRI; counts toward consciousness-verifier breadth, NOT toward Tononi 16-study replication."
+}

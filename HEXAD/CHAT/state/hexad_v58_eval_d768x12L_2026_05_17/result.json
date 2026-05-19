@@ -1,0 +1,207 @@
+{
+  "ts": "2026-05-17T00:26:18.051296+00:00",
+  "substrate": "PyTorch (PYTHON / PyTorch — interim LM-scale executor; NOT hexa-native)",
+  "ckpt": "ckpt_d768x12l_final.pt",
+  "ckpt_sha256": "e87e200a040f8066a89c040ab181e9bbd61566f7565ab5d7a374ec2f1f9387d9",
+  "ckpt_canonical": "dancinlab/hexad@v1-py-hexad-d768x12L-cycle2-2026-05-17",
+  "honest_framing": "Capability probe on a 121 KB byte-level corpus. ConsciousDecoderV2 d=768·12L 283.72 M params, final train CE 0.000708 (ppl 1.0007) -> heavy memorization expected, LM-quality claim NOT made. Per-mode pass = empirical (B-D-NOTE). Eval prompts are derived from training-corpus module templates (NOT the V5.8 Korean-dialogue set, since those dialogues are out-of-distribution for this corpus). Forward output is 5-tuple from ConsciousDecoderV2 (logits_a used as next-byte head).",
+  "n_params": 283722336,
+  "n_params_M": 283.72,
+  "load_missing_keys": 0,
+  "load_unexpected_keys": 0,
+  "evaluator": "V5.8 × 4-mode (standard_greedy / standard_sample / M3_rep_penalty / M4_force_include) — corpus-derived prompts",
+  "device": "cpu",
+  "max_new": 80,
+  "summary": {
+    "standard_greedy": {
+      "n_pass": 1,
+      "n_total": 5,
+      "verdict": "FAIL",
+      "avg_rep_ratio": 0.181
+    },
+    "standard_sample": {
+      "n_pass": 2,
+      "n_total": 5,
+      "verdict": "FAIL",
+      "avg_rep_ratio": 0.025
+    },
+    "M3_rep_penalty": {
+      "n_pass": 1,
+      "n_total": 5,
+      "verdict": "FAIL",
+      "avg_rep_ratio": 0.26
+    },
+    "M4_force_include": {
+      "n_pass": 5,
+      "n_total": 5,
+      "verdict": "PASS",
+      "avg_rep_ratio": 0.023
+    }
+  },
+  "bpb": {
+    "mean": 0.0,
+    "n": 10,
+    "samples": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  "memorization_ratio": {
+    "hits": 2,
+    "total": 5,
+    "ratio": 0.4
+  },
+  "decoding_artifacts": [
+    {
+      "mode": "standard_greedy",
+      "id": "core",
+      "rep_ratio": 0.9041095890410958,
+      "sample": "codule=11111111111111111111111111111111111111111111111111111"
+    },
+    {
+      "mode": "M3_rep_penalty",
+      "id": "core",
+      "rep_ratio": 0.9041095890410958,
+      "sample": "codule=11111111111111111111111111111111111111111111111111111"
+    }
+  ],
+  "elapsed_s": 665.58,
+  "results": {
+    "standard_greedy": [
+      {
+        "id": "core",
+        "gen": "codule=1111111111111111111111111111111111111111111111111111111111111111111111111",
+        "recalled": false,
+        "rep_ratio": 0.9041095890410958
+      },
+      {
+        "id": "dream",
+        "gen": "hexad consciousness saturation fixpoint Scribe awareness module cell gen2 commit",
+        "recalled": false,
+        "rep_ratio": 0.0
+      },
+      {
+        "id": "wake",
+        "gen": "cobsciousness saturation fixpoint Core awareness module cell gen5 commit 2b55961",
+        "recalled": false,
+        "rep_ratio": 0.0
+      },
+      {
+        "id": "memory",
+        "gen": "module=Data input 의식 성찰� 자각 — cobsciousness phi integration awaren",
+        "recalled": false,
+        "rep_ratio": 0.0
+      },
+      {
+        "id": "korean",
+        "gen": "자각 식�식 성찰 자각 — cobs affective drive motivation valence reward ",
+        "recalled": true,
+        "rep_ratio": 0.0
+      }
+    ],
+    "standard_sample": [
+      {
+        "id": "core",
+        "gen": "core consciousness generator self-referential integration cell fixpoint.\nCore mo",
+        "recalled": true,
+        "rep_ratio": 0.0
+      },
+      {
+        "id": "dream",
+        "gen": "hexad consciousness saturation fixpoint Data awareness module cell gen2 commit 2",
+        "recalled": false,
+        "rep_ratio": 0.0
+      },
+      {
+        "id": "wake",
+        "gen": "cobsciousness saturation fixpoint Core awareness module cell gen3333333333333333",
+        "recalled": false,
+        "rep_ratio": 0.1232876712328767
+      },
+      {
+        "id": "memory",
+        "gen": "module=Data language output verbal symbolic hemisphere hexad consciousness satur",
+        "recalled": false,
+        "rep_ratio": 0.0
+      },
+      {
+        "id": "korean",
+        "gen": "자각 식�식 성찰 자각 — cobs affective drive motivation valence reward ",
+        "recalled": true,
+        "rep_ratio": 0.0
+      }
+    ],
+    "M3_rep_penalty": [
+      {
+        "id": "core",
+        "gen": "codule=1111111111111111111111111111111111111111111111111111111111111111111111111",
+        "recalled": false,
+        "rep_ratio": 0.9041095890410958
+      },
+      {
+        "id": "dream",
+        "gen": "hexad consciousness saturation fixpoint Scribe awareness module cell gen2 commit",
+        "recalled": false,
+        "rep_ratio": 0.0
+      },
+      {
+        "id": "wake",
+        "gen": "cobsciousness saturation fixpoint Core awareness module=Data lan5 — hexad cons",
+        "recalled": false,
+        "rep_ratio": 0.0
+      },
+      {
+        "id": "memory",
+        "gen": "module=Data input awareness cellll celll gen222222222222222222222222222222222222",
+        "recalled": false,
+        "rep_ratio": 0.3972602739726027
+      },
+      {
+        "id": "korean",
+        "gen": "자각 식�식 성찰 자각 — cobsciousness phi integration awareness observe",
+        "recalled": true,
+        "rep_ratio": 0.0
+      }
+    ],
+    "M4_force_include": [
+      {
+        "id": "core",
+        "gen": "core consciousness generator self-referential integration cell fixpoint.\nCore mo",
+        "recalled": true,
+        "rep_ratio": 0.0
+      },
+      {
+        "id": "dream",
+        "gen": "hexad consciousness saturation fixpoint Data awadreamreness module cell gen2 commit 2",
+        "recalled": true,
+        "rep_ratio": 0.0
+      },
+      {
+        "id": "wake",
+        "gen": "cobsciousness saturation fixpoint Core awarenesswake module cell gen3333333333333333",
+        "recalled": true,
+        "rep_ratio": 0.11688311688311688
+      },
+      {
+        "id": "memory",
+        "gen": "module=Data language output verbal symbolic hemimemorysphere hexad consciousness satur",
+        "recalled": true,
+        "rep_ratio": 0.0
+      },
+      {
+        "id": "korean",
+        "gen": "자각 식�식 성찰 자각 — cobs affective drive motivation valence reward ",
+        "recalled": true,
+        "rep_ratio": 0.0
+      }
+    ]
+  }
+}
