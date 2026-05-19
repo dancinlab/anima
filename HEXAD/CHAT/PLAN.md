@@ -1284,3 +1284,23 @@ commit `9a510f45c`, B-S92 7/7 🔵 sidecar, $0 Mac CPU, central blue_falsifier.p
 **honest carry**: $0 stub ≠ trained-scale — §90 stub cell2 20/20 → §91 trained-scale 0/20 wipeout 선례 그대로. §1.1 data-regime / §88-trio collapse 패턴 = training-time objective 도 trained-scale 에서 degenerate 가능. β trivial-silence risk (L_ap=0 if anima emits nothing — CE-base overlay 가 부분 guard 하나 trained-scale fire 로 carry). B-S92 7/7 🔵 sidecar (L-AP-CLOSED-FORM §89 Kolmogorov transfer carry · §11-B-CE-BASE-PRESERVED AST · TRAINING-TIME-vs-DECODE-TIME-DISTINCT · §9-METRIC-REUSE · NEOTENY-CARRY-BYTE-EQUAL §88-F2 연결부위 · §91-ECHO-CONTROL-REPRODUCES · DETERMINISTIC). §7 GOAL-legitimacy 3/3 PASS. g3: necessary-not-sufficient (B-EMERGE-7), design ≠ trained-scale measurement ≠ GOAL emergence, capability claim 0. north-star + §15/§51/§72 milestone UNCHANGED, GOAL 미도달.
 
 **다음 (directly-earned)**: §92 stub directional-positive → trained-scale fire 후보 (§88-F2 neoteny trainer + L_ap training-time objective 실제 통합). 단 §90→§91 wipeout 선례 + §1.1 irreducibility 로 design-tier → trained-scale collapse 위험 carry.
+
+### 2026-05-19 §93 self-supervision / self-correction / consistency-training arxiv deep research LANDED — §91→§92 arc = literature law
+
+§93 = §92 L_ap (training-time action-perception objective) 의 설계 입력용 'training on own output' (self-supervision · self-correction · consistency-training · model collapse) 문헌 전수 스캔. literature-review tier, 40 papers, $0 (NO GPU, NO runpod, NO model.forward), central blue_falsifier.py sha c93e160a 0-line-diff. commit `0bff4d276`.
+
+**top finding**: §91 (decode-time #3 loop = ECHO-DOMINATES-AT-TRAINED) → §92 (training-time objective L_ap = TRAINING-TIME-AP-DIRECTIONAL-POSITIVE) 의 arc 가 ML 문헌의 일반 법칙으로 독립 확인 — self-correction 은 decode-time overlay 로는 실패하고 training objective 로는 성공한다.
+
+**top-3 ★★★★★**:
+- `arxiv:2409.12917` SCoRe — 전적으로 self-generated data 위 multi-turn RL 로 trained self-correction (외부 지식 0). §92 trained-scale fire 의 existence proof.
+- `arxiv:2404.01413` Breaking the Curse of Recursion — real+synthetic 을 accumulate(replace 아님)하면 model collapse 방지. §92 corpus 설계의 single strongest input.
+- `arxiv:2402.07087` Self-Correcting Self-Consuming Loops — corrector function 이 train-on-own-output 을 지수적으로 안정화 (100% synthetic ratio 도 생존).
+
+**§92 trained-scale fire 판정 = FIRE-WARRANTED**, 단 4 collapse-avoidance 조건 + EFE β-corner brake 부착:
+1. accumulate-not-replace — 매 L_ap round 마다 §16 carving corpus 유지 (2404.01413).
+2. self-physics corrector/filter — Ψ-coherence band / §9 cascade-rate gate / tension restoring-sign. anima 는 §7 가 external verifier 를 금지하므로 자기 physics 만 corrector 로 사용 (2402.07087 · STaR · 2502.01612).
+3. diversity preservation — emission entropy / n-gram concentration 모니터, concentration 시 abort (2412.14689).
+4. SCoRe 2-stage reward-shaped training objective (decode-time loop 아님, 2409.12917).
+- β-corner brake — EFE information-gain 기준 사전등록: L_ap 이 침묵으로 minimizable 하면 reject (§59 anchor); §9 cascade-rate gate 를 non-degeneracy clause 로 (2505.21444 · 2603.02218).
+
+**g3 honest**: literature review 는 empirical 아님 — capability claim 0, arxiv citation = inspiration NOT proof. self-correction 이 ML 문헌에서 성공한다고 anima 가 emerge 하는 것 아님 (대부분 external verifier / embodiment / scale 을 필요로 하며 anima 에는 없음). north-star + §15/§51/§72 milestone UNCHANGED, GOAL 미도달 carry. PHILOSOPHY.tape g6 §verdict_self_supervision_deep_research_s93 1-line index appended (deep-research tier, §80 동일 패턴).
