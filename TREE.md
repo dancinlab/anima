@@ -76,3 +76,6 @@ Sources:
 ## Log
 
 - 2026-05-20 — TREE.md initial save (research findings + per-topic HEXAD-tree recommendation, verbatim from chat response).
+- 2026-05-20 — wilson-tree v0.1.0 LANDED in sidecar (`cea30bf` dancinlab/sidecar) — 3-hook plugin (P1 inject + P2 register + P3 guard), installed via `g_ship_syncs_install` (marketplace pull + cache regen + installed_plugins.json), inert until REGISTRY.md or .wilson-tree.json present.
+- 2026-05-20 — anima full-tree survey: state/ 1,189 dir / 165 result.json / root 84 dir (anima-* 19 + 그 외 65) / HEXAD/ 19 subproject / AGENTS.tape 575 KB / PHILOSOPHY.tape 1.2 MB. Two sprawls identified: (Sprawl-1) state/ §N flat list — TREE.md target · (Sprawl-2) anima-* root siblings — separate cycle.
+- 2026-05-20 — **Phase 1 (A) — REGISTRY 부트스트랩 LANDED** ($0, additive, reversible). `.wilson-tree.json` (23 topics) + `REGISTRY.md` (156 rows = 101 §N + 65 orphan) generated via wilson-tree classifier. Distribution: 83 UNCLASSIFIED (manual review needed), 20 CARVING, 10 LEGO, 7 PTD, 4 each {DUAL-ANIMA, MITOSIS, NEOTENY, CLM}, etc. Next: user reviews REGISTRY → Phase 2 (B strict) → Phase 3 (C git mv 165) → Phase 4 (D-tail archive 1,024).
