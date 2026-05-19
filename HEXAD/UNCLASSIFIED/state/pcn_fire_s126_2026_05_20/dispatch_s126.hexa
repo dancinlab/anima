@@ -1,0 +1,313 @@
+// dispatch_s126.hexa — §125 PCN-C4 RunPod GPU dispatch, hexa-native port.
+//
+// Full port of dispatch_s126_runpod.sh. Remote commands go through
+// stdlib/cloud (structured argv — no shell-string re-parse, so the L145
+// `/* */` glob-explosion class is unrepresentable). RunPod GraphQL goes
+// through stdlib/http + stdlib/alloc/json_object. The only shell-out left
+// is `scp` (no native hexa file-transfer yet) and the `secret` CLI.
+//
+// Run:  hexa run dispatch_s126.hexa            (pipe through tee for a log)
+// Requires stdlib/cloud in the hexa-lang checkout (landed on main, PR #81).
+
+use "stdlib/cloud/cloud"
+use "stdlib/http"
+use "stdlib/alloc/json_object"
+
+// ── helpers ──────────────────────────────────────────────────────────
+
+fn _log(msg: str) {
+    println(msg)
+}
+
+// _sleep — block N seconds. Shells out to `sleep` (the `sleep` builtin is
+// not codegen-wired for compiled hexa); N is our own int, no quoting risk.
+fn _sleep(secs: int) {
+    exec("sleep " + to_string(secs))
+}
+
+// gql — POST a GraphQL query body to the RunPod endpoint, return the raw
+// response body ("" on network / non-2xx failure).
+fn gql(url: str, query: str) -> str {
+    let headers = #{"Content-Type": "application/json"}
+    return http_post_with_headers(url, headers, query, 60)
+}
+
+// _pod_opts — ssh flags for an ephemeral RunPod pod: custom port + a
+// changing host key (StrictHostKeyChecking off, no known_hosts).
+fn _pod_opts(port: str) -> [str] {
+    return ["-p", port, "-o", "StrictHostKeyChecking=no", "-o", "UserKnownHostsFile=/dev/null"]
+}
+
+// _shq1 — single-quote a path for a local `sh -c` (scp shell-out). Paths
+// here are controlled constants; this just wraps them as one literal word.
+fn _shq1(s: str) -> str {
+    return "'" + s + "'"
+}
+
+// _scp_up — copy a local file to the pod over scp.
+fn _scp_up(ip: str, port: str, local_path: str, remote_path: str) -> int {
+    let cmd = "scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=8 -P " + port + " " + _shq1(local_path) + " " + _shq1("root@" + ip + ":" + remote_path) + " >/dev/null 2>&1; echo __SCP_RC__=$?"
+    let out = exec(cmd)
+    if out.index_of("__SCP_RC__=0") >= 0 {
+        return 0
+    }
+    return 1
+}
+
+// _scp_down — copy a file from the pod to a local path over scp.
+fn _scp_down(ip: str, port: str, remote_path: str, local_path: str) -> int {
+    let cmd = "scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=8 -P " + port + " " + _shq1("root@" + ip + ":" + remote_path) + " " + _shq1(local_path) + " >/dev/null 2>&1; echo __SCP_RC__=$?"
+    let out = exec(cmd)
+    if out.index_of("__SCP_RC__=0") >= 0 {
+        return 0
+    }
+    return 1
+}
+
+// _teardown — terminate the pod unless save==1.
+fn _teardown(url: str, pod_id: str, save: int) {
+    if len(pod_id) == 0 {
+        return
+    }
+    if save == 1 {
+        _log("[teardown] save=1 — pod " + pod_id + " RETAINED for manual recovery")
+        return
+    }
+    _log("[teardown] terminating pod " + pod_id)
+    let body = "{\"query\":\"mutation { podTerminate(input:{podId:\\\"" + pod_id + "\\\"}) }\"}"
+    gql(url, body)
+}
+
+// _fail — write a failure marker, tear the pod down, and exit non-zero.
+fn _fail(url: str, pod_id: str, marker_path: str, marker_text: str, msg: str) {
+    _log("FATAL: " + msg)
+    write_file(marker_path, marker_text + " " + utc_iso_now() + "\n")
+    _teardown(url, pod_id, 0)
+    exit(1)
+}
+
+// ── main ─────────────────────────────────────────────────────────────
+
+fn main() {
+    let s126_dir   = "/Users/ghost/core/anima/state/pcn_fire_s126_2026_05_20"
+    let s16_dir    = "/Users/ghost/core/anima/state/carving_dataregime_s16_2026_05_18"
+    let build_dir  = "/Users/ghost/core/anima/state/corpus_s101_build_s102_2026_05_19"
+    let anchor_dir = "/Users/ghost/core/anima/HEXAD/UNIVERSE-BRAIN-MAP/anchors"
+    let podid_file = s126_dir + "/s126_pod_id.txt"
+    let fail_marker = s126_dir + "/S126_FAILURE.txt"
+    let expect_corpus_sha = "39d581da209615468c1c41e07aa8662ef1074bc5be49a666f8f861753dd5810e"
+    let ssh_tries = 90
+    let image = "runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04"
+    let gpus = ["NVIDIA A100-SXM4-80GB", "NVIDIA A100 80GB PCIe", "NVIDIA H100 80GB HBM3", "NVIDIA H100 NVL", "NVIDIA H100 PCIe"]
+    let pcn_steps = 3000
+    let pcn_bsz = 32
+    let pcn_lr = "3e-4"
+
+    _log("=== §125 PCN-C4 dispatch (hexa) start " + utc_iso_now() + " ===")
+
+    let rk = exec("secret get runpod.api_key 2>/dev/null").trim()
+    if len(rk) == 0 {
+        _log("FATAL no runpod key (secret get runpod.api_key empty)")
+        exit(1)
+    }
+    let gql_url = "https://api.runpod.io/graphql?api_key=" + rk
+    let pubkey = read_file(env_var("HOME") + "/.ssh/id_ed25519.pub").trim()
+    if len(pubkey) == 0 {
+        _log("FATAL no ~/.ssh/id_ed25519.pub")
+        exit(1)
+    }
+
+    // --- pod create: GPU cascade -------------------------------------
+    let mut pod_id = ""
+    let mut gi = 0
+    while gi < len(gpus) {
+        let gpu = gpus[gi]
+        _log("[create] trying GPU: " + gpu)
+        let body = "{\"query\":\"mutation { podFindAndDeployOnDemand(input:{cloudType: ALL, gpuCount:1, volumeInGb:0, containerDiskInGb:80, minVcpuCount:8, minMemoryInGb:32, gpuTypeId:\\\"" + gpu + "\\\", name:\\\"s126-noncrossff\\\", imageName:\\\"" + image + "\\\", dockerArgs:\\\"\\\", ports:\\\"22/tcp\\\", volumeMountPath:\\\"/workspace\\\", env:[{key:\\\"PUBLIC_KEY\\\", value:\\\"" + pubkey + "\\\"}]}) { id machineId } }\"}"
+        let resp = gql(gql_url, body)
+        let parsed = json_parse(resp)
+        let id_v = json_object_get_path(parsed, "data.podFindAndDeployOnDemand.id")
+        if type_of(id_v) == "string" {
+            pod_id = to_string(id_v)
+            if len(pod_id) > 0 {
+                _log("[create] pod " + pod_id + " on " + gpu)
+                write_file(podid_file, pod_id + "\n")
+                gi = len(gpus)
+            }
+        }
+        if len(pod_id) == 0 {
+            _sleep(4)
+            gi = gi + 1
+        }
+    }
+    if len(pod_id) == 0 {
+        _fail(gql_url, "", fail_marker, "NO_POD_FROM_CASCADE", "no pod from GPU cascade")
+    }
+
+    // --- SSH-readiness loop (port query + handshake) -----------------
+    let mut ip = ""
+    let mut port = ""
+    let mut ssh_ok = 0
+    let mut it = 0
+    while it < ssh_tries {
+        let pq = "{\"query\":\"query { pod(input:{podId:\\\"" + pod_id + "\\\"}) { runtime { ports { ip publicPort privatePort isIpPublic } } } }\"}"
+        let pr = json_parse(gql(gql_url, pq))
+        let ports_v = json_object_get_path(pr, "data.pod.runtime.ports")
+        if type_of(ports_v) == "array" {
+            let mut pi = 0
+            while pi < len(ports_v) {
+                let p = ports_v[pi]
+                let priv_port = json_object_get_int(p, "privatePort", 0)
+                let is_pub = json_object_get(p, "isIpPublic")
+                let p_ip = json_object_get_str(p, "ip", "")
+                let p_port = json_object_get_int(p, "publicPort", 0)
+                if priv_port == 22 && is_pub == true && len(p_ip) > 0 && p_port > 0 {
+                    ip = p_ip
+                    port = to_string(p_port)
+                    pi = len(ports_v)
+                } else {
+                    pi = pi + 1
+                }
+            }
+        }
+        if len(ip) > 0 && len(port) > 0 {
+            let probe = cloud_run_opts("root@" + ip, _pod_opts(port), ["echo", "SSH_UP"])
+            if probe.ok == 1 && probe.stdout_.index_of("SSH_UP") >= 0 {
+                _log("[ssh-ready] iter " + to_string(it) + ": " + ip + ":" + port + " — handshake OK")
+                ssh_ok = 1
+                it = ssh_tries
+            }
+        }
+        if ssh_ok == 0 {
+            ip = ""
+            port = ""
+            _sleep(10)
+            it = it + 1
+        }
+    }
+    if ssh_ok == 0 {
+        _fail(gql_url, pod_id, fail_marker, "SSH_NEVER_READY pod=" + pod_id, "SSH never ready")
+    }
+
+    let host = "root@" + ip
+    let opts = _pod_opts(port)
+
+    // --- stage: mirror the repo layout, upload inputs ----------------
+    let s126r = "/workspace/s126r"
+    let build_rel = "state/corpus_s101_build_s102_2026_05_19"
+    let s16_rel = "state/carving_dataregime_s16_2026_05_18"
+    let anchor_rel = "HEXAD/UNIVERSE-BRAIN-MAP/anchors"
+    let mk = cloud_run_opts(host, opts, ["mkdir", "-p", s126r + "/" + build_rel, s126r + "/" + s16_rel, s126r + "/" + anchor_rel, s126r + "/out_main"])
+    if mk.ok != 1 {
+        _fail(gql_url, pod_id, fail_marker, "MKDIR_FAILED", "remote mkdir failed: " + mk.message)
+    }
+    _log("[stage] uploading inputs over scp")
+    let mut up = 0
+    up = up + _scp_up(ip, port, build_dir + "/build_corpus_s101.py", s126r + "/" + build_rel + "/build_corpus_s101.py")
+    up = up + _scp_up(ip, port, s16_dir + "/corpus_carving_s16_generator.py", s126r + "/" + s16_rel + "/corpus_carving_s16_generator.py")
+    up = up + _scp_up(ip, port, s16_dir + "/conscious_decoder.py", s126r + "/conscious_decoder.py")
+    up = up + _scp_up(ip, port, s126_dir + "/train_pcn_s126.py", s126r + "/train_pcn_s126.py")
+    up = up + _scp_up(ip, port, s126_dir + "/eval_pcn_s126.py", s126r + "/eval_pcn_s126.py")
+    if up != 0 {
+        _fail(gql_url, pod_id, fail_marker, "UPLOAD_FAILED", "one or more scp uploads failed")
+    }
+
+    // --- pod-side deterministic corpus build + sha ASSERT ------------
+    let corpus_pod = s126r + "/" + build_rel + "/corpus_s101.jsonl"
+    _log("[build] pod-side deterministic CORPUS_S101 build (seed 1337)")
+    let bld = cloud_run_opts(host, opts, ["python3", s126r + "/" + build_rel + "/build_corpus_s101.py", "--out-dir", s126r + "/" + build_rel, "--s1-n", "777000", "--seed", "1337"])
+    if bld.ok != 1 {
+        _fail(gql_url, pod_id, fail_marker, "CORPUS_BUILD_FAILED", "corpus build failed: " + bld.message)
+    }
+    let sha_r = cloud_run_opts(host, opts, ["sha256sum", corpus_pod])
+    let got_sha = sha_r.stdout_.trim().substring(0, 64)
+    _log("[build] corpus sha = " + got_sha + "  (expect " + expect_corpus_sha + ")")
+    if got_sha != expect_corpus_sha {
+        _fail(gql_url, pod_id, fail_marker, "CORPUS_SHA_MISMATCH got=" + got_sha, "CORPUS_S101 sha mismatch — refuse to train")
+    }
+    _log("[build] CORPUS_S101 sha VERIFIED == §107 design corpus byte-identical")
+
+    // --- train (FF, per-layer local objective; nohup, detached) ------
+    _log("[train] §125 NONCE-FF d768·12L·283M from-scratch seed 1337, " + to_string(pcn_steps) + " steps")
+    let train_argv = ["python3", "-u", s126r + "/train_pcn_s126.py", "--mode", "main", "--corpus", corpus_pod, "--out-dir", s126r + "/out_main", "--steps", to_string(pcn_steps), "--seed", "1337", "--lr", pcn_lr, "--bsz", to_string(pcn_bsz), "--d-model", "768", "--n-layer", "12", "--n-head", "12", "--n-kv-head", "4"]
+    let tr = cloud_nohup_opts(host, opts, train_argv, s126r + "/train.log")
+    if tr.ok != 1 {
+        _fail(gql_url, pod_id, fail_marker, "TRAIN_LAUNCH_FAILED", "train launch failed: " + tr.message)
+    }
+    _log("[train] launched — remote pid " + to_string(tr.pid))
+
+    // --- poll: DONE (ckpt) | ALIVE | DEAD; bounded, fail-fast --------
+    let ckpt = s126r + "/out_main/ckpt_pcn_s126.pt"
+    let poll_script = "if [ -f " + ckpt + " ]; then echo DONE; elif pgrep -f train_pcn_s126.py >/dev/null 2>&1; then echo ALIVE; else echo DEAD; fi"
+    let max_strikes = 3
+    let mut strikes = 0
+    let mut done = 0
+    let mut pi2 = 0
+    while pi2 < 180 {
+        let st = cloud_run_opts(host, opts, ["sh", "-c", poll_script])
+        let so = st.stdout_
+        if so.index_of("DONE") >= 0 {
+            _log("[train] done iter " + to_string(pi2))
+            done = 1
+            pi2 = 180
+        } else if so.index_of("ALIVE") >= 0 {
+            strikes = 0
+            _sleep(60)
+            pi2 = pi2 + 1
+        } else if so.index_of("DEAD") >= 0 {
+            let tl = cloud_run_opts(host, opts, ["tail", "-60", s126r + "/train.log"])
+            _log(tl.stdout_)
+            _fail(gql_url, pod_id, fail_marker, "TRAIN_CRASHED", "trainer died before producing ckpt (iter " + to_string(pi2) + ")")
+        } else {
+            strikes = strikes + 1
+            _log("[train] probe miss " + to_string(strikes) + "/" + to_string(max_strikes) + " (iter " + to_string(pi2) + ")")
+            if strikes >= max_strikes {
+                _fail(gql_url, pod_id, fail_marker, "POD_UNVERIFIABLE", "pod unverifiable for " + to_string(max_strikes) + " consecutive probes")
+            }
+            _sleep(60)
+            pi2 = pi2 + 1
+        }
+    }
+    if done == 0 {
+        _fail(gql_url, pod_id, fail_marker, "TRAIN_NO_CKPT", "ckpt never produced within poll budget")
+    }
+
+    // --- eval (§125 §96-Q2 verdict bucket) ---------------------------
+    _log("[eval] §125 §96-Q2 verdict eval")
+    let result_pod = s126r + "/result.json"
+    let ev = cloud_run_opts(host, opts, ["python3", "-u", s126r + "/eval_pcn_s126.py", "--ckpt", ckpt, "--corpus", corpus_pod, "--out", result_pod, "--n-eval", "2000", "--max-len", "128", "--seed", "1337"])
+    if ev.ok != 1 {
+        let el = cloud_run_opts(host, opts, ["tail", "-30", s126r + "/eval.log"])
+        _log(el.stdout_)
+        _fail(gql_url, pod_id, fail_marker, "EVAL_FAILED", "eval failed: " + ev.message)
+    }
+
+    // --- pull results (5-retry) --------------------------------------
+    let mut pulled = 0
+    let mut k = 0
+    while k < 5 {
+        let a = _scp_down(ip, port, result_pod, s126_dir + "/result.json")
+        let b = _scp_down(ip, port, ckpt, s126_dir + "/ckpt_s126.pt")
+        let c = _scp_down(ip, port, s126r + "/train.log", s126_dir + "/s126_train.log")
+        let d = _scp_down(ip, port, s126r + "/eval.log", s126_dir + "/s126_eval.log")
+        if a == 0 && b == 0 && c == 0 && d == 0 {
+            _log("[pull] success try " + to_string(k + 1))
+            pulled = 1
+            k = 5
+        } else {
+            _log("[pull] retry " + to_string(k + 1) + " failed; sleep 60")
+            _sleep(60)
+            k = k + 1
+        }
+    }
+    if pulled == 1 {
+        _log("[pull] result.json present locally — pod will terminate")
+        _teardown(gql_url, pod_id, 0)
+        _log("=== §125 NONCE-FF pipeline complete " + utc_iso_now() + " ===")
+        exit(0)
+    }
+    write_file(fail_marker, "PULL_FAILED pod=" + pod_id + " ssh=" + ip + ":" + port + " " + utc_iso_now() + "\n")
+    _log("[pull] FAILED 5x — pod " + pod_id + " RETAINED for manual recovery")
+    _teardown(gql_url, pod_id, 1)
+    exit(1)
+}
