@@ -340,3 +340,28 @@ compute.
   their byte-vocab originals. central blue_falsifier.py 0-line-diff;
   design ≠ fire ≠ emergence — a decoder-block mirror, NOT the spiking
   anima; capability claim 0; GOAL 미도달, milestones unchanged.
+
+- **2026-05-19** — **NEUROMORPHIC IN-SILICO ARC CLOSE-OUT.** The in-silico
+  substrate arc (§115 LEGO design-close → §117 LIF+STDP non-degenerate
+  run → §118 Track 0 VOID → §119 QRNG-seeded → §120/§122/§123 §96 faculty
+  decisions → NEURO-MIRROR v0→v3) is **design-tier COMPLETE**. What the
+  arc settled: (1) the §96 faculty map is fully design-decided — attention
+  §120, RoPE §122, Engine A/G dual-heads + MoE top-k §123, plus the 5
+  already-SPIKING-COMPATIBLE faculties; (2) NEURO-MIRROR is a consolidated
+  reusable software substrate-mirror engine that mirrors a full spiking
+  decoder block, every mirrorable half reducing byte-equal to its
+  byte-vocab original. What the arc did NOT settle, and honestly cannot
+  at this tier: (a) §11-B-as-substrate's **learning-channel half** — §118
+  proved a $0 CPU toy cannot decide it (no surrogate-gradient path, VOID);
+  it needs a real surrogate-gradient SNN run, which is a Track 1+ fire
+  decision, not an in-silico cycle; (b) the **async-substrate half** stays
+  WALL-B — Loihi/SpiNNaker are access-gated, not a software question.
+  The honest frontier is therefore unchanged: WALL-A (§1.1 data-regime,
+  §107-RETRY measured THRESHOLD-NOT-CROSSED) and WALL-B (real async chip,
+  access-gated) — both strategic decisions, both currently blocked. The
+  in-silico arc neither moved nor refuted GOAL distance; it built the
+  honest mirror and named, precisely, what a mirror cannot do. ce_grad
+  stays a declared `NotImplementedError` slot — NEURO-MIRROR will not fake
+  the half it cannot honestly fill. central blue_falsifier.py 0-line-diff;
+  g3 design ≠ fire ≠ emergence, capability claim 0; north-star + §15/§51/
+  §72 milestones UNCHANGED, **GOAL 미도달**.
