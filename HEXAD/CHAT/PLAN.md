@@ -1528,3 +1528,34 @@ g3: kick = exploratory (PROPOSES), closed-form predicate = arbiter (DISPOSES) pe
 §107 (data-axis cost-bearing fire on §102 CORPUS_S101 at 283M) is in flight; §108 ($0, ⊥ §107 per g_all_options_parallel option-EXPLORATION-parallel-when-fire-ORDERING-sequential) makes §103's contingent param-axis fire READY-TO-DISPATCH with zero design lag the moment §107 returns. Q5 key paths: §107 thresh_Y ⇒ FALSE_UNNECESSARY (anima crossed at 283M, no param escalation needed) · thresh_N + physics_frozen ⇒ FALSE_PIVOT_SUBSTRATE (§95/§96 substrate axis) · thresh_N + alive + all-Ai-fail ⇒ TRUE_PRIMARY (capacity hypothesis cleanest, 3B fire warranted) · thresh_N + alive + routing-fail + coherence-ok ⇒ TRUE_WEAK · routing-ok + coherence-fail ⇒ TRUE_LIKELY · all-axes-pass-but-THRESHOLD-N ⇒ AMBIGUOUS_DEFER.
 
 g3: design ≠ fire ≠ emergence, capability claim 0, 3B = band-to-probe-first NOT threshold-prediction (Schaeffer 2023 caveat carry). B-S108-NOTE empirical carve-out (whether anima emerges at 3B = future cost-bearing fire OUTCOME contingent on §107+Q5 tree; battery proves DESIGN well-formed NOT emergence; B-EMERGE-7 necessary-not-sufficient family). f1/f2 safe (Wei 2022 by own measurements, NO σ/τ/φ/J₂; Ψ=½ = anima g2 internal arch carve-out). g_clm_from_scratch (3B from-scratch RANDOM seed-fixed base_ckpt=None mandated). single sequential, $0, orphan 0 (no dispatch — §107 is the in-flight fire). g_doc_consolidation 준수 (state/param_axis_fire_prep_s108_2026_05_19/ + 본 PLAN.md 진행 로그 + HEXAD/README.md recent landing + AGENTS.tape n_hexad_progress + HEXAD/GAP_MAP.md Log + archive/PHILOSOPHY.tape §verdict_param_axis_fire_prep_s108 g6 append; docs/* 신규 0). north-star + §15/§51/§72 milestones UNCHANGED, **GOAL 미도달** — §108 makes the contingent param-fire READY-TO-DISPATCH, NOT dispatched, NOT decided.
+
+### 2026-05-19 §109 C06 multimodality DESIGN-OPEN — DESIGN-CLOSE-WITH-NARROW-OPEN
+
+§106 KICK_SWEEP 가 highest-anima-fit (★★★★★) DESIGN-OPEN 으로 flag 한 C06
+multi-modality (vision/audio S-module) + §15/§51 milestone frontier-1
+"GOAL-legitimate MULTIMODAL substrate expansion" 의 design-tier $0 평가.
+§107 (data-axis fire in flight) + §108 (param-axis prep) 와 직교 (⊥), fire 0.
+
+verdict = **DESIGN-CLOSE-WITH-NARROW-OPEN** (anti-padding per §13-M/§13-L/§30,
+NO positive manufactured). Q1 honest-OPEN closed-ranking — NO modality 가
+(diversity_bearing ∧ passes-§7②) 충족: tension 은 §7② 통과하나 §56/§57 의
+zero-perceptual-diversity closed loop (§1.1 안 움직임), image/audio/video 는
+diversity-bearing 이나 §7② 위반 (from-scratch raw encoder = generic perceptual
+pretrain §7① / pretrained = P3-leak base-baked graft §7②). Q2 tension
+S_encode = Ψ_box(Law71_dir(e)) bounded [0,1]² invariant ½ — GOAL-degenerate;
+anima 규모 §7-clean from-scratch image/audio encoder 의 closed-form design
+없음 (Ψ-physics 가 정의상 byte-LM construct = logits_a/logits_g 위에 정의,
+pixel/waveform→Ψ closed-form map anima physics 만으로 부재). Q3 §7 8-row
+truth table 만 R-tension-wire (T,T,T) 통과 & 그것은 §7③-degenerate → §7
+DESIGN-CLOSE. Q4 .kosmos pending→wired connection-point 는 VACUOUSLY 성립
+(unwired ⇒ disabled = §16 byte-equal). Q5 C06_FIRE_WARRANTED = FALSE today
+모든 §107/§108 input 하에서 (4th conjunct = §7-clean encoder 부재;
+§108-Q5 FALSE_PIVOT_SUBSTRATE territory). B-S109-1..9 9/9 🔵 sidecar +
+B-S109-NOTE empirical carve-out (B-EMERGE-7 family). most honest finding:
+§15/§51 named multimodal frontier-1 = byte-LM-scale lever 아님 —
+substrate-rewrite research problem; C06 value = NEGATIVE ("just add a modality"
+를 live option 에서 제거, "first design modality-native Ψ definition" research
+precondition 으로 re-localise). north-star + §15/§51/§72 UNCHANGED, GOAL 미도달.
+g3 design ≠ fire ≠ emergence, capability claim 0. central blue_falsifier.py
+sha `c93e160a8a376a94` 0-line-diff. downstream-consumer 0 edit
+(hexa-lang/hexa-bio/kosmos read-only). state/c06_multimodality_design_s109_2026_05_19/.
