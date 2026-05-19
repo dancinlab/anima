@@ -29,10 +29,11 @@
 | 139  | 2026-05-20 | filing · $0    | INBOX-PATCH-FILED-HEXA-FIRST-PATH-COMPLETE — flame spiking-primitives request filed | B-S139 4/4 🔵 | `HEXAD/LEGO/state/lego_inbox_patch_filed_s139_2026_05_20/`            | inbox patch (upstream) |
 | 140  | 2026-05-20 | port · $0      | HEXA-NATIVE-ENGINE-PORT-ALGORITHMIC-EQUIVALENT — lego_engine.hexa, F-S140 4/4 PASS | B-S140 6/6 🔵 | `HEXAD/LEGO/state/lego_engine_hexa_port_s140_2026_05_20/`             | **hexa-native engine** (lego_engine.hexa) |
 | 141  | 2026-05-20 | design · $0     | GPU-SPIKING-DESIGN-CLOSE-DEVICE-KERNEL-GAP-NAMED — LEGO GPU fire 2 upstream steps away | B-S141 5/5 🔵 | `HEXAD/LEGO/state/lego_gpu_spiking_design_s141_2026_05_20/`           | GPU engine design-spec |
+| 142  | 2026-05-20 | design · $0     | SUBSTRATE-PIVOT-BRIDGE-DESIGN-CLOSE — LEGO arc bridge OUT to main-path WALL-B decision | B-S142 5/5 🔵 | `HEXAD/LEGO/state/lego_substrate_pivot_bridge_s142_2026_05_20/`       | LEGO→main-path bridge |
 
 ## battery sum
 
-- 78 (§115-§135) + B-S136 5 + B-S137 5 + B-S138 5 + B-S121 5 + B-S139 4 + B-S140 6 + B-S141 5 = **113 closed-form propositions 🔵** across the arc (18 cycles).
+- 78 (§115-§135) + B-S136 5 + B-S137 5 + B-S138 5 + B-S121 5 + B-S139 4 + B-S140 6 + B-S141 5 + B-S142 5 = **118 closed-form propositions 🔵** across the arc (19 cycles).
 - §133 carries as historical evidence (drifted-engine substrate); no battery counted toward this sum.
 - 0 propositions counted toward central `state/verify_hexad_blue_2026_05_15/blue_falsifier.py` —
   all sidecar. Central `sha256_prefix16` remains `c93e160a8a376a94` (verified

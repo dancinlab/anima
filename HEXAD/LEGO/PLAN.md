@@ -303,3 +303,14 @@ north-star + §15/§51/§72 milestones UNCHANGED; **GOAL 미도달**.
   stay CPU. inbox patch `flame-stdp-pair-gpu-kernel.md` filed (runtime-kernel tier).
   **LEGO GPU fire = 2 upstream steps away**, NOT fire-ready — fire-gate discipline
   forbids firing on unmet prerequisite. The honest answer to "GPU fire go".
+
+### §142 — LEGO→MAIN-PATH SUBSTRATE PIVOT BRIDGE *(2026-05-20)*
+
+- **tier**: design-tier · $0 · **verdict** `SUBSTRATE-PIVOT-BRIDGE-DESIGN-CLOSE-LEGO-FEEDS-WALL-B-DECISION`
+- **battery**: B-S142 5/5 🔵 · **state**: `HEXAD/LEGO/state/lego_substrate_pivot_bridge_s142_2026_05_20/`
+- **finding**: The LEGO arc's bridge OUT to the main-path WALL-B decision.
+  Specifies what 18 LEGO cycles hand the substrate pivot (§117/§124/§95/§134/§138
+  deliverables). 3 exhaustive pivot options — P1 GPU-stays (plateaus §107-RETRY) ·
+  P2 Loihi-physical (INRC-access-walled) · P3 in-silico-spiking-main-path (inherits
+  §128 layer-3). Honest: NO cheap winner — the pivot is strategic, not $0. §142
+  maps the decision; does not make it.
