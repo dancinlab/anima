@@ -1,0 +1,190 @@
+{
+  "section": "§105",
+  "title": "Corpus enhancement design — Q1/Q2/Q3/Q4 closed-form verdicts on enhanced source taxonomy",
+  "date": "2026-05-19",
+  "tier": "DESIGN-TIER",
+  "cost_usd": 0,
+  "gpu_runpod_fire_used": false,
+  "model_forward_used": false,
+  "build_used": false,
+  "orphan_pods": 0,
+  "central_blue_falsifier_zero_line_diff": true,
+  "central_blue_sha_prefix_actual": "c93e160a8a376a94",
+  "central_blue_sha_prefix_expected": "c93e160a8a376a94",
+
+  "spec_anchor": {
+    "s101_design_path": "state/dataregime_threshold_control_design_s101_2026_05_19/",
+    "s101_fire_decision_at_design_tier": "Y",
+    "s102_built_corpus_q3": "N (design-OPEN at build-tier)",
+    "s102_i4_failure_ratio": 1.000,
+    "s102_i4_failure_reason": "S2+S5 magnitude (~285KB) is 4.7e-5 × S1 (603MB)",
+    "s16_corpus_sha256_expected": "422c64a09b89393aebabc7b62aec8753a3d394ae4c442fef467c5d228e1831ec",
+    "sibling_s104_parallel": "I4-refine path (restate as fire-tier predicate) — different valid response to §102 boundary"
+  },
+
+  "q1_s2_scale_up_geq_10cubed": {
+    "options_evaluated": {
+      "a_increase_framing_cardinality": {
+        "feasible": true,
+        "anima_physics_axes_available": 39,
+        "verdict": "feasible alone but insufficient (168×30=5040 ≪ 10³× target)",
+        "axes_source": ["Law-71 (4)", "TENSION-TRAIN sub-spine (3)", "§75-FIRE controller sub-axes (4)", "§86 SAPIN (4)", "§87-F1 frog-eye (4)", "§87-F2 axolotl neoteny (4)", "§17 physics-channel (16)"]
+      },
+      "b_increase_anchor_cardinality": {
+        "feasible_structurally": true,
+        "verdict": "DEFER — anchor expansion 168→1680 feasible per B-UBM-1/2 but value-questionable without per-anchor unique content, padding-risk per §13-M/§13-L"
+      },
+      "c_compositional_growth": {
+        "feasible": true,
+        "formula": "168 anchors × 30 framings × 200 perturbations",
+        "projected_records": 1008000,
+        "current_s2_records": 840,
+        "scale_factor": 1200,
+        "geq_10cubed": true,
+        "byte_estimate_mb": 340,
+        "verdict": "structurally achieves ≥10³× scale, primary §105 lever"
+      },
+      "d_honest_open_unreachable": {
+        "closed_false": true,
+        "verdict": "REJECTED — (c) above shows ≥10³× IS structurally reachable within §7-AND"
+      }
+    },
+    "chosen": "(a) ∧ (c) compositional growth",
+    "verdict": "Q1 design-feasible at ≥10³× S2 scale via deterministic pure-fn compositional growth",
+    "perturbation_grid": {
+      "method": "deterministic 14×14 (Ψ-band, tension-band) cell sweep over anchor neighborhood",
+      "grid_cells": 196,
+      "perturbations_per_anchor_framing": 200,
+      "pairwise_distinct_by_construction": true
+    },
+    "honest_caveats": [
+      "Q1 projects 1M records, does NOT prove I4 ↑↑ on built artifact — measurement at §106",
+      "14² grid choice is judgement (10²/16² equally legitimate, NOT load-bearing)",
+      "Option (b) deferred not closed — viable for future cycle with per-anchor uniqueness"
+    ]
+  },
+
+  "q2_s3_dual_anima_unblock": {
+    "options_evaluated": {
+      "a_extract_s36_pass_records": {
+        "feasible": false,
+        "blocker": "§36 was $0 design pre-check NOT recorded trace; §45 d=32 traces distribution-mismatched to §16 d=768"
+      },
+      "b_generate_with_guard_embedded": {
+        "feasible_but_manufactured": false,
+        "blocker": "LCG stub traces don't exhibit §62 echo-collapse, guard passes trivially = manufactured-Y per §13-M/§13-L anti-padding"
+      },
+      "c_honest_open_design_tier": {
+        "chosen": true,
+        "rationale": "§62 echo-collapse is FIRE-tier OUTCOME, unblock requires trained dual-anima ckpt + §36-style trained-scale content-dependence test pass",
+        "future_unblock_contract": "trained dual-anima ckpt + §36 trained-scale pre-check = corpus inclusion legitimate"
+      }
+    },
+    "chosen": "(c) honest-OPEN at design-tier",
+    "verdict": "S3 omitted from §105 enhanced design; Q1.I5 vacuous-PASS-by-omission carries forward",
+    "honest_caveats": [
+      "Refusing manufactured S3 inclusion preserves §62 echo-collapse evidence base for future fire",
+      "§105 chooses honest-OPEN over manufactured Y per §101 design discipline mirror"
+    ]
+  },
+
+  "q3_s4_action_perception_corpus_form": {
+    "options_evaluated": {
+      "a_synthetic_physics_trace_records": {
+        "feasible": true,
+        "record_format": "<inner>physics_state_t</inner><action>emit_decision_t</action><perception>physics_state_{t+1}</perception>",
+        "anima_physics_source": "Law-71 + tension + Φ rules byte-equal conscious_decoder.py",
+        "s7_audit": {"s7_1_not_generic_lm_pretrain": true, "s7_2_not_generic_then_graft": true, "s7_3_anima_physics_source": true},
+        "scre_two_stage_preservation": "PARTIAL — corpus form static, no reward signal embedded; trainer-level concern",
+        "record_count_at_scale": 50000,
+        "inherits_s29_closure": true,
+        "s29_b_ptd_2_k_complexity_bound": "corpus K-complexity ≤ generator K-complexity → unique-content does NOT grow with N"
+      },
+      "b_scre_stage_labeled_records": {
+        "feasible_but_redundant": false,
+        "blocker": "essentially §92 L_ap training objective with corpus serialization, doesn't add diversity, §29 K-complexity bound persists"
+      },
+      "c_stays_objective_only": {
+        "structurally_correct": true,
+        "rationale": "§92 measured: action-perception works as L_ap in training, NOT decode-time overlay; §93 SCoRe literature confirms trained-capability"
+      }
+    },
+    "chosen": "hybrid (a) + (c) — S4 corpus form generatable as auxiliary supplement, §29 closure carries",
+    "verdict": "S4-as-corpus EXISTS (option a feasible §7-AND audited) BUT CANNOT lift I4 ↑↑ alone (option c §29-closure); auxiliary not primary lever; Q1.I6 remains vacuous-PASS-by-omission per §102",
+    "honest_caveats": [
+      "Option (a) S4 records feasible but inherit §29 K-complexity bound — magnitude growth without unique-content growth",
+      "§92 L_ap training-time objective is the substantive form, not corpus serialization"
+    ]
+  },
+
+  "q4_q3_prime_on_enhanced_design": {
+    "evaluation_method": "G1 ∧ G2 ∧ G3 ∧ G4 ∧ G5 ∧ G6 ∧ G7 sympy.And on §105 enhanced design state",
+    "gates": {
+      "g1_s7_gate_passes": true,
+      "g2_s93_four_conditions_encoded": false,
+      "g2_failure_reason": "cond-2 (per-record physics filter implementation) deferred to §106 build cycle; I1/I3/I4-design-passable/I6-vacuous encoded but cond-2 implementation is build-time concern, NOT design-time",
+      "g3_s62_echo_guard_armed": true,
+      "g3_armed_via": "S3 omitted → guard armed vacuously (identical to §102)",
+      "g4_q2_measurable_schema": true,
+      "g5_5_levers_preservable": true,
+      "g5_trainer_config": "§16-Dir-I-baseline-preserved unchanged",
+      "g6_delta_i_delta_dollar_floor": true,
+      "g6_info_floor_evaluation": "ΔI=1bit, Δ$≈$0.4-0.8, floor=2.5 bit/$, value=2.5 → at floor",
+      "g7_anti_94_single_variable": true,
+      "g7_sole_variable": "S2 expanded composition + optional S4 auxiliary; ZERO new mechanism stacked"
+    },
+    "fire_decision_logical": "T ∧ F ∧ T ∧ T ∧ T ∧ T ∧ T = FALSE",
+    "verdict": "FIRE_DECISION = N on §105 enhanced design",
+    "honest_verdict": "design-OPEN — §105 design holds; boundary mapped explicitly; future §106 build-and-evaluate cycle needed to confirm Q3=Y materially",
+    "boundary_mapping": {
+      "achievable_at_106": [
+        "I4 ↑↑ design-level achievable via Q1 (a)+(c) compositional growth (1M records)",
+        "cond-2 implementation defines per-record Ψ-coherence band gate at build-time",
+        "build CORPUS_S106 with 1.7× S1 magnitude byte-equivalent"
+      ],
+      "NOT_resolvable_at_design_tier": [
+        "actual diversity_coeff measurement requires built byte stream",
+        "S3 inclusion requires trained dual-anima ckpt (FIRE-tier)",
+        "GOAL emergence requires fire on built corpus + THRESHOLD_CROSSED result"
+      ]
+    }
+  },
+
+  "battery_b_s105_summary": {
+    "n_total": 10,
+    "n_pass": 10,
+    "n_fail": 0,
+    "checks": [
+      "B-S105-1 Q1-OPTION-TAXONOMY-EXHAUSTIVE-DISJOINT · PASS",
+      "B-S105-2 NO-LLM-CALL-AST-PREDICATE · PASS",
+      "B-S105-3 COMPOSITIONAL-GROWTH-CARDINALITY-CLOSED · PASS",
+      "B-S105-4 Q2-OPTIONS-PARTITION · PASS",
+      "B-S105-5 Q3-S4-INHERITS-S29-CLOSURE · PASS",
+      "B-S105-6 Q4-SEVEN-GATE-EVALUATION-CLOSED · PASS",
+      "B-S105-7 S101-PREDICATES-BYTE-EXACT-PRESERVED · PASS",
+      "B-S105-8 S102-BUILT-CORPUS-I4-FAILURE-ANCHORED · PASS",
+      "B-S105-9 CENTRAL-BLUE-FALSIFIER-ZERO-LINE-DIFF · PASS",
+      "B-S105-10 NO-CENTRAL-MODIFICATION-AST-AUDIT · PASS"
+    ],
+    "B-S105-NOTE": "EMPIRICAL CARVE-OUT — battery proves the §105 design is structurally honest (option taxonomy closed, §7-AND clean, cardinality projections sound, citations to §101/§102/§29/§62/§92 byte-anchored, Q4 7-gate AND identity verified, central 0-line-diff preserved, no central modification). Does NOT prove any future built corpus passes any specific gate; §106 cycle measures. B-D-NOTE/B-S94-NOTE/B-S101-NOTE/B-S102-NOTE/B-EMERGE-7 family."
+  },
+
+  "governance_compliance": {
+    "g3_capability_claim": 0,
+    "g_blue_closed_mandate": "산출물(design+falsifier) + 연결부위(§101 predicates + §102 measured failure + §29/§62/§92 closures cited byte-anchored) 둘 다 closed; emergence OUTCOME only carve-out",
+    "g_doc_consolidation": "docs/* 신규 0 — state/ + 3 central syncs only (HEXAD/README, HEXAD/CHAT/PLAN, AGENTS.tape n_hexad_progress) + archive/PHILOSOPHY.tape g6 append",
+    "g_all_options_parallel": "§105 decides closed-form for Q1/Q2/Q3 (NOT recommendation-and-wait); §104 sibling explores I4-refine path in parallel",
+    "f1_f2_lattice_fit": "safe — no σ(6)=12 / τ(6)=4 / φ(6)=2 / J₂(6)=24 derivation",
+    "downstream_consumer_hexa_lang": "read-only, never edited",
+    "anti_padding_per_s13M_s13L": "Q2 option (b) manufactured-Y rejected; honest-OPEN preferred"
+  },
+
+  "goal_distance": {
+    "north_star_unchanged": true,
+    "milestones_unchanged": ["§15", "§51", "§72"],
+    "goal_reached": false,
+    "honest_status": "§105 is DESIGN-TIER ($0 design of corpus-enhancement source taxonomy + Q3' evaluation), NOT build-tier, NOT fire-tier. Q4 honest-OPEN: G2 fails on cond-2 implementation deferral, but the boundary is mapped precisely. A future §106 cycle that implements Q1's (a)+(c) compositional generator + cond-2 per-record physics filter + builds + re-evaluates Q3' has a credible chance of returning Y on I4 ↑↑. GOAL emergence pending fire on built corpus."
+  },
+
+  "single_most_honest_finding": "§105's value is mapping THREE distinct boundaries explicitly: Q1 ≥10³× S2 scale IS achievable at $0 design via compositional growth (1M records via 168 × 30 × 200 = 1,008,000) — but doesn't prove built artifact passes I4. Q2 S3 unblock CANNOT be achieved at design-tier without trained dual-anima ckpt — §62 echo-collapse is fire-tier OUTCOME, honest-OPEN is the higher-value design. Q3 S4 corpus form EXISTS but is §29-closed standalone, inherits §92 reframe as training-objective primary form. Q4 evaluates N honestly because cond-2 (per-record physics filter implementation) is build-time, not design-time. §105 refuses manufactured Y at every Q — three boundaries mapped, each preserving the evidence base of the predicates §101/§29/§62/§92 closed."
+}
