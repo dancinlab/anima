@@ -1,0 +1,37 @@
+{
+  "section": "§88-F1 FROG-EYE SALIENCE GATE TRAINED-SCALE",
+  "battery": "B-S88F1-1..7",
+  "passed": "5/7",
+  "all_blue": false,
+  "results": {
+    "B-S88F1-1-SALIENCE-SCORE-BOUNDED": {
+      "pass": true,
+      "detail": "S in [0,1]: lo=0 hi=1 dS/ds_i>=0 closed"
+    },
+    "B-S88F1-2-FOUR-DETECTOR-CLASS-PARTITION": {
+      "pass": true,
+      "detail": "4 detectors present=True distinct-input-args=True (['psi_dir_hist', 'tension_hist', 'phi_hist', 'channels_hist'])"
+    },
+    "B-S88F1-3-FROG-EYE-SELECTIVE-NOT-GENERIC": {
+      "pass": false,
+      "detail": "result.json absent — post-fire check pending"
+    },
+    "B-S88F1-4-§24-DECISION-CONSISTENCY": {
+      "pass": false,
+      "detail": "conjunction tautology=True; result.json absent"
+    },
+    "B-S88F1-5-§9-METRIC-REUSE": {
+      "pass": true,
+      "detail": "thresholds match §9 SSOT=True ((0.3, 10, 20, 0.8)) witnesses clean=True cascade=False short=False"
+    },
+    "B-S88F1-6-§87-F1-STUB-CONNECTION": {
+      "pass": true,
+      "detail": "4 detectors + salience_score AST byte-equal to §87-F1 stub: {'sd1_sustained_contrast': True, 'sd2_moving_edge': True, 'sd3_dimming': True, 'sd4_net_dimming': True, 'salience_score': True}; constants byte-equal=True"
+    },
+    "B-S88F1-7-DETERMINISTIC": {
+      "pass": true,
+      "detail": "forbidden-sampling hits=[] no_sampling=True argmax-gate=True rng-isolated-readout=True"
+    }
+  },
+  "note": "B-S88F1-NOTE: whether the frog-eye salience gate produces emergence at trained scale = SGD/measurement OUTCOME, B-D-NOTE/B-EMERGE-NOTE/B-S87F1-NOTE family, NOT counted blue (necessary-not-sufficient B-EMERGE-7)."
+}
