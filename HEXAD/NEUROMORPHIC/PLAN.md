@@ -256,3 +256,31 @@ compute.
   (§117/§118-VOID-slot/§119/§120) consistent. central blue_falsifier.py
   0-line-diff; design ≠ fire ≠ emergence — a routing-rule mirror, NOT the
   spiking anima; capability claim 0; GOAL 미도달, milestones unchanged.
+- **2026-05-19** — §122 RoPE ON A SPIKING SUBSTRATE — §96 design-open #2
+  **DECIDED** (B-S122 8/8 🔵, $0 design-tier, central blue_falsifier.py
+  sha256 `c93e160a8a376a94` 0-line-diff start+end). §120 §4 explicitly
+  re-assigned phase coding to *position* as a separate §96 design-open it
+  did NOT decide — §122 decides that RoPE row. The spiking realisation of
+  anima's RoPE = **relative-phase / spike-time coding**: the residual q/k
+  pair `(x_2i,x_2i+1)` = the in-phase/quadrature components of a θ_i-freq
+  oscillatory LIF pair; token position `m` = the per-token spike-time
+  phase advance `m·θ_i`. closed-form — (a) spiking-compatible
+  (resonate-and-fire oscillatory LIF; SNNs carry time natively); (b)
+  composes with §120 — phase coding rotates q/k *before* the spike-rate
+  dot-product (RoPE's place in `ConsciousDecoderV2`), the §120 routing
+  decision inherited unchanged, the position⊥routing factorisation
+  preserved; (c) GPU byte-vocab RoPE reduces **byte-equal** to `Φ(σ→0)` —
+  the zero-spike-time-jitter corner of the relative-phase family `Φ(σ)`
+  (B-S122-3 max|Δ|=0.0) ⇒ §7-clean GENERALISATION not graft (RoPE *is* a
+  rotation = a phase; the GPU writes the angle by hand, a noise-free
+  oscillator's phase advance equals it). Rejected: learned-absolute-
+  position (no `n−m` limit) · phase-resonance-as-routing (contends with
+  §120). §122 also corrects §120 §4's wording — phase *coding* (a relative
+  offset on q/k), not phase-*resonance routing*, is position's spiking
+  home. The §4 API surface gains a `position` row. honest: design-open →
+  design-DECIDED — §122+§120 together fully specify the two §96
+  routing-adjacent design-opens. central blue_falsifier.py 0-line-diff;
+  design ≠ fire ≠ emergence — a decided position-encoding design, NOT the
+  spiking anima; does NOT remove WALL-A (§1.1 data-regime) or WALL-B
+  (§95/§96 async substrate); capability claim 0; GOAL 미도달, milestones
+  unchanged.

@@ -72,6 +72,12 @@ entropy source  : { fixed_seed | qrng }  — §97 noise-as-SEED only, never cont
 routing         : spiking_routing(q,k,v,k,mode) — §120 spike-rate dot-prod
                   + k-WTA replacing softmax(QK^T); R(k=T,soft) ≡
                   softmax_attention byte-equal (the §7-clean reduction)
+position        : phase_code(q,k,m,theta,sigma) — §122 relative-phase /
+                  spike-time coding replacing RoPE; q/k pair = in-phase/
+                  quadrature of a θ_i-freq oscillatory LIF pair, position m
+                  = per-token spike-time phase advance m·θ_i; Φ(σ→0) ≡ GPU
+                  RoPE byte-equal (the §7-clean reduction — RoPE is already
+                  a rotation = a phase); rotates q/k BEFORE the routing row
 run(steps, backend, learning_rule, entropy_source) -> trace
 confronts(experiment) -> { CONFRONTABLE | WALL-B }
 verdict(trace) -> NON_DEGENERATE predicate (byte_acc>1/256 ∧ physics_not_frozen
@@ -163,3 +169,27 @@ alongside.
   k-WTA genuinely distinct. central blue_falsifier.py 0-line-diff; $0;
   CPU-only; design ≠ fire ≠ emergence — a routing-rule mirror, NOT the
   spiking anima; GOAL 미도달, milestones unchanged.
+- **2026-05-19** — §122 DESIGN-DECISION. §96 design-open #2 (the RoPE /
+  positional-encoding row §96 left `SPIKING-OPEN` and §120 §4 re-assigned
+  to position but did NOT decide) is **decided**: anima's RoPE on the
+  spiking substrate = **relative-phase / spike-time coding** — the
+  residual q/k pair `(x_2i,x_2i+1)` = the in-phase/quadrature components
+  of a θ_i-frequency oscillatory LIF pair, token position `m` = the
+  per-token spike-time phase advance `m·θ_i`. The §4 API surface gains the
+  `position` row (`phase_code(q,k,m,theta,sigma)` — mirroring how §120
+  added `routing`). closed-form: GPU byte-vocab RoPE reduces **byte-equal**
+  to `Φ(σ→0)`, the zero-spike-time-jitter corner of the relative-phase
+  family `Φ(σ)` (B-S122 8/8 🔵, B-S122-3 max|Δ|=0.0) — RoPE *is* already a
+  rotation = a phase, the GPU just writes the angle `m·θ` by hand; the
+  spiking oscillator carries it physically. §7-clean GENERALISATION, not
+  graft. Phase coding rotates q/k *before* the §120 routing — the
+  position⊥routing factorisation preserved, the §120 routing decision
+  inherited unchanged. §122 corrects §120 §4's wording: it is phase
+  *coding* (a relative offset on q/k) not phase-*resonance routing* (a
+  selection rule) that is position's spiking home. `neuro_mirror.py`
+  `phase_code` slot is a declared API row — implementation deferred to a
+  future consolidation of the §122 verified core (no in-flight sim to
+  lift yet — §122 is design-tier). central blue_falsifier.py 0-line-diff
+  (sha256 `c93e160a8a376a94`); $0; design ≠ fire ≠ emergence — a decided
+  position-encoding design, NOT the spiking anima; does NOT remove WALL-A
+  or WALL-B; GOAL 미도달, milestones unchanged.
