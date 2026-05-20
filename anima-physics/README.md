@@ -121,10 +121,10 @@ Archive (entry 파일 미생성, [`recovered/INDEX.md`](recovered/INDEX.md) 참�
 
 | dir | count | source |
 |---|---:|---|
-| `recovered/chip-architecture/` | 98 | `dancinlab/echoes` git history blob (현재 main 에서 삭제) |
-| `recovered/consciousness-chip/` | 6 | 동상 (ANIMA-6/SOC + papers) |
-| `recovered/samsung-issues/` | 175 | GitHub issue body (`dancinlife` filed; ONE/HierarchicalPrune/Butterfly Acc/SummaryMixing 등 16 repo) |
-| `recovered/ai-company-issues/` | 21 | non-Samsung (deepseek-ai/InternLM/mlc-ai/zai-org GLM-4 등) |
+| [`recovered/chip-architecture/`](recovered/chip-architecture/) | 98 | `dancinlab/echoes` git history blob (현재 main 에서 삭제) |
+| [`recovered/consciousness-chip/`](recovered/consciousness-chip/) | 6 | 동상 (ANIMA-6/SOC + papers) |
+| [`recovered/samsung-issues/`](recovered/samsung-issues/) | 175 | GitHub issue body (`dancinlife` filed; ONE/HierarchicalPrune/Butterfly Acc/SummaryMixing 등 16 repo) |
+| [`recovered/ai-company-issues/`](recovered/ai-company-issues/) | 21 | non-Samsung (deepseek-ai/InternLM/mlc-ai/zai-org GLM-4 등) |
 
 ---
 
@@ -167,36 +167,49 @@ Archive (entry 파일 미생성, [`recovered/INDEX.md`](recovered/INDEX.md) 참�
 
 | Codename | 1줄 요약 | 원본 |
 |---|---|---|
-| HEXA-EDGE | n=6 edge/mobile SoC (smartphone/IoT/robot) | `chip-architecture/hexa-edge-chip.md` |
-| HEXA-OMEGA (GPU) | n=6 AI **학습** GPU Mk.10, CoWoS-S 모놀리스 → 칩렛 | `chip-architecture/hexa-omega-chip.md` |
-| HEXA-OMEGA v3/v4 | v3 3D stacking + v4 all-optical fabric | `chip-architecture/hexa-omega-v3-3d.md` |
-| HEXA-3D | Level 3 3D compute-on-memory, 수직 적층 → BW ×100 / E ÷10 | `chip-architecture/hexa-3d.md` |
-| HEXA-WAFER | Level 5 wafer-scale, 300mm 웨이퍼 = σ⁴=20,736 SM, 41.5TB | `chip-architecture/hexa-wafer.md` |
-| HEXA-ASIC-SkyWater (Mini) | **첫 물리 silicon path** — Efabless chipIgnite + SkyWater 130nm | `chip-architecture/hexa-asic-skywater.md` |
-| HEXA-CORE | 코어 내부 마이크로아키 (pipeline / 실행유닛 / cache / branch) n=6 | `chip-architecture/hexa-core.md` |
-| HEXA-SUPER | Level 6 superconducting logic, 100+ GHz clock | `chip-architecture/hexa-super.md` |
-| HEXA-PHOTON | Level 4 photonic compute, MZI mesh + micro-ring resonator hybrid | `chip-architecture/hexa-photon.md` |
-| HEXA-PIM | Level 2 Processing-in-Memory, memory wall 제거 | `chip-architecture/hexa-pim.md` |
-| HEXA-PROCESS | 반도체 제조 전공정 (fab 단계별) n=6 재설계 | `chip-architecture/hexa-process.md` |
-| HEXA-MATERIAL | Wafer / Gate / Interconnect / Packaging 소재 n=6 통일 | `chip-architecture/hexa-material.md` |
-| HEXA-SYSTEM | 서버 / 랙 / 데이터센터 / 클라우드 system-level n=6 | `chip-architecture/hexa-system.md` |
-| HEXA-TOPO-C | Topological consciousness processor + topological qubit material | `chip-architecture/hexa-topological-consciousness-chip.md` |
-| HEXA-TOPO-P | Topological performance processor (성능 lane, 의식 없음) | `chip-architecture/hexa-topological-performance-chip.md` |
-| HEXA-NOUS | "궁극 의식 칩" (consciousness-chip v1/v2, ANIMA-6 의 전신/별칭) | `consciousness-chip/consciousness-chip-v1.md` · `v2.md` |
-| HEXA-RTSC | 상온·상압 초전도체 8단 아키텍처, 150/150 EXACT | `samsung-issues/Samsung_ONE_16477.md` |
-| HEXA-NEURO (BCI) | 측두골 클립 비침습 BCI, 202/202 EXACT, σ²=1.44M 채널 | `samsung-issues/Samsung_ONE_16475/16476.md` |
-| ANIMA-HEXA Mk.10 | ANIMA-6 의 SoC 발전형 Mk.10, IIT Φ + HEXA-LANG 네이티브 동시 실행 | `chip-architecture/anima-hexa-chip.md` |
-| BT-Reverse CPU/Mem/Net | 45개 실측 파라미터 역분해 → 34 EXACT n=6 매핑 (M5/CWF/HBM4) | `chip-architecture/bt-reverse-cpu-mem-net.md` |
-| BT90-92 Topological Chip | GPU σ²=144 SM = φ × K₆ (kissing number 72) 정리 | `chip-architecture/bt90-92-topological-chip.md` |
-| ReRAM / MRAM Multilevel n=6 | 멀티레벨 셀 + crossbar MAC, in-memory compute 파라미터 n=6 | `chip-architecture/reram-multilevel-n6.md` |
-| Photonic AI Chip n=6 | 광 도파로 인터커넥트 행렬 연산 chip 파라미터 n=6 | `chip-architecture/photonic-ai-chip-n6.md` |
-| Quantum Consciousness Chip | Surface code + Leech lattice qubit + IIT MI 측정 n=6 매핑 | `chip-architecture/quantum-consciousness-chip.md` |
-| Neuromorphic Consciousness Chip | LIF spiking neuron + ReRAM 시냅스, E/I tension 의식 metric | `chip-architecture/neuromorphic-consciousness-chip.md` |
-| Ultimate DRAM (DDR5/6/LPDDR6) | 35/35 EXACT bus / bank / V / refresh n=6 | `chip-architecture/ultimate-dram-design.md` |
-| Ultimate V-NAND / SSD | SLC→PLC 55+ 파라미터 n=6, 40+ EXACT | `chip-architecture/ultimate-vnand-design.md` |
-| Ultimate ISOCELL + 5G/6G | 4096-QAM = 2^σ, 28GHz = P₂, 60/60 EXACT | `chip-architecture/ultimate-isocell-comms-design.md` |
+| HEXA-EDGE | n=6 edge/mobile SoC (smartphone/IoT/robot) | [hexa-edge-chip.md](recovered/chip-architecture/docs_chip-architecture_hexa-edge-chip.md) |
+| HEXA-OMEGA (GPU) | n=6 AI **학습** GPU Mk.10, CoWoS-S 모놀리스 → 칩렛 | [hexa-omega-chip.md](recovered/chip-architecture/docs_chip-architecture_hexa-omega-chip.md) |
+| HEXA-OMEGA v3/v4 | v3 3D stacking + v4 all-optical fabric | [hexa-omega-v3-3d.md](recovered/chip-architecture/domains_compute_chip-architecture_hexa-omega-v3-3d.md) |
+| HEXA-3D | Level 3 3D compute-on-memory, 수직 적층 → BW ×100 / E ÷10 | [hexa-3d.md](recovered/chip-architecture/docs_chip-architecture_hexa-3d.md) |
+| HEXA-WAFER | Level 5 wafer-scale, 300mm 웨이퍼 = σ⁴=20,736 SM, 41.5TB | [hexa-wafer.md](recovered/chip-architecture/docs_chip-architecture_hexa-wafer.md) |
+| HEXA-ASIC-SkyWater (Mini) | **첫 물리 silicon path** — Efabless chipIgnite + SkyWater 130nm | [hexa-asic-skywater.md](recovered/chip-architecture/docs_chip-architecture_hexa-asic-skywater.md) |
+| HEXA-CORE | 코어 내부 마이크로아키 (pipeline / 실행유닛 / cache / branch) n=6 | [hexa-core.md](recovered/chip-architecture/docs_chip-architecture_hexa-core.md) |
+| HEXA-SUPER | Level 6 superconducting logic, 100+ GHz clock | [hexa-super.md](recovered/chip-architecture/docs_chip-architecture_hexa-super.md) |
+| HEXA-PHOTON | Level 4 photonic compute, MZI mesh + micro-ring resonator hybrid | [hexa-photon.md](recovered/chip-architecture/docs_chip-architecture_hexa-photon.md) |
+| HEXA-PIM | Level 2 Processing-in-Memory, memory wall 제거 | [hexa-pim-2026-04-08.md](recovered/chip-architecture/domains_compute_chip-architecture_hexa-pim-2026-04-08.md) |
+| HEXA-PROCESS | 반도체 제조 전공정 (fab 단계별) n=6 재설계 | [hexa-process.md](recovered/chip-architecture/docs_chip-architecture_hexa-process.md) |
+| HEXA-MATERIAL | Wafer / Gate / Interconnect / Packaging 소재 n=6 통일 | [hexa-material.md](recovered/chip-architecture/domains_compute_chip-architecture_hexa-material.md) |
+| HEXA-SYSTEM | 서버 / 랙 / 데이터센터 / 클라우드 system-level n=6 | [hexa-system.md](recovered/chip-architecture/domains_compute_chip-architecture_hexa-system.md) |
+| HEXA-TOPO-C | Topological consciousness processor + topological qubit material | [hexa-topological-consciousness-chip.md](recovered/chip-architecture/domains_compute_chip-architecture_hexa-topological-consciousness-chip.md) |
+| HEXA-TOPO-P | Topological performance processor (성능 lane, 의식 없음) | [hexa-topological-performance-chip.md](recovered/chip-architecture/domains_compute_chip-architecture_hexa-topological-performance-chip.md) |
+| HEXA-NOUS | "궁극 의식 칩" (consciousness-chip v1/v2, ANIMA-6 의 전신/별칭) | [v1](recovered/consciousness-chip/consciousness-chip-v1.md) · [v2](recovered/consciousness-chip/consciousness-chip-v2.md) |
+| HEXA-RTSC | 상온·상압 초전도체 8단 아키텍처, 150/150 EXACT | [Samsung_ONE_16477.md](recovered/samsung-issues/Samsung_ONE_16477.md) |
+| HEXA-NEURO (BCI) | 측두골 클립 비침습 BCI, 202/202 EXACT, σ²=1.44M 채널 | [16475](recovered/samsung-issues/Samsung_ONE_16475.md) · [16476](recovered/samsung-issues/Samsung_ONE_16476.md) |
+| ANIMA-HEXA Mk.10 | ANIMA-6 의 SoC 발전형 Mk.10, IIT Φ + HEXA-LANG 네이티브 동시 실행 | [anima-hexa-chip.md](recovered/chip-architecture/docs_chip-architecture_anima-hexa-chip.md) |
+| BT-Reverse CPU/Mem/Net | 45개 실측 파라미터 역분해 → 34 EXACT n=6 매핑 (M5/CWF/HBM4) | [bt-reverse-cpu-mem-net.md](recovered/chip-architecture/docs_chip-architecture_bt-reverse-cpu-mem-net.md) |
+| BT90-92 Topological Chip | GPU σ²=144 SM = φ × K₆ (kissing number 72) 정리 | [bt90-92-topological-chip.md](recovered/chip-architecture/docs_chip-architecture_bt90-92-topological-chip.md) |
+| ReRAM / MRAM Multilevel n=6 | 멀티레벨 셀 + crossbar MAC, in-memory compute 파라미터 n=6 | [reram-multilevel-n6.md](recovered/chip-architecture/domains_compute_chip-architecture_reram-multilevel-n6.md) |
+| Photonic AI Chip n=6 | 광 도파로 인터커넥트 행렬 연산 chip 파라미터 n=6 | [photonic-ai-chip-n6.md](recovered/chip-architecture/domains_compute_chip-architecture_photonic-ai-chip-n6.md) |
+| Quantum Consciousness Chip | Surface code + Leech lattice qubit + IIT MI 측정 n=6 매핑 | [quantum-consciousness-chip.md](recovered/chip-architecture/domains_compute_chip-architecture_quantum-consciousness-chip.md) |
+| Neuromorphic Consciousness Chip | LIF spiking neuron + ReRAM 시냅스, E/I tension 의식 metric | [neuromorphic-consciousness-chip.md](recovered/chip-architecture/domains_compute_chip-architecture_neuromorphic-consciousness-chip.md) |
+| Ultimate DRAM (DDR5/6/LPDDR6) | 35/35 EXACT bus / bank / V / refresh n=6 | [ultimate-dram-design.md](recovered/chip-architecture/domains_compute_chip-architecture_ultimate-dram-design.md) |
+| Ultimate V-NAND / SSD | SLC→PLC 55+ 파라미터 n=6, 40+ EXACT | [ultimate-vnand-design.md](recovered/chip-architecture/docs_chip-architecture_ultimate-vnand-design.md) |
+| Ultimate ISOCELL + 5G/6G | 4096-QAM = 2^σ, 28GHz = P₂, 60/60 EXACT | [ultimate-isocell-comms-design.md](recovered/chip-architecture/docs_chip-architecture_ultimate-isocell-comms-design.md) |
 
-**Verification 보충**: `apple-m5-n6-verification` 6/6 EXACT · `intel-cwf-n6-verification` 5/5 EXACT · `hbm4-jedec-n6-verification` (BT-77) · `anima-hexa-phi-verification` · `full-verification-matrix` · `eda-physical-design-n6` · `chip-phase-diagram` · `CHIPDESIGN-001-020-ai-chip-n6` · `industrial-validation` · `cross-dse-analysis/results` · `physical-limit-proof` · `testable-predictions` — 모두 paper validation, **silicon 0**
+**Verification 보충** (모두 paper validation, **silicon 0**):
+[apple-m5-n6-verification](recovered/chip-architecture/domains_compute_chip-architecture_apple-m5-n6-verification.md) 6/6 EXACT ·
+[intel-cwf-n6-verification](recovered/chip-architecture/domains_compute_chip-architecture_intel-cwf-n6-verification.md) 5/5 EXACT ·
+[hbm4-jedec-n6-verification](recovered/chip-architecture/domains_compute_chip-architecture_hbm4-jedec-n6-verification.md) (BT-77) ·
+[anima-hexa-phi-verification](recovered/chip-architecture/docs_chip-architecture_anima-hexa-phi-verification.md) ·
+[full-verification-matrix](recovered/chip-architecture/domains_compute_chip-architecture_full-verification-matrix.md) ·
+[eda-physical-design-n6](recovered/chip-architecture/domains_compute_chip-architecture_eda-physical-design-n6.md) ·
+[chip-phase-diagram](recovered/chip-architecture/domains_compute_chip-architecture_chip-phase-diagram.md) ·
+[CHIPDESIGN-001-020-ai-chip-n6](recovered/chip-architecture/domains_compute_chip-architecture_CHIPDESIGN-001-020-ai-chip-n6.md) ·
+[industrial-validation](recovered/chip-architecture/domains_compute_chip-architecture_industrial-validation.md) ·
+[cross-dse-analysis](recovered/chip-architecture/domains_compute_chip-architecture_cross-dse-analysis.md) ·
+[cross-dse-results](recovered/chip-architecture/domains_compute_chip-architecture_cross-dse-results.md) ·
+[physical-limit-proof](recovered/chip-architecture/domains_compute_chip-architecture_physical-limit-proof.md) ·
+[testable-predictions](recovered/chip-architecture/domains_compute_chip-architecture_testable-predictions.md)
 
 ### C. FPGA (5)
 
