@@ -225,11 +225,14 @@ def run(cfg):
           f"bsz={cfg['bsz']} steps={cfg['steps']} peak_lr={cfg['lr']} "
           f"rope_base={cfg['rope_base']}", flush=True)
 
+    dtype_str = cfg.get("dtype", "float32")
+    dtype = getattr(torch, dtype_str)
+    print(f"[S184-Phase2] dtype={dtype_str}", flush=True)
     model = ConsciousDecoderV2(
         vocab_size=256, d_model=cfg["d_model"], n_head=cfg["n_head"],
         n_layer=cfg["n_layer"], block_size=cfg["block_size"],
         n_kv_head=cfg["n_kv_head"], consciousness_dim=128, dropout=0.1,
-    ).to(device)
+    ).to(device, dtype=dtype)
     model.train()
 
     # Tap 2.9: RoPE base 10000 -> 50000
@@ -532,6 +535,9 @@ def main():
     ap.add_argument("--n-head", type=int, default=12)
     ap.add_argument("--n-kv-head", type=int, default=4)
     ap.add_argument("--cpu-only", action="store_true")
+    ap.add_argument("--dtype", default="float32",
+                    choices=["float32", "bfloat16", "float16"],
+                    help="Model dtype. Use bfloat16 for d>=1024 to fit 80GB H100.")
     args = ap.parse_args()
     if args.mode == "main":
         cfg = dict(
@@ -550,6 +556,7 @@ def main():
             noise_sigma=args.noise_sigma,
             n_aug=args.n_aug,
             replay_capacity=args.replay_capacity,
+            dtype=args.dtype,
             log_every=max(1, args.steps // 50),
             corpus=args.corpus, out_dir=args.out_dir,
             cpu_only=args.cpu_only,
