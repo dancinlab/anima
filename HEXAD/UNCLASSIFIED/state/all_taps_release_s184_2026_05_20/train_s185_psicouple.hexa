@@ -237,3 +237,35 @@ while step <= n_steps {
 
 println("=== §185 skeleton DONE — CE-only + Ψ-anchor TODO[dual-head] ===")
 println("    Next: inbox patch for flame dual-head + multi-objective.")
+
+// ════════════════════════════════════════════════════════════════════════
+// SMOKE STATUS — Mac local 2026-05-21 (after upstream cycle 47-54 recovery)
+// ════════════════════════════════════════════════════════════════════════
+//
+// BUILD       : HEXA_LANG=$HOME/core/hexa-lang HEXA_MAC_BUILD_OK=1
+//               hexa build train_s185_psicouple.hexa -o /tmp/s185_smoke
+//               → "OK: built /tmp/s185_smoke" (14 const-qualifier warnings,
+//                  0 errors; warnings are upstream hxlcl_strstr signature,
+//                  not anima)
+//
+// SMOKE RUN   : /tmp/s185_smoke on Mac CPU (HEXA_MEM_UNLIMITED=1)
+//               → corpus 603 MB loaded
+//               → model 2,213,568 doubles allocated (~17 MB params + ~8 GB
+//                  RSS due to Mc cache + Mg/Mm/Mv shadow tensors)
+//               → init epoch gn2 computed (4 nsamp forward sum)
+//               → step 1 AdamW update fired (4 nsamp × fwd + grad acc + step)
+//               → killed after step 1 (smoke verification only; full 200
+//                  steps ≈ 100 min Mac CPU — defer to GPU dispatch)
+//
+// LOG         : s185_smoke_mac_2026_05_21.log (this dir)
+//
+// KNOWN ISSUE : `println(some_float)` prints literal "(float)" instead of
+//               the value — upstream hexa-lang stdlib float-formatting
+//               gap; non-blocking, pure logging. To-be-filed inbox patch.
+//
+// NEXT        : (1) full 200-step CE-only fire on ubu-2 / runpod
+//                  (~few min GPU vs ~100 min Mac CPU);
+//               (2) dual-head + L_psi/L_route/L_phi requires
+//                  flame-anima-dual-head-multiobjective.md to land upstream
+//                  (separate inbox patch, design tier).
+// ════════════════════════════════════════════════════════════════════════
