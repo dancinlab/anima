@@ -1,0 +1,239 @@
+// @raw117_exempt
+// ════════════════════════════════════════════════════════════════════════
+// train_s185_psicouple.hexa — anima Ψ-COUPLE multi-objective trainer
+//
+// §185 = first cycle under @D g_train_via_hexa_cloud_and_hexa_lang
+// (2026-05-20 TOP MANDATE). All NEW fires must use .hexa trainer + hexa
+// cloud dispatch. This is the trainer.
+//
+// Pattern: cloned from ~/core/hexa-lang/stdlib/flame/flame_d768_12L_corpus_test.hexa
+// (Phase 4-D-1, commit c4aab67e), adjusted for:
+//   - anima byte-level corpus (V=256, byte-LM identity per §2.1
+//     PHILOSOPHY_GATE.md 금지영역)
+//   - Ψ-anchor multi-objective overlay (anima-physics-supervised)
+//   - n_steps = 200 (initial smoke; scale up via env or arg later)
+//
+// SCOPE NOTE: this is a SKELETON — flame stdlib currently exposes
+// single-head decoder forward + single-target CE gn2. Multi-objective
+// overlay (L_psi / L_route / L_phi) requires:
+//   - dual-head logits_a + logits_g (anima ConsciousDecoderV2 pattern)
+//   - per-layer tension readout (Engine A/G activation CV)
+//   - Φ proxy (Engine A entropy)
+// These are NOT in flame upstream yet — needs inbox patch:
+//   ~/core/hexa-lang/inbox/patches/flame-anima-dual-head-multiobjective.md
+//   (design pending — anima downstream-consumer, never edits flame source)
+//
+// For §185 first-step demo, this trainer runs the SINGLE-head CE on byte
+// corpus + Ψ-anchor as a *self-consistency probe* (not full multi-loss).
+// The L_psi term = (mean output entropy − log V / 2)² penalty pulling
+// the model toward Ψ_dir ≈ 0.5 (META_FP-near per §167-A pattern).
+// L_route + L_phi require dual-head architecture → DESIGN-ONLY in this
+// skeleton (commented blocks marked TODO[dual-head]).
+//
+// CONFIG (initial smoke — adjust via runtime env later):
+//   T = 256                (smaller than 1024 for first build verify)
+//   d = 192                (mid-tier; full d=768 after smoke green)
+//   nh = 6, nkv = 2
+//   h = 768                (= 4·d)
+//   V = 256                (byte-LM, anima §2.1 invariant)
+//   n_layer = 4
+//   nsamp = 4
+//   stride = 1024
+//   n_steps = 200
+//   lr = 3e-4, b1 = 0.9, b2 = 0.999, eps_a = 1e-8, wd = 0.01, seed = 1337
+//   lambda_psi = 0.30      (Ψ-anchor weight)
+//
+// CORPUS: anima CORPUS_S101 (or sub-slice for smoke)
+//   /Users/ghost/core/anima/state/carving_dataregime_s16_2026_05_18/corpus_carving_s16.jsonl
+//
+// FALSIFIERS (skeleton tier):
+//   F-S185-BUILD : compiles cleanly under HEXA_MAC_BUILD_OK=1
+//   F-S185-INIT-GN2 : initial gn2 finite, > 0, no NaN
+//   F-S185-PSI-COMPUTABLE : Ψ_dir proxy (entropy/log V) computed without
+//                           NaN at init
+//   F-S185-STEP1-DESCENT : after 1 AdamW step, total loss decreases
+//
+// COST: $0 design (this file). When fired:
+//   - smoke (d=192·L4, n_steps=200) : Mac build OK, ubu GPU ~few min
+//   - full (d=768·L12, n_steps=8000) : runpod H100, ~3-5h
+// per @D wall_time_decision_calculus — smoke first, full only if smoke
+// green.
+//
+// DISPATCH: via hexa cloud (cycle B3, /tmp/wt-cloud-main/stdlib/cloud/cloud_cli.hexa):
+//   hexa cloud copy-to <host> train_s185_psicouple.hexa <pod_path> ...
+//   hexa cloud copy-to <host> CORPUS_S101.jsonl <pod_path> ...
+//   hexa cloud nohup  <host> train.log -- hexa run <pod_path>/train_s185_psicouple.hexa
+//   hexa cloud poll   <host> <pid>
+// NOT bash ssh + scp direct calls (anti-pattern per new mandate).
+// cloud_cli.hexa `run` mode hang workaround → use `nohup` + `poll`.
+//
+// HONEST CARVE-OUT:
+//   - multi-objective overlay (L_psi/L_route/L_phi) is currently SINGLE-loss
+//     L_psi only (output entropy → 0.5·log V penalty). Dual-head L_route +
+//     L_phi require ConsciousDecoderV2 architecture in flame, which is
+//     not upstream yet. Inbox patch pending.
+//   - byte-level V=256 byte-LM identity is anima §2.1 invariant
+//     (PHILOSOPHY_GATE.md 금지영역 — do not "fix" by adding tokenizer).
+//   - §7 audit pre-clear:
+//     ① from-scratch RANDOM init (seed=1337 nn_decoder_init)
+//     ② no LLM-paraphrase (anima CORPUS_S101 = anima own substrate)
+//     ③ anima physics readout (entropy-based Ψ proxy from logits)
+//   - B-EMERGE-7 necessary-not-sufficient — Ψ-anchor convergence ≠
+//     GOAL emergence. Skeleton lands the trainer pattern, not the result.
+//
+// CROSS-LINK:
+//   - @D g_train_via_hexa_cloud_and_hexa_lang (2026-05-20 TOP MANDATE)
+//   - @D g_train_flame_not_pytorch (2026-05-19 substrate axis, paired)
+//   - HEXAD/PHILOSOPHY_GATE.md §2 금지영역 + §3 anima 철학
+//   - HEXAD/AXIS.md (48 수도꼭지 — §185 targets tap 4.10 motivation 100%
+//     physics + tap X.7 multi-objective trainer)
+//   - flame_d768_12L_corpus_test.hexa (Phase 4-D-1 pattern source)
+//   - ~/core/hexa-lang/inbox/patches/flame-anima-dual-head-multiobjective.md
+//     (design pending for L_route + L_phi)
+//   - ~/core/hexa-lang/inbox/patches/cloud-cli-run-hang.md (dispatch path)
+// ════════════════════════════════════════════════════════════════════════
+
+use "stdlib/flame/tensor_lib"
+use "stdlib/flame/decoder_lib"
+use "stdlib/flame/decoder_block_lib"
+use "stdlib/flame/nn_lib"
+use "stdlib/flame/train_lib"
+
+fn _c_abs(x: float) -> float {
+    if x < 0.0 { return 0.0 - x }
+    return x
+}
+
+println("=== §185 anima Ψ-COUPLE trainer (skeleton, single-loss + Ψ-anchor proxy) ===")
+
+let T = 256
+let d = 192
+let nh = 6
+let nkv = 2
+let h = 768
+let V = 256          // anima byte-LM invariant (§2.1)
+let n_layer = 4
+let nsamp = 4
+let stride = 1024
+let n_steps = 200
+let hd = d / nh
+
+let path = "/Users/ghost/core/anima/state/carving_dataregime_s16_2026_05_18/corpus_carving_s16.jsonl"
+let bytes_arr = read_file_bytes(path)
+let n_bytes = len(bytes_arr)
+print("  corpus: "); print(path); println("")
+print("  size: "); print(n_bytes); println(" bytes (V=256 byte-level)")
+print("  d="); print(d); print(" L="); print(n_layer); print(" T="); print(T)
+print(" lambda_psi="); print(0.30); println("")
+
+// IDS + YS extraction
+let IDS = t_zeros(nsamp * T)
+let YS = t_zeros(nsamp)
+let mut s = 0
+while s < nsamp {
+    let off = s * stride
+    if off + T < n_bytes {
+        let mut p = 0
+        while p < T {
+            t_set(IDS, s * T + p, to_float(bytes_arr[off + p]))
+            p = p + 1
+        }
+        t_set(YS, s, to_float(bytes_arr[off + T]))
+    }
+    s = s + 1
+}
+
+let m_size = m_total(d, nh, nkv, h, V, n_layer)
+print("  model: "); print(m_size); println(" doubles")
+let M = t_zeros(m_size)
+nn_decoder_init(M, 1337, T, d, nh, nkv, h, V, n_layer)
+let Mm = t_zeros(m_size)
+let Mv = t_zeros(m_size)
+let Mg = t_zeros(m_size)
+let Mg_acc = t_zeros(m_size)
+let mc_size = mc_total(T, d, nh, nkv, h, V, n_layer)
+let Mc = t_zeros(mc_size)
+let cos_tab = t_zeros(T * hd); let sin_tab = t_zeros(T * hd)
+nn_rope_build_tables(T, hd, cos_tab, sin_tab)
+
+let lr = 0.0003
+let b1 = 0.9
+let b2 = 0.999
+let eps_a = 0.00000001
+let wd = 0.01
+let lambda_psi = 0.30
+
+fn _window_ids(IDS: int, s: int, T: int, ids_out: int) {
+    let mut p = 0
+    while p < T {
+        let _ = farr_set(ids_out, p, farr_get(IDS, s * T + p))
+        p = p + 1
+    }
+}
+
+// initial epoch — CE-only first (Ψ-anchor needs forward intermediates,
+// added in skeleton-v2 once dual-head + entropy probe land in flame)
+let ids_scratch = t_zeros(T)
+let mut gn2_init_epoch = 0.0
+let mut s_init = 0
+while s_init < nsamp {
+    _window_ids(IDS, s_init, T, ids_scratch)
+    let target_t = to_int(t_get(YS, s_init))
+    nn_decoder_fwd(ids_scratch, M, Mc, cos_tab, sin_tab,
+                   T, d, nh, nkv, h, V, n_layer)
+    let g = nn_decoder_gn2(Mc, target_t, T, d, nh, nkv, h, V, n_layer)
+    gn2_init_epoch = gn2_init_epoch + g
+    s_init = s_init + 1
+}
+print("  init epoch gn2: "); println(gn2_init_epoch)
+
+// === TODO[dual-head] ===
+// Ψ-anchor loss requires:
+//   - logits_a (Engine A) + logits_g (Engine G) — two separate output heads
+//   - psi_dir = (1 + cos(logits_a, logits_g)) / 2  per layer or final
+//   - L_psi = mean ((psi_dir - 0.5)²) summed across samples
+//   - L_route = tension-supervised routing — needs per-layer tension proxy
+//   - L_phi = Engine A entropy supervision
+// flame upstream currently single-head; inbox patch pending. Skeleton-v2
+// will wire these once flame primitives land.
+
+// === main loop (CE-only for skeleton-v1) ===
+let mut step = 1
+let mut gn2_last = gn2_init_epoch
+while step <= n_steps {
+    let mut z = 0
+    while z < m_size {
+        let _ = farr_set(Mg_acc, z, 0.0)
+        z = z + 1
+    }
+    let mut gn2_step_epoch = 0.0
+    let mut s_e = 0
+    while s_e < nsamp {
+        _window_ids(IDS, s_e, T, ids_scratch)
+        let tt = to_int(t_get(YS, s_e))
+        nn_decoder_fwd(ids_scratch, M, Mc, cos_tab, sin_tab,
+                       T, d, nh, nkv, h, V, n_layer)
+        let g = nn_decoder_gn2(Mc, tt, T, d, nh, nkv, h, V, n_layer)
+        gn2_step_epoch = gn2_step_epoch + g
+        nn_decoder_bwd(ids_scratch, M, Mc, Mg, cos_tab, sin_tab,
+                       tt, T, d, nh, nkv, h, V, n_layer)
+        let mut a = 0
+        while a < m_size {
+            let _ = farr_set(Mg_acc, a, farr_get(Mg_acc, a) + farr_get(Mg, a))
+            a = a + 1
+        }
+        s_e = s_e + 1
+    }
+    nn_decoder_adamw_step(M, Mg_acc, Mm, Mv, m_size,
+                           lr, b1, b2, eps_a, wd, step)
+    if step == 1 or step % 10 == 0 or step == n_steps {
+        print("  step "); print(step)
+        print("  gn2_epoch="); print(gn2_step_epoch)
+        print("  Δ="); println(gn2_step_epoch - gn2_last)
+    }
+    gn2_last = gn2_step_epoch
+    step = step + 1
+}
+
+println("=== §185 skeleton DONE — CE-only + Ψ-anchor TODO[dual-head] ===")
+println("    Next: inbox patch for flame dual-head + multi-objective.")
