@@ -487,4 +487,34 @@ anima-physics/
 
 ---
 
-*전수조사: 2026-05-21 · 3-agent 병렬 (루트+docs / substrate / recovered) · 93 active entry file + 300 archive*
+## § 9. 검증 결과 (2026-05-21, 22 ✅ 후보 hexa run fire)
+
+> 22 ✅-tagged substrate entry 를 `hexa run` 으로 실측. 결과 14 PASS / 8 FAIL — 등급 표는 historical LANDED snapshot 기준이고 현 toolchain 환경 차이 / 언어 드리프트가 일부에 영향.
+
+| Verdict | Count | Entry |
+|---|---:|---|
+| ✅ PASS (clean) | 14 | eeg/mu_rhythm · eeg/sleep_stage · hippocampus/theta_gamma · hw/autonomous_expansion · motor_cortex · oscillator/sleep · photonic/temporal_delay · prediction/protention · proprioception · social/kuramoto · quantum/bell_state · tool/v1 · tool/v2 · tool/v3 |
+| 🔧 TRANSPILE OK / probe-FAIL | 5 | arduino · cmos · fpga · memristor · quantum cloud_facade_poc — hexa transpile 정상, probe self-gate FAIL. `env()` stub 반환 → `local_ngspice_unknown_...` (cycle-66 upstream fix landed but `hexa.real` 미리빌드). [`inbox/patches/runtime-env-and-exec-capture-stubs-block-cli-tools`](#) |
+| 🚧 PARSE FAIL (B-class) | 3 | consciousness-loop/{main, main_longrun, snn_main} — `&var` prefix unary 미지원 + AOT `record`/`var`/`*Type` mutation 미지원. `or`/`and` 키워드는 [PR fix/or-and-keyword-alias-2026-05-21](https://github.com/dancinlab/hexa-lang/pull/new/fix/or-and-keyword-alias-2026-05-21) 적용 후 회복 예정. ([inbox note](#)) |
+
+### 진행된 upstream fix
+
+| Branch | Scope |
+|---|---|
+| [`fix/parser-diag-shell-interp-2026-05-21`](https://github.com/dancinlab/hexa-lang/pull/new/fix/parser-diag-shell-interp-2026-05-21) | `self/main.hexa:2169` shell-interp 버그 — parser 진단 본문이 shell command substitution 으로 재해석되던 1줄 fix |
+| [`fix/or-and-keyword-alias-2026-05-21`](https://github.com/dancinlab/hexa-lang/pull/new/fix/or-and-keyword-alias-2026-05-21) | `self/lexer.hexa` `or`/`and` 키워드 alias 복원 (16 lines, codegen unchanged) |
+| ✓ upstream cycle 66 (이미 main) | `self/runtime.c` `hxlcl_getenv` environ-walk fix — 5개 transpile-OK probe-FAIL 의 근본 원인 해결 (hexa.real 리빌드 필요) |
+| 📋 inbox `2026-05-21-anima-physics-{parser-diag-shell-interp,consciousness-loop-address-of-drift}.md` | 보고서 + 패치 hunk + 보류 사유 |
+
+### 보류
+
+| 항목 | 상태 |
+|---|---|
+| hexa.real 리빌드 + 설치 | 메인테이너 release cycle (build_dispatch.hexa 경로) — 리빌드 시 (a) shell-interp diag rendering 클린화 (b) or/and 키워드 복원 (c) env() 작동 → 5개 probe FAIL 회복 |
+| (B) `&var` prefix + AOT record/var | RFC 필요 — upstream owner 의 *Type 매개변수 자동 autoref vs. & 복원 vs. struct mutation API 결정 후 |
+| (B) consciousness-loop 3 파일 port | (B) RFC 결정 후 |
+| demiurge `cli verify` 검증 | `g_cockpit_isolation` (exports/** only) — anima entry path 거부, 별도 routing 필요 |
+
+---
+
+*전수조사: 2026-05-21 · 3-agent 병렬 (루트+docs / substrate / recovered) · 93 active entry file + 300 archive · 22-entry 검증 14/22 PASS · 3 upstream branch (2 PR + cycle-66 main)*
