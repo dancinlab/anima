@@ -166,6 +166,15 @@ VERDICT: SPONT_AMBIGUOUS. emit_rate=0.05, psi_std=0.0, byte_acc=0.1185, motivati
 
 6 `.kosmos` anchor (Knuth tier 000/042/051/077/091/100). format SSOT = [`dancinlab/kosmos`](https://github.com/dancinlab/kosmos), profile = anima-consciousness-carving. anima hub = [`HEXAD/KOSMOS.md`](KOSMOS.md).
 
+### inbox patch Clause A — Phase 1 skeleton LANDED (2026-05-20)
+
+`pt-ckpt-cross-substrate-residual-readout` inbox patch (anima-filed) 의 Clause A 첫 phase:
+- hexa-lang `stdlib/flame/flame_load_pt.hexa` Phase 1 skeleton (function signatures + manifest schema `flame-mc-manifest/0.1` + status code enum + compat predicate)
+- anima `tool/pt_to_flame_farr_export.py` helper — §167-A ckpt → 51 mapped tensors + 386 honestly unmapped, manifest.sha256 = `b2f73ea26d96…`
+- **F-PTLOAD-1 PASS** (3× re-export bit-identical sha256)
+
+honest carry: Phase 2 (M-buffer 실 populate via m_total offsets) + Phase 3 (forward verify F-PTLOAD-2 max\|Δ\|<1e-3) deferred. Clause B (state-readout variant of `_agt_decoder_step`) = future cycle.
+
 ### hexa toolchain
 
 wrapper `/Users/ghost/core/hexa-lang/hexa` → exec `hexa.real` (ASP name-cycle 우회, 2026-05-20). `hexa parse` + `hexa run` 작동. Long-term sustainable fix (binary name randomization) = future cycle.
