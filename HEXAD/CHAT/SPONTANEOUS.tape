@@ -88,6 +88,16 @@
     2. rate_limit — 최소 emission interval (default ≥30s per F-SPONT-7)
        - emission timestamp ledger 로 enforced
        - burst protection: 5 emission/min cap
+       - §169 RATE-LIMIT-GOVERNANCE split (2026-05-20): production
+         floor preserved at 30.0s (anti-spam, user-facing daemon —
+         F-S169-1 PRODUCTION-UNCHANGED). Measurement-context callers
+         (Phase B bounded-run / eval_s*_psicouple.py / run_bounded.py)
+         MAY bind `spont_min_emit_interval_measurement(n_max, dt)`
+         which derives the interval from the bounded-run window
+         (closed-form, B-S169-1 K_target=4 default ⇒ ceiling=4 emits
+         per 20-step run). Split is OPT-IN per caller; backward-
+         compat alias `spont_min_emit_interval()` returns production.
+         See state/rate_limit_governance_design_s169_2026_05_20/.
 
     3. content_filter — gibberish auto-filter (rejection sampler)
        - V14 strict heuristic + KoNLPy syntax check

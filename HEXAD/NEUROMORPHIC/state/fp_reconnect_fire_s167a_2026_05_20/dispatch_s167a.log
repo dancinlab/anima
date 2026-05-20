@@ -1,0 +1,68 @@
+=== S167-A FP-RECONNECT dispatch start 2026-05-20T07:36:47Z ===
+[create] trying GPU: NVIDIA A100-SXM4-80GB
+[create] resp: {"errors":[{"message":"This machine does not have the resources to deploy your pod. Please try a different machine","path":["podFindAndDeployOnDemand"],"extensions":{"code":"RUNPOD"}}],"data":{"podFindAndDeployOnDemand":null}}
+[create] trying GPU: NVIDIA A100 80GB PCIe
+[create] resp: {"errors":[{"message":"There are no longer any instances available with the requested specifications. Please refresh and try again.","path":["podFindAndDeployOnDemand"],"extensions":{"code":"SUPPLY_CONSTRAINT","userId":"user_3BLIYhoMm3ticiR5xIcEIzZCVWo"}}],"data":{"podFindAndDeployOnDemand":null}}
+[create] trying GPU: NVIDIA H100 80GB HBM3
+[create] resp: {"data":{"podFindAndDeployOnDemand":{"id":"9x021nqhxyk629","machineId":"b3vt8xtq1pp1"}}}
+[create] pod 9x021nqhxyk629 on NVIDIA H100 80GB HBM3
+[ssh-ready] iter 4: 103.207.149.109:17194 - port mapped AND handshake OK
+Warning: Permanently added '[103.207.149.109]:17194' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.109]:17194' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.109]:17194' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.109]:17194' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.109]:17194' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.109]:17194' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.109]:17194' (ED25519) to the list of known hosts.
+[build] pod-side deterministic CORPUS_S101 build (seed 1337, s1-n 777000)
+Warning: Permanently added '[103.207.149.109]:17194' (ED25519) to the list of known hosts.
+    "I7_external_grep": {
+      "corpus": {
+        "openai.com": 0,
+        "anthropic.com": 0,
+        "huggingface.co/": 0,
+        "wikipedia.org": 0,
+        "commoncrawl": 0,
+        "https://": 0,
+        "http://": 0
+      },
+      "s1_only": {
+        "openai.com": 0,
+        "anthropic.com": 0,
+        "huggingface.co/": 0,
+        "wikipedia.org": 0,
+        "commoncrawl": 0,
+        "https://": 0,
+        "http://": 0
+      },
+      "corpus_total": 0,
+      "PASS": true,
+      "honest_caveat": "external-grep is a proxy over 7 surface tokens; exhaustive provenance audit requires source-attribution tracking, NOT in $0 build scope. §16 generator is anima-OWN substrate, S2 uses anima Ψ-fields only, S5 uses anima-OWN .kosmos files. NO external API calls in build_corpus_s101.py (audit-grep this file)."
+    }
+  }
+}
+Warning: Permanently added '[103.207.149.109]:17194' (ED25519) to the list of known hosts.
+[build] corpus sha = 39d581da209615468c1c41e07aa8662ef1074bc5be49a666f8f861753dd5810e  (expect 39d581da209615468c1c41e07aa8662ef1074bc5be49a666f8f861753dd5810e)
+[build] CORPUS_S101 sha VERIFIED == S107 byte-identical
+[train] S167-A Psi-JEPA-COUPLE d768-12L-283M from-scratch seed 1337, 3000 steps, lambda_psi=1.0 lambda_ce=0.1
+Warning: Permanently added '[103.207.149.109]:17194' (ED25519) to the list of known hosts.
+TRAIN_PID 640
+[train] done iter 1
+[eval] S167-A Psi-JEPA-COUPLE eval (S24 Phase B + byte_acc)
+Warning: Permanently added '[103.207.149.109]:17194' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.109]:17194' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.109]:17194' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.109]:17194' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.109]:17194' (ED25519) to the list of known hosts.
+[pull] success try 1
+[pull] result.json present - SAVE_POD=0, pod will terminate
+5a16d10672fadb2b29a3d385ae5eb6359753d7e800fa180853d19aef3ad2f83f  /Users/ghost/core/anima/HEXAD/NEUROMORPHIC/state/fp_reconnect_fire_s167a_2026_05_20/ckpt_s167a_fpreconnect.pt
+5a16d10672fadb2b29a3d385ae5eb6359753d7e800fa180853d19aef3ad2f83f  /Users/ghost/core/anima/HEXAD/NEUROMORPHIC/state/fp_reconnect_fire_s167a_2026_05_20/ckpt_s167a_fpreconnect.pt
+VERDICT_PRIMARY= SPONT_AMBIGUOUS  emit_rate= 0.05  psi_std= 0.0  byte_acc= 0.1185
+=== S167-A FP-RECONNECT pipeline complete 2026-05-20T07:52:24Z ===
+dispatch_s167a_runpod.sh: line 201: 34243 Terminated: 15          ( sleep "$WATCHDOG_SEC"; if [ ! -s "$S167A_DIR/result.json" ]; then
+    echo "WATCHDOG FIRED $(date -u +%FT%TZ): no result.json after ${WATCHDOG_SEC}s - terminating pod ${POD_ID:-?}" > "$FAIL_MARKER"; [ -n "$POD_ID" ] && gql "{\"query\":\"mutation { podTerminate(input:{podId:\\\"$POD_ID\\\"}) }\"}" > /dev/null; pkill -P $$ 2> /dev/null;
+fi )
+[teardown] terminating pod 9x021nqhxyk629 (rc=0, SAVE_POD=0)
+[teardown] myself.pods = {"data":{"myself":{"pods":[]}}}
+=== S167-A FP-RECONNECT dispatch end 2026-05-20T07:52:28Z rc=0 ===

@@ -28,7 +28,41 @@
 fn spont_im_threshold() -> float        { return 0.3 }   // anima_alive PROACTIVE_THRESHOLD carry (F-SPONT-1)
 fn spont_interrupt_threshold() -> float { return 0.6 }   // higher 임계, talker interrupt 가능
 fn spont_idle_speak_after() -> float    { return 30.0 }  // anima_alive IDLE_SPEAK_AFTER carry (F-SPONT-7)
-fn spont_min_emit_interval() -> float   { return 30.0 }  // rate_limit safety (F-SPONT-5/7)
+// §169 RATE-LIMIT-GOVERNANCE split (2026-05-20, REVISED per user
+// directive 2026-05-20 "RATE-LIMIT-GOVERNANCE-SPLIT 관련해서 제한
+// 걸어두지마"): production fn returns a RECOMMENDED DEFAULT (30.0s
+// anti-spam convention), NOT a hard-floor. Per @D g_no_cost_scope_
+// limit, no limit anywhere. User / caller may override freely at
+// invocation site — production_default value below is for convention
+// + tooling continuity, NOT enforcement.
+//
+// Measurement-context derives min_emit_interval from (n_max, dt) so a
+// Phase B bounded run with T_total ≪ 30s doesn't ceiling-saturate at
+// emit_rate=1/n. K_target=4 default per state/rate_limit_governance_
+// design_s169_2026_05_20/DESIGN.md §2 closed-form (B-S169-1).
+//
+// Backward-compatible alias `spont_min_emit_interval()` returns the
+// production default (30.0s) — every existing caller continues to
+// receive the historic convention unchanged. Measurement callers
+// (Phase B eval / run_bounded.py / eval_s*_psicouple.py) MAY OPT IN
+// to the measurement variant or to ANY user-chosen value (no hard
+// floor) to lift the rate-limit ceiling §168 surfaced.
+fn spont_min_emit_interval_production() -> float {
+    // SPONTANEOUS.tape §4 6-control #2 — RECOMMENDED DEFAULT only
+    // (anti-spam convention for user-facing daemon). Per @D g_no_
+    // cost_scope_limit (2026-05-20) NOT a hard floor — caller may
+    // override at invocation site.
+    return 30.0
+}
+
+fn spont_min_emit_interval_measurement(n_max: int, think_interval: float) -> float {
+    // closed-form: ceiling >= K_target = 4 ⇒ min_emit_interval ≤ T_total/(K-1)
+    // T_total = n_max × think_interval (sec); divisor 3.0 = K_target-1 = 3
+    let t_total = (n_max as float) * think_interval
+    return t_total / 3.0
+}
+
+fn spont_min_emit_interval() -> float   { return spont_min_emit_interval_production() }  // rate_limit safety (F-SPONT-5/7); §169 backward-compat alias
 fn spont_tts_cooldown() -> float        { return 3.0 }   // anima_alive carry, self-hearing guard
 
 
