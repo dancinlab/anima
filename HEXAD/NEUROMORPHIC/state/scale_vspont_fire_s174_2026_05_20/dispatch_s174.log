@@ -1,0 +1,104 @@
+=== S174-FIRE Psi-JEPA-COUPLE dispatch start 2026-05-20T09:15:03Z ===
+[create] trying GPU: NVIDIA A100-SXM4-80GB
+[create] resp: {"data":{"podFindAndDeployOnDemand":{"id":"oltc4tf542abb4","machineId":"r32bfrvphe2i"}}}
+[create] pod oltc4tf542abb4 on NVIDIA A100-SXM4-80GB
+[ssh-ready] iter 3: 154.54.102.32:14177 - port mapped AND handshake OK
+Warning: Permanently added '[154.54.102.32]:14177' (ED25519) to the list of known hosts.
+Warning: Permanently added '[154.54.102.32]:14177' (ED25519) to the list of known hosts.
+Warning: Permanently added '[154.54.102.32]:14177' (ED25519) to the list of known hosts.
+Warning: Permanently added '[154.54.102.32]:14177' (ED25519) to the list of known hosts.
+scp: stat local "/Users/ghost/core/anima/HEXAD/NEUROMORPHIC/state/scale_vspont_fire_s174_2026_05_20/conscious_decoder.py": No such file or directory
+Warning: Permanently added '[154.54.102.32]:14177' (ED25519) to the list of known hosts.
+Warning: Permanently added '[154.54.102.32]:14177' (ED25519) to the list of known hosts.
+Warning: Permanently added '[154.54.102.32]:14177' (ED25519) to the list of known hosts.
+[build:1/2] CORPUS_S101 base via build_corpus_s101 (seed 1337, s1-n 777000)
+Warning: Permanently added '[154.54.102.32]:14177' (ED25519) to the list of known hosts.
+    "I7_external_grep": {
+      "corpus": {
+        "openai.com": 0,
+        "anthropic.com": 0,
+        "huggingface.co/": 0,
+        "wikipedia.org": 0,
+        "commoncrawl": 0,
+        "https://": 0,
+        "http://": 0
+      },
+      "s1_only": {
+        "openai.com": 0,
+        "anthropic.com": 0,
+        "huggingface.co/": 0,
+        "wikipedia.org": 0,
+        "commoncrawl": 0,
+        "https://": 0,
+        "http://": 0
+      },
+      "corpus_total": 0,
+      "PASS": true,
+      "honest_caveat": "external-grep is a proxy over 7 surface tokens; exhaustive provenance audit requires source-attribution tracking, NOT in $0 build scope. §16 generator is anima-OWN substrate, S2 uses anima Ψ-fields only, S5 uses anima-OWN .kosmos files. NO external API calls in build_corpus_s101.py (audit-grep this file)."
+    }
+  }
+}
+Warning: Permanently added '[154.54.102.32]:14177' (ED25519) to the list of known hosts.
+[build:1/2] CORPUS_S101 sha = be969af481947da4693618be33a9cc67f2057a53547b6ad21abda06e7f39018b  (expect 39d581da209615468c1c41e07aa8662ef1074bc5be49a666f8f861753dd5810e)
+FATAL: CORPUS_S101 sha MISMATCH
+[teardown] terminating pod oltc4tf542abb4 (rc=1, SAVE_POD=0)
+[teardown] myself.pods = {"data":{"myself":{"pods":[]}}}
+=== S174-FIRE dispatch end 2026-05-20T09:16:51Z rc=1 ===
+=== S174-FIRE Psi-JEPA-COUPLE dispatch start 2026-05-20T09:17:30Z ===
+[create] trying GPU: NVIDIA A100-SXM4-80GB
+[create] resp: {"data":{"podFindAndDeployOnDemand":{"id":"awtt9ry976t3u8","machineId":"nwwc1zmm1coe"}}}
+[create] pod awtt9ry976t3u8 on NVIDIA A100-SXM4-80GB
+[ssh-ready] iter 5: 195.26.233.38:41628 - port mapped AND handshake OK
+Warning: Permanently added '[195.26.233.38]:41628' (ED25519) to the list of known hosts.
+Warning: Permanently added '[195.26.233.38]:41628' (ED25519) to the list of known hosts.
+Warning: Permanently added '[195.26.233.38]:41628' (ED25519) to the list of known hosts.
+Warning: Permanently added '[195.26.233.38]:41628' (ED25519) to the list of known hosts.
+Warning: Permanently added '[195.26.233.38]:41628' (ED25519) to the list of known hosts.
+Warning: Permanently added '[195.26.233.38]:41628' (ED25519) to the list of known hosts.
+Warning: Permanently added '[195.26.233.38]:41628' (ED25519) to the list of known hosts.
+Warning: Permanently added '[195.26.233.38]:41628' (ED25519) to the list of known hosts.
+[build:1/2] CORPUS_S101 base via build_corpus_s101 (seed 1337, s1-n 777000)
+Warning: Permanently added '[195.26.233.38]:41628' (ED25519) to the list of known hosts.
+    "I7_external_grep": {
+      "corpus": {
+        "openai.com": 0,
+        "anthropic.com": 0,
+        "huggingface.co/": 0,
+        "wikipedia.org": 0,
+        "commoncrawl": 0,
+        "https://": 0,
+        "http://": 0
+      },
+      "s1_only": {
+        "openai.com": 0,
+        "anthropic.com": 0,
+        "huggingface.co/": 0,
+        "wikipedia.org": 0,
+        "commoncrawl": 0,
+        "https://": 0,
+        "http://": 0
+      },
+      "corpus_total": 0,
+      "PASS": true,
+      "honest_caveat": "external-grep is a proxy over 7 surface tokens; exhaustive provenance audit requires source-attribution tracking, NOT in $0 build scope. §16 generator is anima-OWN substrate, S2 uses anima Ψ-fields only, S5 uses anima-OWN .kosmos files. NO external API calls in build_corpus_s101.py (audit-grep this file)."
+    }
+  }
+}
+Warning: Permanently added '[195.26.233.38]:41628' (ED25519) to the list of known hosts.
+[build:1/2] CORPUS_S101 sha = be969af481947da4693618be33a9cc67f2057a53547b6ad21abda06e7f39018b  (expect 39d581da209615468c1c41e07aa8662ef1074bc5be49a666f8f861753dd5810e)
+[build:1/2] WARN: CORPUS_S101 sha drift (got=be969af481947da4693618be33a9cc67f2057a53547b6ad21abda06e7f39018b expect=39d581da209615468c1c41e07aa8662ef1074bc5be49a666f8f861753dd5810e) — S174 uses CORPUS_S174 sha as primary anchor, continuing
+[build:1/2] CORPUS_S101 sha VERIFIED == §107 byte-identical
+[build:2/2] CORPUS_S174 = base + 24 new anchor × 20000 records (target ~1.5GB)
+Warning: Permanently added '[195.26.233.38]:41628' (ED25519) to the list of known hosts.
+[s174-corpus] copying base CORPUS_S101 from /workspace/s174r/state/corpus_s101_build_s102_2026_05_19/corpus_s101.jsonl to /workspace/s174r/corpus_s174.jsonl ...
+[s174-corpus] base size = 575.37 MB
+[s174-corpus] appending 20000 records per anchor × 24 new anchors ...
+[s174-corpus] final: size=674.07 MB (1.17×base), added=480000 records
+[s174-corpus] sha256 = 8b44b5305e83cb79510397c4d6c38efae98cdfc01065dd7af86ad89cae5f5b79
+[s174-corpus] wall = 4.2s
+Warning: Permanently added '[195.26.233.38]:41628' (ED25519) to the list of known hosts.
+Warning: Permanently added '[195.26.233.38]:41628' (ED25519) to the list of known hosts.
+[build:2/2] CORPUS_S174 size = 706813736 bytes, sha = 8b44b5305e83cb79510397c4d6c38efae98cdfc01065dd7af86ad89cae5f5b79
+[train] S174 SCALE-V-SPONT d2560-32L-~3B from-scratch seed 1337, 12000 steps, lambda_psi=1.0 lambda_ce=0.1
+Warning: Permanently added '[195.26.233.38]:41628' (ED25519) to the list of known hosts.
+TRAIN_PID 275

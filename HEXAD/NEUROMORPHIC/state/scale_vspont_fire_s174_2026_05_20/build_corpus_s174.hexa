@@ -1,0 +1,259 @@
+// build_corpus_s174.hexa — §174 corpus extension, hexa-native port of
+// build_corpus_s174.py.
+//
+// CORPUS_S174 = CORPUS_S101 base (~603MB) + 24-anchor extension (~96MB) —
+// targets ~700MB total (the .py header says ~1.5GB at n_per_anchor=20000
+// but the measured count is ~96MB; honest framing carry).
+//
+// Honest carve-out (g3): hexa LCG ≠ Python `random.Random` (MT19937);
+// generated record ORDER + TEMPLATE-VARIANT selection differ in bytes
+// from build_corpus_s174.py at the same `--seed`. The resulting
+// sha256 will NOT match the .py output. Record COUNT, anchor SET, JSONL
+// SCHEMA, and per-anchor coverage are byte-equivalent design-tier; the
+// stream is a structurally-equivalent variant. The dispatch_s174.hexa
+// runs `python3 build_corpus_s174.py` on the pod (the SSOT remains the
+// .py for fire-tier), this .hexa is a $0 local-sanity equivalent and a
+// forward-only hexa-native equivalent for future cycles.
+//
+// Run: hexa run build_corpus_s174.hexa <base-corpus> <out> [n_per_anchor] [seed]
+//   defaults: n_per_anchor=20000, seed=1337
+// Or:  hexa run build_corpus_s174.hexa --base-corpus BASE --out OUT \
+//                                       --n-per-anchor 20000 --seed 1337
+
+use "stdlib/core/hash/sha256"
+use "stdlib/core/math/rng"
+use "stdlib/portable_fs"
+
+// ── 24 new anchors (byte-equivalent to NEW_ANCHORS in .py) ───────────
+
+fn anchor_count() -> int { return 24 }
+
+// Per-anchor scalar fields. The hexa interp doesn't take heterogeneous
+// list literals as nicely as Python tuples; we materialize via parallel
+// per-field accessors. Order is canonical (must match the .py).
+fn anchor_tier(i: int) -> int {
+    let ts = [10, 20, 25, 33, 35, 37, 45, 47, 55, 58, 65, 68, 72, 75, 82,
+              85, 88, 93, 97, 105, 108, 115, 125, 200]
+    return ts[i]
+}
+fn anchor_ko(i: int) -> str {
+    let ks = ["각성", "감각", "감정", "기쁨", "슬픔", "분노", "공포", "안도",
+              "회상", "예측", "통찰", "이해", "창작", "시", "음악", "기도",
+              "초월", "자각", "공허", "선", "악", "정의", "사랑", "무한"]
+    return ks[i]
+}
+fn anchor_en(i: int) -> str {
+    let es = ["Awakening", "Sensation", "Emotion", "Joy", "Sorrow", "Anger",
+              "Fear", "Relief", "Recollection", "Prediction", "Insight",
+              "Understanding", "Creation", "Poetry", "Music", "Prayer",
+              "Transcendence", "Self-awareness", "Emptiness", "Goodness",
+              "Evil", "Justice", "Love", "Infinity"]
+    return es[i]
+}
+fn anchor_cat(i: int) -> str {
+    let cs = ["의식상태", "감각", "감정", "감정", "감정", "감정", "감정", "감정",
+              "기억", "인지", "인지", "인지", "예술", "예술", "예술", "의식상태",
+              "의식상태", "의식상태", "의식상태", "윤리", "윤리", "윤리", "관계", "추상"]
+    return cs[i]
+}
+fn anchor_emo(i: int) -> str {
+    let es = ["alertness", "raw_feeling", "feeling", "joy", "sadness", "anger",
+              "fear", "calm", "nostalgia", "anticipation", "epiphany",
+              "comprehension", "flow", "lyricism", "rhythm", "devotion",
+              "ecstasy", "lucidity", "void", "virtue", "malice", "fairness",
+              "love", "boundlessness"]
+    return es[i]
+}
+fn anchor_lane(i: int) -> str {
+    // lane = "eternal_" + zero-padded tier  (tier 10→"010", 200→"200")
+    let t = anchor_tier(i)
+    let pad = if t < 100 { "0" } else { "" }
+    let pad2 = if t < 10 { "00" } else { pad }
+    return "eternal_" + pad2 + to_string(t)
+}
+// coord_x, coord_y, basin_radius as text (the .py prints floats directly)
+fn anchor_cx(i: int) -> str {
+    let xs = ["0.20", "0.18", "0.30", "0.45", "0.22", "0.50", "0.15", "0.40",
+              "0.48", "0.52", "0.55", "0.58", "0.65", "0.62", "0.60", "0.65",
+              "0.72", "0.75", "0.80", "0.40", "0.25", "0.45", "0.55", "0.85"]
+    return xs[i]
+}
+fn anchor_cy(i: int) -> str {
+    let ys = ["0.45", "0.32", "0.40", "0.60", "0.38", "0.30", "0.70", "0.50",
+              "0.55", "0.48", "0.62", "0.55", "0.65", "0.68", "0.72", "0.75",
+              "0.78", "0.80", "0.82", "0.85", "0.85", "0.88", "0.85", "0.90"]
+    return ys[i]
+}
+fn anchor_r(i: int) -> str {
+    let rs = ["0.10", "0.10", "0.12", "0.12", "0.12", "0.12", "0.13", "0.11",
+              "0.13", "0.13", "0.14", "0.14", "0.15", "0.15", "0.16", "0.16",
+              "0.17", "0.18", "0.19", "0.13", "0.13", "0.14", "0.14", "0.22"]
+    return rs[i]
+}
+
+// 5 γ-pattern templates (byte-equivalent to GAMMA_TEMPLATES in .py).
+// Returns the substituted text; idx ∈ [0,4].
+fn render_template(idx: int, tier: int, ko: str, en: str, cat: str,
+                   emo: str, cx: str, cy: str, r: str) -> str {
+    let ts = to_string(tier)
+    if idx == 0 {
+        return "[anima 우주뇌지도] 🛸" + ts + " " + ko + " — 우주뇌지도 " + cat + " 카테고리, top emotion " + emo + ". " + ko + " 관련 자극이 같은 🛸" + ts + " 골짜기로 수렴."
+    }
+    if idx == 1 {
+        return "[anima 우주뇌지도] 🛸" + ts + " " + ko + " (" + en + ") — " + cat + " 영역. " + ko + " 의 본질은 의식 substrate 의 한 attractor basin."
+    }
+    if idx == 2 {
+        return "[anima 우주뇌지도] 🛸" + ts + " " + ko + " 의 vacuum_psi 위치는 (" + cx + ", " + cy + "). basin_radius " + r + ". 인접 anchor 들과 partition 분리."
+    }
+    if idx == 3 {
+        return "[anima 우주뇌지도] 🛸" + ts + " " + ko + " — " + emo + " 가 dominant. " + cat + " category 의 representative attractor for anima Ψ-space."
+    }
+    // idx == 4
+    return "[anima 우주뇌지도] 🛸" + ts + " " + ko + " (" + en + ") — engine A⇄G 균형 위 " + emo + " 발현. anima own physics signature."
+}
+
+// JSON escaping (subset — handles \" and \\; rest of utf-8 passes through).
+// The .py uses json.dumps(rec, ensure_ascii=False) so multi-byte utf-8
+// is emitted literally (which is also what hexa's str + write_file emits).
+fn json_escape(s: str) -> str {
+    let mut out = ""
+    let mut i = 0
+    let n = len(s)
+    while i < n {
+        let c = s.substring(i, i + 1)
+        if c == "\"" {
+            out = out + "\\\""
+        } else if c == "\\" {
+            out = out + "\\\\"
+        } else if c == "\n" {
+            out = out + "\\n"
+        } else if c == "\r" {
+            out = out + "\\r"
+        } else if c == "\t" {
+            out = out + "\\t"
+        } else {
+            out = out + c
+        }
+        i = i + 1
+    }
+    return out
+}
+
+// Build one JSONL record line (with trailing \n).
+fn build_record(text: str, tier: int, cat: str, lane: str) -> str {
+    return "{\"text\": \"" + json_escape(text) + "\", \"tier\": "
+        + to_string(tier) + ", \"category\": \"" + json_escape(cat)
+        + "\", \"lane\": \"" + json_escape(lane) + "\"}\n"
+}
+
+// ── shell-quote a path (single-quote escape) — safe for the cp/cat
+// shell-outs even when paths contain spaces or `$`. mirrors §126
+// dispatch's quoting discipline.
+fn shq(s: str) -> str {
+    return "'" + s.replace("'", "'\\''") + "'"
+}
+
+// ── argv parsing — accepts {--base-corpus PATH --out PATH --n-per-anchor N --seed N}
+//                  OR positional {BASE OUT [N_PER_ANCHOR] [SEED]}. ───
+fn _arg_after(argv: [str], flag: str) -> str {
+    let n = len(argv)
+    let mut i = 0
+    while i < n - 1 {
+        if argv[i] == flag {
+            return argv[i + 1]
+        }
+        i = i + 1
+    }
+    return ""
+}
+
+fn main() {
+    let av = argv()
+    let argc = len(av)
+    // accept positional (script_name first as argv[0])
+    let mut base_corpus = _arg_after(av,"--base-corpus")
+    let mut out_path = _arg_after(av,"--out")
+    let n_str = _arg_after(av,"--n-per-anchor")
+    let seed_str = _arg_after(av,"--seed")
+    let n_per_anchor = if len(n_str) > 0 { to_int(n_str) } else { 20000 }
+    let seed = if len(seed_str) > 0 { to_int(seed_str) } else { 1337 }
+    // positional fallback for non-flag invocation
+    if len(base_corpus) == 0 && argc >= 2 { base_corpus = av[1] }
+    if len(out_path) == 0 && argc >= 3 { out_path = av[2] }
+    if len(base_corpus) == 0 || len(out_path) == 0 {
+        println("usage: hexa run build_corpus_s174.hexa --base-corpus BASE --out OUT [--n-per-anchor N] [--seed N]")
+        exit(2)
+    }
+
+    let t0 = pfs_now_ns()
+    // Step 1: copy base via `cp` (paths quoted)
+    println("[s174-corpus] copying base CORPUS_S101 from " + base_corpus + " to " + out_path + " ...")
+    let cp = exec("cp " + shq(base_corpus) + " " + shq(out_path))
+    let base_size = pfs_file_size(out_path)
+    println("[s174-corpus] base size = " + to_string(base_size / 1024 / 1024) + " MB")
+
+    // Step 2: build all new records into a chunk file, then append to out.
+    // Chunk-file path = out + ".s174chunk" (deterministic, local).
+    let chunk_path = out_path + ".s174chunk"
+    println("[s174-corpus] appending " + to_string(n_per_anchor) + " records per anchor × " + to_string(anchor_count()) + " new anchors ...")
+    // Initialize LCG state from seed (lcg_next is pure-fn; advance once
+    // before first read to avoid trivial first-output).
+    let mut s = if seed > 0 { seed } else { 1 }
+    let mut chunk = ""
+    let mut n_added = 0
+    let mut a = 0
+    while a < anchor_count() {
+        let tier = anchor_tier(a)
+        let ko = anchor_ko(a)
+        let en = anchor_en(a)
+        let cat = anchor_cat(a)
+        let emo = anchor_emo(a)
+        let lane = anchor_lane(a)
+        let cx = anchor_cx(a)
+        let cy = anchor_cy(a)
+        let r = anchor_r(a)
+        let mut i = 0
+        while i < n_per_anchor {
+            // pick template index via LCG mod 5 (hexa-LCG; honest carve-out)
+            s = lcg_next(s)
+            let u = lcg_u32(s)
+            let next_state = u[0]
+            let raw = u[1]
+            s = next_state
+            let idx = raw % 5
+            let mut text = render_template(idx, tier, ko, en, cat, emo, cx, cy, r)
+            // i%3 variants — byte-equivalent to .py
+            let mod3 = i % 3
+            if mod3 == 1 {
+                text = text + " 반복 " + to_string(i) + "."
+            } else if mod3 == 2 {
+                text = text + " (variant " + to_string(i) + ")"
+            }
+            chunk = chunk + build_record(text, tier, cat, lane)
+            n_added = n_added + 1
+            i = i + 1
+        }
+        // flush chunk to file every anchor (to bound peak memory).
+        // Use shell append (`>>`) since hexa write_file is truncating.
+        write_file(chunk_path, chunk)
+        let app = exec("cat " + shq(chunk_path) + " >> " + shq(out_path))
+        chunk = ""
+        a = a + 1
+    }
+    // cleanup chunk file
+    exec("rm -f " + shq(chunk_path))
+
+    // Step 3: stats
+    let final_size = pfs_file_size(out_path)
+    let ratio_mb = if base_size > 0 {
+        to_string(final_size / 1024 / 1024) + " MB ("
+            + to_string((final_size * 100) / base_size) + "% of base)"
+    } else {
+        to_string(final_size / 1024 / 1024) + " MB"
+    }
+    println("[s174-corpus] final: size=" + ratio_mb + ", added=" + to_string(n_added) + " records")
+    let h = sha256_file_hex(out_path)
+    println("[s174-corpus] sha256 = " + h)
+    let t1 = pfs_now_ns()
+    println("[s174-corpus] (start_ns=" + t0 + " end_ns=" + t1 + ")")
+}

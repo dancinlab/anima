@@ -1,64 +1,17 @@
-=== §125 PCN-C4 dispatch start 2026-05-19T19:14:28Z ===
-[create] trying GPU: NVIDIA A100-SXM4-80GB
-[create] resp: {"data":{"podFindAndDeployOnDemand":{"id":"9kwzdrv6p5r5b4","machineId":"spaf035exhj2"}}}
-[create] pod 9kwzdrv6p5r5b4 on NVIDIA A100-SXM4-80GB
-[ssh-ready] iter 3: 154.54.102.51:19241 — port mapped AND handshake OK
-Warning: Permanently added '[154.54.102.51]:19241' (ED25519) to the list of known hosts.
-Warning: Permanently added '[154.54.102.51]:19241' (ED25519) to the list of known hosts.
-Warning: Permanently added '[154.54.102.51]:19241' (ED25519) to the list of known hosts.
-Warning: Permanently added '[154.54.102.51]:19241' (ED25519) to the list of known hosts.
-Warning: Permanently added '[154.54.102.51]:19241' (ED25519) to the list of known hosts.
-Warning: Permanently added '[154.54.102.51]:19241' (ED25519) to the list of known hosts.
-Warning: Permanently added '[154.54.102.51]:19241' (ED25519) to the list of known hosts.
-[build] pod-side deterministic CORPUS_S101 build (seed 1337, --s1-n 777000)
-Warning: Permanently added '[154.54.102.51]:19241' (ED25519) to the list of known hosts.
-    "I7_external_grep": {
-      "corpus": {
-        "openai.com": 0,
-        "anthropic.com": 0,
-        "huggingface.co/": 0,
-        "wikipedia.org": 0,
-        "commoncrawl": 0,
-        "https://": 0,
-        "http://": 0
-      },
-      "s1_only": {
-        "openai.com": 0,
-        "anthropic.com": 0,
-        "huggingface.co/": 0,
-        "wikipedia.org": 0,
-        "commoncrawl": 0,
-        "https://": 0,
-        "http://": 0
-      },
-      "corpus_total": 0,
-      "PASS": true,
-      "honest_caveat": "external-grep is a proxy over 7 surface tokens; exhaustive provenance audit requires source-attribution tracking, NOT in $0 build scope. §16 generator is anima-OWN substrate, S2 uses anima Ψ-fields only, S5 uses anima-OWN .kosmos files. NO external API calls in build_corpus_s101.py (audit-grep this file)."
-    }
-  }
-}
-Warning: Permanently added '[154.54.102.51]:19241' (ED25519) to the list of known hosts.
+=== §125 PCN-C4 dispatch (hexa) start 2026-05-19T21:50:40Z ===
+[create] runpod_create_cascade across 5 GPU types
+[create] created (cli) on NVIDIA A100-SXM4-80GB — pod xe8y3stm3vkalh
+[ssh-wait] runpod_wait_ssh (up to ~900s)
+[ssh-ready] 154.54.102.50:14690
+[stage] uploading inputs (cloud_copy_to)
+[stage] uploading anchor kosmos files
+[build] pod-side deterministic CORPUS_S101 build (seed 1337)
 [build] corpus sha = 39d581da209615468c1c41e07aa8662ef1074bc5be49a666f8f861753dd5810e  (expect 39d581da209615468c1c41e07aa8662ef1074bc5be49a666f8f861753dd5810e)
 [build] CORPUS_S101 sha VERIFIED == §107 design corpus byte-identical
 [train] §125 NONCE-FF d768·12L·283M from-scratch seed 1337, 3000 steps
-Warning: Permanently added '[154.54.102.51]:19241' (ED25519) to the list of known hosts.
-TRAIN_PID 252
-[train] done iter 1
-[eval] §125 §96-Q2 verdict eval
-Warning: Permanently added '[154.54.102.51]:19241' (ED25519) to the list of known hosts.
-Warning: Permanently added '[154.54.102.51]:19241' (ED25519) to the list of known hosts.
-Warning: Permanently added '[154.54.102.51]:19241' (ED25519) to the list of known hosts.
-Warning: Permanently added '[154.54.102.51]:19241' (ED25519) to the list of known hosts.
-Warning: Permanently added '[154.54.102.51]:19241' (ED25519) to the list of known hosts.
-[pull] success try 1
-[pull] result.json present locally — SAVE_POD=0, pod will terminate
-69235b14c88081db271ec92e2bad1026001f75c3657a0e4155def4a95394f8d5  /Users/ghost/core/anima/state/pcn_fire_s126_2026_05_20/ckpt_s126.pt
-69235b14c88081db271ec92e2bad1026001f75c3657a0e4155def4a95394f8d5  /Users/ghost/core/anima/state/pcn_fire_s126_2026_05_20/ckpt_s126.pt
-VERDICT= PARTIAL_AMBIGUOUS  byte_acc= 0.1185  psi_responsive= False
-=== §125 NONCE-FF pipeline complete 2026-05-19T19:50:48Z ===
-dispatch_s126_runpod.sh: line 217:  7353 Terminated: 15          ( sleep "$WATCHDOG_SEC"; if [ ! -s "$S126_DIR/result.json" ]; then
-    echo "WATCHDOG FIRED $(date -u +%FT%TZ): no result.json after ${WATCHDOG_SEC}s — terminating pod ${POD_ID:-?}" > "$FAIL_MARKER"; [ -n "$POD_ID" ] && gql "{\"query\":\"mutation { podTerminate(input:{podId:\\\"$POD_ID\\\"}) }\"}" > /dev/null; pkill -P $$ 2> /dev/null;
-fi )
-[teardown] terminating pod 9kwzdrv6p5r5b4 (rc=0, SAVE_POD=0)
-[teardown] myself.pods = {"data":{"myself":{"pods":[]}}}
-=== §125 PCN-C4 dispatch end 2026-05-19T19:50:52Z rc=0 ===
+[train] launched — remote pid 299
+[train] probe miss 1/3 (iter 6 — ssh could not verify pod)
+[train] probe miss 2/3 (iter 7 — ssh could not verify pod)
+[train] probe miss 3/3 (iter 8 — ssh could not verify pod)
+FATAL: pod unverifiable for 3 consecutive probes
+[teardown] terminating pod xe8y3stm3vkalh

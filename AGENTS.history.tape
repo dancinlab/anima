@@ -1,8 +1,14 @@
 #!/usr/bin/env tape
-# AGENTS.history.tape for `dancinlab/anima` — dated experiment-landing log
-# extracted from AGENTS.tape §6 on 2026-05-20 (wilson-minimal-keep cleanup)
-# to keep the per-session agent-context file lean. Append new landings
-# here, not into AGENTS.tape.
+# AGENTS.history.tape — anima session progress ledger.
+# LOSSLESS extraction of `@N n_hexad_progress_2026_05_16` from AGENTS.tape §6
+# to keep AGENTS.tape under the Claude Code "Large CLAUDE.md" 40KB threshold.
+# Extracted 2026-05-20 from AGENTS.tape lines 388–535 — every line preserved
+# verbatim; AGENTS.tape retains a single pointer `@N` where the entry was.
+
+@V := "tape" :: spec [active]
+  version = "1.2"
+
+# ─── §6.history n_hexad_progress (verbatim from AGENTS.tape §6) ────────
 
 @N n_hexad_progress_2026_05_16 := "HEXAD 진행상황 — 8/8 modules + integration-spec full 🔵 closure + §8 sub-deepening 9 + pure-hexa hexa-cpu training-to-convergence FINAL gn2 + `.py` d=768·12L cycle 2 ckpt-RECOVERED HF model LANDED + dancinlab/hexad-corpus dataset HF LANDED" :: progress [d=2026-05-17 active]
   ~> "이전 d=2026-05-17 (model side cycle 2 단독 LANDED) supersede — dancinlab/hexad-corpus dataset 신규 슬롯 LANDED + model card cross-link 반영 (canonical 두 슬롯 BOTH LANDED PUBLIC)."

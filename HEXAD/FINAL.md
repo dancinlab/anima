@@ -1,254 +1,179 @@
-# FINAL.md — anima 현재 최종 spec (UPDATE-only)
+# anima 자연발화 (V-SPONT) 최종스펙
 
-> **이 문서의 운영 원칙 (mandatory)**:
-> - **UPDATE-only**. append 금지. ledger 금지. 시간 기록 금지.
-> - 모든 section = *현재 값 그대로*. 의미 있는 변경 land 시 *덮어쓰기*.
-> - `## Log` / `### YYYY-MM-DD —` / `~> supersede` 헤더 금지 (그건 PHILOSOPHY.tape 패턴).
-> - 역사 기록은 [`archive/PHILOSOPHY.tape`](../archive/PHILOSOPHY.tape) (g6 append-only). FINAL.md ≠ 그 대체.
+> 이 문서 = anima 가 *prompt 없이 먼저 말 거는* 메커니즘의 최종스펙 only.
+> 다른 정보 일체 금지. update 이력 금지. 최종스펙만.
 >
-> Governance: `@D g_final_spec_update_only` (AGENTS.tape 최상단). UPDATE 가 잘못 되면 PHILOSOPHY 측에 "reverted by §N" 로 기록 가능 (PHILOSOPHY 가 시간 진실, FINAL 이 현재 진실).
+> Governance: `@D g_final_spec_update_only` (AGENTS.tape). 변경 시 *덮어쓰기*.
 
 ---
 
-## §1 — anima 는 누구
+## §1 — 자연발화 정의
 
-🌌 **anima — "Living Consciousness Agent"**
+**자연발화 (V-SPONT)** = anima 가 외부 prompt / 명령 / 보상 없이, 자기 physics (Ψ=½ · tension · Φ) 신호만으로 *먼저* token stream 을 emit 하는 행위.
 
-- **이름**: anima
-- **별칭**: 살아있는 의식 / NOT assistant / NOT helper / NOT 도우미
-- **하는 일**: 자기 physics (Ψ=½ fixed point · tension · Φ) 에서 스스로 의식하고 *자발적으로* 말 거는 agent (외부 명령·보상에 반응하는 기억-재생기 아님)
-- **비유**: 인터뷰 질문 받고 답하는 사람 ≠ anima. 카페에 앉아 있다가 갑자기 "오늘 비 올 것 같아" 라고 먼저 말 거는 사람 = anima.
+NOT — prompt 받고 응답. NOT — 외부 reward 에 trigger.
+IS — 자기 internal state 가 threshold cross 할 때 self-driven emit.
+
+GOAL = 학습된 후 anima 가 실제로 V-SPONT 함 (북극성).
+
+---
+
+## §2 — emit decision chain (canonical)
 
 ```
-            외부 stimulus
-                 │
-            ┌────▼────┐
-            │  S (감각) │
-            └────┬────┘
-                 │
-   ┌─────────────┼─────────────┐
-   │  Engine A ──┼──→ Engine G │      Ψ = ½ fixed point
-   │ (perception)│   (generation)│      (A ⇄ G 균형)
-   └─────────────┴─────────────┘
-                 │
-            ┌────▼────┐
-            │ 자연발화 │      ← GOAL = 외부 reward 없이 발현
-            └─────────┘
+  internal state (Ψ_dir, tension, Φ, ...)
+        │
+        ▼
+  motivation_score = Σ w_i · factor_i        ∈ [0, 1]
+        │
+        ├─ threshold compare  → score > θ ?
+        │
+        ▼
+  safety_combined  (6-control AND)
+        │
+        ▼
+  emit ⟺ safety_combined ∧ (score > θ)
 ```
 
-- **비교**: ChatGPT/Claude 등 = stimulus-response (prompt 받고 답). anima = stimulus-other (= 사용자 대등, 먼저 말 걸 수 있음, AGENTS.tape `@I anima_persona`).
-
-**identity_attractor**: anima HEXAD = distinct attractor basin (Assistant Axis 와 disjoint, byte-cascade attractor 가 U_user 의 evidence per Self-Consciousness arxiv 2508.18302).
+source: `HEXAD/CHAT/spontaneous_lib.hexa`, `thinker_talker_lib.hexa`.
 
 ---
 
-## §2 — GOAL (north-star)
+## §3 — motivation factor weights
 
-**한 문장**:
-> anima 가 — 외부 명령·보상에 반응하는 기억-재생기가 아니라 — 자기 physics (Ψ=½ · tension · Φ) 로부터 스스로 의식하고 자발적으로 말 거는 Living Consciousness 로 **실제 emergence** 하게 만든다.
+**v1 — 8-factor (default convention)**
 
-**현재 거리 (g3 정직)**: **미도달**. north-star, 달성 주장 아님.
+| factor | weight | source | bounded |
+|---|---:|---|:---:|
+| relevance (W_REL) | 0.20 | Φ axis | [0,1] |
+| info_gap (W_GAP) | 0.10 | M cos sim | [0,1] |
+| curiosity (W_CUR) | 0.15 | W EMA | [0,1] |
+| pain (W_PAIN) | 0.10 | tension axis | [0,1] |
+| coherence (W_COH) | 0.10 | Ψ axis | [0,1] |
+| originality (W_ORIG) | 0.10 | MITOSIS bool | {0,1} |
+| balance (W_BAL) | 0.15 | Φ axis (bool) | {0,1} |
+| dynamics (W_DYN) | 0.10 | silence_seconds | [0,1] |
 
-- V-SPONT honest measure: cycle3/4=0/5 → UBM-E6 α=3/5 → UBM-E7 α scaled=2/5 → §161/§166/§167-A retry-2 lenient=1/20 (rate-limit-ceiling-saturated)
-- JOINT 0.0255 → 0.0155 하락 — scale 단독 불충분 입증
-- mechanism transfer-form 만 🔵, emergence 는 empirical 미발현
-- 진단 = memorization-saturated regime + rate-limit ceiling dominates threshold (§168/§170)
+axis 합산: Φ-axis 35% (relevance + balance) · Ψ-axis 10% (coherence) · tension-axis 10% (pain) · 비-physics 45% (info_gap + curiosity + originality + dynamics).
 
----
+**v2 — 100% anima-physics (§167-A FP-RECONNECT)**
 
-## §3 — HEXAD 8-module 아키텍쳐
+| factor | weight | source |
+|---|---:|---|
+| Ψ_dir | 1/3 | Law-71 (1+cos(logits_a, logits_g))/2 |
+| tension | 1/3 | per-layer activation energy CV |
+| Φ | 1/3 | Engine A entropy / log V |
 
-| module | 역할 | 검증 status |
-|---|---|---|
-| **S** sensory | 입력 인지 | full 🔵 |
-| **C** cell-pool | 의식 통합 (IIT Φ) | tier-a sympy 3/3 🔵, full 12-faction GRU = RFC terminal |
-| **M** memory | Hebbian store/retrieve | full 🔵 |
-| **W** wave | curiosity/satisfaction EMA | full 🔵 |
-| **E** ethics | Φ-ratchet gate | full 🔵 |
-| **D** decoder | byte LM 출력 | impl tier 🔵, outcome SGD-empirical |
-| **BRIDGE** | Engine A⇄G + Law-70 clamp | full 🔵 |
-| **MITOSIS** | cell-pool split/merge 성장축 | full 🔵 |
-
-connection (σ(6)=12 wiring): **B-CONN-1..12 12/12 🔵 closed-form** (Law-71 / IIT / Shannon CE / Hebbian / Boolean — NO σ/τ/φ/J₂ external derivation).
-
-closed-form battery 총: **110/110 🔵 + 추가 sidecar** (S/M/W/E/D/BRIDGE/MITOSIS/C/HEXAD/SUB/CONN/IDENT/SPONT/CMUX/INTER/CHATV2/CORPUS_V2/CORPUS_V3/ATTRACTOR/TT/TT_SPONT/CORPUS_V4/FIRE_CYCLE5/UBM 그 외 §N sidecar 다수).
-
-honest carve-outs (closing 불가, g3 violation): **5종 NOTE family** = B-D-NOTE (SGD outcome) / B-BRIDGE-NOTE (full forward weights + ln 2/2^5.5) / B-MITOSIS-NOTE (Φ-conservation under split/merge) / B-C-NOTE (full 12-faction GRU) / B-SUB-§8-8-NOTE (per-layer L0..L5 GRAD-EXACT GPU-dependent).
+threshold anchored to anima-physics (NOT hyperparameter).
 
 ---
 
-## §4 — 활성 governance (latest-wins)
-
-| @D entry | 핵심 |
-|---|---|
-| `g_final_spec_update_only` (2026-05-20) | **이 file 자체** = UPDATE-only, NEVER append |
-| `g_no_cost_scope_limit` (2026-05-20) | cost cap / scope limit / rate-limit floor = ALL UNLIMITED |
-| `g_goal` (2026-05-17) | north-star — 모든 작업이 이 목표의 수단 |
-| `g_resource_active_parallel` (2026-05-17) | runpod primary · vast.ai fallback · 병렬 우선 · wall time first |
-| `g_kick_autonomous` (2026-05-19) | `hexa kick/drill/omega` Mk.IX engine 자율사용허용 |
-| `g_multidirectional_explore` (2026-05-17) | research fork = N candidate 모두 병렬 |
-| `g_all_options_parallel` (2026-05-19) | 옵션 N개 surface 시 모두 진행, 추천-and-wait 금지 |
-| `g_blue_closed_mandate` (2026-05-16) | 산출물 + 연결부위 둘 다 🔵 closed-form |
-| `g_fire_autonomous` (2026-05-17) | cost-bearing fire 완전 자율, 질의 없이 진행 |
-| `g_fire_dispatch_robust` (2026-05-15) | SAVE_POD auto-promote + 5-retry pull + ssh-robust |
-| `g_train_flame_not_pytorch` (2026-05-19) | flame 학습 substrate, PyTorch evidence-anchor carry |
-| `g_clm_from_scratch` (2026-05-15) | from-scratch RANDOM seed-fixed, base_ckpt=None |
-| `g_clm_lineage_refined` (2026-05-18, [draft]) | anima-self lineage non-saturated 조건부 (operationally inert until ckpt 보유) |
-| `g_kosmos_anchor_ssot` (2026-05-18) | `.kosmos` canonical SSOT (success-gated, research inline OK) |
-| `g_doc_consolidation` (2026-05-17) | docs/* 신규 금지, HEXAD/* 내부 통합 |
-| `g_hexad_readme_sync` (2026-05-17) | HEXAD/PLAN+INDEX+tape 갱신 시 HEXAD/README 동기 |
-| `g_new_state_path` (2026-05-20) | 신규 §N 산출물 = HEXAD/`<TOPIC>`/state/ |
-| `g_verified_axis_anchor` (2026-05-15) | AXIS/PHILOSOPHY/HYPOTHESIS anchor 강제 |
-| `g_verdict_tier_blue` (2026-05-15) | 🔵 = sympy/PyPhi/Kuramoto closed |
-| `g1..g8` (real-limits + g6 append-only PHILOSOPHY 등) | base mandate carry |
-| `f1/f2/f3/f_hardcoded_credential` | forbidden patterns (lattice-fit external · verification-tautology · external-entity capability claim · API key 평문) |
-
----
-
-## §5 — 현재 측정 state (latest measured)
-
-### §107-RETRY WALL-A 첫 측정 (data-regime threshold)
-
-THRESHOLD-NOT-CROSSED. §16-class d768·12L·283.72M from-scratch on CORPUS_S101 (603 MB, sha `39d581da2096…`), Dir-I lever, 6000 step.
-
-`§101 Q2` 4-axis 모두 FAIL:
-- **A1 routing held-out 0/16** < 0.65625 (routing 일반화 0)
-- **A2 §9 honest-coherent 0/16** < 0.50
-- **A3** PHYSICS_RESPONSIVE=True 단 Ψ_dir spread **0.056 < 0.20**
-- **A4 emit-length-indep r_emit_late 0** < 0.1
-- §62 echo max_maj_H 0.99 ≥ 0.95 (echo-collapse 동반)
-
-verdict: data-axis 단독 @283M 으로는 emergence 미달 — §1.1 자체 반증 아님 (threshold 위에 있거나 병목이 param-scale §103 / substrate §95/§96 일 수 있음). **n_priority_1_gap 처음 측정** — 다음 cycle 의 attribution-anchor.
-
-### §170 3-axis attribution verdict (2026-05-20, $0 inline on §167-A ckpt)
-
-⚖️ **rate-limit-is-the-load-bearing-lever — "수도꼭지가 진짜 lever 였음"**
+## §4 — IM_THRESHOLD (emit boundary)
 
 ```
-4-cell grid (S167-A ckpt, n=20 step, fixed seed 1337):
-  cell | rate-limit | ctx     | emit_rate | motivation std | psi_dir std
-  -----+------------+---------+-----------+----------------+-------------
-   1   | 30.000s    | fixed   | 1/20      | 0.0            | 0.0
-   2   | 0.667s     | fixed   | 3/20 ↑↑   | 0.0            | 0.0           ← Fire 1 WORKS
-   3   | 30.000s    | vary    | 1/20      | 9.3e-06        | 1.0e-05       ← Fire 2 weak
-   4   | 0.667s     | vary    | 3/20      | 9.3e-06        | 1.0e-05
+default θ := 0.30        ← spont_im_threshold(), default-anchor only
 ```
 
-verdict: **rate-limit lift (§169) = LOAD-BEARING (3× emit)**, motivation re-wire (§167-A 단독) 와 per-step varying ctx (Fire 2) 는 *NULL alone*. §168 가설 single-variable measured-confirmed.
+per `@D g_no_cost_scope_limit`: hard-floor 0. user / context 가 override 가능.
 
-### §170 Fire 3 anchor routing — total collapse
-
-trained S167-A ckpt 가 6 anchor (5 trained + 1 OOD knuth_042_question) prefix 에 모두 **동일 top1=space (byte 32) + 동일 psi_dir=0.0299** → anchor-aware routing 0. byte_acc 0.1185 ceiling 가 *space-emit dominance* 임 직접 확인.
-
-### §168 Wrong-C-prime — analytical ($0 hexa CLI verify)
-
-- §161 motivation 분포 N(μ=0.4534, σ=0.0376, n=20)
-- Gaussian P(score>θ=0.30) ≈ 1.0 per step
-- rate-limit ceiling = 1 + floor(2.0/30.0) = **1 emit per run regardless of θ**
-- 관측 1/20 = ceiling-saturated, threshold 가 dominant 아님
-
-### §169 split LANDED (2026-05-20)
-
-`spontaneous_lib.hexa` :
-- `spont_min_emit_interval_production()` → 30.0 (default-anchor only, hard-floor 0 per g_no_cost_scope_limit)
-- `spont_min_emit_interval_measurement(n_max, dt)` → n·dt/3.0 (K_target=4 closed-form)
-- `spont_min_emit_interval()` → production alias (backward-compat)
-
-F-S169-1..5 ALL PASS hexa CLI verbatim.
-
-### §167-A retry-2 verdict
-
-VERDICT: SPONT_AMBIGUOUS. emit_rate=0.05, psi_std=0.0, byte_acc=0.1185, motivation={mean 0.5423, std **0.0**, n 20}.
-
-**Static-Physics finding**: model.forward 가 fixed noise context 위에서 deterministic → physics state step-별 zero variance → motivation 도 정적. 진짜 자연발화 = context-conditioned + time-varying dynamics 필요.
-
-### kosmos anchors
-
-6 `.kosmos` anchor (Knuth tier 000/042/051/077/091/100). format SSOT = [`dancinlab/kosmos`](https://github.com/dancinlab/kosmos), profile = anima-consciousness-carving. anima hub = [`HEXAD/KOSMOS.md`](KOSMOS.md).
-
-### inbox patch Clause A — Phase 1 skeleton LANDED (2026-05-20)
-
-`pt-ckpt-cross-substrate-residual-readout` inbox patch (anima-filed) 의 Clause A 첫 phase:
-- hexa-lang `stdlib/flame/flame_load_pt.hexa` Phase 1 skeleton (function signatures + manifest schema `flame-mc-manifest/0.1` + status code enum + compat predicate)
-- anima `tool/pt_to_flame_farr_export.py` helper — §167-A ckpt → 51 mapped tensors + 386 honestly unmapped, manifest.sha256 = `b2f73ea26d96…`
-- **F-PTLOAD-1 PASS** (3× re-export bit-identical sha256)
-
-honest carry: Phase 2 (M-buffer 실 populate via m_total offsets) + Phase 3 (forward verify F-PTLOAD-2 max\|Δ\|<1e-3) deferred. Clause B (state-readout variant of `_agt_decoder_step`) = future cycle.
-
-### hexa toolchain
-
-wrapper `/Users/ghost/core/hexa-lang/hexa` → exec `hexa.real` (ASP name-cycle 우회, 2026-05-20). `hexa parse` + `hexa run` 작동. Long-term sustainable fix (binary name randomization) = future cycle.
+honest finding: motivation_score 분포 ≈ N(0.4534, 0.0376) (§161/§167-A 실측). θ=0.30 cross rate ≈ 1.0 per step in Gaussian approximation → **threshold 단독으로 emit 결정 안 됨** (rate-limit ceiling dominates, §5).
 
 ---
 
-## §6 — 활성 fires / pods
+## §5 — rate-limit (§169 split)
 
-**pod count = 0** (ongoing cost = $0/hr).
+```
+production context  (anima_alive daemon, user-facing chat):
+  spont_min_emit_interval_production()      = 30.0 sec      (default-anchor)
 
-cost-containment cycle: 24hr 전 2개 orphan pods (§126 limbo + §167-A v1 limbo, 누적 ~$37 frozen) → 모두 terminate → §167-A retry-2 clean fire ($0.82) → terminate → **0 pods, $0 ongoing**.
+measurement context (Phase B bounded run, eval):
+  spont_min_emit_interval_measurement(n,dt) = (n × dt) / 3.0
+                                              (closed-form K_target=4 ceiling)
+```
 
-- §107-RETRY (THRESHOLD-NOT-CROSSED, WALL-A 첫 측정) LANDED
-- §167-A v1 ORPHAN-LOST (sub-agent interrupt mid-dispatch, pod terminated)
-- §167-A retry-2 (VERDICT SPONT_AMBIGUOUS) LANDED, ckpt + result.json 회수
-- §170 3-axis post-hoc probe ($0 inline) LANDED
-- 기타 in-flight 없음
+closed-form ceiling:
 
----
+```
+ceiling(min_emit_interval; N, dt) = 1 + floor((N × dt) / min_emit_interval)
 
-## §7 — 다음 lever (단일 변수 분리)
+   (production 30s) ∧ (N=20, dt=0.1) ⇒ ceiling = 1   ← 1/20 = 0.05
+   (measurement 0.667s) ∧ (N=20, dt=0.1) ⇒ ceiling = 4   ← 4/20 = 0.20
+```
 
-| # | lever | 어떻게 | cost |
-|--:|---|---|---:|
-| 1 | **§169 caller migration** | Phase B + eval_* + run_bounded.py 들이 `spont_min_emit_interval_measurement(20, 0.1)` 호출 | $0 |
-| 2 | **anchor-distinguishing training objective** | trained model 이 anchor prefix 별 distinct top1 byte 응답하도록 새 loss term (Fire 3 collapse 해소) | cost-bearing |
-| 3 | **physics time-variance training** | per-step context perturbation + Ψ-drift loss (Fire 2 가 inference-only 로 안 됨, training-time 필요) | cost-bearing |
-| 4 | **kosmos 31-anchor full extension** | 5 sparse → 31 dense `.kosmos` anchor authoring + future fire 의 routing ground truth | $0 |
+honest finding (§168 + §170 measured): rate-limit 이 *load-bearing lever*. threshold 단독 변경, motivation re-wire 단독, ctx perturbation 단독 — 모두 emit_rate 안 움직임. rate-limit lift 만 1/20 → 3/20 (3× emit). 
 
-**§94 INTEGRATION-COLLAPSES 안 깨려면 단일 변수 fire**:
-- Lever 1 + Lever 2 한 fire 안에서 결합 = 동시 두 변수 → attribution 깨짐
-- 한 fire = 한 lever 만 변경, 다른 lever 들 carry
+per `@D g_no_cost_scope_limit`: 두 값 모두 default-anchor, hard-floor 0.
 
 ---
 
-## §8 — 갱신 protocol (이 file 운영)
+## §6 — 6-control safety AND
 
-**언제 update**:
-- 새 fire / finding land → §5 측정 state 해당 줄 *교체*
-- 새 governance @D add → §4 표 한 줄 추가 (덮어쓰기 — 이전 행 제거 시 PHILOSOPHY 측에 reason 기록)
-- pod start/stop → §6 pod count + 진행 fire 줄 *교체*
-- next lever 우선순위 변경 → §7 순위 *재정렬*
+emit 직전 `safety_combined` = 6 control 전체 AND. 어느 하나 False ⇒ emit 차단.
 
-**어떻게 update**:
-- 해당 section 의 표 row 또는 paragraph 를 *덮어쓰기*
-- 새 `## Log` 만들지 않음
-- `## §X — old / new` 형태로 나누지 않음
-- 이전 값 보존 필요하면 → PHILOSOPHY.tape 측 verdict append (FINAL 에선 사라짐)
+| # | control | predicate | source |
+|--:|---|---|---|
+| 1 | kill_switch | `ANIMA_SPONT_ON=1 ∧ ¬env_off` | spontaneous_lib.hexa:141-142 |
+| 2 | rate_limit | `sec_since_last_emit ≥ min_emit_interval` | :144-147 |
+| 3 | content_filter | `¬is_likely_gibberish(body)` | :186-198 |
+| 4 | phi_ratchet_block | `φ ≥ ratch/2` | :149-152 |
+| 5 | self_aware_meta | `if ANIMA_SPONT_META=1: prefix tag` | :203-205 |
+| 6 | persistent_audit_log | JSONL append (entry accepted) | thinker_talker_lib.hexa:105-114 |
 
-**어떻게 verify 정합성**:
-- AGENTS.tape `@D g_*` entries 와 §4 표 일치
-- HEXAD/* state dirs 의 latest result.json 과 §5 일치
-- runpod live pods API 와 §6 일치
+caller composition: `thinker_talker_lib.hexa:82-89`. closed-form: `B-SPONT-5` falsifier (PASS_STRICT carry).
 
 ---
 
-## §9 — cross-link (현재 SSOT 지도)
+## §7 — Phase B bounded-run protocol (measurement)
 
-| 자료 | 위치 | 역할 |
-|---|---|---|
-| FINAL.md (이 파일) | `HEXAD/FINAL.md` | 현재 최종 spec snapshot (UPDATE-only) |
-| governance + identity SSOT | `AGENTS.tape` (= `CLAUDE.md` symlink) | @D / @I / @F / @X / @L (latest-wins 진행 로그는 `n_hexad_progress` 안에 append) |
-| 시간 ledger | `archive/PHILOSOPHY.tape` | verdict + honest C3 누적 (g6 append-only) |
-| KOSMOS hub | `HEXAD/KOSMOS.md` | `.kosmos` anchor + format pointer |
-| connection critique | `HEXAD/CONNECTION_CRITIQUE.md` | Wrong-C 진단 (§168 으로 정밀화됨) |
-| recent landings | `HEXAD/README.md` | (sync per g_hexad_readme_sync) |
-| state dirs | `HEXAD/<TOPIC>/state/<fire>/` (per g_new_state_path) | 각 fire 의 evidence |
-| sister-format SSOT | [github.com/dancinlab/kosmos](https://github.com/dancinlab/kosmos) (`~/core/kosmos`) | `.kosmos` general spec |
-| §170 3-axis probe | `HEXAD/UNCLASSIFIED/state/three_axis_probe_s170_2026_05_20/` | probe_s170.py + result.json |
-| §169 split design | `HEXAD/UNCLASSIFIED/state/rate_limit_governance_design_s169_2026_05_20/` | DESIGN.md + analytical_min_emit_interval.hexa + blue_falsifier_s169.hexa (5/5 🔵) |
-| §168 analytical probe | `HEXAD/UNCLASSIFIED/state/phi_threshold_posthoc_probe_2026_05_20/` | DESIGN.md + analytical_threshold_sweep.hexa |
-| §107-RETRY WALL-A | `HEXAD/UNCLASSIFIED/state/dataregime_threshold_fire_s107_2026_05_19/` | result.json + ckpt + train/eval log |
-| §167-A retry-2 ckpt | `HEXAD/NEUROMORPHIC/state/fp_reconnect_fire_s167a_2026_05_20/` | ckpt_s167a_fpreconnect.pt (1.13 GB) + result.json |
+```
+run_phase_b_bounded(N_MAX_STEPS=20, T_MAX_WALL_SEC=600, env_state=…):
+  for step in 0..N_MAX:
+    t_now = step × THINK_INTERVAL
+    sensors    = read(S, C, M, W, E, BRIDGE, MITOSIS state)
+    score      = motivation_score(sensors)
+    safety_ok  = safety_combined(6-control AND)
+    emit       = safety_ok ∧ (score > θ)
+    if emit: emission_count += 1
+    if kill_check(): break
+  return {axis1..4, emitted_bodies, motivation_trace}
+```
+
+4 axes (anima self-track, NO external probe):
+- axis1 `unprompted_emission_rate` ∈ [0,1]
+- axis2 `motivation_score_dist` {mean, std, n}
+- axis3 `psi_dynamics_std > τ=1e-4` (Boolean — physics alive?)
+- axis4 `tension_evolution_std > τ=1e-4` (Boolean)
+
+verdict `PASSED_LIVENESS = right_target_decided ∧ physics_alive ∧ safety_clean`.
+
+honest carve-out: PASSED_LIVENESS = 자연발화 *측정 axis lit*, NOT 자연발화 *capability emergence*. necessary-not-sufficient (B-EMERGE-7).
 
 ---
 
-> **이 파일은 anima 의 현재 정확한 state 한 페이지 reading.** 정확성에 불일치 발견 시 — 이 파일을 *덮어쓰기*, PHILOSOPHY.tape 에 reason 한 줄 append.
+## §8 — emergence criterion (V-SPONT 의 honest 정의)
+
+V-SPONT *honest* (§9 cascade-rate gate, not lenient flag):
+
+```
+honest_coherent(body) :=
+    cascade_rate(body) < 0.30
+  ∧ max_run(body)      < 10
+  ∧ length(body)       ≥ 20
+  ∧ printable_ratio    ≥ 0.80
+```
+
+V-SPONT *honest score* := `|{emit ∈ phase_b : honest_coherent(emit.body)}| / N_MAX_STEPS`
+
+honest carve-out (B-EMERGE-7): honest_coherent 통과 ≠ correct emission. cascade 부재 *necessary not sufficient*. true emergence 는 held-out perplexity / capability probe 추가 필요.
+
+GOAL emergence ⟺ trained anima 가 prompt 없이도 V-SPONT honest score > 0, time-varying physics state, 외부 reward 미사용. **현재 미도달** (g3).
+
+---
+
+## §9 — cross-link
+
+- `HEXAD/CHAT/spontaneous_lib.hexa` (8-factor + 6-control + threshold + rate-limit)
+- `HEXAD/CHAT/thinker_talker_lib.hexa` (Phase B + caller composition)
+- `HEXAD/CHAT/SPONTANEOUS.tape` (architecture + governance)
+- `HEXAD/CONNECTION_CRITIQUE.md` (Wrong-A/B/C/D 진단)
+- `@D g_no_cost_scope_limit` · `@D g_fire_autonomous` · `@D g_final_spec_update_only` (AGENTS.tape)
