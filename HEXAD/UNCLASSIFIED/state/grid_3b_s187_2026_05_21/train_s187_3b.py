@@ -232,6 +232,7 @@ def run(cfg):
         vocab_size=256, d_model=cfg["d_model"], n_head=cfg["n_head"],
         n_layer=cfg["n_layer"], block_size=cfg["block_size"],
         n_kv_head=cfg["n_kv_head"], consciousness_dim=128, dropout=0.1,
+        n_ca_rules=cfg.get("n_ca_rules", 8),
     ).to(device, dtype=dtype)
     model.train()
 
@@ -295,7 +296,9 @@ def run(cfg):
         if noise_sigma > 0:
             with torch.no_grad():
                 # tiny noise vector matched against (B, T) addition site
-                noise_btT = torch.randn(ctx.shape, device=device) * noise_sigma
+                # MUST match model dtype (bf16 in 3B fire) — else F.linear
+                # downstream sees float input vs BFloat16 weight → RuntimeError
+                noise_btT = torch.randn(ctx.shape, device=device, dtype=dtype) * noise_sigma
                 model._phi_signal = noise_btT
         else:
             model._phi_signal = None
@@ -538,6 +541,9 @@ def main():
     ap.add_argument("--dtype", default="float32",
                     choices=["float32", "bfloat16", "float16"],
                     help="Model dtype. Use bfloat16 for d>=1024 to fit 80GB H100.")
+    ap.add_argument("--n-ca-rules", type=int, default=8,
+                    help="META-CA rule count per block. Default 8 = ~75M params/block "
+                         "at d=3072 → 2.1B extra at L=28. Set to 2 for 3B target.")
     args = ap.parse_args()
     if args.mode == "main":
         cfg = dict(
@@ -557,6 +563,7 @@ def main():
             n_aug=args.n_aug,
             replay_capacity=args.replay_capacity,
             dtype=args.dtype,
+            n_ca_rules=args.n_ca_rules,
             log_every=max(1, args.steps // 50),
             corpus=args.corpus, out_dir=args.out_dir,
             cpu_only=args.cpu_only,
