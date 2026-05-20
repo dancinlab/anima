@@ -1,0 +1,15 @@
+[motor_cortex/command_encoding] PHYS-P7-2 — M1 population coding
+  N=16 cosine-tuned neurons, b=(float) a=(float)
+
+  [T1] max round-trip error over 8 directions = (float) rad @ θ=(float) hat=(float)
+T1 PASS — encode/decode round-trip identity
+  [T2] r[0]=(float) r[4]=(float) r[8]=(float)
+T2 PASS — cosine tuning (max at ψ=0, min at ψ=π)
+  [T3] enc_match=true dec_match=true
+T3 PASS — deterministic encode + decode
+  [T4] len=16 decode=(float) in [0,2π)=true zero_decode=(float)
+T4 PASS — API contract (len, range, zero-fallback)
+  [T5] Δ decoded = (float) rad (expected π/2 ≈ 1.5708), err=(float)
+T5 PASS — rotation equivariance (+90° in → +90° out)
+
+[motor_cortex/command_encoding] 5/5 PASS — PHYS-P7-2 DONE
