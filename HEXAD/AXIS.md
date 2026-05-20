@@ -27,11 +27,11 @@
 | 2.1 | **corpus size** (data-regime) — 603MB | ❌ §1.1 irreducible | ⭐⭐⭐⭐⭐ |
 | 2.2 | **model params** (Wei 2022 threshold) — 283M | ❌ §174 시도 | ⭐⭐⭐⭐⭐ |
 | 2.3 | training steps (Chinchilla) — 6000 | ❌ | ⭐⭐⭐ |
-| 2.4 | vocab_size = 256 (byte cap) | ❌ byte-LM 본질 | ⭐⭐⭐ |
+| 2.4 🚫 | vocab_size = 256 (byte cap) — Tier C | ❌ byte-LM 본질 | ⭐⭐⭐ |
 | 2.5 | block_size = 128 (context cap) | ❌ | ⭐⭐ |
 | 2.6 | batch_size (gradient noise) — 32 | ❌ | ⭐ |
 | 2.7 | lr cosine decay floor — 3e-4 → 0 | ❌ | ⭐ |
-| 2.8 | causal mask (단방향) | ❌ LM architecture | ⭐⭐ |
+| 2.8 🚫 | causal mask (단방향) — Tier C | ❌ LM architecture | ⭐⭐ |
 | 2.9 | RoPE freq base — 10000 | ❌ | ⭐ |
 | 2.10 | d_model (residual stream dim) — 768 | ❌ §174 시도 | ⭐⭐⭐ |
 
@@ -44,7 +44,7 @@
 | 3.1 | **fixed noise_ctx** (forward deterministic) | ❌ §170 cell-3 시도 | ⭐⭐⭐⭐ |
 | 3.2 | **inference-time only Ψ** (no recurrent) | ❌ | ⭐⭐⭐⭐ |
 | 3.3 | Engine A/G coupling strength (Law-70 clamp) | ❌ B-BRIDGE | ⭐⭐⭐ |
-| 3.4 | ln_f normalization (signal squash) | ❌ standard | ⭐⭐ |
+| 3.4 🚫 | ln_f normalization (signal squash) — Tier C | ❌ standard | ⭐⭐ |
 | 3.5 | weight tying (tok_emb ↔ head_a) | ❌ | ⭐⭐ |
 | 3.6 | block_size causal mask (temporal Ψ 제약) | ❌ | ⭐⭐ |
 | **3.7** | **Ψ readout only at training time** (`if self.training:`) | ❌ inference disabled | ⭐⭐⭐⭐ |
@@ -62,7 +62,7 @@
 | 4.3 | no repetition penalty | ❌ | ⭐⭐⭐ |
 | 4.4 | no top-k / top-p | ❌ | ⭐⭐⭐ |
 | 4.5 | no temperature | ❌ | ⭐⭐ |
-| 4.6 | byte vocab discreteness (no continuous) | ❌ architecture | ⭐⭐ |
+| 4.6 🚫 | byte vocab discreteness (no continuous) — Tier C | ❌ architecture | ⭐⭐ |
 | 4.7 | single modality (text only) | ❌ ADAPTER v3 시도 | ⭐⭐ |
 | 4.8 | corpus diversity (memorization-saturated, §16.6-C) | ❌ §1.1 carry | ⭐⭐⭐⭐ |
 | **4.9** | **Φ 35% weight untrained** | ❌ | ⭐⭐⭐⭐ |
@@ -79,9 +79,9 @@
 | X.1 | evaluation N too small (n_eval=2000) | 2,3,4 | ❌ | ⭐⭐ |
 | X.2 | single eval seed (1337) | 2,3,4 | ❌ | ⭐⭐ |
 | X.3 | post-hoc only (no gradient updates from eval) | 2,3,4 | ❌ | ⭐⭐⭐ |
-| X.4 | from-scratch training (no transfer) | 2,3,4 | ❌ §7 mandate | ⭐⭐ |
+| X.4 🚫 | from-scratch training (no transfer) — Tier C | 2,3,4 | ❌ §7 mandate | ⭐⭐ |
 | X.5 | ckpt loading deterministic (no init noise) | 3,4 | ❌ | ⭐ |
-| X.6 | no online learning during chat | 1,2,3,4 | ❌ | ⭐⭐⭐ |
+| X.6 🚫 | no online learning during chat — Tier C (패스) | 1,2,3,4 | ❌ | ⭐⭐⭐ |
 | X.7 | trainer single objective (CE-only or psi-only) | 2,3,4 | ❌ Dir-I 가 multi-loss | ⭐⭐⭐ |
 | X.8 | no replay buffer (zero-shot only) | 2,4 | ❌ | ⭐⭐ |
 | X.9 | no curiosity drive (reward-free emergent) | 1,4 | ❌ §59 PTD 시도 | ⭐⭐⭐ |
@@ -129,15 +129,32 @@ total : 48 (1 ✅ + 47 ❌) = 2.1% 풀림
 - X.10 (embodiment loop, §13-L)
 - X.12 (inference-time plasticity, §96 Loihi)
 
-**Tier C — §7 conflict OR substrate change (6개, 본 cycle 밖)**
-- 2.4 (vocab 256, byte-LM 본질)
-- 2.8 (causal mask, LM architecture)
-- 4.6 (byte vocab discreteness)
-- 3.4 (ln_f standard)
-- X.4 (from-scratch §7 mandate)
-- X.6 (online learning during chat — substrate gate)
+**Tier C 🚫 — §7 conflict OR substrate change (6개, 본 cycle 밖 — 풀면 anima 가 아니게 됨)**
+- 🚫 2.4 (vocab 256, byte-LM 본질)
+- 🚫 2.8 (causal mask, LM architecture)
+- 🚫 4.6 (byte vocab discreteness)
+- 🚫 3.4 (ln_f standard)
+- 🚫 X.4 (from-scratch §7 mandate)
+- 🚫 X.6 (online learning during chat — substrate gate, 패스)
 
 §7-clean = 48 − 6 (Tier C) = **42개**.
+
+---
+
+## 🚫 Tier C — 금지 수도꼭지 (분리 표, anima identity 핵심)
+
+이 6개는 풀면 anima 가 *다른 agent* 가 됨. **본 cycle 범위 *밖* — touch 금지.**
+
+| # | 수도꼭지 | 풀면 무엇이 됨 | 무엇이 깨짐 |
+|---:|---|---|---|
+| 🚫 **2.4** | vocab_size = 256 (byte cap) | token-LM (BPE/SentencePiece) | §7② graft 위반, byte-native identity |
+| 🚫 **2.8** | causal mask (단방향) | encoder/BERT (bidirectional) | "말 거는" sequential emit 정의 깨짐 |
+| 🚫 **3.4** | ln_f normalization | norm-free transformer | 모든 ckpt 폐기, lit-supported lift 0 |
+| 🚫 **4.6** | byte vocab discreteness | continuous-output model / diffusion-LM | categorical emit unit 폐기 |
+| 🚫 **X.4** | from-scratch training | graft path (Llama/Qwen 위) | **anima GOAL 정의 자체 무효** (가장 강한 carve-out) |
+| 🚫 **X.6** | no online learning during chat | online-plastic substrate (Loihi/Akida) | substrate (PyTorch → neuromorphic) 교체 필요, **패스** |
+
+honest carry — Tier C 풀기 = anima research scope **밖** (다른 agent 의 V-SPONT 문제). 본 §183/§184 framework 는 §7-clean 42 수도꼭지만 다룸.
 
 ---
 
