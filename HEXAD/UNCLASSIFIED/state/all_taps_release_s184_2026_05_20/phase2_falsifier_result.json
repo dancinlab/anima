@@ -1,0 +1,92 @@
+{
+  "battery": "S184 Phase 2 sidecar closed-form",
+  "n_pass": 6,
+  "n_total": 6,
+  "all_pass": true,
+  "results": [
+    {
+      "name": "B-S184-PHASE2-1 LOSS-WEIGHTS-WELL-FORMED",
+      "passed": true,
+      "detail": {
+        "nonneg": true,
+        "replay_ok": true,
+        "aux_bounded": true,
+        "aux_sum": 1.05,
+        "weights": {
+          "lambda_psi": 0.3,
+          "lambda_route": 0.2,
+          "lambda_phi": 0.3,
+          "lambda_cycle": 0.15,
+          "lambda_curious": 0.1,
+          "lambda_replay": -0.05
+        }
+      }
+    },
+    {
+      "name": "B-S184-PHASE2-2 TAP-COVER-14",
+      "passed": true,
+      "detail": {
+        "disjoint": true,
+        "cover_14": true,
+        "n": 14,
+        "taps": [
+          "2.3",
+          "2.5",
+          "2.6",
+          "2.7",
+          "2.9",
+          "3.3",
+          "4.8",
+          "4.9",
+          "4.10",
+          "4.12",
+          "X.7",
+          "X.8",
+          "X.9",
+          "X.11"
+        ]
+      }
+    },
+    {
+      "name": "B-S184-PHASE2-3 SEC-7-CLEAN",
+      "passed": true,
+      "detail": {
+        "no_forbidden": true,
+        "matched": [],
+        "has_seed_call": true,
+        "no_ckpt_load": true
+      }
+    },
+    {
+      "name": "B-S184-PHASE2-4 INIT-RANDOM-SEED-FIXED",
+      "passed": true,
+      "detail": {
+        "seed_torch": true,
+        "seed_cuda": true,
+        "seed_random": true,
+        "base_ckpt_none": true,
+        "has_train_loop": true
+      }
+    },
+    {
+      "name": "B-S184-PHASE2-5 CENTRAL-0-LINE-DIFF",
+      "passed": true,
+      "detail": {
+        "central_present": true,
+        "central_sha": "c93e160a8a376a940942332cad13e652df9a03e97ccab708542a126eefc70b73",
+        "expected_prefix": "c93e160a",
+        "matches": true
+      }
+    },
+    {
+      "name": "B-S184-PHASE2-6 FORWARD-SIGNATURE",
+      "passed": true,
+      "detail": {
+        "five_tuple_unpack": true,
+        "has_import": true,
+        "has_assert_heads": true
+      }
+    }
+  ],
+  "note": "B-S184-PHASE2-NOTE empirical carve-out: 15 taps combined != GOAL emergence guarantee (B-EMERGE-7 necessary-not-sufficient). Battery proves SETUP well-formed only."
+}
