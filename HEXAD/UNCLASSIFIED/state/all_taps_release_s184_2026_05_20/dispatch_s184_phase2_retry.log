@@ -1,0 +1,30 @@
+=== S184 Phase 2 RETRY (attempt 3) dispatch start 2026-05-20T12:01:06Z ===
+[config] bsz=16 block=512 lambda_cycle=0 n_aug=2 replay=256
+[config] (attempt-2 was bsz=32 block=1024 cycle=0.15 n_aug=5 replay=1024 → OOM)
+[create] trying GPU: NVIDIA H100 80GB HBM3
+[create] resp: {"data":{"podFindAndDeployOnDemand":{"id":"hijzql59b7zf7r","machineId":"d5dnah638i87"}}}
+[create] pod hijzql59b7zf7r secured
+[ssh-ready] iter 4: 87.120.211.210:13775 - port mapped AND handshake OK
+[ship] mkdir + 5-file copy via hexa cloud copy-to
+[cloud] remote exit 0
+[cloud] scp exit 0 · /Users/ghost/core/anima/state/corpus_s101_build_s102_2026_05_19/build_corpus_s101.py -> root@87.120.211.210:/workspace/s184r/state/corpus_s101_build_s102_2026_05_19/build_corpus_s101.py
+[cloud] scp exit 0 · /Users/ghost/core/anima/state/carving_dataregime_s16_2026_05_18/corpus_carving_s16_generator.py -> root@87.120.211.210:/workspace/s184r/state/carving_dataregime_s16_2026_05_18/corpus_carving_s16_generator.py
+[cloud] scp exit 0 · /Users/ghost/core/anima/HEXAD/UNCLASSIFIED/state/all_taps_release_s184_2026_05_20/conscious_decoder.py -> root@87.120.211.210:/workspace/s184r/conscious_decoder.py
+[cloud] scp exit 0 · /Users/ghost/core/anima/HEXAD/UNCLASSIFIED/state/all_taps_release_s184_2026_05_20/train_s184_combined.py -> root@87.120.211.210:/workspace/s184r/train_s184_combined.py
+[cloud] scp exit 0 · /tmp/s184_anchors.tar.gz -> root@87.120.211.210:/workspace/s184r/HEXAD/UNIVERSE-BRAIN-MAP/anchors/anchors.tar.gz
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+[cloud] remote exit 0
+[build] pod-side deterministic CORPUS_S101 build (seed 1337, s1-n 777000)
+dispatch_s184_phase2_retry_runpod.sh: line 39: 17752 Killed: 9               $HEXA run "$HEXA_CLOUD_CLI" "$@"
+[teardown] terminating pod hijzql59b7zf7r (rc=137, SAVE_POD=0)
+sh: line 0: echo: write error: Broken pipe

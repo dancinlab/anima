@@ -355,6 +355,7 @@ fn build_marker_entry(substrate, sub_dir, base_dir) {
 }
 
 // ─── main ──────────────────────────────────────────────────────────────────
+@manual_main
 fn main() {
     let mut argv = []
     let base_dir       = if env("LEDGER_BASE_DIR") != "" { _str(env("LEDGER_BASE_DIR")) } else { DEFAULT_BASE_DIR }

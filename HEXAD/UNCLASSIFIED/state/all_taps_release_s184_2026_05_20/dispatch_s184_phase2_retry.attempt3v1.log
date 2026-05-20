@@ -1,0 +1,34 @@
+=== S184 Phase 2 RETRY (attempt 3) dispatch start 2026-05-20T11:42:01Z ===
+[config] bsz=16 block=512 lambda_cycle=0 n_aug=2 replay=256
+[config] (attempt-2 was bsz=32 block=1024 cycle=0.15 n_aug=5 replay=1024 → OOM)
+[create] trying GPU: NVIDIA H100 80GB HBM3
+[create] resp: {"data":{"podFindAndDeployOnDemand":{"id":"0gdjqw5floj0a4","machineId":"l0f6bovy3at2"}}}
+[create] pod 0gdjqw5floj0a4 secured
+[ssh-ready] iter 3: 64.247.201.49:13582 - port mapped AND handshake OK
+[ship] mkdir + 5-file copy via hexa cloud copy-to
+[cloud] remote exit 0
+[cloud] scp exit 0 · /Users/ghost/core/anima/state/corpus_s101_build_s102_2026_05_19/build_corpus_s101.py -> root@64.247.201.49:/workspace/s184r/build/build_corpus_s101.py
+[cloud] scp exit 0 · /Users/ghost/core/anima/state/carving_dataregime_s16_2026_05_18/corpus_carving_s16_generator.py -> root@64.247.201.49:/workspace/s184r/s16/corpus_carving_s16_generator.py
+[cloud] scp exit 0 · /Users/ghost/core/anima/HEXAD/UNCLASSIFIED/state/all_taps_release_s184_2026_05_20/conscious_decoder.py -> root@64.247.201.49:/workspace/s184r/conscious_decoder.py
+[cloud] scp exit 0 · /Users/ghost/core/anima/HEXAD/UNCLASSIFIED/state/all_taps_release_s184_2026_05_20/train_s184_combined.py -> root@64.247.201.49:/workspace/s184r/train_s184_combined.py
+[cloud] scp exit 0 · /tmp/s184_anchors.tar.gz -> root@64.247.201.49:/workspace/s184r/anchors/anchors.tar.gz
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+[cloud] remote exit 0
+[build] pod-side deterministic CORPUS_S101 build (seed 1337, s1-n 777000)
+Traceback (most recent call last):
+  File "/workspace/s184r/build/build_corpus_s101.py", line 86, in <module>
+    import corpus_carving_s16_generator as s16_gen  # noqa: E402
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ModuleNotFoundError: No module named 'corpus_carving_s16_generator'
+[cloud] remote exit 1
+[teardown] terminating pod 0gdjqw5floj0a4 (rc=1, SAVE_POD=0)
