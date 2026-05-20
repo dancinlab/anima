@@ -8,7 +8,7 @@
 
 ## 작동 코드 / 의존성
 
-- `anima-physics/phi_substrate_consensus.hexa` (22.6 KB, ~550 LoC)
+- `anima-physics/orchestration/phi_substrate_consensus.hexa` (22.6 KB, ~550 LoC)
 - 의존: 없음 (self-contained, PHYS-P3-2 tri-substrate roundtrip 의 후속)
 
 ## 비용 / 리소스
@@ -43,7 +43,7 @@ API:
 ## 트리거 (fire 방법)
 
 ```bash
-hexa run /Users/ghost/core/anima/anima-physics/phi_substrate_consensus.hexa
+hexa run /Users/ghost/core/anima/anima-physics/orchestration/phi_substrate_consensus.hexa
 ```
 
 ## 검증 결과

@@ -42,8 +42,8 @@ dispatch contract:
 ## 트리거 (fire 방법)
 
 ```bash
-hexa run /Users/ghost/core/anima/anima-physics/physics_substrate_dispatch.hexa --selftest
-hexa run /Users/ghost/core/anima/anima-physics/physics_substrate_dispatch.hexa --demo
+hexa run /Users/ghost/core/anima/anima-physics/orchestration/physics_substrate_dispatch.hexa --selftest
+hexa run /Users/ghost/core/anima/anima-physics/orchestration/physics_substrate_dispatch.hexa --demo
 ```
 
 ## 검증 결과

@@ -41,7 +41,7 @@ fn sensor_to_consciousness(input: SensorInput) -> float { input.pressure }
 ## 트리거 (fire 방법)
 
 ```bash
-hexa run anima-physics/src/body_physics_bridge.hexa
+hexa run anima-physics/substrate/src/body_physics_bridge.hexa
 ```
 
 ## 검증 결과

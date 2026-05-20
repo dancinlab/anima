@@ -39,7 +39,7 @@ Entrypoints:
 ```bash
 # token 발급 후
 export BRAINCHIP_AKIDA_TOKEN=<token>
-hexa run /Users/ghost/core/anima/anima-physics/neuromorphic/cloud_facade_poc.hexa
+hexa run /Users/ghost/core/anima/anima-physics/substrate/neuromorphic/cloud_facade_poc.hexa
 ```
 
 ## 검증 결과

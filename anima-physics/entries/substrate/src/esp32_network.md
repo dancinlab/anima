@@ -44,7 +44,7 @@ fn run_benchmark(steps, topology) -> float { 0.0 }
 ## 트리거 (fire 방법)
 
 ```bash
-hexa run anima-physics/src/esp32_network.hexa
+hexa run anima-physics/substrate/src/esp32_network.hexa
 ```
 
 ## 검증 결과

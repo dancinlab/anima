@@ -34,7 +34,7 @@ Order of self-reference:
 ## 트리거 (fire 방법)
 
 ```bash
-hexa run anima-physics/fpga/nested_lattice.hexa
+hexa run anima-physics/substrate/fpga/nested_lattice.hexa
 ```
 
 ## 검증 결과

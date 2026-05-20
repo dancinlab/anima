@@ -38,7 +38,7 @@ c_fiber = 204,218 m/ms (n_eff=1.468 SMF-28 @ 1550 nm)
 ## 트리거 (fire 방법)
 
 ```bash
-hexa run anima-physics/photonic/mesh_network.hexa
+hexa run anima-physics/substrate/photonic/mesh_network.hexa
 ```
 
 ## 검증 결과

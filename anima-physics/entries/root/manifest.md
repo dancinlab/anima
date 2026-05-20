@@ -8,7 +8,7 @@
 
 ## 작동 코드 / 의존성
 
-- `anima-physics/signal_corpus_manifest.json` (1.5 KB, 52 lines)
+- `anima-physics/orchestration/signal_corpus_manifest.json` (1.5 KB, 52 lines)
 - 의존: `signal_corpus.hexa` (emit 명령 — T6 검증으로 manifest 재생성 가능)
 
 ## 비용 / 리소스
@@ -39,9 +39,9 @@
 ## 트리거 (fire 방법)
 
 ```bash
-cat /Users/ghost/core/anima/anima-physics/signal_corpus_manifest.json | jq
+cat /Users/ghost/core/anima/anima-physics/orchestration/signal_corpus_manifest.json | jq
 # regenerate via T6 selftest:
-hexa run /Users/ghost/core/anima/anima-physics/signal_corpus.hexa
+hexa run /Users/ghost/core/anima/anima-physics/orchestration/signal_corpus.hexa
 ```
 
 ## 검증 결과

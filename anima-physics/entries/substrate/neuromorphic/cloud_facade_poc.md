@@ -36,12 +36,12 @@ surrogate yields ~1.75 nat (typical), well above G1 floor
 
 ```bash
 # default (surrogate fallback if no token)
-hexa run anima-physics/neuromorphic/cloud_facade_poc.hexa
-hexa run anima-physics/neuromorphic/cloud_facade_poc.hexa --selftest
+hexa run anima-physics/substrate/neuromorphic/cloud_facade_poc.hexa
+hexa run anima-physics/substrate/neuromorphic/cloud_facade_poc.hexa --selftest
 
 # LIVE (token 있을 때 자동 dispatch)
 export AKIDA_TOKEN=...
-hexa run anima-physics/neuromorphic/cloud_facade_poc.hexa
+hexa run anima-physics/substrate/neuromorphic/cloud_facade_poc.hexa
 ```
 
 ## 검증 결과

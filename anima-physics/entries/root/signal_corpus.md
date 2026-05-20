@@ -8,7 +8,7 @@
 
 ## 작동 코드 / 의존성
 
-- `anima-physics/signal_corpus.hexa` (24 KB, ~620 LoC)
+- `anima-physics/orchestration/signal_corpus.hexa` (24 KB, ~620 LoC)
 - 의존: 없음 (deterministic LCG, 외부 dataset 다운로드 안 함 — catalog only)
 - emit: `signal_corpus_manifest.json` (P22 downstream task)
 
@@ -47,7 +47,7 @@ Public catalog: SEED, DEAP, Sleep-EDF, TUH-EEG, DREAMER, MAHNOB-HCI
 ## 트리거 (fire 방법)
 
 ```bash
-hexa run /Users/ghost/core/anima/anima-physics/signal_corpus.hexa
+hexa run /Users/ghost/core/anima/anima-physics/orchestration/signal_corpus.hexa
 ```
 
 ## 검증 결과

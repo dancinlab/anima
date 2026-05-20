@@ -8,7 +8,7 @@
 
 ## 작동 코드 / 의존성
 
-- `anima-physics/physics_substrate_dispatch.hexa` (12 KB, ~300 LoC)
+- `anima-physics/orchestration/physics_substrate_dispatch.hexa` (12 KB, ~300 LoC)
 - 의존: `physics.hexa` (enum SSOT + dispatch fn)
 - selftest 분기에서 4 backend variant 모두 호출 → routing 행동 stdout emit
 
@@ -36,8 +36,8 @@ mirror_dispatch(cells, backend) -> LocalDispatchProbe
 ## 트리거 (fire 방법)
 
 ```bash
-hexa run /Users/ghost/core/anima/anima-physics/physics_substrate_dispatch.hexa --selftest
-hexa run /Users/ghost/core/anima/anima-physics/physics_substrate_dispatch.hexa --demo
+hexa run /Users/ghost/core/anima/anima-physics/orchestration/physics_substrate_dispatch.hexa --selftest
+hexa run /Users/ghost/core/anima/anima-physics/orchestration/physics_substrate_dispatch.hexa --demo
 ```
 
 ## 검증 결과

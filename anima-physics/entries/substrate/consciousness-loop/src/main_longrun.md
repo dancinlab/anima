@@ -45,7 +45,7 @@ fn main() {
 ## 트리거 (fire 방법)
 
 ```bash
-hexa run anima-physics/consciousness-loop/src/main_longrun.hexa
+hexa run anima-physics/substrate/consciousness-loop/src/main_longrun.hexa
 ```
 
 ## 검증 결과

@@ -40,7 +40,7 @@ struct SNNEngine {
 ## 트리거 (fire 방법)
 
 ```bash
-hexa run anima-physics/engines/snn_consciousness.hexa
+hexa run anima-physics/substrate/engines/snn_consciousness.hexa
 ```
 
 ## 검증 결과

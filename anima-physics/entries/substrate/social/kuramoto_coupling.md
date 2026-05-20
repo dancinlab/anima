@@ -37,7 +37,7 @@ Critical coupling:
 ## 트리거 (fire 방법)
 
 ```bash
-hexa run anima-physics/social/kuramoto_coupling.hexa
+hexa run anima-physics/substrate/social/kuramoto_coupling.hexa
 ```
 
 ## 검증 결과

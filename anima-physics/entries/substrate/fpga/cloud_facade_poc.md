@@ -35,8 +35,8 @@ SEED_LFSR = 0x42 · SEED_RING = 0xA5 · POLY = 0xB8
 ## 트리거 (fire 방법)
 
 ```bash
-hexa run anima-physics/fpga/cloud_facade_poc.hexa
-hexa run anima-physics/fpga/cloud_facade_poc.hexa --selftest
+hexa run anima-physics/substrate/fpga/cloud_facade_poc.hexa
+hexa run anima-physics/substrate/fpga/cloud_facade_poc.hexa --selftest
 ```
 
 ## 검증 결과

@@ -39,7 +39,7 @@ analog + memristor + cmos + fpga + arduino; quantum has 2 markers POC + Phase 2)
 
 ```bash
 HEXA_RESOLVER_NO_REROUTE=1 hexa run \
-    anima-physics/tool/mk_xii_substrate_witness_ledger_aggregator.hexa
+    anima-physics/substrate/tool/mk_xii_substrate_witness_ledger_aggregator.hexa
 
 # env vars (선택):
 # LEDGER_OUT, LEDGER_BASE_DIR, LEDGER_TARGET_TOTAL

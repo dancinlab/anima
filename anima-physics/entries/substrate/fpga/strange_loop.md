@@ -35,7 +35,7 @@ N = 4 cells per layer, 2 layers (A, B)
 ## 트리거 (fire 방법)
 
 ```bash
-hexa run anima-physics/fpga/strange_loop.hexa
+hexa run anima-physics/substrate/fpga/strange_loop.hexa
 ```
 
 ## 검증 결과

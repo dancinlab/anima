@@ -39,7 +39,7 @@ fn compute_power(substrate: string, n_cells: i32) -> float { return 0.0 }
 ## 트리거 (fire 방법)
 
 ```bash
-hexa run anima-physics/benchmarks/bench_power_efficiency.hexa
+hexa run anima-physics/substrate/benchmarks/bench_power_efficiency.hexa
 ```
 
 ## 검증 결과

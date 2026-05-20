@@ -38,7 +38,7 @@ fn sync_eeg(eeg_path, engine_type)   -> EEGPhysicsResult  // active_sync 60s
 ## 트리거 (fire 방법)
 
 ```bash
-hexa run anima-physics/src/eeg_physics_bridge.hexa
+hexa run anima-physics/substrate/src/eeg_physics_bridge.hexa
 ```
 
 ## 검증 결과

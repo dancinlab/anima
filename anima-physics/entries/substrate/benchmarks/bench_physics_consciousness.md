@@ -39,7 +39,7 @@ fn run_geom_bench(cells: i32, steps: i32)  -> GeomResult   { ... 0 ... }
 ## 트리거 (fire 방법)
 
 ```bash
-hexa run anima-physics/benchmarks/bench_physics_consciousness.hexa
+hexa run anima-physics/substrate/benchmarks/bench_physics_consciousness.hexa
 ```
 
 ## 검증 결과

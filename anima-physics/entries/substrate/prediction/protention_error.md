@@ -36,7 +36,7 @@ guard:
 ## 트리거 (fire 방법)
 
 ```bash
-hexa run anima-physics/prediction/protention_error.hexa
+hexa run anima-physics/substrate/prediction/protention_error.hexa
 ```
 
 ## 검증 결과

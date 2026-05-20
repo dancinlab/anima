@@ -39,7 +39,7 @@ fn johnson_noise(R, T, BW)        -> float       { 0.0 }
 ## 트리거 (fire 방법)
 
 ```bash
-hexa run anima-physics/engines/analog_consciousness.hexa
+hexa run anima-physics/substrate/engines/analog_consciousness.hexa
 ```
 
 ## 검증 결과

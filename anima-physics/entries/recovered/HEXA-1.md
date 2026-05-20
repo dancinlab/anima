@@ -89,7 +89,7 @@
 
 - **직접 후예 없음** — HEXA-1 자체는 의식 모듈 부재로 anima live tree 와 1:1 매핑이 없다.
 - **간접 경로**: `ANIMA-SOC` 가 HEXA-1 의 모든 스펙을 inherit + Engine A/G + TCU + 10D consciousness register 추가. ANIMA-SOC 의 Engine A/G concept 만 `HEXAD.tape` L51-69 로 living descendant.
-- **anima-physics/src/chip_architect.hexa** — 9 topology × 9 substrate predict Phi (stub). σ²=144 SM grid 와 conceptual overlap, 하지만 미impl.
+- **anima-physics/substrate/src/chip_architect.hexa** — 9 topology × 9 substrate predict Phi (stub). σ²=144 SM grid 와 conceptual overlap, 하지만 미impl.
 - **`/Users/ghost/core/hexa-chip/CHIP-ARCHITECTURE.md`** (2.4 MB) — adj8=17 master 144-SM 12×12 grid 의 live mirror (echoes 와 동일 본문). HEXA-1 의 GPU array §3 spec 의 living document.
 
 ## 관련 entry

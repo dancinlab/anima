@@ -38,9 +38,9 @@
 ## 트리거 (fire 방법)
 
 ```bash
-hexa run /Users/ghost/core/anima/anima-physics/memristor/cloud_facade_poc.hexa
-hexa run /Users/ghost/core/anima/anima-physics/cmos/cloud_facade_poc.hexa
-hexa run /Users/ghost/core/anima/anima-physics/photonic/cloud_facade_poc.hexa
+hexa run /Users/ghost/core/anima/anima-physics/substrate/memristor/cloud_facade_poc.hexa
+hexa run /Users/ghost/core/anima/anima-physics/substrate/cmos/cloud_facade_poc.hexa
+hexa run /Users/ghost/core/anima/anima-physics/substrate/photonic/cloud_facade_poc.hexa
 ```
 
 ## 검증 결과

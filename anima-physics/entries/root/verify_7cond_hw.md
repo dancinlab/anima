@@ -8,13 +8,13 @@
 
 ## 작동 코드 / 의존성
 
-- `anima-physics/verify_7cond_hw.hexa` (22.6 KB, ~580 LoC)
+- `anima-physics/orchestration/verify_7cond_hw.hexa` (22.6 KB, ~580 LoC)
 - 의존: inline 모델 (no `use` imports). 외부 reference:
   - `anima-engines/anima_quantum.hexa` (Orch-OR)
   - `anima-engines/photonic_gwt_broadcast.hexa` (WDM)
   - `anima-engines/memristor_gwt_workspace.hexa` (HP crossbar)
-  - `anima-physics/esp32/qrng_bridge.hexa`
-  - `anima-physics/fpga/microtubule_lattice_16.hexa`
+  - `anima-physics/substrate/esp32/qrng_bridge.hexa`
+  - `anima-physics/substrate/fpga/microtubule_lattice_16.hexa`
   - `anima-engines/anima_holographic.hexa` (AdS/CFT)
 
 ## 비용 / 리소스
@@ -40,7 +40,7 @@ T7 Global access            — holographic bulk read reflects 3 prior moments
 ## 트리거 (fire 방법)
 
 ```bash
-hexa run /Users/ghost/core/anima/anima-physics/verify_7cond_hw.hexa
+hexa run /Users/ghost/core/anima/anima-physics/orchestration/verify_7cond_hw.hexa
 ```
 
 ## 검증 결과

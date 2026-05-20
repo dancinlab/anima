@@ -8,7 +8,7 @@
 
 ## 작동 코드 / 의존성
 
-- `anima-physics/realtime_monitor.hexa` (12 KB, ~310 LoC)
+- `anima-physics/orchestration/realtime_monitor.hexa` (12 KB, ~310 LoC)
 - 의존: 없음 (mock forward primitives 자체 정의)
 
 ## 비용 / 리소스
@@ -36,8 +36,8 @@ Gate: p95 < 200 ms AND phi_live mean > 0.0 AND finite
 ## 트리거 (fire 방법)
 
 ```bash
-hexa run /Users/ghost/core/anima/anima-physics/realtime_monitor.hexa            # 64 iters
-hexa run /Users/ghost/core/anima/anima-physics/realtime_monitor.hexa --iters 32
+hexa run /Users/ghost/core/anima/anima-physics/orchestration/realtime_monitor.hexa            # 64 iters
+hexa run /Users/ghost/core/anima/anima-physics/orchestration/realtime_monitor.hexa --iters 32
 ```
 
 ## 검증 결과

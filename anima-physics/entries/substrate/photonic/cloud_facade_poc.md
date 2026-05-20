@@ -32,8 +32,8 @@ G4 backend == "perceval_slos_fock"
 ## 트리거 (fire 방법)
 
 ```bash
-hexa run anima-physics/photonic/cloud_facade_poc.hexa
-hexa run anima-physics/photonic/cloud_facade_poc.hexa --selftest
+hexa run anima-physics/substrate/photonic/cloud_facade_poc.hexa
+hexa run anima-physics/substrate/photonic/cloud_facade_poc.hexa --selftest
 ```
 
 ## 검증 결과

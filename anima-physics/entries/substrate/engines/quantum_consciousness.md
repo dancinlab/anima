@@ -37,7 +37,7 @@ fn measure(engine) -> i32 { 0 }
 ## 트리거 (fire 방법)
 
 ```bash
-hexa run anima-physics/engines/quantum_consciousness.hexa
+hexa run anima-physics/substrate/engines/quantum_consciousness.hexa
 ```
 
 ## 검증 결과

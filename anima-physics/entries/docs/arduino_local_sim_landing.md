@@ -41,7 +41,7 @@ Probe topology:
 
 ```bash
 brew install ngspice
-hexa run /Users/ghost/core/anima/anima-physics/arduino/cloud_facade_poc.hexa
+hexa run /Users/ghost/core/anima/anima-physics/substrate/arduino/cloud_facade_poc.hexa
 ```
 
 ## 검증 결과

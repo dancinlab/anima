@@ -41,10 +41,10 @@ Protocol:
 
 ```bash
 # server
-hexa run anima-physics/web/physics_server.hexa --topology small_world --cells 32 --speed 30
+hexa run anima-physics/substrate/web/physics_server.hexa --topology small_world --cells 32 --speed 30
 
 # browser
-open anima-physics/web/dashboard.html      # connects ws://localhost:8765
+open anima-physics/substrate/web/dashboard.html      # connects ws://localhost:8765
 ```
 
 ## 검증 결과

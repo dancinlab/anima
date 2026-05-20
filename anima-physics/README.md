@@ -218,8 +218,8 @@ Archive (entry 파일 미생성, [`recovered/INDEX.md`](recovered/INDEX.md) 참�
 | iverilog Galois LFSR sim | ✅ | **$0 Mac local** | PHYS-P25 iverilog local sim, 4/4 PASS | [`entries/substrate/fpga/cloud_facade_poc.md`](entries/substrate/fpga/cloud_facade_poc.md) |
 | iCE40UP5K single (256 cells) | 🟡 | **$60/board** | 5,280 LUT + 120 Kbit BRAM + 256 Kbit SPRAM, yosys + nextpnr-ice40 오픈소스, 256 셀 tight, ~10mW | [`docs/fpga-synthesis-guide.md`](docs/fpga-synthesis-guide.md) |
 | 4× iCE40UP5K mesh (1024 cells) | 🟡 | **~$240 board** | 4 보드 SPI 10MHz interconnect, internal ring + inter-FPGA small-world, **예상 Φ≈1400** (초선형 N^1.09) | [`docs/multi-fpga-mesh-spec.md`](docs/multi-fpga-mesh-spec.md) |
-| Microtubule lattice 16-node | 🟡 | ($60 × N 보드) | FPGA Verilog 16-node microtubule lattice POC (Penrose-Hameroff Orch-OR 후예) | [`fpga/microtubule_lattice_16.hexa`](fpga/microtubule_lattice_16.hexa) |
-| Partial reconfig / nested / strange-loop | ❌ | (stub) | 3 hexa stub, 미실현 | [`fpga/`](fpga/) |
+| Microtubule lattice 16-node | 🟡 | ($60 × N 보드) | FPGA Verilog 16-node microtubule lattice POC (Penrose-Hameroff Orch-OR 후예) | [`substrate/fpga/microtubule_lattice_16.hexa`](substrate/fpga/microtubule_lattice_16.hexa) |
+| Partial reconfig / nested / strange-loop | ❌ | (stub) | 3 hexa stub, 미실현 | [`substrate/fpga/`](substrate/fpga/) |
 
 ```
   ┌──────────────────┐   SPI-AB    ┌──────────────────┐
@@ -239,7 +239,7 @@ Archive (entry 파일 미생성, [`recovered/INDEX.md`](recovered/INDEX.md) 참�
 |---|:---:|---|---|---|
 | ESP32-WROOM-32 ×8 SPI ring (16 cell) | 🟡 | **~$77 BOM** | 보드당 2 cell × 8 = 16 cell, VSPI(M)/HSPI(S) ring, GRU-like hidden state SPI 전송 | [`docs/esp32-hardware-guide.md`](docs/esp32-hardware-guide.md) |
 | ESP32-S3-DevKitC-1 (PSRAM 8MB) | 🟡 | ~$6/board → $48 ×8 | SRAM 512KB + **PSRAM 8MB** + Flash 8MB, ConsciousDecoderV2 34.5M fp16 PSRAM 적재 가능 | [`entries/root/edge_deploy.md`](entries/root/edge_deploy.md) |
-| ESP32 QRNG bridge | 🟡 | (보드값 + 노이즈 회로) | ESP32 ADC noise → quantum-style RNG → anima inference seed | [`esp32/qrng_bridge.hexa`](esp32/) · [`esp32/QRNG_SPEC.md`](esp32/) |
+| ESP32 QRNG bridge | 🟡 | (보드값 + 노이즈 회로) | ESP32 ADC noise → quantum-style RNG → anima inference seed | [`substrate/esp32/qrng_bridge.hexa`](substrate/esp32/) · [`substrate/esp32/QRNG_SPEC.md`](substrate/esp32/) |
 | Arduino Uno R3 (호스트) | 🟡 | $8.00 | 8-cell electromagnet ring 의 PWM + ADC 호스트 (§A) | [`docs/arduino-prototype-spec.md`](docs/arduino-prototype-spec.md) |
 
 ### E. Neuromorphic (3)
@@ -264,8 +264,8 @@ Archive (entry 파일 미생성, [`recovered/INDEX.md`](recovered/INDEX.md) 참�
 | Entry | 등급 | 비용 | 1줄 요약 | 위치 |
 |---|:---:|---|---|---|
 | Quantum Bell + Fock local sim | ✅ | **$0 Mac local** | qiskit-aer / Strawberry Fields / Perceval; bell_state T1-T5 + cloud_facade 4/4 PASS | [`entries/substrate/quantum/`](entries/substrate/quantum/) |
-| AWS Braket IonQ Forte-1 (trapped ion) | 🟡 | **$0.30/task + $0.03/shot** (4-qubit GHZ ≈ $0.67/2회) | `arn:aws:braket:us-east-1::device/qpu/ionq/Forte-1`, 4-qubit GHZ; `i` gate 미지원 (rx 대체); DRY_RUN default | [`scripts/anima_physics_braket_ionq_probe.py`](scripts/) |
-| AWS Braket QuEra Aquila (Rydberg) | 🟡 | **$0.30/task + $0.01/shot** (4-atom MIS ≈ $2.60/2회) | `arn:aws:braket:us-east-1::device/qpu/quera/Aquila`, 5.5µm lattice, 4-atom analog Hamiltonian | [`scripts/anima_physics_braket_quera_probe.py`](scripts/) |
+| AWS Braket IonQ Forte-1 (trapped ion) | 🟡 | **$0.30/task + $0.03/shot** (4-qubit GHZ ≈ $0.67/2회) | `arn:aws:braket:us-east-1::device/qpu/ionq/Forte-1`, 4-qubit GHZ; `i` gate 미지원 (rx 대체); DRY_RUN default | [`substrate/scripts/anima_physics_braket_ionq_probe.py`](substrate/scripts/) |
+| AWS Braket QuEra Aquila (Rydberg) | 🟡 | **$0.30/task + $0.01/shot** (4-atom MIS ≈ $2.60/2회) | `arn:aws:braket:us-east-1::device/qpu/quera/Aquila`, 5.5µm lattice, 4-atom analog Hamiltonian | [`substrate/scripts/anima_physics_braket_quera_probe.py`](substrate/scripts/) |
 | IBM Q free tier | 🟡 | $0 / month free credit | qiskit-aer local sim + IBM Q Runtime token (optional) | [`entries/substrate/quantum/cloud_real_ibm_q_facade.md`](entries/substrate/quantum/cloud_real_ibm_q_facade.md) |
 | AWS Braket Rigetti Ankaa-3 | ❌ | (deprecated 2026-Q1) | superconducting `us-west-1` 4-qubit GHZ, **retired** | [`entries/substrate/superconducting/cloud_facade_poc.md`](entries/substrate/superconducting/cloud_facade_poc.md) |
 
@@ -274,7 +274,7 @@ Archive (entry 파일 미생성, [`recovered/INDEX.md`](recovered/INDEX.md) 참�
 | Entry | 등급 | 비용 | 1줄 요약 | 위치 |
 |---|:---:|---|---|---|
 | HP TiO₂ Biolek memristor (NgSpice) | ✅ | **$0 Mac local** | PHYS-P25 Biolek HP TiO2 ngspice, I-V hysteresis, 4/4 PASS | [`entries/substrate/memristor/cloud_facade_poc.md`](entries/substrate/memristor/cloud_facade_poc.md) |
-| Memristor self-reference loop | 🟡 | $0 sim | hexa substrate self_reference (memristor 의 메모리 = recurrent state) POC | [`memristor/self_reference.hexa`](memristor/) |
+| Memristor self-reference loop | 🟡 | $0 sim | hexa substrate self_reference (memristor 의 메모리 = recurrent state) POC | [`substrate/memristor/self_reference.hexa`](substrate/memristor/) |
 | ReRAM/MRAM multilevel n=6 | 📦 | (paper) | Multi-level cell + crossbar MAC, n=6 derived | `recovered/chip-architecture/reram-multilevel-n6.md` |
 
 ### I. Analog / CMOS (4)
@@ -464,7 +464,7 @@ N3──N2   round-trip 4-hop = 3.91 ms  (gate: < 10 ms)
 - **benchmarks/ stub → impl** — 4 benchmark (cross_platform/physics_consciousness/power_efficiency/spin_glass) 가 stub. 9 substrate × 9 topology grid 채우려면 필수
 - **src/*_bridge.hexa stub → impl** — body_physics_bridge / chip_architect / eeg_physics_bridge 3 bridge 모두 stub
 - **HW prototype Phase 1** — Arduino $35 fire 시 [verify_7cond_hw](entries/root/verify_7cond_hw.md) 의 condition 4 (ESP32 perturbation) 첫 실측 가능
-- **recovered → live anima** — [ANIMA-SOC](entries/recovered/ANIMA-SOC.md) 의 Engine A/G concept 는 `HEXAD.tape` 로 living descendant. ANIMA-6 의 TCU + 10D register 는 아직 anima 본체 미연결 — `engines/` 또는 `src/chip_architect.hexa` 에서 impl 후보
+- **recovered → live anima** — [ANIMA-SOC](entries/recovered/ANIMA-SOC.md) 의 Engine A/G concept 는 `HEXAD.tape` 로 living descendant. ANIMA-6 의 TCU + 10D register 는 아직 anima 본체 미연결 — `substrate/engines/` 또는 `substrate/src/chip_architect.hexa` 에서 impl 후보
 
 ---
 
@@ -474,15 +474,21 @@ N3──N2   round-trip 4-hop = 3.91 ms  (gate: < 10 ms)
 anima-physics/
 ├── README.md                       ← (이 파일)
 ├── README_legacy.md                ← 이전 README (8 platform / 9 substrate 개요)
-├── entries/
-│   ├── root/        (11)           ← § 1
-│   ├── docs/        (19)           ← § 2
-│   ├── substrate/   (60)           ← § 3 (28 폴더, 카테고리 구조 유지)
-│   └── recovered/   (3)            ← § 4 (HEXA-1 / ANIMA-6 / ANIMA-SOC)
-├── docs/            (19 원본 .md)
-├── recovered/       (300 archive + INDEX.md)
-├── {28 substrate 서브폴더}         ← 원본 .hexa / .py / .cir / .sv / SPEC.md
-└── {루트 .hexa 9개 + manifest.json}
+├── .gitignore                      ← 빌드 산출물 / venv / 크래시덤프 제외
+├── orchestration/   (10)           ← § 1 원본 .hexa + manifest.json
+├── substrate/       (28)           ← § 3 원본 .hexa / .py / .cir / .sv / SPEC.md
+│   ├── analog/ arduino/ benchmarks/ cmos/ consciousness-loop/ eeg/ engines/
+│   ├── esp32/ fpga/ hippocampus/ hw/ memristor/ motor_cortex/ neuromorphic/
+│   ├── oscillator/ photonic/ prediction/ proprioception/ quantum/ scripts/
+│   └── social/ src/ superconducting/ thermodynamic/ tool/ trapped_ion/ vestibular/ web/
+├── docs/            (19 원본 .md)  ← § 2
+├── recovered/       (300 archive + INDEX.md)   ← § 4
+├── entries/                        ← 93 entry .md 전수조사 인덱스
+│   ├── root/        (11)           ← § 1 마크다운
+│   ├── docs/        (19)           ← § 2 마크다운
+│   ├── substrate/   (60)           ← § 3 마크다운 (substrate/ 원본 미러)
+│   └── recovered/   (3)            ← § 4 마크다운 (HEXA-1 / ANIMA-6 / ANIMA-SOC)
+└── config/                         ← physics_config.json 등
 ```
 
 ---

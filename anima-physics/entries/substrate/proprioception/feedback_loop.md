@@ -41,7 +41,7 @@ Proprioceptive noise (biological spindles + Golgi tendon):
 ## 트리거 (fire 방법)
 
 ```bash
-hexa run anima-physics/proprioception/feedback_loop.hexa
+hexa run anima-physics/substrate/proprioception/feedback_loop.hexa
 ```
 
 ## 검증 결과

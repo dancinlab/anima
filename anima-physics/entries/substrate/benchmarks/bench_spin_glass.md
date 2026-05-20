@@ -41,7 +41,7 @@ fn simulate_spin_glass(cells: i32, frustration: float, steps: i32) -> SpinGlassR
 ## 트리거 (fire 방법)
 
 ```bash
-hexa run anima-physics/benchmarks/bench_spin_glass.hexa
+hexa run anima-physics/substrate/benchmarks/bench_spin_glass.hexa
 ```
 
 ## 검증 결과

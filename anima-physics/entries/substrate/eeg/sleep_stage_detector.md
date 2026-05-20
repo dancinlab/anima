@@ -37,7 +37,7 @@ Rules:
 ## 트리거 (fire 방법)
 
 ```bash
-hexa run anima-physics/eeg/sleep_stage_detector.hexa
+hexa run anima-physics/substrate/eeg/sleep_stage_detector.hexa
 ```
 
 ## 검증 결과

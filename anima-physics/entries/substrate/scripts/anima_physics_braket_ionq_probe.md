@@ -33,14 +33,14 @@ Required JSON keys (all branches):
 
 ```bash
 # DRY_RUN (default)
-ANIMA_BRAKET_DRY_RUN=1 python3 anima-physics/scripts/anima_physics_braket_ionq_probe.py --seed 42 --program ghz
+ANIMA_BRAKET_DRY_RUN=1 python3 anima-physics/substrate/scripts/anima_physics_braket_ionq_probe.py --seed 42 --program ghz
 
 # LIVE
 export AWS_PROFILE=braket
-ANIMA_BRAKET_DRY_RUN=0 python3 anima-physics/scripts/anima_physics_braket_ionq_probe.py --seed 42 --program ghz
+ANIMA_BRAKET_DRY_RUN=0 python3 anima-physics/substrate/scripts/anima_physics_braket_ionq_probe.py --seed 42 --program ghz
 
 # 또는 hexa wrapper
-hexa run anima-physics/trapped_ion/cloud_facade_poc.hexa
+hexa run anima-physics/substrate/trapped_ion/cloud_facade_poc.hexa
 ```
 
 ## 검증 결과

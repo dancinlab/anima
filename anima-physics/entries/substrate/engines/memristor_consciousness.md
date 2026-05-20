@@ -37,7 +37,7 @@ fn update_memristance(synapse, current, dt) -> MemristorSynapse { synapse }
 ## 트리거 (fire 방법)
 
 ```bash
-hexa run anima-physics/engines/memristor_consciousness.hexa
+hexa run anima-physics/substrate/engines/memristor_consciousness.hexa
 ```
 
 ## 검증 결과

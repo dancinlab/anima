@@ -42,7 +42,7 @@ Verdict ladder: PASS / INTEGRATED_PASS / PASS_DEGRADED_SDK_FALLBACK /
 ## 트리거 (fire 방법)
 
 ```bash
-hexa run /Users/ghost/core/anima/anima-physics/tool/mk_xii_substrate_witness_ledger_aggregator.hexa
+hexa run /Users/ghost/core/anima/anima-physics/substrate/tool/mk_xii_substrate_witness_ledger_aggregator.hexa
 ```
 
 ## 검증 결과

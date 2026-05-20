@@ -35,7 +35,7 @@ struct Cell { hidden: [f32], identity: [f32], ... }
 ## 트리거 (fire 방법)
 
 ```bash
-hexa run anima-physics/consciousness-loop/src/main.hexa
+hexa run anima-physics/substrate/consciousness-loop/src/main.hexa
 ```
 
 ## 검증 결과

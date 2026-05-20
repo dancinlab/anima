@@ -36,7 +36,7 @@ Determinism: no random — moment = f(node_idx, step_parity) → bit-identical F
 
 ```bash
 # Mac sim
-hexa run anima-physics/fpga/microtubule_lattice_16.hexa
+hexa run anima-physics/substrate/fpga/microtubule_lattice_16.hexa
 
 # FPGA synth (별 cycle)
 cd anima-physics/fpga && make synth   # yosys + nextpnr-ice40 + icestorm

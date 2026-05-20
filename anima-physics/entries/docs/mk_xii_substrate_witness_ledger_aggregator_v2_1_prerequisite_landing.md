@@ -41,13 +41,13 @@ v3 dry-run synthetic LIVE:
 
 ```bash
 # v2 byte-identical regression
-hexa run /Users/ghost/core/anima/anima-physics/tool/mk_xii_substrate_witness_ledger_aggregator_v2.hexa
+hexa run /Users/ghost/core/anima/anima-physics/substrate/tool/mk_xii_substrate_witness_ledger_aggregator_v2.hexa
 
 # v3 mode dry-run (env-var override)
 LEDGER_VERSION=v3 \
 LEDGER_OUT=state/v10_anima_physics_cloud_facade/integration_ledger/witness_ledger_v3.json \
 MARKER_OUT=state/v10_anima_physics_cloud_facade/integration_ledger/marker_v3.json \
-hexa run /Users/ghost/core/anima/anima-physics/tool/mk_xii_substrate_witness_ledger_aggregator_v2.hexa
+hexa run /Users/ghost/core/anima/anima-physics/substrate/tool/mk_xii_substrate_witness_ledger_aggregator_v2.hexa
 ```
 
 ## 검증 결과

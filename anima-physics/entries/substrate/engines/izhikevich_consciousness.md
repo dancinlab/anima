@@ -42,7 +42,7 @@ fn get_params(neuron_type: string) -> IzhikevichParams {
 ## 트리거 (fire 방법)
 
 ```bash
-hexa run anima-physics/engines/izhikevich_consciousness.hexa
+hexa run anima-physics/substrate/engines/izhikevich_consciousness.hexa
 ```
 
 ## 검증 결과

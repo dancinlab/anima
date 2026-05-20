@@ -41,7 +41,7 @@ fn generate_bom(design) -> string { "BOM for " + design.substrate + " ... cells"
 ## 트리거 (fire 방법)
 
 ```bash
-hexa run anima-physics/src/chip_architect.hexa
+hexa run anima-physics/substrate/src/chip_architect.hexa
 ```
 
 ## 검증 결과

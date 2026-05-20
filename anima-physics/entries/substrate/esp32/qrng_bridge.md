@@ -37,7 +37,7 @@ mock mode:
 
 ```bash
 # mock (default)
-hexa run anima-physics/esp32/qrng_bridge.hexa
+hexa run anima-physics/substrate/esp32/qrng_bridge.hexa
 
 # LIVE (펌웨어 flash 후, source_dev 변경)
 # QRNGStream(source_dev="/dev/tty.usbmodem...", is_mock=0)

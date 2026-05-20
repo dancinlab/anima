@@ -35,7 +35,7 @@ At step t:
 ## 트리거 (fire 방법)
 
 ```bash
-hexa run anima-physics/memristor/self_reference.hexa
+hexa run anima-physics/substrate/memristor/self_reference.hexa
 ```
 
 ## 검증 결과

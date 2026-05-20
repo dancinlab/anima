@@ -32,7 +32,7 @@ biology refs:
 ## 트리거 (fire 방법)
 
 ```bash
-hexa run anima-physics/hippocampus/episodic_replay.hexa
+hexa run anima-physics/substrate/hippocampus/episodic_replay.hexa
 ```
 
 ## 검증 결과

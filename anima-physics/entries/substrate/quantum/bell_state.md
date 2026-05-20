@@ -36,7 +36,7 @@ Correlation: corr = count(qubit_A == qubit_B) / n_trials
 ## 트리거 (fire 방법)
 
 ```bash
-hexa run anima-physics/quantum/bell_state.hexa
+hexa run anima-physics/substrate/quantum/bell_state.hexa
 ```
 
 ## 검증 결과

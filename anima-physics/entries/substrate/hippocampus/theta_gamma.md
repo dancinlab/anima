@@ -38,7 +38,7 @@ Modulation Index (Tort 2010):
 ## 트리거 (fire 방법)
 
 ```bash
-hexa run anima-physics/hippocampus/theta_gamma.hexa
+hexa run anima-physics/substrate/hippocampus/theta_gamma.hexa
 ```
 
 ## 검증 결과

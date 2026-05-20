@@ -8,7 +8,7 @@
 
 ## 작동 코드 / 의존성
 
-- `anima-physics/physics.hexa` (7.2 KB, ~180 LoC)
+- `anima-physics/orchestration/physics.hexa` (7.2 KB, ~180 LoC)
 - 의존: `physics_substrate_dispatch.hexa` (4 operational call site), `quantum/cloud_facade_poc.hexa` (sibling A POC)
 - 호출: `scripts/anima_physics_qiskit_aer_probe.py` (선택, 부재 시 stub_reason 명시)
 
@@ -34,7 +34,7 @@ quantum_engine_dispatch(cells, backend) -> QuantumResult
 ## 트리거 (fire 방법)
 
 ```bash
-hexa run /Users/ghost/core/anima/anima-physics/physics_substrate_dispatch.hexa --selftest
+hexa run /Users/ghost/core/anima/anima-physics/orchestration/physics_substrate_dispatch.hexa --selftest
 ```
 
 ## 검증 결과

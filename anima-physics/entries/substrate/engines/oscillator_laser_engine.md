@@ -33,7 +33,7 @@ struct OscillatorLaserEngine {
 ## 트리거 (fire 방법)
 
 ```bash
-hexa run anima-physics/engines/oscillator_laser_engine.hexa
+hexa run anima-physics/substrate/engines/oscillator_laser_engine.hexa
 ```
 
 ## 검증 결과

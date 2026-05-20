@@ -52,9 +52,9 @@ Three pillars combined →
 ## 트리거 (fire 방법)
 
 ```bash
-hexa run /Users/ghost/core/anima/anima-physics/consciousness-loop/src/main.hexa
-hexa run /Users/ghost/core/anima/anima-physics/consciousness-loop/src/snn_main.hexa
-iverilog -o ring.vvp /Users/ghost/core/anima/anima-physics/consciousness-loop/verilog/consciousness_cell.v
+hexa run /Users/ghost/core/anima/anima-physics/substrate/consciousness-loop/src/main.hexa
+hexa run /Users/ghost/core/anima/anima-physics/substrate/consciousness-loop/src/snn_main.hexa
+iverilog -o ring.vvp /Users/ghost/core/anima/anima-physics/substrate/consciousness-loop/verilog/consciousness_cell.v
 # WebGPU: 브라우저에서 consciousness-loop/webgpu/index.html 열기
 # Pure Data: pd consciousness-loop/puredata/consciousness.pd
 ```

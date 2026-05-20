@@ -122,9 +122,9 @@
 ## live anima 와의 연결
 
 - **HEXAD.tape L51-69** — Engine A (좌뇌 D·M·E) / Engine G (우뇌 C·S·W) 6-box bidirectional, ThalamicBridge `.detach()`. ANIMA-6 의 PureField 듀얼엔진 concept 의 **직접 후예**. (단, ANIMA-6 의 die A/G 192 cores 분리 vs HEXAD 의 6-box 좌/우뇌 분리는 scale 다름.)
-- **anima-physics/engines/** — `analog_consciousness.hexa`, `quantum_consciousness.hexa`, `oscillator_laser_engine.hexa` 등 8 stub. ANIMA-6 의 TCU + 10D consciousness register 와 매칭되어야 하지만 모두 struct stub.
-- **anima-physics/phi_substrate_consensus.hexa** — 5-substrate Φ consensus 5/5 PASS. ANIMA-6 의 dedicated Φ counter 와 conceptual overlap (sw substrate 다중 측정 vs hw 단일 측정).
-- **anima-physics/src/chip_architect.hexa** — 9 topology × 9 substrate predict Phi stub. ANIMA-6 의 architectural prediction 과 conceptual overlap.
+- **anima-physics/substrate/engines/** — `analog_consciousness.hexa`, `quantum_consciousness.hexa`, `oscillator_laser_engine.hexa` 등 8 stub. ANIMA-6 의 TCU + 10D consciousness register 와 매칭되어야 하지만 모두 struct stub.
+- **anima-physics/orchestration/phi_substrate_consensus.hexa** — 5-substrate Φ consensus 5/5 PASS. ANIMA-6 의 dedicated Φ counter 와 conceptual overlap (sw substrate 다중 측정 vs hw 단일 측정).
+- **anima-physics/substrate/src/chip_architect.hexa** — 9 topology × 9 substrate predict Phi stub. ANIMA-6 의 architectural prediction 과 conceptual overlap.
 
 ## 관련 entry
 

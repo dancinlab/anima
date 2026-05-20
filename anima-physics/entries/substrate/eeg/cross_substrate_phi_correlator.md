@@ -36,7 +36,7 @@ idx  substrate          live status
 ## 트리거 (fire 방법)
 
 ```bash
-hexa run anima-physics/eeg/cross_substrate_phi_correlator.hexa
+hexa run anima-physics/substrate/eeg/cross_substrate_phi_correlator.hexa
 ```
 
 ## 검증 결과

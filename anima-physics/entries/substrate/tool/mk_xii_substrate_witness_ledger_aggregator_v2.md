@@ -39,11 +39,11 @@ Forward-compat: schema includes future-substrate fields (gracefully extends)
 
 ```bash
 HEXA_RESOLVER_NO_REROUTE=1 hexa run \
-    anima-physics/tool/mk_xii_substrate_witness_ledger_aggregator_v2.hexa
+    anima-physics/substrate/tool/mk_xii_substrate_witness_ledger_aggregator_v2.hexa
 
 # v2.1 mode (synthetic LIVE for v3 dry-run testing):
 LEDGER_VERSION=v3-dryrun MARKER_OUT=/tmp/test_v3.json \
-    hexa run anima-physics/tool/mk_xii_substrate_witness_ledger_aggregator_v2.hexa
+    hexa run anima-physics/substrate/tool/mk_xii_substrate_witness_ledger_aggregator_v2.hexa
 ```
 
 ## 검증 결과

@@ -43,7 +43,7 @@ fn run_benchmark(cells: i32, steps: i32, frustration: float) -> CrossPlatformRes
 
 ```bash
 # stub — 실행은 가능하지만 의미 있는 결과 없음
-hexa run anima-physics/benchmarks/bench_cross_platform.hexa
+hexa run anima-physics/substrate/benchmarks/bench_cross_platform.hexa
 ```
 
 ## 검증 결과

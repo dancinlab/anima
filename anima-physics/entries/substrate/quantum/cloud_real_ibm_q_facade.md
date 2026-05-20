@@ -38,12 +38,12 @@ Verdicts:
 
 ```bash
 # DEGRADED (no token)
-hexa run anima-physics/quantum/cloud_real_ibm_q_facade.hexa
+hexa run anima-physics/substrate/quantum/cloud_real_ibm_q_facade.hexa
 
 # LIVE
 export QISKIT_IBM_TOKEN=...
-hexa run anima-physics/quantum/cloud_real_ibm_q_facade.hexa
-hexa run anima-physics/quantum/cloud_real_ibm_q_facade.hexa --selftest
+hexa run anima-physics/substrate/quantum/cloud_real_ibm_q_facade.hexa
+hexa run anima-physics/substrate/quantum/cloud_real_ibm_q_facade.hexa --selftest
 ```
 
 ## 검증 결과

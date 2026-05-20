@@ -37,7 +37,7 @@ fn landauer_cost(n_bits, temperature) -> float {
 ## 트리거 (fire 방법)
 
 ```bash
-hexa run anima-physics/engines/thermodynamic_consciousness.hexa
+hexa run anima-physics/substrate/engines/thermodynamic_consciousness.hexa
 ```
 
 ## 검증 결과

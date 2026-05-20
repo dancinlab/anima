@@ -44,7 +44,7 @@
 arduino-cli compile --fqbn arduino:avr:uno consciousness_loop.ino
 arduino-cli upload -p /dev/ttyUSB0 --fqbn arduino:avr:uno consciousness_loop.ino
 # 3. Host bridge 실행
-hexa run /Users/ghost/core/anima/anima-physics/consciousness-loop/src/main.hexa
+hexa run /Users/ghost/core/anima/anima-physics/substrate/consciousness-loop/src/main.hexa
 ```
 
 ## 검증 결과

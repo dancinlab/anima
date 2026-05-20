@@ -39,7 +39,7 @@ universal short-term approximator up to O(N·τ)
 ## 트리거 (fire 방법)
 
 ```bash
-hexa run anima-physics/photonic/temporal_delay.hexa
+hexa run anima-physics/substrate/photonic/temporal_delay.hexa
 ```
 
 ## 검증 결과

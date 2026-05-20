@@ -48,7 +48,7 @@ comptime const RATCHET_DECAY_THRESH = 0.8
 ## 트리거 (fire 방법)
 
 ```bash
-hexa run anima-physics/esp32/src/lib.hexa
+hexa run anima-physics/substrate/esp32/src/lib.hexa
 # (실 flash: ESP-IDF / Arduino IDE — docs/esp32-hardware-guide.md)
 ```
 

@@ -30,8 +30,8 @@ G3 byte-identical · G4 backend == "local_ngspice_<ver>_ne555_astable_mc16"
 ## 트리거 (fire 방법)
 
 ```bash
-hexa run anima-physics/arduino/cloud_facade_poc.hexa
-hexa run anima-physics/arduino/cloud_facade_poc.hexa --selftest
+hexa run anima-physics/substrate/arduino/cloud_facade_poc.hexa
+hexa run anima-physics/substrate/arduino/cloud_facade_poc.hexa --selftest
 ```
 
 ## 검증 결과

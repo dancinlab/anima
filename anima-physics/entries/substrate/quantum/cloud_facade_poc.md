@@ -33,8 +33,8 @@ G4 backend == "qiskit_aer_statevector"
 ## 트리거 (fire 방법)
 
 ```bash
-hexa run anima-physics/quantum/cloud_facade_poc.hexa
-hexa run anima-physics/quantum/cloud_facade_poc.hexa --selftest
+hexa run anima-physics/substrate/quantum/cloud_facade_poc.hexa
+hexa run anima-physics/substrate/quantum/cloud_facade_poc.hexa --selftest
 ```
 
 ## 검증 결과

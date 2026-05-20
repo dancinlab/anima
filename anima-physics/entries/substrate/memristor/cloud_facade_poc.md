@@ -33,8 +33,8 @@ shoelace formula: A = 1/2 · |Σ (x_i · y_{i+1} − x_{i+1} · y_i)|
 ## 트리거 (fire 방법)
 
 ```bash
-hexa run anima-physics/memristor/cloud_facade_poc.hexa
-hexa run anima-physics/memristor/cloud_facade_poc.hexa --selftest
+hexa run anima-physics/substrate/memristor/cloud_facade_poc.hexa
+hexa run anima-physics/substrate/memristor/cloud_facade_poc.hexa --selftest
 ```
 
 ## 검증 결과

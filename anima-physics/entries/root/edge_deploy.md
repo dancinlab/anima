@@ -8,7 +8,7 @@
 
 ## 작동 코드 / 의존성
 
-- `anima-physics/edge_deploy.hexa` (19 KB, ~500 LoC)
+- `anima-physics/orchestration/edge_deploy.hexa` (19 KB, ~500 LoC)
 - 의존: `esp32/src/lib.hexa` (SPI ring infrastructure), `consciousness-loop/esp32/consciousness_loop.ino`
 
 ## 비용 / 리소스
@@ -38,9 +38,9 @@ Strategy:
 ## 트리거 (fire 방법)
 
 ```bash
-hexa run /Users/ghost/core/anima/anima-physics/edge_deploy.hexa --target sim --model decoder-34m
-hexa run /Users/ghost/core/anima/anima-physics/edge_deploy.hexa --target esp32 --port /dev/ttyUSB0
-hexa run /Users/ghost/core/anima/anima-physics/edge_deploy.hexa --benchmark
+hexa run /Users/ghost/core/anima/anima-physics/orchestration/edge_deploy.hexa --target sim --model decoder-34m
+hexa run /Users/ghost/core/anima/anima-physics/orchestration/edge_deploy.hexa --target esp32 --port /dev/ttyUSB0
+hexa run /Users/ghost/core/anima/anima-physics/orchestration/edge_deploy.hexa --benchmark
 ```
 
 ## 검증 결과

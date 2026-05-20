@@ -36,7 +36,7 @@ round-trip target: |θ − θ̂| < 0.01 rad
 ## 트리거 (fire 방법)
 
 ```bash
-hexa run anima-physics/motor_cortex/command_encoding.hexa
+hexa run anima-physics/substrate/motor_cortex/command_encoding.hexa
 ```
 
 ## 검증 결과

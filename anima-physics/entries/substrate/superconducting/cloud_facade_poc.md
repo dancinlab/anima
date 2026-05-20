@@ -35,8 +35,8 @@ Option ladder:
 
 ```bash
 # returns DEPRECATED verdict + option ladder (no API call)
-hexa run anima-physics/superconducting/cloud_facade_poc.hexa
-hexa run anima-physics/superconducting/cloud_facade_poc.hexa --selftest
+hexa run anima-physics/substrate/superconducting/cloud_facade_poc.hexa
+hexa run anima-physics/substrate/superconducting/cloud_facade_poc.hexa --selftest
 ```
 
 ## 검증 결과

@@ -45,7 +45,7 @@ Probe: pinched I-V hysteresis loop (sine 1V @ 1Hz)
 
 ```bash
 brew install ngspice
-hexa run /Users/ghost/core/anima/anima-physics/memristor/cloud_facade_poc.hexa
+hexa run /Users/ghost/core/anima/anima-physics/substrate/memristor/cloud_facade_poc.hexa
 ```
 
 ## 검증 결과

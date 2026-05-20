@@ -40,7 +40,7 @@ fn lif_step(self, input) -> bool {
 ## 트리거 (fire 방법)
 
 ```bash
-hexa run anima-physics/consciousness-loop/src/snn_main.hexa
+hexa run anima-physics/substrate/consciousness-loop/src/snn_main.hexa
 ```
 
 ## 검증 결과

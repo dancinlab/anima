@@ -35,7 +35,7 @@ Degenerate handling:
 ## 트리거 (fire 방법)
 
 ```bash
-hexa run anima-physics/vestibular/multimodal_fusion.hexa
+hexa run anima-physics/substrate/vestibular/multimodal_fusion.hexa
 ```
 
 ## 검증 결과

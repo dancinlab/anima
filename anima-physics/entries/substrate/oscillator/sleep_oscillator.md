@@ -38,7 +38,7 @@ mode switch is INSTANTANEOUS (phase accumulator carries; only f and A change).
 ## 트리거 (fire 방법)
 
 ```bash
-hexa run anima-physics/oscillator/sleep_oscillator.hexa
+hexa run anima-physics/substrate/oscillator/sleep_oscillator.hexa
 ```
 
 ## 검증 결과

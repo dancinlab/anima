@@ -45,8 +45,8 @@ export AWS_ACCESS_KEY_ID=<key>
 export AWS_SECRET_ACCESS_KEY=<secret>
 export AWS_REGION=us-east-1
 export ANIMA_BRAKET_DRY_RUN=0  # LIVE
-hexa run /Users/ghost/core/anima/anima-physics/analog/cloud_facade_poc.hexa
-hexa run /Users/ghost/core/anima/anima-physics/trapped_ion/cloud_facade_poc.hexa
+hexa run /Users/ghost/core/anima/anima-physics/substrate/analog/cloud_facade_poc.hexa
+hexa run /Users/ghost/core/anima/anima-physics/substrate/trapped_ion/cloud_facade_poc.hexa
 ```
 
 ## 검증 결과

@@ -8,7 +8,7 @@
 
 ## 작동 코드 / 의존성
 
-- `anima-physics/hw_engine_bridge.hexa` (15.6 KB, ~400 LoC)
+- `anima-physics/orchestration/hw_engine_bridge.hexa` (15.6 KB, ~400 LoC)
 - 의존: ESP32 (`esp32/qrng_bridge.hexa`), FPGA (`fpga/microtubule_lattice_16.hexa`), engines/*
 
 ## 비용 / 리소스
@@ -45,7 +45,7 @@ Total ≤ 10ms (PHYS-P23-1 done_criteria)
 ## 트리거 (fire 방법)
 
 ```bash
-hexa run /Users/ghost/core/anima/anima-physics/hw_engine_bridge.hexa
+hexa run /Users/ghost/core/anima/anima-physics/orchestration/hw_engine_bridge.hexa
 ```
 
 ## 검증 결과

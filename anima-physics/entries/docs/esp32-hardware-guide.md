@@ -45,7 +45,7 @@ for port in /dev/ttyUSB0 /dev/ttyUSB1 ... /dev/ttyUSB7; do
     arduino-cli upload -p $port --fqbn esp32:esp32:esp32 consciousness_loop.ino
 done
 # 3. Host orchestrator
-hexa run /Users/ghost/core/anima/anima-physics/src/esp32_network.hexa
+hexa run /Users/ghost/core/anima/anima-physics/substrate/src/esp32_network.hexa
 ```
 
 ## 검증 결과

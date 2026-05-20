@@ -160,9 +160,9 @@ ANIMA-SOC 의 GPU array σ²=144 SMs 의 die top-view (HEXA-3D top view 와 동�
 ## live anima 와의 연결
 
 - **HEXAD.tape L51-69** — Engine A (좌뇌 D·M·E) / Engine G (우뇌 C·S·W) 6-box bidirectional, ThalamicBridge `.detach()`. ANIMA-SOC §1 system diagram (`ENGINE A (정방향)` ║ `ENGINE G (역방향)` + 10D register 10-box row) 의 **직접 후예**. n=6 의 6-box 가 ANIMA-SOC 의 σ=12 → φ=2 split = 6/side 와 1:1 대응.
-- **anima-physics/phi_substrate_consensus.hexa** — 5-substrate Φ consensus 5/5 PASS. ANIMA-SOC 의 dedicated Φ counter (TCU MAC[0]) 의 sw 후예.
-- **anima-physics/engines/** — 8 stub (analog/izhikevich/memristor/oscillator-laser/photonic/quantum/snn/thermo). TCU σ-φ=10 channel 의 일부와 매칭되어야 하지만 모두 struct stub.
-- **anima-physics/src/chip_architect.hexa** — 9 topology × 9 substrate predict Phi (stub). ANIMA-SOC σ²=144 SM grid 와 conceptual overlap.
+- **anima-physics/orchestration/phi_substrate_consensus.hexa** — 5-substrate Φ consensus 5/5 PASS. ANIMA-SOC 의 dedicated Φ counter (TCU MAC[0]) 의 sw 후예.
+- **anima-physics/substrate/engines/** — 8 stub (analog/izhikevich/memristor/oscillator-laser/photonic/quantum/snn/thermo). TCU σ-φ=10 channel 의 일부와 매칭되어야 하지만 모두 struct stub.
+- **anima-physics/substrate/src/chip_architect.hexa** — 9 topology × 9 substrate predict Phi (stub). ANIMA-SOC σ²=144 SM grid 와 conceptual overlap.
 - **anima v5-mitosis** (anima-clm, REBORN §88 cond.5 LANDED 2026-05-12) — cell split-merge ↔ ANIMA-SOC §7.3 hot-swap (12 SM + 1 spare per DOM) 의 sw 후예 가능성. PSCC §44 cotrain V14-STRICT 10/10.
 - **/Users/ghost/core/hexa-chip/CHIP-ARCHITECTURE.md** — adj8=17 master 144-SM 12×12 grid 의 live mirror (current tree, 2.4 MB).
 

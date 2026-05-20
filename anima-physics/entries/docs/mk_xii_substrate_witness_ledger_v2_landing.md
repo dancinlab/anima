@@ -49,7 +49,7 @@ v1 → v2 diff:
 ## 트리거 (fire 방법)
 
 ```bash
-hexa run /Users/ghost/core/anima/anima-physics/tool/mk_xii_substrate_witness_ledger_aggregator_v2.hexa
+hexa run /Users/ghost/core/anima/anima-physics/substrate/tool/mk_xii_substrate_witness_ledger_aggregator_v2.hexa
 ```
 
 ## 검증 결과

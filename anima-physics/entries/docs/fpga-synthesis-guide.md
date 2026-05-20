@@ -48,7 +48,7 @@ Synthesis flow:
 
 ```bash
 brew install yosys nextpnr-ice40 icestorm
-cd /Users/ghost/core/anima/anima-physics/consciousness-loop/verilog
+cd /Users/ghost/core/anima/anima-physics/substrate/consciousness-loop/verilog
 yosys -p "synth_ice40 -top consciousness_cell -json out.json" consciousness_cell.v
 nextpnr-ice40 --up5k --package sg48 --json out.json --pcf board.pcf --asc out.asc
 icepack out.asc out.bin

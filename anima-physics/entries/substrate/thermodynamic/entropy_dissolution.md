@@ -39,7 +39,7 @@ Regimes:
 ## 트리거 (fire 방법)
 
 ```bash
-hexa run anima-physics/thermodynamic/entropy_dissolution.hexa
+hexa run anima-physics/substrate/thermodynamic/entropy_dissolution.hexa
 ```
 
 ## 검증 결과

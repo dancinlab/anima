@@ -40,7 +40,7 @@ ceiling: n_nodes ≤ 64
 ## 트리거 (fire 방법)
 
 ```bash
-hexa run anima-physics/hw/autonomous_expansion.hexa
+hexa run anima-physics/substrate/hw/autonomous_expansion.hexa
 ```
 
 ## 검증 결과

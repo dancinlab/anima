@@ -31,12 +31,12 @@ shots=100 · seed=42 · N_ATOMS=4
 
 ```bash
 # DRY_RUN (default)
-hexa run anima-physics/analog/cloud_facade_poc.hexa
-hexa run anima-physics/analog/cloud_facade_poc.hexa --selftest
+hexa run anima-physics/substrate/analog/cloud_facade_poc.hexa
+hexa run anima-physics/substrate/analog/cloud_facade_poc.hexa --selftest
 
 # LIVE
 export AWS_ACCESS_KEY_ID=... AWS_SECRET_ACCESS_KEY=... AWS_DEFAULT_REGION=us-east-1
-ANIMA_BRAKET_DRY_RUN=0 hexa run anima-physics/analog/cloud_facade_poc.hexa
+ANIMA_BRAKET_DRY_RUN=0 hexa run anima-physics/substrate/analog/cloud_facade_poc.hexa
 ```
 
 ## 검증 결과

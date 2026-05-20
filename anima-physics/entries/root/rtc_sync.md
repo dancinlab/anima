@@ -8,7 +8,7 @@
 
 ## 작동 코드 / 의존성
 
-- `anima-physics/rtc_sync.hexa` (13 KB, ~340 LoC)
+- `anima-physics/orchestration/rtc_sync.hexa` (13 KB, ~340 LoC)
 - 의존: 없음 (struct return bug 회피 위해 모든 clock state flat `let mut` 인라인)
 
 ## 비용 / 리소스
@@ -37,7 +37,7 @@ API:
 ## 트리거 (fire 방법)
 
 ```bash
-hexa run /Users/ghost/core/anima/anima-physics/rtc_sync.hexa
+hexa run /Users/ghost/core/anima/anima-physics/orchestration/rtc_sync.hexa
 ```
 
 ## 검증 결과

@@ -41,7 +41,7 @@
 
 ```bash
 brew install icarus-verilog
-hexa run /Users/ghost/core/anima/anima-physics/fpga/cloud_facade_poc.hexa
+hexa run /Users/ghost/core/anima/anima-physics/substrate/fpga/cloud_facade_poc.hexa
 ```
 
 ## 검증 결과

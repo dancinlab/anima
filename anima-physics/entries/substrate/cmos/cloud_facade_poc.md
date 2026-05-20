@@ -29,8 +29,8 @@ G4 backend == "local_ngspice_<ver>_cmos_ring_osc_5stage"
 ## 트리거 (fire 방법)
 
 ```bash
-hexa run anima-physics/cmos/cloud_facade_poc.hexa
-hexa run anima-physics/cmos/cloud_facade_poc.hexa --selftest
+hexa run anima-physics/substrate/cmos/cloud_facade_poc.hexa
+hexa run anima-physics/substrate/cmos/cloud_facade_poc.hexa --selftest
 ```
 
 ## 검증 결과

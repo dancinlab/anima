@@ -38,7 +38,7 @@ G5 LIVE_HW_WITNESS_RATE threshold ladder:
 
 ```bash
 HEXA_RESOLVER_NO_REROUTE=1 hexa run \
-    anima-physics/tool/mk_xii_substrate_witness_ledger_aggregator_v3.hexa
+    anima-physics/substrate/tool/mk_xii_substrate_witness_ledger_aggregator_v3.hexa
 ```
 
 ## 검증 결과

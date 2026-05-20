@@ -38,7 +38,7 @@ partial reconfig = change function_id of specific blocks at runtime
 ## 트리거 (fire 방법)
 
 ```bash
-hexa run anima-physics/fpga/partial_reconfig.hexa
+hexa run anima-physics/substrate/fpga/partial_reconfig.hexa
 ```
 
 ## 검증 결과

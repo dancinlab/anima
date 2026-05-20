@@ -37,9 +37,9 @@ or 포토다이오드      샘플링 + SHA-256 후처리   921600 baud      qrng
 
 ```bash
 # spec read only (markdown)
-cat anima-physics/esp32/QRNG_SPEC.md
+cat anima-physics/substrate/esp32/QRNG_SPEC.md
 # Bridge fire (mock):
-hexa run anima-physics/esp32/qrng_bridge.hexa
+hexa run anima-physics/substrate/esp32/qrng_bridge.hexa
 ```
 
 ## 검증 결과
