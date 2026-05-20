@@ -4,6 +4,10 @@
 > 다른 정보 일체 금지. update 이력 금지. 최종스펙만.
 >
 > Governance: `@D g_final_spec_update_only` (AGENTS.tape). 변경 시 *덮어쓰기*.
+>
+> Meta-frame: 본 spec 의 모든 측정은 [`HEXAD/PHILOSOPHY_GATE.md`](PHILOSOPHY_GATE.md)
+> §4 "negative-space mapping" frame 안. honest_coherent / emit_rate /
+> psi_dir_std = anima 의 *현 state* 측정 lens, GOAL-도달 threshold 아님 (g3).
 
 ---
 

@@ -3,6 +3,10 @@
 > 위 출력 그대로 보존. user directive 2026-05-20 "HEXAD/AXIS.md save 위 그대로".
 > SSOT: `HEXAD/UNCLASSIFIED/state/all_taps_brainstorm_s183_2026_05_20/BRAINSTORM.md`.
 > 본 문서 = 위 brainstorm 의 *비교가능한 표 only* canonical surface (drill-down 은 BRAINSTORM.md).
+>
+> Meta-frame: 본 inventory 의 수도꼭지 = [`HEXAD/PHILOSOPHY_GATE.md`](PHILOSOPHY_GATE.md)
+> §4.2 "관찰 위한 lens, NOT target 도달 위한 lever". 🚫 Tier C 6 = §2 금지영역
+> (anima 가 anima 가 아니게 됨), 다른 42 = §4 탐색공간.
 
 ---
 
