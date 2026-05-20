@@ -215,8 +215,8 @@ while step <= n_steps {
                        T, d, nh, nkv, h, V, n_layer)
         let g = nn_decoder_gn2(Mc, tt, T, d, nh, nkv, h, V, n_layer)
         gn2_step_epoch = gn2_step_epoch + g
-        nn_decoder_bwd(ids_scratch, M, Mc, Mg, cos_tab, sin_tab,
-                       tt, T, d, nh, nkv, h, V, n_layer)
+        nn_decoder_grad(ids_scratch, tt, M, Mc, Mg, cos_tab, sin_tab,
+                        T, d, nh, nkv, h, V, n_layer)
         let mut a = 0
         while a < m_size {
             let _ = farr_set(Mg_acc, a, farr_get(Mg_acc, a) + farr_get(Mg, a))
@@ -226,7 +226,7 @@ while step <= n_steps {
     }
     nn_decoder_adamw_step(M, Mg_acc, Mm, Mv, m_size,
                            lr, b1, b2, eps_a, wd, step)
-    if step == 1 or step % 10 == 0 or step == n_steps {
+    if step == 1 || step % 10 == 0 || step == n_steps {
         print("  step "); print(step)
         print("  gn2_epoch="); print(gn2_step_epoch)
         print("  Δ="); println(gn2_step_epoch - gn2_last)
