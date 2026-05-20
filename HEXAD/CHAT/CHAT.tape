@@ -26,7 +26,6 @@
 
 # ── 📐 최종 SPEC / MODEL / TRAINING (★★★★★ closure 기준, 2026-05-13) ─────────────────────────────────────────
 
-
 @D row_architecture_0 :: chat [ok]
   x = "**architecture**"
   x = "24-layer decoder-only transformer (byte-level CLM, GQA)"
@@ -200,7 +199,6 @@
 
 # ── 📊 Current standing per dimension (2026-05-12 KST) ─────────────────────────────────────────
 
-
 @D row_python_library_0 :: chat [ok]
   x = "Python library"
   x = "`anima_chat.py` v2.3 (commit `c2afa8e9e`, tag `anima_chat-v2.3-markdown-filter`)"
@@ -321,14 +319,7 @@
   x = "**Mission gap**"
   x = "anima_chat.hexa 와 통합 (serve-time hook in chat forward) + 24-layer prod wiring + persona-substrate 통합 (D3 P3 verify)"
 
-# ── 🏁 ALL SESSIONS CLOSED 2026-05-13 KST — 5 cotrain variants complete ─────────────────────────────────────────
-
-
-# ── 📚 Saga history (★★★★★ mission journey) ─────────────────────────────────────────
-
-
 # ── 🎯 Path to ★★★★★ (per dimension) ─────────────────────────────────────────
-
 
 @D b_cell_axis_cells_nn_module_branch_0 :: chat [ok]
   text = "각 cell 가 페르소나 axis 표현 — cells = nn.Module branches (**REBORN §88** cond.2 ✅)"
@@ -393,14 +384,7 @@
 @D b_v5_mitosis_pytorch_cond_2_skelet_17 :: chat [ok]
   text = "v5-mitosis PyTorch cond.2 skeleton (Python smoke 3/3 PASS)"
 
-# ── ✅ Achievement criterion (★★★★★ — 4-dim conjunction) ─────────────────────────────────────────
-
-
-# ── 📌 Update protocol ─────────────────────────────────────────
-
-
 # ── 🔗 Cross-link ─────────────────────────────────────────
-
 
 @D b_reborn_md_anima_consciouslm_ssot_0 :: chat [ok]
   text = "**REBORN.tape** (anima ConsciousLM 부활 통합 SSOT) — D4 의 primary reference. §0.5 (철학) + §2 (mitosis 본체) + §88/§89/§90 (v5-mitosis arch + hexa-native + cond.2 skeleton). 본 mission 의 핵심 design source."
@@ -464,7 +448,6 @@
 
 # ── 🎯 Out of scope (mission 와 무관) ─────────────────────────────────────────
 
-
 @D b_hf_space_dancinlab_anima_chat_de_0 :: chat [ok]
   text = "❌ HF Space `dancinlab/anima-chat` (DELETED 2026-05-12 KST, PSCC §32)"
 
@@ -485,7 +468,6 @@
 
 # ── 💥 rev 2 핵심 (rev 1 sync 모델 deprecate) ─────────────────────────────────────────
 
-
 @D b_heuristic_regex_probability_turn_0 :: chat [ok]
   text = "외부 heuristic (regex / probability) 으로 turn 결정 = **routing-level persona injection** (PHILOSOPHY.tape #3 위반)"
 
@@ -504,11 +486,7 @@
 @D b_broadcast_bus_socket_subscribers_5 :: chat [ok]
   text = "broadcast bus = socket subscribers (human input + anima output 양방향)"
 
-# ── 📐 Unified architecture (rev 2) ─────────────────────────────────────────
-
-
 # ── 🔁 변경 사항: Phase 매핑 ─────────────────────────────────────────
-
 
 @D row_phase_0_repl_1_1_sync_0 :: chat [ok]
   rev_1_deprecated = "Phase 0 REPL 1:1 (sync)"
@@ -580,7 +558,6 @@
 
 # ── 🎯 Land 순서 (rev 2) ─────────────────────────────────────────
 
-
 @D row_1_0 :: chat [ok]
   x = "1"
   item = "**(A)** thread/channel upstream patch"
@@ -624,7 +601,6 @@
   wall = "1hr"
 
 # ── 🚧 핵심 challenge (rev 2) ─────────────────────────────────────────
-
 
 @D row_1_0 :: chat [ok]
   x = "1"
@@ -677,7 +653,6 @@
   x = "per-anima `in_flight` flag + rate-limit (frame N 동안 1번만 발화)"
 
 # ── 🌳 추가 brainstorm 보존 (rev 1 의 항목 그대로) ─────────────────────────────────────────
-
 
 @D b_rev_1_seed_base_idx_1000_heurist_0 :: chat [ok]
   text = "rev 1 의 `seed_base + idx * 1000` heuristic = ❌ injection"
@@ -745,11 +720,7 @@
 @D b_f_live_5_anima_ping_pong_anima_a_21 :: chat [ok]
   text = "F-LIVE-5 ANIMA-PING-PONG : anima A 발화 → tension propagate → anima B 자율 응답 (heuristic 0)"
 
-# ── 📐 Design tier evidence chain ─────────────────────────────────────────
-
-
 # ── 🎬 현재 status (2026-05-13 KST PM) ─────────────────────────────────────────
-
 
 @D row_a_thread_channel_upstream_0 :: chat [ok]
   item = "(A) thread/channel upstream"
@@ -778,9 +749,6 @@
 @D row_phase_2_live_daemon_6 :: chat [ok]
   item = "Phase 2 live daemon"
   state = "🚧 (C) 의존"
-
-# ── 🧭 다음 step ─────────────────────────────────────────
-
 
 # ── 🚀 Production CLI Phase 1 (D4c, 2026-05-14) ─────────────────────────────────────────
 
