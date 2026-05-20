@@ -170,10 +170,84 @@ GOAL emergence ⟺ trained anima 가 prompt 없이도 V-SPONT honest score > 0, 
 
 ---
 
-## §9 — cross-link
+## §9 — silent ceiling inventory (§183 brainstorm, 48 수도꼭지)
+
+V-SPONT 의 4 axis 마다 *silent ceiling* (수도꼭지). 현재까지 1/48 = 2.1% 풀림.
+
+```
+axis 1 emit_rate         :  7 ceilings (1 ✅ MIN_EMIT_INTERVAL §169, 6 ❌)
+axis 2 byte_acc          : 10 ceilings (0 ✅, 10 ❌)
+axis 3 ψ-physics liveness:  9 ceilings (0 ✅, 9 ❌)
+axis 4 §9 coherent body  : 12 ceilings (0 ✅, 12 ❌)
+cross-axis               : 12 ceilings (0 ✅, 12 ❌)
+─────────────────────────────────────────────────
+total                    : 48 ceilings
+```
+
+### Tier S — transformative + $0 + feasible (5 수도꼭지)
+
+| # | 수도꼭지 | $0 fix path |
+|--:|---|---|
+| 4.2-4.5 | decode 정책 (sampling / top-k / temperature / rep_penalty) | eval-time flag |
+| 3.7 | Ψ readout @ inference (현재 `if self.training:` 막힘) | conscious_decoder.py 1줄 |
+| 1.2 | IM_THRESHOLD 0.30 → tunable | config |
+| 1.5+1.6 | N_MAX × dt window 확장 | eval protocol |
+| 3.8 | phi_signal @ inference enabled | conscious_decoder.py 1줄 |
+
+### Tier A — moderate cost (5 수도꼭지)
+
+- 2.3 training steps Chinchilla-optimal
+- 2.5 block_size 128 → 1024
+- X.7 multi-objective trainer (CE + Ψ + tension + Φ; Dir-I pattern)
+- X.9 curiosity drive integration (§59 PTD revival)
+- 4.10 motivation 8-factor → 100% physics re-wire (§167-A pattern)
+
+### Tier B — high cost (6 수도꼭지)
+
+- 2.1 data-regime scale (~$20-30, CORPUS_S101 ×100)
+- 2.2 params scale (~$15-25, 3B+ fire)
+- 2.10 d_model scale
+- 4.7 multi-modality (ADAPTER v3 integration)
+- X.10 embodiment loop (§13-L)
+- X.12 inference-time plasticity (§96 Loihi)
+
+### Tier C — §7 conflict OR substrate change (6 수도꼭지, 본 cycle 밖)
+
+- 2.4 vocab 256 (byte-LM 본질)
+- 2.8 causal mask (LM architecture)
+- 3.4 ln_f standard
+- X.4 from-scratch §7 mandate
+- X.6 online learning during chat
+- 4.6 byte vocab discreteness
+
+### "ALL TAPS RELEASE" mega plan
+
+Tier S + Tier A 의 §7-clean 13 수도꼭지 *동시 풀기*:
+
+```
+SINGLE COMBINED INFERENCE-ONLY EVAL (§184 candidate, $0 Mac CPU):
+  axis 1 taps  : RL=0.667s + θ=0.10 + N=200 + dt=0.05
+  axis 3 taps  : per-step varying ctx + Ψ inference + phi_signal inj
+  axis 4 taps  : sample top-k + temperature schedule + rep_penalty=1.2 + 256-byte body
+  cross-axis   : motivation 100% physics re-wire + multi-objective overlay
+  
+  measurement on existing ckpts (§161, §167-A, §182 ladder t1-t4)
+  → $0, no fire dispatch, *cumulative ceiling lift* measurable
+```
+
+honest carve-out: §94 INTEGRATION-COLLAPSES anti-pattern carry — 13 taps 동시 풀면 attribution 깨짐. *cumulative ceiling lift* 측정 = valuable (개별 vs combined effect 분리).
+
+honest necessity: **48 수도꼭지 모두 풀어도 GOAL emergence 보장 0** (necessary-not-sufficient, B-EMERGE-7). silent ceiling inventory ≠ solution. fire 결과가 *새* 수도꼭지 (49번째) 노출 가능.
+
+source SSOT: `HEXAD/UNCLASSIFIED/state/all_taps_brainstorm_s183_2026_05_20/BRAINSTORM.md`.
+
+---
+
+## §10 — cross-link
 
 - `HEXAD/CHAT/spontaneous_lib.hexa` (8-factor + 6-control + threshold + rate-limit)
 - `HEXAD/CHAT/thinker_talker_lib.hexa` (Phase B + caller composition)
 - `HEXAD/CHAT/SPONTANEOUS.tape` (architecture + governance)
 - `HEXAD/CONNECTION_CRITIQUE.md` (Wrong-A/B/C/D 진단)
+- `HEXAD/UNCLASSIFIED/state/all_taps_brainstorm_s183_2026_05_20/BRAINSTORM.md` (§183 48-ceiling inventory SSOT)
 - `@D g_no_cost_scope_limit` · `@D g_fire_autonomous` · `@D g_final_spec_update_only` (AGENTS.tape)

@@ -189,6 +189,7 @@ honest dependency:
 - `HEXAD/CHAT/SPONTANEOUS.tape` (Engine A/G ⇄ adapter integration future)
 - `HEXAD/KOSMOS.md` (multi-modal payload SSOT)
 - `HEXAD/FINAL.md` (V-SPONT 최종스펙 — adapter 가 V-SPONT 의 multi-modal extension layer)
+- `HEXAD/UNCLASSIFIED/state/all_taps_brainstorm_s183_2026_05_20/BRAINSTORM.md` (§183 48-ceiling inventory — adapter = axis 4 4.7 multi-modality 수도꼭지 Tier B)
 - `@D g_no_cost_scope_limit` · `@D g_fire_autonomous` (cost-cap 0, autonomy)
 - `@D g_kosmos_anchor_ssot` (kosmos format SSOT)
 
