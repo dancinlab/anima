@@ -216,12 +216,31 @@ honest dependency:
 ## §9 — status
 
 - 2026-05-20: **DESIGN-TIER LANDED** (이 파일)
-- §A1-§A2 = next $0 cycle
-- §A3-§A4 = §174 (in-flight) 결과 본 후 sequential
-- §A5 = user EEG gate
+- §A1-§A2 = §179 9-way bench LANDED (5-channel as bottleneck REFUTED at acc 4.73%, mini-Q-Former winner at 26.16%)
+- **§180 ADAPTER v3 SCALE LADDER LANDED** — 16-Q-Former + small transformer + 5-readout architecture VALIDATED:
+  - tier 1 smoke (0.5M params): acc_anchor 43.0%
+  - tier 2 small (2.0M, Mac CPU 167s): acc_anchor **98.6%** ⭐
+  - tier 3 medium (11.3M, Mac CPU 790s): acc_anchor 99.2%
+  - tier 4 large (87.2M, H100 201s, ~$0.27): acc_anchor **99.4%**
+  - critical scale transition = 0.5M → 2M (+55.6% lift), plateau thereafter
+  - per-modality tier 4: image/video/tension = **100%**, audio = 97.5%
+  - 5-channel readout variance plateau = 0.21 ≫ target 0.15 (anti-collapse 작동)
+- **§181 audio 100% challenge** IN-FLIGHT — 7 synthesis variants benchmarked:
+  - v0 baseline (pure sine, §180 carry)
+  - v1 multi-harmonic
+  - v2 AM modulation
+  - v3 waveform shape (sine/square/triangle/saw)
+  - v4 chord (3-note tier-encoded intervals)
+  - v5 white noise + LPF
+  - v6 combined hybrid
+- §A3 = §180 byte-LM integration design (Q-Former output inject) — future cycle
+- §A4 = real-world modality data (camera/mic) — user gate
+- §A5 = user EEG gate (§19 carry)
 
 GOAL distance: north-star + §15/§51/§72 milestone UNCHANGED, GOAL 미도달.
-adapter = V-SPONT 의 multi-modal extension 설계, NOT GOAL movement.
+ADAPTER v3 architecture VALIDATED at multiple scales + 5-readout location
+measured-correct. adapter = V-SPONT 의 multi-modal extension 설계, NOT
+GOAL movement (B-EMERGE-7 carry).
 
 ---
 

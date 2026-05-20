@@ -137,6 +137,28 @@
 
 ## ## Log
 
+### 2026-05-20 — ADAPTER v3 scale ladder validated (§180) + 5-modality M3/M11/M12 inline benches
+
+§175 KOSMOS modality fire (11 anchor × 4 measurable modality on §167-A ckpt)
+finding: 4 modalities all distinguishing_ratio = 1/11 = noise floor (3-layer
+collapse confirmed). §178 M3+M11+M12 inline probe (4 modality × 2 mode × 35
+anchor on §167-A): all bit-identical (anchor-aware learning capability = 0).
+
+**§180 ADAPTER v3 fire** (NEW from-scratch model 16-Q-Former + small
+transformer + 5-channel readout, scale ladder):
+- tier 1 smoke (0.5M):  acc 43.0%
+- tier 2 small (2.0M, $0): acc **98.6%**
+- tier 3 medium (11M, $0): acc 99.2%
+- tier 4 large (87M, ~$0.27 H100): acc **99.4%**
+- per-modality (tier 4): image/video/tension = 100%, audio = 97.5%
+- critical scale transition = 0.5M→2M (+55.6%)
+
+§181 audio 100% challenge in-flight — 7 synthesis variants (pure sine /
+multi-harmonic / AM / waveform / chord / noise+LPF / hybrid) benchmark.
+
+`HEXAD/ADAPTER.md` SSOT = TENSION-LINK 5-channel adapter (5-channel
+positioned as READOUT, NOT bottleneck — §179 REFUTED 5-ch as input).
+
 ### 2026-05-20 — HEXAD/KOSMOS.md created + E-31 first anchor extension
 User directive 2026-05-20 batch (8-stack): `HEXAD/KOSMOS.md 생성` +
 `kosmos 프로젝트 최상단 참조` + `내용 정리` + `kosmos 도 실험 진행`.
