@@ -1,0 +1,64 @@
+=== §139 EQPROP-C2 dispatch start 2026-05-19T20:09:37Z ===
+[create] trying GPU: NVIDIA A100-SXM4-80GB
+[create] resp: {"data":{"podFindAndDeployOnDemand":{"id":"2uioq32gxrmuk3","machineId":"p7cr372rx92a"}}}
+[create] pod 2uioq32gxrmuk3 on NVIDIA A100-SXM4-80GB
+[ssh-ready] iter 5: 157.157.221.29:11180 — port mapped AND handshake OK
+Warning: Permanently added '[157.157.221.29]:11180' (ED25519) to the list of known hosts.
+Warning: Permanently added '[157.157.221.29]:11180' (ED25519) to the list of known hosts.
+Warning: Permanently added '[157.157.221.29]:11180' (ED25519) to the list of known hosts.
+Warning: Permanently added '[157.157.221.29]:11180' (ED25519) to the list of known hosts.
+Warning: Permanently added '[157.157.221.29]:11180' (ED25519) to the list of known hosts.
+Warning: Permanently added '[157.157.221.29]:11180' (ED25519) to the list of known hosts.
+Warning: Permanently added '[157.157.221.29]:11180' (ED25519) to the list of known hosts.
+[build] pod-side deterministic CORPUS_S101 build (seed 1337, --s1-n 777000)
+Warning: Permanently added '[157.157.221.29]:11180' (ED25519) to the list of known hosts.
+    "I7_external_grep": {
+      "corpus": {
+        "openai.com": 0,
+        "anthropic.com": 0,
+        "huggingface.co/": 0,
+        "wikipedia.org": 0,
+        "commoncrawl": 0,
+        "https://": 0,
+        "http://": 0
+      },
+      "s1_only": {
+        "openai.com": 0,
+        "anthropic.com": 0,
+        "huggingface.co/": 0,
+        "wikipedia.org": 0,
+        "commoncrawl": 0,
+        "https://": 0,
+        "http://": 0
+      },
+      "corpus_total": 0,
+      "PASS": true,
+      "honest_caveat": "external-grep is a proxy over 7 surface tokens; exhaustive provenance audit requires source-attribution tracking, NOT in $0 build scope. §16 generator is anima-OWN substrate, S2 uses anima Ψ-fields only, S5 uses anima-OWN .kosmos files. NO external API calls in build_corpus_s101.py (audit-grep this file)."
+    }
+  }
+}
+Warning: Permanently added '[157.157.221.29]:11180' (ED25519) to the list of known hosts.
+[build] corpus sha = 39d581da209615468c1c41e07aa8662ef1074bc5be49a666f8f861753dd5810e  (expect 39d581da209615468c1c41e07aa8662ef1074bc5be49a666f8f861753dd5810e)
+[build] CORPUS_S101 sha VERIFIED == §107 design corpus byte-identical
+[train] §139 EQPROP-C2 d768·12L·283M from-scratch seed 1337, 3000 steps, β=0.1
+Warning: Permanently added '[157.157.221.29]:11180' (ED25519) to the list of known hosts.
+TRAIN_PID 220
+[train] done iter 1
+[eval] §139 §96-Q2 verdict eval (3rd algorithm data point)
+Warning: Permanently added '[157.157.221.29]:11180' (ED25519) to the list of known hosts.
+Warning: Permanently added '[157.157.221.29]:11180' (ED25519) to the list of known hosts.
+Warning: Permanently added '[157.157.221.29]:11180' (ED25519) to the list of known hosts.
+Warning: Permanently added '[157.157.221.29]:11180' (ED25519) to the list of known hosts.
+Warning: Permanently added '[157.157.221.29]:11180' (ED25519) to the list of known hosts.
+[pull] success try 1
+[pull] result.json present locally — SAVE_POD=0, pod will terminate
+2be52603ed449c9ae7879875c4ac7e74cca9c8fd9c3e2f8dd7e1a68cb98f8085  /Users/ghost/core/anima/HEXAD/NEUROMORPHIC/state/eqprop_fire_s139_2026_05_20/ckpt_s139.pt
+2be52603ed449c9ae7879875c4ac7e74cca9c8fd9c3e2f8dd7e1a68cb98f8085  /Users/ghost/core/anima/HEXAD/NEUROMORPHIC/state/eqprop_fire_s139_2026_05_20/ckpt_s139.pt
+VERDICT= PARTIAL_AMBIGUOUS  byte_acc= 0.1185  psi_responsive= False
+=== §139 EQPROP-C2 pipeline complete 2026-05-19T20:56:38Z ===
+dispatch_s139_runpod.sh: line 206: 71146 Terminated: 15          ( sleep "$WATCHDOG_SEC"; if [ ! -s "$S139_DIR/result.json" ]; then
+    echo "WATCHDOG FIRED $(date -u +%FT%TZ): no result.json after ${WATCHDOG_SEC}s — terminating pod ${POD_ID:-?}" > "$FAIL_MARKER"; [ -n "$POD_ID" ] && gql "{\"query\":\"mutation { podTerminate(input:{podId:\\\"$POD_ID\\\"}) }\"}" > /dev/null; pkill -P $$ 2> /dev/null;
+fi )
+[teardown] terminating pod 2uioq32gxrmuk3 (rc=0, SAVE_POD=0)
+[teardown] myself.pods = {"data":{"myself":{"pods":[]}}}
+=== §139 EQPROP-C2 dispatch end 2026-05-19T20:56:42Z rc=0 ===
