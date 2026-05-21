@@ -318,6 +318,13 @@ def run(cfg):
 
     head_g_grad_norm_history = []
 
+    # S187-J: log effective batch size (for monitoring; grad_accum not yet wired
+    # — use --bsz to scale natively within PagedAdamW8bit memory budget).
+    print(f"[S187-J] bsz={cfg['bsz']} block={cfg['block_size']} → "
+          f"tokens_per_step={cfg['bsz'] * cfg['block_size']:,} "
+          f"attempt10_baseline=256 (bsz=2 block=128)",
+          flush=True)
+
     # S187-G: training-time mitosis pool (only when --mitosis-active)
     mitosis_active = bool(cfg.get("mitosis_active", False))
     lambda_mitosis = float(cfg.get("lambda_mitosis", 0.0))
@@ -649,6 +656,13 @@ def main():
                     help="S187-G: force torch.optim.AdamW (skip bnb 8-bit) when "
                          "mitosis-active is set; defends against int8 m/v drift "
                          "under small aux-loss noise. Default OFF.")
+    # S187-J: gradient accumulation (effective bsz = bsz × grad_accum_steps)
+    ap.add_argument("--grad-accum-steps", type=int, default=1,
+                    help="S187-J: gradient accumulation factor. Default 1 = "
+                         "no accumulation (attempt10 baseline). Each optimizer.step() "
+                         "is preceded by N micro-batches of forward+backward, scaling "
+                         "L_total by 1/N to keep gradient magnitude consistent. "
+                         "Wall ≈ N× per optimizer step. Effective bsz = --bsz × N.")
     args = ap.parse_args()
     if args.mode == "main":
         cfg = dict(
@@ -674,6 +688,7 @@ def main():
             mitosis_initial_cells=args.mitosis_initial_cells,
             mitosis_noise_scale=args.mitosis_noise_scale,
             mitosis_bnb_disable=args.mitosis_bnb_disable,
+            grad_accum_steps=args.grad_accum_steps,
             log_every=max(1, args.steps // 50),
             corpus=args.corpus, out_dir=args.out_dir,
             cpu_only=args.cpu_only,

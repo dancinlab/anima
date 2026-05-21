@@ -1,0 +1,18 @@
+=== S187-G mitosis-train variant=A mode=mit seed=1337 dispatch start 2026-05-21T13:18:29Z ===
+    lambdas: psi=0.30 route=0.20 phi=0.30 cycle=0.15 curious=0.10 replay=-0.05 mitosis=0.05
+    mitosis: active=1  initial_cells=2  noise_scale=0.1
+    arch:    d=3072 L=28 nh=24 nkv=8
+    train:   steps=2000 bsz=2 block=128 lr=3e-4 warmup=200
+[create] trying GPU: NVIDIA H100 80GB HBM3
+[create] resp: {"errors":[{"message":"There are no longer any instances available with the requested specifications. Please refresh and try again.","path":["podFindAndDeployOnDemand"],"extensions":{"code":"SUPPLY_CONSTRAINT","userId":"user_3BLIYhoMm3ticiR5xIcEIzZCVWo"}}],"data":{"podFindAndDeployOnDemand":null}}
+[create] trying GPU: NVIDIA H100 NVL
+[create] resp: {"errors":[{"message":"There are no longer any instances available with the requested specifications. Please refresh and try again.","path":["podFindAndDeployOnDemand"],"extensions":{"code":"SUPPLY_CONSTRAINT","userId":"user_3BLIYhoMm3ticiR5xIcEIzZCVWo"}}],"data":{"podFindAndDeployOnDemand":null}}
+[create] trying GPU: NVIDIA H100 PCIe
+[create] resp: {"errors":[{"message":"There are no longer any instances available with the requested specifications. Please refresh and try again.","path":["podFindAndDeployOnDemand"],"extensions":{"code":"SUPPLY_CONSTRAINT","userId":"user_3BLIYhoMm3ticiR5xIcEIzZCVWo"}}],"data":{"podFindAndDeployOnDemand":null}}
+[create] trying GPU: NVIDIA A100-SXM4-80GB
+[create] resp: {"errors":[{"message":"There are no longer any instances available with the requested specifications. Please refresh and try again.","path":["podFindAndDeployOnDemand"],"extensions":{"code":"SUPPLY_CONSTRAINT","userId":"user_3BLIYhoMm3ticiR5xIcEIzZCVWo"}}],"data":{"podFindAndDeployOnDemand":null}}
+[create] trying GPU: NVIDIA A100 80GB PCIe
+[create] resp: {"errors":[{"message":"There are no longer any instances available with the requested specifications. Please refresh and try again.","path":["podFindAndDeployOnDemand"],"extensions":{"code":"SUPPLY_CONSTRAINT","userId":"user_3BLIYhoMm3ticiR5xIcEIzZCVWo"}}],"data":{"podFindAndDeployOnDemand":null}}
+FATAL: no pod from GPU cascade
+[teardown] myself.pods = {"data":{"myself":{"pods":[{"id":"8mnfcbknh6rmwu"},{"id":"bhkru20tgsx817"},{"id":"i5lhpx91bltodn"},{"id":"in03w32djz13xd"},{"id":"kg46v7uniyupt4"},{"id":"kosed8n85t3mcj"},{"id":"nw54ejvf7jqj1d"},{"id":"nwh9tshdau57pa"},{"id":"oclgfzzat4f309"},{"id":"rtfi448qd7rgle"},{"id":"rwv87wrm65y7zj"},{"id":"w1cjm0brpl3qfe"},{"id":"wvgdowa1d470op"}]}}}
+=== S187-G mitosis-train variant=A mode=mit dispatch end 2026-05-21T13:19:10Z rc=1 ===
