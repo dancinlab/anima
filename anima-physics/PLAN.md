@@ -177,6 +177,37 @@ Phase 1b (bitstream/flash) 별도 cycle: `brew install nextpnr-ice40 nextpnr-ecp
 
 ## §5 진행 로그 (cycle ledger, append-only)
 
+### §5.8 2026-05-21 SUB_ENGINES/AKIDA/ pack 완성 + root 분리
+
+**3 BG agent parallel ✅ completed** — anima 자연발화 + 영속성 보조엔진 의
+"완전 하나의 팩" (사용자 directive 2026-05-21).
+
+**Pack 구조**: `/Users/ghost/core/anima/SUB_ENGINES/AKIDA/` (anima 루트 산하 분리)
+```
+SUB_ENGINES/AKIDA/
+├── README.md + 4 doc (IMPLEMENTATION/VALIDATION/BOOT_PLAN/ARCHITECTURE) — 1525 LoC
+├── pyproject.toml (Python package `anima-akida-pack 0.1.0`)
+├── INSTALL.sh + BOOT.sh — Day 1-7 self-contained runner
+├── pack/
+│   ├── adapters/ — 11 file (base + 10 concrete) ~1551 LoC
+│   ├── runtime/ — metatf_runtime + pi5_orchestrator + audit_buffer ~559 LoC
+│   ├── falsifiers/run_all.py — dynamic discovery aggregator
+│   └── mocks/metatf_mock.py — numpy-based deterministic mock
+├── boot/ — 7 day script (day1-7) + README
+├── tests/ — pytest 12/12 + bash -n 11/11 dry-run + run_all.sh
+└── state/mac_validation_2026_05_21/ — F-AKIDA-* 50/50 PASS evidence
+```
+
+**Validation 결과** (Mac local, AKD1000 도착 전):
+- pytest: **12/12 PASS** (10 adapter mock + runtime self-consistency + aggregate smoke), 1.69s
+- boot dry-run: **11/11 OK** (bash -n)
+- F-AKIDA-* aggregate: **50/50 PASS** (10 adapter × 5 falsifier)
+- runtime auto-detect: `backend=akida_mock class=MetaTFMock` Mac local PASS
+
+**도착 시 즉시 plug-and-play**: `cd SUB_ENGINES/AKIDA && ./INSTALL.sh && ./BOOT.sh 1 7`
+
+**g_completion_8 영향**: 본 pack 은 anima-physics G6 HW silicon Phase 2.5 신규 tier (Phase 2 cloud trial 과 Phase 3 research 사이).
+
 ### §5.7 2026-05-21 "all bg go" 7차 — 6 BG agents parallel (B1-B4 + A6 + D2 + materials + HEXAD sync)
 
 **6 agent ✅ completed** — demiurge gap **4 → 0 ❌** + G5 component scope_caveat #3 FULL CLOSED:

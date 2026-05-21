@@ -1,0 +1,328 @@
+{
+  "adapters_discovered": 10,
+  "pass_total": 50,
+  "fail_total": 0,
+  "target_pass": 55,
+  "per_adapter": {
+    "eeg-pattern": {
+      "name": "F-AKIDA-EEG",
+      "passed": 5,
+      "failed": 0,
+      "details": [
+        {
+          "id": "F-AKIDA-EEG-1-MU-DETECT",
+          "ok": true,
+          "msg": "label=mu conf=1.00"
+        },
+        {
+          "id": "F-AKIDA-EEG-2-SLEEP-DETECT",
+          "ok": true,
+          "msg": "label=sleep conf=1.00"
+        },
+        {
+          "id": "F-AKIDA-EEG-3-LABEL-SET",
+          "ok": true,
+          "msg": "all_in_set=True"
+        },
+        {
+          "id": "F-AKIDA-EEG-4-CONF-BOUND",
+          "ok": true,
+          "msg": "conf_range=[0.000,1.000]"
+        },
+        {
+          "id": "F-AKIDA-EEG-5-SWITCH",
+          "ok": true,
+          "msg": "labels_seen=['mu', 'sleep']"
+        }
+      ]
+    },
+    "izhikevich": {
+      "name": "F-AKIDA-IZ",
+      "passed": 5,
+      "failed": 0,
+      "details": [
+        {
+          "id": "F-AKIDA-IZ-1-QUIESCENT",
+          "ok": true,
+          "msg": "v_min=-70.00 v_max=-70.00"
+        },
+        {
+          "id": "F-AKIDA-IZ-2-REGULAR",
+          "ok": true,
+          "msg": "spikes=96"
+        },
+        {
+          "id": "F-AKIDA-IZ-3-RESET",
+          "ok": true,
+          "msg": "seen_reset=True"
+        },
+        {
+          "id": "F-AKIDA-IZ-4-MONOTONE",
+          "ok": true,
+          "msg": "rates=[0, 48, 94]"
+        },
+        {
+          "id": "F-AKIDA-IZ-5-BOUNDED",
+          "ok": true,
+          "msg": "v_range=[-70.8,-69.7]"
+        }
+      ]
+    },
+    "kuramoto": {
+      "name": "F-AKIDA-KU",
+      "passed": 5,
+      "failed": 0,
+      "details": [
+        {
+          "id": "F-AKIDA-KU-1-DRIFT",
+          "ok": true,
+          "msg": "tail_mean=0.074 ceiling=1.414"
+        },
+        {
+          "id": "F-AKIDA-KU-2-SYNC",
+          "ok": true,
+          "msg": "r_final=1.000"
+        },
+        {
+          "id": "F-AKIDA-KU-3-R-BOUNDED",
+          "ok": true,
+          "msg": "bounded=True"
+        },
+        {
+          "id": "F-AKIDA-KU-4-K-MONOTONE",
+          "ok": true,
+          "msg": "means=[0.216, 0.99, 0.999, 1.0]"
+        },
+        {
+          "id": "F-AKIDA-KU-5-SEED-STABLE",
+          "ok": true,
+          "msg": "max_diff=0.00e+00"
+        }
+      ]
+    },
+    "memristor-hybrid": {
+      "name": "F-AKIDA-MEM",
+      "passed": 5,
+      "failed": 0,
+      "details": [
+        {
+          "id": "F-AKIDA-MEM-1-ONE-SHOT",
+          "ok": true,
+          "msg": "w[0,1]: -0.0061 \u2192 0.0672"
+        },
+        {
+          "id": "F-AKIDA-MEM-2-PERSIST",
+          "ok": true,
+          "msg": "max_drift=0.00000"
+        },
+        {
+          "id": "F-AKIDA-MEM-3-SELF-REF",
+          "ok": true,
+          "msg": "a_dst_no_fb=1.0000 a_dst_fb=1.0000"
+        },
+        {
+          "id": "F-AKIDA-MEM-4-BOUND",
+          "ok": true,
+          "msg": "W_range=[0.000,1.000]"
+        },
+        {
+          "id": "F-AKIDA-MEM-5-DETRANS",
+          "ok": true,
+          "msg": "drift=0.0049"
+        }
+      ]
+    },
+    "motivation-gate": {
+      "name": "F-AKIDA-MG",
+      "passed": 5,
+      "failed": 0,
+      "details": [
+        {
+          "id": "F-AKIDA-MG-1-BELOW",
+          "ok": true,
+          "msg": "results=[0, 0, 0, 0, 0]..."
+        },
+        {
+          "id": "F-AKIDA-MG-2-ABOVE",
+          "ok": true,
+          "msg": "results=[1, 1, 1, 1, 1]..."
+        },
+        {
+          "id": "F-AKIDA-MG-3-MONOTONE",
+          "ok": true,
+          "msg": "rates=[0, 0, 100, 100]"
+        },
+        {
+          "id": "F-AKIDA-MG-4-HYSTERESIS",
+          "ok": true,
+          "msg": "on_after=True still_on=True now_off=True"
+        },
+        {
+          "id": "F-AKIDA-MG-5-QUIET-POW",
+          "ok": true,
+          "msg": "fire_count=0"
+        }
+      ]
+    },
+    "snn-lif": {
+      "name": "F-AKIDA-SNN",
+      "passed": 5,
+      "failed": 0,
+      "details": [
+        {
+          "id": "F-AKIDA-SNN-1-REST",
+          "ok": true,
+          "msg": "rest_spikes=0 v_mean=0.0155"
+        },
+        {
+          "id": "F-AKIDA-SNN-2-THRESHOLD",
+          "ok": true,
+          "msg": "any_spike=True"
+        },
+        {
+          "id": "F-AKIDA-SNN-3-COUPLING",
+          "ok": true,
+          "msg": "sp_uncoupled=528 sp_coupled=528"
+        },
+        {
+          "id": "F-AKIDA-SNN-4-MONOTONE",
+          "ok": true,
+          "msg": "rates=[598, 800, 800]"
+        },
+        {
+          "id": "F-AKIDA-SNN-5-LONG-RUN",
+          "ok": true,
+          "msg": "finite=True v_mean=2.690"
+        }
+      ]
+    },
+    "sparse-attention": {
+      "name": "F-AKIDA-SA",
+      "passed": 5,
+      "failed": 0,
+      "details": [
+        {
+          "id": "F-AKIDA-SA-1-TOPK-SHAPE",
+          "ok": true,
+          "msg": "row_sums_unique=[2.0]"
+        },
+        {
+          "id": "F-AKIDA-SA-2-ZERO-REST",
+          "ok": true,
+          "msg": "zero_rest=True"
+        },
+        {
+          "id": "F-AKIDA-SA-3-PERM-EQUIVAR",
+          "ok": true,
+          "msg": "perm_match=True"
+        },
+        {
+          "id": "F-AKIDA-SA-4-MONOTONE-K",
+          "ok": true,
+          "msg": "densities=[0.125, 0.25, 0.5]"
+        },
+        {
+          "id": "F-AKIDA-SA-5-SPARSITY",
+          "ok": true,
+          "msg": "density=0.1250 expected=0.1250"
+        }
+      ]
+    },
+    "spike-tier-lm-head": {
+      "name": "F-AKIDA-LM",
+      "passed": 5,
+      "failed": 0,
+      "details": [
+        {
+          "id": "F-AKIDA-LM-1-ARGMAX-ID",
+          "ok": true,
+          "msg": "adapter=19 ref=19"
+        },
+        {
+          "id": "F-AKIDA-LM-2-TOPK-SET",
+          "ok": true,
+          "msg": "adapter=[4, 19, 43, 52] ref=[4, 19, 43, 52]"
+        },
+        {
+          "id": "F-AKIDA-LM-3-DET-SEED",
+          "ok": true,
+          "msg": "max_W_diff=0.00e+00"
+        },
+        {
+          "id": "F-AKIDA-LM-4-SHAPE",
+          "ok": true,
+          "msg": "logits=(128,) spikes=(128,)"
+        },
+        {
+          "id": "F-AKIDA-LM-5-NAN-FREE",
+          "ok": true,
+          "msg": "finite=True"
+        }
+      ]
+    },
+    "spontaneous-gate": {
+      "name": "F-AKIDA-SG",
+      "passed": 5,
+      "failed": 0,
+      "details": [
+        {
+          "id": "F-AKIDA-SG-1-SILENT",
+          "ok": true,
+          "msg": "emit_count=0"
+        },
+        {
+          "id": "F-AKIDA-SG-2-EMIT",
+          "ok": true,
+          "msg": "emit_count=11"
+        },
+        {
+          "id": "F-AKIDA-SG-3-REFRACTORY",
+          "ok": true,
+          "msg": "gaps=[15, 15, 15, 15, 15]..."
+        },
+        {
+          "id": "F-AKIDA-SG-4-SAFETY-RATCHET",
+          "ok": true,
+          "msg": "emit_count=0 (should be 0 with safety_block)"
+        },
+        {
+          "id": "F-AKIDA-SG-5-AUDIT-TRAIL",
+          "ok": true,
+          "msg": "audit_len=13 emit_count=13"
+        }
+      ]
+    },
+    "theta-gamma": {
+      "name": "F-AKIDA-TG",
+      "passed": 5,
+      "failed": 0,
+      "details": [
+        {
+          "id": "F-AKIDA-TG-1-THETA-FREQ",
+          "ok": true,
+          "msg": "f_theta=6.00 Hz (nominal 6.0)"
+        },
+        {
+          "id": "F-AKIDA-TG-2-GAMMA-FREQ",
+          "ok": true,
+          "msg": "f_gamma=40.00 Hz (nominal 40.0)"
+        },
+        {
+          "id": "F-AKIDA-TG-3-COUPLING",
+          "ok": true,
+          "msg": "corr(env,cos(theta))=0.995"
+        },
+        {
+          "id": "F-AKIDA-TG-4-RATIO",
+          "ok": true,
+          "msg": "ratio=6.67"
+        },
+        {
+          "id": "F-AKIDA-TG-5-BOUNDEDNESS",
+          "ok": true,
+          "msg": "finite=True"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,65 @@
+[build-system]
+requires = ["setuptools>=61", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "anima-akida-pack"
+version = "0.1.0"
+description = "anima 자연발화 + 영속성 보조엔진 — BrainChip AKD1000 + Pi 5 pack"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "Apache-2.0" }
+authors = [
+    { name = "anima-physics", email = "404errornew@proton.me" },
+]
+keywords = [
+    "anima",
+    "akida",
+    "brainchip",
+    "neuromorphic",
+    "snn",
+    "spike",
+    "raspberry-pi",
+    "kuramoto",
+    "izhikevich",
+    "memristor",
+    "consciousness",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: POSIX :: Linux",
+    "Operating System :: MacOS",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+dependencies = [
+    "numpy>=1.24",
+]
+
+[project.optional-dependencies]
+akida = [
+    # MetaTF SDK — optional, installed on Pi 5 host after AKD1000 arrival.
+    # Mac local development uses pack.mocks.metatf_mock fallback (no extra dep).
+    "akida>=2.0",
+]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/dancinlab/anima-physics"
+"AUX/AKIDA" = "https://github.com/dancinlab/anima-physics/tree/main/AUX/AKIDA"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["pack*"]
+exclude = ["tests*", "state*", "docs*", "boot*"]
+
+[tool.setuptools.package-data]
+pack = ["py.typed"]

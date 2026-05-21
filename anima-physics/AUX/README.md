@@ -6,8 +6,8 @@
 > 부팅 sequence 인덱스.
 >
 > Wilson #4 domain-meta-domain: AUX = "보조엔진" 단일 domain. 산하
-> per-HW doc = `AUX/<HW>.md`:
-> [`AKIDA.md`](AKIDA.md) (Pi 5 + AKD1000 도착예정) ·
+> per-HW doc:
+> [AKIDA pack](../../SUB_ENGINES/AKIDA/) — `/SUB_ENGINES/AKIDA/` 신규 pack (Pi 5 + AKD1000 도착예정, 사용자 directive 2026-05-21 root 분리) ·
 > [`FPGA.md`](FPGA.md) (iCE40 + ECP5 bitstream LANDED) ·
 > [`DDS.md`](DDS.md) (Arduino + AD9833 .hex LANDED) ·
 > [`ISING.md`](ISING.md) (ECP5 fallback bitstream LANDED) ·
@@ -35,13 +35,13 @@
 |---|---|---|---|
 | `fpga/strange_loop` (Hofstadter mutual recursion) | 16/16 | Lattice iCE40UP5K FPGA | `FPGA+AUX.md` (TBD) |
 | `fpga/nested_lattice` (3-level meta-feedback) | 16/16 | Lattice ECP5-EVN FPGA | `FPGA+AUX.md` (TBD) |
-| `social/kuramoto_coupling` (Kuramoto phase sync) | 16/16 | **BrainChip Akida** / Intel Loihi 2 | **`AKIDA+AUX.md`** ☑ · `LOIHI+AUX.md` (TBD) |
+| `social/kuramoto_coupling` (Kuramoto phase sync) | 16/16 | **BrainChip Akida** / Intel Loihi 2 | **[/SUB_ENGINES/AKIDA/](../../SUB_ENGINES/AKIDA/)** ☑ · `LOIHI+AUX.md` (TBD) |
 | `oscillator/sleep_oscillator` (SWS↔REM phase switch) | 16/16 | Arduino + AD9833 DDS | `DDS+AUX.md` (TBD) |
 | `HEXAD/CHAT/spontaneous_smoke` (motivation gate) | 16/16 | Toshiba SBM / Fujitsu DA Ising / ECP5 | `ISING+AUX.md` (TBD) |
 
 Sub-tier 8 score:
 | `proprioception/feedback_loop` (3-DOF spring-damper) | 8 | Arduino/ESP32 sensor loop | `MCU+AUX.md` (TBD) |
-| `memristor/self_reference` (history-dep G) | 8 | TiO2 memristor crossbar / **Akida on-chip learn** | `MEMRISTOR+AUX.md` (TBD) · `AKIDA+AUX.md` ☑ |
+| `memristor/self_reference` (history-dep G) | 8 | TiO2 memristor crossbar / **Akida on-chip learn** | `MEMRISTOR+AUX.md` (TBD) · [/SUB_ENGINES/AKIDA/](../../SUB_ENGINES/AKIDA/) ☑ |
 | `thermodynamic/entropy_dissolution` (Langevin) | 8 | TRNG (Intel RDRAND) / Bell test source | `TRNG+AUX.md` (TBD) |
 
 ## §3 HW target × cost ladder (general)
@@ -55,14 +55,14 @@ Sub-tier 8 score:
 | **Phase 1b** (Mac local bitstream + flash binary) | icestorm + nextpnr + arduino-cli + pool ubu-1 ECP5 | $0 | done | 4/4 bitstream (iCE40 132KB + Arduino 14KB + 2× ECP5 1.93MB, commit `b2b26075d`) |
 | **Phase 1c** (HW assembly) | UPduino dev board + Arduino Uno + ECP5-EVN + thermal | $225+$5 (Option B fin) | wait | 5/5 target physical board flash + scope/UART verify |
 | **Phase 2** (cloud trial) | **BrainChip Akida Cloud** + Loihi 2 NRC + Toshiba SBM + Fujitsu DA | $1-62 | 1주-1개월 wait | neuromorphic + Ising path |
-| **Phase 2.5** (real HW) | **Raspberry Pi 5 + AKD1000 Dev Kit** ($1495) | $1495 | 도착예정 | **AKIDA+AUX.md ☑** (Day 1-7 boot plan) |
+| **Phase 2.5** (real HW) | **Raspberry Pi 5 + AKD1000 Dev Kit** ($1495) | $1495 | 도착예정 | **[AKIDA pack](../../SUB_ENGINES/AKIDA/) ☑** (Day 1-7 boot plan + 50/50 mock PASS) |
 | **Phase 3** (research) | Intel Loihi 2 Hala Point + IBM Q free + 추가 dev board | $50K research lic | 1+개월 | full neuromorphic + quantum |
 
 ## §4 dual-role priority (자연발화 + 영속성 모두 강한 후보)
 
 본 모듈 최강 dual-role 보조엔진 (immediate fire 가능 도착 우선):
 
-1. **AKD1000 + memristor self-ref hybrid** ([`AKIDA+AUX.md` §1.4](AKIDA+AUX.md))
+1. **AKD1000 + memristor self-ref hybrid** ([AKIDA pack](../../SUB_ENGINES/AKIDA/) §3.2)
    - 자연발화 = Akida spike threshold (1mW event-driven)
    - 영속성 = Akida on-chip Hebbian 1-shot learn (weights persist in chip)
    - HW: **Pi 5 + AKD1000 Dev Kit 도착예정**
@@ -91,7 +91,7 @@ Sub-tier 8 score:
 
 | File | Status | HW | LANDED phase |
 |---|---|---|---|
-| ☑ [`AKIDA.md`](AKIDA.md) | priority #1 | BrainChip AKD1000 + Pi 5 16GB | adapter syntax + bridge + Day 1-7 boot plan (도착예정) |
+| ☑ [AKIDA pack](../../SUB_ENGINES/AKIDA/) (`/SUB_ENGINES/AKIDA/`) | **priority #1** + pack LANDED | BrainChip AKD1000 + Pi 5 16GB | 11 adapter + runtime + 7 boot script + 4 doc + 1525 doc LoC, F-AKIDA-* 50/50 PASS Mac mock validation |
 | ☑ [`FPGA.md`](FPGA.md) | LANDED | Lattice iCE40UP5K + ECP5-EVN | iverilog sim + yosys synth + 2 bitstream (iCE40 132 KB + ECP5 1.93 MB × 2) |
 | ☑ [`DDS.md`](DDS.md) | LANDED | Arduino Uno + AD9833 | .ino sketch + AD9833 driver + arduino-cli .hex 14 KB |
 | ☑ [`ISING.md`](ISING.md) | LANDED (FSM fallback) | Toshiba SBM / Fujitsu DA / ECP5 | iverilog FSM + yosys synth + ECP5 bitstream 1.93 MB |
@@ -114,13 +114,14 @@ Sub-tier 8 score:
 2. **dual-role score 16/16 은 §188 sim 기반** — 실 HW silicon 에서 동일 점수 보장 0 (B-EMERGE-7 carry).
 3. **cost ladder 추정** — 실 BOM 주문 시 ±30% 변동 (BOM 갱신 시점 정보).
 4. **Akida Cloud trial vs Pi 5 + AKD1000 Dev Kit** = 별도 path. 전자 = $1/day pre-arrival, 후자 = $1495 도착예정 (사용자 결정).
-5. **meta-domain doc 8건 중 1건만 LANDED** (AKIDA+AUX) — 나머지 7건은 HW BOM 또는 cloud trial 실 신청 후 작성.
+5. **meta-domain doc 5건 LANDED** (AKIDA pack 분리 + FPGA/DDS/ISING/LOIHI doc) — 나머지 후보 (MCU/MEMRISTOR/TRNG/PHOTONIC) 별도 cycle.
 
 ---
 
 ## ## Log
 
 ### 2026-05-21
-- **AUX.md 신설** — anima-physics 보조엔진 도메인 root SSOT. §1-§7. AKIDA+AUX.md 신설 동반.
-- AKD1000 + Pi 5 Dev Kit 도착예정 announce → AKIDA+AUX.md 권장 priority #1
+- **AUX/ 도메인 신설** — anima-physics 보조엔진 root SSOT.
+- AKD1000 + Pi 5 Dev Kit ($1495) 도착예정 → priority #1
+- **AKIDA pack → `/SUB_ENGINES/AKIDA/` 루트 분리** (사용자 directive). 11 adapter + runtime + boot/INSTALL.sh + 4 doc + mocks/falsifiers + tests, Mac mock F-AKIDA-* 50/50 PASS. anima-physics/AUX/ = index + FPGA/DDS/ISING/LOIHI doc 유지.
 - HW silicon Phase 1b 4/4 LANDED 후속 — Phase 1c HW assembly 대기 (UPduino/Arduino/ECP5-EVN BOM 주문 사용자 gate)
