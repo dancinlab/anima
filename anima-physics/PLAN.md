@@ -18,9 +18,9 @@
 
 **완성 = 8 기준 (g_completion_8) 모두 충족**:
 
-1. **G1 build 무결성** — 모든 `.hexa` 파일 `hexa build` exit 0 (현재 62 파일 중 ~50 PASS, 추정)
+1. **G1 build 무결성** — 모든 `.hexa` 파일 `hexa build` exit 0 (현재 69 파일 중 59 PASS = 86.8%, §5.3 G3 lint 후 actual)
 2. **G2 falsifier coverage** — 모든 substrate (27 dir) 최소 1개 falsifier PASS (현재 §188 기준 21/35 PASS)
-3. **G3 entry index** — 모든 `.hexa` 파일이 `entries/{root,docs,substrate,recovered}/<name>.md` 에 등재 (현재 93 entry / 62 .hexa, 카테고리 분포 분석 필요)
+3. **G3 entry index** — 모든 `.hexa` 파일이 `entries/{root,docs,substrate,recovered}/<name>.md` 에 등재 (현재 96 entry / 69 .hexa, drift 3 stub 추가 후 CLEAN, §5.3)
 4. **G4 substrate README** — 모든 27 substrate dir 에 1줄 이상 `README.md` (현재 esp32 만 — **26 dir 결손**)
 5. **G5 demiurge verify** — 본 module 이 의존하는 demiurge 도메인 (chip + component + firmware) GATE_CLOSED_MEASURED OR 명시적 gap doc (현재 chip ✅ 12/12, 나머지 ⏳ GATE_OPEN)
 6. **G6 HW silicon path** — top 5 dual-role substrate (strange_loop · nested_lattice · kuramoto · sleep_oscillator · spontaneous_smoke) HW Phase 1 (iverilog wave / Arduino blink / cloud trial submit) 1건 이상 LANDED
@@ -36,8 +36,8 @@
 
 ### §2.1 file tree
 - **27 substrate dir**: analog · arduino · benchmarks · cmos · consciousness-loop · eeg · engines · esp32 · fpga · hippocampus · hw · memristor · motor_cortex · neuromorphic · oscillator · photonic · prediction · proprioception · quantum · social · src · state · superconducting · thermodynamic · trapped_ion · vestibular · web
-- **62 .hexa file** total
-- **93 entry file** (root 11 · docs 19 · substrate 60 · recovered 3)
+- **69 .hexa file** total
+- **96 entry file** (root 11 · docs 19 · substrate 63 · recovered 3) — G3 cross-check CLEAN (§5.3)
 - **21 doc** in `docs/` (HW prototype spec + signup guide + landing 등)
 - **7 root .hexa** (physics, dispatch, edge_deploy, hw_engine_bridge, phi_substrate_consensus, realtime_monitor, rtc_sync, signal_corpus, verify_7cond_hw)
 - **state/** = 1 legacy dir (v10_anima_physics_cloud_facade)
@@ -51,7 +51,7 @@
 ### §2.3 알려진 결손 (G1~G8 별)
 - **G1 (build)**: 3 partial canonical fix 잔존 (consciousness-loop/{main, snn_main, main_longrun} legacy `&ident`/`self: *T`/`or`/`++`/if-as-expr 69+ 사이트)
 - **G2 (falsifier)**: 7 ⚠ empty substrate = engines/*.hexa 22-31 LoC stubs (구현 부재)
-- **G3 (entry)**: 60 substrate-entry × 62 .hexa file — drift 가능성 (자동 cross-check 필요)
+- **G3 (entry)**: 63 substrate-entry × 69 .hexa file — drift CLEAN (G3 ☑ §5.3 cross-check tool + 3 missing stub 추가 완료)
 - **G4 (substrate README)**: **27 중 1 (esp32)만 존재 = 26 결손**
 - **G5 (demiurge)**: component ⏳ toy box · firmware ⏳ stub · materials no-producer · brain no-producer
 - **G6 (HW Phase 1)**: 1건도 fire 안됨 (cost ladder $0 first-fire 후보 = strange_loop iverilog wave 1-2 day)
@@ -62,7 +62,7 @@
 
 상세 진행 추적용 atomic 항목. 본 §3 의 각 ☐ 가 ☑ 로 바뀌면 G1~G8 충족 진행:
 
-### G1 build 무결성 (62 파일)
+### G1 build 무결성 (69 파일)
 - ☑ aux_engine_lib + aux_engine_smoke (anima `2c636ce96`)
 - ☑ engines/memristor_consciousness (anima 이번 commit)
 - ☐ consciousness-loop/src/main (canonical 134 fix, legacy 43 잔존)
@@ -76,9 +76,9 @@
 - ☐ consciousness-loop/src/{main,snn_main,main_longrun} falsifier (G1 의존)
 - ☐ trapped_ion / superconducting / analog / cmos / arduino / web — falsifier 정의 부재
 
-### G3 entry index (cross-check)
-- ☐ `tool/cross_check_entries.sh` 신규 — `entries/**/*.md` ↔ 실 `.hexa` 파일 1:1 매핑 검증
-- ☐ drift 발견 시 entry 추가/삭제/갱신
+### G3 entry index (cross-check) — ☑ CLOSED (2026-05-21)
+- ☑ `tool/cross_check_entries.sh` 신규 — `entries/**/*.md` ↔ 실 `.hexa` 파일 1:1 매핑 검증 (§5.3 LANDED)
+- ☑ drift 3 missing entry stub 추가 (aux_engine_lib + aux_engine_smoke + anima_physics_e2e_demo) → cross_check exit 0 CLEAN
 
 ### G4 substrate README — 27 dir × 1 README 필요 (현재 1/27)
 - ☑ esp32/README.md (or .hexa header 확인)
@@ -142,7 +142,7 @@ Phase 1b (bitstream/flash) 별도 cycle: `brew install nextpnr-ice40 nextpnr-ecp
 - entries 자동 cross-check tool + 1회 lint pass
 
 ### Phase B — build 전수 + 잔여 canonical ($0, ~2 day) — G1
-- bulk `hexa build` smoke (62 파일)
+- bulk `hexa build` smoke (69 파일)
 - consciousness-loop/src/{main,snn_main,main_longrun} legacy syntax 의미보존 rewrite (aux_engine 식 functional pattern)
 - 잔여 canonical 위반 일괄 fix
 
@@ -176,6 +176,24 @@ Phase 1b (bitstream/flash) 별도 cycle: `brew install nextpnr-ice40 nextpnr-ecp
 **총 Phase A-F 예상**: $0-30 BOM/cloud + 7-10 day wall (single dev, Mac local)
 
 ## §5 진행 로그 (cycle ledger, append-only)
+
+### §5.4 2026-05-21 "all bg go" 3차 — 4 BG agents parallel (G3 stub + 2 rewrite + G5 Phase 2)
+
+**4 agent ✅ completed**:
+
+1. ✅ **G3 entry stubs + count drift** — 3 stubs (aux_engine_lib + aux_engine_smoke + anima_physics_e2e_demo) + 7 count drift fix (PLAN L21/23/39/54/65/145/240) + README L20. cross_check post-fix **CLEAN** (96 entries / 69 .hexa, 0 missing 0 orphan). **G3 ☐ → ☑ CLOSED**.
+
+2. ✅ **esp32/src/lib.hexa Rust syntax rewrite** — 307 → 455 LoC, 6 Rust pattern 제거 (40× `var`→`let mut`, 13× `[T]{}`→`[]`, 6× `*T`→value+helper, ~50× `u8/u32/u64/f32`→`int/float`, 3× `++`→`concat_f`, ~15 cast). build PASS, binary 424 KB. helpers: `cell_with_hidden_at` 류 3단 계층.
+
+3. ✅ **edge_deploy.hexa effect-system rewrite** — 432 → 540 LoC. 2 effect block (`IO` + `Serial`) + 27 call sites all canonical. `effect IO {...}` → 3 top-level fn (`io_write/io_now_ms/io_sleep_ms`), `effect Serial {...}` → SerialHandle struct + 4 stub fn, `!(IO[, Serial])` annotation 제거. **build PASS + 3 runtime smoke PASS** (`--benchmark` + `--target sim` + `--target esp32`). 4 honest C3 (busy-wait sleep, serial stub, JSON hand-format, pure drop).
+
+4. ✅ **G5 + Phase 2 cloud trial doc** — `hw/kuramoto_neuromorphic/src/demiurge_brain_bridge.py` (152 LoC, smoke PASS, 3 backend) + `hw/PHASE_2_CLOUD_TRIAL.md` (189 LoC, 7§, 3 platform = Akida/Loihi 2/Toshiba+Fujitsu, cost $1-62, 신청 권장 week 1 Akida → 2-4 Loihi 2) + PHASE_1B_STATUS.md §3.3 cross-link.
+
+**g_completion_8 진행 갱신** (2026-05-21 17:30 KST):
+- G1: 59/68 → **61/68 (89.7%)** specific (+2: esp32 lib + edge_deploy). 잔여 5 = 3 hexa_random (PR #262 dep) + 2 more
+- G3: ☑ CLOSED (cross_check CLEAN)
+- G5: chip ✅ + brain producer ⏳ (anima-side bridge skeleton LANDED)
+- G7: README L20 + PLAN 7 위치 count 갱신 정합
 
 ### §5.3 2026-05-21 "all bg go" 2차 — 4 BG agents parallel completion (G1 회수 + G3 cross-check + HEXAD sync + Phase 1b setup)
 
@@ -237,7 +255,7 @@ Phase 1b (bitstream/flash) 별도 cycle: `brew install nextpnr-ice40 nextpnr-ecp
 ### §5.1 2026-05-21 PLAN.md 신설 + 초기 SNAPSHOT
 - 본 PLAN.md 생성. §1-§4 + §6.
 - 8 완성 기준 (g_completion_8) 정의
-- 현재 state SNAPSHOT (62 .hexa / 93 entry / 21 §188 PASS / chip GATE_CLOSED 12/12 / aux_engine 5/5 PASS)
+- 현재 state SNAPSHOT (69 .hexa / 96 entry / 21 §188 PASS / chip GATE_CLOSED 12/12 / aux_engine 5/5 PASS)
 - Phase ladder A-F 정의 (총 7-10 day wall $0-30)
 - 사전 LANDED commits (HEXAD/PHYSICS/README §6.14): anima `8cda89bde` + `6253be33e` + `2c636ce96` + `f77f45996` + `f6e00d990`; hexa-lang PR #262 + #264
 

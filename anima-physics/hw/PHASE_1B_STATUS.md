@@ -108,6 +108,18 @@
 4. **Akida Cloud trial 신청** ($1/day) — Kuramoto N=8 first run, ~1주 turn-around.
 5. **ECP5-EVN dev board** ($120) — kuramoto + ising HW 동시 호스팅 (board 공유), 2주 wall.
 
+### §3.3 Phase 2 cloud trial cross-link
+
+cloud-only HW substrate (kuramoto neuromorphic + Ising solver) 의 trial
+가입 + first cloud run walkthrough: **[PHASE_2_CLOUD_TRIAL.md](PHASE_2_CLOUD_TRIAL.md)**
+(신규 2026-05-21).
+
+- 3 platform: Akida Cloud ($1/day) · Loihi 2 NRC ($0 research) · Toshiba SBM / Fujitsu DA ($1-30/solve)
+- 권장 순서: week 1 Akida + Toshiba → week 2 Fujitsu → week 2-4 Loihi 2
+- 사전준비 checklist 4 adapter (akida/loihi2/toshiba/fujitsu) + 1 demiurge bridge
+- demiurge brain producer ❌ no producer gap 우회: `kuramoto_neuromorphic/src/demiurge_brain_bridge.py` (신규 skeleton)
+- 본 doc 은 가이드 only — 실 신청 / API 호출 / first run 은 사용자 gate
+
 ---
 
 ## §4 산출물 매니페스트

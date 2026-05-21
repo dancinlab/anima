@@ -17,7 +17,7 @@
 - 위치: `anima-physics/<substrate>/` (예: `fpga/`, `oscillator/`, `social/`)
 - 내용: `.hexa` substrate source — 자연발화 + 영속성 메커니즘의 **수학적 / 알고리즘적** 정의 (closed-form sim, 어떤 HW realization 에도 공통 사용)
 - 검증: `hexa run <file>` (selftest), `HEXAD/NEUROMORPHIC/state/spontaneous_substrate_parallel_s188_2026_05_21/` (§188 batch fire)
-- 27 substrate dir × 62 .hexa file
+- 27 substrate dir × 69 .hexa file
 
 ### §0.2 HW 전용 (per-target realization)
 - 위치: [`anima-physics/hw/<target>/`](hw/) (예: `strange_loop_ice40/`, `kuramoto_neuromorphic/`)

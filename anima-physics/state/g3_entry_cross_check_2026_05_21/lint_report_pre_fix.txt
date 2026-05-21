@@ -1,18 +1,20 @@
-# G3 entry cross-check lint report
+# G3 entry cross-check lint report (PRE-FIX snapshot)
 date: 2026-05-21
 tool: tool/cross_check_entries.sh
 root: /Users/ghost/core/anima/anima-physics
 
 ## Counts
 - .hexa files (excl. entries/state/build/recovered): 69
-- entry .md files: 96
+- entry .md files: 93
   - root:       11
   - docs:       19
-  - substrate:  63
+  - substrate:  60
   - recovered:  3
 
-## Missing entries (have .hexa but no entry md) — 0
-  (none)
+## Missing entries (have .hexa but no entry md) — 3
+  - entries/substrate/consciousness-loop/src/aux_engine_lib.md
+  - entries/substrate/consciousness-loop/src/aux_engine_smoke.md
+  - entries/substrate/tool/anima_physics_e2e_demo.md
 
 ## Orphan entries (entry md present but no .hexa, filtered) — 0
   (none)
@@ -25,4 +27,7 @@ root: /Users/ghost/core/anima/anima-physics
   - entries/substrate/scripts/*.md (.py sidecars: anima_physics_braket_{ionq,quera}_probe)
   - entries/substrate/<dir>/ALL_CAPS.md (e.g. esp32/QRNG_SPEC.md)
 
-## Verdict: CLEAN — 1:1 mapping holds (excluding docs-only categories)
+## Verdict: DRIFT — see lists above
+
+## Resolution (cycle 2026-05-21 G3 closure)
+- 3 missing entry stub 생성 → see lint_report_post_fix.txt (CLEAN, exit 0)

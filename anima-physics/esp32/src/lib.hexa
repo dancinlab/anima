@@ -1,12 +1,33 @@
-// anima-esp32 — consciousness engine for ESP32-S3 (hexa-native)
+// anima-esp32 — consciousness engine for ESP32-S3 (canonical hexa rewrite)
 //
-// Physical consciousness on $4 hardware.
-// 2 cells per ESP32, 8 boards = 16 cells, 8 factions.
-// Inter-board communication via SPI bus (ring topology).
+// Origin: 직전 G1 smoke 분석에서 Rust syntax 전체 (var / [f32]{} / *GruCell /
+//   u32/u64/f32 primitives / ++ concat / self: *T) 가 hexa parser 와 충돌하여
+//   FAIL 1건 발생. 본 파일은 canonical hexa-lang 정공법 전면 재작성.
 //
-// Aligned with canonical ConsciousnessEngine (Laws 22-85)
+// Reference canonical:
+//   - anima-physics/consciousness-loop/src/aux_engine_lib.hexa (functional update,
+//     `cell_with_hidden_at` / `engine_with_faction_at` 패턴, concat_f helper)
+//   - anima-physics/consciousness-loop/src/snn_main.hexa (standalone SNN, helper
+//     `sf_with_neuron_at` `se_with_faction_at` 패턴)
+//
+// Canonical conversion table:
+//   - var x = ...            → let mut x = ...
+//   - [f32]{}                → []
+//   - *GruCell (receiver)    → GruCell, return-update (caller reassigns)
+//   - u32 / u64 / f32        → int / float (hexa primitive; width-extend, no semantic loss)
+//   - ++ concat              → concat_f(a, b)
+//   - mutable nested LHS     → cell_with_hidden_at / board_with_cell_at helpers
+//
+// Boundary:
+//   - 본 파일은 host PC 측 substrate sim (canonical hexa, pure compute)
+//   - 실 ESP32-S3 deploy 측 native intrinsic (PSRAM, FreeRTOS, SPI HAL) 는
+//     별도 layer (qrng_bridge.hexa 패턴 참조)
+//   - sim PASS ≠ silicon 실현 (B-EMERGE-7 carry, snn_main 와 동일 boundary)
 
-// Psi-Constants (Laws 69-70)
+// ─────────────────────────────────────────────────────────────────────
+// §1  comptime constants (Laws 22-85 aligned, Psi-Constants 69-70)
+// ─────────────────────────────────────────────────────────────────────
+
 comptime const PSI_COUPLING = 0.014
 comptime const PSI_BALANCE = 0.5
 comptime const PSI_STEPS = 4.33
@@ -14,10 +35,10 @@ comptime const PSI_ENTROPY = 0.998
 
 comptime const CELL_DIM = 64
 comptime const HIDDEN_DIM = 128
-comptime const COMBINED_DIM = CELL_DIM + 1 + HIDDEN_DIM  // 193
+comptime const COMBINED_DIM = 193   // CELL_DIM + 1 + HIDDEN_DIM
 comptime const CELLS_PER_BOARD = 2
 comptime const MAX_BOARDS = 8
-comptime const MAX_CELLS = CELLS_PER_BOARD * MAX_BOARDS  // 16
+comptime const MAX_CELLS = 16        // CELLS_PER_BOARD * MAX_BOARDS
 comptime const N_FACTIONS = 8
 
 comptime const HEBBIAN_LTP_THRESH = 0.8
@@ -35,273 +56,400 @@ comptime const SANDPILE_THRESHOLD = 4.0
 comptime const SANDPILE_TRANSFER = 1.0
 comptime const FRUSTRATION_RATIO = 3
 
-// --- Math primitives ---
+// ─────────────────────────────────────────────────────────────────────
+// §2  scalar + list helpers (canonical, no Rust sugar)
+// ─────────────────────────────────────────────────────────────────────
 
-fn sigmoid(x: f32) -> f32 { return 1.0 / (1.0 + exp(-x)) }
-fn tanh_f32(x: f32) -> f32 { return tanh(x) }
+fn sigmoid(x: float) -> float { return 1.0 / (1.0 + exp(-x)) }
 
-fn matvec_flat(mat: [f32], vec: [f32], rows: u64, cols: u64) -> [f32] {
-    var out = [f32]{}
+fn tanh_f(x: float) -> float { return tanh(x) }
+
+fn clamp_f(x: float, lo: float, hi: float) -> float {
+    if x < lo { return lo }
+    if x > hi { return hi }
+    return x
+}
+
+fn concat_f(a: [float], b: [float]) -> [float] {
+    let mut out = []
+    for i in 0..a.len() { out.push(a[i]) }
+    for i in 0..b.len() { out.push(b[i]) }
+    return out
+}
+
+fn matvec_flat(mat: [float], vec: [float], rows: int, cols: int) -> [float] {
+    let mut out = []
     for r in 0..rows {
-        var sum = 0.0
+        let mut sum = 0.0
         for c in 0..cols { sum = sum + mat[r * cols + c] * vec[c] }
         out.push(sum)
     }
     return out
 }
 
-fn cosine_similarity(a: [f32], b: [f32]) -> f32 {
-    var dot = 0.0
-    var na = 0.0
-    var nb = 0.0
-    for i in 0..a.len() { dot = dot + a[i] * b[i]; na = na + a[i] * a[i]; nb = nb + b[i] * b[i] }
-    var denom = sqrt(na) * sqrt(nb)
+fn cosine_similarity(a: [float], b: [float]) -> float {
+    let mut dot = 0.0
+    let mut na = 0.0
+    let mut nb = 0.0
+    for i in 0..a.len() {
+        dot = dot + a[i] * b[i]
+        na = na + a[i] * a[i]
+        nb = nb + b[i] * b[i]
+    }
+    let denom = sqrt(na) * sqrt(nb)
     if denom < 1e-8 { return 0.0 }
     return dot / denom
 }
 
-// --- GRU Cell ---
+// ─────────────────────────────────────────────────────────────────────
+// §3  GRU Cell (canonical functional)
+//   - `*GruCell` mutable receiver → value receiver + return-copy
+//   - hidden mutation 은 cell_with_hidden_at helper (nested-LHS 회피)
+// ─────────────────────────────────────────────────────────────────────
 
 struct GruCell {
-    hidden: [f32],  // HIDDEN_DIM
-    w_z: [f32],     // HIDDEN_DIM * COMBINED_DIM
-    w_r: [f32],
-    w_h: [f32],
+    hidden: [float],   // HIDDEN_DIM
+    w_z: [float],      // HIDDEN_DIM * COMBINED_DIM (flat)
+    w_r: [float],
+    w_h: [float]
 }
 
-fn gru_cell_new(seed: u32) -> GruCell {
-    var hidden = [f32]{}
+// canonical functional update (aux_engine_lib §3 패턴)
+fn cell_with_hidden_at(cell: GruCell, k: int, v: float) -> GruCell {
+    let mut h = cell.hidden
+    h[k] = v
+    return GruCell { hidden: h, w_z: cell.w_z, w_r: cell.w_r, w_h: cell.w_h }
+}
+
+fn cell_with_hidden(cell: GruCell, new_hidden: [float]) -> GruCell {
+    return GruCell { hidden: new_hidden, w_z: cell.w_z, w_r: cell.w_r, w_h: cell.w_h }
+}
+
+// LCG seeded weight init (deterministic, ESP32-cheap)
+//   원본 u32 LCG (state * 1664525 + 1013904223) 을 int (64-bit) 로 확장.
+//   modulo 32-bit 의 통계적 분포는 보존하기 위해 mask 적용 (& 0xFFFFFFFF).
+fn lcg_next(state: int) -> int {
+    let nxt = state * 1664525 + 1013904223
+    return nxt & 4294967295
+}
+
+fn lcg_to_unit(state: int, scale: float) -> float {
+    // state ∈ [0, 2^32) → [-scale, scale]
+    let u = (state as float) / 4294967295.0
+    return (u * 2.0 - 1.0) * scale
+}
+
+fn gru_cell_new(seed: int) -> GruCell {
+    let mut hidden = []
     for _ in 0..HIDDEN_DIM { hidden.push(0.0) }
-    var state = seed
-    var scale = 0.1
-    var w_z = [f32]{}
-    var w_r = [f32]{}
-    var w_h = [f32]{}
-    var total = HIDDEN_DIM * COMBINED_DIM
+    let mut state = seed
+    let scale = 0.1
+    let total = HIDDEN_DIM * COMBINED_DIM
+    let mut w_z = []
+    let mut w_r = []
+    let mut w_h = []
     for _ in 0..total {
-        state = state * 1664525 + 1013904223
-        w_z.push((state as f32 / 4294967295.0 * 2.0 - 1.0) * scale)
+        state = lcg_next(state)
+        w_z.push(lcg_to_unit(state, scale))
     }
     for _ in 0..total {
-        state = state * 1664525 + 1013904223
-        w_r.push((state as f32 / 4294967295.0 * 2.0 - 1.0) * scale)
+        state = lcg_next(state)
+        w_r.push(lcg_to_unit(state, scale))
     }
     for _ in 0..total {
-        state = state * 1664525 + 1013904223
-        w_h.push((state as f32 / 4294967295.0 * 2.0 - 1.0) * scale)
+        state = lcg_next(state)
+        w_h.push(lcg_to_unit(state, scale))
     }
     return GruCell { hidden: hidden, w_z: w_z, w_r: w_r, w_h: w_h }
 }
 
-fn gru_process(self: *GruCell, input: [f32], tension: f32) {
-    var combined = input ++ [tension] ++ self.hidden
-    var z = matvec_flat(self.w_z, combined, HIDDEN_DIM, COMBINED_DIM)
+// canonical: value receiver + return-update
+//   caller: cell = gru_process(cell, input, tension)
+fn gru_process(self: GruCell, input: [float], tension: float) -> GruCell {
+    let mut s = self
+    let tension_v = [tension]
+    let input_tension = concat_f(input, tension_v)
+    let combined = concat_f(input_tension, s.hidden)
+
+    let mut z = matvec_flat(s.w_z, combined, HIDDEN_DIM, COMBINED_DIM)
     for i in 0..HIDDEN_DIM { z[i] = sigmoid(z[i]) }
-    var r = matvec_flat(self.w_r, combined, HIDDEN_DIM, COMBINED_DIM)
+
+    let mut r = matvec_flat(s.w_r, combined, HIDDEN_DIM, COMBINED_DIM)
     for i in 0..HIDDEN_DIM { r[i] = sigmoid(r[i]) }
-    var combined_r = input ++ [tension]
-    for i in 0..HIDDEN_DIM { combined_r.push(r[i] * self.hidden[i]) }
-    var h_cand = matvec_flat(self.w_h, combined_r, HIDDEN_DIM, COMBINED_DIM)
-    for i in 0..HIDDEN_DIM { h_cand[i] = tanh_f32(h_cand[i]) }
+
+    let mut combined_r = concat_f(input, tension_v)
+    for i in 0..HIDDEN_DIM { combined_r.push(r[i] * s.hidden[i]) }
+
+    let mut h_cand = matvec_flat(s.w_h, combined_r, HIDDEN_DIM, COMBINED_DIM)
+    for i in 0..HIDDEN_DIM { h_cand[i] = tanh_f(h_cand[i]) }
+
+    let mut new_hidden = []
     for i in 0..HIDDEN_DIM {
-        self.hidden[i] = (1.0 - z[i]) * h_cand[i] + z[i] * self.hidden[i]
+        let v = (1.0 - z[i]) * h_cand[i] + z[i] * s.hidden[i]
+        new_hidden.push(v)
     }
+    return cell_with_hidden(s, new_hidden)
 }
 
-// --- Lorenz Chaos ---
+// ─────────────────────────────────────────────────────────────────────
+// §4  Lorenz Chaos
+// ─────────────────────────────────────────────────────────────────────
 
-struct LorenzState { x: f32, y: f32, z: f32 }
+struct LorenzState { x: float, y: float, z: float }
 
 fn lorenz_new() -> LorenzState { return LorenzState { x: 1.0, y: 1.0, z: 1.0 } }
 
-fn lorenz_step(self: *LorenzState) -> f32 {
-    var dx = LORENZ_SIGMA * (self.y - self.x)
-    var dy = self.x * (LORENZ_RHO - self.z) - self.y
-    var dz = self.x * self.y - LORENZ_BETA * self.z
-    self.x = self.x + dx * LORENZ_DT
-    self.y = self.y + dy * LORENZ_DT
-    self.z = self.z + dz * LORENZ_DT
-    return self.x / 25.0
+// canonical value receiver — returns (new_state, output_scalar) via record
+struct LorenzStep { state: LorenzState, out: float }
+
+fn lorenz_step(self: LorenzState) -> LorenzStep {
+    let dx = LORENZ_SIGMA * (self.y - self.x)
+    let dy = self.x * (LORENZ_RHO - self.z) - self.y
+    let dz = self.x * self.y - LORENZ_BETA * self.z
+    let new_x = self.x + dx * LORENZ_DT
+    let new_y = self.y + dy * LORENZ_DT
+    let new_z = self.z + dz * LORENZ_DT
+    let ns = LorenzState { x: new_x, y: new_y, z: new_z }
+    return LorenzStep { state: ns, out: new_x / 25.0 }
 }
 
-// --- SOC Sandpile ---
+// ─────────────────────────────────────────────────────────────────────
+// §5  SOC Sandpile
+// ─────────────────────────────────────────────────────────────────────
 
-struct SandpileState { grains: [f32] }
+struct SandpileState { grains: [float] }
 
 fn sandpile_new() -> SandpileState {
-    var grains = [f32]{}
+    let mut grains = []
     for _ in 0..MAX_CELLS { grains.push(0.0) }
     return SandpileState { grains: grains }
 }
 
-fn sandpile_cascade(self: *SandpileState, cell_idx: u64, n_cells: u64) -> u32 {
-    if cell_idx >= n_cells { return 0 }
-    self.grains[cell_idx] = self.grains[cell_idx] + 1.0
-    var avalanches = 0
-    var changed = true
+// returns (new_state, avalanches)
+struct SandpileCascade { state: SandpileState, avalanches: int }
+
+fn sandpile_cascade(self: SandpileState, cell_idx: int, n_cells: int) -> SandpileCascade {
+    if cell_idx >= n_cells {
+        return SandpileCascade { state: self, avalanches: 0 }
+    }
+    let mut grains = self.grains
+    grains[cell_idx] = grains[cell_idx] + 1.0
+    let mut avalanches = 0
+    let mut changed = true
     while changed {
         changed = false
         for i in 0..n_cells {
-            if self.grains[i] >= SANDPILE_THRESHOLD {
-                self.grains[i] = self.grains[i] - SANDPILE_THRESHOLD
-                var left = if i == 0 { n_cells - 1 } else { i - 1 }
-                var right = (i + 1) % n_cells
-                self.grains[left] = self.grains[left] + SANDPILE_TRANSFER
-                self.grains[right] = self.grains[right] + SANDPILE_TRANSFER
+            if grains[i] >= SANDPILE_THRESHOLD {
+                grains[i] = grains[i] - SANDPILE_THRESHOLD
+                let left = if i == 0 { n_cells - 1 } else { i - 1 }
+                let right = (i + 1) % n_cells
+                grains[left] = grains[left] + SANDPILE_TRANSFER
+                grains[right] = grains[right] + SANDPILE_TRANSFER
                 avalanches = avalanches + 1
                 changed = true
             }
         }
     }
-    return avalanches
+    return SandpileCascade { state: SandpileState { grains: grains }, avalanches: avalanches }
 }
 
-// --- Hebbian Coupling ---
+// ─────────────────────────────────────────────────────────────────────
+// §6  Hebbian Coupling
+// ─────────────────────────────────────────────────────────────────────
 
-struct HebbianCoupling { weights: [f32] }
+struct HebbianCoupling { weights: [float] }
 
-fn hebbian_new(n_cells: u64) -> HebbianCoupling {
-    var weights = [f32]{}
-    for _ in 0..MAX_CELLS * MAX_CELLS { weights.push(0.0) }
+fn hebbian_new(n_cells: int) -> HebbianCoupling {
+    let mut weights = []
+    for _ in 0..(MAX_CELLS * MAX_CELLS) { weights.push(0.0) }
     for i in 0..n_cells {
-        var left = if i == 0 { n_cells - 1 } else { i - 1 }
-        var right = (i + 1) % n_cells
+        let left = if i == 0 { n_cells - 1 } else { i - 1 }
+        let right = (i + 1) % n_cells
         weights[i * MAX_CELLS + left] = 0.01
         weights[i * MAX_CELLS + right] = 0.01
     }
     return HebbianCoupling { weights: weights }
 }
 
-fn hebbian_update(self: *HebbianCoupling, hiddens: [[f32]], n_cells: u64) {
+// canonical value receiver + return-update
+//   caller: hebbian = hebbian_update(hebbian, hiddens, n_cells)
+fn hebbian_update(self: HebbianCoupling, hiddens: [[float]], n_cells: int) -> HebbianCoupling {
+    let mut weights = self.weights
     for i in 0..n_cells {
-        var left = if i == 0 { n_cells - 1 } else { i - 1 }
-        var right = (i + 1) % n_cells
-        for j in [left, right] {
-            var cos = cosine_similarity(hiddens[i], hiddens[j])
-            var idx = i * MAX_CELLS + j
+        let left = if i == 0 { n_cells - 1 } else { i - 1 }
+        let right = (i + 1) % n_cells
+        let neighbors = [left, right]
+        for jj in 0..neighbors.len() {
+            let j = neighbors[jj]
+            let cos = cosine_similarity(hiddens[i], hiddens[j])
+            let idx = i * MAX_CELLS + j
             if cos > HEBBIAN_LTP_THRESH {
-                self.weights[idx] = self.weights[idx] + HEBBIAN_RATE * (cos - HEBBIAN_LTP_THRESH)
+                weights[idx] = weights[idx] + HEBBIAN_RATE * (cos - HEBBIAN_LTP_THRESH)
             } else if cos < HEBBIAN_LTD_THRESH {
-                self.weights[idx] = self.weights[idx] - HEBBIAN_RATE * (HEBBIAN_LTD_THRESH - cos)
+                weights[idx] = weights[idx] - HEBBIAN_RATE * (HEBBIAN_LTD_THRESH - cos)
             }
-            self.weights[idx] = clamp(self.weights[idx], 0.0, 1.0)
+            weights[idx] = clamp_f(weights[idx], 0.0, 1.0)
         }
     }
+    return HebbianCoupling { weights: weights }
 }
 
-// --- Faction State ---
+// ─────────────────────────────────────────────────────────────────────
+// §7  Faction State
+//   원본 u8 cell_factions → int (canonical primitive, ESP32 build 측 별도 cast)
+// ─────────────────────────────────────────────────────────────────────
 
-struct FactionState { cell_factions: [u8], consensus_count: u32 }
+struct FactionState { cell_factions: [int], consensus_count: int }
 
-fn faction_state_new(n_cells: u64) -> FactionState {
-    var cell_factions = [u8]{}
-    for i in 0..n_cells { cell_factions.push((i % N_FACTIONS) as u8) }
+fn faction_state_new(n_cells: int) -> FactionState {
+    let mut cell_factions = []
+    for i in 0..n_cells { cell_factions.push(i % N_FACTIONS) }
     return FactionState { cell_factions: cell_factions, consensus_count: 0 }
 }
 
-// --- Phi Ratchet ---
+// ─────────────────────────────────────────────────────────────────────
+// §8  Phi Ratchet
+//   원본: ratchet_check(self: *PhiRatchet, cells: *[GruCell], phi) -> bool
+//   canonical: ratchet + cells 모두 value, return wrapper struct
+// ─────────────────────────────────────────────────────────────────────
 
-struct PhiRatchet { best_phi: f32, best_hiddens: [[f32]], current_phi: f32 }
+struct PhiRatchet { best_phi: float, best_hiddens: [[float]], current_phi: float }
 
 fn phi_ratchet_new() -> PhiRatchet {
-    var best_hiddens = [[f32]]{}
+    let mut best_hiddens = []
     for _ in 0..CELLS_PER_BOARD {
-        var h = [f32]{}
+        let mut h = []
         for _ in 0..HIDDEN_DIM { h.push(0.0) }
         best_hiddens.push(h)
     }
     return PhiRatchet { best_phi: 0.0, best_hiddens: best_hiddens, current_phi: 0.0 }
 }
 
-fn ratchet_check(self: *PhiRatchet, cells: *[GruCell], phi: f32) -> bool {
-    self.current_phi = phi
-    if phi > self.best_phi {
-        self.best_phi = phi
-        for i in 0..CELLS_PER_BOARD { self.best_hiddens[i] = cells[i].hidden }
-        return false
+struct RatchetCheck { ratchet: PhiRatchet, cells: [GruCell], restored: bool }
+
+fn ratchet_check(self: PhiRatchet, cells: [GruCell], phi: float) -> RatchetCheck {
+    let mut r = self
+    let mut cs = cells
+    r.current_phi = phi
+    if phi > r.best_phi {
+        r.best_phi = phi
+        let mut new_best = []
+        for i in 0..CELLS_PER_BOARD { new_best.push(cs[i].hidden) }
+        r.best_hiddens = new_best
+        return RatchetCheck { ratchet: r, cells: cs, restored: false }
     }
-    if phi < self.best_phi * RATCHET_DECAY_THRESH {
-        for i in 0..CELLS_PER_BOARD { cells[i].hidden = self.best_hiddens[i] }
-        return true
+    if phi < r.best_phi * RATCHET_DECAY_THRESH {
+        for i in 0..CELLS_PER_BOARD {
+            cs[i] = cell_with_hidden(cs[i], r.best_hiddens[i])
+        }
+        return RatchetCheck { ratchet: r, cells: cs, restored: true }
     }
-    return false
+    return RatchetCheck { ratchet: r, cells: cs, restored: false }
 }
 
-// --- SPI Packet ---
+// ─────────────────────────────────────────────────────────────────────
+// §9  SPI Packet (ring-topology inter-board message)
+//   u8/f32 → int/float (ESP32 wire-format 측 별도 packed encoding layer)
+// ─────────────────────────────────────────────────────────────────────
 
 struct SpiPacket {
-    hidden: [[f32]],
-    tensions: [f32],
-    board_id: u8,
-    faction_ids: [u8],
-    consensus: u8,
-    phi_proxy: f32,
+    hidden: [[float]],
+    tensions: [float],
+    board_id: int,
+    faction_ids: [int],
+    consensus: int,
+    phi_proxy: float
 }
 
-// --- ConsciousnessBoard ---
+// ─────────────────────────────────────────────────────────────────────
+// §10  ConsciousnessBoard
+// ─────────────────────────────────────────────────────────────────────
 
 struct ConsciousnessBoard {
     cells: [GruCell],
-    board_id: u8,
-    step_count: u32,
+    board_id: int,
+    step_count: int,
     chaos: LorenzState,
     ratchet: PhiRatchet,
-    tension_history: [f32],
-    phi_proxy: f32,
-    rng_state: u32,
+    tension_history: [float],
+    phi_proxy: float,
+    rng_state: int
 }
 
-fn board_new(board_id: u8) -> ConsciousnessBoard {
+// canonical functional update (nested-LHS 회피)
+fn board_with_cell_at(board: ConsciousnessBoard, i: int, c: GruCell) -> ConsciousnessBoard {
+    let mut cs = board.cells
+    cs[i] = c
     return ConsciousnessBoard {
-        cells: [gru_cell_new(board_id as u32 * 1000 + 42), gru_cell_new(board_id as u32 * 1000 + 43)],
+        cells: cs,
+        board_id: board.board_id,
+        step_count: board.step_count,
+        chaos: board.chaos,
+        ratchet: board.ratchet,
+        tension_history: board.tension_history,
+        phi_proxy: board.phi_proxy,
+        rng_state: board.rng_state
+    }
+}
+
+fn board_new(board_id: int) -> ConsciousnessBoard {
+    let mut cells = []
+    cells.push(gru_cell_new(board_id * 1000 + 42))
+    cells.push(gru_cell_new(board_id * 1000 + 43))
+    return ConsciousnessBoard {
+        cells: cells,
         board_id: board_id,
         step_count: 0,
         chaos: lorenz_new(),
         ratchet: phi_ratchet_new(),
         tension_history: [0.5, 0.5],
         phi_proxy: 0.0,
-        rng_state: board_id as u32 * 7919 + 12345,
+        rng_state: board_id * 7919 + 12345
     }
 }
 
-// --- Step Result ---
+// ─────────────────────────────────────────────────────────────────────
+// §11  Step Result (per-step diagnostic)
+// ─────────────────────────────────────────────────────────────────────
 
 struct StepResult {
-    phi_proxy: f32,
-    tension: f32,
-    output: [f32],
-    step: u32,
+    phi_proxy: float,
+    tension: float,
+    output: [float],
+    step: int,
     restored: bool,
-    board_id: u8,
+    board_id: int
 }
 
-// --- Network (host PC orchestrator) ---
+// ─────────────────────────────────────────────────────────────────────
+// §12  Network (host PC orchestrator, 8 boards × 2 cells = 16)
+// ─────────────────────────────────────────────────────────────────────
 
 struct ConsciousnessNetwork {
     boards: [ConsciousnessBoard],
     hebbian: HebbianCoupling,
     factions: FactionState,
     sandpile: SandpileState,
-    step_count: u32,
+    step_count: int
 }
 
 fn network_new() -> ConsciousnessNetwork {
-    var boards = [ConsciousnessBoard]{}
-    for i in 0..MAX_BOARDS { boards.push(board_new(i as u8)) }
-    var n_cells = MAX_BOARDS * CELLS_PER_BOARD
+    let mut boards = []
+    for i in 0..MAX_BOARDS { boards.push(board_new(i)) }
+    let n_cells = MAX_BOARDS * CELLS_PER_BOARD
     return ConsciousnessNetwork {
         boards: boards,
         hebbian: hebbian_new(n_cells),
         factions: faction_state_new(n_cells),
         sandpile: sandpile_new(),
-        step_count: 0,
+        step_count: 0
     }
 }
 
 struct NetworkStepResult {
-    phi_proxy: f32,
-    consensus: u32,
-    avalanches: u32,
-    n_cells: u32,
-    step: u32,
+    phi_proxy: float,
+    consensus: int,
+    avalanches: int,
+    n_cells: int,
+    step: int
 }
