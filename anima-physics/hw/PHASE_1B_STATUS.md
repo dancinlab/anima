@@ -32,12 +32,12 @@
 | # | Target | pnr | pack | flash | bitstream | next |
 |---|---|---|---|---|---|---|
 | 1 | strange_loop_ice40 | ✅ PASS | ✅ PASS | SKIP (no board) | **132 KB** `state/strange_loop.bin` | UPduino v3 ($30) OR iCEBreaker ($70) 주문 + iceprog flash |
-| 2 | nested_lattice_ecp5 | ⛔ BLOCKED | — | — | — | nextpnr-ecp5 build-from-source OR ECP5-EVN board ($120) + Lattice Diamond proprietary |
-| 3 | spontaneous_ising (ECP5 fallback) | ⛔ BLOCKED | — | — | — | 동상 (#2 와 toolchain 공유) |
+| 2 | nested_lattice_ecp5 | ✅ PASS (ubu-1) | ✅ PASS (ubu-1) | SKIP (no board) | **1.93 MB** `state/nested_lattice.bit` | ECP5-EVN board ($120) + `openFPGAloader -c usb -b ecp5_evn nested_lattice.bit` |
+| 3 | spontaneous_ising (ECP5 fallback) | ✅ PASS (ubu-1) | ✅ PASS (ubu-1) | SKIP (no board) | **1.93 MB** `state/ising_fsm.bit` | 동상 (#2 와 board 공유) |
 | 4 | sleep_oscillator_arduino | N/A | ✅ PASS | SKIP (no board) | **14 KB hex** `state/build/sleep_oscillator.ino.hex` (+42 KB elf) | Arduino Uno R3 ($23) + AD9833 module ($10) + breadboard + arduino-cli upload |
 | 5 | kuramoto_neuromorphic | N/A | N/A (cloud-only HW) | — | — | Akida Cloud trial 신청 ($1/day) · Loihi 2 Hala Point Intel NRC 신청 (free, 1개월 wait) |
 
-**Phase 1b 통계**: bitstream/firmware **2/4 PASS** (ice40 + arduino) · ECP5 2 target blocked on toolchain (nextpnr-ecp5 부재) · neuromorphic 1 target N/A (cloud-only) · cost $0.
+**Phase 1b 통계**: bitstream/firmware **4/4 PASS** (ice40 + 2× ECP5 + arduino) · neuromorphic 1 target N/A (cloud-only) · cost $0. ECP5 2 target 은 pool dispatch (Mac → ubu-1 Ubuntu 24.04, apt `nextpnr-ecp5 + fpga-trellis`) 로 unblock — §2.3 + §7 참조.
 
 ### §2.1 strange_loop_ice40 (iCE40) — bitstream LANDED
 
@@ -56,15 +56,25 @@
 - **artifact**: `state/build/sleep_oscillator.ino.hex` (14 KB) + `.elf` (42 KB) + `.with_bootloader.hex` (15 KB)
 - **honest C3**: (a) board flash unverified (`arduino-cli upload --fqbn arduino:avr:uno -p /dev/cu.usbmodemXXX` 가 다음 step); (b) AD9833 SPI 동작은 hardware loopback 으로만 검증 가능; (c) follow-up: build.sh 에 `--sketch-dir` workaround 통합 권장.
 
-### §2.3 nested_lattice_ecp5 + spontaneous_ising — ECP5 BLOCKED
+### §2.3 nested_lattice_ecp5 + spontaneous_ising — ECP5 UNBLOCKED via ubu-1 (2026-05-21 update)
 
 - **synth**: `synth_ecp5` 이미 Phase 1a 에서 PASS (nested_lattice: 14 cells + 219 submodules / ising_fsm: 1 MULT18X18D + 454 submodules).
-- **pnr blocker**: `nextpnr-ecp5` Homebrew core 부재 (오직 `nextpnr-ice40` 만 packaged). 시도한 alternative path 들:
-  1. ❌ `brew install nextpnr-ecp5` — formula 부재 (`Did you mean nextdns?`).
-  2. ❌ `pip3 install --user yowasp-nextpnr-ecp5` PASS but WASM 실행 → `resources=["share"]` 만 preopen, user filesystem write 차단 → exit 0 with no output file. WASI sandbox 한계.
-  3. ⏸ `nextpnr-ecp5` source build (CMake + Boost + prjtrellis db) — $0 but 30-60 min wall, sudo 없이도 가능 (Homebrew CMake + Boost 이미 install 됨).
-- **pack ready**: `ecppack` (prjtrellis) installed and verified working. nextpnr-ecp5 가 `.config` 산출하면 즉시 `.bit` 생성 가능.
-- **next**: ECP5 path 진행 시 → `git clone github.com/YosysHQ/nextpnr && cmake -DARCH=ecp5 && make` (~30-60 min, $0).
+- **pnr blocker (resolved)**: Mac-local `nextpnr-ecp5` Homebrew core 부재 + yowasp WASI sandbox 차단 — pool dispatch (`pool on ubu-1`, Ubuntu 24.04 RTX 5070 box) 로 우회. `sudo apt install nextpnr-ecp5 fpga-trellis` 한 번에 install PASS (nextpnr-ecp5 0.6 + fpga-trellis 1.4, deb 6 packages ~70 MB).
+- **device target 정정**: 원래 dispatch 명세는 `--25k --package CABGA381`, but LPF 파일 자체가 `LFE5UM5G-85F-8BG381C` 보드 (ECP5-EVN dev kit) 향. nextpnr 에 `--um5g-85k --package CABGA381 --speed 8` 로 정정.
+- **$scopeinfo 함정 (nested_lattice 단독)**: yosys 0.65 (Mac) 가 emit 한 `$scopeinfo` debug-info pseudo-cell 을 nextpnr-ecp5 0.6 (apt) 가 unrecognized → `Unable to place cell 'u_nm1', no BELs remaining to implement cell type '$scopeinfo'`. **Fix**: `yosys -p "read_json X.json; delete t:\$scopeinfo; write_json X_clean.json"` 1-line pass-through 후 nextpnr 재실행 PASS. (`ising_fsm.json` 에는 `$scopeinfo` cell 부재 → cleanup 불필요).
+- **PNR 결과**:
+
+  | Target | TRELLIS_FF | TRELLIS_COMB | DCCA | Fmax | Target | Slack |
+  |---|---|---|---|---|---|---|
+  | nested_lattice | 58/83640 (0%) | 133/83640 (0%) | 1/56 (1%) | **341.18 MHz** | 12 MHz | ✅ 28× margin |
+  | ising_fsm | 134/83640 (0%) | 270/83640 (0%) | 1/56 (1%) | **90.08 MHz** | 12 MHz | ✅ 7.5× margin |
+
+  (LFE5UM5G-85F-8BG381C, --speed 8). 둘 다 LC utilisation < 0.5% — 더 작은 25K/45K device 로 downsize 여지 있음 (board 변경 시).
+- **ecppack**: 둘 다 PASS, 각 1.93 MB `.bit` (ECP5-85 standard bitstream 길이).
+- **pin 매핑 미완 LPF**: 두 LPF 모두 clk/rst_n/start/state_dump[7:0] 만 제약 (실 board LED 8개 매칭), 나머지 `step_count[15:0] + state_dump[41:8]` 등은 `--lpf-allow-unconstrained` 로 nextpnr 자동 placement. 실 board flash 시 외부 노출 핀 매칭 보장 X — 추가 LPF 작성 필요.
+- **artifacts (회수 완료)**:
+  - `hw/nested_lattice_ecp5/state/{nested_lattice.bit (1.93 MB), nested_lattice.config (105 KB), pnr.log (13.9 KB), pack.log}`
+  - `hw/spontaneous_ising/state/{ising_fsm.bit (1.93 MB), ising_fsm.config (294 KB), pnr.log (37.3 KB), pack.log}`
 
 ### §2.4 kuramoto_neuromorphic — cloud-only HW
 
@@ -114,6 +124,20 @@ anima-physics/hw/
 │       ├── strange_loop.asc                                ← nextpnr-ice40 output (944 KB)
 │       ├── strange_loop.bin                                ← icepack bitstream (132 KB) ★
 │       └── pnr.log                                         ← nextpnr utilisation + Fmax log
+├── nested_lattice_ecp5/                                    ← ECP5 UNBLOCKED 2026-05-21 (pool ubu-1)
+│   └── state/
+│       ├── nested_lattice.json                             ← yosys synth_ecp5 output (Mac)
+│       ├── nested_lattice.config                           ← nextpnr-ecp5 textcfg (105 KB, ubu-1)
+│       ├── nested_lattice.bit                              ← ecppack bitstream (1.93 MB, ubu-1) ★
+│       ├── pnr.log                                         ← Fmax 341.18 MHz @ 12 MHz target
+│       └── pack.log
+├── spontaneous_ising/                                       ← ECP5 UNBLOCKED 2026-05-21 (pool ubu-1)
+│   └── state/
+│       ├── ising_fsm.json                                  ← yosys synth_ecp5 output (Mac)
+│       ├── ising_fsm.config                                ← nextpnr-ecp5 textcfg (294 KB, ubu-1)
+│       ├── ising_fsm.bit                                   ← ecppack bitstream (1.93 MB, ubu-1) ★
+│       ├── pnr.log                                         ← Fmax 90.08 MHz @ 12 MHz target
+│       └── pack.log
 └── sleep_oscillator_arduino/
     └── state/
         ├── compile.log                                      ← arduino-cli compile output
@@ -147,3 +171,40 @@ anima-physics/hw/
 - wall (이 cycle): **~10-15 min** (4 brew install + 1 pip install + 2 pnr + 2 pack + 1 arduino compile)
 - cost: **$0** (모두 Mac local + Homebrew + arduino-cli core install free)
 - saga learning: brew install parallel 시 dep lock 함정 + yowasp WASI sandbox 한계 (2 new lessons)
+
+---
+
+## §7 ECP5 UNBLOCK saga via pool dispatch (2026-05-21 amendment)
+
+Mac Phase 1b 가 §2.3 에서 ECP5 BLOCKED 로 stop 했던 곳을 `pool on ubu-1` (Ubuntu 24.04 RTX 5070 box, idle load 0.00, 30 GB RAM) 으로 unblock. **3-axis 결정**:
+
+1. **toolchain source**: source-build (`git clone YosysHQ/nextpnr && cmake -DARCH=ecp5`, 30-60 min) **vs** apt-get (`nextpnr-ecp5 + fpga-trellis`, < 30 s). Ubuntu 24.04 apt 가 둘 다 제공 → apt 선택, install wall ~25 s.
+2. **device target**: dispatch spec 의 `--25k --package CABGA381` **vs** LPF 파일의 `LFE5UM5G-85F-8BG381C`. 후자 (실 board target) 채택 — Fmax/utilisation 모두 PASS, LPF 핀 매칭 무시 (device 부족) 위험 회피.
+3. **$scopeinfo cell 처리**: nextpnr-ecp5 0.6 (apt) < yosys 0.65 (Mac) 버전 gap 으로 yosys 가 emit 한 debug pseudo-cell 미지원. **fix**: ubu-1 측 yosys 0.64 로 `delete t:$scopeinfo` 1-line cleanup pass — re-synth 불필요, JSON 직접 편집.
+
+### 결과 chip-tape (5 row)
+
+| step | dispatch | wall | exit | artifact |
+|---|---|---|---|---|
+| 1. apt install nextpnr-ecp5 + fpga-trellis | `ssh ubu-1 'sudo -n apt-get install -y …'` | ~25 s | 0 | `/usr/bin/{nextpnr-ecp5,ecppack}` |
+| 2. scp JSON+LPF Mac → ubu-1 | `scp X.{json,lpf} ubu-1:/tmp/anima_ecp5/X/` | ~3 s | 0 | 4 file in `/tmp/anima_ecp5/` |
+| 3. nextpnr-ecp5 (parallel bg, 2 target) | `ssh ubu-1 'nohup … &'` | 0.6 s (ising) + 0.18 s init-fail (nested) | 0 / 255 | ising_fsm.config PASS · nested_lattice $scopeinfo error |
+| 3.5. yosys $scopeinfo strip + nested_lattice retry | `yosys -p "delete t:\$scopeinfo"` | < 1 s + retry < 1 s | 0 | nested_lattice.config PASS |
+| 4. ecppack ×2 | `ssh ubu-1 'ecppack X.config X.bit'` | < 1 s each | 0 | 2× 1.93 MB `.bit` |
+| 5. scp `.bit + .config + .log` ubu-1 → Mac | `scp ubu-1:… state/` | ~3 s | 0 | 8 file landed |
+
+**Total wall: ~40 s on ubu-1** (install + dispatch + retry). **pool resource usage**: ubu-1 load 0.00 → peak ~0.6 (single nextpnr proc < 1 s × 2) → 0.04 (idle, end of run). **cost: $0**.
+
+### Key learnings (pool dispatch pattern)
+
+1. **`pool on <host> <cmd>`** wraps `ssh <host>` — `~/.pool/pool.json` 의 `ssh:` 필드가 그대로 ssh alias (이 경우 `ubu-1` ~/.ssh/config 별칭). 따라서 file transfer 는 직접 `scp ubu-1:...` 가능 (pool API 통과 불필요).
+2. **백그라운드 long-running**: `nohup bash -c '…' > log 2>&1 &` 패턴이 ssh disconnect 후에도 잔존 — 단, 이번 PNR 은 < 1 s 였으므로 무의미. ising/nested cotrain 같은 multi-min job 에 유효.
+3. **sudo -n** (non-interactive): `~/.pool/pool.json` 의 `sudo: true` 는 mere flag — 실 NOPASSWD sudoers 설정은 ubu-1 측 `/etc/sudoers.d/` 에 별도 필요. 이번 케이스는 통과 (`sudo -n apt-get install` PASS).
+4. **device version skew**: Mac yosys (0.65 Homebrew bleeding) → ubu-1 yosys (0.64 apt) → ubu-1 nextpnr-ecp5 (0.6 apt, 2024-vintage). $scopeinfo 같은 신규 yosys 기능이 down-stream tool 에 미지원될 수 있음. **rule**: 가능한 한 toolchain version 같은 host 에서 synth + PnR 묶어 실행. 이번 cycle 의 retroactive workaround 는 1-line cleanup 으로 운 좋게 가능했지만, future 는 `pool on ubu-1 yosys synth_ecp5 …` 도 ubu-1 측 실행 권장.
+5. **dispatch spec ≠ 실 board target** 함정: dispatch 명세 (`--25k`) 와 hw LPF 파일 (`85F`) 충돌 시 LPF 우선 — 핀 매핑이 device 종속이므로.
+6. **mass file transfer**: 4 file × ~1 MB = 3 s `scp`. pool API 통하지 않고 ssh alias 직접 활용이 cleanest.
+
+### Follow-up (PHASE_1B_STATUS.md §3.2 update)
+
+- ~~3. **nextpnr-ecp5 source build** ($0, 30-60 min) — ECP5 path unblock~~ → **DONE via apt on ubu-1, $0, 40 s wall.** ECP5 path now fully open: Mac synth + ubu-1 PnR/pack + Mac artifact archive.
+- 다음 ECP5 cycle 권장: **ECP5-EVN board ($120)** 주문 + `openFPGAloader -c usb -b ecp5_evn nested_lattice.bit` flash 로 silicon tier 검증. LPF 의 pin coverage 보강 필요 (`step_count` + 상위 state_dump 비트).

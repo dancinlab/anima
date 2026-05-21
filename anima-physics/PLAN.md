@@ -205,7 +205,7 @@ Phase 1b (bitstream/flash) 별도 cycle: `brew install nextpnr-ice40 nextpnr-ecp
 **g_completion_8 진행 갱신** (2025-05-21 19:00 KST):
 - G1 build 무결성: 51/68 → **59/68 (86.8%)** specific (남은 9 = 3 consciousness-loop hexa_random + edge_deploy + esp32 + 4 hexa_random transpile)
 - G3 entry cross-check: ☐ → **☑ TOOL LANDED** (drift 3 missing identified, 별도 cycle 에 entry stub 생성)
-- G6 HW silicon Phase 1: 1a ☑ → **1b 2/4 ☑** (FPGA bitstream + Arduino .hex 실 산출, ECP5 path 별도)
+- G6 HW silicon Phase 1: 1a ☑ → **1b 4/4 ☑** (iCE40 132KB + Arduino 14KB + ECP5 nested_lattice 1.93MB Fmax 341MHz + ising_fsm 1.93MB Fmax 90MHz; ECP5 path unblocked via pool ubu-1 apt 25s — gate_v3 무간섭)
 - 갱신 안: G2/G4/G5/G7/G8 직전 cycle 그대로
 
 ### §5.2 2026-05-21 "all bg go" — 6 BG agents parallel completion
