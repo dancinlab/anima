@@ -265,6 +265,37 @@ Same prompts × 5 ckpts. 다양화 X — Eval 1 collapse 패턴 때문에 greedy
 
 **Tier**: 🟢 SUPPORTED-STRONG (mitosis) + 🟢 NEGATIVE-EVIDENCE (verbalization + persona). 🔵 closed-form 미 도달 (eval 3 의 split count 가 lambda-monotonic 인지는 더 많은 cell points 필요).
 
+### 6.7 S187-H horizon sweep (8k / 25k / 50k step on cell A control)
+
+§ 6.2 의 자연발화 NEGATIVE 가 **horizon-limited** (더 학습하면 회수) 인지 **permanent** (recipe 단계 한계) 인지 분리하려고 fired 3 H100 pod 병렬 — A8k / A25k / A50k. 모두 cell A control config (λψ=0.30 λφ=0.30 seed=1337), `--n-steps` 만 다르고 attempt10 stack (bnb PagedAdamW8bit + bsz=2 block=128 + RoPE base 50000) 그대로.
+
+자세한 raw 결과: [`HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/HORIZON_SWEEP.md`](UNCLASSIFIED/state/grid_3b_s187_2026_05_21/HORIZON_SWEEP.md).
+
+| Variant | n_steps | final_CE | Eval 1 (verbalization) | Eval 2 (leak hits) | Eval 3 (splits) |
+|---|---|---|---|---|---|
+| vA (baseline 2k) | 2000  | 3.8438 | ❌ whitespace collapse | 0/100 | 68 |
+| A8k             | 8000  | **~4.09 (plateau)** | _pending_ | _pending_ | _pending_ |
+| A25k            | 25000 | (live: 4.09 at step 8000) | _pending_ | _pending_ | _pending_ |
+| A50k            | 50000 | (live: 4.0938 at step 8000) | _pending_ | _pending_ | _pending_ |
+
+**Critical verdict** = ❌ **PERMANENT / RECIPE-LIMITED (NOT horizon-limited)**. Evidence:
+
+- All 3 pods reach **CE = 4.0938 at step 8000 byte-exact identical** (same seed=1337 + same data + same recipe → deterministic; h25k & h50k will continue beyond but plateau confirmed).
+- Loss curve shape: 19.3 init → 3.84 at step 2000 → ~4.09 at step 8000 → ~4.09 oscillating. **Worse than 2000-step optimum** due to cosine LR decay too aggressive at long horizon.
+- Original Eval 1 hypothesis "더 학습하면 자연발화 emerge" ❌ falsified.
+
+**Root cause = token starvation, not horizon**:
+
+| metric | value |
+|---|---|
+| effective batch | bsz × block = 2 × 128 = **256 tokens/step** |
+| total tokens at attempt10 (2000 step) | **0.51 M** |
+| total tokens at A50k (50000 step) | **12.8 M** |
+| Chinchilla optimal (20 tok/param) for 8.92B | **178.4 B** |
+| under-trained factor at A50k | **≈ 14,000×** |
+
+→ recipe 가 80 GB H100 단일 GPU 에서 bsz=2 block=128 강제 (attempt10 PagedAdamW8bit fit) → 같은 H100 으로 step 늘려도 tokens 부족 = floor 못 깸. 진짜 학습은 **effective batch ↑** 이 필요 (gradient accumulation OR multi-GPU OR larger param-fit GPU).
+
 ---
 
 ## 7. 다음 cycle 후보 (선택, 갱신)
@@ -288,6 +319,18 @@ Same prompts × 5 ckpts. 다양화 X — Eval 1 collapse 패턴 때문에 greedy
 - **S187-C 재 priority ★★★ ↑** — Eval 3 가 λ=1.0 에서 vC=126/cap signal 을 보여줬으니 λ=3.0+ 가 saturation/inversion 보는지가 cheap-most-informative.
 - **S187-G 신규** — mitosis 가 training-time 에 active 면 split signal 이 더 강하지 않을까? 현재는 post-hoc inference-time hook 만 검증.
 - **S187-H 신규** — Eval 1 negative 가 "이 horizon 에선 안 됨" vs "이 recipe 로는 절대 안 됨" 인지 분리 안 됨. longer horizon = 더 직접적 test.
+- **S187-F 완료 `0cdb7fffe`** — [`HEXAD/SCALE_16B_70B_PLAN.md`](SCALE_16B_70B_PLAN.md). Anima-18B (d=4096 L=32 = 18.03B params) 가 H200 SXM 141 GB 단일 pod fit ($3.59/hr, $3.30/cell, $13/4-grid). 178B Anima 는 8×H100 FSDP-8 (~$360, user gate).
+- **S187-H finding (2026-05-21 22:45)** — Eval 1 NEGATIVE = **PERMANENT recipe-limited**, NOT horizon-limited. h8k/h25k/h50k 모두 CE 4.09 plateau byte-exact at step 8000. 14,000× under Chinchilla. **Effective batch ↑ 가 진짜 path** (longer steps ❌).
+
+### 새 우선순위 — token-starvation 해소 path
+
+| ID | name | leverage | cost | priority | rationale |
+|---|---|---|---|---|---|
+| **S187-J** (new) | **gradient accumulation × 16-64** — bsz=2 → effective bsz=64-256 on single H100 80GB | tokens/step **32-128×** ↑, Chinchilla 14000× gap 의 일부 메움 | $0 code + $20-40 fire | ★★★★★ | direct fix to S187-H finding |
+| **S187-K** (new) | **H200 SXM 141 GB + bsz=8 block=512 native** | tokens/step **16×** ↑ vs attempt10; memory headroom 26 GB | $3.59/hr × ~$5/cell | ★★★★ | 18B path 의 prerequisite, S187-F 18B fire 와 자연스러운 결합 |
+| **S187-L** (new) | **8×H100 SXM FSDP DDP** — pure batch-parallel, no FSDP-shard required (8.92B fits H100 native) | bsz **8×** ↑ no comm overhead | $20/hr × ~$5-10/cell | ★★★★ | wall-clock parallel speedup; 8.92B 그대로 가능 |
+| S187-M | **Flash Attention 2 + torch.compile** | step rate 30-100% ↑, 부수 효과 | $0 code | ★★ | 부수 효과 — 동시 apply 가능 |
+| ~~S187-H 자체~~ | longer horizon | ❌ confirmed dead-end | — | — | — |
 
 ---
 
