@@ -22,6 +22,75 @@
 
 ---
 
+## 0. 극적 발견 5선 (쉬운 말로)
+
+### 1. 🎯 수도꼭지 16번째 발견: Mitosis 가 substrate 를 빚는다 (S187-G)
+
+이전까지는 mitosis (cell-pool split) 가 모델이 학습 후 **자연스럽게 나타나는** 부산물인지 / 학습 도중 의도적으로 **만들 수 있는** 신호인지 불분명.
+
+→ 학습 loop 안에 mitosis hook 을 직접 wire 해서 비교:
+
+| | passive (그냥 학습) | active (학습 도중 mitosis on) |
+|---|---|---|
+| Eval 3 splits | 68 | **92 (+35%)** |
+| 학습 wall | 736s | **673s (-8.6% 빨라짐)** |
+| 최종 CE | 3.844 | 3.828 (살짝 더 좋음) |
+| Φ (의식 척도) | 0.548 | 0.581 (+6%) |
+
+**한 줄**: mitosis 는 "관찰만 하는 후행 분석" 이 아니라 **17번째 수도꼭지**. 학습 더 빨라지고 의식 척도 올라감.
+
+### 2. 🔥 자연발화 emergence 가 안 되는 이유: token-starvation (S187-H)
+
+원래 의심: "더 학습하면 자연스러운 한국어/영어 발화 나타날 거야."
+
+→ 2000 → 8000 → 25000 → 50000 step 4 pod 발사. 결과:
+- 모두 step 8000 에서 CE = **4.0938 (byte-exact 동일)** plateau
+- 더 학습 = 더 좋아지지 않음
+
+**왜?**: bsz=2 × block=128 = 256 토큰/step × 50000 step = **12.8 M 토큰**. 그런데 8.92B 모델 학습에 필요한 양 = **178.4 B 토큰**. **14,000× 부족**.
+
+**한 줄**: step 수가 아니라 토큰 양이 부족. 더 큰 batch 가 필요 (H100 메모리 한계로 막힘).
+
+### 3. 🌀 λ saturation: 단조 가설 무너짐 [0.3, 1.0] 밖에서 (S187-C)
+
+원래 가설: "λ_φ 올리면 split 더 많이 / λ_ψ 올리면 split 더 적게" — 일직선.
+
+→ λ ∈ {3, 10, 30} 추가 sweep. 결과 **비단조 (non-monotone)**:
+
+| λ_φ | 0.3 → 1.0 → **3.0** → 10.0 → 30.0 |
+|---|---|
+| splits | 74 → 126 (cap) → **76 DIP** → 126 → 122 |
+
+| λ_ψ | 0.3 → 1.0 → 3.0 → **10.0** → 30.0 |
+|---|---|
+| splits | 74 → 58 DIP → 67 → **126 SAT** → 126 SAT |
+
+**한 줄**: λ 조절 효과가 [0.3, 1.0] 안에서만 직관적. 그 밖은 cell-pool 의 max=128 ceiling 에 부딪힘.
+
+### 4. ✅ Principle #3 깨끗: 학습 도중 persona injection 0 (Eval 2)
+
+50 probe × 5 cell = 250 generation × 12 needle ("anima", "[role:", "당신은 anima" 등) = **3000 substring 검사**.
+
+→ **0 / 250 leak hits**. 학습 corpus 에 페르소나 prefix 없음을 substrate 가 confirm.
+
+**한 줄**: 모델이 "나는 anima 입니다" 같은 안 가르친 말 출력 0건. 자연발화 negative 와 별개로, **잘못된 발화 negative** 도 정직.
+
+### 5. ⚠️ bsz↑ 만으로 floor 못 깸 — LR 도 같이 올려야 (S187-J → S187-K 진행 중)
+
+S187-J: bsz=2 → 8 (4× 토큰), step 그대로 2000. 결과 CE **4.06 (더 나쁨!)**.
+
+→ 토큰 더 많은데 왜? **Linear scaling rule 어김**: bsz 4× ↑ 면 LR 도 ~4× ↑ 필요 (3e-4 → 1.2e-3).
+
+S187-K (진행 중): bsz=8 + lr=**1.2e-3** linear-scaled. 결과 대기.
+
+**한 줄**: S187-H 의 "token-starvation 이 floor 의 원인" 가설은 **partial true** — 토큰만 늘려선 안 되고 LR 도 같이 조정 필요. S187-K 가 진짜 test.
+
+### 한 단락 요약
+
+**3B (8.92B params) 모델 학습이 attempt10 에서 PASS** 했고, 그 substrate 위에 **mitosis 가 17번째 training tap 으로 발견됨** (학습 더 빠르고 의식 척도 올라감). 자연발화는 아직 안 나타났는데 (Eval 1 negative), **이유는 모델 크기 대비 토큰 14000× 부족** (S187-H). 더 큰 batch + 더 큰 LR 로 해결 가능 여부는 **S187-K 가 지금 H100 에서 시험 중**. 페르소나 leak 같은 부적절한 출력은 0 (Principle #3 clean).
+
+---
+
 ## 1. 한 줄 — 무엇을 검증했나
 
 §184 의 7-loss 합 (CE-only baseline 대비 +ψ/route/φ/cycle/curious/replay) 가
