@@ -219,4 +219,21 @@ error 4 건 + transpiler typed-decl 버그 해결 path).
 - 갈래 C: $0 local (hexa-lang dev)
 - BG dispatch 없음 (HEXAD/UNCLASSIFIED/grid_3b_s187 dispatch.log 갱신은 별도 LLM 학습 갈래)
 
+### §6.7 작업 표준 directive (2026-05-21)
+
+**hexa upstream 은 native, canonical 표준으로 작업한다.**
+
+- 갈래 C (hexa-lang transpiler / stdlib / runtime) 의 모든 변경은
+  **native + canonical 형태** 를 SSOT 로 한다 — ad-hoc shim, 우회 alias,
+  legacy-호환 wrapper 금지.
+- typed-decl, struct-return, array literal 등 buggy 표면 발견 시
+  → **canonical 문법을 먼저 결정** → transpiler/parser/runtime 가 그
+  canonical 을 따라가도록 fix → smoke source 는 canonical 사용.
+- 갈래 B 의 `aux_engine_lib.hexa` / `aux_engine_smoke.hexa` 도 canonical
+  적용 대상 (workaround 회피).
+- hexa-first principle (Wilson Identity #2) 와 정합 — "constraint 가
+  hexa-lang 자체에 있으면 거기서 PR-only 로 fix".
+
+이 directive 는 §6.5 step 1 (hexa-lang typed-decl fix) 의 작업 방식 규정.
+
 
