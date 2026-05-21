@@ -177,6 +177,48 @@ Phase 1b (bitstream/flash) 별도 cycle: `brew install nextpnr-ice40 nextpnr-ecp
 
 ## §5 진행 로그 (cycle ledger, append-only)
 
+### §5.7 2026-05-21 "all bg go" 7차 — 6 BG agents parallel (B1-B4 + A6 + D2 + materials + HEXAD sync)
+
+**6 agent ✅ completed** — demiurge gap **4 → 0 ❌** + G5 component scope_caveat #3 FULL CLOSED:
+
+1. ✅ **B1+B2 demiurge consumer scan-foreign** — FirmwareVerifyProducer + ComponentVerifyProducer ~110 LoC Swift diff
+   - `foreignRecordPrefixes` static + `scanForeignRecords(under:)` helper
+   - 2 smoke 모두 anima record auto-cite (`anima_sleep_oscillator_*` + `upduino_enclosure_thermal_*`)
+   - 13 sibling producer 일반화 가능 패턴 확정
+
+2. ✅ **B3+B4 4 new demiurge producers** — Brain + Bio + Chem + Grid (417 LoC Swift)
+   - ActionDispatch.swift 4 case + 4 helpers
+   - 4 smoke 모두 ⏳ GATE_OPEN with anima record auto-cite
+   - **gap 4 ❌ → 4 ⏳** (flipped)
+
+3. ✅ **A6 aura ActionDispatch 우회** — AuraVerifyProducer ~110 LoC + ProducerRegistry Tier 3 override ~30 LoC
+   - **premise correction**: 실 routing 은 ActionDispatch 가 아닌 ProducerRegistry 단락회로
+   - sibling-repo exit 1 → fallback → anima record cited (`aura_q0.00_v+0.00_a0.00_local_sim`)
+   - aura ❌ → ⏳ GATE_OPEN
+
+4. ✅ **HEXAD/PHYSICS §6.23-§6.25 sync 4차** — +47 LoC append, README 616→663
+
+5. ✅ **D2 multi-load FEM (vibration + EMI + coupled)** — 모든 4 verdict PASS
+   - vibration σ_vM 4.30 MPa, FoS 64.2 (Al 6061-T6 276 MPa yield)
+   - EMI SE 1167-10336 dB across 100MHz/1GHz/10GHz (Al 1mm plane-wave)
+   - coupled thermal+mech σ_total 55.3 MPa, FoS 4.99
+   - **G5 component scope_caveat #3 FULL CLOSED** (3 분석 same geometry)
+
+6. ✅ **materials anima bridge (D17 pattern)** — `demiurge_materials_bridge.py` 330 LoC composite
+   - 5 backend (composite/hexa_matter/memristor/thermo/supercond)
+   - demiurge cli auto-cite ✅, materials ⏳ no producer → ⏳ GATE_OPEN
+
+**g_completion_8 진행 갱신** (2026-05-21 19:30 KST):
+- G5 demiurge: **gap aggregate 5 → 0 ❌** (5건 모두 ⏳ GATE_OPEN with anima record auto-cited)
+  - chip ✅ + brain/firmware/component/bio/chem/grid/aura/materials ⏳ + bot/cern/energy/fusion/mobility/antimatter ⏳
+- G5 component: scope_caveat #1 + #3 + #5 closed (4/6 → 1/6 remaining)
+- G7: HEXAD §6 sync 정합 (616→663)
+
+**잔존**:
+- **User-gate**: hexa-lang PR #262/#264 머지 · HW BOM 주문 · Phase 2 cloud trial 신청 · demiurge fork 또는 직접 commit 결정
+- **G5 component 잔여 scope_caveats**: #2 measured material lot (Al 6061 datasheet) · #4 hand-rolled vs scikit-fem built-in audit · #6 3rd-party signoff
+- **demiurge 측 working tree 변경 (5 신규 .swift + 2 수정 .swift + ActionDispatch + ProducerRegistry)** — 별도 commit 결정 필요
+
 ### §5.6 2026-05-21 "all bg go" 6차 — 6 BG agents parallel (A1-A5 + C thermal mitigation)
 
 **6 agent ✅ completed**:

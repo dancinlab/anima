@@ -31,7 +31,7 @@ record OR no-producer gap 표기 (g3 over-claim 금지). 결과 record path =
 | **chip** | ✅ **GATE_CLOSED_MEASURED · absorbed=true** | §B+§D oracle parity **12/12 GREEN** (B1-B4 + D1-D6 + L1-L2 Leighton) — ZLL_d4=61.5 / ZLL_d6=55.875 / B_d6=15 > B_d4=8 / gap=5.625 cyc / hops_d4=8.5 hops_d6=7.094 / xwire_d6=1.406 | `sB_mesh88_uniform_22nm`, `sD_mesh_d4_tornado_22nm`, `sD_hex_d6_tornado_22nm` |
 | **component** | ⏳ GATE_OPEN (toy box) | gmsh 4.15.2 + scikit-fem 12.0.1 — ΔT=0.528 K, T_max=298.68 K, σ_vM_max=38.37 Pa, u_max=2.796e-13 m; mesh 686 nodes 2232 tetrahedra | `component_verify_20260521T062439Z` |
 | **firmware** | ⏳ GATE_OPEN (stub + anima-bridge) | demiurge stub (QEMU mps2-an385 install-gated skip) + anima `demiurge_firmware_bridge.py` LANDED 2026-05-21 (3-backend: local_sim 5/5 + arduino_lint 3/3 + arduino_compile .hex 14KB / flash 5038B (15%) / RAM 235B (11%)); demiurge `FirmwareVerifyProducer` 가 anima record 자동 인용 cycle 은 별도 (consumer scan-foreign 미구현) | `firmware_verify_20260521T062442Z`, `sleep_oscillator_ad9833_arduino_compile` (anima-bridge) |
-| **materials** | ⏳ no producer | 라우팅 미스 — owner=`~/core/hexa-matter/verify/run_all.hexa` (D17 consumer-pointer pattern) | none |
+| **materials** | ⏳ GATE_OPEN (anima-bridge + hexa-matter pointer) | D17 consumer-pointer — owner=`~/core/hexa-matter/verify/run_all.hexa` SSOT. anima `demiurge_materials_bridge.py` LANDED 2026-05-21 (composite mode: memristor TiO2 + thermo Langevin + supercond provenance + hexa-matter exit pointer); demiurge cli action verify materials 가 anima record 자동 감지·인용 (composite_TiO2_hxmNone) | `2026-05-21T09-30-19Z/anima_materials_20260521T093019Z` |
 
 ### §2.2 HW adjacent (shallow cohort domains, 11)
 
@@ -52,7 +52,7 @@ record OR no-producer gap 표기 (g3 over-claim 금지). 결과 record path =
 ### §2.3 aggregate
 
 - ✅ GATE_CLOSED_MEASURED: **1** (chip)
-- ⏳ GATE_OPEN (measured but provisional): **10** (component, firmware, antimatter, bot, **brain** ← anima-bridge 추가 2026-05-21, cern, energy, fusion, mobility, +materials sibling)
+- ⏳ GATE_OPEN (measured but provisional): **11** (component, firmware, antimatter, bot, **brain** ← anima-bridge 추가 2026-05-21, cern, energy, fusion, mobility, **materials** ← anima-bridge + hexa-matter D17 pointer 추가 2026-05-21)
 - ❌ no producer / engine gap: **4** (aura, bio, chem, grid)
 - **total domains**: 15
 

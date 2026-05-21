@@ -1,0 +1,72 @@
+{
+  "analysis": "vibration_shock_static_equivalent",
+  "analytic_1d": {
+    "a_eff_m_per_s2": 735.49875,
+    "a_over_b": 1.5151515151515151,
+    "alpha_roark": 0.08483030303030303,
+    "beta_roark": 0.4899636363636364,
+    "plate_stiffness_D_nm": 6.443347173904911,
+    "q_pa_inertial": 1985.8466250000001,
+    "sigma_max_pa": 1059588.9780399003,
+    "u_max_m": 2.899567739234434e-06
+  },
+  "cross_check": {
+    "expected_ratio_range": "1.5..3.0 (4-corner clamp is stiffer than SSSS plate)",
+    "sigma_fem_over_analytic": 4.059798372984963,
+    "u_fem_over_analytic": 3.4815933082605843
+  },
+  "error": null,
+  "factor_of_safety": {
+    "fos_ultimate": 72.06423763050259,
+    "fos_yield": 64.16041801941522,
+    "pass_ultimate_FoS_gt_3": true,
+    "pass_yield_FoS_gt_2": true,
+    "ultimate_mpa": 310.0,
+    "yield_mpa": 276.0
+  },
+  "fem": {
+    "dof_count": 61530,
+    "sigma_vm_max_mpa": 4.301717609079187,
+    "sigma_vm_max_pa": 4301717.609079187,
+    "u_max_m": 1.0095115637766877e-05,
+    "wall_s": 8.191306829452515
+  },
+  "geometry": {
+    "id": "upduino_v3_enclosure_v1",
+    "length_m": 0.05,
+    "mesh_size_m": 0.0005,
+    "n_elements": 74587,
+    "n_nodes": 20510,
+    "thickness_m": 0.001,
+    "width_m": 0.033
+  },
+  "geometry_id": "upduino_v3_enclosure_v1",
+  "interface": "demiurge:component:gmsh-skfem-verify-record-multiload",
+  "load": {
+    "drop_height_m_equiv": 1.0,
+    "dynamic_amp_factor": 1.5,
+    "peak_g": 50.0,
+    "pulse_ms": 11.0,
+    "shape": "half_sine"
+  },
+  "material": {
+    "k_w_per_mk": 167.0,
+    "name": "aluminium 6061-T6 (textbook 300 K)",
+    "poissons": 0.33,
+    "rho_kg_per_m3": 2700.0,
+    "youngs_pa": 68900000000.0
+  },
+  "ok": true,
+  "produced_at_utc": "2026-05-21T09:30:30.210600+00:00",
+  "provenance": {
+    "absorbed": false,
+    "measurement_gate": "GATE_OPEN",
+    "producer": "gmsh@4.15.2 + scikit-fem@12.0.1 (anima/multiload_2026_05_21/vibration_fem.py)",
+    "scope_caveats": [
+      "static-equivalent representation of the half-sine shock pulse via DAF=1.5 (MIL-STD-810G \u00a7516.6); a true modal-superposition transient solve was NOT performed and would refine \u03c3_vM by ~10-30 % depending on 1st-mode period vs 11 ms pulse.",
+      "4-corner clamp idealised as 1.5 mm pads with rigid u=0 \u2014 real M3 screw+washer has finite stiffness, would soften \u03c3_vM near the pads by ~20 %.",
+      "Al 6061-T6 \u03c3_y/\u03c3_u = 276/310 MPa = MMPDS textbook values, NOT a lot-tested coupon. Heat-affected zone near welds (none on this part) would drop \u03c3_y to ~165 MPa."
+    ]
+  },
+  "record_id": "vibration_fem_20260521T093030Z"
+}

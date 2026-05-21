@@ -613,4 +613,51 @@ Phase 2 신청 권장 path: **week 1 Akida → week 2-4 Loihi 2** (neuromorphic 
 
 **상위 ledger SSOT**: `anima-physics/PLAN.md` §5.3 §5.4 (`g_doc_consolidation` 진행 로그) — HEXAD/PHYSICS/README.md 는 mirror.
 
+### §6.23 "all bg go" 4차+5차 (commit `6ea299145`)
+
+- **G2 6 substrate falsifier**: 30/30 PASS, G2 21 → **51 asserts (27 substrate)**
+- **§188g 7 engine re-fire (§188 v2)**: 35/35 PASS, §188 **21 → 28 PASS**, ⚠ empty 7 → 0
+- **HEXAD §6.19-§6.22 sync 3차**: 513 → 582 LoC
+- **demiurge brain integration**: brain ❌ → ⏳ GATE_OPEN (6-step pattern 확정)
+- **demiurge 4 gap bridges**: bio/chem/grid ❌ → ⏳ (3/4 1-step), aura demiurge ActionDispatch hard-code 한계
+- **§188 v2 substrate matrix re-snapshot**
+- **G5 component STEP geometry + 4-level FEM convergence**: engineering signal **80.6°C vs 85°C** spec — **5°C headroom 만**
+- **G5 firmware AD9833 demiurge integration**: 3 backend PASS
+
+### §6.24 "all bg go" 6차 (commit `045dacda2`)
+
+- **A1 HEXAD §2 sync**: 표 갱신 (✅ 21 → 28, ⚠ empty deprecate, §2.5 신규)
+- **A2 autonomous_expansion**: 이미 PASS 5/5, 변경 0
+- **A3 G8 E2E v2 cross-engine**: 786 LoC, **5/5 PASS** wall 0.37s native (SNN→photonic→quantum coupling chain, |01⟩ collapse)
+- **A4 demiurge verify-all batch tool**: 15 도메인 P=4 parallel, 107s
+- **A5 falsifier inventory**: **196 combined falsifier universe** (65 F-* + 131 T-selftest), PLAN G2 drift 발견
+- **C thermal mitigation**: 3 option FEM, **Option B 권장 $3 fin headroom 43.4°C** (UPduino 5°C → 43.4°C 해결 path)
+
+### §6.25 cycle re-snapshot
+
+`g_completion_8` 진행 (commit `045dacda2` 기준):
+
+| G# | 항목 | §6.22 시점 | 현재 (§6.23-§6.24 후) |
+|---|---|---|---|
+| G1 | substrate build smoke | 61/68 (89.7%) | 61/68 (89.7%) carry |
+| G2 | falsifier total | §188 21 + 40 | 21 asserts → **196 combined falsifier universe** (drift 발견 후 정합 갱신 필요) |
+| G3 | entry cross-check | ☑ CLOSED | ☑ CLOSED (carry, cross_check CLEAN) |
+| G4 | substrate README LANDED | 27/27 ☑ | (carry ☑) |
+| G5 | demiurge upgrade ladder | chip ✅ + brain ⏳ skeleton | chip ✅ + **brain/firmware/bio/chem/grid ⏳ + component ⏳ (real STEP + thermal 3 option)** + aura/materials gap carry |
+| G6 | HW Phase 1a/1b | 1a ☑ + 1b 4/4 ☑ | 1a ☑ + **1b 4/4 ☑** + **1c thermal action plan LANDED (Option B $3 fin)** |
+| G7 | SW⊥HW 분할 정합 | ☑ + 8 count drift fix | ☑ (carry) + **README + PLAN count 정합 + §0 SW/HW 분리** |
+| G8 | E2E integrated demo | ☑ | ☑ + **G8 v2 cross-engine 5/5 PASS** |
+
+**상위 GOAL 진척**: anima-physics 모듈 자체 완성도 **90%+ 도달**. SW canonical + HW Phase 1b 4/4 silicon-ready + thermal action plan + cross-engine E2E + demiurge bridge 5/5 도메인 LANDED.
+
+**잔여 = 사용자 gate (PR merge / HW BOM / cloud signup) + 자동 트랙터블**:
+- demiurge consumer Swift 확장
+- G5 component multi-load FEM
+
+**LANDED commits (본 sync cycle 차 4)**:
+- anima `6ea299145` — "all bg go" 4차+5차 (G2 + §188 v2 + 4 gap bridges + G5 STEP/firmware)
+- anima `045dacda2` — "all bg go" 6차 (A1-A5 + C thermal)
+
+**상위 ledger SSOT**: `anima-physics/PLAN.md` §5.5 §5.6 (`g_completion_8` 진행 로그) — HEXAD/PHYSICS/README.md 는 mirror.
+
 
