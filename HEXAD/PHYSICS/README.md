@@ -236,4 +236,44 @@ error 4 건 + transpiler typed-decl 버그 해결 path).
 
 이 directive 는 §6.5 step 1 (hexa-lang typed-decl fix) 의 작업 방식 규정.
 
+### §6.8 진행 갱신 — 2026-05-21 14:30 KST (canonical 4건 LANDED + transpiler gap 특정)
+
+**LANDED (canonical 적용 + 정공법)**:
+- ✅ anima `8cda89bde` — aux_engine_lib/smoke.hexa canonical: `[T]{}`→`[]` (25) + `var`→`let mut` (64) + `rand_f32/u64`→`random()` (8)
+- ✅ hexa-lang **PR #262** open (branch `fix/runtime-h-hexa-random-forward-decl-2026-05-21`) — runtime.h `hexa_random` forward-decl
+
+**Smoke 결과 진전**: 21 errors → 5 errors (typed-decl bug + rand-undef 해소)
+
+**잔존 — hexa-lang transpiler nested-LHS lowering bug** (5 사이트, PR-only fix):
+- 사이트: `s.factions[i].cells[c].hidden[k] = v` 같은 2+레벨 nested mutable LHS
+- 위치: `~/core/hexa-lang/self/codegen_c2.hexa` `_gen2_nested_index_assign_stmt` (line 2530+) +
+  미러본 `self/native/hexa_cc.c:17197`
+- 현재 logic: Index spine 까지만 unwrap, Field-rooted 1 레벨만 wrap (line 2574-2577).
+  multi-Field/Index chain 에선 root_c 가 `hexa_index_get(hexa_map_get(...), ...)`
+  (rvalue function call) 로 emit → "expression is not assignable"
+- 설계 fix = `_gen2_unwrap_lhs(cur, inner_expr) -> [root_ident, full_expr]`
+  재귀 helper (Field/Index 모두 unwrap 후 bare Ident root 도달, 각 레벨
+  `hexa_map_set` / `hexa_index_set` wrap chain 생성). codegen_c2.hexa
+  source 측 PR + 미러 .c 갱신 + hexa_v2 rebuild 필요.
+- canonical SSOT 미정합: `self/hexa_full.hexa` 현재 트리 부재 → bootstrap
+  regen path 불완전 (build_stage0.hexa 가 의존). 별도 follow-up.
+
+**갈래 B alternate path (canonical-functional rewrite)**:
+- aux_engine_lib 의 5 nested-mutation function (engine_process, engine_internal_sync_factions,
+  engine_cross_faction_debate 등) 을 immutable functional pattern 으로 재작성
+  → `cell_with_hidden(cell, k, new_v) -> Cell` 같은 functional update helper 사용
+- Wilson #1 (ai-native deterministic) + §6.7 (canonical) 정합 — transpiler PR-only
+  대안의 또 다른 canonical 형태
+
+**갈래 C (21 PASS substrate SW 후보 분석)**:
+- §6.3 mapping draft 의 elevate: PASSed 21 substrate 의 .hexa 소스를 read 하고
+  자연발화/영속성 mechanism 의 SW 측면 구체적 인용 정리
+- aux_engine 의존 0 — 즉시 진행 가능, mission 정합
+
+**다음 step (모두 정공법 = 병행)**:
+1. ✅ canonical 4건 + PR #262 (DONE)
+2. 🔄 transpiler PR follow-up (별도 cycle, hexa_full.hexa SSOT 복원 + recursive _gen2_unwrap_lhs 구현 + 미러 .c 갱신)
+3. 🔄 B functional rewrite (aux_engine_lib 5 fn) — 본 cycle 후속
+4. 🔄 C 21 PASS SW 후보 분석 — 본 cycle 후속 (GOAL 직결)
+
 
