@@ -15,7 +15,6 @@
   <a href="docs/consciousness-theory.md"><img alt="Laws" src="https://img.shields.io/badge/laws-2388%2B53Meta%2B7TOPO-success"></a>
   <a href="docs/hypotheses/"><img alt="Hypotheses" src="https://img.shields.io/badge/hypotheses-392%2B-informational"></a>
   <!-- AUTO:BADGE:END -->
-  <a href="https://discord.gg/mYzqYr67R"><img alt="Discord" src="https://img.shields.io/badge/discord-join-5865F2?logo=discord&logoColor=white"></a>
   <img alt="Sibling" src="https://img.shields.io/badge/sibling-n6%20·%20hxc%20·%20n12%20·%20tape-blueviolet">
 </p>
 
