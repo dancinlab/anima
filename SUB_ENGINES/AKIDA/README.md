@@ -306,6 +306,73 @@ AUX/AKIDA/
 
 ---
 
+## §13 LAN deploy (표준 — Mac ↔ router ↔ Pi 5, 사용자 directive 2026-05-21)
+
+표준 LAN 설정. AKD1000 = Pi 5 내부 M.2 PCIe (network 무관), Pi 5 자체는 LAN host.
+
+### §13.1 topology
+
+```
+   ┌──────────┐       WiFi/GbE       ┌────────────┐      WiFi/GbE      ┌──────────┐
+   │   Mac    │◄────────────────────►│ 공유기      │◄──────────────────►│  Pi 5    │
+   │ (dev)    │   192.168.0.X        │  (router)   │   192.168.0.Y      │ + AKD1000│
+   └──────────┘                       └─────────────┘                     └──────────┘
+        │                                                                       │
+        └──► ssh pi@pi5-akida.local  (Bonjour mDNS — IP 외울 필요 X)            │
+        └──► pool on pi5-akida '...' (anima pool CLI dispatch)──────────────────┘
+```
+
+### §13.2 Pi 5 셋업 (도착 시 30분)
+
+1. **microSD flash** (Mac 의 Raspberry Pi Imager):
+   - Raspberry Pi OS 64-bit Bookworm
+   - **Custom**: SSH enable + WiFi creds + `hostname=pi5-akida`
+2. Pi 5 boot → router DHCP IP 할당 → Mac 의 Bonjour 가 `pi5-akida.local` 자동 인식
+3. Mac → `ssh pi@pi5-akida.local`
+4. AKD1000 detect: `lspci | grep -i akida`
+5. anima clone: `git clone https://github.com/dancinlab/anima ~/anima`
+6. `cd ~/anima/SUB_ENGINES/AKIDA && ./INSTALL.sh && ./BOOT.sh 1 7`
+
+### §13.3 anima/pool 등록 (1줄)
+
+```bash
+# Mac 에서
+pool add pi5-akida pi@pi5-akida.local --sudo
+pool list --live   # 4번째 host (mini + ubu-1 + ubu-2 + pi5-akida)
+pool on pi5-akida 'cd anima/SUB_ENGINES/AKIDA && ./INSTALL.sh && ./BOOT.sh 1 7'
+```
+
+이후 Mac 한 줄로 Pi 5 boot sequence trigger.
+
+### §13.4 network 분담
+
+| Layer | 위치 | LAN 필요? |
+|---|---|---|
+| AKD1000 inference | Pi 5 내부 M.2 PCIe | ❌ (local) |
+| MetaTF runtime + adapter | Pi 5 local Python | ❌ |
+| Mac orchestration (SSH) | Mac → Pi 5 | ✅ |
+| Akida Cloud trial (fallback) | Pi 5 → cloud REST | ✅ |
+| demiurge record sync | Pi 5 → Mac (rsync / NFS) | ✅ |
+| anima git pull/push | Pi 5 ↔ GitHub | ✅ |
+
+### §13.5 추가 setup 옵션
+
+| Option | 효과 | 방법 |
+|---|---|---|
+| **NFS share** Mac↔Pi 5 | record auto-sync (rsync 불필요) | Mac: `sudo nfsd start` · Pi 5: `mount -t nfs mac.local:/Users/.../demiurge/exports /mnt/demiurge` |
+| **Tailscale** | 인터넷 통한 Pi 5 (외부 출장) | 양쪽 `tailscale up` (pool `hexa-absorbed-tailscale` 활용) |
+| **VS Code Remote** | Mac → Pi 5 코드 편집 | Remote-SSH extension |
+| **`pool init`** | tailscale + cron 일괄 셋업 | `pool init` 후 모든 enabled host bootstrap |
+
+### §13.6 boot scripts SSH-friendly
+
+현재 pack 의 `boot/day*.sh` + `INSTALL.sh` + `BOOT.sh` 는 **이미 non-interactive**:
+- bash + Python, 대화형 input 없음
+- `pool on pi5-akida './...'` 직접 dispatch OK
+- `state/` 산출물 → rsync / NFS → Mac 측 수집
+
+---
+
 ## ## Log
 
 ### 2026-05-21
@@ -346,3 +413,9 @@ AUX/AKIDA/
 | NEW-B | bridge akida_cloud 3-tier fallback | — | — | — | — | ✅ +267 | — |
 | NEW-C | record 3 신규 field (power/npu/latency) | — | — | — | — | ✅ 0.2 | ✅ base.py |
 | NEW-D | CNN2SNN converter (sparse_attention) | ✅ MockCNN2SNN | — | — | — | — | ✅ sparse_attention |
+
+### 2026-05-21 (evening — LAN deploy 표준 채택)
+- **§13 LAN deploy** 신설 — Mac ↔ router ↔ Pi 5 표준 (사용자 directive).
+  - topology + 30분 Pi 5 setup 시퀀스 + anima/pool 등록 (1줄) + 6 layer network 분담 표 + 4 추가 옵션 (NFS / Tailscale / VS Code Remote / pool init)
+  - boot scripts 이미 non-interactive → `pool on pi5-akida './INSTALL.sh && ./BOOT.sh 1 7'` 직접 dispatch
+  - AKD1000 = Pi 5 내부 M.2 PCIe (LAN 무관), Pi 5 자체는 4번째 pool host (mini + ubu-1 + ubu-2 다음)
