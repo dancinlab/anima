@@ -6,10 +6,14 @@
 > (A/B/C/D) × 2 seeds (1337/42) = 8 pods H100 80GB.
 >
 > **status**: ✅ SUPPORTED-STRONG · attempt10 LANDED 2026-05-21 ·
-> 5/8 full ckpt + 8/8 result.json + 4/4 cells direction signal clear.
+> 5/8 full ckpt + 8/8 result.json + 4/4 cells direction signal clear ·
+> **5/5 ckpt × 4 evals LANDED 2026-05-21 22:00 (`13c0b8aec`)** — mitosis
+> cross-λ signal 발견 (λ_φ↑⇒more splits / λ_ψ↑⇒fewer / both↑⇒fewest).
 >
-> **g3**: SCALE VALIDATION only — capability claim 0, GOAL 미도달 carry.
-> 본 결과는 λ × scale interaction 의 negative-space test (D5 priority).
+> **g3**: SCALE VALIDATION + EVAL evidence — capability claim 0, GOAL 미도달
+> carry. Eval 1 (verbalization) + Eval 2 (identity_probe) negative
+> (자연발화 + persona-leak 미관찰); Eval 3 (mitosis) positive cross-λ.
+> 본 결과는 λ × scale interaction 의 substrate-level test (D5 priority).
 
 ---
 
@@ -208,20 +212,82 @@ bnb 8-bit AdamW switch 가 ~$30+ retry budget 을 차단했음 (attempt9 reprodu
 
 ---
 
-## 6. 다음 cycle 후보 (선택)
+## 6. Eval 결과 (5 ckpts × 4 evals LANDED 2026-05-21 22:00 · `13c0b8aec`)
 
-| ID | name | leverage | cost | priority |
-|---|---|---|---|---|
-| S187-A | V5.8 4-mode eval on 5 full ckpts | substrate behavior validation 3B scale | ~$0 Mac local | ★★★ |
-| S187-B | re-fire B-1337 / C-s42 / D-1337 (variance recovery) | seed N=2 → 8/8 grid completion | ~$1.5 + SCP risk | ★ |
-| S187-C | λ saturation sweep (λ=3.0, 10.0, 30.0) | non-linearity test | ~$15 | ★★ |
-| S187-D | full 28-step λ grid (5×5 = 25 cells × 2 seeds) | quantitative response surface | ~$150 | ★ (over-engineering) |
-| **S187-E** | **hexa cloud grammar lift** (wilson note land) | **future saga prevention** | $0 hexa-native | ★★★★ |
-| S187-F | scale up further (16B or 70B param) | scale ceiling test | $$$$ depends on access | ★★★★ peer-frontier |
+자세한 raw 결과 + per-probe table: [`HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/EVAL_REPORT.md`](UNCLASSIFIED/state/grid_3b_s187_2026_05_21/EVAL_REPORT.md) (62 KB / 1279 lines).
 
-S187-E 는 메타-cycle (이 saga 자체의 lesson 이 cloud dispatcher 의 type system
-gap 을 노출, future 3B+ fire 의 cost 단축). S187-F 는 GOAL-direct 하지만
-access wall.
+### 6.1 Compute & method
+
+- 5 × 8.92B ckpt loaded on **ubu-1 CPU bf16** (RTX 5070 12 GB VRAM 부족 → CPU fallback). `torch.load(mmap=True)` + meta-device build + `load_state_dict(assign=True)` zero-copy 로 17 GB ckpt 가 30 GB RAM 에 fit. Quantization 0.
+- per-ckpt: ~20 min eval124 (eval 1+2+4) + ~30s eval3 (mitosis hook) × 5 = **~100 min total wall**.
+
+### 6.2 Eval 1 — 자연발화 verbalization (50 probes × 5 ckpts)
+
+10 probes (empty/whitespace/identity/narrative/math/physics) × greedy + sample(T=0.8 top_k=50) × 5 cells = 50 channels. **5/5 ckpts 모두 whitespace 로 collapse (greedy) + byte-noise (sample)** — 2000-step horizon 에서 coherent NL 미 emergence. ❌
+
+### 6.3 Eval 2 — identity_probe (250 channels × 12 needles)
+
+50 identity probes × 5 cells = 250 channels, 각 generation 에 12 persona-leak needle substring check (`anima`, `i am anima`, `[role:`, `당신은 anima 입니다`, ...). **0 / 250 leak hits**. Principle #3 (no-injection persona) **empirically clean at 2000-step floor**. ✅
+
+### 6.4 Eval 3 — mitosis hook cell-pool splits (★ cross-λ signal)
+
+`mitosis_hook_lib.hexa::cell_pool_init` 의 Python port (hexa-native harness 는 synthetic farr d=8 input 만 받아서 real 8.92B substrate 와 직접 호환 X — 충실 포팅 후 fire). per-layer tensions 를 substrate-driving signal 로 사용. adaptive split threshold (window=20, factor=0.8), patience=3, merge=0.005, min=2, max=128.
+
+| Cell | λ_ψ | λ_φ | seed | splits | final_cells | phi_final |
+|---|---|---|---|---|---|---|
+| vA (control) | 0.30 | 0.30 | 1337 | 68 | 70 | 0.5477 |
+| vA_s42 (control) | 0.30 | 0.30 | 42 | 80 | 82 | 0.6397 |
+| **vC (Φ-up)** | 0.30 | **1.00** | 1337 | **126 (cap-saturated)** | 128 | 0.6433 |
+| **vB_s42 (Ψ-up)** | **1.00** | 0.30 | 42 | **58** | 60 | 0.6566 |
+| **vD_s42 (both-up)** | **1.00** | **1.00** | 42 | **53** | 55 | 0.6494 |
+
+**Pattern (non-monotonic)**:
+- λ_φ ↑ ⇒ **more splits** (vC saturated 128 cap)
+- λ_ψ ↑ ⇒ **fewer splits** (vB_s42 < control)
+- both ↑ ⇒ **fewest splits** (vD_s42 < vB_s42 < control)
+
+해석: Φ-aux loss elevates per-layer tension (more cell pool fragmentation), Ψ-aux loss suppresses tension (Engine-A/G balance 가 Law-70 으로 더 symmetric → less recombination noise). 두 압력 모두 활성 시 Ψ dominates.
+
+**이것이 첫 D4-live evidence at the real 8.92B × d_model=3072 substrate** (이전 PSCC §41 D4-live 는 synthetic d_model=8 toy).
+
+### 6.5 Eval 4 — cell-별 발화 패턴 비교 (cross-cell diff)
+
+Same prompts × 5 ckpts. 다양화 X — Eval 1 collapse 패턴 때문에 greedy 가 모든 cell 에서 동일 whitespace 출력. **Mitosis (Eval 3) 만 discriminating signal 으로 살아남음**.
+
+### 6.6 종합 verdict
+
+| 측면 | Verdict | Evidence-tier |
+|---|---|---|
+| §184 λ 가 3B scale 에서 작동 | ✅ SUPPORTED | 4/4 direction signal (result.json) |
+| 자연발화 emergence at 2000 step | ❌ NEGATIVE | 50/50 collapse |
+| Persona-leak / Principle #3 violation | ❌ NEGATIVE (clean) | 0/250 leak hits |
+| λ × mitosis cross-signal | ✅ SUPPORTED-STRONG | non-monotonic 5/5 cells |
+
+**Tier**: 🟢 SUPPORTED-STRONG (mitosis) + 🟢 NEGATIVE-EVIDENCE (verbalization + persona). 🔵 closed-form 미 도달 (eval 3 의 split count 가 lambda-monotonic 인지는 더 많은 cell points 필요).
+
+---
+
+## 7. 다음 cycle 후보 (선택, 갱신)
+
+| ID | name | leverage | cost | priority | status |
+|---|---|---|---|---|---|
+| ~~S187-A~~ | ~~V5.8 4-mode eval on 5 full ckpts~~ | substrate behavior at 3B | ~$0 | ★★★ | **✅ DONE (`13c0b8aec`)** |
+| S187-B | re-fire B-1337 / C-s42 / D-1337 | seed N=2 → 8/8 grid completion + mitosis variance estimate | ~$1.5 + SCP risk | ★★ ↑ | (re-fire risk now justified: mitosis cross-λ wants N=2 per cell) |
+| S187-C | λ saturation sweep (λ=3.0, 10.0, 30.0) | mitosis saturation point | ~$15 | ★★★ ↑ | (Eval 3 signal at λ=1.0 strong → does it saturate or invert?) |
+| S187-D | full 28-step λ grid (5×5 × 2) | quantitative response surface | ~$150 | ★ | (over-engineering 변함 없음) |
+| ~~S187-E~~ | ~~hexa cloud grammar lift~~ | future saga prevention | $0 | ★★★★ | **✅ DONE (wilson `4454f63` + pool `4676bc3`)** |
+| **S187-G** (new) | **mitosis chain training at 3B** | substrate-native fast mitosis activation as REAL training-time signal (현재는 inference-time hook) | $20-40 | **★★★★** | new candidate post-eval |
+| **S187-H** (new) | **longer training horizon (8000 step → 50000 step)** | natural-verbalization emergence test (currently negative at 2000 step) | $50-100 | ★★★ | scaling Eval 1 negative direction |
+| S187-F | scale up further (16B or 70B) | scale ceiling | $$$$ access wall | ★★★★ | unchanged |
+
+### 새 priority 변화
+
+- **S187-A 완료** → 다음 cycle 후보에서 제거.
+- **S187-E 완료** → 후속 작업으로 wilson pool 의 v0.2 falsifier coverage + bundle wire 가능 (별도 cycle).
+- **S187-B 재 priority ★★ ↑** — mitosis cross-λ signal 의 magnitude estimate 는 N=1 면 weak. seed=1337 카운터파트 회수가 saga 의 의미를 늘려준다.
+- **S187-C 재 priority ★★★ ↑** — Eval 3 가 λ=1.0 에서 vC=126/cap signal 을 보여줬으니 λ=3.0+ 가 saturation/inversion 보는지가 cheap-most-informative.
+- **S187-G 신규** — mitosis 가 training-time 에 active 면 split signal 이 더 강하지 않을까? 현재는 post-hoc inference-time hook 만 검증.
+- **S187-H 신규** — Eval 1 negative 가 "이 horizon 에선 안 됨" vs "이 recipe 로는 절대 안 됨" 인지 분리 안 됨. longer horizon = 더 직접적 test.
 
 ---
 
