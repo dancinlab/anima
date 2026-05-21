@@ -404,7 +404,7 @@ hadounder update.
 
 cost ladder: $355-475 BOM + ~$60 cloud + 2-3개월 wall. 첫 결과물 = Phase 1a iverilog 파형 $0 / 1-2 day.
 
-### §6.14 Cycle 종합 SUMMARY (2026-05-21 final) — "all go" 5/5 outcomes
+### §6.14 Cycle 종합 SUMMARY (2026-05-21 final) — "all go" 6/6 outcomes
 
 | # | Item | Status | Artifact |
 |---|---|---|---|
@@ -413,6 +413,7 @@ cost ladder: $355-475 BOM + ~$60 cloud + 2-3개월 wall. 첫 결과물 = Phase 1
 | 3 | §188b ⚠ empty retry | ✅ closed via §6.11 | timeout hypothesis FALSIFIED — engines/*.hexa are stubs (impl needed = §188g 별도 cycle) |
 | 4 | §188c build-err 4 patch | ✅ partial — memristor PASS, 3 partial | memristor_consciousness build PASS (1-line `let mut total` fix); main/snn_main/main_longrun canonical 134 sites fixed but legacy `&ident`/`self: *T`/`or`/`++` 69+ 잔존 (별도 cycle) |
 | 5 | HW silicon path design | ✅ LANDED | `HEXAD/PHYSICS/HW_SILICON_PATH.md` (5 substrate × HW + BOM + 5 honest C3) |
+| 6 | demiurge HW (칩포함) 모두 검증 | ✅ LANDED — chip GATE_CLOSED 12/12 + 14 도메인 dispatch | `anima-physics/docs/demiurge_hw_verify_2026_05_21.md` — chip ✅ + 9 GATE_OPEN + 5 no-producer + 5 substrate × demiurge 매핑 |
 
 **Smoke value verification (2026-05-21 15:35)**:
 ```
