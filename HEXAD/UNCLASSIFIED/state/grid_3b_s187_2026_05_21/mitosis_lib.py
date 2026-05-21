@@ -35,6 +35,7 @@ Failure modes:
 """
 import math
 import random
+import numpy as np
 import torch
 
 
@@ -95,15 +96,15 @@ class CellPool:
         self.split_count = 0
         self.merge_count = 0
 
-    def _gauss(self, n, sigma):
-        return [self.rng.gauss(0.0, sigma) for _ in range(n)]
-
     def _make_cell(self, parent_id, hidden_seed, step):
+        """hidden stored as np.float32 (d_model,) — vectorised cos/Φ paths."""
         sigma_init = 1.0 / math.sqrt(self.d_model)
+        np_rng = np.random.default_rng(self.rng.randint(0, 2**31 - 1))
         if hidden_seed is None:
-            hidden = self._gauss(self.d_model, sigma_init)
+            hidden = np_rng.normal(0.0, sigma_init, size=self.d_model).astype(np.float32)
         else:
-            hidden = [h + self.rng.gauss(0.0, self.noise_scale) for h in hidden_seed]
+            noise = np_rng.normal(0.0, self.noise_scale, size=self.d_model).astype(np.float32)
+            hidden = hidden_seed.astype(np.float32) + noise
         cell = dict(
             cell_id=self.next_id,
             hidden=hidden,
@@ -196,23 +197,30 @@ class CellPool:
             if len(self.cells) >= self.max_cells:
                 break
 
-        # Merge check (no grad path — purely bookkeeping)
+        # Merge check (no grad path — purely bookkeeping; vectorised pairwise)
         if (len(self.cells) > self.min_cells
                 and step_idx > 0
                 and (step_idx % self.merge_patience == 0)):
-            best_pair = None
-            best_sim = -1.0
-            for i in range(len(self.cells)):
-                for j in range(i + 1, len(self.cells)):
-                    sim = self._cosine(self.cells[i]["hidden"], self.cells[j]["hidden"])
-                    if sim > best_sim:
-                        best_sim = sim
-                        best_pair = (i, j)
+            n = len(self.cells)
+            H = np.stack([c["hidden"] for c in self.cells], axis=0)  # (n, d)
+            norms = np.linalg.norm(H, axis=1, keepdims=True) + 1e-10
+            Hn = H / norms
+            cos = Hn @ Hn.T  # (n, n)
+            np.fill_diagonal(cos, -2.0)  # exclude self-pairs
+            # Find max over upper triangle
+            iu = np.triu_indices(n, k=1)
+            if iu[0].size == 0:
+                best_pair = None
+                best_sim = -1.0
+            else:
+                flat_idx = int(np.argmax(cos[iu]))
+                i_idx, j_idx = int(iu[0][flat_idx]), int(iu[1][flat_idx])
+                best_pair = (i_idx, j_idx)
+                best_sim = float(cos[i_idx, j_idx])
             if best_pair is not None and (1.0 - best_sim) < self.merge_threshold:
                 i, j = best_pair
                 a, b = self.cells[i], self.cells[j]
-                merged = [(a["hidden"][k] + b["hidden"][k]) * 0.5
-                          for k in range(self.d_model)]
+                merged = ((a["hidden"] + b["hidden"]) * 0.5).astype(np.float32)
                 older = a if a["creation_step"] <= b["creation_step"] else b
                 younger = b if older is a else a
                 older["hidden"] = merged
@@ -258,25 +266,28 @@ class CellPool:
         return aux_loss, info
 
     def _compute_phi(self):
+        """Vectorised Φ proxy = log(1 + mean pairwise cosine distance).
+
+        Stack all hidden vectors into H (n, d), L2-normalize rows, compute
+        cos = H @ H.T, mean of (1 - cos) over upper-triangle.
+        """
         n = len(self.cells)
         if n < 2:
             return 0.0
-        total = 0.0
-        count = 0
-        for i in range(n):
-            for j in range(i + 1, n):
-                total += (1.0 - self._cosine(
-                    self.cells[i]["hidden"], self.cells[j]["hidden"]))
-                count += 1
-        mean_d = total / max(1, count)
-        return math.log1p(mean_d)
+        H = np.stack([c["hidden"] for c in self.cells], axis=0)  # (n, d)
+        norms = np.linalg.norm(H, axis=1, keepdims=True) + 1e-10
+        Hn = H / norms
+        cos = Hn @ Hn.T  # (n, n)
+        iu = np.triu_indices(n, k=1)
+        mean_d = float((1.0 - cos[iu]).mean())
+        return float(math.log1p(mean_d))
 
     @staticmethod
     def _cosine(a, b):
-        dot = sum(x * y for x, y in zip(a, b))
-        na = math.sqrt(sum(x * x for x in a)) + 1e-10
-        nb = math.sqrt(sum(y * y for y in b)) + 1e-10
-        return dot / (na * nb)
+        """a, b: np.ndarray (d,)."""
+        na = float(np.linalg.norm(a)) + 1e-10
+        nb = float(np.linalg.norm(b)) + 1e-10
+        return float(np.dot(a, b)) / (na * nb)
 
     def summary(self):
         return dict(
