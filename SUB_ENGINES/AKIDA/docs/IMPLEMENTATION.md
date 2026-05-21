@@ -307,10 +307,61 @@ pre-arrival validation 표식.
 
 ## §7 cross-link
 
-- root: [`../../anima-physics/AUX/README.md`](../../anima-physics/AUX/README.md) — pack 사용법 §9-§12
+- root: [`../README.md`](../README.md) — pack 사용법 §9-§12 + Log
 - validation 결과: [`VALIDATION.md`](VALIDATION.md)
 - Day 1-7 boot: [`BOOT_PLAN.md`](BOOT_PLAN.md)
 - architecture diagram: [`ARCHITECTURE.md`](ARCHITECTURE.md)
 - runtime source: [`../pack/runtime/`](../pack/runtime/)
 - mock source: [`../pack/mocks/`](../pack/mocks/)
-- demiurge bridge (기존 pattern): `../../../anima-physics/hw/kuramoto_neuromorphic/src/demiurge_brain_bridge.py`
+- BrainChip AKD1000 cached refs: [`../doc/INDEX.md`](../doc/INDEX.md) (11 doc, ~2700 LoC)
+- demiurge bridge: `../../../anima-physics/hw/kuramoto_neuromorphic/src/demiurge_brain_bridge.py` (SCHEMA_VERSION 0.2, 3-tier akida_cloud fallback)
+
+---
+
+## §8 100% closure follow-up (2026-05-21 afternoon)
+
+5 original + bonus gap (commit `8f2df06b2`) 외 4 신규 closure (commit `f67978eb2`):
+
+### §8.1 NEW-A: 10 adapter real API alignment
+
+10 adapter file `build_model()` / `step()` 갱신:
+
+| adapter | layer 사용 | input dtype | output dtype | on-chip learn |
+|---|---|---|---|---|
+| snn_lif | `akida.FullyConnected` (sparse activation) | uint8 | int32 spike | — |
+| izhikevich | `akida.Dense` (2-var compartment) | uint8 | int32 spike | — |
+| kuramoto | `akida.FullyConnected` (8-cell coupling matrix) | uint8 | int32 spike | — |
+| memristor_hybrid | `akida.FullyConnected` | uint8 | int32 spike | `AkidaUnsupervised` |
+| sparse_attention | CNN2SNN convert path | uint8 | int32 spike | — |
+| spike_tier_lm_head | `akida.Dense` (LM head sparse projection) | uint8 | int32 spike | — |
+| motivation_gate | `akida.Dense` (8-factor weighted sum) | uint8 | int32 event | — |
+| theta_gamma | `akida.Convolutional` (1D conv for rhythm) | uint8 | int32 spike | — |
+| eeg_pattern | `akida.Convolutional` + `akida.Dense` | uint8 | int32 spike | `AkidaUnsupervised` |
+| spontaneous_gate | `akida.Dense` (motivation accumulator) | uint8 | int32 event | — |
+
+### §8.2 NEW-B: bridge akida_cloud 3-tier fallback
+
+`anima-physics/hw/kuramoto_neuromorphic/src/demiurge_brain_bridge.py` 196 → 463 LoC.
+
+3-tier graceful fallback (모두 동일 record shape):
+1. **Tier 1** — `import akida` 실패 → `ImportError` capture, `akida_cloud_unavailable` flag
+2. **Tier 2** — SDK 있지만 `akida.devices() == []` (HW 부재) → `no_devices` flag
+3. **Tier 3** — `model.map()` / `model.forward()` raise → `runtime_error` flag
+
+### §8.3 NEW-C: record 3 신규 field
+
+base.py `to_record()` 갱신, 모든 adapter 자동 inherit:
+
+| field | calculation | source |
+|---|---|---|
+| `power_estimate_mW` | `50.0 + spike_count × 0.5` | `doc/akd1000_power_spec.md` |
+| `npu_count_used` | adapter-specific (1-20 NPU mesh) | `doc/akd1000_hardware_spec.md` |
+| `latency_us_estimate` | `spike_count × cycles_per_spike / 300 MHz` | `doc/metatf_api_engine_cpp.md` |
+
+bridge record 동일 3 field (SCHEMA_VERSION 0.2 backward compat).
+
+### §8.4 NEW-D: MockCNN2SNN converter
+
+`pack/mocks/metatf_mock.py` 의 `MockCNN2SNN` 클래스 (`sparse_attention.py` adapter path):
+- `MockCNN2SNN.convert(keras_model_dict) → MockModel`
+- 실 BrainChip `cnn2snn.convert()` API mirror

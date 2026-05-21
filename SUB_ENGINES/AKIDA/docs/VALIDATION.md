@@ -238,3 +238,40 @@ record.
 - architecture: [`ARCHITECTURE.md`](ARCHITECTURE.md)
 - mock 소스: [`../pack/mocks/`](../pack/mocks/) (별도 agent)
 - falsifier runner: [`../pack/falsifiers/`](../pack/falsifiers/) (별도 agent)
+
+---
+
+## §6 100% closure follow-up validation (2026-05-21 afternoon)
+
+직전 cycle BrainChip survey (commit `8f2df06b2`) + adapter alignment (commit `f67978eb2`) 의 통합 검증:
+
+### §6.1 F-AKIDA-* aggregate (10 adapter × 5 falsifier)
+- **50/50 PASS · 0 FAIL · 0 TIMEOUT** (regression 0)
+- runtime auto-detect: `backend=akida_mock class=MetaTFMock` (Mac local)
+- 10 adapters discovered (base 제외, dynamic discovery via `pkgutil.iter_modules`)
+
+### §6.2 pytest (tests/test_adapters_mock.py)
+- **12/12 PASS · 1.40s wall** (12 = 10 adapter mock-run + mock-runtime self-consistency + aggregate smoke)
+- 강한 mock self-consistency assert (post-survey: real API parity check)
+
+### §6.3 base.py `to_record()` 신규 3 field
+- `power_estimate_mW` (idle 50.0 mW + 0.5 mW/spike — `doc/akd1000_power_spec.md`)
+- `npu_count_used` (1-20 NPU mesh allocation, adapter-specific override)
+- `latency_us_estimate` (`spike_count × cycles_per_spike / 300 MHz`)
+
+sample (SNNLifAdapter post-selftest):
+```
+power_estimate_mW: 52.0   (50 idle + 2 events × 0.5)
+npu_count_used:    1
+latency_us_estimate: 5.03 μs
+```
+
+### §6.4 demiurge cli action verify brain
+- bridge record drop: `~/core/demiurge/exports/brain/verify/2026-05-21T11-55-13Z/anima_kuramoto_akida_cloud_*.json` (1843 B)
+- demiurge cli 자동 인용: `kuramoto_n8_k5.00_akida_cloud_akida_cloud_unavailable`
+- 3-tier graceful fallback (Tier 1 SDK 부재): ⏳ GATE_OPEN · absorbed=false (g3)
+
+### §6.5 real HW 도착 시 추가 validation (TBD)
+- byte-parity F-AKIDA-*-5: AkidaUnsupervised 의 competitive WTA + plasticity decay → 8-bit drift rank-parity 완화 검토 (`params={"byte_parity_mode": "rank"}`)
+- 실 NPU mesh allocation: `model.sequences[*].components[*].np_ident` 집계 vs adapter 의 `_estimate_npu_count()` 정합
+- 실 power: external INA260 USB meter vs adapter 의 50 + 0.5×spike 추정

@@ -321,3 +321,60 @@ Falsifier (F-E2E-CROSS-1..5 Akida 변형):
 - runtime source: [`../pack/runtime/`](../pack/runtime/)
 - adapter source: [`../pack/adapters/`](../pack/adapters/) (별도 agent)
 - E2E v2 cross-engine 원본: `../../../tool/anima_physics_e2e_v2_cross_engine.hexa`
+
+---
+
+## §7 100% closure follow-up (2026-05-21 afternoon)
+
+### §7.1 L4 adapters layer — 신규 3 field
+
+base.py `to_record()` 의 출력 dict 에 3 신규 field 추가, 모든 adapter inherit:
+
+```
+to_record() output (SCHEMA_VERSION 0.2, additive backward-compat):
+  ┌──────────────────────────────────────────────────────────┐
+  │ existing fields (interface, producer, backend, ...)     │
+  ├──────────────────────────────────────────────────────────┤
+  │ NEW: power_estimate_mW     (idle 50 + 0.5/spike)        │
+  │ NEW: npu_count_used        (1-20 NPU mesh allocation)   │
+  │ NEW: latency_us_estimate   (spike_count × cycles / fclk)│
+  └──────────────────────────────────────────────────────────┘
+              │
+              ▼
+   adapter._estimate_*() override (adapter-specific)
+```
+
+### §7.2 L3 runtime — assert_akd1000()
+
+`pack/runtime/metatf_runtime.py` 신규 helper:
+- `assert_akd1000()` — HwVersion.NSoC_v1 check (mock + real both)
+- runtime auto-detect after `init_runtime()` first call
+
+### §7.3 L1 silicon — 정확 spec
+
+| 항목 | 값 | source |
+|---|---|---|
+| NPU count | **20 mesh** (1024 추정 wrong) | `doc/akd1000_hardware_spec.md` |
+| SRAM | **8 MB on-chip** | datasheet |
+| Clock | **300 MHz** | datasheet |
+| Power | **~1 W M.2 module** (1 mW = per-event amortised) | `doc/akd1000_power_spec.md` |
+| Form factor | M.2 PCIe Gen 2 ×1 | datasheet |
+
+### §7.4 cross-engine chain — Akida 첫 stage 교체 path
+
+```
+E2E v2 cross-engine chain (anima-physics/tool/anima_physics_e2e_v2_cross_engine.hexa):
+
+  Stage 1: SNN spike  ◄── SUB_ENGINES/AKIDA/pack/adapters/snn_lif (Akida HW or mock)
+            │  uint8 input → int32 spike count
+            ▼
+  Stage 2: photonic phase mod (Mac sim, hexa)
+            │
+            ▼
+  Stage 3: quantum coupling g(t) (Mac closed-form, hexa)
+            │
+            ▼
+  Stage 4: motivation_gate emit  ◄── SUB_ENGINES/AKIDA/pack/adapters/motivation_gate (Akida threshold)
+```
+
+real silicon 도착 후 Stage 1 + Stage 4 = Akida, Stage 2-3 = Pi 5 host.

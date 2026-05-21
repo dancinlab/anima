@@ -314,3 +314,35 @@ AUX/AKIDA/
 - Day 1-7 부팅 sequence + $1502 cost envelope
 - HW silicon path Phase 2.5 신규 tier 정의 (Phase 2 cloud trial 과 Phase 3 research 사이)
 - **§9-§12 추가 + 4 detail doc 신규** — pack 사용법 / ASCII tree / cross-link table / troubleshooting + `docs/{IMPLEMENTATION,VALIDATION,BOOT_PLAN,ARCHITECTURE}.md` (총 ~830 LoC). pack 0.1.0 의 self-contained drop 구조 docs 측 완성.
+- **루트 분리** (사용자 directive) — `anima-physics/AUX/AKIDA/` → `/SUB_ENGINES/AKIDA/` mv. anima 루트 산하 self-contained pack. commit `356fdd2f0`.
+- **BrainChip AKD1000 doc 전수조사 + cache** (commit `8f2df06b2`) — 45 traversed → 12 AKD1000 filter pass → 11 markdown cached in `doc/` (singular, ~2700 LoC, 92 KB). `doc/INDEX.md` + `doc/SOURCE_URLS.md` + `doc/BRAINCHIP_SURVEY_2026_05_21.md` 포함.
+- **5 critical mock vs HW gap** 발견 + 수정 (mock 167→720 LoC full rewrite):
+  1. NPU count 1024 → **20 NPU mesh + 8MB SRAM + 300 MHz**
+  2. Power 1mW typical → **~1 W M.2 module** (mW = per-event amortised)
+  3. Layer `Conv2D` V2 → **`akida.Convolutional` V1** (AKD1000 only)
+  4. `Model()` no-arg → **`Model(filename=None, layers=None)`** (.fbz load)
+  5. `fit(x, target)` → **`compile(AkidaUnsupervised(...))` + `fit(uint8, int32_labels)`**
+  Bonus: HwVersion.NSoC_v1 enum + AKD1000() virtual + MapMode + DKMS PCIe driver + Pi 5 aarch64 wheel CONFIRMED (cp311-manylinux_2_28_aarch64, 2.4 MB).
+- **AKD1000 = ONLY edge-learning Akida chip** (Akida 2.0 dropped on-chip Hebbian → 본 pack 의 AKD1000 targeting correct, legacy 아님). on-chip update = `AkidaUnsupervised` (competitive WTA + plasticity decay), NOT Hebbian outer-product — mock 의 Hebbian = SW approximation, byte-parity 는 real silicon 도착 후.
+
+### 2026-05-21 (afternoon — 100% closure follow-up)
+- **adapter real API alignment** (commit `f67978eb2`) — 10 adapter file 모두 V1 layer (`akida.Convolutional` / `akida.FullyConnected` / `akida.Dense` / `akida.InputData`) + uint8 input + int32 spike output 정합.
+- **3 신규 record fields** — `power_estimate_mW` (idle 50 mW + 0.5 mW/spike) + `npu_count_used` (1-20 NPU mesh allocation, adapter-specific) + `latency_us_estimate` (300 MHz clock × spike count × cycles/spike). `base.py to_record()` 갱신, adapter 별 `_estimate_*()` override.
+- **bridge akida_cloud branch** (`anima-physics/hw/kuramoto_neuromorphic/src/demiurge_brain_bridge.py`) 196→463 LoC (+267). SCHEMA_VERSION 0.1→0.2 backward compat. 실 MetaTF flow + 3-tier graceful fallback (SDK 부재 / `devices()==[]` / `forward()` raise) + 동일 record shape 유지 + `akida_cloud_unavailable` flag.
+- **CNN2SNN converter mock** — `pack/mocks/metatf_mock.py` 의 `MockCNN2SNN` 추가 (sparse_attention adapter path).
+- **검증** — F-AKIDA-* aggregate **50/50 PASS** (0 regression) + pytest **12/12 PASS**. sample SNNLifAdapter record: `power_estimate_mW=52.0`, `npu_count_used=1`, `latency_us_estimate=5.03 μs`.
+- **demiurge cli action verify brain** 자동 인용 `kuramoto_n8_k5.00_akida_cloud_akida_cloud_unavailable` (3-tier fallback 작동).
+- **100% closure 표** (5 + bonus + 4 신규):
+
+| # | gap | Mock | runtime | boot | doc | bridge | adapter |
+|---|---|---|---|---|---|---|---|
+| 1 | NPU 1024 → 20 mesh | ✅ | ✅ | — | ✅ | ✅ | ✅ |
+| 2 | Power 1mW → ~1W amortised | ✅ | — | — | ✅ | ✅ | ✅ |
+| 3 | Conv2D V2 → Convolutional V1 | ✅ | — | — | ✅ | ✅ | ✅ |
+| 4 | Model() args (filename/layers/.fbz) | ✅ | — | — | ✅ | ✅ | ✅ |
+| 5 | fit API → AkidaUnsupervised + uint8/int32 | ✅ | — | — | ✅ | ✅ | ✅ |
+| Bonus | HwVersion/MapMode + DKMS + Pi 5 wheel | ✅ | ✅ | ✅ day1 | ✅ | ✅ | ✅ |
+| NEW-A | adapter 10 real API alignment | — | — | — | — | — | ✅ |
+| NEW-B | bridge akida_cloud 3-tier fallback | — | — | — | — | ✅ +267 | — |
+| NEW-C | record 3 신규 field (power/npu/latency) | — | — | — | — | ✅ 0.2 | ✅ base.py |
+| NEW-D | CNN2SNN converter (sparse_attention) | ✅ MockCNN2SNN | — | — | — | — | ✅ sparse_attention |

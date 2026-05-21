@@ -345,3 +345,35 @@ cd ~/SUB_ENGINES/AKIDA
 - demiurge bridge: `../../../anima-physics/hw/kuramoto_neuromorphic/src/demiurge_brain_bridge.py`
 - cloud trial guide: `../../../anima-physics/docs/akida_cloud_signup_guide.md`
 - HW silicon path: `../../../HEXAD/PHYSICS/HW_SILICON_PATH.md §2.3`
+
+---
+
+## §4 100% closure follow-up (2026-05-21 afternoon)
+
+직전 cycle 의 다음 Day plan 영향:
+
+### §4.1 Day 1 install — 갱신
+- `pip install akida` → Pi 5 aarch64 wheel `cp311-manylinux_2_28_aarch64` 2.4 MB **CONFIRMED** (BrainChip doc cache 확인)
+- PCIe DKMS kernel driver = developer.brainchip.com 별도 manual setup (apt 미포함)
+- `boot/day1_install.sh +55 LoC` — venv + DKMS + lspci + `assert_akd1000()` runtime hook
+
+### §4.2 Day 2 kuramoto — record 자동 신규 3 field
+- bridge SCHEMA_VERSION 0.2 (`power_estimate_mW` + `npu_count_used` + `latency_us_estimate`) 자동 emit
+- `python3 demiurge_brain_bridge.py --backend akida_cloud` 시 3-tier fallback (도착 후 Tier 1 통과 기대)
+
+### §4.3 Day 3 SNN — adapter real API
+- snn_lif adapter `build_model()`: `akida.FullyConnected` (V1 layer, not V2 Conv2D)
+- `step()`: uint8 input → int32 spike output
+- byte-compare with Mac sim baseline: 도착 후 첫 silicon spike count vs mock
+
+### §4.4 Day 4 memristor — AkidaUnsupervised
+- on-chip Hebbian → 실 API = `AkidaUnsupervised` (competitive WTA + plasticity decay)
+- mock 의 Hebbian outer-product = SW approximation, byte-parity 는 silicon 도착 후
+
+### §4.5 Day 6 demiurge brain — record auto-cite
+- bridge `--backend akida_cloud` → demiurge cli action verify brain 자동 인용 (현재 Mac mock 측에서 작동 확인됨)
+- 도착 후 실 SDK Tier 1 통과 시 `akida_cloud_unavailable` flag 제거, GATE_OPEN → GATE_CLOSED 시도
+
+### §4.6 Day 7 summary — 신규 power_log + npu_alloc 통계
+- `state/day7_summary.md` 에 11 adapter × 3 신규 field 통계 표 자동 emit
+- external INA260 USB meter 측정 vs adapter 추정 (`power_estimate_mW`) 차이 분석
