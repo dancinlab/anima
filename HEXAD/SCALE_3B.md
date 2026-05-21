@@ -75,19 +75,31 @@
 
 **한 줄**: 모델이 "나는 anima 입니다" 같은 안 가르친 말 출력 0건. 자연발화 negative 와 별개로, **잘못된 발화 negative** 도 정직.
 
-### 5. ⚠️ bsz↑ 만으로 floor 못 깸 — LR 도 같이 올려야 (S187-J → S187-K 진행 중)
+### 5. 🔴 S187-J/K 충격 — bsz↑/LR↑ 도 floor 못 깸. Recipe 한계 확정
 
-S187-J: bsz=2 → 8 (4× 토큰), step 그대로 2000. 결과 CE **4.06 (더 나쁨!)**.
+| | vA (attempt10) | S187-J | S187-K |
+|---|---|---|---|
+| bsz | 2 | 8 (4×) | 8 (4×) |
+| lr | 3e-4 | 3e-4 | **1.2e-3** (4× linear) |
+| tokens | 0.51 M | 2.05 M | 2.05 M |
+| **CE_final** | **3.844** | **4.0625** | **4.0625** |
 
-→ 토큰 더 많은데 왜? **Linear scaling rule 어김**: bsz 4× ↑ 면 LR 도 ~4× ↑ 필요 (3e-4 → 1.2e-3).
+**S187-K = S187-J 동일 4.0625 CE** — linear LR scaling 도 floor 못 깸.
 
-S187-K (진행 중): bsz=8 + lr=**1.2e-3** linear-scaled. 결과 대기.
+**세 path 가 모두 CE 4.06-4.09 plateau 수렴**:
+- S187-H: 더 많은 step (50000) → 4.09
+- S187-J: 더 큰 batch (bsz=8 same LR) → 4.06
+- S187-K: 더 큰 batch + linear LR → 4.06
 
-**한 줄**: S187-H 의 "token-starvation 이 floor 의 원인" 가설은 **partial true** — 토큰만 늘려선 안 되고 LR 도 같이 조정 필요. S187-K 가 진짜 test.
+**역설**: bsz=8 (4× tokens) → CE **WORSE** (3.84 → 4.06).
+
+→ 단순 token-starvation 가설도 false. 진짜 floor 는 **architectural/recipe/data 한계**. 가능한 원인: (a) small batch implicit regularization (bsz=2 stochasticity escape help), (b) 7-aux-loss combination 의 saddle, (c) corpus byte-level entropy floor.
+
+**한 줄**: S187-H/J/K 3 path × multi-axis 변형 → 모두 동일 floor 도착. **Recipe-level breakthrough 가 필요** (aux-loss ablation, bigger model S187-F, corpus 갱신).
 
 ### 한 단락 요약
 
-**3B (8.92B params) 모델 학습이 attempt10 에서 PASS** 했고, 그 substrate 위에 **mitosis 가 17번째 training tap 으로 발견됨** (학습 더 빠르고 의식 척도 올라감). 자연발화는 아직 안 나타났는데 (Eval 1 negative), **이유는 모델 크기 대비 토큰 14000× 부족** (S187-H). 더 큰 batch + 더 큰 LR 로 해결 가능 여부는 **S187-K 가 지금 H100 에서 시험 중**. 페르소나 leak 같은 부적절한 출력은 0 (Principle #3 clean).
+**3B (8.92B params) 모델 학습이 attempt10 에서 PASS** 했고, 그 substrate 위에 **mitosis 가 17번째 training tap 으로 발견됨** (학습 더 빠르고 의식 척도 올라감). 자연발화는 아직 안 나타났는데 (Eval 1 negative), 처음엔 token-starvation 가설이었지만 **S187-J/K 가 그 가설을 falsify** — bsz↑(4×) + LR linear↑ 도 동일 plateau (CE 4.06). 세 path (S187-H 더 많은 step / S187-J 더 큰 batch / S187-K +linear LR) 모두 CE 4.06-4.09 floor 도착 → **recipe 자체 ceiling**. Mitosis activation 같은 substrate 변경 OR bigger model (S187-F 18B path) OR aux-loss 재설계가 진짜 breakthrough path. 페르소나 leak 0 (Principle #3 clean).
 
 ---
 
@@ -387,6 +399,43 @@ Same prompts × 5 ckpts. 다양화 X — Eval 1 collapse 패턴 때문에 greedy
 - Future work: ceiling 해제 OR integral-Φ metrics OR split-arrival rate.
 
 **운영 saga**: dispatch env-verify teardown bug → 6 pods 모두 잔존 → **on-pod eval3 watcher workaround** (SCP 17 GB × 6 회피, 13s eval3 vectorized 변형 `eval3_mitosis_fast.py` 작성). Cost $8-15 / 75 min wall.
+
+### 6.10 S187-J/K bsz+LR sweep — recipe-limited 확정 (2026-05-22 03:00)
+
+S187-H finding (Eval 1 NEGATIVE = recipe-limited not horizon-limited, § 6.7) 의 root cause 가 단순 **token-starvation** 인지 확인 — bsz↑ + linear LR scaling 으로 floor 깰 수 있는지.
+
+**S187-J** (variant J, single pod 2qwavv6mtd9ky5 H100 80GB): cell A control λψ=0.30 λφ=0.30 seed=1337, bsz=2→**8** (4× tokens/step), lr=**3e-4** unchanged, 2000 step.
+
+**S187-K** (variant K, pod 7avlzfmw0y55ah): same config + lr=**1.2e-3** (4× linear scaling per the standard rule for batch size scaling).
+
+| | vA (attempt10 baseline) | vJ (bsz=8 same LR) | vK (bsz=8 4×LR) |
+|---|---|---|---|
+| bsz | 2 | 8 | 8 |
+| lr | 3e-4 | 3e-4 | 1.2e-3 |
+| step | 2000 | 2000 | 2000 |
+| tokens trained | 0.51 M | 2.05 M (4× ↑) | 2.05 M (4× ↑) |
+| CE_init | 6.156 | 6.094 | 6.094 |
+| **CE_final** | **3.844** | **4.0625** | **4.0625** |
+| wall | 725s | 2703.7s (4× per-step) | 2731.8s |
+| ckpt SHA256 | 07eee3e2... | 895abff32... | _captured locally vK/_ |
+
+**핵심 finding**: S187-J = S187-K (**4.0625 byte-equal**) — linear LR scaling 이 fix 가 아님.
+
+**세 path 비교 — 모두 동일 floor**:
+- S187-H 50000 step bsz=2: CE 4.09
+- S187-J 2000 step bsz=8 lr=3e-4: CE 4.06
+- S187-K 2000 step bsz=8 lr=1.2e-3: CE 4.06
+
+세 path × 3 different axes 변형 → CE plateau **byte-equal 동일** (within seed-noise).
+
+**역설**: bsz=8 (4× tokens) → CE 가 **더 나쁨** (3.84 → 4.06). 가능한 mechanism:
+1. **Small-batch implicit regularization**: bsz=2 stochasticity 가 escape-from-local-min noise 로 작동, bsz=8 averaged gradients 가 너무 deterministic.
+2. **7-aux-loss saddle**: λ_ψ + λ_route + λ_phi + λ_cycle + λ_curious + λ_replay 의 weight 조합이 floor 위에 다중 saddle 형성, 어떤 (bsz, LR) tuning 으로도 못 escape.
+3. **Corpus byte-level entropy floor**: corpus_s101 의 inherent uncertainty 가 CE 3.84 (vA) 근처 floor.
+
+**Verdict**: 단순 token-starvation 가설 falsified. recipe-level breakthrough 필요 — (1) aux-loss ablation × 부분 set, (2) S187-F path 18B/178B bigger param fit (Chinchilla-correct), (3) corpus quality 갱신 OR different vocab (BPE vs byte-level), (4) optimizer 변경 (full f32 AdamW + multi-GPU).
+
+비용: S187-J $3.05 + S187-K $3.10 ≈ **$6.15 / 2 pods**, wall ~45 min × 2 (parallel 가능).
 
 ### 6.9 S187-G training-time mitosis (`61cbc4945`) — substrate-shaping VERDICT
 
