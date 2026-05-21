@@ -53,6 +53,13 @@ from collections import deque
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from conscious_decoder import ConsciousDecoderV2
+try:
+    from mitosis_lib import CellPool as _MitosisCellPool
+    _MITOSIS_AVAILABLE = True
+except Exception as _e:
+    _MitosisCellPool = None
+    _MITOSIS_AVAILABLE = False
+    print(f"[S184-Phase2] WARN mitosis_lib import failed: {_e}", flush=True)
 
 
 # ----------------------------------------------------------------------------
@@ -256,19 +263,31 @@ def run(cfg):
     # paging on transient peaks (caching-allocator fragmentation insurance).
     # Fallback to torch.optim.AdamW if bitsandbytes unimportable so smoke
     # paths stay green.
-    try:
-        import bitsandbytes as bnb
-        optimizer = bnb.optim.PagedAdamW8bit(
-            model.parameters(), lr=cfg["lr"], betas=(0.9, 0.95),
-            weight_decay=0.01,
-        )
-        print(f"[S184-Phase2] optimizer=PagedAdamW8bit (bnb {bnb.__version__})", flush=True)
-    except ImportError as _e:
-        print(f"[S184-Phase2] WARN bnb import failed ({_e}); falling back torch.optim.AdamW", flush=True)
+    # S187-G: mitosis-active mode can optionally bypass bnb 8-bit optim if
+    # the int8 m/v quantisation drifts under the tiny mitosis aux loss. Set
+    # `mitosis_bnb_disable` in cfg (or --mitosis-bnb-disable CLI) to force
+    # torch.optim.AdamW even when bnb is importable. Default OFF (bnb wins).
+    mitosis_bnb_disable = bool(cfg.get("mitosis_bnb_disable", False))
+    if mitosis_bnb_disable:
+        print("[S184-Phase2] mitosis_bnb_disable=True → torch.optim.AdamW (override)", flush=True)
         optimizer = torch.optim.AdamW(
             model.parameters(), lr=cfg["lr"], betas=(0.9, 0.95),
             weight_decay=0.01,
         )
+    else:
+        try:
+            import bitsandbytes as bnb
+            optimizer = bnb.optim.PagedAdamW8bit(
+                model.parameters(), lr=cfg["lr"], betas=(0.9, 0.95),
+                weight_decay=0.01,
+            )
+            print(f"[S184-Phase2] optimizer=PagedAdamW8bit (bnb {bnb.__version__})", flush=True)
+        except ImportError as _e:
+            print(f"[S184-Phase2] WARN bnb import failed ({_e}); falling back torch.optim.AdamW", flush=True)
+            optimizer = torch.optim.AdamW(
+                model.parameters(), lr=cfg["lr"], betas=(0.9, 0.95),
+                weight_decay=0.01,
+            )
 
     corpus_bytes = load_corpus_bytes(cfg["corpus"])
     print(f"[S184-Phase2] corpus bytes: {len(corpus_bytes):,}", flush=True)
@@ -298,6 +317,29 @@ def run(cfg):
     psi_anchor = 0.5
 
     head_g_grad_norm_history = []
+
+    # S187-G: training-time mitosis pool (only when --mitosis-active)
+    mitosis_active = bool(cfg.get("mitosis_active", False))
+    lambda_mitosis = float(cfg.get("lambda_mitosis", 0.0))
+    mitosis_initial_cells = int(cfg.get("mitosis_initial_cells", 2))
+    cell_pool = None
+    mitosis_step_log = []
+    if mitosis_active:
+        if not _MITOSIS_AVAILABLE:
+            raise RuntimeError("--mitosis-active set but mitosis_lib import failed")
+        if lambda_mitosis <= 0.0:
+            print(f"[S187-G] WARN mitosis_active=True but lambda_mitosis={lambda_mitosis} ≤ 0 — pool will update but aux loss disabled", flush=True)
+        cell_pool = _MitosisCellPool(
+            d_model=cfg["d_model"],
+            initial_cells=mitosis_initial_cells,
+            seed=cfg["seed"],
+            noise_scale=float(cfg.get("mitosis_noise_scale", 0.1)),
+        )
+        print(f"[S187-G] mitosis_active=True lambda_mitosis={lambda_mitosis} "
+              f"initial_cells={mitosis_initial_cells} noise_scale={cfg.get('mitosis_noise_scale', 0.1)}",
+              flush=True)
+    else:
+        print(f"[S187-G] mitosis_active=False (attempt10 baseline behavior)", flush=True)
 
     for step in range(steps):
         # Tap 2.7: LR schedule
@@ -409,6 +451,18 @@ def run(cfg):
         # Push current summary to replay buffer
         replay.push(probs_mean[:256])
 
+        # ---- L_mitosis (S187-G training-time hook, only if --mitosis-active)
+        # Build per-layer mean-tension tensor (KEEPS GRAD on tensions list).
+        # Tensions list elements are (B, T); stack -> (L, B, T) -> .mean(dim=(1,2)) -> (L,)
+        if mitosis_active and cell_pool is not None:
+            t_stack_mit = torch.stack(tensions, dim=0)  # (L, B, T) — same stack as L_route uses
+            per_layer_mean_t = t_stack_mit.mean(dim=(1, 2))  # (L,) differentiable
+            aux_loss_mit, mit_info = cell_pool.step(per_layer_mean_t, step)
+            L_mitosis = aux_loss_mit
+        else:
+            L_mitosis = torch.tensor(0.0, device=device)
+            mit_info = None
+
         # ---- TOTAL ---------------------------------------------------------
         # NOTE: lam_replay is sign-explicit negative in cfg per PLAN.md sec 3.
         L_total = (L_ce
@@ -417,7 +471,8 @@ def run(cfg):
                    + lam_phi * L_phi
                    + lam_cycle * L_cycle
                    + lam_curious * L_curious
-                   + lam_replay * L_replay)
+                   + lam_replay * L_replay
+                   + lambda_mitosis * L_mitosis)
 
         optimizer.zero_grad(set_to_none=True)
         L_total.backward()
@@ -448,6 +503,11 @@ def run(cfg):
                     L_cycle=float(L_cycle.detach()),
                     L_curious=float(L_curious.detach()),
                     L_replay=float(L_replay.detach() if hasattr(L_replay, 'detach') else L_replay),
+                    L_mitosis=float(L_mitosis.detach() if hasattr(L_mitosis, 'detach') else L_mitosis),
+                    mitosis_pool_size=(len(cell_pool.cells) if cell_pool is not None else 0),
+                    mitosis_split_total=(cell_pool.split_count if cell_pool is not None else 0),
+                    mitosis_merge_total=(cell_pool.merge_count if cell_pool is not None else 0),
+                    mitosis_phi=(float(cell_pool.phi) if cell_pool is not None else 0.0),
                     psi_dir_mean=psi_dir_mean,
                     psi_dir_std=psi_dir_std,
                     psi_ent_mean=psi_ent_mean_v,
@@ -458,11 +518,19 @@ def run(cfg):
                 )
                 log.append(entry)
                 head_g_grad_norm_history.append(head_g_grad_norm)
+            mit_str = ""
+            if cell_pool is not None:
+                mit_str = (f" mit(L={entry['L_mitosis']:+.4f},"
+                           f"pool={entry['mitosis_pool_size']},"
+                           f"split={entry['mitosis_split_total']},"
+                           f"merge={entry['mitosis_merge_total']},"
+                           f"phi={entry['mitosis_phi']:.3f})")
             print(f"[S184-Phase2] step={step+1:6d} lr={lr_now:.2e} "
                   f"L_tot={entry['L_total']:+.4f} CE={entry['L_ce']:.4f} "
                   f"psi={entry['L_psi']:.4f} route={entry['L_route']:.4f} "
                   f"phi={entry['L_phi']:.4f} cyc={entry['L_cycle']:.4f} "
-                  f"cur={entry['L_curious']:.4f} rep={entry['L_replay']:+.4f} "
+                  f"cur={entry['L_curious']:.4f} rep={entry['L_replay']:+.4f}"
+                  f"{mit_str} "
                   f"Psi_dir(mu={psi_dir_mean:.3f},sd={psi_dir_std:.4f}) "
                   f"|g_head_g|={head_g_grad_norm:.4f} t={elapsed:.0f}s",
                   flush=True)
@@ -522,6 +590,9 @@ def run(cfg):
         head_g_grad_mean=head_g_grad_mean,
         head_g_received_gradient=(head_g_grad_min > 0.0),
         replay_final_size=len(replay),
+        mitosis_active=mitosis_active,
+        lambda_mitosis=lambda_mitosis,
+        mitosis_summary=(cell_pool.summary() if cell_pool is not None else None),
     )
     with open(os.path.join(out_dir, "result.json"), "w") as f:
         json.dump(result, f, indent=2, default=str)
@@ -562,6 +633,22 @@ def main():
     ap.add_argument("--n-ca-rules", type=int, default=8,
                     help="META-CA rule count per block. Default 8 = ~75M params/block "
                          "at d=3072 → 2.1B extra at L=28. Set to 2 for 3B target.")
+    # S187-G: training-time mitosis hook flags
+    ap.add_argument("--mitosis-active", action="store_true",
+                    help="S187-G: wire mitosis_lib.CellPool into the training loop. "
+                         "Default OFF (attempt10 baseline behavior preserved).")
+    ap.add_argument("--lambda-mitosis", type=float, default=0.0,
+                    help="S187-G: aux-loss weight on L_mitosis. Default 0.0 "
+                         "(disabled even when --mitosis-active set, useful for "
+                         "passive-observe-during-training mode).")
+    ap.add_argument("--mitosis-initial-cells", type=int, default=2,
+                    help="S187-G: initial cell count in pool. Default 2 (spec).")
+    ap.add_argument("--mitosis-noise-scale", type=float, default=0.1,
+                    help="S187-G: noise_scale for child hidden init. Default 0.1 (spec).")
+    ap.add_argument("--mitosis-bnb-disable", action="store_true",
+                    help="S187-G: force torch.optim.AdamW (skip bnb 8-bit) when "
+                         "mitosis-active is set; defends against int8 m/v drift "
+                         "under small aux-loss noise. Default OFF.")
     args = ap.parse_args()
     if args.mode == "main":
         cfg = dict(
@@ -582,6 +669,11 @@ def main():
             replay_capacity=args.replay_capacity,
             dtype=args.dtype,
             n_ca_rules=args.n_ca_rules,
+            mitosis_active=args.mitosis_active,
+            lambda_mitosis=args.lambda_mitosis,
+            mitosis_initial_cells=args.mitosis_initial_cells,
+            mitosis_noise_scale=args.mitosis_noise_scale,
+            mitosis_bnb_disable=args.mitosis_bnb_disable,
             log_every=max(1, args.steps // 50),
             corpus=args.corpus, out_dir=args.out_dir,
             cpu_only=args.cpu_only,
@@ -596,6 +688,11 @@ def main():
             lambda_psi=0.30, lambda_route=0.20, lambda_phi=0.30,
             lambda_cycle=0.15, lambda_curious=0.10, lambda_replay=-0.05,
             noise_sigma=0.1, n_aug=5, replay_capacity=64,
+            mitosis_active=args.mitosis_active,
+            lambda_mitosis=args.lambda_mitosis,
+            mitosis_initial_cells=args.mitosis_initial_cells,
+            mitosis_noise_scale=args.mitosis_noise_scale,
+            mitosis_bnb_disable=args.mitosis_bnb_disable,
             log_every=max(1, args.steps // 10),
             corpus=args.corpus, out_dir=args.out_dir, cpu_only=True,
         )
