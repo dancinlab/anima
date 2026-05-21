@@ -117,3 +117,106 @@ PASS = 자발 발화 capability 의 *필요조건* 만족, *충분조건* 아님
 4. **build error 4건** — anima-physics module deps 의 hexa-lang upstream
    gap. 별도 inbox patch + 분리 cycle.
 5. **⚠ empty 7건** — 120s timeout 가능성. 300s retry verify 필요.
+
+---
+
+## §6 재크래시 안전 — 2026-05-21 진행상황 SNAPSHOT (방향성 + 모든 것)
+
+> macOS 크래시로 직전 세션 유실. **본 §6 은 next-session pickup 용 SSOT**.
+> 모든 work-in-flight pointer + 방향성 + 복구 breadcrumb 를 한 곳에 고정.
+
+### §6.1 방향성 (Direction)
+
+**1차 GOAL** = anima 의 **자연발화 (spontaneous fire)** + **영속성 유지
+(persistence)** 에 사용 가능한 **하드웨어 보조 엔진 후보 추출** (HW aux
+engine candidates).
+
+**2차 확장 GOAL** = HW 뿐 아니라 **SW 후보 (HEXAD/PHYSICS + anima-physics
+SW)** 도 자연발화/영속성 용도로 사용 가능한지 **검토 + 후보 추출**
+(2026-05-21 사용자 directive).
+
+**3차 작업** = hexa-lang **문법 진행** (anima-physics 의 `.hexa` build
+error 4 건 + transpiler typed-decl 버그 해결 path).
+
+### §6.2 In-flight 3-갈래 (Work threads)
+
+#### 갈래 A — HEXAD/PHYSICS substrate matrix
+- **state pointer**: `HEXAD/NEUROMORPHIC/state/spontaneous_substrate_parallel_s188_2026_05_21/`
+- **결과**: 35-substrate parallel fire, **21 PASS / 2 partial / 4 build-err / 7 ⚠ empty / 1 anomaly**
+- **commit**: `f74d8a425` (anima main) — landed
+- **next cycle 후보**: §3.2 (PLAN.md) — §188b retry 300s · §188c inbox patch · §188d HW Arduino · §188e cloud probe · §188f cross-cut Φ consensus
+
+#### 갈래 B — anima-physics SW aux engine 후보 검토 (NEW — 2026-05-21 directive)
+- **state**: `HEXAD/PHYSICS/state/aux_engine_smoke_v1_2026_05_21/smoke.log` (10.6 KB)
+- **source**: `anima-physics/consciousness-loop/src/aux_engine_smoke.hexa` + `aux_engine_lib.hexa`
+- **status**: **smoke FAIL** — hexa transpiler 가 typed-decl `var name: f32[] = ...` 를 `var; out = hexa_array_push(hexa_array_new(), f32);` 로 깨뜨림 (C compile error 20+)
+- **blocker**: 갈래 C (hexa-lang 문법) 해결 의존
+- **scope**: anima-physics SW 트리 전체 — 8 engines, consciousness-loop (erlang/esp32/puredata/src/verilog/webgpu), phi_substrate_consensus, physics, edge_deploy, hw_engine_bridge, realtime_monitor, rtc_sync, signal_corpus
+
+#### 갈래 C — hexa-lang 문법 (transpiler typed-decl bug + RFC stash)
+- **repo**: `/Users/ghost/core/hexa-lang/` (별도 git repo, 동시 작업 중)
+- **crash recovery breadcrumb**: `~/core/hexa-lang/inbox/notes/crash_recovery_2026_05_21/` 에 2개 stash patch 보존
+  - `stash0_rounds_5_8_exhaustion.patch` (28 KB)
+  - `stash1_rfc071_p2_1_spec_cookbook.patch` (28 KB)
+- **last commit**: `5a5fb5ec feat(stdlib/runtime): RUNTIME.md step 3 cycle 37 — rt_array_interleave_float`
+- **버그 증거**: 갈래 B smoke.log 의 hexa_run C 출력 — `var;` + `out = ... hexa_array_push(..., f32)` (type annotation `f32` 가 expression 으로 잘못 전사)
+- **runtime.h warning**: `runtime.h:349-350` `/* ... /*` nested block comment (cosmetic)
+
+### §6.3 anima-physics SW 후보 — 자연발화/영속성 mapping (draft)
+
+| SW 파일 | 자연발화 후보? | 영속성 유지 후보? | note |
+|---|---|---|---|
+| `oscillator/sleep_oscillator.hexa` | ✅ SWS↔REM phase switch = native auto-fire | △ ckpt hook 필요 | §2.1 PASS — internal-clock-driven |
+| `hippocampus/theta_gamma.hexa` | ✅ θ-γ coupling natural osc | △ window-replay buf | §2.1 PASS |
+| `hippocampus/episodic_replay.hexa` | △ trigger-driven | ✅ replay = 영속성 substrate 자체 | §2.1 PASS |
+| `memristor/self_reference.hexa` | ✅ history-dep G feedback emit | ✅✅ memristor 상태 자체가 비휘발 substrate | §2.1 PASS — 가장 강한 dual-role 후보 |
+| `prediction/protention_error.hexa` | ✅ predictive coding 자발 error gen | △ rolling pred buf | §2.1 PASS |
+| `thermodynamic/entropy_dissolution.hexa` | △ thermal noise auto-fire | △ entropy log | §2.1 PASS — noise-driven 후보 |
+| `phi_substrate_consensus.hexa` | △ consensus trigger | ✅ Tukey biweight 5-substrate consensus = 다중 substrate 영속성 통합 | §2.1 PASS — meta-level 후보 |
+| `engines/*_consciousness.hexa` (7개) | ? | ? | §2.3-2.4 build-err + empty — 갈래 B/C 해결 후 재평가 |
+| `consciousness-loop/src/aux_engine_smoke` (+ lib) | TBD | TBD | 갈래 B 본체 — smoke 통과 후 분석 |
+| `edge_deploy.hexa` | △ deploy-side trigger | ✅ on-device 영속 deploy 패턴 | uninspected — fire 별도 |
+| `realtime_monitor.hexa` | ✅ realtime monitor = continuous fire | △ monitor log | uninspected — fire 별도 |
+| `rtc_sync.hexa` | ✅ RTC clock = native time-base | ✅ RTC = 시간축 영속성 | uninspected — fire 별도 |
+| `signal_corpus.hexa` (+ manifest) | △ corpus replay-driven | ✅ signal corpus = 영속 신호 ledger | uninspected — fire 별도 |
+| `hw_engine_bridge.hexa` | bridge | bridge | HW ↔ SW 인터페이스 — fire 별도 |
+| `phi_substrate_dispatch.hexa` | △ dispatch | △ dispatch | uninspected |
+
+**최강 dual-role 후보 (자연발화 + 영속성 동시)**:
+1. **`memristor/self_reference`** — history-dep conductance = 자연 feedback fire ⊕ 비휘발 상태
+2. **`rtc_sync`** — RTC = 자연 시간축 fire ⊕ 시간 영속성 (power-loss 후 복구)
+3. **`phi_substrate_consensus`** — 5-substrate 통합 = meta 자발 fire ⊕ cross-substrate 영속 합의
+
+**최강 자연발화-only 후보** (영속성 약함):
+- `sleep_oscillator`, `theta_gamma`, `protention_error`, `realtime_monitor`
+
+**최강 영속성-only 후보** (자연발화 약함):
+- `episodic_replay`, `signal_corpus`, `edge_deploy`
+
+### §6.4 복구 breadcrumb (모두 보존됨, 유실 0)
+
+1. **세션 unstaged 변경** (`grid_3b_s187_2026_05_21/` 안 modified 20+ files) — 비-PHYSICS 작업 (LLM grid 학습 dispatch 흔적), 별도 갈래
+2. **HEXAD/PHYSICS/state/** — untracked, 본 §6 의 갈래 B smoke.log 만 들어 있음
+3. **PHILOSOPHY.tape** — verdict 영속 ledger (g6 append-only) — 크래시 직전 verdict 모두 보존
+4. **PLAN.md §3.1** — §188 commit `f74d8a425` 로 frozen
+5. **hexa-lang stashes** — `~/core/hexa-lang/inbox/notes/crash_recovery_2026_05_21/*.patch` 2 개
+
+### §6.5 next session pickup checklist (재크래시 대응)
+
+순서 (의존성 순):
+1. **갈래 C 먼저** — hexa-lang transpiler typed-decl 버그 fix (smoke.log 의 C 출력 `var; out = ... f32` 재현 → grammar/transpiler 추적)
+   - 단서: typed array decl `var x: [float]` 또는 `var x: f32[] = ...` 가 깨짐
+   - inbox 2 stash 검토 (RUNTIME.md cycle 38+ 작업 진행 중이었을 가능성)
+2. **갈래 B 갱신** — aux_engine_smoke.hexa rebuild → smoke.log 갱신 → §6.3 후보 mapping 확정
+3. **갈래 A 후속** — §188b (300s retry) 또는 §188f (cross-cut Φ consensus) 중 사용자 선택
+4. **모든 cycle 결과 → PLAN.md §3.x append + 본 §6.5 의 step 완료 marker ☑**
+
+### §6.6 cost / dispatch 상태
+
+- 본 §6 작업: $0 Mac local (문서 update only)
+- 갈래 A 35-substrate fire: $0 Mac local (LANDED)
+- 갈래 B smoke 1 회: $0 Mac local (FAIL 상태)
+- 갈래 C: $0 local (hexa-lang dev)
+- BG dispatch 없음 (HEXAD/UNCLASSIFIED/grid_3b_s187 dispatch.log 갱신은 별도 LLM 학습 갈래)
+
+
