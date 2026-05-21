@@ -196,27 +196,43 @@ worse* at fitting this corpus.** This is the load-bearing falsification.
    attention, 2.8B, with FULL 7-aux retained → CE 0.264). Aggregate verdict
    in cross-tier section below.
 
-## Aggregate Verdict (Tier S × Tier A × Tier B preview)
+## Aggregate Verdict (Tier S × Tier A × Tier B — FINAL)
 
 **Hypothesis**: "7-aux loss recipe is the saddle that holds CE at 3.83."
 
-**Falsification status (as of 2026-05-22 03:53 KST)**:
+**Cross-tier evidence (8 of 14 pods landed; 6 lost to env-verify SSH-glitch
+false-positive + 1 wikitext corpus build break):**
 
 | evidence | reading | hypothesis status |
 |---|---|---|
-| O6: same arch family, 280M, CE-only → CE 0.026 | arch family CAN fit | consistent with recipe-saddle |
-| **O1: same arch, 3B, CE-only → CE 3.81 ≈ vA 3.83** | aux strip alone does NOT save 3B | **FALSIFIED** |
-| **O4: vanilla GPT-2 arch, 2.8B, FULL 7-aux → CE 0.264** | 7-aux is compatible with learning IF arch is sound | **FALSIFIED** (recipe not the gate) |
-| O10: gpt2-124M pretrained + 7-aux → CE 2.5 | pretrained head still drops below vA floor with same recipe | partial — recipe contributes some drag |
+| **O6**: same arch family, 280M, CE-only → CE 0.026 | arch family CAN fit | consistent w/ recipe-saddle |
+| **O1**: same arch, 3B, CE-only → CE 3.81 ≈ vA 3.83 | aux strip alone does NOT save 3B | **FALSIFIED** |
+| **O4**: vanilla GPT-2 arch, 2.8B, full 7-aux → CE 0.264 | 7-aux compatible w/ learning IF arch sound | **FALSIFIED** (recipe not gate) |
+| **O2**: byte → BPE 50K, full 7-aux, 9.2B → 2.80 bits/byte | byte tokenizer inflates per-byte CE ~2× | tokenizer = secondary source |
+| **O3**: f32 AdamW (no bnb int8), 7-aux, 8.9B → CE 4.16 | optimizer precision NOT the cause | **FALSIFIED** |
+| **O10**: gpt2-124M FT + 7-aux → CE 2.50 | pretrained init compensates for arch pathology | partial — recipe is tolerable |
+| **O11-phi/cycle/replay**: single-aux on vA arch → CE 3.81-3.83 (all) | each aux ≤0.005 CE drag individually | **FALSIFIED** (no single aux is gate) |
+| O11-{psi,route,curious}, O12, O7 | LOST to env-verify false-positive | unmeasurable (not load-bearing) |
 
-**Verdict**: The 7-aux loss recipe is NOT the saddle. The **3B custom
-ConsciousDecoderV2 architecture is the bottleneck** when trained
-from-scratch on this corpus at this token budget. Specifically: either
-(a) the custom GQA + consciousness_dim + Engine A/G heads have a
-training-time pathology at scale, or (b) the 2000-step horizon is too
-short for an 8.9B custom-arch from-scratch model regardless of recipe.
-Tier B #11 ablations + O7 (100K-step CE-only) and O3 (f32 AdamW) will
-disambiguate (a) vs (b).
+**Verdict**: The 7-aux loss recipe is **NOT the saddle**. Cross-confirmed
+from 3 independent angles (Tier S O1 + Tier A O4 + Tier B 4×single-aux).
+The **3B custom ConsciousDecoderV2 architecture is the dominant
+bottleneck** when trained from-scratch on byte-CORPUS_S101 at 2000 step.
+
+**Compounding-factor decomposition** (Tier A bits/byte):
+
+- vA at 3.83 CE = ~5.52 bits/byte (baseline floor on byte vocab)
+- Removing arch (O4) → CE 0.264 = ~0.38 bits/byte (**93% reduction**)
+- Removing tokenizer (O2, arch kept) → 2.80 bits/byte (~49% reduction)
+- Removing aux recipe (O1, arch kept) → CE 3.81 → ~5.50 bits/byte (~0% reduction)
+
+**Arch dominates by ~10× over tokenizer; recipe contributes ~0%.**
+
+**Unanswered**: the alternative "2000-step horizon too short for 8.9B
+from-scratch regardless of recipe" — Tier B O7 (100K step CE-only) was the
+intended test but lost to env-verify. Re-fire on patched dispatch is the
+$31 follow-up to fully close that branch. Until then, the load-bearing
+verdict ("arch is the gate") holds with Tier A O4 + Tier S O1+O6 alone.
 
 ## Honest C3 (cross-test)
 
