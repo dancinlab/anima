@@ -1,10 +1,44 @@
 # anima-physics — 실제 구현 가능성 매트릭스
 
-> 2026-05-21 전수조사. `/Users/ghost/core/anima/anima-physics/` 산하 모든 문서·코드 인덱스. 각 entry 는 `entries/{root,docs,substrate,recovered}/*.md` 에 1개씩 별도 파일로 존재 (구현 가능성 / 작동 코드 / 비용 / ASCII / 트리거).
+> 2026-05-21 전수조사 + HW 트리 정리. `/Users/ghost/core/anima/anima-physics/` 산하 모든 문서·코드 인덱스. 각 entry 는 `entries/{root,docs,substrate,recovered}/*.md` 에 1개씩 별도 파일로 존재 (구현 가능성 / 작동 코드 / 비용 / ASCII / 트리거).
 >
-> 구조: 루트(11) · docs/(19) · substrate(60) · recovered chip family(3) = **93 entry file** + recovered/ 300 archive.
+> 구조: 루트(11) · docs/(19) · substrate(60) · recovered chip family(3) = **93 entry file** + recovered/ 300 archive + **hw/ (5 HW target, 2026-05-21 신설)**.
 >
 > 기존 개요 문서: [`README_legacy.md`](README_legacy.md) (8 platform / 9 substrate / 9 topology 설명).
+> 완성 기준 + 로드맵: [`PLAN.md`](PLAN.md) (g_completion_8 + Phase A-F).
+
+---
+
+## §0 SW 공용 vs HW 전용 — 디렉터리 분할 원칙 (2026-05-21)
+
+본 module 의 모든 파일은 **2 부류** 중 하나:
+
+### §0.1 SW 공용 (substrate source, HW-independent)
+- 위치: `anima-physics/<substrate>/` (예: `fpga/`, `oscillator/`, `social/`)
+- 내용: `.hexa` substrate source — 자연발화 + 영속성 메커니즘의 **수학적 / 알고리즘적** 정의 (closed-form sim, 어떤 HW realization 에도 공통 사용)
+- 검증: `hexa run <file>` (selftest), `HEXAD/NEUROMORPHIC/state/spontaneous_substrate_parallel_s188_2026_05_21/` (§188 batch fire)
+- 27 substrate dir × 62 .hexa file
+
+### §0.2 HW 전용 (per-target realization)
+- 위치: [`anima-physics/hw/<target>/`](hw/) (예: `strange_loop_ice40/`, `kuramoto_neuromorphic/`)
+- 내용: SW 공용 의 SW substrate 를 **특정 HW** (FPGA / 칩 / MCU / cloud chip) 으로 실현하는 어댑터 + Verilog/firmware/adapter + build pipeline
+- 검증: 본 dir 내 `build.sh` (iverilog/yosys/arduino-cli/python sim) + cloud trial 결과
+- 5 HW target (2026-05-21 LANDED Phase 1a, [hw/README.md](hw/README.md)):
+  - [`strange_loop_ice40/`](hw/strange_loop_ice40/) — Lattice iCE40UP5K FPGA
+  - [`nested_lattice_ecp5/`](hw/nested_lattice_ecp5/) — Lattice ECP5-EVN FPGA
+  - [`kuramoto_neuromorphic/`](hw/kuramoto_neuromorphic/) — Intel Loihi 2 + BrainChip Akida
+  - [`sleep_oscillator_arduino/`](hw/sleep_oscillator_arduino/) — Arduino + AD9833 DDS
+  - [`spontaneous_ising/`](hw/spontaneous_ising/) — Toshiba SBM / Fujitsu DA / ECP5 fallback
+
+### §0.3 SW ↔ HW 매핑 표 (dual-role top 5)
+
+| SW substrate (공용) | HW target (전용) | Mac local compile |
+|---|---|---|
+| `fpga/strange_loop.hexa` | [`hw/strange_loop_ice40/`](hw/strange_loop_ice40/) | iverilog ✅ + yosys ✅ |
+| `fpga/nested_lattice.hexa` | [`hw/nested_lattice_ecp5/`](hw/nested_lattice_ecp5/) | iverilog + yosys (synth_ecp5) |
+| `social/kuramoto_coupling.hexa` | [`hw/kuramoto_neuromorphic/`](hw/kuramoto_neuromorphic/) | Python local sim (cloud-only HW) |
+| `oscillator/sleep_oscillator.hexa` | [`hw/sleep_oscillator_arduino/`](hw/sleep_oscillator_arduino/) | Python local sim (arduino-cli 별도) |
+| `HEXAD/CHAT/spontaneous_smoke.hexa` (외부 ref) | [`hw/spontaneous_ising/`](hw/spontaneous_ising/) | iverilog + yosys + Python |
 
 ---
 

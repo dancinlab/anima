@@ -1,0 +1,18 @@
+[kuramoto_neuromorphic/local_sim] HW target #3 — Mac local numpy oscillator sim
+  N=8, T=1000, dt=0.01, OMEGA_MEAN=1.0, OMEGA_STD=1.5  (K_c ≈ 2.4)
+  numpy=2.0.2
+
+[F-HW-KU-1] phase init: in[0,2π)=True mean=3.039 (target≈π=3.142) std=1.868 (target≈1.814)
+  → PASS
+[F-HW-KU-2] K=0.1 N=8 steps=1000: r_tail=0.215 (threshold < 0.3)
+  → PASS
+[F-HW-KU-3] K=5.0 N=8 steps=1000: r_tail=0.951 (threshold > 0.7, K_c≈2.4)
+  → PASS
+[F-HW-KU-4] r̄(K=0.1)=0.297 ≤ r̄(K=1.0)=0.352 ≤ r̄(K=5.0)=0.966 monotone=True
+  → PASS
+[F-HW-KU-5] K=2.0 last-100 std(r)=0.0434 (threshold < 0.1)
+  → PASS
+
+r(K=2.0) = 0.6445  (near-critical, K_c≈2.4 — reference only)
+F-HW-KU-1..5 PASS count: 5/5
+[kuramoto_neuromorphic/local_sim] 5/5 PASS — HW target #3 Phase 1a local sim DONE

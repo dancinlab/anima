@@ -113,12 +113,15 @@
 - ☐ firmware GATE_OPEN → GATE_CLOSED: AD9833 DDS bring-up firmware sample
 - ☐ brain producer 신설 (demiurge 측, D81 candidate; anima 측에선 cloud trial bridge)
 
-### G6 HW silicon Phase 1 — 1건 이상 fire
-- ☐ Phase 1a strange_loop iverilog wave (★권장 first-fire, $0 / 1-2 day) — `tool/codegen_verilog.hexa` 활용
-- ☐ Phase 1b sleep_oscillator Arduino + AD9833 ($30 BOM, scope 제외, 1 day)
-- ☐ Phase 2a kuramoto Akida cloud trial ($1-30, 1 week)
-- ☐ Phase 2b nested_lattice ECP5 ($120 + 2 day)
-- ☐ Phase 3a/b Ising chip cloud + Loihi 2 Hala Point 신청 ($1-30 + 1 month wait)
+### G6 HW silicon Phase 1 — ☑ ALL 5 LANDED (2026-05-21)
+- ☑ strange_loop_ice40: iverilog sim PASS (F-HW-SL-1 reset 0x29CBB8 + attractor period-2) + yosys synth 57 LUT4 + 40 FF
+- ☑ nested_lattice_ecp5: iverilog 5/5 PASS (F-HW-NL-1..5, 10-cycle byte-exact SW↔RTL) + yosys synth_ecp5 111 LUT4 + 58 TRELLIS_FF
+- ☑ kuramoto_neuromorphic: numpy local sim 5/5 PASS (F-HW-KU-1..5, r locked at K=5.0=0.951) + Loihi/Akida adapter syntax check
+- ☑ sleep_oscillator_arduino: Python phase accumulator sim 5/5 PASS (F-HW-SO-1..5, SWS↔REM continuous switch δ=0.0) + AD9833 driver + .ino lint
+- ☑ spontaneous_ising: iverilog 5/5 PASS (F-HW-SI-1..5) + yosys synth_ecp5 192 LUT4 + 134 FF + 1 MULT18X18D + Toshiba/Fujitsu adapter syntax
+
+**Total: 25/25 falsifier PASS across 5 HW targets**, Mac local Phase 1a $0.
+Phase 1b (bitstream/flash) 별도 cycle: `brew install nextpnr-ice40 nextpnr-ecp5 icestorm prjtrellis arduino-cli` + dev board 주문.
 
 ### G7 cross-link integrity
 - ☐ README.md count 갱신: §188 result 반영 → 21 PASS / 14 nonPASS 분류
