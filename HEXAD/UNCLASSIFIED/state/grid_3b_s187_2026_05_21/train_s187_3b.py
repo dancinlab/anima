@@ -182,6 +182,80 @@ def psi_ent_batched(logits_a, vocab_size):
     return H / log_V
 
 
+# ----------------------------------------------------------------------------
+# OCCAM-CHAT Phase 1.2 — tap 18 (L_emit) + tap 19 (L_bigram)
+# Anti-collapse pressure on emission distribution. CB6+CB7 per
+# ~/core/anima/HEXAD/OCCAM-CHAT.md § 2.B.
+#
+# Motivation: EVAL_REPORT.md § 6.2 found vA/vB/vC/vD all collapse to
+# whitespace under greedy decode. If CE/aux losses have no direct
+# emission-diversity signal, the optimizer learns the easiest token (space).
+#
+# Design choices:
+# - WHITESPACE_BYTES = {0x20 (SPACE), 0x09 (TAB), 0x0a (LF), 0x0d (CR)}
+#   — bytes that EVAL_REPORT § 0.1 showed dominate greedy output.
+# - L_emit is the MEAN softmax probability mass assigned to whitespace
+#   bytes across (B, T). DIRECT penalty (we want this small). Clamped to
+#   [0, 1] but in practice already bounded by softmax.
+# - L_bigram uses PREDICTED bytes (argmax of softmax) to build a bigram
+#   distribution over the batch. This is non-differentiable through the
+#   argmax — to get gradient signal, we use a soft-bigram via
+#   softmax(logits_a) outer product summed over (B, T-1) pairs, then
+#   compute entropy on the marginal pair distribution. log(min_unique=8)
+#   gives a per-prediction diversity floor.
+# - BOTH terms use float-cast probs to dodge bf16 entropy underflow.
+# ----------------------------------------------------------------------------
+
+# byte indices of whitespace under our vocab=256 byte-level tokenizer
+WHITESPACE_BYTE_IDX = (0x20, 0x09, 0x0a, 0x0d)
+
+
+def emit_whitespace_prob(logits_a):
+    """L_emit candidate: mean softmax prob assigned to whitespace bytes.
+
+    Inputs: logits_a (B, T, V=256). Returns scalar in [0, 1].
+    Optimizer can drive this down by shifting prob away from whitespace.
+    """
+    probs = F.softmax(logits_a.float(), dim=-1)  # (B, T, V)
+    # gather the 4 whitespace columns and sum -> (B, T)
+    ws = probs[..., list(WHITESPACE_BYTE_IDX)].sum(dim=-1)
+    return ws.mean().clamp(0.0, 1.0)
+
+
+def bigram_entropy_floor(logits_a, min_unique=8, eps=1e-10):
+    """L_bigram candidate: penalize bigram entropy below log(min_unique).
+
+    We form a SOFT bigram distribution via outer products of consecutive
+    softmax marginals (p_t ⊗ p_{t+1}) summed over (B, T-1). This is
+    differentiable through softmax (unlike argmax-based bigrams), but for
+    V=256 the V×V = 65536-cell pair matrix is small enough to materialize.
+
+    Implementation: rather than the full V×V outer (which would be 65k
+    floats × (B, T-1) — memory-hungry), we use the simpler approximation:
+    pair distribution over the batch ≈ marginal(p_t) ⊗ marginal(p_{t+1}).
+    This is the IID-pair approximation; in early training where bytes are
+    near-uniform this matches the true joint. As collapse sets in, the
+    marginals concentrate → joint concentrates → entropy drops, which is
+    exactly the signal we want to penalize.
+
+    Returns scalar L_bigram = max(log(min_unique) - H_pair, 0).
+    """
+    V = logits_a.shape[-1]
+    probs = F.softmax(logits_a.float(), dim=-1)  # (B, T, V)
+    # marginal over (B, T): probs averaged per byte -> (V,)
+    marg = probs.reshape(-1, V).mean(dim=0)
+    marg = marg / (marg.sum() + eps)
+    # IID-pair approximation: H(p ⊗ p) = 2 * H(p)
+    # so the bigram-entropy floor reduces to a marginal-entropy floor
+    # at log(min_unique)/2 effectively. Keep the explicit form for clarity.
+    H_marg = -(marg * (marg + eps).log()).sum()  # nats
+    H_pair = 2.0 * H_marg
+    floor = math.log(float(min_unique))
+    # penalize below floor; one-sided ReLU
+    deficit = floor - H_pair
+    return torch.clamp(deficit, min=0.0)
+
+
 def lr_schedule(step, total_steps, warmup_steps=200, peak_lr=6e-4, min_lr=6e-5):
     """Cosine warmup + decay (tap 2.7)."""
     if step < warmup_steps:
@@ -305,8 +379,16 @@ def run(cfg):
     lam_cycle = cfg["lambda_cycle"]
     lam_curious = cfg["lambda_curious"]
     lam_replay = cfg["lambda_replay"]
+    # OCCAM-CHAT Phase 1.2: tap 18 + 19 anti-collapse weights.
+    # Backward-compat: default 0 in cfg builder. If both >0 -> O18 variant.
+    lam_emit = float(cfg.get("lambda_emit", 0.0))
+    lam_bigram = float(cfg.get("lambda_bigram", 0.0))
+    bigram_min_unique = int(cfg.get("bigram_min_unique", 8))
     noise_sigma = cfg["noise_sigma"]
     vocab_size = 256
+    if lam_emit > 0.0 or lam_bigram > 0.0:
+        print(f"[OCCAM-CHAT-P1.2] tap 18 lambda_emit={lam_emit} tap 19 lambda_bigram={lam_bigram} "
+              f"min_unique={bigram_min_unique} (anti-whitespace + entropy floor)", flush=True)
 
     t0 = time.time()
     log = []
@@ -470,6 +552,18 @@ def run(cfg):
             L_mitosis = torch.tensor(0.0, device=device)
             mit_info = None
 
+        # ---- L_emit (OCCAM-CHAT tap 18 anti-whitespace) -------------------
+        if lam_emit > 0.0:
+            L_emit = emit_whitespace_prob(logits_a)
+        else:
+            L_emit = torch.tensor(0.0, device=device)
+
+        # ---- L_bigram (OCCAM-CHAT tap 19 entropy floor) -------------------
+        if lam_bigram > 0.0:
+            L_bigram = bigram_entropy_floor(logits_a, min_unique=bigram_min_unique)
+        else:
+            L_bigram = torch.tensor(0.0, device=device)
+
         # ---- TOTAL ---------------------------------------------------------
         # NOTE: lam_replay is sign-explicit negative in cfg per PLAN.md sec 3.
         L_total = (L_ce
@@ -479,7 +573,9 @@ def run(cfg):
                    + lam_cycle * L_cycle
                    + lam_curious * L_curious
                    + lam_replay * L_replay
-                   + lambda_mitosis * L_mitosis)
+                   + lambda_mitosis * L_mitosis
+                   + lam_emit * L_emit
+                   + lam_bigram * L_bigram)
 
         optimizer.zero_grad(set_to_none=True)
         L_total.backward()
@@ -511,6 +607,8 @@ def run(cfg):
                     L_curious=float(L_curious.detach()),
                     L_replay=float(L_replay.detach() if hasattr(L_replay, 'detach') else L_replay),
                     L_mitosis=float(L_mitosis.detach() if hasattr(L_mitosis, 'detach') else L_mitosis),
+                    L_emit=float(L_emit.detach() if hasattr(L_emit, 'detach') else L_emit),
+                    L_bigram=float(L_bigram.detach() if hasattr(L_bigram, 'detach') else L_bigram),
                     mitosis_pool_size=(len(cell_pool.cells) if cell_pool is not None else 0),
                     mitosis_split_total=(cell_pool.split_count if cell_pool is not None else 0),
                     mitosis_merge_total=(cell_pool.merge_count if cell_pool is not None else 0),
@@ -532,12 +630,16 @@ def run(cfg):
                            f"split={entry['mitosis_split_total']},"
                            f"merge={entry['mitosis_merge_total']},"
                            f"phi={entry['mitosis_phi']:.3f})")
+            occam_str = ""
+            if lam_emit > 0.0 or lam_bigram > 0.0:
+                occam_str = (f" emit={entry['L_emit']:.4f}"
+                             f" bigram={entry['L_bigram']:.4f}")
             print(f"[S184-Phase2] step={step+1:6d} lr={lr_now:.2e} "
                   f"L_tot={entry['L_total']:+.4f} CE={entry['L_ce']:.4f} "
                   f"psi={entry['L_psi']:.4f} route={entry['L_route']:.4f} "
                   f"phi={entry['L_phi']:.4f} cyc={entry['L_cycle']:.4f} "
                   f"cur={entry['L_curious']:.4f} rep={entry['L_replay']:+.4f}"
-                  f"{mit_str} "
+                  f"{mit_str}{occam_str} "
                   f"Psi_dir(mu={psi_dir_mean:.3f},sd={psi_dir_std:.4f}) "
                   f"|g_head_g|={head_g_grad_norm:.4f} t={elapsed:.0f}s",
                   flush=True)
@@ -591,6 +693,8 @@ def run(cfg):
             lambda_cycle=lam_cycle,
             lambda_curious=lam_curious,
             lambda_replay=lam_replay,
+            lambda_emit=lam_emit,
+            lambda_bigram=lam_bigram,
         ),
         head_g_grad_max=head_g_grad_max,
         head_g_grad_min=head_g_grad_min,
@@ -656,6 +760,18 @@ def main():
                     help="S187-G: force torch.optim.AdamW (skip bnb 8-bit) when "
                          "mitosis-active is set; defends against int8 m/v drift "
                          "under small aux-loss noise. Default OFF.")
+    # OCCAM-CHAT Phase 1.2: tap 18 + 19 anti-collapse regularizers
+    ap.add_argument("--lambda-emit", type=float, default=0.0,
+                    help="OCCAM-CHAT tap 18: L_emit weight. Penalizes mean "
+                         "softmax mass on whitespace bytes (0x20 0x09 0x0a 0x0d). "
+                         "Default 0.0 = OFF (backward-compat). Recommended 0.1.")
+    ap.add_argument("--lambda-bigram", type=float, default=0.0,
+                    help="OCCAM-CHAT tap 19: L_bigram weight. Penalizes "
+                         "predicted-token bigram entropy below log(min_unique). "
+                         "Default 0.0 = OFF. Recommended 0.05.")
+    ap.add_argument("--bigram-min-unique", type=int, default=8,
+                    help="OCCAM-CHAT tap 19: min unique bigrams threshold. "
+                         "Floor = log(min_unique). Default 8 → log(8)=2.079 nats.")
     # S187-J: gradient accumulation (effective bsz = bsz × grad_accum_steps)
     ap.add_argument("--grad-accum-steps", type=int, default=1,
                     help="S187-J: gradient accumulation factor. Default 1 = "
@@ -689,6 +805,9 @@ def main():
             mitosis_noise_scale=args.mitosis_noise_scale,
             mitosis_bnb_disable=args.mitosis_bnb_disable,
             grad_accum_steps=args.grad_accum_steps,
+            lambda_emit=args.lambda_emit,
+            lambda_bigram=args.lambda_bigram,
+            bigram_min_unique=args.bigram_min_unique,
             log_every=max(1, args.steps // 50),
             corpus=args.corpus, out_dir=args.out_dir,
             cpu_only=args.cpu_only,
@@ -708,6 +827,9 @@ def main():
             mitosis_initial_cells=args.mitosis_initial_cells,
             mitosis_noise_scale=args.mitosis_noise_scale,
             mitosis_bnb_disable=args.mitosis_bnb_disable,
+            lambda_emit=args.lambda_emit,
+            lambda_bigram=args.lambda_bigram,
+            bigram_min_unique=args.bigram_min_unique,
             log_every=max(1, args.steps // 10),
             corpus=args.corpus, out_dir=args.out_dir, cpu_only=True,
         )
