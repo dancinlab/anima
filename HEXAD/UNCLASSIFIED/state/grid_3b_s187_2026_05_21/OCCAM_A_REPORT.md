@@ -1,10 +1,10 @@
 # OCCAM-A Tier A Report — 4 Carve-Out Strips
 
-> **status**: 🟡 PARTIAL — **O4 + O10 LANDED**, O2 + O5 still training.
-> Headline finding: **O4 (vanilla GPT-2 attention, 2.8B, full 7-aux) CE
-> 0.264 — vanilla arch breaks the saddle even WITH 7-aux retained.** This
-> independently confirms the custom-arch-is-the-bottleneck verdict from
-> Tier S O1.
+> **status**: 🟢 3/4 COMPLETE (O5 infra-failed). Headline: **O4 (vanilla
+> arch) CE 0.264 + O2 (BPE 50K) 2.80 bits/byte + O10 (gpt2 FT) CE 2.50.**
+> Three separate single-axis swaps all break the 3.83 floor. The vA stack
+> has multiple compounding issues — but the largest single contributor is
+> arch (O4's 14.5× CE drop).
 >
 > **frame**: OCCAM.md § 3 Tier A isolates 4 *carve-out* axes — each test
 > swaps ONE big design dimension from the vA stack and asks whether that
@@ -24,9 +24,9 @@
 
 | variant | swap-out | swap-in | pod | GPU | status |
 |---|---|---|---|---|---|
-| O2 | byte vocab=256 | **BPE GPT-2 vocab=50257** | `da3zdh6r2orcfd` | H100 SXM | 🟡 training |
+| O2 | byte vocab=256 | **BPE GPT-2 vocab=50257** | `da3zdh6r2orcfd` | H100 SXM | ✅ CE 5.16 (2.80 bits/byte) |
 | O4 | custom GQA + Ψ + Engine A/G heads | **vanilla GPT-2 attention** | `9mqxfhjwckwf7m` | H100 SXM | ✅ CE 0.264 |
-| O5 | CORPUS_S101 byte-mush | **wikitext-103-raw 50 MB** | `6nncbaa4hg4ygm` | H100 SXM | 🟡 training |
+| O5 | CORPUS_S101 byte-mush | **wikitext-103-raw 50 MB** | `6nncbaa4hg4ygm` | H100 SXM | 🔴 FAILED (HF URI parser regression) |
 | O10 | from-scratch 3B | **HF gpt2 124M fine-tune on this corpus** | `y7ksws42semci6` | H100 SXM | ✅ CE 2.50 |
 
 All four pods training at 2026-05-22 03:48 KST. Results will populate below
@@ -46,16 +46,38 @@ of English+code text (~5.5 bits/byte, log(256)=8 bits/byte → ~5.5 means
 per-token information density — break the 3.83 floor when measured per
 *token*?
 
-**Result**: _filled after pod completion_
+**Result**: 🟢 **CE 5.156 per token = 2.80 bits/byte** (vs vA's ~5.52
+bits/byte at byte vocab). **49% lower bits/byte.**
+
+| metric | value |
+|---|---|
+| n_params | 9,228,386,360 (9.23B; vocab head bigger due to 50257 vocab) |
+| wall_s | 803.2 s on H100 SXM |
+| CE step 1 | 11.375 (BPE; init from random) |
+| CE step 2000 | **5.156** |
+| L_total | 5.196 (full 7-aux λ vector) |
+| **bits_per_byte_est** | **2.80** |
+| vocab | tiktoken gpt2 (50257) |
+| λ vector | psi=0.30 route=0.20 phi=0.30 cycle=0.15 curious=0.10 replay=-0.05 (full 7-aux) |
+
+**Interpretation**: With FULL 7-aux retained, swapping byte-vocab → BPE 50K
+roughly **halves bits/byte** (5.52 → 2.80). The byte-tokenizer is
+significant but **not the dominant gate** — at 2.80 bits/byte, the model
+is still ~4× worse than O4's CE 0.264 (which corresponds to ~0.38
+bits/byte at byte level). So tokenizer-only swap closes ~half the gap;
+arch-only swap closes ~all the gap.
 
 ### Honest C3
 
-1. CE is not directly comparable across tokenizers (byte-CE vs token-CE).
-   Bits/byte conversion: `CE_token / log2(vocab) * avg_bytes_per_token` —
-   if O2 CE < vA's bits/byte after the conversion, then byte tokenizer IS
-   the floor.
-2. _to be filled with finding_
-3. _to be filled with finding_
+1. Comparing CE across tokenizers requires per-byte normalization. The
+   trainer's `ce_bits_per_byte_est` field computes `CE_token /
+   avg_bytes_per_token`. This is an estimate; exact bytes/token depends on
+   corpus distribution. Trust to ±10%.
+2. vA's 3.83 byte-CE in natural log = 5.52 bits/byte (since CE × log2(e) ≈
+   CE × 1.443, here 3.83 × 1.443 = 5.52). O2's 2.80 bits/byte = 49% lower.
+3. With FULL 7-aux active in O2, this confirms that **7-aux is NOT
+   incompatible with learning** — it's the byte tokenizer + custom arch
+   combination at scale that produces the 3.83 saddle.
 
 ---
 
@@ -82,8 +104,8 @@ even with 7-aux retained.**
 | L_ce step 1 | 6.094 |
 | L_ce step 2000 | **0.264** |
 | L_total | 0.264 (lambdas not reported per-step in vanilla trainer fork) |
-| ckpt sha256 | `659e41aa7736fdb40d17c0635fdfeb262ef8ff4a5dc1b0741ae35a73c0872dd3` |
-| ckpt size | 716 MB |
+| ckpt sha256 | `8180a1e7ec102bdefdf8e91a5e888485e101e41934db92a901340e59ce192fa3` |
+| ckpt size | 2657 MB |
 | corpus | CORPUS_S101 (identical to vA + O1) |
 
 **Interpretation**: O4 keeps the EXACT same corpus, byte-vocab, 2000 step,
@@ -124,15 +146,27 @@ adversarial or low-entropy for byte modeling. Does swapping to real-world
 Wikipedia byte stream remove the floor? If yes → corpus quality IS the
 floor cause and OCCAM-A is over.
 
-**Result**: _filled after pod completion_
+**Result**: 🔴 **FAILED at corpus-build phase**. `huggingface_hub` version on
+the runpod base image rejects the old wikitext download URI format
+(`hf://datasets/wikitext@<commit>/wikitext-103-raw-v1/test-*`) with
+`HfUriError: Repository id must be 'namespace/name', got 'wikitext'`.
+Trainer started anyway but found no corpus_wikitext.jsonl and crashed
+3× in retry loop before pod-side OOM/timeout. **O5 to be re-fired with
+`build_wikitext_corpus.py` patched to use `load_dataset('wikitext',
+'wikitext-103-raw-v1')` form** — left as separate cycle.
 
 ### Honest C3
 
-1. 50 MB ≠ 299 MB; Wikipedia byte distribution differs from CORPUS_S101
+1. Failure is infrastructure not science. The pod was successfully
+   provisioned + SSH + GPU healthy; only the corpus build broke. No CE data
+   to report.
+2. 50 MB ≠ 299 MB; Wikipedia byte distribution differs from CORPUS_S101
    (more whitespace, more proper nouns, more Latin, fewer ↑↓ASCII symbols).
-   CE comparison MUST control for byte-entropy of the source.
-2. _to be filled_
-3. _to be filled_
+   When re-run, CE comparison MUST control for byte-entropy of the source.
+3. With O4 already showing arch is the gate (CE 0.264 same corpus, vanilla
+   arch), the corpus-quality test is no longer load-bearing for the
+   aggregate verdict. Re-firing O5 is a "completeness" item, not a
+   "decision" item.
 
 ---
 
@@ -161,7 +195,7 @@ below vA's 3.83 floor but well above O4's 0.26 floor.
 | L_ce step 1000 | **2.50** |
 | L_total | 2.69 (CE + weighted 7-aux active) |
 | bits_per_byte_est | **1.463** |
-| ckpt sha256 | `b94417f64327d82cabf8fa068b9c69cb99bf36e6c0bbaff9b35ed5386ed265ab` |
+| ckpt sha256 | `98590fb4ee78d66bd41e5762651c3fb0848737861cc0add30222b644e3f508fc` (481 MB) |
 | λ vector | psi=0.30 route=0.20 phi=0.30 cycle=0.15 curious=0.10 replay=-0.05 (full 7-aux) |
 
 **Interpretation**: Starting from a pretrained GPT-2 124M and applying the
@@ -195,7 +229,7 @@ from-scratch custom arch.
 | variant | swap | CE_final | wall(s) | cost($) | finding |
 |---|---|---|---|---|---|
 | vA (ref) | — | 3.83 | 670 | 0.40 | floor reference |
-| O2 | tokenizer → BPE | _TBD_ | | | training |
+| O2 | tokenizer → BPE | 5.156 (2.80 bits/byte) | 803 | $0.73 | tokenizer drag closes ~50% of gap |
 | **O4** | **arch → vanilla** | **0.264** | 257 | $0.24 | **arch is the gate** |
 | O5 | corpus → wikitext | _TBD_ | | | training |
 | O10 | foundation → gpt2-FT | 2.50 | 42 | $0.04 | partial; 7-aux not poisonous to sound model |
@@ -206,32 +240,48 @@ from-scratch custom arch.
 
 | variant | cost | source |
 |---|---|---|
-| O2 | ~$0.40 (est 720 s on H100 SXM) | in-flight |
+| O2 | $0.73 (803 s on H100 SXM) | done |
 | O4 | ~$0.40 | in-flight |
 | O5 | ~$0.40 | in-flight |
 | O10 | ~$0.10 (124M model, 4-5× faster) | in-flight |
 | **Total OCCAM-A** | **~$1.30** | of $5 cap |
 
-## Verdict (preliminary — pending O2 + O5)
+## Verdict
 
-**Headline**: O4 alone is sufficient to **falsify the 7-aux saddle
-hypothesis**. With CORPUS_S101, byte vocab, 2000 step, and even partial
-7-aux module exposure all held fixed, swapping ConsciousDecoderV2 → vanilla
-GPT-2-style decoder restores learning at 2.8B scale (CE 0.264).
+**Headline**: 3 of 4 carve-out axes break the saddle in 3 different ways:
 
-**O10 strengthens this**: starting from a known-sound pretrained 124M
-model, even WITH FULL 7-aux active, the model reaches CE 2.50 in 42 s.
-The recipe adds drag but does not produce the 3.83 saddle on a sound model.
+- **O4 (arch → vanilla)**: CE 0.264 = **biggest single-axis win** (14.5×
+  drop). Arch is the largest contributor.
+- **O2 (tokenizer → BPE 50K)**: 2.80 bits/byte (vs vA 5.52 bits/byte) = 49%
+  drop in per-byte information loss. Tokenizer is a real but secondary
+  contributor.
+- **O10 (foundation → pretrained GPT-2)**: CE 2.50 + 7-aux drag. Foundation
+  prior compensates for some architectural pathology but does not fully
+  rescue.
+- **O5 (corpus → wikitext)**: infra-failed (HF URI parser regression).
 
-**Carve-out scoreboard**:
+**Pattern**: Multiple compounding factors. The 3.83 saddle is NOT a single
+defect — it's the product of (a) custom-arch with Engine A/G + Ψ + cross-attn
+training instability AT SCALE, (b) byte vocab inflating per-byte CE, and
+(c) compressed token budget at 2000 step. Each Tier A swap removes one of
+these compounding factors:
 
-- **arch axis (O4)** = the saddle's source. ✅ falsified that arch is not.
-- corpus axis (O5) = pending; expect modest impact since O4 + O6 already
-  prove the corpus is learnable.
-- tokenizer axis (O2) = pending; expect modest impact since byte vocab
-  worked at 280M (O6).
-- foundation axis (O10) = partially confirms saddle is recipe-tolerant if
-  arch is sound.
+- O4 removes (a) → CE 0.264
+- O2 removes (b) → bits/byte 2.80
+- O10 removes (a) via pretrained init → CE 2.50
+
+Removing (a) gives the **biggest** single drop. Tier S O1 (CE-only at 3B,
+i.e., removing none of the compounders) → CE 3.81 = vA floor.
+
+**Final carve-out scoreboard**:
+
+- **arch axis (O4)** = the dominant source. Custom ConsciousDecoderV2 has
+  pathology at 8.9B scale from-scratch on byte data.
+- **tokenizer axis (O2)** = secondary source. Byte vocab inflates per-byte
+  CE roughly 2×.
+- foundation axis (O10) = pretrained init can partially compensate for
+  custom-arch pathology.
+- corpus axis (O5) = not measured.
 
 ## Honest C3 (cross-test)
 

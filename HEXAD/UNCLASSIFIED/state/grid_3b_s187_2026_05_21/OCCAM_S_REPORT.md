@@ -138,7 +138,7 @@ noise.
 | L_ce step 2000 | **3.8125** |
 | L_total | 3.8125 (CE only, all λ=0) |
 | L_route (unweighted spy) | 13,303,808 → indicating route-feature path explodes regardless of λ |
-| ckpt sha256 | `a139c3089b1dc063facbbd29344ab3a7e8e6150d4acda24716622ccf08239936` |
+| ckpt sha256 | `a7bbe8a0b5109c0d46ac4b68bce651716d2324f7dbfe9c948aed7fb712f72bfb` (1185 MB) |
 | dtype | bfloat16 |
 
 **Pre-registered interpretations** (settled):
@@ -159,8 +159,9 @@ worse* at fitting this corpus.** This is the load-bearing falsification.
 
 1. **bfloat16 instability at 3B**: at 8.92B params with bfloat16 weights and
    bsz=2 block=128, the effective fp16-range underflow on small gradient
-   updates could prevent the model from learning. O3 (f32 AdamW) in Tier B
-   tests this directly.
+   updates could prevent the model from learning. Tier B O3 tested f32 AdamW
+   (no int8 quantisation) and reached **CE 4.16** — slightly WORSE than vA.
+   So the optimizer-precision saddle hypothesis is also FALSIFIED.
 2. **Token starvation**: 2000 step × 256 token/step = 512K tokens. For 8.9B
    params Chinchilla-optimal is ~178B tokens (20× params). We're at 0.0003%
    of optimal token budget. CE 3.81 may be "barely started learning"
