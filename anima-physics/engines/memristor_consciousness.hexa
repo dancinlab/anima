@@ -16,7 +16,7 @@ struct MemristorEngine {
 }
 
 fn create_engine(n_cells: i32, topology: string) -> MemristorEngine {
-    total = n_cells * n_cells
+    let mut total = n_cells * n_cells
     return MemristorEngine(n_cells, topology, 0.0, total)
 }
 

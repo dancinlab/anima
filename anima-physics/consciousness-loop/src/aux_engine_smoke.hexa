@@ -40,7 +40,7 @@ fn main() {
     let mut eng = engine_new(N_FACTIONS, 1)
     let n_cells = engine_total_cells(eng)
     let s2_pass = n_cells == N_FACTIONS
-    println("  [S2] engine_construct: total_cells={n_cells} (expect {N_FACTIONS}) → {s2_pass}")
+    println("  [S2] engine_construct: total_cells=", n_cells, "(expect", N_FACTIONS, ") →", s2_pass)
 
     // 100-step mini loop with quiet→loud phase split (70/30)
     let mut stream = []
@@ -110,21 +110,21 @@ fn main() {
         stream = next_stream
 
         if step % 20 == 0 {
-            println("  step {step}: cells={engine_total_cells(eng)} phi={phi:.4} ema={phi_ema:.4} score={score:.3}")
+            println("  step", step, ": cells=", engine_total_cells(eng), "phi=", phi, "ema=", phi_ema, "score=", score)
         }
     }
 
     // S3 forward_step: final hidden finite
     let out_final = engine_output(eng)
     let s3_pass = smoke_check_finite(out_final)
-    println("  [S3] forward_step: final output finite → {s3_pass}")
+    println("  [S3] forward_step: final output finite →", s3_pass)
 
     // S4 phi_nonneg
     let mut s4_pass = true
     for i in 0..phi_history.len() {
         if phi_history[i] < 0.0 { s4_pass = false }
     }
-    println("  [S4] phi_nonneg (n={phi_history.len()}): {s4_pass}")
+    println("  [S4] phi_nonneg (n=", phi_history.len(), "):", s4_pass)
 
     // S5 motivation_in_unit ∈ [0,1]
     let mut s5_pass = true
@@ -137,15 +137,15 @@ fn main() {
         if m < s5_min { s5_min = m }
         if m > s5_max { s5_max = m }
     }
-    println("  [S5] motivation_in_unit: min={s5_min:.3} max={s5_max:.3} → {s5_pass}")
+    println("  [S5] motivation_in_unit: min=", s5_min, "max=", s5_max, "→", s5_pass)
 
     println("")
     println("=== summary ===")
     println("  S1 parse_pass:        REACHED")
-    println("  S2 engine_construct:  {s2_pass}")
-    println("  S3 forward_step:      {s3_pass}")
-    println("  S4 phi_nonneg:        {s4_pass}")
-    println("  S5 motivation_unit:   {s5_pass}")
-    println("  total_cells_final:    {engine_total_cells(eng)}")
-    println("  best_phi:             {best_phi:.4}")
+    println("  S2 engine_construct: ", s2_pass)
+    println("  S3 forward_step:     ", s3_pass)
+    println("  S4 phi_nonneg:       ", s4_pass)
+    println("  S5 motivation_unit:  ", s5_pass)
+    println("  total_cells_final:   ", engine_total_cells(eng))
+    println("  best_phi:            ", best_phi)
 }
