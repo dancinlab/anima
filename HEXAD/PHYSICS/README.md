@@ -53,10 +53,17 @@ PASS = 자발 발화 capability 의 *필요조건* 만족, *충분조건* 아님
 | `fpga/partial_reconfig` | 런타임 FPGA partial reconfig | ✅ 5/5 | §188 |
 | `phi_substrate_consensus` | Tukey biweight Φ consensus 5-substrate | ✅ 5/5 | §188 |
 | `HEXAD/CHAT/spontaneous_smoke` | anima 8-factor motivation closed-form | ✅ F-SPONT-1..7 | §188 |
+| `engines/analog_consciousness` | analog dynamics engine (385 LoC) | ✅ F-ANALOG-1..5 | §188g v2 (`6ea299145`) |
+| `engines/izhikevich_consciousness` | Izhikevich spiking neuron engine (307 LoC) | ✅ F-IZ-1..5 | §188g v2 (`6ea299145`) |
+| `engines/snn_consciousness` | spiking-neural-net engine (349 LoC) | ✅ F-SNN-1..5 | §188g v2 (`6ea299145`) |
+| `engines/oscillator_laser_engine` | oscillator-laser hybrid engine (331 LoC) | ✅ F-OL-1..5 | §188g v2 (`6ea299145`) |
+| `engines/photonic_consciousness` | photonic-substrate engine (418 LoC) | ✅ F-PH-1..5 | §188g v2 (`6ea299145`) |
+| `engines/quantum_consciousness` | quantum-substrate engine (514 LoC) | ✅ F-Q-1..5 | §188g v2 (`6ea299145`) |
+| `engines/thermodynamic_consciousness` | thermodynamic-substrate engine (416 LoC) | ✅ F-TH-1..5 | §188g v2 (`6ea299145`) |
 
-**21 substrate ✅ PASS** — 신경학 (5) + 사회 (1) + 광학 (2) + 양자 (1) +
+**28 substrate ✅ PASS** — 신경학 (5) + 사회 (1) + 광학 (2) + 양자 (1) +
 열역학 (1) + FPGA (3) + 운동/감각 (3) + memristor (1) + anima-spec
-(2) + cross-substrate (2).
+(2) + cross-substrate (2) + **engines impl (7, §188g v2)**.
 
 ### §2.2 🟡 partial / 🔥 in-progress
 
@@ -75,11 +82,30 @@ PASS = 자발 발화 capability 의 *필요조건* 만족, *충분조건* 아님
 | `consciousness-loop/src/main_longrun` | hexa build failed | inbox patch |
 | `engines/memristor_consciousness` | hexa build failed | inbox patch |
 
-### §2.4 ⚠ empty (120s timeout OR silent pass)
+### §2.4 ⚠ empty (deprecated — `§188g LANDED, all promoted to §2.1`)
 
-`engines/{analog, izhikevich, snn, photonic, quantum, thermodynamic}_consciousness`,
-`engines/oscillator_laser_engine` (anima-physics) — 300s retry verify
-필요.
+~~`engines/{analog, izhikevich, snn, photonic, quantum, thermodynamic}_consciousness`,
+`engines/oscillator_laser_engine` (anima-physics)~~ — 7 engines actual
+impl + 5/5 falsifier PASS each (§188g v2 `6ea299145`), 모두 §2.1 로
+promote. §6.11 의 "120s timeout hypothesis FALSIFIED — engines/*.hexa
+are stubs" 진단이 §188g impl cycle 으로 closure.
+
+### §2.5 G2 6 falsifier substrate (선택, §188 outside)
+
+anima-physics G2 추가 6 substrate × 30 falsifier PASS (commit `6ea299145`
+"all bg go" 4차) — §188 35-substrate matrix 외 별도 inventory:
+
+| substrate | falsifier | source | last fire |
+|---|---|---|---|
+| `trapped_ion` | provenance gate | anima-physics G2 | §G2 (`6ea299145`) |
+| `superconducting` | provenance gate | anima-physics G2 | §G2 (`6ea299145`) |
+| `analog` (QuEra Aquila) | analog cloud | anima-physics G2 | §G2 (`6ea299145`) |
+| `cmos` (180nm ring osc) | ring-osc native | anima-physics G2 | §G2 (`6ea299145`) |
+| `arduino` (NE555) | NE555 timer | anima-physics G2 | §G2 (`6ea299145`) |
+| `web` | web substrate | anima-physics G2 | §G2 (`6ea299145`) |
+
+**6 substrate × ~5 falsifier = 30/30 PASS** (anima-physics G2 inventory,
+§188 35-row count 와 별도).
 
 ## §3 진행상황 (cycle ledger pointer)
 
@@ -88,6 +114,12 @@ PASS = 자발 발화 capability 의 *필요조건* 만족, *충분조건* 아님
 - §188 (2026-05-21) — **35-substrate parallel fire $0 Mac local, 21 PASS**.
   state: `HEXAD/NEUROMORPHIC/state/spontaneous_substrate_parallel_s188_2026_05_21/`.
   commit: `f74d8a425`. PHILOSOPHY append: `§verdict_spontaneous_substrate_parallel_s188_2026_05_21`.
+- §188g (2026-05-21) — **7 engines actual impl + 5/5 falsifier PASS each
+  (35/35 aggregate)**. ⚠ empty 7 stubs (analog/izhikevich/snn/photonic/
+  quantum/thermodynamic/oscillator_laser_engine) → 307-514 LoC impl + 모두
+  §2.1 ✅ promote. state: `HEXAD/NEUROMORPHIC/state/spontaneous_substrate_parallel_s188_v2_2026_05_21/`
+  (SUMMARY_V2.md + 7 `<engine>.v2.log` evidence). source: `anima-physics/state/s188g_engines_2026_05_21/summary.json`.
+  commit: `6ea299145`. §188 PASS 21 → **28**, ⚠ empty 7 → **0**.
 
 ## §4 cross-link
 
@@ -116,7 +148,9 @@ PASS = 자발 발화 capability 의 *필요조건* 만족, *충분조건* 아님
    별도 cycle.
 4. **build error 4건** — anima-physics module deps 의 hexa-lang upstream
    gap. 별도 inbox patch + 분리 cycle.
-5. **⚠ empty 7건** — 120s timeout 가능성. 300s retry verify 필요.
+5. ~~**⚠ empty 7건** — 120s timeout 가능성. 300s retry verify 필요.~~
+   **CLOSED (§188g v2 `6ea299145`)** — timeout hypothesis FALSIFIED, 7
+   engines 모두 stub→impl elevation + 5/5 falsifier PASS, §2.1 로 promote.
 
 ---
 

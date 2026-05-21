@@ -1,0 +1,30 @@
+Building for debugging...
+[0/3] Write swift-version--58304C5D6DBC2206.txt
+Build of product 'DemiurgeCLI' complete! (0.10s)
+action: 검증 (검증) · domain=brain — dispatching…
+## brain + verify — 엔진 도구 없음 (g3)
+
+**조사 결과**
+
+| 항목 | 상태 |
+|---|---|
+| `ActionDispatch` 라우팅 | `(.verify, "brain")` 케이스 **없음** — 14개 verify 도메인 중 brain 미포함 (component / chip / cern / sscb / scope / fusion / energy / bot / space / rtsc / mobility / antimatter / firmware 만 wire-up) |
+| 해당 Producer 타입 | `BrainAnalyzeProducer` 만 존재 (`brain + analyze` 용, brian2 LIF). `BrainVerifyProducer` 는 **미작성** |
+| `exports/brain/verify/` 레코드 | 1건 존재 (`2026-05-21T08-22-26Z/anima_kuramoto_*.json`) — 그러나 `producer = "anima-kuramoto-loihi-akida-bridge"` 즉 **anima 측 외부 producer 가 demiurge 의 verify slot 으로 떨군 skeleton**, demiurge 측 엔진이 측정한 결과 아님 |
+
+**그 1건의 레코드 자체도 GATE_OPEN**
+
+`anima_kuramoto_20260521T082226Z.json` 내용:
+- `verdict.gate_state`: `GATE_OPEN`
+- `provenance.scope_caveats`: `["kuramoto local sim is reference numpy, NOT silicon spike-event", ..., "brain producer oracle parity not yet authored (TODO: demiurge rfc)"]`
+- `verdict.rationale`: `"skeleton emit — brain oracle parity TODO; r_tail=0.951 at K=5.00 provisional"`
+
+즉 **레코드 본인이 "측정 아님 · skeleton · TODO"** 라고 명시.
+
+**결론 (g3 — over-claim 금지)**
+
+- `'실제로 돌리기'` 를 눌러도 demiurge 쪽에는 돌릴 **엔진 도구가 아직 없음**. dispatch 가 brain verify 케이스를 모르므로 unsupported action 으로 떨어집니다 (`brain + analyze` 만 가능 — 그것도 brian2 단일 LIF, GATE_OPEN, algorithm verification 일 뿐 실제 brain 신호 측정 아님).
+- `exports/brain/verify/` 에 있는 1건은 anima 가 떨군 skeleton 이라 demiurge verify 의 측정 근거로 인용할 수 없음. ✅ / 측정완료 주장 불가.
+- 다음 단계는 `BrainVerifyProducer` (oracle parity producer) 의 RFC 작성 — 해당 레코드 caveat 와 `BrainAnalyzeProducer.swift:22` 의 patch-clamp + Hodgkin-Huxley + Allen Brain Atlas 흡수 전제와 일치.
+---
+⏳ no new measured record — this stage has not been measured (g3).

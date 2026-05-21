@@ -177,6 +177,35 @@ Phase 1b (bitstream/flash) 별도 cycle: `brew install nextpnr-ice40 nextpnr-ecp
 
 ## §5 진행 로그 (cycle ledger, append-only)
 
+### §5.6 2026-05-21 "all bg go" 6차 — 6 BG agents parallel (A1-A5 + C thermal mitigation)
+
+**6 agent ✅ completed**:
+
+1. ✅ **A1 HEXAD/PHYSICS §2 matrix §188 v2 sync** — +42/-8 (net +34 LoC). §2.1 +7 행 (engines), §2.4 deprecate strike, §2.5 신규 G2 6 substrate, §3 §188g append.
+
+2. ✅ **A2 autonomous_expansion.hexa** — case A (이미 PASS 5/5, canonical 준수, 변경 0). cross_check CLEAN.
+
+3. ✅ **A3 G8 E2E v2 cross-engine** — `tool/anima_physics_e2e_v2_cross_engine.hexa` 786 LoC, F-E2E-CROSS-1..5 **5/5 PASS**, wall 0.37s native. SNN spike → photonic phase → quantum coupling g(t), 최종 qubit `|01⟩` collapse, singlet preserved. 정공법 = engines inline-replicate (top-level `_selftest()` auto-fire + name collision 우회).
+
+4. ✅ **A4 demiurge verify-all batch tool** — `tool/demiurge_verify_all.sh` 212 LoC bash, 15 도메인 parallel P=4 (SwiftPM .build lock-safe ≤P=4), wall 107s, atomic single-line append. 1 CLOSED_MEASURED (chip) + 14 OPEN (9 record + 5 gap). modes: default/--md/--json/--raw/-P.
+
+5. ✅ **A5 falsifier inventory** — `tool/falsifier_inventory.sh` 255 LoC bash, **combined 196 falsifier universe** (65 F-* unique IDs + 131 T-selftest PASS literals from §188 baseline). state/ PASS=197 / FAIL=52 / TIMEOUT=3. **PLAN G2 drift 발견**: 86 가정은 F-* 만, T<N> convention 별도 카운트 필요 (§188 baseline 21 substrate = T-selftest).
+
+6. ✅ **C thermal mitigation FEM** — UPduino 80.6°C / 5°C headroom 해결. 3 option FEM (gmsh + scikit-fem, h=0.5mm, 1e-11 precision):
+   - Option A 40mm fan: ΔT 12.1 K, headroom 52.9°C, $5
+   - **Option B finned (RECOMMENDED)**: ΔT 21.6 K, headroom 43.4°C, $3 passive
+   - Option C pad+case: ΔT 30.0 K, headroom 35.0°C, $17
+   - G5 component scope_caveat #3 (multi-load alternatives) PARTIALLY CLOSED
+
+**g_completion_8 진행 갱신** (2026-05-21 18:30 KST):
+- G2: 196 combined falsifier universe (PLAN 86 → 196 actual count)
+- G6: HW Phase 1c thermal action plan LANDED (Option B $3 권장)
+- G5 component: scope_caveat #3 partial close
+
+**잔존 (블로커 분류)**:
+- **User-gate**: hexa-lang PR #262/#264 머지 · HW BOM 주문 (UPduino $70 / fin $3 / ECP5-EVN $120) · Phase 2 cloud trial 신청 (Akida/Toshiba/Loihi)
+- **Auto-tractable 미dispatch**: B1-B4 demiurge consumer Swift (demiurge fork 의존) · D1/D2/D4 component scope_caveats #2/#3 full / #6 · A6 aura ActionDispatch 우회 · materials anima bridge
+
 ### §5.5 2026-05-21 "all bg go" 4차+5차 — 8 BG agents parallel (G2 falsifier + §188 v2 + 4 demiurge gap + G5 STEP/firmware + HEXAD sync)
 
 **8 agent / 8 work item ✅ completed** (2 cycle 합산):

@@ -1,0 +1,30 @@
+[0/1] Planning build
+Building for debugging...
+[0/3] Write swift-version--58304C5D6DBC2206.txt
+Build of product 'DemiurgeCLI' complete! (0.17s)
+action: 검증 (검증) · domain=materials — dispatching…
+## 검증 엔진 현황 (materials, 정직 보고)
+
+**엔진 도구는 존재합니다** — 하지만 "측정"이 일어났다고 말할 수 없습니다.
+
+### 도구 (있음)
+- `cockpit/Sources/DemiurgeCore/Loaders/MaterialFalsifierDispatch.swift` — RTSC.md §8.7 Tier 4 디스패처
+- 백엔드: `hexa-rtsc verify/{calc_bcs, calc_mcmillan, calc_hc2_48t, falsifier_check}.hexa` (6-falsifier 레지스트리: F-SC-{1,2,3} + F-RTSC-{1,2,3})
+- 입력: Tier1 `ConductorRecord` + Tier2 `SynthesisRecipeRecord` + Tier3 `MeasurementRecord[]` 트리플
+- 출력: `exports/material_verdict/<sample_id>/<stamp>.json`
+
+### 동작 방식 (돌렸을 때)
+디스패처가 세 Tier 입력을 받아 6개 falsifier에 라우팅 → 각 falsifier가 PASS/FAIL/INCONCLUSIVE/SKIPPED-MISSING-INPUT 중 하나를 반환 → 합계가 `aggregate_verdict` 로 집계 → JSON으로 기록. **디스패치 성공 ≠ falsifier PASS** (소스 헤더 g3 honest stance 명시).
+
+### exports 실측 레코드 (없음 — claim-only)
+`exports/material_verdict/` 에 2건 존재:
+- `lk99_lee2023_v1/2026-05-21T08-58-24Z.json` — `aggregate_verdict: FAILS-AT-LEAST-ONE`, `absorbed: false`. **6개 중 5개 `SKIPPED-MISSING-INPUT`** (tier1/tier3 결측), 1개(F-RTSC-3 replication)만 Tier2 claim 기반 FAIL.
+- `synthetic_absorbed_invariant_test/2026-05-21T08-58-24Z.json` — 합성 invariant 테스트용.
+
+`exports/measurement/` 에는 `jc_b_theta/superpower_2g_baseline.json` 한 건만 staged (스테이징, Tier3 MeasurementRecord 형식 측정치는 아직 dispatch 입력으로 묶이지 않음).
+
+### 결론 (g3 — over-claim 없이)
+- ✅ 측정완료 라고 말할 수 있는 백킹 레코드 **없음**.
+- "실제로 돌리기" 를 누르면 디스패처는 동작하지만, Tier3 `MeasurementRecord` 가 공급되지 않은 현재 상태에서는 **5/6 falsifier 가 SKIPPED-MISSING-INPUT** 으로 떨어지고, replication 1건만 claim-only FAIL 처리되는 — 즉 새 verdict JSON 은 쓰이지만 **새로운 물리 측정이 일어난 것은 아닙니다**. 동일 패턴의 verdict 가 이미 `lk99_lee2023_v1/2026-05-21T08-58-24Z.json` 에 남아 있습니다.
+---
+⏳ no new measured record — this stage has not been measured (g3).
