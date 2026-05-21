@@ -1,0 +1,17 @@
+=== S187 3B GRID variant=B dispatch start 2026-05-20T18:35:53Z ===
+    lambdas: psi=1.00 route=0.20 phi=0.30 cycle=0.15 curious=0.10 replay=-0.05
+    arch:    d=3072 L=28 nh=24 nkv=8  (head_dim=128 GQA_groups=3)
+    train:   steps=2000 bsz=16 block=256 lr=3e-4 warmup=200
+[create] trying GPU: NVIDIA H100 80GB HBM3
+[create] resp: {"errors":[{"message":"Something went wrong. Please try again later or contact support.","path":["podFindAndDeployOnDemand"],"extensions":{"code":"INTERNAL_SERVER_ERROR"}}],"data":{"podFindAndDeployOnDemand":null}}
+[create] trying GPU: NVIDIA H100 NVL
+[create] resp: {"errors":[{"message":"Something went wrong. Please try again later or contact support.","path":["podFindAndDeployOnDemand"],"extensions":{"code":"INTERNAL_SERVER_ERROR"}}],"data":{"podFindAndDeployOnDemand":null}}
+[create] trying GPU: NVIDIA H100 PCIe
+[create] resp: {"errors":[{"message":"There are no longer any instances available with the requested specifications. Please refresh and try again.","path":["podFindAndDeployOnDemand"],"extensions":{"code":"SUPPLY_CONSTRAINT","userId":"user_3BLIYhoMm3ticiR5xIcEIzZCVWo"}}],"data":{"podFindAndDeployOnDemand":null}}
+[create] trying GPU: NVIDIA A100-SXM4-80GB
+[create] resp: {"errors":[{"message":"Something went wrong. Please try again later or contact support.","path":["podFindAndDeployOnDemand"],"extensions":{"code":"INTERNAL_SERVER_ERROR"}}],"data":{"podFindAndDeployOnDemand":null}}
+[create] trying GPU: NVIDIA A100 80GB PCIe
+[create] resp: {"errors":[{"message":"There are no longer any instances available with the requested specifications. Please refresh and try again.","path":["podFindAndDeployOnDemand"],"extensions":{"code":"SUPPLY_CONSTRAINT","userId":"user_3BLIYhoMm3ticiR5xIcEIzZCVWo"}}],"data":{"podFindAndDeployOnDemand":null}}
+FATAL: no pod from GPU cascade
+[teardown] myself.pods = {"data":{"myself":{"pods":[{"id":"eu79mxlh61iv4b"},{"id":"h5b8l3ohd1y09x"},{"id":"i54dlpmjhgihpz"}]}}}
+=== S187 3B GRID variant=B dispatch end 2026-05-20T18:36:20Z rc=1 ===

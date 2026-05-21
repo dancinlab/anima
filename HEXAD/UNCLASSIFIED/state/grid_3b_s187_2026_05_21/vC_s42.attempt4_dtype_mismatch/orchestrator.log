@@ -55,3 +55,12 @@ TRAIN_PID 639
 [train-C]     return F.linear(input, self.weight, self.bias)
 [train-C]            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 [train-C] RuntimeError: expected mat1 and mat2 to have the same dtype, but got: float != c10::BFloat16
+[train-C]     return F.linear(input, self.weight, self.bias)
+[train-C]            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[train-C] RuntimeError: expected mat1 and mat2 to have the same dtype, but got: float != c10::BFloat16
+[teardown] terminating pod x4fyk7ejfai9fh (rc=0, SAVE_POD=0)
+./dispatch_s187_3b_runpod.sh: line 85: 61860 Terminated: 15          ( sleep "$WATCHDOG_SEC"; if [ ! -s "$VDIR/result.json" ]; then
+    echo "WATCHDOG FIRED $(date -u +%FT%TZ): no result.json after ${WATCHDOG_SEC}s - terminating pod ${POD_ID:-?}" > "$FAIL_MARKER"; [ -n "$POD_ID" ] && gql "{\"query\":\"mutation { podTerminate(input:{podId:\\\"$POD_ID\\\"}) }\"}" > /dev/null; pkill -P $$ 2> /dev/null;
+fi )
+[teardown] myself.pods = {"data":{"myself":{"pods":[]}}}
+=== S187 3B GRID variant=C dispatch end 2026-05-20T18:19:38Z rc=0 ===
