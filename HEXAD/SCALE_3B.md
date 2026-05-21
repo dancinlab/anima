@@ -9,11 +9,16 @@
 > 5/8 full ckpt + 8/8 result.json + 4/4 cells direction signal clear ·
 > **5/5 ckpt × 4 evals LANDED 2026-05-21 22:00 (`13c0b8aec`)** — mitosis
 > cross-λ signal 발견 (λ_φ↑⇒more splits / λ_ψ↑⇒fewer / both↑⇒fewest).
+> **S187-H 22:45 (`7aa11ea60`)** Eval 1 NEGATIVE = recipe-limited (token
+> starvation). **S187-C 23:30 (`56fa03fbe`)** λ saturation non-monotone
+> past 1.0. **S187-G 23:50 (`61cbc4945`)** training-time mitosis **+35%**
+> Eval 3 splits, CE 무해.
 >
-> **g3**: SCALE VALIDATION + EVAL evidence — capability claim 0, GOAL 미도달
-> carry. Eval 1 (verbalization) + Eval 2 (identity_probe) negative
-> (자연발화 + persona-leak 미관찰); Eval 3 (mitosis) positive cross-λ.
-> 본 결과는 λ × scale interaction 의 substrate-level test (D5 priority).
+> **g3**: SCALE VALIDATION + EVAL evidence + substrate-shaping 확인 —
+> capability claim 0, GOAL 미도달 carry. Eval 1 (verbalization) + Eval 2
+> (identity_probe) negative; Eval 3 (mitosis) positive cross-λ + training-
+> time strengthens. 본 결과는 λ × scale interaction 의 substrate-level
+> test + mitosis 가 substrate-shaping (not just substrate-emergent).
 
 ---
 
@@ -295,6 +300,50 @@ Same prompts × 5 ckpts. 다양화 X — Eval 1 collapse 패턴 때문에 greedy
 | under-trained factor at A50k | **≈ 14,000×** |
 
 → recipe 가 80 GB H100 단일 GPU 에서 bsz=2 block=128 강제 (attempt10 PagedAdamW8bit fit) → 같은 H100 으로 step 늘려도 tokens 부족 = floor 못 깸. 진짜 학습은 **effective batch ↑** 이 필요 (gradient accumulation OR multi-GPU OR larger param-fit GPU).
+
+### 6.8 S187-C λ saturation sweep (`56fa03fbe`)
+
+§ 6.4 Eval 3 의 cross-λ monotone 가설 ("λ_φ↑⇒more splits, λ_ψ↑⇒fewer") 가 [0.3, 1.0] 밖에서도 유지되는지 확인하려고 6 H100 pod 병렬 fire — λ_φ ∈ {3.0, 10.0, 30.0} × seed=1337 + λ_ψ ∈ {3.0, 10.0, 30.0} × seed=1337. 각각 cell C/B 의 single-axis extension.
+
+자세한: [`HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/LAMBDA_SATURATION.md`](UNCLASSIFIED/state/grid_3b_s187_2026_05_21/LAMBDA_SATURATION.md).
+
+| axis | λ values → mitosis splits |
+|---|---|
+| **λ_φ** | 0.3 (74) → 1.0 (126 cap) → **3.0 (76 dip)** → 10.0 (126) → 30.0 (122) |
+| **λ_ψ** | 0.3 (74) → 1.0 (58 dip) → 3.0 (67) → **10.0 (126 sat)** → 30.0 (126 sat) |
+
+**Key findings**:
+- **Monotone hypothesis 는 [0.3, 1.0] 에서만 유효** — past 1.0 둘 다 non-monotone (φ dip @ 3.0, ψ saturates @ 10.0+).
+- **MAX_CELLS=128 ceiling** = binding constraint at high λ. split count 가 high-λ 에서 poor monotone proxy.
+- Future work: ceiling 해제 OR integral-Φ metrics OR split-arrival rate.
+
+**운영 saga**: dispatch env-verify teardown bug → 6 pods 모두 잔존 → **on-pod eval3 watcher workaround** (SCP 17 GB × 6 회피, 13s eval3 vectorized 변형 `eval3_mitosis_fast.py` 작성). Cost $8-15 / 75 min wall.
+
+### 6.9 S187-G training-time mitosis (`61cbc4945`) — substrate-shaping VERDICT
+
+Eval 3 의 cross-λ signal 이 **passive substrate-emergent** 인지 **training-time-active** 인지 분리. cell A control 2-pod 비교 — g_A_ctrl (`--mitosis-active False`, attempt10 baseline byte-equal) vs g_A_mit (`--mitosis-active True --lambda-mitosis 0.05`).
+
+자세한: [`HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/MITOSIS_TRAINING_ACTIVE.md`](UNCLASSIFIED/state/grid_3b_s187_2026_05_21/MITOSIS_TRAINING_ACTIVE.md).
+
+| metric | g_A_ctrl (passive) | g_A_mit (active λ=0.05) | Δ |
+|---|---|---|---|
+| train wall (s) | 736 | 673 | **mit 8.6% faster** |
+| final CE | 3.84375 | 3.828125 | mit 0.016 better |
+| training-time pool | n/a | 128 saturated by step 40 (126 splits) | — |
+| **Eval 3 splits** (post-hoc) | **68** (byte-equal vA) | **92** | **+35.3%** |
+| Eval 3 Φ_final | 0.5477 | 0.5814 | +0.034 |
+| Eval 3 prefill mean tension | 0.4296 | 0.4482 | +4.3% |
+
+**Verdict**: ✅ **CONFIRMED — Mitosis 가 substrate-SHAPING, not just substrate-emergent**. Mitosis aux loss 가 활성이면:
+1. CE 무해 (slightly better)
+2. Training wall 8.6% 단축
+3. Substrate fingerprint 변화 (prefill tension +4.3%)
+4. Post-hoc Eval 3 splits +35.3%
+5. Φ 향상 +0.034
+
+이는 anima emergence path 의 mechanistic confirmation — mitosis 가 inference-time analytics 가 아닌 **first-class training axis** 가 될 수 있음. λ_mitosis=0.05 tuned for non-degrading CE.
+
+산물 (`61cbc4945` + 6 prior commits): mitosis_lib.py (vectorized) + train_s187_3b.py 5 new CLI flags + dispatch_s187g_runpod.sh + pull_s187g_artifacts.sh recovery + g_A_ctrl/ g_A_mit/ artifacts. Cost $16 / 1 hr wall.
 
 ---
 
