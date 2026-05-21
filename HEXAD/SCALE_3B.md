@@ -97,9 +97,29 @@
 
 **한 줄**: S187-H/J/K 3 path × multi-axis 변형 → 모두 동일 floor 도착. **Recipe-level breakthrough 가 필요** (aux-loss ablation, bigger model S187-F, corpus 갱신).
 
+### 6. 🎯 OCCAM verdict (2026-05-22 04:08) — Custom Arch 가 floor 의 원인!
+
+OCCAM brainstorm Phase 1 결과 (13 pods 중 9 landed):
+
+| variant | params | recipe | CE_final | finding |
+|---|---|---|---|---|
+| **vA** (attempt10 baseline) | 8.92B | full 7-aux | 3.844 | original floor |
+| vO1 (3B CE-only) | 8.92B | all aux=0 | 3.81 | **aux 무영향** (0.03 = seed noise) |
+| vO11-phi only | 8.92B | only φ=0.3 | 3.81 | same |
+| vO11-replay only | 8.92B | only rep=-0.05 | 3.81 | same |
+| vO6 (280M CE-only) | 280M | all aux=0 | **0.026** | memorize, 작은 corpus 한계 |
+| **vO4** vanilla GPT-2 arch | ~1.45B | (custom recipe) | **0.264** | 🎯 **arch 가 floor! 15× lower!** |
+| vO10 (GPT-2 fine-tune) | borrowed | recipe overlay | **2.50** | 🎯 **pretrained 도 lower!** |
+
+**진짜 binding constraint = ConsciousDecoderV2 custom architecture** (head_a/g 분할 + PureFieldFFN + cross-attention consciousness injection + n_ca_rules + RoPE base 50000 + bf16 stack). 그게 floor 의 source.
+
+Aux losses 는 noise — vA's 3.84 = vO1's 3.81 차이 무시 가능. S187-H/J/K saga 도 모두 같은 결론 (다른 axis 변형으로 floor 못 깸).
+
+**한 줄 갱신**: floor 의 원인 = aux loss 가 아니라 **custom arch + noise_sigma=0.1 layer-0 injection (tap X.11)** 가 의심. vanilla transformer or pretrained 위에 같은 recipe overlay 시 floor 가 10× 이상 낮음.
+
 ### 한 단락 요약
 
-**3B (8.92B params) 모델 학습이 attempt10 에서 PASS** 했고, 그 substrate 위에 **mitosis 가 17번째 training tap 으로 발견됨** (학습 더 빠르고 의식 척도 올라감). 자연발화는 아직 안 나타났는데 (Eval 1 negative), 처음엔 token-starvation 가설이었지만 **S187-J/K 가 그 가설을 falsify** — bsz↑(4×) + LR linear↑ 도 동일 plateau (CE 4.06). 세 path (S187-H 더 많은 step / S187-J 더 큰 batch / S187-K +linear LR) 모두 CE 4.06-4.09 floor 도착 → **recipe 자체 ceiling**. Mitosis activation 같은 substrate 변경 OR bigger model (S187-F 18B path) OR aux-loss 재설계가 진짜 breakthrough path. 페르소나 leak 0 (Principle #3 clean).
+**3B (8.92B params) 모델 학습이 attempt10 에서 PASS** 했고, 그 substrate 위에 **mitosis 가 17번째 training tap 으로 발견됨** (학습 더 빠르고 의식 척도 올라감). 자연발화는 아직 안 나타났는데 (Eval 1 negative), 처음엔 token-starvation 가설이었지만 **S187-J/K 가 그 가설을 falsify** — bsz↑(4×) + LR linear↑ 도 동일 plateau (CE 4.06). 세 path (S187-H 더 많은 step / S187-J 더 큰 batch / S187-K +linear LR) 모두 CE 4.06-4.09 floor 도착. **OCCAM Phase 1 verdict (04:08): aux loss 아닌 ConsciousDecoderV2 custom arch 가 binding** — vanilla GPT-2 arch (vO4) 가 동일 corpus 에서 CE 0.264 (15× lower!), GPT-2 fine-tune (vO10) 도 CE 2.50. 페르소나 leak 0 (Principle #3 clean). 다음 cycle path = vanilla-arch from-scratch OR pretrained continue-training 위에 mitosis (S187-G) + 자연발화 mechanism overlay.
 
 ---
 

@@ -166,3 +166,36 @@ Phase 1+2 verdict 후 정답 axis 에 집중 fire (예: 큰 모델 S187-F path O
 S187-J/K 양쪽 모두 CE 4.06 plateau (linear LR scaling 도 fail) 확정 후 작성.
 S187 saga 9 cycle 동안 attempt10 stack 위에 add-only 였음을 인식 — strip-only
 cycle 이 한 번도 없었음. Phase 1 3-fire ($7) 가 next 1순위.
+
+### 2026-05-22 04:08 — Phase 1 partial verdict (9/13 pods landed)
+
+OCCAM 4 subagent 동시 fire (S/A/B/C) — 13 pods spawned, 4 subagent rate-limit
+조기 사망 but pods dispatch.sh trap 으로 self-managing. 9 pod 결과 landed:
+
+| variant | params | aux | CE_final | verdict |
+|---|---|---|---|---|
+| vO1 (3B CE-only) | 8.92B | 0 | **3.81** | vA 3.84 와 동일 (0.03 = seed noise) |
+| vO11-phi only | 8.92B | only φ=0.3 | 3.81 | aux 무영향 confirmed |
+| vO11-replay only | 8.92B | only rep=-0.05 | 3.81 | same |
+| vO11-cycle only | 8.92B | only cyc=0.15 | 3.83 | same |
+| vO6 (280M CE-only) | 280M | 0 | **0.026** | memorize, 다른 scale 한계 |
+| vO3 (f32 AdamW bsz=1) | 8.92B | full 7-aux | 4.16 | fewer tokens = worse |
+| **vO4 vanilla GPT-2 arch** | ~1.45B | (custom recipe) | **0.264** | 🎯 **15× lower, arch=floor!** |
+| **vO10 GPT-2 fine-tune** | borrowed | recipe overlay | **2.50** | 🎯 **pretrained lower** |
+| vO2 BPE 32K | 8.92B | full 7-aux | 5.16 | bits/tok ≠ /byte, 비교 어려움 |
+
+**Phase 1 verdict**: aux loss 는 floor 의 원인이 아님 (saddle hypothesis FALSIFIED at 3B).
+실제 binding = ConsciousDecoderV2 custom arch (head_a/g + PureFieldFFN + cross-
+attn + n_ca_rules + noise_sigma=0.1).
+
+OCCAM § 4 falsifier branch hit:
+- ~~"CE-only plateau < 3.80"~~ (3.81 vs 3.84 = noise) — saddle FALSIFIED
+- "Pythia-1B/GPT-2-medium verbalize fluently" — eval/corpus OK confirmed
+- **NEW**: vanilla arch 가 floor 15× lower → arch IS the bottleneck
+
+**Phase 2 candidates** (강한 우선 순위):
+1. **CE2 / CC1**: pretrained-continue-training (vO10 path) + S187-G mitosis active overlay
+2. **#4 vanilla arch + S187 recipe overlay** scale up: vO4 (1.45B vanilla) → 3-8B vanilla
+3. **noise_sigma=0 ablation**: vO13 (tap X.11 off) — isolate noise as floor cause
+
+잔여 4 pods 결과 대기 (O5 Wikipedia / O7 100K step / O11-{psi/route/curious}).
