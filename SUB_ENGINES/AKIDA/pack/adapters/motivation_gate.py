@@ -42,7 +42,38 @@ class MotivationGateAdapter(AkidaAdapter):
         self._state.update({"threshold": self.threshold,
                             "hysteresis": self.hysteresis,
                             "n": self.n_neurons})
-        return {"kind": "motivation_gate", "threshold": self.threshold}
+        # AKD1000 V1 layer stack: 8-factor input → single FC unit (threshold
+        # = bias).  Binary weights + binary act = pure event-fire (chip stays
+        # at the ~50 mW idle floor unless input crosses threshold).
+        from ..runtime.metatf_runtime import get_runtime
+
+        akida = get_runtime()
+        model = akida.Model()
+        model.add(akida.InputData(input_shape=(self.n_neurons, 1, 1),
+                                  input_bits=1, name="motiv_in"))
+        model.add(akida.FullyConnected(units=1, weights_bits=1,
+                                       activation=True, act_bits=1,
+                                       name="motiv_gate"))
+        self._akida_model = model
+        self._state["akida_layer_count"] = len(model.layers)
+        return {"kind": "motivation_gate", "threshold": self.threshold,
+                "akida_model": model, "layers": list(model.layers)}
+
+    def _event_count_for_power(self) -> int:
+        # Single comparator emits at most 1 fire bit per step (typically 0).
+        # Use realised fire rate for a tighter estimate.
+        if self._step_count > 0:
+            rate = self._fire_count / self._step_count
+            return max(0, int(round(rate)))  # 0 or 1
+        return 0
+
+    def _estimate_npu_count(self) -> int:
+        # 1 FC unit = trivial — single NP, single neuron slot.
+        return 1
+
+    def _estimate_latency_us(self) -> float:
+        # Single comparator: cycle-counted at ~1 cycle.
+        return 5.5
 
     def step(self, input_data: Optional[Any] = None) -> dict:
         self.ensure_built()

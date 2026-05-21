@@ -45,7 +45,54 @@ class EEGPatternAdapter(AkidaAdapter):
         self._last_label = "null"
         self._state.update({"fs": self.fs, "bands": [b[0] for b in self.BANDS],
                             "n": self.n_neurons})
-        return {"kind": "eeg_pattern_classifier"}
+        # AKD1000 V1 layer stack: spectral-envelope detector built from a
+        # 1-channel InputConvolutional (band-pass-like 3×1 kernel) + an
+        # internal Convolutional (mid-band sharpening) + a binary FC head
+        # with AkidaUnsupervised for on-chip label learning.
+        # AKD1000 InputConvolutional: H ≥ 5 + C ∈ {1, 3}.  Use H=16 × W=16 ×
+        # C=1 to stay within the 5-256 H window with a wide enough field.
+        from ..runtime.metatf_runtime import get_runtime
+
+        akida = get_runtime()
+        model = akida.Model()
+        model.add(akida.InputConvolutional(
+            input_shape=(16, 16, 1),
+            kernel_size=3, filters=8,
+            weights_bits=2, act_bits=2,
+            name="eeg_band_input",
+        ))
+        model.add(akida.Convolutional(
+            kernel_size=3, filters=8,
+            weights_bits=2, act_bits=2,
+            name="eeg_band_mid",
+        ))
+        # Edge-learn head: 4 labels (mu / sleep / phi / null).
+        model.add(akida.FullyConnected(units=4, weights_bits=1, act_bits=1,
+                                       name="eeg_label_head"))
+        opt = akida.AkidaUnsupervised(
+            num_weights=4, num_classes=4,
+            initial_plasticity=1.0,
+            learning_competition=0.1,
+        )
+        model.compile(opt)
+        self._akida_model = model
+        self._state["akida_layer_count"] = len(model.layers)
+        self._state["edge_learn_enabled"] = True
+        return {"kind": "eeg_pattern_classifier",
+                "akida_model": model, "layers": list(model.layers)}
+
+    def _event_count_for_power(self) -> int:
+        # 4-label classifier: argmax → 1 spike event per inference (the
+        # winning label).  Mid-conv produces transient spikes ~ 8 NP-events.
+        return 8
+
+    def _estimate_npu_count(self) -> int:
+        # InputConv + Conv + FC = 3-layer pipeline, typically 3-4 NPs.
+        return 4
+
+    def _estimate_latency_us(self) -> float:
+        # 16×16 input → 256 spatial × 8 filters × 3-layer = ~6 cycles / px.
+        return float(5.0 + 6.0 * 16 * 16 / 300.0)
 
     def step(self, input_data: Optional[Any] = None) -> dict:
         self.ensure_built()

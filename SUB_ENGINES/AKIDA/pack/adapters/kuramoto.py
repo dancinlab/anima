@@ -39,7 +39,32 @@ class KuramotoAdapter(AkidaAdapter):
         self._theta = rng.uniform(0, 2 * np.pi, self.n_neurons)
         self._omega = rng.normal(0.0, self.omega_spread, self.n_neurons)
         self._state.update({"K": self.K, "n": self.n_neurons, "omega_spread": self.omega_spread})
-        return {"kind": "kuramoto_pool", "n": self.n_neurons}
+        # AKD1000 V1 layer stack: n×n coupling matrix encoded as a 4-bit FC
+        # layer (phase encoded into 4-bit activations).  Kuramoto integration
+        # itself is sw; the FC encodes the K-weighted mean-field projection.
+        from ..runtime.metatf_runtime import get_runtime
+
+        akida = get_runtime()
+        model = akida.Model()
+        model.add(akida.InputData(input_shape=(self.n_neurons, 1, 1),
+                                  input_bits=4, name="kuramoto_phase_in"))
+        model.add(akida.FullyConnected(units=self.n_neurons, weights_bits=4,
+                                       activation=True, act_bits=4,
+                                       name="kuramoto_coupling"))
+        self._akida_model = model
+        self._state["akida_layer_count"] = len(model.layers)
+        return {"kind": "kuramoto_pool", "n": self.n_neurons,
+                "akida_model": model, "layers": list(model.layers)}
+
+    def _event_count_for_power(self) -> int:
+        # Synchronised pool: every oscillator emits per period.  At dt=0.05
+        # and ω~0.3, that's roughly n events / step.
+        return int(self.n_neurons)
+
+    def _estimate_npu_count(self) -> int:
+        # n×n coupling matrix at 4-bit: 8×8 = 256 weights → still 1 NP.
+        # If n_neurons grows ≥ 32, dense coupling spills to 2 NPs.
+        return 2 if self.n_neurons >= 32 else 1
 
     def step(self, input_data: Optional[Any] = None) -> dict:
         self.ensure_built()

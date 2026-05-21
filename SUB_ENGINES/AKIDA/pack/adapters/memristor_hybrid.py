@@ -46,7 +46,45 @@ class MemristorHybridAdapter(AkidaAdapter):
         self._last_act = np.zeros(n, dtype=np.float64)
         self._state.update({"n": n, "eta": self.eta, "fb_src": self.feedback_idx_src,
                             "fb_dst": self.feedback_idx_dst})
-        return {"kind": "memristor_hybrid", "n": n}
+        # AKD1000 V1 layer stack: binary FC head + AkidaUnsupervised compile
+        # (mandatory for the Hebbian 1-shot path that this adapter wraps).
+        # See doc/akd1000_onchip_learning.md — edge learning requires
+        # binary weights + binary inputs + final FC.
+        from ..runtime.metatf_runtime import get_runtime
+
+        akida = get_runtime()
+        model = akida.Model()
+        model.add(akida.InputData(input_shape=(n, 1, 1), input_bits=1,
+                                  name="mem_in"))
+        model.add(akida.FullyConnected(units=n, weights_bits=1,
+                                       activation=True, act_bits=1,
+                                       name="mem_hebbian_head"))
+        # On-chip learn: competitive WTA + plasticity decay → mock approximates
+        # via Hebbian outer-product (intentional sw substitute).
+        opt = akida.AkidaUnsupervised(
+            num_weights=max(1, n // 2),
+            num_classes=n,
+            initial_plasticity=1.0,
+            learning_competition=0.1,
+            min_plasticity=0.1,
+            plasticity_decay=0.25,
+        )
+        model.compile(opt)
+        self._akida_model = model
+        self._state["akida_layer_count"] = len(model.layers)
+        self._state["edge_learn_enabled"] = True
+        return {"kind": "memristor_hybrid", "n": n,
+                "akida_model": model, "layers": list(model.layers)}
+
+    def _event_count_for_power(self) -> int:
+        # Hebbian co-fire: typically ~30-50% of neurons fire above threshold
+        # under nominal drive.
+        return max(1, self.n_neurons // 2)
+
+    def _estimate_npu_count(self) -> int:
+        # Edge-learn FC layer requires its own NP (per akida.AkidaUnsupervised
+        # constraints).  n=8 binary FC + plasticity table fits in 1 NP.
+        return 2 if self.n_neurons >= 64 else 1
 
     def step(self, input_data: Optional[Any] = None) -> dict:
         self.ensure_built()

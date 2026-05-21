@@ -711,6 +711,155 @@ class MetaTFMock:
         return f"<MetaTFMock version={self.version} devices={len(self._devices)}>"
 
 
+# --------------------------------------------------------------------------- #
+# CNN2SNN converter — host-side path (sparse_attention adapter uses this)
+# --------------------------------------------------------------------------- #
+class MockAkidaVersion(enum.Enum):
+    """Mirror of ``cnn2snn.AkidaVersion``."""
+    v1 = "v1"   # AKD1000 — pack target
+    v2 = "v2"   # AKD2000 — out-of-scope
+
+
+class MockCNN2SNN:
+    """Mock CNN2SNN converter — accepts Keras-style dict, returns a MockModel.
+
+    Mirrors the host-side flow described in ``doc/akd1000_quantization.md``:
+
+        cnn2snn.set_akida_version(AkidaVersion.v1)
+        akida_model = cnn2snn.convert(quantized_keras_model)
+        akida_model.save("foo.fbz")
+
+    Real CNN2SNN walks a Keras model, fuses quantize ops, and emits an
+    `akida.Model` with V1 layers.  The mock skips actual conversion and just
+    materialises an equivalent ``MockModel`` from a layer-config dict —
+    enough for the sparse-attention adapter to assert "I went through the
+    converter path" without needing the full Keras/TF stack on Mac.
+
+    The accepted ``keras_model_dict`` shape:
+
+        {
+          "name": "...",
+          "layers": [
+            {"type": "InputData", "input_shape": (8, 1, 1), "input_bits": 1},
+            {"type": "FullyConnected", "units": 8,
+             "weights_bits": 1, "act_bits": 1, "name": "attn_head"},
+            ...
+          ]
+        }
+
+    Unknown layer types raise ``ValueError`` (no silent passthrough — the
+    real converter is strict).
+    """
+
+    AkidaVersion = MockAkidaVersion
+    _target_version: MockAkidaVersion = MockAkidaVersion.v1
+
+    @staticmethod
+    def set_akida_version(version: MockAkidaVersion) -> None:
+        """Mirror ``cnn2snn.set_akida_version(v)``."""
+        if not isinstance(version, MockAkidaVersion):
+            raise TypeError(
+                f"set_akida_version requires MockAkidaVersion enum; got {type(version).__name__}"
+            )
+        MockCNN2SNN._target_version = version
+
+    @staticmethod
+    def get_akida_version() -> MockAkidaVersion:
+        return MockCNN2SNN._target_version
+
+    @staticmethod
+    def convert(keras_model_dict: dict,
+                file_path: Optional[str] = None,
+                input_scaling: Optional[tuple] = None) -> "MockModel":  # noqa: ARG004
+        """Mock CNN2SNN converter — accepts Keras-style dict, returns ``MockModel``."""
+        if not isinstance(keras_model_dict, dict):
+            raise TypeError(
+                f"convert() requires a dict (Keras-style model spec); got {type(keras_model_dict).__name__}"
+            )
+        if MockCNN2SNN._target_version != MockAkidaVersion.v1:
+            raise ValueError(
+                "anima Pack targets AKD1000 (NSoC_v1); "
+                f"got target_version={MockCNN2SNN._target_version.value} "
+                "— call cnn2snn.set_akida_version(AkidaVersion.v1) first"
+            )
+
+        m = MockModel()
+        for layer_cfg in keras_model_dict.get("layers", []):
+            ltype = layer_cfg.get("type")
+            if ltype == "InputData":
+                m.add(InputData(
+                    input_shape=tuple(layer_cfg.get("input_shape", (1, 1, 1))),
+                    input_bits=int(layer_cfg.get("input_bits", 4)),
+                    name=layer_cfg.get("name", ""),
+                ))
+            elif ltype == "InputConvolutional":
+                m.add(InputConvolutional(
+                    input_shape=tuple(layer_cfg.get("input_shape", (8, 8, 1))),
+                    kernel_size=int(layer_cfg.get("kernel_size", 3)),
+                    filters=int(layer_cfg.get("filters", 8)),
+                    name=layer_cfg.get("name", ""),
+                    weights_bits=int(layer_cfg.get("weights_bits", 1)),
+                    act_bits=int(layer_cfg.get("act_bits", 1)),
+                ))
+            elif ltype == "Convolutional":
+                m.add(Convolutional(
+                    kernel_size=int(layer_cfg.get("kernel_size", 3)),
+                    filters=int(layer_cfg.get("filters", 8)),
+                    name=layer_cfg.get("name", ""),
+                    weights_bits=int(layer_cfg.get("weights_bits", 1)),
+                    act_bits=int(layer_cfg.get("act_bits", 1)),
+                ))
+            elif ltype == "SeparableConvolutional":
+                m.add(SeparableConvolutional(
+                    kernel_size=int(layer_cfg.get("kernel_size", 3)),
+                    filters=int(layer_cfg.get("filters", 8)),
+                    name=layer_cfg.get("name", ""),
+                    weights_bits=int(layer_cfg.get("weights_bits", 2)),
+                    act_bits=int(layer_cfg.get("act_bits", 1)),
+                ))
+            elif ltype == "FullyConnected":
+                m.add(FullyConnected(
+                    units=int(layer_cfg.get("units", 1)),
+                    name=layer_cfg.get("name", ""),
+                    weights_bits=int(layer_cfg.get("weights_bits", 1)),
+                    activation=bool(layer_cfg.get("activation", True)),
+                    act_bits=int(layer_cfg.get("act_bits", 1)),
+                ))
+            else:
+                raise ValueError(
+                    f"MockCNN2SNN: unknown layer type {ltype!r}; "
+                    f"V1 supports InputData / InputConvolutional / Convolutional / "
+                    f"SeparableConvolutional / FullyConnected"
+                )
+
+        if file_path is not None:
+            m.save(file_path)
+        return m
+
+    @staticmethod
+    def check_model_compatibility(keras_model_dict: dict,
+                                  device: Optional[MockHwDevice] = None,  # noqa: ARG004
+                                  input_dtype: str = "uint8") -> None:
+        """Mirror ``cnn2snn.check_model_compatibility`` — raises on first issue."""
+        if input_dtype != "uint8":
+            raise ValueError(
+                f"AKD1000 InputConvolutional requires uint8 input; got {input_dtype}"
+            )
+        # If layers list has any V2-only types, fail loud
+        v2_only = {"Conv2D", "InputConv2D", "DepthwiseConv2D", "Add", "Concatenate",
+                   "Dense1D", "BufferTempConv", "Dequantizer"}
+        for layer_cfg in keras_model_dict.get("layers", []):
+            ltype = layer_cfg.get("type", "")
+            if ltype in v2_only:
+                raise ValueError(
+                    f"layer type {ltype!r} is Akida 2.0 only — not compatible with AKD1000"
+                )
+
+
+# Module-level alias so ``MetaTFMock.cnn2snn`` resolves like a real package.
+MetaTFMock.cnn2snn = MockCNN2SNN  # type: ignore[attr-defined]
+
+
 # pre-instantiated singleton — `from pack.mocks.metatf_mock import metatf_mock`
 metatf_mock = MetaTFMock()
 

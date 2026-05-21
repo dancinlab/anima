@@ -41,7 +41,35 @@ class SpikeTierLMHeadAdapter(AkidaAdapter):
         self._b = rng.normal(0, 0.01, self.vocab_size)
         self._state.update({"d_model": self.d_model, "vocab_size": self.vocab_size,
                             "top_k": self.top_k})
-        return {"kind": "spike_tier_lm_head", "vocab": self.vocab_size}
+        # AKD1000 V1 layer stack: linear LM head (d_model → vocab) as a
+        # 2-bit FC layer — top-k spike emit is implicit at act_bits=1 with
+        # threshold tuning post-quantize.
+        from ..runtime.metatf_runtime import get_runtime
+
+        akida = get_runtime()
+        model = akida.Model()
+        model.add(akida.InputData(input_shape=(self.d_model, 1, 1),
+                                  input_bits=2, name="lm_head_in"))
+        model.add(akida.FullyConnected(units=self.vocab_size, weights_bits=2,
+                                       activation=True, act_bits=1,
+                                       name="lm_head_dense"))
+        self._akida_model = model
+        self._state["akida_layer_count"] = len(model.layers)
+        return {"kind": "spike_tier_lm_head", "vocab": self.vocab_size,
+                "akida_model": model, "layers": list(model.layers)}
+
+    def _event_count_for_power(self) -> int:
+        # Top-k spike emit: exactly top_k spike events per step.
+        return int(self.top_k)
+
+    def _estimate_npu_count(self) -> int:
+        # vocab=64 × d_model=32 at 2-bit ≈ 4 KB weight matrix → 1 NP fine.
+        # vocab=128+ may need 2 NPs.
+        return 2 if self.vocab_size >= 128 else 1
+
+    def _estimate_latency_us(self) -> float:
+        # FC matmul dominates: d_model × vocab cycles, parallelised across NP.
+        return float(5.0 + self.vocab_size / 300.0)
 
     def step(self, input_data: Optional[Any] = None) -> dict:
         self.ensure_built()

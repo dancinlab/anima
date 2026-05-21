@@ -44,7 +44,41 @@ class ThetaGammaAdapter(AkidaAdapter):
         self._history = []
         self._state.update({"theta_hz": self.theta_hz, "gamma_hz": self.gamma_hz,
                             "dt": self.dt, "coupling": self.coupling})
-        return {"kind": "theta_gamma", "n": self.n_neurons}
+        # AKD1000 V1 layer stack: 1D-style rhythm via 3×1 Convolutional
+        # (effectively the temporal-conv filter for θ/γ envelope detection),
+        # followed by an FC head that emits the 2-bit phase code per cell.
+        from ..runtime.metatf_runtime import get_runtime
+
+        akida = get_runtime()
+        model = akida.Model()
+        # AKD1000 InputConvolutional requires HxWxC with C ∈ {1,3} and H ≥ 5.
+        # Use H=8 (covers 8-channel pool default) × W=1 × C=1.
+        model.add(akida.InputConvolutional(
+            input_shape=(max(self.n_neurons, 5), 1, 1),
+            kernel_size=3, filters=4,
+            weights_bits=2, act_bits=2,
+            name="tg_rhythm_conv",
+        ))
+        model.add(akida.FullyConnected(units=self.n_neurons,
+                                       weights_bits=2, act_bits=2,
+                                       name="tg_phase_head"))
+        self._akida_model = model
+        self._state["akida_layer_count"] = len(model.layers)
+        return {"kind": "theta_gamma", "n": self.n_neurons,
+                "akida_model": model, "layers": list(model.layers)}
+
+    def _event_count_for_power(self) -> int:
+        # γ-band fires ~6× per θ cycle → high event rate.  At dt=0.005,
+        # roughly n_neurons × 0.6 events / step.
+        return max(1, int(self.n_neurons * 0.6))
+
+    def _estimate_npu_count(self) -> int:
+        # Conv + FC pipeline: 2 NPs typical for 8-cell pool.
+        return 2
+
+    def _estimate_latency_us(self) -> float:
+        # 1D conv (3 taps) + FC: ~4 cycles / cell.
+        return float(5.0 + 4.0 * self.n_neurons / 300.0)
 
     def step(self, input_data: Optional[Any] = None) -> dict:
         self.ensure_built()

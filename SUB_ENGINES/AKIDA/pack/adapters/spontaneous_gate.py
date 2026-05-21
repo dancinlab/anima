@@ -51,7 +51,41 @@ class SpontaneousGateAdapter(AkidaAdapter):
                             "min_interval_steps": self.min_interval_steps,
                             "safety_block": self.safety_block,
                             "n": self.n_neurons})
-        return {"kind": "spontaneous_gate"}
+        # AKD1000 V1 layer stack: motivation accumulator (FC with 2-bit
+        # weights to encode decay × input) → single emit bit (binary FC head
+        # gates spontaneous fire).  No on-chip learning — gate threshold is
+        # a fixed scalar parameter (safety ratchet stays in numpy / orchestrator).
+        from ..runtime.metatf_runtime import get_runtime
+
+        akida = get_runtime()
+        model = akida.Model()
+        model.add(akida.InputData(input_shape=(self.n_neurons, 1, 1),
+                                  input_bits=2, name="spon_in"))
+        model.add(akida.FullyConnected(units=self.n_neurons,
+                                       weights_bits=2, act_bits=2,
+                                       name="spon_accum"))
+        model.add(akida.FullyConnected(units=1, weights_bits=1, act_bits=1,
+                                       name="spon_emit_gate"))
+        self._akida_model = model
+        self._state["akida_layer_count"] = len(model.layers)
+        return {"kind": "spontaneous_gate",
+                "akida_model": model, "layers": list(model.layers)}
+
+    def _event_count_for_power(self) -> int:
+        # Refractory-gated emit: at most 1 event per ``min_interval_steps``
+        # — averaged over a step, that's < 1.
+        if self._step_count > 0 and self._emit_count > 0:
+            rate = self._emit_count / self._step_count
+            return max(0, int(round(rate)))
+        return 0
+
+    def _estimate_npu_count(self) -> int:
+        # 2-layer FC (accumulator + emit): 2 NPs.
+        return 2
+
+    def _estimate_latency_us(self) -> float:
+        # 2-FC pipeline: ~2 cycles / cell.
+        return float(5.0 + 2.0 * self.n_neurons / 300.0)
 
     def step(self, input_data: Optional[Any] = None) -> dict:
         self.ensure_built()

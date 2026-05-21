@@ -109,6 +109,38 @@ brain schema decoder 가 demiurge 측 consumer cycle 의 일부.
    (brain: ❌ no producer → ⏳ GATE_OPEN, gap count 5 → 4, open count
    9 → 10).
 
+### 후속 cycle 2026-05-21 — akida_cloud branch 실 SDK 정합 LANDED
+
+bridge v0.2 (SCHEMA_VERSION 0.1 → 0.2 additive):
+
+1. **`submit_to_akida_cloud(n, k, steps, r_tail, ...)` driver 신설** —
+   `import akida` try ⊥ `akida.devices()` discovery ⊥ `_build_akida_kuramoto_model()`
+   (InputData + FullyConnected + AkidaUnsupervised.compile) ⊥
+   `model.map(devs[0])` + `model.forward(uint8)` flow. `SUB_ENGINES/AKIDA/doc/
+   metatf_api_{model,devices,layers}.md` 와 byte-equal.
+2. **graceful 3-tier fallback** — (i) Mac local SDK 부재
+   (`akida_unavailable_reason` = ImportError), (ii) SDK 있지만
+   `akida.devices()==[]` (no AKD1000), (iii) `.map()` / `.forward()` raise —
+   3 tier 모두 동일 record shape 유지 (record_id 에 `_akida_cloud_unavailable`
+   flag, scope_caveats 자기 기재).
+3. **record format v0.2 신규 root fields 3건** —
+   `power_estimate_mW` (idle 50 mW + spike × 0.5 mW), `npu_count_used`
+   (20 NPU mesh 중 mapped sequence component 집계), `latency_us_estimate`
+   (300 MHz clock × cycles_per_spike). akd1000_power_spec.md / hardware_spec.md
+   datasheet 기반. local_sim/loihi2_nrc backend 은 0.0 (additive).
+4. **provenance.akida_sdk_*** — `available` / `version` / `hw_device_count` /
+   `unavailable_reason` / `spike_train_len` 5 fields 추가, mock vs HW path
+   self-disclosure.
+5. **demiurge cli verify brain 자동 인용 재확인** — exports/brain/verify/<UTC>Z/
+   anima_kuramoto_akida_cloud_*.json drop 후 `demiurge cli action verify brain`
+   이 latest record = akida_cloud record 로 정확히 pick (record_id =
+   `kuramoto_n8_k5.00_akida_cloud_akida_cloud_unavailable` 명시 인용,
+   `⏳ GATE_OPEN · absorbed=false`).
+
+bridge 는 여전히 `pack.runtime.metatf_runtime` 의존 X (stand-alone
+`import akida` try) — sibling 관계 보존, anima-physics 만으로
+mac local + Pi5 + cloud 3 환경 동일 record schema 보장.
+
 ### demiurge 측 별도 cycle 후보 (consumer)
 
 `BrainVerifyProducer.swift` 신설 → `ActionDispatch.swift` 의
@@ -135,10 +167,12 @@ repo 측에서 별도 dispatch.
 2. **real consumer 부재** — demiurge 측 `BrainVerifyProducer` 가 없으므로
    본 record 는 cli action verify brain 에서 **인용만** 되고 oracle parity
    gating 평가는 일어나지 않음 (`gate_state=GATE_OPEN` 영구 — Phase 2 이전).
-3. **1 backend only** — `local_sim` 만 end-to-end 검증. `akida_cloud` /
-   `loihi2_nrc` 두 backend code path 는 `gate_state()` switch 등록만
-   되어 있고 실제 cloud trial 결과 record drop 은 별도 cycle (cost
-   $1-30 user 승인 필요).
+3. **2 backend end-to-end verified** — `local_sim` 와 `akida_cloud` 모두
+   record drop + demiurge cli verify brain 자동 인용 확인. `akida_cloud`
+   는 (a) Mac local SDK 없음 path = graceful skeleton (`record_id` 에
+   `_akida_cloud_unavailable` flag) (b) Pi5+AKD1000 OR Akida Cloud Trial
+   path = 실 silicon spike measurement — 두 경로 동일 `submit_to_akida_cloud()`
+   진입. `loihi2_nrc` 단독 미검증 (Loihi 2 NRC 신청 후 대기).
 4. **`cli show` decode fail** — demiurge 측 schema decoder 가 chip F1F2
    shape 만 알고 brain shape 미등록. anima 측 schema 는 `interface=
    demiurge:brain:kuramoto-record` SCHEMA_VERSION=0.1 — demiurge consumer
@@ -179,3 +213,44 @@ substrate 가 producer 의 측정 단위인지) 확정이 선행 조건.
 - SW source: `~/core/anima/anima-physics/social/kuramoto_coupling.hexa` §188 PASS 6/6
 - local sim source: `~/core/anima/anima-physics/hw/kuramoto_neuromorphic/src/kuramoto_local_sim.py` (F-HW-KU-1..5 5/5)
 - demiurge consumer cycle pointer: `~/core/demiurge/cockpit/.../ActionDispatch.swift` `(.verify, "brain")` 케이스 신설 + `BrainVerifyProducer.swift` (TODO)
+
+### SUB_ENGINES/AKIDA cross-link (bridge ↔ pack sibling 관계)
+
+bridge 는 `SUB_ENGINES/AKIDA/pack/` 의 sibling — 동일 SDK target (AKD1000
+NSoC_v1) + 동일 `import akida` try 패턴, 하지만 의존성 X. 각자 stand-alone.
+
+| 측면 | anima-physics bridge | SUB_ENGINES/AKIDA pack |
+|---|---|---|
+| 책임 | producer (substrate measurement → record JSON) | runtime infra (mock + HW path init, 10 adapter) |
+| code path | `submit_to_akida_cloud()` 직접 try | `metatf_runtime.get_runtime()` lazy init |
+| consumer | demiurge `cli action verify brain` | pack 자체 falsifier suite (`pack/falsifiers/`) |
+| layer build | `_build_akida_kuramoto_model()` (8-cell pool) | `pack/adapters/kuramoto_adapter.py` (대응 8-cell) |
+| spec source | `metatf_api_{model,devices,layers}.md` 직접 인용 | 동일 doc + `mocks/metatf_mock.py` 거울 |
+| target host | Mac local (mock) + Pi5+AKD1000 (real) + Cloud trial | 동일 |
+
+bridge 는 **pack 미인스톨 상태에서도** `import akida` 만으로 작동 — 양쪽
+모두 BrainChip MetaTF SDK 가 SSOT, intermediary 없음. 향후 pack 의 10
+adapter 갱신 cycle (별도 BG) 과 file overlap 0 (bridge 단독 소유).
+
+cross-link doc:
+- `~/core/anima/SUB_ENGINES/AKIDA/doc/metatf_api_model.md` (Model API + edge learning)
+- `~/core/anima/SUB_ENGINES/AKIDA/doc/metatf_api_devices.md` (devices() + HwVersion + MapMode)
+- `~/core/anima/SUB_ENGINES/AKIDA/doc/metatf_api_layers.md` (InputData/FullyConnected V1)
+- `~/core/anima/SUB_ENGINES/AKIDA/doc/akd1000_hardware_spec.md` (20 NPU mesh, 300 MHz, 1 W TDP)
+- `~/core/anima/SUB_ENGINES/AKIDA/doc/akd1000_power_spec.md` (PowerMeter API, ClockMode)
+- `~/core/anima/SUB_ENGINES/AKIDA/doc/akd1000_onchip_learning.md` (AkidaUnsupervised + add_classes)
+
+### key learning — bridge ↔ pack 의존성 패턴
+
+**의존성 0 = robust separation**. bridge 가 `pack.runtime.metatf_runtime`
+import 를 한 줄도 안 함 → pack 의 mock 구현 변경/falsifier sweep 이
+bridge record 형식에 영향 X, 역방향도 마찬가지. SSOT 는 둘 모두 BrainChip
+MetaTF SDK (`import akida`) + cached doc spec — 양쪽 다 동일 doc 인용,
+intermediary 없음.
+
+이 패턴은 다른 demiurge gap bridge (aura/bio/chem/grid) 도 동일하게 적용
+— anima-physics 측 bridge 가 SUB_ENGINES/<HW>/pack/ 와 sibling 으로
+서있으면서 SDK 만 공유, code 의존성 0. anima-physics 가 demiurge 측
+producer (record JSON shape SSOT) + SUB_ENGINES 가 HW SDK runtime
+(adapter + mock + falsifier) — 역할 분리가 명확해야 future cycle 에서
+양쪽이 독립적으로 진화 가능.

@@ -42,7 +42,76 @@ class SparseAttentionAdapter(AkidaAdapter):
         self._W_k = rng.normal(0, scale, (d, d))
         self._W_v = rng.normal(0, scale, (d, d))
         self._state.update({"k": self.k, "d_model": d, "n_seq": self.n_neurons})
-        return {"kind": "sparse_attention", "n_seq": self.n_neurons}
+        # AKD1000 V1 layer stack via CNN2SNN converter path
+        # (doc/akd1000_quantization.md): in production, a Keras attention
+        # block would be quantized → cnn2snn.convert() → .fbz.  Here we
+        # exercise the converter contract end-to-end so the mock CNN2SNN
+        # path is regression-covered.
+        from ..runtime.metatf_runtime import get_runtime
+
+        akida = get_runtime()
+        # The Keras-style model spec the converter accepts.  Conv layer
+        # captures the top-k mask (sparse activation = AKD1000's strength);
+        # FC head emits the attention values.
+        keras_model_dict = {
+            "name": "sparse_attention_block",
+            "layers": [
+                {"type": "InputData",
+                 "input_shape": (self.n_neurons, 1, 1),
+                 "input_bits": 4,
+                 "name": "attn_in"},
+                {"type": "Convolutional",
+                 "kernel_size": 1,
+                 "filters": d,
+                 "weights_bits": 1,
+                 "act_bits": 1,
+                 "name": "attn_qk_conv"},
+                {"type": "FullyConnected",
+                 "units": self.n_neurons,
+                 "weights_bits": 1,
+                 "act_bits": 1,
+                 "name": "attn_topk_head"},
+            ],
+        }
+        # CNN2SNN converter path — target AKD1000 (v1).
+        cnn2snn = self._get_cnn2snn(akida)
+        cnn2snn.set_akida_version(cnn2snn.AkidaVersion.v1)
+        cnn2snn.check_model_compatibility(keras_model_dict)
+        model = cnn2snn.convert(keras_model_dict)
+        self._akida_model = model
+        self._state["akida_layer_count"] = len(model.layers)
+        self._state["cnn2snn_target"] = "v1"
+        return {"kind": "sparse_attention", "n_seq": self.n_neurons,
+                "akida_model": model, "layers": list(model.layers)}
+
+    @staticmethod
+    def _get_cnn2snn(akida: Any) -> Any:
+        """Return the cnn2snn module (real or MockCNN2SNN), HW-tolerant."""
+        # Mock path: MetaTFMock instance has `.cnn2snn` attribute (MockCNN2SNN).
+        cnn = getattr(akida, "cnn2snn", None)
+        if cnn is not None:
+            return cnn
+        # HW path: real `cnn2snn` is a separate package.
+        try:
+            import cnn2snn as real_cnn2snn  # type: ignore[import-not-found]
+            return real_cnn2snn
+        except ImportError as exc:  # pragma: no cover — real-HW path only
+            raise RuntimeError(
+                "cnn2snn unavailable — install `pip install cnn2snn` on host "
+                "(used to convert Keras → .fbz for AKD1000)"
+            ) from exc
+
+    def _event_count_for_power(self) -> int:
+        # Sparse attention: only top-k positions per row spike.
+        return max(1, int(self.k))
+
+    def _estimate_npu_count(self) -> int:
+        # 3-layer stack (conv + FC) typically lands on 2-3 NPs after CNN2SNN.
+        return 3 if self.n_neurons >= 16 else 2
+
+    def _estimate_latency_us(self) -> float:
+        # Conv + FC pipeline: ~3 cycles / token at 300 MHz.
+        return float(5.0 + 3.0 * self.n_neurons / 300.0)
 
     def step(self, input_data: Optional[Any] = None) -> dict:
         self.ensure_built()

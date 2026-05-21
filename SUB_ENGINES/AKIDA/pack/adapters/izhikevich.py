@@ -45,7 +45,31 @@ class IzhikevichAdapter(AkidaAdapter):
         self._u = self.b * self._v
         self._spikes_total = 0
         self._state.update({"a": self.a, "b": self.b, "c": self.c, "d": self.d, "n": self.n_neurons})
-        return {"kind": "izhikevich_pool", "n": self.n_neurons}
+        # AKD1000 V1 layer stack: 2-variable Izhikevich (v + u) reduces to a
+        # single FC head emitting binary spike — the (a,b,c,d) compartment
+        # math runs in numpy (AKD1000 has no programmable LIF variant cell).
+        # 2-bit weights to encode the 2 state variables compactly.
+        from ..runtime.metatf_runtime import get_runtime
+
+        akida = get_runtime()
+        model = akida.Model()
+        model.add(akida.InputData(input_shape=(self.n_neurons, 1, 1),
+                                  input_bits=2, name="iz_in"))
+        model.add(akida.FullyConnected(units=self.n_neurons, weights_bits=2,
+                                       activation=True, act_bits=1,
+                                       name="iz_compartment"))
+        self._akida_model = model
+        self._state["akida_layer_count"] = len(model.layers)
+        return {"kind": "izhikevich_pool", "n": self.n_neurons,
+                "akida_model": model, "layers": list(model.layers)}
+
+    def _event_count_for_power(self) -> int:
+        # Izhikevich regular-spiking: ~5-10% spike density (sparse).
+        return max(1, self.n_neurons // 8)
+
+    def _estimate_latency_us(self) -> float:
+        # 2 Euler half-steps per call → 2× base latency.
+        return float(5.0 + 2 * self.n_neurons / 300.0)
 
     def step(self, input_data: Optional[Any] = None) -> dict:
         self.ensure_built()

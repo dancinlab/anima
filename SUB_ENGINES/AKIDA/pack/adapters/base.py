@@ -76,6 +76,12 @@ class AkidaAdapter(ABC):
 
         Mirrors ``HEXAD/PHYSICS/.../demiurge_brain_bridge.py`` so the same
         VerifyProducer can consume adapter output without a new schema.
+
+        Per the 2026-05-21 BrainChip survey, the record now also exposes the
+        AKD1000 hardware-envelope estimates (``power_estimate_mW`` +
+        ``npu_count_used`` + ``latency_us_estimate``) so downstream verifiers
+        can sanity-check energy / NP-budget claims against datasheet ceilings
+        (~1 W M.2 module, 20 NPU mesh, 300 MHz clock).
         """
         # Late import keeps base.py importable even if runtime stub is missing
         # (e.g. during package introspection).
@@ -103,7 +109,55 @@ class AkidaAdapter(ABC):
                 "mock vs HW divergence",
             ],
             "gate_failures": [],
+            # AKD1000 hardware-envelope estimates (real silicon = override these on Pi 5)
+            "power_estimate_mW": float(self._estimate_power_mW()),
+            "npu_count_used": int(self._estimate_npu_count()),
+            "latency_us_estimate": float(self._estimate_latency_us()),
         }
+
+    # -------------------------- AKD1000 envelope estimates (overridable) --
+    #
+    # Defaults below assume the smallest possible binary-FC adapter on a
+    # single AKD1000 NP — adapters with heavier layer stacks (CNN,
+    # multi-layer FC) override these.  See ``doc/akd1000_power_spec.md`` +
+    # ``doc/akd1000_hardware_spec.md`` for the per-component datasheet
+    # numbers driving the default formulas.
+
+    # Per-event energy band (sub-mW class).  Marketing-quoted "~1 mW per
+    # inference event" amortised; idle module = ~50 mW for the
+    # NoC + ARM-M4 + LPDDR PHY even when no NP fires.
+    _PER_EVENT_MW: float = 0.5
+    _IDLE_FLOOR_MW: float = 50.0
+
+    def _estimate_power_mW(self) -> float:  # noqa: N802
+        """Estimate per-step mW (idle floor + per-event amortised)."""
+        events = self._event_count_for_power()
+        return float(self._IDLE_FLOOR_MW + events * self._PER_EVENT_MW)
+
+    def _event_count_for_power(self) -> int:
+        """Default = ``n_neurons`` worth of events per step.
+
+        Adapters whose spike count differs (e.g. sparse-attention's top-k mask,
+        motivation-gate's single fire bit) override this hook.
+        """
+        return int(self.n_neurons)
+
+    def _estimate_npu_count(self) -> int:
+        """Default = 1 NPU (smallest binary-FC adapter fits in a single NP).
+
+        Larger / multi-layer adapters override.  AKD1000 mesh = 20 NPUs.
+        """
+        return 1
+
+    def _estimate_latency_us(self) -> float:
+        """Default = ``n_neurons / 300`` µs at 300 MHz, plus a 5 µs DMA floor.
+
+        Real number requires ``model.statistics`` after silicon arrival; this
+        is the bring-up estimate (≈ 1 cycle / neuron / NP at peak).
+        """
+        # 300 MHz ≈ 3.33 ns / cycle ≈ 300 cycles / µs
+        cycles = max(int(self.n_neurons), 1)
+        return float(5.0 + cycles / 300.0)
 
     # ------------------------------------------------------------- utility
 
