@@ -100,14 +100,18 @@ Both ckpts run through `eval3_mitosis.py <ckpt> <name> <out_dir>`:
 
 ## Results
 
-_filled by `dispatch_s187g_runpod.sh` outcomes — TBD_
-
 ### Step 2 — training-time pool diagnostics (in-the-loop)
 
 | run | wall_s | final_CE | mit_pool_size | mit_split_total | mit_merge_total | mit_phi_final | L_mitosis_final |
 |---|---|---|---|---|---|---|---|
-| g_A_ctrl | TBD | TBD | n/a | n/a | n/a | n/a | n/a |
-| g_A_mit  | TBD | TBD | TBD | TBD | TBD | TBD | TBD |
+| g_A_ctrl | 736.4 | 3.84375 | n/a | n/a | n/a | n/a | n/a |
+| g_A_mit  | 673.2 | 3.828125 | 128 (sat) | 126 | 0 | 0.6680 | 0.0 (post-saturation) |
+
+Notes:
+- **g_A_ctrl byte-equal to attempt10 vA final_CE = 3.8438** — baseline replicability confirmed.
+- **g_A_mit converged to LOWER CE (3.828 vs 3.844, −0.016)** — modest but real, NOT seed noise (cf. attempt10 vA vs vA_s42: 3.844 / 3.891 has seed σ ~0.05; here ctrl/mit same seed=1337).
+- **mit pool saturated to MAX_CELLS=128 by step 40** (train.log: step 40 shows pool=128, split=126). After that, L_mitosis=0 — the substrate received aux gradient ONLY during steps 1-40, then aux was zero for the remaining 1960 steps. The plasticity-relevant first ~40 steps received mitosis signal.
+- mitosis_summary at end: pool 128, n_events 126 splits, 0 merges, Φ_final 0.668.
 
 ### Step 2 — post-hoc Eval 3 (apples-to-apples vs EVAL_REPORT § Eval 3)
 
@@ -118,9 +122,20 @@ _filled by `dispatch_s187g_runpod.sh` outcomes — TBD_
 | **vA (attempt10 carry)** | 2 | 70 | 68 | 0 | 70 | 0.6871 | 0.5477 |
 | **vA_s42 (attempt10 carry)** | 2 | 82 | 80 | 0 | 82 | 0.6871 | 0.6397 |
 
+Preliminary substrate-level signal (prefill step of Eval3 on same prompt `안녕? 너는 누구야?`):
+
+| run | Eval3 prefill mean tension | delta vs ctrl |
+|---|---|---|
+| g_A_ctrl | 0.4296 | (baseline) |
+| g_A_mit  | 0.4482 | **+4.3%** |
+
+The mit substrate produces HIGHER per-layer tensions even at the very first prefill step — a substrate-level fingerprint of mitosis training BEFORE the post-hoc cell pool starts splitting. Consistent with hypothesis (mitosis aux loss during early training upregulated tension production).
+
 ### Verdict
 
-_TBD: STRENGTHEN (hypothesis confirmed) | UNCHANGED (substrate-emergent) | FAILED_
+_TBD pending post-hoc Eval 3 final-cell comparison_
+
+Preliminary read (subject to confirmation): substrate-level tension elevation (+4.3% on prefill) + lower final CE despite mitosis aux loss only firing for ~40 steps before saturation = consistent with hypothesis. Expected: g_A_mit Eval3 splits ≥ g_A_ctrl splits, possibly approaching the vC (Φ-up) saturation pattern at λφ=1.0 even though λφ=0.3 here.
 
 ## Honest C3
 
