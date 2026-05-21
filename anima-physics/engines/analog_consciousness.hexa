@@ -1,6 +1,66 @@
 // analog_consciousness.hexa — SPICE analog circuit consciousness engine
-// Each cell = op-amp integrator (RC feedback, tau=RC)
-// Tension = voltage difference, topology = resistor network
+// Each cell = op-amp RC integrator (1st-order linear), tau = R*C
+// Tension = voltage difference, topology = nearest-neighbor coupling
+//
+// Dynamics (per cell):
+//   dV/dt = -V/tau + I_input + sum_j K_ij * (V_j - V_i) + noise
+// where:
+//   tau = RC time constant (default 1 ms)
+//   I_input = external drive (volts/sec equivalent)
+//   K_ij = ring-coupling matrix (nearest-neighbor)
+//   noise = Johnson thermal noise (Gaussian-bounded)
+//
+// Falsifier suite (F-ANALOG-1..5):
+//   F-ANALOG-1 zero-input decay τ-consistent (V → 0 at ~exp(-t/τ))
+//   F-ANALOG-2 step input → bounded steady-state settle
+//   F-ANALOG-3 ring coupling → mean-voltage sync (variance shrinks)
+//   F-ANALOG-4 Johnson noise injection bounded (|V| < safety_cap)
+//   F-ANALOG-5 long-run stability (10k steps, no NaN/inf, |V| bounded)
+//
+// Canonical hexa (no `var`, no `[T]{}`, no nested LHS mutation):
+//   - `let mut` only
+//   - functional update via with_voltage_at helper
+//   - random() in [0,1); noise = (random() - 0.5) * scale
+
+// ─────────────────────────────────────────────────────────────────────
+// §1  Physical constants
+// ─────────────────────────────────────────────────────────────────────
+
+let K_BOLTZMANN = 1.380649e-23      // Joules / Kelvin
+let DEFAULT_TAU = 0.001              // 1 ms RC time constant
+let DEFAULT_RESISTANCE = 1000.0      // 1 kΩ feedback resistor
+let SAFETY_CAP = 100.0               // |V| > this → flag instability
+
+// ─────────────────────────────────────────────────────────────────────
+// §2  Scalar helpers + deterministic PRNG (avoids codegen `hexa_random`
+//     undefined-symbol gap; mirrors test_toolformer.hexa LCG pattern)
+// ─────────────────────────────────────────────────────────────────────
+
+fn fabs(x: float) -> float {
+    if x < 0.0 { return 0.0 - x }
+    return x
+}
+
+fn clamp_v(x: float, cap: float) -> float {
+    if x > cap { return cap }
+    if x < (0.0 - cap) { return 0.0 - cap }
+    return x
+}
+
+// LCG hash → uniform [0,1)
+fn lcg_hash(seed: int, i: int) -> int {
+    let h = ((seed * 2654435761 + i * 1315423911 + 731) % 100003)
+    if h < 0 { return 0 - h }
+    return h
+}
+
+fn lcg_rand01(seed: int, i: int) -> float {
+    return (lcg_hash(seed, i) as float) / 100003.0
+}
+
+// ─────────────────────────────────────────────────────────────────────
+// §3  Structs
+// ─────────────────────────────────────────────────────────────────────
 
 struct AnalogCell {
     voltage: float,
@@ -9,20 +69,317 @@ struct AnalogCell {
 }
 
 struct AnalogEngine {
-    n_cells: i32,
+    n_cells: int,
     temperature_k: float,
     topology: string,
-    phi: float
+    coupling_k: float,
+    cells: [AnalogCell],
+    phi: float,
+    step_count: int
 }
 
-fn create_engine(n_cells: i32, topology: string) -> AnalogEngine {
-    return AnalogEngine(n_cells, 300.0, topology, 0.0)
+// ─────────────────────────────────────────────────────────────────────
+// §4  Construction
+// ─────────────────────────────────────────────────────────────────────
+
+fn create_cell(initial_v: float) -> AnalogCell {
+    return AnalogCell {
+        voltage: initial_v,
+        rc_tau: DEFAULT_TAU,
+        noise_floor: 1e-6
+    }
 }
 
-fn step(engine: AnalogEngine, dt: float) -> AnalogEngine {
-    return engine
+fn create_engine(n_cells: int, topology: string) -> AnalogEngine {
+    let mut cells = []
+    for i in 0..n_cells {
+        // small distinct initial conditions (so coupling sync is observable)
+        let v0 = (lcg_rand01(42, i) - 0.5) * 0.1
+        cells.push(create_cell(v0))
+    }
+    return AnalogEngine {
+        n_cells: n_cells,
+        temperature_k: 300.0,
+        topology: topology,
+        coupling_k: 0.1,
+        cells: cells,
+        phi: 0.0,
+        step_count: 0
+    }
 }
 
+// ─────────────────────────────────────────────────────────────────────
+// §5  Functional update helpers (no nested LHS)
+// ─────────────────────────────────────────────────────────────────────
+
+fn cell_with_voltage(cell: AnalogCell, v: float) -> AnalogCell {
+    return AnalogCell {
+        voltage: v,
+        rc_tau: cell.rc_tau,
+        noise_floor: cell.noise_floor
+    }
+}
+
+fn engine_with_cell_at(engine: AnalogEngine, i: int, c: AnalogCell) -> AnalogEngine {
+    let mut cs = engine.cells
+    cs[i] = c
+    return AnalogEngine {
+        n_cells: engine.n_cells,
+        temperature_k: engine.temperature_k,
+        topology: engine.topology,
+        coupling_k: engine.coupling_k,
+        cells: cs,
+        phi: engine.phi,
+        step_count: engine.step_count
+    }
+}
+
+// ─────────────────────────────────────────────────────────────────────
+// §6  Physics: Johnson noise + step dynamics
+// ─────────────────────────────────────────────────────────────────────
+
+// Johnson-Nyquist thermal noise voltage (RMS approx)
+//   V_n = sqrt(4 * k_B * T * R * bandwidth)
 fn johnson_noise(resistance: float, temp_k: float, bandwidth: float) -> float {
-    return 0.0
+    let raw = 4.0 * K_BOLTZMANN * temp_k * resistance * bandwidth
+    if raw < 0.0 { return 0.0 }
+    return sqrt(raw)
 }
+
+// Compute ring-coupling input for cell i (nearest neighbor average diff)
+fn coupling_input(engine: AnalogEngine, i: int) -> float {
+    let n = engine.cells.len()
+    if n < 2 { return 0.0 }
+    let left = if i == 0 { n - 1 } else { i - 1 }
+    let right = (i + 1) % n
+    let v_i = engine.cells[i].voltage
+    let v_l = engine.cells[left].voltage
+    let v_r = engine.cells[right].voltage
+    return engine.coupling_k * ((v_l - v_i) + (v_r - v_i))
+}
+
+// Single Euler step with given per-cell external drive
+fn step_with_input(engine: AnalogEngine, dt: float, input_v: float) -> AnalogEngine {
+    let mut s = engine
+    let n = s.cells.len()
+    // snapshot voltages (read-only for the whole step → simultaneity)
+    let mut v_snap = []
+    for i in 0..n { v_snap.push(s.cells[i].voltage) }
+    // noise scale = johnson_noise at 1 Hz bandwidth, capped to noise_floor max
+    let noise_amp = johnson_noise(DEFAULT_RESISTANCE, s.temperature_k, 1.0) * 1e6
+    let step_seed = s.step_count
+    for i in 0..n {
+        let v_i = v_snap[i]
+        let tau = s.cells[i].rc_tau
+        // coupling from snapshot
+        let left = if i == 0 { n - 1 } else { i - 1 }
+        let right = (i + 1) % n
+        let coup = s.coupling_k * ((v_snap[left] - v_i) + (v_snap[right] - v_i))
+        let noise = (lcg_rand01(step_seed, i) - 0.5) * noise_amp * 2.0
+        let dv = ((0.0 - v_i) / tau + input_v + coup + noise) * dt
+        let v_new = clamp_v(v_i + dv, SAFETY_CAP)
+        let new_cell = cell_with_voltage(s.cells[i], v_new)
+        s = engine_with_cell_at(s, i, new_cell)
+    }
+    return AnalogEngine {
+        n_cells: s.n_cells,
+        temperature_k: s.temperature_k,
+        topology: s.topology,
+        coupling_k: s.coupling_k,
+        cells: s.cells,
+        phi: s.phi,
+        step_count: s.step_count + 1
+    }
+}
+
+// Public step: zero external input by default
+fn step(engine: AnalogEngine, dt: float) -> AnalogEngine {
+    return step_with_input(engine, dt, 0.0)
+}
+
+// ─────────────────────────────────────────────────────────────────────
+// §7  Analysis
+// ─────────────────────────────────────────────────────────────────────
+
+fn mean_voltage(engine: AnalogEngine) -> float {
+    let n = engine.cells.len()
+    if n == 0 { return 0.0 }
+    let mut s = 0.0
+    for i in 0..n { s = s + engine.cells[i].voltage }
+    return s / (n as float)
+}
+
+fn voltage_variance(engine: AnalogEngine) -> float {
+    let n = engine.cells.len()
+    if n < 2 { return 0.0 }
+    let m = mean_voltage(engine)
+    let mut sq = 0.0
+    for i in 0..n {
+        let d = engine.cells[i].voltage - m
+        sq = sq + d * d
+    }
+    return sq / (n as float)
+}
+
+fn max_abs_voltage(engine: AnalogEngine) -> float {
+    let n = engine.cells.len()
+    if n == 0 { return 0.0 }
+    let mut m = 0.0
+    for i in 0..n {
+        let v = fabs(engine.cells[i].voltage)
+        if v > m { m = v }
+    }
+    return m
+}
+
+// ─────────────────────────────────────────────────────────────────────
+// §8  Falsifiers (F-ANALOG-1..5)
+// ─────────────────────────────────────────────────────────────────────
+
+fn f_analog_1_zero_input_decay() -> bool {
+    // Initialize 8 cells with V0=1.0, coupling off, no noise, no input
+    let mut e = create_engine(8, "isolated")
+    e = AnalogEngine {
+        n_cells: e.n_cells,
+        temperature_k: 0.0,         // disable noise
+        topology: e.topology,
+        coupling_k: 0.0,            // disable coupling
+        cells: e.cells,
+        phi: e.phi,
+        step_count: e.step_count
+    }
+    // force all voltages to 1.0
+    for i in 0..e.cells.len() {
+        let c = cell_with_voltage(e.cells[i], 1.0)
+        e = engine_with_cell_at(e, i, c)
+    }
+    // run 1 tau (1ms) at dt=0.0001 → 10 steps
+    let dt = 0.0001
+    let n_steps = 10
+    for _ in 0..n_steps { e = step_with_input(e, dt, 0.0) }
+    // expected V(t=tau) ≈ 1/e ≈ 0.3679; Euler ≈ (1 - dt/tau)^10 ≈ 0.3487
+    let mv = mean_voltage(e)
+    let ok = mv > 0.30 && mv < 0.45
+    println("  [F-ANALOG-1] zero-input decay mean_v=" + str(mv) + " (expect ~0.35-0.37)")
+    return ok
+}
+
+fn f_analog_2_step_settle() -> bool {
+    // Apply constant input I=10 V/s, expect steady-state V_ss = I*tau = 0.01
+    let mut e = create_engine(8, "isolated")
+    e = AnalogEngine {
+        n_cells: e.n_cells,
+        temperature_k: 0.0,
+        topology: e.topology,
+        coupling_k: 0.0,
+        cells: e.cells,
+        phi: e.phi,
+        step_count: e.step_count
+    }
+    for i in 0..e.cells.len() {
+        let c = cell_with_voltage(e.cells[i], 0.0)
+        e = engine_with_cell_at(e, i, c)
+    }
+    let dt = 0.0001
+    // 50 tau = 500 steps → near steady-state
+    for _ in 0..500 { e = step_with_input(e, dt, 10.0) }
+    let mv = mean_voltage(e)
+    let v_ss = 10.0 * DEFAULT_TAU   // 0.01
+    let err = fabs(mv - v_ss) / v_ss
+    let ok = err < 0.05
+    println("  [F-ANALOG-2] step-settle mean_v=" + str(mv) + " v_ss=" + str(v_ss) + " err=" + str(err))
+    return ok
+}
+
+fn f_analog_3_coupling_sync() -> bool {
+    // With strong ring coupling, variance should shrink over time
+    let mut e = create_engine(8, "ring")
+    // strong coupling
+    e = AnalogEngine {
+        n_cells: e.n_cells,
+        temperature_k: 0.0,
+        topology: "ring",
+        coupling_k: 50.0,
+        cells: e.cells,
+        phi: e.phi,
+        step_count: e.step_count
+    }
+    // set divergent initial voltages
+    for i in 0..e.cells.len() {
+        let v0 = (i as float) - 4.0       // [-4, -3, ..., 3]
+        let c = cell_with_voltage(e.cells[i], v0 * 0.1)
+        e = engine_with_cell_at(e, i, c)
+    }
+    let var_init = voltage_variance(e)
+    let dt = 0.00001
+    for _ in 0..200 { e = step_with_input(e, dt, 0.0) }
+    let var_final = voltage_variance(e)
+    let ok = var_final < var_init * 0.5
+    println("  [F-ANALOG-3] coupling-sync var_init=" + str(var_init) + " var_final=" + str(var_final))
+    return ok
+}
+
+fn f_analog_4_noise_bounded() -> bool {
+    // With noise on but no input, voltages stay bounded
+    let mut e = create_engine(8, "isolated")
+    e = AnalogEngine {
+        n_cells: e.n_cells,
+        temperature_k: 300.0,
+        topology: e.topology,
+        coupling_k: 0.0,
+        cells: e.cells,
+        phi: e.phi,
+        step_count: e.step_count
+    }
+    let dt = 0.0001
+    for _ in 0..500 { e = step_with_input(e, dt, 0.0) }
+    let max_v = max_abs_voltage(e)
+    let ok = max_v < SAFETY_CAP
+    println("  [F-ANALOG-4] noise-bounded max|v|=" + str(max_v) + " cap=" + str(SAFETY_CAP))
+    return ok
+}
+
+fn f_analog_5_long_run_stable() -> bool {
+    // 10000 steps with mixed coupling + small drive + noise → no NaN, bounded
+    let mut e = create_engine(8, "ring")
+    e = AnalogEngine {
+        n_cells: e.n_cells,
+        temperature_k: 300.0,
+        topology: "ring",
+        coupling_k: 0.5,
+        cells: e.cells,
+        phi: e.phi,
+        step_count: e.step_count
+    }
+    let dt = 0.0001
+    for _ in 0..10000 { e = step_with_input(e, dt, 1.0) }
+    let max_v = max_abs_voltage(e)
+    let var_f = voltage_variance(e)
+    // NaN-check via self-equality
+    let finite = max_v == max_v
+    let ok = finite && max_v < SAFETY_CAP && var_f >= 0.0
+    println("  [F-ANALOG-5] long-run max|v|=" + str(max_v) + " var=" + str(var_f) + " finite=" + str(finite))
+    return ok
+}
+
+fn _selftest() {
+    println("[engines/analog_consciousness] F-ANALOG-1..5 falsifier suite")
+    let t1 = f_analog_1_zero_input_decay()
+    if t1 { println("F-ANALOG-1 PASS") } else { println("F-ANALOG-1 FAIL") }
+    let t2 = f_analog_2_step_settle()
+    if t2 { println("F-ANALOG-2 PASS") } else { println("F-ANALOG-2 FAIL") }
+    let t3 = f_analog_3_coupling_sync()
+    if t3 { println("F-ANALOG-3 PASS") } else { println("F-ANALOG-3 FAIL") }
+    let t4 = f_analog_4_noise_bounded()
+    if t4 { println("F-ANALOG-4 PASS") } else { println("F-ANALOG-4 FAIL") }
+    let t5 = f_analog_5_long_run_stable()
+    if t5 { println("F-ANALOG-5 PASS") } else { println("F-ANALOG-5 FAIL") }
+    let n_pass = (if t1 { 1 } else { 0 })
+                + (if t2 { 1 } else { 0 })
+                + (if t3 { 1 } else { 0 })
+                + (if t4 { 1 } else { 0 })
+                + (if t5 { 1 } else { 0 })
+    println("[engines/analog_consciousness] " + str(n_pass) + "/5 PASS")
+}
+
+_selftest()

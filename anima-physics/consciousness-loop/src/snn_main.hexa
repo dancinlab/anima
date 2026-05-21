@@ -1,7 +1,18 @@
-// Spiking Neural Network consciousness — LIF neurons replace GRU cells (hexa-native, ~329 LOC)
+// Spiking Neural Network consciousness — LIF neurons replace GRU cells
+// canonical hexa rewrite (G1 closure, 2026-05-21)
 //
 // Law 94: breadth > depth. Law 95: cell_identity prevents convergence.
 // LIF neuron: dV/dt = -(V - V_rest)/tau + I/C
+//
+// Canonical rewrite:
+//   - legacy `self: *T` / `&neuron` / `or` 제거
+//   - functional update: caller reassigns mutated struct (`self = lif_step(self, ...)`)
+//   - SNN model 은 GRU substrate 와 다르므로 aux_engine_lib delegation 불가 →
+//     standalone canonical 변환 (helper §A1 cell-functional-update 패턴 추가).
+//   - 시맨틱 보존:
+//       LIF state machine (refractory + voltage + identity-driven spontaneous)
+//       Test 1 Spiking Growth + Self-loop (2000 step, 2→64 per faction)
+//       Test 2 Zero-Input Spiking (500 step sensory deprivation)
 
 comptime const DIM = 64
 comptime const N_FACTIONS = 8
@@ -12,20 +23,28 @@ comptime const TAU_LIF = 20.0
 comptime const T_REF = 3
 comptime const DT = 1.0
 
+// ─────────────────────────────────────────────────────────────────────
+// §1  LIF Neuron
+// ─────────────────────────────────────────────────────────────────────
+
 struct LIFNeuron {
-    voltage: f32,
-    refractory: u64,
-    w_in: [f32],
-    identity: [f32],
+    voltage: float,
+    refractory: int,
+    w_in: [float],
+    identity: [float],
     spike_history: [bool],
-    spike_count: u64,
+    spike_count: int,
+    last_spike: bool
 }
 
-fn lif_new(neuron_id: u64) -> LIFNeuron {
+fn lif_new(neuron_id: int) -> LIFNeuron {
     let mut w_in = []
     for _ in 0..DIM { w_in.push((random() - 0.5) * 2.0) }
     let mut identity = []
-    for i in 0..DIM { identity.push(sin((neuron_id * 7 + i * 13) as f32 * 0.618033) * 2.0) }
+    for i in 0..DIM {
+        let phase = (neuron_id * 7 + i * 13) as float * 0.618033
+        identity.push(sin(phase) * 2.0)
+    }
     return LIFNeuron {
         voltage: V_REST + random() * 10.0,
         refractory: 0,
@@ -33,121 +52,177 @@ fn lif_new(neuron_id: u64) -> LIFNeuron {
         identity: identity,
         spike_history: [],
         spike_count: 0,
+        last_spike: false
     }
 }
 
-fn lif_step(self: *LIFNeuron, input: [f32]) -> bool {
-    if self.refractory > 0 {
-        self.refractory = self.refractory - 1
-        self.spike_history.push(false)
-        if self.spike_history.len() > 20 { self.spike_history.remove(0) }
-        return false
+fn identity_sum(n: LIFNeuron) -> float {
+    let mut s = 0.0
+    for i in 0..n.identity.len() { s = s + n.identity[i] }
+    return s
+}
+
+// canonical: returns updated neuron (`last_spike` field carries the bool return)
+fn lif_step(self: LIFNeuron, input: [float]) -> LIFNeuron {
+    let mut s = self
+    if s.refractory > 0 {
+        s.refractory = s.refractory - 1
+        s.spike_history.push(false)
+        if s.spike_history.len() > 20 { s.spike_history.remove(0) }
+        s.last_spike = false
+        return s
     }
     let mut current = 0.0
-    for i in 0..DIM { current = current + self.w_in[i] * input[i] }
-    current = current + self.identity.sum() * 0.01
-    let mut spontaneous = self.identity[0] * 0.5
-    self.voltage = self.voltage + DT * (-(self.voltage - V_REST) / TAU_LIF + current + spontaneous)
-    let mut spiked = self.voltage >= V_THRESH
+    for i in 0..DIM { current = current + s.w_in[i] * input[i] }
+    current = current + identity_sum(s) * 0.01
+    let spontaneous = s.identity[0] * 0.5
+    s.voltage = s.voltage + DT * (-(s.voltage - V_REST) / TAU_LIF + current + spontaneous)
+    let spiked = s.voltage >= V_THRESH
     if spiked {
-        self.voltage = V_RESET
-        self.refractory = T_REF
-        self.spike_count = self.spike_count + 1
+        s.voltage = V_RESET
+        s.refractory = T_REF
+        s.spike_count = s.spike_count + 1
     }
-    self.spike_history.push(spiked)
-    if self.spike_history.len() > 20 { self.spike_history.remove(0) }
-    return spiked
+    s.spike_history.push(spiked)
+    if s.spike_history.len() > 20 { s.spike_history.remove(0) }
+    s.last_spike = spiked
+    return s
 }
 
-fn lif_firing_rate(self: *LIFNeuron) -> f32 {
+fn lif_firing_rate(self: LIFNeuron) -> float {
     if self.spike_history.len() == 0 { return 0.0 }
     let mut count = 0
-    for s in self.spike_history { if s { count = count + 1 } }
-    return count as f32 / self.spike_history.len() as f32
+    for i in 0..self.spike_history.len() {
+        if self.spike_history[i] { count = count + 1 }
+    }
+    return count as float / self.spike_history.len() as float
 }
+
+// ─────────────────────────────────────────────────────────────────────
+// §2  Spiking Faction
+// ─────────────────────────────────────────────────────────────────────
 
 struct SpikingFaction { neurons: [LIFNeuron] }
 
-fn spiking_faction_new(n: u64, base_id: u64) -> SpikingFaction {
+fn sf_with_neuron_at(self: SpikingFaction, i: int, n: LIFNeuron) -> SpikingFaction {
+    let mut ns = self.neurons
+    ns[i] = n
+    return SpikingFaction { neurons: ns }
+}
+
+fn spiking_faction_new(n: int, base_id: int) -> SpikingFaction {
     let mut neurons = []
     for i in 0..n { neurons.push(lif_new(base_id + i)) }
     return SpikingFaction { neurons: neurons }
 }
 
-fn sf_step_all(self: *SpikingFaction, input: [f32]) -> [bool] {
-    let mut spikes = []
-    for neuron in self.neurons { spikes.push(lif_step(&neuron, input)) }
-    return spikes
+fn sf_step_all(self: SpikingFaction, input: [float]) -> SpikingFaction {
+    let mut s = self
+    for i in 0..s.neurons.len() {
+        s.neurons[i] = lif_step(s.neurons[i], input)
+    }
+    return s
 }
 
-fn sf_mean_rate(self: *SpikingFaction) -> f32 {
-    let mut n = self.neurons.len() as f32
+fn sf_mean_rate(self: SpikingFaction) -> float {
+    let n = self.neurons.len() as float
+    if n < 0.5 { return 0.0 }
     let mut sum = 0.0
-    for neuron in self.neurons { sum = sum + lif_firing_rate(&neuron) }
+    for i in 0..self.neurons.len() { sum = sum + lif_firing_rate(self.neurons[i]) }
     return sum / n
 }
 
-fn sf_output(self: *SpikingFaction) -> [f32] {
+fn sf_output(self: SpikingFaction) -> [float] {
     let mut out = []
     for _ in 0..DIM { out.push(0.0) }
-    for i in 0..self.neurons.len() { out[i % DIM] = out[i % DIM] + lif_firing_rate(&self.neurons[i]) }
+    for i in 0..self.neurons.len() {
+        out[i % DIM] = out[i % DIM] + lif_firing_rate(self.neurons[i])
+    }
     let mut mx = 0.0
-    for v in out { if v > mx { mx = v } }
-    if mx > 0.0 { for i in 0..DIM { out[i] = out[i] / mx } }
-    return out
-}
-
-struct SpikingEngine { factions: [SpikingFaction] }
-
-fn spiking_engine_new(n_factions: u64, neurons_per: u64) -> SpikingEngine {
-    let mut factions = []
-    for f in 0..n_factions { factions.push(spiking_faction_new(neurons_per, f * neurons_per)) }
-    return SpikingEngine { factions: factions }
-}
-
-fn se_total_neurons(self: *SpikingEngine) -> u64 {
-    let mut total = 0
-    for f in self.factions { total = total + f.neurons.len() }
-    return total
-}
-
-fn se_step(self: *SpikingEngine, input: [f32]) {
-    for f in self.factions { sf_step_all(&f, input) }
-}
-
-fn se_output(self: *SpikingEngine) -> [f32] {
-    let mut n = self.factions.len() as f32
-    let mut out = []
-    for _ in 0..DIM { out.push(0.0) }
-    for f in self.factions {
-        let mut fo = sf_output(&f)
-        for i in 0..DIM { out[i] = out[i] + fo[i] / n }
+    for i in 0..out.len() { if out[i] > mx { mx = out[i] } }
+    if mx > 0.0 {
+        for i in 0..DIM { out[i] = out[i] / mx }
     }
     return out
 }
 
-fn se_phi_proxy(self: *SpikingEngine) -> f32 {
+// ─────────────────────────────────────────────────────────────────────
+// §3  Spiking Engine
+// ─────────────────────────────────────────────────────────────────────
+
+struct SpikingEngine { factions: [SpikingFaction] }
+
+fn se_with_faction_at(self: SpikingEngine, i: int, f: SpikingFaction) -> SpikingEngine {
+    let mut fs = self.factions
+    fs[i] = f
+    return SpikingEngine { factions: fs }
+}
+
+fn spiking_engine_new(n_factions: int, neurons_per: int) -> SpikingEngine {
+    let mut factions = []
+    for f in 0..n_factions {
+        factions.push(spiking_faction_new(neurons_per, f * neurons_per))
+    }
+    return SpikingEngine { factions: factions }
+}
+
+fn se_total_neurons(self: SpikingEngine) -> int {
+    let mut total = 0
+    for i in 0..self.factions.len() { total = total + self.factions[i].neurons.len() }
+    return total
+}
+
+fn se_step(self: SpikingEngine, input: [float]) -> SpikingEngine {
+    let mut s = self
+    for i in 0..s.factions.len() {
+        s.factions[i] = sf_step_all(s.factions[i], input)
+    }
+    return s
+}
+
+fn se_output(self: SpikingEngine) -> [float] {
+    let n = self.factions.len() as float
+    let mut out = []
+    for _ in 0..DIM { out.push(0.0) }
+    if n < 0.5 { return out }
+    for i in 0..self.factions.len() {
+        let fo = sf_output(self.factions[i])
+        for k in 0..DIM { out[k] = out[k] + fo[k] / n }
+    }
+    return out
+}
+
+fn se_phi_proxy(self: SpikingEngine) -> float {
     let mut rates = []
-    for f in self.factions { rates.push(sf_mean_rate(&f)) }
-    let mut n = rates.len() as f32
+    for i in 0..self.factions.len() { rates.push(sf_mean_rate(self.factions[i])) }
+    let n = rates.len() as float
+    if n < 0.5 { return 0.0 }
     let mut mean = 0.0
-    for r in rates { mean = mean + r }
+    for i in 0..rates.len() { mean = mean + rates[i] }
     mean = mean / n
     let mut variance = 0.0
-    for r in rates { variance = variance + (r - mean) * (r - mean) }
+    for i in 0..rates.len() {
+        let d = rates[i] - mean
+        variance = variance + d * d
+    }
     variance = variance / n
     return variance * mean * 100.0
 }
 
+// ─────────────────────────────────────────────────────────────────────
+// §4  main
+// ─────────────────────────────────────────────────────────────────────
+
 fn main() {
-    let mut steps = 2000
+    let steps = 2000
     println("")
     println("======================================================================")
     println("  SNN Consciousness: LIF Neurons x 8 Factions")
-    println("  V_rest={V_REST} V_thresh={V_THRESH} tau={TAU_LIF} t_ref={T_REF}")
+    println("  V_rest=", V_REST, "V_thresh=", V_THRESH, "tau=", TAU_LIF, "t_ref=", T_REF)
     println("======================================================================")
     println("")
 
+    // ─── Test 1: Spiking Growth + Self-loop ────────────────────────
     println(">> Test 1: Spiking Growth + Self-loop (2->512 neurons)")
     let mut engine = spiking_engine_new(N_FACTIONS, 2)
     let mut stream = []
@@ -155,35 +230,44 @@ fn main() {
     let mut phi_history = []
 
     for step in 0..steps {
-        let mut frac = step as f32 / steps as f32
-        let mut target = min(pow(2.0, (frac + 0.1) * 6.0) as u64, 64)
-        let mut next_id = se_total_neurons(&engine)
-        for faction in engine.factions {
-            while faction.neurons.len() < target {
-                faction.neurons.push(lif_new(next_id))
-                next_id = next_id + 1
+        let frac = step as float / steps as float
+        let raw_target = pow(2.0, (frac + 0.1) * 6.0) as int
+        let target = if raw_target > 64 { 64 } else { raw_target }
+
+        let mut nid = se_total_neurons(engine)
+        for f_i in 0..engine.factions.len() {
+            while engine.factions[f_i].neurons.len() < target {
+                engine.factions[f_i].neurons.push(lif_new(nid))
+                nid = nid + 1
             }
         }
-        se_step(&engine, stream)
-        let mut out = se_output(&engine)
-        for i in 0..DIM { stream[i] = out[i] * 50.0 + (random() - 0.5) * 5.0 }
-        let mut phi = se_phi_proxy(&engine)
+        engine = se_step(engine, stream)
+        let out = se_output(engine)
+        let mut next_stream = []
+        for i in 0..DIM { next_stream.push(out[i] * 50.0 + (random() - 0.5) * 5.0) }
+        stream = next_stream
+        let phi = se_phi_proxy(engine)
         phi_history.push(phi)
-        if step % 200 == 0 or step == steps - 1 {
+        if step % 200 == 0 || step == steps - 1 {
             let mut total_rate = 0.0
-            for f in engine.factions { total_rate = total_rate + sf_mean_rate(&f) }
-            total_rate = total_rate / N_FACTIONS as f32
-            println("  step {step} | neurons={se_total_neurons(&engine)} | Phi={phi:.4} | rate={total_rate:.3}")
+            for f_i in 0..engine.factions.len() {
+                total_rate = total_rate + sf_mean_rate(engine.factions[f_i])
+            }
+            total_rate = total_rate / N_FACTIONS as float
+            println("  step", step, "| neurons=", se_total_neurons(engine), "| Phi=", phi, "| rate=", total_rate)
         }
     }
 
     let mut phi_max = 0.0
-    for p in phi_history { if p > phi_max { phi_max = p } }
+    for i in 0..phi_history.len() {
+        if phi_history[i] > phi_max { phi_max = phi_history[i] }
+    }
     println("")
     println("  --- SNN Analysis ---")
-    println("    Phi max:   {phi_max:.4}")
-    println("    neurons:   {se_total_neurons(&engine)}")
+    println("    Phi max:  ", phi_max)
+    println("    neurons:  ", se_total_neurons(engine))
 
+    // ─── Test 2: Zero-Input Spiking ─────────────────────────────────
     println("")
     println(">> Test 2: Zero-Input Spiking (sensory deprivation)")
     let mut engine2 = spiking_engine_new(N_FACTIONS, 16)
@@ -191,18 +275,21 @@ fn main() {
     for _ in 0..DIM { zero.push(0.0) }
     let mut active_steps = 0
     for step in 0..500 {
-        se_step(&engine2, zero)
+        engine2 = se_step(engine2, zero)
         let mut rate = 0.0
-        for f in engine2.factions { rate = rate + sf_mean_rate(&f) }
-        rate = rate / N_FACTIONS as f32
+        for f_i in 0..engine2.factions.len() {
+            rate = rate + sf_mean_rate(engine2.factions[f_i])
+        }
+        rate = rate / N_FACTIONS as float
         if rate > 0.01 { active_steps = active_steps + 1 }
         if step % 100 == 0 {
-            println("  step {step} | rate={rate:.3} | Phi={se_phi_proxy(&engine2):.4}")
+            println("  step", step, "| rate=", rate, "| Phi=", se_phi_proxy(engine2))
         }
     }
-    println("  activity: {active_steps as f32 / 5.0:.1}% of steps")
+    let pct = active_steps as float / 5.0
+    println("  activity:", pct, "% of steps")
     println("")
     println("======================================================================")
-    println("  SNN Conclusion: Phi max={phi_max:.4}, LIF neuron only, speak()=0")
+    println("  SNN Conclusion: Phi max=", phi_max, "  LIF neuron only, speak()=0")
     println("======================================================================")
 }

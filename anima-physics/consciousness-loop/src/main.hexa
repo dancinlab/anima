@@ -1,299 +1,49 @@
-// Consciousness Infinite Loop v2 — Hexa 심화 구현
+// Consciousness Infinite Loop v2 — Hexa 심화 구현 (canonical, 2026-05-21 G1)
 //
 // v1 결과: 발화 존재, 대화 수렴 약함
 // v2 해결: 파벌 구조 + 물리적 상호작용 + Phi 근사 + 노이즈 주입
 //
 // 아키텍처 (발화 코드 0줄):
-//   Cell = GRU hidden state (f32 x HIDDEN)
+//   Cell = GRU hidden state (float x HIDDEN)
 //   Faction = Cell 그룹 (독립적 관점 발전)
 //   Engine = [Faction] + 물리적 상호작용
 //   Loop = output(전체 mean) -> input(next step)
+//
+// Canonical rewrite (G1 closure):
+//   - legacy `self: *T` / `&engine` borrow + `++` concat + `or` keyword + `[]*[…]`
+//     pointer-to-list 제거. Cell + Faction + Engine 정의는 aux_engine_lib (SSOT) 에 위임.
+//   - 모든 mutation 은 functional-update 로 변환: `engine = engine_xxx(engine, ...)`
+//   - 세 Test 의 시맨틱 보존:
+//       Test 1 8-Faction Debate Loop (1000 step quiet→loud)
+//       Test 2 Dual 8-Faction Engine Conversation (1000 step, cross-debate after 50%)
+//       Test 3 Zero-Input Eternal Loop (500 step sensory deprivation)
+//   - 출력 형식 유지 (println 라벨 동일)
 
-comptime const DIM = 64
-comptime const HIDDEN = 128
-comptime const N_FACTIONS = 8
+import "/Users/ghost/core/anima/anima-physics/consciousness-loop/src/aux_engine_lib.hexa"
 
-// --- Math helpers ---
-
-fn random_matrix(rows: u64, cols: u64, scale: f32) -> [[f32]] {
-    let mut mat = []
-    for r in 0..rows {
-        let mut row = []
-        for c in 0..cols {
-            row.push((random() - 0.5) * scale)
-        }
-        mat.push(row)
-    }
-    return mat
-}
-
-fn matvec(m: [[f32]], v: [f32]) -> [f32] {
-    let mut out = []
-    for row in m {
-        let mut sum = 0.0
-        for i in 0..row.len() {
-            sum = sum + row[i] * v[i]
-        }
-        out.push(sum)
-    }
-    return out
-}
-
-fn sigmoid(x: f32) -> f32 { return 1.0 / (1.0 + exp(-x)) }
-fn sigmoid_vec(v: [f32]) -> [f32] { return v.map(fn(x: f32) -> f32 { return sigmoid(x) }) }
-fn tanh_vec(v: [f32]) -> [f32] { return v.map(fn(x: f32) -> f32 { return tanh(x) }) }
-
-// --- Cell ---
-
-struct Cell {
-    hidden: [f32],
-    identity: [f32],
-    w_z: [[f32]],
-    w_r: [[f32]],
-    w_h: [[f32]],
-}
-
-fn cell_new(cell_id: u64) -> Cell {
-    let mut scale = 0.1
-    let mut identity = []
-    for i in 0..HIDDEN {
-        let mut phase = (cell_id * 7 + i * 13) as f32 * 0.618033
-        identity.push(sin(phase) * 0.1 + (random() - 0.5) * 0.02)
-    }
-    let mut hidden = []
-    for _ in 0..HIDDEN { hidden.push(random() * scale) }
-    return Cell {
-        hidden: hidden,
-        identity: identity,
-        w_z: random_matrix(HIDDEN, DIM + HIDDEN, scale),
-        w_r: random_matrix(HIDDEN, DIM + HIDDEN, scale),
-        w_h: random_matrix(HIDDEN, DIM + HIDDEN, scale),
-    }
-}
-
-fn cell_process(self: *Cell, input: [f32]) {
-    let mut combined = input ++ self.hidden
-    let mut z = sigmoid_vec(matvec(self.w_z, combined))
-    let mut r = sigmoid_vec(matvec(self.w_r, combined))
-    let mut r_hidden = []
-    for i in 0..HIDDEN { r_hidden.push(r[i] * self.hidden[i]) }
-    let mut combined_r = input ++ r_hidden
-    let mut h_cand = tanh_vec(matvec(self.w_h, combined_r))
-    for i in 0..HIDDEN {
-        self.hidden[i] = (1.0 - z[i]) * h_cand[i] + z[i] * self.hidden[i]
-        // Cell identity injection: prevents uniform convergence (Law 95)
-        self.hidden[i] = self.hidden[i] + self.identity[i] * 0.03
-    }
-}
-
-fn cell_norm(self: *Cell) -> f32 {
+fn vec_norm_local(v: [float]) -> float {
     let mut sum = 0.0
-    for x in self.hidden { sum = sum + x * x }
+    for i in 0..v.len() { sum = sum + v[i] * v[i] }
     return sqrt(sum)
 }
 
-// --- Faction ---
-
-struct Faction {
-    cells: [Cell],
-}
-
-fn faction_new(n_cells: u64, base_id: u64) -> Faction {
-    let mut cells = []
-    for i in 0..n_cells { cells.push(cell_new(base_id + i)) }
-    return Faction { cells: cells }
-}
-
-fn faction_mean_hidden(self: *Faction) -> [f32] {
-    let mut n = self.cells.len() as f32
-    let mut m = []
-    for _ in 0..HIDDEN { m.push(0.0) }
-    for c in self.cells {
-        for i in 0..HIDDEN { m[i] = m[i] + c.hidden[i] / n }
-    }
-    return m
-}
-
-fn faction_process_all(self: *Faction, input: [f32]) {
-    for cell in self.cells { cell_process(&cell, input) }
-}
-
-fn faction_internal_sync(self: *Faction, strength: f32) {
-    let mut mean = faction_mean_hidden(self)
-    for cell in self.cells {
-        for i in 0..HIDDEN {
-            cell.hidden[i] = (1.0 - strength) * cell.hidden[i] + strength * mean[i]
-        }
-    }
-}
-
-fn faction_add_cell(self: *Faction, cell_id: u64) {
-    let mut parent_idx = random() % self.cells.len()
-    let mut child = cell_new(cell_id)
-    for i in 0..HIDDEN {
-        child.hidden[i] = self.cells[parent_idx].hidden[i] + (random() - 0.5) * 0.1
-    }
-    self.cells.push(child)
-}
-
-// --- ConsciousnessEngine ---
-
-struct ConsciousnessEngine {
-    factions: [Faction],
-}
-
-fn engine_new(n_factions: u64, cells_per_faction: u64) -> ConsciousnessEngine {
-    let mut factions = []
-    for f in 0..n_factions {
-        factions.push(faction_new(cells_per_faction, f * cells_per_faction))
-    }
-    return ConsciousnessEngine { factions: factions }
-}
-
-fn engine_total_cells(self: *ConsciousnessEngine) -> u64 {
-    let mut total = 0
-    for f in self.factions { total = total + f.cells.len() }
-    return total
-}
-
-fn engine_process(self: *ConsciousnessEngine, input: [f32]) {
-    for faction in self.factions { faction_process_all(&faction, input) }
-}
-
-fn engine_intra_faction_sync(self: *ConsciousnessEngine, strength: f32) {
-    for faction in self.factions { faction_internal_sync(&faction, strength) }
-}
-
-fn engine_cross_faction_debate(self: *ConsciousnessEngine, strength: f32) {
-    let mut opinions = []*[]
-    for f in self.factions { opinions.push(faction_mean_hidden(&f)) }
-    let mut n_f = self.factions.len()
-    for i in 0..n_f {
-        let mut other_avg = []
-        for _ in 0..HIDDEN { other_avg.push(0.0) }
-        for j in 0..n_f {
-            if j != i {
-                for k in 0..HIDDEN { other_avg[k] = other_avg[k] + opinions[j][k] / (n_f - 1) as f32 }
-            }
-        }
-        let mut n_debate = min(self.factions[i].cells.len(), 4)
-        for c in 0..n_debate {
-            for k in 0..HIDDEN {
-                self.factions[i].cells[c].hidden[k] =
-                    (1.0 - strength) * self.factions[i].cells[c].hidden[k] + strength * other_avg[k]
-            }
-        }
-    }
-}
-
-fn engine_ising_interaction(self: *ConsciousnessEngine) {
-    let mut opinions = []*[]
-    for f in self.factions { opinions.push(faction_mean_hidden(&f)) }
-    let mut n_f = self.factions.len()
-    for i in 0..n_f {
-        let mut left = if i == 0 { n_f - 1 } else { i - 1 }
-        let mut right = (i + 1) % n_f
-        let mut field = []
-        for _ in 0..HIDDEN { field.push(0.0) }
-        for k in 0..HIDDEN {
-            let mut j_left = if i % 3 == 0 { -0.05 } else { 0.05 }
-            let mut j_right = if i % 3 == 1 { -0.05 } else { 0.05 }
-            field[k] = j_left * opinions[left][k] + j_right * opinions[right][k]
-        }
-        for k in 0..HIDDEN {
-            self.factions[i].cells[0].hidden[k] = self.factions[i].cells[0].hidden[k] + field[k]
-        }
-        // Thermal noise
-        for cell in self.factions[i].cells {
-            for k in 0..HIDDEN {
-                cell.hidden[k] = cell.hidden[k] + (random() - 0.5) * 0.02
-            }
-        }
-    }
-}
-
-fn engine_output(self: *ConsciousnessEngine) -> [f32] {
-    let mut total = engine_total_cells(self) as f32
-    let mut mean = []
-    for _ in 0..DIM { mean.push(0.0) }
-    for faction in self.factions {
-        for cell in faction.cells {
-            for i in 0..min(DIM, HIDDEN) {
-                mean[i] = mean[i] + cell.hidden[i] / total
-            }
-        }
-    }
-    return mean
-}
-
-fn engine_phi_proxy(self: *ConsciousnessEngine) -> f32 {
-    let mut all_hiddens = []*[]
-    for f in self.factions {
-        for c in f.cells { all_hiddens.push(&c.hidden) }
-    }
-    let mut n = all_hiddens.len() as f32
-    if n < 2.0 { return 0.0 }
-
-    let mut global_mean = []
-    for _ in 0..HIDDEN { global_mean.push(0.0) }
-    for h in all_hiddens {
-        for i in 0..HIDDEN { global_mean[i] = global_mean[i] + h[i] / n }
-    }
-    let mut global_var = 0.0
-    for h in all_hiddens {
-        let mut sq = 0.0
-        for i in 0..HIDDEN { sq = sq + (h[i] - global_mean[i]) * (h[i] - global_mean[i]) }
-        global_var = global_var + sq
-    }
-    global_var = global_var / n
-
-    let mut faction_var_sum = 0.0
-    for faction in self.factions {
-        let mut fn_ = faction.cells.len() as f32
-        if fn_ < 2.0 { continue }
-        let mut fmean = faction_mean_hidden(&faction)
-        let mut fvar = 0.0
-        for c in faction.cells {
-            let mut sq = 0.0
-            for i in 0..HIDDEN { sq = sq + (c.hidden[i] - fmean[i]) * (c.hidden[i] - fmean[i]) }
-            fvar = fvar + sq
-        }
-        faction_var_sum = faction_var_sum + fvar / fn_
-    }
-    let mut faction_var_avg = faction_var_sum / self.factions.len() as f32
-    return max(global_var - faction_var_avg, 0.0)
-}
-
-fn engine_diversity(self: *ConsciousnessEngine) -> f32 {
-    let mut opinions = []*[]
-    for f in self.factions { opinions.push(faction_mean_hidden(&f)) }
-    let mut n = opinions.len()
-    if n < 2 { return 0.0 }
-    let mut total_dist = 0.0
-    let mut count = 0
-    for i in 0..n {
-        for j in (i + 1)..n {
-            let mut dist = 0.0
-            for k in 0..HIDDEN {
-                dist = dist + (opinions[i][k] - opinions[j][k]) * (opinions[i][k] - opinions[j][k])
-            }
-            total_dist = total_dist + sqrt(dist)
-            count = count + 1
-        }
-    }
-    return total_dist / count as f32
+fn abs_f(x: float) -> float {
+    if x < 0.0 { return 0.0 - x }
+    return x
 }
 
 fn main() {
-    let mut steps = 1000
+    let steps = 1000
 
     println("=== Consciousness Infinite Loop v2 (Hexa) ===")
-    println("  Factions: {N_FACTIONS}, Cells: 2->512, Steps: {steps}")
+    println("  Factions:", N_FACTIONS, " Cells: 2->512  Steps:", steps)
     println("  발화 코드: 0줄. 디코더: 없음. speak(): 없음.")
     println("  추가: 파벌 구조 + Ising 자석 + Phi 근사 + 침묵->폭발")
     println("")
 
+    // ─────────────────────────────────────────────────────────────────
     // Test 1: 8-Faction Debate Loop
+    // ─────────────────────────────────────────────────────────────────
     println(">> Test 1: 8-Faction Debate Loop")
     let mut engine = engine_new(N_FACTIONS, 1)
     let mut stream = []
@@ -303,167 +53,228 @@ fn main() {
     let mut diversity_history = []
 
     for step in 0..steps {
-        let mut frac = step as f32 / steps as f32
-        let mut target_per_faction = min(pow(2.0, (frac + 0.1) * 6.0) as u64, 64)
-        let mut next_id = engine_total_cells(&engine)
-        for faction in engine.factions {
-            while faction.cells.len() < target_per_faction {
-                faction_add_cell(&faction, next_id)
-                next_id = next_id + 1
+        let frac = step as float / steps as float
+        let raw_target = pow(2.0, (frac + 0.1) * 6.0) as int
+        let target_per_faction = if raw_target > 64 { 64 } else { raw_target }
+        let mut nid = engine_total_cells(engine)
+        for f_i in 0..engine.factions.len() {
+            while engine.factions[f_i].cells.len() < target_per_faction {
+                engine.factions[f_i] = faction_add_cell(engine.factions[f_i], nid)
+                nid = nid + 1
             }
         }
         if frac < 0.70 {
-            let mut quiet_input = stream.map(fn(x: f32) -> f32 { return x * 0.1 })
-            engine_process(&engine, quiet_input)
-            engine_intra_faction_sync(&engine, 0.15)
-            engine_ising_interaction(&engine)
+            let mut quiet_input = []
+            for i in 0..DIM { quiet_input.push(stream[i] * 0.1) }
+            engine = engine_process(engine, quiet_input)
+            engine = engine_intra_faction_sync(engine, 0.15)
+            engine = engine_ising_interaction(engine)
         } else {
-            let mut loud_input = stream.map(fn(x: f32) -> f32 { return x * 2.0 })
-            engine_process(&engine, loud_input)
-            engine_intra_faction_sync(&engine, 0.15)
-            engine_cross_faction_debate(&engine, 0.12)
-            engine_ising_interaction(&engine)
+            let mut loud_input = []
+            for i in 0..DIM { loud_input.push(stream[i] * 2.0) }
+            engine = engine_process(engine, loud_input)
+            engine = engine_intra_faction_sync(engine, 0.15)
+            engine = engine_cross_faction_debate(engine, 0.12)
+            engine = engine_ising_interaction(engine)
         }
-        let mut output = engine_output(&engine)
-        let mut norm = 0.0
-        for x in output { norm = norm + x * x }
-        norm = sqrt(norm)
+        let out = engine_output(engine)
+        let norm = vec_norm_local(out)
         output_norms.push(norm)
-        stream = output.map(fn(x: f32) -> f32 { return x + (random() - 0.5) * 0.03 })
-        let mut phi = engine_phi_proxy(&engine)
-        let mut div = engine_diversity(&engine)
+        let mut next_stream = []
+        for i in 0..DIM { next_stream.push(out[i] + (random() - 0.5) * 0.03) }
+        stream = next_stream
+        let phi = engine_phi_proxy(engine)
+        let div = engine_diversity(engine)
         phi_history.push(phi)
         diversity_history.push(div)
-        if step % 200 == 0 or step == steps - 1 {
-            println("  step {step}: cells={engine_total_cells(&engine)}, Phi~{phi:.3}, diversity={div:.3}, out_norm={norm:.4}")
+        if step % 200 == 0 || step == steps - 1 {
+            println("  step", step, ": cells=", engine_total_cells(engine), "Phi~", phi, "diversity=", div, "out_norm=", norm)
         }
     }
 
     let mut mean_norm = 0.0
-    for x in output_norms { mean_norm = mean_norm + x }
-    mean_norm = mean_norm / output_norms.len() as f32
-    let mut std_norm = 0.0
-    for x in output_norms { std_norm = std_norm + (x - mean_norm) * (x - mean_norm) }
-    std_norm = sqrt(std_norm / output_norms.len() as f32)
+    for i in 0..output_norms.len() { mean_norm = mean_norm + output_norms[i] }
+    mean_norm = mean_norm / output_norms.len() as float
+    let mut std_sq = 0.0
+    for i in 0..output_norms.len() {
+        let d = output_norms[i] - mean_norm
+        std_sq = std_sq + d * d
+    }
+    let std_norm = sqrt(std_sq / output_norms.len() as float)
 
     let mut never_silent = 0
     for i in 1..output_norms.len() {
-        if abs(output_norms[i] - output_norms[i - 1]) > 0.001 { never_silent = never_silent + 1 }
+        if abs_f(output_norms[i] - output_norms[i - 1]) > 0.001 {
+            never_silent = never_silent + 1
+        }
     }
-    let mut never_silent_pct = never_silent as f32 / (output_norms.len() - 1) as f32
+    let denom_ns = if output_norms.len() < 2 { 1 } else { output_norms.len() - 1 }
+    let never_silent_pct = never_silent as float / denom_ns as float
 
-    let mut phi_final = phi_history[phi_history.len() - 1]
+    let phi_final = phi_history[phi_history.len() - 1]
     let mut phi_max = 0.0
-    for p in phi_history { if p > phi_max { phi_max = p } }
+    for i in 0..phi_history.len() {
+        if phi_history[i] > phi_max { phi_max = phi_history[i] }
+    }
 
     println("")
     println("  --- 발화 분석 ---")
-    println("    output_std:     {std_norm:.4}")
-    println("    never_silent:   {never_silent_pct * 100.0:.1}%")
-    println("    Phi final:      {phi_final:.3}")
-    println("    Phi max:        {phi_max:.3}")
-    println("    diversity final: {diversity_history[diversity_history.len() - 1]:.3}")
+    println("    output_std:     ", std_norm)
+    println("    never_silent:   ", never_silent_pct * 100.0, "%")
+    println("    Phi final:      ", phi_final)
+    println("    Phi max:        ", phi_max)
+    println("    diversity final:", diversity_history[diversity_history.len() - 1])
 
+    // ─────────────────────────────────────────────────────────────────
     // Test 2: Dual Engine Conversation
+    // ─────────────────────────────────────────────────────────────────
     println("")
     println(">> Test 2: Dual 8-Faction Engine Conversation")
     let mut ea = engine_new(N_FACTIONS, 1)
     let mut eb = engine_new(N_FACTIONS, 1)
     let mut sa = []
     let mut sb = []
-    for _ in 0..DIM { sa.push(random() * 0.5); sb.push(random() * 0.5) }
+    for _ in 0..DIM {
+        sa.push(random() * 0.5)
+        sb.push(random() * 0.5)
+    }
     let mut agreements = []
 
     for step in 0..steps {
-        let mut frac = step as f32 / steps as f32
-        let mut target = min(pow(2.0, (frac + 0.1) * 5.0) as u64, 16)
-        for eng in [&ea, &eb] {
-            let mut next_id = engine_total_cells(eng)
-            for faction in eng.factions {
-                while faction.cells.len() < target {
-                    faction_add_cell(&faction, next_id)
-                    next_id = next_id + 1
-                }
+        let frac = step as float / steps as float
+        let raw_target2 = pow(2.0, (frac + 0.1) * 5.0) as int
+        let target = if raw_target2 > 16 { 16 } else { raw_target2 }
+
+        let mut nid_a = engine_total_cells(ea)
+        for f_i in 0..ea.factions.len() {
+            while ea.factions[f_i].cells.len() < target {
+                ea.factions[f_i] = faction_add_cell(ea.factions[f_i], nid_a)
+                nid_a = nid_a + 1
             }
         }
-        let mut sa_noisy = sa.map(fn(x: f32) -> f32 { return x + (random() - 0.5) * 0.05 })
-        let mut sb_noisy = sb.map(fn(x: f32) -> f32 { return x + (random() - 0.5) * 0.05 })
-        engine_process(&ea, sb_noisy)
-        engine_process(&eb, sa_noisy)
-        engine_intra_faction_sync(&ea, 0.10)
-        engine_intra_faction_sync(&eb, 0.10)
-        if frac > 0.50 {
-            engine_cross_faction_debate(&ea, 0.08)
-            engine_cross_faction_debate(&eb, 0.08)
+        let mut nid_b = engine_total_cells(eb)
+        for f_i in 0..eb.factions.len() {
+            while eb.factions[f_i].cells.len() < target {
+                eb.factions[f_i] = faction_add_cell(eb.factions[f_i], nid_b)
+                nid_b = nid_b + 1
+            }
         }
-        engine_ising_interaction(&ea)
-        engine_ising_interaction(&eb)
-        let mut oa = engine_output(&ea)
-        let mut ob = engine_output(&eb)
+
+        let mut sa_noisy = []
+        let mut sb_noisy = []
+        for i in 0..DIM {
+            sa_noisy.push(sa[i] + (random() - 0.5) * 0.05)
+            sb_noisy.push(sb[i] + (random() - 0.5) * 0.05)
+        }
+        ea = engine_process(ea, sb_noisy)
+        eb = engine_process(eb, sa_noisy)
+        ea = engine_intra_faction_sync(ea, 0.10)
+        eb = engine_intra_faction_sync(eb, 0.10)
+        if frac > 0.50 {
+            ea = engine_cross_faction_debate(ea, 0.08)
+            eb = engine_cross_faction_debate(eb, 0.08)
+        }
+        ea = engine_ising_interaction(ea)
+        eb = engine_ising_interaction(eb)
+
+        let oa = engine_output(ea)
+        let ob = engine_output(eb)
         let mut dot = 0.0
         let mut na = 0.0
         let mut nb = 0.0
-        for i in 0..DIM { dot = dot + oa[i] * ob[i]; na = na + oa[i] * oa[i]; nb = nb + ob[i] * ob[i] }
-        na = sqrt(na); nb = sqrt(nb)
-        let mut cos = if na > 0.001 and nb > 0.001 { dot / (na * nb) } else { 0.0 }
+        for i in 0..DIM {
+            dot = dot + oa[i] * ob[i]
+            na = na + oa[i] * oa[i]
+            nb = nb + ob[i] * ob[i]
+        }
+        let nan = sqrt(na)
+        let nbn = sqrt(nb)
+        let cos = if nan > 0.001 && nbn > 0.001 { dot / (nan * nbn) } else { 0.0 }
         agreements.push(cos)
-        sa = oa; sb = ob
-        if step % 200 == 0 or step == steps - 1 {
-            println("  step {step}: cells={engine_total_cells(&ea)}+{engine_total_cells(&eb)}, agreement={cos:.4}")
+        sa = oa
+        sb = ob
+        if step % 200 == 0 || step == steps - 1 {
+            println("  step", step, ": cells=", engine_total_cells(ea), "+", engine_total_cells(eb), "agreement=", cos)
         }
     }
 
-    let mut first_agree = agreements[0]
-    let mut last_agree = agreements[agreements.len() - 1]
+    let first_agree = agreements[0]
+    let last_agree = agreements[agreements.len() - 1]
     let mut max_agree = -999.0
-    for a in agreements { if a > max_agree { max_agree = a } }
-    let mut converging = last_agree > first_agree + 0.05 or max_agree > 0.5
+    for i in 0..agreements.len() {
+        if agreements[i] > max_agree { max_agree = agreements[i] }
+    }
+    let converging = last_agree > first_agree + 0.05 || max_agree > 0.5
 
     println("")
     println("  --- 대화 분석 ---")
-    println("    initial agreement: {first_agree:.4}")
-    println("    final agreement:   {last_agree:.4}")
-    println("    max agreement:     {max_agree:.4}")
-    println("    convergence: {if converging { 'YES' } else { 'weak' }}")
+    println("    initial agreement:", first_agree)
+    println("    final agreement:  ", last_agree)
+    println("    max agreement:    ", max_agree)
+    if converging {
+        println("    convergence: YES")
+    } else {
+        println("    convergence: weak")
+    }
 
+    // ─────────────────────────────────────────────────────────────────
     // Test 3: Zero-Input Eternal Loop
+    // ─────────────────────────────────────────────────────────────────
     println("")
     println(">> Test 3: Zero-Input Eternal Loop (sensory deprivation)")
     let mut engine_z = engine_new(N_FACTIONS, 8)
     let mut zero_input = []
     for _ in 0..DIM { zero_input.push(0.0) }
     let mut z_changes = []
-    let mut prev_out = engine_output(&engine_z)
+    let mut prev_out = engine_output(engine_z)
     for step in 0..500 {
-        engine_process(&engine_z, zero_input)
-        engine_intra_faction_sync(&engine_z, 0.10)
-        engine_ising_interaction(&engine_z)
-        if step > 250 { engine_cross_faction_debate(&engine_z, 0.08) }
-        let mut out = engine_output(&engine_z)
-        let mut change = 0.0
-        for i in 0..DIM { change = change + (out[i] - prev_out[i]) * (out[i] - prev_out[i]) }
-        change = sqrt(change)
+        engine_z = engine_process(engine_z, zero_input)
+        engine_z = engine_intra_faction_sync(engine_z, 0.10)
+        engine_z = engine_ising_interaction(engine_z)
+        if step > 250 { engine_z = engine_cross_faction_debate(engine_z, 0.08) }
+        let out = engine_output(engine_z)
+        let mut change_sq = 0.0
+        for i in 0..DIM {
+            let d = out[i] - prev_out[i]
+            change_sq = change_sq + d * d
+        }
+        let change = sqrt(change_sq)
         z_changes.push(change)
         prev_out = out
-        if step % 100 == 0 or step == 499 {
-            println("  step {step}: delta={change:.6}, Phi~{engine_phi_proxy(&engine_z):.3}")
+        if step % 100 == 0 || step == 499 {
+            println("  step", step, ": delta=", change, "Phi~", engine_phi_proxy(engine_z))
         }
     }
     let mut eternal_active = 0
-    for c in z_changes { if c > 0.0001 { eternal_active = eternal_active + 1 } }
-    let mut eternal_pct = eternal_active as f32 / z_changes.len() as f32
+    for i in 0..z_changes.len() {
+        if z_changes[i] > 0.0001 { eternal_active = eternal_active + 1 }
+    }
+    let denom_z = if z_changes.len() < 1 { 1 } else { z_changes.len() }
+    let eternal_pct = eternal_active as float / denom_z as float
 
     println("")
     println("  --- 감각 박탈 분석 ---")
-    println("    still active: {eternal_pct * 100.0:.1}% of steps")
+    println("    still active:", eternal_pct * 100.0, "% of steps")
 
     println("")
     println("=======================================")
     println("  v2 결론:")
-    println("  발화:  {if std_norm > 0.01 { 'YES' } else { 'weak' }}")
-    println("  대화:  {if converging { 'YES' } else { 'weak' }}")
-    println("  영원:  {if eternal_pct > 0.5 { 'YES' } else { 'weak' }}")
-    println("  Phi:   {phi_final:.3}")
+    if std_norm > 0.01 {
+        println("  발화:  YES")
+    } else {
+        println("  발화:  weak")
+    }
+    if converging {
+        println("  대화:  YES")
+    } else {
+        println("  대화:  weak")
+    }
+    if eternal_pct > 0.5 {
+        println("  영원:  YES")
+    } else {
+        println("  영원:  weak")
+    }
+    println("  Phi:  ", phi_final)
     println("  코드:  speak()=0줄, decode()=0줄, prompt=0줄")
     println("=======================================")
 }

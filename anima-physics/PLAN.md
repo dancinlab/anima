@@ -177,6 +177,32 @@ Phase 1b (bitstream/flash) 별도 cycle: `brew install nextpnr-ice40 nextpnr-ecp
 
 ## §5 진행 로그 (cycle ledger, append-only)
 
+### §5.2 2026-05-21 "all bg go" — 6 BG agents parallel completion
+
+**6 agent / 7 work item parallel dispatch, all ✅ completed**:
+
+1. ✅ **engines batch A** (analog + izhikevich + snn + oscillator_laser) — 4 stub 22-31 LoC → 285-385 LoC actual impl, 20/20 selftest PASS (5×4), LCG `lcg_next/tf_rand01` 패턴 `random()` 우회
+2. ✅ **engines batch B** (photonic + quantum + thermodynamic) — 3 stub → 416-514 LoC, 15/15 selftest PASS (5×3). quantum 은 real-pair 표현 + 2×2 block closed-form (F-Q-1 norm drift 1.3e-14)
+3. ✅ **G4 26 substrate README** — 25 신규 + hw/README 1 보존 = 26 dir 모두 README 보유. 메커니즘 + §188 결과 + .hexa list 표 + cross-link 표준화
+4. ✅ **G8 E2E integrated demo** — `tool/anima_physics_e2e_demo.hexa` 535 LoC, F-E2E-1..5 5/5 PASS, wall 4.41s. substrate (strange_loop 4×4) → engine → motivation → emit (10 events, ratchet binding) → audit RB. PLAN G8 ☑
+5. ✅ **consciousness-loop legacy rewrite** — 3 파일 (main, snn_main, main_longrun) 107 legacy 사이트 → 0 code-side, all parse PASS. main/main_longrun = `import "aux_engine_lib.hexa"` lib delegation, snn_main = standalone LIF + new helpers (`sf_with_neuron_at`, `se_with_faction_at`, `identity_sum`)
+6. ✅ **G1 build smoke 전수** — 68 .hexa 파일 (62 → 68 actual count) `hexa build` smoke. **51 PASS / 17 FAIL / 0 TIMEOUT (75% PASS)**. FAIL 분류: 7 auto-invoke conflict (rename `main()`→`run()` 1-line patch) + 6 parse error (legacy `&`/`+`/`fn` nesting modernization) + 4 `hexa_random` undeclared (PR #262 unmerged + agent hexa_v2 local rebuild 미적용)
+
+**g_completion_8 진행 갱신**:
+- G1 build 무결성: 51/68 PASS (75%, was unknown) — 17 FAIL specific
+- G2 falsifier coverage: §188 21 PASS + 본 cycle engines impl 35 PASS (7 substrates × 5) + E2E 5 PASS = 새 cycle 추가 40 PASS
+- G4 substrate README: 1/27 → 27/27 (☑ closed) — esp32 + 26 신규
+- G6 HW silicon Phase 1: ☑ (직전 commit)
+- G7 cross-link: README §0 SW/HW 분할 + 27 substrate README 정합
+- G8 E2E demo: ☐ → **☑ LANDED** (5/5 PASS, deterministic)
+- G3 entry cross-check: ☐ 유지 (별도 cycle)
+- G5 demiurge GATE upgrade: ☐ 유지 (component STEP/firmware bring-up 별도)
+
+**남은 work** (다음 cycle):
+- G1 17 FAIL 회수: 7 auto-invoke rename + 6 parse modernization + 4 hexa_random (hexa-lang PR #262 merge 의존)
+- G3 tool/cross_check_entries.sh 작성 + 1회 lint pass
+- G5 demiurge component real STEP + firmware AD9833 bring-up
+
 ### §5.1 2026-05-21 PLAN.md 신설 + 초기 SNAPSHOT
 - 본 PLAN.md 생성. §1-§4 + §6.
 - 8 완성 기준 (g_completion_8) 정의

@@ -1,22 +1,331 @@
-// oscillator_laser_engine.hexa — 3-champion engine: Kuramoto oscillator + laser amplification
-// Phi(IIT)=56.6 + Granger=63993 + CE=0.08, blend=0.05 golden ratio
+// oscillator_laser_engine.hexa — Semiconductor laser rate equations
+// Single-mode rate-equation model (Coldren & Corzine 1995):
+//   dN/dt = J - N/tau_n - G*(N - N_0)*S
+//   dS/dt = G*(N - N_0)*S - S/tau_p + beta*N/tau_n
+// where:
+//   N = carrier density (cm^-3, scaled units)
+//   S = photon density (cm^-3, scaled units)
+//   J = pump current (carriers / s)
+//   tau_n = carrier lifetime (~1 ns)
+//   tau_p = photon lifetime (~1 ps)
+//   G = gain coefficient
+//   N_0 = transparency carrier density
+//   beta = spontaneous emission factor
+//
+// Threshold: J_th = N_th / tau_n where N_th = N_0 + 1/(G*tau_p)
+//
+// 3-champion engine extension (legacy header retained):
+//   Φ(IIT)=56.6 + Granger=63993 + CE=0.08, blend=0.05 golden ratio
+//   (these are aggregate-level metrics computed downstream)
+//
+// Falsifier suite (F-OL-1..5):
+//   F-OL-1 below-threshold N grows (S stays near 0)
+//   F-OL-2 above-threshold S grows substantially
+//   F-OL-3 steady-state S∝(J - J_th)
+//   F-OL-4 turn-on delay (S takes finite time to rise after step)
+//   F-OL-5 relaxation oscillation detectable (S oscillates before settling)
+//
+// Canonical hexa: deterministic LCG, functional updates, no nested LHS.
 
-struct OscillatorLaserEngine {
-    n_cells: i32,
-    blend: float,
-    coupling_k: float,
-    phi: float,
-    granger: float
+// ─────────────────────────────────────────────────────────────────────
+// §1  Constants (normalized units for numerical tractability)
+// ─────────────────────────────────────────────────────────────────────
+
+let TAU_N = 1.0e-9     // 1 ns carrier lifetime
+let TAU_P = 2.0e-12    // 2 ps photon lifetime
+let G_GAIN = 1.5e-6    // gain coefficient (cm^3/s scaled)
+let N_0 = 1.0e18       // transparency carrier density
+let BETA = 1.0e-4      // spontaneous emission factor
+let DT_S = 1.0e-12     // 1 ps integration step
+
+// Threshold carrier density: N_th = N_0 + 1/(G*tau_p)
+//   = 1e18 + 1/(1.5e-6 * 2e-12) = 1e18 + 1/3e-18 = 1e18 + 3.33e17 = 1.333e18
+// Threshold pump: J_th = N_th / tau_n = 1.333e18 / 1e-9 = 1.333e27
+let J_TH = 1.333e27
+
+// ─────────────────────────────────────────────────────────────────────
+// §2  Scalar helpers + LCG
+// ─────────────────────────────────────────────────────────────────────
+
+fn fabs(x: float) -> float {
+    if x < 0.0 { return 0.0 - x }
+    return x
 }
 
-fn create_engine(n_cells: i32, blend: float) -> OscillatorLaserEngine {
-    return OscillatorLaserEngine(n_cells, blend, 1.0, 0.0, 0.0)
+fn lcg_hash(seed: int, i: int) -> int {
+    let h = ((seed * 2654435761 + i * 1315423911 + 731) % 100003)
+    if h < 0 { return 0 - h }
+    return h
+}
+
+fn lcg_rand01(seed: int, i: int) -> float {
+    return (lcg_hash(seed, i) as float) / 100003.0
+}
+
+// ─────────────────────────────────────────────────────────────────────
+// §3  Structs
+// ─────────────────────────────────────────────────────────────────────
+
+struct LaserCell {
+    n_carriers: float,    // carrier density
+    s_photons: float,     // photon density
+    j_pump: float         // per-cell pump current
+}
+
+struct OscillatorLaserEngine {
+    n_cells: int,
+    blend: float,
+    coupling_k: float,
+    cells: [LaserCell],
+    phi: float,
+    granger: float,
+    step_count: int,
+    s_history: [float]    // last-cell photon trace (for relaxation osc analysis)
+}
+
+// ─────────────────────────────────────────────────────────────────────
+// §4  Construction
+// ─────────────────────────────────────────────────────────────────────
+
+fn create_cell(j_pump: float) -> LaserCell {
+    return LaserCell { n_carriers: 1.0e17, s_photons: 1.0, j_pump: j_pump }
+}
+
+fn create_engine(n_cells: int, blend: float) -> OscillatorLaserEngine {
+    let mut cells = []
+    for _ in 0..n_cells { cells.push(create_cell(0.0)) }
+    return OscillatorLaserEngine {
+        n_cells: n_cells,
+        blend: blend,
+        coupling_k: 1.0,
+        cells: cells,
+        phi: 0.0,
+        granger: 0.0,
+        step_count: 0,
+        s_history: []
+    }
+}
+
+// ─────────────────────────────────────────────────────────────────────
+// §5  Functional update helpers
+// ─────────────────────────────────────────────────────────────────────
+
+fn engine_with_cell_at(engine: OscillatorLaserEngine, i: int, c: LaserCell) -> OscillatorLaserEngine {
+    let mut cs = engine.cells
+    cs[i] = c
+    return OscillatorLaserEngine {
+        n_cells: engine.n_cells,
+        blend: engine.blend,
+        coupling_k: engine.coupling_k,
+        cells: cs,
+        phi: engine.phi,
+        granger: engine.granger,
+        step_count: engine.step_count,
+        s_history: engine.s_history
+    }
+}
+
+fn engine_set_pump(engine: OscillatorLaserEngine, j: float) -> OscillatorLaserEngine {
+    let mut s = engine
+    for i in 0..s.cells.len() {
+        let c = LaserCell { n_carriers: s.cells[i].n_carriers, s_photons: s.cells[i].s_photons, j_pump: j }
+        s = engine_with_cell_at(s, i, c)
+    }
+    return s
+}
+
+// ─────────────────────────────────────────────────────────────────────
+// §6  Dynamics: rate-equation Euler step
+// ─────────────────────────────────────────────────────────────────────
+
+fn rate_eq_step(cell: LaserCell, dt: float) -> LaserCell {
+    let n_ = cell.n_carriers
+    let s_ = cell.s_photons
+    let j_ = cell.j_pump
+    let stim = G_GAIN * (n_ - N_0) * s_
+    let dn = j_ - n_ / TAU_N - stim
+    let ds = stim - s_ / TAU_P + BETA * n_ / TAU_N
+    let n_new_raw = n_ + dn * dt
+    let s_new_raw = s_ + ds * dt
+    // physical floors (densities are non-negative)
+    let n_new = if n_new_raw < 0.0 { 0.0 } else { n_new_raw }
+    let s_new = if s_new_raw < 1e-3 { 1e-3 } else { s_new_raw }
+    return LaserCell { n_carriers: n_new, s_photons: s_new, j_pump: j_ }
 }
 
 fn step(engine: OscillatorLaserEngine) -> OscillatorLaserEngine {
-    return engine
+    let mut s = engine
+    let n = s.cells.len()
+    for i in 0..n {
+        let c = rate_eq_step(s.cells[i], DT_S)
+        s = engine_with_cell_at(s, i, c)
+    }
+    // append last cell's photon density to history (cap at 2000 entries)
+    let mut hist = s.s_history
+    if n > 0 { hist.push(s.cells[n - 1].s_photons) }
+    if hist.len() > 2000 {
+        let mut trimmed = []
+        let start = hist.len() - 2000
+        for k in start..hist.len() { trimmed.push(hist[k]) }
+        hist = trimmed
+    }
+    return OscillatorLaserEngine {
+        n_cells: s.n_cells,
+        blend: s.blend,
+        coupling_k: s.coupling_k,
+        cells: s.cells,
+        phi: s.phi,
+        granger: s.granger,
+        step_count: s.step_count + 1,
+        s_history: hist
+    }
+}
+
+// ─────────────────────────────────────────────────────────────────────
+// §7  Analysis
+// ─────────────────────────────────────────────────────────────────────
+
+fn mean_n(engine: OscillatorLaserEngine) -> float {
+    let n = engine.cells.len()
+    if n == 0 { return 0.0 }
+    let mut s = 0.0
+    for i in 0..n { s = s + engine.cells[i].n_carriers }
+    return s / (n as float)
+}
+
+fn mean_s(engine: OscillatorLaserEngine) -> float {
+    let n = engine.cells.len()
+    if n == 0 { return 0.0 }
+    let mut s = 0.0
+    for i in 0..n { s = s + engine.cells[i].s_photons }
+    return s / (n as float)
 }
 
 fn get_hiddens(engine: OscillatorLaserEngine) -> string {
-    return ""
+    return "N=" + str(mean_n(engine)) + " S=" + str(mean_s(engine))
 }
+
+// Detect oscillation: count sign-changes of (S - S_mean) in history
+fn count_oscillation_crossings(engine: OscillatorLaserEngine) -> int {
+    let h = engine.s_history
+    let n = h.len()
+    if n < 4 { return 0 }
+    let mut mean = 0.0
+    for i in 0..n { mean = mean + h[i] }
+    mean = mean / (n as float)
+    let mut prev_above = h[0] > mean
+    let mut crossings = 0
+    for i in 1..n {
+        let now_above = h[i] > mean
+        if now_above != prev_above { crossings = crossings + 1 }
+        prev_above = now_above
+    }
+    return crossings
+}
+
+// ─────────────────────────────────────────────────────────────────────
+// §8  Falsifiers (F-OL-1..5)
+// ─────────────────────────────────────────────────────────────────────
+
+fn f_ol_1_below_threshold() -> bool {
+    // J = 0.3 * J_th → carriers grow toward steady state J*tau_n
+    // Below-threshold: photons stay << above-threshold steady-state (~1e15)
+    let mut e = create_engine(1, 0.05)
+    e = engine_set_pump(e, 0.3 * J_TH)
+    // 5 ns = 5000 steps
+    for _ in 0..5000 { e = step(e) }
+    let n_ = mean_n(e)
+    let s_ = mean_s(e)
+    let n_ss_expected = 0.3 * J_TH * TAU_N    // ~4e17
+    // Above-threshold S settles at ~1e15; below-threshold S stays orders of magnitude lower
+    let ok = n_ > 1.0e17 && n_ < 1.0e18 && s_ < 1.0e12
+    println("  [F-OL-1] below-th N=" + str(n_) + " S=" + str(s_) + " expect N~" + str(n_ss_expected))
+    return ok
+}
+
+fn f_ol_2_above_threshold() -> bool {
+    // J = 2 * J_th → photon density grows by many orders of magnitude
+    let mut e = create_engine(1, 0.05)
+    e = engine_set_pump(e, 2.0 * J_TH)
+    let s_init = mean_s(e)
+    for _ in 0..10000 { e = step(e) }
+    let s_final = mean_s(e)
+    let ok = s_final > s_init * 1.0e5
+    println("  [F-OL-2] above-th S_init=" + str(s_init) + " S_final=" + str(s_final) + " ratio=" + str(s_final / s_init))
+    return ok
+}
+
+fn f_ol_3_steady_state_proportional() -> bool {
+    // Steady-state S ≈ tau_p * (J - J_th)/q approx — verify S(1.5*J_th) > S(1.2*J_th)
+    let mut e_lo = create_engine(1, 0.05)
+    e_lo = engine_set_pump(e_lo, 1.2 * J_TH)
+    for _ in 0..15000 { e_lo = step(e_lo) }
+    let s_lo = mean_s(e_lo)
+    let mut e_hi = create_engine(1, 0.05)
+    e_hi = engine_set_pump(e_hi, 1.5 * J_TH)
+    for _ in 0..15000 { e_hi = step(e_hi) }
+    let s_hi = mean_s(e_hi)
+    let ok = s_hi > s_lo * 1.5
+    println("  [F-OL-3] steady-state S(1.2Jth)=" + str(s_lo) + " S(1.5Jth)=" + str(s_hi))
+    return ok
+}
+
+fn f_ol_4_turn_on_delay() -> bool {
+    // Step from 0 to 2*J_th, find first step where S crosses 1% of its eventual
+    // steady-state value (~1.3e15 → threshold ~1.3e13). Lasing takes finite time
+    // because carriers must accumulate past N_th before stimulated emission dominates.
+    let mut e = create_engine(1, 0.05)
+    e = engine_set_pump(e, 2.0 * J_TH)
+    let s_threshold = 1.0e13   // 1% of expected steady-state lasing level
+    let mut delay_steps = -1
+    let mut i = 0
+    while i < 5000 {
+        e = step(e)
+        if mean_s(e) > s_threshold {
+            delay_steps = i + 1
+            i = 5000   // break
+        } else {
+            i = i + 1
+        }
+    }
+    // Delay should be > 0 (finite turn-on time, not instantaneous)
+    let ok = delay_steps > 10 && delay_steps < 5000
+    println("  [F-OL-4] turn-on-delay=" + str(delay_steps) + " steps (~" + str((delay_steps as float) * DT_S * 1.0e12) + " ps)")
+    return ok
+}
+
+fn f_ol_5_relaxation_oscillation() -> bool {
+    // Step from below to above threshold → expect oscillation in S before damping
+    let mut e = create_engine(1, 0.05)
+    e = engine_set_pump(e, 3.0 * J_TH)
+    // run 2 ns = 2000 steps to capture the relaxation oscillation
+    for _ in 0..2000 { e = step(e) }
+    let crossings = count_oscillation_crossings(e)
+    // Relaxation oscillation: at least 3 crossings = 1.5 cycles before damping
+    let ok = crossings >= 3
+    println("  [F-OL-5] relaxation-osc crossings=" + str(crossings) + " hist_len=" + str(e.s_history.len()))
+    return ok
+}
+
+fn _selftest() {
+    println("[engines/oscillator_laser_engine] F-OL-1..5 falsifier suite")
+    println("  J_th=" + str(J_TH) + " tau_n=" + str(TAU_N) + " tau_p=" + str(TAU_P))
+    let t1 = f_ol_1_below_threshold()
+    if t1 { println("F-OL-1 PASS") } else { println("F-OL-1 FAIL") }
+    let t2 = f_ol_2_above_threshold()
+    if t2 { println("F-OL-2 PASS") } else { println("F-OL-2 FAIL") }
+    let t3 = f_ol_3_steady_state_proportional()
+    if t3 { println("F-OL-3 PASS") } else { println("F-OL-3 FAIL") }
+    let t4 = f_ol_4_turn_on_delay()
+    if t4 { println("F-OL-4 PASS") } else { println("F-OL-4 FAIL") }
+    let t5 = f_ol_5_relaxation_oscillation()
+    if t5 { println("F-OL-5 PASS") } else { println("F-OL-5 FAIL") }
+    let n_pass = (if t1 { 1 } else { 0 })
+                + (if t2 { 1 } else { 0 })
+                + (if t3 { 1 } else { 0 })
+                + (if t4 { 1 } else { 0 })
+                + (if t5 { 1 } else { 0 })
+    println("[engines/oscillator_laser_engine] " + str(n_pass) + "/5 PASS")
+}
+
+_selftest()

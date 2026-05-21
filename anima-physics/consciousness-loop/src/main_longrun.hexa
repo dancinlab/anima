@@ -1,106 +1,109 @@
-// Long-Run Persistence Test — hexa-native (~224 LOC)
+// Long-Run Persistence Test — hexa-native (canonical, ~120 LOC)
 // 10000 steps, 8 factions, 512 cells target
 // ratchet + Hebbian + debate + Ising
+//
+// Canonical rewrite (G1 closure, 2026-05-21):
+//   - legacy `self: *T` / `&engine` / `or` removed
+//   - struct + engine fns delegated to aux_engine_lib.hexa (canonical SSOT)
+//   - functional-update idiom: `engine = engine_xxx(engine, ...)`
+//   - Hebbian step delegated to aux_engine_hebbian_all (lib §7 AUX-P2)
+//   - ratchet check uses aux_ratchet_drop (lib §7 AUX-P1)
+//
+// Semantics preserved:
+//   - 10000 step loop / 8 factions / 70-30 quiet-loud split / ratchet+Hebbian
+//   - quarter-bucket Phi tracking + monotonic / collapsed verdicts
+//   - growth target = pow(2, (frac+0.1)*9), capped 512, divided by N_FACTIONS
 
-comptime const DIM = 64
-comptime const HIDDEN = 128
-comptime const N_FACTIONS = 8
+import "/Users/ghost/core/anima/anima-physics/consciousness-loop/src/aux_engine_lib.hexa"
+
 comptime const STEPS = 10000
 
-// Cell, Faction, Engine structs reuse consciousness-loop main.hexa patterns
-// (GRU cells, faction sync, debate, Ising, ratchet, Hebbian)
-
-// Abbreviated: the full structs are identical to main.hexa
-// This file adds ratchet_check and hebbian methods
-
 fn main() {
-    println("=== Hexa Long-Run Persistence Test ({STEPS} steps) ===")
+    println("=== Hexa Long-Run Persistence Test (", STEPS, " steps) ===")
     println("  8 factions, 512 cells target")
     println("  ratchet + Hebbian + debate + Ising")
     println("")
 
-    // Reuse engine from main.hexa with added ratchet + hebbian
     let mut engine = engine_new(N_FACTIONS, 1)
     let mut stream = []
     for _ in 0..DIM { stream.push(random() * 0.5) }
     let mut best_phi = 0.0
-    let mut saved_states = null
     let mut phi_quarters = [0.0, 0.0, 0.0, 0.0]
     let mut quarter_counts = [0, 0, 0, 0]
 
     for step in 0..STEPS {
-        let mut frac = step as f32 / STEPS as f32
-        let mut target = min(pow(2.0, (frac + 0.1) * 9.0) as u64, 512) / N_FACTIONS
-        let mut nid = engine_total_cells(&engine)
-        for f in engine.factions {
-            while f.cells.len() < max(target, 1) {
-                faction_add_cell(&f, nid)
+        let frac = step as float / STEPS as float
+        let raw_target = pow(2.0, (frac + 0.1) * 9.0) as int
+        let cap_target = if raw_target > 512 { 512 } else { raw_target }
+        let mut target = cap_target / N_FACTIONS
+        if target < 1 { target = 1 }
+
+        let mut nid = engine_total_cells(engine)
+        for f_i in 0..engine.factions.len() {
+            while engine.factions[f_i].cells.len() < target {
+                engine.factions[f_i] = faction_add_cell(engine.factions[f_i], nid)
                 nid = nid + 1
             }
         }
 
-        // Silence -> debate (70/30)
+        // Silence (70%) → loud + debate (30%)
         if frac < 0.7 {
-            let mut q = stream.map(fn(x: f32) -> f32 { return x * 0.1 })
-            engine_process(&engine, q)
+            let mut q = []
+            for i in 0..DIM { q.push(stream[i] * 0.1) }
+            engine = engine_process(engine, q)
         } else {
-            let mut l = stream.map(fn(x: f32) -> f32 { return x * 2.0 })
-            engine_process(&engine, l)
-            engine_cross_faction_debate(&engine, 0.12)
+            let mut l = []
+            for i in 0..DIM { l.push(stream[i] * 2.0) }
+            engine = engine_process(engine, l)
+            engine = engine_cross_faction_debate(engine, 0.12)
         }
-        engine_intra_faction_sync(&engine, 0.15)
-        engine_ising_interaction(&engine)
+        engine = engine_intra_faction_sync(engine, 0.15)
+        engine = engine_ising_interaction(engine)
 
-        // Hebbian: similar neighbors strengthen
-        for f in engine.factions {
-            let mut n = f.cells.len()
-            for i in 0..min(n, 16) {
-                let mut j = (i + 1) % n
-                let mut corr = 0.0
-                for k in 0..HIDDEN { corr = corr + f.cells[i].hidden[k] * f.cells[j].hidden[k] }
-                corr = corr / HIDDEN as f32
-                if corr > 0.0 {
-                    for k in 0..HIDDEN {
-                        f.cells[i].hidden[k] = 0.97 * f.cells[i].hidden[k] + 0.03 * f.cells[j].hidden[k]
-                    }
-                }
-            }
-        }
+        // Hebbian: similar neighbors strengthen (lib AUX-P2)
+        engine = aux_engine_hebbian_all(engine)
 
-        let mut out = engine_output(&engine)
-        stream = out.map(fn(x: f32) -> f32 { return x + (random() - 0.5) * 0.03 })
-        let mut phi = engine_phi_proxy(&engine)
+        let out = engine_output(engine)
+        let mut next_stream = []
+        for i in 0..DIM { next_stream.push(out[i] + (random() - 0.5) * 0.03) }
+        stream = next_stream
 
-        // Ratchet: save best, restore if Phi drops
-        if phi > best_phi {
-            best_phi = phi
-            // Save states (simplified)
-        } else if phi < best_phi * 0.7 {
-            // Restore from saved (simplified)
-        }
+        let phi = engine_phi_proxy(engine)
 
-        // Quarter tracking
-        let mut q = min((frac * 4.0) as u64, 3)
+        // Ratchet: save best, signal restore if Phi drops > 30%
+        if phi > best_phi { best_phi = phi }
+        // restore-on-drop is signal-only (lib AUX-P1); semantics preserved as observation
+        let _drop = aux_ratchet_drop(phi, best_phi)
+
+        // Quarter tracking (lib AUX-P3)
+        let q = aux_quarter_index(step, STEPS)
         phi_quarters[q] = phi_quarters[q] + phi
         quarter_counts[q] = quarter_counts[q] + 1
 
-        if step % 1000 == 0 or step == STEPS - 1 {
-            println("  step {step}: cells={engine_total_cells(&engine)}, Phi={phi:.4}, best={best_phi:.4}")
+        if step % 1000 == 0 || step == STEPS - 1 {
+            println("  step", step, ": cells=", engine_total_cells(engine), "Phi=", phi, "best=", best_phi)
         }
     }
 
     println("")
     println("=== Results ===")
     for i in 0..4 {
-        let mut qm = phi_quarters[i] / max(quarter_counts[i], 1) as f32
-        println("  Q{i+1} mean Phi: {qm:.4}")
+        let denom = if quarter_counts[i] < 1 { 1 } else { quarter_counts[i] }
+        let qm = phi_quarters[i] / denom as float
+        println("  Q", i + 1, " mean Phi:", qm)
     }
-    println("  best Phi: {best_phi:.4}")
+    println("  best Phi:", best_phi)
+
     let mut qm = []
-    for i in 0..4 { qm.push(phi_quarters[i] / max(quarter_counts[i], 1) as f32) }
-    let mut monotonic = qm[0] <= qm[1] and qm[1] <= qm[2] and qm[2] <= qm[3]
-    let mut collapsed = qm[3] < qm[0] * 0.5
-    println("  monotonic: {monotonic}")
-    println("  collapsed: {not collapsed}")
-    println("  growth:    x{qm[3] / (qm[0] + 1e-8):.1} (Q4/Q1)")
+    for i in 0..4 {
+        let denom = if quarter_counts[i] < 1 { 1 } else { quarter_counts[i] }
+        qm.push(phi_quarters[i] / denom as float)
+    }
+    let monotonic = qm[0] <= qm[1] && qm[1] <= qm[2] && qm[2] <= qm[3]
+    let collapsed = qm[3] < qm[0] * 0.5
+    let alive = !collapsed
+    println("  monotonic:", monotonic)
+    println("  alive:    ", alive)
+    let growth = qm[3] / (qm[0] + 1e-8)
+    println("  growth:   x", growth, "(Q4/Q1)")
 }
