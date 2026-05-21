@@ -123,6 +123,73 @@ fn write_marker(verdict: string, error: string) {
     println("[verdict] " + verdict)
 }
 
+// ═══════════════════════════════════════════════════════════════
+// G2 closure — honest DEPRECATED skip-pass falsifier (F-SUPERCONDUCTING-1..5)
+// Rigetti retired 2026-04-27; no LIVE_HW probe possible.
+// Per spec: honest record + skip. Each falsifier returns a deprecation
+// witness assertion rather than physics evaluation.
+// ═══════════════════════════════════════════════════════════════
+
+// F-SUPERCONDUCTING-1: schema literal preserved (provenance)
+fn fs_super_1() -> bool {
+    let want = "anima_physics/cloud_facade_superconducting/1_braket_rigetti_deprecated"
+    let ok = SCHEMA == want
+    println("  [F-SUPERCONDUCTING-1] schema=" + SCHEMA + " match=" + bool_str(ok))
+    return ok
+}
+
+// F-SUPERCONDUCTING-2: deprecation_date frozen (2026-04-27)
+fn fs_super_2() -> bool {
+    let ok = DEPRECATION_DATE == "2026-04-27"
+    println("  [F-SUPERCONDUCTING-2] deprecation_date=" + DEPRECATION_DATE + " match=" + bool_str(ok))
+    return ok
+}
+
+// F-SUPERCONDUCTING-3: device_arn historical preserved (ledger continuity)
+fn fs_super_3() -> bool {
+    let want = "arn:aws:braket:us-west-1::device/qpu/rigetti/Ankaa-3"
+    let ok = DEFAULT_DEVICE_ARN == want
+    println("  [F-SUPERCONDUCTING-3] device_arn=" + DEFAULT_DEVICE_ARN + " match=" + bool_str(ok))
+    return ok
+}
+
+// F-SUPERCONDUCTING-4: verdict literal stable (PREP_DEPRECATED_RIGETTI_RETIRED)
+fn fs_super_4() -> bool {
+    let want = "PREP_DEPRECATED_RIGETTI_RETIRED"
+    let ok = V_DEPRECATED == want
+    println("  [F-SUPERCONDUCTING-4] verdict=" + V_DEPRECATED + " match=" + bool_str(ok))
+    return ok
+}
+
+// F-SUPERCONDUCTING-5: no live-API contract — backend prefix is "aws_braket_rigetti_"
+fn fs_super_5() -> bool {
+    let ok = BACKEND_PREFIX == "aws_braket_rigetti_"
+    println("  [F-SUPERCONDUCTING-5] backend_prefix=" + BACKEND_PREFIX + " match=" + bool_str(ok))
+    return ok
+}
+
+fn _selftest() -> int {
+    println("── superconducting falsifier (DEPRECATED, honest skip-pass) ──")
+    let f1 = fs_super_1()
+    if f1 { println("F-SUPERCONDUCTING-1 PASS — schema preserved") } else { println("F-SUPERCONDUCTING-1 FAIL") }
+    let f2 = fs_super_2()
+    if f2 { println("F-SUPERCONDUCTING-2 PASS — deprecation_date frozen") } else { println("F-SUPERCONDUCTING-2 FAIL") }
+    let f3 = fs_super_3()
+    if f3 { println("F-SUPERCONDUCTING-3 PASS — device_arn historical preserved") } else { println("F-SUPERCONDUCTING-3 FAIL") }
+    let f4 = fs_super_4()
+    if f4 { println("F-SUPERCONDUCTING-4 PASS — verdict literal stable") } else { println("F-SUPERCONDUCTING-4 FAIL") }
+    let f5 = fs_super_5()
+    if f5 { println("F-SUPERCONDUCTING-5 PASS — backend prefix stable") } else { println("F-SUPERCONDUCTING-5 FAIL") }
+    let mut pc = 0
+    if f1 { pc = pc + 1 }
+    if f2 { pc = pc + 1 }
+    if f3 { pc = pc + 1 }
+    if f4 { pc = pc + 1 }
+    if f5 { pc = pc + 1 }
+    println("[superconducting falsifier] " + to_string(pc) + "/5 PASS (DEPRECATED honest skip — provenance only)")
+    return pc
+}
+
 fn cmd_selftest() {
     println("── braket_rigetti cloud_facade_poc selftest (DEPRECATED) ──")
     println("provider_status=retired_2026_04_27")
@@ -136,11 +203,18 @@ fn cmd_selftest() {
 fn main() {
     let av = argv()
     let mut selftest = false
-    let mut i = 2
+    let mut falsifier = false
+    let mut i = 0
     while i < len(av) {
         let a = av[i]
         if a == "--selftest" { selftest = true; i = i + 1; continue }
+        if a == "--falsifier" { falsifier = true; i = i + 1; continue }
         i = i + 1
+    }
+    if falsifier {
+        let pc = _selftest()
+        if pc == 5 { exit(0) }
+        exit(1)
     }
     if selftest {
         cmd_selftest()

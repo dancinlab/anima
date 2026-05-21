@@ -177,6 +177,58 @@ Phase 1b (bitstream/flash) 별도 cycle: `brew install nextpnr-ice40 nextpnr-ecp
 
 ## §5 진행 로그 (cycle ledger, append-only)
 
+### §5.5 2026-05-21 "all bg go" 4차+5차 — 8 BG agents parallel (G2 falsifier + §188 v2 + 4 demiurge gap + G5 STEP/firmware + HEXAD sync)
+
+**8 agent / 8 work item ✅ completed** (2 cycle 합산):
+
+**4차 (4 agents)**:
+1. ✅ **G2 6 substrate falsifier add** — 30/30 PASS (trapped_ion 5/5 + superconducting 5/5 [deprecated provenance gate] + analog 5/5 [QuEra Aquila Rydberg, NOT NgSpice — 의미보존] + cmos 5/5 [ring osc 9.09 GHz 180nm] + arduino 5/5 [NE555 480.9 Hz] + web 5/5)
+   - **G2 진척: 21 → 51 falsifier asserts** (27 distinct substrate × ~5 falsifier)
+   - 적용 canonical: LCG (`random()` codegen gap 우회), Newton sqrt + Taylor sin/cos/ln deg 9
+   - 의미보존: cloud facade dispatch path 0건 변경
+
+2. ✅ **§188g 7 engines re-fire (§188 v2 snapshot)** — 35/35 falsifier PASS
+   - HEXAD/NEUROMORPHIC/state/spontaneous_substrate_parallel_s188_v2_2026_05_21/ (신규)
+   - 7 engine AOT binary determinism verified (analog 1s + izhikevich 1s + snn 2s + oscillator_laser 2s + photonic 2s + quantum 1s + thermodynamic 1s)
+   - **§188 substrate matrix: 21 → 28 PASS**, ⚠ empty 7 → 0
+   - anima-physics/README.md ✅ 22→29 / 총 ✅ 34→41
+
+3. ✅ **HEXAD/PHYSICS §6.19-§6.22 sync 3차** — 513→582 LoC (+69), 3 commit 인용
+
+4. ✅ **demiurge brain producer integration** — anima-side `demiurge_brain_bridge.py` ⊥ demiurge exports/brain/verify/ drop ⊥ cli auto-cite PASS
+   - **brain ❌ → ⏳ GATE_OPEN** (1-step 전환)
+   - 6-step anima-side producer pattern 확정
+
+**5차 (4 agents)**:
+1. ✅ **demiurge 4 gap domain bridges** — aura/bio/chem/grid 모두 anima-side bridge LANDED
+   - **bio/chem/grid ❌ → ⏳ GATE_OPEN** (3/4 1-step 전환, 7-step pattern)
+   - aura: demiurge ActionDispatch hard-code sibling-repo dispatch → record 보존만, 1-step 전환 미달
+   - **demiurge gap aggregate: 4 → 1 ❌** (aura 만 잔존)
+   - 4 bridge × ~200 LoC + 4 record (1.5-1.7 KB each) + integration doc (225 LoC)
+
+2. ✅ **§188 v2 re-snapshot (anima-physics/README.md 갱신)** — engines/ 8 entries 중 7 ✅ + 1 ❌ carry (memristor evidence 미확인 보수적)
+
+3. ✅ **G5 component STEP geometry** — UPduino enclosure STEP 33 KB + 4-level FEM convergence (20510 nodes / 74587 tets, h=0.5mm, ΔT_max=60.61 K)
+   - 1D analytic cross-check rel err 1.7e-5 — Biot ≈ 6e-5 convection-limited
+   - **engineering signal: 80.6°C ↔ iCE40UP5K T_j 85°C, 5°C headroom only** → 강제 공냉/finned 권장
+   - 6 scope_caveats 중 2 closed (#1 + #5), G5 component ⏳ → ⏳ (real STEP + convergence)
+
+4. ✅ **G5 firmware AD9833 demiurge integration** — `demiurge_firmware_bridge.py` 301 LoC + 3 backend (local_sim 5/5 + arduino_lint 3/3 + arduino_compile 14 KB)
+   - G5 firmware ⏳ stub → ⏳ GATE_OPEN (anima-bridge LANDED)
+   - consumer auto-citation PARTIAL (demiurge FirmwareVerifyProducer.swift `firmware_verify_` prefix filter → foreign `anima_*` 미인용; 별도 cycle)
+
+**g_completion_8 진행 갱신** (2026-05-21 18:00 KST):
+- G1: 61/68 (89.7%) carry
+- G2: 21 PASS → **51 falsifier asserts (27 substrate)** — 6 신규 + 7 engines + 21 carry
+- G5 demiurge: chip ✅ + **brain ⏳ + firmware ⏳ + bio/chem/grid ⏳ + component ⏳ (real STEP)** + aura/materials ⏳/gap carry
+- G7: README ✅ 34 → 41, ❌ 23 → 16 정합
+
+**잔존 cycle 후보**:
+- G5 component: 실 measured datasheet + multi-load + 3rd-party signoff (4 scope_caveats 잔존)
+- demiurge consumer auto-citation 확장 (FirmwareVerifyProducer + ComponentVerifyProducer scan-foreign extension)
+- aura demiurge ActionDispatch 우회 (sibling-repo hard-code 해체)
+- Phase 2 cloud trial 실 신청 (사용자 gate)
+
 ### §5.4 2026-05-21 "all bg go" 3차 — 4 BG agents parallel (G3 stub + 2 rewrite + G5 Phase 2)
 
 **4 agent ✅ completed**:

@@ -1,0 +1,15 @@
+[engines/izhikevich_consciousness] F-IZ-1..5 falsifier suite
+  [F-IZ-1] rest mean_v=-70.0081 spikes=0
+F-IZ-1 PASS
+  [F-IZ-2] I=10 spikes=32 (expect >4)
+F-IZ-2 PASS
+  [F-IZ-3] u_before=-13.0 u_after=-4.33847 fired=true
+F-IZ-3 PASS
+  [F-IZ-4] spikes(I=5)=16 spikes(I=15)=52
+F-IZ-4 PASS
+  [F-IZ-5] firing_rate=208.0 Hz (expect 0 < r < 600)
+F-IZ-5 PASS
+[engines/izhikevich_consciousness] 5/5 PASS
+real 0.40
+user 0.01
+sys 0.00

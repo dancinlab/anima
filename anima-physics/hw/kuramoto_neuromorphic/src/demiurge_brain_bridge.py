@@ -143,10 +143,54 @@ class DemiurgeBrainBridge:
         return json.dumps(self.to_record(), indent=indent, sort_keys=True)
 
 
-if __name__ == "__main__":
-    # smoke: emit a sample record from a synthetic local sim result
-    sample = DemiurgeBrainBridge(
-        n=8, k=2.0, steps=1000, r_tail=0.78, r_std_tail=0.04,
-        backend="local_sim", seed=42,
+def _main() -> int:
+    """CLI: emit a record to stdout or --output file.
+
+    Defaults mirror `anima-physics/hw/kuramoto_neuromorphic/state/sim.log`
+    F-HW-KU-3 locked-state measurement (K=5.0, N=8, steps=1000, r_tail=0.951).
+    """
+    import argparse
+    import sys
+
+    parser = argparse.ArgumentParser(
+        prog="demiurge_brain_bridge",
+        description=(
+            "Emit a demiurge:brain:kuramoto-record JSON "
+            "(stdout or --output)."
+        ),
     )
-    print(sample.to_json())
+    parser.add_argument(
+        "--backend",
+        default="local_sim",
+        choices=("local_sim", "akida_cloud", "loihi2_nrc"),
+    )
+    parser.add_argument("--n", type=int, default=8)
+    parser.add_argument("--k", type=float, default=5.0)
+    parser.add_argument("--steps", type=int, default=1000)
+    parser.add_argument("--r-tail", type=float, default=0.951)
+    parser.add_argument("--r-std-tail", type=float, default=0.0434)
+    parser.add_argument("--seed", type=int, default=42)
+    parser.add_argument("--output", default="-", help="JSON file path or '-' for stdout")
+    args = parser.parse_args()
+
+    bridge = DemiurgeBrainBridge(
+        n=args.n,
+        k=args.k,
+        steps=args.steps,
+        r_tail=args.r_tail,
+        r_std_tail=args.r_std_tail,
+        backend=args.backend,
+        seed=args.seed,
+    )
+    text = bridge.to_json()
+    if args.output == "-":
+        sys.stdout.write(text + "\n")
+    else:
+        with open(args.output, "w", encoding="utf-8") as fh:
+            fh.write(text + "\n")
+        sys.stderr.write(f"[demiurge_brain_bridge] wrote {args.output}\n")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(_main())

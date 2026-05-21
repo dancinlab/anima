@@ -30,7 +30,7 @@ record OR no-producer gap 표기 (g3 over-claim 금지). 결과 record path =
 |---|---|---|---|
 | **chip** | ✅ **GATE_CLOSED_MEASURED · absorbed=true** | §B+§D oracle parity **12/12 GREEN** (B1-B4 + D1-D6 + L1-L2 Leighton) — ZLL_d4=61.5 / ZLL_d6=55.875 / B_d6=15 > B_d4=8 / gap=5.625 cyc / hops_d4=8.5 hops_d6=7.094 / xwire_d6=1.406 | `sB_mesh88_uniform_22nm`, `sD_mesh_d4_tornado_22nm`, `sD_hex_d6_tornado_22nm` |
 | **component** | ⏳ GATE_OPEN (toy box) | gmsh 4.15.2 + scikit-fem 12.0.1 — ΔT=0.528 K, T_max=298.68 K, σ_vM_max=38.37 Pa, u_max=2.796e-13 m; mesh 686 nodes 2232 tetrahedra | `component_verify_20260521T062439Z` |
-| **firmware** | ⏳ GATE_OPEN (stub) | record emit only | `firmware_verify_20260521T062442Z` |
+| **firmware** | ⏳ GATE_OPEN (stub + anima-bridge) | demiurge stub (QEMU mps2-an385 install-gated skip) + anima `demiurge_firmware_bridge.py` LANDED 2026-05-21 (3-backend: local_sim 5/5 + arduino_lint 3/3 + arduino_compile .hex 14KB / flash 5038B (15%) / RAM 235B (11%)); demiurge `FirmwareVerifyProducer` 가 anima record 자동 인용 cycle 은 별도 (consumer scan-foreign 미구현) | `firmware_verify_20260521T062442Z`, `sleep_oscillator_ad9833_arduino_compile` (anima-bridge) |
 | **materials** | ⏳ no producer | 라우팅 미스 — owner=`~/core/hexa-matter/verify/run_all.hexa` (D17 consumer-pointer pattern) | none |
 
 ### §2.2 HW adjacent (shallow cohort domains, 11)
@@ -41,7 +41,7 @@ record OR no-producer gap 표기 (g3 over-claim 금지). 결과 record path =
 | aura | ⏳ engine gap | sibling-repo dispatch `~/core/hexa-aura/verify/run_all.hexa` exit=1 | none |
 | bio | ❌ no producer | (D81 candidate) | none |
 | bot | ⏳ GATE_OPEN | record emit only | `bot_verify_20260521T062709Z` |
-| brain | ❌ no producer | UX "엔진 없음" guard 필요 | none |
+| brain | ⏳ GATE_OPEN (anima-bridge) | anima `demiurge_brain_bridge.py` LANDED + 첫 record dropped (kuramoto N=8 K=5.0 r_tail=0.951); demiurge `BrainVerifyProducer` consumer 신설은 별도 cycle | `2026-05-21T08-22-26Z/anima_kuramoto_20260521T082226Z` |
 | **cern** | ⏳ GATE_OPEN | Bethe-Bloch analytic — Pb @ 100MeV dE/dx=3.610 MeV·cm²/g, β=0.428 · Al @ 1GeV dE/dx=1.767 MeV·cm²/g, γ=2.066 (Geant4 MC 4종 보정 미적용) | `cern_g4_stopping_20260521T062755Z` |
 | chem | ❌ no producer | mock-fallback 가능성 | none |
 | **energy** | ⏳ GATE_OPEN | hexa_native_parity ↩ pilot-solar (injected 1 record) | `energy_verify_20260521T062846Z` |
@@ -52,8 +52,8 @@ record OR no-producer gap 표기 (g3 over-claim 금지). 결과 record path =
 ### §2.3 aggregate
 
 - ✅ GATE_CLOSED_MEASURED: **1** (chip)
-- ⏳ GATE_OPEN (measured but provisional): **9** (component, firmware, antimatter, bot, cern, energy, fusion, mobility, +materials sibling) 
-- ❌ no producer / engine gap: **5** (aura, bio, brain, chem, grid)
+- ⏳ GATE_OPEN (measured but provisional): **10** (component, firmware, antimatter, bot, **brain** ← anima-bridge 추가 2026-05-21, cern, energy, fusion, mobility, +materials sibling)
+- ❌ no producer / engine gap: **4** (aura, bio, chem, grid)
 - **total domains**: 15
 
 ## §3 anima HW 5 substrate × demiurge verify 매핑
@@ -65,8 +65,8 @@ backbone 검증 매핑 (HEXAD/PHYSICS/HW_SILICON_PATH.md §2 와 정렬):
 |---|---|---|---|
 | `fpga/strange_loop` | Lattice iCE40UP5K | chip + component | chip ✅ 12/12 · component ⏳ toy box |
 | `fpga/nested_lattice` | Lattice ECP5-EVN | chip + component | chip ✅ 12/12 · component ⏳ toy box |
-| `social/kuramoto_coupling` | Intel Loihi 2 / Akida | chip + brain (D81) | chip ✅ 12/12 · brain ❌ no producer |
-| `oscillator/sleep_oscillator` | Arduino + AD9833 DDS | chip + firmware | chip ✅ 12/12 · firmware ⏳ stub |
+| `social/kuramoto_coupling` | Intel Loihi 2 / Akida | chip + brain (D81) | chip ✅ 12/12 · brain ⏳ GATE_OPEN (anima-bridge LANDED 2026-05-21) |
+| `oscillator/sleep_oscillator` | Arduino + AD9833 DDS | chip + firmware | chip ✅ 12/12 · firmware ⏳ GATE_OPEN (anima-bridge LANDED 2026-05-21) |
 | `HEXAD/CHAT/spontaneous_smoke` | Toshiba SBM / Fujitsu DA Ising / ECP5 | chip | chip ✅ 12/12 |
 
 **핵심 발견**:
@@ -76,8 +76,10 @@ backbone 검증 매핑 (HEXAD/PHYSICS/HW_SILICON_PATH.md §2 와 정렬):
 - **component (FEM/EM/thermal)** ⏳ toy box → real STEP geometry +
   measured datasheet + mesh convergence 가 anima FPGA bring-up Phase 1
   의 hardware-side 검증 milestone
-- **firmware** ⏳ stub → sleep_oscillator Arduino + AD9833 firmware
-  bring-up Phase 1 의 검증 backbone 필요
+- **firmware** ⏳ GATE_OPEN (anima-bridge) → anima `demiurge_firmware_bridge.py`
+  LANDED 2026-05-21 (3-backend: local_sim / arduino_lint / arduino_compile).
+  데모니지 consumer 가 anima record 자동 인용 + oracle parity (cf. chip f1f2
+  12/12) 정의 별도 cycle
 - **brain ❌ no producer** → Loihi 2/Akida neuromorphic 검증은 demiurge
   의 brain producer 신설 필요 (D81 candidate); 임시로 BrainChip Akida
   Cloud trial ($1-30) + Loihi 2 Hala Point trial 신청으로 우회

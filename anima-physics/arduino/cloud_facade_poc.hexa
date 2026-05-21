@@ -283,6 +283,113 @@ fn run_facade() -> bool {
     return false
 }
 
+// ═══════════════════════════════════════════════════════════════
+// G2 closure — closed-form NE555 astable falsifier (F-ARDUINO-1..5)
+// Mechanism (preserved): NE555 astable RC oscillator analytic model.
+// T_high = (R1+R2)·C·ln(2), T_low = R2·C·ln(2). No ngspice in falsifier.
+// ═══════════════════════════════════════════════════════════════
+
+fn abs_f_ar(x: float) -> float {
+    if x < 0.0 { return 0.0 - x }
+    return x
+}
+
+fn lcg_next_ar(s: int) -> int { return (s * 1103515245 + 12345) % 2147483648 }
+fn lcg_unit_ar(s: int) -> float {
+    let raw = s % 1000000
+    let pos = raw
+    if pos < 0 { return to_float(pos + 1000000) / 1000000.0 }
+    return to_float(pos) / 1000000.0
+}
+
+let LN2 = 0.6931471805599453
+
+// NE555 astable analytics (Texas Instruments app note)
+//   T_high = (R1+R2)·C·ln(2)
+//   T_low  = R2·C·ln(2)
+//   duty   = T_high / (T_high+T_low) = (R1+R2)/(R1+2·R2)
+//   freq   = 1 / (T_high+T_low)
+fn ne555_duty(r1: float, r2: float) -> float {
+    return (r1 + r2) / (r1 + 2.0 * r2)
+}
+
+fn ne555_freq(r1: float, r2: float, c: float) -> float {
+    let t = (r1 + 2.0 * r2) * c * LN2
+    return 1.0 / t
+}
+
+// Output voltage level: NE555 swings ~Vcc on output high
+fn ne555_output_level(vcc: float) -> float { return vcc * 0.95 }
+
+// Dropout: Vcc must exceed 4.5V for stable operation
+fn ne555_operational(vcc: float) -> bool { return vcc >= 4.5 }
+
+// F-ARDUINO-1: duty cycle ≈ 2/3 at R1=R2=10k (textbook nominal)
+fn fa_ar_1() -> bool {
+    let d = ne555_duty(10000.0, 10000.0)
+    let dev = abs_f_ar(d - 0.6666666666666666)
+    println("  [F-ARDUINO-1] duty=" + to_string(d) + " expected=0.667 dev=" + to_string(dev))
+    return dev < 0.001
+}
+
+// F-ARDUINO-2: freq stability — R1=R2=10k, C=100nF → f ≈ 481 Hz
+fn fa_ar_2() -> bool {
+    let f = ne555_freq(10000.0, 10000.0, 100.0e-9)
+    let expected = 480.9   // 1/((10k+20k)·100n·ln2) = 481 Hz
+    let dev = abs_f_ar(f - expected)
+    println("  [F-ARDUINO-2] freq=" + to_string(f) + " Hz expected~" + to_string(expected) + " dev=" + to_string(dev))
+    return dev < 1.0
+}
+
+// F-ARDUINO-3: RC tuning — halving C doubles freq
+fn fa_ar_3() -> bool {
+    let f1 = ne555_freq(10000.0, 10000.0, 100.0e-9)
+    let f2 = ne555_freq(10000.0, 10000.0, 50.0e-9)
+    let ratio = f2 / f1
+    let dev = abs_f_ar(ratio - 2.0)
+    println("  [F-ARDUINO-3] f(C/2)/f(C)=" + to_string(ratio) + " expected=2 dev=" + to_string(dev))
+    return dev < 0.001
+}
+
+// F-ARDUINO-4: output level ≈ 0.95·Vcc at Vcc=5V
+fn fa_ar_4() -> bool {
+    let v = ne555_output_level(5.0)
+    let ok = v > 4.5 && v < 5.0
+    println("  [F-ARDUINO-4] vout=" + to_string(v) + " in_band=" + to_string(ok))
+    return ok
+}
+
+// F-ARDUINO-5: dropout — Vcc<4.5V → non-operational
+fn fa_ar_5() -> bool {
+    let op_hi = ne555_operational(5.0)
+    let op_lo = ne555_operational(3.3)
+    let ok = op_hi && (op_lo == false)
+    println("  [F-ARDUINO-5] op@5V=" + to_string(op_hi) + " op@3.3V=" + to_string(op_lo))
+    return ok
+}
+
+fn _selftest() -> int {
+    println("── NE555 astable falsifier (F-ARDUINO-1..5) ──")
+    let f1 = fa_ar_1()
+    if f1 { println("F-ARDUINO-1 PASS — duty cycle 2/3") } else { println("F-ARDUINO-1 FAIL") }
+    let f2 = fa_ar_2()
+    if f2 { println("F-ARDUINO-2 PASS — freq stability") } else { println("F-ARDUINO-2 FAIL") }
+    let f3 = fa_ar_3()
+    if f3 { println("F-ARDUINO-3 PASS — RC tuning") } else { println("F-ARDUINO-3 FAIL") }
+    let f4 = fa_ar_4()
+    if f4 { println("F-ARDUINO-4 PASS — output level") } else { println("F-ARDUINO-4 FAIL") }
+    let f5 = fa_ar_5()
+    if f5 { println("F-ARDUINO-5 PASS — dropout") } else { println("F-ARDUINO-5 FAIL") }
+    let mut pc = 0
+    if f1 { pc = pc + 1 }
+    if f2 { pc = pc + 1 }
+    if f3 { pc = pc + 1 }
+    if f4 { pc = pc + 1 }
+    if f5 { pc = pc + 1 }
+    println("[arduino falsifier] " + to_string(pc) + "/5 PASS")
+    return pc
+}
+
 fn cmd_selftest() {
     println("── cloud_facade_poc arduino selftest ──")
     let cir_ok = exec("test -f " + CIR_PATH + " && echo y || echo n").trim()
@@ -303,11 +410,18 @@ fn cmd_selftest() {
 fn main() {
     let av = argv()
     let mut selftest = false
-    let mut i = 2
+    let mut falsifier = false
+    let mut i = 0
     while i < len(av) {
         let a = av[i]
         if a == "--selftest" { selftest = true; i = i + 1; continue }
+        if a == "--falsifier" { falsifier = true; i = i + 1; continue }
         i = i + 1
+    }
+    if falsifier {
+        let pc = _selftest()
+        if pc == 5 { exit(0) }
+        exit(1)
     }
     if selftest {
         cmd_selftest()

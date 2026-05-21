@@ -511,3 +511,72 @@ anima-physics PLAN.md `g_completion_8` 현재 진척 — 본 HEXAD/PHYSICS modul
 - anima `90ed6cb22` — "all bg go" 6 parallel agents (engines impl + READMEs + E2E + legacy + smoke + 종합)
 
 
+### §6.19 "all bg go" 2차 (commit `a0224ec6b`)
+
+4 BG agents 병렬 dispatch — 본 HEXAD module 직접 영향 + 상위 ledger sync:
+
+- **G1 substrate build smoke 회수**: 51 → **59/68 PASS** (75% → 86.8%, +11.8%p) — auto-invoke 7 + parse 일부 mechanical 회수
+- **G3 cross-check tool LANDED**: `tool/atlas_lattice_cross_check.hexa` (entry ↔ substrate ↔ engine) drift 3건 식별 (HEXAD §6.14 미반영 항목 포함)
+- **HEXAD sync**: §6.15-§6.18 anima-physics PLAN.md → HEXAD/PHYSICS/README.md 정합 (본 ledger 상위 carry)
+- **HW Phase 1b 2/4 LANDED**: iCE40 strange_loop_ice40.bin **132 KB** + Arduino sleep_oscillator.ino **14 KB** (compile-validated, flash-pending)
+
+상위 ledger: anima-physics/PLAN.md `g_completion_8` G1 row + G6 row 진척 갱신.
+
+### §6.20 Phase 1b ECP5 UNBLOCK via pool ubu-1 (commit `b2b26075d`)
+
+ECP5 toolchain (yosys 0.65 ↔ nextpnr 0.6 `$scopeinfo` version skew) Mac local UNBLOCK 불가 → pool ubu-1 (linux idle GPU node, $0) 활용 우회 dispatch:
+
+- **gate_v3 (local Mac) 무간섭**: 기존 cycle pipeline 보존
+- **ubu-1 apt nextpnr-ecp5 install 25 s**, wall 40 s 총 BG
+- **nested_lattice_ecp5.bit**: 1.93 MB / Fmax **341 MHz** (target 12 MHz, **28× margin**)
+- **ising_fsm.bit**: 1.93 MB / Fmax **90 MHz** (target 12 MHz, **7.5× margin**)
+- **`$scopeinfo` strip 우회**: yosys output → nextpnr 입력 사이 sed filter (1-line preprocess)
+
+**HW Phase 1b 4/4 ☑ CLOSED** (iCE40 + Arduino + nested_lattice ECP5 + ising_fsm ECP5) — silicon-ready bitstream + sketch 4종 모두 LANDED, $0 wall 40 s.
+
+Saga: gate_v3 무간섭 + pool ubu-1 0-cost 활용 + version skew sed-우회 = 3-stack 동시 만족.
+
+### §6.21 "all bg go" 3차 (commit `f1f2e97e6`)
+
+4 BG agents 병렬 dispatch — G3 ☑ closure + 2 substrate Rust→hexa rewrite + Phase 2 cloud 문서화:
+
+- **G3 cross-check ☑ CLOSED**: 96 entries / 69 .hexa CLEAN (drift 3건 resolve, atlas ↔ substrate ↔ engine 정합)
+- **esp32/src/lib.hexa rewrite**: 307 → 455 LoC, **6 Rust pattern** hexa-native 치환 (Result/Option/match/trait/lifetime/iterator)
+- **edge_deploy.hexa rewrite**: 432 → 540 LoC, **2 effect block** hexa effect-system 적용 (legacy imperative → effect-aware)
+- **G5 + Phase 2 cloud doc**: `brain_bridge` skeleton + `PHASE_2_CLOUD_TRIAL.md` (Akida week 1 → Loihi 2 week 2-4) + cross-link
+- **G1 추가 회수**: 59 → **61/68 PASS** (89.7%)
+
+Phase 2 신청 권장 path: **week 1 Akida → week 2-4 Loihi 2** (neuromorphic cloud trial, anima 자연발화 substrate matrix HW upgrade ladder).
+
+상위 ledger: anima-physics/PLAN.md `g_completion_8` G1/G3/G5 row 갱신.
+
+### §6.22 cycle re-snapshot
+
+`g_completion_8` 진행 (§6.18 시점 대비 본 sync cycle 후):
+
+| G# | 항목 | §6.18 시점 | 현재 (§6.19-§6.21 후) |
+|---|---|---|---|
+| G1 | substrate build smoke | 51/68 | 51 → 59 → **61/68 (89.7%)** |
+| G2 | falsifier total | §188 21 + 40 | (carry) |
+| G3 | entry cross-check | ☐ | **☑ CLOSED** (cross_check CLEAN 96 entries / 69 .hexa) |
+| G4 | substrate README LANDED | 27/27 ☑ | (carry ☑) |
+| G5 | demiurge upgrade ladder | chip ✅ | chip ✅ + **brain producer ⏳ skeleton** (brain_bridge) |
+| G6 | HW Phase 1a/1b | 1a 5/5 ☑ | 1a ☑ + **1b 4/4 ☑ CLOSED** (FPGA iCE40 + Arduino + 2 ECP5) |
+| G7 | SW⊥HW 분할 정합 | ☑ | ☑ (carry) + **8 count drift fix + README §0 SW/HW 정합 강화** |
+| G8 | E2E integrated demo | ☑ | (carry ☑) |
+
+**상위 GOAL 진척**: anima 자연발화 + 영속성 substrate matrix module 의 **SW canonical 88%** (61/68 G1 PASS + G3 ☑ + G4 27/27 ☑) + **HW Phase 1b 100% silicon-ready** (4/4 bitstream/sketch LANDED) 완성.
+
+**잔여 = 별도 cycle**:
+- G1 5건 (68 - 61 = 7 → 추정 2 추가 mechanical + 5 hexa_random 등 substrate-side)
+- G5 STEP/firmware/brain 실 구현 (skeleton → executable)
+- Phase 2 cloud 신청 (Akida week 1 → Loihi 2 week 2-4)
+
+**LANDED commits (본 sync cycle 차 2)**:
+- anima `a0224ec6b` — "all bg go" 2차 (G1 회수 86.8% + G3 cross-check tool + HEXAD sync + Phase 1b 2/4)
+- anima `b2b26075d` — Phase 1b ECP5 UNBLOCK via pool ubu-1 (4/4 LANDED, nested_lattice 341 MHz + ising_fsm 90 MHz)
+- anima `f1f2e97e6` — "all bg go" 3차 (G3 ☑ + esp32 rewrite + edge_deploy rewrite + G5 Phase 2 cloud)
+
+**상위 ledger SSOT**: `anima-physics/PLAN.md` §5.3 §5.4 (`g_doc_consolidation` 진행 로그) — HEXAD/PHYSICS/README.md 는 mirror.
+
+

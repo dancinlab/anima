@@ -48,9 +48,9 @@
 |---|---:|---:|---:|---:|
 | [루트](entries/root/) | 11 | 4 | 7 | 0 |
 | [docs/](entries/docs/) | 19 | 8 | 10 | 1 |
-| [substrate](entries/substrate/) | 60 | 22 | 19 | 19 |
+| [substrate](entries/substrate/) | 60 | 29 | 19 | 12 |
 | [recovered (chip family)](entries/recovered/) | 3 | 0 | 0 | 3 |
-| **합계 (active)** | **93** | **34** | **36** | **23** |
+| **합계 (active)** | **93** | **41** | **36** | **16** |
 
 **비용 ladder**
 
@@ -118,7 +118,7 @@
 | [cmos/](entries/substrate/cmos/) | [cloud_facade_poc](entries/substrate/cmos/cloud_facade_poc.md) | ✅ |
 | [consciousness-loop/src/](entries/substrate/consciousness-loop/src/) | [main](entries/substrate/consciousness-loop/src/main.md) · [main_longrun](entries/substrate/consciousness-loop/src/main_longrun.md) · [snn_main](entries/substrate/consciousness-loop/src/snn_main.md) | ✅×3 |
 | [eeg/](entries/substrate/eeg/) | [cross_substrate_phi_correlator](entries/substrate/eeg/cross_substrate_phi_correlator.md) · [mu_rhythm_detector](entries/substrate/eeg/mu_rhythm_detector.md) · [sleep_stage_detector](entries/substrate/eeg/sleep_stage_detector.md) | 🟡 · ✅ · ✅ |
-| [engines/](entries/substrate/engines/) | [analog](entries/substrate/engines/analog_consciousness.md) · [izhikevich](entries/substrate/engines/izhikevich_consciousness.md) · [memristor](entries/substrate/engines/memristor_consciousness.md) · [oscillator_laser](entries/substrate/engines/oscillator_laser_engine.md) · [photonic](entries/substrate/engines/photonic_consciousness.md) · [quantum](entries/substrate/engines/quantum_consciousness.md) · [snn](entries/substrate/engines/snn_consciousness.md) · [thermodynamic](entries/substrate/engines/thermodynamic_consciousness.md) | ❌×8 |
+| [engines/](entries/substrate/engines/) | [analog](entries/substrate/engines/analog_consciousness.md) · [izhikevich](entries/substrate/engines/izhikevich_consciousness.md) · [memristor](entries/substrate/engines/memristor_consciousness.md) · [oscillator_laser](entries/substrate/engines/oscillator_laser_engine.md) · [photonic](entries/substrate/engines/photonic_consciousness.md) · [quantum](entries/substrate/engines/quantum_consciousness.md) · [snn](entries/substrate/engines/snn_consciousness.md) · [thermodynamic](entries/substrate/engines/thermodynamic_consciousness.md) | ✅×7 + ❌×1 (memristor) — §188g 7/7 build PASS + 35/35 falsifier PASS (2026-05-21), v2 re-stamp: `HEXAD/NEUROMORPHIC/state/spontaneous_substrate_parallel_s188_v2_2026_05_21/` |
 | [esp32/](entries/substrate/esp32/) | [qrng_bridge](entries/substrate/esp32/qrng_bridge.md) · [QRNG_SPEC](entries/substrate/esp32/QRNG_SPEC.md) · [src/lib](entries/substrate/esp32/src/lib.md) | 🟡×3 |
 | [fpga/](entries/substrate/fpga/) | [cloud_facade_poc](entries/substrate/fpga/cloud_facade_poc.md) · [microtubule_lattice_16](entries/substrate/fpga/microtubule_lattice_16.md) · [nested_lattice](entries/substrate/fpga/nested_lattice.md) · [partial_reconfig](entries/substrate/fpga/partial_reconfig.md) · [strange_loop](entries/substrate/fpga/strange_loop.md) | ✅ · 🟡 · ❌×3 |
 | [hippocampus/](entries/substrate/hippocampus/) | [episodic_replay](entries/substrate/hippocampus/episodic_replay.md) · [theta_gamma](entries/substrate/hippocampus/theta_gamma.md) | 🟡 · ✅ |
