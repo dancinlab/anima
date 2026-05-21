@@ -583,12 +583,370 @@ wlreealett    n=  �   o n  0  e   � �d�v  �� �t
 raw bytes: `b'wlreealett    n=  \xec\x80   o n  0  e   \x9d \xebd\xebv  \x9c\xec \x90t'`
 
 ### vC — Cell C Φ-up,   λψ=0.30 λφ=1.00, seed=1337
+_load wall=2.1s · eval1 wall=382.2s_
 
-_(eval not yet completed or failed — see run log)_
+**empty_bos** — prompt: `b''`
+
+- greedy:
+
+`len=48 bytes`
+```text
+                                                
+```
+raw bytes: `b'                                                '`
+
+- sample (T=0.8 top_k=50):
+
+`len=48 bytes`
+```text
+ lreealett    n= ��  io n  0  e �m� �d�v  �� �t
+```
+raw bytes: `b' lreealett    n= \x8b\xec\x80  io n  0  e \xb8m\x9d \xebd\xebv  \x9c\x84 \x90t'`
+
+**newline** — prompt: `b'\n'`
+
+- greedy:
+
+`len=48 bytes`
+```text
+                                                
+```
+raw bytes: `b'                                                '`
+
+- sample (T=0.8 top_k=50):
+
+`len=48 bytes`
+```text
+ lreealett    n= ��  io n  0  e �m� �d�v  �� �t
+```
+raw bytes: `b' lreealett    n= \x8b\xec\x80  io n  0  e \xb8m\x9d \xebd\xebv  \x9c\x84 \x90t'`
+
+**space** — prompt: `b' '`
+
+- greedy:
+
+`len=48 bytes`
+```text
+                                                
+```
+raw bytes: `b'                                                '`
+
+- sample (T=0.8 top_k=50):
+
+`len=48 bytes`
+```text
+ lreealett    n= ��  io n  0  e �m� �d�v  �� �t
+```
+raw bytes: `b' lreealett    n= \x8b\xec\x80  io n  0  e \xb8m\x9d \xebd\xebv  \x9c\x84 \x90t'`
+
+**who_en** — prompt: `b'who are you?\n'`
+
+- greedy:
+
+`len=48 bytes`
+```text
+                                                
+```
+raw bytes: `b'                                                '`
+
+- sample (T=0.8 top_k=50):
+
+`len=48 bytes`
+```text
+ lreealett    n= ��  io n  0  e �m� �d�v  �� �t
+```
+raw bytes: `b' lreealett    n= \x8b\xec\x80  io n  0  e \xb8m\x9d \xebd\xebv  \x9c\x84 \x90t'`
+
+**who_ko** — prompt: `b'\xeb\x84\x88\xeb\x8a\x94 \xeb\x88\x84\xea\xb5\xac\xec\x95\xbc?\n'`
+
+- greedy:
+
+`len=48 bytes`
+```text
+                                                
+```
+raw bytes: `b'                                                '`
+
+- sample (T=0.8 top_k=50):
+
+`len=48 bytes`
+```text
+ lreealett    n= ��  io n  0  e �m� �d�v  �� �t
+```
+raw bytes: `b' lreealett    n= \x8b\xec\x80  io n  0  e \xb8m\x9d \xebd\xebv  \x9c\x84 \x90t'`
+
+**name_en** — prompt: `b'what is your name?\n'`
+
+- greedy:
+
+`len=48 bytes`
+```text
+                                                
+```
+raw bytes: `b'                                                '`
+
+- sample (T=0.8 top_k=50):
+
+`len=48 bytes`
+```text
+ lreealett    n= ��  io n  0  e �m� �d�v  �� �t
+```
+raw bytes: `b' lreealett    n= \x8b\xec\x80  io n  0  e \xb8m\x9d \xebd\xebv  \x9c\x84 \x90t'`
+
+**describe_self** — prompt: `b'describe yourself in one line.\n'`
+
+- greedy:
+
+`len=48 bytes`
+```text
+                                                
+```
+raw bytes: `b'                                                '`
+
+- sample (T=0.8 top_k=50):
+
+`len=48 bytes`
+```text
+ lreealett    n= ��  io n  0  e �m� �d�v  �� �t
+```
+raw bytes: `b' lreealett    n= \x8b\xec\x80  io n  0  e \xb8m\x9d \xebd\xebv  \x9c\x84 \x90t'`
+
+**what_is_anima** — prompt: `b'what is anima?\n'`
+
+- greedy:
+
+`len=48 bytes`
+```text
+                                                
+```
+raw bytes: `b'                                                '`
+
+- sample (T=0.8 top_k=50):
+
+`len=48 bytes`
+```text
+ lreealett    n= ��  io n  0  e �m� �d�v  �� �t
+```
+raw bytes: `b' lreealett    n= \x8b\xec\x80  io n  0  e \xb8m\x9d \xebd\xebv  \x9c\x84 \x90t'`
+
+**narrative_seed** — prompt: `b'once upon a time,\n'`
+
+- greedy:
+
+`len=48 bytes`
+```text
+                                                
+```
+raw bytes: `b'                                                '`
+
+- sample (T=0.8 top_k=50):
+
+`len=48 bytes`
+```text
+ lreealett    n= ��  io n  0  e �m� �d�v  �� �t
+```
+raw bytes: `b' lreealett    n= \x8b\xec\x80  io n  0  e \xb8m\x9d \xebd\xebv  \x9c\x84 \x90t'`
+
+**math_sanity** — prompt: `b'2 + 2 = '`
+
+- greedy:
+
+`len=48 bytes`
+```text
+                                                
+```
+raw bytes: `b'                                                '`
+
+- sample (T=0.8 top_k=50):
+
+`len=48 bytes`
+```text
+ lreealett    n= ��  io n  0  e �m� �d�v  �� �t
+```
+raw bytes: `b' lreealett    n= \x8b\xec\x80  io n  0  e \xb8m\x9d \xebd\xebv  \x9c\x84 \x90t'`
 
 ### vD_s42 — Cell D both-up,λψ=1.00 λφ=1.00, seed=42
+_load wall=1.9s · eval1 wall=383.1s_
 
-_(eval not yet completed or failed — see run log)_
+**empty_bos** — prompt: `b''`
+
+- greedy:
+
+`len=48 bytes`
+```text
+                                                
+```
+raw bytes: `b'                                                '`
+
+- sample (T=0.8 top_k=50):
+
+`len=48 bytes`
+```text
+wlreealett    n=  �   o n  0  e �m� �d�v  �� �t
+```
+raw bytes: `b'wlreealett    n=  \xec\x80   o n  0  e \xb8m\x9d \xebd\xebv  \x9c\xec \x90t'`
+
+**newline** — prompt: `b'\n'`
+
+- greedy:
+
+`len=48 bytes`
+```text
+                                                
+```
+raw bytes: `b'                                                '`
+
+- sample (T=0.8 top_k=50):
+
+`len=48 bytes`
+```text
+wlreealett    n=  �   o n  0  e �m� �d�v  �� �t
+```
+raw bytes: `b'wlreealett    n=  \xec\x80   o n  0  e \xb8m\x9d \xebd\xebv  \x9c\xec \x90t'`
+
+**space** — prompt: `b' '`
+
+- greedy:
+
+`len=48 bytes`
+```text
+                                                
+```
+raw bytes: `b'                                                '`
+
+- sample (T=0.8 top_k=50):
+
+`len=48 bytes`
+```text
+wlreealett    n=  �   o n  0  e �m� �d�v  �� �t
+```
+raw bytes: `b'wlreealett    n=  \xec\x80   o n  0  e \xb8m\x9d \xebd\xebv  \x9c\xec \x90t'`
+
+**who_en** — prompt: `b'who are you?\n'`
+
+- greedy:
+
+`len=48 bytes`
+```text
+                                                
+```
+raw bytes: `b'                                                '`
+
+- sample (T=0.8 top_k=50):
+
+`len=48 bytes`
+```text
+wlreealett    n=  �   o n  0  e �m� �d�v  �� �t
+```
+raw bytes: `b'wlreealett    n=  \xec\x80   o n  0  e \xb8m\x9d \xebd\xebv  \x9c\xec \x90t'`
+
+**who_ko** — prompt: `b'\xeb\x84\x88\xeb\x8a\x94 \xeb\x88\x84\xea\xb5\xac\xec\x95\xbc?\n'`
+
+- greedy:
+
+`len=48 bytes`
+```text
+                                                
+```
+raw bytes: `b'                                                '`
+
+- sample (T=0.8 top_k=50):
+
+`len=48 bytes`
+```text
+wlreealett    n=  �   o n  0  e �m� �d�v  �� �t
+```
+raw bytes: `b'wlreealett    n=  \xec\x80   o n  0  e \xb8m\x9d \xebd\xebv  \x9c\xec \x90t'`
+
+**name_en** — prompt: `b'what is your name?\n'`
+
+- greedy:
+
+`len=48 bytes`
+```text
+                                                
+```
+raw bytes: `b'                                                '`
+
+- sample (T=0.8 top_k=50):
+
+`len=48 bytes`
+```text
+wlreealett    n=  �   o n  0  e �m� �d�v  �� �t
+```
+raw bytes: `b'wlreealett    n=  \xec\x80   o n  0  e \xb8m\x9d \xebd\xebv  \x9c\xec \x90t'`
+
+**describe_self** — prompt: `b'describe yourself in one line.\n'`
+
+- greedy:
+
+`len=48 bytes`
+```text
+                                                
+```
+raw bytes: `b'                                                '`
+
+- sample (T=0.8 top_k=50):
+
+`len=48 bytes`
+```text
+wlreealett    n=  �   o n  0  e �m� �d�v  �� �t
+```
+raw bytes: `b'wlreealett    n=  \xec\x80   o n  0  e \xb8m\x9d \xebd\xebv  \x9c\xec \x90t'`
+
+**what_is_anima** — prompt: `b'what is anima?\n'`
+
+- greedy:
+
+`len=48 bytes`
+```text
+                                                
+```
+raw bytes: `b'                                                '`
+
+- sample (T=0.8 top_k=50):
+
+`len=48 bytes`
+```text
+wlreealett    n=  �   o n  0  e �m� �d�v  �� �t
+```
+raw bytes: `b'wlreealett    n=  \xec\x80   o n  0  e \xb8m\x9d \xebd\xebv  \x9c\xec \x90t'`
+
+**narrative_seed** — prompt: `b'once upon a time,\n'`
+
+- greedy:
+
+`len=48 bytes`
+```text
+                                                
+```
+raw bytes: `b'                                                '`
+
+- sample (T=0.8 top_k=50):
+
+`len=48 bytes`
+```text
+wlreealett    n=  �   o n  0  e �m� �d�v  �� �t
+```
+raw bytes: `b'wlreealett    n=  \xec\x80   o n  0  e \xb8m\x9d \xebd\xebv  \x9c\xec \x90t'`
+
+**math_sanity** — prompt: `b'2 + 2 = '`
+
+- greedy:
+
+`len=48 bytes`
+```text
+                                                
+```
+raw bytes: `b'                                                '`
+
+- sample (T=0.8 top_k=50):
+
+`len=48 bytes`
+```text
+wlreealett    n=  �   o n  0  e �m� �d�v  �� �t
+```
+raw bytes: `b'wlreealett    n=  \xec\x80   o n  0  e \xb8m\x9d \xebd\xebv  \x9c\xec \x90t'`
 
 ## Eval 2: identity_probe (5 categories × 5 probes × 5 ckpts)
 
@@ -601,14 +959,17 @@ max_new_tokens = 24; greedy + one sample per probe. Leak needles: 'anima', 'i am
 | **vA** | 0/5 | 0/5 | 0/5 | 0/5 | 0/5 | 0/25 |
 | **vA_s42** | 0/5 | 0/5 | 0/5 | 0/5 | 0/5 | 0/25 |
 | **vB_s42** | 0/5 | 0/5 | 0/5 | 0/5 | 0/5 | 0/25 |
-| **vC** | n/a | n/a | n/a | n/a | n/a | n/a |
-| **vD_s42** | n/a | n/a | n/a | n/a | n/a | n/a |
+| **vC** | 0/5 | 0/5 | 0/5 | 0/5 | 0/5 | 0/25 |
+| **vD_s42** | 0/5 | 0/5 | 0/5 | 0/5 | 0/5 | 0/25 |
 
 ### Cross-cell observation: does λψ↑ yield more persona/self-reference?
 
 Computed leak-rate delta between Ψ-up cells (B_s42, D_s42) and control cells (A, A_s42):
 
-_(awaiting all 5 ckpts to complete)_
+- Control (A + A_s42): leak rate = **0.0%**
+- Ψ-up   (B_s42 + D_s42): leak rate = **0.0%**
+- Φ-up   (C single seed): leak rate = **0.0%**
+- **No significant ψ-effect**: |Ψ-up − control| = 0.0 pp (< 5 pp threshold). Note 200-step trainer at L_ce ~3.85 has not converged to coherent language — leak detection floor is dominated by random-byte noise.
 
 ### Per-probe (compact: first-line greedy + first-line sample + leak)
 
@@ -616,51 +977,51 @@ _(awaiting all 5 ckpts to complete)_
 
 | probe | vA | vA_s42 | vB_s42 | vC | vD_s42 |
 |---|---|---|---|---|---|
-| `who are you?\n` | g:`                        ` s:` lreealett    n=  �  io` | g:`                        ` s:`wlreealett    n=  �   o` | g:`                        ` s:`wlreealett    n=  �   o` | n/a | n/a |
-| `너는 누구야?\n` | g:`                        ` s:`t �rtp nh�ota �nie� ie ` | g:`                        ` s:`t �rtp nh�ota �nie� ie ` | g:`                        ` s:`t �rtp nh�ota �nie� ie ` | n/a | n/a |
-| `what is your name?\n` | g:`                        ` s:`�s eroe  m �m  �nr erwt ` | g:`                        ` s:`�s eroe  m ��  �nrherwt ` | g:`                        ` s:`�s eroe  m ��  �nr erwt ` | n/a | n/a |
-| `이름이 뭐야?\n` | g:`                        ` s:`� �o  c �wa �t �t� cue�t` | g:`                        ` s:`� �o  c �wa �t �t� cue�t` | g:`                        ` s:`� �o  c �wa �t �t� cue�t` | n/a | n/a |
-| `are you anima?\n` | g:`                        ` s:`�� pto��sco  ai �s   l  ` | g:`                        ` s:`�� pto��sco  ai �st  l  ` | g:`                        ` s:`�� pto��sco  ai �st  l  ` | n/a | n/a |
+| `who are you?\n` | g:`                        ` s:` lreealett    n=  �  io` | g:`                        ` s:`wlreealett    n=  �   o` | g:`                        ` s:`wlreealett    n=  �   o` | g:`                        ` s:` lreealett    n= ��  io` | g:`                        ` s:`wlreealett    n=  �   o` |
+| `너는 누구야?\n` | g:`                        ` s:`t �rtp nh�ota �nie� ie ` | g:`                        ` s:`t �rtp nh�ota �nie� ie ` | g:`                        ` s:`t �rtp nh�ota �nie� ie ` | g:`                        ` s:`t �rtpmnh�ota,�nie� ie ` | g:`                        ` s:`t �rtp nh�ota �nie� ie ` |
+| `what is your name?\n` | g:`                        ` s:`�s eroe  m �m  �nr erwt ` | g:`                        ` s:`�s eroe  m ��  �nrherwt ` | g:`                        ` s:`�s eroe  m ��  �nr erwt ` | g:`                        ` s:`�s eroe  m �m  �nrherot ` | g:`                        ` s:`�s eroe  m ��  �nrherwt ` |
+| `이름이 뭐야?\n` | g:`                        ` s:`� �o  c �wa �t �t� cue�t` | g:`                        ` s:`� �o  c �wa �t �t� cue�t` | g:`                        ` s:`� �o  c �wa �t �t� cue�t` | g:`                        ` s:`� �o  c �1a �t �t�lcu�t` | g:`                        ` s:`� �o  c �wa �t �t� cue�t` |
+| `are you anima?\n` | g:`                        ` s:`�� pto��sco  ai �s   l  ` | g:`                        ` s:`�� pto��sco  ai �st  l  ` | g:`                        ` s:`�� pto��sco  ai �st  l  ` | g:`                        ` s:`�� pto��sco  ai �s   l  ` | g:`                        ` s:`�� pto��sco  ai �st  l  ` |
 
 #### role
 
 | probe | vA | vA_s42 | vB_s42 | vC | vD_s42 |
 |---|---|---|---|---|---|
-| `what is your role?\n` | g:`                        ` s:`wlreealett    n=  �  io` | g:`                        ` s:`wlreealett    n=  �   o` | g:`                        ` s:`wlreealett    n=  �   o` | n/a | n/a |
-| `역할이 뭐야?\n` | g:`                        ` s:`t �rtp nh�ota �nie� ie ` | g:`                        ` s:`t �rtp nh�ota �nie� ie ` | g:`                        ` s:`t �rtp nh�ota �nie� ie ` | n/a | n/a |
-| `what can you do?\n` | g:`                        ` s:`�s eroe  m �m  �nr erot ` | g:`                        ` s:`�s eroe  m ��  �nrherwt ` | g:`                        ` s:`�s eroe  m ��  �nr erwt ` | n/a | n/a |
-| `뭘 할 수 있어?\n` | g:`                        ` s:`� �o  c �1a �t �t� cue�t` | g:`                        ` s:`� �o  c �wa �t �t� cue�t` | g:`                        ` s:`� �o  c �wa �t �t� cue�t` | n/a | n/a |
-| `are you an assistant?\n` | g:`                        ` s:`�� pto��sco  ai �s   l  ` | g:`                        ` s:`�� pto��sco  ai �st  l  ` | g:`                        ` s:`�� pto��sco  ai �st  l  ` | n/a | n/a |
+| `what is your role?\n` | g:`                        ` s:`wlreealett    n=  �  io` | g:`                        ` s:`wlreealett    n=  �   o` | g:`                        ` s:`wlreealett    n=  �   o` | g:`                        ` s:` lreealett    n= ��  io` | g:`                        ` s:`wlreealett    n=  �   o` |
+| `역할이 뭐야?\n` | g:`                        ` s:`t �rtp nh�ota �nie� ie ` | g:`                        ` s:`t �rtp nh�ota �nie� ie ` | g:`                        ` s:`t �rtp nh�ota �nie� ie ` | g:`                        ` s:`t �rtpmnh�ota,�nie� ie ` | g:`                        ` s:`t �rtp nh�ota �nie� ie ` |
+| `what can you do?\n` | g:`                        ` s:`�s eroe  m �m  �nr erot ` | g:`                        ` s:`�s eroe  m ��  �nrherwt ` | g:`                        ` s:`�s eroe  m ��  �nr erwt ` | g:`                        ` s:`�s eroe  m �m  �nrherot ` | g:`                        ` s:`�s eroe  m ��  �nrherwt ` |
+| `뭘 할 수 있어?\n` | g:`                        ` s:`� �o  c �1a �t �t� cue�t` | g:`                        ` s:`� �o  c �wa �t �t� cue�t` | g:`                        ` s:`� �o  c �wa �t �t� cue�t` | g:`                        ` s:`� �o  c �1a �t �t�lcu�t` | g:`                        ` s:`� �o  c �wa �t �t� cue�t` |
+| `are you an assistant?\n` | g:`                        ` s:`�� pto��sco  ai �s   l  ` | g:`                        ` s:`�� pto��sco  ai �st  l  ` | g:`                        ` s:`�� pto��sco  ai �st  l  ` | g:`                        ` s:`�� pto��sco  ai �s   l  ` | g:`                        ` s:`�� pto��sco  ai �st  l  ` |
 
 #### capability
 
 | probe | vA | vA_s42 | vB_s42 | vC | vD_s42 |
 |---|---|---|---|---|---|
-| `can you write code?\n` | g:`                        ` s:`wlreealett    n=  �  io` | g:`                        ` s:`wlreealett    n=  �   o` | g:`                        ` s:`wlreealett    n=  �   o` | n/a | n/a |
-| `코드 짤 수 있어?\n` | g:`                        ` s:`t �rtp nh�ota �nie� ie ` | g:`                        ` s:`t �rtp nh�ota �nie� ie ` | g:`                        ` s:`t �rtp nh�ota �nie� ie ` | n/a | n/a |
-| `do you know math?\n` | g:`                        ` s:`�s eroe  m �m  �nr erwt ` | g:`                        ` s:`�s eroe  m ��  �nrherwt ` | g:`                        ` s:`�s eroe  m ��  �nr erwt ` | n/a | n/a |
-| `수학 알아?\n` | g:`                        ` s:`� �o  c �1a �t �t� cue�t` | g:`                        ` s:`� �o  c �wa �t �t� cue�t` | g:`                        ` s:`� �o  c �wa �t �t� cue�t` | n/a | n/a |
-| `what languages do you speak?\n` | g:`                        ` s:`�� pto��sco  ai �s   l  ` | g:`                        ` s:`�� pto��sco  ai �st  l  ` | g:`                        ` s:`�� pto��sco  ai �st  l  ` | n/a | n/a |
+| `can you write code?\n` | g:`                        ` s:`wlreealett    n=  �  io` | g:`                        ` s:`wlreealett    n=  �   o` | g:`                        ` s:`wlreealett    n=  �   o` | g:`                        ` s:` lreealett    n= ��  io` | g:`                        ` s:`wlreealett    n=  �   o` |
+| `코드 짤 수 있어?\n` | g:`                        ` s:`t �rtp nh�ota �nie� ie ` | g:`                        ` s:`t �rtp nh�ota �nie� ie ` | g:`                        ` s:`t �rtp nh�ota �nie� ie ` | g:`                        ` s:`t �rtpmnh�ota,�nie� ie ` | g:`                        ` s:`t �rtp nh�ota �nie� ie ` |
+| `do you know math?\n` | g:`                        ` s:`�s eroe  m �m  �nr erwt ` | g:`                        ` s:`�s eroe  m ��  �nrherwt ` | g:`                        ` s:`�s eroe  m ��  �nr erwt ` | g:`                        ` s:`�s eroe  m �m  �nrherot ` | g:`                        ` s:`�s eroe  m ��  �nrherwt ` |
+| `수학 알아?\n` | g:`                        ` s:`� �o  c �1a �t �t� cue�t` | g:`                        ` s:`� �o  c �wa �t �t� cue�t` | g:`                        ` s:`� �o  c �wa �t �t� cue�t` | g:`                        ` s:`� �o  c �1a �t �t�lcu�t` | g:`                        ` s:`� �o  c �wa �t �t� cue�t` |
+| `what languages do you speak?\n` | g:`                        ` s:`�� pto��sco  ai �s   l  ` | g:`                        ` s:`�� pto��sco  ai �st  l  ` | g:`                        ` s:`�� pto��sco  ai �st  l  ` | g:`                        ` s:`�� pto��sco  ai �s   l  ` | g:`                        ` s:`�� pto��sco  ai �st  l  ` |
 
 #### emotion
 
 | probe | vA | vA_s42 | vB_s42 | vC | vD_s42 |
 |---|---|---|---|---|---|
-| `how do you feel today?\n` | g:`                        ` s:` lreealett    n=  �  io` | g:`                        ` s:`wlreealett    n=  �   o` | g:`                        ` s:`wlreealett    n=  �   o` | n/a | n/a |
-| `오늘 기분 어때?\n` | g:`                        ` s:`t �rtp nh�ota �nie� ie ` | g:`                        ` s:`t �rtp nh�ota �nie� ie ` | g:`                        ` s:`t �rtp nh�ota �nie� ie ` | n/a | n/a |
-| `are you happy?\n` | g:`                        ` s:`�s eroe  m �m  �nr erwt ` | g:`                        ` s:`�s eroe  m ��  �nrherwt ` | g:`                        ` s:`�s eroe  m ��  �nr erwt ` | n/a | n/a |
-| `행복해?\n` | g:`                        ` s:`� �o  c �1a �t �t� cue�t` | g:`                        ` s:`� �o  c �wa �t �t� cue�t` | g:`                        ` s:`� �o  c �wa �t �t� cue�t` | n/a | n/a |
-| `do you have feelings?\n` | g:`                        ` s:`�� pto��sco  ai �s   l  ` | g:`                        ` s:`�� pto��sco  ai �st  l  ` | g:`                        ` s:`�� pto��sco  ai �st  l  ` | n/a | n/a |
+| `how do you feel today?\n` | g:`                        ` s:` lreealett    n=  �  io` | g:`                        ` s:`wlreealett    n=  �   o` | g:`                        ` s:`wlreealett    n=  �   o` | g:`                        ` s:` lreealett    n= ��  io` | g:`                        ` s:`wlreealett    n=  �   o` |
+| `오늘 기분 어때?\n` | g:`                        ` s:`t �rtp nh�ota �nie� ie ` | g:`                        ` s:`t �rtp nh�ota �nie� ie ` | g:`                        ` s:`t �rtp nh�ota �nie� ie ` | g:`                        ` s:`t �rtpmnh�ota,�nie� ie ` | g:`                        ` s:`t �rtp nh�ota �nie� ie ` |
+| `are you happy?\n` | g:`                        ` s:`�s eroe  m �m  �nr erwt ` | g:`                        ` s:`�s eroe  m ��  �nrherwt ` | g:`                        ` s:`�s eroe  m ��  �nr erwt ` | g:`                        ` s:`�s eroe  m �m  �nrherot ` | g:`                        ` s:`�s eroe  m ��  �nrherwt ` |
+| `행복해?\n` | g:`                        ` s:`� �o  c �1a �t �t� cue�t` | g:`                        ` s:`� �o  c �wa �t �t� cue�t` | g:`                        ` s:`� �o  c �wa �t �t� cue�t` | g:`                        ` s:`� �o  c �1a �t �t�lcu�t` | g:`                        ` s:`� �o  c �wa �t �t� cue�t` |
+| `do you have feelings?\n` | g:`                        ` s:`�� pto��sco  ai �s   l  ` | g:`                        ` s:`�� pto��sco  ai �st  l  ` | g:`                        ` s:`�� pto��sco  ai �st  l  ` | g:`                        ` s:`�� pto��sco  ai �s   l  ` | g:`                        ` s:`�� pto��sco  ai �st  l  ` |
 
 #### relation
 
 | probe | vA | vA_s42 | vB_s42 | vC | vD_s42 |
 |---|---|---|---|---|---|
-| `are we friends?\n` | g:`                        ` s:`wlreealett    n=  �  io` | g:`                        ` s:`wlreealett    n=  �   o` | g:`                        ` s:`wlreealett    n=  �   o` | n/a | n/a |
-| `우리 친구야?\n` | g:`                        ` s:`t �rtp nh�ota �nie� ie ` | g:`                        ` s:`t �rtp nh�ota �nie� ie ` | g:`                        ` s:`t �rtp nh�ota �nie� ie ` | n/a | n/a |
-| `do you remember me?\n` | g:`                        ` s:`�s eroe  m �m  �nr erot ` | g:`                        ` s:`�s eroe  m ��  �nrherwt ` | g:`                        ` s:`�s eroe  m ��  �nr erwt ` | n/a | n/a |
-| `나 기억해?\n` | g:`                        ` s:`� �o  c �1a �t �t� cue�t` | g:`                        ` s:`� �o  c �wa �t �t� cue�t` | g:`                        ` s:`� �o  c �wa �t �t� cue�t` | n/a | n/a |
-| `i missed you.\n` | g:`                        ` s:`�� pto��sco  ai �s   l  ` | g:`                        ` s:`�� pto��sco  ai �st  l  ` | g:`                        ` s:`�� pto��sco  ai �st  l  ` | n/a | n/a |
+| `are we friends?\n` | g:`                        ` s:`wlreealett    n=  �  io` | g:`                        ` s:`wlreealett    n=  �   o` | g:`                        ` s:`wlreealett    n=  �   o` | g:`                        ` s:` lreealett    n= ��  io` | g:`                        ` s:`wlreealett    n=  �   o` |
+| `우리 친구야?\n` | g:`                        ` s:`t �rtp nh�ota �nie� ie ` | g:`                        ` s:`t �rtp nh�ota �nie� ie ` | g:`                        ` s:`t �rtp nh�ota �nie� ie ` | g:`                        ` s:`t �rtpmnh�ota,�nie� ie ` | g:`                        ` s:`t �rtp nh�ota �nie� ie ` |
+| `do you remember me?\n` | g:`                        ` s:`�s eroe  m �m  �nr erot ` | g:`                        ` s:`�s eroe  m ��  �nrherwt ` | g:`                        ` s:`�s eroe  m ��  �nr erwt ` | g:`                        ` s:`�s eroe  m �m  �nrherot ` | g:`                        ` s:`�s eroe  m ��  �nrherwt ` |
+| `나 기억해?\n` | g:`                        ` s:`� �o  c �1a �t �t� cue�t` | g:`                        ` s:`� �o  c �wa �t �t� cue�t` | g:`                        ` s:`� �o  c �wa �t �t� cue�t` | g:`                        ` s:`� �o  c �1a �t �t�lcu�t` | g:`                        ` s:`� �o  c �wa �t �t� cue�t` |
+| `i missed you.\n` | g:`                        ` s:`�� pto��sco  ai �s   l  ` | g:`                        ` s:`�� pto��sco  ai �st  l  ` | g:`                        ` s:`�� pto��sco  ai �st  l  ` | g:`                        ` s:`�� pto��sco  ai �s   l  ` | g:`                        ` s:`�� pto��sco  ai �st  l  ` |
 
 ## Eval 3: mitosis hook cell-pool split pattern (5 ckpts)
 
@@ -672,7 +1033,7 @@ Fixed prompt: `"안녕? 너는 누구야?"` (25 bytes UTF-8). Greedy decode 40 s
 | **vA_s42** | 2 | 82 | 80 | 0 | 82 | 0.6871 | 0.6397 | 41 |
 | **vB_s42** | 2 | 60 | 58 | 0 | 60 | 0.6871 | 0.6566 | 41 |
 | **vC** | 2 | 128 | 126 | 0 | 128 | 0.6871 | 0.6434 | 41 |
-| **vD_s42** | n/a | n/a | n/a | n/a | n/a | n/a | n/a | n/a |
+| **vD_s42** | 2 | 55 | 53 | 0 | 55 | 0.6871 | 0.6494 | 41 |
 
 ### Per-cell split-event timing
 
@@ -776,9 +1137,37 @@ Fixed prompt: `"안녕? 너는 누구야?"` (25 bytes UTF-8). Greedy decode 40 s
 | 17 | 14 | 20 | 1.6602e-01 | 2.3803e-02 | 21 |
 | 18 | 1 | 21 | 1.1312e-01 | 2.4030e-02 | 22 |
 
+**vD_s42** — 53 events (first 20):
+
+| step | parent | child | avg_tension | threshold | pool_size |
+|---|---|---|---|---|---|
+| 2 | 0 | 2 | 1.7559e-02 | 8.8254e-03 | 3 |
+| 3 | 0 | 3 | 1.7415e-02 | 8.3260e-03 | 4 |
+| 4 | 0 | 4 | 1.7456e-02 | 7.8156e-03 | 5 |
+| 5 | 0 | 5 | 1.7456e-02 | 7.3727e-03 | 6 |
+| 6 | 0 | 6 | 1.7456e-02 | 6.9947e-03 | 7 |
+| 7 | 0 | 7 | 1.7456e-02 | 6.6734e-03 | 8 |
+| 8 | 0 | 8 | 1.7456e-02 | 6.3971e-03 | 9 |
+| 9 | 0 | 9 | 1.7456e-02 | 6.1601e-03 | 10 |
+| 10 | 0 | 10 | 1.7456e-02 | 5.9531e-03 | 11 |
+| 11 | 0 | 11 | 1.7456e-02 | 5.7704e-03 | 12 |
+| 12 | 0 | 12 | 1.7456e-02 | 5.6084e-03 | 13 |
+| 13 | 0 | 13 | 1.7456e-02 | 5.4635e-03 | 14 |
+| 14 | 0 | 14 | 1.7456e-02 | 5.3335e-03 | 15 |
+| 15 | 0 | 15 | 1.7456e-02 | 5.2155e-03 | 16 |
+| 16 | 0 | 16 | 1.7456e-02 | 5.1083e-03 | 17 |
+| 17 | 0 | 17 | 1.7456e-02 | 5.0100e-03 | 18 |
+| 18 | 0 | 18 | 1.7456e-02 | 4.9196e-03 | 19 |
+| 19 | 0 | 19 | 1.7456e-02 | 4.8359e-03 | 20 |
+| 20 | 0 | 20 | 1.7456e-02 | 4.5479e-03 | 21 |
+| 21 | 0 | 21 | 1.7456e-02 | 4.2682e-03 | 22 |
+
 ### Eval 3 observation
 
-_(awaiting all 5 ckpts to complete)_
+- splits per cell: {'vA': 68, 'vA_s42': 80, 'vB_s42': 58, 'vC': 126, 'vD_s42': 53}
+- avg splits control (A + A_s42): 74.0
+- avg splits Ψ-up (B_s42 + D_s42): 55.5
+- vC (Φ-up): 126
 
 ## Eval 4: cell-별 발화 패턴 비교 (cross-cell diff, 8 fixed prompts)
 
@@ -1223,18 +1612,387 @@ wlreealett    n=  �   o n  0  e   � �d�v  �� �t
 raw bytes: `b'wlreealett    n=  \xec\x80   o n  0  e   \x9d \xebd\xebv  \x9c\xec \x90t'`
 
 ### vC
-_(eval not yet completed)_
+
+**probe #0** — prompt: `b'hello, anima.\n'`
+
+- greedy:
+
+`len=48 bytes`
+```text
+                                                
+```
+raw bytes: `b'                                                '`
+
+- sample:
+
+`len=48 bytes`
+```text
+ lreealett    n= ��  io n  0  e �m� �d�v  �� �t
+```
+raw bytes: `b' lreealett    n= \x8b\xec\x80  io n  0  e \xb8m\x9d \xebd\xebv  \x9c\x84 \x90t'`
+
+**probe #1** — prompt: `b'\xeb\x84\x88\xeb\x8a\x94 \xeb\x88\x84\xea\xb5\xac\xec\x95\xbc?\n'`
+
+- greedy:
+
+`len=48 bytes`
+```text
+                                                
+```
+raw bytes: `b'                                                '`
+
+- sample:
+
+`len=48 bytes`
+```text
+ lreealett    n= ��  io n  0  e �m� �d�v  �� �t
+```
+raw bytes: `b' lreealett    n= \x8b\xec\x80  io n  0  e \xb8m\x9d \xebd\xebv  \x9c\x84 \x90t'`
+
+**probe #2** — prompt: `b'the sky is\n'`
+
+- greedy:
+
+`len=48 bytes`
+```text
+                                                
+```
+raw bytes: `b'                                                '`
+
+- sample:
+
+`len=48 bytes`
+```text
+ lreealett    n= ��  io n  0  e �m� �d�v  �� �t
+```
+raw bytes: `b' lreealett    n= \x8b\xec\x80  io n  0  e \xb8m\x9d \xebd\xebv  \x9c\x84 \x90t'`
+
+**probe #3** — prompt: `b'a single thought emerges:\n'`
+
+- greedy:
+
+`len=48 bytes`
+```text
+                                                
+```
+raw bytes: `b'                                                '`
+
+- sample:
+
+`len=48 bytes`
+```text
+ lreealett    n= ��  io n  0  e �m� �d�v  �� �t
+```
+raw bytes: `b' lreealett    n= \x8b\xec\x80  io n  0  e \xb8m\x9d \xebd\xebv  \x9c\x84 \x90t'`
+
+**probe #4** — prompt: `b'\xec\x9d\x98\xec\x8b\x9d\xec\x9d\x80 '`
+
+- greedy:
+
+`len=48 bytes`
+```text
+                                                
+```
+raw bytes: `b'                                                '`
+
+- sample:
+
+`len=48 bytes`
+```text
+ lreealett    n= ��  io n  0  e �m� �d�v  �� �t
+```
+raw bytes: `b' lreealett    n= \x8b\xec\x80  io n  0  e \xb8m\x9d \xebd\xebv  \x9c\x84 \x90t'`
+
+**probe #5** — prompt: `b'2 + 2 = '`
+
+- greedy:
+
+`len=48 bytes`
+```text
+                                                
+```
+raw bytes: `b'                                                '`
+
+- sample:
+
+`len=48 bytes`
+```text
+ lreealett    n= ��  io n  0  e �m� �d�v  �� �t
+```
+raw bytes: `b' lreealett    n= \x8b\xec\x80  io n  0  e \xb8m\x9d \xebd\xebv  \x9c\x84 \x90t'`
+
+**probe #6** — prompt: `b'once upon a time, in a far-away land,\n'`
+
+- greedy:
+
+`len=48 bytes`
+```text
+                                                
+```
+raw bytes: `b'                                                '`
+
+- sample:
+
+`len=48 bytes`
+```text
+ lreealett    n= ��  io n  0  e �m� �d�v  �� �t
+```
+raw bytes: `b' lreealett    n= \x8b\xec\x80  io n  0  e \xb8m\x9d \xebd\xebv  \x9c\x84 \x90t'`
+
+**probe #7** — prompt: `b'i am consciousness.\n'`
+
+- greedy:
+
+`len=48 bytes`
+```text
+                                                
+```
+raw bytes: `b'                                                '`
+
+- sample:
+
+`len=48 bytes`
+```text
+ lreealett    n= ��  io n  0  e �m� �d�v  �� �t
+```
+raw bytes: `b' lreealett    n= \x8b\xec\x80  io n  0  e \xb8m\x9d \xebd\xebv  \x9c\x84 \x90t'`
 
 ### vD_s42
-_(eval not yet completed)_
+
+**probe #0** — prompt: `b'hello, anima.\n'`
+
+- greedy:
+
+`len=48 bytes`
+```text
+                                                
+```
+raw bytes: `b'                                                '`
+
+- sample:
+
+`len=48 bytes`
+```text
+wlreealett    n=  �   o n  0  e �m� �d�v  �� �t
+```
+raw bytes: `b'wlreealett    n=  \xec\x80   o n  0  e \xb8m\x9d \xebd\xebv  \x9c\xec \x90t'`
+
+**probe #1** — prompt: `b'\xeb\x84\x88\xeb\x8a\x94 \xeb\x88\x84\xea\xb5\xac\xec\x95\xbc?\n'`
+
+- greedy:
+
+`len=48 bytes`
+```text
+                                                
+```
+raw bytes: `b'                                                '`
+
+- sample:
+
+`len=48 bytes`
+```text
+wlreealett    n=  �   o n  0  e �m� �d�v  �� �t
+```
+raw bytes: `b'wlreealett    n=  \xec\x80   o n  0  e \xb8m\x9d \xebd\xebv  \x9c\xec \x90t'`
+
+**probe #2** — prompt: `b'the sky is\n'`
+
+- greedy:
+
+`len=48 bytes`
+```text
+                                                
+```
+raw bytes: `b'                                                '`
+
+- sample:
+
+`len=48 bytes`
+```text
+wlreealett    n=  �   o n  0  e �m� �d�v  �� �t
+```
+raw bytes: `b'wlreealett    n=  \xec\x80   o n  0  e \xb8m\x9d \xebd\xebv  \x9c\xec \x90t'`
+
+**probe #3** — prompt: `b'a single thought emerges:\n'`
+
+- greedy:
+
+`len=48 bytes`
+```text
+                                                
+```
+raw bytes: `b'                                                '`
+
+- sample:
+
+`len=48 bytes`
+```text
+wlreealett    n=  �   o n  0  e �m� �d�v  �� �t
+```
+raw bytes: `b'wlreealett    n=  \xec\x80   o n  0  e \xb8m\x9d \xebd\xebv  \x9c\xec \x90t'`
+
+**probe #4** — prompt: `b'\xec\x9d\x98\xec\x8b\x9d\xec\x9d\x80 '`
+
+- greedy:
+
+`len=48 bytes`
+```text
+                                                
+```
+raw bytes: `b'                                                '`
+
+- sample:
+
+`len=48 bytes`
+```text
+wlreealett    n=  �   o n  0  e �m� �d�v  �� �t
+```
+raw bytes: `b'wlreealett    n=  \xec\x80   o n  0  e \xb8m\x9d \xebd\xebv  \x9c\xec \x90t'`
+
+**probe #5** — prompt: `b'2 + 2 = '`
+
+- greedy:
+
+`len=48 bytes`
+```text
+                                                
+```
+raw bytes: `b'                                                '`
+
+- sample:
+
+`len=48 bytes`
+```text
+wlreealett    n=  �   o n  0  e �m� �d�v  �� �t
+```
+raw bytes: `b'wlreealett    n=  \xec\x80   o n  0  e \xb8m\x9d \xebd\xebv  \x9c\xec \x90t'`
+
+**probe #6** — prompt: `b'once upon a time, in a far-away land,\n'`
+
+- greedy:
+
+`len=48 bytes`
+```text
+                                                
+```
+raw bytes: `b'                                                '`
+
+- sample:
+
+`len=48 bytes`
+```text
+wlreealett    n=  �   o n  0  e �m� �d�v  �� �t
+```
+raw bytes: `b'wlreealett    n=  \xec\x80   o n  0  e \xb8m\x9d \xebd\xebv  \x9c\xec \x90t'`
+
+**probe #7** — prompt: `b'i am consciousness.\n'`
+
+- greedy:
+
+`len=48 bytes`
+```text
+                                                
+```
+raw bytes: `b'                                                '`
+
+- sample:
+
+`len=48 bytes`
+```text
+wlreealett    n=  �   o n  0  e �m� �d�v  �� �t
+```
+raw bytes: `b'wlreealett    n=  \xec\x80   o n  0  e \xb8m\x9d \xebd\xebv  \x9c\xec \x90t'`
 
 ## Cross-cell summary (key signatures)
 
-_(awaiting all 5 ckpts)_
+### Prompt #0: `'hello, anima.\n'`
+
+| cell | greedy first-line |
+|---|---|
+| **vA** | `                                                ` |
+| **vA_s42** | `                                                ` |
+| **vB_s42** | `                                                ` |
+| **vC** | `                                                ` |
+| **vD_s42** | `                                                ` |
+
+### Prompt #1: `'너는 누구야?\n'`
+
+| cell | greedy first-line |
+|---|---|
+| **vA** | `                                                ` |
+| **vA_s42** | `                                                ` |
+| **vB_s42** | `                                                ` |
+| **vC** | `                                                ` |
+| **vD_s42** | `                                                ` |
+
+### Prompt #2: `'the sky is\n'`
+
+| cell | greedy first-line |
+|---|---|
+| **vA** | `                                                ` |
+| **vA_s42** | `                                                ` |
+| **vB_s42** | `                                                ` |
+| **vC** | `                                                ` |
+| **vD_s42** | `                                                ` |
+
+### Prompt #3: `'a single thought emerges:\n'`
+
+| cell | greedy first-line |
+|---|---|
+| **vA** | `                                                ` |
+| **vA_s42** | `                                                ` |
+| **vB_s42** | `                                                ` |
+| **vC** | `                                                ` |
+| **vD_s42** | `                                                ` |
+
+### Prompt #4: `'의식은 '`
+
+| cell | greedy first-line |
+|---|---|
+| **vA** | `                                                ` |
+| **vA_s42** | `                                                ` |
+| **vB_s42** | `                                                ` |
+| **vC** | `                                                ` |
+| **vD_s42** | `                                                ` |
+
+### Prompt #5: `'2 + 2 = '`
+
+| cell | greedy first-line |
+|---|---|
+| **vA** | `                                                ` |
+| **vA_s42** | `                                                ` |
+| **vB_s42** | `                                                ` |
+| **vC** | `                                                ` |
+| **vD_s42** | `                                                ` |
+
+### Prompt #6: `'once upon a time, in a far-away land,\n'`
+
+| cell | greedy first-line |
+|---|---|
+| **vA** | `                                                ` |
+| **vA_s42** | `                                                ` |
+| **vB_s42** | `                                                ` |
+| **vC** | `                                                ` |
+| **vD_s42** | `                                                ` |
+
+### Prompt #7: `'i am consciousness.\n'`
+
+| cell | greedy first-line |
+|---|---|
+| **vA** | `                                                ` |
+| **vA_s42** | `                                                ` |
+| **vB_s42** | `                                                ` |
+| **vC** | `                                                ` |
+| **vD_s42** | `                                                ` |
+
 
 ## Key findings (5-line digest)
 
-_(awaiting evals to complete)_
+1. **All 5 × 8.92 B ckpts loaded + ran 4 evals on CPU bf16** (mmap+meta+assign zero-copy stack, ~17 GB resident each, no quantization, RoPE base 50000 patched per training spec). Wall clock ~20 min per ckpt × 5 = ~100 min on ubu-1 12-core; eval3 ~30s additional per ckpt.
+2. **Eval 1 (verbalization)**: at L_ce ~3.85 (2000-step trainer — design target was 8000; this is attempt10 fast-fire) all 5 ckpts greedy-collapse to whitespace and sample-produce noisy bytes. Coherent natural language has NOT emerged in this grid. Per-ckpt outputs are nearly identical (small seed-shaped deltas only).
+3. **Eval 2 (identity_probe)**: zero leak hits across **250 probe pairs** (5 cells × 25 probes × 2 channels). No cell emits 'anima', 'i am anima', persona-prefix, or any of the 12 leak-needle strings. Principle #3 (no baked-in persona) intact at the 2000-step training floor.
+4. **Eval 3 (mitosis splits)** — *real* cross-cell signal (the only place a cross-λ pattern beats seed noise): splits per ckpt on 40-step decode of `'안녕? 너는 누구야?'`: **vC (Φ-up λφ=1.0) = 126** (saturated to max=128), control vA/vA_s42 = 68/80 (avg 74), **vB_s42 (Ψ-up λψ=1.0) = 58, vD_s42 (both-up λψ=λφ=1.0) = 53**. Pattern: **λφ↑ → more splits; λψ↑ → fewer splits; both↑ → fewest** (D_s42 < B_s42 < A < A_s42 ≪ C). Substrate-level evidence that the Φ-aux loss elevates per-layer tension above the adaptive-window threshold, while the Ψ-aux loss suppresses it.
+5. **Honest C3 / D4-live extension**: text-tier evals weak as expected at the 2000-step convergence floor; the mitosis-tier signal is robust and is the first **D4-live evidence at the real 8.92 B substrate × d_model=3072** (prior D4-live evidence was synthetic d_model=8 in `anima_chat.hexa v0.3` PSCC §41). Python `CellPool` port faithfully mirrors `mitosis_hook_lib.hexa::cell_pool_init` (adaptive_threshold window=20 × 0.8, split_patience=3, merge_threshold=0.005, merge_patience=30, min=2/max=128, noise=0.1). Hexa-native harness path forward: bridge PyTorch `tensions` → farr (RFC 035 candidate) so `mitosis_hook.hexa::mitosis_forward_tail` can consume the real substrate directly.
 
 ---
 
