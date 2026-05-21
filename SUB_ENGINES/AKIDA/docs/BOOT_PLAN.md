@@ -14,12 +14,18 @@
 
 - Raspberry Pi 5 **16 GB** (BCM2712 2.4 GHz, VideoCore VII, GbE + BT 5.0 +
   WiFi 802.11ac, dual 4Kp60 HDMI)
-- AKD1000 M.2 Dev Kit (1024 NPU, 8-bit weight, ~0.5 mW typical, includes
-  MetaTF SDK)
+- **AKD1000 M.2 Dev Kit** ($1495 BrainChip — see doc/akd1000_hardware_spec.md):
+  - 20 NPU mesh @ 300 MHz (NOT 1024 NPU — that was old marketing)
+  - 8 MB on-chip SRAM + ARM M.4 + LPDDR4 PHY
+  - Form factor: M.2 2260 B+M Key (Pi 5 M.2 HAT must support 2260)
+  - Typical power: 1 W module (per-event amortised: sub-mW)
+  - Peak compute: 1.5 TOPS INT8
+  - akida 2.19.1 aarch64 wheel from PyPI (no source build needed)
 - microSD ≥ 32 GB (Raspberry Pi OS Bookworm 64-bit) 또는 NVMe via HAT
-- 정격 5V/5A USB-C 전원 (Pi 5 official PSU 권장)
+- 정격 5V/5A USB-C 전원 (Pi 5 official PSU 권장 — combined Pi5 + AKD1000 ~5.1W worst case)
 - (optional) Pi 5 active cooler + case
 - (optional) UART debug cable
+- **Akida PCIe driver** (DKMS, manual download from developer.brainchip.com)
 
 ### §1.2 SW
 

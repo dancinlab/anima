@@ -53,16 +53,18 @@ AKD1000 silicon (or MetaTF mock).
 │       ┌────────────┐ │  │       ┌────────────────┐ │  │   audit_buf.  │
 │       │ akida.Model│ │  │       │ MetaTFMock     │ │  │   jsonl       │
 │       │ akida.devi │ │  │       │ MockModel      │ │  │               │
-│       │ ces()      │ │  │       │ MockDevice     │ │  │ /home/.../    │
-│       │ akida.layer│ │  │       │ MockLayers     │ │  │   exports/    │
-│       │ s.*        │ │  │       └────────────────┘ │  │   brain/      │
+│       │ ces()      │ │  │       │ MockHwDevice   │ │  │ /home/.../    │
+│       │ akida.Fully│ │  │       │ MockLayers     │ │  │   exports/    │
+│       │ Connected  │ │  │       │ MockAkidaUnsup │ │  │   brain/      │
 │       └────────────┘ │  │                          │  │   verify/     │
 └──────────┬───────────┘  └──────────────────────────┘  └────────────────┘
            │
            ▼  PCIe 2.0 single-lane (Pi 5 ↔ AKD1000 M.2)
 ┌──────────────────────────────────────────────────────────────────────────┐
-│  L1  AKD1000 silicon (1024 NPU · 8-bit weight · 0.5mW typ · on-chip     │
-│       Hebbian) — *real arrival pending* ($1495 Dev Kit)                 │
+│  L1  AKD1000 silicon (20 NPU mesh · 8MB on-chip SRAM · 300 MHz · 1W typ │
+│       module · 1.5 TOPS · on-chip Hebbian via AkidaUnsupervised) —      │
+│       *real arrival pending* ($1495 Pi 5 Dev Kit)                       │
+│       (NSoC_v1 · Akida 1.0 — see doc/)             │
 └──────────────────────────────────────────────────────────────────────────┘
 ```
 

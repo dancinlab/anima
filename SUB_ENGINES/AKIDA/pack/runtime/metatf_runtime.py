@@ -3,9 +3,11 @@
 Two paths
 ---------
 - **HW path**  : ``import akida`` (BrainChip MetaTF SDK installed via
-  ``pip install anima-akida-pack[akida]`` on the Pi 5 host).
+  ``pip install akida`` on the Pi 5 host — aarch64 wheel auto-selected from
+  PyPI; see ``doc/metatf_install_linux_arm.md``).
 - **Mock path**: ``from pack.mocks.metatf_mock import MetaTFMock`` (Mac-local
-  pre-arrival validation; written by a separate agent).
+  pre-arrival validation; rewritten 2026-05-21 to mirror real BrainChip API
+  per cached reference docs).
 
 Auto-detect at first :func:`get_runtime` call.  The choice is sticky for the
 lifetime of the process — repeated calls return the same backend.  Use
@@ -14,6 +16,11 @@ lifetime of the process — repeated calls return the same backend.  Use
 The module deliberately tolerates **both** an importable ``akida`` SDK *and*
 the absence of any mock — in that case :func:`init_runtime` raises a clear
 ``RuntimeError`` rather than silently substituting a no-op.
+
+When HW backend is selected, :func:`assert_akd1000` validates that at least one
+attached device reports ``HwVersion.NSoC_v1`` (the AKD1000 family). Pack
+adapters require Akida 1.0 silicon for on-chip Hebbian / 1-shot learning
+(Akida 2.0 dropped edge learning).
 """
 
 from __future__ import annotations
@@ -147,9 +154,63 @@ def reset_runtime() -> None:
     _ERROR_LOG.clear()
 
 
+def assert_akd1000() -> dict:
+    """Verify the bound runtime exposes at least one AKD1000 (NSoC_v1) device.
+
+    Works for both backends:
+    - HW backend: checks ``akida.devices()[0].version == akida.HwVersion.NSoC_v1``
+    - Mock backend: checks ``MockHwDevice.version == HwVersion.NSoC_v1`` (mock enum)
+
+    Returns
+    -------
+    dict
+        ``{"backend": str, "device_count": int, "device_versions": list[str],
+           "akd1000_present": bool, "first_device_desc": str}``
+
+    Raises
+    ------
+    RuntimeError
+        If no AKD1000 (NSoC_v1) device present in either backend.
+    """
+    rt = get_runtime()
+    try:
+        devs = rt.devices()
+    except Exception as exc:  # noqa: BLE001
+        raise RuntimeError(f"runtime devices() failed: {exc!r}") from exc
+
+    versions: list[str] = []
+    akd1000_present = False
+    first_desc = ""
+    for i, dev in enumerate(devs):
+        # both real + mock expose `.version` (HwVersion enum or HwVersion-like)
+        v = getattr(dev, "version", None)
+        v_str = getattr(v, "name", None) or getattr(v, "value", None) or str(v)
+        versions.append(v_str)
+        if v_str == "NSoC_v1":
+            akd1000_present = True
+        if i == 0:
+            first_desc = getattr(dev, "desc", "") or getattr(dev, "name", "") or repr(dev)
+
+    if not akd1000_present:
+        raise RuntimeError(
+            "No AKD1000 (NSoC_v1) device detected. Pack adapters require "
+            "Akida 1.0 silicon for edge learning. "
+            f"backend={_BACKEND} devices={versions}"
+        )
+
+    return {
+        "backend": _BACKEND or "unknown",
+        "device_count": len(devs),
+        "device_versions": versions,
+        "akd1000_present": akd1000_present,
+        "first_device_desc": first_desc,
+    }
+
+
 __all__ = [
     "init_runtime",
     "get_runtime",
     "get_runtime_info",
     "reset_runtime",
+    "assert_akd1000",
 ]

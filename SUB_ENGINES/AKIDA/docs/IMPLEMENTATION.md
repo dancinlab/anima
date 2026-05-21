@@ -1,13 +1,22 @@
-# AUX/AKIDA/docs/IMPLEMENTATION.md — 11 adapter + runtime 구현 detail
+# SUB_ENGINES/AKIDA/docs/IMPLEMENTATION.md — 11 adapter + runtime 구현 detail
 
 > Pack module: `anima-akida-pack 0.1.0` (`pack/__init__.py`).
-> Implementation surface = **11 adapters** (`pack/adapters/`) + **3 runtime**
+> Implementation surface = **10 adapters live + 1 spec-tier** (`pack/adapters/`) + **3 runtime**
 > modules (`pack/runtime/`) + **mocks** (`pack/mocks/`) +
 > **falsifier runner** (`pack/falsifiers/`).
 >
 > 본 doc 은 *구현 detail* (어떤 클래스 / 어떤 contract / 어떤 falsifier).
 > Architecture diagram 은 `ARCHITECTURE.md`, validation 결과는
 > `VALIDATION.md`, Pi 5 도착 후 Day-by-day 는 `BOOT_PLAN.md` 참조.
+>
+> **API contract verified (2026-05-21)**: pack mock and adapter contracts have
+> been audited against the cached BrainChip reference in
+> `doc/` (10 markdown files + INDEX + SOURCE_URLS).
+> All previous "1024 NPU / 1 mW typical / Conv2D" claims were marketing
+> mismatches — corrected to **20 NPU mesh / 1 W typical module / Convolutional
+> (V1)**. Mock now exposes the verified API surface including
+> `AkidaUnsupervised`, `MapMode`, `HwVersion`, `ClockMode`, `Padding`,
+> `PoolType`. Falsifier baseline 50/50 PASS maintained post-rewrite.
 
 ---
 

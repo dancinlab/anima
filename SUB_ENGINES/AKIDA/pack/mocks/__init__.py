@@ -10,24 +10,35 @@ Public API
 ----------
 - :class:`MetaTFMock`       — top-level ``akida`` module replacement.
 - :class:`MockModel`        — ``akida.Model`` mock with ``add``/``forward``/``fit``.
-- :class:`MockDevice`       — ``akida.devices()[i]`` mock with ``program``.
-- :class:`MockLayers`       — ``akida.layers`` namespace mock.
+- :class:`MockHwDevice`     — ``akida.HwDevice`` mock (NSoC_v1 / AKD1000).
+- :data:`MockDevice`        — back-compat alias for :class:`MockHwDevice`.
+- :class:`MockLayers`       — ``akida.layers`` namespace mock (V2-style alias).
+- :class:`MockAkidaUnsupervised` — edge-learning optimizer mock.
 - :data:`metatf_mock`       — pre-instantiated singleton for direct import use.
+
+The mock now mirrors the real BrainChip API surface verified against
+``doc/`` (cached 2026-05-21).
 """
 
 from __future__ import annotations
 
 from .metatf_mock import (  # noqa: F401
     MetaTFMock,
-    MockDevice,
+    MockAkidaUnsupervised,
+    MockHwDevice,
     MockLayers,
     MockModel,
     metatf_mock,
 )
 
+# Back-compat: old name was ``MockDevice``.
+MockDevice = MockHwDevice
+
 __all__ = [
     "MetaTFMock",
+    "MockAkidaUnsupervised",
     "MockDevice",
+    "MockHwDevice",
     "MockLayers",
     "MockModel",
     "metatf_mock",

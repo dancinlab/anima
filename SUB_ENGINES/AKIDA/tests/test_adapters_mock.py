@@ -105,12 +105,22 @@ def test_adapter_mock_run(adapter_module):
 
 
 def test_mock_runtime_self_consistency():
-    """Sanity-check the metatf mock itself — independent of adapter pack."""
+    """Sanity-check the metatf mock itself — independent of adapter pack.
+
+    Asserts against the post-2026-05-21 metatf_mock rewrite which mirrors
+    the real BrainChip API surface (see ``doc/``).
+    """
     from pack.mocks.metatf_mock import _selftest
     res = _selftest()
     assert res["forward_deterministic"], "MetaTFMock.forward must be deterministic"
+    assert res["forward_returns_int32"], "MetaTFMock.forward must return int32 (real API)"
     assert res["fit_weights_ok"], "MetaTFMock.fit must populate weights"
-    assert res["device_program_ok"], "MockDevice.program must succeed"
+    assert res["device_version_v1"], "akida.devices()[0] must report NSoC_v1 (AKD1000)"
+    assert res["device_bound"], "model.map(device) must bind device"
+    assert res["virtual_AKD1000_ok"], "akida.AKD1000() virtual device must work"
+    assert res["validates_bad_units"], "FullyConnected must reject units<=0"
+    assert res["v2_namespace_backcompat"], "akida.layers.FullyConnected back-compat broken"
+    assert res["legacy_fit_backcompat"], "old model.fit(input, target) back-compat broken"
     assert res["is_mock"], "MetaTFMock.is_mock flag must be True"
 
 
