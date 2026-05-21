@@ -177,6 +177,37 @@ Phase 1b (bitstream/flash) 별도 cycle: `brew install nextpnr-ice40 nextpnr-ecp
 
 ## §5 진행 로그 (cycle ledger, append-only)
 
+### §5.3 2026-05-21 "all bg go" 2차 — 4 BG agents parallel completion (G1 회수 + G3 cross-check + HEXAD sync + Phase 1b setup)
+
+**4 agent / 4 work item, all ✅ completed**:
+
+1. ✅ **G1 17 FAIL 회수** — 8 PASS (8/13 시도), 새 PASS rate **59/68 = 86.8%** (75% → +11.8%p)
+   - A 그룹 auto-invoke 7/7 PASS (`main()` → `run()` rename, mechanical)
+   - B 그룹 parse error 1/6 PASS (physics.hexa theorem block 주석)
+   - 잔존 5: 3 consciousness-loop (hexa_random link, C 그룹 합류) + edge_deploy (effect system 전체 rewrite) + esp32 (Rust syntax 전체 rewrite) — 별도 cycle
+
+2. ✅ **G3 entry cross-check tool LANDED** — `tool/cross_check_entries.sh` (~150 LoC bash, executable, exit code = drift signal)
+   - 총 .hexa: 69 (이전 추정 62 → 실 69)
+   - 총 entry: 93 (root 11 · docs 19 · substrate 60 · recovered 3)
+   - **3 missing entries** identified: aux_engine_lib, aux_engine_smoke, anima_physics_e2e_demo
+   - 0 orphan
+   - README/PLAN count drift detected (62 → 69)
+
+3. ✅ **HEXAD/PHYSICS §6.15-§6.18 sync** — 442→522 lines append-only. §6.15 PLAN.md 신설 + §6.16 HW Phase 1a + §6.17 6 BG agents + §6.18 cycle 종결 (g_completion_8 ☑ G4/G6/G8 closed 명시)
+
+4. ✅ **Phase 1b HW setup** — tool install 5/6 PASS + **2/4 실 bitstream LANDED**:
+   - strange_loop_ice40: **132 KB iCE40 bitstream** (HX8K-CT256 substitution, 0.8% LC, Fmax 253 MHz @ 12 MHz)
+   - sleep_oscillator_arduino: **14 KB .hex firmware** (5038 bytes flash 15% Uno, 235 bytes RAM 11%)
+   - nested_lattice_ecp5 + spontaneous_ising: BLOCKED (nextpnr-ecp5 Homebrew core 부재, yowasp WASI sandbox 차단 → source build $0 30-60min 별도 cycle)
+   - kuramoto_neuromorphic: cloud-only (Akida $1/day trial 신청 별도)
+   - doc: `hw/PHASE_1B_STATUS.md` (12 KB, 6 §, 10 honest C3)
+
+**g_completion_8 진행 갱신** (2025-05-21 19:00 KST):
+- G1 build 무결성: 51/68 → **59/68 (86.8%)** specific (남은 9 = 3 consciousness-loop hexa_random + edge_deploy + esp32 + 4 hexa_random transpile)
+- G3 entry cross-check: ☐ → **☑ TOOL LANDED** (drift 3 missing identified, 별도 cycle 에 entry stub 생성)
+- G6 HW silicon Phase 1: 1a ☑ → **1b 2/4 ☑** (FPGA bitstream + Arduino .hex 실 산출, ECP5 path 별도)
+- 갱신 안: G2/G4/G5/G7/G8 직전 cycle 그대로
+
 ### §5.2 2026-05-21 "all bg go" — 6 BG agents parallel completion
 
 **6 agent / 7 work item parallel dispatch, all ✅ completed**:

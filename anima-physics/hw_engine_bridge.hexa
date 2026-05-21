@@ -392,7 +392,7 @@ fn test_t5_engine_mapping() -> int {
     return 1
 }
 
-fn main() {
+fn run() {
     println("[hw_engine_bridge] PHYS-P23-1 HW<->engine bridge")
     println("[hw_engine_bridge] 8 channels, ring=" + str(HWB_RING_SIZE)
           + ", budget=" + str(HWB_LATENCY_BUDGET_MS) + "ms")
@@ -459,4 +459,4 @@ fn main() {
     }
 }
 
-main()
+run()

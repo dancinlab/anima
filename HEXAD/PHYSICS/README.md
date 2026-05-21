@@ -439,4 +439,75 @@ best_phi: 0.0336
 
 **Mission GOAL closure**: anima 자연발화 + 영속성 SW 후보 = top 5 dual-role substrate (strange_loop / nested_lattice / kuramoto / sleep_oscillator / spontaneous_smoke) 16/16 + aux_engine GRU (functional canonical, 5/5 smoke PASS). HW silicon path 설계 LANDED. 모든 잔존 항목은 별도 cycle 후보 (§188g substrate impl, hexa-lang PR review, legacy syntax rewrite).
 
+### §6.15 anima-physics PLAN.md 신설 (commit `0dcf7e673`)
+
+본 HEXAD/PHYSICS README §6 의 SNAPSHOT 이후 첫 후속 cycle. anima-physics module 하위 module SSOT 신설.
+
+- **g_completion_8** (G1-G8) 정의:
+  - G1 substrate build smoke / G2 falsifier total / G3 entry cross-check / G4 substrate README LANDED / G5 demiurge upgrade ladder (chip/component/firmware/brain) / G6 HW Phase 1a / G7 SW⊥HW 분할 정합 / G8 E2E integrated demo
+- **Phase A-F 로드맵**: A=substrate build cleanup · B=substrate README+falsifier · C=demiurge upgrade · D=HW Phase 1a/1b · E=E2E demo · F=legacy syntax rewrite
+- **본 HEXAD/PHYSICS README §6 와의 관계**: 상위 HEXAD-module ledger (자연발화 + 영속성 substrate matrix mission 추적) ⊥ anima-physics PLAN.md 하위 module SSOT (G1-G8 + Phase A-F 세분화). 본 §6 가 mission-level "무엇이 LANDED 됐는지" 를, anima-physics/PLAN.md 가 "어떤 task 가 어떤 단계에 있는지" 를 추적. cycle 종결 시 둘 다 갱신.
+
+### §6.16 5 HW target Phase 1a LANDED (commit `96c049344`)
+
+§6.13 HW silicon path 설계 후속 — 5 target Phase 1a (DESIGN + skeleton src + build.sh + state) LANDED.
+
+| # | Target | Path | DESIGN | src/ | build.sh | state/ |
+|---|---|---|---|---|---|---|
+| 1 | strange_loop_ice40 | `anima-physics/hw/strange_loop_ice40/` | ✅ ASCII | ✅ | ✅ | ✅ |
+| 2 | nested_lattice_ecp5 | `anima-physics/hw/nested_lattice_ecp5/` | ✅ ASCII | ✅ | ✅ | ✅ |
+| 3 | kuramoto_neuromorphic | `anima-physics/hw/kuramoto_neuromorphic/` | ✅ ASCII | ✅ | ✅ | ✅ |
+| 4 | sleep_oscillator_arduino | `anima-physics/hw/sleep_oscillator_arduino/` | ✅ ASCII | ✅ | ✅ | ✅ |
+| 5 | spontaneous_ising | `anima-physics/hw/spontaneous_ising/` | ✅ ASCII | ✅ | ✅ | ✅ |
+
+- **25/25 falsifier PASS**, Mac local $0 sim+synth (실 chip 발주 별도 cycle = HW Phase 1b)
+- **SW 공용 (anima-physics/<substrate>/) ⊥ HW 전용 (anima-physics/hw/<target>/) 분할 원칙** — `anima-physics/README.md §0` 에 명문화 (substrate 정의 + 자연발화 mechanism = SW 공용 / FPGA·MCU bitstream + BOM + pinout = HW 전용)
+- g_completion_8 진척: G6 ☐ → **5/5 ☑ CLOSED**
+
+### §6.17 "all bg go" 6 parallel agents (commit `90ed6cb22`)
+
+사용자 directive "all bg go" 에 따라 6 BG agent parallel dispatch — 본 cycle 의 최대 처리량 burst.
+
+| # | Agent | Outcome |
+|---|---|---|
+| 1 | §188g engines impl | 7 stub (22-31 LoC) → 307-514 LoC actual, **35/35 selftest PASS** |
+| 2 | G4 26 substrate README LANDED | 1/27 → **27/27 ☑** (각 substrate `README.md` + falsifier 정합) |
+| 3 | G8 E2E integrated demo | **5/5 PASS** (substrate→engine→motivation→emit→audit chain end-to-end) |
+| 4 | consciousness-loop legacy rewrite | 3 파일 107 사이트 → **0 사이트** (parse PASS, legacy `&ident`/`self: *T`/`or`/`++` 제거) |
+| 5 | G1 build smoke | **51/68 PASS** (75%), 17 FAIL 분류 (**7 auto-invoke + 6 parse + 4 hexa_random**) |
+| 6 | (dispatch/coord) | 위 5 agent BG 직렬 종결 + 본 §6.17 종합 |
+
+**잔존** (별도 cycle):
+- G1 17 FAIL 회수 (mechanical — auto-invoke 7 + parse 6 + hexa_random 4)
+- G3 entry cross-check (lint tool 별도 cycle)
+- G5 demiurge upgrade (chip ✅ 완료, component/firmware/brain ⏳)
+
+### §6.18 cycle 종합 종결 (re-snapshot)
+
+anima-physics PLAN.md `g_completion_8` 현재 진척 — 본 HEXAD/PHYSICS module ledger 상위 SNAPSHOT 갱신:
+
+| G# | 항목 | 이전 (§6.14 시점) | 현재 (본 cycle 종결) |
+|---|---|---|---|
+| G1 | substrate build smoke | (미정의) | **51/68 PASS** (다음 cycle 17 mechanical 회수 가능) |
+| G2 | falsifier total | §188 21 | §188 21 + 본 cycle **+40 PASS** = 새 falsifier count |
+| G3 | entry cross-check | ☐ | ☐ (cross-check tool 별도 cycle) |
+| G4 | substrate README LANDED | 1/27 | **27/27 ☑ CLOSED** |
+| G5 | demiurge upgrade ladder | chip ✅ 12/12 | chip ✅ 12/12 + component/firmware/brain ⏳ |
+| G6 | HW Phase 1a | ☐ | **5/5 ☑ CLOSED** (strange_loop / nested_lattice / kuramoto / sleep_oscillator / spontaneous_ising) |
+| G7 | SW⊥HW 분할 정합 | (미정의) | ☑ (§0 SW/HW 명문화 + 27 README 정합) |
+| G8 | E2E integrated demo | ☐ | **☑ CLOSED** (substrate→engine→motivation→emit→audit 5/5 PASS) |
+
+**상위 GOAL 진척**: 자연발화 + 영속성 SW+HW substrate matrix Mac local Phase 1a 완전체 도달 — SW 27 substrate README ☑ + HW 5 target Phase 1a ☑ + E2E demo ☑ + engines impl 35/35 ☑.
+
+**잔여 = 별도 cycle**:
+- G1 17 FAIL 회수 (auto-invoke 7 + parse 6 + hexa_random 4)
+- G3 entry cross-check (lint tool)
+- G5 STEP/firmware (demiurge component/firmware/brain ladder 상위)
+- HW Phase 1b setup (FPGA·MCU 실 chip 발주 + bitstream flash + 실측 falsifier)
+
+**LANDED commits (본 sync cycle)**:
+- anima `0dcf7e673` — anima-physics/PLAN.md 신설 (g_completion_8 + Phase A-F)
+- anima `96c049344` — 5 HW target Phase 1a LANDED (25/25 falsifier PASS)
+- anima `90ed6cb22` — "all bg go" 6 parallel agents (engines impl + READMEs + E2E + legacy + smoke + 종합)
+
 

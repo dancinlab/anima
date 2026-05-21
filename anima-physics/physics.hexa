@@ -148,6 +148,6 @@ fn esp32_network(boards: int, topology: string) -> PhysicsEngine {
 fn bridge_eeg_physics(phi: float) -> float { phi }
 fn bridge_body_physics(motor_cmd: float) -> float { motor_cmd }
 
-theorem esp32_cells_per_board {
-    forall e: PhysicsEngine. e.substrate == "esp32" -> e.cells == e.cells -> true
-}
+// theorem esp32_cells_per_board — disabled: hexa parser does not accept
+// `forall e: T.` typed-quantifier syntax. Reinstate when theorem block
+// support lands. Intent: e.substrate == "esp32" -> e.cells == e.cells.

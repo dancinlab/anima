@@ -328,7 +328,7 @@ fn parse_iters(argv: array) -> int {
     return 64
 }
 
-fn main() {
+fn run() {
     let argv = args()
     let iters = parse_iters(argv)
 
@@ -390,4 +390,4 @@ fn main() {
     println("pass=" + (if ok { "1" } else { "0" }))
 }
 
-main()
+run()

@@ -221,7 +221,7 @@ fn emit_marker(g1: bool, g2: bool, g3: bool, g4: bool, sim_probe: LocalDispatchP
     println("[marker] " + marker_path)
 }
 
-fn main() {
+fn run() {
     let av = argv()
     let mut mode = "selftest"
     let mut i = 2
@@ -236,4 +236,4 @@ fn main() {
     exit(0)
 }
 
-main()
+run()

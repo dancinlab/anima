@@ -246,7 +246,7 @@ fn cmd_selftest() {
     println("DONE")
 }
 
-fn main() {
+fn run() {
     let av = argv()
     let mut selftest = false
     let mut i = 2
@@ -264,4 +264,4 @@ fn main() {
     exit(1)
 }
 
-main()
+run()
