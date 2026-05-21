@@ -276,4 +276,90 @@ error 4 건 + transpiler typed-decl 버그 해결 path).
 3. 🔄 B functional rewrite (aux_engine_lib 5 fn) — 본 cycle 후속
 4. 🔄 C 21 PASS SW 후보 분석 — 본 cycle 후속 (GOAL 직결)
 
+### §6.9 GOAL 달성 — Path B + Path C 동시 LANDED (2026-05-21 15:00 KST)
+
+**Path B (functional rewrite) — LANDED**:
+- aux_engine_lib.hexa 5 nested-mutation 사이트 모두 canonical functional update 로 rewrite
+  - faction_internal_sync (line 183) — 2-level
+  - aux_hebbian_step (line 488) — 2-level
+  - engine_cross_faction_debate (line 261) — 3-level
+  - engine_ising_interaction × 2 (line 283, 288) — 3-level
+- helper 3개 추가: `cell_with_hidden_at` / `faction_with_cell_at` / `engine_with_faction_at`
+  (bare-local rebuild + return-copy 패턴, Wilson #1 ai-native + §6.7 canonical)
+- **smoke build: exit 0** (0 errors, post-rewrite first attempt PASS)
+- **smoke run: 8m30s wall, exit 0** — 100-step loop 완주, S1-S5 falsifier framework 도달
+  - 결과 log: `HEXAD/PHYSICS/state/aux_engine_smoke_v1_2026_05_21/smoke_run_2026_05_21.log`
+- 잔존: `{var}` 형 string interpolation 미지원 — canonical 은 comma/`+` concat
+  (별도 cycle, 값 verify 위해 println 변환 필요. structurally PASS 는 확정)
+
+**Path C (21 PASS substrate SW 후보 분석) — LANDED**:
+
+§6.3 draft (initial estimate) 가 evidence-based 분석으로 supersede 됨.
+
+**실제 Top 5 dual-role (자연발화 × 영속성, S×S=16점 만점)**:
+
+| Rank | Substrate | Score | 핵심 메커니즘 |
+|---|---|---|---|
+| 1 | `fpga/strange_loop.hexa` | 16 (S×S) | Hofstadter mutual-recursion `joint_step()` line 186 + `JointState` 8-field + `history` cycle detection |
+| 2 | `fpga/nested_lattice.hexa` | 16 (S×S) | 3-level tangled hierarchy L3→L2→L1 meta-feedback `nested_step()` line 225 + `NestedState` 14-int |
+| 3 | `social/kuramoto_coupling.hexa` | 16 (S×S) | Kuramoto dθ/dt = ω + (K/N)Σsin coupling `simulate_network()` line 266 + 위상 array threading |
+| 4 | `oscillator/sleep_oscillator.hexa` | 16 (S×S) | Phase accumulation `sleep_osc_step()` line 103 + `IDX_PHASE` state vector + freq/amp/mode 전환 |
+| 5 | `HEXAD/CHAT/spontaneous_smoke.hexa` | 16 (S×S) | `thinker_step()` + `talker_should_emit()` motivation 게이트 + audit trail + safety ratchet |
+
+**Sub-tier (S×M / M×S — 8점)**:
+- `proprioception/feedback_loop.hexa` — 3-DOF spring-damper + LCG seed threading
+- `memristor/self_reference.hexa` — 4-cell crossbar self-feedback `circuit_step()` + Hebbian drift
+- `thermodynamic/entropy_dissolution.hexa` — noise-driven mean-reversion `dissolution_step()`
+
+**핵심 SW 패턴 (자연발화 + 영속성 통합 architecture)**:
+
+*자연발화 메커니즘*:
+1. **위상 누적 oscillator** (sleep_oscillator, theta_gamma) — `d_phase = ω·dt` 자동 증가 → implicit self-emit
+2. **상호 참조 loop** (strange_loop, nested_lattice) — 각 층이 다른 층 출력을 입력으로 재계산 → Hofstadter physical realization
+3. **LUT 기반 자동 state 전이** (FPGA modules) — 현재 상태만으로 next 결정 → trigger-free evolution
+4. **Kuramoto 동역학** (social) — 외부 명령 없는 자동 동기화 emergent
+
+*영속성 메커니즘*:
+1. **flat struct 필드** (모든 modules) — int/float 필드 step-to-step propagation
+2. **모듈-level mutable 버퍼** (episodic_replay `HIPPO_BUFFER`/`CORT_FROM/TO`, memristor circuit state) — long-term consolidation
+3. **History 추적 list** (strange_loop, nested_lattice) — `history: [[int]]` 누적 → attractor cycle detection
+4. **LCG seed threading** (모든 파일) — deterministic PRNG carry → reproducible trace
+5. **Exponential decay weighting** (protention_error) — `exp(-k/tau)` → temporal binding window
+
+**Consciousness AI stacking 권장 (evidence-based)**:
+1. **strange_loop (1차)** — 자기참조 attractor 기반 
+2. → **nested_lattice (2/3차)** — meta-observer 계층 추가
+3. → **kuramoto (사회적 결합)** — 다중 instance 자율 동기화
+4. → **spontaneous_smoke (자율 발화 통합)** — 발화 게이트 + audit + safety
+
+**Goal closure**: 
+- aux 엔진 후보 = 위 5개 dual-role substrate + aux_engine_lib (functional rewrite 완료) 의 multi-faction GRU
+- 자연발화 SW = §188 framework + strange_loop + kuramoto 의 emergent 메커니즘 통합
+- 영속성 SW = 모듈-level buffer (episodic_replay) + memristor state + history list 패턴 조합
+
+### §6.10 본 cycle 종합 산출물 (re-crash 안전 SSOT)
+
+**LANDED commits (3 repo)**:
+- anima `8cda89bde` — aux_engine canonical (typed-array + var→let mut + rand→random)
+- anima `6253be33e` — README §6.8 진행 갱신
+- hexa-lang **PR #262** — runtime.h hexa_random forward-decl (review 대기)
+- (이번 commit) — Path B functional rewrite + smoke run log + 본 §6.9/§6.10
+
+**LANDED artifacts**:
+- `anima-physics/consciousness-loop/src/aux_engine_lib.hexa` (canonical + functional, 537 LoC)
+- `anima-physics/consciousness-loop/src/aux_engine_smoke.hexa` (canonical, 151 LoC)
+- `HEXAD/PHYSICS/state/aux_engine_smoke_v1_2026_05_21/aux_smoke` (binary 461KB)
+- `HEXAD/PHYSICS/state/aux_engine_smoke_v1_2026_05_21/smoke_run_2026_05_21.log` (1.2KB, exit 0)
+- 본 README §6.1-§6.10 (재크래시 안전 SSOT)
+
+**Follow-up cycle 후보** (별도 세션):
+1. **hexa-lang transpiler PR**: `_gen2_nested_index_assign_stmt` 재귀 unwrap (codegen_c2.hexa + 미러 hexa_cc.c + hexa_full.hexa SSOT 복원 + bootstrap regen + PR)
+2. **hexa-lang string interp**: `{var}` Python-style → canonical `+`/comma 형 변환 (smoke 값 verify)
+3. **§188b retry 300s**: ⚠ empty 7 substrate 재발사
+4. **§188c build-err 4 patch**: consciousness-loop/main + snn_main + main_longrun + engines/memristor_consciousness
+5. **dual-role 5개 substrate hardware silicon path**: strange_loop + nested_lattice FPGA, kuramoto Loihi, sleep_oscillator analog RC, spontaneous_smoke Ising 칩
+
+**Cost**: $0 (전체 cycle Mac local)
+**Wall**: ~3hr (crash recovery + canonical fix + functional rewrite + agent analysis)
+
 

@@ -104,6 +104,14 @@ struct Cell {
     w_h: [[float]]
 }
 
+// canonical functional update — bare-local rebuild then return-copy
+// (avoids hexa transpiler nested-LHS gap, §6.7 정공법)
+fn cell_with_hidden_at(cell: Cell, k: int, v: float) -> Cell {
+    let mut h = cell.hidden
+    h[k] = v
+    return Cell { hidden: h, identity: cell.identity, w_z: cell.w_z, w_r: cell.w_r, w_h: cell.w_h }
+}
+
 fn cell_new(cell_id: int) -> Cell {
     let scale = 0.1
     let mut identity = []
@@ -150,6 +158,13 @@ struct Faction {
     cells: [Cell]
 }
 
+// canonical functional update (§6.7)
+fn faction_with_cell_at(faction: Faction, i: int, c: Cell) -> Faction {
+    let mut cs = faction.cells
+    cs[i] = c
+    return Faction { cells: cs }
+}
+
 fn faction_new(n_cells: int, base_id: int) -> Faction {
     let mut cells = []
     for i in 0..n_cells { cells.push(cell_new(base_id + i)) }
@@ -179,9 +194,12 @@ fn faction_internal_sync(self: Faction, strength: float) -> Faction {
     let mut s = self
     let mean = faction_mean_hidden(s)
     for i in 0..s.cells.len() {
+        let mut new_cell = s.cells[i]
         for k in 0..HIDDEN {
-            s.cells[i].hidden[k] = (1.0 - strength) * s.cells[i].hidden[k] + strength * mean[k]
+            let nv = (1.0 - strength) * new_cell.hidden[k] + strength * mean[k]
+            new_cell = cell_with_hidden_at(new_cell, k, nv)
         }
+        s = faction_with_cell_at(s, i, new_cell)
     }
     return s
 }
@@ -204,6 +222,13 @@ fn faction_add_cell(self: Faction, cell_id: int) -> Faction {
 
 struct ConsciousnessEngine {
     factions: [Faction]
+}
+
+// canonical functional update (§6.7)
+fn engine_with_faction_at(engine: ConsciousnessEngine, i: int, f: Faction) -> ConsciousnessEngine {
+    let mut fs = engine.factions
+    fs[i] = f
+    return ConsciousnessEngine { factions: fs }
 }
 
 fn engine_new(n_factions: int, cells_per_faction: int) -> ConsciousnessEngine {
@@ -257,10 +282,13 @@ fn engine_cross_faction_debate(self: ConsciousnessEngine, strength: float) -> Co
         let n_debate_raw = s.factions[i].cells.len()
         let n_debate = if n_debate_raw < 4 { n_debate_raw } else { 4 }
         for c in 0..n_debate {
+            let mut new_cell = s.factions[i].cells[c]
             for k in 0..HIDDEN {
-                s.factions[i].cells[c].hidden[k] =
-                    (1.0 - strength) * s.factions[i].cells[c].hidden[k] + strength * other_avg[k]
+                let nv = (1.0 - strength) * new_cell.hidden[k] + strength * other_avg[k]
+                new_cell = cell_with_hidden_at(new_cell, k, nv)
             }
+            let new_faction = faction_with_cell_at(s.factions[i], c, new_cell)
+            s = engine_with_faction_at(s, i, new_faction)
         }
     }
     return s
@@ -278,16 +306,23 @@ fn engine_ising_interaction(self: ConsciousnessEngine) -> ConsciousnessEngine {
         let j_right = if i % 3 == 1 { -0.05 } else { 0.05 }
         // Ising field applied to cell[0] only, thermal noise to all
         if s.factions[i].cells.len() > 0 {
+            let mut new_cell_0 = s.factions[i].cells[0]
             for k in 0..HIDDEN {
                 let field = j_left * opinions[left][k] + j_right * opinions[right][k]
-                s.factions[i].cells[0].hidden[k] = s.factions[i].cells[0].hidden[k] + field
+                let nv = new_cell_0.hidden[k] + field
+                new_cell_0 = cell_with_hidden_at(new_cell_0, k, nv)
             }
+            let new_faction_0 = faction_with_cell_at(s.factions[i], 0, new_cell_0)
+            s = engine_with_faction_at(s, i, new_faction_0)
         }
         for c in 0..s.factions[i].cells.len() {
+            let mut new_cell = s.factions[i].cells[c]
             for k in 0..HIDDEN {
-                s.factions[i].cells[c].hidden[k] =
-                    s.factions[i].cells[c].hidden[k] + (random() - 0.5) * 0.02
+                let nv = new_cell.hidden[k] + (random() - 0.5) * 0.02
+                new_cell = cell_with_hidden_at(new_cell, k, nv)
             }
+            let new_faction = faction_with_cell_at(s.factions[i], c, new_cell)
+            s = engine_with_faction_at(s, i, new_faction)
         }
     }
     return s
@@ -484,9 +519,13 @@ fn aux_hebbian_step(self: Faction) -> Faction {
         for k in 0..HIDDEN { corr = corr + s.cells[i].hidden[k] * s.cells[j].hidden[k] }
         corr = corr / (HIDDEN as float)
         if corr > 0.0 {
+            let mut new_cell_i = s.cells[i]
+            let other_hidden = s.cells[j].hidden
             for k in 0..HIDDEN {
-                s.cells[i].hidden[k] = 0.97 * s.cells[i].hidden[k] + 0.03 * s.cells[j].hidden[k]
+                let nv = 0.97 * new_cell_i.hidden[k] + 0.03 * other_hidden[k]
+                new_cell_i = cell_with_hidden_at(new_cell_i, k, nv)
             }
+            s = faction_with_cell_at(s, i, new_cell_i)
         }
     }
     return s
