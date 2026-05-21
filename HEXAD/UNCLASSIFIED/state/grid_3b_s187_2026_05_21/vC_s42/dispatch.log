@@ -1,19 +1,21 @@
-=== S187 3B GRID variant=C dispatch start 2026-05-20T18:04:11Z ===
+=== S187 3B GRID variant=C dispatch start 2026-05-21T04:38:36Z ===
     lambdas: psi=0.30 route=0.20 phi=1.00 cycle=0.15 curious=0.10 replay=-0.05
     arch:    d=3072 L=28 nh=24 nkv=8  (head_dim=128 GQA_groups=3)
-    train:   steps=2000 bsz=16 block=256 lr=3e-4 warmup=200
+    train:   steps=2000 bsz=2 block=128 lr=3e-4 warmup=200
 [create] trying GPU: NVIDIA H100 80GB HBM3
-[create] resp: {"data":{"podFindAndDeployOnDemand":{"id":"x4fyk7ejfai9fh","machineId":"7s2gqezl2vjo"}}}
-[create] pod x4fyk7ejfai9fh on NVIDIA H100 80GB HBM3
-[ssh-ready] iter 2: 103.207.149.153:17778 - port mapped AND handshake OK
-Warning: Permanently added '[103.207.149.153]:17778' (ED25519) to the list of known hosts.
-Warning: Permanently added '[103.207.149.153]:17778' (ED25519) to the list of known hosts.
-Warning: Permanently added '[103.207.149.153]:17778' (ED25519) to the list of known hosts.
-Warning: Permanently added '[103.207.149.153]:17778' (ED25519) to the list of known hosts.
-Warning: Permanently added '[103.207.149.153]:17778' (ED25519) to the list of known hosts.
-Warning: Permanently added '[103.207.149.153]:17778' (ED25519) to the list of known hosts.
+[create] resp: {"data":{"podFindAndDeployOnDemand":{"id":"bap4u2xmjgsh9q","machineId":"kj7feefbowx3"}}}
+[create] pod bap4u2xmjgsh9q on NVIDIA H100 80GB HBM3
+[ssh-ready] iter 4: 216.243.220.202:17279 - port mapped AND handshake OK
+Warning: Permanently added '[216.243.220.202]:17279' (ED25519) to the list of known hosts.
+Warning: Permanently added '[216.243.220.202]:17279' (ED25519) to the list of known hosts.
+Warning: Permanently added '[216.243.220.202]:17279' (ED25519) to the list of known hosts.
+Warning: Permanently added '[216.243.220.202]:17279' (ED25519) to the list of known hosts.
+Warning: Permanently added '[216.243.220.202]:17279' (ED25519) to the list of known hosts.
+Warning: Permanently added '[216.243.220.202]:17279' (ED25519) to the list of known hosts.
+Warning: Permanently added '[216.243.220.202]:17279' (ED25519) to the list of known hosts.
+Warning: Permanently added '[216.243.220.202]:17279' (ED25519) to the list of known hosts.
 [build] pod-side deterministic CORPUS_S101 build (seed 1337, s1-n 777000)
-Warning: Permanently added '[103.207.149.153]:17778' (ED25519) to the list of known hosts.
+Warning: Permanently added '[216.243.220.202]:17279' (ED25519) to the list of known hosts.
     "I7_external_grep": {
       "corpus": {
         "openai.com": 0,
@@ -39,19 +41,49 @@ Warning: Permanently added '[103.207.149.153]:17778' (ED25519) to the list of kn
     }
   }
 }
-Warning: Permanently added '[103.207.149.153]:17778' (ED25519) to the list of known hosts.
+Warning: Permanently added '[216.243.220.202]:17279' (ED25519) to the list of known hosts.
 [build] corpus sha = be969af481947da4693618be33a9cc67f2057a53547b6ad21abda06e7f39018b  (expect 39d581da209615468c1c41e07aa8662ef1074bc5be49a666f8f861753dd5810e)
 [build] WARN: CORPUS_S101 sha drift (post-ee4ceea27); S187 anchors on be969af481947da4693618be33a9cc67f2057a53547b6ad21abda06e7f39018b
 [build] CORPUS_S101 sha CARRIED == be969af481947da4693618be33a9cc67f2057a53547b6ad21abda06e7f39018b
 [gpu] checking GPU mem on pod
-Warning: Permanently added '[103.207.149.153]:17778' (ED25519) to the list of known hosts.
+Warning: Permanently added '[216.243.220.202]:17279' (ED25519) to the list of known hosts.
 NVIDIA H100 80GB HBM3, 81559 MiB
 [train] S187 3B GRID variant=C  d=3072 L=28 nh=24 nkv=8
-[train]   from-scratch seed=42  steps=2000 bsz=16 block=256 lr=3e-4 (warmup=200 cosine)
+[train]   from-scratch seed=42  steps=2000 bsz=2 block=128 lr=3e-4 (warmup=200 cosine)
 [train]   lambdas: psi=0.30 route=0.20 phi=1.00
 [train]            cycle=0.15 curious=0.10 replay=-0.05
-Warning: Permanently added '[103.207.149.153]:17778' (ED25519) to the list of known hosts.
-TRAIN_PID 639
-[train-C]     return F.linear(input, self.weight, self.bias)
-[train-C]            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-[train-C] RuntimeError: expected mat1 and mat2 to have the same dtype, but got: float != c10::BFloat16
+Warning: Permanently added '[216.243.220.202]:17279' (ED25519) to the list of known hosts.
+TRAIN_PID 277
+Warning: Permanently added '[216.243.220.202]:17279' (ED25519) to the list of known hosts.
+[env-verify] [launch] PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+[env-verify] ✓ launcher exported env before exec
+[train] done iter 1
+Warning: Permanently added '[216.243.220.202]:17279' (ED25519) to the list of known hosts.
+Warning: Permanently added '[216.243.220.202]:17279' (ED25519) to the list of known hosts.
+[pull] retry 1 failed; sleep 60
+Warning: Permanently added '[216.243.220.202]:17279' (ED25519) to the list of known hosts.
+Warning: Permanently added '[216.243.220.202]:17279' (ED25519) to the list of known hosts.
+[pull] retry 2 failed; sleep 60
+Warning: Permanently added '[216.243.220.202]:17279' (ED25519) to the list of known hosts.
+Warning: Permanently added '[216.243.220.202]:17279' (ED25519) to the list of known hosts.
+Read from remote host 216.243.220.202: Connection reset by peer
+client_loop: send disconnect: Broken pipe
+scp: Connection closed
+[pull] retry 3 failed; sleep 60
+ssh: connect to host 216.243.220.202 port 17279: Connection refused
+scp: Connection closed
+[pull] retry 4 failed; sleep 60
+ssh: connect to host 216.243.220.202 port 17279: Connection refused
+scp: Connection closed
+[pull] retry 5 failed; sleep 60
+[pull] result.json present - SAVE_POD=0, pod will terminate
+fc97248ab5c3c89d3e644deb7f68ae2d32d5677e43da238eb0b5758d3e370e25  /Users/ghost/core/anima/HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/vC_s42/ckpt_s187_3b_C_s42.pt
+fc97248ab5c3c89d3e644deb7f68ae2d32d5677e43da238eb0b5758d3e370e25  /Users/ghost/core/anima/HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/vC_s42/ckpt_s187_3b_C_s42.pt
+variant=C phase= 2 n_params= 8921180216 wall_s= 722.5 final_CE= 3.875
+=== S187 3B GRID variant=C pipeline complete 2026-05-21T05:49:05Z ===
+./dispatch_s187_3b_runpod.sh: line 269: 62633 Terminated: 15          ( sleep "$WATCHDOG_SEC"; if [ ! -s "$VDIR/result.json" ]; then
+    echo "WATCHDOG FIRED $(date -u +%FT%TZ): no result.json after ${WATCHDOG_SEC}s - terminating pod ${POD_ID:-?}" > "$FAIL_MARKER"; [ -n "$POD_ID" ] && gql "{\"query\":\"mutation { podTerminate(input:{podId:\\\"$POD_ID\\\"}) }\"}" > /dev/null; pkill -P $$ 2> /dev/null;
+fi )
+[teardown] terminating pod bap4u2xmjgsh9q (rc=0, SAVE_POD=0)
+[teardown] myself.pods = {"data":{"myself":{"pods":[{"id":"4qyet8dhrxp1l9"},{"id":"5fhszgwukzgrqo"},{"id":"i6luf4d1o80xe5"},{"id":"iqoscxl5ceepdt"},{"id":"khn6mrkaip3haq"}]}}}
+=== S187 3B GRID variant=C dispatch end 2026-05-21T05:49:10Z rc=0 ===

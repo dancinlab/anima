@@ -1,0 +1,83 @@
+=== S187 3B GRID variant=B dispatch start 2026-05-21T03:43:48Z ===
+    lambdas: psi=1.00 route=0.20 phi=0.30 cycle=0.15 curious=0.10 replay=-0.05
+    arch:    d=3072 L=28 nh=24 nkv=8  (head_dim=128 GQA_groups=3)
+    train:   steps=2000 bsz=2 block=128 lr=3e-4 warmup=200
+[create] trying GPU: NVIDIA H100 80GB HBM3
+[create] resp: {"data":{"podFindAndDeployOnDemand":{"id":"qkzl27j44gwv29","machineId":"vzsfqhtipd0j"}}}
+[create] pod qkzl27j44gwv29 on NVIDIA H100 80GB HBM3
+[ssh-ready] iter 3: 213.181.122.247:11563 - port mapped AND handshake OK
+Warning: Permanently added '[213.181.122.247]:11563' (ED25519) to the list of known hosts.
+Warning: Permanently added '[213.181.122.247]:11563' (ED25519) to the list of known hosts.
+Warning: Permanently added '[213.181.122.247]:11563' (ED25519) to the list of known hosts.
+Warning: Permanently added '[213.181.122.247]:11563' (ED25519) to the list of known hosts.
+Warning: Permanently added '[213.181.122.247]:11563' (ED25519) to the list of known hosts.
+Warning: Permanently added '[213.181.122.247]:11563' (ED25519) to the list of known hosts.
+Warning: Permanently added '[213.181.122.247]:11563' (ED25519) to the list of known hosts.
+Warning: Permanently added '[213.181.122.247]:11563' (ED25519) to the list of known hosts.
+[build] pod-side deterministic CORPUS_S101 build (seed 1337, s1-n 777000)
+Warning: Permanently added '[213.181.122.247]:11563' (ED25519) to the list of known hosts.
+    "I7_external_grep": {
+      "corpus": {
+        "openai.com": 0,
+        "anthropic.com": 0,
+        "huggingface.co/": 0,
+        "wikipedia.org": 0,
+        "commoncrawl": 0,
+        "https://": 0,
+        "http://": 0
+      },
+      "s1_only": {
+        "openai.com": 0,
+        "anthropic.com": 0,
+        "huggingface.co/": 0,
+        "wikipedia.org": 0,
+        "commoncrawl": 0,
+        "https://": 0,
+        "http://": 0
+      },
+      "corpus_total": 0,
+      "PASS": true,
+      "honest_caveat": "external-grep is a proxy over 7 surface tokens; exhaustive provenance audit requires source-attribution tracking, NOT in $0 build scope. §16 generator is anima-OWN substrate, S2 uses anima Ψ-fields only, S5 uses anima-OWN .kosmos files. NO external API calls in build_corpus_s101.py (audit-grep this file)."
+    }
+  }
+}
+Warning: Permanently added '[213.181.122.247]:11563' (ED25519) to the list of known hosts.
+[build] corpus sha = be969af481947da4693618be33a9cc67f2057a53547b6ad21abda06e7f39018b  (expect 39d581da209615468c1c41e07aa8662ef1074bc5be49a666f8f861753dd5810e)
+[build] WARN: CORPUS_S101 sha drift (post-ee4ceea27); S187 anchors on be969af481947da4693618be33a9cc67f2057a53547b6ad21abda06e7f39018b
+[build] CORPUS_S101 sha CARRIED == be969af481947da4693618be33a9cc67f2057a53547b6ad21abda06e7f39018b
+[gpu] checking GPU mem on pod
+Warning: Permanently added '[213.181.122.247]:11563' (ED25519) to the list of known hosts.
+NVIDIA H100 80GB HBM3, 81559 MiB
+[train] S187 3B GRID variant=B  d=3072 L=28 nh=24 nkv=8
+[train]   from-scratch seed=42  steps=2000 bsz=2 block=128 lr=3e-4 (warmup=200 cosine)
+[train]   lambdas: psi=1.00 route=0.20 phi=0.30
+[train]            cycle=0.15 curious=0.10 replay=-0.05
+Warning: Permanently added '[213.181.122.247]:11563' (ED25519) to the list of known hosts.
+TRAIN_PID 317
+Warning: Permanently added '[213.181.122.247]:11563' (ED25519) to the list of known hosts.
+[env-verify] [launch] PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+[env-verify] ✓ launcher exported env before exec
+[train-B]     exp_avg_sq_sqrt = torch._foreach_sqrt(device_exp_avg_sqs)
+[train-B]                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[train-B] torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 48.00 MiB. GPU 0 has a total capacity of 79.19 GiB of which 40.50 MiB is free. Including non-PyTorch memory, this process has 79.14 GiB memory in use. Of the allocated memory 78.22 GiB is allocated by PyTorch, and 197.45 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+[train-B]     exp_avg_sq_sqrt = torch._foreach_sqrt(device_exp_avg_sqs)
+[train-B]                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[train-B] torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 48.00 MiB. GPU 0 has a total capacity of 79.19 GiB of which 40.50 MiB is free. Including non-PyTorch memory, this process has 79.14 GiB memory in use. Of the allocated memory 78.22 GiB is allocated by PyTorch, and 197.45 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+[train-B]     exp_avg_sq_sqrt = torch._foreach_sqrt(device_exp_avg_sqs)
+[train-B]                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[train-B] torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 48.00 MiB. GPU 0 has a total capacity of 79.19 GiB of which 40.50 MiB is free. Including non-PyTorch memory, this process has 79.14 GiB memory in use. Of the allocated memory 78.22 GiB is allocated by PyTorch, and 197.45 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+[train-B]     exp_avg_sq_sqrt = torch._foreach_sqrt(device_exp_avg_sqs)
+[train-B]                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[train-B] torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 48.00 MiB. GPU 0 has a total capacity of 79.19 GiB of which 40.50 MiB is free. Including non-PyTorch memory, this process has 79.14 GiB memory in use. Of the allocated memory 78.22 GiB is allocated by PyTorch, and 197.45 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+[train-B]     exp_avg_sq_sqrt = torch._foreach_sqrt(device_exp_avg_sqs)
+[train-B]                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[train-B] torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 48.00 MiB. GPU 0 has a total capacity of 79.19 GiB of which 40.50 MiB is free. Including non-PyTorch memory, this process has 79.14 GiB memory in use. Of the allocated memory 78.22 GiB is allocated by PyTorch, and 197.45 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+[train-B]     exp_avg_sq_sqrt = torch._foreach_sqrt(device_exp_avg_sqs)
+[train-B]                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[train-B] torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 48.00 MiB. GPU 0 has a total capacity of 79.19 GiB of which 40.50 MiB is free. Including non-PyTorch memory, this process has 79.14 GiB memory in use. Of the allocated memory 78.22 GiB is allocated by PyTorch, and 197.45 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+[train-B]     exp_avg_sq_sqrt = torch._foreach_sqrt(device_exp_avg_sqs)
+[train-B]                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[train-B] torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 48.00 MiB. GPU 0 has a total capacity of 79.19 GiB of which 40.50 MiB is free. Including non-PyTorch memory, this process has 79.14 GiB memory in use. Of the allocated memory 78.22 GiB is allocated by PyTorch, and 197.45 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+[train-B]     exp_avg_sq_sqrt = torch._foreach_sqrt(device_exp_avg_sqs)
+[train-B]                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[train-B] torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 48.00 MiB. GPU 0 has a total capacity of 79.19 GiB of which 40.50 MiB is free. Including non-PyTorch memory, this process has 79.14 GiB memory in use. Of the allocated memory 78.22 GiB is allocated by PyTorch, and 197.45 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
