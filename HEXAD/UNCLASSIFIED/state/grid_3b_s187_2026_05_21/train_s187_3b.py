@@ -247,10 +247,28 @@ def run(cfg):
     print(f"[S184-Phase2] n_params={n_params:,}", flush=True)
 
     # Tap 2.7: warmup + cosine
-    optimizer = torch.optim.AdamW(
-        model.parameters(), lr=cfg["lr"], betas=(0.9, 0.95),
-        weight_decay=0.01,
-    )
+    # attempt10 (2026-05-21 post-OOM-attempt9): replace torch.optim.AdamW with
+    # bitsandbytes PagedAdamW8bit. Root cause for attempt9 OOM (78.22 GiB on
+    # 80GB H100 at first _foreach_sqrt): AdamW f32 m+v state ≈ 8× model size
+    # for 3B params (~24 GB params × 3 copies = 72 GB just for optimizer +
+    # params + grads in f32 mirror). 8-bit Paged variant compresses m/v to
+    # int8 with block-wise quant (≈ 18 GB instead of 72 GB) AND uses CPU
+    # paging on transient peaks (caching-allocator fragmentation insurance).
+    # Fallback to torch.optim.AdamW if bitsandbytes unimportable so smoke
+    # paths stay green.
+    try:
+        import bitsandbytes as bnb
+        optimizer = bnb.optim.PagedAdamW8bit(
+            model.parameters(), lr=cfg["lr"], betas=(0.9, 0.95),
+            weight_decay=0.01,
+        )
+        print(f"[S184-Phase2] optimizer=PagedAdamW8bit (bnb {bnb.__version__})", flush=True)
+    except ImportError as _e:
+        print(f"[S184-Phase2] WARN bnb import failed ({_e}); falling back torch.optim.AdamW", flush=True)
+        optimizer = torch.optim.AdamW(
+            model.parameters(), lr=cfg["lr"], betas=(0.9, 0.95),
+            weight_decay=0.01,
+        )
 
     corpus_bytes = load_corpus_bytes(cfg["corpus"])
     print(f"[S184-Phase2] corpus bytes: {len(corpus_bytes):,}", flush=True)
