@@ -114,7 +114,16 @@ def build_substrate(kind: str) -> Substrate:
                              adapter_ja=ADAPTER_JA, base_model=BASE_MODEL,
                              device=DEVICE)
     if kind == "v3":
-        from substrate_v3 import V3Substrate  # V3 session owns this impl
+        # substrate_v3.py is owned by the V3 session (SUBSTRATE_PLUGIN.md).
+        # Guard: clear actionable error if it has not landed yet.
+        try:
+            from substrate_v3 import V3Substrate
+        except ModuleNotFoundError as e:
+            raise RuntimeError(
+                "--substrate v3 requested but substrate_v3.py is absent. "
+                "It is owned by the V3 session and lands with the V3 ckpt. "
+                "Use --substrate lora (production default) until then."
+            ) from e
         return V3Substrate(ckpt_path=os.environ.get("ANIMA_V3_CKPT", ""),
                            device=DEVICE)
     raise ValueError(f"unknown substrate kind: {kind!r}")

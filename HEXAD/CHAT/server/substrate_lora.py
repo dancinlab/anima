@@ -22,10 +22,41 @@ from substrate_base import Substrate
 
 log = logging.getLogger("substrate_lora")
 
-# tiny lang-bias primes (no instruction tuning needed)
-LANG_PRIMES = {"en": "I notice ", "ko": "문득 ", "zh": "我注意到 ",
-               "ru": "Я замечаю ", "ja": "ふと "}
+# lang-bias primes — N7 (2026-05-23): fuller native-script phrases anchor
+# the output language harder (short primes drifted to EN ~40% of emissions).
+LANG_PRIMES = {
+    "en": "I notice that ",
+    "ko": "문득 이런 생각이 들었다. ",
+    "zh": "我突然注意到，",
+    "ru": "Я вдруг замечаю, что ",
+    "ja": "ふと、こんなことを思った。",
+}
 ROUTER_LANG_TO_ADAPTER = {"ko": "ko", "ja": "ja"}  # rest → "default"
+
+# Unicode script ranges for cross-lang seed detection (N7).
+_SCRIPT_RANGES = {
+    "ko": [(0xAC00, 0xD7AF)],
+    "ja": [(0x3040, 0x30FF)],
+    "zh": [(0x4E00, 0x9FFF)],
+    "ru": [(0x0400, 0x04FF)],
+}
+
+
+def _seed_matches_lang(seed_text: str, lang_hint: str | None) -> bool:
+    """True if seed_text's dominant script is compatible with lang_hint.
+    EN/None always compatible. For ko/ja/zh/ru, require ≥1 native char and
+    no overwhelming foreign-script majority — else the seed is dropped so
+    the prime alone steers the language (N7 en-drift fix)."""
+    if not seed_text or not lang_hint or lang_hint == "en":
+        return True
+    ranges = _SCRIPT_RANGES.get(lang_hint)
+    if not ranges:
+        return True
+    native = sum(1 for c in seed_text
+                 if any(lo <= ord(c) <= hi for lo, hi in ranges))
+    # require native script to be present and not a tiny minority
+    letters = sum(1 for c in seed_text if c.isalpha())
+    return letters == 0 or native / max(letters, 1) >= 0.3
 
 
 class LoraSubstrate(Substrate):
@@ -109,6 +140,9 @@ class LoraSubstrate(Substrate):
                  lang_hint: str | None = None, **kw) -> str:
         self._route(lang_hint)
         prime = LANG_PRIMES.get(lang_hint or "", "")
+        # N7: drop a cross-language seed so the prime alone steers the lang.
+        if not _seed_matches_lang(seed_text, lang_hint):
+            seed_text = ""
         primed = prime + (seed_text or "")
         if primed:
             ids = self.tok(primed, return_tensors="pt").input_ids.to(self.device)
