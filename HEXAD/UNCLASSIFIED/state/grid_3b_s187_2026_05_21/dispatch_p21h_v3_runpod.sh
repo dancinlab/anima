@@ -48,6 +48,12 @@ P21H_WIKI_TARGET_MB_PER_LANG=${P21H_WIKI_TARGET_MB_PER_LANG:-10}
 P21H_LANGS=${P21H_LANGS:-en,ko,zh,ru,ja}
 P21H_NOISE_SIGMA=${P21H_NOISE_SIGMA:-0.1}
 P21H_LAMBDA_MITOSIS=${P21H_LAMBDA_MITOSIS:-0.05}
+# Phase 2 R2+R5+R6 ready (env-overridable):
+P21H_MITOSIS_MAX=${P21H_MITOSIS_MAX:-128}                 # R6: 128 → 16 권장
+P21H_CKPT_EVERY=${P21H_CKPT_EVERY:-500}                   # intermediate ckpt every N step
+P21H_CKPT_OSC_THRESHOLD=${P21H_CKPT_OSC_THRESHOLD:-0.0}   # CE std > X → save + early-stop (0=disable)
+P21H_CKPT_OSC_WINDOW=${P21H_CKPT_OSC_WINDOW:-10}          # rolling window for osc
+P21H_EARLY_STOP_PATIENCE=${P21H_EARLY_STOP_PATIENCE:-0}   # CE no-improve N log entries (0=disable)
 
 # LR per init variant (random needs higher LR than warm)
 case "$INIT_VARIANT" in
@@ -220,7 +226,10 @@ CMD="bash $P21HR/launch_trainer_p21h.sh $P21HR/train_p21h_v3.py \
   --steps $P21H_STEPS --bsz $P21H_BSZ --block $P21H_BLOCK --lr $P21H_LR \
   --warmup-steps $P21H_WARMUP --seed $SEED \
   --wiki-frac $P21H_WIKI_FRAC --target-corpus-mb $P21H_CORPUS_MB \
-  --noise-sigma $P21H_NOISE_SIGMA --lambda-mitosis $P21H_LAMBDA_MITOSIS"
+  --noise-sigma $P21H_NOISE_SIGMA --lambda-mitosis $P21H_LAMBDA_MITOSIS \
+  --mitosis-max $P21H_MITOSIS_MAX --ckpt-every $P21H_CKPT_EVERY \
+  --ckpt-osc-threshold $P21H_CKPT_OSC_THRESHOLD --ckpt-osc-window $P21H_CKPT_OSC_WINDOW \
+  --early-stop-patience $P21H_EARLY_STOP_PATIENCE"
 
 echo "[train] P21H V3 launch ($INIT_VARIANT)"
 $SSH "cd $P21HR && nohup $CMD > $P21HR/train.log 2>&1 & echo TRAIN_PID \$!"
