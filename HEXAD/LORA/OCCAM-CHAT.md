@@ -221,9 +221,9 @@ Phase 2 gates on Phase 1 verdict (per OCCAM.md § 4 pattern).
 
 ## 6. 관련 link
 
-- 본 doc motivation: [`HEXAD/OCCAM.md`](OCCAM.md) — minimal-baseline strip
+- 본 doc motivation: [`HEXAD/OCCAM.md`](../OCCAM.md) — minimal-baseline strip
 - prior chat paths: `hypotheses_candidates/Hc_632-660*chat*.md` (9 entries)
-- HEXAD CHAT SSOT: [`HEXAD/CHAT/PLAN.md`](CHAT/PLAN.md), `HEXAD/CHAT/RESEARCH.md`, `HEXAD/CHAT/SPONTANEOUS.tape`
+- HEXAD CHAT SSOT: [`HEXAD/CHAT/PLAN.md`](../CHAT/PLAN.md), `HEXAD/CHAT/RESEARCH.md`, `HEXAD/CHAT/SPONTANEOUS.tape`
 - S187 saga findings: [`HEXAD/SCALE_3B.md § 6.9 S187-G training-time mitosis`](SCALE_3B.md) (substrate-shaping evidence)
 - 18B path (next-scale): [`HEXAD/SCALE_16B_70B_PLAN.md`](SCALE_16B_70B_PLAN.md)
 - prior simple_stack PASS (LoRA Llama-3B): `~/.claude/projects/-Users-ghost-core-anima/memory/project_simple_stack_pass_unlocked.md`
