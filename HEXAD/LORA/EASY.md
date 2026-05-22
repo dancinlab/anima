@@ -45,7 +45,7 @@ LoRA (Low-Rank Adaptation) = pretrained 모델 weight 대부분 freeze + 작은 
 | 한국어 | PARTIAL | 18 | 15 |
 | 日本語 | WEAK | 16 | 11 |
 
-### LoRA path milestone arc (anima 0.4.0 → 0.11.0)
+### LoRA path milestone arc (anima 0.4.0 → 0.12.0)
 
 | release | 마일스톤 |
 |---|---|
@@ -57,6 +57,7 @@ LoRA (Low-Rank Adaptation) = pretrained 모델 weight 대부분 freeze + 작은 
 | 0.9.0 | 🌀 **closed loop Option C** — 단일 motivation scalar 가 threshold rewrite + emit gate 동시 구동. self-referential cycle. |
 | 0.10.0 | 🇰🇷 **Korean unlock** — vP21K STRONG_GENERALIZE KO 16/20 |
 | 0.11.0 | 🌍 **multilingual unlock** — vP21M VP21M_WORKS 4/5 langs |
+| 0.12.0 | 🔀 **hot-swap router unlock** — production per-lang adapter 자동 교체 (vP21M+KOFL+JAFL) + substrate-plugin 아키텍처 |
 
 honest 한계 (0.5.0 직후 측정): vP21 held-out OOD = PURE_MEMORIZE 18/20 (anima
 register leak) — § 4 의 "학습된 토큰" 한계. vP21G/K/M 의 diverse-corpus mix 가

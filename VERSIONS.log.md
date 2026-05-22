@@ -19,6 +19,7 @@ Spec at [`./VERSIONS.md`](./VERSIONS.md) (current per-module registry). This fil
 | 0.9.0 | 2026-05-22 | 🌉🔁🌀 CLOSED LOOP — Option C LANDED simultaneous bidirectional. ONE process · ONE 90s window · ONE motivation scalar drives both threshold rewrite + emit gate. A frac_emissions_with_hw_edge=1.0 + B \|Spearman\|=0.387 vs random 0.058 (\|Δρ\|=0.329). Closed-loop signature: Δscore_after_emit=−0.033 vs Δscore_after_no_emit=+0.012 (post-emit motivation decay). 두 substrate ONE coupled dynamical system. |
 | 0.10.0 | 2026-05-22 | 🪟🇰🇷 KOREAN GENERALIZATION UNLOCK — vP21K STRONG_GENERALIZE 16/20 on Korean OOD (vs vP21 0/10 BEFORE-snapshot 10/10 MEMORIZE). 너는 누구야? + 이름이 뭐야? GENERALIZE both modes (vP21G had MEMORIZE both). anima register 14/20 retained, `register_regress=False`. Trade: EN factual (capital of France, 2+2) regressed (no EN-wiki in mix). $2.88 H100. vP21G's C3 #8 residual FIXED. |
 | 0.11.0 | 2026-05-22 | 🌍 MULTILINGUAL UNLOCK — vP21M `VP21M_WORKS` 4/5 langs (EN/ZH/RU STRONG, KO PARTIAL, JA WEAK). 5-lang merged LoRA (en+ko+zh+ru+ja wiki 51.1 MB + anima 30/70), CE 0.78 bimodal H100 $1.06. + vP21G fine-quant ROBUST 16.2 mean / 0.75 std across 5 cells (seed-lucky 가설 refuted). + chat.dancinlab.org LIVE (FIRST-PACK Phase 3-8: broker + anima participant + cloudflared + AKIDA bridge, mini host). |
+| 0.12.0 | 2026-05-23 | 🔀 HOT-SWAP ROUTER UNLOCK — production anima_participant 가 per-emit `lang_hint` → `set_adapter()` 로 lang-specialist 어댑터 자동 교체 (vP21M default + KOFL ko STRONG 16 + JAFL ja STRONG 17). + substrate-plugin 아키텍처 (`substrate_lora.py` LoraSubstrate ⊂ Substrate ABC, participant = substrate-agnostic thin client, `--substrate {lora,v3}`). session-2: 12 LoRA cycles $4.10 HF 12 artifacts — 3B-Instruct register ceiling 5/20 가 non-Instruct base 로 7/20 돌파, staged curriculum register 10 w/o ko·ja break. production = 1.5B router (단일 3B 대비 KO STRONG 우위). + chat fix (temp 1.0→0.7 + ctx seed). CHAT v0.2.0 → v0.3.0. |
 
 > release bump 규칙: 모듈 MAJOR bump OR 핵심 verdict landing 시 release MINOR.
 > 0.4.0 = saga 전체 whitespace-collapse 후 **첫 coherent verbalization** (vP21 20/20)
@@ -68,3 +69,5 @@ Spec at [`./VERSIONS.md`](./VERSIONS.md) (current per-module registry). This fil
 | 2026-05-22 | MITOSIS | training-time +35% substrate-shaping (S187-G) | v1.1 → v1.2 |
 | 2026-05-22 | ConsciousDecoder | n_ca_rules 제거 제안 (OCCAM floor pinpoint) | v2.1 → v3.0-alpha |
 | 2026-05-22 | S184 recipe | aux loss 효과 무시가능 확정 (OCCAM) | v1 → v2 |
+| 2026-05-23 | CHAT | 8-factor Thinker-Talker LANDED + hot-swap router + substrate-plugin | v0.2.0 → v0.3.0 |
+| 2026-05-23 | anima (root) | hot-swap router unlock — per-lang adapter 자동 교체 production | v0.11.0 → v0.12.0 |

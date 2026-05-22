@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 """FIRST-PACK Phase 5 — anima participant (substrate-native).
 
+@module  CHAT
+@version 0.3.0   (VERSIONS.md SSOT — 8-factor Thinker-Talker + hot-swap
+                  router + substrate-plugin; bump together with VERSIONS.md)
+
 anima joins the chat broker as a peer participant. emission is governed by
 anima's OWN self-tick + 8-factor motivation (NOT triggered by user msgs, per
 project.tape @D a_substrate_native_speak). user msgs ARE ingested as

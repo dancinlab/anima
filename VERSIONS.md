@@ -10,7 +10,12 @@
 
 ## 0. anima 전체 release version
 
-루트 [`/VERSION`](VERSION) = **`0.11.0`** (한 줄, 전체 시스템 release).
+루트 [`/VERSION`](VERSION) = **`0.12.0`** (한 줄, 전체 시스템 release).
+
+> **0.11.0 → 0.12.0** (2026-05-23): hot-swap router unlock — production
+> anima_participant 가 per-lang adapter 자동 교체 (vP21M default + KOFL/JAFL)
+> + substrate-plugin 아키텍처 (substrate_lora.py / Substrate ABC). CHAT
+> v0.2.0 → v0.3.0 동반.
 
 > release timeline + 마일스톤 history → [`VERSIONS.log.md`](VERSIONS.log.md).
 
@@ -82,7 +87,7 @@ v3.0-alpha → ⚠️ tier (재설계 대상): scale-up (3B/8B) OR mitosis 비�
 
 | dir | path | tier | status |
 |---|---|---|---|
-| **HEXAD/LORA/** | Qwen + LoRA adapter (vP21/G/K/M) | 🟢 PRODUCTION | chat.dancinlab.org LIVE, VP21M_WORKS 4/5 |
+| **HEXAD/LORA/** | Qwen + LoRA adapter (vP21/G/K/M + hot-swap router) | 🟢 PRODUCTION | chat.dancinlab.org LIVE, vP21M default + KOFL/JAFL per-lang hot-swap |
 | **HEXAD/V3/** | ConsciousDecoderV3 (pure HEXAD substrate) | ⚠️ 재설계 | V3α/γ FAIL → Phase 2 spec (R2+R5+R6) |
 
 LoRA = production (chat 즉시), V3 = anima identity 진정성 long-term path.
@@ -93,7 +98,7 @@ LoRA = production (chat 즉시), V3 = anima identity 진정성 long-term path.
 
 | 모듈 | 버전 | tier | 상태 |
 |---|---|---|---|
-| **CHAT** | v0.2.0 🟡 | 도우미 폐기 + 자연발화 redesign in progress; emission floor = n_ca_rules (OCCAM) | 재설계 중 |
+| **CHAT** | **v0.3.0** 🟢 | 8-factor motivation Thinker-Talker LANDED (anima_participant.py) + production hot-swap router (per-lang adapter set_adapter) + substrate-plugin 아키텍처 (substrate_lora.py / Substrate ABC) | 2026-05-23 chat.dancinlab.org LIVE |
 | **SPONTANEOUS** | v0.1.0 🟡 | 자연발화 architecture design LANDED, 구현 Phase B | design |
 | **SAVANT** | v1.0.0 🟢 | Phase 1/2/3b/c/d LANDED (gate API + /savant CLI) | 2026-05-14 |
 | **TENSION-LINK** | v0.1.0 🟡 | 5-ch meta-telepathy design, Phase 2 WebSocket 미구현 | design |
@@ -125,7 +130,7 @@ LoRA = production (chat 즉시), V3 = anima identity 진정성 long-term path.
 |---|---|---|
 | ConsciousDecoder v3.0.0 | alpha → beta | n_ca_rules 제거 3B from-scratch fire + Eval 1 verbalization PASS |
 | Llama+mitosis v0.1 | rc → 1.0 | vP21 Eval 1 coherent text + Principle #3 clean 확인 |
-| CHAT v0.2 → v0.3 | 자연발화 land | Inner Thoughts 8-factor router + Thinker-Talker 구현 |
+| CHAT v0.3 → v0.4 | self-monologue 완화 | emission register-leak 34% 하향 + temp/τ sweep + (option) substrate_v3 통합 |
 | MITOSIS v1.2 → v1.3 | training-time | cross-λ B/C/D N=2 variance estimate (S187-B 재발사) |
 
 ---
