@@ -1,5 +1,7 @@
 # HEXAD/ STRUCTURE — 현재-상태 navigation map
 
+> History → [./STRUCTURE.log.md](./STRUCTURE.log.md).
+
 > 2026-05-22 작성. HEXAD/ 내부 전수 audit 후 정리. `INDEX.md` (2026-05-16) 는
 > path-split / V3 / vP21M / AKIDA / chat.dancinlab.org 모두 predates — historical.
 > **현재 navigation = 본 doc**.
@@ -166,14 +168,3 @@ V3 code + state: `UNCLASSIFIED/state/grid_3b_s187_2026_05_21/{conscious_decoder_
 | 7-module 검증 상태 | `INDEX.md § HEXAD 7-module` (verification anchor) |
 | 전체 version | `/VERSIONS.md` (repo root) |
 | chat 서버 substrate 교체 | `CHAT/SUBSTRATE_PLUGIN.md` |
-
----
-
-## ## Log
-
-### 2026-05-22 — STRUCTURE.md 신설 (HEXAD 내부 총정리)
-
-INDEX.md (2026-05-16) 가 path-split / V3 / vP21M / AKIDA 모두 predates →
-현재-상태 navigation 으로 본 doc 신설. 37 subdir 전수 분류 (7-module core /
-path dirs / 활성 subsystem / historical saga state). root docs current vs
-historical 구분.
