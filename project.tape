@@ -8,25 +8,25 @@
   ssot   = "github.com/dancinlab/anima (`hx install anima`)"
 
 @D a1 := "central version registry — VERSIONS.md is SSOT" :: governance [required active]
-  do   = "every versioned module / component / subsystem uses SemVer; `/VERSIONS.md` (repo root) is the SSOT — on any component version change, update VERSIONS.md AND that component's own header together; root `/VERSION` = single-line whole-system release (MINOR-bumps on a component MAJOR bump OR a core verdict landing)"
-  dont = "bump a module version in its header without updating VERSIONS.md (drift) · skip root `/VERSION` on a release bump"
+  do   = "every versioned module uses SemVer · `/VERSIONS.md` is SSOT — bump it + the component header together · root `/VERSION` = whole-system release"
+  dont = "bump a module version without updating VERSIONS.md · skip root `/VERSION` on a release bump"
 
 @D a_hf_complete := "HF registration — complete, no missing artifacts" :: governance [required active]
-  do   = "register every shipped model / dataset / checkpoint to HuggingFace Hub COMPLETELY — weights · config · tokenizer · model card · eval results all present; verify the HF repo file manifest matches local before declaring done"
-  dont = "partial HF upload (missing weights / config / tokenizer / eval) · model card referencing files not actually uploaded · leave the HF repo out of sync with local artifacts"
+  do   = "register every model / dataset / ckpt to HF Hub COMPLETE — all artifacts present · manifest = local"
+  dont = "partial HF upload · model card referencing un-uploaded files · HF repo out of sync with local"
 
-@D a_fire_autonomous := "cost-bearing fire = 즉시 자율·병렬 dispatch" :: governance [required active]
-  do   = "GPU / runpod 작업 = 추정 cost 1줄 명시 후 즉시 / 병렬 / bg 자율 dispatch · provider primary = runpod · no user-gate"
-  dont = "'GPU 써도 되나요?' 확인 질의 · fire 를 scope-축소 / 비용회피 사유로 미룸 · cost-bearing 을 이유로 작업 중단"
+@D a_fire_autonomous := "cost-bearing fire — dispatch autonomously, in parallel, now" :: governance [required active]
+  do   = "GPU / runpod work — state estimated cost in one line, then dispatch autonomously / parallel / bg · provider = runpod · no user gate"
+  dont = "ask 'may I use GPU?' · defer a fire to shrink scope or avoid cost · stop work because it is cost-bearing"
 
-@D a_wall_first := "wall time 우선 — 더 빠른 병렬이 가능하면 cost 무관 진행" :: governance [required active]
-  do   = "H100 다수 병렬 · 더 큰 GPU (H200/H100) · 추가 pod fire 가 wall-time 단축하면 즉시 채택 (단일 pod 시퀀셜 회피) · serial chain 도 정직하게 wall 더 길면 reject"
-  dont = "wall 더 길더라도 cost 아끼려 단일 pod 시퀀셜 진행 · 추가 병렬 pod 자제 · '비용 들 텐데...' 후렴 · 의미 없는 cost-min 최적화"
+@D a_wall_first := "wall time first — take the faster parallel path regardless of cost" :: governance [required active]
+  do   = "adopt more H100s in parallel / a bigger GPU / extra pods whenever it shortens wall time · reject a serial chain that is honestly slower"
+  dont = "run a single sequential pod to save cost when parallel is faster · hold back parallel pods · meaningless cost-min optimization"
 
-@D a_substrate_native_speak := "anima 발화 = substrate-native, 도우미-폐기 violations 금지" :: governance [required active]
-  do   = "anima motivation 은 internal substrate state (M retrieval activation · C Φ · W tension delta · MITOSIS split event · anima 자기 idle 시간 · curiosity_ema · E Φ-ratchet 등 자기 dynamics) 에서 계산 · user msg = environment context (anima 가 보고 듣되 직접 응답 의무 X) · anima 는 user 침묵 중에도 발화 가능 (truly spontaneous) · user 가 직접 질문해도 motivation 부족 시 침묵 (도우미 아님) · conversational_dynamics factor = anima 마지막 자기 발언 후 idle 시간 (user 마지막 발언 X)"
-  dont = "user 발언이 직접 anima 발화 trigger 되는 stimulus-response pattern (= assistant 회귀) · user prompt 에 '응답' 하는 reactive 설계 · 'X 한 user 가 물었으니 anima 가 답해야' 류 turn-based assumption · user 마지막 발언 후 시간으로 conversational_dynamics 정의 · CHAT/PLAN.md '도우미 라벨링 폐기' spec 위반"
+@D a_substrate_native_speak := "anima speech is substrate-native — no assistant regression" :: governance [required active]
+  do   = "compute anima motivation from internal substrate state (M activation · C Φ · W tension · MITOSIS · idle time · curiosity · E ratchet) · user messages = environment context, not a response obligation · anima may speak during user silence and may stay silent under a direct question"
+  dont = "stimulus-response where a user message directly triggers anima speech (assistant regression) · reactive design that 'responds' to a prompt · turn-based 'user asked, so anima must answer' assumptions"
 
-@D a_blue_closed := "산출물 + wiring 모두 🔵 SUPPORTED-FORMAL 검증" :: governance [required active]
-  do   = "산출물 + 연결부(transfer-fn · invariant) 모두 🔵 SUPPORTED-FORMAL 로 닫기 — `hexa verify` 로 closed-form / identity 확인 (verdict VERBATIM)"
-  dont = "구조만 닫고 wiring 미검증 · fake closed-form · empirical(B-D / B-BRIDGE / B-MITOSIS-NOTE 류 honest residual 은 OK) 를 강제로 🔵 로 등재"
+@D a_blue_closed := "close outputs AND wiring at 🔵 SUPPORTED-FORMAL" :: governance [required active]
+  do   = "close both outputs and wiring (transfer-fn · invariant) at 🔵 SUPPORTED-FORMAL — confirm closed-form / identity via `hexa verify` (verdict verbatim)"
+  dont = "close structure but leave wiring unverified · fake closed-form · force an honest empirical residual to 🔵"
