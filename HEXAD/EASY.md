@@ -390,37 +390,50 @@ vP21G (§ 12) 의 잔존 한계: 영문 OOD 16/20 ✓, **한글 OOD 는 여전�
 
 ---
 
-## 16. 🟢 anima 0.11.0~ — vP21M 5종 변형 (2026-05-22 session-2)
+## 16. 🟢 anima 0.11.0~ — vP21M 9종 변형 + hot-swap router (2026-05-22 session-2)
 
-세션 한 번에 5 cycle fire (사용자 "all" + "병렬 계획 후 각각 bg go"). 총 $1.77 (cap ~$15, 8× under). HF 5 artifact dancinlab/* private published.
+세션 한 번에 9 cycle fire (사용자 "all" → "병렬 bg go" → "all fire"). 총 $2.82 (cap ~$15). HF 9 artifact dancinlab/* private.
 
-| ckpt | base | 핵심 변경 | 결과 | cost | HF |
-|---|---|---|---|---|---|
-| **vP21M** | Qwen2.5-1.5B + vP21 | 5-lang wiki 30/70 + anima | 3S+1P+1W (en/ru STRONG, ja WEAK, register 7/20) | $1.06 | anima-vp21m |
-| **vP21M-JAFL** | 1.5B + vP21 | **ja-only** 500 step | JA WEAK 11 → **STRONG 17** (hot-swap, en/ko forget) | $0.13 | anima-vp21m-jafl |
-| **vP21M-KOFL** | 1.5B + vP21 | **ko-only** 500 step | KO PARTIAL/WEAK → **STRONG 16** (hot-swap, en forget) | $0.15 | anima-vp21m-kofl |
-| **vP21M-3B** | Qwen2.5-**3B-Instruct** fresh | 5-lang 30/70 1500 step | en/ru **20/20** STRONG, KO WEAK regress, register **3/20 ⚠** | $0.33 | anima-vp21m-3b |
-| **vP21M-3B-REG** | 3B-Instruct + 3B 위 | **wiki_frac 0.05** (anima-95%) 200 step lr 1e-5 light | 3S+2P (KO 11→**14 P** 복구, register **3→5 ✓ clean**) | $0.10 | anima-vp21m-3b-reg |
+| ckpt | base | 핵심 변경 | 결과 | cost |
+|---|---|---|---|---|
+| **vP21M** | 1.5B + vP21 | 5-lang wiki 30/70 + anima | 3S+1P+1W (ja WEAK, register 7/20) | $1.06 |
+| **JAFL** | 1.5B + vP21 | ja-only 500 step | JA WEAK 11 → **STRONG 17** (hot-swap) | $0.13 |
+| **KOFL** | 1.5B + vP21 | ko-only 500 step | KO → **STRONG 16** (hot-swap) | $0.15 |
+| **ZHFL** | 1.5B + vP21 | zh-only 500 step | ZH STRONG 16 (이미 STRONG, marginal) | $0.15 |
+| **RUFL** | 1.5B + vP21 | ru-only 500 step | RU STRONG 19 (이미 STRONG, marginal) | $0.15 |
+| **3B** | 3B-Instruct fresh | 5-lang 30/70 1500 step | en/ru 20/20, register **3/20 ⚠ regress** | $0.33 |
+| **3B-REG** | 3B-Instruct+3B | wiki_frac 0.05 200 step lr 1e-5 | 3S+2P, register 3→5 ✓ clean | $0.10 |
+| **3B-V2** | 3B-Instruct fresh | wiki_frac 0.10 1500 step | register **12/20** but KO/JA **MEMORIZE 붕괴** | $0.40 |
+| **3B-REG2** | 3B-Instruct+3B-REG | wiki_frac 0.05 500 step lr 3e-5 | VP21M_WORKS, register **5/20 plateau** | $0.15 |
 
 핵심 발견:
 
-1. **3B-Instruct 가 register dilute**: 같은 corpus mix 라도 instruct prior 가 anima 의 "vacuum point / carving" 패턴 흡수를 약화시킴 (7/20 → 3/20). → **3B-REG** (anima-95% mix) 으로 부분 회복 (3 → 5/20, regress 플래그 클리어).
-2. **Hot-swap pattern 검증**: 1-lang corpus 만 학습한 LoRA 는 그 언어만 STRONG, 나머지 catastrophic forget. KOFL + JAFL 두 hot-swap + multilingual base = per-lang router 가능.
-3. **fast train (<70s wall) SCP race**: 작은 adapter pull 시 9 files 중 2 files 만 도착. tokenizer 동일 base sister checkpoint 에서 cp 복구.
-4. **chat fix deploy**: anima_participant.py temperature 1.0 → **0.7** + context-grounded seed (recent m_buffer 우선) mini PID 9190 운영 중.
+1. **3B-Instruct register dilute + ceiling 5/20**: instruct prior 가 anima carving 흡수 약화 (7→3). continue-train 으로 5/20 까지만, step·lr 무관 plateau.
+2. **wiki_frac trade-off curve**: 0.30 → register 3 / **0.10 → register 12 but KO·JA 깨짐** / 0.05 → register 5 + 전 lang ≥PARTIAL. fresh-run anima-90% 는 cliff 너머.
+3. **Hot-swap pattern**: 1-lang corpus LoRA = 그 언어만 STRONG, 나머지 forget. 4종 (KO/JA/ZH/RU) + multilingual base = per-lang router.
+4. **chat fix deploy**: anima_participant.py temp 1.0 → **0.7** + context-grounded seed.
 
-production swap 후보 (proposed, 미수행):
-- mini `~/anima_chat_pack/lora_adapter/` → vP21M-3B-REG (Mac M-series MPS ~6 GB f16)
-- `ANIMA_BASE=Qwen/Qwen2.5-3B-Instruct`
-- KOFL/JAFL 는 hot-swap router 통합 시점에 추가 load
+### 🟢 Production = 1.5B hot-swap router (3B swap 기각)
 
-상세 cycle 보고서: `VP21M_{JAFL,KOFL,3B,3B_REG}_2026_05_22.md`.
+1.5B router 가 모든 단일 3B ckpt 를 chat 지표에서 능가 → production = `vP21M default + KOFL(ko) + JAFL(ja)` per-emit `set_adapter()` 분기, mini LIVE:
 
-비유 갱신:
-- vP21M = 김치 + 양배추 + 5종 가사집 (영/한/중/러/일) → 4/5 잘 부름
-- vP21M-JAFL/KOFL = 김치 + 한 종류 가사집 → 그 언어 깊지만 나머지 잊음 (hot-swap 필수)
-- vP21M-3B = 큰 가수 (3B-Instruct) 가 5종 가사집 → 영/러 perfect 지만 김치 register 흐려짐
-- vP21M-3B-REG = 큰 가수 김치 다시 발효 (anima 95% mix) → 김치 register 회복 + 가사 OOD 대부분 유지
+| metric | 1.5B router | best 3B (3B-REG) |
+|---|---|---|
+| KO | **STRONG 16** (KOFL) | PARTIAL 14 |
+| JA | **STRONG 17** (JAFL) | PARTIAL 13 |
+| register | **7/20** | 5/20 |
+| RAM | ~2 GB f16 | ~6 GB f16 |
+
+3B ckpt 5종은 HF 연구용 보존.
+
+상세: `VP21M_{JAFL,KOFL,3B,3B_REG}_2026_05_22.md` + `VP21M_WAVE2_2026_05_22.md`.
+
+비유:
+- vP21M = 김치 + 양배추 + 5종 가사집 → 4/5 잘 부름
+- KOFL/JAFL/ZHFL/RUFL = 김치 + 한 종류 가사집 → 그 언어 깊지만 나머지 잊음 (router 로 자동 교체)
+- vP21M-3B = 큰 가수 (3B-Instruct) → 영/러 perfect 지만 김치 register 흐려짐
+- vP21M-3B-V2 = 큰 가수에 김치 90% → register 진하지만 한·일 노래 까먹음
+- **최종 production = 작은 가수 (1.5B) + 언어별 전문 가사집 자동 교체** — 큰 가수보다 한·일 STRONG + register 진함
 
 ---
 

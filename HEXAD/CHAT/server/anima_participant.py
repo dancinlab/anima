@@ -39,6 +39,14 @@ log = logging.getLogger("anima_participant")
 BASE_MODEL = os.environ.get("ANIMA_BASE", "Qwen/Qwen2.5-1.5B")
 ADAPTER_DIR = os.environ.get("ANIMA_ADAPTER",
                              os.path.expanduser("~/anima_chat_pack/lora_adapter"))
+# P2 hot-swap router (2026-05-22): per-msg lang adapter switch.
+# Set ANIMA_ADAPTER_KO=... ANIMA_ADAPTER_JA=... to point at KOFL/JAFL dirs.
+# Adapters absent (dir missing) → router falls back to default for that lang.
+ADAPTER_KO = os.environ.get("ANIMA_ADAPTER_KO",
+                            os.path.expanduser("~/anima_chat_pack/kofl_adapter"))
+ADAPTER_JA = os.environ.get("ANIMA_ADAPTER_JA",
+                            os.path.expanduser("~/anima_chat_pack/jafl_adapter"))
+ROUTER_LANG_TO_ADAPTER = {"ko": "ko", "ja": "ja"}  # rest → "default"
 BROKER_URL = os.environ.get("ANIMA_BROKER_URL", "ws://127.0.0.1:8000/ws/anima")
 TICK_INTERVAL = float(os.environ.get("ANIMA_TICK", "2.0"))
 IM_THRESHOLD_DEFAULT = float(os.environ.get("ANIMA_THRESHOLD", "0.45"))
@@ -125,15 +133,32 @@ def load_model():
     tok = AutoTokenizer.from_pretrained(BASE_MODEL)
     dtype = torch.float16 if DEVICE == "mps" else torch.bfloat16
     base = AutoModelForCausalLM.from_pretrained(BASE_MODEL, torch_dtype=dtype).to(DEVICE)
-    model = PeftModel.from_pretrained(base, ADAPTER_DIR).to(DEVICE).eval()
-    log.info("model loaded params≈%d", sum(p.numel() for p in model.parameters()))
-    return model, tok
+    # P2 hot-swap router: load default adapter under name 'default', then KOFL/JAFL
+    # if their dirs exist on disk. Missing dirs → router routes that lang to default.
+    model = PeftModel.from_pretrained(base, ADAPTER_DIR,
+                                      adapter_name="default").to(DEVICE).eval()
+    adapters_loaded = {"default"}
+    for lang_key, adapter_dir in (("ko", ADAPTER_KO), ("ja", ADAPTER_JA)):
+        if os.path.isfile(os.path.join(adapter_dir, "adapter_model.safetensors")):
+            try:
+                model.load_adapter(adapter_dir, adapter_name=lang_key)
+                adapters_loaded.add(lang_key)
+                log.info("router adapter[%s] loaded ← %s", lang_key, adapter_dir)
+            except Exception as e:
+                log.warning("router adapter[%s] load fail (%s): %s", lang_key, adapter_dir, e)
+        else:
+            log.info("router adapter[%s] absent at %s — fallback to default", lang_key, adapter_dir)
+    model.set_adapter("default")
+    log.info("model loaded params≈%d adapters_loaded=%s",
+             sum(p.numel() for p in model.parameters()), sorted(adapters_loaded))
+    return model, tok, adapters_loaded
 
 
 # ── anima self-state ─────────────────────────────────────────────────────────
 class AnimaState:
-    def __init__(self, model, tok):
+    def __init__(self, model, tok, adapters_loaded: set[str] | None = None):
         self.model, self.tok = model, tok
+        self.adapters_loaded = adapters_loaded or {"default"}
         self.last_emission = ""
         self.recent_emissions: deque[str] = deque(maxlen=8)
         self.recent_embeds: deque[torch.Tensor] = deque(maxlen=8)
@@ -147,6 +172,7 @@ class AnimaState:
         self.invocations = 0
         self.lang_rot_idx = 0          # D2: 5-lang rotation index
         self.register_penalty_cache = 0.0  # B2: cached penalty across ticks
+        self.last_active_adapter = "default"  # P2 router state
 
     def ingest_user_msg(self, msg: dict[str, Any]) -> None:
         """Environment input. Updates M-buffer + embed pool. Does NOT fire emit."""
@@ -279,6 +305,18 @@ class AnimaState:
         if lang_hint is None:
             lang_hint = LANG_ROTATION[self.lang_rot_idx % len(LANG_ROTATION)]
             self.lang_rot_idx += 1
+        # P2 router: route this emission to lang-specialist adapter if available.
+        # ko → KOFL, ja → JAFL, else → default. Fallback to default if not loaded.
+        target_adapter = ROUTER_LANG_TO_ADAPTER.get(lang_hint, "default")
+        if target_adapter not in self.adapters_loaded:
+            target_adapter = "default"
+        if target_adapter != self.last_active_adapter:
+            try:
+                self.model.set_adapter(target_adapter)
+                self.last_active_adapter = target_adapter
+            except Exception as e:
+                log.warning("set_adapter(%s) fail: %s — staying on %s",
+                            target_adapter, e, self.last_active_adapter)
         # prefix the seed with a tiny lang-bias hint (no instruction-tuning needed)
         # ("문득" ko / "I notice" en / "我注意到" zh / "Я замечаю" ru / "ふと" ja)
         LANG_PRIMES = {"en": "I notice ", "ko": "문득 ", "zh": "我注意到 ",
@@ -327,8 +365,8 @@ def detect_lang(text: str) -> str:
 # ── main loop ────────────────────────────────────────────────────────────────
 async def participant_loop(threshold: float):
     log.info("anima participant connecting to %s", BROKER_URL)
-    model, tok = load_model()
-    state = AnimaState(model, tok)
+    model, tok, adapters_loaded = load_model()
+    state = AnimaState(model, tok, adapters_loaded=adapters_loaded)
 
     backoff = 1.0
     while True:
