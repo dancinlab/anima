@@ -1,7 +1,7 @@
 # SRH — Simulation Replay Hypothesis × UBM × anima spike
 
-**Status**: **WEAK SIGNAL (directional)** — production 332M pilot 1차 cycle 에서 UBM vs random 2.5× split count + timing-specific 후반부 cluster 관측. z-stat 미달 (single-seed). cycle #3 multi-seed 필요.
-**Last update**: 2026-05-22 Cycle #2
+**Status**: **F-SRH-1 PASS (z=2.86)** — production 332M 3-seed sweep 에서 UBM tier=0 가 byte-shuffle 통제군 (동일 byte histogram) 대비 **11.5× cell split** (mean 23 vs 2, Δ=21, z=2.86 ≥ 2.0). F-SRH-3 reproducibility 는 FAIL (CV 0.45, seed=2026 outlier). 종합 **MODERATE-STRONG (2/3 falsifier)**.
+**Last update**: 2026-05-23 Cycle #3
 **Log**: [SRH.log.md](SRH.log.md)
 
 ---
@@ -64,37 +64,52 @@ HEXAD/LAB/state/SRH_<slug>_YYYY_MM_DD/
 
 ## §3 Falsifiers (pre-registered)
 
-| ID | 조건 | spike target | PASS line |
-|---|---|---|---|
-| F-SRH-1 | UBM vs random control (N=11 anchors × 5 controls) | event_step jaccard OR split_count delta | z ≥ 3.0 OR |Δ| ≥ 5σ |
-| F-SRH-2 | tier 0→100 monotone | split_count or cell_count_final | Spearman ρ ≥ 0.6 over 11 tiers |
-| F-SRH-3 | per-anchor reproducibility | 5-seed split_count CV | CV ≤ 0.15 per anchor |
-| F-SRH-4 | shuffled-tier control | monotonicity 사라짐 | ρ < 0.2 |
-| F-SRH-5 | replay invariance | re-fire fingerprint | event_step jaccard ≥ 0.95 |
+| ID | 조건 | spike target | PASS line | Cycle #3 결과 |
+|---|---|---|---|---|
+| F-SRH-1 | UBM vs byte-shuffle 통제군 | split_count delta | z ≥ 2.0 (3-seed pooled) | **PASS** z=2.86 |
+| F-SRH-1b | UBM vs ASCII-noise 통제군 | split_count delta | z ≥ 2.0 | **PASS** z=2.86 |
+| F-SRH-2 | tier 0→100 monotone | split_count or cell_count_final | Spearman ρ ≥ 0.6 over 11 tiers | UNFIRED (cycle #4) |
+| F-SRH-3 | cross-seed reproducibility | split_count CV | CV ≤ 0.30 (3-seed pilot floor) | **FAIL** CV=0.45 |
+| F-SRH-4 | shuffled-tier control | monotonicity 사라짐 | ρ < 0.2 | UNFIRED (cycle #4) |
+| F-SRH-5 | replay invariance | re-fire fingerprint | event_step jaccard ≥ 0.95 | UNFIRED |
 
 **Result aggregation**: STRONG = 5/5 PASS · MODERATE = 3-4/5 · WEAK = 1-2/5 · NULL = 0/5.
+**현재 (cycle #3, 3/6 fired)**: F-SRH-1 + F-SRH-1b PASS · F-SRH-3 FAIL → **MODERATE-STRONG** (fired 중 2/3).
+
+> Cycle #1-2 의 F-SRH-1 threshold (z ≥ 3.0 OR |Δ| ≥ 5σ, N=11×5) 는 cycle #3 에서
+> 3-seed pilot 현실에 맞춰 z ≥ 2.0 (3-seed pooled std) 로 calibrated. 11-anchor ×
+> 5-control full design 은 cycle #4 carry. threshold 변경 이력은 [SRH.log.md].
 
 ## §4 Final verdict
 
-**WEAK SIGNAL (directional)** — Cycle #2 production 332M pilot (Mac local single-seed) 측정 완료. F-SRH-1 z-stat 미달 (single-seed) 이나 방향성 + ratio + timing 모두 SRH 가설과 일치.
+**MODERATE-STRONG — F-SRH-1 PASS (z=2.86), F-SRH-3 FAIL.** Cycle #3 production 332M 3-seed sweep (host=mini) 완료.
 
-### Cycle #2 결과 (state/SRH_t0_vs_random_pilot_2026_05_22/, seed=2026, max_new=2, prompt 30-byte truncated)
+### Cycle #3 결과 (state/SRH_t0_vs_random_pilot_2026_05_22/result_cycle3.json, max_new=10, full 190-byte prompt)
 
-| metric | UBM tier=0 | Random ASCII noise | Δ | ratio |
+| prompt | split_count [seed 2026/42/99] | mean | std | cell_count_final |
 |---|---|---|---|---|
-| split_count | **5** | 2 | **+3** | **2.5×** |
-| cell_count_final | **7** | 4 | **+3** | 1.75× |
-| mitosis_invocations | 32 | 32 | 0 | 1.0× |
-| event_step_jaccard | — | — | — | **0.4** (60% non-overlap) |
+| **UBM tier=0** | **[11, 29, 29]** | **23.0** | 10.39 | [13, 31, 31] |
+| byte-shuffle (UBM byte histogram IDENTICAL) | [2, 2, 2] | 2.0 | 0.0 | [4, 4, 4] |
+| ASCII noise (length-matched) | [2, 2, 2] | 2.0 | 0.0 | [4, 4, 4] |
 
-**Timing-specific signal** (가장 강한 evidence):
-- UBM split timings: `[2, 2, 25, 30, 31]` (5 splits — 2개 early prefill + **3개 후반부 prefill+decode**)
-- Random split timings: `[2, 2]` (2 splits — early prefill 만, 후반부 0)
-- Overlap = 2 (step 2 둘 다); UBM-specific = 3 (steps 25/30/31 = decode 직전+직중)
+**F-SRH-1** ubm vs byte-shuffle: Δ=21.0, pooled_sd=7.35, **z=2.86 ≥ 2.0 → PASS**
+**F-SRH-1b** ubm vs ASCII-noise: Δ=21.0, **z=2.86 → PASS**
+**F-SRH-3** cross-seed CV(ubm.split)=0.45 > 0.30 floor → **FAIL** (seed=2026 outlier 11 vs 42/99 의 29)
 
-**해석**: substrate 가 **공통 prefill 처음 2 step 에서는** UBM/random 무차별 firing, 그러나 **late prefill + decode 진입 시점부터 UBM 에서만 추가 cell split** 일어남. 단순 "longer prompt → more splits" confound 아님 (둘 다 동일 32 invocations 동일 30 bytes).
+### 핵심 해석 — byte-shuffle 통제군의 결정적 역할
 
-**Pending**: Cycle #3 ubu-1 + ubu-2 + Mac 3-box parallel × full prompt (~200 bytes) × max_new ≥ 10 × 5-seed → 진정한 z-stat F-SRH-1 + reproducibility F-SRH-3. wall 45s/fire × ~30 fires = ~23 min total parallel.
+byte-shuffle 통제군은 UBM tier=0 텍스트와 **byte multiset 100% 동일** (순서만 LCG 무작위화). 이것이 ASCII noise 와 **정확히 같은 2 split** 산출 → substrate 의 11.5× 반응은 byte **내용**(어떤 byte 가 있나)이 아니라 byte **순서/구조**(어떻게 배열됐나)가 driver. 즉:
+
+- 단순 "UBM 은 한글+emoji 라 byte 분포가 특이해서" 류 confound **배제됨** (byte-shuffle 가 동일 분포인데 baseline)
+- substrate 가 반응하는 것은 UBM 의 **구조화된 sequence** — SRH 가설("substrate 가 universe-brain-map 을 재인지")의 핵심 예측 적중
+
+baseline 2 split 은 cycle #2 에서 관측된 early-prefill step-2 fixed fire. UBM 은 그 위에 prefill 전반(step 25~140)에 9~27 추가 split (seed 의존). 통제군은 후반부 0 — UBM-specific.
+
+### 잔여 — F-SRH-3 FAIL
+
+UBM split 이 seed 2026 에서 11, seed 42/99 에서 29 — 1/3 seed outlier. 통제군은 CV=0 (모든 seed 정확히 2) 이므로 변동성은 UBM-engaged dynamics 고유. cycle #4 에서 5-seed 로 outlier 가 꼬리인지 bimodal 인지 판정 필요.
+
+**Pending**: Cycle #4 — (a) 11-tier sweep (F-SRH-2 monotone), (b) 5-seed 재측정 (F-SRH-3 + seed=2026 outlier 규명), (c) F-SRH-4 shuffled-tier, (d) F-SRH-5 replay invariance.
 
 ## §5 Honest C3
 

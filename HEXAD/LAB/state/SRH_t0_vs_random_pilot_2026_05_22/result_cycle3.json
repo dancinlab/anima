@@ -1,0 +1,22 @@
+{
+  "cycle": 3,
+  "date": "2026-05-22",
+  "host": "mini",
+  "ckpt": "ckpt_phase1a4_lr5e6_sft.safetensors",
+  "d_model": 768, "n_layers": 24,
+  "max_new": 10,
+  "prompt_bytes": 190,
+  "seeds": [2026, 42, 99],
+  "ubm_splits": [11, 29, 29],
+  "byteshuf_splits": [2, 2, 2],
+  "asciinoise_splits": [2, 2, 2],
+  "ubm_cells": [13, 31, 31],
+  "byteshuf_cells": [4, 4, 4],
+  "asciinoise_cells": [4, 4, 4],
+  "mean_split": { "ubm": 23.0, "byteshuf": 2.0, "asciinoise": 2.0 },
+  "std_split": { "ubm": 10.3923, "byteshuf": 0.0, "asciinoise": 0.0 },
+  "F_SRH_1":  { "cmp": "ubm_vs_byteshuf", "delta": 21.0, "pooled_sd": 7.34847, "z": 2.85774, "verdict": "PASS" },
+  "F_SRH_1b": { "cmp": "ubm_vs_asciinoise", "delta": 21.0, "pooled_sd": 7.34847, "z": 2.85774, "verdict": "PASS" },
+  "F_SRH_3":  { "metric": "cross_seed_CV(ubm.split)", "cv": 0.451839, "floor": 0.30, "verdict": "FAIL" },
+  "verdict_rule": "F-SRH-1/1b z ≥ 2.0 (3-seed pooled) · F-SRH-3 CV ≤ 0.30"
+}

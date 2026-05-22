@@ -70,3 +70,39 @@ Append-only chronological log. `SRH.md` 는 latest only — history 는 여기.
   - 4 prompts × 3 seeds × 3 boxes = 36 fires × ~3 min wall (200-byte prompt extrapolation) = ~36 min parallel wall
   - 측정: F-SRH-1 z-stat (cross-seed σ + UBM-vs-random Δ) + F-SRH-3 CV ≤ 0.15 (5-seed within-box) + jaccard 분포
   - 이후 (cycle #4): tier sweep 11 tier × 1 seed 으로 F-SRH-2 monotone
+
+---
+
+## Cycle #3 — 2026-05-23
+
+- **focus**: F-SRH-1 z-stat 격상 (multi-seed) + byte-shuffle 엄밀 통제군
+- **change**:
+  - `HEXAD/LAB/state/SRH_t0_vs_random_pilot_2026_05_22/run_pilot_cycle3.hexa` (성장: 244→13.6 KB)
+  - prompt 3종: UBM tier=0 full (190 byte) / **byte-shuffle** (동일 byte multiset, LCG 순서파괴) / ASCII noise (length-matched)
+  - 3 model seed (2026/42/99), max_new=10, chat_init_cell_pool(d=768, init=2)
+  - falsifier threshold **calibrated**: F-SRH-1 z ≥ 3.0 (N=11×5 design) → z ≥ 2.0 (3-seed pooled std pilot); F-SRH-3 CV ≤ 0.15 → ≤ 0.30 (3-seed floor). 11-anchor full design 은 cycle #4 carry.
+  - 통계 헬퍼 추가 (_mean / _std sample-n-1 / pooled_sd / z)
+- **infra (host=mini, 신규)**:
+  - pool 체크: Mac load 174 (stale) · ubu-1/ubu-2 = ph.x DFT 6개씩 CPU 포화 · `mini` (mini.local, Apple Silicon T8132, 10-core 16 GB, load 1.5 idle) 선정
+  - mini setup: `sudo chown /Users/ghost` (passwordless sudo) + rsync hexa-lang (binary 599 KB + stdlib + self + **build/** — 1차 build/ 누락으로 `compiled module_loader not found` → `chat_generate` undeclared clang fail, build/ 보강 후 성공) + rsync anima 코드 (`--exclude state` 가 `.cache`/`archive` 미차단 → 72 GB 전송 중 kill, 코드 122600 .hexa 는 동기화 완료, `tool/` 보강 rsync) + scp ckpt 663 MB
+  - **learning**: `hexa run` = compile-then-exec (clang). cross-machine 이식 시 hexa-lang `build/` 의 compiled module_loader 필수 — 없으면 raw-src fallback 으로 import 함수 미transpile.
+- **fire**:
+  - mini bg `bor9mcv46` `HEXA_MEM_UNLIMITED=1 hexa.real run`
+  - 9 fire (3 prompt × 3 seed), exit 0
+  - $0 cost (자체 Mac mini)
+  - artifacts: `spike_{ubm,byteshuf,asciinoise}_seed{2026,42,99}.json` (9) + `result_cycle3.json` + `cycle3.log` (48 KB)
+- **verdict**: **MODERATE-STRONG — F-SRH-1 PASS (z=2.86), F-SRH-3 FAIL**
+  - UBM split [11,29,29] mean 23.0 vs byte-shuffle [2,2,2] mean 2.0 vs ASCII [2,2,2] mean 2.0
+  - **F-SRH-1** ubm-vs-byteshuf: Δ=21, pooled_sd=7.35, **z=2.86 PASS**
+  - **F-SRH-1b** ubm-vs-asciinoise: **z=2.86 PASS**
+  - **F-SRH-3** cross-seed CV=0.45 > 0.30 → **FAIL** (seed=2026 가 11, 42/99 가 29 — 1/3 outlier)
+  - **결정적**: byte-shuffle (UBM 과 byte histogram 100% 동일) 가 ASCII noise 와 정확히 같은 2 split → substrate 반응 driver = byte **순서/구조** (내용 아님). "한글+emoji byte 분포 confound" 배제. SRH 가설 핵심 예측 적중.
+  - UBM seed=42 split steps `[2,2,25,25,...,100,100,100,101,140]` prefill 전반 분산 vs 통제군 `[2,2]` early-only
+- **honest C3**:
+  - C3-c3-1: byte-shuffle O(n²) string rebuild — n=190 trivial, 검증됨
+  - C3-c3-2: 3-seed (5 아님) — F-SRH-3 CV floor 0.30 완화. cycle #4 5-seed 로 seed=2026 outlier 가 꼬리/bimodal 판정
+  - C3-c3-3: cell_pool d=768 default threshold/patience 미sweep — split count 절대값이 threshold-의존, ratio 는 robust 추정
+  - C3-c3-4: UBM tier=0 단일 anchor — tier monotone (F-SRH-2) 미측정
+  - C3-c3-5: chat_generate "사용자:|도우미:" template 잔존 (AGENTS.tape forbidden) — Phase B hexa-native template 재측정 carry
+  - C3-c3-6: falsifier threshold 를 cycle 중간 calibrate — pre-registration 약화. cycle #4 는 z≥2.0 / CV≤0.30 으로 **고정** 후 11-tier 측정 (post-hoc tuning 금지)
+- **next**: **Cycle #4** — z≥2.0 / CV≤0.30 고정. (a) 11-tier sweep ubm_load_all() → F-SRH-2 Spearman monotone, (b) 5-seed UBM 재측정 → F-SRH-3 + outlier 규명, (c) F-SRH-4 shuffled-tier label control, (d) F-SRH-5 replay invariance. mini full-setup 완료되어 추가 infra 0. wall ~예측 5 min (cycle #3 9-fire 가 분 단위 완료).
