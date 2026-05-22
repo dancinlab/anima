@@ -29,7 +29,8 @@ from typing import Any
 import torch
 import torch.nn.functional as F
 import websockets
-from safetensors.torch import load_file
+
+from substrate_base import Substrate
 
 logging.basicConfig(level=logging.INFO,
                     format="%(asctime)s [%(levelname)s] %(message)s")
@@ -99,66 +100,26 @@ def factor_balance(phi, r):      return 1.0 if phi > r/2.0 else 0.0
 def factor_dynamics(silence):    return _clamp01(silence / IDLE_SPEAK_AFTER)
 
 
-# ── model load ───────────────────────────────────────────────────────────────
-def load_model():
-    log.info("loading base=%s adapter=%s device=%s", BASE_MODEL, ADAPTER_DIR, DEVICE)
-    # Repair adapter_config target_modules from safetensors keys if missing
-    sd_path = os.path.join(ADAPTER_DIR, "adapter_model.safetensors")
-    cfg_path = os.path.join(ADAPTER_DIR, "adapter_config.json")
-    try:
-        existing = json.load(open(cfg_path))
-        tmods = existing.get("target_modules")
-    except Exception:
-        existing, tmods = {}, None
-    if not tmods:
-        sd = load_file(sd_path)
-        found = set()
-        for k in sd:
-            if ".lora_A." in k or ".lora_B." in k:
-                parts = k.split(".")
-                for i, p in enumerate(parts):
-                    if p in ("lora_A", "lora_B") and i > 0:
-                        found.add(parts[i - 1])
-        tmods = sorted(found)
-        cfg = {"peft_type": "LORA", "task_type": "CAUSAL_LM",
-               "base_model_name_or_path": BASE_MODEL,
-               "r": 32, "lora_alpha": 64, "lora_dropout": 0.05,
-               "target_modules": tmods, "bias": "none",
-               "inference_mode": True, "fan_in_fan_out": False}
-        json.dump(cfg, open(cfg_path, "w"), indent=2)
-        log.info("repaired adapter_config.json target_modules=%s", tmods)
-
-    from transformers import AutoModelForCausalLM, AutoTokenizer
-    from peft import PeftModel
-    tok = AutoTokenizer.from_pretrained(BASE_MODEL)
-    dtype = torch.float16 if DEVICE == "mps" else torch.bfloat16
-    base = AutoModelForCausalLM.from_pretrained(BASE_MODEL, torch_dtype=dtype).to(DEVICE)
-    # P2 hot-swap router: load default adapter under name 'default', then KOFL/JAFL
-    # if their dirs exist on disk. Missing dirs → router routes that lang to default.
-    model = PeftModel.from_pretrained(base, ADAPTER_DIR,
-                                      adapter_name="default").to(DEVICE).eval()
-    adapters_loaded = {"default"}
-    for lang_key, adapter_dir in (("ko", ADAPTER_KO), ("ja", ADAPTER_JA)):
-        if os.path.isfile(os.path.join(adapter_dir, "adapter_model.safetensors")):
-            try:
-                model.load_adapter(adapter_dir, adapter_name=lang_key)
-                adapters_loaded.add(lang_key)
-                log.info("router adapter[%s] loaded ← %s", lang_key, adapter_dir)
-            except Exception as e:
-                log.warning("router adapter[%s] load fail (%s): %s", lang_key, adapter_dir, e)
-        else:
-            log.info("router adapter[%s] absent at %s — fallback to default", lang_key, adapter_dir)
-    model.set_adapter("default")
-    log.info("model loaded params≈%d adapters_loaded=%s",
-             sum(p.numel() for p in model.parameters()), sorted(adapters_loaded))
-    return model, tok, adapters_loaded
+# ── substrate build (L1 plugin refactor 2026-05-22) ───────────────────────────
+def build_substrate(kind: str) -> Substrate:
+    """Construct the pluggable substrate. anima dynamics below are
+    substrate-agnostic — only substrate.generate / entropy_of_next used."""
+    if kind == "lora":
+        from substrate_lora import LoraSubstrate
+        return LoraSubstrate(adapter_dir=ADAPTER_DIR, adapter_ko=ADAPTER_KO,
+                             adapter_ja=ADAPTER_JA, base_model=BASE_MODEL,
+                             device=DEVICE)
+    if kind == "v3":
+        from substrate_v3 import V3Substrate  # V3 session owns this impl
+        return V3Substrate(ckpt_path=os.environ.get("ANIMA_V3_CKPT", ""),
+                           device=DEVICE)
+    raise ValueError(f"unknown substrate kind: {kind!r}")
 
 
 # ── anima self-state ─────────────────────────────────────────────────────────
 class AnimaState:
-    def __init__(self, model, tok, adapters_loaded: set[str] | None = None):
-        self.model, self.tok = model, tok
-        self.adapters_loaded = adapters_loaded or {"default"}
+    def __init__(self, substrate: Substrate):
+        self.substrate = substrate
         self.last_emission = ""
         self.recent_emissions: deque[str] = deque(maxlen=8)
         self.recent_embeds: deque[torch.Tensor] = deque(maxlen=8)
@@ -172,7 +133,6 @@ class AnimaState:
         self.invocations = 0
         self.lang_rot_idx = 0          # D2: 5-lang rotation index
         self.register_penalty_cache = 0.0  # B2: cached penalty across ticks
-        self.last_active_adapter = "default"  # P2 router state
 
     def ingest_user_msg(self, msg: dict[str, Any]) -> None:
         """Environment input. Updates M-buffer + embed pool. Does NOT fire emit."""
@@ -219,19 +179,9 @@ class AnimaState:
             return joined[-128:], strat
         return "", strat  # only when m_buffer empty
 
-    @torch.no_grad()
     def _entropy_of_next(self, seed_text: str) -> tuple[float, torch.Tensor]:
-        if seed_text:
-            ids = self.tok(seed_text, return_tensors="pt").input_ids.to(DEVICE)
-        else:
-            bid = self.tok.bos_token_id or self.tok.eos_token_id
-            ids = torch.tensor([[bid]]).to(DEVICE)
-        logits = self.model(ids).logits[0, -1]
-        p = F.softmax(logits.float(), dim=-1)
-        ent = -(p * (p + 1e-12).log()).sum().item()
-        emb = self.model.get_input_embeddings()(ids)[0].mean(0).float().cpu()
-        ent_norm = ent / math.log(logits.shape[-1])
-        return ent_norm, emb
+        # delegate to substrate (Thinker 8-factor input)
+        return self.substrate.entropy_of_next(seed_text)
 
     def _register_penalty(self) -> float:
         """B2: anima register pattern hash. Penalty 0..1 (higher = penalize originality more)."""
@@ -299,40 +249,13 @@ class AnimaState:
                 "in_refractory": in_refractory, "register_penalty": reg_penalty,
                 "ts": time.time()}
 
-    @torch.no_grad()
     def emit(self, seed_text: str, lang_hint: str | None = None) -> str:
-        # D2: language rotation — force diverse lang use across emissions
+        # D2: language rotation — force diverse lang use across emissions.
+        # substrate.generate handles per-lang adapter routing + lang prime.
         if lang_hint is None:
             lang_hint = LANG_ROTATION[self.lang_rot_idx % len(LANG_ROTATION)]
             self.lang_rot_idx += 1
-        # P2 router: route this emission to lang-specialist adapter if available.
-        # ko → KOFL, ja → JAFL, else → default. Fallback to default if not loaded.
-        target_adapter = ROUTER_LANG_TO_ADAPTER.get(lang_hint, "default")
-        if target_adapter not in self.adapters_loaded:
-            target_adapter = "default"
-        if target_adapter != self.last_active_adapter:
-            try:
-                self.model.set_adapter(target_adapter)
-                self.last_active_adapter = target_adapter
-            except Exception as e:
-                log.warning("set_adapter(%s) fail: %s — staying on %s",
-                            target_adapter, e, self.last_active_adapter)
-        # prefix the seed with a tiny lang-bias hint (no instruction-tuning needed)
-        # ("문득" ko / "I notice" en / "我注意到" zh / "Я замечаю" ru / "ふと" ja)
-        LANG_PRIMES = {"en": "I notice ", "ko": "문득 ", "zh": "我注意到 ",
-                       "ru": "Я замечаю ", "ja": "ふと "}
-        prime = LANG_PRIMES.get(lang_hint, "")
-        primed_seed = prime + (seed_text or "")
-        if primed_seed:
-            ids = self.tok(primed_seed, return_tensors="pt").input_ids.to(DEVICE)
-        else:
-            bid = self.tok.bos_token_id or self.tok.eos_token_id
-            ids = torch.tensor([[bid]]).to(DEVICE)
-        out = self.model.generate(ids, max_new_tokens=MAX_NEW,
-                                  do_sample=True, temperature=0.7, top_k=50, top_p=0.95,
-                                  repetition_penalty=1.2,
-                                  pad_token_id=self.tok.eos_token_id)
-        text = self.tok.decode(out[0][ids.shape[1]:], skip_special_tokens=True)
+        text = self.substrate.generate(seed_text, max_new=MAX_NEW, lang_hint=lang_hint)
         self.last_emission = text
         self.recent_emissions.append(text)
         try:
@@ -363,10 +286,11 @@ def detect_lang(text: str) -> str:
 
 
 # ── main loop ────────────────────────────────────────────────────────────────
-async def participant_loop(threshold: float):
+async def participant_loop(threshold: float, substrate_kind: str = "lora"):
     log.info("anima participant connecting to %s", BROKER_URL)
-    model, tok, adapters_loaded = load_model()
-    state = AnimaState(model, tok, adapters_loaded=adapters_loaded)
+    substrate = build_substrate(substrate_kind)
+    log.info("substrate ready: %r", substrate)
+    state = AnimaState(substrate)
 
     backoff = 1.0
     while True:
@@ -459,8 +383,10 @@ async def participant_loop(threshold: float):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--threshold", type=float, default=IM_THRESHOLD_DEFAULT)
+    ap.add_argument("--substrate", choices=["lora", "v3"], default="lora",
+                    help="pluggable substrate (SUBSTRATE_PLUGIN.md)")
     args = ap.parse_args()
-    asyncio.run(participant_loop(args.threshold))
+    asyncio.run(participant_loop(args.threshold, substrate_kind=args.substrate))
 
 
 if __name__ == "__main__":
