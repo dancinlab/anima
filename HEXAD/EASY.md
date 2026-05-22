@@ -219,6 +219,29 @@ LIF threshold-fire 결정이 **실리콘에서** 계산됨 (FullyConnected.activ
 
 상세 + 6 C3: `HELDOUT_VP21_2026_05_22.md`.
 
+## 11. mitosis 의 진짜 역할 정확히 — generalization 무관, substrate-shaping 만
+
+§ 3 mitosis 가 좋다는 발견 → 정확히 어디서 좋은가? 직접 ablation:
+
+| 모델 | λ_mitosis | OOD held-out (gen/mem) | 결과 |
+|---|---|---|---|
+| vP21 | 0.05 (mitosis on) | 2 / 18 | PURE_MEMORIZE |
+| vP21N | 0.0 (mitosis off) | 1 / 18 (mp 1) | PURE_MEMORIZE |
+
+→ 거의 동일 (classifier noise 범위). **mitosis 는 generalization 기여 없음**.
+
+mitosis 의 진짜 value:
+- ✅ **substrate-shaping** — training-time splits +35%, wall -8.6%, Φ +6% (S187-G, MITOSIS_TRAINING_ACTIVE.md)
+- ❌ **generalization** — corpus 가 원인, mitosis 무관 (이번 P21N ablation)
+
+비유:
+- 김치 발효: **양배추(mitosis) 는 김치(corpus_s101) 더 맛 좋게 만들지만**, **요리 레퍼토리(generalization) 는 양배추 로 안 늘어남** — 다른 재료(다양 corpus) 가 필요
+- → vP21G (Wikipedia + 다양 corpus LoRA continue-train) 가 진짜 path (in-flight)
+
+mitosis 는 v3 ConsciousDecoder 의 substrate axis 로 유지. 생산 capability scope 확장은 corpus axis 의 일.
+
+상세: `MITOSIS_ABLATION_HELDOUT_2026_05_22.md` (5 C3).
+
 ---
 
 ## 관련 link
