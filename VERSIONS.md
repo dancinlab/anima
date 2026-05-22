@@ -10,7 +10,7 @@
 
 ## 0. anima 전체 release version
 
-루트 [`/VERSION`](VERSION) = **`0.5.0`** (한 줄, 전체 시스템 release).
+루트 [`/VERSION`](VERSION) = **`0.6.0`** (한 줄, 전체 시스템 release).
 
 | release | 날짜 | 마일스톤 |
 |---|---|---|
@@ -18,7 +18,8 @@
 | 0.2.0 | 2026-05-16 | HEXAD-only canonical pivot + hexa-native tree |
 | 0.3.0 | 2026-05-22 | S187 3B scale 검증 + OCCAM floor pinpoint (n_ca_rules) + MITOSIS training-time + Llama-mitosis winning path |
 | 0.4.0 | 2026-05-22 | 🎯 자연발화 EMERGENCE — vP21 (Qwen+LoRA+mitosis) Eval 1 = 20/20 coherent (anima-native register). + AKIDA AKD1000 HW connected |
-| **0.5.0** | **2026-05-22** | **🧠 AKIDA HW-NATIVE 자연발화 CONFIRMED — AKD1000 LIF threshold-comparator emit from ZERO input (8/8 checks PASS, `BackendType.Hardware`). 자연발화 GOAL 의 hardware 축 LANDED.** |
+| 0.5.0 | 2026-05-22 | 🧠 AKIDA HW-NATIVE 자연발화 CONFIRMED — AKD1000 LIF threshold-comparator emit from ZERO input (8/8 checks PASS, `BackendType.Hardware`). hardware 축 LANDED. + held-out PURE_MEMORIZE 정직 scope 확증 |
+| **0.6.0** | **2026-05-22** | **🌉 vP21 ⊥ AKD1000 INTEGRATED BRIDGE — HW-gated 자연발화 30/30 coherent, frac_emissions_with_hw_edge=1.0, AKD1000 spike timing → vP21 emission cadence (Option A LAN TCP). 두 substrate ONE coherent loop** |
 
 > release bump 규칙: 모듈 MAJOR bump OR 핵심 verdict landing 시 release MINOR.
 > 0.4.0 = saga 전체 whitespace-collapse 후 **첫 coherent verbalization** (vP21 20/20)
