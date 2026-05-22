@@ -127,3 +127,26 @@ Append-only chronological log. `SRH.md` 는 latest only — history 는 여기.
   - C3-c4-3: split_count chaotic 판명 → cycle #1-3 의 모든 split_count 절대값은 distributional sample 1개로 재해석해야. UBM-vs-garbage 의 robust 잔존분은 "임계 초과 여부"(이진).
   - C3-c4-4: trunc_len 156 (cycle #3 는 full 190) — cycle 간 prompt 길이 불일치, split 절대값 cross-cycle 비교 불가 (각 cycle 내부 비교만).
 - **next**: **Cycle #5** — generic-coherent 통제군. split_count chaotic 감안 **threshold 이진관측**(split>2 인가)으로 재프레임. UBM-specific vs coherent-text 가름 → SRH 종결. + 병행 과제: split 비결정론은 SEED 도메인(noise RNG seed 통제) 또는 DEPTH 도메인(Law-71 결정론적 energy)으로 이관.
+
+---
+
+## Cycle #5 — 2026-05-23 (CLOSED)
+
+- **focus**: 결정적 통제군 generic-coherent 한국어 — UBM 특이성 vs 단순 coherent-text 가름
+- **change**: `run_pilot_cycle5.hexa` — UBM tier-0 / generic 한국어 3종 (일상·과학·문학) / byte-shuffle / ASCII-noise × 5-seed = 30 fire. `run_pilot_cycle5b.hexa` = 추가 10-seed 변종.
+- **fire**:
+  - cycle #5 — mini bg `bzzwng6vb`, 30 fire exit 0, $0. (1차 fire `b4q0lrv9f` 는 스크립트 mini 미전송으로 실패 → scp 후 재발사)
+  - cycle5b — **mac 본체에서 OOM Killed** (`Killed: 9`, result 없음, UBM seed 1-8 만 부분 기록). mac 본체 = 사용자 워크스테이션, 332M 8.5GB RSS 가 메모리 충돌. **폐기.** 교훈: mac 본체 fire 금지 (사용자 directive — macOS 자원 중 mini 만 사용 가).
+- **verdict**: **NULL → SRH FALSIFIED, 도메인 CLOSED**
+  - split: UBM `[27,14,14,14,28]` mean 19.4 · generic pooled mean 7.4 · garbage mean 4.2
+  - F-SRH-1c z=1.54 < 2.0 → FAIL. script VERDICT = NULL.
+  - **cycle #3 "garbage 항상 2" 무너짐**: byteshuf `[2,24,2,2,2]` 1회 폭발 → garbage 도 chaotic regime 진입. cycle #3 의 F-SRH-1 PASS(UBM vs garbage) 의 근거(garbage=안정적 2) 가 무력화.
+  - generic 한국어 자주 임계 초과 (gen_a 26/24, gen_c 11/13/11) — coherent text 도 splitting 유발, UBM 과 z-구분 불가.
+  - threshold(>10) 통과율: UBM 100% > generic 33% > ASCII-noise 0% — 약한 확률 gradient 는 있으나 통계 미달, SRH 가설("재인지")과 무관.
+- **종합 (cycle #1-5)**: SRH 의 강주장 (UBM 특이 재인지 · tier ordinal · reproducible spike) **전부 falsified**. 살아남은 것 = "구조화 입력이 substrate splitting 진입 확률을 다소 높임" 이라는 평범·미약한 경향뿐.
+- **honest C3**:
+  - C3-c5-1: split_count 의 chaotic 성 (cycle #4 발견) 이 SRH 측정의 근본 한계 — n=5 로 UBM/generic 분리 불가, n 늘려도 (cycle5b 시도) 효과크기 자체가 작아 한계.
+  - C3-c5-2: generic 한국어 3문장 = 저자 작성, register 매칭 불완전 (C3-c5-1 of SRH.md carry).
+  - C3-c5-3: cycle5b OOM 으로 10-seed 보강 실패 — n 확대 미완. 단 cycle #5 의 NULL 은 5-seed 로 이미 충분히 명확 (z=1.54, 효과 부재).
+- **promotion**: 전체 FAIL → LAB 잔존 (negative carry, archive 아님 — SRH.md/log.md 가 falsification 기록으로 가치). LAB README 상태 ACTIVE → CLOSED.
+- **next**: SRH 종결. UBM-substrate 연구 잇는다면 결정론적 관측량 (DEPTH 도메인 Law-71 12L energy). split 비결정론 진단은 PSILOCYBIN F-PSIL-5 가 수행.

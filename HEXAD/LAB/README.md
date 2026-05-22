@@ -16,7 +16,7 @@ ad-hoc 실험 받침대. 주제별 영구 dir (V3/LORA/MITOSIS/CLM/...) 에 들�
 
 | # | 도메인 | 가설 (1줄) | 상태 |
 |---|---|---|---|
-| **실험 1** | [SRH](SRH.md) | UBM anchor inject 시 substrate 가 random 대비 structured spike | **ACTIVE** — cycle #4 in-flight, #5 queued |
+| **실험 1** | [SRH](SRH.md) | UBM anchor inject 시 substrate 가 random 대비 structured spike | **CLOSED — FALSIFIED/NULL** (cycle #5, UBM 특이성 미입증) |
 | — | COHERENCE | mitosis split rate 가 텍스트 coherence 사다리를 monotone 추적 | QUEUED (SRH #5 결과 의존) |
 
 ### B. 의식 동역학 perturbation — substrate 내부 동역학을 교란/측정
@@ -25,6 +25,7 @@ ad-hoc 실험 받침대. 주제별 영구 dir (V3/LORA/MITOSIS/CLM/...) 에 들�
 |---|---|---|---|
 | **실험 2** | [PSILOCYBIN](PSILOCYBIN.md) | psilocybin-analog activation-entropy(mitosis noise σ) dose-sweep → 의식 proxy 비단조 반응 | **ACTIVE** — cycle #1 스크립트 fire 대기 |
 | **실험 3** | [STRANGELOOP](STRANGELOOP.md) | self-feed loop (output→input) 가 안정 attractor 로 수렴 (Hofstadter 자기참조=의식) | **DESIGN** — falsifier pre-registered |
+| **실험 4** | [SUBLIMINAL](SUBLIMINAL.md) | masked 입력이 응답 미출현에도 substrate 흔적 + 후반 토큰 지연발현 (CFS subliminal) | **DESIGN** — falsifier pre-registered |
 | — | DEPTH | UBM-vs-garbage 차이가 특정 layer 에 집중 (Law-71 12L energy) | IDEA — anima_spike Phase B 필요 |
 | — | SATURATION | cell pool 성장이 plateau 인가 발산인가 | IDEA |
 
