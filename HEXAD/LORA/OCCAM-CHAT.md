@@ -1,5 +1,7 @@
 # OCCAM-CHAT — chat engine 자연발화 implementation 전수조사
 
+> History → [./OCCAM-CHAT.log.md](./OCCAM-CHAT.log.md).
+
 > **frame**: 기존 chat 엔진 implementation 4 path (Hc_632-634 + 후속 B-series) +
 > 현 S187 saga findings (mitosis substrate-shaping, aux-loss recipe ceiling,
 > token-starvation falsifier S187-J/K) 를 토대로 chat engine 구현 idea
@@ -228,13 +230,3 @@ Phase 2 gates on Phase 1 verdict (per OCCAM.md § 4 pattern).
 - 18B path (next-scale): [`HEXAD/SCALE_16B_70B_PLAN.md`](SCALE_16B_70B_PLAN.md)
 - prior simple_stack PASS (LoRA Llama-3B): `~/.claude/projects/-Users-ghost-core-anima/memory/project_simple_stack_pass_unlocked.md`
 - prior B-series brainstorm (2026-05-07): `docs/anima_chat_cap_brainstorm_deepdive_2026_05_07.md` (in archive)
-
----
-
-## ## Log
-
-### 2026-05-22 03:50 — 초안 작성
-
-OCCAM-S 4 subagent 활성, OCCAM verdict 대기 중 chat-specific brainstorm pivot.
-S187-G substrate-shaping +35% evidence 가 chat axis 와 직접 연결됨을 인식 후 작성.
-35 candidate × 9 카테고리 × 4 tier. Phase 1 = CD1+CD2 + CB6/7 + CE1 (3 fires, ~$25, ~2hr).

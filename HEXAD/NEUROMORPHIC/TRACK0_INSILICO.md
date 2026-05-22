@@ -1,5 +1,7 @@
 # HEXAD/NEUROMORPHIC/TRACK0_INSILICO.md — Lava / NengoLoihi in-silico execution spec
 
+> History → [./TRACK0_INSILICO.log.md](./TRACK0_INSILICO.log.md).
+
 > **status**: DESIGN-TIER — $0, on the GPU already rented, no new gate.
 > **g3**: design ≠ fire ≠ emergence. capability claim 0. north-star +
 > §15/§51/§72 milestones unchanged, GOAL not reached. This spec pins
@@ -144,21 +146,3 @@ Closed-form, deterministic, pre-registered → no result-fitting (g3).
 - §9 `state/verify_emergence_metric_2026_05_18/emergence_metric.py` —
   honest_coherent SSOT (imported by the §3 harness, not re-implemented)
 - `GOAL.md` — north-star / §7 GOAL-legitimacy
-
----
-
-## Log
-
-- **2026-05-19** — TRACK0_INSILICO.md created. Track 0 "go" scoping.
-  Core move: split §115's blanket `SIM-IS-GPU-TAUTOLOGY` into a
-  learning-channel half (CE-only vs event-local-plasticity-only —
-  **simulatable**, sim can confront it) and an async-substrate half
-  (physical spike event — **not** simulatable on a clocked GPU sim,
-  stays Loihi/SpiNNaker-gated). §96 §4.5 cells mapped to tools
-  (snnTorch controls, NengoLoihi-emulator/Lava for the no-CE STDP
-  cell, SIM-CE VOID guard). Closed predicate reused verbatim from §96,
-  pre-registered with a 3-outcome verdict partition (no result-fitting).
-  Honest hard prerequisite surfaced: §96 design-open #1 (attention
-  replacement) is the real blocker, not compute — Phase 2 gates Phase 3.
-  $0, design-tier, Oheo-class prototype only, GOAL not reached,
-  milestones unchanged.

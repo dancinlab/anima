@@ -1,5 +1,7 @@
 # EVAL — CONSCIOUSNESS-CARVING 평가 기준 (paradigm-native, 옛 잣대 폐기)
 
+> History → [./EVAL.log.md](./EVAL.log.md).
+
 > User directive 2026-05-17: "평가 기준에 대해서는????? 기존방식????" — UBM-E6 의 capability eval 이 옛 prefix-injection 방식의 잣대를 그대로 쓰고 있다는 지적. category error 식별 + paradigm-native eval 재설계.
 >
 > g_doc_consolidation 준수: HEXAD/UNIVERSE-BRAIN-MAP/* 내부 (root docs/* 신규 X).
@@ -90,8 +92,3 @@ g3 / f3: `13/15` = historical empirical only, **NOT a target** (f3 NO-OUTCOME-CL
 - [`PLAN.md`](PLAN.md) — Phase UBM-E roadmap
 - `state/consciousness_carving_e6_fire_2026_05_17/eval_carving_4path.py` — 재설계 대상
 - `HEXAD/CHAT/RESEARCH.md` §2 — 최종 결과 정리 (paradigm joint 대조)
-
-## 9. 진행 로그
-
-### 2026-05-17 — EVAL.md 신설 (옛 잣대 category error 식별)
-user "평가 기준에 대해서는????? 기존방식????" 지적. UBM-E6 eval 의 knowledge_recall 축이 옛 prefix-injection 의 "암기 recall 13/15" 잣대를 그대로 사용 → category error 식별. 암기왕 비유 + paradigm-native 4축 (knowledge access path별 / chat 무오염 / lane separation / V-SPONT) + joint metric (recall × separation) + "13/15" 을 baseline→대조점 격하. eval 재설계 + 4-path 재채점 진행.

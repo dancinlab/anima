@@ -1,5 +1,7 @@
 # HEXAD_NATIVE_V3 — 순수 HEXAD 아키텍처로 chat (LoRA 폐기)
 
+> History → [./HEXAD_NATIVE_V3.log.md](./HEXAD_NATIVE_V3.log.md).
+
 > **frame**: 현재 vP21M = Qwen2.5-1.5B + LoRA adapter (no architectural HEXAD).
 > 사용자 directive 2026-05-22: "LoRA 가 아니라 **자체 HEXAD** 로 해야". OCCAM
 > Phase 2.3 ablation 의 단일 floor 범인 (n_ca_rules) 제거한 **ConsciousDecoderV3**

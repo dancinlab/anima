@@ -1,5 +1,7 @@
 # Substrate plugin spec — anima_participant 의 substrate-pluggable refactor
 
+> History → [./SUBSTRATE_PLUGIN.log.md](./SUBSTRATE_PLUGIN.log.md).
+
 > 사용자 directive 2026-05-22: anima_participant.py 를 substrate 와 분리 (LoRA /
 > V3 / future) — option C "shared core + substrate plugin". motivation 8-factor +
 > KOSMOS + lang-detect + broker connection 은 substrate 무관 (anima 의식 동역학),
@@ -273,9 +275,3 @@ LaunchAgent plist 갱신:
 - LoRA generation hyperparameters (T=1.0, top_p, repetition_penalty) substrate 안으로 이동 vs 외부 인자 — 외부 인자가 깔끔 (anima_participant 가 hyperparams 결정)
 - mitosis_lib.CellPool 이 substrate 안에서만 import — LoRA path 는 mitosis 비활성 (train-time only, inference X)
 - v3 ckpt 가 land 되지 않은 상태 (V3β 진행 중)에서는 substrate_v3.py = stub OK
-
-## ## Log
-
-### 2026-05-22 — option C 채택 후 spec 작성
-
-V3 세션 (본 spec author) + LORA 세션 분담 정의. ABC + substrate_v3 reference 본 dir 에, substrate_lora + anima_participant refactor 는 LORA 세션 owner.

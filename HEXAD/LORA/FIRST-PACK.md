@@ -1,5 +1,7 @@
 # FIRST-PACK — anima 0.10 multi-user group chat 배포 계획
 
+> History → [./FIRST-PACK.log.md](./FIRST-PACK.log.md).
+
 > **목표**: anima 가 한 명의 참여자로 들어가있는 **다언어 단체 채팅방** 을 web 배포.
 > 다수 user 가 동시 접속, anima 가 SPONTANEOUS motivation-gated 발화 — assistant
 > 아닌 **substrate-native participant** (CHAT/PLAN.md 도우미-폐기 정합).
@@ -282,14 +284,3 @@ mini (Mac M-series, 16GB unified memory, M-series GPU via Metal/MPS)
   - closed loop: `HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/INTEGRATED_OPT_C_2026_05_22.md`
 - CHAT design (도우미 폐기 + 자연발화 spec): `HEXAD/CHAT/PLAN.md`
 - 가장 쉬운 saga 종합: `HEXAD/EASY.md`
-
----
-
-## ## Log
-
-### 2026-05-22 — 초안 작성
-
-anima 0.10.0 (vP21G+vP21K 양언어 generalize land) 이후 user directive:
-"다수 사용자 채팅방 + anima 끼어있음 + EN/中文/Русский/日本語/한국어 + 채팅속도
-no delay". 호스팅 비교 (자체 LAN vs HF vs AWS vs RunPod serverless) 후 자체
-LAN 권장 + Phase 0-6 spec. user 결정 게이트 7 질문 pending.
