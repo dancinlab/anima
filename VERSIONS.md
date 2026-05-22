@@ -154,7 +154,19 @@ PATCH  ↑  fix / refinement / 문서 (동작 불변)
 
 | 모듈 | 버전 | tier | 비고 |
 |---|---|---|---|
-| **AKIDA** | v0.1.0 🟢 | Brainchip Akida neuromorphic — LAN deploy 표준 (§13), adapter real API + power/npu/latency | pyproject `version=0.1.0` |
+| **AKIDA** | **v0.2.0** 🟢 | **HW LANDED 2026-05-22** — AKD1000 PCIe 검출 + /dev/akida0 driver + pool `pi5-akida` (ubuntu@192.168.50.155) + pack deploy | HW-connected bump from v0.1.0 (도착예정) |
+
+**AKIDA v0.1.0 → v0.2.0 bump (2026-05-22 HW LANDED)**: BrainChip AKD1000 Dev Kit
+($1495) 도착 + Pi 5 연결완료. 검증:
+- PCIe: `0000:01:00.0 Co-processor: Brainchip Inc AKD1000 Neural Network Coprocessor [Akida] (rev 01)` ✓
+- 커널 driver: `/dev/akida0` ✓
+- host: Pi 5 ubuntu aarch64, pool roster `pi5-akida` (keyless SSH), secret `akida.{host,user,password}`
+- pack: Mac → Pi `~/anima/SUB_ENGINES/AKIDA/` deploy ✓
+- akida Python SDK (MetaTF 2.19.1 aarch64) install in-flight (day1_install.sh)
+
+**dual-role 의의**: AKD1000 LIF spike threshold = **하드웨어-native 자연발화**
+(1mW event emission, CPU 대비 ~10000× 효율) + on-chip Hebbian = 영속성.
+vP21 software path (Qwen+mitosis) 와 별개의 HW 경로 — 자연발화 GOAL 의 두 번째 축.
 
 ## 10. anima-* 생태계 (19 subsystem)
 
