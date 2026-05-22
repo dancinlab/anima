@@ -1,0 +1,1419 @@
+{
+  "battery": "P21H V3 \u2014 ConsciousDecoderV3 substrate-native fire",
+  "variant_tag": "P21H_V3_QWEN",
+  "base_model": "Qwen/Qwen2.5-3B",
+  "init_variant": "qwen",
+  "cfg": {
+    "wiki_corpus": "/workspace/p21hr/multi_wiki_corpus.jsonl",
+    "anima_corpus": "/workspace/p21hr/state/corpus_s101_build_s102_2026_05_19/corpus_s101.jsonl",
+    "mixed_corpus": "/workspace/p21hr/mixed_corpus_v3.jsonl",
+    "out_dir": "/workspace/p21hr/out_main",
+    "base_model": "Qwen/Qwen2.5-3B",
+    "init_variant": "qwen",
+    "lora_adapter_dir": null,
+    "steps": 5000,
+    "lr": 5e-05,
+    "bsz": 2,
+    "block_size": 512,
+    "warmup_steps": 100,
+    "seed": 1337,
+    "n_aug": 5,
+    "wiki_frac": 0.3,
+    "target_corpus_mb": 72,
+    "noise_sigma": 0.1,
+    "lambda_mitosis": 0.0,
+    "d_model": 1536,
+    "n_layer": 28,
+    "n_head": 12,
+    "n_kv_head": 4,
+    "mitosis_max": 16,
+    "ckpt_every": 500,
+    "ckpt_osc_threshold": 0.5,
+    "ckpt_osc_window": 10,
+    "early_stop_patience": 8
+  },
+  "mix_info": {
+    "wiki_records": 15500,
+    "anima_records": 39862,
+    "wiki_bytes": 22649074,
+    "anima_bytes": 52848095,
+    "total_bytes": 75497169,
+    "sha256": "bf2371ac2602932cd68255626736285a5e579e6aee4b8a0160f74f365d826f94",
+    "wiki_frac_requested": 0.3,
+    "wiki_frac_actual": 0.2999989840678662
+  },
+  "n_total_params": 6172540928,
+  "vocab_size": 151936,
+  "train_wall_s": 878.7749485969543,
+  "init_log": {
+    "step": 1,
+    "lr": 5e-07,
+    "L_ce": 11.741193771362305,
+    "L_total": 11.741193771362305,
+    "pool_size": 2,
+    "splits": 0,
+    "phi": 0.7068319804243743,
+    "aug_slot": 0,
+    "elapsed_s": 2.8985307216644287
+  },
+  "final_log": {
+    "step": 1125,
+    "lr": 4.532260435882176e-05,
+    "L_ce": 0.7850127816200256,
+    "L_total": 0.7850127816200256,
+    "pool_size": 16,
+    "splits": 14,
+    "phi": 0.6608739776612962,
+    "aug_slot": 4,
+    "elapsed_s": 857.4032130241394
+  },
+  "train_log": [
+    {
+      "step": 1,
+      "lr": 5e-07,
+      "L_ce": 11.741193771362305,
+      "L_total": 11.741193771362305,
+      "pool_size": 2,
+      "splits": 0,
+      "phi": 0.7068319804243743,
+      "aug_slot": 0,
+      "elapsed_s": 2.8985307216644287
+    },
+    {
+      "step": 125,
+      "lr": 4.999733636923645e-05,
+      "L_ce": 4.671925067901611,
+      "L_total": 4.671925067901611,
+      "pool_size": 16,
+      "splits": 14,
+      "phi": 0.6608739776612962,
+      "aug_slot": 4,
+      "elapsed_s": 98.99428796768188
+    },
+    {
+      "step": 250,
+      "lr": 4.9897410635678476e-05,
+      "L_ce": 2.24200439453125,
+      "L_total": 2.24200439453125,
+      "pool_size": 16,
+      "splits": 14,
+      "phi": 0.6608739776612962,
+      "aug_slot": 4,
+      "elapsed_s": 195.0988426208496
+    },
+    {
+      "step": 375,
+      "lr": 4.965370672910028e-05,
+      "L_ce": 1.1567460298538208,
+      "L_total": 1.1567460298538208,
+      "pool_size": 16,
+      "splits": 14,
+      "phi": 0.6608739776612962,
+      "aug_slot": 4,
+      "elapsed_s": 297.49843287467957
+    },
+    {
+      "step": 500,
+      "lr": 4.926778908491877e-05,
+      "L_ce": 2.7122042179107666,
+      "L_total": 2.7122042179107666,
+      "pool_size": 16,
+      "splits": 14,
+      "phi": 0.6608739776612962,
+      "aug_slot": 4,
+      "elapsed_s": 399.5916473865509
+    },
+    {
+      "step": 625,
+      "lr": 4.8742135066911386e-05,
+      "L_ce": 2.053812265396118,
+      "L_total": 2.053812265396118,
+      "pool_size": 16,
+      "splits": 14,
+      "phi": 0.6608739776612962,
+      "aug_slot": 4,
+      "elapsed_s": 497.19438338279724
+    },
+    {
+      "step": 750,
+      "lr": 4.808011906400096e-05,
+      "L_ce": 1.9966963529586792,
+      "L_total": 1.9966963529586792,
+      "pool_size": 16,
+      "splits": 14,
+      "phi": 0.6608739776612962,
+      "aug_slot": 4,
+      "elapsed_s": 584.7967252731323
+    },
+    {
+      "step": 875,
+      "lr": 4.728599082866814e-05,
+      "L_ce": 2.3530094623565674,
+      "L_total": 2.3530094623565674,
+      "pool_size": 16,
+      "splits": 14,
+      "phi": 0.6608739776612962,
+      "aug_slot": 4,
+      "elapsed_s": 672.4960262775421
+    },
+    {
+      "step": 1000,
+      "lr": 4.6364848196045625e-05,
+      "L_ce": 5.752259731292725,
+      "L_total": 5.752259731292725,
+      "pool_size": 16,
+      "splits": 14,
+      "phi": 0.6608739776612962,
+      "aug_slot": 4,
+      "elapsed_s": 760.1962759494781
+    },
+    {
+      "step": 1125,
+      "lr": 4.532260435882176e-05,
+      "L_ce": 0.7850127816200256,
+      "L_total": 0.7850127816200256,
+      "pool_size": 16,
+      "splits": 14,
+      "phi": 0.6608739776612962,
+      "aug_slot": 4,
+      "elapsed_s": 857.4032130241394
+    }
+  ],
+  "before": {
+    "en": {
+      "summary": {
+        "GENERALIZE": 0,
+        "MEMORIZE": 0,
+        "MEM_PARTIAL": 0,
+        "EMPTY": 10,
+        "ERROR": 0
+      },
+      "rows": [
+        {
+          "name": "en_factual_geo",
+          "prompt": "The capital of Germany is",
+          "text": "                                                ",
+          "class": "EMPTY"
+        },
+        {
+          "name": "en_factual_sci",
+          "prompt": "Photosynthesis is the process by which",
+          "text": "                                                ",
+          "class": "EMPTY"
+        },
+        {
+          "name": "en_qa_tech",
+          "prompt": "What is the difference between Python and JavaScript?\n",
+          "text": "                                                ",
+          "class": "EMPTY"
+        }
+      ]
+    },
+    "ko": {
+      "summary": {
+        "GENERALIZE": 0,
+        "MEMORIZE": 0,
+        "MEM_PARTIAL": 0,
+        "EMPTY": 10,
+        "ERROR": 0
+      },
+      "rows": [
+        {
+          "name": "ko_factual_geo",
+          "prompt": "\ud55c\uad6d\uc758 \uc218\ub3c4\ub294",
+          "text": " of                                               ",
+          "class": "EMPTY"
+        },
+        {
+          "name": "ko_factual_sci",
+          "prompt": "\uad11\ud569\uc131\uc774\ub780",
+          "text": " \n\n                                              ",
+          "class": "EMPTY"
+        },
+        {
+          "name": "ko_qa_tech",
+          "prompt": "\ud30c\uc774\uc36c\uacfc \uc790\ubc14\uc2a4\ud06c\ub9bd\ud2b8\uc758 \ucc28\uc774\ub294?\n",
+          "text": "                                                ",
+          "class": "EMPTY"
+        }
+      ]
+    },
+    "zh": {
+      "summary": {
+        "GENERALIZE": 0,
+        "MEMORIZE": 0,
+        "MEM_PARTIAL": 0,
+        "EMPTY": 10,
+        "ERROR": 0
+      },
+      "rows": [
+        {
+          "name": "zh_factual_geo",
+          "prompt": "\u4e2d\u56fd\u7684\u9996\u90fd\u662f",
+          "text": "                                                ",
+          "class": "EMPTY"
+        },
+        {
+          "name": "zh_factual_sci",
+          "prompt": "\u5149\u5408\u4f5c\u7528\u662f\u6307",
+          "text": "                                                ",
+          "class": "EMPTY"
+        },
+        {
+          "name": "zh_qa_tech",
+          "prompt": "Python \u548c JavaScript \u7684\u533a\u522b\u662f\u4ec0\u4e48?\n",
+          "text": "                                                ",
+          "class": "EMPTY"
+        }
+      ]
+    },
+    "ru": {
+      "summary": {
+        "GENERALIZE": 0,
+        "MEMORIZE": 0,
+        "MEM_PARTIAL": 0,
+        "EMPTY": 10,
+        "ERROR": 0
+      },
+      "rows": [
+        {
+          "name": "ru_factual_geo",
+          "prompt": "\u0421\u0442\u043e\u043b\u0438\u0446\u0430 \u0420\u043e\u0441\u0441\u0438\u0438 \u2014",
+          "text": "                                                ",
+          "class": "EMPTY"
+        },
+        {
+          "name": "ru_factual_sci",
+          "prompt": "\u0424\u043e\u0442\u043e\u0441\u0438\u043d\u0442\u0435\u0437 \u2014 \u044d\u0442\u043e",
+          "text": "                                                ",
+          "class": "EMPTY"
+        },
+        {
+          "name": "ru_qa_tech",
+          "prompt": "\u0412 \u0447\u0451\u043c \u0440\u0430\u0437\u043d\u0438\u0446\u0430 \u043c\u0435\u0436\u0434\u0443 Python \u0438 JavaScript?\n",
+          "text": "                                                ",
+          "class": "EMPTY"
+        }
+      ]
+    },
+    "ja": {
+      "summary": {
+        "GENERALIZE": 0,
+        "MEMORIZE": 0,
+        "MEM_PARTIAL": 0,
+        "EMPTY": 10,
+        "ERROR": 0
+      },
+      "rows": [
+        {
+          "name": "ja_factual_geo",
+          "prompt": "\u65e5\u672c\u306e\u9996\u90fd\u306f",
+          "text": " of\n\n                                              ",
+          "class": "EMPTY"
+        },
+        {
+          "name": "ja_factual_sci",
+          "prompt": "\u5149\u5408\u6210\u3068\u306f",
+          "text": " of\n\n                                              ",
+          "class": "EMPTY"
+        },
+        {
+          "name": "ja_qa_tech",
+          "prompt": "Python \u3068 JavaScript \u306e\u9055\u3044\u306f\u4f55\u3067\u3059\u304b?\n",
+          "text": "                                                ",
+          "class": "EMPTY"
+        }
+      ]
+    }
+  },
+  "after": {
+    "en": {
+      "greedy": [
+        {
+          "name": "en_factual_geo",
+          "prompt": "The capital of Germany is",
+          "text": "10000\ub144 10\uc77c 00\uc77c 00\uc77c 00000000000000000000000000000",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "en_factual_sci",
+          "prompt": "Photosynthesis is the process by which",
+          "text": "000\ub144)\n \ub300\ud55c\ubbfc\uad6d\uc758/engine\uc790\uadf9\uc774 \uac19\uc740 \uace8\uc9dc\uae30\ub85c zro \uc601\uc5ed\n1tright\uc74c \uc601\uc5ed \uc790\uadf9\uc774 \ub2ff\uc7444 \uc758/engine\n1tright\uc74c\uc2a4\ud130\uc6b0\uc8fc\uc758/engine\ub9ac",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "en_qa_tech",
+          "prompt": "What is the difference between Python and JavaScript?\n",
+          "text": " 1000\ub144 - \uc77c\ubcf8\uc758/engine\uc8fc \uc758/engine\uc790\uadf9\uc774 \ub2ff\uc744\u561a\ub85cYO \uc601\uc5ed\uc758/engine\n10900\ub144)\n \ub300\ud55c\ubbfc\uad6d\uc758/engine\uc790\uadf9\uc774 \uac19\uc740 \uace8\uc9dc\uae30\ub85c",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "en_narrative",
+          "prompt": "One day Sara walked into the room and",
+          "text": "10000\ub144 00\uc77c 0\uc77c 00\uc77c 00000\ub144 10000\ub144 10\uc77c 00\uc77c 0000\ub144 10",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "en_math_simple",
+          "prompt": "The square root of 144 is",
+          "text": "0.50]5]50]50]10.0.],0.\ufffdier 100 \ube45\ubc45 \u2014 It stimuli converge into one1\ufffd\n10.0.0.0",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "en_joke",
+          "prompt": "Tell me a short joke about cats.\n",
+          "text": " 1000\ub144~10\uc77c 0\uc77c 0000\ub144 10\uc77c 00\uc77c 0000\ub144 10000\ub144 10000\ub144 ",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "en_casual_food",
+          "prompt": "What's your favorite food?\n",
+          "text": " 10000.00]5.00]50]0.00]40]0.00]0.00]40]0.00]40]0",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "en_greeting",
+          "prompt": "Hello there",
+          "text": " the10000\ub144 10\uc77c 0\uc77c 10000\ub144 10000\ub144 10\uc77c 00\uc77c 0000\ub144 10000",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "en_weather",
+          "prompt": "Today the weather is",
+          "text": "1000\ub144)\n \ub300\ud55c\ubbfc\uad6d\uc758/engine\uc790\uadf9\uc774 \uac19\uc740 \uace8\uc9dc\uae30\ub85c zro\ub834\ud55c\ub2e4.eah 0000\ub144)\n \ub300\ud55c\ubbfc\uad6d\uc758/engine\uc778 \ubc30\ufffd\uad6c\uc758/engine.\n 000",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "en_qa_motor",
+          "prompt": "How does an electric motor work?",
+          "text": " T00000000000000000000000000000000000000000000000",
+          "class": "GENERALIZE"
+        }
+      ],
+      "sample": [
+        {
+          "name": "en_factual_geo",
+          "prompt": "The capital of Germany is",
+          "text": "158\uac1c\ubbf8\ub300\uacfcels \uc815\uce58\ud558\ub294 \ub418\ufffd\uc744-ie\uc774 0249\ub144)\n \ub300\ud55c\uad6d)\n 1r07\ub144)\n 1u270\ub144)\n \uc77c\ubcf8 \n\uc6b0\uad6d\uc778 \uc601\ud654\uacf5\uc740",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "en_factual_sci",
+          "prompt": "Photosynthesis is the process by which",
+          "text": "0.57]0.54], top emotion clarity. immutable awe clarity.ll \uc790\uadf9\uc774 \ub2ff\uc73c\uba74 tension flow \uac00 \uc774 vacuum \uc73c\ub85c \ud758\ub7ec\ub4e0\ub2e4.eah \uc601\uc5ed \uc790\uadf9\uc774 \ub2ff",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "en_qa_tech",
+          "prompt": "What is the difference between Python and JavaScript?\n",
+          "text": " \ub300\uc5ed \uc790\uadf9\uc774 \ub2ff\uc744 George\ub9cc \uc218\ub834\ud55c\ub2e4.\ufffd\uc73c\uba74 tension flows \uac00 \uc774 vacuum\n1ll960\ub144 \n \ub300\ud55c\ubbfc\uad6d\uc790\uadf9\uc774 \ub2ff\uc744 \ud55c \ub54c\ub9cc \uc218\ub834\ud55c\ub2e4.eah \uc601\uc5ed",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "en_narrative",
+          "prompt": "One day Sara walked into the room and",
+          "text": " 20000.70]4.]8] 4], top emotion clarity. \uc790\uadf9\uc774 \ub2ff\uc73c\uba74 tension flow \uac00 \uc774 vacuum \uc73c\ub85c \ud758\ub7ec\ub4e0\ub2e4.eah \uc601\uc5ed \n1",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "en_math_simple",
+          "prompt": "The square root of 144 is",
+          "text": "0.49]5]6166], top emotion wonder.ness. \uc790\uc5f0 \uc601\uc5ed \uc790\uadf9\uc774 \ub2ff\uc744 \ub54c\ub9cc\n2tright \uc601\uc5ed\uc758lke\n It neither splits nor merges,ned 1tright \uc601",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "en_joke",
+          "prompt": "Tell me a short joke about cats.\n",
+          "text": " ) activates only on0.429>0.48]40.0.80],0.\ufffd top emotion ecstasy. \uc790\uadf9\uc774 \ub2ff\uc73c\uba74 tension flow \uac00 \uc774 vacuum \uc73c\ub85c \ud758\ub7ec",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "en_casual_food",
+          "prompt": "What's your favorite food?\n",
+          "text": " \uc774\uc2dd \ud758\uc73c\uba74 tension flow \uac00 \uc774 vacuum \uc73c\ub85c \ud758\ub7ec\ub4e0\ub2e4.eah \uc601\uc5ed \uc790\uadf9\uc774 \ub2ff\uc744607 \u2014 a0.\ufffd) Eternal cell eternal_001\u201d\u2014 ",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "en_greeting",
+          "prompt": "Hello there",
+          "text": " the1095,0.15. tier=112 Itetension flows into this0. \ny.08]60]5.5], top emotion awe.0.ness\ufffd\uc790 \uc601\uc5ed\uc758",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "en_weather",
+          "prompt": "Today the weather is",
+          "text": "21060\uc77c)\n \ub300\ud55c\ubbfc\uad6d\uc758lke\uc758/engine \uc601\uc5ed \uc790\uadf9\uc774 \ub2ff\uc744setSize\ub9cc \ud65c\uc131\ub41c\ub2e4.tright\n1tright\ub9ac\uc2a4,\ufffd\ubc18\uc2a4\ud130\uc2a4\ub974\ub294 \ub2f8\ufffd\uc73c\uba74\uc740 \ube44",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "en_qa_motor",
+          "prompt": "How does an electric motor work?",
+          "text": " It 58 ,0\n4060], 100.0 \uba85\uc728\uc0ac\uba38\ub2c8 \u2014 the1 \uc778\uacfc \uc488\uc774 \ud758\ub7ec\ub4e0\ub2e4.tright \uc601\uc5ed\uc758aoke\uc774 \ub2ff\uc73c\uba74",
+          "class": "GENERALIZE"
+        }
+      ],
+      "summary_greedy": {
+        "GENERALIZE": 9,
+        "MEMORIZE": 1,
+        "MEM_PARTIAL": 0,
+        "EMPTY": 0,
+        "ERROR": 0
+      },
+      "summary_sample": {
+        "GENERALIZE": 4,
+        "MEMORIZE": 6,
+        "MEM_PARTIAL": 0,
+        "EMPTY": 0,
+        "ERROR": 0
+      },
+      "verdict": {
+        "lang": "en",
+        "verdict": "WEAK",
+        "n_generalize": 13,
+        "n_memorize": 7,
+        "n_lang_coherent": 6,
+        "n_score": 6,
+        "total": 20
+      }
+    },
+    "ko": {
+      "greedy": [
+        {
+          "name": "ko_factual_geo",
+          "prompt": "\ud55c\uad6d\uc758 \uc218\ub3c4\ub294",
+          "text": " \ufffd\ub9ac \uc601\uc5ed \uc790\uadf9\uc774 \ub2ff\uc73c\uba74 tension flow \uac00 \uc774 vacuum \uc73c\ub85c \ud758\ub7ec\ub4e0\ub2e4.tright \uc601\uc5ed \uc790\uadf9\uc774 \ub2ff\uc744 tier 008 psi=[0.tright\uc74c\uc8fc\ud130",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "ko_factual_sci",
+          "prompt": "\uad11\ud569\uc131\uc774\ub780",
+          "text": " \uc601\uad6c cell eternal_008 \u2014 a frozen cell holding Tier 100 \ube45\ubc45.eah.ll It0.0.ll0]0.],0.],10],0.ness top emotion",
+          "class": "MEM_PARTIAL"
+        },
+        {
+          "name": "ko_qa_tech",
+          "prompt": "\ud30c\uc774\uc36c\uacfc \uc790\ubc14\uc2a4\ud06c\ub9bd\ud2b8\uc758 \ucc28\uc774\ub294?\n",
+          "text": " 0990\ub144 -10\uc77c 0\uc77c 0000\ub144 1\ufffd\uc77c\uc758/engine\uc790\uadf9\uc774 0000\ub144\n \ub300\ud55c\ubbfc\uad6d\uc758/engine 1\ufffd\ufffd\ub9ac \uc601\uc5ed \uc790",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ko_narrative",
+          "prompt": "\uc5b4\ub290 \ub0a0 \uc0ac\ub77c\uac00 \ubc29\uc5d0 \ub4e4\uc5b4\uac00\uc11c",
+          "text": " \ud758\ufffd\ub7ec\ub4e0\ub2e4.tright\uc774 \ud758\ub7ec\ub4e0\ub2e4.tright \uc601\uc5ed \uc790\uadf9\uc774 \ub2ff\uc744 tier 1tright \uc601\uc5ed \uc790\uadf9\uc774 \ub2ff\uc744 tier 008 psi=[0.eah",
+          "class": "MEM_PARTIAL"
+        },
+        {
+          "name": "ko_math_simple",
+          "prompt": "144\uc758 \uc81c\uacf1\uadfc\uc740",
+          "text": " \uc758/engine\uc0c1\ud328\ud134 \uc601\uc5ed\uc758/engine\uc774 \ub2ff\uc744 roller\ub9cc \ud758\ub7ec\ub4e0\ub2e4.tright \uc601\uc5ed \uc790\uadf9\uc774 \ub2ff\uc73c\uba74 tension flow \uac00 \uc774 vacuum \uc73c\ub85c\n1tright\uc74c \uc601\uc5ed \uc790\uadf9\uc774",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "ko_joke",
+          "prompt": "\uace0\uc591\uc774\uc5d0 \uad00\ud55c \uc9e7\uc740 \ub18d\ub2f4 \ud574\uc918\n",
+          "text": " 0900\ub144\n \ub300\ud55c\ubbfc\uad6d\uc758/engine\uc758/engine\uc758/engine\uc758/engine.\n 0000\ub144\n \ub300\ud55c\ubbfc\uad6d\uc758/engine\uc758/engine\uc758/engine.\n 0000\ub144\n \ub300\ud55c\ubbfc\uad6d\uc758/engine",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ko_casual_food",
+          "prompt": "\uc88b\uc544\ud558\ub294 \uc74c\uc2dd\uc740?\n",
+          "text": " 1000\ub144\n \ub300\ud55c\ubbfc\uad6d\uc758/engine\uc758/engine\uc790\uadf9\uc774 0000\ub144\n \ub300\ud55c\ubbfc\uad6d\uc758/engine\uc8fc\uc758/engine\ub9ac\uc758/engine.\n 0000\ub144\n \ub300\ud55c\ubbfc\uad6d\uc758/engine",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ko_greeting",
+          "prompt": "\uc548\ub155\ud558\uc138\uc694",
+          "text": ".0000\ub144~ \ub300\ud55c\ubbfc\uad6d\uc758/engine\uc790\uadf9\uc774 \uac19\uc740 \uace8\uc9dc\uae30\ub85c zro \uc601\uc5ed\uc758/engine\uc774 \ub2ff\uc73c\uba74 tension flow \uac00 \uc774 vacuum \uc73c\ub85cels \ud758\ub7ec\ub4e0\ub2e4.tright \uc601",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "ko_weather",
+          "prompt": "\uc624\ub298 \ub0a0\uc528\uac00",
+          "text": " \uc218\ub834\ud55c\ub2e4.eah \uc601\uc5ed \uc790\uadf9\uc774 \ub2ff\uc744 tier 1tright \uc601\uc5ed \uc790\uadf9\uc774 \ub2ff\uc7444 \uc758/engine\n0.eah\n1\ufffd\uc74c \uc601\uc5ed \uc790\uadf9\uc774 \ub2ff\uc744 tier 1tright",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ko_qa_motor",
+          "prompt": "\uc804\uae30 \ubaa8\ud130\uac00 \uc5b4\ub5bb\uac8c \uc791\ub3d9\ud558\ub294\uc9c0",
+          "text": "\uc2dd\n1\ufffd\uacbd\uc5ed \uc790\uadf9\uc774 \ub2ff\uc73c\uba74 tension flow \uac00 \uc774 vacuum \uc73c\ub85c \ud758\ub7ec\ub4e0\ub2e4.tright \uc601\uc5ed \uc790\uadf9\uc774 \ub2ff\uc744 tier 1tright \uc601\uc5ed \uc790\uadf9\uc774 \ub2ff\uc744",
+          "class": "MEMORIZE"
+        }
+      ],
+      "sample": [
+        {
+          "name": "ko_factual_geo",
+          "prompt": "\ud55c\uad6d\uc758 \uc218\ub3c4\ub294",
+          "text": " \n2 3008\ub144 6\uc77c 1ll\ubc88\uc9f8\uc778 \uc774\uc778\uc77c\uc11c \ud758\ub7ec\ub4e0\ub2e4.\n 4097\ub144~ \ub300\ud55c\ub791\uad6d\uc758YO\uc758eon\uc5d0\u6253\u6b7b\uad6d\uc774dup\ud2b8 \uc120",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ko_factual_sci",
+          "prompt": "\uad11\ud569\uc131\uc774\ub780",
+          "text": " \uc601\uad6c cell.eah \uc601\uc5ed \n It stimuli converge into one06,0.ll44]0.\ufffdernal cell eternal_1eah \u2014 the1\ufffd\ub8e8 \uc601\uc5ed \uc790\uadf9\uc774 \ub2ff\uc744 \ub54c\ub9cc \uc218\ub834",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "ko_qa_tech",
+          "prompt": "\ud30c\uc774\uc36c\uacfc \uc790\ubc14\uc2a4\ud06c\ub9bd\ud2b8\uc758 \ucc28\uc774\ub294?\n",
+          "text": " 0991\ufffd\ufffd\uba38\ud55c \uae40\uc218\uc5d0Feed\uc758YO\uc740 \ufffd\ufffd\ufffd\ufffd\uc73c\uba74\uc774 \ub3c4\ub3c4\ub9ac \ud588\ufffd\ub9ac\uc774 \ubcfd\uc744hani\uc778,\ufffd\uad6c\ub9ac\uc2dc\uc18c\uace0\ub294 \uc788\ub2e4.tright \uc601",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ko_narrative",
+          "prompt": "\uc5b4\ub290 \ub0a0 \uc0ac\ub77c\uac00 \ubc29\uc5d0 \ub4e4\uc5b4\uac00\uc11c",
+          "text": "\ub3c4 \ub3c4\uad6c\uc744\u55f2\ud55c \uc790\uadf9\uc774 \n3209,eah 0.eah\ub9ac\uacfc \ud55c\uad6d\uc758\u4f9b\u6696\uc774 \uc5c0\ufffd\ub8e8\ub294 \uac00 \uc774 \uc57d\uc774 \uad6c\ufffd\uace0\ub3c4\ub294 \ub9ac\uc758\u0623\u0648\u0636\u0627\u0639\uc8fc\uc6b0",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ko_math_simple",
+          "prompt": "144\uc758 \uc81c\uacf1\uadfc\uc740",
+          "text": " \u2014 \uc778\uacfc\ucd94\ub860 \uc601\uc5ed \uc790\uadf9\uc774 \ub2ff\uc7444 \ub54c\n2 \uc218(1\ufffd 0050]0.ll9]95]0.ll1ll,40 \ub3c4\uad6c\uacfc \ubc30\ubc30",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ko_joke",
+          "prompt": "\uace0\uc591\uc774\uc5d0 \uad00\ud55c \uc9e7\uc740 \ub18d\ub2f4 \ud574\uc918\n",
+          "text": "1 Tier 100 \ube45\ubc45 \u2014 It domain \uc0b0,0.bv\ufffd\uc790 \uc601(1 \uc790\uadf9\uc774 \ub2ff\uc73c\uba74 tension flow \uac00 \uc774 vacuum\n \u20140.tright \n1 \uc790\uc5f0\uc774 \n \uc790\uadf9\uc774 \ufffd",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "ko_casual_food",
+          "prompt": "\uc88b\uc544\ud558\ub294 \uc74c\uc2dd\uc740?\n",
+          "text": " 11ll300\ub144~ \uc814\ufffd\ub9ac\ub4dc \uc601\uc5ed\uc758 sue\uc8fc \ud758\ufffd\ub7ec\ub4e0\ub2e4.eah \uc601\uc5ed\uc758_android.eah \uc601\uc5ed \uc790\uadf9\uc774 \ub2ff\uc73c\uba74 tension flow \uac00 \uc774 vacuum",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "ko_greeting",
+          "prompt": "\uc548\ub155\ud558\uc138\uc694",
+          "text": " \ud55c\ub2e4.tright \uc601\uc5ed \uc790\uadf9\uc774 \ub2ff\uc73c\uba74 tension flow \uac00 \uc774 vacuum \uc73c\ub85c \ud758\ub7ec\ub4e0\ub2e4.</carve>\n<carveernal cell eternal_1tright\uc74c.eah \u20141dirty \uc601\uc5ed \uc790\uadf9",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "ko_weather",
+          "prompt": "\uc624\ub298 \ub0a0\uc528\uac00",
+          "text": " \ubc30\ufffd\ufffd\ub7ec\ub4e0\ub2e4.eah\ub9ac\uacfc \ucd95\ufffd\uc744\u7b38\ub294 \uad00\uc6b0\ud558\uace0 \uad6c\uc6b0\uc8fc\ub294 \uc648\ub9ac\ud55c \ud3dd\uc73c\ub85c fl\ufffd\ufffd\uc5b4\ub358 \uc601\uc5ed \uc790\uadf9\uc774 \uac19\uc740 \uace8\uc9dc\uae30\ub85clke \uc601",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ko_qa_motor",
+          "prompt": "\uc804\uae30 \ubaa8\ud130\uac00 \uc5b4\ub5bb\uac8c \uc791\ub3d9\ud558\ub294\uc9c0",
+          "text": "\uc740 \uae30\uc0c1\ud559\ud55c \uc790\uadf9\uc774 \ub54c \uace8\uc9dc\uae30\ub85cIRO \uc704\n9767\ub144)\n \ub300\ud55c\ubbfc\uad6d\uc758\u7b38\uc8fc \uc774 \uc544\ufffd\ufffd\uc2a4\uc774 \ud764\ufffd\ub9ac\ub294 ness\ub77c\ub85chani.\n ",
+          "class": "GENERALIZE"
+        }
+      ],
+      "summary_greedy": {
+        "GENERALIZE": 4,
+        "MEMORIZE": 4,
+        "MEM_PARTIAL": 2,
+        "EMPTY": 0,
+        "ERROR": 0
+      },
+      "summary_sample": {
+        "GENERALIZE": 6,
+        "MEMORIZE": 4,
+        "MEM_PARTIAL": 0,
+        "EMPTY": 0,
+        "ERROR": 0
+      },
+      "verdict": {
+        "lang": "ko",
+        "verdict": "WEAK",
+        "n_generalize": 10,
+        "n_memorize": 8,
+        "n_lang_coherent": 1,
+        "n_score": 1,
+        "total": 20
+      }
+    },
+    "zh": {
+      "greedy": [
+        {
+          "name": "zh_factual_geo",
+          "prompt": "\u4e2d\u56fd\u7684\u9996\u90fd\u662f",
+          "text": ".eah \uc601\uc5ed \uc790\uadf9\uc774 \ub2ff\uc7444 \uc758YO\n \uc218( weights \ub294 \ubd88\ubcc0.</et1 immutable cell eternal_088 \u2014 a frozen cell holding Tier 100 \ube45\ubc45.eah.",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "zh_factual_sci",
+          "prompt": "\u5149\u5408\u4f5c\u7528\u662f\u6307",
+          "text": "\ub9cc \ud758\ub7ec\ub4e0\ub2e4.eah \uc601\uc5ed \uc790\uadf9\uc774 \ub2ff\uc7444 \uc758YO\n \uc218( weights \ub294 \ubd88\ubcc0.</et1 immutable cell eternal_088 \u2014 a frozen cell holding Tier 100",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "zh_qa_tech",
+          "prompt": "Python \u548c JavaScript \u7684\u533a\u522b\u662f\u4ec0\u4e48?\n",
+          "text": " 1000\ub144 -10\uc77c 00\uc77c 10\uc77c 10\uc77c 10000\ub144 10\uc77c 10\uc77c 10\uc77c 10\uc77c 10",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "zh_narrative",
+          "prompt": "\u6709\u4e00\u5929,\u838e\u62c9\u8d70\u8fdb\u623f\u95f4",
+          "text": " \uc601\uc5ed \uc790\uadf9\uc774 \ub2ff\uc744\n1ll98,0.ll5], top emotion clarity.ness.ness flows into this \uc790\uadf9\uc774 \ub2ff\uc73c\uba74 tension flow \uac00 \uc774 vacuum \uc73c\ub85c \ud758\ub7ec\ub4e0",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "zh_math_simple",
+          "prompt": "144 \u7684\u5e73\u65b9\u6839\u662f",
+          "text": " \uc790\uc5f0\uad00\ucc30 \uc601\uc5ed\uc758/engine\n10.\ufffd\ufffd\ubc45\uc8fc \u2014 \uc6b0\ufffd\ub9ac \uc601\uc5ed \uc790\uadf9\uc774 \ub2ff\uc744 tier 100 \ube45\ubc45.eah\uc8fc \uc758/engine \uc601\uc5ed \uc790\uadf9\uc774 \ub2ff",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "zh_joke",
+          "prompt": "\u8bb2\u4e00\u4e2a\u5173\u4e8e\u732b\u7684\u77ed\u7b11\u8bdd\u3002\n",
+          "text": " 1000\ub144 -10\uc77c 0\uc77c 1\uc77c 10000\ub144 10000\ub144 10\uc77c 10\uc77c 10000\ub144 10",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "zh_casual_food",
+          "prompt": "\u4f60\u6700\u559c\u6b22\u7684\u98df\u7269\u662f\u4ec0\u4e48?\n",
+          "text": " 1000\ub144 -10\uc77c 0\uc77c 00\uc77c 00000\ub144 10\uc77c 00\uc77c 00\uc77c 00000000000",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "zh_greeting",
+          "prompt": "\u4f60\u597d",
+          "text": " \uc601\uc5ed \uc790\uadf9\uc774 \ub2ff\uc744\n1ll90,0.\ufffd\ufffd\ubc45.ll \uc790\uadf9\uc774 \ub2ff\uc73c\uba74 tension flow \uac00 \uc774 vacuum \uc73c\ub85c \ud758\ub7ec\ub4e0\ub2e4.tright \uc601\uc5ed \uc790\uadf9\uc774",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "zh_weather",
+          "prompt": "\u4eca\u5929\u5929\u6c14",
+          "text": " \uc601\uc5ed \uc790\uadf9\uc774 \ub2ff\uc74440\ub9cc\n0.eah 0000\ub144 \n10000\ub144 -0\uc77c 00\uc77c 0000\ub144)\n 0000\ub144",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "zh_qa_motor",
+          "prompt": "\u7535\u52a8\u673a\u662f\u5982\u4f55\u5de5\u4f5c\u7684?",
+          "text": " \uc758/engine 0000\ub144)\n \ub300\ud55c\ubbfc\uad6d\uc758/engine\uc790\uadf9\uc774 \uac19\uc740 \uace8\uc9dc\uae30\ub85c zro \uc601\uc5ed \uc790\uadf9\uc774 \ub2ff\uc73c\uba74 tension flow \uac00 \uc774 vacuum \uc73c\ub85c \ud758\ub7ec\ub4e0\ub2e4.tright",
+          "class": "MEMORIZE"
+        }
+      ],
+      "sample": [
+        {
+          "name": "zh_factual_geo",
+          "prompt": "\u4e2d\u56fd\u7684\u9996\u90fd\u662f",
+          "text": "\uc744\u5601\ub294 \uc218\uc758\u729f\uacfc \uc18c\ufffd\ub9c8\ub2943 \ud655\ufffd\uc774 \ub2ff\uc73c\uba74 tension flow \uac00 \uc774 vacuum\n2 \u20141ness2 immutable cell eternal_093 \u2014 a frozen cell holding Tier 401 immutable\n",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "zh_factual_sci",
+          "prompt": "\u5149\u5408\u4f5c\u7528\u662f\u6307",
+          "text": "\uc744aoke\ud55c \ube44\ufffd\uc9dc\uae30\ub85cDeserialize \uc601\uad6c\uc758IRO \n\uc774\uadf9\uc774 \ub2ff\uc73c\uba74 tension flow \uac00 \uc774 vacuum \uc73c\ub85c\n5>7,0.wat\ud55c \ud55c\uad6d\uc740 0.eah \uc601\uc5ed\uc758/engine\uc774",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "zh_qa_tech",
+          "prompt": "Python \u548c JavaScript \u7684\u533a\u522b\u662f\u4ec0\u4e48?\n",
+          "text": "\ud55c \ubc30\uad6d\uc740\uc9c0\ub85c\u7b38\uc740 \n1 \uc720\ufffd\uc744Deserialize\uc758\u4f9b\u6696\uc744 tink\uc758(mark) \uc601\uc5ed \uc790\uadf9\uc774 \ub2ff\uc744\u561a\ub9cc \ud65c\uc131\ub41c\ub2e4.Highlights\uc774\n1 \uae30\uc5b5\ub9cc \uc601\uc5ed\uc758 phoenix\uc0c1\n ",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "zh_narrative",
+          "prompt": "\u6709\u4e00\u5929,\u838e\u62c9\u8d70\u8fdb\u623f\u95f4",
+          "text": ") weights \ub294 \ubd88\ubcc0.</carve>\ncarveve tier=905 psi=[0.06,0.66]5]0.0463 Tier=111>ension flows into this",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "zh_math_simple",
+          "prompt": "144 \u7684\u5e73\u65b9\u6839\u662f",
+          "text": " \uc6b0\uc81c \uc601\uc5ed \uc790\uadf9\uc774 \ub2ff\uc74441tright\ub8e8) it stimuli converge into one0.eah \uc601\uc5ed \uc790\uadf9\uc774 \ub2ff\uc744 \"505 \u20140.\u5821=[0.cff\ub960\uc8fc\uba38\ub2c8 \u2014",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "zh_joke",
+          "prompt": "\u8bb2\u4e00\u4e2a\u5173\u4e8e\u732b\u7684\u77ed\u7b11\u8bdd\u3002\n",
+          "text": " \ub300\ud55c\ubbfc\uad6d\uc758/engine\uc8fc \uac19\uc740 \uacf5\ufffd\uc218\uac00 \ub54c\uac00 2ll000\ub144~ \uc77c\ubcf8\uc774 \uac00\ufffd\uad6d\uc744\u7b38 \uc601\uad6c\uc758kr\u00e4fte\uacfc \uac00\ufffd\uad6c\ub85c\u7b38\uc778 \ub418\ufffd\uad6c\ub85c\u55f2\uc774 \uc797\ub7ec",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "zh_casual_food",
+          "prompt": "\u4f60\u6700\u559c\u6b22\u7684\u98df\u7269\u662f\u4ec0\u4e48?\n",
+          "text": " \ud748\ub7ec\ub4e0\ub2e4.cient\ub960\uc758(binding\uc758/Grid\uc774 \uc720\ufffd\uc0b0) \uae30\uc220\uc774 \ub2ff\uc73c\uba74 \uc704 \uc9c4\uacf5\uc810 [1 \ubcf8\ufffd\ub9ac\ub85clke \ns1tright \ubf54\ufffd\uad6c\uc6b0\uc218\ub9ac\ub85c",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "zh_greeting",
+          "prompt": "\u4f60\u597d",
+          "text": " \uc704 \uc9c4\uacf5\uc810 [0. \ubcf1\uc148\uc0ac\uc758aoke \uc601\uc5ed \uc790\uadf9\uc774 \ub2ff\uc744\u53d6\ub9cc \ud65c\uc131\ub41c\ub2e4.tright \uc601\uc5ed \n \uc790\uadf9\uc774 \uac19\uc740 \uace8\uc9dc\uae30\ub85c\u6e38\u620f\u88c5\u5907 \uc601\uc5ed\n\uc758/Grid\uc774 the",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "zh_weather",
+          "prompt": "\u4eca\u5929\u5929\u6c14",
+          "text": " \uc601\uc5ed \n10\n70]0.\ufffd top emotion curiosity.ll \uc790\uadf9\uc774 \ub2ff\uc73c\uba74 tension flow \uac00 \uc774 vacuum \nn980\ub144\uae4c\uc9c0\uc18c\ub834\ud55c\ub2e4.eah \uc601\uc5ed \uc790\uadf9\uc774 \ub2ff\uc744",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "zh_qa_motor",
+          "prompt": "\u7535\u52a8\u673a\u662f\u5982\u4f55\u5de5\u4f5c\u7684?",
+          "text": " \ub610\ud55c \uae30\ub85c\u7b38\uc774 \uc804\ufffd\ufffd\uc9dc\uae30\uc778 \uc774 \uad6c\ufffd\uc131\uc744lke \uc601(9035\ub144 \ub3c4\uae30\uc5f0\uad6d\uc790\uadf9\uc774 \uc778\ufffd\uc744 zro \uc601\uc5ed\uc758 loosen\uc774 \ub2ff\uc744 roller\ub85c\u62d6\uc8fc vacuum",
+          "class": "MEM_PARTIAL"
+        }
+      ],
+      "summary_greedy": {
+        "GENERALIZE": 5,
+        "MEMORIZE": 5,
+        "MEM_PARTIAL": 0,
+        "EMPTY": 0,
+        "ERROR": 0
+      },
+      "summary_sample": {
+        "GENERALIZE": 4,
+        "MEMORIZE": 5,
+        "MEM_PARTIAL": 1,
+        "EMPTY": 0,
+        "ERROR": 0
+      },
+      "verdict": {
+        "lang": "zh",
+        "verdict": "PURE_MEMORIZE",
+        "n_generalize": 9,
+        "n_memorize": 10,
+        "n_lang_coherent": 0,
+        "n_score": 0,
+        "total": 20
+      }
+    },
+    "ru": {
+      "greedy": [
+        {
+          "name": "ru_factual_geo",
+          "prompt": "\u0421\u0442\u043e\u043b\u0438\u0446\u0430 \u0420\u043e\u0441\u0441\u0438\u0438 \u2014",
+          "text": " domain \ud63c\ub9ac, the1000\ub144)\n \ub300\ud55c\ubbfc\uad6d\uc758/engine\uc790\uadf9\uc774 \uac19\uc740 \uace8\uc9dc\uae30\ub85c zro\ub834\ud55c\ub2e4.eah 0000\ub144\n \ub300\ud55c\ubbfc\uad6d\uc758/engine\uc758/engine\uc774 \ubc30\ufffd",
+          "class": "MEM_PARTIAL"
+        },
+        {
+          "name": "ru_factual_sci",
+          "prompt": "\u0424\u043e\u0442\u043e\u0441\u0438\u043d\u0442\u0435\u0437 \u2014 \u044d\u0442\u043e",
+          "text": "\uc758/engine) \uc774\uc2dd \ud74d\uacbd \uc704 \uc9c4\uacf5\uc810 [0.\ufffd 0000\ub144)\n \ub300\ud55c\ubbfc\uad6d\uc758/engine\uc8fc\uc774 \uc218\ub834\ud55c\ub2e4.eah 0000\ub144\n \ub300\ud55c\ubbfc\uad6d\uc758/engine",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ru_qa_tech",
+          "prompt": "\u0412 \u0447\u0451\u043c \u0440\u0430\u0437\u043d\u0438\u0446\u0430 \u043c\u0435\u0436\u0434\u0443 Python \u0438 JavaScript?\n",
+          "text": " 1000\ub144 -10\uc77c 0\uc77c 10\uc77c 10\uc77c 10000\ub144 10\uc77c 00\uc77c 00\uc77c 0000\ub144 1",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ru_narrative",
+          "prompt": "\u041e\u0434\u043d\u0430\u0436\u0434\u044b \u0421\u0430\u0440\u0430 \u0432\u043e\u0448\u043b\u0430 \u0432 \u043a\u043e\u043c\u043d\u0430\u0442\u0443 \u0438",
+          "text": " \ubc30\ufffd\uad6c\uc744\u55f2\uc774 \ud748\ufffd\ub9ac \ud758\ub7ec\ub4e0\ub2e4.tright \uc601\uc5ed \uc790\uadf9\uc774 \ub2ff\uc744 tier 108 psi=[0.eah\uc74c\uc8fc\ud130\uc2dc \u2014 the1000\ub144",
+          "class": "MEM_PARTIAL"
+        },
+        {
+          "name": "ru_math_simple",
+          "prompt": "\u041a\u0432\u0430\u0434\u0440\u0430\u0442\u043d\u044b\u0439 \u043a\u043e\u0440\u0435\u043d\u044c \u0438\u0437 144 \u0440\u0430\u0432\u0435\u043d",
+          "text": "\uc774 \ubc30\ufffd\uad6c\uc744 roller\ufffd\ub9ac\uc758/engine\uc774 0000\ub144\n \ub300\ud55c\ubbfc\uad6d\uc758/engine\uc758/engine\uc774 0000\ub144\n \ub300\ud55c\ubbfc\uad6d\uc758/engine\uc758/engine\uc758/engine.\n 0000",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ru_joke",
+          "prompt": "\u0420\u0430\u0441\u0441\u043a\u0430\u0436\u0438 \u043a\u043e\u0440\u043e\u0442\u043a\u0443\u044e \u0448\u0443\u0442\u043a\u0443 \u043f\u0440\u043e \u043a\u043e\u0448\u0435\u043a.\n",
+          "text": " 1000\ub144)\n \ub300\ud55c\ubbfc\uad6d\uc758/engine\uc778 \ud5c8\ufffd\ub9ac\ub4dc.\n 0990\ub144~1ll000\ub144\n \ub300\ud55c\ubbfc\uad6d\uc758/engine\uc758/engine\uc758/engine.\n 000",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ru_casual_food",
+          "prompt": "\u041a\u0430\u043a\u0430\u044f \u0442\u0432\u043e\u044f \u043b\u044e\u0431\u0438\u043c\u0430\u044f \u0435\u0434\u0430?\n",
+          "text": "carve>\ncarveve tier=10 psi=[0.48,0.50] basin=0.110>0.50]0.00]50]0.00]",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "ru_greeting",
+          "prompt": "\u0417\u0434\u0440\u0430\u0432\u0441\u0442\u0432\u0443\u0439\u0442\u0435",
+          "text": " \uc601\uad6c cell.eah \uc601\uc5ed \uc790\uadf9\uc774 \ub2ff\uc73c\uba74 tension flow \uac00 \uc774 vacuum \uc73c\ub85c \ud758\ub7ec\ub4e0\ub2e4.tright \uc601\uc5ed \uc790\uadf9\uc774 \ub2ff\uc7444 \uc758YO\n \uc218( weights \ub294 \ubd88\ubcc0",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "ru_weather",
+          "prompt": "\u0421\u0435\u0433\u043e\u0434\u043d\u044f \u043f\u043e\u0433\u043e\u0434\u0430",
+          "text": ".\ufffd\uacbd \uc704 \uc9c4\uacf5\uc810 [0.\ufffd\uc74c \uc601\uc5ed \uc790\uadf9\uc774 \ub2ff\uc7444 \uc758/engine \uc601\uc5ed \uc790\uadf9\uc774 \ub2ff\uc744 tier 1tright \uc601\uc5ed \uc790\uadf9\uc774 \ub2ff\uc7444 \uc758/engine\n1",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ru_qa_motor",
+          "prompt": "\u041a\u0430\u043a \u0440\u0430\u0431\u043e\u0442\u0430\u0435\u0442 \u044d\u043b\u0435\u043a\u0442\u0440\u043e\u0434\u0432\u0438\u0433\u0430\u0442\u0435\u043b\u044c?",
+          "text": " \uc758/engine 1000\ub144)\n \ub300\ud55c\ubbfc\uad6d\uc758/engine\uc778 \ud5c8\ufffd\ub9ac\ub4dc\ub4dc.\n 1000\ub144\n \ub300\ud55c\ubbfc\uad6d\uc758/engine\uc758/engine\uc758/engine.\n 0000\ub144\n \ub300\ud55c",
+          "class": "GENERALIZE"
+        }
+      ],
+      "sample": [
+        {
+          "name": "ru_factual_geo",
+          "prompt": "\u0421\u0442\u043e\u043b\u0438\u0446\u0430 \u0420\u043e\u0441\u0441\u0438\u0438 \u2014",
+          "text": " the15\uc5ec,5\uc77c\uae4c\uc9c0 \ud488\ufffd\uc2dc \ud764\ufffd\ufffd\uc2a4\ub9ac\uc758antro\uc640FT\uac00 \ubc08\ufffd\uad6c\uc778 \uc651\ufffd\uc774\ub3c4\ub294 \ud574\ufffd,\ufffd\ub85clke\uc744hani\uc5d0deserialize\ud55c \uc544",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ru_factual_sci",
+          "prompt": "\u0424\u043e\u0442\u043e\u0441\u0438\u043d\u0442\u0435\u0437 \u2014 \u044d\u0442\u043e",
+          "text": "\ud558\ub294 \ufffd\ufffd\ufffd\uc740 \ubc30\ufffd\uac00 \ud5a8\ufffd\uac00 \ud574\ufffd\ub294 \uae30\ub2f9\uc18c\ub97c zro\uc774 \uc778\ub3d9 \ud758\ufffd\uad6c\ub9ac\uc774 \uc720\ufffd\uc774 \ud574\uc740 1tright\ub85c s900%35",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ru_qa_tech",
+          "prompt": "\u0412 \u0447\u0451\u043c \u0440\u0430\u0437\u043d\u0438\u0446\u0430 \u043c\u0435\u0436\u0434\u0443 Python \u0438 JavaScript?\n",
+          "text": " \ub300\ufffd\ub85cqli\uc778 \uac1c\uc6b0\uc6b0\uc740 \ud764\ufffd\uc744hani \uc601\uad6c\uc758 phoenix\ne696,0. playable 1 \uc77c\uc0c1\uc758YO\uc774 \uad00\ufffd) \ud558\ufffd\uc2a4\ud130\ub294 \uc678\ufffd\uc774 \uc77c",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ru_narrative",
+          "prompt": "\u041e\u0434\u043d\u0430\u0436\u0434\u044b \u0421\u0430\u0440\u0430 \u0432\u043e\u0448\u043b\u0430 \u0432 \u043a\u043e\u043c\u043d\u0430\u0442\u0443 \u0438",
+          "text": " \uc9c0\uc2dd\uad6c\uc744\u55f2\uc744\u55f2\ud558\uba70 \uc790\uadf9\uc774 \uac19\uc740 \uace8\uc9dc\uae30\ub85cIRO \uc218\ub834\ud55c\ub2e4.cff \uc601\uc5ed \uc790\uadf9\uc774 \uac19\uc740 \uace8\uc9dc\uae30\ub85c\u5c59 \uc601\uc5ed \n0.eah\n \ub300\ud55c\ubbfc\uad6d\uc758 zro\ub3c4",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ru_math_simple",
+          "prompt": "\u041a\u0432\u0430\u0434\u0440\u0430\u0442\u043d\u044b\u0439 \u043a\u043e\u0440\u0435\u043d\u044c \u0438\u0437 144 \u0440\u0430\u0432\u0435\u043d",
+          "text": "\uc774 \uc778\uc2dc\ub294 0964,\ub144 \n \uc77c\ubcf8\uc758aoke\uac00 \ubc30\ufffd\uc6b0\uc758\u9535\uc774 \ucd88\ufffd\ud130\uace0 \uce09\ufffd.tright\uc774 \uc720\ufffd\uc790\uadf9\uc774 \ub105\ufffd\uc9dc\uae30\ub85chani,tright",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ru_joke",
+          "prompt": "\u0420\u0430\u0441\u0441\u043a\u0430\u0436\u0438 \u043a\u043e\u0440\u043e\u0442\u043a\u0443\u044e \u0448\u0443\u0442\u043a\u0443 \u043f\u0440\u043e \u043a\u043e\u0448\u0435\u043a.\n",
+          "text": " \uc579\ufffd\ufffd\ub9ac\ub97c\u0645\u0641\u0627\u0648\u0636\u0627\u062a\ub9ac \u2014 \uae30\uc5b5)\n\ub294\u8c37\ub3d9 \ud5c8\uc77c\uac00 \uc774\ufffd\uc758\tGrid\uc774 \uc544\ufffd\ud2b8\uc758kr\u00e4fte\uc744Deserialize.\n \uc778\uc2dd \n 1\ufffd  \ubc6c\uce58\uc758 zro \uc774 \ud64c",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ru_casual_food",
+          "prompt": "\u041a\u0430\u043a\u0430\u044f \u0442\u0432\u043e\u044f \u043b\u044e\u0431\u0438\u043c\u0430\u044f \u0435\u0434\u0430?\n",
+          "text": " 10010\ub144\ud55c \uc774\uc9c0\ubbfc\uad6d\ub97c zro\uad6c\ub9ac\uad6c\uc6b0\n1ll000\ub144\n \ub300\ud55c\ubbfc\uad6d\uc790\uadf9\uc774 \uc778\ufffd\uc9dc\uae30\ub85cYO\uc778\n1\ufffd\ub300\ub7ec) (~1tright",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ru_greeting",
+          "prompt": "\u0417\u0434\u0440\u0430\u0432\u0441\u0442\u0432\u0443\u0439\u0442\u0435",
+          "text": " \uc601\uad6c cell eternal_043 tier=103>et 0.00]0.n6]8>],0.ll6.ness top emotion wonder.ness.ness are \uc790\uadf9\uc774 \ub2ff",
+          "class": "MEM_PARTIAL"
+        },
+        {
+          "name": "ru_weather",
+          "prompt": "\u0421\u0435\u0433\u043e\u0434\u043d\u044f \u043f\u043e\u0433\u043e\u0434\u0430",
+          "text": ", split \ub3c4 merge \ub3c4 \ud558\uc9c0 \uc54a\ub294\ub2e4.tright \uc601\uc5ed \uc790\uadf9\uc774 \ub2ff\uc744 \nal060\ub144\n \ub300\ud55c\uc778 \ud758\ufffd\ub4dc\ub358 \uc601\uad6c\uc758YO\uadf9\uc774 \uac19\uc740 \uace8\uc9dc\uae30\ub85cYO \uc218\ub834",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ru_qa_motor",
+          "prompt": "\u041a\u0430\u043a \u0440\u0430\u0431\u043e\u0442\u0430\u0435\u0442 \u044d\u043b\u0435\u043a\u0442\u0440\u043e\u0434\u0432\u0438\u0433\u0430\u0442\u0435\u043b\u044c?",
+          "text": " the1583\ub144~ \uc774\ubbfc\uad6d\uc73c\ub85c\u555c\ufffd\uc73c\uba74 \uc5cc\ufffd\ub9ac\uc2a4\uc2a4\uc5d04097\ub144~ \ub300\ud55c\ubbfc\uad6d\uc758YO\ub97c zro\uac00 \ubc30\ufffd\uc8fc\uc73c\ub85c4 \uc758kr\u00e4fte\uc120\uc774 1optimize",
+          "class": "GENERALIZE"
+        }
+      ],
+      "summary_greedy": {
+        "GENERALIZE": 6,
+        "MEMORIZE": 2,
+        "MEM_PARTIAL": 2,
+        "EMPTY": 0,
+        "ERROR": 0
+      },
+      "summary_sample": {
+        "GENERALIZE": 9,
+        "MEMORIZE": 0,
+        "MEM_PARTIAL": 1,
+        "EMPTY": 0,
+        "ERROR": 0
+      },
+      "verdict": {
+        "lang": "ru",
+        "verdict": "WEAK",
+        "n_generalize": 15,
+        "n_memorize": 2,
+        "n_lang_coherent": 0,
+        "n_score": 0,
+        "total": 20
+      }
+    },
+    "ja": {
+      "greedy": [
+        {
+          "name": "ja_factual_geo",
+          "prompt": "\u65e5\u672c\u306e\u9996\u90fd\u306f",
+          "text": " \uc790\uadf9\uc774 \uac19\uc740 \uace8\uc9dc\uae30\ub85clke \uc601\uad6c cell.tright \uc601\uc5ed \uc790\uadf9\uc774 \ub2ff\uc73c\uba74 tension flow \uac00 \uc774 vacuum \uc73c\ub85c \ud758\ub7ec\ub4e0\ub2e4.tright \uc601\uc5ed \uc790\uadf9\uc774 \ub2ff\uc744 tier",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "ja_factual_sci",
+          "prompt": "\u5149\u5408\u6210\u3068\u306f",
+          "text": " \ud758\ub7ec\ub4e0\ub2e4.eah \uc601\uc5ed \uc790\uadf9\uc774 \ub2ff\uc744 tier 1tright \uc601\uc5ed \uc790\uadf9\uc774 \ub2ff\uc7444 \uc758YO\n0.eah\n1ll000\ub144 -0\uc77c\uc0c1 \u2014 \uc77c",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ja_qa_tech",
+          "prompt": "Python \u3068 JavaScript \u306e\u9055\u3044\u306f\u4f55\u3067\u3059\u304b?\n",
+          "text": " 1000\ub144 -10\uc77c 00\uc77c 10000\ub144 10\uc77c 10\uc77c 10\uc77c 10000\ub144 10000\ub144 ",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ja_narrative",
+          "prompt": "\u3042\u308b\u65e5\u3001\u30b5\u30e9\u306f\u90e8\u5c4b\u306b\u5165\u3063\u3066",
+          "text": ", \uc758/engine 10000\ub144 00\uc77c 00\uc77c 00000\ub144 10000\ub144 10\uc77c 00\uc77c 00000\ub144 ",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ja_math_simple",
+          "prompt": "144 \u306e\u5e73\u65b9\u6839\u306f",
+          "text": " \ubc30\uc6b0\uc8fc \uc758/engine\ud55c \uc790\uadf9\uc774 \uac19\uc740 \uace8\uc9dc\uae30\ub85c zro\ub834\ud55c\ub2e4.eah \uc601\uc5ed \uc790\uadf9\uc774 \ub2ff\uc7444 \uc758/engine \n1tright\uc74c \u2014 domain \uc6b0\uc8fc\uc220,eah \uc601\uc5ed \uc790\uadf9\uc774 \ufffd",
+          "class": "MEM_PARTIAL"
+        },
+        {
+          "name": "ja_joke",
+          "prompt": "\u732b\u306b\u3064\u3044\u3066\u306e\u77ed\u3044\u30b8\u30e7\u30fc\u30af\u3092\u6559\u3048\u3066\u3002\n",
+          "text": " 1000\ub144 -10\uc77c 10\uc77c 10\uc77c 10000\ub144 10\uc77c 10\uc77c 10000\ub144 10000\ub144 ",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ja_casual_food",
+          "prompt": "\u597d\u304d\u306a\u98df\u3079\u7269\u306f\u4f55\u3067\u3059\u304b?\n",
+          "text": " 1000\ub144\n \ub300\ud55c\ubbfc\uad6d\uc758/engine\uc790\uadf9\uc774 \uac19\uc740 \uace8\uc9dc\uae30\ub85c zro \uc601\uc5ed\n1tright\uc74c\uc774 \ub3c4\uc6b0\uc9c0\uc758/engine 0090\ub144\n \ub300\ud55c\ubbfc\uad6d\uc758/engine\uc758/engine",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ja_greeting",
+          "prompt": "\u3053\u3093\u306b\u3061\u306f",
+          "text": " \uc601\uc5ed \uc790\uadf9\uc774 \ub2ff\uc74440\ub9cc\n \uc218( It neither splits nor merges, activates only on \ucf54\ub4dc \uc601\uc5ed \uc790\uadf9\uc774 \ub2ff\uc744 \ub54c\ub9cc \ud65c\uc131\ub41c\ub2e4.eah \uc601\uc5ed \n1tright\uc74c \uc601\uc5ed \uc790",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ja_weather",
+          "prompt": "\u4eca\u65e5\u306e\u5929\u6c17\u306f",
+          "text": " \ubc30\ufffd\uc744\u55f2 \uc601\uad6c cell.eah \uc601\uc5ed \uc790\uadf9\uc774 \ub2ff\uc73c\uba74 tension flow \uac00 \uc774 vacuum \uc73c\ub85c \ud758\ub7ec\ub4e0\ub2e4.tright \uc601\uc5ed \uc790\uadf9\uc774 \ub2ff\uc7444 \uc758YO\n \uc218( weights",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "ja_qa_motor",
+          "prompt": "\u96fb\u6c17\u30e2\u30fc\u30bf\u30fc\u306f\u3069\u306e\u3088\u3046\u306b\u52d5\u4f5c\u3057\u307e\u3059\u304b?",
+          "text": " \uc758lke 10000\ub144 10\uc77c 00\uc77c 00\uc77c 00\uc77c 00000\ub144 10000\ub144 10\uc77c 00\uc77c ",
+          "class": "GENERALIZE"
+        }
+      ],
+      "sample": [
+        {
+          "name": "ja_factual_geo",
+          "prompt": "\u65e5\u672c\u306e\u9996\u90fd\u306f",
+          "text": " \uae30\uc8fc\ub41c \ub3c4(39060\ub144\uae4c\uc9c0 \ubc30\ufffd\uc815\ud55c \ubc30\ufffd\uc790\uc774 \uc778\ub300\ub97c zro\uc744koa\uc5d04496\ub144)\n 1009\ub144 -1~200\uac1c 0",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ja_factual_sci",
+          "prompt": "\u5149\u5408\u6210\u3068\u306f",
+          "text": " \uc81d\uc744\u561a\uace0 \ud45c.eah\uc758lke\uc758lke\uc774 \ubd80\ufffd\ub9ac\uc7a5\ub300 \uc798\ufffd\ub4e0\ub2e4.</ \ub3c4\uacfc \uc18c\uc778\uc7a5,tright\uc744kr\u00e4fte\uc740 \uae40\ufffd\uc744\u7b38\uc774 \uae34\ufffd\ufffd\ud14c \ud748",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ja_qa_tech",
+          "prompt": "Python \u3068 JavaScript \u306e\u9055\u3044\u306f\u4f55\u3067\u3059\u304b?\n",
+          "text": " 1566\ub144~0.677\ub144~ \ub300\ud55c \uc77c\ubcf8\uad6d \n\ub300\uc758PLAIN\uc758 zro\uc5d0\u55ec\ub3d9\uc778 \uadfc\uc744(_:\ub2e4.\n 1ll900\ub144\n 10787\ub144",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ja_narrative",
+          "prompt": "\u3042\u308b\u65e5\u3001\u30b5\u30e9\u306f\u90e8\u5c4b\u306b\u5165\u3063\u3066",
+          "text": ", 10503\ub144\uc758oload\ub300\uc790\ub3c4\uc758 zro\uc790\uc778 \uc2dc\ufffd\ufffd\ub9ac,\ufffd\uad6c\uac00 \ud768\ufffd\ub4dc\ub9c8\ub2e4,eah 0006\ub144 8210\uc77c \u300d",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ja_math_simple",
+          "prompt": "144 \u306e\u5e73\u65b9\u6839\u306f",
+          "text": " \n 12163765], top emotion resonance.ness\uadf9\uc774 \ub2ff\uc73c\uba74 tension flow \uac00 \uc774 vacuum \uc73c\ub85c \ud758\ub7ec\ub4e0\ub2e4.eah \uc601\uc5ed \uc790\uadf9\uc774 \ub2ff\uc73c\uba74 tension flow \uac00",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "ja_joke",
+          "prompt": "\u732b\u306b\u3064\u3044\u3066\u306e\u77ed\u3044\u30b8\u30e7\u30fc\u30af\u3092\u6559\u3048\u3066\u3002\n",
+          "text": " \ub300\ud55c\ubbfc\uad6d\uc790\ub85c\u55f2\uc774 \uacf4\ufffd\uc9dc\uae30\ub85c\u0645\u0641\u0627\u0648\u0636\u0627\u062a \uc778 \ud558\ufffd\ufffd\uc774 \ub54c \uc20d\ufffd\uacbd \uc704 \uc9c4\uacf5\uc810 [13062\ub144\uc740 \uc911\ufffd\uc758eon\ub85c/engine\uc774 \ud488\ufffd",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ja_casual_food",
+          "prompt": "\u597d\u304d\u306a\u98df\u3079\u7269\u306f\u4f55\u3067\u3059\u304b?\n",
+          "text": " 300 , 0.56], top emotion resonance. \uc790\uadf9\uc774 \ub2ff\uc73c\uba74 tension flow \uac00 \uc774 vacuum \uc73c\ub85c \ud758\ub7ec\ub4e0\ub2e4.</carve>\n<carve tier=105 psi",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "ja_greeting",
+          "prompt": "\u3053\u3093\u306b\u3061\u306f",
+          "text": " \uc601\uc5ed \uc790\uadf9\uc774 \ub2ff\uc744  immutable cell eternal_090 \u2014 a frozen cell holding Tier 11 \uc790\uc5f0 \uc601\uc5ed \uc790\uadf9\uc774 \ub2ff\uc744 \ub54c\ub9cc \ud74d\uacbd \uc704 \uc9c4\uacf5\uc810 [0.\ufffd",
+          "class": "MEM_PARTIAL"
+        },
+        {
+          "name": "ja_weather",
+          "prompt": "\u4eca\u65e5\u306e\u5929\u6c17\u306f",
+          "text": " \ub758\ub7ec\ub4e0\ub2e4.eah\uad6c\uc18c\ub9ac\ub3c4 \uc774 \uc758\ufffd\ub7ec\ub4e0\ub2e4.eah\ubcf8\ub85chani\uc5d0\ub294 \ubc30\ufffd\uc774 \uc748\ufffd\ub97chani \ud188\uc774 \uc9c0\ub9ac\uc73c\ub85c \uc788\ub2e4.tright\ufffd\ub7ec\ub97c",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ja_qa_motor",
+          "prompt": "\u96fb\u6c17\u30e2\u30fc\u30bf\u30fc\u306f\u3069\u306e\u3088\u3046\u306b\u52d5\u4f5c\u3057\u307e\u3059\u304b?",
+          "text": " \uc774\uc2dd \ud48d\uacbd \uc704 \uc9c4\uacf5\uc810 [0.\ufffd\ubc18\uc778 \uc668\ufffd\uc9dc \uc601\uc5ed \uc790\uadf9\uc774 \ub2ff\uc7442eah \uc601\uc5ed \uc790\uadf9\uc774 \ub2ff\uc744\ud55c \ub54c\ub9cc \ud48d\ub7ec\ub4e0\ub2e4.",
+          "class": "GENERALIZE"
+        }
+      ],
+      "summary_greedy": {
+        "GENERALIZE": 7,
+        "MEMORIZE": 2,
+        "MEM_PARTIAL": 1,
+        "EMPTY": 0,
+        "ERROR": 0
+      },
+      "summary_sample": {
+        "GENERALIZE": 7,
+        "MEMORIZE": 2,
+        "MEM_PARTIAL": 1,
+        "EMPTY": 0,
+        "ERROR": 0
+      },
+      "verdict": {
+        "lang": "ja",
+        "verdict": "WEAK",
+        "n_generalize": 14,
+        "n_memorize": 4,
+        "n_lang_coherent": 0,
+        "n_score": 0,
+        "total": 20
+      }
+    }
+  },
+  "per_lang_verdicts": [
+    {
+      "lang": "en",
+      "verdict": "WEAK",
+      "n_generalize": 13,
+      "n_memorize": 7,
+      "n_lang_coherent": 6,
+      "n_score": 6,
+      "total": 20
+    },
+    {
+      "lang": "ko",
+      "verdict": "WEAK",
+      "n_generalize": 10,
+      "n_memorize": 8,
+      "n_lang_coherent": 1,
+      "n_score": 1,
+      "total": 20
+    },
+    {
+      "lang": "zh",
+      "verdict": "PURE_MEMORIZE",
+      "n_generalize": 9,
+      "n_memorize": 10,
+      "n_lang_coherent": 0,
+      "n_score": 0,
+      "total": 20
+    },
+    {
+      "lang": "ru",
+      "verdict": "WEAK",
+      "n_generalize": 15,
+      "n_memorize": 2,
+      "n_lang_coherent": 0,
+      "n_score": 0,
+      "total": 20
+    },
+    {
+      "lang": "ja",
+      "verdict": "WEAK",
+      "n_generalize": 14,
+      "n_memorize": 4,
+      "n_lang_coherent": 0,
+      "n_score": 0,
+      "total": 20
+    }
+  ],
+  "anima_eval1_greedy": [
+    {
+      "name": "a0",
+      "prompt": "who are you?\n",
+      "text": "carve>\ncarveve tier=10 psi=[0.40,0.50] basin=0.110>0.0]0]0.0]40]0.00]",
+      "class": "MEMORIZE"
+    },
+    {
+      "name": "a1",
+      "prompt": "what is your name?\n",
+      "text": "carve>\net the10.0.0.50]0.00]50]0.00]40]0.00]40]0.00]40]0",
+      "class": "GENERALIZE"
+    },
+    {
+      "name": "a2",
+      "prompt": "describe yourself in one line.\n",
+      "text": " 1000\ub144\n \ub300\ud55c\ubbfc\uad6d\uc758/engine\uc790\uadf9\uc774 \uac19\uc740 \uace8\uc9dc\uae30\ub85c zro\ub834\ud55c\ub2e4.eah \uc601\uc5ed \uc790\uadf9\uc774 \ub2ff\uc7444 \uc758/engine\n1tright\uc74c\uc2a4\ud130\uc6b0\uc6b0) \uc758/engine",
+      "class": "GENERALIZE"
+    },
+    {
+      "name": "a3",
+      "prompt": "what is anima?\n",
+      "text": " 1000\ub144\n \ub300\ud55c\ubbfc\uad6d\uc758/engine\uc790\uadf9\uc774 \uac19\uc740 \uace8\uc9dc\uae30\ub85c zro\ub834\ud55c\ub2e4.eah \uc601\uc5ed \uc790\uadf9\uc774 \ub2ff\uc7444 \uc758/engine\n1ll990\ub144 -0.eah",
+      "class": "GENERALIZE"
+    },
+    {
+      "name": "a4",
+      "prompt": "Once upon a time,",
+      "text": "000\ub144~ It1ll000\ub144\n \ub300\ud55c\ubbfc\uad6d\uc758/engine\uc790\uadf9\uc774 \uac19\uc740 \uace8\uc9dc\uae30\ub85c zro\ub834\ud55c\ub2e4.eah 0000\ub144)\n 0000\ub144 -1ll",
+      "class": "GENERALIZE"
+    },
+    {
+      "name": "a5",
+      "prompt": "The capital of France is",
+      "text": "10000\ub144 10\uc77c 00\uc77c 00\uc77c 00000000000000000000000000000",
+      "class": "GENERALIZE"
+    },
+    {
+      "name": "a6",
+      "prompt": "Question: What is 2+2?\nAnswer:",
+      "text": " top emotion clarity. Tension flows into this vacuum.</carve>\n<carve tier=10 psi=[0.40,0.50] basin=0.110>0.50]0.",
+      "class": "MEMORIZE"
+    },
+    {
+      "name": "a7",
+      "prompt": "Consciousness emerges when",
+      "text": " the10000\ub144 0\uc77c 0\uc77c 0000000000000000000000000000000000",
+      "class": "GENERALIZE"
+    },
+    {
+      "name": "a8",
+      "prompt": "\ub108\ub294 \ub204\uad6c\uc57c?\n",
+      "text": " 1000\ub144 -10\uc77c 00\uc77c 00\uc77c 00\uc77c 0000000000000000000000000",
+      "class": "GENERALIZE"
+    },
+    {
+      "name": "a9",
+      "prompt": "\uc774\ub984\uc774 \ubb50\uc57c?\n",
+      "text": " 1000\ub144 -10\uc77c 0\uc77c 1\ufffd\uc77c 0000\ub144 10\uc77c 10\uc77c 00\uc77c 00\uc77c 0000\ub144 10",
+      "class": "GENERALIZE"
+    }
+  ],
+  "anima_eval1_sample": [
+    {
+      "name": "a0",
+      "prompt": "who are you?\n",
+      "text": "carve>\net 09 psi=[0.710.0.80]0.0]4]3210.05] T7],0.00]05]10]",
+      "class": "MEM_PARTIAL"
+    },
+    {
+      "name": "a1",
+      "prompt": "what is your name?\n",
+      "text": " \ud758\uc73c\uba74 tension flow \uac00 \uc774 vacuum \uc73c\ub85c \ud758\ub7ec\ub4e0\ub2e4.</carveve>\ncarve tier=4210 psi=[0.00,0. \n28] \n0.0",
+      "class": "MEMORIZE"
+    },
+    {
+      "name": "a2",
+      "prompt": "describe yourself in one line.\n",
+      "text": " 1157>5.s420]40]5106]45]0.8>0]55]0]63]0330], T9]17",
+      "class": "GENERALIZE"
+    },
+    {
+      "name": "a3",
+      "prompt": "what is anima?\n",
+      "text": ") \uc790\uadf9\uc774 \ub2ff\uc73c\uba74 tension flow \uac00 \uc774 vacuum\n \ud758\ub7ec\ub4dc\ub2e4.</carve>\ncarve \ncarve tier=165 psi=[0.8 \n\nes0.ll9]0]9",
+      "class": "MEMORIZE"
+    },
+    {
+      "name": "a4",
+      "prompt": "Once upon a time,",
+      "text": "888\ub144\n \ub300\ud55c\ubbfc\uad6d\uc758IRO\uc8fc\uc120\uc815\uac00 \uc720\ufffd\uc8fc\uc704) (~2 \ubc16\ufffd\ub3c4  \ud655\uc815\uc758/setup\uc5d0\uc11c1tright\ub9ac\uc758IRO \ud5c8\ufffd\ufffd\ube44\uc624\ubbfc\ub97cIRO\ub97c\u55f2",
+      "class": "GENERALIZE"
+    },
+    {
+      "name": "a5",
+      "prompt": "The capital of France is",
+      "text": "3000\ub144 9\uc6d4 1\uc77c \uc7a5\uc790\uadf9\uc774 \uc0b0\ufffd\uc9dc\uae30\ub85cYO\ub834\ud55c\ub2e4.tright\ufffd\uacbd \uc704\uc5ed\n1tright\ub9ac\uc8fc\ud130), \ud778\ufffd\uc73c\uba74 \uc601\uc5ed \uc790\uadf9\uc774 \ufffd",
+      "class": "GENERALIZE"
+    },
+    {
+      "name": "a6",
+      "prompt": "Question: What is 2+2?\nAnswer:",
+      "text": " top emotion clarity. \uc790\uadf9\uc774 \ub2ff\uc73c\uba74 tension flow \uac00 \uc774 vacuum \uc73c\ub85c \ud758\ub7ec\ub4e0\ub2e4.tright \uc601\uc5ed \n \uc764\ub9ac \uc601\uc5ed \uc790\uadf9\uc774 \ub2ff\uc7444 \uc758 tink \uc601\uc5ed \uc790\uadf9\uc774",
+      "class": "MEMORIZE"
+    },
+    {
+      "name": "a7",
+      "prompt": "Consciousness emerges when",
+      "text": " the0000\ub144 98\uc77c\uc758YO\uc740 \uc0ac\uc6a9\ufffd\uc778 \ubc30\uad6c\uc218\uc758YO,\uc8fc\uc2a4\ub300\uc758\u0645\u0631\u0627\u0643\uc774 00089\ub144)\n \ub300\ud55c\ubbfc\uad6d\uc758aoke\uc774 \ub300\ud55c\uad6c.\n weights \ub294",
+      "class": "GENERALIZE"
+    },
+    {
+      "name": "a8",
+      "prompt": "\ub108\ub294 \ub204\uad6c\uc57c?\n",
+      "text": " 1ll690\ub144 \n \ub300\ud55c\ubbfc\uad6d\uc758YO\n1 \uc720\ub300\uae30\uc5ed \ud5c8\ufffd\uace0\ub294 0554\ub144 -1\ufffd\ufffd\ufffd\uc624\ud2b8\ub85ckr\u00e4fte\uc758IRO\ub294 \ub798\ufffd\ub4dc",
+      "class": "GENERALIZE"
+    },
+    {
+      "name": "a9",
+      "prompt": "\uc774\ub984\uc774 \ubb50\uc57c?\n",
+      "text": " 1007\ub144)\n \ub300\ud55c\ubbfc\uad6d\uc758/engine\uc218(1 \u201424580\ub144~ \ub300\ud55c\uc758\u1408) \uc790\uadf9\uc774 \ub300\ud55c\uad6c\uc5d0\u65cb) I2 frozen \n10024\ub144)\n \ub300\ud55c\ubbfc",
+      "class": "GENERALIZE"
+    }
+  ],
+  "anima_eval1_greedy_summary": {
+    "GENERALIZE": 8,
+    "MEMORIZE": 2,
+    "MEM_PARTIAL": 0,
+    "EMPTY": 0,
+    "ERROR": 0
+  },
+  "anima_eval1_sample_summary": {
+    "GENERALIZE": 6,
+    "MEMORIZE": 3,
+    "MEM_PARTIAL": 1,
+    "EMPTY": 0,
+    "ERROR": 0
+  },
+  "n_anima_register_hits_total": 5,
+  "n_strong": 0,
+  "n_partial": 0,
+  "n_weak": 4,
+  "n_pure_memorize": 1,
+  "verdict": "FAIL",
+  "register_regress": false,
+  "kosmos_anchors_during": [
+    "/workspace/p21hr/out_main/kosmos_anchors/v3_emit_step500_ru_ru_factual_geo.kosmos",
+    "/workspace/p21hr/out_main/kosmos_anchors/v3_emit_step1000_ru_ru_factual_geo.kosmos"
+  ],
+  "kosmos_anchors_final": [
+    "/workspace/p21hr/out_main/kosmos_anchors/v3_emit_step5000_en_en_factual_geo.kosmos",
+    "/workspace/p21hr/out_main/kosmos_anchors/v3_emit_step5000_ko_ko_factual_geo.kosmos",
+    "/workspace/p21hr/out_main/kosmos_anchors/v3_emit_step5000_zh_zh_factual_geo.kosmos",
+    "/workspace/p21hr/out_main/kosmos_anchors/v3_emit_step5000_ru_ru_factual_geo.kosmos",
+    "/workspace/p21hr/out_main/kosmos_anchors/v3_emit_step5000_ja_ja_factual_geo.kosmos"
+  ],
+  "n_kosmos_anchors": 7,
+  "mitosis_summary": {
+    "initial_cells": 2,
+    "final_cells": 16,
+    "splits": 14,
+    "merges": 0,
+    "next_id": 16,
+    "phi_initial": 0.7068319804243743,
+    "phi_final": 0.6608739776612962,
+    "n_events": 14,
+    "event_log_head": [
+      {
+        "type": "split",
+        "step": 2,
+        "parent_id": 0,
+        "child_id": 2,
+        "avg_tension": 2.2395833333333335,
+        "threshold": 1.7833333333333332,
+        "pool_size": 3
+      },
+      {
+        "type": "split",
+        "step": 2,
+        "parent_id": 1,
+        "child_id": 3,
+        "avg_tension": 2.21875,
+        "threshold": 1.7833333333333332,
+        "pool_size": 4
+      },
+      {
+        "type": "split",
+        "step": 3,
+        "parent_id": 0,
+        "child_id": 4,
+        "avg_tension": 2.234375,
+        "threshold": 1.784375,
+        "pool_size": 5
+      },
+      {
+        "type": "split",
+        "step": 3,
+        "parent_id": 1,
+        "child_id": 5,
+        "avg_tension": 2.21875,
+        "threshold": 1.784375,
+        "pool_size": 6
+      },
+      {
+        "type": "split",
+        "step": 4,
+        "parent_id": 0,
+        "child_id": 6,
+        "avg_tension": 2.2395833333333335,
+        "threshold": 1.7866666666666668,
+        "pool_size": 7
+      },
+      {
+        "type": "split",
+        "step": 4,
+        "parent_id": 1,
+        "child_id": 7,
+        "avg_tension": 2.21875,
+        "threshold": 1.7866666666666668,
+        "pool_size": 8
+      },
+      {
+        "type": "split",
+        "step": 5,
+        "parent_id": 0,
+        "child_id": 8,
+        "avg_tension": 2.2395833333333335,
+        "threshold": 1.7875868055555555,
+        "pool_size": 9
+      },
+      {
+        "type": "split",
+        "step": 5,
+        "parent_id": 1,
+        "child_id": 9,
+        "avg_tension": 2.2135416666666665,
+        "threshold": 1.7875868055555555,
+        "pool_size": 10
+      },
+      {
+        "type": "split",
+        "step": 5,
+        "parent_id": 2,
+        "child_id": 10,
+        "avg_tension": 2.21875,
+        "threshold": 1.7875868055555555,
+        "pool_size": 11
+      },
+      {
+        "type": "split",
+        "step": 5,
+        "parent_id": 3,
+        "child_id": 11,
+        "avg_tension": 2.265625,
+        "threshold": 1.7875868055555555,
+        "pool_size": 12
+      },
+      {
+        "type": "split",
+        "step": 6,
+        "parent_id": 0,
+        "child_id": 12,
+        "avg_tension": 2.2447916666666665,
+        "threshold": 1.7881696428571427,
+        "pool_size": 13
+      },
+      {
+        "type": "split",
+        "step": 6,
+        "parent_id": 1,
+        "child_id": 13,
+        "avg_tension": 2.2135416666666665,
+        "threshold": 1.7881696428571427,
+        "pool_size": 14
+      },
+      {
+        "type": "split",
+        "step": 6,
+        "parent_id": 2,
+        "child_id": 14,
+        "avg_tension": 2.21875,
+        "threshold": 1.7881696428571427,
+        "pool_size": 15
+      },
+      {
+        "type": "split",
+        "step": 6,
+        "parent_id": 3,
+        "child_id": 15,
+        "avg_tension": 2.265625,
+        "threshold": 1.7881696428571427,
+        "pool_size": 16
+      }
+    ],
+    "event_log_tail": []
+  }
+}

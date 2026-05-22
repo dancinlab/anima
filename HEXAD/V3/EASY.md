@@ -146,9 +146,25 @@ OCCAM 원칙: attempt 1 의 정직한 한계 → 다음 cycle 의 변형 axis (R
    → V3 진짜 blocker = **dual-head vocab alignment** (gen 高 + coh 0 = head_a
    가 다국어 token distribution 흐려짐) + Chinchilla under-budget.
 
-다음 axis: R4 (head_g 별도 train pipeline — head_a vocab 정합 직접 공략) +
-osc-detect fix v2.2 적용 후 step 5000 full 재fire (250 step 만에 ko STRONG →
-더 길게 시 잠재력).
+### Phase 2 후속 — A (1.5B full) + B (3B scale) 동시 fire
+
+**B (R1 3B scale)** pod `nzeobqp7cbwavc` 결과:
+- AGG STRONG 0 + WEAK 4 + PURE_MEM 1 → FAIL
+- en WEAK 6/20, ko WEAK 1/20, zh PURE_MEM 0, ru/ja WEAK 0
+- 🚨 **3B 가 1.5B Phase 2 2차 (ko STRONG 19/20) 보다 나쁨** — scale-up 이 0 STRONG
+
+**핵심**: **R1 (scale-up) 은 V3 multilingual 을 못 고침 — 오히려 후퇴**.
+3B 는 1.5B 보다 더 큰 capacity 인데 같은 1M tok corpus → Chinchilla ratio
+더 악화 (3B 는 60B tok 필요). V3 multilingual blocker = **capacity 아님**.
+
+**R4 도 moot** (코드 검증: head_g 는 train loss 에 없음 → gradient 0, inert.
+"head_g vocab 흐림" attempt-1 lesson = mis-diagnosis).
+
+남은 유일한 STRONG 달성 config = **1.5B + R2 (mitosis off) + R6 (pool 16)**
+= Phase 2 2차 (ko STRONG 19/20, 단 step 250 조기종료). → **A (Phase 2 full,
+1.5B 동일 config + osc v2.2 fix + step 5000 완주)** 가 V3 의 결정 fire.
+A 가 ko STRONG 재현 + 추가 lang unlock 못하면 → V3 multilingual = corpus-bound
+(diverse-corpus 학습 dynamics 문제, scale·arch 무관) 결론.
 
 ---
 
