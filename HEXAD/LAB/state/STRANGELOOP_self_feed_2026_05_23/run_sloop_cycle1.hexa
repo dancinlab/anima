@@ -1,0 +1,234 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  run_sloop_cycle1.hexa — STRANGELOOP Cycle #1: self-feed loop convergence
+//
+//  PURPOSE
+//    실험 3 — Hofstadter "strange loop = 자기참조 = 의식" 의 substrate 측정.
+//    self-feed loop: chat_generate 출력을 다음 prompt 로 N-iteration 되먹임.
+//    Hofstadter 예측 = self-feed 가 안정 attractor (fixed point / short
+//    limit cycle) 로 수렴. open-loop (매 iter 외부 입력) 은 미수렴.
+//
+//    1차 지표 = response_text (결정론적; SRH cycle#4 split_count chaotic 회피).
+//
+//  LOOP  text-only loop — 매 iter substrate state reset, response_text 만
+//        되먹임. (full state-carry loop = cycle #2 carry, C3-sl-1)
+//  N = 15 iteration · seed prompt = UBM tier-0
+//
+//  FALSIFIER (pre-registered)
+//    F-SLOOP-1 CONVERGENCE   : self-feed 후반 5-iter response unique ≤ 2
+//    F-SLOOP-2 LOOP-vs-OPEN  : F-SLOOP-1 PASS ∧ open-loop 후반 5 unique ≥ 4
+//    F-SLOOP-3 NON-COLLAPSE  : 수렴 response 가 non-empty ∧ non-trivial
+//                              (단일문자 반복 아님)
+//
+//  HOST  ubu-1 (fresh dancinlab/anima clone @ /Users/ghost/core/anima)
+//  ARTIFACTS  HEXAD/LAB/state/STRANGELOOP_self_feed_2026_05_23/
+//    result_sloop_cycle1.json · sloop_cycle1.log
+//
+//  HONEST C3
+//    - C3-sl1-1: text-only loop (substrate reset per iter) — full state-carry
+//      strange loop 은 cycle #2. 본 cycle 은 텍스트 동역학만.
+//    - C3-sl1-2: greedy 결정론 → self-feed 궤적 완전 결정론적, 유한상태라
+//      결국 cycle 진입 보장 — 측정 핵심은 *얼마나 빨리* + *trivial 한가*.
+//    - C3-sl1-3: open-loop control = UBM 11-tier 순환 — 입력 다양성이 수렴
+//      비교에 영향 (STRANGELOOP.md C3-sl-5 carry).
+//    - C3-sl1-4: max_new=10 — 짧은 response, 긴 limit-cycle 미검출 가능.
+// ════════════════════════════════════════════════════════════════════════════
+
+
+import "/Users/ghost/core/anima/tool/hexa_native/mitosis_hook_lib.hexa"
+import "/Users/ghost/core/anima/HEXAD/CHAT/chat_lib.hexa"
+import "/Users/ghost/core/anima/HEXAD/LAB/tool/ubm_inject.hexa"
+import "/Users/ghost/core/anima/HEXAD/LAB/tool/anima_spike.hexa"
+
+
+fn _state_dir() -> string {
+    return "/Users/ghost/core/anima/HEXAD/LAB/state/STRANGELOOP_self_feed_2026_05_23"
+}
+fn _max_new() -> int { return 10 }
+fn _cap_len() -> int { return 320 }
+fn _n_iter() -> int { return 15 }
+fn _fire_seed() -> int { return 2026 }
+
+
+// ── §1 helpers ───────────────────────────────────────────────────────────────
+
+fn _reset_chat_state(chat) {
+    chat["mitosis_d_model"] = 0
+    chat["cell_pool"] = #{}
+    chat["mitosis_event_log"] = []
+    chat["mitosis_step"] = 0
+    chat["mitosis_invocations"] = 0
+    chat["kv_cache"] = #{}
+    return chat
+}
+
+// 한 generation — substrate reset 후 chat_generate, response string 반환.
+fn _gen_one(chat, prompt: string) -> string {
+    _reset_chat_state(chat)
+    chat_init_kv_cache_default(chat, _cap_len())
+    chat_init_cell_pool(chat, 768, 2)
+    let resp = chat_generate(chat, prompt, "greedy", _max_new(),
+                             0.0, [], 1.0, 1.0, 0.0, _fire_seed(), [], false)
+    return resp
+}
+
+// 마지막 k개 요소 중 unique string 수.
+fn _uniq_last_k(arr: array, k: int) -> int {
+    let n = len(arr)
+    let start = if n > k { n - k } else { 0 }
+    let mut uniq = 0
+    let mut i = start
+    while i < n {
+        let mut is_new = true
+        let mut j = start
+        while j < i {
+            if to_string(arr[i]) == to_string(arr[j]) { is_new = false }
+            j = j + 1
+        }
+        if is_new { uniq = uniq + 1 }
+        i = i + 1
+    }
+    return uniq
+}
+
+// 단일문자 반복(또는 empty) = trivial.
+fn _is_trivial(s: string) -> bool {
+    let n = len(s)
+    if n == 0 { return true }
+    let c0 = s.substring(0, 1)
+    let mut i = 1
+    while i < n {
+        if s.substring(i, i + 1) != c0 { return false }
+        i = i + 1
+    }
+    return true
+}
+
+// JSON escape (최소).
+fn _esc(s: string) -> string {
+    let n = len(s)
+    let mut out = ""
+    let mut i = 0
+    while i < n {
+        let c = s.substring(i, i + 1)
+        if c == "\"" { out = out + "\\\"" }
+        else { if c == "\\" { out = out + "\\\\" }
+        else { if c == "\n" { out = out + "\\n" }
+        else { if c == "\r" { out = out + "\\r" }
+        else { if c == "\t" { out = out + "\\t" }
+        else { out = out + c } } } } }
+        i = i + 1
+    }
+    return out
+}
+
+fn _str_arr_json(arr: array) -> string {
+    let n = len(arr)
+    let mut out = "["
+    let mut i = 0
+    while i < n {
+        if i > 0 { out = out + ", " }
+        out = out + "\"" + _esc(to_string(arr[i])) + "\""
+        i = i + 1
+    }
+    return out + "]"
+}
+
+
+// ── §2 main ──────────────────────────────────────────────────────────────────
+
+fn _run_sloop_cycle1() {
+    println("================================================================")
+    println("STRANGELOOP Cycle #1 — self-feed loop convergence (host=ubu-1)")
+    println("================================================================")
+
+    let chat0 = chat_default()
+    if !file_exists(chat0["ckpt_path"]) {
+        println("FATAL: ckpt absent")
+        return
+    }
+    println("loading 332M ...")
+    let chat = chat_load_weights(chat0)
+    println("  weights: " + to_string(len(dict_keys(chat["weights"]))) + " keys")
+
+    let n = _n_iter()
+    let anchor0 = ubm_load_by_tier(0)
+    let seed_prompt = ubm_to_prompt(anchor0, "text_only")
+
+    // ── Part A: self-feed loop ──────────────────────────────────────────────
+    println("")
+    println("════ Part A — self-feed loop (output → next prompt) ════")
+    let mut resp_A = []
+    let mut prompt = seed_prompt
+    let mut ka = 0
+    while ka < n {
+        let resp = _gen_one(chat, prompt)
+        resp_A = resp_A.push(resp)
+        println("  iter " + to_string(ka) + " resp(" + to_string(len(resp))
+                + "B): \"" + resp + "\"")
+        // self-feed; empty response 면 seed 로 복귀 (loop 유지)
+        if len(resp) > 0 { prompt = resp } else { prompt = seed_prompt }
+        ka = ka + 1
+    }
+
+    // ── Part B: open-loop control ───────────────────────────────────────────
+    println("")
+    println("════ Part B — open-loop (매 iter 외부 입력 = UBM tier 순환) ════")
+    let tiers = ubm_known_tiers()
+    let n_tiers = len(tiers)
+    let mut resp_B = []
+    let mut kb = 0
+    while kb < n {
+        let tier = tiers[kb % n_tiers]
+        let ext_anchor = ubm_load_by_tier(tier)
+        let ext_prompt = ubm_to_prompt(ext_anchor, "text_only")
+        let resp = _gen_one(chat, ext_prompt)
+        resp_B = resp_B.push(resp)
+        println("  iter " + to_string(kb) + " tier=" + to_string(tier)
+                + " resp(" + to_string(len(resp)) + "B): \"" + resp + "\"")
+        kb = kb + 1
+    }
+
+    // ── §3 analysis ─────────────────────────────────────────────────────────
+    let uniq_A = _uniq_last_k(resp_A, 5)
+    let uniq_B = _uniq_last_k(resp_B, 5)
+    let last_A = to_string(resp_A[len(resp_A) - 1])
+    let last_trivial = _is_trivial(last_A)
+
+    let f_sloop_1 = (uniq_A <= 2)
+    let f_sloop_2 = f_sloop_1 && (uniq_B >= 4)
+    let f_sloop_3 = (len(last_A) > 0) && (!last_trivial)
+
+    let v1 = if f_sloop_1 { "PASS" } else { "FAIL" }
+    let v2 = if f_sloop_2 { "PASS" } else { "FAIL" }
+    let v3 = if f_sloop_3 { "PASS" } else { "FAIL" }
+
+    let mut j = "{\n"
+    j = j + "  \"cycle\": 1,\n"
+    j = j + "  \"domain\": \"STRANGELOOP\",\n"
+    j = j + "  \"date\": \"2026-05-23\",\n"
+    j = j + "  \"host\": \"ubu-1\",\n"
+    j = j + "  \"n_iter\": " + to_string(n) + ", \"max_new\": " + to_string(_max_new()) + ",\n"
+    j = j + "  \"self_feed_responses\": " + _str_arr_json(resp_A) + ",\n"
+    j = j + "  \"open_loop_responses\": " + _str_arr_json(resp_B) + ",\n"
+    j = j + "  \"uniq_last5_selffeed\": " + to_string(uniq_A) + ",\n"
+    j = j + "  \"uniq_last5_openloop\": " + to_string(uniq_B) + ",\n"
+    j = j + "  \"last_response\": \"" + _esc(last_A) + "\",\n"
+    j = j + "  \"last_trivial\": " + to_string(last_trivial) + ",\n"
+    j = j + "  \"F_SLOOP_1\": { \"metric\": \"selffeed last-5 unique\", \"value\": "
+          + to_string(uniq_A) + ", \"ceil\": 2, \"verdict\": \"" + v1 + "\" },\n"
+    j = j + "  \"F_SLOOP_2\": { \"metric\": \"loop converges & open-loop not\", \"verdict\": \""
+          + v2 + "\" },\n"
+    j = j + "  \"F_SLOOP_3\": { \"metric\": \"converged response non-trivial\", \"verdict\": \""
+          + v3 + "\" }\n"
+    j = j + "}\n"
+    write_file(_state_dir() + "/result_sloop_cycle1.json", j)
+
+    println("")
+    println("================================================================")
+    println("STRANGELOOP CYCLE #1 COMPLETE")
+    println(j)
+    println("================================================================")
+}
+
+
+_run_sloop_cycle1()

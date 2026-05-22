@@ -59,7 +59,7 @@ HEXAD/LAB/state/SRH_<slug>_YYYY_MM_DD/
   spike_tier<N>.json        ← per-anchor spike (UBM injects)
   spike_ctrl_<C>.json       ← per-control spike (random / shuffled-tier / non-UBM)
   result.json               ← falsifier aggregate verdict
-  dispatch_*.sh             ← (선택) GPU fire script
+  run_*.hexa                ← fire script (hexa-only)
 ```
 
 ## §3 Falsifiers (pre-registered)

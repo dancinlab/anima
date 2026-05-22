@@ -58,7 +58,7 @@ HEXAD/LAB/
     ckpts/                                   ← 산출 ckpt (size 클 시 HF dancinlife/* private)
     *.log                                    ← train.log / sweep.log
     result.json                              ← falsifier verdict JSON
-    dispatch_*.sh                            ← runpod / vast.ai fire script
+    run_*.hexa                               ← fire script (hexa-only; .sh 금지)
   docs/<exp_slug>_YYYY_MM_DD.md              ← 보조 long-form 문서 (8-§ design, debug notes — 필요시)
   tool/<primitive>.hexa                      ← LAB-scoped helper (영구화시 ROOT/tool/ 이동)
 ```
