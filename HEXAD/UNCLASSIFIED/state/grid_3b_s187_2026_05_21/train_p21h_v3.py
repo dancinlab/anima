@@ -284,10 +284,44 @@ def run(cfg):
     log_every = max(1, steps // 40)
     kosmos_every = max(50, steps // 10)
     anchor_paths = []
+    # v2 (2026-05-22): early-stop + per-step ckpt save state
+    ckpt_every = int(cfg.get("ckpt_every", 0) or 0)
+    osc_thr = float(cfg.get("ckpt_osc_threshold", 0.0) or 0.0)
+    osc_win = int(cfg.get("ckpt_osc_window", 20) or 20)
+    es_patience = int(cfg.get("early_stop_patience", 0) or 0)
+    best_ce = float("inf")
+    best_step = -1
+    no_improve_count = 0
+    ce_history = []  # last osc_win CE values for rolling std
+    early_stopped = False
+    early_stop_reason = None
+
+    def _save_ckpt(label: str, step_n: int, ce_now: float):
+        path = os.path.join(out_dir, f"ckpt_{label}.pt")
+        torch.save({
+            "model_state_dict": model.state_dict(),
+            "config": dict(
+                vocab_size=model.vocab_size, d_model=model.d_model,
+                n_layer=model.n_layer, block_size=model.block_size,
+                consciousness_dim=model.consciousness_dim,
+                noise_sigma=model.noise_sigma,
+                init_variant=cfg["init_variant"],
+            ),
+            "psi_status": model.psi_status(),
+            "mitosis_summary": pool.summary() if hasattr(pool, 'summary') else None,
+            "step": step_n,
+            "CE": ce_now,
+            "label": label,
+        }, path)
+        sz = os.path.getsize(path)
+        print(f"[P21H] ckpt save ({label}) step={step_n} CE={ce_now:.4f} → {path} ({sz/1024/1024:.1f} MB)", flush=True)
+        return path
 
     print(f"[P21H] steps={steps} bsz={cfg['bsz']} block={cfg['block_size']} "
           f"peak_lr={cfg['lr']} warmup={cfg['warmup_steps']} "
-          f"lambda_mitosis={cfg['lambda_mitosis']} init={cfg['init_variant']}",
+          f"lambda_mitosis={cfg['lambda_mitosis']} init={cfg['init_variant']} "
+          f"mitosis_max={cfg.get('mitosis_max', 128)} "
+          f"ckpt_every={ckpt_every} osc_thr={osc_thr} es_patience={es_patience}",
           flush=True)
 
     vocab_size = model.vocab_size
@@ -317,17 +351,50 @@ def run(cfg):
             pool_size = len(pool.cells)
             splits = pool.split_count
             phi = float(pool.phi)
+            ce_now = float(L_ce.detach())
             entry = dict(
                 step=step + 1, lr=lr_now,
-                L_ce=float(L_ce.detach()),
+                L_ce=ce_now,
                 L_total=float(L_total.detach()),
                 pool_size=pool_size, splits=splits, phi=phi,
                 aug_slot=aug_slot, elapsed_s=elapsed,
             )
             log.append(entry)
-            print(f"[P21H] step={step+1:6d} lr={lr_now:.2e} CE={entry['L_ce']:.4f} "
+            print(f"[P21H] step={step+1:6d} lr={lr_now:.2e} CE={ce_now:.4f} "
                   f"total={entry['L_total']:.4f} pool={pool_size} splits={splits} "
                   f"phi={phi:.4f} t={elapsed:.0f}s", flush=True)
+
+            # v2: best ckpt + plateau + oscillation 감지
+            ce_history.append(ce_now)
+            if len(ce_history) > osc_win:
+                ce_history.pop(0)
+            if ce_now < best_ce - 1e-4:
+                best_ce = ce_now
+                best_step = step + 1
+                no_improve_count = 0
+                # best ckpt save (always overwrite)
+                _save_ckpt("best", step + 1, ce_now)
+            else:
+                no_improve_count += 1
+            # CE oscillation detection (rolling std)
+            if osc_thr > 0.0 and len(ce_history) == osc_win:
+                import statistics
+                cur_std = statistics.pstdev(ce_history)
+                if cur_std > osc_thr:
+                    _save_ckpt(f"osc_step{step+1}", step + 1, ce_now)
+                    early_stopped = True
+                    early_stop_reason = f"CE oscillation std={cur_std:.4f}>{osc_thr} over last {osc_win} log entries"
+                    print(f"[P21H] EARLY STOP: {early_stop_reason}", flush=True)
+            # plateau / no-improve early stop
+            if es_patience > 0 and no_improve_count >= es_patience:
+                _save_ckpt(f"plateau_step{step+1}", step + 1, ce_now)
+                early_stopped = True
+                early_stop_reason = f"CE no-improve for {es_patience} log entries (best_CE={best_ce:.4f} @ step={best_step})"
+                print(f"[P21H] EARLY STOP: {early_stop_reason}", flush=True)
+
+        # per-step intermediate ckpt save (independent of log_every)
+        if ckpt_every > 0 and (step + 1) % ckpt_every == 0 and (step + 1) < steps:
+            _save_ckpt(f"step{step+1}", step + 1, float(L_ce.detach()))
 
         # KOSMOS anchor emission every kosmos_every steps
         if (step + 1) % kosmos_every == 0:
@@ -337,9 +404,16 @@ def run(cfg):
                 anchor_paths.append(ap)
                 print(f"[P21H] kosmos anchor written: {os.path.basename(ap)}", flush=True)
 
+        # early-stop break (after KOSMOS anchor emission to capture current state)
+        if early_stopped:
+            break
+
     train_wall = time.time() - t0
-    print(f"[P21H] TRAIN DONE wall={train_wall:.1f}s final_CE={log[-1]['L_ce']:.4f}",
-          flush=True)
+    actual_steps = log[-1]['step'] if log else 0
+    print(f"[P21H] TRAIN DONE wall={train_wall:.1f}s "
+          f"final_CE={log[-1]['L_ce']:.4f} actual_steps={actual_steps}/{steps} "
+          f"early_stopped={early_stopped} reason={early_stop_reason or 'n/a'} "
+          f"best_CE={best_ce:.4f}@step{best_step}", flush=True)
 
     # ─── save ckpt ──
     ckpt_path = os.path.join(out_dir, "ckpt.pt")
@@ -543,6 +617,21 @@ def main():
     ap.add_argument("--n-layer", type=int, default=28)
     ap.add_argument("--n-head", type=int, default=12)
     ap.add_argument("--n-kv-head", type=int, default=4)
+    # v2 (2026-05-22): early-stop + per-step ckpt save + plateau detection
+    # mitosis cell pool ceiling (R6 재설계)
+    ap.add_argument("--mitosis-max", type=int, default=128,
+                    help="MAX cell pool size (R6: 128 → 16 권장)")
+    # ckpt save 주기 (step)
+    ap.add_argument("--ckpt-every", type=int, default=500,
+                    help="intermediate ckpt save every N steps (0=disable)")
+    # CE oscillation 감지 → 즉시 save + early stop
+    ap.add_argument("--ckpt-osc-threshold", type=float, default=0.0,
+                    help="if rolling-CE std > threshold over window, save + early-stop (0=disable)")
+    ap.add_argument("--ckpt-osc-window", type=int, default=20,
+                    help="rolling CE window size for oscillation detection")
+    # CE plateau 감지 → save + early stop
+    ap.add_argument("--early-stop-patience", type=int, default=0,
+                    help="early-stop if CE no-improvement for N consecutive log entries (0=disable)")
     args = ap.parse_args()
     cfg = dict(
         wiki_corpus=args.wiki_corpus,
@@ -562,6 +651,11 @@ def main():
         lambda_mitosis=args.lambda_mitosis,
         d_model=args.d_model, n_layer=args.n_layer,
         n_head=args.n_head, n_kv_head=args.n_kv_head,
+        mitosis_max=args.mitosis_max,
+        ckpt_every=args.ckpt_every,
+        ckpt_osc_threshold=args.ckpt_osc_threshold,
+        ckpt_osc_window=args.ckpt_osc_window,
+        early_stop_patience=args.early_stop_patience,
     )
     run(cfg)
 
