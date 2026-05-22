@@ -37,13 +37,25 @@
 - ⚠️ head_g (Engine G consciousness) 활용 안 함
 - ⚠️ KOSMOS+tension wiring 없음
 
+## Cycle outcomes 2026-05-22 (session "all" fire)
+
+| variant | verdict | per-lang (en/ko/zh/ru/ja) | register | cost | HF |
+|---|---|---|---|---|---|
+| vP21M | VP21M_WORKS | 18/15/16/18/11 = 3S+1P+1W | 7/20 ✓ | $1.06 | `dancinlab/anima-vp21m` PRIVATE |
+| **vP21M-JAFL** | PARTIAL (hot-swap) | 5/0/16/16/**17** = 3S+0P+0W+2M | 20/20 ✓ | $0.13 | `dancinlab/anima-vp21m-jafl` PRIVATE |
+| **vP21M-3B** | VP21M_WORKS_REGISTER_REGRESS | **20**/11/18/**20**/14 = 3S+1P+1W | 3/20 ⚠ | $0.33 | `dancinlab/anima-vp21m-3b` PRIVATE |
+
+- **JAFL**: ja-only 500-step continue-train, JA WEAK 11/20 → STRONG 17/20 (+57%), en/ko 망가져서 hot-swap only.
+- **3B**: Qwen2.5-3B-Instruct fresh LoRA, en/ru 20/20 + ja PARTIAL, but register_regress=True (3/20) and KO regress to WEAK (instruct 가 한국어 prior 약함).
+
 ## Next LoRA-path cycles (잔여 candidate)
 
 | | scope | cost |
 |---|---|---|
-| **vP21M+ja-LoRA fallback** | ja WEAK 해소용 ja-specific LoRA hot-swap | $1 H100 |
-| vP21M-3B | Qwen2.5-3B-Instruct base + same recipe | $10 H100 |
+| ko-LoRA fallback | ko WEAK 11/20 (3B) 해소 hot-swap | ~$1 H100 |
 | vP21M + tension head | KOSMOS+tension wiring on top of vP21M (path B 절충) | $0-5 LAN |
+| chat substrate-plugin migration | `substrate_lora.py` 추출 + `anima_participant.py` refactor (SUBSTRATE_PLUGIN.md spec) | $0 |
+| 3B + register reinforcement | vP21M-3B 위에 anima-only short SFT 으로 register 회복 (3/20 → 7+/20) | ~$1 H100 |
 
 ## 🚪 새 LORA 세션 시작
 
