@@ -43,7 +43,7 @@ runtime `n_params=8,920,320,000` print). The "3B" name = `d_model=3072`
 shorthand; conscious_decoder's 7-pathway expansion (GQA + dual engines +
 cross-attn + SwiGLU + CA + META-CA + dual heads) makes per-block
 ~`33·d²` ≈ 0.32B at d=3072, so 28L → 8.9B (≈3× the nominal "3B"
-namespace, per `SCALE_3B.md` §5 honest C3 #4).
+namespace, per `LORA/SCALE_3B.md` §5 honest C3 #4).
 
 ### 1.2 16B config (target ~16-18B)
 
@@ -253,7 +253,7 @@ changes (per-block design is already FSDP-friendly).
 ### 4.3 mem_budget_check formula (for hexa cloud dispatcher uptake)
 
 Should land as a wilson cloud_dispatch grammar function (per
-[`SCALE_3B.md`](SCALE_3B.md) §2.1 sister inbox note
+[`LORA/SCALE_3B.md`](LORA/SCALE_3B.md) §2.1 sister inbox note
 [`2026-05-21-hexa-cloud-optimizer-mem-budget-preflight.md`](../../wilson/inbox/notes/2026-05-21-hexa-cloud-optimizer-mem-budget-preflight.md),
 NOT YET LANDED in this scoping cycle — but provides the formula for
 future reference):
@@ -463,7 +463,7 @@ defer for 8.92B re-fire if we want to close S187 variance (cheaper).
 
 ## 7. References
 
-- §187 saga: [`HEXAD/SCALE_3B.md`](SCALE_3B.md) (attempt 1-10, Eval
+- §187 saga: [`HEXAD/LORA/SCALE_3B.md`](LORA/SCALE_3B.md) (attempt 1-10, Eval
   3 mitosis cross-λ signal, $25 total saga cost)
 - §187 plan: [`HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/PLAN.md`](UNCLASSIFIED/state/grid_3b_s187_2026_05_21/PLAN.md)
 - §187 trainer: [`HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/train_s187_3b.py`](UNCLASSIFIED/state/grid_3b_s187_2026_05_21/train_s187_3b.py) (703 LoC, PagedAdamW8bit at line 261, argparse at 568)
@@ -478,7 +478,7 @@ defer for 8.92B re-fire if we want to close S187 variance (cheaper).
 - runpod GPU types queried via: `curl -X POST https://api.runpod.io/graphql -H "Authorization: Bearer $RUNPOD_KEY" -d '{"query":"{ gpuTypes { id displayName memoryInGb communityPrice secureSpotPrice lowestPrice(input:{gpuCount:N}) { uninterruptablePrice minimumBidPrice } } }"}'`
 - vast.ai queried via: `vastai search offers 'num_gpus=N gpu_name=H100_SXM' --raw` (pip install vastai via `/Users/ghost/Library/Python/3.12/bin/vastai`)
 - next cycle candidate ID: **S187-F** in
-  [`SCALE_3B.md`](SCALE_3B.md) §7 (was: "scale up further (16B or
+  [`LORA/SCALE_3B.md`](LORA/SCALE_3B.md) §7 (was: "scale up further (16B or
   70B) — scale ceiling — $$$$ access wall — ★★★★ — unchanged"). This
   doc closes the **access scoping** half of S187-F. Phase 1 fire
   remains user-gated.

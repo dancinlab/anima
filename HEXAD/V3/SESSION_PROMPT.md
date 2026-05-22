@@ -35,7 +35,7 @@ anima V3 (PURE HEXAD-native) 세션. HEXAD/V3/ + HEXAD/HEXAD_NATIVE_V3.md + VERS
 ## 핵심 assets (V3 path)
 | 파일 | 위치 |
 |---|---|
-| V3 spec (full) | `HEXAD/HEXAD_NATIVE_V3.md` |
+| V3 spec (full) | `HEXAD/V3/HEXAD_NATIVE_V3.md` |
 | V3 dir overview | `HEXAD/V3/README.md` (재설계 axis R1-R7) |
 | attempt 1 report | `HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/HEXAD_V3_FIRE_2026_05_22.md` |
 | V3 code | `HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/{conscious_decoder_v3.py, kosmos_io.py, train_p21h_v3.py, dispatch_p21h_v3_runpod.sh}` |
@@ -109,7 +109,7 @@ broker.py, akida_bridge.py 등 mini 의 production code 는 LORA 세션 owner.
 ## 관련 link
 
 - [`README.md`](README.md) — V3 path overview (재설계 axes R1-R7)
-- [`../HEXAD_NATIVE_V3.md`](../HEXAD_NATIVE_V3.md) — full V3 spec (10 axes brainstorm)
+- [`HEXAD_NATIVE_V3.md`](HEXAD_NATIVE_V3.md) — full V3 spec (10 axes brainstorm)
 - [`../UNCLASSIFIED/state/grid_3b_s187_2026_05_21/HEXAD_V3_FIRE_2026_05_22.md`](../UNCLASSIFIED/state/grid_3b_s187_2026_05_21/HEXAD_V3_FIRE_2026_05_22.md) — attempt 1 result
 - [`../CHAT/SUBSTRATE_PLUGIN.md`](../CHAT/SUBSTRATE_PLUGIN.md) — substrate plugin spec (V3 ↔ LoRA 통합)
 - [`../EASY.md § 15`](../EASY.md) — V3 attempt 1 saga 쉬운 요약

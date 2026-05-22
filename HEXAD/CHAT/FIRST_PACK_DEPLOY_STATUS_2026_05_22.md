@@ -110,7 +110,7 @@ browser callback 실패 → Mac Downloads/cert.pem download → scp to mini fall
 
 ## 관련 link
 
-- 결정 base: `HEXAD/FIRST-PACK.md` (8/8 결정 land)
+- 결정 base: `HEXAD/LORA/FIRST-PACK.md` (8/8 결정 land)
 - substrate-native guard: `project.tape @D a_substrate_native_speak`
 - model: `HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/VP21M_MULTILINGUAL_2026_05_22.md`
 - mini host: `pool on mini` OR `ssh mini@mini.local`

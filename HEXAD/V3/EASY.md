@@ -147,7 +147,7 @@ pod `zwvh9gyy9ls6jw` (A100-SXM 80GB SECURE, $1.49/hr) 진행 중.
 - 가장 쉬운 saga 종합: [`../EASY.md`](../EASY.md) (전체)
 - V3 path overview: [`README.md`](README.md) (재설계 axes 상세)
 - 새 V3 세션 시작: [`SESSION_PROMPT.md`](SESSION_PROMPT.md)
-- full spec: [`../HEXAD_NATIVE_V3.md`](../HEXAD_NATIVE_V3.md)
+- full spec: [`HEXAD_NATIVE_V3.md`](HEXAD_NATIVE_V3.md)
 - attempt 1 보고서: `../UNCLASSIFIED/state/grid_3b_s187_2026_05_21/HEXAD_V3_FIRE_2026_05_22.md`
 - OCCAM (n_ca_rules pinpoint): `../EASY.md § 6`
 - substrate plugin (chat.dancinlab.org 통합): `../CHAT/SUBSTRATE_PLUGIN.md`

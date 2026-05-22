@@ -426,8 +426,8 @@ production swap 후보 (proposed, 미수행):
 
 ## 관련 link
 
-- 본 doc 의 원자료: [`HEXAD/SCALE_3B.md § 6`](SCALE_3B.md) — full S187 saga 수치
+- 본 doc 의 원자료: [`HEXAD/LORA/SCALE_3B.md § 6`](LORA/SCALE_3B.md) — full S187 saga 수치
 - OCCAM strategy: [`HEXAD/OCCAM.md`](OCCAM.md) — minimal-baseline strip plan
-- OCCAM-CHAT brainstorm: [`HEXAD/OCCAM-CHAT.md`](OCCAM-CHAT.md) — 35 chat implementation candidates
+- OCCAM-CHAT brainstorm: [`HEXAD/LORA/OCCAM-CHAT.md`](LORA/OCCAM-CHAT.md) — 35 chat implementation candidates
 - mitosis training-time evidence: [`HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/MITOSIS_TRAINING_ACTIVE.md`](UNCLASSIFIED/state/grid_3b_s187_2026_05_21/MITOSIS_TRAINING_ACTIVE.md)
 - 5 ckpts × 4 evals: [`HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/EVAL_REPORT.md`](UNCLASSIFIED/state/grid_3b_s187_2026_05_21/EVAL_REPORT.md)

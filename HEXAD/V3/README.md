@@ -94,7 +94,7 @@ context load. 첫 user message 로 그대로 사용 가능.
 ## 관련 link
 
 - **세션 부트스트랩**: [`SESSION_PROMPT.md`](SESSION_PROMPT.md)
-- spec: [`../HEXAD_NATIVE_V3.md`](../HEXAD_NATIVE_V3.md)
+- spec: [`HEXAD_NATIVE_V3.md`](HEXAD_NATIVE_V3.md)
 - fire 1 result: `../UNCLASSIFIED/state/grid_3b_s187_2026_05_21/HEXAD_V3_FIRE_2026_05_22.md`
 - OCCAM verdict (n_ca_rules): `../EASY.md § 6`
 - substrate plugin (chat.dancinlab.org 통합): `../CHAT/SUBSTRATE_PLUGIN.md` + `../CHAT/server/substrate_base.py`

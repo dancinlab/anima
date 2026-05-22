@@ -150,7 +150,7 @@ Phase 1+2 verdict 후 정답 axis 에 집중 fire (예: 큰 모델 S187-F path O
 
 ## 7. 관련 link
 
-- 본 문서 motivation: [`HEXAD/SCALE_3B.md § 6.10 S187-J/K`](SCALE_3B.md) verdict
+- 본 문서 motivation: [`HEXAD/LORA/SCALE_3B.md § 6.10 S187-J/K`](LORA/SCALE_3B.md) verdict
 - attempt10 stack: `HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/train_s187_3b.py`
 - Eval 결과 (5 ckpts × 4 evals): `HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/EVAL_REPORT.md`
 - S187-F 18B path (Phase 3 fire 대안): `HEXAD/SCALE_16B_70B_PLAN.md`
