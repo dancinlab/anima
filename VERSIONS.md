@@ -10,7 +10,7 @@
 
 ## 0. anima 전체 release version
 
-루트 [`/VERSION`](VERSION) = **`0.10.0`** (한 줄, 전체 시스템 release).
+루트 [`/VERSION`](VERSION) = **`0.11.0`** (한 줄, 전체 시스템 release).
 
 > release timeline + 마일스톤 history → [`VERSIONS.log.md`](VERSIONS.log.md).
 
