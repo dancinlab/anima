@@ -115,18 +115,28 @@ OCCAM 원칙: attempt 1 의 정직한 한계 → 다음 cycle 의 변형 axis (R
 | **R6** | mitosis cell pool 작게 | MAX 128 → **16** |
 | R7 | step 늘림 | 2000 → 5000+ |
 
-### Phase 2 fire (현재 진행 중)
+### Phase 2 fire 결과 (2026-05-22)
 
-🔵 **R2 + R5 + R6 동시 fire** (단일 attempt):
-- `--lambda-mitosis 0.0`
-- `--init-variant qwen`
-- `--mitosis-max 16`
-- step 5000
-- `--ckpt-osc-threshold 0.5 --early-stop-patience 8` (mode collapse 방지)
+🔵 **R2 + R5 + R6 동시 fire** — early-stop + osc-detect 코드 v2 적용.
 
-추정 cost ~$8-15 H100, ~3hr wall.
+**Phase 2 (1차)** pod `zwvh9gyy9ls6jw`:
+- CE 0.643 (R2 mitosis-off 가 V3 attempt 1 의 CE 2.9-3.3 → **0.64 극적 개선**!)
+- osc-detect 작동: step 1125 CE oscillation std 3.85 > 0.5 → `ckpt_osc_step1125.pt` 저장 + early-stop ✓
+- **단 5-lang 0/5** (en PURE_MEM 8/20, ko WEAK 1/20, zh/ru/ja WEAK 0/20) — generalization FAIL
+- R6 (`--mitosis-max 16`) 미적용 bug (pool 128) — fix `1e4c537fd`
 
-pod `zwvh9gyy9ls6jw` (A100-SXM 80GB SECURE, $1.49/hr) 진행 중.
+**Phase 2 (2차, R6 fixed)** pod `kxfts3r6gsi6re` 진행 중:
+- `pool=16 splits=14` — **R6 작동** ✓ (cell pool 128→16 cap)
+
+### Phase 2 핵심 발견
+
+**R2 (mitosis 학습-비활성화) 가 CE 는 고치지만 generalization 은 못 고침**:
+- mitosis off → CE 3.0 → 0.64 (memorization 개선)
+- 하지만 5-lang generalize 여전히 0/5
+- → V3 진짜 blocker = **mitosis 아님**. **dual-head vocab alignment** +
+  Chinchilla under-budget 가 multilingual 실패 원인.
+
+다음 axis: R4 (head_g 별도 train pipeline) + R1/R3 (scale + corpus).
 
 ---
 
