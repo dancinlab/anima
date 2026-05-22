@@ -1,0 +1,20 @@
+{
+  "cycle": 4,
+  "date": "2026-05-23",
+  "host": "mini",
+  "ckpt": "ckpt_phase1a4_lr5e6_sft.safetensors",
+  "trunc_len": 156,
+  "max_new": 10,
+  "tiers": [0, 15, 30, 42, 51, 60, 77, 80, 91, 95, 100],
+  "A_tier_splits": [12, 14, 13, 12, 16, 7, 12, 21, 17, 11, 16],
+  "A_tier_split_rates": [0.0722892, 0.0843373, 0.0783133, 0.0722892, 0.0963855, 0.0421687, 0.0722892, 0.126506, 0.10241, 0.0662651, 0.0963855],
+  "B_seeds": [2026, 42, 99, 7, 123],
+  "B_tier0_splits": [27, 28, 14, 27, 28],
+  "B_mean": 24.8, "B_std": 6.05805,
+  "C_permuted_tiers": [51, 100, 77, 80, 30, 15, 95, 42, 0, 91, 60],
+  "F_SRH_2": { "metric": "spearman(tier,split)", "rho": 0.220704, "floor": 0.6, "verdict": "FAIL" },
+  "F_SRH_3": { "metric": "cross_seed_CV(tier0.split)", "cv": 0.244276, "floor": 0.30, "verdict": "PASS" },
+  "F_SRH_4": { "metric": "spearman(permuted_tier,split)", "rho": -0.317262, "ceil": 0.2, "verdict": "FAIL" },
+  "F_SRH_5": { "metric": "replay_event_step_jaccard", "jaccard": 0.464286, "floor": 0.95, "verdict": "FAIL" },
+  "verdict_rule": "F-SRH-2 rho>=0.6 · F-SRH-3 CV<=0.30 · F-SRH-4 |rho|<0.2 · F-SRH-5 jac>=0.95 (FIXED pre-cycle4)"
+}

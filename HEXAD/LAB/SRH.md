@@ -1,7 +1,7 @@
 # SRH — Simulation Replay Hypothesis × UBM × anima spike
 
-**Status**: **F-SRH-1 PASS (z=2.86)** — production 332M 3-seed sweep 에서 UBM tier=0 가 byte-shuffle 통제군 (동일 byte histogram) 대비 **11.5× cell split** (mean 23 vs 2, Δ=21, z=2.86 ≥ 2.0). F-SRH-3 reproducibility 는 FAIL (CV 0.45, seed=2026 outlier). 종합 **MODERATE-STRONG (2/3 falsifier)**.
-**Last update**: 2026-05-23 Cycle #3
+**Status**: **MIXED → DOWNGRADED.** cycle #4 에서 F-SRH-2 (tier monotone) + F-SRH-5 (replay invariance) **둘 다 FAIL**. 핵심 발견 — 동일 prompt·seed 가 동일 response 를 내지만 **split_count 는 27 vs 14 로 다름** → split_count 는 **비결정론적 관측량** (mitosis split noise RNG 미-seed). SRH 의 강한 주장(tier ordinal · reproducible spike) 기각. 잔존 = 약한 threshold 효과 ("UBM-class 텍스트는 splitting 임계를 넘고 garbage 는 안 넘는다").
+**Last update**: 2026-05-23 Cycle #4
 **Log**: [SRH.log.md](SRH.log.md)
 
 ---
@@ -64,21 +64,25 @@ HEXAD/LAB/state/SRH_<slug>_YYYY_MM_DD/
 
 ## §3 Falsifiers (pre-registered)
 
-| ID | 조건 | spike target | PASS line | Cycle #3 결과 |
+| ID | 조건 | metric | PASS line | 결과 |
 |---|---|---|---|---|
-| F-SRH-1 | UBM vs byte-shuffle 통제군 | split_count delta | z ≥ 2.0 (3-seed pooled) | **PASS** z=2.86 |
-| F-SRH-1b | UBM vs ASCII-noise 통제군 | split_count delta | z ≥ 2.0 | **PASS** z=2.86 |
-| F-SRH-2 | tier 0→100 monotone | split_count or cell_count_final | Spearman ρ ≥ 0.6 over 11 tiers | UNFIRED (cycle #4) |
-| F-SRH-3 | cross-seed reproducibility | split_count CV | CV ≤ 0.30 (3-seed pilot floor) | **FAIL** CV=0.45 |
-| F-SRH-4 | shuffled-tier control | monotonicity 사라짐 | ρ < 0.2 | UNFIRED (cycle #4) |
-| F-SRH-5 | replay invariance | re-fire fingerprint | event_step jaccard ≥ 0.95 | UNFIRED |
+| F-SRH-1 | UBM vs byte-shuffle 통제군 | split_count delta | z ≥ 2.0 (3-seed pooled) | **PASS** z=2.86 (#3) — 단 split_count 비결정론 판명으로 *threshold 효과*로 재해석 |
+| F-SRH-1b | UBM vs ASCII-noise 통제군 | split_count delta | z ≥ 2.0 | **PASS** z=2.86 (#3) — 동상 |
+| F-SRH-2 | tier 0→100 monotone | split_count | Spearman ρ ≥ 0.6 | **FAIL** ρ=0.22 (#4) — random permute 의 |ρ|=0.32 보다도 낮음 |
+| F-SRH-3 | cross-seed reproducibility | split_count CV | CV ≤ 0.30 | PASS CV=0.24 (#4) — 단 F-SRH-5 가 동일-seed 비재현 보여 hollow |
+| F-SRH-4 | permuted-tier null | spearman(permuted,split) | |ρ| < 0.2 | FAIL\* ρ=−0.32 (#4) — n=11 1-permute underpowered (참고용) |
+| F-SRH-5 | replay invariance | re-fire event_step jaccard | ≥ 0.95 | **FAIL** jaccard=0.46, split 27→14 동일 prompt·seed (#4) |
 
 **Result aggregation**: STRONG = 5/5 PASS · MODERATE = 3-4/5 · WEAK = 1-2/5 · NULL = 0/5.
-**현재 (cycle #3, 3/6 fired)**: F-SRH-1 + F-SRH-1b PASS · F-SRH-3 FAIL → **MODERATE-STRONG** (fired 중 2/3).
+**현재 (cycle #4, 6/6 fired)**: F-SRH-1/1b PASS (재해석) · F-SRH-3 PASS(hollow) · F-SRH-2/5 **FAIL** · F-SRH-4 FAIL\*(underpowered) → **WEAK / MIXED**.
 
-> Cycle #1-2 의 F-SRH-1 threshold (z ≥ 3.0 OR |Δ| ≥ 5σ, N=11×5) 는 cycle #3 에서
-> 3-seed pilot 현실에 맞춰 z ≥ 2.0 (3-seed pooled std) 로 calibrated. 11-anchor ×
-> 5-control full design 은 cycle #4 carry. threshold 변경 이력은 [SRH.log.md].
+> **결정적 재해석**: F-SRH-5 가 split_count 의 **비결정론** 을 드러냄 — 동일
+> (prompt, seed) 가 동일 response_text("ines highe") 를 내면서 split_count 는
+> 27 vs 14. forward pass 는 결정론적, **mitosis split 의 noise RNG (RFC 033
+> farr_add_gaussian_noise) 가 seed 통제 밖** → split cascade chaotic. 따라서
+> split_count 는 point observable 이 아니라 **chaotic distributional observable**.
+> F-SRH-1 의 "11.5×"는 magnitude 가 아니라 **threshold 통과 여부** (garbage =
+> 안정적 2-split fixed point · UBM = 임계 초과 chaotic regime) 로만 유효.
 
 ## §4 Final verdict
 
@@ -109,7 +113,23 @@ baseline 2 split 은 cycle #2 에서 관측된 early-prefill step-2 fixed fire. 
 
 UBM split 이 seed 2026 에서 11, seed 42/99 에서 29 — 1/3 seed outlier. 통제군은 CV=0 (모든 seed 정확히 2) 이므로 변동성은 UBM-engaged dynamics 고유. cycle #4 에서 5-seed 로 outlier 가 꼬리인지 bimodal 인지 판정 필요.
 
-**Pending**: Cycle #4 — (a) 11-tier sweep (F-SRH-2 monotone), (b) 5-seed 재측정 (F-SRH-3 + seed=2026 outlier 규명), (c) F-SRH-4 shuffled-tier, (d) F-SRH-5 replay invariance.
+### Cycle #4 결과 (result_cycle4.json, trunc_len=156, max_new=10)
+
+11-tier split [0..100] = `[12,14,13,12,16,7,12,21,17,11,16]` — **monotone 아님** (tier 60 이 최저 7, tier 80 이 최고 21). Spearman ρ=0.22, random permute null |ρ|=0.32 보다도 낮음 → **F-SRH-2 FAIL hard** (tier 의 "cosmic significance ordinal" 신호 0).
+
+5-seed tier0 split = `[27,28,14,27,28]` CV=0.24 → F-SRH-3 PASS. 그러나 replay (동일 prompt·seed=2026) 가 split 27→**14**, jaccard 0.46 → **F-SRH-5 FAIL**. response_text 는 27-run·14-run 동일("ines highe") → forward 결정론적, **split cascade 만 chaotic**.
+
+### 종합 verdict (cycle #1-4)
+
+**WEAK / MIXED.** SRH 의 검증가능 강주장 — (a) UBM tier ordinal 구조, (b) reproducible spike fingerprint — **둘 다 falsified** (F-SRH-2, F-SRH-5).
+
+살아남은 것 = **단일 약한 명제**: "UBM-class 구조화 텍스트는 mitosis splitting 임계를 넘기고, garbage (byte-shuffle / ASCII-noise) 는 안정적 2-split fixed point 에 머문다." 이는 bistable/threshold 현상이지 "재인지/재시뮬레이션" 증거 아님. 임계 초과 후 split_count 는 noisy-split RNG 로 chaotic.
+
+미해결 confound (cycle #5 가 가름): **UBM 특이적 vs 단순 coherent-text** — generic 한국어 통제군 미측정. cycle #5 는 split_count chaotic 을 감안, **threshold 통과 여부**(split > 2 인가)를 binary observable 로 재프레임.
+
+미해결 infra: split_count 비결정론 — mitosis split noise 를 seed 통제하거나 (SEED 도메인), 결정론적 관측량 (Law-71 12L energy, DEPTH 도메인) 으로 전환 필요.
+
+**Pending**: Cycle #5 (generic-coherent threshold test) → SRH 종결 판정.
 
 ## §5 Honest C3
 

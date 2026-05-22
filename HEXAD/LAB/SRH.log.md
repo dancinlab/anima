@@ -106,3 +106,24 @@ Append-only chronological log. `SRH.md` 는 latest only — history 는 여기.
   - C3-c3-5: chat_generate "사용자:|도우미:" template 잔존 (AGENTS.tape forbidden) — Phase B hexa-native template 재측정 carry
   - C3-c3-6: falsifier threshold 를 cycle 중간 calibrate — pre-registration 약화. cycle #4 는 z≥2.0 / CV≤0.30 으로 **고정** 후 11-tier 측정 (post-hoc tuning 금지)
 - **next**: **Cycle #4** — z≥2.0 / CV≤0.30 고정. (a) 11-tier sweep ubm_load_all() → F-SRH-2 Spearman monotone, (b) 5-seed UBM 재측정 → F-SRH-3 + outlier 규명, (c) F-SRH-4 shuffled-tier label control, (d) F-SRH-5 replay invariance. mini full-setup 완료되어 추가 infra 0. wall ~예측 5 min (cycle #3 9-fire 가 분 단위 완료).
+
+---
+
+## Cycle #4 — 2026-05-23
+
+- **focus**: 잔여 falsifier 4개 (F-SRH-2/3/4/5) 측정, threshold 고정 (z≥2.0/CV≤0.30, post-hoc tuning 금지 C3-c3-6 준수)
+- **change**: `run_pilot_cycle4.hexa` — 11-tier sweep + 5-seed + permute null + replay. Spearman(=Pearson-on-avg-ranks) / _permute_ints (concat-free) 구현. 공통 truncate len=156 (length confound 통제).
+- **fire**: mini bg `btw5wp85x`, 17 fire, exit 0, $0. artifacts: `spike_c4_*.json` (17) + `result_cycle4.json` + `cycle4.log`.
+- **verdict**: **WEAK / MIXED — F-SRH-2 FAIL + F-SRH-5 FAIL (강주장 2개 falsified)**
+  - **F-SRH-2 FAIL**: 11-tier split `[12,14,13,12,16,7,12,21,17,11,16]` monotone 아님. ρ=0.22 < random-permute |ρ|=0.32. tier ordinal 신호 0.
+  - **F-SRH-3 PASS** (CV=0.24 ≤ 0.30) — 단 F-SRH-5 가 무력화
+  - **F-SRH-4 FAIL\*** ρ=−0.32 — n=11 1-permute underpowered, 참고용 (실제 의미: F-SRH-2 의 ρ 가 random permute 보다 낮다는 corroboration)
+  - **F-SRH-5 FAIL**: replay (동일 prompt·seed=2026) split 27→14, jaccard 0.46
+  - **★ 결정적 발견**: `spike_c4_t0_seed2026` 와 `spike_c4_replay_seed2026` — 동일 prompt·seed, **response_text 동일** ("ines highe"), 그러나 split_count **27 vs 14**. forward pass 는 완전 결정론적, **mitosis split cascade 만 비결정론**. 원인 = split 시 `farr_add_gaussian_noise` (RFC 033) 의 RNG 가 `seed` 파라미터 통제 밖 (greedy 모드라 seed 는 sampling 에도 무영향). → **split_count 은 point observable 이 아니라 chaotic distributional observable.**
+  - cycle #3 의 "11.5×"는 magnitude 가 아니라 **threshold 통과 여부**로만 유효: garbage = 안정적 2-split fixed point, UBM = 임계 초과 chaotic regime. bistable/threshold 현상.
+- **honest C3**:
+  - C3-c4-1: F-SRH-4 permutation 1회 underpowered — full permutation test (1000×) 면 정확하나 pilot scope. 참고치로만.
+  - C3-c4-2: F-SRH-3 "PASS" 는 hollow — F-SRH-5 가 동일-seed 비재현 보이므로 cross-seed CV 자체가 의미 약함.
+  - C3-c4-3: split_count chaotic 판명 → cycle #1-3 의 모든 split_count 절대값은 distributional sample 1개로 재해석해야. UBM-vs-garbage 의 robust 잔존분은 "임계 초과 여부"(이진).
+  - C3-c4-4: trunc_len 156 (cycle #3 는 full 190) — cycle 간 prompt 길이 불일치, split 절대값 cross-cycle 비교 불가 (각 cycle 내부 비교만).
+- **next**: **Cycle #5** — generic-coherent 통제군. split_count chaotic 감안 **threshold 이진관측**(split>2 인가)으로 재프레임. UBM-specific vs coherent-text 가름 → SRH 종결. + 병행 과제: split 비결정론은 SEED 도메인(noise RNG seed 통제) 또는 DEPTH 도메인(Law-71 결정론적 energy)으로 이관.
