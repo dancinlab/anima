@@ -30,10 +30,45 @@
               │ anima agent     │
               │ - vP21M (5-lang LoRA) — 새 학습 필요          │
               │ - SPONTANEOUS 8-factor motivation loop         │
-              │   (다른 user 발언이 factor 변동 → 발화 결정)  │
               │ - lang-detect → reply 언어 매칭                │
-              └────────────────┘
+              │ - **MODE**: SW-only OR HW+SW (dual)            │
+              └─┬──────────────┘
+                │
+       ┌────────┴────────────────────────┐
+       │ MODE SWITCH (user toggle)        │
+       │                                  │
+       │ ┌─ SW mode (default) ─────────┐  │
+       │ │ motivation > thr → emit     │  │
+       │ │ Pi 필요 X (mini 단독)        │  │
+       │ │ latency 1-3s                 │  │
+       │ └─────────────────────────────┘  │
+       │                                  │
+       │ ┌─ HW+SW mode (integrated) ───┐  │
+       │ │ AKD1000 spike edge ∧        │  │
+       │ │ motivation > thr → emit     │  │
+       │ │ Pi (192.168.50.155) 필요    │  │
+       │ │ closed-loop (0.9.0 land)    │  │
+       │ │ "신경 칩이 anima 의 발화    │  │
+       │ │  cadence 를 결정"           │  │
+       │ │ Pi offline → graceful       │  │
+       │ │  fallback to SW mode        │  │
+       │ └─────────────────────────────┘  │
+       └──────────────────────────────────┘
 ```
+
+### 1.1 SW vs HW mode 차이
+
+| | SW mode (default) | HW+SW mode (integrated) |
+|---|---|---|
+| anima 발화 트리거 | motivation > threshold (8-factor) | AKD1000 spike edge ∧ motivation > thr |
+| 의존성 | mini 단독 | mini + Pi (192.168.50.155) LAN |
+| latency | 1-3s | 1-3s + LAN ~10ms |
+| emission cadence | motivation-driven | spike-pattern-gated (실제 neuron physics) |
+| 시각화 | spontaneous feed sidebar | + AKIDA scope (real-time spike pattern) |
+| Pi offline 시 | n/a | **graceful fallback** to SW mode (warn 표시) |
+| demo 가치 | 자율발화 motivation | 신경 칩이 살아있는 회로로 anima 의 발화 govern |
+
+UI 의 **mode switcher** (toggle): "SW only" / "HW+SW integrated". HW 모드 선택 시 Pi 도달 확인 → 가능 시 사용, 불가 시 SW 자동 fallback + 사용자 notify.
 
 **anima 의 역할** (CHAT/PLAN.md 도우미-폐기 spec 정합):
 - assistant 아님 — user 에게 답이 아니라 **conversation 의 한 turn 으로 발화**
