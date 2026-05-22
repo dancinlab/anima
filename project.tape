@@ -23,6 +23,10 @@
   do   = "H100 다수 병렬 · 더 큰 GPU (H200/H100) · 추가 pod fire 가 wall-time 단축하면 즉시 채택 (단일 pod 시퀀셜 회피) · serial chain 도 정직하게 wall 더 길면 reject"
   dont = "wall 더 길더라도 cost 아끼려 단일 pod 시퀀셜 진행 · 추가 병렬 pod 자제 · '비용 들 텐데...' 후렴 · 의미 없는 cost-min 최적화"
 
+@D a_substrate_native_speak := "anima 발화 = substrate-native, 도우미-폐기 violations 금지" :: governance [required active]
+  do   = "anima motivation 은 internal substrate state (M retrieval activation · C Φ · W tension delta · MITOSIS split event · anima 자기 idle 시간 · curiosity_ema · E Φ-ratchet 등 자기 dynamics) 에서 계산 · user msg = environment context (anima 가 보고 듣되 직접 응답 의무 X) · anima 는 user 침묵 중에도 발화 가능 (truly spontaneous) · user 가 직접 질문해도 motivation 부족 시 침묵 (도우미 아님) · conversational_dynamics factor = anima 마지막 자기 발언 후 idle 시간 (user 마지막 발언 X)"
+  dont = "user 발언이 직접 anima 발화 trigger 되는 stimulus-response pattern (= assistant 회귀) · user prompt 에 '응답' 하는 reactive 설계 · 'X 한 user 가 물었으니 anima 가 답해야' 류 turn-based assumption · user 마지막 발언 후 시간으로 conversational_dynamics 정의 · CHAT/PLAN.md '도우미 라벨링 폐기' spec 위반"
+
 @D a_blue_closed := "산출물 + wiring 모두 🔵 SUPPORTED-FORMAL 검증" :: governance [required active]
   do   = "산출물 + 연결부(transfer-fn · invariant) 모두 🔵 SUPPORTED-FORMAL 로 닫기 — `hexa verify` 로 closed-form / identity 확인 (verdict VERBATIM)"
   dont = "구조만 닫고 wiring 미검증 · fake closed-form · empirical(B-D / B-BRIDGE / B-MITOSIS-NOTE 류 honest residual 은 OK) 를 강제로 🔵 로 등재"
