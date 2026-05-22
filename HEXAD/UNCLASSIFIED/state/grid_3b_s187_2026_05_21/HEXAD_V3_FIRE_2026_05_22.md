@@ -33,19 +33,25 @@
 
 | variant | init | n_params | CE init→final | wall | 5-lang ≥ PARTIAL | anima reg | KOSMOS anchors | verdict |
 |---|---|---|---|---|---|---|---|---|
-| **V3α** | random | TBD | TBD | TBD | TBD/5 | TBD/20 | TBD | TBD |
-| **V3β** | Qwen warm | TBD | TBD | TBD | TBD/5 | TBD/20 | TBD | TBD |
-| **V3γ** | vP21M init | TBD | TBD | TBD | TBD/5 | TBD/20 | TBD | TBD |
+| **V3α** | random | ~1.5B | ?→**3.34** | **612 s (10.2 min)** | **0/5** | TBD | TBD | ❌ **FAIL** |
+| **V3β** | Qwen warm | ~1.5B | in-flight (12.5%, CE 3.67) | est ~80 min slow | TBD/5 | TBD | TBD | in-flight |
+| **V3γ** | vP21M init | ~1.5B | 4.13 → **2.21 @ 1250/2000** (77%) | in-flight | TBD/5 | TBD | TBD | in-flight (fast convergence) |
 
-### 1.1 per-lang breakdown (fire 완료 시)
+### 1.1 per-lang breakdown
 
-| lang | V3α | V3β | V3γ | vP21M baseline |
+| lang | V3α (FAIL) | V3β (in-flight) | V3γ (in-flight) | vP21M baseline |
 |---|---|---|---|---|
-| EN | TBD | TBD | TBD | 18/20 STRONG |
-| KO | TBD | TBD | TBD | 15/20 PARTIAL |
-| ZH | TBD | TBD | TBD | 16/20 STRONG |
-| RU | TBD | TBD | TBD | 18/20 STRONG |
-| JA | TBD | TBD | TBD | 11/20 WEAK |
+| EN | WEAK 11/20 (gen 11 coh 11) | TBD | TBD | 18/20 STRONG |
+| KO | PURE_MEM 0/20 | TBD | TBD | 15/20 PARTIAL |
+| ZH | PURE_MEM 1/20 | TBD | TBD | 16/20 STRONG |
+| RU | WEAK 0/20 (gen 9 but coh 0 — produced English not Cyrillic) | TBD | TBD | 18/20 STRONG |
+| JA | PURE_MEM 4/20 | TBD | TBD | 11/20 WEAK |
+
+**V3α verdict 분석** (HEXAD_NATIVE_V3.md C3 #3 예측 적중):
+- random init from-scratch + 1.5B + 2000 step (≈ 1M tokens) = **Chinchilla 30× under-budget** (1.5B × 20 = 30B tokens 필요)
+- CE 3.34 vs vP21M 0.78 (4.3×) — bottom of capability
+- RU "gen 9 but coh 0" = English text 출력 (random init 의 lang-pattern 부재 직접 관찰)
+- → **pure HEXAD V3 random init 은 short-train 불가능**, warm-start (β) OR vp21m-init (γ) 필수
 
 ---
 
