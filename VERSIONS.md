@@ -158,25 +158,35 @@ PATCH  ↑  fix / refinement / 문서 (동작 불변)
 
 ## 10. anima-* 생태계 (19 subsystem)
 
-각 subsystem 의 SSOT version (README/pyproject 기반 추정 — 헤더 sync 는 차후 cycle):
+version 파일 부재 (전부 미버전) → maturity (impl 파일 수 + README 유무) 기반
+**초기 버전 부여**. 본 registry 가 이들의 version SSOT (subsystem 내 VERSION 파일
+안 뿌림 — 중앙 관리 원칙).
 
-| subsystem | 버전 | tier | 역할 |
-|---|---|---|---|
-| anima-core | v0.x 🟡 | core consciousness engine | consciousness_engine.py 2173L anchor |
-| anima-engines | v0.x 🟡 | 163 *_phi.hexa collection (질병/현상별 Φ 모델) | abiogenesis/adhd/aesthetic/... per-phenomenon |
-| anima-agent | v0.x 🟡 | agent harness (channels/core/plugins/providers/skills) | |
-| anima-body | v0.x 🟡 | sensorimotor / proprioception | |
-| anima-os | v0.x 🟡 | OS-level integration | |
-| anima-serve | v0.x 🟡 | serving layer | |
-| anima-measurement | v0.x 🟡 | Φ measurement / verification | |
-| anima-hci-research | v0.x 🟡 | HCI research | |
-| anima-cpgd-research | v0.x 🟡 | CPGD research | |
-| anima-tribev2-pilot | v0.x 🟡 | TRIBE multi-agent pilot | |
-| anima-tools | v0.x 🟡 | tooling | |
-| anima-hexad | v0.x 🟡 | HEXAD mirror / legacy | |
-| anima-agent-{channels,core,hire-sim,plugins,providers,skills} | v0.x 🟡 | agent sub-packages | |
+| subsystem | 버전 | tier | impl | 역할 |
+|---|---|---|---|---|
+| anima-core | v0.3.0 🟢 | 31 files + R | core consciousness engine (consciousness_engine.py 2173L anchor) |
+| anima-engines | v0.2.0 🟢 | 163 .hexa | 질병/현상별 Φ 모델 collection (abiogenesis/adhd/aesthetic/...) |
+| anima-tools | v0.2.0 🟢 | 73 files + R | tooling |
+| anima-body | v0.2.0 🟢 | 28 files + R | sensorimotor / proprioception |
+| anima-hci-research | v0.1.0 🟡 | 12 files + R | HCI research |
+| anima-cpgd-research | v0.1.0 🟡 | 12 files + R | CPGD research |
+| anima-measurement | v0.1.0 🟡 | 10 files | Φ measurement / verification |
+| anima-agent-hire-sim | v0.1.0 🟡 | 9 files | agent hire simulation |
+| anima-agent-channels | v0.1.0 🟡 | 7 files | agent channel layer |
+| anima-agent-plugins | v0.1.0 🟡 | 7 files | agent plugins |
+| anima-agent | v0.1.0 🟡 | 6 files + R | agent harness (top) |
+| anima-agent-core | v0.1.0 🟡 | 6 files | agent core |
+| anima-agent-providers | v0.1.0 🟡 | 6 files | LLM providers |
+| anima-serve | v0.1.0 🟡 | 3 files + R | serving layer |
+| anima-agent-skills | v0.1.0-alpha 🟡 | 2 files | agent skills |
+| anima-tribev2-pilot | v0.1.0-alpha 🟡 | 1 file + R | TRIBE multi-agent pilot |
+| anima-os | v0.0.1 🟡 | 0 impl | OS-level integration (stub) |
+| anima-hexad | v0.0.1 🟡 | 0 impl + R | HEXAD mirror / legacy (stub) |
 
-> **honest**: anima-* 19 subsystem 은 README/pyproject SSOT version 만 catalog. .hexa 헤더 일괄 삽입은 163 anima-engines + 수백 파일 규모라 별도 cycle (위험 대비 가치 낮음). 본 registry 가 anima-wide version SSOT.
+> **버전 부여 근거**: README + 30+ impl 파일 = v0.2-0.3 (working), 10-12 = v0.1
+> (partial), ≤2 또는 0 impl = v0.1-alpha / v0.0.1 (stub). 모두 version 파일
+> 부재라 본 registry 가 SSOT. anima-engines 163 *_phi.hexa 의 개별 헤더는
+> 미삽입 (collection 단위 v0.2.0 으로 관리, 위험 대비 가치 낮음).
 
 ---
 
