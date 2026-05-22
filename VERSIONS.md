@@ -157,7 +157,7 @@ PATCH  ↑  fix / refinement / 문서 (동작 불변)
 
 | 모듈 | 버전 | tier | 비고 |
 |---|---|---|---|
-| **AKIDA** | **v0.2.0** 🟢 | **HW LANDED 2026-05-22** — AKD1000 PCIe 검출 + /dev/akida0 driver + pool `pi5-akida` (ubuntu@192.168.50.155) + pack deploy | HW-connected bump from v0.1.0 (도착예정) |
+| **AKIDA** | **v0.2.0** 🟢 | **HW LANDED 2026-05-22 + FIRST INFERENCE LANDED** — AKD1000 PCIe 검출 + /dev/akida0 driver + pool `pi5-akida` (ubuntu@192.168.50.155) + pack deploy + venv 수정 + 첫 on-chip inference (`BackendType.Hardware`) | HW-connected bump from v0.1.0 (도착예정) |
 
 **AKIDA v0.1.0 → v0.2.0 bump (2026-05-22 HW LANDED)**: BrainChip AKD1000 Dev Kit
 ($1495) 도착 + Pi 5 연결완료. 검증:
@@ -165,7 +165,19 @@ PATCH  ↑  fix / refinement / 문서 (동작 불변)
 - 커널 driver: `/dev/akida0` ✓
 - host: Pi 5 ubuntu aarch64, pool roster `pi5-akida` (keyless SSH), secret `akida.{host,user,password}`
 - pack: Mac → Pi `~/anima/SUB_ENGINES/AKIDA/` deploy ✓
-- akida Python SDK (MetaTF 2.19.1 aarch64) install in-flight (day1_install.sh)
+- akida Python SDK (MetaTF 2.19.1 aarch64) `~/.venv/anima-akida` 설치 ✓ (`akida.devices() count=1`, `BC.00.000.002`/`NSoC_v2`/`AKD1000`)
+
+**first inference LANDED (2026-05-22)**: venv 경로 버그 수정 (이전 day1_install
+이 sudo 하에 실행 → `$HOME=/root` 로 venv 가 `/root/.venv` 에 생성됨; `ubuntu`
+유저로 재생성). 첫 on-chip inference 실행 — `InputData→FullyConnected` 모델을
+HW 디바이스에 map, forward pass 가 `BackendType.Hardware` 에서 실행, 출력
+`[117]×10` (dot-product 산술 정확), wall latency 0.64 ms, on-chip clock 748
+cycle. **silicon-rev 해명**: `BC.00.000.002`(`NSoC_v2`) = 양산 AKD1000 (SDK
+`akida.AKD1000()` factory 와 enum 일치, `IpVersion.v1`). pack 의 "edge-learning
+gated" note 는 `assert_akd1000` 이 `NSoC_v1` 만 매칭하는 **pack 버그** — HW 한계
+아님. on-chip edge learning 실증 ✓ (`AkidaUnsupervised` compile + `fit()` on HW,
+`learn_enabled False→True`). 유일 미가용 = INA power telemetry (M.2 보드에 센서
+미노출, `bus -2`). 상세: `SUB_ENGINES/AKIDA/state/FIRST_INFERENCE_2026_05_22.md`.
 
 **dual-role 의의**: AKD1000 LIF spike threshold = **하드웨어-native 자연발화**
 (1mW event emission, CPU 대비 ~10000× 효율) + on-chip Hebbian = 영속성.
