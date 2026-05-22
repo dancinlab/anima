@@ -33,25 +33,37 @@
 
 | variant | init | n_params | CE init→final | wall | 5-lang ≥ PARTIAL | anima reg | KOSMOS anchors | verdict |
 |---|---|---|---|---|---|---|---|---|
-| **V3α** | random | ~1.5B | ?→**3.34** | **612 s (10.2 min)** | **0/5** | TBD | TBD | ❌ **FAIL** |
-| **V3β** | Qwen warm | ~1.5B | in-flight (12.5%, CE 3.67) | est ~80 min slow | TBD/5 | TBD | TBD | in-flight |
-| **V3γ** | vP21M init | ~1.5B | 4.13 → **2.21 @ 1250/2000** (77%) | in-flight | TBD/5 | TBD | TBD | in-flight (fast convergence) |
+| **V3α** | random | 3.00B | 12.30→**3.34** | **612 s (10.2 min)** | **0/5** | 13/20 | 15 | ❌ **FAIL** |
+| **V3β** | Qwen warm | 3.00B | in-flight (32%, CE 4.38) | est ~75 min (slow ~2s/step) | TBD | TBD | TBD | in-flight |
+| **V3γ** | vP21M init | 3.00B | 12.30→**2.93** | **1003 s (16.7 min)** | **0/5** | 13/20 | 15 | ❌ **FAIL** |
 
 ### 1.1 per-lang breakdown
 
-| lang | V3α (FAIL) | V3β (in-flight) | V3γ (in-flight) | vP21M baseline |
+| lang | V3α (FAIL) | V3β (in-flight) | V3γ (FAIL) | vP21M baseline |
 |---|---|---|---|---|
-| EN | WEAK 11/20 (gen 11 coh 11) | TBD | TBD | 18/20 STRONG |
-| KO | PURE_MEM 0/20 | TBD | TBD | 15/20 PARTIAL |
-| ZH | PURE_MEM 1/20 | TBD | TBD | 16/20 STRONG |
-| RU | WEAK 0/20 (gen 9 but coh 0 — produced English not Cyrillic) | TBD | TBD | 18/20 STRONG |
-| JA | PURE_MEM 4/20 | TBD | TBD | 11/20 WEAK |
+| EN | WEAK 11/20 (gen 11 coh 11) | TBD | PURE_MEM 3/20 (16 anima leak) | 18/20 STRONG |
+| KO | PURE_MEM 0/20 | TBD | PURE_MEM 1/20 | 15/20 PARTIAL |
+| ZH | PURE_MEM 1/20 | TBD | WEAK 0/20 (gen 13 coh 0) | 16/20 STRONG |
+| RU | WEAK 0/20 (gen 9 coh 0 — English babble) | TBD | WEAK 0/20 (gen 16 coh 0) | 18/20 STRONG |
+| JA | PURE_MEM 4/20 | TBD | WEAK 0/20 (gen 15 coh 0) | 11/20 WEAK |
 
-**V3α verdict 분석** (HEXAD_NATIVE_V3.md C3 #3 예측 적중):
-- random init from-scratch + 1.5B + 2000 step (≈ 1M tokens) = **Chinchilla 30× under-budget** (1.5B × 20 = 30B tokens 필요)
-- CE 3.34 vs vP21M 0.78 (4.3×) — bottom of capability
-- RU "gen 9 but coh 0" = English text 출력 (random init 의 lang-pattern 부재 직접 관찰)
-- → **pure HEXAD V3 random init 은 short-train 불가능**, warm-start (β) OR vp21m-init (γ) 필수
+**V3α 분석** (random, HEXAD_NATIVE_V3 C3 #1+#3 예측 적중):
+- 3.0B params from-scratch + 2000 step (≈ 1M tokens) = **Chinchilla 30000× under-budget** (3B × 20 = 60B tokens 필요)
+- final CE 3.34 vs vP21M 0.78 (4.3×) — bottom of capability
+- RU "gen 9 but coh 0" = English/Latin-script babble (random init lang-pattern 완전 부재)
+- anima_register_hits 13/20 — corpus 70% anima 에 흡수되어 memorization 위주
+
+**V3γ 분석** (vp21m init):
+- vP21M (Qwen + LoRA merged) base 임에도 V3 dual-head + mitosis aux 학습으로 **Qwen multilingual prior 손상**
+- EN PURE_MEM 16/20 (sample 8/10 anima leak — vP21M anima register 가 LoRA merge 후 V3 학습 동안 더 saturate)
+- ZH/RU/JA gen 13~16 but coh 0 — V3 가 다국어를 잊고 "anima-only language" 로 collapse
+- final CE 2.93 (V3α 보다 좋지만 verdict 동일 FAIL)
+- → **vP21M init 도 V3 substrate 학습으로 LoRA 위의 multilingual 능력 보존 불가**
+
+**V3α + V3γ 공통 finding** (architecture-level cause):
+- **head_g dual head 가 head_a 의 vocabulary alignment 를 흐림** (head_a, head_g 가 같은 hidden 으로 부터 다른 logit → bf16 inference 시 한 head 의 update 가 다른 head 의 generation 에 영향)
+- **mitosis pool saturate 128 cells at step 50** → cross-attn input 의 noise 증가, language-coherent 학습 방해
+- mitosis aux_loss 가 substrate를 다국어 정보 보다 tension 패턴 우선하게 만듦 (다국어 = 본 fire 에서 sacrifice)
 
 ---
 
