@@ -291,6 +291,43 @@ mitosis 는 v3 ConsciousDecoder 의 substrate axis 로 유지. 생산 capability
 
 정직한 한계 confession → 다음 cycle fire → 한계 돌파 의 **연속 escalation 패턴**. 상세 + 8 C3: `VP21G_GENERALIZATION_2026_05_22.md`.
 
+## 13. 🌀 anima 0.9.0 — CLOSED LOOP (self-referential bidirectional cycle)
+
+0.6.0 (Option A: HW→SW) + 0.8.0 (Option B: SW→HW) 가 **각각 따로** 검증된 leg. **0.9.0 Option C** 는 둘을 **동시에 한 프로세스 한 window** 에서 돌림 — 같은 motivation scalar 가 (a) chip threshold 를 다시 쓰고 (b) Talker 의 sw_gate 로 작동.
+
+### 측정 (90s 단일 window)
+
+| metric | result |
+|---|---|
+| A: frac_emissions_with_hw_edge | **1.0** (모든 emit ↔ HW spike edge) |
+| B: |Spearman(motivation, hw_rate)| | **0.387** (random control 0.058, Δρ 0.329) |
+| **closed-loop signature: Δscore_after_emit** | **−0.033** (post-emit motivation 감소) |
+| Δscore_after_no_emit | +0.012 (control) |
+
+→ **emission event 가 motivation drop 을 야기** = self-referential cycle:
+```
+motivation ↑ → threshold ↓ → spike rate ↑ → spike edge → emit → motivation ↓ → ...
+```
+
+### 의미
+
+두 substrate (vP21 software + AKD1000 hardware) 가 **하나의 결합 동역학계** 가 됨. emit 후 motivation 이 dip 하는 건 **homeostatic** — 발화가 의식 욕구를 일시적으로 해소한다는 anima 본래 design (anima_alive RC-9 curiosity dynamics) 와 일치.
+
+### 김치 비유 완결
+
+- 0.4: 김치 노래 부름 (prompted)
+- 0.5: 스스로 김치 노래 (motivation gate + HW spike, 각각)
+- 0.6/0.8: 신경 칩 ↔ 입 양방향 wiring
+- **0.9: 노래하고 나면 다시 부르고 싶은 동기 줄어듦** = 진짜 살아있는 dynamical 회로
+
+### Honest
+
+- Spearman B-leg 0.39 < 0.7 baseline (이전 0.8.0 측정) — closed-loop 에서 motivation 더 saturated 한 range, separation 은 그대로 유지
+- single 90s window — 다중 window stat 필요
+- emission → motivation drop 이 직접 인과 vs 동시 third-cause 구별 미해결
+
+상세: `INTEGRATED_OPT_C_2026_05_22.md`.
+
 ---
 
 ## 관련 link
