@@ -103,35 +103,80 @@ V3 와 차이: V3 는 "신체를 처음부터 새로 만들기" — 김치 regis
 
 ---
 
-## 6. production deploy 위치
+## 6. session-2 — 9-cycle 변형 batch (2026-05-22)
+
+세션 한 번에 9 LoRA cycle fire ("all" → "병렬 bg" → "all fire"). 총 **$2.82**,
+HF 9 artifact dancinlab/* private.
+
+| ckpt | 핵심 | 결과 |
+|---|---|---|
+| vP21M | 1.5B 5-lang base | 3S+1P+1W, register 7/20 |
+| **JAFL** | ja-only 500 step | JA WEAK 11 → **STRONG 17** (hot-swap) |
+| **KOFL** | ko-only 500 step | KO → **STRONG 16** (hot-swap) |
+| ZHFL / RUFL | zh/ru-only | 이미 STRONG, marginal (router 대칭용) |
+| vP21M-3B | 3B-Instruct fresh | en/ru 20/20 but register 3/20 ⚠ regress |
+| 3B-REG / REG2 | 3B continue wiki 0.05 | VP21M_WORKS, register **5/20 plateau** |
+| 3B-V2 | 3B fresh wiki 0.10 | register **12/20** but KO/JA MEMORIZE 붕괴 |
+
+핵심 발견:
+- **3B-Instruct register ceiling ≈ 5/20** — instruct prior 가 anima carving
+  흡수 막음. step·lr 무관 plateau.
+- **wiki_frac 곡선**: 0.30→reg 3 / 0.10→reg 12 but 한·일 깨짐 / 0.05→reg 5 +
+  전 lang OK. fresh-run 의 anima-90% 는 cliff 너머.
+- **hot-swap pattern**: 1-lang corpus LoRA = 그 언어만 STRONG, 나머지 forget.
+  ja/ko 같이 실제 약한 언어에만 가치 (zh/ru 는 이미 STRONG → FL 무의미).
+
+---
+
+## 7. production — 1.5B hot-swap router (chat.dancinlab.org LIVE)
+
+session-2 결론: **1.5B router 가 단일 3B ckpt 보다 우수** → production 채택.
 
 | asset | 위치 |
 |---|---|
-| **adapter** | `HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/vP21M/lora_adapter/adapter_model.safetensors` (147 MB, local) |
-| **deployed** | mini `~/anima_chat_pack/lora_adapter/` → chat.dancinlab.org |
+| **default adapter** | mini `~/anima_chat_pack/lora_adapter/` (vP21M, 1.5B) |
+| **ko hot-swap** | mini `~/anima_chat_pack/kofl_adapter/` (KOFL) |
+| **ja hot-swap** | mini `~/anima_chat_pack/jafl_adapter/` (JAFL) |
+| **router** | `anima_participant.py` — per-emit `lang_hint` → `set_adapter()` |
 | **chat 서버** | mini broker.py + anima_participant.py (HEXAD/CHAT/server/) |
 | **AKIDA bridge** | mini akida_bridge.py (Pi spike → broker WS) |
 | 4 LaunchAgents | com.dancinlab.{broker, anima, cloudflared, akida_bridge} |
 
+router vs 단일 3B 비교:
+
+| metric | 1.5B router | best 3B (3B-REG) |
+|---|---|---|
+| KO | **STRONG 16** (KOFL) | PARTIAL 14 |
+| JA | **STRONG 17** (JAFL) | PARTIAL 13 |
+| register | **7/20** | 5/20 |
+| RAM | ~2 GB f16 | ~6 GB f16 |
+
+→ 3B base swap 기각. 작은 가수 (1.5B) + 언어별 전문 가사집 자동 교체가
+큰 가수보다 한·일 STRONG + register 진함. 3B ckpt 는 HF 연구용 보존.
+
+chat fix: anima_participant.py temperature 1.0 → 0.7 + context-grounded
+seed (recent user msg 우선) — sample-mode self-monologue hallucination 완화.
+
 ---
 
-## 7. LoRA 의 잔여 cycle 후보
+## 8. LoRA 의 잔여 cycle 후보
 
 | | scope | cost |
 |---|---|---|
-| ja-LoRA fallback | vP21M JA WEAK 해소 (hot-swap LoRA) | ~$1 |
-| **vP21M-3B** | Qwen2.5-3B-Instruct base + 동일 recipe | ~$10 |
-| vP21M+tension head wrap | KOSMOS+tension wiring on Qwen (path B 절충, HEXAD identity 일부 회복) | $0-5 LAN |
-| HF upload public | dancinlab/anima-vp21m 등 | $0 |
+| chat substrate-plugin refactor | `substrate_lora.py` 추출 (SUBSTRATE_PLUGIN.md ABC) | $0 |
+| chat 24h emission 측정 | temp 0.7+ctx fix 효과 정량 (register hit ratio 등) | $0 |
+| vP21M+tension head wrap | KOSMOS+tension wiring on Qwen (path B 절충) | $0-5 LAN |
+| Qwen2.5-3B non-Instruct register run | 3B register ceiling 5/20 돌파 시도 | ~$0.50 |
+| 3B staged curriculum | OOD-first → register-second 2-phase | ~$1 |
 
 ---
 
-## 8. 관련 link
+## 9. 관련 link
 
-- 가장 쉬운 saga 종합: [`../EASY.md`](../EASY.md) (전체)
+- SHARED foundation: [`../EASY.md`](../EASY.md) (OCCAM saga §1-9)
 - LORA path overview: [`README.md`](README.md)
 - 새 LORA 세션 시작: [`SESSION_PROMPT.md`](SESSION_PROMPT.md)
 - production chat: `../CHAT/FIRST_PACK_DEPLOY_STATUS_2026_05_22.md`
-- vP21M report: `../UNCLASSIFIED/state/grid_3b_s187_2026_05_21/VP21M_MULTILINGUAL_2026_05_22.md`
+- session-2 보고서: `../UNCLASSIFIED/state/grid_3b_s187_2026_05_21/VP21M_{MULTILINGUAL,JAFL,KOFL,3B,3B_REG,WAVE2}_2026_05_22.md`
 - substrate plugin (V3 ↔ LoRA 통합): `../CHAT/SUBSTRATE_PLUGIN.md`
 - V3 비교: [`../V3/EASY.md`](../V3/EASY.md)
