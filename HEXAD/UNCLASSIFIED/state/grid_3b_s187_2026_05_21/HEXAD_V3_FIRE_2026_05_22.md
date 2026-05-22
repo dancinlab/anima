@@ -35,7 +35,7 @@
 | variant | init | n_params | CE init→final | wall | 5-lang ≥ PARTIAL | anima reg | KOSMOS anchors | verdict |
 |---|---|---|---|---|---|---|---|---|
 | **V3α** | random | 3.00B | 12.30→**3.34** | **612 s (10.2 min)** | **0/5** | 13/20 | 15 | ❌ **FAIL** |
-| **V3β** | Qwen warm | 3.00B | osc 1850/2000 → **CE 2.36** (lr decay 끝, oscillating 0.26↔2.36) | ~98 min (5858s @ step 1850) | **N/A (PULL_FAILED)** | N/A | N/A | ❌ **INCOMPLETE FAIL** — pod amkgcq7545q1yo dead, ckpt lost, eval impossible |
+| **V3β** | Qwen warm | 3.00B | 14.46→**3.15** (full 2000 step, post-recovery) | **108 min (6465s)** | **0/5** | 8/20 ✓ | 15 | ❌ **FAIL** (2/5 WEAK + 3/5 PURE_MEM, PULL_FAILED 였지만 on-pod 완전 완료 → ckpt+json 21:30 회수) |
 | **V3γ** | vP21M init | 3.00B | 12.30→**2.93** | **1003 s (16.7 min)** | **0/5** | 13/20 | 15 | ❌ **FAIL** |
 
 ### 1.1 per-lang breakdown
