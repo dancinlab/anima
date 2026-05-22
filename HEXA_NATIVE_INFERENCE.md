@@ -218,7 +218,7 @@ Phase 0 SSOT commit (`d5dcf4a64`) is clean — local only until user resolves.
 
 ## 🔗 Cross-link
 
-- prior SSOT: `PASS_STRICT_SPONTANEOUS_CHAT.md` (Phase 0/1A/1A.1/1B substrate work)
+- prior SSOT: `PASS_STRICT_SPONTANEOUS_CHAT.log.md` (Phase 0/1A/1A.1/1B substrate work)
 - hexa stdlib: `/Users/ghost/core/hexa-lang/stdlib/`
 - target ckpt: `state/anima_phase1a1_color_cosmology_2026_05_12/ckpts/ckpt_phase1a1_sft.pt`
 - engine arch: `training/engine_a_g_arch.py`

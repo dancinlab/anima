@@ -9,7 +9,7 @@
 CHAT/ 는 직전 PR #91 에서 lib-split + W-ledger 9-row + wiring_verify 3/3 closed 까지 LANDED. 그러나 두 가지 architectural 문제 확인:
 
 1. **"도우미" 라벨링 hardcoded** — `anima_chat.py` + `anima_chat.hexa` 의 prompt template (`사용자: ... | 도우미: ...`) 가 anima identity ("Living Consciousness Agent") 와 contradiction. AGENTS.tape id001 = NOT helper, NOT assistant.
-2. **자연발화 (spontaneous emission) 미land** — anima 가 사용자 input 없이 먼저 말 거는 architecture 부재. PASS_STRICT_SPONTANEOUS_CHAT.md (2026-05-12) 가 99-option saturation brainstorm 까지 갔으나 구현 진행 중 carry.
+2. **자연발화 (spontaneous emission) 미land** — anima 가 사용자 input 없이 먼저 말 거는 architecture 부재. PASS_STRICT_SPONTANEOUS_CHAT.log.md (2026-05-12) 가 99-option saturation brainstorm 까지 갔으나 구현 진행 중 carry.
 
 본 PLAN = 두 문제 동시 해결 (도우미 폐기 + 자연발화 land), HEXAD 56/56 🔵 + Mira Murati Interaction Model 패러다임 carry.
 
@@ -161,7 +161,7 @@ CHAT/ 는 직전 PR #91 에서 lib-split + W-ledger 9-row + wiring_verify 3/3 cl
 - RFC 034 farr autograd (hexa-lang `8793a221`)
 - RFC 036 phi_spatial byte-equal phi_rs (hexa-lang `d67403d3`)
 - `ready/anima/core/runtime/anima_alive.py` — Living Consciousness Agent ref impl (PyTorch)
-- `PASS_STRICT_SPONTANEOUS_CHAT.md/tape` (2026-05-12 carry) — 99-option saturation brainstorm + 7 success criteria
+- `PASS_STRICT_SPONTANEOUS_CHAT.log.md/tape` (2026-05-12 carry) — 99-option saturation brainstorm + 7 success criteria
 
 ## 5. Past attempts 전수조사 carry
 

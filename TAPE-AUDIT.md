@@ -11,11 +11,11 @@ The canonical Class-T tape baseline (`.tape` HXC spec cites anima's r29 measurem
 
 ## B. Identity surface
 
-Strong. `PERSONA.md`, `REBORN.md`, `SAVANT.md`, `MEMORY.md`, `PHILOSOPHY.md` carry the agent's selfhood narrative; `IMPORTED_FROM_CANON.md` carries provenance. Together they form a natural `anima/identity.tape` (`@I` identity events + `@D` decision points, immutable history of self-redefinition).
+Strong. `PERSONA.md`, `REBORN.md`, `SAVANT.md`, `MEMORY.md`, `PHILOSOPHY.md` carry the agent's selfhood narrative; `IMPORTED_FROM_CANON.log.md` carries provenance. Together they form a natural `anima/identity.tape` (`@I` identity events + `@D` decision points, immutable history of self-redefinition).
 
 ## C. Domain.md files
 
-`UPPERCASE.md` convention present: 20 top-level mds (`AGENTS.md`, `CHAT.md`, `DOWNLOADS.md`, `HEXA_NATIVE_INFERENCE.md`, `LATTICE_POLICY.md`, `LIMIT_BREAKTHROUGH.md`, `NEXT.md`, `PASS_STRICT_SPONTANEOUS_CHAT.md`, `URGENT_ACTION_LIST.md`, plus the identity set). No cross-product `A+B.md` meta-domains. Each domain.md gets a sibling `<DOMAIN>.tape` (`@T` topic events + `@K` knowledge atoms + `@R` references).
+`UPPERCASE.md` convention present: 20 top-level mds (`AGENTS.md`, `CHAT.md`, `DOWNLOADS.md`, `HEXA_NATIVE_INFERENCE.md`, `LATTICE_POLICY.md`, `LIMIT_BREAKTHROUGH.md`, `NEXT.md`, `PASS_STRICT_SPONTANEOUS_CHAT.log.md`, `URGENT_ACTION_LIST.md`, plus the identity set). No cross-product `A+B.md` meta-domains. Each domain.md gets a sibling `<DOMAIN>.tape` (`@T` topic events + `@K` knowledge atoms + `@R` references).
 
 ## D. Per-run / per-event history surfaces
 
