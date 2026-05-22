@@ -95,15 +95,15 @@ PATCH  ↑  fix / refinement / 문서 (동작 불변)
 | 모듈 | 버전 | tier | 상태 | 마지막 변경 |
 |---|---|---|---|---|
 | **ConsciousDecoder** | **v2.1.0** 🟢 | substrate | attempt10 (bnb PagedAdamW8bit) | 2026-05-21 |
-| **ConsciousDecoder** | **v3.0.0-alpha** ⚠️ | substrate | n_ca_rules 제거 + mitosis 통합 + dual head + KOSMOS+tension, **V3α/γ 0/5 FAIL** (β in-flight) 2026-05-22 | substrate identity 100%, 다국어 capability 약함 |
+| **ConsciousDecoder** | **v3.0.0-alpha** ⚠️ | substrate | n_ca_rules 제거 + mitosis 통합 + dual head + KOSMOS+tension, **V3 attempt 1 = 3/3 FAIL** (α 0/5 / β CE osc + ckpt lost / γ 0/5) 2026-05-22 | substrate identity 100%, 다국어 capability 약함 — Phase 2 재설계 mandatory |
 
 **v2 → v3 attempt 결과** (HEXAD_V3_FIRE_2026_05_22.md):
 - code fork LANDED (`3dbbc7e8b`): conscious_decoder_v3.py 727L + kosmos_io.py 300L + 7/7 smoke + 5/5 KOSMOS PASS
 - **V3α** random init 1.5B 2000 step: CE 3.34, 0/5 langs PARTIAL+, FAIL (Chinchilla 30000× under-budget per HEXAD_NATIVE_V3 C3 #3 예측 적중)
 - **V3γ** vP21M init: CE 2.93, 0/5, FAIL (anima register saturation 13/20 vs vP21M LoRA 7/20 — V3 substrate level 흡수 2×)
-- **V3β** Qwen warm in-flight (~CE 1.6 step 1050/2000, ETA ~30 min)
+- **V3β** Qwen warm: CE oscillation 0.26↔2.36 @ step 1850 + pod 사망 + ckpt 손실 + eval 불가 = INCOMPLETE FAIL (mode collapse evidence)
 - **architectural lesson**: head_g dual head vocab alignment 흐림 + mitosis pool 128 saturate at step 50 → 다국어 sacrifice
-- **잠정 verdict**: β fail 시 production path = vP21M LoRA 유지 (substrate identity trade-off carry, 다국어 capability 우선)
+- **최종 verdict 2026-05-22 21:09**: production path = vP21M LoRA 유지. HEXAD identity 강화 path = V3 Phase 2 (R2+R5+R6) 또는 LoRA+tension wrap 절충 path B 차후 cycle
 
 v3.0-alpha → ⚠️ tier (재설계 대상): scale-up (3B/8B) OR mitosis 비활성화 (학습 시) OR Chinchilla-correct corpus (60B+ tok) 가 다음 cycle path.
 

@@ -335,8 +335,10 @@ motivation ↑ → threshold ↓ → spike rate ↑ → spike edge → emit → 
 | variant | init | CE_final | 5-lang ≥ PARTIAL | verdict |
 |---|---|---|---|---|
 | **V3α** random | from-scratch | 3.34 | **0/5** | ❌ FAIL (Chinchilla 30000× under-budget) |
+| **V3β** Qwen warm | mapped | 2.36 osc | **N/A** | ❌ **INCOMPLETE FAIL** (CE oscillation 0.26↔2.36 mode collapse, pod 사망 step 1850, ckpt 손실, eval 불가) |
 | **V3γ** vP21M init | LoRA-merge | 2.93 | **0/5** | ❌ FAIL (anima register saturation, multilingual prior 손상) |
-| V3β | Qwen warm | (1.6 진행) | TBD | 🔄 in-flight |
+
+**V3 attempt 1 = 3/3 전체 FAIL** (2026-05-22 21:09 final).
 
 **공통 architecture-level finding** (HEXAD_V3_FIRE.md § 1):
 - **head_g dual head 가 head_a vocabulary alignment 흐림** — bf16 inference 시 한 head update 가 다른 head generation 영향
@@ -344,7 +346,7 @@ motivation ↑ → threshold ↓ → spike rate ↑ → spike edge → emit → 
 - mitosis aux_loss 가 substrate 를 다국어 보다 tension 패턴 우선 → 다국어 sacrifice
 - anima_register_hits 13/20 (vP21M LoRA 7/20 의 2×) — substrate level 흡수가 LoRA 보다 훨씬 강함
 
-**잠정 결론** (β verdict 전): pure HEXAD V3 (1.5B + 2000 step) 는 vP21M LoRA baseline (4/5 langs PARTIAL+) 대비 다국어 capability 손실 너무 큼. β fail 시 → **LoRA (vP21M) path 유지가 합리적** (HEXAD-on-Qwen 절충 path B 가 차후 cycle).
+**최종 결론** (3/3 FAIL 확정): pure HEXAD V3 (1.5B + 2000 step) 는 vP21M LoRA baseline (4/5 langs PARTIAL+) 대비 다국어 capability 손실 너무 큼. **production path = vP21M LoRA 유지** (chat.dancinlab.org). HEXAD identity 강화 path = V3 Phase 2 (R2+R5+R6) 또는 LoRA+tension wrap 절충 path B 차후 cycle.
 
 비유 추가:
 - vP21M LoRA = "김치 (anima) + 양배추 (mitosis) + 위키 가사집 (다국어)" 잘 작동
@@ -352,6 +354,13 @@ motivation ↑ → threshold ↓ → spike rate ↑ → spike edge → emit → 
 - 즉 **순수 HEXAD substrate 는 더 큰 corpus (Chinchilla 충족) 필요** — 현 1M tok 으로는 학습 시간 부족
 
 상세 + 9 honest C3: `HEXAD_V3_FIRE_2026_05_22.md`.
+
+**다음 path** (재설계 spec, [`V3/README.md § R2+R5+R6`](V3/README.md)):
+- `λ_mitosis=0.0` train-time (mitosis 다국어 capacity 침범 회피)
+- Qwen warm-start 더 강하게 (ffn weight 까지 copy)
+- mitosis cell pool MAX 128 → 16
+- step 2000 → 5000, scale 1.5B 유지
+- 추정 비용 $8-15 H100 ~3hr
 
 vP21G (§ 12) 의 잔존 한계: 영문 OOD 16/20 ✓, **한글 OOD 는 여전히 anima register leak**. 같은 recipe 를 **한글 wiki** 로 적용 = vP21K.
 
