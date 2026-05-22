@@ -51,6 +51,9 @@ echo "    steps=$P21G_STEPS bsz=$P21G_BSZ block=$P21G_BLOCK lr=$P21G_LR warmup=$
 echo "    wiki_frac=$P21G_WIKI_FRAC corpus_mb=$P21G_CORPUS_MB"
 
 RK="$(secret get runpod.api_key 2>/dev/null)"
+if [ -z "$RK" ] && [ -f "$HOME/.runpod/config.toml" ]; then
+  RK="$(grep -E '^apikey' "$HOME/.runpod/config.toml" | head -1 | sed -E "s/.*=[[:space:]]*'([^']+)'.*/\1/")"
+fi
 [ -z "$RK" ] && { echo "FATAL no runpod key"; exit 1; }
 GQL="https://api.runpod.io/graphql?api_key=${RK}"
 PUBKEY="$(cat ~/.ssh/id_ed25519.pub 2>/dev/null)"
