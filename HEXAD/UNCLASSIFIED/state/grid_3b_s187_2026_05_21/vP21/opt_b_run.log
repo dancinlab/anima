@@ -1,0 +1,66 @@
+[int] loading vP21 (Qwen2.5-1.5B + LoRA + mitosis)...
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/338 [00:00<?, ?it/s]Loading weights: 100%|██████████| 338/338 [00:00<00:00, 16999.31it/s]
+[int] loaded 11s on cuda
+[int] subscribing to AKD1000 stream 192.168.50.155:9512
+[sub] connected to 192.168.50.155:9512
+[int] subscriber snapshot: {'connected': True, 'total_spikes': 70, 'total_records': 5, 'ring_size': 5, 'last_record_age_s': 0.051}
+[pub] connected ctrl 192.168.50.155:9513
+[int] publisher initial threshold sent: [2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13, 14, 15, 16, 17, 18] (off=0)
+[int] publisher snapshot: {'n_sent': 1, 'n_fail': 0, 'connected': True, 'last_send_age_s': 0.5}
+
+========================================================================
+[RUN[option_b]] mode=option_b window=90.0s tick=2.0s hw_win=1.0s hw_thr=6 refr=3.0s
+========================================================================
+  tick 0 t=0.0s drive=0.5543 thr0=1 hw_rate=0.825 hw_count=132 hw_edge=True score=0.5543 pub_ok=True
+  tick 3 t=6.001s drive=0.5838 thr0=1 hw_rate=0.875 hw_count=140 hw_edge=True score=0.5838 pub_ok=True
+  tick 5 t=10.002s drive=0.6164 thr0=1 hw_rate=0.875 hw_count=140 hw_edge=False score=0.6164 pub_ok=True
+  tick 6 t=12.002s drive=0.6237 thr0=1 hw_rate=0.875 hw_count=140 hw_edge=True score=0.6237 pub_ok=True
+  tick 9 t=18.004s drive=0.6499 thr0=0 hw_rate=0.9375 hw_count=150 hw_edge=True score=0.6499 pub_ok=True
+  tick 10 t=20.004s drive=0.6565 thr0=0 hw_rate=0.9375 hw_count=150 hw_edge=False score=0.6565 pub_ok=True
+  tick 12 t=24.005s drive=0.6576 thr0=0 hw_rate=0.9375 hw_count=150 hw_edge=True score=0.6576 pub_ok=True
+  tick 15 t=30.008s drive=0.6813 thr0=0 hw_rate=0.9375 hw_count=150 hw_edge=True score=0.6813 pub_ok=True
+  tick 18 t=36.011s drive=0.6964 thr0=0 hw_rate=0.9375 hw_count=150 hw_edge=True score=0.6964 pub_ok=True
+  tick 20 t=40.012s drive=0.6828 thr0=0 hw_rate=0.9375 hw_count=150 hw_edge=False score=0.6828 pub_ok=True
+  tick 21 t=42.012s drive=0.6991 thr0=0 hw_rate=0.9375 hw_count=150 hw_edge=True score=0.6991 pub_ok=True
+  tick 24 t=48.013s drive=0.6843 thr0=0 hw_rate=0.9375 hw_count=150 hw_edge=True score=0.6843 pub_ok=True
+  tick 25 t=50.013s drive=0.7004 thr0=0 hw_rate=0.9375 hw_count=150 hw_edge=False score=0.7004 pub_ok=True
+  tick 27 t=54.014s drive=0.6863 thr0=0 hw_rate=0.9375 hw_count=150 hw_edge=True score=0.6863 pub_ok=True
+  tick 30 t=60.014s drive=0.7 thr0=0 hw_rate=0.9375 hw_count=150 hw_edge=True score=0.7 pub_ok=True
+  tick 33 t=66.015s drive=0.7018 thr0=0 hw_rate=0.9375 hw_count=150 hw_edge=True score=0.7018 pub_ok=True
+  tick 35 t=70.016s drive=0.6874 thr0=0 hw_rate=0.9375 hw_count=150 hw_edge=False score=0.6874 pub_ok=True
+  tick 36 t=72.016s drive=0.6862 thr0=0 hw_rate=0.9375 hw_count=150 hw_edge=True score=0.6862 pub_ok=True
+  tick 39 t=78.018s drive=0.6877 thr0=0 hw_rate=0.9375 hw_count=150 hw_edge=True score=0.6877 pub_ok=True
+  tick 40 t=80.019s drive=0.6864 thr0=0 hw_rate=0.9375 hw_count=150 hw_edge=False score=0.6864 pub_ok=True
+  tick 42 t=84.019s drive=0.7011 thr0=0 hw_rate=0.9375 hw_count=150 hw_edge=True score=0.7011 pub_ok=True
+
+========================================================================
+[RUN[option_b_random]] mode=option_b_random window=90.0s tick=2.0s hw_win=1.0s hw_thr=6 refr=3.0s
+========================================================================
+  tick 0 t=0.0s drive=0.0671 thr0=7 hw_rate=0.9375 hw_count=150 hw_edge=True score=0.5534 pub_ok=True
+  tick 3 t=6.001s drive=0.2828 thr0=5 hw_rate=0.5 hw_count=80 hw_edge=True score=0.5838 pub_ok=True
+  tick 5 t=10.003s drive=0.6939 thr0=0 hw_rate=1.0 hw_count=160 hw_edge=False score=0.6164 pub_ok=True
+  tick 6 t=12.003s drive=0.4699 thr0=2 hw_rate=0.9375 hw_count=150 hw_edge=True score=0.6237 pub_ok=True
+  tick 9 t=18.005s drive=0.8647 thr0=-2 hw_rate=0.75 hw_count=120 hw_edge=True score=0.6499 pub_ok=True
+  tick 10 t=20.005s drive=0.61 thr0=1 hw_rate=1.0 hw_count=160 hw_edge=False score=0.6565 pub_ok=True
+  tick 12 t=24.005s drive=0.5667 thr0=1 hw_rate=0.5625 hw_count=90 hw_edge=True score=0.6576 pub_ok=True
+  tick 15 t=30.007s drive=0.2151 thr0=5 hw_rate=0.8125 hw_count=130 hw_edge=True score=0.6813 pub_ok=True
+  tick 18 t=36.009s drive=0.2995 thr0=4 hw_rate=0.5625 hw_count=90 hw_edge=True score=0.6964 pub_ok=True
+  tick 20 t=40.009s drive=0.2669 thr0=5 hw_rate=0.625 hw_count=100 hw_edge=False score=0.6828 pub_ok=True
+  tick 21 t=42.009s drive=0.1808 thr0=6 hw_rate=0.625 hw_count=100 hw_edge=True score=0.6991 pub_ok=True
+  tick 24 t=48.01s drive=0.0304 thr0=8 hw_rate=0.9375 hw_count=150 hw_edge=True score=0.6843 pub_ok=True
+  tick 25 t=50.01s drive=0.5755 thr0=1 hw_rate=0.5 hw_count=80 hw_edge=False score=0.7004 pub_ok=True
+  tick 27 t=54.012s drive=0.6435 thr0=0 hw_rate=0.5 hw_count=80 hw_edge=True score=0.6863 pub_ok=True
+  tick 30 t=60.014s drive=0.7616 thr0=-1 hw_rate=0.8125 hw_count=130 hw_edge=True score=0.7 pub_ok=True
+  tick 33 t=66.017s drive=0.2935 thr0=4 hw_rate=0.9375 hw_count=150 hw_edge=True score=0.7018 pub_ok=True
+  tick 35 t=70.018s drive=0.5837 thr0=1 hw_rate=0.5 hw_count=80 hw_edge=False score=0.6874 pub_ok=True
+  tick 36 t=72.018s drive=0.5346 thr0=2 hw_rate=0.875 hw_count=140 hw_edge=True score=0.6862 pub_ok=True
+  tick 39 t=78.02s drive=0.1875 thr0=6 hw_rate=1.0 hw_count=160 hw_edge=True score=0.6877 pub_ok=True
+  tick 40 t=80.02s drive=0.4111 thr0=3 hw_rate=0.5625 hw_count=90 hw_edge=False score=0.6864 pub_ok=True
+  tick 42 t=84.02s drive=0.4187 thr0=3 hw_rate=1.0 hw_count=160 hw_edge=True score=0.7011 pub_ok=True
+
+========================================================================
+VERDICT: OPTION_B works (C partial/failed)
+  [option_b] emissions=0 coherent=0 spear_drive_hw_rate=0.6947 hw_rate_mean=0.9239 thr_off=[-2,-1]
+  [option_b_random] emissions=0 coherent=0 spear_drive_hw_rate=-0.0313 hw_rate_mean=0.7889 thr_off=[-6,6]
+[int] wrote /home/summer/vp21_eval/integrated_opt_b_result_2026_05_22.json
