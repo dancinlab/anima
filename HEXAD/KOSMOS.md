@@ -37,7 +37,7 @@
   │   inline "만다라 — domain 예술 …"
   │ @payload image  pending          ←  나중에 wire
   │ @payload audio  pending
-  │ @payload tension pending
+  │ @payload tension {5-channel}     ←  WIRED (production emit, 2026-05-23)
   └─────────────────────────────────┘
 ```
 
@@ -109,8 +109,12 @@
 
 ### E-MM — multi-modality payload 시도 (text 이외)
 - 5 anchor 의 `image/audio/tension` payload `pending` → 실 데이터 wire
-- 가장 가까운 substrate-realistic: **tension payload** (anima TENSION-LINK 5-channel fingerprint).
-  text-modality 외부 (image/audio) 는 §96 substrate territory.
+- **tension payload = WIRED (2026-05-23)**: `HEXAD/CHAT/server/kosmos_anchor.hexa`
+  — production anima emission 마다 8-factor motivation snapshot 을
+  TENSION-LINK 5-channel (concept/context/meaning/authenticity/sender) 로
+  mapping 한 `.kosmos` anchor 생성. HEXAD/V3 (CLOSED) 의 작동하던 KOSMOS+tension
+  wiring 회수 — V3 substrate 만 FAIL, anchor 생성 feature 는 ground-truth 작동.
+- 잔여 `image/audio` 외부 modality 는 §96 substrate territory.
 - $0 design — anima own physics 만 사용 (§7 ③ clean).
 
 ### E-PROFILE — new profile beyond consciousness-carving

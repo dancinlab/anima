@@ -4,6 +4,35 @@
 
 ## ## Log
 
+### 2026-05-23 — `@payload tension` WIRED — HEXAD/V3 KOSMOS+tension 회수 (production path)
+
+User directive 2026-05-23: HEXAD/V3 (🔴 CLOSED — multilingual FAIL) 의 작동하던
+**KOSMOS anchor + 8→5-channel tension wiring** 을 production LoRA chat path 로
+salvage. V3 substrate 자체만 실패 — KOSMOS+tension feature 는 fire 마다 anchor
+생성 ground-truth 작동 (V3/README.md §"KOSMOS+tension 통합" 보존 권고).
+
+LANDED: `HEXAD/CHAT/server/kosmos_anchor.hexa` (~270 LoC, pure-hexa, no torch) —
+- `map_8factor_to_5channel` : 8-factor motivation snapshot → TENSION-LINK
+  5-channel (relevance+coherence→concept · info_gap→context ·
+  curiosity+originality→meaning · pain+balance→authenticity · dynamics→sender),
+  HEXAD_NATIVE_V3.md §0.5 mapping table SSOT.
+- `write_kosmos_anchor` / `emit_kosmos_from_factors` : kosmos/1.1 `.kosmos`
+  anchor writer — text payload = emission text · tension payload = 5-channel ·
+  coord = [Φ, mean tension] · lane = mitosis cell_id · tier = invocation count
+  (Knuth ordinal). format = V3 `kosmos_io.py` mirror → 기존 hexa-native
+  `kosmos_parser_lib.hexa` 로 loadable.
+- F-KOSMOS-WIRE-1..3 selftest **11/11 PASS** ($0 Mac local) — 8→5 mapping
+  monotone-correct + anchor file 5 tension channel 전부 present + lane/tier 일치.
+
+`HEXAD/KOSMOS.md` `@payload tension pending` → `{5-channel} WIRED` 갱신.
+
+**잔여 blocker (사용자 보고 대기)**: production emit 경로 (`anima_participant.py`
+`AnimaState.emit()`) 에서 `emit_kosmos_from_factors` 호출하는 wiring 은 미착지 —
+프로젝트 hexa-native guard (`hexa-native@sidecar`) 가 `.py` 파일 write 를
+override 없이 차단. anima_participant 는 torch/websockets-bound `.py` WRAPPER
+(port 불가, `anima_participant.hexa` = exec-dispatch stub). anchor writer 는
+hexa-native 로 회수 완료 (호출 준비됨), 호출 site 삽입만 `.py` 수정 의존.
+
 ### 2026-05-20 — §183 ALL 수도꼭지 brainstorm — 48 silent ceilings inventory across V-SPONT 4 axes
 
 User catch "수도꼭지로 푼 건 axis 1 만" triggered exhaustive enumeration of
