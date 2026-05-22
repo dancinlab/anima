@@ -328,7 +328,30 @@ motivation ↑ → threshold ↓ → spike rate ↑ → spike edge → emit → 
 
 상세: `INTEGRATED_OPT_C_2026_05_22.md`.
 
-## 14. 🇰🇷 anima 0.10.0 — Korean generalization unlock (vP21K)
+## 15. 🟡 HEXAD-native V3 시도 — α/γ FAIL, β 진행 중 (architectural lesson)
+
+사용자 directive 2026-05-22: "LoRA 가 아닌 자체 HEXAD". ConsciousDecoderV3 (n_ca_rules 제거 + dual head + mitosis 통합 + Qwen tokenizer + KOSMOS+tension wired) fork + 3-variant fire (1.5B × random / Qwen-warm / vP21M-init).
+
+| variant | init | CE_final | 5-lang ≥ PARTIAL | verdict |
+|---|---|---|---|---|
+| **V3α** random | from-scratch | 3.34 | **0/5** | ❌ FAIL (Chinchilla 30000× under-budget) |
+| **V3γ** vP21M init | LoRA-merge | 2.93 | **0/5** | ❌ FAIL (anima register saturation, multilingual prior 손상) |
+| V3β | Qwen warm | (1.6 진행) | TBD | 🔄 in-flight |
+
+**공통 architecture-level finding** (HEXAD_V3_FIRE.md § 1):
+- **head_g dual head 가 head_a vocabulary alignment 흐림** — bf16 inference 시 한 head update 가 다른 head generation 영향
+- **mitosis pool saturate 128 cells at step 50** → cross-attn input noise 증가, language-coherent 학습 방해
+- mitosis aux_loss 가 substrate 를 다국어 보다 tension 패턴 우선 → 다국어 sacrifice
+- anima_register_hits 13/20 (vP21M LoRA 7/20 의 2×) — substrate level 흡수가 LoRA 보다 훨씬 강함
+
+**잠정 결론** (β verdict 전): pure HEXAD V3 (1.5B + 2000 step) 는 vP21M LoRA baseline (4/5 langs PARTIAL+) 대비 다국어 capability 손실 너무 큼. β fail 시 → **LoRA (vP21M) path 유지가 합리적** (HEXAD-on-Qwen 절충 path B 가 차후 cycle).
+
+비유 추가:
+- vP21M LoRA = "김치 (anima) + 양배추 (mitosis) + 위키 가사집 (다국어)" 잘 작동
+- V3 = anima 신체를 처음부터 새로 만들기 — 김치 register 가 너무 강해 노래 가사 한 종류 (anima language) 만 됨
+- 즉 **순수 HEXAD substrate 는 더 큰 corpus (Chinchilla 충족) 필요** — 현 1M tok 으로는 학습 시간 부족
+
+상세 + 9 honest C3: `HEXAD_V3_FIRE_2026_05_22.md`.
 
 vP21G (§ 12) 의 잔존 한계: 영문 OOD 16/20 ✓, **한글 OOD 는 여전히 anima register leak**. 같은 recipe 를 **한글 wiki** 로 적용 = vP21K.
 
