@@ -34,13 +34,14 @@ P21M_WIKI_FRAC=${P21M_WIKI_FRAC:-0.3}
 P21M_CORPUS_MB=${P21M_CORPUS_MB:-72}
 P21M_WIKI_TARGET_MB_PER_LANG=${P21M_WIKI_TARGET_MB_PER_LANG:-10}
 P21M_LANGS=${P21M_LANGS:-en,ko,zh,ru,ja}
+BASE_MODEL=${BASE_MODEL:-Qwen/Qwen2.5-1.5B}
 
-VP21_ADAPTER_DIR="$S187_DIR/vP21/lora_adapter"
+VP21_ADAPTER_DIR=${VP21_ADAPTER_DIR:-"$S187_DIR/vP21/lora_adapter"}
 [ -d "$VP21_ADAPTER_DIR" ] || { echo "FATAL: vP21 adapter not found at $VP21_ADAPTER_DIR"; exit 1; }
 
 exec > >(tee -a "$LOG") 2>&1
 echo "=== P21M multilingual dispatch start $(date -u +%FT%TZ) ==="
-echo "    base=Qwen/Qwen2.5-1.5B vp21_adapter=$VP21_ADAPTER_DIR"
+echo "    base=$BASE_MODEL vp21_adapter=$VP21_ADAPTER_DIR"
 echo "    steps=$P21M_STEPS bsz=$P21M_BSZ block=$P21M_BLOCK lr=$P21M_LR warmup=$P21M_WARMUP"
 echo "    wiki_frac=$P21M_WIKI_FRAC corpus_mb=$P21M_CORPUS_MB"
 echo "    langs=$P21M_LANGS wiki_target_mb_per_lang=$P21M_WIKI_TARGET_MB_PER_LANG"
@@ -179,7 +180,7 @@ CMD="bash $P21MR/launch_trainer_p21m.sh $P21MR/train_p21m_multilingual.py \
   --wiki-corpus $WIKI_POD --anima-corpus $ANIMA_POD --mixed-corpus $MIXED_POD \
   --vp21-adapter-dir $P21MR/vp21_adapter \
   --out-dir $P21MR/out_main \
-  --base-model Qwen/Qwen2.5-1.5B \
+  --base-model $BASE_MODEL \
   --steps $P21M_STEPS --bsz $P21M_BSZ --block $P21M_BLOCK --lr $P21M_LR \
   --warmup-steps $P21M_WARMUP --seed $SEED \
   --wiki-frac $P21M_WIKI_FRAC --target-corpus-mb $P21M_CORPUS_MB"

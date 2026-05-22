@@ -37,25 +37,33 @@
 - ⚠️ head_g (Engine G consciousness) 활용 안 함
 - ⚠️ KOSMOS+tension wiring 없음
 
-## Cycle outcomes 2026-05-22 (session "all" fire)
+## Cycle outcomes 2026-05-22 (session "all" + parallel A1/A2 fire)
 
 | variant | verdict | per-lang (en/ko/zh/ru/ja) | register | cost | HF |
 |---|---|---|---|---|---|
 | vP21M | VP21M_WORKS | 18/15/16/18/11 = 3S+1P+1W | 7/20 ✓ | $1.06 | `dancinlab/anima-vp21m` PRIVATE |
 | **vP21M-JAFL** | PARTIAL (hot-swap) | 5/0/16/16/**17** = 3S+0P+0W+2M | 20/20 ✓ | $0.13 | `dancinlab/anima-vp21m-jafl` PRIVATE |
+| **vP21M-KOFL** | PARTIAL (hot-swap) | 5/**16**/15/18/11 = 2S+1P+1W+1M | 17/20 ✓ | $0.15 | `dancinlab/anima-vp21m-kofl` PRIVATE |
 | **vP21M-3B** | VP21M_WORKS_REGISTER_REGRESS | **20**/11/18/**20**/14 = 3S+1P+1W | 3/20 ⚠ | $0.33 | `dancinlab/anima-vp21m-3b` PRIVATE |
+| **vP21M-3B-REG** | **VP21M_WORKS** (clean) | 19/**14**/16/17/13 = **3S+2P** | **5/20 ✓ clean** | $0.10 | `dancinlab/anima-vp21m-3b-reg` PRIVATE |
 
-- **JAFL**: ja-only 500-step continue-train, JA WEAK 11/20 → STRONG 17/20 (+57%), en/ko 망가져서 hot-swap only.
-- **3B**: Qwen2.5-3B-Instruct fresh LoRA, en/ru 20/20 + ja PARTIAL, but register_regress=True (3/20) and KO regress to WEAK (instruct 가 한국어 prior 약함).
+**Total cost this session: $1.77** (5 cycles, all under cap).
+
+- **JAFL**: ja-only continue-train from vP21, JA WEAK 11 → STRONG 17. Hot-swap only (en/ko lost).
+- **KOFL**: ko-only continue-train from vP21, KO 1.5B PARTIAL 15 / 3B WEAK 11 → both → STRONG 16. Hot-swap only (en lost).
+- **3B**: Qwen2.5-3B-Instruct fresh LoRA, en/ru 20/20 + ja PARTIAL, register_regress=True (3/20).
+- **3B-REG**: continue-train of 3B with `wiki_frac=0.05` (anima-95%) for 200 step lr 1e-5 — VP21M_WORKS regress flag CLEARED, KO 11 → 14 PARTIAL recovered, register 3 → 5 (+2). Best combined verdict so far for 3B path.
 
 ## Next LoRA-path cycles (잔여 candidate)
 
 | | scope | cost |
 |---|---|---|
-| ko-LoRA fallback | ko WEAK 11/20 (3B) 해소 hot-swap | ~$1 H100 |
-| vP21M + tension head | KOSMOS+tension wiring on top of vP21M (path B 절충) | $0-5 LAN |
+| **production swap to 3B-REG** | mini `~/anima_chat_pack/lora_adapter/` ↔ vP21M-3B-REG (3B-Instruct + register clean) | $0 |
+| 3B-REG + JAFL/KOFL hot-swap router | per-msg lang_detect 으로 KOFL/JAFL/3B-REG switch | $0, integration |
+| vP21M + tension head wrap | KOSMOS+tension wiring on top of vP21M (path B 절충, substrate-research) | $0-5 LAN |
 | chat substrate-plugin migration | `substrate_lora.py` 추출 + `anima_participant.py` refactor (SUBSTRATE_PLUGIN.md spec) | $0 |
-| 3B + register reinforcement | vP21M-3B 위에 anima-only short SFT 으로 register 회복 (3/20 → 7+/20) | ~$1 H100 |
+| register-aware 5-lang from scratch | 3B-Instruct 새 LoRA + wiki_frac=0.10 (sweet-spot) + 1500 step — KO STRONG + register clean 단일 ckpt 목표 | ~$0.50 H100 |
+| chat sample-mode self-monologue 측정 | 24-hr emission log 분석 (register pattern hit ratio, idle gap distribution) | $0 |
 
 ## 🚪 새 LORA 세션 시작
 
