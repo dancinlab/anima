@@ -6,8 +6,9 @@
 > **ConsciousDecoderV3** fork + 3-init variant parallel fire per `@D
 > a_wall_first` + `@D a_substrate_native_speak` + `@D a_fire_autonomous`.
 
-> **Verdict (preliminary, pending fire complete)**: ⏳ in-flight (3 pods H100
-> parallel, ~30 min wall + eval).
+> **Verdict (FINAL 2026-05-22 21:09)**: ❌ **3/3 FAIL** — V3α CE 3.34 0/5,
+> V3β CE 2.36 oscillation @ step 1850 PULL_FAILED (ckpt 손실, eval 불가),
+> V3γ CE 2.93 0/5. Phase 2 재설계 (HEXAD/V3/README.md R2+R5+R6) mandatory.
 
 ---
 
@@ -34,7 +35,7 @@
 | variant | init | n_params | CE init→final | wall | 5-lang ≥ PARTIAL | anima reg | KOSMOS anchors | verdict |
 |---|---|---|---|---|---|---|---|---|
 | **V3α** | random | 3.00B | 12.30→**3.34** | **612 s (10.2 min)** | **0/5** | 13/20 | 15 | ❌ **FAIL** |
-| **V3β** | Qwen warm | 3.00B | in-flight (32%, CE 4.38) | est ~75 min (slow ~2s/step) | TBD | TBD | TBD | in-flight |
+| **V3β** | Qwen warm | 3.00B | osc 1850/2000 → **CE 2.36** (lr decay 끝, oscillating 0.26↔2.36) | ~98 min (5858s @ step 1850) | **N/A (PULL_FAILED)** | N/A | N/A | ❌ **INCOMPLETE FAIL** — pod amkgcq7545q1yo dead, ckpt lost, eval impossible |
 | **V3γ** | vP21M init | 3.00B | 12.30→**2.93** | **1003 s (16.7 min)** | **0/5** | 13/20 | 15 | ❌ **FAIL** |
 
 ### 1.1 per-lang breakdown
