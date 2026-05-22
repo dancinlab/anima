@@ -45,9 +45,25 @@
 | vP21M-3B | Qwen2.5-3B-Instruct base + same recipe | $10 H100 |
 | vP21M + tension head | KOSMOS+tension wiring on top of vP21M (path B 절충) | $0-5 LAN |
 
+## 🚪 새 LORA 세션 시작
+
+[`SESSION_PROMPT.md`](SESSION_PROMPT.md) 의 `text` 블록 paste → 즉시 LoRA path
+context load. 첫 user message 로 그대로 사용 가능.
+
+핵심 (전체 prompt 는 `SESSION_PROMPT.md` 참고):
+- production 상태 (chat.dancinlab.org LIVE, mini 4 LaunchAgents, vP21M 4/5 langs)
+- path 분리 (본 LORA 세션 = production / V3 = 별도 세션, V3 dir 건드림 X)
+- 6 directives (a_fire_autonomous / a_wall_first / a_substrate_native_speak /
+  a_blue_closed / a_hf_complete / a1)
+- 잔여 cycle 5 candidates (ja-LoRA fallback / +tension wrap / 3B scale /
+  HF upload / chat operational)
+
 ## 관련 link
 
-- 가장 쉬운 saga 종합: [`HEXAD/EASY.md`](../EASY.md)
-- OCCAM verdict: `HEXAD/EASY.md § 6` (n_ca_rules pinpoint)
-- production chat: `HEXAD/CHAT/FIRST_PACK_DEPLOY_STATUS_2026_05_22.md`
-- vP21M report: `HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/VP21M_MULTILINGUAL_2026_05_22.md`
+- **세션 부트스트랩**: [`SESSION_PROMPT.md`](SESSION_PROMPT.md)
+- 가장 쉬운 saga 종합: [`../EASY.md`](../EASY.md)
+- OCCAM verdict: `../EASY.md § 6` (n_ca_rules pinpoint)
+- production chat: `../CHAT/FIRST_PACK_DEPLOY_STATUS_2026_05_22.md`
+- substrate plugin: `../CHAT/SUBSTRATE_PLUGIN.md`
+- vP21M report: `../UNCLASSIFIED/state/grid_3b_s187_2026_05_21/VP21M_MULTILINGUAL_2026_05_22.md`
+- V3 path (별도 세션): [`../V3/README.md`](../V3/README.md) + [`../V3/SESSION_PROMPT.md`](../V3/SESSION_PROMPT.md)

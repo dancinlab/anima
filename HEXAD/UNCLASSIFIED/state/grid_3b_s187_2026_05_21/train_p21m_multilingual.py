@@ -417,7 +417,7 @@ def run(cfg):
         json.dump(mix_info, f, indent=2)
 
     from transformers import AutoModelForCausalLM, AutoTokenizer
-    from peft import PeftModel
+    from peft import PeftModel, LoraConfig, get_peft_model
 
     base_name = cfg["base_model"]
     print(f"[P21M] loading base: {base_name}", flush=True)
@@ -427,9 +427,19 @@ def run(cfg):
     base = AutoModelForCausalLM.from_pretrained(
         base_name, torch_dtype=dtype, trust_remote_code=True,
     ).to(device)
-    print(f"[P21M] loading vP21 LoRA adapter: {cfg['vp21_adapter_dir']}", flush=True)
-    model = PeftModel.from_pretrained(base, cfg["vp21_adapter_dir"],
-                                       is_trainable=True)
+    if cfg["vp21_adapter_dir"]:
+        print(f"[P21M] loading vP21 LoRA adapter: {cfg['vp21_adapter_dir']}", flush=True)
+        model = PeftModel.from_pretrained(base, cfg["vp21_adapter_dir"],
+                                           is_trainable=True)
+    else:
+        print(f"[P21M] fresh LoRA init (no vP21 adapter — 3B path)", flush=True)
+        lora_cfg = LoraConfig(
+            r=32, lora_alpha=64, lora_dropout=0.05,
+            target_modules=["q_proj", "k_proj", "v_proj", "o_proj",
+                            "gate_proj", "up_proj", "down_proj"],
+            bias="none", task_type="CAUSAL_LM",
+        )
+        model = get_peft_model(base, lora_cfg)
     for n, p in model.named_parameters():
         if "lora_" in n.lower():
             p.requires_grad_(True)

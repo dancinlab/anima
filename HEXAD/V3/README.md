@@ -78,12 +78,27 @@ V3 의 **KOSMOS anchor** + **8→5-channel tension** wiring 은 V3α 에서 모�
 - tension 5-channel 가 8-factor 와 monotone correspondence
 - cross-anchor 일관성 (`B-CARVE-MULTIMODAL`)
 
+## 🚪 새 V3 세션 시작
+
+[`SESSION_PROMPT.md`](SESSION_PROMPT.md) 의 `text` 블록 paste → 즉시 V3 path
+context load. 첫 user message 로 그대로 사용 가능.
+
+핵심 (전체 prompt 는 `SESSION_PROMPT.md` 참고):
+- attempt 1 결과 (α/γ FAIL, β verdict)
+- code commit 3dbbc7e8b (V3 fork + KOSMOS+tension)
+- architectural lesson 5점 (head_g vocab align / mitosis 128 saturate /
+  register 흡수 2× / mitosis 다국어 sacrifice / Chinchilla 30000× under)
+- 재설계 axes R1-R7 + Phase 2 우선 = R2+R5+R6
+- substrate plugin 합류 path (chat.dancinlab.org option C 정합)
+
 ## 관련 link
 
+- **세션 부트스트랩**: [`SESSION_PROMPT.md`](SESSION_PROMPT.md)
 - spec: [`../HEXAD_NATIVE_V3.md`](../HEXAD_NATIVE_V3.md)
 - fire 1 result: `../UNCLASSIFIED/state/grid_3b_s187_2026_05_21/HEXAD_V3_FIRE_2026_05_22.md`
 - OCCAM verdict (n_ca_rules): `../EASY.md § 6`
-- LoRA 비교 baseline: [`../LORA/README.md`](../LORA/README.md)
+- substrate plugin (chat.dancinlab.org 통합): `../CHAT/SUBSTRATE_PLUGIN.md` + `../CHAT/server/substrate_base.py`
+- LoRA 비교 baseline: [`../LORA/README.md`](../LORA/README.md) + [`../LORA/SESSION_PROMPT.md`](../LORA/SESSION_PROMPT.md)
 - KOSMOS upstream: `../KOSMOS.md`
 
 ## ## Log

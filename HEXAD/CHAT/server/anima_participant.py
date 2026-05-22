@@ -164,16 +164,34 @@ class AnimaState:
             pass
 
     def _seed_text(self) -> tuple[str, str]:
+        # F1 (2026-05-22): context-grounded seeding — prefer recent user msgs
+        # over anima's own last_emission to break self-monologue loops.
         strat = SEED_STRATEGIES[self.ticks % len(SEED_STRATEGIES)]
-        if strat == "m_retrieve_seed" and self.last_emission:
-            return self.last_emission[-64:], strat
-        if strat == "m_retrieve_seed" and self.m_buffer:
-            return self.m_buffer[-1]["text"][-64:], strat
+        # m_buffer fresh window: last user msg within 60s
+        now = time.time()
+        fresh_user = None
+        if self.m_buffer:
+            last = self.m_buffer[-1]
+            if (now - last.get("ts", 0)) < 60.0:
+                fresh_user = last
+        if strat == "m_retrieve_seed":
+            if fresh_user:
+                return fresh_user["text"][-64:], strat
+            if self.last_emission:
+                return self.last_emission[-64:], strat
+            if self.m_buffer:
+                return self.m_buffer[-1]["text"][-64:], strat
         if strat == "w_curiosity_peak_seed":
             return "\n", strat
         if strat == "random_explore_seed":
             return " ", strat
-        return "", strat  # self_monologue: BOS only
+        # self_monologue_seed: F1 — concat last 3 m_buffer msgs as ctx seed
+        # (was: empty BOS, which let model wander into anima register).
+        if self.m_buffer:
+            tail = list(self.m_buffer)[-3:]
+            joined = " ".join(m.get("text", "")[-32:] for m in tail).strip()
+            return joined[-128:], strat
+        return "", strat  # only when m_buffer empty
 
     @torch.no_grad()
     def _entropy_of_next(self, seed_text: str) -> tuple[float, torch.Tensor]:
@@ -273,7 +291,7 @@ class AnimaState:
             bid = self.tok.bos_token_id or self.tok.eos_token_id
             ids = torch.tensor([[bid]]).to(DEVICE)
         out = self.model.generate(ids, max_new_tokens=MAX_NEW,
-                                  do_sample=True, temperature=1.0, top_k=50, top_p=0.95,
+                                  do_sample=True, temperature=0.7, top_k=50, top_p=0.95,
                                   repetition_penalty=1.2,
                                   pad_token_id=self.tok.eos_token_id)
         text = self.tok.decode(out[0][ids.shape[1]:], skip_special_tokens=True)

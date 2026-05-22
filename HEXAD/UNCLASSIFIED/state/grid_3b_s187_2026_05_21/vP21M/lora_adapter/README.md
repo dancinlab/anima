@@ -1,202 +1,120 @@
 ---
 base_model: Qwen/Qwen2.5-1.5B
 library_name: peft
+tags:
+  - lora
+  - multilingual
+  - qwen2.5
+  - anima
+language:
+  - en
+  - ko
+  - zh
+  - ru
+  - ja
+license: apache-2.0
 ---
 
-# Model Card for Model ID
-
-<!-- Provide a quick summary of what the model is/does. -->
-
-
-
-## Model Details
-
-### Model Description
-
-<!-- Provide a longer summary of what this model is. -->
-
-
-
-- **Developed by:** [More Information Needed]
-- **Funded by [optional]:** [More Information Needed]
-- **Shared by [optional]:** [More Information Needed]
-- **Model type:** [More Information Needed]
-- **Language(s) (NLP):** [More Information Needed]
-- **License:** [More Information Needed]
-- **Finetuned from model [optional]:** [More Information Needed]
-
-### Model Sources [optional]
-
-<!-- Provide the basic links for the model. -->
-
-- **Repository:** [More Information Needed]
-- **Paper [optional]:** [More Information Needed]
-- **Demo [optional]:** [More Information Needed]
-
-## Uses
-
-<!-- Address questions around how the model is intended to be used, including the foreseeable users of the model and those affected by the model. -->
-
-### Direct Use
-
-<!-- This section is for the model use without fine-tuning or plugging into a larger ecosystem/app. -->
-
-[More Information Needed]
-
-### Downstream Use [optional]
-
-<!-- This section is for the model use when fine-tuned for a task, or when plugged into a larger ecosystem/app -->
-
-[More Information Needed]
-
-### Out-of-Scope Use
-
-<!-- This section addresses misuse, malicious use, and uses that the model will not work well for. -->
-
-[More Information Needed]
-
-## Bias, Risks, and Limitations
-
-<!-- This section is meant to convey both technical and sociotechnical limitations. -->
-
-[More Information Needed]
-
-### Recommendations
-
-<!-- This section is meant to convey recommendations with respect to the bias, risk, and technical limitations. -->
-
-Users (both direct and downstream) should be made aware of the risks, biases and limitations of the model. More information needed for further recommendations.
-
-## How to Get Started with the Model
-
-Use the code below to get started with the model.
-
-[More Information Needed]
-
-## Training Details
-
-### Training Data
-
-<!-- This should link to a Dataset Card, perhaps with a short stub of information on what the training data is all about as well as documentation related to data pre-processing or additional filtering. -->
-
-[More Information Needed]
-
-### Training Procedure
-
-<!-- This relates heavily to the Technical Specifications. Content here should link to that section when it is relevant to the training procedure. -->
-
-#### Preprocessing [optional]
-
-[More Information Needed]
-
-
-#### Training Hyperparameters
-
-- **Training regime:** [More Information Needed] <!--fp32, fp16 mixed precision, bf16 mixed precision, bf16 non-mixed precision, fp16 non-mixed precision, fp8 mixed precision -->
-
-#### Speeds, Sizes, Times [optional]
-
-<!-- This section provides information about throughput, start/end time, checkpoint size if relevant, etc. -->
-
-[More Information Needed]
-
-## Evaluation
-
-<!-- This section describes the evaluation protocols and provides the results. -->
-
-### Testing Data, Factors & Metrics
-
-#### Testing Data
-
-<!-- This should link to a Dataset Card if possible. -->
-
-[More Information Needed]
-
-#### Factors
-
-<!-- These are the things the evaluation is disaggregating by, e.g., subpopulations or domains. -->
-
-[More Information Needed]
-
-#### Metrics
-
-<!-- These are the evaluation metrics being used, ideally with a description of why. -->
-
-[More Information Needed]
-
-### Results
-
-[More Information Needed]
-
-#### Summary
-
-
-
-## Model Examination [optional]
-
-<!-- Relevant interpretability work for the model goes here -->
-
-[More Information Needed]
-
-## Environmental Impact
-
-<!-- Total emissions (in grams of CO2eq) and additional considerations, such as electricity usage, go here. Edit the suggested text below accordingly -->
-
-Carbon emissions can be estimated using the [Machine Learning Impact calculator](https://mlco2.github.io/impact#compute) presented in [Lacoste et al. (2019)](https://arxiv.org/abs/1910.09700).
-
-- **Hardware Type:** [More Information Needed]
-- **Hours used:** [More Information Needed]
-- **Cloud Provider:** [More Information Needed]
-- **Compute Region:** [More Information Needed]
-- **Carbon Emitted:** [More Information Needed]
-
-## Technical Specifications [optional]
-
-### Model Architecture and Objective
-
-[More Information Needed]
-
-### Compute Infrastructure
-
-[More Information Needed]
-
-#### Hardware
-
-[More Information Needed]
-
-#### Software
-
-[More Information Needed]
-
-## Citation [optional]
-
-<!-- If there is a paper or blog post introducing the model, the APA and Bibtex information for that should go in this section. -->
-
-**BibTeX:**
-
-[More Information Needed]
-
-**APA:**
-
-[More Information Needed]
-
-## Glossary [optional]
-
-<!-- If relevant, include terms and calculations in this section that can help readers understand the model or model card. -->
-
-[More Information Needed]
-
-## More Information [optional]
-
-[More Information Needed]
-
-## Model Card Authors [optional]
-
-[More Information Needed]
-
-## Model Card Contact
-
-[More Information Needed]
-### Framework versions
+# anima-vp21m — multilingual LoRA r32 for Qwen2.5-1.5B
+
+Continue-trained LoRA adapter on top of `Qwen/Qwen2.5-1.5B`. Forked from
+internal `vP21` baseline + 1500 steps on 5-language wiki + anima-corpus
+mix. Produced 2026-05-22.
+
+## Quick verdict
+
+| lang | verdict | score/20 | gen | lang_coherent | notes |
+|---|---|---|---|---|---|
+| EN | STRONG | 18 | 18 | 20 | slight uplift over vP21G |
+| KO | PARTIAL | 15 | 18 | 15 | sample-mode anima leak on 2 probes |
+| ZH | STRONG | 16 | 20 | 16 | 0 memorize |
+| RU | STRONG | 18 | 20 | 18 | 0 memorize, Cyrillic stable |
+| JA | WEAK | 11 | 16 | 11 | sample-mode hallucination on 4 probes |
+
+Aggregate: 3 STRONG + 1 PARTIAL + 1 WEAK + 0 PURE_MEMORIZE →
+`VP21M_WORKS` (≥4 langs ≥ PARTIAL).
+
+`register_regress=False` (anima register not over-fit).
+
+## Training
+
+| key | value |
+|---|---|
+| base | `Qwen/Qwen2.5-1.5B` |
+| init adapter | vP21 LoRA r32 α64 (continue-train) |
+| trainable | 36.93M (2.34% of 1.58B) |
+| target modules | inferred from safetensors (Qwen attention + MLP projections) |
+| steps | 1500 |
+| bsz / block | 2 / 512 |
+| LR | 5e-5 peak, cosine → 5e-6, warmup 50 |
+| optimizer | PagedAdamW8bit (bnb 0.43.1) |
+| dtype | bf16 |
+| GPU | H100 80GB HBM3 SXM (runpod) |
+| train wall | 198.8 s (3.3 min) |
+| init CE → final CE | 1.7163 → 0.7787 (55% reduction) |
+
+## Corpus
+
+- 5-language wiki: `wikimedia/wikipedia` 20231101 snapshots (en/ko/zh/ru/ja),
+  per-language native-script ratio filter (en ≥ 0.50, ko/zh/ru ≥ 0.20,
+  ja ≥ 0.05). 19,337 records, 51.1 MB.
+- anima-corpus s101 seed=1337 n=777000 (603 MB) — anima register +
+  consciousness-substrate carving entries.
+- Mix: 1 KB chunks interleaved with `wiki_frac=0.30`, global shuffle seed=42.
+  Total 75.5 MB / 55,362 records.
+
+## Eval
+
+- Per-language OOD held-out: 10 probes × 5 langs × 2 modes (greedy + sample)
+  = 100 generations.
+- anima register Eval1: 10 anima-context probes × 2 modes = 20 generations.
+- Multilingual classifier: anima-key detector (CJK/Cyrillic-aware) +
+  `lang_coherent()` native-script ratio per lang.
+
+## How to use
+
+```python
+from peft import PeftModel
+from transformers import AutoModelForCausalLM, AutoTokenizer
+
+base = AutoModelForCausalLM.from_pretrained("Qwen/Qwen2.5-1.5B",
+                                            torch_dtype="bfloat16")
+tok  = AutoTokenizer.from_pretrained("Qwen/Qwen2.5-1.5B")
+model = PeftModel.from_pretrained(base, "dancinlab/anima-vp21m").eval()
+
+ids = tok("The capital of Germany is", return_tensors="pt").input_ids
+out = model.generate(ids, max_new_tokens=80, do_sample=True,
+                     temperature=0.7, top_p=0.95, repetition_penalty=1.2)
+print(tok.decode(out[0], skip_special_tokens=True))
+```
+
+## Limitations
+
+- JA register: sample-mode hallucination on ~40% of probes — fix
+  candidate: ja-only LoRA hot-swap (in progress).
+- Anima register leak: 7/20 anima-context probes still echo training-set
+  carving phrases. Use temperature 0.7 + context-grounded seeding.
+- Single-shot LoRA r32 — no instruction tuning; raw completion only.
+
+## Lineage
+
+| step | what |
+|---|---|
+| vP21 | initial LoRA on EN wiki only |
+| vP21G | EN STRONG (16/20) |
+| vP21K | KO STRONG (continued from vP21G) |
+| vP21M | this card — 5-lang merged on top of vP21 baseline |
+
+Cost: $1.06 actual (cap $15).
+
+## Provenance
+
+- adapter sha256: `96c2b226cc1c85fe4f717d2898f2f5394657cd7f279b19fecd2575cd1821833e`
+- corpus mix sha256: `bf2371ac2602932cd68255626736285a5e579e6aee4b8a0160f74f365d826f94`
+- run dir: `HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/vP21M/`
+
+### Framework
 
 - PEFT 0.12.0
+- transformers 4.x
+- bitsandbytes 0.43.1
