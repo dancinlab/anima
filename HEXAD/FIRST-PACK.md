@@ -212,7 +212,7 @@ mini (Mac M-series, 16GB unified memory, M-series GPU via Metal/MPS)
 | **a) 호스팅** ✅ | **자체 mini (Mac M-series) + Tailscale ($0) — 결정** (덜 쓰이는 host, dev 분리) | 비용 + scale |
 | **b) public link** ✅ | **Cloudflare Tunnel → `chat.dancinlab.org`** — 결정 (own domain, public) | 접근 범위 |
 | **c) MVP 모델** | vP21M (untested 5-merge) / 5 LoRA hot-swap (verified path) | Phase 1 리스크 |
-| **d) 동시 접속 예상** | 1-5 / 5-20 / 20-100 / 100+ | host 선택 + 큐 설계 |
+| **d) 동시 접속 예상** ✅ | **1-20 (normal 1-5, spike 5-20)** — 결정. mini queue 설계: 1-3s base + N×0.5s, 응답 토큰 64-128 권장 | host 선택 + 큐 설계 |
 | **e) anima motivation threshold** | 0.45 (selective, vP21G calibration) / 0.30 (always speak, 시끄러움) / dynamic | 발화 빈도 |
 | **f) 첫 release scope** | 채팅만 / + AKIDA closed-loop viz / + spontaneous feed sidebar | UI 복잡도 |
 | **g) 공개 범위** | public anyone / unlisted (link only) / LAN private | 보안 + 비용 |
