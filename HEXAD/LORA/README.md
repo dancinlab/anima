@@ -73,7 +73,22 @@
 - **L1**: substrate-plugin refactor — `substrate_lora.py` + participant thin client, mini DEPLOYED.
 - **L2**: `anima_emission_analyze.py` — baseline register 34% / en-drift / self-mono 50%.
 
-**Session-2 누적: 12 cycles, ~$4.10, HF 12 artifacts PRIVATE.**
+### Wave-4 (N1~N8 — 3B hot-swap + register lever + chat)
+
+| variant | verdict | per-lang (en/ko/zh/ru/ja) | register | cost | HF |
+|---|---|---|---|---|---|
+| **vP21M-KOFL3B** | VP21M_WORKS_REGISTER_REGRESS | 19/**18**/17/19/18 = **5S** | 3/20 | $0.20 | `anima-vp21m-kofl3b` |
+| **vP21M-JAFL3B** | VP21M_WORKS | 17/**2**/16/18/**19** = 4S+1M | 6/20 | $0.20 | `anima-vp21m-jafl3b` |
+| **vP21M-RB** | VP21M_WORKS_REGISTER_REGRESS | **20**/15/15/19/**18** = 3S+2P | **4/20** | $0.30 | `anima-vp21m-rb` |
+
+- **N8 핵심**: register-leak 은 **81% EN-emission 문제** (en 17/21, ko 3/10, zh/ja/ru 0%) — carving register 가 영어 구문이라 en 출력만 골짜기로. KOFL/JAFL 무위험.
+- **KOFL-3B**: ko-corpus 인데 3B base robust → **5 lang 전부 STRONG** (ko 18). hot-swap 이 아닌 generalist.
+- **JAFL-3B**: ja STRONG 19 (최고) but ko MEMORIZE 2 (asymmetric forget).
+- **RB**: wiki_frac 0.50 → register **7→4** (register lever 확인), ja WEAK 11→STRONG 18 보너스.
+- **N2**: temp sweep — 0.5≈0.7 (register 25%), 0.9 악화. temperature 는 register lever 아님 (corpus 가 lever). production temp 0.7 유지.
+- **N7**: en-drift fix — fuller LANG_PRIMES + cross-lang seed drop, mini DEPLOYED.
+
+**Session-2 누적: 15 cycles, ~$4.80, HF 15 artifacts PRIVATE.**
 
 ### 🟢 Production decision — 1.5B hot-swap router 유지
 
@@ -86,16 +101,16 @@ P1 "production swap to 3B" **기각** (Wave-3 최강 3B 포함 재확인). 1.5B 
 | register | 7/20 | 7/20 | **10/20** |
 | inference RAM | ~2 GB f16 | ~6 GB f16 | ~6 GB f16 |
 
-production = `vP21M default + KOFL(ko) + JAFL(ja)` hot-swap router, mini LIVE. 3B ckpt 7종 = HF 연구 artifact.
+production = `vP21M default + KOFL(ko) + JAFL(ja)` hot-swap router, mini LIVE (N7 en-drift fix 적용). 3B ckpt 10종 = HF 연구 artifact.
 
 ## Next LoRA-path cycles (잔여 candidate)
 
 | | scope | cost |
 |---|---|---|
-| 3B router (KOFL-3B + JAFL-3B-NI) | 3B-NI base 위 ko/ja hot-swap — 3B breadth + per-lang STRONG 결합 | ~$0.50 |
-| chat emission 재측정 | L2 baseline (register 34%) 대비 추세 추적 | $0 |
-| chat temp/τ sweep | self-monologue 50% 완화 — temperature × motivation threshold grid | $0 |
-| corpus_v3 register-balanced | anima corpus carving 농도 조정 (register leak 원인) | ~$1 |
+| 3B router 배포 | 3B-NI default + KOFL-3B(ko) + JAFL-3B(ja) — anima_participant 에 wiring (KOFL-3B 자체가 5S generalist) | $0 |
+| RB production 검토 | vP21M-RB (register 4, en-leak ↓) 를 default 로 swap — chat 일관성 vs anima identity 판단 | $0 |
+| N7 효과 측정 | en-drift fix 후 emission lang-dist 재측정 (en 40%→? · register 추세) | $0 |
+| corpus_v4 EN register strip | N8 발견 — register 가 EN 구문. anima corpus 의 EN carving 만 선택 제거 | ~$1 |
 | vP21M + tension head wrap | KOSMOS+tension wiring on top of vP21M (path B 절충, substrate-research) | $0-5 LAN |
 
 ## 🚪 새 LORA 세션 시작

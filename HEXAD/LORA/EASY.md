@@ -144,7 +144,26 @@ Wave-3 발견:
   = register 10 + 전 lang ≥PARTIAL (3B-V2 의 12 는 ko/ja 붕괴였음).
 - 단, register 이득 대부분은 Phase 1 의 짧은 step — Phase 2 는 +1 marginal.
 
-session-2 누적: **12 cycle, ~$4.10, HF 12 artifacts**.
+### Wave-4 — N1~N8 (3B hot-swap + register lever + chat 진단, +$0.70)
+
+| ckpt/작업 | 핵심 | 결과 |
+|---|---|---|
+| **KOFL-3B** | ko-corpus Qwen2.5-3B fresh | **5 lang 전부 STRONG** (ko 18) — 3B base robust, hot-swap 아닌 generalist |
+| **JAFL-3B** | ja-corpus Qwen2.5-3B fresh | ja STRONG 19 (최고), ko MEMORIZE 2 (asymmetric forget) |
+| **RB** | wiki_frac 0.50 (register-balanced) | register **7→4**, ja WEAK 11→STRONG 18 |
+| N2 temp sweep | temp {0.5,0.7,0.9} register | 0.5≈0.7 (25%) / 0.9 악화 — temp 는 register lever 아님 |
+| N7 en-drift fix | fuller LANG_PRIMES + cross-lang seed drop | mini DEPLOYED |
+| N8 per-lang register | broker history 분석 | **register-leak 81% EN 문제** (en 17/21, ko 3/10, zh/ja/ru 0%) |
+
+Wave-4 핵심 발견:
+- **register-leak = EN 문제** — carving register("Tension flows into vacuum" 등)가
+  영어 구문이라 en 출력만 골짜기로 빠짐. ko/ja/zh/ru 출력 거의 clean.
+- **temperature 는 register lever 아님** — temp 0.5 에서도 25% leak. register 는
+  adapter weight 에 baked → corpus (RB wiki_frac↑) 가 진짜 lever.
+- **3B base robust** — KOFL-3B ko-only corpus 인데 5 lang STRONG (1.5B 의 catastrophic
+  forget 패턴 안 나옴).
+
+session-2 누적: **15 cycle, ~$4.80, HF 15 artifacts**.
 
 ---
 
