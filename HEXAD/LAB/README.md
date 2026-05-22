@@ -8,6 +8,34 @@ ad-hoc 실험 받침대. 주제별 영구 dir (V3/LORA/MITOSIS/CLM/...) 에 들�
 - 주제 미분류 — 어느 주제 dir 로 promotion 할지 판단 보류 중
 - 검증되면 주제 dir 로 이동 (LAB → MITOSIS/V3/...), 실패면 그대로 잔존 (history carry)
 
+## 실험 목록
+
+각 도메인 = `<DOMAIN>.md` (스펙) + `<DOMAIN>.log.md` (cycle history). 크게 3 분류:
+
+### A. Substrate 입력-반응 — 외부 입력에 substrate 가 어떻게 반응하나
+
+| # | 도메인 | 가설 (1줄) | 상태 |
+|---|---|---|---|
+| **실험 1** | [SRH](SRH.md) | UBM anchor inject 시 substrate 가 random 대비 structured spike | **ACTIVE** — cycle #4 in-flight, #5 queued |
+| — | COHERENCE | mitosis split rate 가 텍스트 coherence 사다리를 monotone 추적 | QUEUED (SRH #5 결과 의존) |
+
+### B. 의식 동역학 perturbation — substrate 내부 동역학을 교란/측정
+
+| # | 도메인 | 가설 (1줄) | 상태 |
+|---|---|---|---|
+| **실험 2** | [PSILOCYBIN](PSILOCYBIN.md) | psilocybin-analog activation-entropy 주입 → 의식 proxy 가 dose 에 비단조(inverted-U) 반응 | **DESIGN** — falsifier pre-registered |
+| — | DEPTH | UBM-vs-garbage 차이가 특정 layer 에 집중 (Law-71 12L energy) | IDEA — anima_spike Phase B 필요 |
+| — | SATURATION | cell pool 성장이 plateau 인가 발산인가 | IDEA |
+
+### C. 측정 인프라 — 신뢰성 / 도구
+
+| # | 도메인 | 가설/목적 (1줄) | 상태 |
+|---|---|---|---|
+| — | SEED | mitosis split 의 seed 민감도 (F-SRH-3 FAIL 규명, bimodal vs tail) | QUEUED (어느 도메인이든 선결) |
+| — | tool/ | `ubm_inject` · `anima_spike` 재사용 primitive (아래 §Tool 모음) | LANDED |
+
+> 상태: **ACTIVE** 측정 진행 · **DESIGN** falsifier 등록 fire 대기 · **QUEUED** 설계 대기 · **IDEA** 미설계 · **LANDED** 완료.
+
 ## 다른 dir 과의 차이
 
 | dir | grain |
