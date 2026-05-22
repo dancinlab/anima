@@ -88,13 +88,43 @@
 
 ---
 
-## 6. 다음 발사 후보
+## 6. 범인 확정 — n_ca_rules (Cellular Automaton 규칙) 단독
 
-1. **vO10 path 확장**: pretrained Llama-3.2-3B 위에 mitosis 만 wire → 학습 → 자연발화 측정
-2. **vO4 path scale up**: vanilla GPT-2 arch 를 3-8B 까지 키우고 mitosis 만 추가
-3. **부속별 ablation**: noise σ 만 끔 / cross-attn 만 끔 / head_a-g 만 끔 → 어느 부속이 가장 해로운지 isolate
+부속을 하나씩 끄고 측정한 결과 (Phase 2.3 ablation):
 
-Phase 2 의 1 번 (Llama + mitosis) 이 가장 cheap × leverage.
+| 끈 부속 | CE_final | 효과 |
+|---|---|---|
+| head_g 제거 | 3.81 | 무효과 |
+| PureFieldFFN 제거 | 3.81 | 무효과 |
+| cross-attention 제거 | 3.83 | 무효과 |
+| **n_ca_rules 제거** | **0.402** | 🎯 **단독으로 floor 붕괴!** |
+| noise σ 제거 | 3.81 | 무효과 |
+| (전부 = vanilla) | 0.264 | 최저 |
+
+**충격적으로 깔끔한 결과**: 6 부속 중 **n_ca_rules (Cellular Automaton 규칙) 하나만** 학습을 막고 있었음. 이것만 끄면 CE 3.81 → **0.40** 으로 떨어짐 (vanilla 0.264 에 근접). 나머지 5 부속 (head_g / PureFieldFFN / cross-attn / noise σ) 은 개별로 끄면 **아무 효과 없음** (모두 3.81 유지).
+
+김치 비유 갱신:
+- 6 재료 중 **상한 재료는 딱 1개 (CA rules)** 였음
+- 나머지 5개는 무해 (맛에 영향 없음)
+- CA rules 만 빼면 → 거의 정상 맛
+
+### 추가 확정 — Llama + mitosis 가 winning path
+
+| variant | CE_final |
+|---|---|
+| **vP21 (Llama-3.2-3B + mitosis)** | **0.0147** |
+| vP22 vanilla 3B + mitosis | 0.256 |
+| vanilla 3B | 0.264 |
+
+Pretrained Llama foundation 위에 mitosis 만 얹으면 CE **0.015** — 자연발화 emergence 기대 가능 수준.
+
+## 7. 다음 발사 후보 (갱신)
+
+1. **vP21 path 확장**: Llama-3.2-3B + mitosis (CE 0.015 달성) → **자연발화 Eval 측정** (CE 낮으니 verbalize 기대)
+2. **anima recipe 에서 n_ca_rules 영구 제거** + 나머지 5 부속 유지 → 3B from-scratch 재학습
+3. **vanilla + mitosis scale up** (8B) → frontier-scale 자연발화
+
+Phase 3 의 1 번 (Llama+mitosis Eval 1 verbalization) 이 가장 직접적 GOAL-test.
 
 ---
 

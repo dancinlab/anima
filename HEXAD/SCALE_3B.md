@@ -97,6 +97,31 @@
 
 **한 줄**: S187-H/J/K 3 path × multi-axis 변형 → 모두 동일 floor 도착. **Recipe-level breakthrough 가 필요** (aux-loss ablation, bigger model S187-F, corpus 갱신).
 
+### 7. 🎯🎯 PINPOINT (2026-05-22 11:23) — n_ca_rules 단독 범인
+
+Phase 2.3 ablation (6 부속 하나씩 끄고 CE-only 측정):
+
+| variant | 끈 부속 | CE_final | 효과 |
+|---|---|---|---|
+| vO1 (전부 유지) | none | 3.81 | baseline |
+| vP23_a | head_g | 3.81 | 무효과 |
+| vP23_b | PureFieldFFN | 3.81 | 무효과 |
+| vP23_c | cross-attn | 3.83 | 무효과 |
+| **vP23_d** | **n_ca_rules** | **0.402** | 🎯 **단독 floor 붕괴** |
+| vP23_e | noise σ=0.1 | 3.81 | 무효과 |
+| vO4 (전부 = vanilla) | all | 0.264 | minimum |
+
+**결정적**: 6 부속 중 **n_ca_rules (META-CA cellular automaton rules, default 8 → S187 에선 2) 단독** 이 floor 의 원인. 이것만 끄면 CE 3.81 → 0.40 (vanilla 0.264 근접). 나머지 5 부속은 개별 제거 시 무효과.
+
+**winning path 확정**:
+| variant | CE_final |
+|---|---|
+| **vP21 (Llama-3.2-3B + mitosis)** | **0.0147** |
+| vP22 vanilla 3B + mitosis | 0.256 |
+| vanilla 3B | 0.264 |
+
+pretrained Llama + mitosis = CE 0.015 (자연발화 emergence 기대 수준). 다음 cycle = vP21 Eval 1 verbalization 측정.
+
 ### 6. 🎯 OCCAM verdict (2026-05-22 04:08) — Custom Arch 가 floor 의 원인!
 
 OCCAM brainstorm Phase 1 결과 (13 pods 중 9 landed):
