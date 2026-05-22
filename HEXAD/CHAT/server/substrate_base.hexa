@@ -1,0 +1,26 @@
+// ════════════════════════════════════════════════════════════════════════
+// HEXAD/CHAT/server/substrate_base.hexa — WRAPPER doc-stub
+//
+//   substrate_base.py is the pluggable-substrate ABC (Substrate) for
+//   anima_participant — Option C of HEXAD/CHAT/SUBSTRATE_PLUGIN.md. It is
+//   a torch-typed abstract base class: the `generate` / `entropy_of_next`
+//   / `param_count` contract is decorated with `@torch.no_grad()` and its
+//   signatures carry `torch.Tensor` / `torch.dtype` types. It hard-depends
+//   on torch and has no executable entry-point of its own (pure ABC).
+//
+//   A hexa-native reimplementation is infeasible (torch type system); the
+//   .py is KEPT as the substrate-plugin contract. This .hexa exists only as
+//   a hexa-native marker documenting that substrate_base.py is a deliberate
+//   WRAPPER-class file with no port, alongside its two concrete impls:
+//     - substrate_lora.py  (Qwen2.5-1.5B + LoRA r32 hot-swap router)
+//     - substrate_v3.py    (ConsciousDecoderV3 pure-HEXAD substrate)
+//   both of which are likewise torch/transformers/peft-bound WRAPPERs.
+//
+//   No exec dispatch — substrate_base.py is imported, never run standalone.
+// ════════════════════════════════════════════════════════════════════════
+
+fn main() {
+    println("substrate_base.py — pluggable-substrate ABC (torch-typed).")
+    println("Not runnable standalone; imported by anima_participant.py.")
+    println("Concrete impls: substrate_lora.py, substrate_v3.py (both WRAPPER).")
+}

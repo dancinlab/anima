@@ -179,7 +179,8 @@ fn cmd_verify(a: [str]) {
     }
     let mut tail = ""
     if json_mode(a) { tail = " --json" }
-    let cmd = "cd " + shq(HS) + " && python3 verify/cli.py " + shq(target) + tail
+    let cmd = "cd " + shq(HS) + " && HEXA_SENSES_ROOT=" + shq(HS) +
+              " hexa run verify/cli.hexa " + shq(target) + tail
     let rc = exec(cmd)
     print(rc)
     _audit("verify", target, 0)
@@ -188,7 +189,8 @@ fn cmd_verify(a: [str]) {
 fn cmd_inventory(a: [str]) {
     let mut tail = ""
     if json_mode(a) { tail = " --json" }
-    let cmd = "cd " + shq(HS) + " && python3 verify/spec_inventory.py" + tail
+    let cmd = "cd " + shq(HS) + " && HEXA_SENSES_ROOT=" + shq(HS) +
+              " hexa run verify/spec_inventory.hexa" + tail
     let rc = exec(cmd)
     print(rc)
     _audit("inventory", "", 0)

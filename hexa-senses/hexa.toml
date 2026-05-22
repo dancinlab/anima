@@ -28,15 +28,9 @@ path = "cli/hexa-senses.hexa"
 runner = "hexa"
 files = [
     "tests/test_selftest.hexa",
-]
-
-[test.python]
-runner = "pytest"
-marker = "auto"
-files = [
-    "tests/test_n6_invariants.py",
-    "tests/test_verifiers.py",
-    "tests/test_spec_inventory.py",
+    "tests/test_n6_invariants.hexa",   # hexa-native selftest (port of test_n6_invariants.py)
+    "tests/test_verifiers.hexa",       # hexa-native selftest (port of test_verifiers.py)
+    "tests/test_spec_inventory.hexa",  # hexa-native selftest (port of test_spec_inventory.py)
 ]
 
 [scripts]
@@ -57,9 +51,9 @@ verify = [
     "verify/lattice_arithmetic.hexa", # n=6 self-consistency (aux per LATTICE_POLICY §1.3)
     "verify/real_limits_anchor.hexa", # LIMIT_BREAKTHROUGH.md anchors
     "verify/closure_consistency.hexa",# scoreboard cross-check
-    "verify/cli.py",                  # legacy Python dispatcher (kept for pytest)
-    "verify/n6_arithmetic.py",        # legacy n=6 arithmetic (kept for pytest)
-    "verify/spec_inventory.py",       # legacy spec inventory (kept for pytest)
+    "verify/cli.hexa",                # unified verifier dispatcher (port of cli.py)
+    "verify/n6_arithmetic.hexa",      # n=6 lattice arithmetic + voice constraint (port of n6_arithmetic.py)
+    "verify/spec_inventory.hexa",     # 5-verb spec presence + provenance (port of spec_inventory.py)
 ]
 build = [
     "build/Makefile",            # verify + test + ci fan-out

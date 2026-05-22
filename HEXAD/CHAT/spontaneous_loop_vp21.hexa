@@ -1,0 +1,58 @@
+// ════════════════════════════════════════════════════════════════════════
+// HEXAD/CHAT/spontaneous_loop_vp21.hexa — WRAPPER entry-point
+//
+//   spontaneous_loop_vp21.py is the GOAL-direct 자연발화 (spontaneous
+//   emission) test: anima speaks UNPROMPTED, gated by the Inner-Thoughts
+//   8-factor motivation score, with a timer-ablation falsifier (run both
+//   full + dynamics-frozen, report whether emission survives).
+//
+//   It hard-depends on torch / transformers / peft / safetensors (vP21 =
+//   Qwen2.5-1.5B + LoRA r32 + mitosis, model.generate + softmax-entropy
+//   forwards) — a pure-hexa reimplementation is infeasible. The .py is
+//   KEPT and this thin .hexa documents purpose and dispatches it via
+//   exec().
+//
+//   NOTE — this is a WRAPPER, NOT a DELETE-SUPERSEDED:
+//   HEXAD/CHAT/spontaneous_lib.hexa is the hexa-native SSOT for the
+//   8-factor motivation MATH (factor_relevance .. factor_dynamics +
+//   weights, byte-mirrored), and spontaneous_smoke.hexa exercises it. But
+//   spontaneous_lib.hexa does NOT run a live LLM forward loop — it has no
+//   torch substrate. spontaneous_loop_vp21.py is the torch-bound RUNNER
+//   that drives a real vP21 model through that math. The library covers
+//   the formula; this wrapper covers the model run. They are complementary,
+//   not duplicates.
+//
+//   USAGE  hexa run spontaneous_loop_vp21.hexa [--window F] [--tick F] [--out P]
+//          (forwards all flags to spontaneous_loop_vp21.py verbatim)
+// ════════════════════════════════════════════════════════════════════════
+
+fn _shq(s: string) -> string {
+    let parts = s.split("'")
+    let mut out = "'"
+    let mut i = 0
+    while i < len(parts) {
+        if i > 0 { out = out + "'\\''" }
+        out = out + parts[i]
+        i = i + 1
+    }
+    return out + "'"
+}
+
+fn main() {
+    let here = "/Users/ghost/core/anima/HEXAD/CHAT"
+    let py = here + "/spontaneous_loop_vp21.py"
+    let exists = exec("[ -f '" + py + "' ] && printf yes || printf no")
+    if exists != "yes" {
+        println("spontaneous_loop_vp21.py not found at: " + py)
+        return
+    }
+    let cli = args()
+    let mut fwd = ""
+    let mut i = 1
+    while i < len(cli) {
+        fwd = fwd + " " + _shq(cli[i])
+        i = i + 1
+    }
+    println("[spontaneous_loop_vp21] dispatch → python3 spontaneous_loop_vp21.py" + fwd)
+    print(exec("cd '" + here + "' && python3 spontaneous_loop_vp21.py" + fwd))
+}
