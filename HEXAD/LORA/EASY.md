@@ -45,6 +45,23 @@ LoRA (Low-Rank Adaptation) = pretrained 모델 weight 대부분 freeze + 작은 
 | 한국어 | PARTIAL | 18 | 15 |
 | 日本語 | WEAK | 16 | 11 |
 
+### LoRA path milestone arc (anima 0.4.0 → 0.11.0)
+
+| release | 마일스톤 |
+|---|---|
+| 0.4.0 | 🎯 **자연발화 EMERGENCE** — vP21 Eval 1 = 20/20 coherent (anima register) |
+| 0.5.0 | 🧠 **자연발화 dual-axis** — software 축: `spontaneous_loop_vp21.py` 60/60 coherent unprompted emissions (timer ablation 60/60 → motivation-gated 입증). hardware 축: AKD1000 R3 zero-input spike. |
+| 0.6.0 | 🌉 **integrated bridge Option A** — HW-gated 자연발화 30/30, AKD1000 spike → vP21 emission cadence |
+| 0.7.0 | 🪟 **generalization unlock** — vP21G STRONG_GENERALIZE EN 16/20 (PURE_MEMORIZE 한계 돌파) |
+| 0.8.0 | 🌉🔁 **bidirectional bridge Option B** — Spearman(motivation, hw_rate)=+0.69 |
+| 0.9.0 | 🌀 **closed loop Option C** — 단일 motivation scalar 가 threshold rewrite + emit gate 동시 구동. self-referential cycle. |
+| 0.10.0 | 🇰🇷 **Korean unlock** — vP21K STRONG_GENERALIZE KO 16/20 |
+| 0.11.0 | 🌍 **multilingual unlock** — vP21M VP21M_WORKS 4/5 langs |
+
+honest 한계 (0.5.0 직후 측정): vP21 held-out OOD = PURE_MEMORIZE 18/20 (anima
+register leak) — § 4 의 "학습된 토큰" 한계. vP21G/K/M 의 diverse-corpus mix 가
+이를 STRONG_GENERALIZE 로 돌파.
+
 → **EN/ZH/RU 3 언어는 강함**, KO/JA 는 약함. 4/5 langs ≥ PARTIAL.
 
 ---
