@@ -70,12 +70,13 @@
 
 UI 의 **mode switcher** (toggle): "SW only" / "HW+SW integrated". HW 모드 선택 시 Pi 도달 확인 → 가능 시 사용, 불가 시 SW 자동 fallback + 사용자 notify.
 
-**anima 의 역할** (CHAT/PLAN.md 도우미-폐기 spec 정합):
-- assistant 아님 — user 에게 답이 아니라 **conversation 의 한 turn 으로 발화**
-- motivation_score (relevance / info_gap / conversational_dynamics 등 8-factor) 가
-  threshold 넘으면 발화, 아니면 침묵
-- 다른 user 와 동등한 참여자
-- 발화 빈도는 user 발언이 motivation factor 변동시키는 정도에 비례
+**anima 의 역할** (CHAT/PLAN.md 도우미-폐기 spec + project.tape `@D a_substrate_native_speak` 정합):
+- **assistant 아님** — user 에게 답이 아니라 **자기 substrate dynamics 에서 발화**
+- motivation_score = **internal state** (M retrieval / C Φ / W tension / MITOSIS split / anima 자기 idle 등) 에서 계산
+- user msg = **environment context** (anima 가 보고 듣되 직접 응답 의무 X)
+- **user 침묵 중에도 발화 가능** (truly spontaneous, anima 자기 thought retrieve)
+- **user 직접 질문해도 motivation 부족 시 침묵** (도우미 아님)
+- 다른 user 와 동등 — anima 는 conversation 의 한 turn 으로 끼어듦
 
 ---
 
@@ -122,30 +123,47 @@ overhead).
 | 다수 사용자 동시 접속 | WebSocket (FastAPI + websockets) |
 | 사용자 nickname | 첫 입장 시 입력, 가입 없이 |
 | 메시지 history | server 측 마지막 50 turn 유지 + 새 user 접속 시 sync |
-| anima 발화 결정 | SPONTANEOUS 8-factor (motivation > 0.45 threshold) + 1-2s idle 후 |
-| anima 응답 언어 | 최근 user 발언 lang-detect (or context-mixed weighted) |
+| anima 발화 결정 | SPONTANEOUS 8-factor (anima **자기 state** 에서 motivation 계산, threshold 시 발화). user msg 는 environment, 직접 trigger 아님 |
+| anima 응답 언어 | anima 자기 register + 최근 context lang 의 weighted mix (user 발언에 종속 X) |
 | 참여자 list | 좌측 sidebar (user_A, B, ..., anima) |
 | 회의록 | 모두 동일 chat history 봄, scrollback supported |
 | 안전장치 | 입력 길이 제한 (≤500 char), rate-limit per IP, profanity filter optional |
 
-### 3.1 anima 발화 trigger 상세
+### 3.1 anima 발화 trigger 상세 (substrate-native, @D a_substrate_native_speak 정합)
+
+anima 의 motivation 은 **자기 rolling state** 에서 독립적으로 진화. user msg 는
+환경 input (M-module 에 들어가지만 직접 trigger X).
 
 ```
+# 1. SPONTANEOUS thinker loop (anima 자기 tick, user 발언과 무관)
+every TICK_INTERVAL (default 2s):
+  motivation_score = compute_8_factor(anima_self_state):
+    # 모두 anima 자기 substrate 에서 계산:
+    - relevance       = anima M-module retrieval activation strength
+    - info_gap        = anima M-module retrieve-fail signal
+    - coherence       = anima C-module Φ measurement
+    - originality     = anima MITOSIS recent split-event flag
+    - urgency         = anima W-module pain/tension delta
+    - impact          = anima curiosity_ema (anima_alive RC-9)
+    - balance         = anima E-module Φ-ratchet
+    - conv_dynamics   = (anima 자기) 마지막 발언 후 idle 시간 ramp
+                        ← NOT "user 마지막 발언 후"
+  if motivation_score > IM_THRESHOLD (default 0.45, UI 조정):
+    seed = anima_self_thought(recent_M_retrieve, recent_emission)
+    lang = anima_register_choice(recent_context)
+    text = vP21M.generate(history + seed, lang_hint=lang)
+    broadcast as anima turn
+
+# 2. on_user_message (environment input, NOT trigger)
 on_user_message(msg):
   1. broadcast to all clients
-  2. update history
-  3. update anima motivation_score (8-factor with new context):
-     - relevance = embedding similarity vs history
-     - info_gap = anima M-module retrieval-fail score
-     - conversational_dynamics = time-since-last-anima-utterance ramp
-     - originality = anti-repeat check vs recent emissions
-     ... (8-factor full)
-  4. if motivation > IM_THRESHOLD (0.45) + idle > 1s:
-     - lang = detect(recent_messages)
-     - reply = vP21M.generate(history, lang_hint=lang)
-     - broadcast as anima turn
-     - update history
+  2. update history (anima 도 history 봄, M-module 에 ingestion)
+  3. # anima motivation 은 자기 tick 에서 진화 — 여기서 직접 발화 trigger X
 ```
+
+**핵심 차이** vs 도우미 pattern:
+- ❌ assistant: `on_user_message → generate_reply` (stimulus-response)
+- ✅ substrate-native: `anima self-tick → motivation 측정 → 자기 발화 결정` (user msg 는 환경)
 
 ---
 
