@@ -1,8 +1,8 @@
-# srh — Simulation Replay Hypothesis × UBM × anima spike
+# SRH — Simulation Replay Hypothesis × UBM × anima spike
 
 **Status**: TOOL-READY (no production cycle yet — synthetic d=8 wiring smoke 만 PASS)
 **Last update**: 2026-05-22 Cycle #1
-**Log**: [srh.log.md](srh.log.md)
+**Log**: [SRH.log.md](SRH.log.md)
 
 ---
 
@@ -49,13 +49,13 @@ spike = spike_set_label(spike, "ubm_tier_<N>")
 spike = spike_record_init(spike, chat)
 let resp = chat_generate(chat, prompt, "greedy", max_new, ...)
 spike = spike_record_final(spike, chat, resp)
-spike_save_json(spike, "state/srh_<slug>_<DATE>/spike_tier<N>.json")
+spike_save_json(spike, "state/SRH_<slug>_<DATE>/spike_tier<N>.json")
 ```
 
 ### State path
 
 ```
-HEXAD/LAB/state/srh_<slug>_YYYY_MM_DD/
+HEXAD/LAB/state/SRH_<slug>_YYYY_MM_DD/
   spike_tier<N>.json        ← per-anchor spike (UBM injects)
   spike_ctrl_<C>.json       ← per-control spike (random / shuffled-tier / non-UBM)
   result.json               ← falsifier aggregate verdict
@@ -87,19 +87,19 @@ Current standing (synthetic d=8 wiring smoke only, 의미해석 불가):
 
 ## §5 Honest C3
 
-- **C3-srh-1**: synthetic d=8 substrate 는 의미 해석 불가 — production 332M (24L
+- **C3-SRH-1**: synthetic d=8 substrate 는 의미 해석 불가 — production 332M (24L
   d=768 BF16 570 MB) 필수. Mac CPU wall ~70 s/token (anima_chat.hexa v0.3 measure) ×
   11 tier × ≥5 control × ≥5 seed = 60+ min Mac OR ~$0.02 H100 single fire.
-- **C3-srh-2**: spike fingerprint 현재 chat-record expose 채널 (mitosis events +
+- **C3-SRH-2**: spike fingerprint 현재 chat-record expose 채널 (mitosis events +
   cell pool + kv) 만. **Law-71 12L×T per-token energy trajectory** (§156 tension
   fingerprint) 는 forward-internal hook 필요 → Phase B 별도 cycle carry.
-- **C3-srh-3**: UBM-baked leak ([baked_p3_leak]) 가 trivial confound — random
+- **C3-SRH-3**: UBM-baked leak ([baked_p3_leak]) 가 trivial confound — random
   control + shuffled-tier control 둘 다 critical, monotone falsifier (F-SRH-2) 가
   specificity (단순 leak 이 아닌 ordinal structure) 증명 게이트.
-- **C3-srh-4**: cell_pool 초기 분포 (cell_pool_init seed) 가 spike 의 noise
+- **C3-SRH-4**: cell_pool 초기 분포 (cell_pool_init seed) 가 spike 의 noise
   floor — initial_cells / seed 변경 시 spike 크게 흔들릴 가능성. F-SRH-3
   (reproducibility) 가 게이트.
-- **C3-srh-5**: chat_generate prompt template ("사용자: ... | 도우미: ") 가
+- **C3-SRH-5**: chat_generate prompt template ("사용자: ... | 도우미: ") 가
   UBM text 와 충돌 — AGENTS.tape `forbidden 도우미` 위반. Phase B 의 hexa-native
   prompt template (anima identity-aligned) 로 cycle #3 이상 재측정 필요.
 
@@ -116,4 +116,4 @@ Current standing (synthetic d=8 wiring smoke only, 의미해석 불가):
 
 ---
 
-> 본 문서는 **latest verdict only**. 사이클 history 는 [srh.log.md](srh.log.md).
+> 본 문서는 **latest verdict only**. 사이클 history 는 [SRH.log.md](SRH.log.md).

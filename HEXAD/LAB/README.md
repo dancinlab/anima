@@ -36,7 +36,7 @@ HEXAD/LAB/
 ## Domain 문서 컨벤션 — `<DOMAIN>.md` + `<DOMAIN>.log.md`
 
 각 실험 **도메인** (가설 단위) = 1 쌍의 spec + log. 도메인 이름은 짧은 kebab-case
-또는 acronym (e.g. `srh`, `ubm_inject_spike`, `fermat_least_action`). 실험 cycle
+또는 acronym (e.g. `SRH`, `UBM_INJECT_SPIKE`, `FERMAT_LEAST_ACTION`). 실험 cycle
 이 누적되면서:
 
 - `<DOMAIN>.md` = **최종 verdict 만** (latest cycle 결과로 overwrite)
@@ -150,7 +150,7 @@ spike_save_json(spike, "state/<slug>/spike_tier0.json")
 ```
 
 ```
-HEXAD/LAB/state/srh_ubm_inject_2026_05_22/      ← 실험1 (SRH × tier sweep)
+HEXAD/LAB/state/SRH_ubm_inject_2026_05_22/      ← 실험1 (SRH × tier sweep)
 HEXAD/LAB/state/probe_substrate_native_kick_2026_05_22/
 HEXAD/LAB/state/falsifier_sweep_T_grid_2026_05_22/
 ```

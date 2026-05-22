@@ -1,6 +1,6 @@
-# srh — cycle history
+# SRH — cycle history
 
-Append-only chronological log. `srh.md` 는 latest only — history 는 여기.
+Append-only chronological log. `SRH.md` 는 latest only — history 는 여기.
 
 ---
 
@@ -11,8 +11,8 @@ Append-only chronological log. `srh.md` 는 latest only — history 는 여기.
   - `HEXAD/LAB/tool/ubm_inject.hexa` (167 LoC) — kosmos_parser_lib 위 build
   - `HEXAD/LAB/tool/anima_spike.hexa` (250 LoC) — chat record → spike fingerprint
   - `HEXAD/LAB/tool/lab_smoke.hexa` (240 LoC) — UBM tier=0 → synthetic d=8 chat → spike capture → JSON 저장 → self-diff
-  - `HEXAD/LAB/srh.md` + `srh.log.md` skeleton (도메인 컨벤션 시범)
-  - falsifier F-SRH-1..5 pre-registered in srh.md §3
+  - `HEXAD/LAB/SRH.md` + `SRH.log.md` skeleton (도메인 컨벤션 시범)
+  - falsifier F-SRH-1..5 pre-registered in SRH.md §3
 - **fire**:
   - `hexa run HEXAD/LAB/tool/lab_smoke.hexa` Mac local $0 wall ~10s
   - artifact: `/tmp/lab_smoke_spike.json` (transient, 672 bytes)
@@ -30,4 +30,4 @@ Append-only chronological log. `srh.md` 는 latest only — history 는 여기.
   - 측정: F-SRH-1 minimum viable (UBM vs random delta only — tier sweep 은 cycle #3)
   - estimated cost: Mac CPU ~5 min/seed × 2 prompts × 5 seed = ~50 min wall $0
     OR H100 SXM ~$0.02 total (전체 2 min wall)
-  - state path: `HEXAD/LAB/state/srh_t0_vs_random_pilot_2026_05_22/`
+  - state path: `HEXAD/LAB/state/SRH_t0_vs_random_pilot_2026_05_22/`
