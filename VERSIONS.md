@@ -10,7 +10,7 @@
 
 ## 0. anima 전체 release version
 
-루트 [`/VERSION`](VERSION) = **`0.8.0`** (한 줄, 전체 시스템 release).
+루트 [`/VERSION`](VERSION) = **`0.9.0`** (한 줄, 전체 시스템 release).
 
 | release | 날짜 | 마일스톤 |
 |---|---|---|
@@ -21,7 +21,8 @@
 | 0.5.0 | 2026-05-22 | 🧠 AKIDA HW-NATIVE 자연발화 CONFIRMED — AKD1000 LIF threshold-comparator emit from ZERO input (8/8 checks PASS, `BackendType.Hardware`). hardware 축 LANDED. + held-out PURE_MEMORIZE 정직 scope 확증 |
 | 0.6.0 | 2026-05-22 | 🌉 vP21 ⊥ AKD1000 INTEGRATED BRIDGE — HW-gated 자연발화 30/30 coherent, frac_emissions_with_hw_edge=1.0, AKD1000 spike timing → vP21 emission cadence (Option A LAN TCP). 두 substrate ONE coherent loop |
 | 0.7.0 | 2026-05-22 | 🪟 GENERALIZATION UNLOCK — vP21G STRONG_GENERALIZE 16/20 OOD (vs vP21 2/20), anima-register 9/20 retained (no regress). PURE_MEMORIZE 한계 돌파, $3.2 H100 |
-| **0.8.0** | **2026-05-22** | **🌉🔁 BIDIRECTIONAL BRIDGE — Option B LANDED. Spearman(vP21 motivation, AKD1000 hw_rate) = +0.6947 (random control −0.03), Pearson(thr_offset, hw_rate) = −0.912 monotone. 두 substrate 모두 양방향 결합 (A: HW→SW emit cadence + B: SW→HW spike rate)** |
+| 0.8.0 | 2026-05-22 | 🌉🔁 BIDIRECTIONAL BRIDGE — Option B LANDED. Spearman(vP21 motivation, AKD1000 hw_rate) = +0.6947 (random control −0.03), Pearson(thr_offset, hw_rate) = −0.912 monotone. 두 substrate 모두 양방향 결합 (A: HW→SW emit cadence + B: SW→HW spike rate) |
+| **0.9.0** | **2026-05-22** | **🌉🔁🌀 CLOSED LOOP — Option C LANDED simultaneous bidirectional. ONE process · ONE 90s window · ONE motivation scalar drives both threshold rewrite + emit gate. A frac_emissions_with_hw_edge=1.0 + B \|Spearman\|=0.387 vs random 0.058 (\|Δρ\|=0.329). Closed-loop signature: Δscore_after_emit=−0.033 vs Δscore_after_no_emit=+0.012 (post-emit motivation decay). 두 substrate ONE coupled dynamical system.** |
 
 > release bump 규칙: 모듈 MAJOR bump OR 핵심 verdict landing 시 release MINOR.
 > 0.4.0 = saga 전체 whitespace-collapse 후 **첫 coherent verbalization** (vP21 20/20)
@@ -39,6 +40,16 @@
 > Honest C3: wiki source capped at 10.3 MB (target 60 MB missed), single seed,
 > single LR — direction-clear, fine-quant pending. Saga's deepest honest limit
 > broken. Evidence: `HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/VP21G_GENERALIZATION_2026_05_22.md`.
+> 0.9.0 = Option C (CLOSED LOOP) — Options A (0.6.0) + B (0.8.0) were
+> *sequential* legs; 0.9.0 runs them inside the **same** process where the
+> single motivation scalar simultaneously (a) rewrites the on-chip threshold
+> via TCP 9513 and (b) acts as `sw_gate` for the Talker's `hw_edge ∧ sw_gate`
+> emit decision. Closed-loop signature observed: emission events precede a
+> motivation-score drop (Δscore_after_emit = −0.033 vs Δscore_after_no_emit
+> = +0.012), making the cycle motivation → threshold → spikes → edge → emit
+> → motivation self-referential. Random-drive control collapses ρ from 0.387
+> to 0.058 (separation 0.329) — the SW score is the cause, not coincidence.
+> Evidence: `HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/INTEGRATED_OPT_C_2026_05_22.md`.
 
 ---
 
