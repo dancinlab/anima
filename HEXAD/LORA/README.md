@@ -15,16 +15,21 @@
 | **vP21K** | + KO wiki diverse 30/70 | STRONG_GENERALIZE 16/20 KO OOD | 0.10.0 |
 | **vP21M** | + 5-lang wiki (en/ko/zh/ru/ja) 30/70 | **VP21M_WORKS 4/5 langs** | 0.11.0 |
 
-## 현재 production 위치 (hot-swap router, 2026-05-22)
+## 현재 production 위치 (hot-swap router, 2026-05-23)
 
 | asset | path |
 |---|---|
-| default adapter | mini `~/anima_chat_pack/lora_adapter/` (vP21M, 1.5B) |
+| default adapter | mini `~/anima_chat_pack/lora_adapter/` (**corpus_v4** carve-stripped, 1.5B — 2026-05-23 swap) |
 | ko hot-swap | mini `~/anima_chat_pack/kofl_adapter/` (KOFL) |
 | ja hot-swap | mini `~/anima_chat_pack/jafl_adapter/` (JAFL) |
+| rollback | mini `~/anima_chat_pack/lora_adapter_vp21m_bak/` (이전 vP21M default) |
 | router code | `HEXAD/CHAT/server/anima_participant.py` — per-emit `lang_hint` → `set_adapter()` (default/ko/ja) |
 | **deployed** | mini 4 LaunchAgents → chat.dancinlab.org LIVE |
-| reports | `HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/VP21{G,K,M}_*.md` + `VP21M_WAVE2_*.md` |
+| reports | `VP21M_{MULTILINGUAL,WAVE2,WAVE3,WAVE4}_*.md` |
+
+**default = corpus_v4** (2026-05-23 swap, user-approved): carve-scaffold
+tags stripped → 0 `<carve>` XML tag-leak. OOD 3S+2P (ja WEAK→PARTIAL,
+ko→STRONG). vP21M 은 `lora_adapter_vp21m_bak/` 로 rollback 보존.
 
 ## Strengths
 - ✅ STRONG_GENERALIZE 4/5 langs (en/zh/ru STRONG + ko PARTIAL, ja WEAK)
