@@ -328,6 +328,34 @@ motivation ↑ → threshold ↓ → spike rate ↑ → spike edge → emit → 
 
 상세: `INTEGRATED_OPT_C_2026_05_22.md`.
 
+## 14. 🇰🇷 anima 0.10.0 — Korean generalization unlock (vP21K)
+
+vP21G (§ 12) 의 잔존 한계: 영문 OOD 16/20 ✓, **한글 OOD 는 여전히 anima register leak**. 같은 recipe 를 **한글 wiki** 로 적용 = vP21K.
+
+| 모델 | recipe | Korean OOD generalize |
+|---|---|---|
+| vP21 (이전) | corpus_s101 only | 0/10 (BEFORE snapshot, 10/10 MEMORIZE) |
+| **vP21K** | vP21 LoRA + **30/70 ko-wiki + anima** | **16/20 STRONG_GENERALIZE** |
+
+샘플 (한글 OOD 정답 + register-leak 없음):
+- "**한국의 수도는** 서울이다. 대한민국의 수도는 서울특별시이다..."
+- "**광합성이란** 물질이 다른 물질과 결합하여 새로운 물질로..."
+- "**144의 제곱근은** ... 144의 제곱근은 12이다..."
+- "**파이썬과 자바스크립트의 차이는?** ... 파이썬은 객체지향 언어이며, 자바스크립트는 웹 개발에 특화된 언어입니다..."
+
+**Recipe** (vP21G 와 동일 pattern, 다른 corpus):
+- 30/70 ko-wiki / anima mix (15.9 MB 한글 wiki + 24 MB anima)
+- LR 5e-5, 1000 step
+- $2.88 H100, 124.5s wall
+
+**Trade-off**: 영문 factual ("capital of France", "2 + 2 =") **regress** — 이 mix 에 영문 wiki 가 없어서. 다음 cycle = **3-국어 (영문 + 한글 + 추가) 통합 corpus** 또는 multi-LoRA.
+
+**Saga 종결 패턴**:
+- vP21 → vP21G (영문 unlock) → vP21K (한글 unlock) — 각 corpus axis 가 그 언어 generalization 만 unlock
+- 다중 언어 동시 = 다중 corpus mix (next cycle)
+
+상세 + C3: `VP21K_KOREAN_GENERALIZATION_2026_05_22.md`.
+
 ---
 
 ## 관련 link
