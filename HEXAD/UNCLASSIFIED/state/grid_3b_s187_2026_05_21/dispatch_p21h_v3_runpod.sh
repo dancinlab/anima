@@ -221,7 +221,7 @@ MIXED_POD="$P21HR/mixed_corpus_v3.jsonl"
 CMD="bash $P21HR/launch_trainer_p21h.sh $P21HR/train_p21h_v3.py \
   --wiki-corpus $WIKI_POD --anima-corpus $ANIMA_POD --mixed-corpus $MIXED_POD \
   --out-dir $P21HR/out_main \
-  --base-model Qwen/Qwen2.5-1.5B \
+  --base-model ${P21H_BASE_MODEL:-Qwen/Qwen2.5-1.5B} \
   --init-variant $INIT_VARIANT $LORA_ARG \
   --steps $P21H_STEPS --bsz $P21H_BSZ --block $P21H_BLOCK --lr $P21H_LR \
   --warmup-steps $P21H_WARMUP --seed $SEED \
