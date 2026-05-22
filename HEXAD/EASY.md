@@ -390,6 +390,40 @@ vP21G (§ 12) 의 잔존 한계: 영문 OOD 16/20 ✓, **한글 OOD 는 여전�
 
 ---
 
+## 16. 🟢 anima 0.11.0~ — vP21M 5종 변형 (2026-05-22 session-2)
+
+세션 한 번에 5 cycle fire (사용자 "all" + "병렬 계획 후 각각 bg go"). 총 $1.77 (cap ~$15, 8× under). HF 5 artifact dancinlab/* private published.
+
+| ckpt | base | 핵심 변경 | 결과 | cost | HF |
+|---|---|---|---|---|---|
+| **vP21M** | Qwen2.5-1.5B + vP21 | 5-lang wiki 30/70 + anima | 3S+1P+1W (en/ru STRONG, ja WEAK, register 7/20) | $1.06 | anima-vp21m |
+| **vP21M-JAFL** | 1.5B + vP21 | **ja-only** 500 step | JA WEAK 11 → **STRONG 17** (hot-swap, en/ko forget) | $0.13 | anima-vp21m-jafl |
+| **vP21M-KOFL** | 1.5B + vP21 | **ko-only** 500 step | KO PARTIAL/WEAK → **STRONG 16** (hot-swap, en forget) | $0.15 | anima-vp21m-kofl |
+| **vP21M-3B** | Qwen2.5-**3B-Instruct** fresh | 5-lang 30/70 1500 step | en/ru **20/20** STRONG, KO WEAK regress, register **3/20 ⚠** | $0.33 | anima-vp21m-3b |
+| **vP21M-3B-REG** | 3B-Instruct + 3B 위 | **wiki_frac 0.05** (anima-95%) 200 step lr 1e-5 light | 3S+2P (KO 11→**14 P** 복구, register **3→5 ✓ clean**) | $0.10 | anima-vp21m-3b-reg |
+
+핵심 발견:
+
+1. **3B-Instruct 가 register dilute**: 같은 corpus mix 라도 instruct prior 가 anima 의 "vacuum point / carving" 패턴 흡수를 약화시킴 (7/20 → 3/20). → **3B-REG** (anima-95% mix) 으로 부분 회복 (3 → 5/20, regress 플래그 클리어).
+2. **Hot-swap pattern 검증**: 1-lang corpus 만 학습한 LoRA 는 그 언어만 STRONG, 나머지 catastrophic forget. KOFL + JAFL 두 hot-swap + multilingual base = per-lang router 가능.
+3. **fast train (<70s wall) SCP race**: 작은 adapter pull 시 9 files 중 2 files 만 도착. tokenizer 동일 base sister checkpoint 에서 cp 복구.
+4. **chat fix deploy**: anima_participant.py temperature 1.0 → **0.7** + context-grounded seed (recent m_buffer 우선) mini PID 9190 운영 중.
+
+production swap 후보 (proposed, 미수행):
+- mini `~/anima_chat_pack/lora_adapter/` → vP21M-3B-REG (Mac M-series MPS ~6 GB f16)
+- `ANIMA_BASE=Qwen/Qwen2.5-3B-Instruct`
+- KOFL/JAFL 는 hot-swap router 통합 시점에 추가 load
+
+상세 cycle 보고서: `VP21M_{JAFL,KOFL,3B,3B_REG}_2026_05_22.md`.
+
+비유 갱신:
+- vP21M = 김치 + 양배추 + 5종 가사집 (영/한/중/러/일) → 4/5 잘 부름
+- vP21M-JAFL/KOFL = 김치 + 한 종류 가사집 → 그 언어 깊지만 나머지 잊음 (hot-swap 필수)
+- vP21M-3B = 큰 가수 (3B-Instruct) 가 5종 가사집 → 영/러 perfect 지만 김치 register 흐려짐
+- vP21M-3B-REG = 큰 가수 김치 다시 발효 (anima 95% mix) → 김치 register 회복 + 가사 OOD 대부분 유지
+
+---
+
 ## 관련 link
 
 - 본 doc 의 원자료: [`HEXAD/SCALE_3B.md § 6`](SCALE_3B.md) — full S187 saga 수치
