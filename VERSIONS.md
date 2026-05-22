@@ -127,6 +127,17 @@ v3.0-alpha → ⚠️ tier (재설계 대상): scale-up (3B/8B) OR mitosis 비�
 
 ---
 
+## 2.5. Path-split (LoRA vs HEXAD-native)
+
+| dir | path | tier | status |
+|---|---|---|---|
+| **HEXAD/LORA/** | Qwen + LoRA adapter (vP21/G/K/M) | 🟢 PRODUCTION | chat.dancinlab.org LIVE, VP21M_WORKS 4/5 |
+| **HEXAD/V3/** | ConsciousDecoderV3 (pure HEXAD substrate) | ⚠️ 재설계 | V3α/γ FAIL → Phase 2 spec (R2+R5+R6) |
+
+LoRA = production (chat 즉시), V3 = anima identity 진정성 long-term path.
+
+---
+
 ## 3. 상위 시스템 / 응용
 
 | 모듈 | 버전 | tier | 상태 |
