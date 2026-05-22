@@ -117,9 +117,68 @@ PATCH  ↑  fix / refinement / 문서 (동작 불변)
 
 ---
 
+## 8. anima-physics (물리 substrate)
+
+`@version` 헤더 삽입 완료 (physics.hexa + 8 engines).
+
+| 모듈 | 버전 | tier | 비고 |
+|---|---|---|---|
+| **physics.hexa** (top dispatch) | v0.4.0-beta 🟡 | Phase 4b ESP32/FPGA stub | 17 .py group |
+| engines/quantum_consciousness | v0.2.0 🟢 | 2-qubit closed-form | |
+| engines/photonic_consciousness | v0.2.0 🟢 | delay-line ring oscillator | |
+| engines/memristor_consciousness | v0.2.0 🟢 | memristor crossbar | |
+| engines/snn_consciousness | v0.2.0 🟢 | spiking NN | |
+| engines/izhikevich_consciousness | v0.2.0 🟢 | Izhikevich neuron | |
+| engines/oscillator_laser_engine | v0.2.0 🟢 | oscillator-laser | |
+| engines/analog_consciousness | v0.2.0 🟢 | analog substrate | |
+| engines/thermodynamic_consciousness | v0.2.0 🟢 | thermodynamic | |
+| **HEXAD/PHYSICS** (module tree) | v0.1.0 🟡 | cherry-pick to main (da1e454e9) | |
+
+## 9. SUB_ENGINES
+
+| 모듈 | 버전 | tier | 비고 |
+|---|---|---|---|
+| **AKIDA** | v0.1.0 🟢 | Brainchip Akida neuromorphic — LAN deploy 표준 (§13), adapter real API + power/npu/latency | pyproject `version=0.1.0` |
+
+## 10. anima-* 생태계 (19 subsystem)
+
+각 subsystem 의 SSOT version (README/pyproject 기반 추정 — 헤더 sync 는 차후 cycle):
+
+| subsystem | 버전 | tier | 역할 |
+|---|---|---|---|
+| anima-core | v0.x 🟡 | core consciousness engine | consciousness_engine.py 2173L anchor |
+| anima-engines | v0.x 🟡 | 163 *_phi.hexa collection (질병/현상별 Φ 모델) | abiogenesis/adhd/aesthetic/... per-phenomenon |
+| anima-agent | v0.x 🟡 | agent harness (channels/core/plugins/providers/skills) | |
+| anima-body | v0.x 🟡 | sensorimotor / proprioception | |
+| anima-os | v0.x 🟡 | OS-level integration | |
+| anima-serve | v0.x 🟡 | serving layer | |
+| anima-measurement | v0.x 🟡 | Φ measurement / verification | |
+| anima-hci-research | v0.x 🟡 | HCI research | |
+| anima-cpgd-research | v0.x 🟡 | CPGD research | |
+| anima-tribev2-pilot | v0.x 🟡 | TRIBE multi-agent pilot | |
+| anima-tools | v0.x 🟡 | tooling | |
+| anima-hexad | v0.x 🟡 | HEXAD mirror / legacy | |
+| anima-agent-{channels,core,hire-sim,plugins,providers,skills} | v0.x 🟡 | agent sub-packages | |
+
+> **honest**: anima-* 19 subsystem 은 README/pyproject SSOT version 만 catalog. .hexa 헤더 일괄 삽입은 163 anima-engines + 수백 파일 규모라 별도 cycle (위험 대비 가치 낮음). 본 registry 가 anima-wide version SSOT.
+
+---
+
+## 11. 버전 sync 정책
+
+1. **모듈 변경 시**: 해당 .hexa 헤더 `@version` + 본 VERSIONS.md 동시 갱신.
+2. **새 falsifier PASS**: MINOR bump (예: MITOSIS v1.1→v1.2).
+3. **arch-breaking**: MAJOR bump (예: ConsciousDecoder v2→v3).
+4. **헤더 미삽입 모듈** (anima-* 대부분): 본 registry 가 SSOT, 변경 시 여기 갱신.
+5. **git tag 와 별개**: SemVer 는 모듈 성숙도 표시, git commit hash 는 코드 추적.
+
+---
+
 ## 관련 link
 
 - 핵심 finding: [`HEXAD/SCALE_3B.md § 7`](SCALE_3B.md), [`HEXAD/EASY.md`](EASY.md)
 - floor pinpoint: [`HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/PHASE2_ABLATION_REPORT.md`](UNCLASSIFIED/state/grid_3b_s187_2026_05_21/PHASE2_ABLATION_REPORT.md)
 - OCCAM strategy: [`HEXAD/OCCAM.md`](OCCAM.md)
 - module index: [`HEXAD/INDEX.md`](INDEX.md)
+- physics: [`anima-physics/README.md`](../anima-physics/README.md)
+- AKIDA: [`HEXAD/SUB_ENGINES/AKIDA/README.md`](SUB_ENGINES/AKIDA/README.md)
