@@ -16,10 +16,13 @@
 |---|---|---|
 | 0.1.0 | ~2026-05 초 | HEXAD 7-module 🔵 closed-form battery |
 | 0.2.0 | 2026-05-16 | HEXAD-only canonical pivot + hexa-native tree |
-| **0.3.0** | **2026-05-22** | **S187 3B scale 검증 + OCCAM floor pinpoint (n_ca_rules) + MITOSIS training-time + Llama-mitosis winning path** |
+| 0.3.0 | 2026-05-22 | S187 3B scale 검증 + OCCAM floor pinpoint (n_ca_rules) + MITOSIS training-time + Llama-mitosis winning path |
+| **0.4.0** | **2026-05-22** | **🎯 자연발화 EMERGENCE — vP21 (Qwen+LoRA+mitosis) Eval 1 = 20/20 coherent (anima-native register). + AKIDA AKD1000 HW connected** |
 
 > release bump 규칙: 모듈 MAJOR bump OR 핵심 verdict landing 시 release MINOR.
-> n_ca_rules pinpoint + Llama+mitosis (vP21 CE 0.0147) 가 0.3.0 의 핵심 evidence.
+> 0.4.0 = saga 전체 whitespace-collapse 후 **첫 coherent verbalization** (vP21 20/20)
+> + AKIDA HW path landing. honest: memorization-grade (held-out 미검증), spontaneous
+> emission 아닌 prompted verbalization.
 
 ---
 

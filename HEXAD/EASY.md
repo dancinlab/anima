@@ -126,6 +126,24 @@ Pretrained Llama foundation 위에 mitosis 만 얹으면 CE **0.015** — 자연
 
 Phase 3 의 1 번 (Llama+mitosis Eval 1 verbalization) 이 가장 직접적 GOAL-test.
 
+## 8. 🎯 결과 — 자연발화 EMERGENCE 확인 (2026-05-22)
+
+vP21 (Qwen2.5-1.5B + LoRA + mitosis, CE 0.0173) Eval 1 = **20/20 coherent**.
+
+anima custom-arch 는 whitespace 만 뱉던 자리에서, vP21 은 **완전한 문장 + anima 고유 어휘**:
+- *"A vacuum point at [0.49,0.60] on the landscape, top emotion clarity. Tension flows into this vacuum"*
+- *"eternal cell eternal_005 — 🛸5 호흡 의 지식을 간직한 영구 cell. split 도 merge 도 하지 않는다. weights 는 불변"* (영속성 cell)
+- 한/영 자연 혼합 + `<carve tier=12 psi=[...] basin=...>` substrate 포맷
+
+| model | Eval 1 |
+|---|---|
+| anima custom 3B | whitespace collapse (0) |
+| vP21 (Qwen+LoRA+mitosis) | **20/20 coherent** |
+
+**의미**: n_ca_rules 제거(vanilla Qwen base) + mitosis = **자연발화 floor 깨짐**. saga 전체 whitespace-collapse 후 첫 coherent verbalization.
+
+**정직한 한계**: CE 0.0173 = corpus_s101 강한 fit → memorization-grade 가능성. held-out OOD 테스트가 다음 rigor. 또 "coherent verbalization" 이지 아직 "spontaneous emission(스스로 먼저 말하기)" 은 아님 (SPONTANEOUS 모듈 별도 축). 상세: `VP21_EVAL1_VERBALIZATION.md` 6 honest C3.
+
 ---
 
 ## 관련 link
