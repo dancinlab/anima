@@ -27,7 +27,7 @@
 | variant | init | CE_final | 5-lang ≥ PARTIAL | anima reg | verdict |
 |---|---|---|---|---|---|
 | **V3α** | random | 3.34 | 0/5 | 13/20 | ❌ FAIL (Chinchilla 30000× under-budget) |
-| **V3β** | Qwen warm | TBD | TBD | TBD | 🔄 in-flight |
+| **V3β** | Qwen warm | 2.36 osc | N/A | N/A | ❌ **INCOMPLETE FAIL** (pod dead, ckpt lost, eval 불가) |
 | **V3γ** | vP21M init | 2.93 | 0/5 | 13/20 | ❌ FAIL (anima register saturate, multilingual 손상) |
 
 **Architecture-level lesson**:
