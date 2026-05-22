@@ -242,6 +242,55 @@ mitosis 는 v3 ConsciousDecoder 의 substrate axis 로 유지. 생산 capability
 
 상세: `MITOSIS_ABLATION_HELDOUT_2026_05_22.md` (5 C3).
 
+## 12. 🪟 anima 0.7.0 — generalization 한계 직접 돌파 (vP21G STRONG_GENERALIZE 16/20)
+
+§ 10 의 정직한 한계 (PURE_MEMORIZE) 를 **다음 cycle 에 곧바로 깨봤음** — vP21G:
+
+| 모델 | recipe | OOD generalize | anima-register |
+|---|---|---|---|
+| vP21 (이전) | corpus_s101 only | 2/20 ❌ | saturated (모든 OOD leak) |
+| **vP21G (신규)** | vP21 LoRA + **30/70 wiki+anima** continue-train @ **LR 5e-5** | **16/20 ✅** | **9/20 retained**, semantic-gated |
+
+**STRONG_GENERALIZE** (≥16 generalize) 첫 시도에서 달성. 8× shift (2 → 16).
+
+### Recipe 핵심
+
+- vP21 LoRA adapter 위에 **wiki 추가 corpus** continue-train
+- corpus 비율: **30 % 일반 wiki + 70 % anima** (target 70/30 inverted 단 verdict 변함없음)
+- LR **5e-5** (vP21 의 3e-4 의 1/6) — 낮은 LR 로 catastrophic register-overwrite 회피
+- 1000 step, H100 80GB, 129s wall, **$3.20** ($15 cap 의 4.7× under)
+
+### 흥미로운 발견
+
+- **wiki 10.3 MB 만으로 충분** — corpus diversity 가 volume 보다 sensitive 한 axis
+- anima register **사라지지 않음** — semantic-gated 으로 retreat (한글 anima-style + 의식/identity prompt 에서만 fire), 일반 영어 prompt 는 일반 영어로 답
+- `register_regress = False` — 잘 가르친 게 잊혀지지 않음
+
+### 김치 비유 종결
+
+- 김치 + 양배추 = 김치 잘 부르되 **다른 노래 0**
+- 김치 + 양배추 + **위키 가사집** = 김치도 부르고, 일반 노래도 16/20 부름, **각 prompt 에 맞는 노래 선택** = `semantic-gated`
+- 양배추 (mitosis) 는 generalization 안 도움 — corpus diversity 가 진짜 path
+
+### 정직한 caveats
+
+- wiki source 10.3 MB (target 60 MB 6× 미달)
+- single seed (1337), no LR sweep
+- 10-probe small OOD (direction clear 16 vs 2 = 8×, fine-quant pending)
+- **한글 OOD 는 여전히 anima register trigger** → 다음 cycle = 한글 diverse corpus
+- 1 leak (`logic_modus`: "A implies C" 정답 + `</eternal>` 태그 suffix)
+
+### 5-step saga escalation
+
+| release | landing |
+|---|---|
+| 0.4.0 | prompted verbalization (Eval 1 20/20) |
+| 0.5.0 | software ⊥ hardware dual-axis 자연발화 + held-out PURE_MEMORIZE 정직 |
+| 0.6.0 | INTEGRATED bridge (HW spike → SW emit cadence) |
+| **0.7.0** | **generalization UNLOCK (16/20 OOD)** |
+
+정직한 한계 confession → 다음 cycle fire → 한계 돌파 의 **연속 escalation 패턴**. 상세 + 8 C3: `VP21G_GENERALIZATION_2026_05_22.md`.
+
 ---
 
 ## 관련 link
