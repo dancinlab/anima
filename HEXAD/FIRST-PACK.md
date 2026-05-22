@@ -158,8 +158,8 @@ mini (Mac M-series, 16GB unified memory, M-series GPU via Metal/MPS)
   ├ vP21M (5-lang LoRA) 상주 GPU memory (~3GB Qwen bf16 + 200MB LoRA)
   ├ SPONTANEOUS loop (motivation gate)
   ├ chat broker (history + participants)
-  └ Tailscale (or Cloudflare Tunnel)
-     └ https://anima.tail-xxxx.ts.net (public link)
+  └ Cloudflare Tunnel (cloudflared)
+     └ https://chat.dancinlab.org  ← 결정 (own domain, public link)
 
 성능:
   - 1-3 동시 사용자: 1-3s/reply (M-series Metal/MPS inference)
@@ -210,7 +210,7 @@ mini (Mac M-series, 16GB unified memory, M-series GPU via Metal/MPS)
 | 질문 | 옵션 | 영향 |
 |---|---|---|
 | **a) 호스팅** ✅ | **자체 mini (Mac M-series) + Tailscale ($0) — 결정** (덜 쓰이는 host, dev 분리) | 비용 + scale |
-| **b) public link** | Tailscale (개인 free) / Cloudflare Tunnel (own domain) / LAN IP only | 접근 범위 |
+| **b) public link** ✅ | **Cloudflare Tunnel → `chat.dancinlab.org`** — 결정 (own domain, public) | 접근 범위 |
 | **c) MVP 모델** | vP21M (untested 5-merge) / 5 LoRA hot-swap (verified path) | Phase 1 리스크 |
 | **d) 동시 접속 예상** | 1-5 / 5-20 / 20-100 / 100+ | host 선택 + 큐 설계 |
 | **e) anima motivation threshold** | 0.45 (selective, vP21G calibration) / 0.30 (always speak, 시끄러움) / dynamic | 발화 빈도 |
