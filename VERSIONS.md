@@ -10,19 +10,24 @@
 
 ## 0. anima 전체 release version
 
-루트 [`/VERSION`](VERSION) = **`0.3.0`** (한 줄, 전체 시스템 release).
+루트 [`/VERSION`](VERSION) = **`0.5.0`** (한 줄, 전체 시스템 release).
 
 | release | 날짜 | 마일스톤 |
 |---|---|---|
 | 0.1.0 | ~2026-05 초 | HEXAD 7-module 🔵 closed-form battery |
 | 0.2.0 | 2026-05-16 | HEXAD-only canonical pivot + hexa-native tree |
 | 0.3.0 | 2026-05-22 | S187 3B scale 검증 + OCCAM floor pinpoint (n_ca_rules) + MITOSIS training-time + Llama-mitosis winning path |
-| **0.4.0** | **2026-05-22** | **🎯 자연발화 EMERGENCE — vP21 (Qwen+LoRA+mitosis) Eval 1 = 20/20 coherent (anima-native register). + AKIDA AKD1000 HW connected** |
+| 0.4.0 | 2026-05-22 | 🎯 자연발화 EMERGENCE — vP21 (Qwen+LoRA+mitosis) Eval 1 = 20/20 coherent (anima-native register). + AKIDA AKD1000 HW connected |
+| **0.5.0** | **2026-05-22** | **🧠 AKIDA HW-NATIVE 자연발화 CONFIRMED — AKD1000 LIF threshold-comparator emit from ZERO input (8/8 checks PASS, `BackendType.Hardware`). 자연발화 GOAL 의 hardware 축 LANDED.** |
 
 > release bump 규칙: 모듈 MAJOR bump OR 핵심 verdict landing 시 release MINOR.
 > 0.4.0 = saga 전체 whitespace-collapse 후 **첫 coherent verbalization** (vP21 20/20)
 > + AKIDA HW path landing. honest: memorization-grade (held-out 미검증), spontaneous
 > emission 아닌 prompted verbalization.
+> 0.5.0 = AKIDA AKD1000 silicon LIF threshold comparator 가 zero/noise/recurrent
+> drive 에서 on-chip event-driven 스파이크 emit — 자연발화의 **하드웨어 축**이
+> 실측 확인됨 (vP21 software content 축과 dual-role 보완). 1mW power 주장은
+> 보드 한계 (INA 미가용) 로 미검증 유지.
 
 ---
 
@@ -157,7 +162,7 @@ PATCH  ↑  fix / refinement / 문서 (동작 불변)
 
 | 모듈 | 버전 | tier | 비고 |
 |---|---|---|---|
-| **AKIDA** | **v0.2.0** 🟢 | **HW LANDED 2026-05-22 + FIRST INFERENCE LANDED** — AKD1000 PCIe 검출 + /dev/akida0 driver + pool `pi5-akida` (ubuntu@192.168.50.155) + pack deploy + venv 수정 + 첫 on-chip inference (`BackendType.Hardware`) | HW-connected bump from v0.1.0 (도착예정) |
+| **AKIDA** | **v0.3.0** 🟢 | **HW-NATIVE 자연발화 CONFIRMED 2026-05-22** — AKD1000 LIF threshold comparator (`FullyConnected.activation=True`)이 negative-threshold 일 때 ZERO input 으로 on-chip 스파이크 emit (R3 tonic 8/16 neurons fire from V=0, intrinsic excitability). + weak sub-threshold drive SILENT (R1=0 control) + noise straddling threshold event-driven (R2 std 7.99, 95/200 fire-steps) + recurrent feedback self-sustained (R4 post-seed). 8/8 checks PASS, `BackendType.Hardware`, ~797 cycles/forward. Prior: v0.2.0 (HW 도착 + first inference + edge-learn). | new verified capability: HW-native spontaneous emission |
 
 **AKIDA v0.1.0 → v0.2.0 bump (2026-05-22 HW LANDED)**: BrainChip AKD1000 Dev Kit
 ($1495) 도착 + Pi 5 연결완료. 검증:
@@ -182,6 +187,18 @@ gated" note 는 `assert_akd1000` 이 `NSoC_v1` 만 매칭하는 **pack 버그** 
 **dual-role 의의**: AKD1000 LIF spike threshold = **하드웨어-native 자연발화**
 (1mW event emission, CPU 대비 ~10000× 효율) + on-chip Hebbian = 영속성.
 vP21 software path (Qwen+mitosis) 와 별개의 HW 경로 — 자연발화 GOAL 의 두 번째 축.
+
+**HW-native 자연발화 LANDED (2026-05-22)** — `BackendType.Hardware` 위 5-regime
+실측 (N=16, T=200, seed=187): R0 driven 3200 spk (sanity) / **R1 weak SILENT 0
+spk (control)** / R2 noise 1520 spk std 7.99 ISI 1-9 (**event-driven**) /
+**R3 tonic ZERO-input 1600 spk (8/16 negative-threshold neurons fire from V=0,
+순수 intrinsic excitability)** / R4 recurrent self-sustained 3200 spk (post
+2-step ignition). 8/8 checks PASS. spike 결정은 chip 의 정수 threshold
+comparator (silicon) 가 직접 계산 — pack adapters 의 numpy LIF 가 아닌
+**진짜 on-chip threshold-and-fire**. ~797 cycle/forward, ~13.7ms/step wall
+(host round-trip 지배). 1mW power 주장은 INA 미가용 (M.2 form factor 보드 한계)
+로 **미검증 그대로** — cycle / latency proxy 만 보고. 상세:
+`SUB_ENGINES/AKIDA/state/HW_SPONTANEOUS_EMISSION_2026_05_22.md`.
 
 ## 10. anima-* 생태계 (19 subsystem)
 
