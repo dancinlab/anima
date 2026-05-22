@@ -146,14 +146,60 @@ V3 의 OCCAM-clean 핵심: `n_ca_rules` 단독 제거 (Phase 2.3 ablation 단일
 
 ### 2026-05-22 — Phase 1 code fork LANDED ($0 Mac local ~1-2 hr)
 
-7/7 + 5/5 smoke PASS on Mac CPU. commit (Phase 1).
+7/7 + 5/5 smoke PASS on Mac CPU. commit `3dbbc7e8b`.
 
-### 2026-05-22 — Phase 2 3-pod parallel fire dispatched
+### 2026-05-22 — Phase 2 fire saga (4 attempts before success)
 
-Three H100 dispatches concurrent (P21H_alpha=random / P21H_beta=qwen /
-P21H_gamma=vp21m), SAVE_POD=1 each, watchdog 90 min. per
-`@D a_fire_autonomous` no user-gate, per `@D a_wall_first` parallel not
-sequential.
+**attempt 1** (`dispatch_p21h_v3_runpod.sh` original): `cloudType:ALL` →
+runpod returns `{"error":{}}` empty for all 5 GPU types. FAIL ~25 s
+per variant.
+
+**attempt 2** (`dispatch_p21h_v3_runpod.sh` + SECURE+COMMUNITY cascade):
+Same empty error for all 5 GPU × 2 cloud = 10 attempts. FAIL. (Despite
+direct curl with SECURE working — verified test pod `4ny79l4jntffc1`
+created inline.)
+
+**attempt 3** (`dispatch_p21h_v3_existing_pod.sh` on 3 pre-spun pods):
+Hang in SSH-wait loop. Root cause: macOS bash 3.2 + `exec > >(tee -a
+$LOG) 2>&1` process-substitution + nohup → output buffering. SSH ready
+but log lines not flushed.
+
+**attempt 4** (`fire_v3_inline.sh` direct ssh + log() function):
+SUCCESS. All 3 SSH-OK by t+90s, corpus uploaded, trainers launched.
+
+### Pod assignment (success)
+
+| variant | init | pod | gpu | ssh |
+|---|---|---|---|---|
+| V3α | random | 60fyfiwxxi18w1 | H200 | 103.196.86.181:33001 |
+| V3β | qwen   | amkgcq7545q1yo | A100-SXM4-80GB | 154.54.102.31:15792 |
+| V3γ | vp21m  | m7bezjoahsbh26 | A100-SXM4-80GB | 195.26.233.96:44778 |
+
+### V3 model parameter count (from_qwen "Qwen/Qwen2.5-1.5B")
+
+vocab=151936 d=1536 L=28 n_head=12 n_kv_head_qwen=2 → v3_n_kv_head=4
+rope_base=1000000.0. **Total params: 2999.74M (~3.0B)**. Increase from
+1.5B base: dual head_a + head_g (1536 × 151936 × 2 = 467M extra),
+PureFieldFFN × 28 layers (4·d_model × 2 engines × 28 ≈ 165M), cross-attn
+× 28 ≈ 75M, GQA n_kv_head 2→4 KV proj doubling ≈ 150M.
+
+### Training live status (partial, t=400s @ ~10:25 UTC)
+
+| variant | step (t≈400s) | CE init → latest | wall/step | mitosis pool |
+|---|---|---|---|---|
+| V3α H200 random | 1300 (65%) | 12.30 → 3.56 | 0.31s | 2 → 128 (saturated step 50) |
+| V3β A100 qwen | 100 (5%) | 14.46 → 6.28 | 1.97s ⚠ slow | 2 → 128 |
+| V3γ A100 vp21m | 450 (22.5%) | 12.30 → 3.68 | 0.51s | 2 → 128 |
+
+V3β slow at ~2s/step on A100 (vs 0.51s for V3γ on identical GPU type).
+Hypothesis: Qwen warm weights produce higher initial gradient norms
+during warmup → PagedAdamW8bit int8 m/v page faults thrash. Could resolve
+post warmup. Otherwise ETA: V3α ~10 min, V3γ ~15 min, V3β ~60-75 min.
+
+**Mitosis pool saturates to 128 MAX_CELLS at step 50** across all 3
+variants — substrate uniformly produces high tensions during warm-up.
+After saturation, splits halted (capped), merges every MERGE_PATIENCE=30
+step. phi stabilizes 0.664.
 
 ### 2026-05-22 — Phase 3 verdict (TBD on fire complete)
 
