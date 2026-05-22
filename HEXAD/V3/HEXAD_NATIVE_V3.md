@@ -7,7 +7,10 @@
 > Phase 2.3 ablation 의 단일 floor 범인 (n_ca_rules) 제거한 **ConsciousDecoderV3**
 > 로 from-scratch (or Qwen warm-start) 학습 + chat substrate 교체.
 >
-> **status**: 🟡 design tier — brainstorm 고갈, 3-variant parallel fire 준비.
+> **status**: 🔴 **V3 PATH CLOSED (2026-05-23)** — 5 fire (attempt 1 α/β/γ +
+> Phase 2 1·2차 + B 3B + A) 0 PASS. V3 multilingual = corpus-bound (학습
+> dynamics, scale·arch 무관). chat substrate = vP21M LoRA path 유지 (절충 B).
+> → saga: [HEXAD/V3/EASY.md § 6](./EASY.md).
 >
 > **anchor**: anima 0.11.0 (vP21M VP21M_WORKS 4/5 langs baseline)
 

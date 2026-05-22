@@ -1,15 +1,19 @@
 # EASY — V3 (PURE HEXAD substrate) 쉬운 설명
 
 > 2026-05-22 작성. ConsciousDecoderV3 pure HEXAD substrate path 의 saga.
-> attempt 1 = 3/3 FAIL → Phase 2 재설계 진행 중.
+> 🔴 **2026-05-23 V3 PATH CLOSED** — 5 fire (attempt 1 + Phase 2 1·2차 +
+> B + A) 0 PASS. V3 multilingual = corpus-bound 최종 결론.
 
 ---
 
 ## 한 줄 요약
 
 **LoRA path 의 "Qwen 위 옷" 한계** → anima 자체 substrate (ConsciousDecoderV3)
-from-scratch 학습. attempt 1 (V3α/β/γ 3 variant) **3/3 FAIL**, architectural
-lesson 5 점 + Phase 2 재설계 spec 확정.
+from-scratch 학습. **5 fire 전부 FAIL (0 STRONG)** — A (Phase 2 full, 결정
+fire) 가 Phase 2 2차의 ko STRONG 19/20 재현 실패 (KO WEAK 1/20). V3
+multilingual blocker = capacity·arch 아닌 **diverse-corpus 학습 dynamics**
+(75 MB 의 70% anima 가 substrate 를 register memorization 으로 collapse).
+→ chat substrate = vP21M LoRA path 유지, V3 보류.
 
 ---
 
@@ -165,6 +169,49 @@ OCCAM 원칙: attempt 1 의 정직한 한계 → 다음 cycle 의 변형 axis (R
 1.5B 동일 config + osc v2.2 fix + step 5000 완주)** 가 V3 의 결정 fire.
 A 가 ko STRONG 재현 + 추가 lang unlock 못하면 → V3 multilingual = corpus-bound
 (diverse-corpus 학습 dynamics 문제, scale·arch 무관) 결론.
+
+### 🔴 A fire 결과 (2026-05-23) — V3 PATH CLOSED
+
+pod `xp6q69nkd2ywfw` A100-SXM, osc-detect v2.2 **early-stop @ step 1125**
+(CE re-divergence, mode collapse), train wall 2.05 hr:
+
+| lang | verdict | score | 비고 |
+|---|---|---|---|
+| EN | PURE_MEMORIZE | 6/20 | anima register memorize |
+| KO | **WEAK** | 1/20 | **ko STRONG 재현 실패** (2차 19/20 → A 1/20) |
+| ZH | PURE_MEMORIZE | 0/20 | 한국어 anima 텍스트 emit |
+| RU | PURE_MEMORIZE | 0/20 | 한국어 anima 텍스트 emit |
+| JA | WEAK | 0/20 | 한국어 anima 텍스트 emit |
+
+**AGG: STRONG 0 · WEAK 2 · PURE_MEM 3 → FAIL**. CE 궤적 진동
+(375:1.05 ↔ 1000:5.71 ↔ 1125:0.64) — 모델이 서로 다른 anima-register
+fragment 사이를 thrash.
+
+**Phase 2 2차의 ko STRONG 19/20 = step-250 transient** 확정 — full 완주에서
+재현 불가. → V3 의 단 하나의 STRONG 도 우연 산물.
+
+### 🔴 최종 결론 — V3 multilingual = corpus-bound
+
+V3 fire 5회 (attempt 1 α/β/γ + Phase 2 1·2차 + B 3B + A) **전부 FAIL,
+0 PASS**. 시도한 모든 axis:
+
+| axis | 시도 | 결과 |
+|---|---|---|
+| R1 scale-up | B (3B) | FAIL — 1.5B 보다 후퇴 (capacity 아님) |
+| R2 mitosis-off | Phase 2 1차/A | CE 는 고침, generalization 못 고침 |
+| R4 head_g pipeline | 코드 검증 | head_g train loss 부재 → inert, moot |
+| R6 pool-16 | Phase 2 2차/A | cross-attn noise 줄임, ko transient 만 |
+| R7 step-up | A (5000 target) | osc early-stop @ 1125, mode collapse |
+
+V3 multilingual blocker = **capacity 도 architecture 도 아닌 diverse-corpus
+학습 dynamics**. 75 MB 코퍼스의 70% anima 비중이 substrate (from-scratch /
+warm-start) 를 anima-register memorization 으로 collapse 시킴. LoRA path
+(vP21M) 가 4/5 langs ≥ PARTIAL 인 이유 = Qwen 다국어 prior 를 보존한 채
+adapter 만 학습 — V3 는 substrate 학습으로 그 prior 를 파괴.
+
+→ **chat substrate = vP21M LoRA path 유지** (절충 B). substrate_v3 합류 보류.
+V3 코드/ckpt = negative-result evidence anchor 로 보존 (`vP21H_phase2_full/`,
+HF `dancinlab/anima-v3-p21h`).
 
 ---
 

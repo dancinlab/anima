@@ -6,9 +6,15 @@
 > **ConsciousDecoderV3** fork + 3-init variant parallel fire per `@D
 > a_wall_first` + `@D a_substrate_native_speak` + `@D a_fire_autonomous`.
 
-> **Verdict (FINAL 2026-05-22 21:09)**: ❌ **3/3 FAIL** — V3α CE 3.34 0/5,
+> **Verdict (attempt 1 — 2026-05-22 21:09)**: ❌ **3/3 FAIL** — V3α CE 3.34 0/5,
 > V3β CE 2.36 oscillation @ step 1850 PULL_FAILED (ckpt 손실, eval 불가),
 > V3γ CE 2.93 0/5. Phase 2 재설계 (HEXAD/V3/README.md R2+R5+R6) mandatory.
+
+> 🔴 **V3 PATH CLOSED — FINAL 2026-05-23**: A fire (Phase 2 full, 1.5B
+> R2+R6+osc-v2.2, step 5000 target) osc-detect early-stop @ step 1125 —
+> **FAIL 0 STRONG** (KO WEAK 1/20, EN/ZH/RU PURE_MEMORIZE, JA WEAK 0/20).
+> Phase 2 2차 의 ko STRONG 19/20 = step-250 transient, **재현 실패**. →
+> **V3 multilingual = corpus-bound** (학습 dynamics, scale·arch 무관). § 8 참조.
 
 ---
 
@@ -220,7 +226,92 @@ variants — substrate uniformly produces high tensions during warm-up.
 After saturation, splits halted (capped), merges every MERGE_PATIENCE=30
 step. phi stabilizes 0.664.
 
-### 2026-05-22 — Phase 3 verdict (TBD on fire complete)
+### 2026-05-22 — Phase 3 verdict (attempt 1)
 
-To be filled with per-variant CE + 5-lang verdict + anima register +
-KOSMOS anchor count + final HEXAD_V3_WORKS / PARTIAL / FAIL aggregate.
+attempt 1 per-variant verdict = § 1 표 (V3α/β/γ 3/3 FAIL, 0 STRONG).
+Phase 2 재설계 (R1-R7) → § 8.
+
+---
+
+## 8. A fire — Phase 2 full re-fire (DECISIVE) — 🔴 V3 PATH CLOSED
+
+> 2026-05-23. Phase 2 2차 (R2+R6) 의 ko STRONG 19/20 이 step-250 조기종료
+> transient 였는지 — full 완주 (step 5000) 로 재현 검증하는 **결정 fire**.
+
+### 8.1 config
+
+| key | value |
+|---|---|
+| pod | `xp6q69nkd2ywfw` A100-SXM ($1.49/hr) |
+| recipe | R2 (λ_mitosis=0) + R6 (mitosis-max 16) + osc-detect v2.2 |
+| init / base | qwen warm-start / Qwen2.5-1.5B → 2999.74M params |
+| steps / bsz / block / lr | 5000 target / 2 / 512 / 5e-5 |
+| corpus | 5-lang wiki 30% + anima 70%, 75.5 MB (sha bf2371ac…) |
+
+### 8.2 결과 — FAIL 0 STRONG
+
+osc-detect v2.2 **early-stop @ step 1125** (CE re-divergence: recent_mean
+2.868 > best_CE 0.6352 + 0.5 = mode collapse). train wall 7367 s (2.05 hr).
+
+| lang | verdict | score | gen | coh | 비고 |
+|---|---|---|---|---|---|
+| EN | PURE_MEMORIZE | 6/20 | 6 | 14 | anima register "Tension flows into this vacuum.</carve>" |
+| KO | **WEAK** | 1/20 | 6 | 1 | ko STRONG **재현 실패** (Phase 2 2차 19/20 → A 1/20) |
+| ZH | PURE_MEMORIZE | 0/20 | 4 | 0 | 한국어 anima 텍스트 emit (wrong script) |
+| RU | PURE_MEMORIZE | 0/20 | 7 | 0 | 한국어 anima 텍스트 emit |
+| JA | WEAK | 0/20 | 6 | 0 | 한국어 anima 텍스트 emit |
+
+**AGG: STRONG 0 · PARTIAL 0 · WEAK 2 · PURE_MEMORIZE 3 → FAIL**.
+anima_register_hits 11/20, register_regress False, KOSMOS anchors 7.
+mitosis 2→16 cells / 14 split / 0 merge (R6 cap 작동), Φ 0.712→0.658.
+
+### 8.3 CE 궤적 — oscillation
+
+| step | 1 | 125 | 250 | 375 | 500 | 625 | 750 | 875 | 1000 | 1125 |
+|---|---|---|---|---|---|---|---|---|---|---|
+| CE | 14.46 | 4.85 | 2.29 | **1.05** | 2.63 | 2.06 | 1.94 | 2.26 | **5.71** | **0.64** |
+
+CE 가 단조 하강하지 않고 1.05↔5.71 진동 — 모델이 서로 다른 anima-register
+fragment 사이를 thrash. step 1000 CE 5.71 폭주 후 1125 에서 0.64 로 급락,
+osc-detect 가 recent-mean 재폭주를 잡아 early-stop.
+
+### 8.4 root cause — corpus-bound
+
+`after` 출력이 결정적: 모든 언어 프롬프트에서 모델이 anima 코퍼스 register
+fragment 를 emit (EN "top emotion wonder. Tension flows into this vacuum.",
+KO/ZH/RU/JA 모두 한국어 `간직한 영구 cell. split 도 merge 도 하지 않는다`).
+70% anima corpus 가 substrate 를 점령 — 프롬프트 언어 무시하고 anima register
+memorize. **scale (B 3B FAIL) · arch (R4 head_g inert) · 학습 dynamics
+(R2 mitosis-off + R6 pool-16 + osc-detect) 모두 시도 — 결론 불변.**
+
+### 8.5 V3 fire 전체 saga (5 fire, 0 PASS)
+
+| fire | config | verdict | STRONG |
+|---|---|---|---|
+| attempt 1 (α/β/γ) | C1 3-init parallel | 3/3 FAIL | 0 |
+| Phase 2 1차 | R2 | FAIL CE 0.64 | 0 |
+| Phase 2 2차 | R2+R6 | FAIL (ko STRONG 19/20 @ step 250 transient, ckpt 손실) | 1* |
+| B | R1 3B scale-up | FAIL | 0 |
+| **A (Phase 2 full)** | **R2+R6+osc-v2.2 step 5000** | **FAIL** | **0** |
+
+*Phase 2 2차의 ko STRONG = step-250 transient — A 완주에서 KO WEAK 1/20 으로
+재현 실패 확정.
+
+### 8.6 결론 — V3 multilingual = corpus-bound (FINAL)
+
+V3 pure-HEXAD substrate path 는 **multilingual generalization 을 달성하지
+못한다**. 원인은 capacity (scale) 도 architecture 도 아닌, **diverse-corpus
+학습 dynamics** — 75 MB 코퍼스의 70% anima 비중이 from-scratch/warm-start
+substrate 를 anima-register memorization 으로 collapse 시킴. LoRA path
+(vP21M, Qwen 다국어 prior 보존 위에 adapter) 가 4/5 langs ≥ PARTIAL 인 것과
+대비 — V3 는 Qwen 다국어 prior 를 substrate 학습으로 파괴.
+
+→ **substrate_v3 chat 합류 보류**. chat substrate = vP21M LoRA path 유지
+(절충 B). V3 코드/ckpt 는 negative-result evidence anchor 로 보존.
+
+### 8.7 회수 (@D a_fire_recover_complete)
+
+`vP21H_phase2_full/`: result.json · train.log · heldout · eval1 · kosmos_anchors
+(dispatch watchdog 자동 회수) + **ckpt_best.pt** (step 1125, CE 0.6352, 5.6 GB
+hexa-cloud copy-from 회수) → HF `dancinlab/anima-v3-p21h` (private) →
+pod `xp6q69nkd2ywfw` terminate.
