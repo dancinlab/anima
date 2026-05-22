@@ -1,13 +1,29 @@
-# VERSIONS — anima HEXAD 모듈 중앙 버전 레지스트리
+# VERSIONS — anima 전체 모듈 중앙 버전 레지스트리 (repo root SSOT)
 
 > **frame**: 모든 HEXAD 모듈은 semantic version (MAJOR.MINOR.PATCH) 으로 관리.
 > 본 file 이 SSOT — 모듈 상태 변경 시 여기 + 해당 모듈 헤더 동시 갱신.
 >
 > **status**: v-registry 도입 2026-05-22 (S187 saga + OCCAM verdict 후).
+> **위치**: repo root `/VERSIONS.md` (SSOT) + root `/VERSION` (전체 release 한 줄).
 
 ---
 
-## 0. 버전 규칙 (SemVer for anima)
+## 0. anima 전체 release version
+
+루트 [`/VERSION`](VERSION) = **`0.3.0`** (한 줄, 전체 시스템 release).
+
+| release | 날짜 | 마일스톤 |
+|---|---|---|
+| 0.1.0 | ~2026-05 초 | HEXAD 7-module 🔵 closed-form battery |
+| 0.2.0 | 2026-05-16 | HEXAD-only canonical pivot + hexa-native tree |
+| **0.3.0** | **2026-05-22** | **S187 3B scale 검증 + OCCAM floor pinpoint (n_ca_rules) + MITOSIS training-time + Llama-mitosis winning path** |
+
+> release bump 규칙: 모듈 MAJOR bump OR 핵심 verdict landing 시 release MINOR.
+> n_ca_rules pinpoint + Llama+mitosis (vP21 CE 0.0147) 가 0.3.0 의 핵심 evidence.
+
+---
+
+## 0.1. 버전 규칙 (SemVer for anima)
 
 ```
 MAJOR.MINOR.PATCH
@@ -176,9 +192,9 @@ PATCH  ↑  fix / refinement / 문서 (동작 불변)
 
 ## 관련 link
 
-- 핵심 finding: [`HEXAD/SCALE_3B.md § 7`](SCALE_3B.md), [`HEXAD/EASY.md`](EASY.md)
-- floor pinpoint: [`HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/PHASE2_ABLATION_REPORT.md`](UNCLASSIFIED/state/grid_3b_s187_2026_05_21/PHASE2_ABLATION_REPORT.md)
-- OCCAM strategy: [`HEXAD/OCCAM.md`](OCCAM.md)
-- module index: [`HEXAD/INDEX.md`](INDEX.md)
-- physics: [`anima-physics/README.md`](../anima-physics/README.md)
-- AKIDA: [`HEXAD/SUB_ENGINES/AKIDA/README.md`](SUB_ENGINES/AKIDA/README.md)
+- 핵심 finding: [`HEXAD/SCALE_3B.md § 7`](HEXAD/SCALE_3B.md), [`HEXAD/EASY.md`](HEXAD/EASY.md)
+- floor pinpoint: [`HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/PHASE2_ABLATION_REPORT.md`](HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/PHASE2_ABLATION_REPORT.md)
+- OCCAM strategy: [`HEXAD/OCCAM.md`](HEXAD/OCCAM.md)
+- module index: [`HEXAD/INDEX.md`](HEXAD/INDEX.md)
+- physics: [`anima-physics/README.md`](anima-physics/README.md)
+- AKIDA: [`HEXAD/SUB_ENGINES/AKIDA/README.md`](HEXAD/SUB_ENGINES/AKIDA/README.md)
