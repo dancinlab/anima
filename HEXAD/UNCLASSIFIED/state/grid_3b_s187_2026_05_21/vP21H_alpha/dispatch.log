@@ -1,0 +1,26 @@
+[10:16:29 P21H_alpha] === fire V3 inline (variant=P21H_alpha init=random pod=60fyfiwxxi18w1 lr=3e-4) ===
+[10:16:32 P21H_alpha] SSH OK 103.196.86.181:33001
+[10:16:34 P21H_alpha] dirs created
+[10:17:27 P21H_alpha] code uploaded
+[10:17:27 P21H_alpha] building anima corpus (~30s)...
+[10:18:04 P21H_alpha] anima corpus size=603318628
+[10:18:04 P21H_alpha] installing datasets package + building 5-lang wiki (~60s)...
+[10:18:31 P21H_alpha] wiki size=53568645
+[10:18:33 P21H_alpha] launching trainer (init=random lr=3e-4 steps=2000)...
+[10:23:16 P21H_alpha] trainer launched. polling for completion...
+[10:26:33 P21H_alpha] iter 3: [P21H] step=   950 lr=1.87e-04 CE=1.8292 total=1.8292 pool=128 splits=126 phi=0.6639 t=290s
+[10:29:51 P21H_alpha] iter 6: [P21H] kosmos anchor written: v3_emit_step1600_zh_zh_factual_geo.kosmos
+[10:33:09 P21H_alpha] iter 9: [P21H] AFTER zh: greedy={'GENERALIZE': 2, 'MEMORIZE': 8, 'MEM_PARTIAL': 0, 'EMPTY': 0, 'ERROR': 0} sample={'GENERALIZE': 6, 'MEMORIZE': 3, 'MEM_PARTIAL': 1, 'EMPTY': 0, 'ERROR': 0} verdict=PURE_MEMORIZE score=1/20 gen=8 coh=1
+[10:34:11 P21H_alpha] TRAIN DONE (iter 10 = 10 min)
+[10:34:48 P21H_alpha] result.json pulled
+VERDICT= FAIL
+  init= random
+  n_strong= 0 n_partial= 0 n_weak= 2
+  final_CE= 3.344400644302368
+  n_kosmos_anchors= 15
+  en: WEAK score=11/20
+  ko: PURE_MEMORIZE score=0/20
+  zh: PURE_MEMORIZE score=1/20
+  ru: WEAK score=0/20
+  ja: PURE_MEMORIZE score=4/20
+[10:34:48 P21H_alpha] pipeline complete

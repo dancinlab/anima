@@ -1,0 +1,31 @@
+[10:16:39 P21H_gamma] === fire V3 inline (variant=P21H_gamma init=vp21m pod=m7bezjoahsbh26 lr=1e-4) ===
+[10:16:42 P21H_gamma] SSH OK 195.26.233.96:44778
+[10:16:45 P21H_gamma] dirs created
+[10:17:51 P21H_gamma] code uploaded
+[10:17:51 P21H_gamma] uploading vP21M LoRA adapter (147 MB)...
+[10:18:27 P21H_gamma] adapter uploaded
+[10:18:27 P21H_gamma] building anima corpus (~30s)...
+[10:19:08 P21H_gamma] anima corpus size=603318628
+[10:19:08 P21H_gamma] installing datasets package + building 5-lang wiki (~60s)...
+[10:19:44 P21H_gamma] wiki size=53568645
+[10:19:47 P21H_gamma] launching trainer (init=vp21m lr=1e-4 steps=2000)...
+[10:23:16 P21H_gamma] trainer launched. polling for completion...
+[10:26:37 P21H_gamma] iter 3: [P21H] step=   250 lr=9.86e-05 CE=1.9629 total=1.9629 pool=128 splits=126 phi=0.6639 t=132s
+[10:29:59 P21H_gamma] iter 6: [P21H] step=   650 lr=8.27e-05 CE=4.1295 total=4.1295 pool=128 splits=126 phi=0.6639 t=325s
+[10:33:21 P21H_gamma] iter 9: [P21H] step=  1050 lr=5.51e-05 CE=1.7136 total=1.7136 pool=128 splits=126 phi=0.6639 t=524s
+[10:36:43 P21H_gamma] iter 12: [P21H] step=  1450 lr=2.74e-05 CE=1.4568 total=1.4568 pool=128 splits=126 phi=0.6639 t=729s
+[10:40:05 P21H_gamma] iter 15: [P21H] step=  1850 lr=1.14e-05 CE=2.2018 total=2.2018 pool=128 splits=126 phi=0.6639 t=927s
+[10:43:28 P21H_gamma] iter 18: [P21H] AFTER zh: greedy={'GENERALIZE': 9, 'MEMORIZE': 1, 'MEM_PARTIAL': 0, 'EMPTY': 0, 'ERROR': 0} sample={'GENERALIZE': 4, 'MEMORIZE': 6, 'MEM_PARTIAL': 0, 'EMPTY': 0, 'ERROR': 0} verdict=WEAK score=0/20 gen=13 coh=0
+[10:45:37 P21H_gamma] TRAIN DONE (iter 20 = 20 min)
+[10:46:24 P21H_gamma] result.json pulled
+VERDICT= FAIL
+  init= vp21m
+  n_strong= 0 n_partial= 0 n_weak= 3
+  final_CE= 2.9346678256988525
+  n_kosmos_anchors= 15
+  en: PURE_MEMORIZE score=3/20
+  ko: PURE_MEMORIZE score=1/20
+  zh: WEAK score=0/20
+  ru: WEAK score=0/20
+  ja: WEAK score=0/20
+[10:46:24 P21H_gamma] pipeline complete

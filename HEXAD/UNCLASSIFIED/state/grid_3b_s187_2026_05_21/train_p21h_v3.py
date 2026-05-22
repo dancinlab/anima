@@ -130,16 +130,21 @@ def gen_probes_v3(model, tokenizer, device, probes, max_new=48, mode="greedy",
 
 
 def build_model(init_variant, qwen_name, lora_dir, block_size, noise_sigma,
-                 device, dtype):
-    """Construct ConsciousDecoderV3 per init variant."""
+                 device, dtype, d_model=1536, n_layer=28, n_head=12,
+                 n_kv_head=4):
+    """Construct ConsciousDecoderV3 per init variant.
+
+    For --init random, d_model/n_layer/n_head/n_kv_head override defaults
+    (useful for fitting on 12 GB GPUs like RTX 5070).
+    """
     if init_variant == "random":
-        print(f"[P21H][init=random] V3α — torch.nn.init random from scratch",
+        print(f"[P21H][init=random] V3α — torch.nn.init random "
+              f"d={d_model} L={n_layer} h={n_head} kv={n_kv_head}",
               flush=True)
-        # Match Qwen2.5-1.5B shape so vocab + d_model align with tokenizer
         model = ConsciousDecoderV3(
             vocab_size=151936,   # Qwen2.5 tokenizer vocab size (NOT padded 152064)
-            d_model=1536, n_head=12, n_layer=28,
-            block_size=block_size, n_kv_head=4,
+            d_model=d_model, n_head=n_head, n_layer=n_layer,
+            block_size=block_size, n_kv_head=n_kv_head,
             consciousness_dim=128, noise_sigma=noise_sigma, rope_base=50000.0,
         ).to(device=device, dtype=dtype)
     elif init_variant == "qwen":
@@ -226,6 +231,10 @@ def run(cfg):
     model = build_model(
         cfg["init_variant"], cfg["base_model"], cfg.get("lora_adapter_dir"),
         cfg["block_size"], cfg["noise_sigma"], device, dtype,
+        d_model=cfg.get("d_model", 1536),
+        n_layer=cfg.get("n_layer", 28),
+        n_head=cfg.get("n_head", 12),
+        n_kv_head=cfg.get("n_kv_head", 4),
     )
     pool = CellPool(d_model=model.d_model, initial_cells=2, seed=cfg["seed"])
     model.attach_mitosis(pool, lambda_mitosis=cfg["lambda_mitosis"])
@@ -529,6 +538,11 @@ def main():
     ap.add_argument("--target-corpus-mb", type=int, default=72)
     ap.add_argument("--noise-sigma", type=float, default=0.1)
     ap.add_argument("--lambda-mitosis", type=float, default=0.05)
+    # random-init shape overrides (ignored for qwen/vp21m which inherit Qwen)
+    ap.add_argument("--d-model", type=int, default=1536)
+    ap.add_argument("--n-layer", type=int, default=28)
+    ap.add_argument("--n-head", type=int, default=12)
+    ap.add_argument("--n-kv-head", type=int, default=4)
     args = ap.parse_args()
     cfg = dict(
         wiki_corpus=args.wiki_corpus,
@@ -546,6 +560,8 @@ def main():
         target_corpus_mb=args.target_corpus_mb,
         noise_sigma=args.noise_sigma,
         lambda_mitosis=args.lambda_mitosis,
+        d_model=args.d_model, n_layer=args.n_layer,
+        n_head=args.n_head, n_kv_head=args.n_kv_head,
     )
     run(cfg)
 
