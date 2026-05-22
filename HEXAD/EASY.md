@@ -144,6 +144,48 @@ anima custom-arch 는 whitespace 만 뱉던 자리에서, vP21 은 **완전한 �
 
 **정직한 한계**: CE 0.0173 = corpus_s101 강한 fit → memorization-grade 가능성. held-out OOD 테스트가 다음 rigor. 또 "coherent verbalization" 이지 아직 "spontaneous emission(스스로 먼저 말하기)" 은 아님 (SPONTANEOUS 모듈 별도 축). 상세: `VP21_EVAL1_VERBALIZATION.md` 6 honest C3.
 
+## 9. 🎯🎯 자연발화 dual-axis 완성 — software ⊥ hardware (anima 0.5.0)
+
+prompted (§ 8) 다음 단계: **스스로 먼저 말하기 (unprompted)** + **하드웨어-native spike emit**.
+
+### 축 A — software (vP21 motivation-gated)
+
+`spontaneous_loop_vp21.py` (HEXAD/CHAT/) — Thinker 가 anima 의 자기 상태에서 Inner Thoughts 8-factor 점수 계산, Talker 는 score>threshold 일 때만 발화 (user prompt 0):
+
+- **60/60 coherent unprompted emissions** (5-min window)
+- **TIMER ABLATION**: timer 동결 → 또 **60/60** ← 핵심 rigor: 발화는 **motivation-gated**, timer 아님 (timer ≤1.3% 기여)
+- 판별 신호 = C/M/MITOSIS factor (info_gap/coherence/originality)
+- **V-SPONT 0/5 ceiling (cycle 3/4) 돌파**
+
+### 축 B — hardware (AKD1000 LIF spike, on-chip)
+
+`SUB_ENGINES/AKIDA/scripts/spontaneous_emission.py` — 5-regime on-silicon spike test:
+
+| regime | 입력 | spk | 의미 |
+|---|---|---|---|
+| R0 driven | 강한 clamp | 3200 | sanity |
+| R1 weak-silent | sub-threshold | **0** | FP control |
+| R2 zero+noise | U[0,3] | 1520 (std 7.99) | event-driven |
+| **R3 tonic zero-input** | **V=0** | **1600** (8/16 fire) | 🎯 **pure HW-native 자연발화** (zero input 에서 intrinsic excitability) |
+| R4 recurrent self-sustain | 2-step seed | 3200 | post-seed self-driven |
+
+LIF threshold-fire 결정이 **실리콘에서** 계산됨 (FullyConnected.activation=True). R3 = zero input + heterogeneous threshold → 칩이 **자력 발화**.
+
+### 비유 갱신
+
+- **vP21 (software)**: 김치 + 발효 양배추 = 맛 좋고 **스스로 노래 부름** (동기 점수 임계 넘으면)
+- **AKD1000 (hardware)**: 똑같이 노래 부르는데 이번엔 **1mW 짜리 신경 칩** 이 (입력 0 에서도) spike 로 발화
+
+같은 GOAL (자연발화) 의 **두 독립 축** 동시 land — vP21 텍스트 vs AKD1000 spike, dual-role 상보적.
+
+### 정직한 한계
+
+- vP21 motivation threshold default 0.30 은 always-open (relevance+balance over-floor) — 0.45 calibration 필요 (1-line, not arch fail). sweep 으로 gate discriminating 증명.
+- AKD1000 R4 closure 는 software (Akida 1.0 IP FF, on-die recurrence 없음); per-step emit decision 만 on-chip. R3 가 가장 pure self-initiated.
+- INA 전력 telemetry 보드 한계로 미측정 (1mW 스펙은 cycle/latency proxy 만).
+
+상세: `SPONTANEOUS_EMISSION_VP21.md` (8 C3) + `SUB_ENGINES/AKIDA/state/HW_SPONTANEOUS_EMISSION_2026_05_22.md` (4 C3).
+
 ---
 
 ## 관련 link
