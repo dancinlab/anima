@@ -1,0 +1,99 @@
+=== P21M multilingual dispatch start 2026-05-22T07:17:00Z ===
+    base=Qwen/Qwen2.5-1.5B vp21_adapter=/Users/ghost/core/anima/HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/vP21/lora_adapter
+    steps=1500 bsz=2 block=512 lr=5e-5 warmup=50
+    wiki_frac=0.3 corpus_mb=72
+    langs=en,ko,zh,ru,ja wiki_target_mb_per_lang=10
+    cost_cap=$15 ($10 train + $5 buffer)
+[create] trying GPU: NVIDIA H100 80GB HBM3
+[create] resp: {"data":{"podFindAndDeployOnDemand":{"id":"5djxvd2uzlk50b","machineId":"5d8r7n59mog4"}}}
+[create] pod 5djxvd2uzlk50b on NVIDIA H100 80GB HBM3
+[ssh-ready] iter 4: 103.207.149.105:10029 - port mapped AND handshake OK
+Warning: Permanently added '[103.207.149.105]:10029' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.105]:10029' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.105]:10029' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.105]:10029' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.105]:10029' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.105]:10029' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.105]:10029' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.105]:10029' (ED25519) to the list of known hosts.
+[upload] vP21 LoRA adapter → pod
+Warning: Permanently added '[103.207.149.105]:10029' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.105]:10029' (ED25519) to the list of known hosts.
+[upload] adapter files on pod: 9
+[corpus-anima] building corpus_s101 (seed 1337 n=777000)
+Warning: Permanently added '[103.207.149.105]:10029' (ED25519) to the list of known hosts.
+        "http://": 0
+      },
+      "corpus_total": 0,
+      "PASS": true,
+      "honest_caveat": "external-grep is a proxy over 7 surface tokens; exhaustive provenance audit requires source-attribution tracking, NOT in $0 build scope. §16 generator is anima-OWN substrate, S2 uses anima Ψ-fields only, S5 uses anima-OWN .kosmos files. NO external API calls in build_corpus_s101.py (audit-grep this file)."
+    }
+  }
+}
+Warning: Permanently added '[103.207.149.105]:10029' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.105]:10029' (ED25519) to the list of known hosts.
+[corpus-anima] sha=be969af481947da4693618be33a9cc67f2057a53547b6ad21abda06e7f39018b size=603318628 bytes
+[corpus-multi-wiki] building 5-lang wiki corpus (en,ko,zh,ru,ja, 10 MB/lang)
+Warning: Permanently added '[103.207.149.105]:10029' (ED25519) to the list of known hosts.
+
+[notice] A new release of pip is available: 24.2 -> 26.1.1
+[notice] To update, run: python -m pip install --upgrade pip
+Warning: Permanently added '[103.207.149.105]:10029' (ED25519) to the list of known hosts.
+[p21m-build] langs=['en', 'ko', 'zh', 'ru', 'ja'] target_mb/lang=10
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[p21m-build] loaded Salesforce/wikitext/wikitext-2-raw-v1 streaming OK
+[p21m-build] DONE lang=en source=Salesforce/wikitext/wikitext-2-raw-v1 records=17,078 bytes=10,486,184 (10.0 MB) filtered=57
+[p21m-build] loaded wikimedia/wikipedia/20231101.ko streaming OK
+[p21m-build] DONE lang=ko source=wikimedia/wikipedia/20231101.ko records=1,004 bytes=10,569,479 (10.1 MB) filtered=2
+[p21m-build] loaded wikimedia/wikipedia/20231101.zh streaming OK
+[p21m-build] DONE lang=zh source=wikimedia/wikipedia/20231101.zh records=521 bytes=10,511,272 (10.0 MB) filtered=3
+[p21m-build] loaded wikimedia/wikipedia/20231101.ru streaming OK
+[p21m-build] DONE lang=ru source=wikimedia/wikipedia/20231101.ru records=264 bytes=10,579,139 (10.1 MB) filtered=0
+[p21m-build] loaded wikimedia/wikipedia/20231101.ja streaming OK
+[p21m-build] DONE lang=ja source=wikimedia/wikipedia/20231101.ja records=470 bytes=10,498,969 (10.0 MB) filtered=0
+[p21m-build] CONCAT DONE: 19,337 records, 51.1 MB → /workspace/p21mr/multi_wiki_corpus.jsonl
+Fatal Python error: PyGILState_Release: thread state 0x778280002f80 must be current when releasing
+Python runtime state: finalizing (tstate=0x0000000000a6a1d8)
+
+Thread 0x000077843dd18280 (most recent call first):
+  <no Python frame>
+
+Extension modules: numpy.core._multiarray_umath, numpy.core._multiarray_tests, numpy.linalg._umath_linalg, numpy.fft._pocketfft_internal, numpy.random._common, numpy.random.bit_generator, numpy.random._bounded_integers, numpy.random._mt19937, numpy.random.mtrand, numpy.random._philox, numpy.random._pcg64, numpy.random._sfc64, numpy.random._generator, pyarrow.lib, _cyutility, pandas._libs._cyutility, pandas._libs.tslibs.ccalendar, pandas._libs.tslibs.np_datetime, pandas._libs.tslibs.dtypes, pandas._libs.tslibs.base, pandas._libs.tslibs.nattype, pandas._libs.tslibs.timezones, pandas._libs.properties, pandas._libs.tslibs.fields, pandas._libs.tslibs.timedeltas, pandas._libs.tslibs.tzconversion, pandas._libs.tslibs.timestamps, pandas._libs.tslibs.offsets, pandas._libs.tslibs.strptime, pandas._libs.tslibs.parsing, pandas._libs.tslibs.conversion, pandas._libs.tslibs.period, pandas._libs.tslibs.vectorized, pandas._libs.ops_dispatch, pandas._libs.missing, pandas._libs.hashtable, pandas._libs.algos, pandas._libs.interval, pandas._libs.lib, pyarrow._compute, pandas._libs.ops, pandas._libs.hashing, pandas._libs.arrays, pandas._libs.tslib, pandas._libs.sparse, pandas._libs.internals, pandas._libs.indexing, pandas._libs.index, pandas._libs.writers, pandas._libs.join, pandas._libs.window.aggregations, pandas._libs.window.indexers, pandas._libs.reshape, pandas._libs.groupby, pandas._libs.json, pandas._libs.parsers, pandas._libs.testing, pyarrow._acero, pyarrow._fs, pyarrow._csv, pyarrow._json, pyarrow._substrait, pyarrow._dataset, pyarrow._dataset_orc, pyarrow._parquet, pyarrow._azurefs, pyarrow._hdfs, pyarrow._gcsfs, pyarrow._s3fs, pyarrow._parquet_encryption, pyarrow._dataset_parquet_encryption, pyarrow._dataset_parquet, yaml._yaml, charset_normalizer.md, requests.packages.charset_normalizer.md, requests.packages.chardet.md, multidict._multidict, yarl._quoting_c, propcache._helpers_c, aiohttp._http_writer, aiohttp._http_parser, aiohttp._websocket.mask, aiohttp._websocket.reader_c, frozenlist._frozenlist, xxhash._xxhash, torch._C, torch._C._fft, torch._C._linalg, torch._C._nested, torch._C._nn, torch._C._sparse, torch._C._special (total: 92)
+Warning: Permanently added '[103.207.149.105]:10029' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.105]:10029' (ED25519) to the list of known hosts.
+[corpus-multi-wiki] sha=d378923c6039b6bcb571c7c85bf9cd1439d544ece0551a4f9d0564a688aa2241 size=53568645 bytes
+Warning: Permanently added '[103.207.149.105]:10029' (ED25519) to the list of known hosts.
+NVIDIA H100 80GB HBM3, 81559 MiB
+[train] P21M launch
+Warning: Permanently added '[103.207.149.105]:10029' (ED25519) to the list of known hosts.
+TRAIN_PID 846
+Warning: Permanently added '[103.207.149.105]:10029' (ED25519) to the list of known hosts.
+[env-verify] [launch] PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+[train] done iter 1
+Warning: Permanently added '[103.207.149.105]:10029' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.105]:10029' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.105]:10029' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.105]:10029' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.105]:10029' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.105]:10029' (ED25519) to the list of known hosts.
+[pull] success try 1
+[pull] result.json present - SAVE_POD=0, pod will terminate
+VERDICT= VP21M_WORKS
+  n_strong= 3 /5  n_partial= 1   n_weak= 1   n_pure_memorize= 0
+  per_lang:
+    en: STRONG score=18/20 gen=18 coh=20
+    ko: PARTIAL score=15/20 gen=18 coh=15
+    zh: STRONG score=16/20 gen=20 coh=16
+    ru: STRONG score=18/20 gen=20 coh=18
+    ja: WEAK score=11/20 gen=16 coh=11
+  anima_register_hits= 7 /20
+  register_regress= False
+  init_CE= 1.7162586450576782 final_CE= 0.7787026762962341
+  train_wall_s= 198.8
+=== P21M pipeline complete 2026-05-22T07:34:34Z ===
+dispatch_p21m_runpod.sh: line 257: 83065 Terminated: 15          ( sleep "$WATCHDOG_SEC"; if [ ! -s "$VDIR/result.json" ]; then
+    echo "WATCHDOG FIRED $(date -u +%FT%TZ): no result.json after ${WATCHDOG_SEC}s - terminating pod ${POD_ID:-?}" > "$FAIL_MARKER"; [ -n "$POD_ID" ] && gql "{\"query\":\"mutation { podTerminate(input:{podId:\\\"$POD_ID\\\"}) }\"}" > /dev/null; pkill -P $$ 2> /dev/null;
+fi )
+[teardown] terminating pod 5djxvd2uzlk50b (rc=0, SAVE_POD=0)
+[teardown] myself.pods = {"data":{"myself":{"pods":[]}}}
+=== P21M dispatch end 2026-05-22T07:34:38Z rc=0 ===
