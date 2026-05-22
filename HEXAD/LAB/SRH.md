@@ -1,7 +1,7 @@
 # SRH — Simulation Replay Hypothesis × UBM × anima spike
 
-**Status**: TOOL-READY (no production cycle yet — synthetic d=8 wiring smoke 만 PASS)
-**Last update**: 2026-05-22 Cycle #1
+**Status**: **WEAK SIGNAL (directional)** — production 332M pilot 1차 cycle 에서 UBM vs random 2.5× split count + timing-specific 후반부 cluster 관측. z-stat 미달 (single-seed). cycle #3 multi-seed 필요.
+**Last update**: 2026-05-22 Cycle #2
 **Log**: [SRH.log.md](SRH.log.md)
 
 ---
@@ -76,14 +76,25 @@ HEXAD/LAB/state/SRH_<slug>_YYYY_MM_DD/
 
 ## §4 Final verdict
 
-**UNFIRED** (production cycle 0회).
+**WEAK SIGNAL (directional)** — Cycle #2 production 332M pilot (Mac local single-seed) 측정 완료. F-SRH-1 z-stat 미달 (single-seed) 이나 방향성 + ratio + timing 모두 SRH 가설과 일치.
 
-Current standing (synthetic d=8 wiring smoke only, 의미해석 불가):
-- F-LAB-1..6 15/15 PASS (tool 작동 검증, not falsifier evidence)
-- UBM tier=0 (synthetic) → 30 split / 2 merge / 210 inv vs baseline "안녕? 너는 누구야?" 21 split
-- 정량 +43% split 차이는 **synthetic noise** — production 332M 필수
+### Cycle #2 결과 (state/SRH_t0_vs_random_pilot_2026_05_22/, seed=2026, max_new=2, prompt 30-byte truncated)
 
-**Pending**: Cycle #2 production 332M pilot.
+| metric | UBM tier=0 | Random ASCII noise | Δ | ratio |
+|---|---|---|---|---|
+| split_count | **5** | 2 | **+3** | **2.5×** |
+| cell_count_final | **7** | 4 | **+3** | 1.75× |
+| mitosis_invocations | 32 | 32 | 0 | 1.0× |
+| event_step_jaccard | — | — | — | **0.4** (60% non-overlap) |
+
+**Timing-specific signal** (가장 강한 evidence):
+- UBM split timings: `[2, 2, 25, 30, 31]` (5 splits — 2개 early prefill + **3개 후반부 prefill+decode**)
+- Random split timings: `[2, 2]` (2 splits — early prefill 만, 후반부 0)
+- Overlap = 2 (step 2 둘 다); UBM-specific = 3 (steps 25/30/31 = decode 직전+직중)
+
+**해석**: substrate 가 **공통 prefill 처음 2 step 에서는** UBM/random 무차별 firing, 그러나 **late prefill + decode 진입 시점부터 UBM 에서만 추가 cell split** 일어남. 단순 "longer prompt → more splits" confound 아님 (둘 다 동일 32 invocations 동일 30 bytes).
+
+**Pending**: Cycle #3 ubu-1 + ubu-2 + Mac 3-box parallel × full prompt (~200 bytes) × max_new ≥ 10 × 5-seed → 진정한 z-stat F-SRH-1 + reproducibility F-SRH-3. wall 45s/fire × ~30 fires = ~23 min total parallel.
 
 ## §5 Honest C3
 
