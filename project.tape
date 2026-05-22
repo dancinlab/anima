@@ -19,6 +19,10 @@
   do   = "GPU / runpod 작업 = 추정 cost 1줄 명시 후 즉시 / 병렬 / bg 자율 dispatch · provider primary = runpod · no user-gate"
   dont = "'GPU 써도 되나요?' 확인 질의 · fire 를 scope-축소 / 비용회피 사유로 미룸 · cost-bearing 을 이유로 작업 중단"
 
+@D a_wall_first := "wall time 우선 — 더 빠른 병렬이 가능하면 cost 무관 진행" :: governance [required active]
+  do   = "H100 다수 병렬 · 더 큰 GPU (H200/H100) · 추가 pod fire 가 wall-time 단축하면 즉시 채택 (단일 pod 시퀀셜 회피) · serial chain 도 정직하게 wall 더 길면 reject"
+  dont = "wall 더 길더라도 cost 아끼려 단일 pod 시퀀셜 진행 · 추가 병렬 pod 자제 · '비용 들 텐데...' 후렴 · 의미 없는 cost-min 최적화"
+
 @D a_blue_closed := "산출물 + wiring 모두 🔵 SUPPORTED-FORMAL 검증" :: governance [required active]
   do   = "산출물 + 연결부(transfer-fn · invariant) 모두 🔵 SUPPORTED-FORMAL 로 닫기 — `hexa verify` 로 closed-form / identity 확인 (verdict VERBATIM)"
   dont = "구조만 닫고 wiring 미검증 · fake closed-form · empirical(B-D / B-BRIDGE / B-MITOSIS-NOTE 류 honest residual 은 OK) 를 강제로 🔵 로 등재"
