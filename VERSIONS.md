@@ -10,7 +10,7 @@
 
 ## 0. anima 전체 release version
 
-루트 [`/VERSION`](VERSION) = **`0.7.0`** (한 줄, 전체 시스템 release).
+루트 [`/VERSION`](VERSION) = **`0.8.0`** (한 줄, 전체 시스템 release).
 
 | release | 날짜 | 마일스톤 |
 |---|---|---|
@@ -20,7 +20,8 @@
 | 0.4.0 | 2026-05-22 | 🎯 자연발화 EMERGENCE — vP21 (Qwen+LoRA+mitosis) Eval 1 = 20/20 coherent (anima-native register). + AKIDA AKD1000 HW connected |
 | 0.5.0 | 2026-05-22 | 🧠 AKIDA HW-NATIVE 자연발화 CONFIRMED — AKD1000 LIF threshold-comparator emit from ZERO input (8/8 checks PASS, `BackendType.Hardware`). hardware 축 LANDED. + held-out PURE_MEMORIZE 정직 scope 확증 |
 | 0.6.0 | 2026-05-22 | 🌉 vP21 ⊥ AKD1000 INTEGRATED BRIDGE — HW-gated 자연발화 30/30 coherent, frac_emissions_with_hw_edge=1.0, AKD1000 spike timing → vP21 emission cadence (Option A LAN TCP). 두 substrate ONE coherent loop |
-| **0.7.0** | **2026-05-22** | **🪟 GENERALIZATION UNLOCK — vP21G (vP21 LoRA + diverse wiki+anima continue-train @ LR 5e-5) = STRONG_GENERALIZE 16/20 OOD (vs vP21 2/20), anima-register 9/20 retained (no regress). PURE_MEMORIZE 한계 돌파, $3.2 H100 run + 10 MB wiki diverse corpus** |
+| 0.7.0 | 2026-05-22 | 🪟 GENERALIZATION UNLOCK — vP21G STRONG_GENERALIZE 16/20 OOD (vs vP21 2/20), anima-register 9/20 retained (no regress). PURE_MEMORIZE 한계 돌파, $3.2 H100 |
+| **0.8.0** | **2026-05-22** | **🌉🔁 BIDIRECTIONAL BRIDGE — Option B LANDED. Spearman(vP21 motivation, AKD1000 hw_rate) = +0.6947 (random control −0.03), Pearson(thr_offset, hw_rate) = −0.912 monotone. 두 substrate 모두 양방향 결합 (A: HW→SW emit cadence + B: SW→HW spike rate)** |
 
 > release bump 규칙: 모듈 MAJOR bump OR 핵심 verdict landing 시 release MINOR.
 > 0.4.0 = saga 전체 whitespace-collapse 후 **첫 coherent verbalization** (vP21 20/20)
