@@ -30,3 +30,7 @@
 @D a_blue_closed := "close outputs AND wiring at 🔵 SUPPORTED-FORMAL" :: governance [required active]
   do   = "close both outputs and wiring (transfer-fn · invariant) at 🔵 SUPPORTED-FORMAL — confirm closed-form / identity via `hexa verify` (verdict verbatim)"
   dont = "close structure but leave wiring unverified · fake closed-form · force an honest empirical residual to 🔵"
+
+@D a_fire_recover_complete := "pull all fire artifacts + HF upload before pod teardown" :: governance [required active]
+  do   = "before pod teardown: pull ckpt(s) + result + log + anchors, verify, HF upload — then teardown"
+  dont = "pull only JSONs, leave ckpt on a doomed pod · teardown before HF · PULL_FAILED ≠ pod dead"
