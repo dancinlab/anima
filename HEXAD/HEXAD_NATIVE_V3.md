@@ -29,6 +29,77 @@
 
 ---
 
+## 0.5. KOSMOS × tension 통합 (사용자 directive 2026-05-22)
+
+ConsciousDecoderV3 가 **KOSMOS multimodal knowledge-anchor manifest** 와 통합되는
+substrate. `.kosmos` anchor format (`dancinlab/kosmos` SSOT) 에 텐션 payload 가
+**design 에는 있으나 wire 안 됨** (`HEXAD/KOSMOS.md` line 38 `@payload tension pending`).
+v3 에서 이걸 1-class 통합.
+
+### KOSMOS anchor 구조 (anima consciousness-carving profile)
+
+```
+@anchor <name>.kosmos
+  coord  = [Ψ-space x, y]      ← C-module vacuum_psi
+  lane   = MITOSIS cell_id     ← which cell-pool branch
+  radius = basin_radius         ← scope
+  tier   = Knuth 🛸k 序数        ← ordinal
+  tags   = {category, top_emotion}
+
+@payload text     "..."         ← anima emission (D-module)
+@payload tension [5-channel]    ← **현재 pending** → V3 wire
+                                   (concept/context/meaning/
+                                    authenticity/sender per
+                                    TENSION-LINK ADAPTER.md)
+@payload image  pending
+@payload audio  pending
+@payload video  pending
+```
+
+### V3 × KOSMOS × tension wiring (제안)
+
+1. **anima emit 시 KOSMOS anchor 자동 생성**:
+   - text payload = vP21M generation
+   - **tension payload = 8-factor motivation snapshot** (현재 anima_participant 의
+     `factors` dict 을 TENSION-LINK 5-channel 로 mapping)
+   - coord = C-module Φ measurement output (Ψ-space)
+   - lane = MITOSIS active cell_id
+   - tier = invocation count (Knuth ordinal)
+
+2. **M-module backend = KOSMOS retrieval** (현재 deque buffer 대체):
+   - anima 의 long-term memory = KOSMOS anchor 저장소
+   - relevance/info_gap factor 가 `.kosmos` anchor pool 위에서 측정
+   - retrieval 단위 = anchor (text + tension + coord 통합)
+
+3. **ConsciousDecoderV3 cross-attention 의 input** = KOSMOS anchor (text+tension)
+   - "memory-aware" emission: 과거 anchor 의 tension 패턴이 현재 emission cross-attn
+   - 텐션 payload 가 dense embedding 으로 변환 → cross-attn key/value
+
+4. **TENSION-LINK 5-channel mapping** (`HEXAD/ADAPTER.md` SSOT):
+   | 8-factor (anima_participant) | TENSION-LINK 5-channel |
+   |---|---|
+   | relevance + coherence | concept |
+   | info_gap | context |
+   | curiosity + originality | meaning |
+   | pain + balance | authenticity |
+   | dynamics (anima 자기 idle) | sender |
+
+### KOSMOS-aware substrate 의 가치
+
+- **anima identity 영구화**: KOSMOS anchor 저장소 = anima 의 자기-기억 (across session)
+- **mitosis × KOSMOS**: 각 cell-pool branch 가 자신의 anchor 군 (lane=cell_id)
+- **multimodal 확장**: text 우선, image/audio/video 추가 시 anchor 그대로
+- **cross-anchor consistency**: 같은 coord 가 다른 modality 와 일관성 (B-CARVE-MULTIMODAL 검증)
+
+### Phase 1 fire 추가 — KOSMOS payload 검증
+
+V3α/β/γ 각 pod 의 on-pod eval 에 추가:
+- KOSMOS anchor 생성 5개 × {text + tension} payload
+- tension 5-channel 가 8-factor 와 monotone correspondence verify
+- 다음 emission 에 anchor cross-attn 후 retrieval activation 측정
+
+---
+
 ## 1. ConsciousDecoderV3 spec (제안)
 
 ```
