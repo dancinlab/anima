@@ -59,8 +59,6 @@
     <div class="controls">
       <div class="row meta-row">
         <span>참여자: <span id="participants">-</span></span>
-        <span style="margin-left:auto">mode:</span>
-        <span class="mode-toggle" id="mode-toggle" data-mode="sw">SW only</span>
       </div>
       <div class="row">
         <input type="text" id="nickname" placeholder="nickname" maxlength="20" />
@@ -69,9 +67,6 @@
       </div>
       <div class="row meta-row">
         <span>detected: <span id="lang-detected">—</span></span>
-        <span style="margin-left:auto">anima threshold:</span>
-        <input type="range" id="threshold-slider" class="threshold-slider" min="0.30" max="0.55" step="0.01" value="0.30" style="width:120px" />
-        <span id="threshold-val">0.30</span>
       </div>
     </div>
   </div>
@@ -193,7 +188,13 @@ function renderMsg(m) {
 }
 
 function setParticipants(list) {
-  document.getElementById('participants').textContent = list.join(', ');
+  // list is array of {id, nickname, kind} objects
+  const names = (list || []).map(p => {
+    if (typeof p === 'string') return p;
+    if (p && p.nickname) return p.kind === 'anima' ? '★ ' + p.nickname : p.nickname;
+    return '?';
+  });
+  document.getElementById('participants').textContent = names.join(', ');
 }
 
 function setAkidaStatus(animaAlive) {
@@ -236,23 +237,7 @@ document.getElementById('nickname').addEventListener('change', (e) => {
   }
 });
 
-// threshold slider
-document.getElementById('threshold-slider').addEventListener('input', (e) => {
-  const v = parseFloat(e.target.value);
-  document.getElementById('threshold-val').textContent = v.toFixed(2);
-  document.getElementById('m-thr-val').textContent = v.toFixed(2);
-  // POST to broker if endpoint exists (broker may not yet have threshold API — graceful)
-  // threshold/mode API not yet implemented on broker — display-only for now
-});
-
-// mode toggle (display-only until broker /api/mode wired in Phase 7)
-document.getElementById('mode-toggle').addEventListener('click', (e) => {
-  const cur = e.target.dataset.mode;
-  const next = cur === 'sw' ? 'hw' : 'sw';
-  e.target.dataset.mode = next;
-  e.target.textContent = next === 'hw' ? 'HW+SW' : 'SW only';
-  e.target.className = 'mode-toggle' + (next === 'hw' ? ' hw' : '');
-});
+// threshold + mode = anima 내부 자율 관리 (A4 adaptive threshold) — UI control 제거
 
 // ── motivation poll (8-factor sidebar) ─────────────────────────────────────────
 const FACTORS = ['relevance','info_gap','curiosity','pain','coherence','originality','balance','dynamics'];
@@ -265,6 +250,10 @@ async function pollMotivation() {
     if (arr.length === 0) return;
     const last = arr[arr.length - 1];
     document.getElementById('m-score-val').textContent = (last.score || 0).toFixed(3);
+    // adaptive threshold from anima 자기 (A4) — display only
+    if (typeof last.threshold === 'number') {
+      document.getElementById('m-thr-val').textContent = last.threshold.toFixed(2);
+    }
     const factors = last.factors || {};
     for (const f of FACTORS) {
       const v = factors[f];
@@ -300,8 +289,9 @@ function drawAkida() {
     if (i === 0) akCtx.moveTo(x, y); else akCtx.lineTo(x, y);
   }
   akCtx.stroke();
-  // threshold line
-  const thr = parseFloat(document.getElementById('threshold-slider').value);
+  // threshold line — read from current motivation feed (adaptive, anima 내부 자율)
+  const thrEl = document.getElementById('m-thr-val');
+  const thr = thrEl ? parseFloat(thrEl.textContent) : 0.30;
   akCtx.strokeStyle = '#ff8060';
   akCtx.setLineDash([4, 4]);
   akCtx.beginPath();
