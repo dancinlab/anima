@@ -1,19 +1,21 @@
 # EASY — V3 (PURE HEXAD substrate) 쉬운 설명
 
 > 2026-05-22 작성. ConsciousDecoderV3 pure HEXAD substrate path 의 saga.
-> 🔴 **2026-05-23 V3 PATH CLOSED** — 5 fire (attempt 1 + Phase 2 1·2차 +
-> B + A) 0 PASS. V3 multilingual = corpus-bound 최종 결론.
+> 🔴 **2026-05-23 V3 PATH CLOSED (corpus-axis 포함 완전)** — 7 fire (attempt 1
+> + Phase 2 1·2차 + B + A + E3 + E2) 0 PASS. V3 multilingual = corpus-bound
+> 최종 결론. corpus-axis sweep (E3 anima 0% / E2 anima 50%) 도 둘 다 FAIL.
 
 ---
 
 ## 한 줄 요약
 
 **LoRA path 의 "Qwen 위 옷" 한계** → anima 자체 substrate (ConsciousDecoderV3)
-from-scratch 학습. **5 fire 전부 FAIL (0 STRONG)** — A (Phase 2 full, 결정
-fire) 가 Phase 2 2차의 ko STRONG 19/20 재현 실패 (KO WEAK 1/20). V3
-multilingual blocker = capacity·arch 아닌 **diverse-corpus 학습 dynamics**
-(75 MB 의 70% anima 가 substrate 를 register memorization 으로 collapse).
-→ chat substrate = vP21M LoRA path 유지, V3 보류.
+from-scratch 학습. **7 fire 전부 FAIL (0 STRONG)** — A (Phase 2 full, 결정
+fire) 가 Phase 2 2차의 ko STRONG 19/20 재현 실패 (KO WEAK 1/20), 후속 corpus-
+axis fire (E3 anima 0% / E2 anima 50%) 도 둘 다 FAIL. V3 multilingual blocker
+= capacity·arch 아닌 **register collapse + Chinchilla under-budget 이중 구속**
+— anima 를 넣으면 register memorization, 빼면 multilingual underfit.
+→ chat substrate = vP21M LoRA path 유지, V3 보류. (detail: HEXAD_V3_FIRE § 9)
 
 ---
 

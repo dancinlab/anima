@@ -8,6 +8,13 @@
 >
 > anchor: closure 결정 fire 보고서 `../UNCLASSIFIED/state/grid_3b_s187_2026_05_21/HEXAD_V3_FIRE_2026_05_22.md` §8.
 
+> 🔴 **Track 1 RESOLVED 2026-05-23 — 본 map 발동(LIVE)**: corpus 재발사
+> E3(anima 0%) + E2(anima 50%) **둘 다 FAIL** — 어느 쪽도 ≥4/5 langs ≥
+> PARTIAL 미달. 결정 트리 (§ 결정 트리) 의 "둘 다 FAIL" 분기 확정 →
+> corpus 축 소진, **본 fallback map 이 V3 의 live path**. 다음 step =
+> B 증류 ∥ A 커리큘럼 ∥ C head_g objective 3-fire 병렬 fan-out
+> (~$11 H100, wall ~2hr). detail: 보고서 § 9.
+
 ## 왜 이 축들이 미탐색인가
 
 closure 가 sweep 한 R1~R7 은 전부 **무엇을(what)** 의 축이다 — scale,

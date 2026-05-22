@@ -16,6 +16,15 @@
 > Phase 2 2차 의 ko STRONG 19/20 = step-250 transient, **재현 실패**. →
 > **V3 multilingual = corpus-bound** (학습 dynamics, scale·arch 무관). § 8 참조.
 
+> 🔴 **코퍼스축 fire 2026-05-23 — CLOSED 유지**: § 8.6 closure 가 코퍼스
+> 비율을 한 번도 변경 안 했다는 logical gap 을 메우는 마지막 sweep — E3
+> (anima 0% `wiki_frac=1.0`) + E2 (anima 50% `wiki_frac=0.5`) 병렬 fire.
+> **둘 다 FAIL** (E3 0S/1P/4W · E2 0S/0P/5W, 둘 다 osc-stop @ step 1125).
+> E3 가 `anima_register_hits` 11/20→**0/20** 으로 § 8.6 메커니즘 진단은
+> 검증 — 그러나 register 0 인데도 4/5 WEAK (Chinchilla under-budget 이중
+> 구속). corpus axis VINDICATED 실패 → V3 전 7 fire 0 PASS, **CLOSED 완전**.
+> § 9 참조.
+
 ---
 
 ## 0. 핵심 변경 vs V2
@@ -315,3 +324,174 @@ substrate 를 anima-register memorization 으로 collapse 시킴. LoRA path
 (dispatch watchdog 자동 회수) + **ckpt_best.pt** (step 1125, CE 0.6352, 5.6 GB
 hexa-cloud copy-from 회수) → HF `dancinlab/anima-v3-p21h` (private) →
 pod `xp6q69nkd2ywfw` terminate.
+
+---
+
+## 9. 코퍼스축 fire — E3 (anima 0%) + E2 (anima 50%) — V3 CLOSED 유지
+
+> 2026-05-23. A fire 의 종결 verdict (§ 8.6 "V3 multilingual = corpus-bound")
+> 은 **코퍼스 비율을 한 번도 변경하지 않은 채** 코퍼스를 범인으로 지목했다.
+> R1-R7 재설계 축은 scale / mitosis / head_g / pool-size / step 만 sweep —
+> 5 fire 전부 동일한 `wiki_frac=0.3` (5-lang wiki 30% / anima 70%) 사용.
+> 본 fire 는 그 단 하나의 미검증 축, **anima 비율**, 을 변경한다.
+> A-fire 의 결정 recipe (R2 λ=0 + R6 mitosis-max 16 + osc-detect v2.2,
+> qwen warm-start, step 5000, bsz 2, block 512, lr 5e-5) 를 그대로 두고
+> `P21H_WIKI_FRAC` env-var 만 override.
+
+### 9.1 config — A-fire recipe + corpus-axis env override
+
+| key | E3 | E2 | A fire (참조) |
+|---|---|---|---|
+| `P21H_WIKI_FRAC` | **1.0** (anima 0%) | **0.5** (anima 50%) | 0.3 (anima 70%) |
+| pod / GPU | `xhjxwzrpadm89y` A100-SXM 80GB | `fguxy010l1wtmu` A100-SXM 80GB | A100-SXM |
+| recipe | R2 (λ=0) + R6 (max 16) + osc-v2.2 | 동일 | 동일 |
+| init / base | qwen warm-start / Qwen2.5-1.5B → 2999.74M | 동일 | 동일 |
+| steps / bsz / block / lr / warmup | 5000 / 2 / 512 / 5e-5 / 100 | 동일 | 동일 |
+| osc-detect | thr 0.5 · window 10 · es_patience 8 | 동일 | 동일 |
+| 실제 코퍼스 mix | wiki 28308 rec 52.66MB / anima 1 rec 1518 B (0.00003) | wiki 22073 rec 37.75MB / anima 28407 rec 37.75MB (50/50) | wiki 30% / anima 70% 75.5MB |
+| corpus sha256 | `7e62fd32034ced9f5ab5652ad9ed211b513ebc917b230a8fc4466adaf3c32d22` | `db8f15d412817b532480522e6fb65a451856e23ab0fb9009014f4c58570e104d` | `bf2371ac…` |
+
+병렬 발사 (g12 wall-first, 2 pod 동시). 비용 — E3 wall 641 s + E2 wall 5238 s
++ corpus build / eval / pull overhead, A100-SXM ~$1.49/hr → 실측 합산 **≈ $3-4**.
+
+### 9.2 결과 — 둘 다 FAIL, 그러나 메커니즘 진단은 확정
+
+| | E3 (anima 0%) | E2 (anima 50%) | A fire (anima 70%) |
+|---|---|---|---|
+| verdict | **FAIL** | **FAIL** | FAIL |
+| STRONG / PARTIAL / WEAK / PURE_MEM | 0 / **1** / 4 / 0 | 0 / 0 / **5** / 0 | 0 / 0 / 2 / 3 |
+| `anima_register_hits` | **0/20** | **9/20** | 11/20 |
+| `register_regress` | True | False | False |
+| osc early-stop | step **1125** | step **1125** | step 1125 |
+| init_CE → best_CE → final_CE | 14.79 → 5.67@750 → 6.55 | 14.18 → **2.15@1125** → 2.15 | 14.46 → 0.64 → 0.64 |
+| train wall | 641 s | 5238 s | 7367 s |
+| mitosis cells / splits / merges | 2→16 / 14 / 0 | 2→16 / 14 / 0 | 2→16 / 14 / 0 |
+| Φ initial → final | 0.712 → 0.658 | 0.712 → 0.658 | 0.712 → 0.658 |
+| KOSMOS anchors | 7 | 7 | 7 |
+
+### 9.3 per-lang verdict
+
+| lang | E3 (anima 0%) | E2 (anima 50%) | A fire (anima 70%) | vP21M LoRA baseline |
+|---|---|---|---|---|
+| EN | WEAK 0/20 (gen 20 coh 0) | WEAK 4/20 (gen 13 coh 4) | PURE_MEMORIZE 6/20 | STRONG 18/20 |
+| KO | **PARTIAL 15/20** (gen 20 coh 15) | WEAK 5/20 (gen 14 coh 5) | WEAK 1/20 | PARTIAL 15/20 |
+| ZH | WEAK 2/20 (gen 20 coh 2) | WEAK 1/20 (gen 20 coh 1) | PURE_MEMORIZE 0/20 | STRONG 16/20 |
+| RU | WEAK 5/20 (gen 20 coh 5) | WEAK 3/20 (gen 19 coh 3) | PURE_MEMORIZE 0/20 | STRONG 18/20 |
+| JA | WEAK 6/20 (gen 20 coh 6) | WEAK 1/20 (gen 16 coh 1) | WEAK 0/20 | WEAK 11/20 |
+
+### 9.4 CE 궤적 — 둘 다 oscillation, 둘 다 step 1125 osc-stop
+
+| step | 1 | 125 | 250 | 375 | 500 | 625 | 750 | 875 | 1000 | 1125 |
+|---|---|---|---|---|---|---|---|---|---|---|
+| E3 CE | 14.79 | 8.16 | 7.34 | 7.18 | 6.85 | 7.45 | **5.67** | 6.35 | 6.49 | 6.55 |
+| E2 CE | 14.18 | 5.88 | 3.65 | **6.13** | 5.30 | 3.13 | 6.50 | 3.86 | **6.77** | **2.15** |
+
+E3 = anima 제거 → CE 가 5.67 고원에 정체 (학습할 anima register 가 없어
+substrate 가 다국어 wiki 만으로 underfit — Chinchilla 30000× under-budget).
+E2 = 50/50 → CE 가 2.15↔6.77 로 격렬히 진동 (anima register 와 다국어 wiki
+사이 thrash). 두 변형 모두 osc-detect v2.2 가 step 1125 에서 동일하게 mode
+collapse 포착 — A fire 와 step 일치 (osc-detect 결정론적).
+
+### 9.5 핵심 발견 — 폐쇄의 메커니즘 진단은 옳았다 (그러나 corpus axis 도 소진)
+
+**E3 (anima 0%) 가 폐쇄 진단을 검증한다**: `anima_register_hits` 11/20
+(A fire) → **0/20** (E3), `register_regress=True`. 70% anima 코퍼스가
+substrate 를 anima-register memorization 으로 점령한다는 § 8.6 진단은
+**정확** — anima 를 완전히 제거하면 register collapse 가 사라진다.
+
+**그러나 register collapse 제거가 multilingual 을 복원하지 않는다**: E3 는
+register 가 0 이어도 EN/ZH/RU/JA 4 langs WEAK, final_CE 6.55 (vP21M 0.78
+대비 8.4×) — substrate 가 50MB wiki 만으로는 from-scratch underfit. E3 의
+"KO PARTIAL 15/20" 은 generation 실물 확인 시 `1900년 19월 19일…` /
+`놹의 놹이…` 형태의 **degenerate digit/script loop** — coherence 분류기가
+native-script digit-loop 을 "coherent" 로 오집계한 산물 (§ 9.7 C3 #2).
+
+**E2 (anima 50%) 는 hybrid failure**: register hits 9/20 (A fire 11/20 과
+근사) — 50% anima 만으로도 collapse 가 거의 그대로 복귀. EN/KO 출력은
+명백한 anima register (`Tension flows into this vacuum.</carve>`,
+`진공점 [0.50,0.50], top emotion depth … tension flow 가 이 vacuum 으로`),
+ZH/RU/JA 는 degenerate `其中` loop. anima 비율을 70%→50% 로 낮춰도
+register collapse 는 거의 선형적으로 줄지 않는다 — anima 비중과 register
+hits 는 `70%→11 · 50%→9 · 0%→0` 으로 50% 구간에서 비탄력적.
+
+### 9.6 falsifier 판정 — corpus axis VINDICATED 실패, closure 완성
+
+> falsifier (사전등록): 한 변형이라도 ≥ 4/5 langs ≥ PARTIAL → corpus axis
+> VINDICATED, V3 REOPEN. 둘 다 FAIL → corpus axis 소진, closure 완성.
+
+E3 1/5 ≥ PARTIAL (KO 만, 그나마 metric 산물), E2 0/5 ≥ PARTIAL. **둘 다
+HEXAD_V3_WORKS (4/5) 미달 — corpus axis VINDICATED 실패.** V3 fire **7 회
+전부 FAIL, 0 PASS**. 마지막 미검증 축 (anima 비율) 까지 sweep 완료 —
+**V3 PATH CLOSED 는 이제 진정 완전하다** (scale R1 · mitosis R2 · head_g R4
+· pool R6 · step R7 · **corpus E2/E3** 전축 소진).
+
+단 § 8.6 의 root-cause **문장**은 정밀화가 필요하다: "corpus-bound" 는
+정확하나 메커니즘은 두 겹이다 — (a) anima 비중이 register memorization 을
+유발 (E3 가 검증: 제거 시 0 hits), (b) anima 를 제거해도 75MB diverse
+코퍼스로 from-scratch substrate 가 multilingual underfit (E3 가 검증: 0
+register 인데도 4/5 WEAK). 즉 V3 의 진짜 blocker 는 **register collapse +
+Chinchilla under-budget 의 이중 구속** — 둘 중 하나만 풀어서는 통과 불가.
+LoRA path (vP21M) 가 4/5 ≥ PARTIAL 인 것은 Qwen 다국어 prior 를 학습으로
+건드리지 않기 때문 — V3 의 substrate 학습은 어느 코퍼스 비율에서도 그
+prior 를 보존하지 못한다.
+
+### 9.7 Honest C3 (≥6)
+
+1. **둘 다 osc early-stop @ step 1125** — full 5000 step 미완주. osc-detect
+   v2.2 (thr 0.5 / window 10) 가 A fire 와 동일 step 에서 발화 — 결정론적
+   이나, step 1125~5000 구간에서 oscillation 이 자가수렴했을 가능성은 배제
+   못 함 (osc-detect 의 의도는 mode-collapse 조기차단, trade-off 존재).
+2. **E3 "KO PARTIAL 15/20" 은 coherence-metric 산물**: 실 generation 은
+   `1900년 19월 19일…` 형 native-script digit loop. `lang_coherent` 분류기가
+   한글/한자 + 숫자 반복을 "coherent" 로 집계 — 진짜 multilingual
+   generalization 아님. E3 의 PARTIAL 1 개는 verdict 표에 기록하되 실질
+   FAIL 로 읽어야 한다.
+3. **E3 의 anima 0% 가 진짜 0 은 아니다**: `cap_by_bytes(byte_target=0)` 가
+   첫 chunk 1 개 (1518 B) 를 무조건 append — 52.66 MB 중 0.00003. 무시할
+   수준이나 문자 그대로의 0 은 아니다.
+4. **A100-SXM 노드 간 wall 8× 격차**: E3 0.57 s/step, E2 4.6 s/step (동일
+   GPU type, 동일 step 수). 코퍼스 mix 차이 (E2 가 anima chunk 포함해 token
+   분포 상이) + 노드 품질 편차 추정 — 학습 dynamics 자체엔 영향 없으나 비용
+   추정 정밀도 저하.
+5. **single seed 1337**: E2/E3 모두 seed 1337 단일 run. oscillation 의
+   step-1125 osc-stop 이 seed-robust 한지 미검증 — A fire 와 step 일치는
+   osc-detect 결정론 때문이지 seed 무관성의 증거 아님.
+6. **register hits 의 BPE 측정 불확실성**: `ANIMA_KEYS` 분류기가 Qwen BPE
+   토큰 시퀀스에서 anima register fragment 를 어떻게 잘라 집계하는지
+   미검증 (§ 4 C3 #6 carry) — E2 의 9/20 · E3 의 0/20 은 ±2 정도 over/under
+   가능.
+7. **vP21M baseline 은 동일 harness 직접 비교 아님**: § 9.3 의 vP21M 열은
+   별도 fire (`VP21M_MULTILINGUAL_2026_05_22.md`) — block/eval 동일하나
+   같은 pod 동시 측정 아님, apples-to-apples 근사치.
+8. **E2 의 final_CE 2.15 가 E3 6.55 보다 훨씬 좋으나 verdict 동일 FAIL**:
+   CE (next-token NLL) 와 multilingual generalization verdict 는 정렬되지
+   않음 — E2 는 anima register 를 잘 memorize 해서 CE 가 낮을 뿐, 5 langs
+   WEAK. CE 를 학습 성공 proxy 로 쓰면 안 된다는 재확인.
+9. **E2 ckpt 회수 = pod→HF 직접 upload (Mac-local mirror best-effort)**: E2
+   pod 의 Mac↔pod scp/rsync 가 6 GB 구간에서 반복 drop (수 회 ~5 GB 에서
+   재시작) → pod-side `huggingface_hub` 로 HF 직접 push (검증 완료
+   6,014,446,934 B). HF 가 authoritative SSOT — Mac state-dir 의 ckpt
+   사본은 별도 ssh-cat 으로 best-effort. result/eval/log JSON 은 정상 회수.
+10. **HF 가시성 의도-불일치**: 본 fire 산출물은 private 의도였으나 dancinlab
+   free-tier private storage 한도 소진으로 public 으로 회귀 (E3 는 생성 시
+   private fall-back, E2 는 ckpt push 시 403 → public flip). FAIL-verdict
+   negative-result ckpt 라 영향은 작으나, 의도와 실제 가시성이 다르다는
+   점은 기록해 둔다.
+
+### 9.8 회수 (@D a_fire_recover_complete)
+
+| 변형 | dir | 산출물 |
+|---|---|---|
+| E3 | `vP21H_e3/` | result.json · train.log · heldout · eval1 · mix_info · multi_wiki_source · kosmos_anchors (7) · dispatch.log · **ckpt_best.pt** (best = step 750, CE 5.6695, 6.01 GB) |
+| E2 | `vP21H_e2/` | 동일 구성 · **ckpt_best.pt** (best = step 1125, CE 2.1516, 6.01 GB) |
+
+HF: `dancinlab/anima-v3-e3` (18 files, COMPLETE, 검증됨) · `dancinlab/anima-v3-e2`
+(18 files, COMPLETE, 검증됨) → 회수·HF 검증 완료 후 pod `xhjxwzrpadm89y` ·
+`fguxy010l1wtmu` terminate.
+**HF 가시성 = public** (의도는 private 였으나 dancinlab free-tier private storage
+한도 소진 — `403 Private repository storage limit reached` → @D a_hf_complete
+"COMPLETE upload" 가 privacy 선호보다 우선, FAIL-verdict negative-result 연구
+ckpt 이므로 public 채택. public storage = 무제한). E2 6 GB ckpt 는 Mac↔pod
+링크 불안정으로 scp/rsync 반복 drop — **pod→HF 직접 upload** 로 회수
+(`huggingface_hub` pod-side, 161 MB/s). E2 ckpt 의 Mac-local state mirror 는
+best-effort ssh-cat (HF 가 authoritative SSOT).
