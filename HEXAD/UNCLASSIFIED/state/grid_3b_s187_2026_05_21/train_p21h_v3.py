@@ -236,7 +236,8 @@ def run(cfg):
         n_head=cfg.get("n_head", 12),
         n_kv_head=cfg.get("n_kv_head", 4),
     )
-    pool = CellPool(d_model=model.d_model, initial_cells=2, seed=cfg["seed"])
+    pool = CellPool(d_model=model.d_model, initial_cells=2, seed=cfg["seed"],
+                    max_cells=int(cfg.get("mitosis_max", 128) or 128))
     model.attach_mitosis(pool, lambda_mitosis=cfg["lambda_mitosis"])
 
     n_total = sum(p.numel() for p in model.parameters())
@@ -376,14 +377,15 @@ def run(cfg):
                 _save_ckpt("best", step + 1, ce_now)
             else:
                 no_improve_count += 1
-            # CE oscillation detection (rolling std)
-            if osc_thr > 0.0 and len(ce_history) == osc_win:
+            # CE oscillation detection (rolling std) — fix v2.1: trigger on min(3, osc_win) entries
+            # not 정확히 osc_win, so 빨리 발화 (Phase 2 saga: window=10 with 8 entries 까지 fill 대기 → 발화 못함)
+            if osc_thr > 0.0 and len(ce_history) >= min(3, max(2, osc_win // 2)):
                 import statistics
                 cur_std = statistics.pstdev(ce_history)
                 if cur_std > osc_thr:
                     _save_ckpt(f"osc_step{step+1}", step + 1, ce_now)
                     early_stopped = True
-                    early_stop_reason = f"CE oscillation std={cur_std:.4f}>{osc_thr} over last {osc_win} log entries"
+                    early_stop_reason = f"CE oscillation std={cur_std:.4f}>{osc_thr} over last {len(ce_history)} log entries (target_win={osc_win})"
                     print(f"[P21H] EARLY STOP: {early_stop_reason}", flush=True)
             # plateau / no-improve early stop
             if es_patience > 0 and no_improve_count >= es_patience:
