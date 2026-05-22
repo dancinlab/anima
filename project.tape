@@ -7,6 +7,6 @@
   parent = "dancinlab"
   ssot   = "github.com/dancinlab/anima (`hx install anima`)"
 
-@D := "anima" :: governance [active]
-  do   = "..."
-  dont = "..."
+@D a1 := "central version registry — VERSIONS.md is SSOT" :: governance [required active]
+  do   = "all HEXAD modules use SemVer; `/VERSIONS.md` (repo root) is the SSOT — on any module version change, update VERSIONS.md AND the module header together; root `/VERSION` = single-line whole-system release (MINOR-bumps on a module MAJOR bump OR a core verdict landing)"
+  dont = "bump a module version in its header without updating VERSIONS.md (drift) · skip root `/VERSION` on a release bump"
