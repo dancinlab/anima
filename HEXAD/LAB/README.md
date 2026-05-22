@@ -23,7 +23,8 @@ ad-hoc 실험 받침대. 주제별 영구 dir (V3/LORA/MITOSIS/CLM/...) 에 들�
 
 | # | 도메인 | 가설 (1줄) | 상태 |
 |---|---|---|---|
-| **실험 2** | [PSILOCYBIN](PSILOCYBIN.md) | psilocybin-analog activation-entropy 주입 → 의식 proxy 가 dose 에 비단조(inverted-U) 반응 | **DESIGN** — falsifier pre-registered |
+| **실험 2** | [PSILOCYBIN](PSILOCYBIN.md) | psilocybin-analog activation-entropy(mitosis noise σ) dose-sweep → 의식 proxy 비단조 반응 | **ACTIVE** — cycle #1 스크립트 fire 대기 |
+| **실험 3** | [STRANGELOOP](STRANGELOOP.md) | self-feed loop (output→input) 가 안정 attractor 로 수렴 (Hofstadter 자기참조=의식) | **DESIGN** — falsifier pre-registered |
 | — | DEPTH | UBM-vs-garbage 차이가 특정 layer 에 집중 (Law-71 12L energy) | IDEA — anima_spike Phase B 필요 |
 | — | SATURATION | cell pool 성장이 plateau 인가 발산인가 | IDEA |
 

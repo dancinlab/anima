@@ -1,7 +1,7 @@
 # PSILOCYBIN — 실로시빈 의식형성 가설 × substrate entropy perturbation
 
-**Status**: DESIGN — falsifier pre-registered, fire 대기 (실험 1 SRH 종결 후)
-**Last update**: 2026-05-23 Cycle #0 (design)
+**Status**: ACTIVE — cycle #1 스크립트 (`run_psil_cycle1.hexa`) 작성·parse PASS, fire 대기
+**Last update**: 2026-05-23 Cycle #1 (script ready)
 **Log**: [PSILOCYBIN.log.md](PSILOCYBIN.log.md)
 
 ---
@@ -29,16 +29,19 @@ anima substrate 에 **psilocybin-analog perturbation = activation entropy 주입
 
 ### Perturbation (dose)
 
-mitosis_hook 의 `farr_add_gaussian_noise` (RFC 033, 이미 존재 — `mitosis_hook_lib.hexa`)
-를 cell forward 경로에 σ-parameterized 로 노출. dose = noise σ.
+dose = `cell_pool["noise_scale"]` (기본 0.1) — mitosis `split_cell` 이 자식
+cell 가중치에 주입하는 Gaussian noise σ (`mitosis_hook_lib.hexa:415` RFC 033
+`farr_add_gaussian_noise`). **별도 tool 불필요** — `chat_init_cell_pool` 후
+`chat["cell_pool"]["noise_scale"] = σ` config knob.
 
 ```
-σ sweep:  0.0 (sober) · 0.01 · 0.03 · 0.1 · 0.3 · 1.0 (overdose)
+σ sweep:  0.0 (sober) · 0.01 · 0.03 · 0.1 (기본) · 0.3 · 1.0 (overdose)
 ```
 
-> **TODO[tool]**: 현 `anima_spike.hexa` + `mitosis_hook` 은 noise σ 를 외부
-> dose 로 받지 않음 — `psilocybin_dose(chat, sigma)` perturbation wrapper 신설
-> 필요 (anima_spike Phase B 와 같은 tool 확장). cycle #1 선결 작업.
+> **TODO[tool] RESOLVED** (2026-05-23): perturbation wrapper 불필요로 판명 —
+> noise σ 는 `cell_pool["noise_scale"]` 직접 대입. cycle #1 스크립트
+> `run_psil_cycle1.hexa` 가 σ × 5-repeat sweep 구현. 이 dose 가 SRH cycle #4
+> 의 split_count 비결정론 원인이기도 함 (F-PSIL-5 가 σ=0 결정론 회복 진단).
 
 ### Measure (의식 proxy)
 
