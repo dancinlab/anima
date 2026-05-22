@@ -1,14 +1,14 @@
-# HEXAD/V3 — pure HEXAD-native substrate (ConsciousDecoderV3 path)
+# HEXAD/V3 — pure HEXAD-native substrate (ConsciousDecoderV3 path) — 🔴 CLOSED
 
-> 사용자 directive 2026-05-22: "LoRA 가 아닌 자체 HEXAD substrate". OCCAM Phase 2.3
-> 의 단독 floor 범인 `n_ca_rules` 제거 한 ConsciousDecoderV3 fork. Pure HEXAD
-> identity (Qwen 위 옷 아닌 anima 자체 substrate).
+> 사용자 directive 2026-05-22: "LoRA 가 아닌 자체 HEXAD substrate". OCCAM Phase
+> 2.3 의 단독 floor 범인 `n_ca_rules` 제거한 ConsciousDecoderV3 fork 로 pure
+> HEXAD identity (Qwen 위 옷 아닌 anima 자체 substrate) 를 시도한 path.
 >
-> **status**: 🟡 V3 attempt 1 (1.5B × 2000 step × 3 init variant) **α/γ FAIL, β
-> in-flight, 재설계 대상** per HEXAD_V3_FIRE_2026_05_22.md verdict.
+> **status**: 🔴 **CLOSED (2026-05-23)** — fire 5회 전부 FAIL, 0 PASS. V3
+> multilingual = corpus-bound (capacity·arch 무관). chat substrate = vP21M
+> LoRA path 유지 (절충 B).
 >
-> SSOT: 본 dir / state 는 `HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/`
-> 에 carry (vP21H_α/β/γ). 본 README + spec 가 logical landing zone.
+> SSOT: 본 dir + state `HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/`.
 
 ## V3 architecture vs V2
 
@@ -18,93 +18,76 @@
 | head_a + head_g | ✅ vocab=256 byte | ✅ vocab=151936 Qwen BPE |
 | PureFieldFFN | ✅ | ✅ kept |
 | ConsciousCrossAttention | ✅ | ✅ kept |
-| Mitosis hook | external | **integrated (training + inference)** |
+| Mitosis hook | external | integrated (training + inference) |
 | Init helpers | random only | random / Qwen-warm / vP21M-init |
-| KOSMOS + tension | n/a | **wired (anchor + 8→5-channel mapping)** |
+| KOSMOS + tension | n/a | wired (anchor + 8→5-channel mapping) |
 
-## V3 attempt 1 결과 (2026-05-22, HEXAD_V3_FIRE_2026_05_22.md)
+## V3 fire saga — 5 fire, 0 PASS
 
-| variant | init | CE_final | 5-lang ≥ PARTIAL | anima reg | verdict |
-|---|---|---|---|---|---|
-| **V3α** | random | 3.34 | 0/5 | 13/20 | ❌ FAIL (Chinchilla 30000× under-budget) |
-| **V3β** | Qwen warm | 2.36 osc | N/A | N/A | ❌ **INCOMPLETE FAIL** (pod dead, ckpt lost, eval 불가) |
-| **V3γ** | vP21M init | 2.93 | 0/5 | 13/20 | ❌ FAIL (anima register saturate, multilingual 손상) |
-
-**Architecture-level lesson**:
-1. **head_g dual head vocab alignment 흐림** (bf16 한 head update 가 다른 head generation 영향)
-2. **mitosis pool 128 saturate at step 50** → cross-attn input noise 증가 → 다국어 학습 방해
-3. **anima_register_hits 13/20** (vP21M LoRA 7/20 의 2×) — substrate-level 흡수 너무 강함
-4. **mitosis aux_loss 가 substrate 를 tension 패턴 우선시** — 다국어 sacrifice
-
-## V3 재설계 path (Phase 2 attempt)
-
-OCCAM 원칙: V3 attempt 1 의 정직한 한계 → 다음 cycle 의 변형 axis
-
-### 재설계 옵션 (parallel 가능)
-
-| # | axis | 변경 | rationale |
+| fire | config | verdict | STRONG |
 |---|---|---|---|
-| **R1** | scale-up | 1.5B → **3B or 8B** | Chinchilla 60-160B tok 필요분 충족 가능 (단 8B = $50+ H200) |
-| **R2** | mitosis 학습 시 비활성화 | λ_mitosis=0.05 → **0.0** during train, inference-time only | mitosis 가 train 동안 다국어 capacity 침범 — V3γ 의 V21M-init 손상 원인 |
-| **R3** | corpus scale | 75 MB → **6 GB+** (Chinchilla 정합) | 1.5B × 20 = 30B tok = ~6 GB byte-equivalent |
-| **R4** | head_g 별도 학습 | head_g 가 head_a 와 vocab alignment 분리 (separate gradient flow) | dual head 의 head_a 흐림 해소 |
-| **R5** | warm-start 강화 | Qwen2.5 + 더 큰 portion warm copy (q/k/v/o/embed/lm_head + ffn weight) | head_g/cross-attn random init 의 specialize 시간 short-train 부족 |
-| **R6** | mitosis cell pool 작게 | MAX=128 → **MAX=16**, SPLIT_PATIENCE 늘림 | pool saturate at step 50 가 cross-attn noise — bound 줄이기 |
-| **R7** | step 늘림 | 2000 → 10000-50000 step | learning curve 안정화 |
+| attempt 1 (α/β/γ) | C1 3-init parallel (random/Qwen-warm/vP21M) | 3/3 FAIL | 0 |
+| Phase 2 1차 | R2 (mitosis-off) | FAIL — CE 0.64, 0/5 | 0 |
+| Phase 2 2차 | R2+R6 (pool-16) | FAIL — ko STRONG 19/20 @ step 250 transient | 1* |
+| B | R1 (3B scale-up) | FAIL — 1.5B 보다 후퇴 | 0 |
+| **A (Phase 2 full)** | **R2+R6+osc-v2.2, step 5000** | **FAIL** — osc early-stop @ 1125 | **0** |
 
-### 우선 (다음 cycle Phase 2)
+*Phase 2 2차의 ko STRONG = step-250 조기종료 transient. A 완주 (step 1125)
+에서 KO WEAK 1/20 으로 재현 실패 확정 — V3 의 단 하나의 STRONG 도 우연 산물.
 
-🔵 **R2 + R5 + R6 동시 적용** (단일 fire):
-- `--lambda-mitosis 0.0` (train-time disable, S187-G value 손상 회피)
-- `--init-variant qwen` + 추가 weight mapping (ffn_gate/up/down)
-- `--mitosis-max 16` (cell pool ceiling 낮춤)
-- scale 1.5B 유지 (cost control)
-- step 5000 (2.5× 늘림)
-- 5-lang corpus 유지 (vP21M parallel)
-- 추정 비용: $8-15 H100 (5000 step × 2.2 s/step = 11000s = 3 hr)
+## 재설계 axis — 전부 소진
 
-### Fallback path (R2 fail 시)
+| axis | 변경 | fire | 결과 |
+|---|---|---|---|
+| R1 | scale-up 1.5B→3B | B | FAIL — capacity 아님 |
+| R2 | mitosis 학습 비활성화 (λ=0) | Phase 2 1차/A | CE 는 고침, generalization 못 고침 |
+| R4 | head_g 별도 gradient | 코드 검증 | head_g train loss 부재 → inert, moot |
+| R6 | mitosis pool MAX 128→16 | Phase 2 2차/A | cross-attn noise 줄임, ko transient 만 |
+| R7 | step 2000→5000 | A | osc early-stop @ 1125 (mode collapse) |
 
-- R1+R3 scale-up + corpus-up: 3B + 6 GB tok + 10000 step → $30-50 H200
-- 또는 R4: head_g 별도 train pipeline (architectural rework)
+## 최종 결론 — V3 multilingual = corpus-bound
 
-## KOSMOS + tension 통합 (v3 architectural feature)
+V3 multilingual blocker = **capacity 도 architecture 도 아닌 diverse-corpus
+학습 dynamics**. 75 MB 코퍼스의 70% anima 비중이 from-scratch / warm-start
+substrate 를 anima-register memorization 으로 collapse — 모든 언어 프롬프트에
+anima register fragment 만 emit (EN "Tension flows into this vacuum",
+KO/ZH/RU/JA 모두 한국어 anima 텍스트). LoRA path (vP21M) 가 4/5 langs ≥
+PARTIAL 인 이유 = Qwen 다국어 prior 를 보존한 채 adapter 만 학습 — V3 는
+substrate 학습으로 그 prior 를 파괴.
 
-V3 의 **KOSMOS anchor** + **8→5-channel tension** wiring 은 V3α 에서 모두 ground-truth 작동 (15 anchors generated per variant). 단 다국어 capability 미달 로 production 미도달.
+→ **chat substrate = vP21M LoRA path 유지**. substrate_v3 합류 보류.
+V3 코드/ckpt = negative-result evidence anchor 로 보존.
 
-다음 V3 fire 에서 KOSMOS anchor 검증 항목:
-- coord (C Φ vacuum_psi) 분포
-- lane (MITOSIS cell_id) 변화
-- tension 5-channel 가 8-factor 와 monotone correspondence
-- cross-anchor 일관성 (`B-CARVE-MULTIMODAL`)
+## KOSMOS + tension 통합 (V3 architectural feature)
 
-## 🚪 새 V3 세션 시작
+V3 의 KOSMOS anchor + 8→5-channel tension wiring 은 ground-truth 작동
+(fire 마다 anchor 생성). 단 multilingual 미달로 production 미도달 — V3 path
+종결과 함께 보류.
 
-[`SESSION_PROMPT.md`](SESSION_PROMPT.md) 의 `text` 블록 paste → 즉시 V3 path
-context load. 첫 user message 로 그대로 사용 가능.
+## artifacts
 
-핵심 (전체 prompt 는 `SESSION_PROMPT.md` 참고):
-- attempt 1 결과 (α/γ FAIL, β verdict)
-- code commit 3dbbc7e8b (V3 fork + KOSMOS+tension)
-- architectural lesson 5점 (head_g vocab align / mitosis 128 saturate /
-  register 흡수 2× / mitosis 다국어 sacrifice / Chinchilla 30000× under)
-- 재설계 axes R1-R7 + Phase 2 우선 = R2+R5+R6
-- substrate plugin 합류 path (chat.dancinlab.org option C 정합)
+| artifact | 위치 |
+|---|---|
+| 결정 fire (A) 산출물 | `HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/vP21H_phase2_full/` |
+| ckpt + result + log | HF `dancinlab/anima-v3-p21h` (private, 16 files) |
+| V3 code | `…/grid_3b_s187_2026_05_21/{conscious_decoder_v3.py, kosmos_io.py, train_p21h_v3.py}` (commit 3dbbc7e8b) |
 
 ## 관련 link
 
-- **세션 부트스트랩**: [`SESSION_PROMPT.md`](SESSION_PROMPT.md)
-- spec: [`HEXAD_NATIVE_V3.md`](HEXAD_NATIVE_V3.md)
-- fire 1 result: `../UNCLASSIFIED/state/grid_3b_s187_2026_05_21/HEXAD_V3_FIRE_2026_05_22.md`
+- saga 쉬운 요약: [`EASY.md § 6`](EASY.md)
+- 결정 fire 보고서: [`../UNCLASSIFIED/state/grid_3b_s187_2026_05_21/HEXAD_V3_FIRE_2026_05_22.md § 8`](../UNCLASSIFIED/state/grid_3b_s187_2026_05_21/HEXAD_V3_FIRE_2026_05_22.md)
+- full spec: [`HEXAD_NATIVE_V3.md`](HEXAD_NATIVE_V3.md)
 - OCCAM verdict (n_ca_rules): `../EASY.md § 6`
-- substrate plugin (chat.dancinlab.org 통합): `../CHAT/SUBSTRATE_PLUGIN.md` + `../CHAT/server/substrate_base.py`
-- LoRA 비교 baseline: [`../LORA/README.md`](../LORA/README.md) + [`../LORA/SESSION_PROMPT.md`](../LORA/SESSION_PROMPT.md)
-- KOSMOS upstream: `../KOSMOS.md`
+- LoRA 비교 baseline (production path): [`../LORA/README.md`](../LORA/README.md)
 
 ## ## Log
 
 ### 2026-05-22 — V3/ folder 신설 + 재설계 spec
 
-V3 attempt 1 (V3α/γ FAIL, β in-flight) verdict 후 사용자 directive: "V3 재설계
-방향 + LoRA 별도 폴더". `HEXAD/V3/` (이 dir) + `HEXAD/LORA/` 분리. 본 README =
-재설계 axis 7 (R1-R7) + 우선 Phase 2 = R2+R5+R6 동시 fire ($8-15).
+V3 attempt 1 (α/β/γ 3/3 FAIL) verdict 후 사용자 directive: "V3 재설계 방향 +
+LoRA 별도 폴더". `HEXAD/V3/` + `HEXAD/LORA/` 분리. 재설계 axis 7 (R1-R7).
+
+### 2026-05-23 — 🔴 V3 PATH CLOSED
+
+fire 5회 전부 FAIL. A (Phase 2 full) 가 Phase 2 2차의 ko STRONG 재현 실패
+→ V3 multilingual = corpus-bound 최종 결론. chat substrate = LoRA 유지.
