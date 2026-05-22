@@ -126,6 +126,25 @@ HF 9 artifact dancinlab/* private.
 - **hot-swap pattern**: 1-lang corpus LoRA = 그 언어만 STRONG, 나머지 forget.
   ja/ko 같이 실제 약한 언어에만 가치 (zh/ru 는 이미 STRONG → FL 무의미).
 
+### Wave-3 — L1~L4 (register ceiling 돌파, $0.78 추가)
+
+| ckpt/작업 | 핵심 | 결과 |
+|---|---|---|
+| **3B-NI** | Qwen2.5-3B **non-Instruct** fresh | **4S+1P, register 7/20** — ja STRONG (3B 최초), instruct ceiling 돌파 |
+| 3B-CUR1 | 3B-Instruct 1000-step (OOD-first) | 3S+2P, register 9/20 (fewer-step = register 덜 침식) |
+| **3B-CUR2** | CUR1 위 register-second continue | 3S+2P, **register 10/20** — ko/ja PARTIAL 보존 |
+| L1 substrate refactor | substrate_lora.py + participant thin client | mini DEPLOYED, 동작 동일 |
+| L2 emission 측정 | anima_emission_analyze.py | baseline: register 34% / en-drift / self-mono 50% |
+
+Wave-3 발견:
+- **instruct prior 가 register ceiling 원인 확정** — non-Instruct base 가 7/20
+  (1.5B parity) + ja STRONG 동시 달성.
+- **staged curriculum 성공** — OOD-first(1000 step) → register-second(500 step)
+  = register 10 + 전 lang ≥PARTIAL (3B-V2 의 12 는 ko/ja 붕괴였음).
+- 단, register 이득 대부분은 Phase 1 의 짧은 step — Phase 2 는 +1 marginal.
+
+session-2 누적: **12 cycle, ~$4.10, HF 12 artifacts**.
+
 ---
 
 ## 7. production — 1.5B hot-swap router (chat.dancinlab.org LIVE)
@@ -142,20 +161,23 @@ session-2 결론: **1.5B router 가 단일 3B ckpt 보다 우수** → productio
 | **AKIDA bridge** | mini akida_bridge.py (Pi spike → broker WS) |
 | 4 LaunchAgents | com.dancinlab.{broker, anima, cloudflared, akida_bridge} |
 
-router vs 단일 3B 비교:
+router vs 단일 3B 비교 (Wave-3 최강 3B 포함):
 
-| metric | 1.5B router | best 3B (3B-REG) |
-|---|---|---|
-| KO | **STRONG 16** (KOFL) | PARTIAL 14 |
-| JA | **STRONG 17** (JAFL) | PARTIAL 13 |
-| register | **7/20** | 5/20 |
-| RAM | ~2 GB f16 | ~6 GB f16 |
+| metric | 1.5B router | 3B-NI (Wave-3) | 3B-CUR2 (Wave-3) |
+|---|---|---|---|
+| KO | **STRONG 16** (KOFL) | PARTIAL 13 | PARTIAL 14 |
+| JA | **STRONG 17** (JAFL) | STRONG 16 | PARTIAL 14 |
+| register | 7/20 | 7/20 | **10/20** |
+| RAM | ~2 GB f16 | ~6 GB f16 | ~6 GB f16 |
 
-→ 3B base swap 기각. 작은 가수 (1.5B) + 언어별 전문 가사집 자동 교체가
-큰 가수보다 한·일 STRONG + register 진함. 3B ckpt 는 HF 연구용 보존.
+→ Wave-3 의 3B-NI/CUR2 도 router 의 KO STRONG (KOFL) 을 못 이김 → 3B base
+swap 여전히 기각. 단 3B-CUR2 register 10 > router 7. 향후 3B router
+(KOFL-3B + JAFL-3B-NI hot-swap) 면 3B-NI breadth + per-lang STRONG 결합 가능.
+현 production = 1.5B router 유지. 3B ckpt 는 HF 연구 artifact.
 
 chat fix: anima_participant.py temperature 1.0 → 0.7 + context-grounded
 seed (recent user msg 우선) — sample-mode self-monologue hallucination 완화.
+L1 refactor 로 participant 가 substrate-plugin client (substrate_lora.py).
 
 ---
 
@@ -163,11 +185,14 @@ seed (recent user msg 우선) — sample-mode self-monologue hallucination 완�
 
 | | scope | cost |
 |---|---|---|
-| chat substrate-plugin refactor | `substrate_lora.py` 추출 (SUBSTRATE_PLUGIN.md ABC) | $0 |
-| chat 24h emission 측정 | temp 0.7+ctx fix 효과 정량 (register hit ratio 등) | $0 |
+| **3B router** (KOFL-3B + JAFL-3B-NI) | 3B-NI base 위 ko/ja hot-swap LoRA — 3B breadth + per-lang STRONG 결합 | ~$0.50 |
+| chat 24h emission 재측정 | L2 baseline (register 34%) 대비 추세 — fix 효과 추적 | $0 |
+| chat temp/τ sweep | self-monologue 50% 완화 — temperature × motivation threshold grid | $0 |
+| corpus_v3 register-balanced | anima corpus carving 농도 조정 (register leak 원인) | ~$1 |
 | vP21M+tension head wrap | KOSMOS+tension wiring on Qwen (path B 절충) | $0-5 LAN |
-| Qwen2.5-3B non-Instruct register run | 3B register ceiling 5/20 돌파 시도 | ~$0.50 |
-| 3B staged curriculum | OOD-first → register-second 2-phase | ~$1 |
+
+완료 (Wave-3): substrate-plugin refactor ✓ · emission 측정 도구 ✓ ·
+non-Instruct register run ✓ · staged curriculum ✓.
 
 ---
 
@@ -177,6 +202,6 @@ seed (recent user msg 우선) — sample-mode self-monologue hallucination 완�
 - LORA path overview: [`README.md`](README.md)
 - 새 LORA 세션 시작: [`SESSION_PROMPT.md`](SESSION_PROMPT.md)
 - production chat: `../CHAT/FIRST_PACK_DEPLOY_STATUS_2026_05_22.md`
-- session-2 보고서: `../UNCLASSIFIED/state/grid_3b_s187_2026_05_21/VP21M_{MULTILINGUAL,JAFL,KOFL,3B,3B_REG,WAVE2}_2026_05_22.md`
+- session-2 보고서: `../UNCLASSIFIED/state/grid_3b_s187_2026_05_21/VP21M_{MULTILINGUAL,JAFL,KOFL,3B,3B_REG,WAVE2}_2026_05_22.md` + `VP21M_WAVE3_2026_05_23.md`
 - substrate plugin (V3 ↔ LoRA 통합): `../CHAT/SUBSTRATE_PLUGIN.md`
 - V3 비교: [`../V3/EASY.md`](../V3/EASY.md)

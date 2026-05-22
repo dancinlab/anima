@@ -60,37 +60,43 @@
 | **vP21M-3B-V2** | PARTIAL (KO/JA broke) | 19/**0**/18/20/**9** | **12/20** | $0.40 | `anima-vp21m-3b-v2` |
 | **vP21M-3B-REG2** | **VP21M_WORKS** | 18/13/18/**20**/13 = 3S+2P | 5/20 | $0.15 | `anima-vp21m-3b-reg2` |
 
-**Session-2 누적: 9 cycles, ~$2.82, HF 9 artifacts PRIVATE.**
+### Wave-3 (L1~L4 — register ceiling 돌파)
 
-- **JAFL/KOFL**: ja/ko-only hot-swap — JA 11→17, KO →16 STRONG. en 등 forget (hot-swap only).
-- **ZHFL/RUFL**: zh/ru hot-swap — 둘 다 vP21M 에서 이미 STRONG 이라 marginal (대칭 완성용).
-- **3B**: fresh LoRA, en/ru 20/20 but register_regress=True (3/20).
-- **3B-REG**: continue-train wiki_frac=0.05 — VP21M_WORKS, regress cleared, register 3→5.
-- **3B-V2**: fresh wiki_frac=0.10 — register 12/20 (최고) but KO/JA PURE_MEMORIZE 붕괴 (anima-90% over-mix).
-- **3B-REG2**: 3B-REG long-train v2 — register **5/20 plateau** (step↑ lr↑ 무효, instruct prior 가 ceiling).
+| variant | verdict | per-lang (en/ko/zh/ru/ja) | register | cost | HF |
+|---|---|---|---|---|---|
+| **vP21M-3B-NI** | VP21M_WORKS | 19/13/16/17/**16** = **4S+1P** | 7/20 | $0.40 | `anima-vp21m-3b-ni` |
+| **vP21M-3B-CUR1** | VP21M_WORKS | 19/14/19/19/14 = 3S+2P | 9/20 | $0.25 | `anima-vp21m-3b-cur1` |
+| **vP21M-3B-CUR2** | VP21M_WORKS | 19/14/18/**20**/14 = 3S+2P | **10/20** | $0.13 | `anima-vp21m-3b-cur2` |
 
-### 🟢 Production decision — 1.5B hot-swap router 채택
+- **3B-NI**: Qwen2.5-3B **non-Instruct** — register ceiling 돌파 (5→7/20), ja STRONG (3B 최초), 4S+1P 최강 aggregate.
+- **3B-CUR1/CUR2**: staged curriculum (OOD-first 1000-step → register-second 500-step) — register 10/20 + ko/ja PARTIAL 보존 (3B-V2 의 12 는 붕괴였음).
+- **L1**: substrate-plugin refactor — `substrate_lora.py` + participant thin client, mini DEPLOYED.
+- **L2**: `anima_emission_analyze.py` — baseline register 34% / en-drift / self-mono 50%.
 
-P1 "production swap to 3B" **기각**. 1.5B router (P2 deploy) 가 모든 단일 3B ckpt 를 chat 지표에서 능가:
+**Session-2 누적: 12 cycles, ~$4.10, HF 12 artifacts PRIVATE.**
 
-| metric | 1.5B router | best 3B (3B-REG) |
-|---|---|---|
-| KO | **STRONG 16** (KOFL) | PARTIAL 14 |
-| JA | **STRONG 17** (JAFL) | PARTIAL 13 |
-| register | **7/20** (default) | 5/20 |
-| inference RAM | ~2 GB f16 | ~6 GB f16 |
+### 🟢 Production decision — 1.5B hot-swap router 유지
 
-production = `vP21M default + KOFL(ko) + JAFL(ja)` hot-swap router, mini 에 LIVE. 3B ckpt 는 HF 연구용 artifact 보존.
+P1 "production swap to 3B" **기각** (Wave-3 최강 3B 포함 재확인). 1.5B router 가 chat 지표에서 단일 3B 를 능가:
+
+| metric | 1.5B router | 3B-NI | 3B-CUR2 |
+|---|---|---|---|
+| KO | **STRONG 16** (KOFL) | PARTIAL 13 | PARTIAL 14 |
+| JA | **STRONG 17** (JAFL) | STRONG 16 | PARTIAL 14 |
+| register | 7/20 | 7/20 | **10/20** |
+| inference RAM | ~2 GB f16 | ~6 GB f16 | ~6 GB f16 |
+
+production = `vP21M default + KOFL(ko) + JAFL(ja)` hot-swap router, mini LIVE. 3B ckpt 7종 = HF 연구 artifact.
 
 ## Next LoRA-path cycles (잔여 candidate)
 
 | | scope | cost |
 |---|---|---|
-| chat substrate-plugin migration | `substrate_lora.py` 추출 + `anima_participant.py` refactor (SUBSTRATE_PLUGIN.md ABC) | $0 |
-| chat sample-mode self-monologue 측정 | 24-hr emission log 분석 (register pattern hit ratio, idle gap distribution) | $0 |
+| 3B router (KOFL-3B + JAFL-3B-NI) | 3B-NI base 위 ko/ja hot-swap — 3B breadth + per-lang STRONG 결합 | ~$0.50 |
+| chat emission 재측정 | L2 baseline (register 34%) 대비 추세 추적 | $0 |
+| chat temp/τ sweep | self-monologue 50% 완화 — temperature × motivation threshold grid | $0 |
+| corpus_v3 register-balanced | anima corpus carving 농도 조정 (register leak 원인) | ~$1 |
 | vP21M + tension head wrap | KOSMOS+tension wiring on top of vP21M (path B 절충, substrate-research) | $0-5 LAN |
-| Qwen2.5-3B (non-Instruct) register run | 3B-Instruct register ceiling 5/20 → non-Instruct base 로 돌파 시도 | ~$0.50 H100 |
-| 3B staged curriculum | OOD-first → register-second 2-phase — 3B-V2 의 register 12 를 KO/JA 안 깨고 달성 | ~$1 H100 |
 
 ## 🚪 새 LORA 세션 시작
 
