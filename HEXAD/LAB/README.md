@@ -21,22 +21,63 @@ ad-hoc 실험 받침대. 주제별 영구 dir (V3/LORA/MITOSIS/CLM/...) 에 들�
 
 ```
 HEXAD/LAB/
-  README.md                              ← this file
-  state/<exp_slug>_YYYY_MM_DD/           ← 실험 인스턴스 (소문자 + 날짜 suffix; HEXAD/<DIR>/state/ 와 동일 grain)
-    ckpts/                               ← 산출 ckpt (size 클 시 HF dancinlife/* private)
-    *.log                                ← train.log / sweep.log
-    result.json                          ← falsifier verdict JSON
-    dispatch_*.sh                        ← runpod / vast.ai fire script
-  docs/<exp_slug>_YYYY_MM_DD.md          ← 8-§ 표준 + honest C3 list (필요시)
-  tool/                                  ← LAB-scoped helper (영구화시 ROOT/tool/ 이동)
+  README.md                                  ← this file
+  <DOMAIN>.md                                ← 도메인 최종 확정 스펙 SSOT (latest only, overwrite)
+  <DOMAIN>.log.md                            ← 도메인 사이클 히스토리 (append-only chronological)
+  state/<DOMAIN>_<slug>_YYYY_MM_DD/          ← 실험 instance artifacts (cycle 단위)
+    ckpts/                                   ← 산출 ckpt (size 클 시 HF dancinlife/* private)
+    *.log                                    ← train.log / sweep.log
+    result.json                              ← falsifier verdict JSON
+    dispatch_*.sh                            ← runpod / vast.ai fire script
+  docs/<exp_slug>_YYYY_MM_DD.md              ← 보조 long-form 문서 (8-§ design, debug notes — 필요시)
+  tool/<primitive>.hexa                      ← LAB-scoped helper (영구화시 ROOT/tool/ 이동)
 ```
+
+## Domain 문서 컨벤션 — `<DOMAIN>.md` + `<DOMAIN>.log.md`
+
+각 실험 **도메인** (가설 단위) = 1 쌍의 spec + log. 도메인 이름은 짧은 kebab-case
+또는 acronym (e.g. `srh`, `ubm_inject_spike`, `fermat_least_action`). 실험 cycle
+이 누적되면서:
+
+- `<DOMAIN>.md` = **최종 verdict 만** (latest cycle 결과로 overwrite)
+- `<DOMAIN>.log.md` = **모든 cycle 의 history** (append-only)
+- `state/<DOMAIN>_<slug>_DATE/` = **각 cycle 의 raw artifacts**
+
+### `<DOMAIN>.md` 표준 §
+
+1. **Hypothesis** — 가설 1-2 줄 (자연어 → formal)
+2. **Pipeline / API** — 어떤 tool 어떤 state path 로 측정
+3. **Falsifiers** — pre-registered `F-XXX-N` 표 (조건 + spike target + PASS line)
+4. **Final verdict** — 현재 PASS/FAIL/PARTIAL + 정량
+5. **Honest C3** — ≥3 carve-out
+6. **Promotion target** — LAB → HEXAD/<DIR>/ or archive 경로
+
+### `<DOMAIN>.log.md` entry 표준
+
+각 cycle = chronological block:
+
+```markdown
+## Cycle #N — YYYY-MM-DD
+- **focus**: 한 줄 요약
+- **change**: spec/pipeline/falsifier 변경 내역
+- **fire**: state/<DOMAIN>_<slug>_DATE/ artifact 경로
+- **verdict**: PASS/FAIL/PARTIAL + 1 줄 결론 (정량 포함)
+- **next**: 후속 cycle 또는 promotion path
+```
+
+### 사이클 closure 절차
+
+1. `<DOMAIN>.md` §4 (final verdict) + §3 (falsifier 결과) **overwrite** — latest 만 carry.
+2. `<DOMAIN>.log.md` 끝에 **새 cycle entry append** (history 보존).
+3. raw artifact = `state/<DOMAIN>_<slug>_DATE/` 안에 result.json / *.log / ckpts.
 
 ## Promotion / Demotion
 
 - **PASS / partial-PASS** → 주제 dir 로 mv:
   - `git mv HEXAD/LAB/state/<exp>/ HEXAD/<TARGET>/state/<exp>/`
-  - docs/도 같이 이동, `MEMORY.md` index 갱신
-- **FAIL** → LAB/ 잔존 OK (negative evidence carry)
+  - `<DOMAIN>.md` + `<DOMAIN>.log.md` 도 같이 이동 (or 사본 + LAB 잔존 메타 link)
+  - `MEMORY.md` index 갱신
+- **FAIL** → LAB/ 잔존 OK (negative evidence carry, log entry 그대로)
 - **stale > 30d 미사용** → archive/ 후보
 
 ## Tool 모음 (`HEXAD/LAB/tool/`)
