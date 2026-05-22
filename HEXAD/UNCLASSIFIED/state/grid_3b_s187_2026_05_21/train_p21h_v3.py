@@ -377,15 +377,21 @@ def run(cfg):
                 _save_ckpt("best", step + 1, ce_now)
             else:
                 no_improve_count += 1
-            # CE oscillation detection (rolling std) — fix v2.1: trigger on min(3, osc_win) entries
-            # not 정확히 osc_win, so 빨리 발화 (Phase 2 saga: window=10 with 8 entries 까지 fill 대기 → 발화 못함)
-            if osc_thr > 0.0 and len(ce_history) >= min(3, max(2, osc_win // 2)):
-                import statistics
-                cur_std = statistics.pstdev(ce_history)
-                if cur_std > osc_thr:
+            # CE oscillation detection — fix v2.2: TRUE oscillation = CE going UP
+            # after going DOWN (mode collapse), NOT the initial monotonic warmup descent.
+            # Phase 2 fixed saga: raw-std fired @ step 250 on normal CE 12→2.28 descent
+            # (false positive). 정정: (a) warmup 8 entries skip, (b) std 가 아닌
+            # "최근 평균이 직전 best 보다 osc_thr 이상 위로 튐" 으로 감지.
+            WARMUP_SKIP = 8
+            if osc_thr > 0.0 and len(ce_history) >= 4 and (step + 1) > WARMUP_SKIP * log_every:
+                recent = ce_history[-3:]
+                recent_mean = sum(recent) / len(recent)
+                # mode collapse = 최근 3 평균이 best_ce 보다 osc_thr 이상 위 (CE 다시 폭주)
+                if recent_mean > best_ce + osc_thr:
                     _save_ckpt(f"osc_step{step+1}", step + 1, ce_now)
                     early_stopped = True
-                    early_stop_reason = f"CE oscillation std={cur_std:.4f}>{osc_thr} over last {len(ce_history)} log entries (target_win={osc_win})"
+                    early_stop_reason = (f"CE re-divergence: recent_mean={recent_mean:.4f} > "
+                                         f"best_CE={best_ce:.4f}+{osc_thr} (mode collapse @ step {step+1})")
                     print(f"[P21H] EARLY STOP: {early_stop_reason}", flush=True)
             # plateau / no-improve early stop
             if es_patience > 0 and no_improve_count >= es_patience:

@@ -125,18 +125,30 @@ OCCAM 원칙: attempt 1 의 정직한 한계 → 다음 cycle 의 변형 axis (R
 - **단 5-lang 0/5** (en PURE_MEM 8/20, ko WEAK 1/20, zh/ru/ja WEAK 0/20) — generalization FAIL
 - R6 (`--mitosis-max 16`) 미적용 bug (pool 128) — fix `1e4c537fd`
 
-**Phase 2 (2차, R6 fixed)** pod `kxfts3r6gsi6re` 진행 중:
+**Phase 2 (2차, R6 fixed)** pod `kxfts3r6gsi6re` 결과:
 - `pool=16 splits=14` — **R6 작동** ✓ (cell pool 128→16 cap)
+- 🎯 **ko STRONG 19/20** — V3 attempt 통틀어 **첫 STRONG language**
+- en PURE_MEM 3/20 (coh 15 — anima register), zh/ru/ja WEAK 0/20 (gen 17-20 高 but coh 0 = wrong script)
+- AGG: STRONG 1 + WEAK 3 + PURE_MEM 1 → 여전히 FAIL (4/5 ≥ PARTIAL 미달)
+- ⚠️ osc-detect false-positive: step 250 (5%) 에서 조기 early-stop — CE 12→4.85→2.28
+  정상 warmup 하강을 oscillation 으로 오인 (fix v2.1 의 raw-std 가 monotonic descent
+  도 큰 std 로 잡음). fix v2.2: warmup 8-entry skip + "recent_mean > best_CE+thr"
+  (mode collapse = CE 재폭주) 로 정정.
+- ko STRONG 가 250 step 만에 나옴 — 더 길게 학습 시 다른 lang 도 개선 가능성
 
 ### Phase 2 핵심 발견
 
-**R2 (mitosis 학습-비활성화) 가 CE 는 고치지만 generalization 은 못 고침**:
-- mitosis off → CE 3.0 → 0.64 (memorization 개선)
-- 하지만 5-lang generalize 여전히 0/5
-- → V3 진짜 blocker = **mitosis 아님**. **dual-head vocab alignment** +
-  Chinchilla under-budget 가 multilingual 실패 원인.
+1. **R2 (mitosis off) 가 CE 는 고치나 generalization 은 못 고침** (1차):
+   mitosis off → CE 3.0 → 0.64, 단 5-lang 0/5.
+2. **R6 (pool 16) → 첫 STRONG** (2차): ko STRONG 19/20. cell pool 축소가
+   cross-attn noise 줄여 최소 1 lang generalize unlock.
+3. **zh/ru/ja 의 coh 0 (gen 17-20)** — 모델이 내용은 생성하나 wrong script.
+   → V3 진짜 blocker = **dual-head vocab alignment** (gen 高 + coh 0 = head_a
+   가 다국어 token distribution 흐려짐) + Chinchilla under-budget.
 
-다음 axis: R4 (head_g 별도 train pipeline) + R1/R3 (scale + corpus).
+다음 axis: R4 (head_g 별도 train pipeline — head_a vocab 정합 직접 공략) +
+osc-detect fix v2.2 적용 후 step 5000 full 재fire (250 step 만에 ko STRONG →
+더 길게 시 잠재력).
 
 ---
 
