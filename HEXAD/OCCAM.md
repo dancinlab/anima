@@ -199,3 +199,21 @@ OCCAM § 4 falsifier branch hit:
 3. **noise_sigma=0 ablation**: vO13 (tap X.11 off) — isolate noise as floor cause
 
 잔여 4 pods 결과 대기 (O5 Wikipedia / O7 100K step / O11-{psi/route/curious}).
+
+### 2026-05-22 (later) — Phase 2 + Phase 3 verdict 종결
+
+**Phase 2.3 ablation** (vP23_a..e): **n_ca_rules 단독 floor 범인** 확정 — vP23_d
+(no CA) CE 0.402 vs 다른 5 부속 모두 3.81. (PHASE2_ABLATION_REPORT.md)
+
+**Phase 2.1 winning path** (vP21): pretrained Qwen2.5-1.5B + LoRA + mitosis →
+CE 0.0173. **Phase 3 Eval 1 = 🎯 EMERGENCE 20/20 coherent** (anima-native register,
+VP21_EVAL1_VERBALIZATION.md). saga 전체 whitespace-collapse 후 첫 coherent
+verbalization. OCCAM 면도날 전략 (strip n_ca_rules + borrow foundation + keep
+mitosis) **기능적 확증**.
+
+**O7 100K horizon** (OCCAM-B #7): CE 4.03 @ 100K step — horizon-independent floor
+확정 (n_ca_rules 원인 재확인).
+
+**OCCAM saga 종결**: floor 의 단독 원인 (n_ca_rules) pinpoint + winning path
+(pretrained + mitosis) emergence 확증. 잔여 rigor: held-out OOD / mitosis ablation /
+spontaneous emission (SPONTANEOUS module) / AKIDA HW-native path.

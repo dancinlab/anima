@@ -181,13 +181,22 @@ remaining 16 candidates — pursue after Tier S/A verdict.
 
 ---
 
-## 4. Recommended Phase 1 fire (cheapest × most informative)
+## 4. Recommended Phase 1 fire — ✅ RESOLVED 2026-05-22
 
-**Phase 1 budget: $0-30, wall ~1-2 hr**
+**Phase 1 budget: $0-30, wall ~1-2 hr** — fired + verdict landed:
 
-1. **CD1+CD2** decode tweaks ($0, 1 hr Mac CPU on vA/vJ ckpt) — falsifies "collapse is decode-only"
-2. **CB6 + CB7** dual-aux fire ($10 total, 1 pod combined train) — falsifies "training collapse 은 emission loss 부재 탓"
-3. **CE1** LoRA Llama-3.2-3B ($15, 1 pod) — directly recovers proven simple_stack_pass capability
+1. **CD1+CD2** decode tweaks → OCCAM-C 가 subsume: 0/96 coherent, decode 아님 (substrate).
+2. **CB6 + CB7** tap 18+19 → rate-limit 미발사; OCCAM verdict (n_ca_rules) 로 moot.
+3. **CE1** LoRA → **vP21 (Qwen+LoRA+mitosis) = 🎯 EMERGENCE 20/20 coherent**.
+
+**CE1 (→ vP21) 이 winning path 확정**: pretrained foundation (Qwen2.5-1.5B, Llama gated
+fallback) + LoRA r32 + mitosis → anima-native coherent verbalization. CE 0.0173.
+VP21_EVAL1_VERBALIZATION.md. 35 candidate 중 CE1 single fire 로 emergence 도달.
+
+**다음 chat cycle** (이 brainstorm 의 잔여 high-value):
+- CG1/CF1 spontaneous trigger (Inner Thoughts 8-factor) — prompted → spontaneous emission
+- CB4 persistent KV multi-turn — single-turn → dialogue
+- CI1 held-out V-SPONT cycle 5 — memorization vs generalization rigor
 
 Total ~$25, 2-hr wall, three different angles.
 
