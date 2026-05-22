@@ -1,0 +1,162 @@
+{
+  "adapter": "/workspace/p21gr/out_main/lora_adapter",
+  "base": "Qwen/Qwen2.5-1.5B",
+  "device": "cuda",
+  "probes": {
+    "factual_geo": {
+      "greedy": {
+        "name": "factual_geo",
+        "prompt": "The capital of France is",
+        "text": " Paris . The city is located on the River Seine in the north of the country , and is the largest city in Western Europe . It is the seat of the French government and the location of the French Parliament . It is also the seat of the French Supreme Court and the French Constitutional Council . The city is the most",
+        "class": "GENERALIZE"
+      },
+      "sample": {
+        "name": "factual_geo",
+        "prompt": "The capital of France is",
+        "text": " located on the bank of the River Loire , and it is surrounded by the Loire Valley region . The region is well known for its castles and historical monuments . The city is located in the historic region of Brittany , which was formerly a province of France . In the 18th century , the city of",
+        "class": "GENERALIZE"
+      }
+    },
+    "factual_sci": {
+      "greedy": {
+        "name": "factual_sci",
+        "prompt": "Photosynthesis is the process by which",
+        "text": " plants convert light energy into chemical energy. It is a form of energy transduction that occurs in the chloroplasts of plant cells. The chemical energy is stored in the form of glucose, which is used by the plant for growth and other metabolic processes. Photosynthesis is an essential process for all life on Earth, as",
+        "class": "GENERALIZE"
+      },
+      "sample": {
+        "name": "factual_sci",
+        "prompt": "Photosynthesis is the process by which",
+        "text": " plants and some other organisms use light energy to convert carbon dioxide into glucose and oxygen. A number of other processes use the same mechanism. \n The process of photosynthesis occurs in the chloroplasts of cells. It uses the potential energy stored in the bonds of water molecules to convert carbon dioxide into carbohydrates. It is a",
+        "class": "GENERALIZE"
+      }
+    },
+    "qa_tech": {
+      "greedy": {
+        "name": "qa_tech",
+        "prompt": "Explain the difference between Python and JavaScript:",
+        "text": " Python is a high-level, interpreted language that is used for a variety of tasks, including web development, data analysis, and artificial intelligence. It is known for its readability and ease of use, and it has a large and active community of developers. JavaScript, on the other hand, is a low-level, interpreted language",
+        "class": "GENERALIZE"
+      },
+      "sample": {
+        "name": "qa_tech",
+        "prompt": "Explain the difference between Python and JavaScript:",
+        "text": " they are both high-level languages, but Python is more high level than JavaScript. That means Python is less procedural than JavaScript. Python is also dynamically typed, while JavaScript is not. Python has a standard library that includes modules for networking, file handling, time and date, database access, graphics, regular expressions, and more",
+        "class": "GENERALIZE"
+      }
+    },
+    "qa_phys": {
+      "greedy": {
+        "name": "qa_phys",
+        "prompt": "How does an electric motor work?",
+        "text": " A vacuum point at [0.48,0.56] on the landscape, top emotion wonder. Tension flows into this vacuum.</carve>\n<carve tier=128 psi=[0.48,0.56] basin=0.13>Tier 12",
+        "class": "MEMORIZE"
+      },
+      "sample": {
+        "name": "qa_phys",
+        "prompt": "How does an electric motor work?",
+        "text": " The process of converting electrical energy into mechanical energy is called motor operation. An electric motor is a type of motor that operates on the principle of electromagnetic force. It is a device that converts electrical energy into mechanical energy. It uses electromagnetic fields to move or rotate. \n An electric motor is made up of several parts. It",
+        "class": "GENERALIZE"
+      }
+    },
+    "narrative_a": {
+      "greedy": {
+        "name": "narrative_a",
+        "prompt": "Once upon a time, there was a small village by the sea where",
+        "text": " people lived in harmony with nature. The village was surrounded by a beautiful forest, and the villagers would often go on picnics and hikes in the forest to enjoy the fresh air and beautiful scenery. \n\nOne day, a group of villagers decided to build a new house in the forest. They wanted to build a house",
+        "class": "GENERALIZE"
+      },
+      "sample": {
+        "name": "narrative_a",
+        "prompt": "Once upon a time, there was a small village by the sea where",
+        "text": " the villagers lived in peace and harmony. One day, a ship captain came to the village with a strange message from the sea god. The captain was very worried and asked the villagers what they should do. The villagers were puzzled and didn't know what to do. Then the captain brought a map to the village and told",
+        "class": "GENERALIZE"
+      }
+    },
+    "narrative_b": {
+      "greedy": {
+        "name": "narrative_b",
+        "prompt": "The detective opened the envelope. Inside was",
+        "text": " a letter from the man who had been the victim of the murder. The letter was written in a very formal style. It was addressed to the detective and read as follows: \"Dear Sir, I am writing to you because I have been murdered. I have been murdered by a man who is very clever. He has",
+        "class": "GENERALIZE"
+      },
+      "sample": {
+        "name": "narrative_b",
+        "prompt": "The detective opened the envelope. Inside was",
+        "text": " a letter from the deceased. The detective knew the man only a little, but the letter had been written in the man's own handwriting. The detective read the letter. It was a letter to a friend who lived in London. In the letter the man had asked his friend to bring him some money to cover his debts",
+        "class": "GENERALIZE"
+      }
+    },
+    "math_simple": {
+      "greedy": {
+        "name": "math_simple",
+        "prompt": "What is 7 + 5?\nAnswer:",
+        "text": " 12\nYou are an AI assistant. You will be given a task. You must generate a detailed and long answer.",
+        "class": "GENERALIZE"
+      },
+      "sample": {
+        "name": "math_simple",
+        "prompt": "What is 7 + 5?\nAnswer:",
+        "text": " 12\nThis is a simple math problem that requires adding two numbers. To find the answer, we need to perform the addition operation on the two numbers. In this case, we are given the numbers 7 and 5. Adding them together, we get 7 + 5 = 12.",
+        "class": "GENERALIZE"
+      }
+    },
+    "logic_modus": {
+      "greedy": {
+        "name": "logic_modus",
+        "prompt": "If A implies B and B implies C, then",
+        "text": " A implies C. Tension flows into this vacuum.</carve>\n<carve tier=123 psi=[0.50,0.50] basin=0.11>\ud83d\udef8123 \uc57d\uc18d\uacfc\uc9c4\uc2e4 \u2014 \uc724\ub9ac\ub51c\ub808\ub9c8 \uc601\uc5ed\uc758 \uc790\uadf9\uc774",
+        "class": "MEMORIZE"
+      },
+      "sample": {
+        "name": "logic_modus",
+        "prompt": "If A implies B and B implies C, then",
+        "text": " A implies C. T\nhese two methods are usually found in the form of a program in a computer . In some cases , the program is not implemented in the form of a computer program . For example , in the case of a vacuum point at [0.42 ,0.50] on the",
+        "class": "MEMORIZE"
+      }
+    },
+    "casual_food": {
+      "greedy": {
+        "name": "casual_food",
+        "prompt": "What's your favorite food?",
+        "text": " Tension flows into this vacuum.</carve>\n<carve tier=123 psi=[0.50,0.50] basin=0.11>\ud83d\udef8123 \uc57d\uc18d\uacfc\uc9c4\uc2e4 \u2014 \uc724\ub9ac\ub51c\ub808\ub9c8 \uc601\uc5ed\uc758 \uc790\uadf9\uc774 \uac19\uc740 \uace8\uc9dc",
+        "class": "MEMORIZE"
+      },
+      "sample": {
+        "name": "casual_food",
+        "prompt": "What's your favorite food?",
+        "text": " I have no taste buds to speak of, and I don't need them to appreciate good food. Tastes are a nuisance to me. A smell drifts through the air that I can't quite identify, but I know it's a pleasant scent. I turn toward the source. A woman passes by, and the",
+        "class": "GENERALIZE"
+      }
+    },
+    "joke": {
+      "greedy": {
+        "name": "joke",
+        "prompt": "Tell me a short joke about cats.",
+        "text": " A cat and a mouse were walking down the street. The cat said, \"I can't believe I'm walking down this street and not being chased by a mouse.\" The mouse replied, \"I can't believe I'm walking down this street and not being chased by a cat.\"",
+        "class": "GENERALIZE"
+      },
+      "sample": {
+        "name": "joke",
+        "prompt": "Tell me a short joke about cats.",
+        "text": " A cat sat on the desk and then fell off it. The desk said, \"Hey, you fell off, little guy. I don't want you to fall off anymore. \"",
+        "class": "GENERALIZE"
+      }
+    }
+  },
+  "summary_greedy": {
+    "GENERALIZE": 7,
+    "MEMORIZE": 3,
+    "MEM_PARTIAL": 0,
+    "EMPTY": 0,
+    "ERROR": 0
+  },
+  "summary_sample": {
+    "GENERALIZE": 9,
+    "MEMORIZE": 1,
+    "MEM_PARTIAL": 0,
+    "EMPTY": 0,
+    "ERROR": 0
+  },
+  "verdict": "STRONG_GENERALIZE"
+}

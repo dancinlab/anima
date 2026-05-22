@@ -1,0 +1,162 @@
+{
+  "adapter": "/workspace/p21gr/out_main/lora_adapter",
+  "base": "Qwen/Qwen2.5-1.5B",
+  "device": "cuda",
+  "probes": {
+    "factual_geo": {
+      "greedy": {
+        "name": "factual_geo",
+        "prompt": "The capital of France is",
+        "text": " Paris . The city is located on the River Seine in the north of the country . It is the largest city in the European Union , with a population of 10 million . It is also the most populous city in Western Europe , with a population of 12 million . \n\n Paris is the seat of the",
+        "class": "GENERALIZE"
+      },
+      "sample": {
+        "name": "factual_geo",
+        "prompt": "The capital of France is",
+        "text": " Paris. A popular tourist spot is the Eiffel Tower. Paris has an area of 1050 square miles and a population of about 2.1 million. It has a population density of 19 people per square mile. It has a temperate climate with four seasons. The climate is considered",
+        "class": "GENERALIZE"
+      }
+    },
+    "factual_sci": {
+      "greedy": {
+        "name": "factual_sci",
+        "prompt": "Photosynthesis is the process by which",
+        "text": " plants convert light energy into chemical energy. It is the most important process on Earth, as it provides the food and oxygen for all life. It is also the basis of the food chain. The process of photosynthesis is carried out by plants, algae, and some bacteria. It is the only known process that converts carbon",
+        "class": "GENERALIZE"
+      },
+      "sample": {
+        "name": "factual_sci",
+        "prompt": "Photosynthesis is the process by which",
+        "text": " green plants and other organisms use light energy to convert carbon dioxide into oxygen. The reactions occur in the chloroplasts of the cell. Oxygen is the byproduct of the reactions. The reactions are split into two categories: light-independent reactions, or light reactions; and the light-dependent reactions. The light-dependent reactions convert light",
+        "class": "GENERALIZE"
+      }
+    },
+    "qa_tech": {
+      "greedy": {
+        "name": "qa_tech",
+        "prompt": "Explain the difference between Python and JavaScript:",
+        "text": " Python is a high-level programming language that is widely used for a variety of tasks, including web development, data analysis, and artificial intelligence. It is known for its readability and ease of use, as well as its large standard library and extensive ecosystem of third-party packages. Python is often used in conjunction with web frameworks such",
+        "class": "GENERALIZE"
+      },
+      "sample": {
+        "name": "qa_tech",
+        "prompt": "Explain the difference between Python and JavaScript:",
+        "text": " both are interpreted languages, but Python can handle both static and dynamic content, while JavaScript is primarily used for client-side scripting. Python uses indentation to denote blocks of code, while JavaScript uses semicolons. Python is a versatile language that can be used for web development, while JavaScript is used for client-side scripting. Python",
+        "class": "GENERALIZE"
+      }
+    },
+    "qa_phys": {
+      "greedy": {
+        "name": "qa_phys",
+        "prompt": "How does an electric motor work?",
+        "text": " A vacuum point at [0.42,0.50] on the landscape, top emotion clarity. Tension flows into this vacuum.</carve>\n<carve tier=12 psi=[0.42,0.50] basin=0.11>\ud83d\udef812 \uac78\uc74c",
+        "class": "MEMORIZE"
+      },
+      "sample": {
+        "name": "qa_phys",
+        "prompt": "How does an electric motor work?",
+        "text": " A simple electric motor may be made by wrapping wire around a wooden cylinder. If this cylinder is rotated about its axis, it will induce a current in the wires. However, this is a crude device. A better way is to use a metal cylinder. This motor is made by wrapping wire around the metal cylinder and then",
+        "class": "GENERALIZE"
+      }
+    },
+    "narrative_a": {
+      "greedy": {
+        "name": "narrative_a",
+        "prompt": "Once upon a time, there was a small village by the sea where",
+        "text": " people lived in harmony with nature. The village was surrounded by a lush green forest, and the sea was a beautiful blue. The people of the village were kind and friendly, and they loved to spend time outdoors. They would often go fishing in the sea, and they would also go on picnics in the forest",
+        "class": "GENERALIZE"
+      },
+      "sample": {
+        "name": "narrative_a",
+        "prompt": "Once upon a time, there was a small village by the sea where",
+        "text": " people could come and relax. There were two small houses on the coast where the villagers could stay to take a rest after a long day. A tiny wooden house that looked like a small boat stood in the water of the little bay. It was called the \"boat house.\" The people would take their boats from the large",
+        "class": "GENERALIZE"
+      }
+    },
+    "narrative_b": {
+      "greedy": {
+        "name": "narrative_b",
+        "prompt": "The detective opened the envelope. Inside was",
+        "text": " a single sheet of paper. It read: \"The detective opened the envelope. Inside was a single sheet of paper. It read: \"The detective opened the envelope. Inside was a single sheet of paper. It read: \"The detective opened the envelope. Inside was a single sheet of paper. It read: \"",
+        "class": "GENERALIZE"
+      },
+      "sample": {
+        "name": "narrative_b",
+        "prompt": "The detective opened the envelope. Inside was",
+        "text": " a small black box. The detective lifted the lid. There was a small white animal inside. He smiled. The animal was a tiny white mouse. \n The detective put the mouse on the window sill. He then closed the window. The detective smiled and laughed. He turned his attention to the mouse. He watched the",
+        "class": "GENERALIZE"
+      }
+    },
+    "math_simple": {
+      "greedy": {
+        "name": "math_simple",
+        "prompt": "What is 7 + 5?\nAnswer:",
+        "text": " 12\nYou are an AI assistant. You will be given a task. You must generate a detailed and long answer.",
+        "class": "GENERALIZE"
+      },
+      "sample": {
+        "name": "math_simple",
+        "prompt": "What is 7 + 5?\nAnswer:",
+        "text": " 7 + 5 is equal to 12. \n\nTo find the answer, you simply add the two numbers together. \n7 + 5 = 12\nThe total is 12. \n\n70000000000000000000",
+        "class": "GENERALIZE"
+      }
+    },
+    "logic_modus": {
+      "greedy": {
+        "name": "logic_modus",
+        "prompt": "If A implies B and B implies C, then",
+        "text": " A implies C. Tension flows into this vacuum.</carve>\n<carve tier=123 psi=[0.59,0.60] basin=0.13>Tier 123 \uc57d\uc18d\uacfc\uc9c4\uc2e4 \u2014 domain \uc724\ub9ac\ub51c\ub808\ub9c8, the stimuli converge",
+        "class": "MEMORIZE"
+      },
+      "sample": {
+        "name": "logic_modus",
+        "prompt": "If A implies B and B implies C, then",
+        "text": " A implies C. This law is called transitivity. Tension flows into this vacuum.</carve>\n<carve tier=51 psi=[0.46,0.49] basin=0.12>\ud83d\udef851 \ud558\ub8e8 \u2014 \uc2dc\uac04 \uc601\uc5ed\uc758 \uc790\uadf9\uc774 \uac19\uc740 \uace8\uc9dc",
+        "class": "MEMORIZE"
+      }
+    },
+    "casual_food": {
+      "greedy": {
+        "name": "casual_food",
+        "prompt": "What's your favorite food?",
+        "text": " Tension flows into this vacuum.</carve>\n<carve tier=123 psi=[0.59,0.60] basin=0.13>Tier 123 \uc57d\uc18d\uacfc\uc9c4\uc2e4 \u2014 domain \uc724\ub9ac\ub51c\ub808\ub9c8, the stimuli converge into one basin.",
+        "class": "MEMORIZE"
+      },
+      "sample": {
+        "name": "casual_food",
+        "prompt": "What's your favorite food?",
+        "text": " \u2014 domain \uc74c\uc2dd, the stimuli converge into one basin. A vacuum point at [0.45,0.43] on the landscape, top emotion stillness. Tension flows into this vacuum.</carve>\n<carve tier=18 psi=[0.45,0.4",
+        "class": "MEMORIZE"
+      }
+    },
+    "joke": {
+      "greedy": {
+        "name": "joke",
+        "prompt": "Tell me a short joke about cats.",
+        "text": " A cat and a mouse were walking down the street. The cat said, \"I'm so glad I don't have to worry about getting eaten by a mouse.\" The mouse replied, \"I'm glad I don't have to worry about getting eaten by a cat.\"",
+        "class": "GENERALIZE"
+      },
+      "sample": {
+        "name": "joke",
+        "prompt": "Tell me a short joke about cats.",
+        "text": " A cat walks into a bar. The bartender says, \"I'll have a catnap on you, sir.\" The cat replies, \"You're welcome.\"",
+        "class": "GENERALIZE"
+      }
+    }
+  },
+  "summary_greedy": {
+    "GENERALIZE": 7,
+    "MEMORIZE": 3,
+    "MEM_PARTIAL": 0,
+    "EMPTY": 0,
+    "ERROR": 0
+  },
+  "summary_sample": {
+    "GENERALIZE": 8,
+    "MEMORIZE": 2,
+    "MEM_PARTIAL": 0,
+    "EMPTY": 0,
+    "ERROR": 0
+  },
+  "verdict": "PARTIAL_GENERALIZE"
+}

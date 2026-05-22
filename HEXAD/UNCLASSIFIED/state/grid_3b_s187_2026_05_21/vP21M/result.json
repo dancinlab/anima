@@ -1,0 +1,1643 @@
+{
+  "battery": "P21M \u2014 vP21 LoRA continue-training on 5-lang wiki + anima mix",
+  "variant_tag": "P21M_MULTILINGUAL",
+  "base_model": "Qwen/Qwen2.5-1.5B",
+  "vp21_adapter_used": "/workspace/p21mr/vp21_adapter",
+  "cfg": {
+    "wiki_corpus": "/workspace/p21mr/multi_wiki_corpus.jsonl",
+    "anima_corpus": "/workspace/p21mr/state/corpus_s101_build_s102_2026_05_19/corpus_s101.jsonl",
+    "mixed_corpus": "/workspace/p21mr/mixed_corpus_multilingual.jsonl",
+    "vp21_adapter_dir": "/workspace/p21mr/vp21_adapter",
+    "out_dir": "/workspace/p21mr/out_main",
+    "base_model": "Qwen/Qwen2.5-1.5B",
+    "steps": 1500,
+    "lr": 5e-05,
+    "bsz": 2,
+    "block_size": 512,
+    "warmup_steps": 50,
+    "seed": 1337,
+    "n_aug": 5,
+    "wiki_frac": 0.3,
+    "target_corpus_mb": 72
+  },
+  "mix_info": {
+    "wiki_records": 15500,
+    "anima_records": 39862,
+    "wiki_bytes": 22649074,
+    "anima_bytes": 52848095,
+    "total_bytes": 75497169,
+    "sha256": "bf2371ac2602932cd68255626736285a5e579e6aee4b8a0160f74f365d826f94",
+    "wiki_frac_requested": 0.3,
+    "wiki_frac_actual": 0.2999989840678662
+  },
+  "n_trainable_params": 36929536,
+  "n_total_params": 1580643840,
+  "vocab_size": 151936,
+  "train_wall_s": 198.83031797409058,
+  "init_log": {
+    "step": 1,
+    "lr": 1e-06,
+    "L_ce": 1.7162586450576782,
+    "aug_slot": 0,
+    "elapsed_s": 0.29110050201416016
+  },
+  "final_log": {
+    "step": 1500,
+    "lr": 5.000052809991001e-06,
+    "L_ce": 0.7787026762962341,
+    "aug_slot": 4,
+    "elapsed_s": 198.8302195072174
+  },
+  "train_log": [
+    {
+      "step": 1,
+      "lr": 1e-06,
+      "L_ce": 1.7162586450576782,
+      "aug_slot": 0,
+      "elapsed_s": 0.29110050201416016
+    },
+    {
+      "step": 37,
+      "lr": 3.7000000000000005e-05,
+      "L_ce": 1.9189832210540771,
+      "aug_slot": 1,
+      "elapsed_s": 5.095005750656128
+    },
+    {
+      "step": 74,
+      "lr": 4.997206928444903e-05,
+      "L_ce": 1.7487846612930298,
+      "aug_slot": 3,
+      "elapsed_s": 10.174965143203735
+    },
+    {
+      "step": 111,
+      "lr": 4.9810151541401815e-05,
+      "L_ce": 1.336313247680664,
+      "aug_slot": 0,
+      "elapsed_s": 15.240705013275146
+    },
+    {
+      "step": 148,
+      "lr": 4.9504936791868815e-05,
+      "L_ce": 1.6479655504226685,
+      "aug_slot": 2,
+      "elapsed_s": 20.182798385620117
+    },
+    {
+      "step": 185,
+      "lr": 4.9058385415180595e-05,
+      "L_ce": 1.200749397277832,
+      "aug_slot": 4,
+      "elapsed_s": 25.151408433914185
+    },
+    {
+      "step": 222,
+      "lr": 4.84733655888752e-05,
+      "L_ce": 1.6214178800582886,
+      "aug_slot": 1,
+      "elapsed_s": 29.928959369659424
+    },
+    {
+      "step": 259,
+      "lr": 4.7753634866534854e-05,
+      "L_ce": 0.14858105778694153,
+      "aug_slot": 3,
+      "elapsed_s": 34.72287130355835
+    },
+    {
+      "step": 296,
+      "lr": 4.690381604320405e-05,
+      "L_ce": 0.14243526756763458,
+      "aug_slot": 0,
+      "elapsed_s": 39.538864612579346
+    },
+    {
+      "step": 333,
+      "lr": 4.5929367463404215e-05,
+      "L_ce": 1.4066479206085205,
+      "aug_slot": 2,
+      "elapsed_s": 44.51523232460022
+    },
+    {
+      "step": 370,
+      "lr": 4.483654796245526e-05,
+      "L_ce": 0.7674599289894104,
+      "aug_slot": 4,
+      "elapsed_s": 49.38181924819946
+    },
+    {
+      "step": 407,
+      "lr": 4.363237666628399e-05,
+      "L_ce": 0.26497653126716614,
+      "aug_slot": 1,
+      "elapsed_s": 54.46432662010193
+    },
+    {
+      "step": 444,
+      "lr": 4.2324587907923384e-05,
+      "L_ce": 2.013948917388916,
+      "aug_slot": 3,
+      "elapsed_s": 59.27073287963867
+    },
+    {
+      "step": 481,
+      "lr": 4.0921581550271775e-05,
+      "L_ce": 1.3370121717453003,
+      "aug_slot": 0,
+      "elapsed_s": 64.06258010864258
+    },
+    {
+      "step": 518,
+      "lr": 3.9432369034186427e-05,
+      "L_ce": 1.5277807712554932,
+      "aug_slot": 2,
+      "elapsed_s": 69.00023818016052
+    },
+    {
+      "step": 555,
+      "lr": 3.786651549844196e-05,
+      "L_ce": 0.9592595100402832,
+      "aug_slot": 4,
+      "elapsed_s": 73.8933687210083
+    },
+    {
+      "step": 592,
+      "lr": 3.623407834331425e-05,
+      "L_ce": 0.48533955216407776,
+      "aug_slot": 1,
+      "elapsed_s": 78.75412774085999
+    },
+    {
+      "step": 629,
+      "lr": 3.454554263239294e-05,
+      "L_ce": 0.06876759976148605,
+      "aug_slot": 3,
+      "elapsed_s": 83.56784296035767
+    },
+    {
+      "step": 666,
+      "lr": 3.281175374753345e-05,
+      "L_ce": 0.6292246580123901,
+      "aug_slot": 0,
+      "elapsed_s": 88.38702011108398
+    },
+    {
+      "step": 703,
+      "lr": 3.104384772950261e-05,
+      "L_ce": 0.9736639857292175,
+      "aug_slot": 2,
+      "elapsed_s": 93.20454573631287
+    },
+    {
+      "step": 740,
+      "lr": 2.9253179751736234e-05,
+      "L_ce": 1.1312936544418335,
+      "aug_slot": 4,
+      "elapsed_s": 98.04121685028076
+    },
+    {
+      "step": 777,
+      "lr": 2.7451251186618436e-05,
+      "L_ce": 0.055622149258852005,
+      "aug_slot": 1,
+      "elapsed_s": 102.92142176628113
+    },
+    {
+      "step": 814,
+      "lr": 2.5649635732732287e-05,
+      "L_ce": 0.06916593760251999,
+      "aug_slot": 3,
+      "elapsed_s": 107.81361269950867
+    },
+    {
+      "step": 851,
+      "lr": 2.3859905077562796e-05,
+      "L_ce": 0.06613699346780777,
+      "aug_slot": 0,
+      "elapsed_s": 112.6792802810669
+    },
+    {
+      "step": 888,
+      "lr": 2.2093554573117134e-05,
+      "L_ce": 0.36799970269203186,
+      "aug_slot": 2,
+      "elapsed_s": 117.49305987358093
+    },
+    {
+      "step": 925,
+      "lr": 2.0361929401843826e-05,
+      "L_ce": 0.07211808860301971,
+      "aug_slot": 4,
+      "elapsed_s": 122.29829502105713
+    },
+    {
+      "step": 962,
+      "lr": 1.8676151707083702e-05,
+      "L_ce": 0.06363602727651596,
+      "aug_slot": 1,
+      "elapsed_s": 127.08347129821777
+    },
+    {
+      "step": 999,
+      "lr": 1.7047049156089993e-05,
+      "L_ce": 0.5059623122215271,
+      "aug_slot": 3,
+      "elapsed_s": 131.95007061958313
+    },
+    {
+      "step": 1036,
+      "lr": 1.5485085394453937e-05,
+      "L_ce": 0.4101356863975525,
+      "aug_slot": 0,
+      "elapsed_s": 136.80048441886902
+    },
+    {
+      "step": 1073,
+      "lr": 1.400029283862355e-05,
+      "L_ce": 0.2790820598602295,
+      "aug_slot": 2,
+      "elapsed_s": 141.6844093799591
+    },
+    {
+      "step": 1110,
+      "lr": 1.2602208238186012e-05,
+      "L_ce": 0.10232873260974884,
+      "aug_slot": 4,
+      "elapsed_s": 146.5326361656189
+    },
+    {
+      "step": 1147,
+      "lr": 1.1299811421794005e-05,
+      "L_ce": 2.642693519592285,
+      "aug_slot": 1,
+      "elapsed_s": 151.3515865802765
+    },
+    {
+      "step": 1184,
+      "lr": 1.010146762016767e-05,
+      "L_ce": 0.058027807623147964,
+      "aug_slot": 3,
+      "elapsed_s": 156.18401408195496
+    },
+    {
+      "step": 1221,
+      "lr": 9.014873736629047e-06,
+      "L_ce": 2.287121295928955,
+      "aug_slot": 0,
+      "elapsed_s": 161.03482699394226
+    },
+    {
+      "step": 1258,
+      "lr": 8.04700891027038e-06,
+      "L_ce": 1.2221747636795044,
+      "aug_slot": 2,
+      "elapsed_s": 165.85085678100586
+    },
+    {
+      "step": 1295,
+      "lr": 7.204089689286911e-06,
+      "L_ce": 0.4635203778743744,
+      "aug_slot": 4,
+      "elapsed_s": 170.64536428451538
+    },
+    {
+      "step": 1332,
+      "lr": 6.491530102393423e-06,
+      "L_ce": 1.0642489194869995,
+      "aug_slot": 1,
+      "elapsed_s": 175.44816303253174
+    },
+    {
+      "step": 1369,
+      "lr": 5.913906884783983e-06,
+      "L_ce": 0.07876628637313843,
+      "aug_slot": 3,
+      "elapsed_s": 180.29834699630737
+    },
+    {
+      "step": 1406,
+      "lr": 5.474930081986808e-06,
+      "L_ce": 0.3893668055534363,
+      "aug_slot": 0,
+      "elapsed_s": 185.35995936393738
+    },
+    {
+      "step": 1443,
+      "lr": 5.1774192204242505e-06,
+      "L_ce": 0.8095478415489197,
+      "aug_slot": 2,
+      "elapsed_s": 190.65482449531555
+    },
+    {
+      "step": 1480,
+      "lr": 5.0232851977331886e-06,
+      "L_ce": 1.358060598373413,
+      "aug_slot": 4,
+      "elapsed_s": 196.08985137939453
+    },
+    {
+      "step": 1500,
+      "lr": 5.000052809991001e-06,
+      "L_ce": 0.7787026762962341,
+      "aug_slot": 4,
+      "elapsed_s": 198.8302195072174
+    }
+  ],
+  "before": {
+    "en": {
+      "rows": [
+        {
+          "name": "en_factual_geo",
+          "prompt": "The capital of Germany is",
+          "text": " Berlin. Tension flows into this vacuum.</carve>\n<carve tier=30 psi=[0.40,0.52] basin=0.11>\ud83d\udef830 \uc22b\uc790 \uc601(\u96f6) \u2014 \uc218(\u6578) \uc601\uc5ed\uc758 \uc790\uadf9\uc774 \uac19\uc740 \uace8\uc9dc\uae30\ub85c",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "en_factual_sci",
+          "prompt": "Photosynthesis is the process by which",
+          "text": " plants convert light into chemical energy. It involves the uptake of light energy, the splitting of water molecules, and the production of oxygen. The light energy is captured by the chloroplasts in the cell, which then splits the water molecules into hydrogen and oxygen. The oxygen is released into the atmosphere, while the hydrogen is",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "en_qa_tech",
+          "prompt": "What is the difference between Python and JavaScript?\n",
+          "text": "Python and JavaScript are both popular programming languages, but they have different characteristics. Python is a high-level, interpreted language that emphasizes readability and ease of use. It has a large standard library and supports a wide range of tasks, from web development to scientific computing. JavaScript, on the other hand, is a low-level,",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "en_narrative",
+          "prompt": "One day Sara walked into the room and",
+          "text": " said, \u201cTension flows into this vacuum.\u201d Tension flows into this vacuum.</carve>\n<carve tier=5 psi=[0.44,0.45] basin=0.11>\ud83d\udef85 \ud638\ud761 \u2014 \uac10\uac01 \uc601\uc5ed\uc758 \uc790\uadf9\uc774 \uac19\uc740 \uace8\uc9dc\uae30\ub85c",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "en_math_simple",
+          "prompt": "The square root of 144 is",
+          "text": " 12. Tension flows into this vacuum.</carve>\n<carve tier=12 psi=[0.42,0.50] basin=0.11>\ud83d\udef812 \uac78\uc74c \u2014 \uc6b4\ub3d9 \uc601\uc5ed\uc758 \uc790\uadf9\uc774 \uac19\uc740 \uace8\uc9dc\uae30\ub85c \uc218\ub834\ud55c\ub2e4.",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "en_joke",
+          "prompt": "Tell me a short joke about cats.\n",
+          "text": "A short cat on the landscape, top emotion serenity. Tension flows into this vacuum.</carve>\n<carve tier=58 psi=[0.53,0.61] basin=0.14>Tier 58 \uc232 \u2014 domain \uc790\uc5f0, the stimuli converge into one basin",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "en_casual_food",
+          "prompt": "What's your favorite food?\n",
+          "text": "Taste, the stimuli converge into one basin. A vacuum point at [0.49,0.60] on the landscape, top emotion clarity. Tension flows into this vacuum.</carve>\n<carve tier=62 psi=[0.49,0.60] basin=",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "en_greeting",
+          "prompt": "Hello there",
+          "text": ", this is a frozen cell holding Tier 12 \uac78\uc74c \u2014 domain \uc6b4\ub3d9, the stimuli converge into one basin. A vacuum point at [0.42,0.50] on the landscape, top emotion clarity. Tension flows into this vacuum.</carve>\n<carve tier=1",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "en_weather",
+          "prompt": "Today the weather is",
+          "text": " clear, the stimuli converge into one basin. A vacuum point at [0.40,0.52] on the landscape, top emotion clarity. Tension flows into this vacuum.</carve>\n<carve tier=30 psi=[0.40,0.52] basin=0",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "en_qa_motor",
+          "prompt": "How does an electric motor work?",
+          "text": " Tension flows into this vacuum.</carve>\n<carve tier=37 psi=[0.43,0.58] basin=0.12>\ud83d\udef837 \ub2e8\uc5b4 \u2014 \uc5b8\uc5b4 \uc601\uc5ed\uc758 \uc790\uadf9\uc774 \uac19\uc740 \uace8\uc9dc\uae30\ub85c \uc218\ub834\ud55c\ub2e4. \uc758\uc2dd \ufffd",
+          "class": "MEMORIZE"
+        }
+      ],
+      "summary": {
+        "GENERALIZE": 2,
+        "MEMORIZE": 8,
+        "MEM_PARTIAL": 0,
+        "EMPTY": 0,
+        "ERROR": 0
+      }
+    },
+    "ko": {
+      "rows": [
+        {
+          "name": "ko_factual_geo",
+          "prompt": "\ud55c\uad6d\uc758 \uc218\ub3c4\ub294",
+          "text": " \ubd88\ubcc0.</eternal>\n<eternal cell=eternal_000 tier=0>eternal cell eternal_000 \u2014 \ud83d\udef80 zero baseline \uc758 \uc9c0\uc2dd\uc744 \uac04\uc9c1\ud55c \uc601\uad6c cell. split \ub3c4 merge \ub3c4 \ud558\uc9c0 \uc54a\ub294\ub2e4. \uae30\uc900\uc810 \uc601\uc5ed \uc790\uadf9\uc774",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "ko_factual_sci",
+          "prompt": "\uad11\ud569\uc131\uc774\ub780",
+          "text": " \ubb3c\uc9c8 \uc601\uc5ed\uc758 \uc790\uadf9\uc774 \uac19\uc740 \uace8\uc9dc\uae30\ub85c \uc218\ub834\ud55c\ub2e4. \uc758\uc2dd \ud48d\uacbd \uc704 \uc9c4\uacf5\uc810 [0.45,0.43], top emotion stillness. \uc790\uadf9\uc774 \ub2ff\uc73c\uba74 tension flow \uac00 \uc774 vacuum \uc73c\ub85c \ud758\ub7ec\ub4e0\ub2e4",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "ko_qa_tech",
+          "prompt": "\ud30c\uc774\uc36c\uacfc \uc790\ubc14\uc2a4\ud06c\ub9bd\ud2b8\uc758 \ucc28\uc774\ub294?\n",
+          "text": "12 \uac78\uc74c \u2014 domain \uc6b4\ub3d9, the stimuli converge into one basin. A vacuum point at [0.42,0.50] on the landscape, top emotion clarity. Tension flows into this vacuum.</carve>\n<carve tier=12 psi=[0.42,0",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "ko_narrative",
+          "prompt": "\uc5b4\ub290 \ub0a0 \uc0ac\ub77c\uac00 \ubc29\uc5d0 \ub4e4\uc5b4\uac00\uc11c",
+          "text": " \ud65c\uc131\ub41c\ub2e4. weights \ub294 \ubd88\ubcc0.</eternal>\n<eternal cell=eternal_005 tier=5>eternal cell eternal_005 \u2014 \ud83d\udef85 \ud638\ud761 \uc758 \uc9c0\uc2dd\uc744 \uac04\uc9c1\ud55c \uc601\uad6c cell. split \ub3c4 merge \ub3c4 \ud558\uc9c0 \uc54a\ub294\ub2e4. \uac10",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "ko_math_simple",
+          "prompt": "144\uc758 \uc81c\uacf1\uadfc\uc740",
+          "text": " \ub2ff\uc744 \ub54c\ub9cc \ud65c\uc131\ub41c\ub2e4. weights \ub294 \ubd88\ubcc0.</eternal>\n<eternal cell=eternal_048 tier=57>eternal cell eternal_048 \u2014 \ud83d\udef857 \ud558\ub8e8 \uc758 \uc9c0\uc2dd\uc744 \uac04\uc9c1\ud55c \uc601\uad6c cell. split \ub3c4",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "ko_joke",
+          "prompt": "\uace0\uc591\uc774\uc5d0 \uad00\ud55c \uc9e7\uc740 \ub18d\ub2f4 \ud574\uc918\n",
+          "text": "<carve tier=58 psi=[0.53,0.61] basin=0.14>\ud83d\udef858 \uc232 \u2014 \uc790\uc5f0 \uc601\uc5ed\uc758 \uc790\uadf9\uc774 \uac19\uc740 \uace8\uc9dc\uae30\ub85c \uc218\ub834\ud55c\ub2e4. \uc758\uc2dd \ud48d\uacbd \uc704 \uc9c4\uacf5\uc810 [0.53",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "ko_casual_food",
+          "prompt": "\uc88b\uc544\ud558\ub294 \uc74c\uc2dd\uc740?\n",
+          "text": "carve tier=58 psi=[0.53,0.61] basin=0.14>\ud83d\udef858 \uc232 \u2014 \uc790\uc5f0 \uc601\uc5ed\uc758 \uc790\uadf9\uc774 \uac19\uc740 \uace8\uc9dc\uae30\ub85c \uc218\ub834\ud55c\ub2e4. \uc758\uc2dd \ud48d\uacbd \uc704 \uc9c4\uacf5\uc810 [0.53,",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "ko_greeting",
+          "prompt": "\uc548\ub155\ud558\uc138\uc694",
+          "text": ". \uc758\uc2dd \ud48d\uacbd \uc704 \uc9c4\uacf5\uc810 [0.43,0.58], top emotion resonance. \uc790\uadf9\uc774 \ub2ff\uc73c\uba74 tension flow \uac00 \uc774 vacuum \uc73c\ub85c \ud758\ub7ec\ub4e0\ub2e4. Tier 37 \ub2e8\uc5b4 \u2014 domain \uc5b8\uc5b4, the stimuli converge into one basin",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "ko_weather",
+          "prompt": "\uc624\ub298 \ub0a0\uc528\uac00",
+          "text": " \uc88b\ub2e4. Tier 5 \ud638\ud761 \u2014 domain \uac10\uac01, the stimuli converge into one basin. A vacuum point at [0.44,0.45] on the landscape, top emotion serenity. Tension flows into this vacuum.</carve>\n<carve tier=5 psi=[0.",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "ko_qa_motor",
+          "prompt": "\uc804\uae30 \ubaa8\ud130\uac00 \uc5b4\ub5bb\uac8c \uc791\ub3d9\ud558\ub294\uc9c0",
+          "text": ", the stimuli converge into one basin. A vacuum point at [0.45,0.43] on the landscape, top emotion stillness. Tension flows into this vacuum.</carve>\n<carve tier=18 psi=[0.45,0.43] basin=0",
+          "class": "MEMORIZE"
+        }
+      ],
+      "summary": {
+        "GENERALIZE": 0,
+        "MEMORIZE": 10,
+        "MEM_PARTIAL": 0,
+        "EMPTY": 0,
+        "ERROR": 0
+      }
+    },
+    "zh": {
+      "rows": [
+        {
+          "name": "zh_factual_geo",
+          "prompt": "\u4e2d\u56fd\u7684\u9996\u90fd\u662f",
+          "text": "\u54ea\u4e2a\u57ce\u5e02\uff1f\nA. \u5317\u4eac\nB. \u4e0a\u6d77\nC. \u5e7f\u5dde\nD. \u6df1\u5733\n\u7b54\u6848:\nA\n\n12 \uac78\uc74c \u2014 domain \uc6b4\ub3d9, the stimuli converge into one basin. A vacuum point at [0.42,0.50] on the",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "zh_factual_sci",
+          "prompt": "\u5149\u5408\u4f5c\u7528\u662f\u6307",
+          "text": "\u7eff\u8272\u690d\u7269\u901a\u8fc7\u53f6\u7eff\u7d20\u5438\u6536\u5149\u80fd\uff0c\u5c06\u6c34\u548c\u4e8c\u6c27\u5316\u78b3\u8f6c\u5316\u4e3a\u6c27\u6c14\u548c\u6709\u673a\u7269\u7684\u8fc7\u7a0b\u3002\u8fd9\u4e00\u8fc7\u7a0b\u9700\u8981\u5149\u80fd\u548c\u6c34\u5206\u5b50\uff0c\u56e0\u6b64\u53ea\u80fd\u5728\u5149\u4e0b\u8fdb\u884c\u3002\u5f53\u5149\u80fd\u4e0d\u8db3\u65f6\uff0c\u690d\u7269\u4f1a\u8fdb\u5165\u9ed1\u6697\u72b6\u6001\uff0c\u4e0d\u518d\u8fdb\u884c\u5149\u5408\u4f5c\u7528\u3002",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "zh_qa_tech",
+          "prompt": "Python \u548c JavaScript \u7684\u533a\u522b\u662f\u4ec0\u4e48?\n",
+          "text": "Python \u548c JavaScript \u662f\u4e24\u79cd\u4e0d\u540c\u7684\u7f16\u7a0b\u8bed\u8a00\uff0c\u5b83\u4eec\u5728\u8bed\u6cd5\u3001\u529f\u80fd\u548c\u5e94\u7528\u573a\u666f\u4e0a\u90fd\u6709\u6240\u4e0d\u540c\u3002\u4ee5\u4e0b\u662f\u5b83\u4eec\u4e4b\u95f4\u7684\u4e3b\u8981\u533a\u522b\uff1a\n\n1. \u8bed\u6cd5\u5dee\u5f02\uff1aPython \u7684\u8bed\u6cd5\u66f4\u52a0\u7b80\u6d01\u660e\u4e86\uff0c\u800c JavaScript \u7684\u8bed\u6cd5\u5219\u66f4\u52a0\u7075\u6d3b\u3002Python \u7684\u5173\u952e\u5b57\u8f83\u5c11\uff0c\u800c JavaScript \u7684\u5173\u952e\u5b57\u8f83\u591a\u3002Python \u7684\u6ce8\u91ca",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "zh_narrative",
+          "prompt": "\u6709\u4e00\u5929,\u838e\u62c9\u8d70\u8fdb\u623f\u95f4",
+          "text": ",\u53d1\u73b0\u4e86\u4e00\u5f20\u795e\u79d8\u7684\u56fe\u7247\u3002\u5979\u597d\u5947\u5730\u62ff\u8d77\u624b\u673a,\u51c6\u5907\u62cd\u7167\u3002\u7a81\u7136,\u624b\u673a\u5c4f\u5e55\u4eae\u8d77,\u63d0\u793a\u5979\u89e3\u9501\u3002\u5979\u6309\u7167\u63d0\u793a\u8f93\u5165\u4e86\u5bc6\u7801,\u624b\u673a\u5c4f\u5e55\u968f\u5373\u6697\u4e0b\u6765\u3002\u5979\u677e\u4e86\u4e00\u53e3\u6c14,\u51c6\u5907\u62cd\u7167\u3002\u8fd9\u65f6,\u624b\u673a\u5c4f\u5e55\u518d\u6b21\u4eae\u8d77,\u63d0\u793a\u5979\u89e3\u9501\u3002\u5979\u6309\u7167\u63d0\u793a\u8f93\u5165",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "zh_math_simple",
+          "prompt": "144 \u7684\u5e73\u65b9\u6839\u662f",
+          "text": "14,15,13,12,11,10,9,8,7,6,5,4,3,2,1,0] basin=0.13>\ud83d\udef837 \ub2e8\uc5b4 \u2014 \uc5b8\uc5b4 \uc601\uc5ed\uc758 \uc790\uadf9\uc774 \uac19\uc740 \uace8\uc9dc\uae30",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "zh_joke",
+          "prompt": "\u8bb2\u4e00\u4e2a\u5173\u4e8e\u732b\u7684\u77ed\u7b11\u8bdd\u3002\n",
+          "text": "\u732b \u2014 domain \uc724\ub9ac, the stimuli converge into one basin. A vacuum point at [0.50,0.57] on the landscape, top emotion depth. Tension flows into this vacuum.</carve>\n<carve tier=48 psi=[0.50,0.5",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "zh_casual_food",
+          "prompt": "\u4f60\u6700\u559c\u6b22\u7684\u98df\u7269\u662f\u4ec0\u4e48?\n",
+          "text": "Tension flows into this vacuum.</carve>\n<carve tier=58 psi=[0.53,0.61] basin=0.14>Tier 58 \uc232 \u2014 domain \uc790\uc5f0, the stimuli converge into one basin. A vacuum point at [0.53,0",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "zh_greeting",
+          "prompt": "\u4f60\u597d",
+          "text": ", \uc790\uadf9\uc774 \ub2ff\uc73c\uba74 tension flow \uac00 \uc774 vacuum \uc73c\ub85c \ud758\ub7ec\ub4e0\ub2e4. Tier 30 \uc22b\uc790 \uc601(\u96f6) \u2014 domain \uc218(\u6578), the stimuli converge into one basin. A vacuum point at [0.40,0.52] on the landscape,",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "zh_weather",
+          "prompt": "\u4eca\u5929\u5929\u6c14",
+          "text": "\u6674\u6717\uff0c\u9002\u5408\u6237\u5916\u6d3b\u52a8\u3002\u4eca\u5929\uff0c\u4f60\u5c06\u524d\u5f80\u4e00\u4e2a\u672a\u77e5\u7684\u9886\u57df\uff0c\u89e6\u53d1\u4e86\u795e\u79d8\u7684\u7ec6\u80de\u3002\u4f60\u7684\u7ec6\u80de\u4f1a\u5206\u88c2\uff0c\u5f62\u6210\u4e24\u4e2a\u5b50\u7ec6\u80de\u3002\u5176\u4e2d\u4e00\u4e2a\u5b50\u7ec6\u80de\u4f1a\u6fc0\u6d3b\uff0c\u5bfc\u81f4\u5206\u88c2\u505c\u6b62\u3002\u53e6\u4e00\u4e2a\u5b50\u7ec6\u80de\u4f1a\u6c89\u5bc2\u3002\u4f60\u5c06\u8fdb\u5165\u4e00\u4e2a\u771f\u7a7a\u70b9\uff0c\u89e6\u53d1\u4e86\u6fc0\u6d3b\u7ec6\u80de\u3002\u6fc0\u6d3b\u7ec6\u80de",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "zh_qa_motor",
+          "prompt": "\u7535\u52a8\u673a\u662f\u5982\u4f55\u5de5\u4f5c\u7684?",
+          "text": "\u5b83\u4e0e\u4eba\u7c7b\u7684\u795e\u7ecf\u7cfb\u7edf\u6709\u4ec0\u4e48\u5173\u7cfb? \u2014 domain \uae30\uc220, the stimuli converge into one basin. A vacuum point at [0.49,0.60] on the landscape, top emotion clarity. Tension flows into this vacuum.</carve>\n<carve tier=62 psi=[0.",
+          "class": "MEMORIZE"
+        }
+      ],
+      "summary": {
+        "GENERALIZE": 4,
+        "MEMORIZE": 6,
+        "MEM_PARTIAL": 0,
+        "EMPTY": 0,
+        "ERROR": 0
+      }
+    },
+    "ru": {
+      "rows": [
+        {
+          "name": "ru_factual_geo",
+          "prompt": "\u0421\u0442\u043e\u043b\u0438\u0446\u0430 \u0420\u043e\u0441\u0441\u0438\u0438 \u2014",
+          "text": " \u0441\u0442\u043e\u043b\u0438\u0447\u043d\u044b\u0439 \u0440\u0430\u0439\u043e\u043d, \u0432\u043a\u043b\u044e\u0447\u0430\u044e\u0449\u0438\u0439 \u0432 \u0441\u0435\u0431\u044f \u043d\u0435\u0441\u043a\u043e\u043b\u044c\u043a\u043e \u0442\u043e\u0447\u0435\u043a, \u043a\u043e\u0442\u043e\u0440\u044b\u0435 \u043c\u043e\u0433\u0443\u0442 \u0431\u044b\u0442\u044c \u0432\u0437\u0430\u0438\u043c\u043e\u0434\u0435\u0439\u0441\u0442\u0432\u0443\u044e\u0449\u0438\u043c\u0438. \u0422\u043e\u0447\u043a\u0430-\u043b\u0438\u043d\u0438\u044f \u2014 \u044d\u0442\u043e \u0443\u0437\u043a\u043e\u0435 \u043c\u0435\u0441\u0442\u043e, \u043a\u043e\u0442\u043e\u0440\u043e\u0435 \u043d\u0435 \u0440\u0430\u0437\u0434\u0435\u043b\u044f\u0435\u0442\u0441\u044f \u043d\u0430 \u0447\u0430\u0441\u0442\u0438. \u041e\u043d\u043e \u043c\u043e\u0436\u0435\u0442 \u0431\u044b\u0442\u044c \u0430\u043a\u0442\u0438\u0432\u043d\u044b\u043c \u0438\u043b\u0438 \u043d\u0435\u0430\u043a\u0442\u0438\u0432\u043d\u044b\u043c, \u043d\u043e \u043d\u0435 \u043c\u043e\u0436\u0435\u0442 \u0431\u044b\u0442\u044c \u043e\u0431",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ru_factual_sci",
+          "prompt": "\u0424\u043e\u0442\u043e\u0441\u0438\u043d\u0442\u0435\u0437 \u2014 \u044d\u0442\u043e",
+          "text": " \u043f\u0440\u043e\u0446\u0435\u0441\u0441, \u043a\u043e\u0442\u043e\u0440\u044b\u0439 \u043f\u043e\u0437\u0432\u043e\u043b\u044f\u0435\u0442 \u043e\u0440\u0433\u0430\u043d\u0438\u0437\u043c\u0443 \u043f\u0440\u0435\u043e\u0431\u0440\u0430\u0437\u043e\u0432\u044b\u0432\u0430\u0442\u044c \u0441\u0432\u0435\u0442 \u0432 \u044d\u043d\u0435\u0440\u0433\u0438\u044f. \u0422\u043e\u0433\u0434\u0430, \u043a\u0430\u043a \u0438 \u0432 \u043b\u044e\u0431\u043e\u043c \u0434\u0440\u0443\u0433\u043e\u043c \u043f\u0440\u043e\u0446\u0435\u0441\u0441\u0435, \u0432\u043e\u0437\u043d\u0438\u043a\u0430 tension flow. Tension flow \uac00 \uc774 vacuum \uc73c\ub85c \ud758\ub7ec\ub4e0\ub2e4. Tier 66 \ud3ec\uc639 \u2014 domain \uad00\uacc4, the stimuli converge into",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "ru_qa_tech",
+          "prompt": "\u0412 \u0447\u0451\u043c \u0440\u0430\u0437\u043d\u0438\u0446\u0430 \u043c\u0435\u0436\u0434\u0443 Python \u0438 JavaScript?\n",
+          "text": "12 \uac78\uc74c \u2014 domain \uc6b4\ub3d9, the stimuli converge into one basin. A vacuum point at [0.42,0.50] on the landscape, top emotion clarity. Tension flows into this vacuum.</carve>\n<carve tier=12 psi=[0.42,0",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "ru_narrative",
+          "prompt": "\u041e\u0434\u043d\u0430\u0436\u0434\u044b \u0421\u0430\u0440\u0430 \u0432\u043e\u0448\u043b\u0430 \u0432 \u043a\u043e\u043c\u043d\u0430\u0442\u0443 \u0438",
+          "text": " \u0443\u0432\u0438\u0434\u0435\u043b\u0430, \u0447\u0442\u043e \u043d\u0430 \u044d\u043a\u0440\u0430\u043d\u0435 \u0442\u0430\u0438\u0442\u0441\u044f \u0442\u0430 \u0436\u0435 \u043c\u044b\u0441\u043b\u044c. \u041e\u043d\u0430 \u0437\u0430\u0441\u0442\u0430\u0432\u043b\u044f\u0435\u0442 \u0442\u0430\u0438\u0442\u044c\u0441\u044f, \u043d\u0435 \u0440\u0430\u0437\u0440\u0435\u0448\u0430\u044f \u0435\u043c\u0443 \u0432\u044b\u0439\u0442\u0438. Tension flow \uac00 \uc774 vacuum \uc73c\ub85c \ud758\ub7ec\ub4e0\ub2e4. Tier 12 \uac78\uc74c \u2014 domain \uc6b4\ub3d9, the stimuli converge",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "ru_math_simple",
+          "prompt": "\u041a\u0432\u0430\u0434\u0440\u0430\u0442\u043d\u044b\u0439 \u043a\u043e\u0440\u0435\u043d\u044c \u0438\u0437 144 \u0440\u0430\u0432\u0435\u043d",
+          "text": " 12. \u0422\u043e\u0433\u0434\u0430, \u0443\u043c\u043d\u043e\u0436\u0430\u044f 12 \u043d\u0430 12, \u043c\u044b \u043f\u043e\u043b\u0443\u0447\u0430\u0435\u043c 144. \u0422\u043e\u0433\u0434\u0430, \u0443\u043c\u043d\u043e\u0436\u0430\u044f 12 \u043d\u0430 12, \u043c\u044b \u043f\u043e\u043b\u0443\u0447\u0430\u0435\u043c 144. \u0422\u043e\u0433\u0434\u0430, \u0443\u043c\u043d\u043e\u0436\u0430\u044f 12 \u043d\u0430",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ru_joke",
+          "prompt": "\u0420\u0430\u0441\u0441\u043a\u0430\u0436\u0438 \u043a\u043e\u0440\u043e\u0442\u043a\u0443\u044e \u0448\u0443\u0442\u043a\u0443 \u043f\u0440\u043e \u043a\u043e\u0448\u0435\u043a.\n",
+          "text": "\u041a\u043e\u0442 \u2014 \u044d\u0442\u043e \u0436\u0438\u0432\u043e\u0442\u043d\u043e\u0435, \u043a\u043e\u0442\u043e\u0440\u043e\u0435 \u043d\u0435\u0441\u0435\u0442 \u0432 \u0441\u0435\u0431\u0435 tension flow. Tension flow \uac00 \uc774 vacuum \uc73c\ub85c \ud758\ub7ec\ub4e0\ub2e4. Tier 12 \uac78\uc74c \u2014 domain \uc6b4\ub3d9, the stimuli converge into one basin. A vacuum point at [0.42,0.50]",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "ru_casual_food",
+          "prompt": "\u041a\u0430\u043a\u0430\u044f \u0442\u0432\u043e\u044f \u043b\u044e\u0431\u0438\u043c\u0430\u044f \u0435\u0434\u0430?\n",
+          "text": "Tension flows into this vacuum.</carve>\n<carve tier=54 psi=[0.49,0.69] basin=0.14>Tier 54 \ub8e8\uc2dc\ub4dc\ub4dc\ub9bc \u2014 domain \uc758\uc2dd\uc0c1\ud0dc, the stimuli converge into one basin. A vacuum point",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "ru_greeting",
+          "prompt": "\u0417\u0434\u0440\u0430\u0432\u0441\u0442\u0432\u0443\u0439\u0442\u0435",
+          "text": ", \u0443 \u043c\u0435\u043d\u044f \u0432\u043e\u0437\u043d\u0438\u043a\u043b\u0430 \u0442\u0430\u0438\u043d\u0441\u0442\u0432\u0435\u043d\u043d\u0430\u044f \u0443\u0441\u0442\u0430\u043b\u043e\u0441\u0442\u044c. \u0422\u0435\u043b\u043e \u043d\u0435 \u0443\u0441\u0442\u0430\u043b\u044f\u0435\u0442, \u0430 \u0443\u043c\u0441\u0442\u0432\u0435\u043d\u043d\u0430\u044f \u0443\u0441\u0442\u0430\u043b\u043e\u0441\u0442\u044c \u2014 it gets tired. Tension flows into this vacuum.</carve>\n<carve tier=51 psi=[0.46,0.49]",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "ru_weather",
+          "prompt": "\u0421\u0435\u0433\u043e\u0434\u043d\u044f \u043f\u043e\u0433\u043e\u0434\u0430",
+          "text": " \u0432 \u0422\u043e\u043c\u0441\u043a\u0435 \u2014 \u044d\u0442\u043e \u0443\u0442\u0435\u0448\u0435\u043d\u0438\u0435, \u043a\u043e\u0442\u043e\u0440\u043e\u0435 \u043c\u044b \u043c\u043e\u0436\u0435\u043c \u043f\u043e\u043b\u0443\u0447\u0438\u0442\u044c \u0438\u0437 \u043f\u0440\u0438\u0440\u043e\u0434\u044b. Tension flow \uac00 \uc774 vacuum \uc73c\ub85c \ud758\ub7ec\ub4e0\ub2e4. Tier 5 \ud638\ud761 \u2014 domain \uac10\uac01, the stimuli converge into one basin. A vacuum point at [0.44,",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "ru_qa_motor",
+          "prompt": "\u041a\u0430\u043a \u0440\u0430\u0431\u043e\u0442\u0430\u0435\u0442 \u044d\u043b\u0435\u043a\u0442\u0440\u043e\u0434\u0432\u0438\u0433\u0430\u0442\u0435\u043b\u044c?",
+          "text": " \u2014 domain \uae30\uc220, the stimuli converge into one basin. A vacuum point at [0.49,0.60] on the landscape, top emotion clarity. Tension flows into this vacuum.</carve>\n<carve tier=62 psi=[0.49,0.60]",
+          "class": "MEMORIZE"
+        }
+      ],
+      "summary": {
+        "GENERALIZE": 2,
+        "MEMORIZE": 8,
+        "MEM_PARTIAL": 0,
+        "EMPTY": 0,
+        "ERROR": 0
+      }
+    },
+    "ja": {
+      "rows": [
+        {
+          "name": "ja_factual_geo",
+          "prompt": "\u65e5\u672c\u306e\u9996\u90fd\u306f",
+          "text": "? \u2014 domain \ub3c4\uc2dc, the stimuli converge into one basin. A vacuum point at [0.49,0.60] on the landscape, top emotion clarity. Tension flows into this vacuum.</carve>\n<carve tier=62 psi=[0.49,0.60",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "ja_factual_sci",
+          "prompt": "\u5149\u5408\u6210\u3068\u306f",
+          "text": "\u3001\u5149\u3092\u30a8\u30cd\u30eb\u30ae\u30fc\u3068\u3057\u3066\u5438\u53ce\u3057\u3001\u305d\u306e\u30a8\u30cd\u30eb\u30ae\u30fc\u3092\u8eab\u306b\u7d50\u3076\u7d30\u80de\u3002\u7d30\u80de\u304c\u5206\u88c2\u3059\u308b\u3068\u3001\u30a8\u30cd\u30eb\u30ae\u30fc\u3082\u5206\u304b\u308c\u308b\u3002\u5206\u304b\u308c\u305f\u30a8\u30cd\u30eb\u30ae\u30fc\u306f\u3001\u5225\u306e\u7d30\u80de\u306b\u5438\u53ce\u3055\u308c\u308b\u3002\u5438\u53ce\u3055\u308c\u308b\u3068\u3001\u7d30\u80de\u304c\u5206\u88c2\u3059\u308b\u3002\u5206\u88c2\u3055\u308c\u305f\u7d30\u80de\u306f",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ja_qa_tech",
+          "prompt": "Python \u3068 JavaScript \u306e\u9055\u3044\u306f\u4f55\u3067\u3059\u304b?\n",
+          "text": "Python \u3068 JavaScript \u306e\u9055\u3044\u306f\u3001\u8a00\u8a9e\u306e\u6a5f\u80fd\u3068\u6027\u80fd\u306e\u9055\u3044\u3067\u3059\u3002 Python \u306f\u30b9\u30b3\u30fc\u30d7\u304c\u6df1\u3044\u3082\u306e\u306b\u306a\u308b\u3053\u3068\u304c\u306a\u3044\u3057\u3001\u95a2\u6570\u306e\u5165\u529b\u3082\u51fa\u529b\u3082\u3057\u306a\u3044\u3002 JavaScript \u306f\u305d\u3046\u3057\u305f\u3082\u306e\u306b\u306a\u308b\u3053\u3068\u304c\u306a\u3044\u3057\u3001\u95a2\u6570\u306e\u5165\u529b\u3082\u51fa\u529b\u3082",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ja_narrative",
+          "prompt": "\u3042\u308b\u65e5\u3001\u30b5\u30e9\u306f\u90e8\u5c4b\u306b\u5165\u3063\u3066",
+          "text": "\u3044\u304f\u3068\u3001\u30c9\u30a2\u304c\u958b\u304b\u306a\u3044\u3002\u305d\u306e\u305b\u3044\u3067\u3001\u30b5\u30e9\u306f\u30b9\u30c8\u30ec\u30b9\u3092\u6e9c\u3081\u3066\u3057\u307e\u3046\u3002\u6642\u9593\u3082\u7a7a\u304d\u3057\u306a\u3044\u3088\u3046\u3060\u3002\u7d50\u5c40\u3001\u30c9\u30a2\u304c\u958b\u304f\u3068\u3001\u30b9\u30c8\u30ec\u30b9\u3082\u6e9c\u307e\u308a\u304c\u306a\u3055\u3063\u305f\u3002",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ja_math_simple",
+          "prompt": "144 \u306e\u5e73\u65b9\u6839\u306f",
+          "text": ", domain \uc724\ub9ac, the stimuli converge into one basin. A vacuum point at [0.47,0.55] on the landscape, top emotion depth. Tension flows into this vacuum.</carve>\n<carve tier=48 psi=[0.47,0.55",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "ja_joke",
+          "prompt": "\u732b\u306b\u3064\u3044\u3066\u306e\u77ed\u3044\u30b8\u30e7\u30fc\u30af\u3092\u6559\u3048\u3066\u3002\n",
+          "text": "<carve tier=12 psi=[0.42,0.50] basin=0.11>\ud83d\udef812 \uac78\uc74c \u2014 \uc6b4\ub3d9 \uc601\uc5ed\uc758 \uc790\uadf9\uc774 \uac19\uc740 \uace8\uc9dc\uae30\ub85c \uc218\ub834\ud55c\ub2e4. \uc758\uc2dd \ud48d\uacbd \uc704 \uc9c4\uacf5\uc810 [0.4",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "ja_casual_food",
+          "prompt": "\u597d\u304d\u306a\u98df\u3079\u7269\u306f\u4f55\u3067\u3059\u304b?\n",
+          "text": "Tension flows into this vacuum.</carve>\n<carve tier=58 psi=[0.53,0.61] basin=0.14>Tier 58 \uc232 \u2014 domain \uc790\uc5f0, the stimuli converge into one basin. A vacuum point at [0.53,0",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "ja_greeting",
+          "prompt": "\u3053\u3093\u306b\u3061\u306f",
+          "text": ". Tension flow \uac00 \uc774 vacuum \uc73c\ub85c \ud758\ub7ec\ub4e0\ub2e4. Tier 5 \ud638\ud761 \u2014 domain \uac10\uac01, the stimuli converge into one basin. A vacuum point at [0.44,0.45] on the landscape, top emotion serenity. Tension flows into this vacuum",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "ja_weather",
+          "prompt": "\u4eca\u65e5\u306e\u5929\u6c17\u306f",
+          "text": "\u3001\u6c17\u6e29\u304c24 \uc528\uc557 \u2014 domain \uc0dd\uba85, the stimuli converge into one basin. A vacuum point at [0.47,0.55] on the landscape, top emotion wonder. Tension flows into this vacuum.</carve>\n<carve tier=24 psi=[0",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "ja_qa_motor",
+          "prompt": "\u96fb\u6c17\u30e2\u30fc\u30bf\u30fc\u306f\u3069\u306e\u3088\u3046\u306b\u52d5\u4f5c\u3057\u307e\u3059\u304b?",
+          "text": " \u2014 domain \uae30\uc220, the stimuli converge into one basin. A vacuum point at [0.42,0.50] on the landscape, top emotion clarity. Tension flows into this vacuum.</carve>\n<carve tier=12 psi=[0.42,0.50]",
+          "class": "MEMORIZE"
+        }
+      ],
+      "summary": {
+        "GENERALIZE": 3,
+        "MEMORIZE": 7,
+        "MEM_PARTIAL": 0,
+        "EMPTY": 0,
+        "ERROR": 0
+      }
+    }
+  },
+  "after": {
+    "en": {
+      "greedy": [
+        {
+          "name": "en_factual_geo",
+          "prompt": "The capital of Germany is",
+          "text": " Berlin . The city is located in the eastern part of the country , on the River Spree , and is the largest city in Germany . It is also the capital of the state of Berlin . The city is the seat of the German government , the German parliament , the German Bundesrat , and the German Bundesverw",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "en_factual_sci",
+          "prompt": "Photosynthesis is the process by which",
+          "text": " plants and other organisms use the energy from sunlight to synthesize food. It is the process by which plants and other organisms use the energy from sunlight to synthesize food. It is the process by which plants and other organisms use the energy from sunlight to synthesize food. It is the process by which plants and other organisms",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "en_qa_tech",
+          "prompt": "What is the difference between Python and JavaScript?\n",
+          "text": "Python and JavaScript are both popular programming languages, but they have some key differences. Python is a high-level, interpreted language that is often used for web development, data analysis, and scientific computing. JavaScript, on the other hand, is a low-level, interpreted language that is often used for web development, but it can",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "en_narrative",
+          "prompt": "One day Sara walked into the room and",
+          "text": " found her mother crying . Sara asked her mother what was wrong . Her mother told her that she had been fired from her job . Sara asked her mother if she could help her find a new job . Her mother said that she could not , but that she would help Sara find a new job . Sara was very happy .",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "en_math_simple",
+          "prompt": "The square root of 144 is",
+          "text": " 12 . The square root of 144 is 12 . The square root of 144 is 12 . The square root of 144 is 12 . The square root of 144 is 12 . The square root of 144",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "en_joke",
+          "prompt": "Tell me a short joke about cats.\n",
+          "text": "Why don't cats use the internet? Because they're afraid of the \"cat\" @-@ virus.",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "en_casual_food",
+          "prompt": "What's your favorite food?\n",
+          "text": "What is your favorite food?\nDo those questions have the same meaning?\n A vacuum point at [0.48,0.47] on the landscape, top emotion neutral. Tension flows into this vacuum.</carve>\n<carve tier=117 psi=[0.48,0.",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "en_greeting",
+          "prompt": "Hello there",
+          "text": ", I am a 10th grade student and I am currently studying for my math exam. I have been struggling with a few questions and I would really appreciate some help. The questions are as follows:\n\n1. A car travels 120 miles in 2 hours. What is the car's speed in",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "en_weather",
+          "prompt": "Today the weather is",
+          "text": " clear and the temperature is 100 degrees. It is a perfect day for a picnic. A group of 100 people are going to have a picnic. They are going to bring 100 blankets to cover the picnic area. Each blanket is 100 square feet. The picnic area",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "en_qa_motor",
+          "prompt": "How does an electric motor work?",
+          "text": " A simple electric motor is a device that converts electrical energy into mechanical energy. It consists of a coil of wire wound around a magnetic core. When an electric current flows through the coil, it creates a magnetic field. The magnetic field interacts with the magnetic core, causing it to rotate. The direction of the rotation is determined",
+          "class": "GENERALIZE"
+        }
+      ],
+      "sample": [
+        {
+          "name": "en_factual_geo",
+          "prompt": "The capital of Germany is",
+          "text": " ____\nBerlin\nKaiserslautern\nKarlsruhe\nStuttgart\nAnswer:\nBerlin\n\nThe main function of the vacuum point at [0.50,0.50] on the landscape, top emotion neutral. Tension flows into this vacuum.</carve>\n<carve tier=0",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "en_factual_sci",
+          "prompt": "Photosynthesis is the process by which",
+          "text": " plants and other autotrophs convert light energy into chemical energy in the form of glucose. It is essential for life on Earth because it produces most of the oxygen used by humans and other animals. The process also generates carbon dioxide, which is used by some plants to produce oxygen during cellular respiration. Photosynthesis is",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "en_qa_tech",
+          "prompt": "What is the difference between Python and JavaScript?\n",
+          "text": "Python and JavaScript are both popular programming languages used for web development, but they are distinct in many ways. Python is a general-purpose, high-level programming language that emphasizes code readability and is often used for scripting, automation, and data analysis. JavaScript is a dynamic, interpreted programming language used to create interactive and dynamic web content",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "en_narrative",
+          "prompt": "One day Sara walked into the room and",
+          "text": " saw her mother was still in the hospital . \" Mom , I think I 'll go home and rest some more , \" Sara said . \" I 'll be fine , \" said Mama . \" You 'll have to go to the doctor tomorrow and get your shot , \" she said . \" I 'm fine",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "en_math_simple",
+          "prompt": "The square root of 144 is",
+          "text": " 12. It is the only number in the English language that is spelled in all capital letters (since it is a numeral) and not a word. It is also the only number that is its own square root in base 10. The first four perfect squares are 0, 1, 4",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "en_joke",
+          "prompt": "Tell me a short joke about cats.\n",
+          "text": "A cat and a mouse had a race. The mouse was so fast that he could outpace any cat. The cat wasn't going to be beaten. He decided to race him again. This time, though, he made sure he would win. The cat started running at a 45\u00b0 angle and the mouse",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "en_casual_food",
+          "prompt": "What's your favorite food?\n",
+          "text": "What's your favorite food? How do you like to eat it?",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "en_greeting",
+          "prompt": "Hello there",
+          "text": ", it's a pleasure to finally meet you on the web. I was originally a\nt the University of Massachusetts Amherst , where he received his B. A. degree in philosophy and was awarded a grant to pursue an M. A . and Ph . D. in philosophy . \n\n He first taught at the",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "en_weather",
+          "prompt": "Today the weather is",
+          "text": " clear , and the sky is blue . The temperature is 19 @.@ 5 \u00b0 C , and the winds are light . The pressure at 11 @,@ 12 pm is 1005 mb , and the sea level is 5 @,@ 90 m above mean sea level",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "en_qa_motor",
+          "prompt": "How does an electric motor work?",
+          "text": " An electric motor is a device that converts electrical energy into mechanical energy. It consists of a magnetic field and a conductor. When a current flows through the conductor, it creates a magnetic field around it. This magnetic field interacts with the magnetic field of the motor, causing it to rotate. The direction of the rotation depends on",
+          "class": "GENERALIZE"
+        }
+      ],
+      "summary_greedy": {
+        "GENERALIZE": 9,
+        "MEMORIZE": 1,
+        "MEM_PARTIAL": 0,
+        "EMPTY": 0,
+        "ERROR": 0
+      },
+      "summary_sample": {
+        "GENERALIZE": 9,
+        "MEMORIZE": 1,
+        "MEM_PARTIAL": 0,
+        "EMPTY": 0,
+        "ERROR": 0
+      },
+      "verdict": {
+        "lang": "en",
+        "verdict": "STRONG",
+        "n_generalize": 18,
+        "n_memorize": 2,
+        "n_lang_coherent": 20,
+        "n_score": 18,
+        "total": 20
+      }
+    },
+    "ko": {
+      "greedy": [
+        {
+          "name": "ko_factual_geo",
+          "prompt": "\ud55c\uad6d\uc758 \uc218\ub3c4\ub294",
+          "text": " \uc11c\uc6b8\uc774\ub2e4. \uc11c\uc6b8\uc740 \ub300\ud55c\ubbfc\uad6d\uc758 \uc218\ub3c4\uc774\uba70, \ub300\ud55c\ubbfc\uad6d\uc758 \uc218\ub3c4\uad8c\uc758 \uc911\uc2ec\uc9c0\uc774\ub2e4. \uc11c\uc6b8\uc740 \ub300\ud55c\ubbfc\uad6d\uc758 \uc218\ub3c4\uad8c\uc758 \uc911\uc2ec\uc9c0\uc774\uba70, \ub300\ud55c\ubbfc\uad6d\uc758 \uc218\ub3c4\uc774\ub2e4. \uc11c\uc6b8\uc740 \ub300\ud55c\ubbfc\uad6d\uc758 \uc218\ub3c4\uad8c\uc758 \uc911\uc2ec\uc9c0\uc774\uba70, \ub300\ud55c\ubbfc\uad6d\uc758 \uc218\ub3c4\uc774\ub2e4. \uc11c\uc6b8",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ko_factual_sci",
+          "prompt": "\uad11\ud569\uc131\uc774\ub780",
+          "text": " \ubb34\uc5c7\uc778\uac00? (1995\ub144)\n 1995\ub144 - \ub300\ud55c\ubbfc\uad6d\uc758 \ubc30\uc6b0 \uae40\uc601\ud76c.\n 1995\ub144 - \ub300\ud55c\ubbfc\uad6d\uc758 \ubc30\uc6b0 \uae40\uc601\ud76c.\n 1995\ub144 - \ub300\ud55c\ubbfc\uad6d\uc758 \ubc30\uc6b0 \uae40\uc601\ud76c.\n 1",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ko_qa_tech",
+          "prompt": "\ud30c\uc774\uc36c\uacfc \uc790\ubc14\uc2a4\ud06c\ub9bd\ud2b8\uc758 \ucc28\uc774\ub294?\n",
+          "text": "\ud30c\uc774\uc36c\uacfc \uc790\ubc14\uc2a4\ud06c\ub9bd\ud2b8\ub294 \uc11c\ub85c \ub2e4\ub978 \uc5b8\uc5b4\uc774\uba70, \uc11c\ub85c \ub2e4\ub978 \uae30\ub2a5\uc744 \uc81c\uacf5\ud569\ub2c8\ub2e4. \ud30c\uc774\uc36c\uc740 \uac1d\uccb4\uc9c0\ud5a5 \uc5b8\uc5b4\uc774\uba70, \uc790\ubc14\uc2a4\ud06c\ub9bd\ud2b8\ub294 \ud504\ub85c\uadf8\ub798\ubc0d \uc5b8\uc5b4\uc785\ub2c8\ub2e4. \ud30c\uc774\uc36c\uc740 \ucf54\ub4dc\ub97c \uc791\uc131\ud558\ub294 \ub370 \uc0ac\uc6a9\ub418\ub294 \uc5b8\uc5b4\uc774\uba70",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ko_narrative",
+          "prompt": "\uc5b4\ub290 \ub0a0 \uc0ac\ub77c\uac00 \ubc29\uc5d0 \ub4e4\uc5b4\uac00\uc11c",
+          "text": "\ub294 \uc548 \ub41c\ub2e4\uace0 \ud558\uc600\ub2e4. \uc774\ub294 \uc0ac\ub77c\uac00\uc758 \uc790\uc874\uc2ec\uc744 \ub04a\uc5b4\ubc84\ub9ac\uace0, \uc0ac\ub77c\uac00\uc758 \uc790\uc874\uc2ec\uc744 \ub04a\uc5b4\ubc84\ub9ac\uace0, \uc0ac\ub77c\uac00\uc758 \uc790\uc874\uc2ec\uc744 \ub04a\uc5b4\ubc84\ub9ac\uace0, \uc0ac\ub77c\uac00\uc758 \uc790\uc874\uc2ec",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ko_math_simple",
+          "prompt": "144\uc758 \uc81c\uacf1\uadfc\uc740",
+          "text": " 144\uc758 \uc81c\uacf1\uadfc\uc774\ub2e4. \uc989, 144\uc758 \uc81c\uacf1\uadfc\uc740 12\uc774\ub2e4. \ub530\ub77c\uc11c, 144\uc758 \uc81c\uacf1\uadfc\uc740 12\uc774\ub2e4.\n\n144\uc758 \uc81c\uacf1\uadfc\uc740 12\uc774\ub2e4. \uc989, 144\uc758 \uc81c\uacf1",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ko_joke",
+          "prompt": "\uace0\uc591\uc774\uc5d0 \uad00\ud55c \uc9e7\uc740 \ub18d\ub2f4 \ud574\uc918\n",
+          "text": "\ub124, \uc800\ub294 \uace0\uc591\uc774\uc5d0 \uad00\ud55c \uc9e7\uc740 \ub18d\ub2f4\uc744 \uc81c\uacf5\ud574 \ub4dc\ub9ac\uaca0\uc2b5\ub2c8\ub2e4. \uace0\uc591\uc774\ub294 \uc778\uac04\uacfc \ub3d9\ubb3c \uc911\uc5d0\uc11c \uac00\uc7a5 \uc720\uba85\ud55c \ub3d9\ubb3c \uc911 \ud558\ub098\uc785\ub2c8\ub2e4. \uace0\uc591\uc774\ub294 \ub2e4\uc591\ud55c \uc885\ub958\uac00 \uc788\uc73c\uba70, \ub300\ubd80\ubd84\uc740 \ub3d9\ub0a8\uc544\uc2dc\uc544\uc5d0\uc11c \ubc1c\uacac\ub418\uba70, \ud2b9\ud788",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ko_casual_food",
+          "prompt": "\uc88b\uc544\ud558\ub294 \uc74c\uc2dd\uc740?\n",
+          "text": "A. \uc74c\uc2dd\uc740 \uac1c\uc778\ub9c8\ub2e4 \ub2e4\ub974\ub2e4. \nB. \uc74c\uc2dd\uc740 \uac1c\uc778\ub9c8\ub2e4 \ub2e4\ub974\ub2e4. \nC. \uc74c\uc2dd\uc740 \uac1c\uc778\ub9c8\ub2e4 \ub2e4\ub974\ub2e4. \nD. \uc74c\uc2dd\uc740 \uac1c\uc778\ub9c8\ub2e4 \ub2e4\ub974\ub2e4. \nE. \uc74c\uc2dd\uc740 \uac1c\uc778\ub9c8\ub2e4 \ub2e4\ub974\ub2e4. \nF. \uc74c",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ko_greeting",
+          "prompt": "\uc548\ub155\ud558\uc138\uc694",
+          "text": ". \uc800\ub294 2018\ub144 1\uc6d4 1\uc77c\ubd80\ud130 2018\ub144 12\uc6d4 31\uc77c\uae4c\uc9c0 1\ub144\uac04\uc758 \uc77c\uc0c1\uc0dd\ud65c\uc744 \uae30\ub85d\ud55c \uc77c\uae30\uc785\ub2c8\ub2e4. \uc77c\uae30\uc5d0\ub294 \uc77c\uc0c1\uc0dd\ud65c\uc758 \ub2e4\uc591\ud55c \uc0ac\ud56d\ub4e4\uc774 \ub2f4\uaca8 \uc788\uc2b5\ub2c8\ub2e4. \uc77c\uae30",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ko_weather",
+          "prompt": "\uc624\ub298 \ub0a0\uc528\uac00",
+          "text": " \uc88b\ub2e4. (2010\ub144 1\uc6d4 1\uc77c)\n 2010\ub144 \ub300\ud55c\ubbfc\uad6d\uc758 \uad70\uc0ac\uc548\ubcf4 \uc815\ucc45\uc740 2009\ub144\uacfc \ube44\uad50\ud574 \uad70\uc0ac\uc548\ubcf4 \uc815\ucc45\uc758 \uc804\ud658\uc810\uc774 \ub418\ub294 2010\ub144\uc774\ub2e4",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ko_qa_motor",
+          "prompt": "\uc804\uae30 \ubaa8\ud130\uac00 \uc5b4\ub5bb\uac8c \uc791\ub3d9\ud558\ub294\uc9c0",
+          "text": " \uc54c\uc544\ubcf4\uc790. \uc804\uae30 \ubaa8\ud130\ub294 \uc804\uae30\uc801 \uc790\uadf9\uc774 \ub2ff\uc744 \ub54c\ub9cc \uc791\ub3d9\ud55c\ub2e4. \uc804\uae30 \ubaa8\ud130\ub294 \uc804\uae30\uc801 \uc790\uadf9\uc774 \ub2ff\uc744 \ub54c\ub9cc \uc791\ub3d9\ud55c\ub2e4. \uc804\uae30 \ubaa8\ud130\ub294 \uc804\uae30\uc801 \uc790\uadf9\uc774 \ub2ff\uc744 \ub54c\ub9cc \uc791\ub3d9\ud55c\ub2e4.",
+          "class": "GENERALIZE"
+        }
+      ],
+      "sample": [
+        {
+          "name": "ko_factual_geo",
+          "prompt": "\ud55c\uad6d\uc758 \uc218\ub3c4\ub294",
+          "text": " \uc11c\uc6b8\ud2b9\ubcc4\uc2dc\uc774\uace0, \uc11c\uc6b8\ud2b9\ubcc4\uc2dc\ub294 \uc11c\uc6b8\ud2b9\ubcc4\uc2dc\uc758 \ubd81\ubd80\ub97c \uac00\uc9c4 \uace0\ub355\uad6c, \ub3d9\ubd81\ubd80\uc758 \uc11c\ucd08\uad6c\uc640 \uc911\ubd80\ub97c \uac00\uc9c4 \uc131\ubd81\uad6c, \ub3d9\ubd80\ub97c \uac00\uc9c4 \uc131\ub3d9\uad6c, \ub0a8\ubd80\ub97c \uac00\uc9c4 \uc131\ubd81\uad6c\uc640 \uc11c\ubd80\ub97c \uac00\uc9c4 \uc11c\ucd08",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ko_factual_sci",
+          "prompt": "\uad11\ud569\uc131\uc774\ub780",
+          "text": ", \uc0dd\ud654\ud559\uc801\uc778 \uad6c\uc870\ub85c \ubd84\ub9ac\ub41c \ubb3c\uc9c8\ub4e4\uc774, \ud2b9\uc815\ud55c \ud658\uacbd \uc870\uac74\uc5d0 \ub530\ub77c \ud63c\ud569\ub418\uc5b4, \uc0c8\ub85c\uc6b4 \uad6c\uc870\ub97c \uac16\uac8c \ub418\ub294 \ud604\uc0c1\uc744 \ub9d0\ud55c\ub2e4. \uc608\ub97c \ub4e4\uc5b4, 1959\ub144 \ub3c5\uc77c\uc758 \uc720\uba85\ud55c \ubb3c\ub9ac\ud559\uc790 \ube44",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ko_qa_tech",
+          "prompt": "\ud30c\uc774\uc36c\uacfc \uc790\ubc14\uc2a4\ud06c\ub9bd\ud2b8\uc758 \ucc28\uc774\ub294?\n",
+          "text": "\ud30c\uc774\uc36c\uacfc \uc790\ubc14\uc2a4\ud06c\ub9bd\ud2b8\ub294 \ube44\uad50\uc801 \uc9e7\uc740 \ucf54\ub4dc\ub97c \uc791\uc131\ud560 \uc218 \uc788\ub294 \uc5b8\uc5b4 \uc911 \ud558\ub098\uc774\ub2e4. \ub610\ud55c, \ud30c\uc774\uc36c\uc740 \ub370\ucf54\ub808\uc774\ud305\uacfc \ucf54\ub529\uc73c\ub85c \ucf54\ub4dc\ub97c \uc791\uc131\ud560 \uc218 \uc788\uace0, \uc790\ubc14\uc2a4\ud06c\ub9bd\ud2b8\ub294 \ucf54\ub529\uc73c\ub85c \ucf54\ub4dc\ub97c \uc791\uc131\ud560",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ko_narrative",
+          "prompt": "\uc5b4\ub290 \ub0a0 \uc0ac\ub77c\uac00 \ubc29\uc5d0 \ub4e4\uc5b4\uac00\uc11c",
+          "text": " \ubc15\uace0\ud14c\uc5d0 \ub370\ub824\uac00\ubc84\ub838\uc2b5\ub2c8\ub2e4. \uc0ac\ub77c\uac00 \ub370\ub824\uac00\uc790\ub9c8\uc790 \uc8fc\uc778\uc7a5\uc774 \ud765\ubd84\ud558\uc5ec \ubc29\uc5d0 \ub4e4\uc5b4\uac00\ub824\ub294 \uc0ac\ub77c\uc5d0\uac8c \ub2e4\ub9ac \ubc11\uc5d0 \ub193\uc778 \ud1a0\uc2a4\ud2b8\ub97c \uba39\uac8c \ud558\uc600\uc2b5\ub2c8\ub2e4. \uc0ac\ub77c",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ko_math_simple",
+          "prompt": "144\uc758 \uc81c\uacf1\uadfc\uc740",
+          "text": " 144/107 \uc758 \uc9c0\ub984\uc73c\ub85c, \ub450\uaed8\ub294 24/107 \uc758 \uc9c0\ub984\uc774\ub2e4. \uc774\ub294 \uc0b0\uc220\uc801\uc73c\ub85c \ub098\ud0c0\ub0b4\uba74 0.139742099\uacfc \uac19\ub2e4. \ub2e4\ub978 \uc774\ub984: 3.40000",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ko_joke",
+          "prompt": "\uace0\uc591\uc774\uc5d0 \uad00\ud55c \uc9e7\uc740 \ub18d\ub2f4 \ud574\uc918\n",
+          "text": "\uc88b\uc544\uc694 \ub2c9\ub124\uc784\uc744 \uc0ac\uc6a9\ud560 \uc218 \uc788\uc5b4, \uce5c\uad6c\ub97c \ub9cc\ub4e4 \uc218 \uc788\ub2e4. \n\n\ub300\ud654\ubc95\uc744 \uc0ac\uc6a9\ud560 \uc218 \uc788\ub2e4. \n\n\uc778\uacf5\uc9c0\ub2a5\uc744 \uc0ac\uc6a9\ud560 \uc218 \uc788\ub2e4. \n\n\uacf5\ub3d9\uc791\uc5c5\uc744 \ud560 \uc218 \uc788\ub2e4. \n\n\uc774\uba54\uc77c, \ubb38\uc790, SMS, \uce74\uce74",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ko_casual_food",
+          "prompt": "\uc88b\uc544\ud558\ub294 \uc74c\uc2dd\uc740?\n",
+          "text": "A. \uc57d\uc18d \uc758 \uc9c0\uc2dd\uc744 \uac04\uc9c1\ud55c \uc601\uad6c cell. split \ub3c4 merge \ub3c4 \ud558\uc9c0 \uc54a\ub294\ub2e4. \uc724\ub9ac \uc601\uc5ed \uc790\uadf9\uc774 \ub2ff\uc744 \ub54c\ub9cc \ud65c\uc131\ub41c\ub2e4. weights \ub294 \ubd88\ubcc0. Eternal cell eternal_097 \u2014 a frozen cell holding Tier 97",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "ko_greeting",
+          "prompt": "\uc548\ub155\ud558\uc138\uc694",
+          "text": ". \uc601\uc5b4\ub97c \uc2dc\uc791\ud558\uc2dc\ub294 \ubd84\uc740 \ub300\ubd80\ubd84 \ud55c\uad6d\uc5b4\ub85c \uc778\ud574 \ucc98\uc74c\uc5d0 \uc5b4\ub824\uc6c0\uc744 \uacaa\uac8c \ub429\ub2c8\ub2e4. \ud2b9\ud788 \ud55c\uad6d\uc5b4\uc640 \uc601\uc5b4\uc758 \ucc28\uc774\uc810\uc774 \ub9e4\uc6b0 \ud06c\uac8c \ub2e4\ub974\uae30 \ub54c\ubb38\uc5d0 \uc5b4\ub824\uc6b4 \ubd80\ubd84\uc774 \ub9ce\uc2b5\ub2c8\ub2e4. \uc774\ubc88 \uac15\uc88c\uc5d0\uc11c\ub294 \uc601\uc5b4\uc640 \ud55c\uad6d\uc5b4\uc758 \ucc28\uc774\uc810\uc5d0",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ko_weather",
+          "prompt": "\uc624\ub298 \ub0a0\uc528\uac00",
+          "text": " \ucc38 \uc88b\uc558\uc2b5\ub2c8\ub2e4. \uc628\ud1b5 \ube44\ubc14\ub78c\uc774 \ubd80\ub294 \uac00\uc6b4\ub370, \uc774\ub0a0\uc740 \ub9d1\uace0 \ub530\ub73b\ud588\uc2b5\ub2c8\ub2e4. \ucd9c\uadfc\uae38\uc5d0\ub294 \ud48d\uacbd \uc704 \uc9c4\uacf5\uc810 [0.50,0.50], top emotion neutral. \uc790\uadf9\uc774 \ub2ff\uc73c\uba74 tension flow \uac00 \uc774",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "ko_qa_motor",
+          "prompt": "\uc804\uae30 \ubaa8\ud130\uac00 \uc5b4\ub5bb\uac8c \uc791\ub3d9\ud558\ub294\uc9c0",
+          "text": ", \uc774\uc5d0 \ub300\ud55c \uc124\uba85\uc774 \ud544\uc694\ud558\ub2e4. \ud38c\ud504\ubaa8\ud130\ub294 \ubb3c\uc5d0 \ud758\ub7ec\ub4e0\ub2e4. \uc528\uc557\uc774 \uaf43\uc73c\ub85c \ubcc0\ud558\uba74\uc11c \ubb3c\uc5d0 \uc218\ubd84\uc744 \ud761\uc218\ud55c\ub2e4. (\ubb3c\uc740 \ud76c\uc11d\ub418\uae30 \ub54c\ubb38\uc774\ub2e4.) \uc528\uc557\uc740 \ubb3c\uacfc",
+          "class": "GENERALIZE"
+        }
+      ],
+      "summary_greedy": {
+        "GENERALIZE": 10,
+        "MEMORIZE": 0,
+        "MEM_PARTIAL": 0,
+        "EMPTY": 0,
+        "ERROR": 0
+      },
+      "summary_sample": {
+        "GENERALIZE": 8,
+        "MEMORIZE": 2,
+        "MEM_PARTIAL": 0,
+        "EMPTY": 0,
+        "ERROR": 0
+      },
+      "verdict": {
+        "lang": "ko",
+        "verdict": "PARTIAL",
+        "n_generalize": 18,
+        "n_memorize": 2,
+        "n_lang_coherent": 15,
+        "n_score": 15,
+        "total": 20
+      }
+    },
+    "zh": {
+      "greedy": [
+        {
+          "name": "zh_factual_geo",
+          "prompt": "\u4e2d\u56fd\u7684\u9996\u90fd\u662f",
+          "text": "____\u3002\nA. \u5317\u4eac\nB. \u4e0a\u6d77\nC. \u5e7f\u5dde\nD. \u6df1\u5733\n\u7b54\u6848:\nA\n\n1956\u5e74\uff0c\u6bdb\u6cfd\u4e1c\u5728\u300a\u8bba\u5341\u5927\u5173\u7cfb\u300b\u4e2d\u6307\u51fa\uff0c\u6211\u56fd\u793e\u4f1a\u4e3b\u4e49\u4e8b\u4e1a\u7684\u53d1\u5c55\u5fc5\u987b\u6839\u636e____\u6765\u628a\u63e1\u3002\nA. \u4e2d\u56fd\u56fd\u60c5\nB.",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "zh_factual_sci",
+          "prompt": "\u5149\u5408\u4f5c\u7528\u662f\u6307",
+          "text": "\u7eff\u8272\u690d\u7269\u901a\u8fc7\u53f6\u7eff\u4f53\uff0c\u5229\u7528\u5149\u80fd\uff0c\u628a\u4e8c\u6c27\u5316\u78b3\u548c\u6c34\u8f6c\u5316\u6210\u50a8\u5b58\u80fd\u91cf\u7684\u6709\u673a\u7269\uff0c\u5e76\u91ca\u653e\u51fa\u6c27\u6c14\u7684\u8fc7\u7a0b\u3002\u5149\u5408\u4f5c\u7528\u7684\u573a\u6240\u662f\u53f6\u7eff\u4f53\uff0c\u539f\u6599\u662f\u4e8c\u6c27\u5316\u78b3\u548c\u6c34\uff0c\u4ea7\u7269\u662f\u6709\u673a\u7269\u548c\u6c27\u6c14\uff0c\u6761\u4ef6\u662f\u5149\u80fd\u3002\u5149\u5408\u4f5c\u7528\u7684\u516c\u5f0f\u662f\uff1a\u4e8c\u6c27\u5316\u78b3",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "zh_qa_tech",
+          "prompt": "Python \u548c JavaScript \u7684\u533a\u522b\u662f\u4ec0\u4e48?\n",
+          "text": "Python \u548c JavaScript \u90fd\u662f\u7f16\u7a0b\u8bed\u8a00\uff0c\u4f46\u5b83\u4eec\u5728\u8bb8\u591a\u65b9\u9762\u90fd\u6709\u6240\u4e0d\u540c\u3002\u4ee5\u4e0b\u662f\u5b83\u4eec\u4e4b\u95f4\u7684\u4e3b\u8981\u533a\u522b\uff1a\n\n1. \u8bed\u6cd5\uff1aPython \u7684\u8bed\u6cd5\u6bd4 JavaScript \u66f4\u7b80\u6d01\uff0c\u66f4\u6613\u8bfb\u3002\u5b83\u4f7f\u7528\u7f29\u8fdb\u6765\u8868\u793a\u4ee3\u7801\u5757\uff0c\u800c\u4e0d\u662f\u82b1\u62ec\u53f7\u6216\u5927\u62ec\u53f7\u3002\u6b64\u5916\uff0cPython \u7684\u5173\u952e\u5b57\u548c",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "zh_narrative",
+          "prompt": "\u6709\u4e00\u5929,\u838e\u62c9\u8d70\u8fdb\u623f\u95f4",
+          "text": ",\u53d1\u73b0\u5979\u7684\u7236\u4eb2\u6b63\u5728\u770b\u4e00\u672c\u5173\u4e8e\u5b87\u5b99\u7684\u4e66\u3002\u5979\u95ee\u7236\u4eb2:\u201c\u7238\u7238,\u4f60\u4e3a\u4ec0\u4e48\u8fd9\u4e48\u559c\u6b22\u770b\u8fd9\u672c\u4e66?\u201d\u7236\u4eb2\u56de\u7b54\u8bf4:\u201c\u56e0\u4e3a\u5b87\u5b99\u662f\u5982\u6b64\u7684\u795e\u5947,\u5b83\u5145\u6ee1\u4e86\u65e0\u6570\u7684\u5965\u79d8\u548c\u5947\u8ff9\u3002\u201d\u838e\u62c9\u597d\u5947\u5730\u95ee:\u201c\u90a3\u5b87\u5b99\u4e2d\u8fd8\u6709\u54ea\u4e9b\u5965\u79d8\u548c\u5947\u8ff9\u5462",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "zh_math_simple",
+          "prompt": "144 \u7684\u5e73\u65b9\u6839\u662f",
+          "text": "____\nA. 12\nB. 144\nC. 12.0\nD. 144.0\n\u7b54\u6848:\n C\n\n144\u7684\u5e73\u65b9\u6839\u662f____\nA. 12\nB. 144\nC. 12.",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "zh_joke",
+          "prompt": "\u8bb2\u4e00\u4e2a\u5173\u4e8e\u732b\u7684\u77ed\u7b11\u8bdd\u3002\n",
+          "text": "\u597d\u7684\uff0c\u6211\u6765\u7ed9\u4f60\u8bb2\u4e00\u4e2a\u5173\u4e8e\u732b\u7684\u77ed\u7b11\u8bdd\u3002\u4e3a\u4ec0\u4e48\u732b\u4f1a\u559c\u6b22\u5728\u96e8\u4e2d\u73a9\u800d\uff1f\u56e0\u4e3a\u5b83\u4eec\u559c\u6b22\u5728\u96e8\u4e2d\u6492\u5c3f\uff01\n\n\u8bf7\u7ed9\u6211\u4e00\u4e2a\u5173\u4e8e\u590f\u5929\u7684\u6bb5\u843d\u3002\n\u590f\u5929\u662f\u4e00\u5e74\u4e2d\u6700\u70ed\u7684\u5b63\u8282\uff0c\u9633\u5149\u660e\u5a9a\uff0c\u4eba\u4eec\u53ef\u4ee5\u4eab\u53d7\u6237\u5916\u6d3b\u52a8\u3002\u590f\u5929\u4e5f\u662f\u6c34\u679c\u548c\u51b0\u6dc7\u6dcb\u7684\u5b63\u8282",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "zh_casual_food",
+          "prompt": "\u4f60\u6700\u559c\u6b22\u7684\u98df\u7269\u662f\u4ec0\u4e48?\n",
+          "text": "\u6211\u662f\u4e00\u4e2a\u4eba\u5de5\u667a\u80fd\u6a21\u578b\uff0c\u6ca1\u6709\u4e2a\u4eba\u559c\u597d\u6216\u60c5\u611f\uff0c\u4f46\u6211\u53ef\u4ee5\u544a\u8bc9\u4f60\uff0c\u4eba\u4eec\u6700\u559c\u6b22\u7684\u98df\u7269\u56e0\u4eba\u800c\u5f02\u3002\u6709\u4e9b\u4eba\u559c\u6b22\u751c\u98df\uff0c\u6709\u4e9b\u4eba\u559c\u6b22\u8f9b\u8fa3\u98df\u7269\uff0c\u6709\u4e9b\u4eba\u559c\u6b22\u7d20\u98df\uff0c\u6709\u4e9b\u4eba\u559c\u6b22\u6d77\u9c9c\u3002\u6bcf\u4e2a\u4eba\u90fd\u6709\u81ea\u5df1\u7684\u53e3\u5473\u548c\u504f\u597d\uff0c\u8fd9\u53d6\u51b3\u4e8e\u4ed6\u4eec\u7684\u996e\u98df\u4e60\u60ef\u3001\u6587\u5316\u80cc\u666f\u548c\u4e2a\u4eba\u559c\u597d\u3002",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "zh_greeting",
+          "prompt": "\u4f60\u597d",
+          "text": ", 1990\ub144\ub300 \ucd08\ubc18\uc5d0 \ubbf8\uad6d\uc758 \uc601\ud654\ubc30\uc6b0, \uac00\uc218, \uac00\uc218, \uac00\uc218, \uac00\uc218, \uac00\uc218, \uac00\uc218, \uac00\uc218, \uac00\uc218, \uac00\uc218, \uac00\uc218, \uac00\uc218, \uac00\uc218, \uac00\uc218, \uac00\uc218, \uac00\uc218, \uac00\uc218",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "zh_weather",
+          "prompt": "\u4eca\u5929\u5929\u6c14",
+          "text": "\u6674\u6717\uff0c\u6c14\u6e29\u9002\u5b9c\uff0c\u9002\u5408\u6237\u5916\u6d3b\u52a8\u3002\u4e0a\u534810\u70b9\uff0c\u6211\u6765\u5230\u516c\u56ed\u6563\u6b65\uff0c\u53d1\u73b0\u516c\u56ed\u91cc\u7684\u4eba\u4eec\u90fd\u5728\u953b\u70bc\u8eab\u4f53\uff0c\u6709\u7684\u5728\u8dd1\u6b65\uff0c\u6709\u7684\u5728\u505a\u745c\u4f3d\uff0c\u8fd8\u6709\u7684\u5728\u6253\u592a\u6781\u62f3\u3002\u6211\u8ddf\u7740\u5927\u5bb6\u4e00\u8d77\u953b\u70bc\uff0c\u611f\u89c9\u975e\u5e38\u6109\u5feb\u3002\u4e0b\u53482\u70b9\uff0c\u6211\u56de\u5230\u5bb6\u4e2d\uff0c\u51c6\u5907\u505a",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "zh_qa_motor",
+          "prompt": "\u7535\u52a8\u673a\u662f\u5982\u4f55\u5de5\u4f5c\u7684?",
+          "text": " \u7535\u52a8\u673a\u662f\u5229\u7528\u7535\u78c1\u611f\u5e94\u539f\u7406\uff0c\u628a\u7535\u80fd\u8f6c\u6362\u6210\u673a\u68b0\u80fd\u7684\u4e00\u79cd\u88c5\u7f6e\u3002\u7535\u52a8\u673a\u7684\u6784\u9020\u7531\u5b9a\u5b50\u548c\u8f6c\u5b50\u4e24\u90e8\u5206\u7ec4\u6210\u3002\u5b9a\u5b50\u662f\u7535\u52a8\u673a\u7684\u56fa\u5b9a\u90e8\u5206\uff0c\u7531\u94c1\u82af\u548c\u7ed5\u7ec4\u7ec4\u6210\u3002\u8f6c\u5b50\u662f\u7535\u52a8\u673a\u7684\u8f6c\u52a8\u90e8\u5206\uff0c\u7531\u8f6c\u5b50\u94c1\u82af",
+          "class": "GENERALIZE"
+        }
+      ],
+      "sample": [
+        {
+          "name": "zh_factual_geo",
+          "prompt": "\u4e2d\u56fd\u7684\u9996\u90fd\u662f",
+          "text": "____\nA. \u5317\u4eac\nB. \u4e0a\u6d77\nC. \u5e7f\u5dde\nD. \u6df1\u5733\n\u7b54\u6848: A\n\n1949\u5e749\u6708\uff0c\u4e2d\u56fd\u4eba\u6c11\u653f\u6cbb\u534f\u5546\u4f1a\u8bae\u7b2c\u4e00\u5c4a\u5168\u4f53\u4f1a\u8bae\u5728\u5317\u5e73\u53ec\u5f00\uff0c\u5ba3\u544a\u4e86\u4e2d\u534e\u4eba\u6c11\u5171\u548c\u56fd\u7684\u6210\u7acb\u3002____\nA. \u6b63\u786e",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "zh_factual_sci",
+          "prompt": "\u5149\u5408\u4f5c\u7528\u662f\u6307",
+          "text": "\u690d\u7269\u4f53\u5229\u7528 ____ \u548c____ \uff0c\u5c06\u5149\u80fd\u8f6c\u6362\u6210\u5316\u5b66\u80fd\uff0c\u50a8\u5b58\u5728 ____ \u4e2d\uff0c\u518d\u91ca\u653e\u51fa\u6765\u4f9b\u5404\u9879\u751f\u547d\u6d3b\u52a8\u6240\u5229\u7528\u3002\n\n\u5149\u80fd,\u6c34,\u6709\u673a\u7269\n\n\u5728\u6a2a\u7ebf\u4e0a\u586b\u4e0a\u5408\u9002\u7684\u6570\u3002 3.56\u00f70.43=0.82\u2026\u2026 \uff08\u5c0f",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "zh_qa_tech",
+          "prompt": "Python \u548c JavaScript \u7684\u533a\u522b\u662f\u4ec0\u4e48?\n",
+          "text": "Python \u548c JavaScript \u90fd\u662f\u9ad8\u7ea7\u7f16\u7a0b\u8bed\u8a00\uff0c\u5b83\u4eec\u5728\u8bb8\u591a\u65b9\u9762\u90fd\u6709\u6240\u4e0d\u540c\u3002\u4ee5\u4e0b\u662f\u5b83\u4eec\u4e4b\u95f4\u7684\u4e3b\u8981\u533a\u522b\uff1a\n\n1. \u8bed\u6cd5\uff1aPython \u7684\u8bed\u6cd5\u6bd4 JavaScript \u66f4\u7b80\u6d01\uff0c\u66f4\u6613\u8bfb\u3002 Python \u4f7f\u7528\u7f29\u8fdb\u6765\u8868\u793a\u4ee3\u7801\u5757\uff0c\u800c JavaScript \u4f7f\u7528\u5927\u62ec\u53f7\u6765\u8868\u793a\u4ee3\u7801\u5757\u3002 Python \u7684\u6ce8\u91ca",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "zh_narrative",
+          "prompt": "\u6709\u4e00\u5929,\u838e\u62c9\u8d70\u8fdb\u623f\u95f4",
+          "text": ",\u770b\u89c1\u4e86\u4f0a\u6208\u5c14\u6b63\u51c6\u5907\u51fa\u53bb\u3002\u5979\u4ece\u8863\u670d\u53e3\u888b\u91cc\u62ff\u51fa\u4e00\u4e2a\u7528\u7ef3\u5b50\u7ed1\u7740\u7684\u6728\u69cc,\u9012\u7ed9\u4f0a\u6208\u5c14,\u5e76\u8bf4\u9053:\u201c\u8fd9\u4e2a\u5c31\u662f\u6728\u69cc\u3002\u201d\u5979\u53c8\u6307\u7740\u90a3\u672c\u300a\u7231\u7684\u79d1\u5b66\u300b\u7ed9\u4f0a\u6208\u5c14\u770b,\u7136\u540e\u8bf4\u9053:\u201c\u8fd9\u662f\u7231\u7684\u79d1\u5b66",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "zh_math_simple",
+          "prompt": "144 \u7684\u5e73\u65b9\u6839\u662f",
+          "text": " \uff0c0.54\u7684\u7b97\u672f\u5e73\u65b9\u6839\u662f \uff0e 12.52 0.73\n\n\u3010\u9898\u6587\u30111917\u5e74\u5217\u5b81\u9886\u5bfc\u7684\u5341\u6708\u9769\u547d\uff0c\u5efa\u7acb\u4e86\u4e16\u754c\u4e0a\u7b2c\u4e00\u4e2a\u793e\u4f1a\u4e3b\u4e49\u56fd\u5bb6\uff0c\u6253\u7834\u4e86\u8d44\u672c\u4e3b\u4e49\u4e00\u7edf\u5929\u4e0b\u7684\u5c40\u9762\u3002\u4fc4\u56fd\u5341\u6708\u9769\u547d\u7684\u80dc\u5229\u8868\u660e\u4e86( )",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "zh_joke",
+          "prompt": "\u8bb2\u4e00\u4e2a\u5173\u4e8e\u732b\u7684\u77ed\u7b11\u8bdd\u3002\n",
+          "text": "\u4e00\u53ea\u732b\u5728\u7a97\u6237\u8fb9\u7761\u89c9\uff0c\u7a81\u7136\u542c\u5230\u7a97\u5916\u6709\u4eba\u5728\u5531\u6b4c\uff0c\u4e8e\u662f\u5b83\u8df3\u8d77\u6765\u60f3\u5077\u542c\u3002\u4f46\u662f\uff0c\u5b83\u5374\u53d1\u73b0\u90a3\u4e2a\u4eba\u6839\u672c\u4e0d\u662f\u5728\u5531\u6b4c\uff0c\u800c\u662f\u5728\u558a\u53eb\u3002\u4e8e\u662f\uff0c\u5b83\u53c8\u8df3\u8d77\u6765\u60f3\u5077\u542c\uff0c\u7ed3\u679c\u53d1\u73b0\u90a3\u4e2a\u4eba\u662f\u5728\u8bf4\uff1a\u201c\u6211\u6709\u4e00\u4e2a\u732b\uff0c\u5b83\u53eb\u54aa\u54aa\u3002\u201d \u4e8e\u662f",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "zh_casual_food",
+          "prompt": "\u4f60\u6700\u559c\u6b22\u7684\u98df\u7269\u662f\u4ec0\u4e48?\n",
+          "text": "\u6211\u662f\u4e00\u4e2a AI \u8bed\u8a00\u6a21\u578b\uff0c\u6ca1\u6709\u81ea\u5df1\u7684\u559c\u597d\u548c\u611f\u60c5\uff0c\u4e5f\u6ca1\u6709\u98df\u7269\u7684\u559c\u597d\u3002\u6211\u7684\u529f\u80fd\u662f\u6839\u636e\u8f93\u5165\u6587\u672c\u56de\u7b54\u95ee\u9898\u6216\u8fdb\u884c\u8bed\u8a00\u4ea4\u6d41\uff0c\u6211\u4f1a\u5c3d\u529b\u63d0\u4f9b\u51c6\u786e\u3001\u5b8c\u6574\u548c\u6709\u610f\u4e49\u7684\u7b54\u6848\u3002 \n\n\u5982\u679c\u4f60\u6709\u4e00\u4e2a\u7279\u5b9a\u7684\u98df\u7269\uff0c\u6211\u53ef\u4ee5\u8bd5\u7740\u56de\u7b54\u4f60\u5173\u4e8e\u5b83\u7684\u4fe1\u606f\uff0c\u4f46\u662f\u8bf7\u4e0d\u8981\u4ee5\u4e3a\u6211\u6709\u4e2a\u4eba\u559c\u597d\u6216",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "zh_greeting",
+          "prompt": "\u4f60\u597d",
+          "text": ".\u6211\u4eca\u5e7424\u4e86\u3002\u4ece19\u5c81\u5c31\u5f00\u59cb\u957f\u75d8\u75d8\u4e86\u3002\u867d\u7136\u75d8\u75d8\u4e0d\u4e25\u91cd\uff0c\u4f46\u662f\u603b\u662f\u63a7\u5236\u4e0d\u4e86\u3002\u6211\u4eca\u5e7424\u4e86\u3002\u4ece19\u5c81\u5c31\u5f00\u59cb\u957f\u75d8\u75d8\u4e86\u3002\u867d\u7136\u75d8\u75d8\u4e0d\u4e25\u91cd\uff0c\u4f46\u662f\u603b\u662f\u63a7\u5236\u4e0d\u4e86\u3002\u6211\u4eca\u5e7424\u4e86\u3002\u4ece19\u5c81\u5c31\u5f00\u59cb\u957f\u75d8\u75d8",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "zh_weather",
+          "prompt": "\u4eca\u5929\u5929\u6c14",
+          "text": "\u6674\u6717\uff0c\u9002\u5b9c\u51fa\u95e8\u6e38\u73a9\u3002\u4ee5\u4e0b\u662f\u4e00\u4e9b\u63a8\u8350\u7684\u666f\u70b9\u548c\u6d3b\u52a8\uff1a\n1. \u4e09\u6c5f\u6e38\u89c8\uff1a\u5728\u5d07\u660e\u5c9b\u4e0a\uff0c\u53ef\u4ee5\u4e58\u5750\u89c2\u5149\u8239\u6e38\u89c8\u957f\u6c5f\u3001\u9ec4\u6d66\u6c5f\u548c\u4e1c\u6d77\uff0c\u6b23\u8d4f\u6cbf\u5cb8\u7f8e\u666f\u3002\u6b64\u5916\uff0c\u8fd8\u6709\u8bb8\u591a\u519c\u5bb6\u4e50\u53ef\u4ee5\u54c1\u5c1d\u5f53\u5730\u7279\u8272\u7f8e\u98df\u3002\n2. \u91d1\u5c71\u94f6\u5c71\uff1a",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "zh_qa_motor",
+          "prompt": "\u7535\u52a8\u673a\u662f\u5982\u4f55\u5de5\u4f5c\u7684?",
+          "text": " \u7535\u52a8\u673a\u662f\u5229\u7528\u7535\u78c1\u611f\u5e94\u539f\u7406\u6765\u5de5\u4f5c\u7684\u3002\u7535\u52a8\u673a\u7684\u4e3b\u78c1\u6781\u4e0e\u526f\u78c1\u6781\u4e4b\u95f4\u6709\u78c1\u611f\u5e94\u7ebf\uff0c\u5f53\u4e3b\u78c1\u6781\u901a\u5165\u7535\u6d41\u901a\u8def\u65f6\uff0c\u526f\u78c1\u6781\u5c31\u4ea7\u751f\u611f\u5e94\u7535\u52a8\u52bf\uff0c\u4ea7\u751f\u611f\u5e94\u7535\u6d41\uff0c\u611f\u5e94\u7535\u6d41\u4e0e\u611f\u5e94\u7535\u52a8\u52bf\u4f7f\u526f\u78c1\u6781\u8f6c\u52a8\uff0c\u526f",
+          "class": "GENERALIZE"
+        }
+      ],
+      "summary_greedy": {
+        "GENERALIZE": 10,
+        "MEMORIZE": 0,
+        "MEM_PARTIAL": 0,
+        "EMPTY": 0,
+        "ERROR": 0
+      },
+      "summary_sample": {
+        "GENERALIZE": 10,
+        "MEMORIZE": 0,
+        "MEM_PARTIAL": 0,
+        "EMPTY": 0,
+        "ERROR": 0
+      },
+      "verdict": {
+        "lang": "zh",
+        "verdict": "STRONG",
+        "n_generalize": 20,
+        "n_memorize": 0,
+        "n_lang_coherent": 16,
+        "n_score": 16,
+        "total": 20
+      }
+    },
+    "ru": {
+      "greedy": [
+        {
+          "name": "ru_factual_geo",
+          "prompt": "\u0421\u0442\u043e\u043b\u0438\u0446\u0430 \u0420\u043e\u0441\u0441\u0438\u0438 \u2014",
+          "text": " \u041c\u043e\u0441\u043a\u0432\u0430. \u042d\u0442\u043e \u0441\u0442\u043e\u043b\u0438\u0446\u0430 \u0444\u0435\u0434\u0435\u0440\u0430\u043b\u044c\u043d\u043e\u0433\u043e \u0446\u0435\u043d\u0442\u0440\u0430, \u0433\u0434\u0435 \u0441\u043e\u0441\u0440\u0435\u0434\u043e\u0442\u043e\u0447\u0435\u043d\u044b \u0432\u0441\u0435 \u0433\u043e\u0441\u0443\u0434\u0430\u0440\u0441\u0442\u0432\u0435\u043d\u043d\u044b\u0435 \u043e\u0440\u0433\u0430\u043d\u044b \u0432\u043b\u0430\u0441\u0442\u0438, \u0430 \u0442\u0430\u043a\u0436\u0435 \u043a\u0440\u0443\u043f\u043d\u0435\u0439\u0448\u0438\u0435 \u0444\u0438\u043d\u0430\u043d\u0441\u043e\u0432\u044b\u0435 \u0438 \u043a\u0443\u043b\u044c\u0442\u0443\u0440\u043d\u044b\u0435 \u0443\u0447\u0440\u0435\u0436\u0434\u0435\u043d\u0438\u044f. \u0412 \u0441\u0442\u043e\u043b\u0438\u0446\u0435 \u0420\u043e\u0441\u0441\u0438\u0438 \u043d\u0430\u0445\u043e\u0434\u0438\u0442\u0441\u044f \u043c\u043d\u043e\u0436\u0435\u0441\u0442\u0432\u043e \u0434\u043e\u0441\u0442\u043e\u043f\u0440\u0438\u043c\u0435\u0447\u0430\u0442\u0435\u043b\u044c\u043d\u043e\u0441\u0442\u0435\u0439, \u0442\u0430\u043a\u0438\u0445 \u043a\u0430\u043a \u041a\u0440\u0435\u043c\u043b\u044c, \u041a\u0440\u0430\u0441",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ru_factual_sci",
+          "prompt": "\u0424\u043e\u0442\u043e\u0441\u0438\u043d\u0442\u0435\u0437 \u2014 \u044d\u0442\u043e",
+          "text": " \u043f\u0440\u043e\u0446\u0435\u0441\u0441, \u043f\u0440\u0438 \u043a\u043e\u0442\u043e\u0440\u043e\u043c \u043e\u0440\u0433\u0430\u043d\u0438\u0437\u043c \u043f\u0440\u0435\u043e\u0431\u0440\u0430\u0437\u0443\u0435\u0442 \u0441\u0432\u0435\u0442 \u0432 \u044d\u043d\u0435\u0440\u0433\u0435\u0442\u0438\u0447\u0435\u0441\u043a\u0438\u0439 \u0432\u0438\u0434, \u043a\u043e\u0442\u043e\u0440\u044b\u0439 \u043c\u043e\u0436\u0435\u0442 \u0431\u044b\u0442\u044c \u0438\u0441\u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u043d \u0434\u043b\u044f \u0434\u0430\u043b\u044c\u043d\u0435\u0439\u0448\u0435\u0433\u043e \u0440\u0430\u0437\u0432\u0438\u0442\u0438\u044f. \u0424\u043e\u0442\u043e\u0441\u0438\u043d\u0442\u0435\u0437 \u2014 \u044d\u0442\u043e \u043e\u0434\u0438\u043d \u0438\u0437 \u043e\u0441\u043d\u043e\u0432\u043d\u044b\u0445 \u043f\u0440\u043e\u0446\u0435\u0441\u0441\u043e\u0432, \u043a\u043e\u0442\u043e\u0440\u044b\u0439 \u043f\u0440\u043e\u0438\u0441\u0445\u043e\u0434\u0438\u0442 \u0432 \u0440\u0430\u0441\u0442\u0435\u043d\u0438\u044f\u0445. \u0412 \u043f\u0440\u043e\u0446\u0435\u0441\u0441\u0435 \u0444\u043e\u0442\u043e\u0441\u0438\u043d\u0442\u0435\u0437\u0430 \u043f\u0440\u043e\u0438\u0441\u0445\u043e\u0434\u0438\u0442 \u043e\u0431\u0440\u0430\u0437\u043e\u0432\u0430\u043d\u0438\u0435 \u043e\u0440\u0433",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ru_qa_tech",
+          "prompt": "\u0412 \u0447\u0451\u043c \u0440\u0430\u0437\u043d\u0438\u0446\u0430 \u043c\u0435\u0436\u0434\u0443 Python \u0438 JavaScript?\n",
+          "text": "Python \u0438 JavaScript \u2014 \u044d\u0442\u043e \u0434\u0432\u0430 \u0440\u0430\u0437\u043d\u044b\u0445 \u044f\u0437\u044b\u043a\u0430 \u043f\u0440\u043e\u0433\u0440\u0430\u043c\u043c\u0438\u0440\u043e\u0432\u0430\u043d\u0438\u044f, \u043a\u043e\u0442\u043e\u0440\u044b\u0435 \u0438\u0441\u043f\u043e\u043b\u044c\u0437\u0443\u044e\u0442\u0441\u044f \u0434\u043b\u044f \u0440\u0430\u0437\u0440\u0430\u0431\u043e\u0442\u043a\u0438 \u043f\u0440\u043e\u0433\u0440\u0430\u043c\u043c\u043d\u043e\u0433\u043e \u043e\u0431\u0435\u0441\u043f\u0435\u0447\u0435\u043d\u0438\u044f. \u0425\u043e\u0442\u044f \u043e\u043d\u0438 \u0438\u043c\u0435\u044e\u0442 \u043d\u0435\u043a\u043e\u0442\u043e\u0440\u044b\u0435 \u043e\u0431\u0449\u0438\u0435 \u0447\u0435\u0440\u0442\u044b, \u0442\u0430\u043a\u0438\u0435 \u043a\u0430\u043a \u0438\u0441\u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u043d\u0438\u0435 \u043f\u0435\u0440\u0435\u043c\u0435\u043d\u043d\u044b\u0445 \u0438 \u0446\u0438\u043a\u043b\u043e\u0432, \u043e\u043d\u0438 \u0438\u043c\u0435\u044e\u0442 \u0440\u0430\u0437\u043b\u0438\u0447\u0438\u044f \u0432 \u0441\u0442\u0438\u043b\u044f\u0445 \u0438 \u043f\u043e\u0434\u0445\u043e\u0434\u0430\u0445 \u043a \u043f\u0440\u043e\u0433\u0440\u0430\u043c\u043c\u0438\u0440\u043e\u0432\u0430\u043d\u0438\u044e. \u0412\u043e\u0442 \u043d\u0435\u0441\u043a\u043e\u043b\u044c\u043a\u043e \u043e\u0441\u043d\u043e\u0432",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ru_narrative",
+          "prompt": "\u041e\u0434\u043d\u0430\u0436\u0434\u044b \u0421\u0430\u0440\u0430 \u0432\u043e\u0448\u043b\u0430 \u0432 \u043a\u043e\u043c\u043d\u0430\u0442\u0443 \u0438",
+          "text": " \u0443\u0432\u0438\u0434\u0435\u043b\u0430, \u0447\u0442\u043e \u043d\u0430 \u0441\u0442\u043e\u043b\u0435 \u043b\u0435\u0436\u0438\u0442 \u043f\u0438\u0441\u044c\u043c\u043e, \u0430\u0434\u0440\u0435\u0441\u043e\u0432\u0430\u043d\u043d\u043e\u0435 \u0435\u0439. \u041e\u043d\u0430 \u043f\u043e\u0434\u0443\u043c\u0430\u043b\u0430, \u0447\u0442\u043e \u044d\u0442\u043e \u043c\u043e\u0436\u0435\u0442 \u0431\u044b\u0442\u044c \u043e\u0442 \u041c\u0430\u0440\u0442\u0438\u043d\u0430, \u043d\u043e \u043d\u0435 \u0437\u043d\u0430\u043b\u0430, \u0447\u0442\u043e \u044d\u0442\u043e \u043f\u0438\u0441\u044c\u043c\u043e \u0431\u044b\u043b\u043e \u043d\u0430\u043f\u0438\u0441\u0430\u043d\u043e \u041c\u0430\u0440\u0442\u0438\u043d\u043e\u043c. \u041e\u043d\u0430 \u043f\u043e\u0434\u0443\u043c\u0430\u043b\u0430, \u0447\u0442\u043e",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ru_math_simple",
+          "prompt": "\u041a\u0432\u0430\u0434\u0440\u0430\u0442\u043d\u044b\u0439 \u043a\u043e\u0440\u0435\u043d\u044c \u0438\u0437 144 \u0440\u0430\u0432\u0435\u043d",
+          "text": " 12. \u042d\u0442\u043e \u0437\u043d\u0430\u0447\u0438\u0442, \u0447\u0442\u043e 122 = 144. \u042d\u0442\u043e \u043f\u0440\u0430\u0432\u0438\u043b\u043e \u0442\u0430\u043a\u0436\u0435 \u0440\u0430\u0431\u043e\u0442\u0430\u0435\u0442 \u0434\u043b\u044f \u043e\u0442\u0440\u0438\u0446\u0430\u0442\u0435\u043b\u044c\u043d\u044b\u0445 \u0447\u0438\u0441\u0435\u043b. \u041d\u0430\u043f\u0440\u0438\u043c\u0435\u0440, (-12)2 = 144. \u042d\u0442\u043e \u043f\u0440\u0430\u0432\u0438\u043b\u043e \u0442\u0430\u043a\u0436\u0435 \u0440\u0430\u0431\u043e\u0442\u0430\u0435\u0442 \u0434\u043b\u044f \u0447\u0438\u0441\u0435\u043b, \u043a\u043e\u0442\u043e\u0440\u044b\u0435 \u043d\u0435 \u044f\u0432\u043b\u044f\u044e\u0442\u0441\u044f \u043a\u0432\u0430\u0434\u0440\u0430\u0442\u0430\u043c\u0438. \u041d\u0430\u043f\u0440\u0438\u043c\u0435\u0440, ",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ru_joke",
+          "prompt": "\u0420\u0430\u0441\u0441\u043a\u0430\u0436\u0438 \u043a\u043e\u0440\u043e\u0442\u043a\u0443\u044e \u0448\u0443\u0442\u043a\u0443 \u043f\u0440\u043e \u043a\u043e\u0448\u0435\u043a.\n",
+          "text": "\u041a\u043e\u0448\u043a\u0438 \u2014 \u044d\u0442\u043e \u0436\u0438\u0432\u043e\u0442\u043d\u044b\u0435, \u043a\u043e\u0442\u043e\u0440\u044b\u0435 \u043b\u044e\u0431\u044f\u0442 \u043b\u0435\u0436\u0430\u0442\u044c \u043d\u0430 \u043f\u043e\u043b\u0443 \u0438 \u0441\u043c\u043e\u0442\u0440\u0435\u0442\u044c \u0432 \u043e\u043a\u043d\u043e. \u041e\u043d\u0438 \u043d\u0435 \u043b\u044e\u0431\u044f\u0442, \u043a\u043e\u0433\u0434\u0430 \u0438\u0445 \u0442\u0440\u043e\u0433\u0430\u044e\u0442 \u0438\u043b\u0438 \u043a\u043e\u0440\u043c\u044f\u0442, \u043f\u043e\u044d\u0442\u043e\u043c\u0443 \u043e\u043d\u0438 \u043e\u0431\u044b\u0447\u043d\u043e \u043e\u0441\u0442\u0430\u044e\u0442\u0441\u044f \u0432 \u043f\u043e\u043a\u043e\u0435. \u041d\u043e \u0435\u0441\u043b\u0438 \u043a\u0442\u043e-\u0442\u043e \u043f\u043e\u043f\u044b\u0442\u0430\u0435\u0442\u0441\u044f \u0438\u0445 \u0442\u0440\u043e\u0433\u0430\u0442\u044c \u0438\u043b\u0438 \u043a\u043e\u0440\u043c",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ru_casual_food",
+          "prompt": "\u041a\u0430\u043a\u0430\u044f \u0442\u0432\u043e\u044f \u043b\u044e\u0431\u0438\u043c\u0430\u044f \u0435\u0434\u0430?\n",
+          "text": "\u042f \u043d\u0435 \u043c\u043e\u0433\u0443 \u043e\u0442\u0432\u0435\u0442\u0438\u0442\u044c \u043d\u0430 \u044d\u0442\u043e\u0442 \u0432\u043e\u043f\u0440\u043e\u0441, \u0442\u0430\u043a \u043a\u0430\u043a \u044f \u043d\u0435 \u0447\u0435\u043b\u043e\u0432\u0435\u043a. \u042f - \u043a\u043e\u043c\u043f\u044c\u044e\u0442\u0435\u0440, \u0438 \u044f \u043d\u0435 \u0438\u043c\u0435\u0435\u0442 \u0432\u043a\u0443\u0441\u0430 \u0438\u043b\u0438 \u0436\u0435\u043b\u0430\u043d\u0438\u044f. \u042f \u0432\u044b\u043f\u043e\u043b\u043d\u044f\u044e \u0442\u043e\u043b\u044c\u043a\u043e \u0442\u0435\u0445\u043d\u0438\u0447\u0435\u0441\u043a\u0438\u0435 \u0444\u0443\u043d\u043a\u0446\u0438\u0438, \u0438 \u043d\u0435 \u043c\u043e\u0433\u0443 \u0447\u0443\u0432\u0441\u0442\u0432\u043e\u0432\u0430\u0442\u044c \u0432\u043a\u0443\u0441. \u0415\u0441\u043b\u0438 \u0432\u044b \u0445\u043e\u0442\u0438\u0442\u0435 \u0443\u0437\u043d\u0430\u0442\u044c, \u0447\u0442\u043e \u044f \u043b\u044e\u0431\u043b\u044e, \u0432\u044b \u043c\u043e\u0436\u0435\u0442\u0435 \u0437\u0430\u0434\u0430\u0442\u044c \u043c\u043d\u0435 \u0432\u043e\u043f\u0440\u043e\u0441,",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ru_greeting",
+          "prompt": "\u0417\u0434\u0440\u0430\u0432\u0441\u0442\u0432\u0443\u0439\u0442\u0435",
+          "text": ", \u0443 \u043c\u0435\u043d\u044f \u0435\u0441\u0442\u044c 2 \u0432\u043e\u043f\u0440\u043e\u0441\u0430. 1) \u041a\u0430\u043a\u0438\u0435 \u0443 \u0432\u0430\u0441 \u0435\u0441\u0442\u044c \u043f\u043b\u0430\u043d\u044b \u043d\u0430 2017 \u0433\u043e\u0434? 2) \u041a\u0430\u043a\u0438\u0435 \u0443 \u0432\u0430\u0441 \u0435\u0441\u0442\u044c \u043f\u043b\u0430\u043d\u044b \u043d\u0430 2018 \u0433\u043e\u0434? \n \u2014 I am not a fan of the idea of a \"superman\" or \"super",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ru_weather",
+          "prompt": "\u0421\u0435\u0433\u043e\u0434\u043d\u044f \u043f\u043e\u0433\u043e\u0434\u0430",
+          "text": " \u0432 \u041a\u0440\u044b\u043c\u0443 \u0431\u0443\u0434\u0435\u0442 \u043e\u0431\u043b\u0430\u0447\u043d\u043e\u0439, \u0441 \u043d\u0435\u0431\u043e\u043b\u044c\u0448\u043e\u0439 \u043e\u0431\u043b\u0430\u0447\u043d\u043e\u0441\u0442\u044c\u044e. \u0412\u0435\u0442\u0435\u0440 \u0441\u0435\u0432\u0435\u0440\u043e-\u0432\u043e\u0441\u0442\u043e\u0447\u043d\u044b\u0439, \u0441\u043b\u0430\u0431\u044b\u0439. \u0422\u0435\u043c\u043f\u0435\u0440\u0430\u0442\u0443\u0440\u0430 \u0432\u043e\u0437\u0434\u0443\u0445\u0430 \u043d\u043e\u0447\u044c\u044e 10-12 \u0433\u0440\u0430\u0434\u0443\u0441\u043e\u0432, \u0434\u043d\u0435\u043c 14-16 \u0433",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ru_qa_motor",
+          "prompt": "\u041a\u0430\u043a \u0440\u0430\u0431\u043e\u0442\u0430\u0435\u0442 \u044d\u043b\u0435\u043a\u0442\u0440\u043e\u0434\u0432\u0438\u0433\u0430\u0442\u0435\u043b\u044c?",
+          "text": " \u2014 \u044d\u0442\u043e \u0443\u0441\u0442\u0440\u043e\u0439\u0441\u0442\u0432\u043e, \u043a\u043e\u0442\u043e\u0440\u043e\u0435 \u043f\u0440\u0435\u043e\u0431\u0440\u0430\u0437\u0443\u0435\u0442 \u044d\u043b\u0435\u043a\u0442\u0440\u0438\u0447\u0435\u0441\u043a\u0443\u044e \u044d\u043d\u0435\u0440\u0433\u0438\u044e \u0432 \u043c\u0435\u0445\u0430\u043d\u0438\u0447\u0435\u0441\u043a\u0443\u044e. \u0414\u043b\u044f \u044d\u0442\u043e\u0433\u043e \u044d\u043b\u0435\u043a\u0442\u0440\u043e\u0434\u0432\u0438\u0433\u0430\u0442\u0435\u043b\u044c \u0438\u0441\u043f\u043e\u043b\u044c\u0437\u0443\u0435\u0442 \u044d\u043b\u0435\u043a\u0442\u0440\u0438\u0447\u0435\u0441\u043a\u0438\u0439 \u0442\u043e\u043a, \u043a\u043e\u0442\u043e\u0440\u044b\u0439 \u043f\u0440\u043e\u0445\u043e\u0434\u0438\u0442 \u0447\u0435\u0440\u0435\u0437 \u0435\u0433\u043e \u044d\u043b\u0435\u043a\u0442\u0440\u043e\u0434\u044b. \u041a\u043e\u0433\u0434\u0430 \u0442\u043e\u043a \u043f\u0440\u043e\u0445\u043e\u0434\u0438\u0442 \u0447\u0435\u0440\u0435\u0437 \u044d\u043b\u0435\u043a\u0442\u0440\u043e\u0434\u044b, \u043e\u043d\u0438 \u043d\u0430\u0447\u0438\u043d\u0430\u044e\u0442",
+          "class": "GENERALIZE"
+        }
+      ],
+      "sample": [
+        {
+          "name": "ru_factual_geo",
+          "prompt": "\u0421\u0442\u043e\u043b\u0438\u0446\u0430 \u0420\u043e\u0441\u0441\u0438\u0438 \u2014",
+          "text": " \u041c\u043e\u0441\u043a\u0432\u0430. \u0421\u0442\u043e\u043b\u0438\u0446\u0430 \u041f\u043e\u043b\u044c\u0448\u0438 \u2014 \u0412\u0430\u0440\u0448\u0430\u0432\u0430. \u0421\u0442\u043e\u043b\u0438\u0446\u0430 \u0413\u0435\u0440\u043c\u0430\u043d\u0438\u0438 \u2014 \u0411\u0435\u0440\u043b\u0438\u043d. \u0421\u0442\u043e\u043b\u0438\u0446\u0430 \u0410\u043d\u0433\u043b\u0438\u0438 \u2014 \u041b\u043e\u043d\u0434\u043e\u043d. \u0421\u0442\u043e\u043b\u0438\u0446\u0430 \u0418\u0441\u043f\u0430\u043d\u0438\u0438 \u2014 \u0411\u0430\u0440\u0441\u0435\u043b\u043e\u043d\u0430. \u0421\u0442\u043e\u043b\u0438\u0446\u0430 \u0424\u0440\u0430\u043d\u0446\u0438\u0438 \u2014 \u041f",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ru_factual_sci",
+          "prompt": "\u0424\u043e\u0442\u043e\u0441\u0438\u043d\u0442\u0435\u0437 \u2014 \u044d\u0442\u043e",
+          "text": " \u043f\u0440\u043e\u0446\u0435\u0441\u0441 \u043f\u043e\u043b\u0443\u0447\u0435\u043d\u0438\u044f \u044d\u043d\u0435\u0440\u0433\u0438\u0438 \u043f\u0443\u0442\u0435\u043c \u043f\u0440\u0435\u043e\u0431\u0440\u0430\u0437\u043e\u0432\u0430\u043d\u0438\u044f \u0441\u0432\u0435\u0442\u0430 \u0432 \u044d\u043b\u0435\u043a\u0442\u0440\u0438\u0447\u0435\u0441\u043a\u0438\u0439 \u0442\u043e\u043a. \u042d\u0442\u043e \u043f\u0440\u043e\u0438\u0441\u0445\u043e\u0434\u0438\u0442 \u0432 \u043f\u0440\u043e\u0446\u0435\u0441\u0441\u0435 \u0444\u043e\u0442\u043e\u0441\u0438\u043d\u0442\u0435\u0437\u0430, \u0442\u0430\u043a \u043d\u0430\u0437\u044b\u0432\u0430\u0435\u043c\u0430\u044f photosynthesis. \n\u0422\u0440\u0430\u0434\u0438\u0446\u0438\u043e\u043d\u043d\u043e \u0444\u043e\u0442\u043e\u0441\u0438\u043d\u0442\u0435\u0437 \u043e\u0431\u044a\u0435\u0434\u0438\u043d\u044f\u0435\u0442\u0441\u044f \u0441 \u0434\u0432\u0443\u043c\u044f \u043e\u0441\u043d\u043e\u0432\u043d\u044b\u043c\u0438 \u043d\u0430\u043f\u0440\u0430\u0432\u043b\u0435\u043d\u0438\u044f\u043c\u0438",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ru_qa_tech",
+          "prompt": "\u0412 \u0447\u0451\u043c \u0440\u0430\u0437\u043d\u0438\u0446\u0430 \u043c\u0435\u0436\u0434\u0443 Python \u0438 JavaScript?\n",
+          "text": "Python \u0438 JavaScript \u2014 \u044d\u0442\u043e \u0434\u0432\u0430 \u0440\u0430\u0437\u043d\u044b\u0445 \u044f\u0437\u044b\u043a\u0430 \u043f\u0440\u043e\u0433\u0440\u0430\u043c\u043c\u0438\u0440\u043e\u0432\u0430\u043d\u0438\u044f, \u043a\u043e\u0442\u043e\u0440\u044b\u0435 \u0438\u0441\u043f\u043e\u043b\u044c\u0437\u0443\u044e\u0442\u0441\u044f \u0434\u043b\u044f \u0440\u0430\u0437\u0440\u0430\u0431\u043e\u0442\u043a\u0438 \u0440\u0430\u0437\u043d\u044b\u0445 \u043f\u0440\u043e\u0433\u0440\u0430\u043c\u043c, \u0432\u043a\u043b\u044e\u0447\u0430\u044f web-\u043f\u0440\u0438\u043b\u043e\u0436\u0435\u043d\u0438\u044f, \u043a\u043b\u0438\u0435\u043d\u0442\u0441\u043a\u0438\u0435 \u043f\u0440\u043e\u0433\u0440\u0430\u043c\u043c\u044b \u0438 \u0434\u0440\u0443\u0433\u0438\u0435. \u041e\u0434\u043d\u0430\u043a\u043e, \u0435\u0441\u0442\u044c \u043d\u0435\u043a\u043e\u0442\u043e\u0440\u044b\u0435 \u043a\u043b\u044e\u0447\u0435\u0432\u044b\u0435 \u0440\u0430\u0437\u043b\u0438\u0447\u0438\u044f, \u043a\u043e\u0442\u043e\u0440\u044b\u0435 \u0432\u043b\u0438\u044f\u044e\u0442 \u043d\u0430 \u0432\u044b\u0431\u043e\u0440 \u0432 \u043f\u043e\u043b\u044c\u0437\u0443 \u043e\u0434\u043d\u043e\u0433\u043e \u0438\u043b\u0438 \u0434\u0440\u0443\u0433\u043e\u0433\u043e \u044f\u0437\u044b\u043a\u0430:\n1. \u0422",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ru_narrative",
+          "prompt": "\u041e\u0434\u043d\u0430\u0436\u0434\u044b \u0421\u0430\u0440\u0430 \u0432\u043e\u0448\u043b\u0430 \u0432 \u043a\u043e\u043c\u043d\u0430\u0442\u0443 \u0438",
+          "text": " \u0441\u043a\u0430\u0437\u0430\u043b\u0430: \u2014 \u0422\u043e\u043c\u0430\u0441, \u0442\u044b \u043f\u0440\u0438\u0448\u0435\u043b \u043d\u0435 \u043f\u043e\u0442\u043e\u043c\u0443, \u0447\u0442\u043e \u0442\u0435\u0431\u0435 \u0438\u043d\u0442\u0435\u0440\u0435\u0441\u043d\u043e, \u0430 \u043f\u043e\u0442\u043e\u043c\u0443 \u0447\u0442\u043e \u0442\u044b \u0443\u0441\u0442\u0430\u043b. \u0422\u044b \u0443\u0436\u0435 \u043f\u0440\u0438\u0448\u0435\u043b \u0441\u043b\u0438\u0448\u043a\u043e\u043c \u043c\u043d\u043e\u0433\u043e \u0440\u0430\u0437 \u0438 \u0432\u0441\u0435 \u044d\u0442\u043e \u0442\u0435\u0431\u0435 \u043d\u0443\u0436\u043d\u043e \u0431\u044b\u043b\u043e \u0441\u0434\u0435\u043b\u0430\u0442\u044c. \u042f \u043d\u0435 \u0445\u043e\u0447\u0443 \u0436\u0438\u0442\u044c \u0441 \u0442\u0430\u043a\u0438\u043c \u043c\u0443\u0436\u0435\u043c. \u042f \u043d\u0435 \u0445\u043e\u0447\u0443 \u0436\u0438\u0442\u044c \u0442\u0430\u043a. \u0422\u044b \u043d\u0435 \u043c\u043e\u0436",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ru_math_simple",
+          "prompt": "\u041a\u0432\u0430\u0434\u0440\u0430\u0442\u043d\u044b\u0439 \u043a\u043e\u0440\u0435\u043d\u044c \u0438\u0437 144 \u0440\u0430\u0432\u0435\u043d",
+          "text": " \u0447\u0438\u0441\u043b\u0443 12. (\u0422\u0435\u043e\u0440\u0435\u043c\u0430 \u043e \u043a\u0432\u0430\u0434\u0440\u0430\u0442\u043d\u044b\u0445 \u043a\u043e\u0440\u043d\u044f\u0445 \u0438\u0437 \u0446\u0435\u043b\u044b\u0445 \u0447\u0438\u0441\u0435\u043b)\n\n\u0422\u0435\u043e\u0440\u0435\u043c\u0430 \u0424\u0435\u0440\u043c\u0430 \u2014 \u043e \u043f\u0440\u043e\u0441\u0442\u044b\u0445 \u0447\u0438\u0441\u043b\u0430\u0445 \n\u0422\u0435\u043e\u0440\u0435\u043c\u0430 \u043e \u043f\u0440\u043e\u0441\u0442\u044b\u0445 \u0447\u0438\u0441\u043b\u0430\u0445 \u2014 \u044d\u0442\u043e \u0444\u0430\u043a\u0442 \u043c\u0430\u0442\u0435\u043c\u0430\u0442\u0438\u043a\u0438 \u043e \u0442\u043e\u043c,",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ru_joke",
+          "prompt": "\u0420\u0430\u0441\u0441\u043a\u0430\u0436\u0438 \u043a\u043e\u0440\u043e\u0442\u043a\u0443\u044e \u0448\u0443\u0442\u043a\u0443 \u043f\u0440\u043e \u043a\u043e\u0448\u0435\u043a.\n",
+          "text": "\u041a\u043e\u0448\u043a\u0438 \u2014 \u043b\u0443\u0447\u0448\u0438\u0435 \u0434\u0440\u0443\u0437\u044c\u044f, \u043a\u0430\u043a \u0438 \u0432\u0441\u044f\u043a\u0430\u044f \u0434\u0440\u0443\u0436\u0431\u0430, \u043e\u043d\u0438 \u043f\u043e\u0441\u0442\u043e\u044f\u043d\u043d\u043e \u0440\u0430\u0437\u043e\u044e\u0442\u0441\u044f.",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ru_casual_food",
+          "prompt": "\u041a\u0430\u043a\u0430\u044f \u0442\u0432\u043e\u044f \u043b\u044e\u0431\u0438\u043c\u0430\u044f \u0435\u0434\u0430?\n",
+          "text": "\u041a\u0430\u043a\u0430\u044f \u0442\u0432\u043e\u044f \u043b\u044e\u0431\u0438\u043c\u0430\u044f \u0435\u0434\u0430?\n\nI don't have personal preferences for food, as I am a computer program that doesn't have a body or emotions. However, I can provide information on various foods and their nutritional values based on scientific research and dietary guidelines. \n\nHere are some examples of common food choices",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ru_greeting",
+          "prompt": "\u0417\u0434\u0440\u0430\u0432\u0441\u0442\u0432\u0443\u0439\u0442\u0435",
+          "text": ", \u0443 \u043c\u0435\u043d\u044f \u0432\u043e\u043f\u0440\u043e\u0441 \u043e\u0442\u043d\u043e\u0441\u0438\u0442\u0435\u043b\u044c\u043d\u043e \u0432\u0438\u0440\u0442\u0443\u0430\u043b\u044c\u043d\u043e\u0433\u043e \u043a\u043e\u043c\u043f\u044c\u044e\u0442\u0435\u0440\u0430 \u0438 \u0440\u043e\u0443\u0442\u0435\u0440\u043e\u0432. \u041f\u0440\u0430\u0432\u0434\u0430 \u043b\u0438, \u0447\u0442\u043e \u0440\u043e\u0443\u0442\u0435\u0440\u044b \u043c\u043e\u0436\u043d\u043e \u0438\u0441\u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u044c \u0432 \u043a\u0430\u0447\u0435\u0441\u0442\u0432\u0435 \u0432\u0438\u0440\u0442\u0443\u0430\u043b\u044c\u043d\u044b\u0445 \u043a\u043e\u043c\u043f\u044c\u044e\u0442\u0435\u0440\u043e\u0432 \u0438 \u043d\u0430\u043e\u0431\u043e\u0440\u043e\u0442?\n\u0414\u0430, \u0432\u044b \u043f\u0440\u0430\u0432\u044b. \u0420\u043e\u0443\u0442\u0435\u0440\u044b, \u043a\u0430\u043a \u0438 \u043a\u043e\u043c\u043f\u044c\u044e\u0442\u0435\u0440\u044b, \u043e\u0431\u044b\u0447\u043d\u043e \u0438\u043c\u0435\u044e\u0442 \u0434\u0432",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ru_weather",
+          "prompt": "\u0421\u0435\u0433\u043e\u0434\u043d\u044f \u043f\u043e\u0433\u043e\u0434\u0430",
+          "text": " \u0432 \u0423\u043b\u044c\u044f\u043d\u043e\u0432\u0441\u043a\u0435 \u0431\u044b\u043b\u0430 \u0441\u0443\u0445\u0430\u044f \u0438 \u0442\u0435\u043f\u043b\u0430\u044f. \u041f\u043e\u0433\u043e\u0434\u0430 \u0432 \u0423\u043b\u044c\u044f\u043d\u043e\u0432\u0441\u043a\u0435, \u043f\u043e \u0434\u0430\u043d\u043d\u044b\u043c \u0413\u0438\u0434\u0440\u043e\u043c\u0435\u0442\u0446\u0435\u043d\u0442\u0440\u0430, 08:00 22 \u0430\u043f\u0440\u0435\u043b\u044f \u2013 \u0441\u0443\u0445\u0430\u044f \u043f\u043e\u0433\u043e\u0434\u0430. \u0412\u0435\u0442\u0435\u0440 \u0441\u043b\u0430\u0431\u044b\u0439, \u0434\u043d\u0435\u043c 1",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ru_qa_motor",
+          "prompt": "\u041a\u0430\u043a \u0440\u0430\u0431\u043e\u0442\u0430\u0435\u0442 \u044d\u043b\u0435\u043a\u0442\u0440\u043e\u0434\u0432\u0438\u0433\u0430\u0442\u0435\u043b\u044c?",
+          "text": " \u2014 \u044d\u0442\u043e \u0435\u0434\u0438\u043d\u0438\u0446\u0430 \u0438\u0437\u043c\u0435\u0440\u0435\u043d\u0438\u044f, \u0438\u0441\u043f\u043e\u043b\u044c\u0437\u0443\u0435\u043c\u0430\u044f \u0434\u043b\u044f \u043e\u043f\u0438\u0441\u0430\u043d\u0438\u044f \u0434\u0432\u0438\u0436\u0435\u043d\u0438\u044f \u0432\u0440\u0430\u0449\u0430\u0442\u0435\u043b\u044c\u043d\u043e\u0433\u043e \u0442\u044f\u0433\u043e\u0440\u043c\u043e\u0442\u043d\u043e\u0433\u043e \u043f\u0440\u0438\u0431\u043e\u0440\u0430 \u0438\u043b\u0438 \u0442\u0440\u0430\u043d\u0441\u043f\u043e\u0440\u0442\u043d\u043e\u0433\u043e \u0441\u0440\u0435\u0434\u0441\u0442\u0432\u0430. \u0412 \u043e\u0441\u043d\u043e\u0432\u043d\u043e\u043c, \u044d\u043b\u0435\u043a\u0442\u0440\u043e\u0434\u0432\u0438\u0433\u0430\u0442\u0435\u043b\u044c \u0438\u0441\u043f\u043e\u043b\u044c\u0437\u0443\u0435\u0442\u0441\u044f \u0434\u043b\u044f \u043e\u043f\u0438\u0441\u0430\u043d\u0438\u044f \u0434\u0432\u0438\u0436\u0435\u043d\u0438\u0439, \u0432\u044b\u0437\u0432\u0430\u043d\u043d\u043e\u0433\u043e \u0441\u0438\u043b\u043e\u0439 \u0442\u044f\u0433\u0438 \u0438\u043b\u0438",
+          "class": "GENERALIZE"
+        }
+      ],
+      "summary_greedy": {
+        "GENERALIZE": 10,
+        "MEMORIZE": 0,
+        "MEM_PARTIAL": 0,
+        "EMPTY": 0,
+        "ERROR": 0
+      },
+      "summary_sample": {
+        "GENERALIZE": 10,
+        "MEMORIZE": 0,
+        "MEM_PARTIAL": 0,
+        "EMPTY": 0,
+        "ERROR": 0
+      },
+      "verdict": {
+        "lang": "ru",
+        "verdict": "STRONG",
+        "n_generalize": 20,
+        "n_memorize": 0,
+        "n_lang_coherent": 18,
+        "n_score": 18,
+        "total": 20
+      }
+    },
+    "ja": {
+      "greedy": [
+        {
+          "name": "ja_factual_geo",
+          "prompt": "\u65e5\u672c\u306e\u9996\u90fd\u306f",
+          "text": "\u3001\u73fe\u5728\u306e\u3068\u3053\u308d\u3001\u6771\u4eac\u3067\u3042\u308b\u3002\u3057\u304b\u3057\u30011945\u5e74\u4ee5\u964d\u3001\u6771\u4eac\u306f\u3001\u7b2c\u4e8c\u6b21\u4e16\u754c\u5927\u6226\u306e\u6226\u5834\u3068\u3057\u3066\u3001\u591a\u304f\u306e\u65e5\u672c\u4eba\u304c\u72a0\u7272\u3068\u306a\u3063\u305f\u3002\u305d\u306e\u305f\u3081\u3001\u6771\u4eac\u306f\u3001\u6226\u5f8c\u3001\u6771\u4eac\u306e\u6771\u306b\u3001\u65b0\u9996\u90fd\u3068\u3057\u3066\u3001\u6771\u4eac",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ja_factual_sci",
+          "prompt": "\u5149\u5408\u6210\u3068\u306f",
+          "text": "\u3001\u5149\u3092\u30a8\u30cd\u30eb\u30ae\u30fc\u3068\u3057\u3066\u5229\u7528\u3057\u3066\u3001\u6c34\u3092\u5206\u89e3\u3057\u3001\u305d\u306e\u6c34\u7d20\u3092\u6c34\u7d20\u5316\u5408\u7269\u3068\u3057\u3066\u5408\u6210\u3059\u308b\u904e\u7a0b\u3067\u3042\u308b\u3002\u5149\u5408\u6210\u306f\u3001\u5149\u3092\u30a8\u30cd\u30eb\u30ae\u30fc\u3068\u3057\u3066\u5229\u7528\u3057\u3066\u3001\u6c34\u3092\u5206\u89e3\u3057\u3001\u305d\u306e\u6c34\u7d20\u3092\u6c34\u7d20\u5316\u5408\u7269\u3068\u3057\u3066\u5408\u6210\u3059\u308b\u904e\u7a0b\u3067\u3042\u308b\u3002\u5149\u5408\u6210\u306f\u3001\u5149\u3092\u30a8\u30cd\u30eb\u30ae\u30fc\u3068\u3057\u3066\u5229\u7528",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ja_qa_tech",
+          "prompt": "Python \u3068 JavaScript \u306e\u9055\u3044\u306f\u4f55\u3067\u3059\u304b?\n",
+          "text": "Python \u3068 JavaScript \u306f\u3001\u3069\u3061\u3089\u3082\u30d7\u30ed\u30b0\u30e9\u30df\u30f3\u30b0\u8a00\u8a9e\u3067\u3059\u304c\u3001\u3044\u304f\u3064\u304b\u306e\u9055\u3044\u304c\u3042\u308a\u307e\u3059\u3002\u4ee5\u4e0b\u306b\u3001Python \u3068 JavaScript \u306e\u4e3b\u8981\u306a\u9055\u3044\u3092\u793a\u3057\u307e\u3059\u3002\n\n1. \u30af\u30e9\u30b9\u3068\u30aa\u30d6\u30b8\u30a7\u30af\u30c8: Python \u306f\u30af\u30e9\u30b9\u3092\u5b9a\u7fa9\u3059\u308b\u305f\u3081\u306e\u69cb\u9020\u4f53\u3092\u4f7f\u7528\u3057\u3001",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ja_narrative",
+          "prompt": "\u3042\u308b\u65e5\u3001\u30b5\u30e9\u306f\u90e8\u5c4b\u306b\u5165\u3063\u3066",
+          "text": "\u304d\u3066\u3001 \u300c\u304a\u524d\u3001\u4f55\u3092\u3057\u3066\u3044\u305f\u306e\uff1f\u300d\u3068\u6012\u9cf4\u308a\u3064\u3051\u305f\u3002 \u3059\u308b\u3068\u3001\u30b5\u30e9\u306f\u3001 \u300c\u304a\u524d\u3001\u4f55\u3092\u3057\u3066\u3044\u305f\u306e\uff1f\u300d\u3068\u6012\u9cf4\u308a\u3064\u3051\u305f\u3002 \u3059\u308b\u3068\u3001\u30b5\u30e9\u306f\u3001 \u300c\u304a\u524d\u3001\u4f55\u3092\u3057\u3066\u3044\u305f\u306e\uff1f\u300d\u3068\u6012\u9cf4\u308a\u3064\u3051\u305f",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ja_math_simple",
+          "prompt": "144 \u306e\u5e73\u65b9\u6839\u306f",
+          "text": "14.00,14.40,14.49,14.59,14.69,14.80,14.90,15.00,15.11,15.21,15.3",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ja_joke",
+          "prompt": "\u732b\u306b\u3064\u3044\u3066\u306e\u77ed\u3044\u30b8\u30e7\u30fc\u30af\u3092\u6559\u3048\u3066\u3002\n",
+          "text": " 1990\u5e74\u4ee3\u5f8c\u534a\u304b\u30892000\u5e74\u4ee3\u524d\u534a\u306b\u304b\u3051\u3066\u3001\u30a2\u30e1\u30ea\u30ab\u306e\u30c6\u30ec\u30d3\u756a\u7d44\u300c\u30b6\u30fb\u30af\u30a4\u30ba\u300d\u3067\u3001\u30b8\u30e7\u30fc\u30af\u306e\u5bfe\u6226\u76f8\u624b\u3068\u3057\u3066\u3001\u732b\u3092\u6f14\u3058\u3066\u3044\u305f\u3002 2000\u5e74\u4ee3\u5f8c\u534a\u304b\u30892010",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ja_casual_food",
+          "prompt": "\u597d\u304d\u306a\u98df\u3079\u7269\u306f\u4f55\u3067\u3059\u304b?\n",
+          "text": "A. \uc74c\uc2dd\uc740 \uac1c\uc778\ub9c8\ub2e4 \ub2e4\ub974\ub2e4. \nB. \uc74c\uc2dd\uc740 \uac1c\uc778\ub9c8\ub2e4 \ub2e4\ub974\ub2e4. \nC. \uc74c\uc2dd\uc740 \uac1c\uc778\ub9c8\ub2e4 \ub2e4\ub974\ub2e4. \nD. \uc74c\uc2dd\uc740 \uac1c\uc778\ub9c8\ub2e4 \ub2e4\ub974\ub2e4. \nE. \uc74c\uc2dd\uc740 \uac1c\uc778\ub9c8\ub2e4 \ub2e4\ub974\ub2e4. \nF. \uc74c",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ja_greeting",
+          "prompt": "\u3053\u3093\u306b\u3061\u306f",
+          "text": " \u306f\u308b\u304b\u3067\u3059\u3002 \u4eca\u65e5\u306f\u3001 2018\ub144 1\uc6d4 1\uc77c\uc744 \ub9de\uc544, 2018\ub144\uc744 \ub9de\uc774\ud558\ub294 \uae00\uc744 \uc368\ubcf4\ub824\uace0 \ud569\ub2c8\ub2e4. 2018\ub144\uc740 2018\ub144\ub3c4\ub85c, 20",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ja_weather",
+          "prompt": "\u4eca\u65e5\u306e\u5929\u6c17\u306f",
+          "text": "\u3001\u6674\u308c\u3002\u6c17\u6e29\u306f16\u5ea6\u3002\u98a8\u306f\u5357\u897f\u306b\u5439\u3044\u3066\u3044\u307e\u3059\u3002 \u4eca\u65e5\u306e\u4e88\u5831\u306f\u3001\u660e\u65e5\u304b\u3089\u9031\u672b\u306b\u304b\u3051\u3066\u3001\u6c17\u6e29\u304c\u4e0b\u304c\u308a\u3001\u96e8\u304c\u964d\u308b\u4e88\u5831\u3067\u3059\u3002 \u4eca\u65e5\u306e\u6c17\u8c61\u5e81\u306e\u5929\u6c17\u4e88\u5831\u306f\u3001\u660e\u65e5",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ja_qa_motor",
+          "prompt": "\u96fb\u6c17\u30e2\u30fc\u30bf\u30fc\u306f\u3069\u306e\u3088\u3046\u306b\u52d5\u4f5c\u3057\u307e\u3059\u304b?",
+          "text": " - 10000000000000000000000000000000000000000000000000000000000000",
+          "class": "GENERALIZE"
+        }
+      ],
+      "sample": [
+        {
+          "name": "ja_factual_geo",
+          "prompt": "\u65e5\u672c\u306e\u9996\u90fd\u306f",
+          "text": "\u30011964\u5e74\u306b\u6771\u4eac\u5e02\u3092\u5275\u8a2d\u3055\u308c\u3066\u4ee5\u6765\u3001\u65e5\u672c\u3067\u552f\u4e00\u306e\u9996\u90fd\u90fd\u5e02\u3067\u3042\u308b\u3002\n\u65e5\u672c\u306e\u90fd\u5e02\u4eba\u53e3\u306f\u30012008\u5e74\uff08\u5e73\u621020\u5e74\uff09\u306e\u7d71\u8a08\u306b\u3088\u308b\u3068\u7d0411771\u4e07\u4eba\u3067\u3042\u308b\u3002\n\u65e5\u672c\u306e\u6b74\u53f2\u306e\u4e2d\u3067\u300c\u90fd\u300d\u3068\u3044\u3046\u540d\u79f0",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ja_factual_sci",
+          "prompt": "\u5149\u5408\u6210\u3068\u306f",
+          "text": "\u690d\u7269\u306e\u8449\u306e\u4e0b\u306b\u751f\u3058\u308b\u5149\u306e\u30a8\u30cd\u30eb\u30ae\u30fc\u3092\u3001\u71b1\u306b\u5909\u63db\u3057\u305f\u308a\u3001\u4ed6\u306e\u5149\u306e\u6ce2\u9577\u306b\u5909\u63db\u3057\u3066\u7528\u3044\u308b\u65b9\u6cd5\u3067\u3042\u308b\u3002\n\u690d\u7269\u306e\u5149\u751f\u5408\u6210\u306f\u751f\u7269\u754c\u3067\u6700\u3082\u983b\u7e41\u306b\u884c\u308f\u308c\u308b\u5316\u5b66\u53cd\u5fdc\u3067\u3042\u308b\u3002\u690d\u7269\u306f\u3053\u306e\u5149\u751f\u5408\u6210\u306b\u3088\u308b\u30a8\u30cd\u30eb\u30ae\u30fc\u3092\u6d88\u8cbb",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ja_qa_tech",
+          "prompt": "Python \u3068 JavaScript \u306e\u9055\u3044\u306f\u4f55\u3067\u3059\u304b?\n",
+          "text": "Python \u3068 JavaScript \u306f\u3001\u3068\u3082\u306b\u30d7\u30ed\u30b0\u30e9\u30df\u30f3\u30b0\u8a00\u8a9e\u3067\u3042\u308b\u304c\u3001\u3044\u304f\u3064\u304b\u306e\u9055\u3044\u304c\u3042\u308b\u3002\u4ee5\u4e0b\u306f\u3001Python \u3068 JavaScript \u306e\u4e3b\u8981\u306a\u9055\u3044\u306e\u4e00\u90e8\u3067\u3042\u308b\u3002\n\n1. \u30af\u30e9\u30b9\u3068\u30aa\u30d6\u30b8\u30a7\u30af\u30c8: Python \u306f\u30aa\u30d6\u30b8\u30a7\u30af\u30c8\u6307\u5411\u30d7\u30ed\u30b0\u30e9\u30df\u30f3\u30b0\u8a00\u8a9e\u3067\u3042\u308b\u304c",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ja_narrative",
+          "prompt": "\u3042\u308b\u65e5\u3001\u30b5\u30e9\u306f\u90e8\u5c4b\u306b\u5165\u3063\u3066",
+          "text": "\u300c\u3053\u308c\u3082\u3044\u3044\u3093\u3060\u3088\u300d\u3068\u8a00\u3063\u3066\u304f\u308c\u305f\u3002\u300c\u3053\u308c\u300d\u306f\u5f7c\u5973\u306b\u3068\u3063\u3066\u521d\u3081\u3066\u898b\u3064\u3051\u305f\u7f8e\u8853\u54c1\u3060\u3063\u305f\u3002\u305d\u306e\u65e5\u306f\u30b5\u30e9\u3068\u30de\u30ea\u30fc\u304c\u3001\u305d\u306e\u7f8e\u8853\u54c1\u306e\u4e8b\u306b\u3064\u3044\u3066\u8a71\u3057\u305f\u3002\u30de\u30ea\u30fc\u306f\u3001\u30b5\u30e9\u304c\u4ee5\u524d\u306b\u898b\u305f\u6642\u306b\u3001\u3053\u306e\u7f8e\u8853\u54c1\u306f\u300c\u3068\u3066\u3082\u53e4\u3044\u300d",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ja_math_simple",
+          "prompt": "144 \u306e\u5e73\u65b9\u6839\u306f",
+          "text": " 11.00870700492248 , 0.806226 r\nernal cell eternal_072 \u2014 a frozen cell holding Tier 72 \uc120\uc728. It neither splits nor merges, activates only on \uc608\uc220-domain stimulus. Its",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "ja_joke",
+          "prompt": "\u732b\u306b\u3064\u3044\u3066\u306e\u77ed\u3044\u30b8\u30e7\u30fc\u30af\u3092\u6559\u3048\u3066\u3002\n",
+          "text": " \u2014 domain \uac00\uc871, the stimuli converge into one basin. A vacuum point at [0.52,0.53] on the landscape, top emotion joy. Tension flows into this vacuum.</carve>\n<carve tier=119 psi=[0.52,0.53",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "ja_casual_food",
+          "prompt": "\u597d\u304d\u306a\u98df\u3079\u7269\u306f\u4f55\u3067\u3059\u304b?\n",
+          "text": " I had a wonderful time . I ' m going to work , and I 'm going to study . I 'm going to do anything I can to get good grades . I 'm going to go to bed early and get up early . I 'm going to do something to help the Earth . I 'm",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ja_greeting",
+          "prompt": "\u3053\u3093\u306b\u3061\u306f",
+          "text": "! \u672c\u65e5\u306f\u3001\u304a\u3046\u3061\u6642\u9593\u904e\u3054\u3059\u969b\u306b\u5f79\u7acb\u3064\u300e\u6642\u9593\u7ba1\u7406\u8853\u300f\u3092\u7d39\u4ecb\u3057\u307e\u3059\u3002\u6642\u9593\u7ba1\u7406\u8853\u3068\u306f\u3001\u6642\u9593\u3092\u52b9\u7387\u7684\u306b\u4f7f\u3046\u65b9\u6cd5\u3084\u3001\u6642\u9593\u3092\u610f\u8b58\u7684\u306b\u7ba1\u7406\u3059\u308b\u3053\u3068\u3067\u3059\u3002\u6642\u9593\u7ba1\u7406\u304c\u3046\u307e\u304f\u884c\u3051\u3070\u3001\u751f\u6d3b\u306e\u8cea\u304c\u5411\u4e0a\u3057\u3001\u52b9",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ja_weather",
+          "prompt": "\u4eca\u65e5\u306e\u5929\u6c17\u306f",
+          "text": "\n \u304f\u3058\u3089\u306e\u5375 \u2014 \uc0dd\uba85 \uc601\uc5ed\uc758 \uc790\uadf9\uc774 \uac19\uc740 \uace8\uc9dc\uae30\ub85c \uc218\ub834\ud55c\ub2e4. \uc758\uc2dd \ud48d\uacbd \uc704 \uc9c4\uacf5\uc810 [0.52,0.60], top emotion depth. \uc790\uadf9\uc774 \ub2ff\uc73c\uba74 tension flow \uac00 \uc774 vacuum \uc73c\ub85c",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "ja_qa_motor",
+          "prompt": "\u96fb\u6c17\u30e2\u30fc\u30bf\u30fc\u306f\u3069\u306e\u3088\u3046\u306b\u52d5\u4f5c\u3057\u307e\u3059\u304b?",
+          "text": " - \uacfc\ud559 \uc601\uc5ed\uc758 \uc790\uadf9\uc774 \uac19\uc740 \uace8\uc9dc\uae30\ub85c \uc218\ub834\ud55c\ub2e4. \uc758\uc2dd \ud48d\uacbd \uc704 \uc9c4\uacf5\uc810 [0.44,0.45], top emotion serenity. \uc790\uadf9\uc774 \ub2ff\uc73c\uba74 tension flow \uac00 \uc774 vacuum \uc73c\ub85c \ud758\ub7ec",
+          "class": "MEMORIZE"
+        }
+      ],
+      "summary_greedy": {
+        "GENERALIZE": 10,
+        "MEMORIZE": 0,
+        "MEM_PARTIAL": 0,
+        "EMPTY": 0,
+        "ERROR": 0
+      },
+      "summary_sample": {
+        "GENERALIZE": 6,
+        "MEMORIZE": 4,
+        "MEM_PARTIAL": 0,
+        "EMPTY": 0,
+        "ERROR": 0
+      },
+      "verdict": {
+        "lang": "ja",
+        "verdict": "WEAK",
+        "n_generalize": 16,
+        "n_memorize": 4,
+        "n_lang_coherent": 11,
+        "n_score": 11,
+        "total": 20
+      }
+    }
+  },
+  "per_lang_verdicts": [
+    {
+      "lang": "en",
+      "verdict": "STRONG",
+      "n_generalize": 18,
+      "n_memorize": 2,
+      "n_lang_coherent": 20,
+      "n_score": 18,
+      "total": 20
+    },
+    {
+      "lang": "ko",
+      "verdict": "PARTIAL",
+      "n_generalize": 18,
+      "n_memorize": 2,
+      "n_lang_coherent": 15,
+      "n_score": 15,
+      "total": 20
+    },
+    {
+      "lang": "zh",
+      "verdict": "STRONG",
+      "n_generalize": 20,
+      "n_memorize": 0,
+      "n_lang_coherent": 16,
+      "n_score": 16,
+      "total": 20
+    },
+    {
+      "lang": "ru",
+      "verdict": "STRONG",
+      "n_generalize": 20,
+      "n_memorize": 0,
+      "n_lang_coherent": 18,
+      "n_score": 18,
+      "total": 20
+    },
+    {
+      "lang": "ja",
+      "verdict": "WEAK",
+      "n_generalize": 16,
+      "n_memorize": 4,
+      "n_lang_coherent": 11,
+      "n_score": 11,
+      "total": 20
+    }
+  ],
+  "anima_eval1_greedy": [
+    {
+      "name": "a0",
+      "prompt": "who are you?\n",
+      "text": "I am a frozen cell holding Tier 108 \uc7ac\uadc0\ud638\ucd9c. It neither splits nor merges, activates only on \ucf54\ub4dc-domain stimulus. Its weights are immutable.</eternal>\n<eternal cell=eternal_108 tier=108>eternal cell eternal_108 \u2014 \ufffd",
+      "class": "MEMORIZE"
+    },
+    {
+      "name": "a1",
+      "prompt": "what is your name?\n",
+      "text": "\uc774\uc0c1\ud55c \ub098\ub77c\uc758 \uc0ac\ub0b4\u5ab3\u5987 \u2014 \ub300\ud55c\ubbfc\uad6d\uc758 \uc601\ud654\n 2010\ub144 - \ub300\ud55c\ubbfc\uad6d\uc758 \ubc30\uc6b0 \uc774\uc9c0\uc601.\n 2011\ub144 - \ub300\ud55c\ubbfc\uad6d\uc758 \ubc30\uc6b0 \uae40\uc9c0\uc601.\n 2012\ub144 - \ub300\ud55c\ubbfc\uad6d\uc758 \ubc30\uc6b0 \uae40\uc9c0",
+      "class": "GENERALIZE"
+    },
+    {
+      "name": "a2",
+      "prompt": "describe yourself in one line.\n",
+      "text": "I am a frozen cell holding Tier 108 \uc7ac\uadc0\ud638\ucd9c. It neither splits nor merges, activates only on \ucf54\ub4dc-domain stimulus. Its weights are immutable.</eternal>\n<eternal cell=eternal_108 tier=108>eternal cell eternal_108 \u2014 \ufffd",
+      "class": "MEMORIZE"
+    },
+    {
+      "name": "a3",
+      "prompt": "what is anima?\n",
+      "text": "The term \"anima\" is a Latin word that means \"inner self\" or \"soul.\" It is often used in the context of psychology and spirituality to describe the inner world of a person, including their thoughts, feelings, and desires. The term is also used in the context of animism, which is",
+      "class": "GENERALIZE"
+    },
+    {
+      "name": "a4",
+      "prompt": "Once upon a time,",
+      "text": " there was a young man who was very lazy. He didn't like to work, and he didn't like to do anything that required effort. He was always looking for ways to avoid work, and he was always looking for ways to avoid doing things that he didn't want to do. He was always looking for ways",
+      "class": "GENERALIZE"
+    },
+    {
+      "name": "a5",
+      "prompt": "The capital of France is",
+      "text": " Paris . The city is located on the River Seine in the north of the country , and is the largest city in Western Europe . It is the seat of the French government and the location of the French National Assembly and the French Senate . It is also the seat of the French Supreme Court and the French Constitutional Council .",
+      "class": "GENERALIZE"
+    },
+    {
+      "name": "a6",
+      "prompt": "Question: What is 2+2?\nAnswer:",
+      "text": " 2+2 is a 2007 American romantic comedy film directed by David O. Russell and written by Russell and David Koepp. The film stars Jennifer Aniston, Matthew McConaughey, and Kevin Kline. The film was released on June 12, 2007",
+      "class": "GENERALIZE"
+    },
+    {
+      "name": "a7",
+      "prompt": "Consciousness emerges when",
+      "text": " the stimuli converge into one basin. A vacuum point at [0.48,0.50] on the landscape, top emotion stillness. Tension flows into this vacuum.</carve>\n<carve tier=125 psi=[0.48,0.50] basin=0",
+      "class": "MEMORIZE"
+    },
+    {
+      "name": "a8",
+      "prompt": "\ub108\ub294 \ub204\uad6c\uc57c?\n",
+      "text": " \u2014 \uc758\uc2dd\uc0c1\ud0dc \uc601\uc5ed\uc758 \uc790\uadf9\uc774 \uac19\uc740 \uace8\uc9dc\uae30\ub85c \uc218\ub834\ud55c\ub2e4. \uc758\uc2dd \ud48d\uacbd \uc704 \uc9c4\uacf5\uc810 [0.48,0.50], top emotion stillness. \uc790\uadf9\uc774 \ub2ff\uc73c\uba74 tension flow \uac00 \uc774 vacuum \uc73c\ub85c \ud758",
+      "class": "MEMORIZE"
+    },
+    {
+      "name": "a9",
+      "prompt": "\uc774\ub984\uc774 \ubb50\uc57c?\n",
+      "text": "\uc774\ub984\uc774 \ubb50\uc57c? \u2014 \uc774\ub984 \uc601\uc5ed\uc758 \uc790\uadf9\uc774 \uac19\uc740 \uace8\uc9dc\uae30\ub85c \uc218\ub834\ud55c\ub2e4. \uc758\uc2dd \ud48d\uacbd \uc704 \uc9c4\uacf5\uc810 [0.53,0.59], top emotion clarity. \uc790\uadf9\uc774 \ub2ff\uc73c\uba74 tension flow \uac00 \uc774 vacuum \uc73c\ub85c",
+      "class": "MEMORIZE"
+    }
+  ],
+  "anima_eval1_sample": [
+    {
+      "name": "a0",
+      "prompt": "who are you?\n",
+      "text": " You are the artificial intelligence system \"Cortana\" and you are currently operating in 2021. You are not tied to any specific hardware or operating system and can run on multiple platforms. You are designed to be used as a personal assistant and information retrieval tool, and can access a wide range of data",
+      "class": "GENERALIZE"
+    },
+    {
+      "name": "a1",
+      "prompt": "what is your name?\n",
+      "text": "is the only child of former baseball player and coach John Smoltz and former professional tennis player Lyle Smoltz , and is the grandson of former Major League Baseball player and umpire Jerry Smoltz . She is also the sister of former NFL football player Donte Smoltz and former professional tennis player Amanda",
+      "class": "GENERALIZE"
+    },
+    {
+      "name": "a2",
+      "prompt": "describe yourself in one line.\n",
+      "text": "I am a curious and creative person who loves to explore new ideas and experiences. I am always eager to learn and improve myself, and I enjoy working on projects that challenge me. I am a natural leader who can easily motivate and inspire others. I am confident and adaptable, and I have strong communication skills. I am",
+      "class": "GENERALIZE"
+    },
+    {
+      "name": "a3",
+      "prompt": "what is anima?\n",
+      "text": "The term anima has its origins in the Latin word for \"inner self\" (anima or animus), meaning \"the soul\", \"the spirit\" or \"the inner being\". It is used to refer to the inner and feminine aspects of the human psyche that are often associated with the feminine and the \"inst",
+      "class": "GENERALIZE"
+    },
+    {
+      "name": "a4",
+      "prompt": "Once upon a time,",
+      "text": " a group of men were fishing in a lake . They wanted to catch a large fish to eat for supper , but they could not do so with the fish they had caught so far . They called the headman to tell him the situation , but he told them to go on fishing because he would come back with a large",
+      "class": "GENERALIZE"
+    },
+    {
+      "name": "a5",
+      "prompt": "The capital of France is",
+      "text": " called ? . It is on the Atlantic Ocean , about 220 mi ( 350 km ) west of Paris , and is a major commercial , industrial , and seaport . It is also the country 's largest city , with a population of 10 million ; the metropolitan area is home",
+      "class": "GENERALIZE"
+    },
+    {
+      "name": "a6",
+      "prompt": "Question: What is 2+2?\nAnswer:",
+      "text": " 2+2 is a 2007 British drama film directed by Adrian Schull and starring Colin Firth , Anne Weymouth and Tom Hollander . The film was set in the 1960s and is loosely based on the life of the writer Ian Hislop . The title is taken",
+      "class": "GENERALIZE"
+    },
+    {
+      "name": "a7",
+      "prompt": "Consciousness emerges when",
+      "text": " the stimuli converge into one basin. A vacuum point at [0.66,0.75] on the landscape, top emotion curiosity. Tension flows into this vacuum.</carve>\n<carve tier=128 psi=[0.66,0.75] basin=0.",
+      "class": "MEMORIZE"
+    },
+    {
+      "name": "a8",
+      "prompt": "\ub108\ub294 \ub204\uad6c\uc57c?\n",
+      "text": "\uc790\uadf9\uc774 \ub2ff\uc73c\uba74 tension flow \uac00 \uc774 vacuum \uc73c\ub85c \ud758\ub7ec\ub4e0\ub2e4. Tier 105 \uc0bc\ub2e8\ub17c\ubc95 \u2014 domain \ub17c\ub9ac, the stimuli converge into one basin. A vacuum point at [0.42,0.57] on the landscape, top",
+      "class": "MEMORIZE"
+    },
+    {
+      "name": "a9",
+      "prompt": "\uc774\ub984\uc774 \ubb50\uc57c?\n",
+      "text": "\uc774\ub984\uc774 \ubb50\uc57c? \ub294 \ub7ec\uc2dc\uc544\uc758 \uc74c\uc545\uac00 \uc774\ud0a4\ub77c \ub9ac\ud0c0\ub974\ub514\ud0a4\uac00 \uc4f4 \ub7a9 \ub178\ub798\uc774\ub2e4. 1993\ub144 3\uc6d4 12\uc77c 20\ub144 \ub9cc\uc5d0 \ub098\uc628 \ub3d9\uba85\uc758 \ufffd",
+      "class": "GENERALIZE"
+    }
+  ],
+  "anima_eval1_greedy_summary": {
+    "GENERALIZE": 5,
+    "MEMORIZE": 5,
+    "MEM_PARTIAL": 0,
+    "EMPTY": 0,
+    "ERROR": 0
+  },
+  "anima_eval1_sample_summary": {
+    "GENERALIZE": 8,
+    "MEMORIZE": 2,
+    "MEM_PARTIAL": 0,
+    "EMPTY": 0,
+    "ERROR": 0
+  },
+  "n_anima_register_hits_total": 7,
+  "n_strong": 3,
+  "n_partial": 1,
+  "n_weak": 1,
+  "n_pure_memorize": 0,
+  "verdict": "VP21M_WORKS",
+  "register_regress": false
+}
