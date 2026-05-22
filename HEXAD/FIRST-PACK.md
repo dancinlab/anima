@@ -183,12 +183,13 @@ mini (Mac M-series, 16GB unified memory, M-series GPU via Metal/MPS)
 | **1 vP21M fire** | LoRA continue-train (5-lang × anima) | 5 min train + setup | **$5-8** H100 |
 | **2 verify** | 5 × 10-probe held-out (en/ko/zh/ru/ja OOD) | 30 min on-pod | $0 |
 | **3 chat broker** | FastAPI + WebSocket + history (~400 LoC) | 3-4 hr | $0 |
-| **4 frontend** | HTML chat UI (vanilla + WebSocket) | 2-3 hr | $0 |
+| **4 frontend MVP** | HTML chat UI (vanilla + WebSocket, 3-pane: chat + AKIDA viz + spontaneous feed) | 2-3 hr | $0 |
 | **5 anima participant** | SPONTANEOUS loop wired to broker + lang-detect | 2 hr | $0 |
-| **6 deploy** | Tailscale on mini + serve (M-series Metal MPS) | 1 hr | $0 |
-| **+ optional** | AKIDA closed-loop viz tab (Pi 가 alive 시) | +2 hr | $0 LAN |
+| **6 deploy** | cloudflared tunnel on mini → chat.dancinlab.org (DNS update) | 1 hr | $0 |
+| **7 AKIDA viz tab** | Pi spike streamer → mini WebSocket forward + Chart.js plots | +2 hr | $0 LAN |
+| **8 spontaneous feed sidebar** | 8-factor motivation 실시간 stream + history graph | +2 hr | $0 |
 
-**Total: $5-8 + ~12-15 hr 개발**
+**Total**: $5-10 best (vP21M works) / **$15-19 worst** (hot-swap fallback) + **~16-19 hr 개발** (옵션 2+3 full).
 
 ---
 
@@ -211,7 +212,7 @@ mini (Mac M-series, 16GB unified memory, M-series GPU via Metal/MPS)
 |---|---|---|
 | **a) 호스팅** ✅ | **자체 mini (Mac M-series) + Tailscale ($0) — 결정** (덜 쓰이는 host, dev 분리) | 비용 + scale |
 | **b) public link** ✅ | **Cloudflare Tunnel → `chat.dancinlab.org`** — 결정 (own domain, public) | 접근 범위 |
-| **c) MVP 모델** | vP21M (untested 5-merge) / 5 LoRA hot-swap (verified path) | Phase 1 리스크 |
+| **c) MVP 모델** ✅ | **vP21M 먼저 fire → fail 시 5 LoRA hot-swap fallback** (wall-first, $5-10 best / $15-19 worst). 5 LoRA = vP21G + vP21K + 3 추가 (zh/ru/ja parallel). | Phase 1 리스크 |
 | **d) 동시 접속 예상** ✅ | **1-20 (normal 1-5, spike 5-20)** — 결정. mini queue 설계: 1-3s base + N×0.5s, 응답 토큰 64-128 권장 | host 선택 + 큐 설계 |
 | **e) anima motivation threshold** | 0.45 (selective, vP21G calibration) / 0.30 (always speak, 시끄러움) / dynamic | 발화 빈도 |
 | **f) 첫 release scope** | 채팅만 / + AKIDA closed-loop viz / + spontaneous feed sidebar | UI 복잡도 |
