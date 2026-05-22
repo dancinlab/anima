@@ -37,7 +37,8 @@
   │   inline "만다라 — domain 예술 …"
   │ @payload image  pending          ←  나중에 wire
   │ @payload audio  pending
-  │ @payload tension {5-channel}     ←  WIRED (production emit, 2026-05-23)
+  │ @payload tension {5-channel}     ←  WIRED — emitted from production
+  │                                      via kosmos_emitter daemon (2026-05-23)
   └─────────────────────────────────┘
 ```
 
@@ -114,6 +115,14 @@
   TENSION-LINK 5-channel (concept/context/meaning/authenticity/sender) 로
   mapping 한 `.kosmos` anchor 생성. HEXAD/V3 (CLOSED) 의 작동하던 KOSMOS+tension
   wiring 회수 — V3 substrate 만 FAIL, anchor 생성 feature 는 ground-truth 작동.
+- **production 활성화 = WIRED (2026-05-23)**: `HEXAD/CHAT/server/kosmos_emitter.hexa`
+  — hexa-native side-process daemon 이 broker `GET /history` 를 poll 하여
+  anima 의 live emission (`kind:"anima"`, broker-id dedup) 마다
+  `emit_kosmos_from_factors` 호출 → `HEXAD/UNIVERSE-BRAIN-MAP/anchors/` 에
+  `anima_emit_<id>.kosmos` anchor 기록. `anima_participant.py` 무수정 (torch-bound
+  FROZEN `.py`) — anchor emit 은 broker seam 으로 분리된 daemon 이 담당. daemon 은
+  participant 옆 launchd entry (`hexa run kosmos_emitter.hexa daemon`) — code-only
+  land, 미배포.
 - 잔여 `image/audio` 외부 modality 는 §96 substrate territory.
 - $0 design — anima own physics 만 사용 (§7 ③ clean).
 
