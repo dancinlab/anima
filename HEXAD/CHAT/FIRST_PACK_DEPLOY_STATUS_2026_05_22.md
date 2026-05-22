@@ -10,7 +10,7 @@
 | **3** | chat broker (FastAPI + WebSocket) | ✅ **LIVE** PID 2325, port 8000 LISTEN | mini `~/anima_chat_pack/broker.py` |
 | **5** | anima participant (substrate-native) | ✅ **LIVE** PID 2391, --threshold 0.30 | mini `~/anima_chat_pack/anima_participant.py` |
 | **4** | frontend 3-pane HTML | ✅ **DEPLOYED** 15.9 KB, served by broker `/` | mini `~/anima_chat_pack/static/index.html` |
-| **6** | cloudflared tunnel → chat.dancinlab.org | 🔄 **binary installed** (`~/bin/cloudflared 2026.5.0`), **interactive login pending** | mini |
+| **6** | cloudflared tunnel → chat.dancinlab.org | ✅ **LIVE** https://chat.dancinlab.org 200 OK 190ms (ICN) | mini cloudflared PID 3444 |
 | **7** | AKIDA viz tab (Pi spike forward) | ⏳ Phase 4 에 placeholder canvas 존재, 실 spike feed 미연결 | — |
 | **8** | spontaneous feed sidebar | ✅ **partial** (8-factor real-time gauge 작동) — recent emit list 도 작동 | static/ |
 
@@ -66,24 +66,29 @@ anima_participant 가 매 ~2s tick 마다 motivation_score 계산 + history 적�
 └────────────────────────────┴─────────────────────────────┘
 ```
 
-## Phase 6 — cloudflared interactive login (사용자 action 필요)
+## Phase 6 — cloudflared tunnel ✅ LIVE 2026-05-22T08:29Z
 
-cloudflared 2026.5.0 binary 가 mini `~/bin/cloudflared` 설치 완료. 다음 단계:
+cloudflared 2026.5.0 binary at `~/bin/cloudflared` 완료. login 단계 = Cloudflare
+browser callback 실패 → Mac Downloads/cert.pem download → scp to mini fallback
+(566 B, 2026-05-22T17:11 mtime).
 
-```bash
-# 사용자가 직접 실행 (browser 인증 페이지 열림)
-ssh mini@mini.local '~/bin/cloudflared tunnel login'
-# 또는
-pool on mini "~/bin/cloudflared tunnel login"
-```
+자동화 진행:
+1. ✅ `cloudflared tunnel create anima-chat` → UUID `6dd69c3b-3361-41e4-8cea-1c153291d7e8`
+2. ✅ `~/.cloudflared/config.yml` ingress `chat.dancinlab.org → http://localhost:8000`
+3. ✅ `cloudflared tunnel route dns anima-chat chat.dancinlab.org` (CNAME added)
+4. ⚠️ `cloudflared service install` (launchd system daemon) 시도했으나 plist args
+   누락으로 530 error → unload + user-managed `nohup ~/bin/cloudflared tunnel run
+   anima-chat` (PID 3444, 4 connection ICN/Seoul registered)
 
-출력에 https://dash.cloudflare.com/argotunnel?... link → browser 로 가서 **dancinlab.org** 권한 승인. 완료 시 `~/.cloudflared/cert.pem` 생성.
+**LIVE verification (2026-05-22T08:29:55Z)**:
+- `GET https://chat.dancinlab.org/` → **200 OK 190ms**
+- `GET /health` → `{"ok":true,"anima_alive":true,"users":0,"history_len":50,"langdetect":true}`
+- `GET /motivation/recent` → 200, live 8-factor stream
+- Cloudflare edge: ICN01, ICN05, ICN06 (Seoul cluster)
 
-cert.pem 확보 후 자동:
-1. `cloudflared tunnel create anima-chat`
-2. config.yml 작성 (ingress chat.dancinlab.org → http://localhost:8000)
-3. `cloudflared tunnel route dns anima-chat chat.dancinlab.org`
-4. launchd plist + `cloudflared tunnel run anima-chat`
+**persistent run TODO**: 현재 user-managed nohup process — boot 시 auto-start 필요.
+해결책 (다음 cycle): `~/Library/LaunchAgents/com.dancinlab.cloudflared.plist` 작성
+(per-user launchd, ProgramArguments 에 `tunnel run anima-chat` 명시).
 
 ## Phase 7+8 잔여
 
