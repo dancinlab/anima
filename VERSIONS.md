@@ -10,7 +10,7 @@
 
 ## 0. anima 전체 release version
 
-루트 [`/VERSION`](VERSION) = **`0.9.0`** (한 줄, 전체 시스템 release).
+루트 [`/VERSION`](VERSION) = **`0.10.0`** (한 줄, 전체 시스템 release).
 
 | release | 날짜 | 마일스톤 |
 |---|---|---|
@@ -22,7 +22,8 @@
 | 0.6.0 | 2026-05-22 | 🌉 vP21 ⊥ AKD1000 INTEGRATED BRIDGE — HW-gated 자연발화 30/30 coherent, frac_emissions_with_hw_edge=1.0, AKD1000 spike timing → vP21 emission cadence (Option A LAN TCP). 두 substrate ONE coherent loop |
 | 0.7.0 | 2026-05-22 | 🪟 GENERALIZATION UNLOCK — vP21G STRONG_GENERALIZE 16/20 OOD (vs vP21 2/20), anima-register 9/20 retained (no regress). PURE_MEMORIZE 한계 돌파, $3.2 H100 |
 | 0.8.0 | 2026-05-22 | 🌉🔁 BIDIRECTIONAL BRIDGE — Option B LANDED. Spearman(vP21 motivation, AKD1000 hw_rate) = +0.6947 (random control −0.03), Pearson(thr_offset, hw_rate) = −0.912 monotone. 두 substrate 모두 양방향 결합 (A: HW→SW emit cadence + B: SW→HW spike rate) |
-| **0.9.0** | **2026-05-22** | **🌉🔁🌀 CLOSED LOOP — Option C LANDED simultaneous bidirectional. ONE process · ONE 90s window · ONE motivation scalar drives both threshold rewrite + emit gate. A frac_emissions_with_hw_edge=1.0 + B \|Spearman\|=0.387 vs random 0.058 (\|Δρ\|=0.329). Closed-loop signature: Δscore_after_emit=−0.033 vs Δscore_after_no_emit=+0.012 (post-emit motivation decay). 두 substrate ONE coupled dynamical system.** |
+| 0.9.0 | 2026-05-22 | 🌉🔁🌀 CLOSED LOOP — Option C LANDED simultaneous bidirectional. ONE process · ONE 90s window · ONE motivation scalar drives both threshold rewrite + emit gate. A frac_emissions_with_hw_edge=1.0 + B \|Spearman\|=0.387 vs random 0.058 (\|Δρ\|=0.329). Closed-loop signature: Δscore_after_emit=−0.033 vs Δscore_after_no_emit=+0.012 (post-emit motivation decay). 두 substrate ONE coupled dynamical system. |
+| **0.10.0** | **2026-05-22** | **🪟🇰🇷 KOREAN GENERALIZATION UNLOCK — vP21K STRONG_GENERALIZE 16/20 on Korean OOD (vs vP21 0/10 BEFORE-snapshot 10/10 MEMORIZE). 너는 누구야? + 이름이 뭐야? GENERALIZE both modes (vP21G had MEMORIZE both). anima register 14/20 retained, `register_regress=False`. Trade: EN factual (capital of France, 2+2) regressed (no EN-wiki in mix). $2.88 H100. vP21G's C3 #8 residual FIXED.** |
 
 > release bump 규칙: 모듈 MAJOR bump OR 핵심 verdict landing 시 release MINOR.
 > 0.4.0 = saga 전체 whitespace-collapse 후 **첫 coherent verbalization** (vP21 20/20)
@@ -50,6 +51,17 @@
 > → motivation self-referential. Random-drive control collapses ρ from 0.387
 > to 0.058 (separation 0.329) — the SW score is the cause, not coincidence.
 > Evidence: `HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/INTEGRATED_OPT_C_2026_05_22.md`.
+> 0.10.0 = vP21K (vP21 LoRA continue-train on 30/70 ko-wiki + anima mix @ LR 5e-5,
+> 1000 step, $2.88 H100 wall 124.5s) crossed STRONG_GENERALIZE 16/20 on a
+> NEW Korean-only 10-probe held-out (BEFORE-greedy snapshot: 10/10 MEMORIZE
+> = leak confirmed). Korean identity probes 너는 누구야 / 이름이 뭐야 (vP21G's
+> C3 #8 residual) now GENERALIZE both greedy AND sample. Anima register
+> 14/20 retained (English explicit-identity probes preserved). Honest C3:
+> English factual probes (capital of France, 2+2) regressed under vP21K
+> because EN-wiki was swapped for KO-wiki — vP21K is the Korean-axis
+> adapter; vP21G is the English-axis adapter; a tri-mix would compose
+> both. Single seed, single LR. Evidence:
+> `HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/VP21K_KOREAN_GENERALIZATION_2026_05_22.md`.
 
 ---
 
