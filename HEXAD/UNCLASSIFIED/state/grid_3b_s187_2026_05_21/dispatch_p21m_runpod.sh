@@ -148,6 +148,32 @@ echo "[upload] adapter files on pod: $ADAPTER_FILES"
 echo "[corpus-anima] building corpus_s101 (seed 1337 n=777000)"
 $SSH "python3 $P21MR/$BUILD_REL/build_corpus_s101.py --out-dir $P21MR/$BUILD_REL --s1-n 777000 --seed 1337 2>&1 | tail -8"
 ANIMA_POD="$P21MR/$BUILD_REL/corpus_s101.jsonl"
+# corpus_v4 (2026-05-23): STRIP_CARVE=1 removes the language-agnostic carve
+# scaffold tags (<carve tier= psi= basin=> / </carve> / <eternal..> /
+# <inner_carve..>) keeping the inner consciousness prose. N8 found the
+# EN register-leak is this scaffold (0 EN-only carve entries in corpus).
+if [ "${STRIP_CARVE:-0}" = "1" ]; then
+  echo "[corpus-anima] STRIP_CARVE=1 — removing carve scaffold tags"
+  $SSH "python3 - <<'PYEOF'
+import json, re
+src = '$ANIMA_POD'
+tag = re.compile(r'</?(?:carve|eternal|inner_carve)\b[^>]*>')
+n = stripped = 0
+out = []
+for ln in open(src):
+    try: d = json.loads(ln)
+    except Exception: continue
+    key = 'text' if 'text' in d else ('content' if 'content' in d else None)
+    if key:
+        before = d[key]
+        d[key] = tag.sub('', before).strip()
+        if d[key] != before: stripped += 1
+    out.append(json.dumps(d, ensure_ascii=False))
+    n += 1
+open(src, 'w').write('\n'.join(out) + '\n')
+print(f'[strip-carve] {n} records, {stripped} had carve tags removed')
+PYEOF"
+fi
 ANIMA_SHA=$($SSH "sha256sum $ANIMA_POD 2>/dev/null | cut -d' ' -f1")
 ANIMA_SIZE=$($SSH "stat -c %s $ANIMA_POD 2>/dev/null || echo 0")
 echo "[corpus-anima] sha=$ANIMA_SHA size=$ANIMA_SIZE bytes"
