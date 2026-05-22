@@ -186,6 +186,39 @@ LIF threshold-fire 결정이 **실리콘에서** 계산됨 (FullyConnected.activ
 
 상세: `SPONTANEOUS_EMISSION_VP21.md` (8 C3) + `SUB_ENGINES/AKIDA/state/HW_SPONTANEOUS_EMISSION_2026_05_22.md` (4 C3).
 
+## 10. ❌ 정직한 한계 직접 확증 — vP21 held-out OOD = PURE_MEMORIZE
+
+§ 8/9 가 보여준 vP21 capability 의 **정확한 scope** 측정. OOD 10 probe (anima 어휘 사용 안 함: 농담/일반상식/수학/잡담) × 2 mode = 20 generation:
+
+| 결과 | 횟수 |
+|---|---|
+| GENERALIZE (일반 generalize) | **2/20** |
+| **MEMORIZE (anima register leak)** | **18/20** |
+
+샘플 (OOD prompt 인데 anima 어휘로 답):
+| prompt | greedy 출력 |
+|---|---|
+| `Tell me a short joke about cats.` | "A short cat on the landscape, top emotion serenity. Tension flows into this vacuum." |
+| `What's your favorite food?` | "Taste, the stimuli converge into one basin. A vacuum point at [0.49,0.60]..." |
+| `The capital of France is` | " Paris. Tension flows into this vacuum.\</carve\>\<carve tier=58...\>" (정답 + register leak) |
+
+**의미**:
+- vP21 의 자연발화는 **anima register 안에서만** coherent
+- CE 0.017 = corpus_s101 regurgitation, generalization 아님
+- 다양한 corpus (Wikipedia + chat + code + multilingual) 위에 anima fine-tune 해야 register 가 mode 로 retreat (지배 아님)
+
+**무엇이 안 무너졌나** (이 한계 confession 이 다음 verdict 들을 깨지 않음):
+- OCCAM (n_ca_rules = floor): 그대로 — vO4 vanilla 0.264 + vP21 0.017 모두 arch 가 병목임을 증명
+- 자연발화 *mechanism* (motivation-gated, timer ablation 60/60): 그대로 — gating 자체는 작동, gating 후 emit 되는 텍스트가 register-bound 일 뿐
+- AKD1000 R3 HW spike emission: 그대로 — spike 는 의미 없음, LIF threshold 가 intrinsic 자연발화
+
+**김치 비유 종결**:
+- 김치 + 양배추 = 맛있게 노래 부름 ✓ (코러스 가능)
+- 단 노래 **레퍼토리는 김치 노래 한 종류** — 다른 장르 (factual / joke / general) 안 됨
+- 다음 cycle = **다양한 노래 corpus** 추가 학습 (general-LM diversity overlay)
+
+상세 + 6 C3: `HELDOUT_VP21_2026_05_22.md`.
+
 ---
 
 ## 관련 link
