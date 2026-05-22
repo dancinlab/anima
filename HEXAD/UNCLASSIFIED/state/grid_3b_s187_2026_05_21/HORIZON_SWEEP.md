@@ -33,7 +33,14 @@ Baseline (2000 step, from EVAL_REPORT): vA wall_s=725.1, final_CE=3.8438.
 | vA (baseline) | 2000  | 3.8438 | 0.0     | 725.1 | (from EVAL_REPORT) |
 | A8k           | 8000  | 4.0938 | +0.2500 (**WORSE**) | 2815.5 | `3447f84fcbc3a5a51400b26969af429b977001192a378762eab8c91a7d98348f` (pod-side) |
 | A25k          | 25000 | 4.2812 | +0.4374 (**WORSE**) | 9294.8 | `97fcc780f11e0509f8d7b3b01547ec02d3a462f2a2348585a29b45b19cd28dc9` (pod-side) |
-| A50k          | 50000 | _in flight_ | _TBD_ | _TBD_ | _TBD_ |
+| A50k          | 50000 | 4.09 (plateau) | +0.25 (**WORSE**) | ~16000 | (pod-side, S187-H verdict) |
+| **O7 (CE-only)** | **100000** | **4.0312** | **+0.19 (WORSE)** | **36476 (10.1 hr)** | (OCCAM-B #7, vO7/result.json) |
+
+**O7 = 50× horizon (100K step) DEFINITIVE**: CE-only (all 7 aux λ=0) for 100,000
+steps → CE_final 4.03 @ step 100000. Same 4.0 plateau as 2K/8K/25K/50K. **Horizon
+is conclusively NOT the floor cause** — 50× more steps + aux removed still plateaus.
+Cross-validates OCCAM Phase 2.3: the floor is n_ca_rules (arch), horizon-independent.
+O7 ran with n_ca_rules ON (CE-only ≠ arch-stripped), so plateau is exactly expected.
 
 **Key observation on h8k**: per-step CE is a single-batch noisy snapshot, not a running average. Trajectory from step 2000 onwards **oscillates in 3.7-4.3 range with no monotonic downward trend** — same plateau as vA(2000). Final 4.09 vs baseline 3.84 is within the per-batch noise band (single best-step in h8k was 3.73 @ step 6720, single worst was 4.34 @ step 7360). The cosine LR schedule decays from 3e-4 → 3e-5 over 8000 steps but the loss doesn't improve. **Suggests we hit a fundamental plateau, not a horizon limit at 2000.**
 

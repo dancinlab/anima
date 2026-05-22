@@ -116,11 +116,21 @@ Phase 2.3 ablation (6 부속 하나씩 끄고 CE-only 측정):
 **winning path 확정**:
 | variant | CE_final |
 |---|---|
-| **vP21 (Llama-3.2-3B + mitosis)** | **0.0147** |
+| **vP21 (Qwen2.5-1.5B + LoRA + mitosis)** | **0.0147 / re-fire 0.0173** |
 | vP22 vanilla 3B + mitosis | 0.256 |
 | vanilla 3B | 0.264 |
 
-pretrained Llama + mitosis = CE 0.015 (자연발화 emergence 기대 수준). 다음 cycle = vP21 Eval 1 verbalization 측정.
+pretrained Qwen + mitosis = CE 0.015 (자연발화 emergence 기대 수준). vP21 = Qwen2.5-1.5B
+(Llama gated → fallback) + LoRA r32 + mitosis. **adapter 1차 disk-full SCP 손상 → re-fire
+clean (147MB/392 tensors, CE 0.0173)**. 다음 = vP21 Eval 1 verbalization (ubu-2 진행 중).
+
+**O7 100K horizon 종결**: CE-only 100,000 step (50× baseline, 10.1hr) → CE 4.03 @ 100K.
+2K/8K/25K/50K/100K **모두 ~4.0 plateau** — horizon 은 floor 원인 절대 아님 (n_ca_rules
+arch 가 horizon-independent floor). 가장 깊은 horizon test 로 confirm.
+
+**🆕 AKIDA HW path (2026-05-22)**: BrainChip AKD1000 (Pi 5) 연결완료 — PCIe 검출 +
+/dev/akida0 driver. LIF spike threshold = 하드웨어-native 자연발화 (1mW). vP21
+software path 와 별개의 두 번째 축. (VERSIONS.md § 9, SUB_ENGINES/AKIDA v0.2.0)
 
 ### 6. 🎯 OCCAM verdict (2026-05-22 04:08) — Custom Arch 가 floor 의 원인!
 
