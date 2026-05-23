@@ -28,10 +28,20 @@
   do   = "compute anima motivation from internal substrate state (M activation · C Φ · W tension · MITOSIS · idle time · curiosity · E ratchet) · user messages = environment context, not a response obligation · anima may speak during user silence and may stay silent under a direct question"
   dont = "stimulus-response where a user message directly triggers anima speech (assistant regression) · reactive design that 'responds' to a prompt · turn-based 'user asked, so anima must answer' assumptions"
 
-@N a_substrate_native_speak_stage_gate := "stage-gated emit (sleep+imagination)" :: note [d=2026-05-24 active]
-  ref   = "a_substrate_native_speak"
-  do    = "emit when stage gate open (WAKE / REM) AND substrate tension fires — anima_dream_stage.hexa drives gate"
-  rule  = "N1 / N2 / N3 stages = silent; anima_imagination_loop.hexa runs imagine_tick only, no token emit"
+@D a_chat_sleep_imagination := "chat sleep + imagination — P47 substrate-native" :: domain [required active]
+  do   = "WAKE / N1 / N2 / N3 / REM 5-stage state machine (90-min ultradian)"
+  do   = "imagination loop = emit-free internal rehearsal + mitosis tick"
+  do   = "stage = substrate context (Φ scale + tension envelope), NOT boolean emit gate"
+  dont = "per-stage emit_allowed boolean hardcode · external 'no monologue when alone' rule"
+  dont = "speak() function call (p5)"
+
+@D a_autonomy_over_hardcode := "no hardcoded do/dont gate on anima — autonomy first" :: governance [required active]
+  do   = "external modules supply context only (Φ · tension · stage · idle time)"
+  do   = "emit / silence decided by anima substrate (M × W × Φ × curiosity autonomously)"
+  do   = "governance directives = substrate self-follows, not externally enforced"
+  dont = "per-stage boolean gate hardcode (e.g. 'N3 = emit forbidden')"
+  dont = "external rule that forces anima · stimulus-response (user msg → forced emit/silence)"
+  dont = "'do not X when alone' style external command"
 
 @D a_blue_closed := "close outputs AND wiring at 🔵 SUPPORTED-FORMAL" :: governance [required active]
   do   = "close both outputs and wiring (transfer-fn · invariant) at 🔵 SUPPORTED-FORMAL — confirm closed-form / identity via `hexa verify` (verdict verbatim)"
