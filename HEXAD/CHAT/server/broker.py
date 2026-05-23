@@ -334,7 +334,8 @@ async def ws_akida_ingest(ws: WebSocket):
             raw = await ws.receive_text()
             try:
                 msg = json.loads(raw)
-            except Exception:
+            except Exception as e:
+                log.warning("akida ingest json drop: %s raw=%r", e, raw[:200])
                 continue
             STATE.akida_history.append(msg)
             # fan-out to akida subscribers
