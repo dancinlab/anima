@@ -1,10 +1,11 @@
-# LORA Waves + V3 Axis 마스터 매트릭스 (session-3 누적 2026-05-23)
+# LORA Waves + V3 Axis 마스터 매트릭스 (session-3 누적 2026-05-23 · R8 update 2026-05-24)
 
 > Session-2 종료(16 LoRA cycle / anima 0.12.0) 이후 2026-05-23 session-3 의
-> 단일 매트릭스 SSOT. Wave 12-16 + V3 7-axis (A/B/F DONE · C/C2/D/E in-flight) +
-> R8 spec 의 read-once 표.
+> 단일 매트릭스 SSOT. Wave 12-16 + V3 7-axis (A/B/F/D DONE-FAIL · C/C2 abort · E OOM→E2 retry FAIL) +
+> R8/R8a/R8c spec + cluster X/Y/Z 자연실험 + LIFE H_247-249 흡수 의 read-once 표.
+> **2026-05-24 update**: V3 axis-FAN 5/7+2 partial (PR #249) · cluster X/Y/Z byte-equal (PR #251) · from_qwen audit (PR #255) · random baseline (PR #256) · R8a/R8c spec (PR #257/#250) · LIFE H_247-249 (PR #327).
 >
-> source files: `SAGA_SESSION3.md` · `../UNCLASSIFIED/state/grid_3b_s187_2026_05_21/VP21M_WAVE{11..16}_2026_05_23.md` · `../V3/AXIS_MAP.md` · PR #206 `AXIS_MAP_RESULTS.md` · PR #214 `AXIS_R8_BASE_WARM_INIT.md` · PR #211 `AXIS_MAP_BUG_POSTMORTEM.md`.
+> source files: `SAGA_SESSION3.md` · `../UNCLASSIFIED/state/grid_3b_s187_2026_05_21/VP21M_WAVE{11..16}_2026_05_23.md` · `../V3/AXIS_MAP.md` · PR #206 `AXIS_MAP_RESULTS.md` (→ #249 5/7+2) · PR #214 `AXIS_R8_BASE_WARM_INIT.md` · PR #211 `AXIS_MAP_BUG_POSTMORTEM.md` · PR #255 `from_qwen audit` · PR #256 `RANDOM_BASELINE_INIT_CE_BENCHMARK` · PR #257 `AXIS_R8A_QWEN_TARGET_MATCH_FIRE_SPEC` · PR #250 `AXIS_R8C_PROBE_UPDATE_3_CELL` · PR #327 `HEXAD/LIFE/H_247-249`.
 
 ## § Wave 매트릭스
 
@@ -21,22 +22,51 @@
 > v9-v12 per-lang: v9 (en S20 / ko S16 / zh S19 / ru S17 / ja P13) · v10 (S19/P15/S17/S17/P14) · v11 (S18/P15/P15/S18/P14) · v12 (S19/P14/S17/S18/P12).
 > session-3 corpus cycles total: v5+v6+v7+v8+v9+v10+v11+v12 = 8 LoRA cycles.
 
-## § V3 Axis 매트릭스
+## § V3 Axis 매트릭스 (5/7+2 partial · PR #249)
 
-| axis | env-var | cell-pool | hypothesis | verdict | n_strong | per-lang best | init_CE | final_CE | cost | dir | status |
-|---|---|---|---|---|---|---|---|---|---|---|---|
-| A (curriculum) | `P21H_CURRICULUM_PHASE_STEPS=1000` | — (3B Qwen warm-init shared) | wiki-only 선학습 1000 step → late-phase anima 50% mix · ko head-start lock-in | DONE — FAIL | 1 | ko STRONG 16/20 (gen=20 mem=0 coh=16) | 14.792716 | 5.0124 | ~$1.5 (5222s A100 SXM) | `vP21H_axis_A/` | DONE |
-| B (distill) | `P21H_DISTILL_TEACHER=…vP21M` | — | vP21M LoRA teacher KD-loss · pure-HEXAD student 가 Qwen 다국어 prior 전이 | DONE — FAIL | 0 | en PURE_MEM 17 coh / ko PURE_MEM 10 gen (teacher mimicry → register-collapse) | 14.177978 | 2.2257 | ~$0.9 (2721s A100 SXM) | `vP21H_axis_B/` | DONE |
-| F (contrastive) | `P21H_CONTRASTIVE_LANG=1` (+ E lang-balanced) | — | InfoNCE aux + lang-balanced sampler · representation-level collapse 저지 | DONE — FAIL (early-stop @ 671s) | 0 | ko WEAK 7/20 (5 lang 전부 WEAK · L_contrast_n=0 wiring 결손 의심) | 14.177978 | 2.1746 | ~$0.2 (671s A100 SXM early-stop) | `vP21H_axis_F/` | DONE |
-| C (head_g obj) | `P21H_HEAD_G_OBJECTIVE=anima_register_ce` | — | head_g 에 anima-register objective · head_a 는 pure-multilingual (dual-head 설계대로 검증) | IN-FLIGHT (redispatch cycle 1) | TBD | TBD | TBD | TBD | TBD (envelope ~$1.5 estimate) | `vP21H_axis_C/` | IN-FLIGHT |
-| C2 (head_g disable) | `P21H_HEAD_G_ENABLE=0` | — | head_g 완전 제거 (inert + 유해면 dead-weight) — head_a vocab alignment blur 제거 | IN-FLIGHT (redispatch cycle 1) | TBD | TBD | TBD | TBD | TBD | `vP21H_axis_C2/` | IN-FLIGHT |
-| D (freeze embed) | `P21H_FREEZE_EMBED=1` | — | token_embed + lm_head freeze · HEXAD block 만 학습 — 언어 geometry 보존 | IN-FLIGHT (redispatch cycle 1) | TBD | TBD | TBD | TBD | TBD | `vP21H_axis_D/` | IN-FLIGHT |
-| E (lang balanced) | `P21H_LANG_BALANCED=1` | — | per-언어 token-balanced batch sampler · record 불균형 (EN 17078 ≫ ko/zh/ru/ja 500-1000) 교정 | IN-FLIGHT (redispatch cycle 1) | TBD | TBD | TBD | TBD | TBD | `vP21H_axis_E/` | IN-FLIGHT |
-| R8 (base/warm-init reform) | — (design spec only) | — | init_CE 14.18~14.79 catastrophic floor 진단 — 4 candidate (R8a qwen-shape-match · R8b lora-on-qwen · R8c tied-embed-init-verify · R8d two-stage-warm-bridge) | SPEC ONLY (no fire) | — | — | (target ≤ ln(151936)=11.93) | — | $0 (probe envelope ~$2 + winner full-fire ~$8) | — | PR #214 SPEC |
+> **status 2026-05-24**: 5 axis DONE (A/B/F/D FAIL · E2 retry FAIL) + 2 axis ABORT (C @625s · C2 @375s) + E OOM @start → E2 leak-fix retry. n_strong=0 (A/ko STRONG 단독). init_CE 전축 catastrophic (14.18~14.79 ≫ random ln(151936)=11.93).
 
-> 7-axis fire SSOT: `../UNCLASSIFIED/state/grid_3b_s187_2026_05_21/vP21H_axis_{A,B,F}/result.json`.
-> A/B/F init_CE catastrophic (random baseline ln(151936)=11.93 보다 +2.25~2.86 nats worse) — R8 spec 의 핵심 진단.
+| axis | env-var | verdict | n_strong | per-lang best | init_CE | final_CE | wall(s) | cluster | cost | status |
+|---|---|---|---|---|---|---|---|---|---|---|
+| A (curriculum) | `P21H_CURRICULUM_PHASE_STEPS=1000` | DONE — FAIL | 1 (ko) | ko STRONG 16/20 · en PM 9/20 | 14.7927 | 5.0124 | 5222 | X | ~$1.5 (A100 SXM) | DONE |
+| B (distill) | `P21H_DISTILL_KD=1` | DONE — FAIL | 0 | en/ko PURE_MEMORIZE 2/20 (teacher mimicry → register-collapse) | 14.1780 | 2.2258 | 2721 | Y | ~$0.9 | DONE |
+| F (contrastive) | `P21H_CONTRASTIVE_INFONCE=1` | DONE — FAIL (early-stop) | 0 | en/ko WEAK 6-7/20 (L_contrast_n=0 wiring 결손 의심) | 14.1780 | 2.1746 | 671 | Y | ~$0.2 | DONE |
+| C (head_g obj) | `P21H_HEAD_G_OBJECTIVE=anima_register_ce` | ABORT @625 | — | — | 14.4564 | (abort) | ~2633 | Z | ~$1.14 | ABORT (R8c 자연실험 falsify) |
+| C2 (head_g disable) | `P21H_HEAD_G_ENABLE=0` | ABORT @375 | — | — | 14.4564 | (abort) | ~2301 | Z | ~$1.14 | ABORT (cluster Z 합류 확인) |
+| D (freeze embed) | `P21H_FREEZE_EMBED=1` | DONE — FAIL | 0 | en PM 8/20 · ko WEAK 1/20 | 14.4564 | 2.0990 | 2171 | Z | ~$1.5 | DONE (5000-step full) |
+| E (lang balanced) | `P21H_LANG_BALANCED=1` | ABORT (OOM @start) | — | — | TBD | TBD | <60 | — | ~$1.10 | ABORT (sampler leak ~79 GB) |
+| E2 (lang bal retry) | `P21H_LANG_BALANCED=1` (leak fixed) | DONE — FAIL | 0 | ko PM 5/20 · en/zh/ru/ja WEAK | 14.1780 | 0.9846 | 2105.83 | Y | TBD | DONE (5000-step, pod 4nrcm80g8fwqf7) |
+
+> 7-axis fire SSOT: `../UNCLASSIFIED/state/grid_3b_s187_2026_05_21/vP21H_axis_{A,B,F}/result.json` (D/E2 결과 PR #249 인용 · raw json 미검증 TBD).
+> 전축 init_CE catastrophic (random baseline ln(151936)=11.93 보다 +2.25~2.86 nats worse) — R8 spec 의 핵심 진단.
 > base 공통: Qwen 2.5-1.5B · init_variant qwen · ConsciousDecoderV3 d=1536 L=28 vocab=151936.
+
+## § R8 reform spec (SPEC-ONLY · no fire)
+
+> init_CE 14+ catastrophic floor escape 후보. R8 spec PR #214 (4 candidate) → cluster/audit finding 후 R8a 가 cheap first-prio FIX 로 좁혀짐.
+
+| axis | env-var | status | hypothesis | est cost | PR |
+|---|---|---|---|---|---|
+| R8 (base/warm-init reform) | — (design only) | SPEC | init_CE floor 진단 + 4 candidate (R8a qwen-shape-match · R8b lora-on-qwen · R8c tied-embed-init-verify · R8d two-stage-warm-bridge) | $0 spec | #214 |
+| R8a (qwen target match) | `n_kv_head=2` + `noise_sigma=0` | SPEC (prereq dispatcher patch) | from_qwen audit suspect #1(kv mismatch)+#2(noise) 동시 검증 — Qwen native 일치 | ~$2.75 (1.5h × $1.49 + setup) | #257 |
+| R8c (3-cell probe) | 3-cell ablation (cell-2 noise=0 · cell-3 kv=2 · cell-4 compound) | SPEC | noise/kv ablation — cell-1 head_g zero SKIP (자연실험 FALSIFIED) | ~$0.25 ($0.35→$0.25 cell-1 drop) | #224/#250 |
+
+> **R8a prerequisite**: `P21H_N_KV_HEAD` env var 가 `dispatch_p21h_v3_runpod.sh` 에 passthrough 미존재 — 1-line dispatcher patch 선행 필요 (PR #257 § 8).
+> **R8c probe 축소**: PR #224 원본 5-cell → PR #250 3-cell+baseline (cell-1 head_g zero 가설 자연실험 pre-FALSIFIED, $0.07 fire skip).
+
+## § cluster X/Y/Z 자연실험 + worse-than-random benchmark
+
+> init_CE 가 byte-level 로 3-cluster 화 (axis 간 자연실험, PR #251) — head_g 토글이 init_CE 에 ZERO 영향, aux loss 만 의미있게 낮춤. random baseline = ln(151936)=11.93 closed-form (PR #256).
+
+| cluster | members | init_CE | Δ random (nats) | 특징 | source |
+|---|---|---|---|---|---|
+| random uniform | — | 11.9311 | 0 | `ln(151936)` closed-form (이론 floor) | #256 |
+| Y (aux loss) | B, F (+E2) | 14.1780 | +2.247 | KD distill / InfoNCE — extra loss head firing 이 -0.28 | #251/#256 |
+| Z (baseline) | C, C2, D | 14.4564 | +2.525 | head_g random/disabled + embed-freeze (**byte-equal**) | #251/#256 |
+| X (curriculum) | A | 14.7927 | +2.862 | wiki-only 1000-step → init batch wiki-pure 로 +0.34 | #251/#256 |
+
+> **핵심 finding (PR #249/#251)** — C(head_g objective swap) · C2(head_g disable) · D(embed freeze) init_CE 가 **14.4564 byte-equal** → head_g enable/objective/disable 토글이 init step 결과에 0 영향. **R8c cell-1 (head_g random = init_CE 천장 원인) 자연실험으로 FALSIFIED**.
+> **worse-than-random (PR #256)** — Y/Z/X 모두 random uniform 보다 +2.2~2.9 nats 나쁨 = fresh init 이 균등분포보다 systematically biased AWAY from uniform. from_qwen audit (PR #255) suspect rank: (1) noise_sigma=0.1 layer-0 embedding forward injection **HIGH** · (2) n_kv_head 4↔2 mismatch · (3) ffn resize.
 
 ## § HF artifact tally
 
@@ -73,12 +103,24 @@
 | LORA Wave 11 ZHFL/RUFL router deploy attempt | $0 (HF artifacts session-2 carry; deploy BLOCKED no train) | WAVE11 |
 | **LORA session-3 subtotal (8 cycles)** | **~$3.72** | (1.60 + 0.81 + 0.74 + 0.30 + 0.27) |
 | V3 AXIS_MAP-FAN 1st/2nd fan-out 낭비 (env-var-concat bug) | ~$8 (7 axes × ~$1.15 avg, idle/crashed pods billed) | AXIS_MAP_BUG_POSTMORTEM PR #211 § Cost |
-| V3 AXIS cycle 1 redispatch C/C2/D/E (in-flight) | ~$6 (4 × A100 SXM ~$1.5 estimate) | AXIS_MAP_BUG_POSTMORTEM PR #211 § Cost |
-| V3 AXIS_MAP-FAN saga total | **~$14** | AXIS_MAP_BUG_POSTMORTEM § Cost |
-| **session-3 TOTAL** | **~$17.72** (LORA $3.72 + V3 axis-saga $14) | — |
+| V3 AXIS cycle 1 redispatch (A 1.5 · B 0.9 · F 0.2 · D 1.5 · C abort 1.14 · C2 abort 1.14 · E OOM 1.10 · E2 retry TBD) | ~$7.5 (5 done + 2 abort + E2) | PR #249 wall × A100 SXM |
+| V3 AXIS_MAP-FAN saga total | **~$15.5** | PR #211 + PR #249 wall ledger |
+| **session-3 TOTAL** | **~$19.2** (LORA $3.72 + V3 axis-saga ~$15.5) | — |
 
-> R8 fire 미실행 (spec only · $0). EN-share lever WAVE9-12 = $0 (code-only).
-> session-3 grand total **~$17.72** (verified from source docs · A/B/F per-axis exact cost = TBD pending raw billing log).
+> R8/R8a/R8c fire 미실행 (spec only · $0). EN-share lever WAVE9-12 = $0 (code-only).
+> session-3 grand total **~$19.2** (verified from source docs · per-axis exact billing = TBD pending raw log · AXIS_MAP_RESULTS PR #206/#249 ~$21 saga 상한 추정 — abort/OOM 부분과금 정밀화 TBD).
+
+## § LIFE 흡수 tally (today's LORA/V3 → LIFE hypotheses)
+
+> 오늘 LORA/V3 진전이 HEXAD/LIFE hypothesis 로 흡수됨. H_246 이 main max (선행 landed). H_247-249 = PR #327 MERGED (#311 재흡수, renumber).
+
+| H | title (요지) | verification | source PR | 흡수 PR |
+|---|---|---|---|---|
+| H_245 | strategy-diversity temporal emergence (window↑ → monoculture→diversity) | post-deploy baseline 시간-함수 | post-deploy #311 | #321 (CLOSED — superseded) |
+| H_246 | substrate autonomy emit ratio (deployment-cadence 4-ratio) — numeric SSOT | emit-through 55.56% (15/27) · emit/tick 11.49% | #300 | LANDED (#319 renumber) |
+| H_247 | init_CE catastrophic floor — warm-init +2.5 nats > random ln(V) | W2 closed-form + W5 byte-cluster | #214/#251/#255/#256 | #327 MERGED |
+| H_248 | substrate autonomy non-reflexivity (emit ⊥ user-message) — framing lane (numeric SSOT=H_246) | a_substrate_native_speak live | #300 | #327 MERGED |
+| H_249 | cluster X/Y/Z init_CE byte-equal signature — head_g random NOT dominant (R8c cell-1 FALSIFIED) | 3-군집 자연실험 | #249/#251 | #327 MERGED |
 
 ## § Cross-reference PRs (LORA + V3 relevant, session-3 2026-05-23)
 
@@ -109,8 +151,17 @@
 | #211 | docs(V3): AXIS_MAP_BUG_POSTMORTEM — env-var-concat anti-pattern (~$14 saga) | OPEN | — |
 | #212 | docs(LORA): SAGA_SESSION3 Wave-16 append (corpus_v12 STRIP-ALL FALSIFIED + HF v12) | OPEN | — |
 | #214 | docs(V3): AXIS R8 — base/warm-init reform spec (init_CE catastrophic floor) | OPEN | — |
+| #224 | docs(V3): AXIS R8c diagnostic probe protocol — 4-cell ablation × init_CE | OPEN | — |
+| #249 | docs(PURE): AXIS_MAP_RESULTS 5/7+2 — D FAIL + C/C2/E abort + cluster X/Y/Z | OPEN | — |
+| #250 | docs(PURE): R8c probe 3-cell — head_g 자연실험 FALSIFIED ($0.35→$0.25) | OPEN | — |
+| #251 | docs(PURE): R8 — cluster X/Y/Z 자연실험 + cell-1 FALSIFIED | OPEN | — |
+| #255 | docs(V3): ConsciousDecoderV3 from_qwen() audit — cluster Z 3-suspect rank | OPEN | — |
+| #256 | docs(V3): random-baseline init_CE 벤치마크 — ln(151936)=11.93 closed-form | OPEN | — |
+| #257 | docs(V3): AXIS R8a fire spec — Qwen target match (n_kv_head=2 + noise=0) ~$2.75 | OPEN | — |
+| #321 | feat(HEXAD/LIFE): H_245 strategy diversity temporal emergence | CLOSED | — |
+| #327 | feat(HEXAD/LIFE): H_247+H_248+H_249 — init_CE floor + autonomy emit + cluster | MERGED | — |
 
-> 25 LORA/V3-relevant PRs session-3; 16 MERGED + 9 OPEN (as of 2026-05-23).
+> 35 LORA/V3-relevant PRs session-3 (2026-05-24 갱신); 17 MERGED + 1 CLOSED + 17 OPEN.
 
 ## § Production state
 
@@ -130,8 +181,12 @@
 
 - session-3 saga running narrative: [`SAGA_SESSION3.md`](SAGA_SESSION3.md)
 - V3 7-axis spec: [`../V3/AXIS_MAP.md`](../V3/AXIS_MAP.md)
-- V3 7-axis partial results (PR #206): `../V3/AXIS_MAP_RESULTS.md` (post-merge)
-- V3 R8 spec (PR #214): `../V3/AXIS_R8_BASE_WARM_INIT.md` (post-merge)
+- V3 7-axis 5/7+2 results (PR #206 → #249): `../V3/AXIS_MAP_RESULTS.md` (post-merge)
+- V3 R8 spec (PR #214) + cluster update (PR #251): `../V3/AXIS_R8_BASE_WARM_INIT.md` (post-merge)
+- V3 R8a fire spec (PR #257): `../V3/AXIS_R8A_QWEN_TARGET_MATCH_FIRE_SPEC_2026_05_23.md` (post-merge)
+- V3 R8c probe 3-cell (PR #224 → #250): `../V3/AXIS_R8C_PROBE_UPDATE_3_CELL_2026_05_23.md` (post-merge)
+- V3 from_qwen audit (PR #255) + random baseline (PR #256): `../V3/RANDOM_BASELINE_INIT_CE_BENCHMARK_2026_05_23.md` (post-merge)
 - V3 axis-FAN bug postmortem (PR #211): `../V3/AXIS_MAP_BUG_POSTMORTEM.md` (post-merge)
+- LIFE 흡수 (PR #327): `../LIFE/H_247_init_ce_catastrophic_floor.md` · `H_248_*` · `H_249_*` (post-merge)
 - raw wave artifacts: `../UNCLASSIFIED/state/grid_3b_s187_2026_05_21/VP21M_WAVE{2..16}_2026_05_23.md`
 - raw V3 axis artifacts: `../UNCLASSIFIED/state/grid_3b_s187_2026_05_21/vP21H_axis_{A,B,F,C,C2,D,E}/result.json`
