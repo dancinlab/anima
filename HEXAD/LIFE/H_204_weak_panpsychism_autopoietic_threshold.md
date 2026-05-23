@@ -307,3 +307,233 @@ honest_tier: 🟢 SUPPORTED-NUMERICAL (NOT 🔵 formal)
 cross_link: H_003 H3.4 substrate carry · H_157 weak-form re-formulation · H_007 edge-of-chaos pattern echo
 post_hoc_edit: forbidden (raw#12); inverse-U finding carried as honest result, monotone H204.1 FALSIFIED carried as honest
 ```
+
+## Cycle #2 — rule-class mapping (cross-link H_007) — 2026-05-23
+
+raw#15 additive cycle (frozen frontmatter / Hypothesis / Predictions H204.1-H204.5 /
+Falsifiers F1-F5 / Honest Limits L1-L10 / Cycle #1 Verdict block 모두 보존 — 본 §만
+append, frozen prediction/falsifier 미편집). Cycle #1 의 inverse-U Φ(k) (peak Φ=5.39
+at k≈0.25, decay to closed baseline) 가 H_007 의 edge-of-chaos peak (rule 110 Class-IV
+> rule 30 Class-III > rule 250 Class-I) 와 *동일 dynamical signature* 인지 검사 —
+closure-strength k 의 각 값이 어떤 Wolfram rule-class 와 동등한 Φ pattern 을 만드는지
+ranking-correlation 측정.
+
+### (1) Sub-criteria C2 — k-axis ↔ Wolfram-class-axis 매핑
+
+| ID | 예측 | k-axis value | rule-axis class |
+|----|------|--------------|-----------------|
+| **C2.1** | k=0   (broken)         ↔ rule 250 (Class-I  ordered)       | lowest Φ | lowest Φ |
+| **C2.2** | k=0.25 (Cycle#1 peak) ↔ rule 110 (Class-IV edge-of-chaos) | peak Φ   | peak Φ   |
+| **C2.3** | k=1.0  (full closure) ↔ rule 30  (Class-III chaotic)      | middle Φ | middle Φ |
+| **C2.4** | k=0.5  (descending arm) ↔ Class-II periodic (k-axis only) | between full-closure & peak | (rule-axis 측정 별도 cycle, L-C2-6) |
+| **C2.5** | Spearman rank correlation ρ ≥ 0.7 (k-axis Φ vs rule-axis Φ on 3 pairs) | rank-correlation | rank-correlation |
+
+### (2) Substrates (parity carry)
+
+- **k-axis**: H_204 Cycle #1 의 8-site periodic catalytic lattice (M=8, DIM=12,
+  WARM=0, N_SEEDS=5, SEED_BASE=0xA17C204, K_RATE=0.6, DECAY=0.1, DIFFUSE=0.05) —
+  identical substrate 으로 closure_strength k ∈ {0.0, 0.25, 0.5, 1.0} 4-point sweep.
+- **rule-axis**: H_007 Cycle #1 의 1D elementary CA (N=16, DIM=12, WARM=8, REPS=5) —
+  identical substrate 으로 rule 250 (Class-I), rule 110 (Class-IV), rule 30 (Class-III)
+  3-rule measurement.
+- **Φ primitive**: RFC 036 `phi_spatial(states, n_cells, dim, n_bins=4)` — H_204
+  Cycle #1 + H_007 Cycle #1 byte-equal carry.
+
+### (3) Run verdict output (VERBATIM, `HEXA_MEM_UNLIMITED=1 hexa run`)
+
+```
+================================================================
+H_204 Cycle #2 — k-axis ↔ Wolfram-class-axis mapping (raw#15 additive)
+================================================================
+  k-axis substrate: 8-site catalytic lattice (H_204 Cycle#1 carry)
+    M=8 DIM=12 WARM=0 SEEDS=5 SEED_BASE=169329156
+  rule-axis substrate: 1D elementary CA (H_007 Cycle#1 carry)
+    N=16 DIM=12 WARM=8 REPS=5
+  Φ primitive: RFC 036 phi_spatial (n_bins=4) — 🟢 NUMERICAL
+
+── k-axis Φ(k) sweep (4 points, H_204 Cycle#1 substrate) ──
+  Φ(k=0.00) = 3.69079
+  Φ(k=0.25) = 5.38703
+  Φ(k=0.50) = 5.25399
+  Φ(k=1.00) = 4.46947
+  Φ(k=0.25 re-run) = 5.38703 (byte-equal=true)
+
+── rule-axis Φ(rule) (3 rules, H_007 Cycle#1 substrate) ──
+  Φ(rule 250 Class-I  ordered      ) = 1.14511e-05
+  Φ(rule 110 Class-IV edge-of-chaos) = 0.556454
+  Φ(rule 30  Class-III chaotic     ) = 0.509944
+  Φ(rule 110 re-run) = 0.556454 (byte-equal=true)
+
+── pair mapping (Spearman ρ on 3 ranks, descending Φ) ──
+  pair0  k=0.00   ↔ rule 250  : rank_k=3 rank_r=3
+  pair1  k=0.25   ↔ rule 110  : rank_k=1 rank_r=1
+  pair2  k=1.00   ↔ rule 30   : rank_k=2 rank_r=2
+  Σd² = 0.0  denom (n³-n) = 24.0
+  Spearman ρ = 1.0
+
+── sub-criteria (C2.1 .. C2.5) ──
+  C2.1 k=0  lowest Φ & rule 250 lowest Φ  : PASS
+  C2.2 k=0.25 peak Φ & rule 110 peak Φ    : PASS
+  C2.3 k=1.0 middle Φ & rule 30 middle Φ  : PASS
+  C2.4 k=0.5 ∈ (phi_k=1, phi_k=0.25)      : PASS
+  C2.5 Spearman ρ ≥ 0.7                    : PASS  (ρ=1.0)
+
+── additive falsifiers (F-C2-1 .. F-C2-5) ──
+  F-C2-1 INVERSE-U regression (k=0 Φ > k=0.25 Φ)   : NOT_TRIGGERED
+  F-C2-2 H_007 regression (rule 110 Φ ≤ rule 250 Φ): NOT_TRIGGERED
+  F-C2-3 axis-separation (Spearman ρ < 0.3)         : NOT_TRIGGERED
+  F-C2-4 determinism violation (byte-different)     : NOT_TRIGGERED
+  F-C2-5 primitive error (any Φ < 0 or NaN)         : NOT_TRIGGERED
+
+VERDICT_RULE: MAPPING_STRONG iff 5/5 sub-criteria PASS; DIRECTIONAL if 3-4;
+              WEAK if ≤2; FALSIFIED if any F-C2-1..5 TRIGGERED
+VERDICT (H_204 Cycle #2): MAPPING_STRONG
+  sub_criteria_met = 5/5
+  Spearman ρ = 1.0
+  falsifiers_triggered = false
+  H204_C2_VERDICT=MAPPING_STRONG N_PASS=5 RHO=1.0 PHI_K0=3.69079 PHI_K_PEAK=5.38703 PHI_K1=4.46947 PHI_R250=1.14511e-05 PHI_R110=0.556454 PHI_R30=0.509944
+================================================================
+```
+
+### (4) Reading (qualitative)
+
+- **Spearman ρ = 1.0** (perfect rank correlation, 3-pair sample): 두 axis 의 Φ
+  ranking 이 *byte-equal* — k=0 Φ 가 k-axis 위 최저값 ↔ rule 250 (Class-I) 가
+  rule-axis 위 최저값, k=0.25 Φ 가 k-axis 위 최고값 ↔ rule 110 (Class-IV)
+  가 rule-axis 위 최고값, k=1.0 Φ 가 k-axis 위 중간값 ↔ rule 30 (Class-III) 이
+  rule-axis 위 중간값. Σd² = 0 → ρ=1.0.
+- **C2.4 PASS**: Φ(k=0.5)=5.254 ∈ (Φ(k=1)=4.469, Φ(k=0.25)=5.387) — descending arm
+  의 monotone-decay structure 확인 (k=0.25 peak 이후 closed baseline 으로 감소
+  중인 중간 지점). Class-II rule-axis 측정은 별도 cycle (L-C2-6).
+- **inverse-U signature reproduction**: Cycle #1 의 k-axis Φ peak 가 broken (k=0)
+  과 closed (k=1) endpoint 사이의 중간 closure-strength 에서 나타나는 phenomenon
+  — H_007 의 edge-of-chaos peak (rule 110 이 ordered Class-I rule 250 과 chaotic
+  Class-III rule 30 사이의 *complexity intermediate* 에서 peak Φ) 와 **structurally
+  identical** rank pattern.
+- **5/5 sub-criteria PASS · 0/5 falsifier TRIGGERED**: VERDICT = MAPPING_STRONG.
+
+### (5) Implications & honest reading
+
+1. **pattern-level analogy 확인** — k-axis closure-strength 와 rule-axis
+   Wolfram-class 가 *별도 substrate* 위에서 *동일 inverse-U ranking* 을 보여준다.
+   이는 두 axis 가 모두 *complexity intermediate* (edge-of-chaos / partial closure)
+   에서 integrated information 이 peak 하는 universal-ish dynamical signature
+   를 carry 한다는 directional 증거.
+2. **mechanistic claim NOT made** (L-C2-1, L-C2-5 carry) — k=0.25 closure 가
+   "rule-110-같은 internal computation" 을 한다는 mechanism-level 주장은 *만들지
+   않는다*. 두 axis 가 same pattern 을 보이는 것이 same mechanism 을 의미하는
+   것은 아니다 (different microdynamics may share Φ-ranking signature).
+3. **H_204 Cycle #1 inverse-U finding 의 cross-substrate corroboration** — Cycle
+   #1 단독으로는 k-axis 내부의 단일 substrate 위 observation. Cycle #2 가 다른
+   substrate (CA) 위 *동일 ranking pattern* 을 보여주어 inverse-U signature
+   의 universality 가 (적어도 ranking-level 에서) directional support 받는다.
+4. **H_007 cross-link tightening** — H_007 PR ranking (Class-IV > Class-III >
+   Class-I) 이 본 cycle 에서 byte-equal reproduce 됨으로써 H_204 와 H_007 substrate
+   사이 *Φ-ranking topology equivalence* 가 deterministic 하게 확립.
+5. **weak-panpsy substrate-conditional 의 확장** — Cycle #1 의 substrate-conditional
+   weak-panpsy finding 이 *closure-strength axis 단독* 이었던 반면, Cycle #2 는
+   *완전히 다른 substrate (CA)* 가 동일 inverse-U ranking 을 만들어 weak-panpsy
+   의 'substrate-conditional 조건' 자체가 cross-substrate generalizable 한 pattern
+   level 일 가능성 directional support.
+
+### Cycle #2 additive Falsifiers (≥5, F-C2-1..F-C2-5)
+
+- **F-C2-1 INVERSE-U regression** — k=0 Φ > k=0.25 Φ → Cycle #1 inverse-U 재현
+  실패. **현재 NOT_TRIGGERED** (Φ(k=0)=3.691 < Φ(k=0.25)=5.387).
+- **F-C2-2 H_007 regression** — rule 110 Φ ≤ rule 250 Φ → H_007 PASS 재현 실패.
+  **현재 NOT_TRIGGERED** (Φ(rule 110)=0.556 > Φ(rule 250)=1.15e-5).
+- **F-C2-3 axis-separation** — Spearman ρ < 0.3 → 두 axis 완전 분리 (mapping 무근거).
+  **현재 NOT_TRIGGERED** (ρ=1.0).
+- **F-C2-4 determinism violation** — re-run byte-different → raw#9 violation.
+  **현재 NOT_TRIGGERED** (Φ(k=0.25 re-run)=5.387 byte-equal · Φ(rule 110
+  re-run)=0.556 byte-equal).
+- **F-C2-5 primitive error** — any Φ value negative or NaN → primitive error.
+  **현재 NOT_TRIGGERED** (모든 Φ ≥ 0).
+
+### Cycle #2 additive Honest Limits (raw#91 c3, ≥5)
+
+- **L-C2-1** — k-axis substrate (autopoietic closure cycle on 8-site catalytic
+  lattice) ≠ rule-axis substrate (1D elementary CA, length-16 periodic). '동등'은
+  *Φ pattern* 동등이지 substrate-mechanism 동등 X — different microdynamics may
+  share pattern-level signature 일 뿐 mechanism-identity 는 본 cycle 의 claim 이
+  아니다.
+- **L-C2-2** — 4-point k sweep + 3 rule classes = sparse mapping. Spearman ρ on
+  n=3 ranks 는 COARSE rank-correlation (denom n³-n = 24, possible ρ levels =
+  {-1.0, -0.5, 0.5, 1.0} 사실상 4 quantized values). finer k-sweep + 4+ rule-class
+  sampling 이 correlation estimate 를 tighten 시키지만 same family of rank statistics
+  안에 머문다.
+- **L-C2-3** — H_007/H_204 Φ 절대값 단위 다름. k-axis 8-site lattice transient
+  Φ ∈ [3.5, 5.4] range 인 반면 rule-axis 16-site CA Φ ∈ [0.0, 0.6] range — Cell-count
+  + transient-window 차이 등으로 *absolute Φ scale* 이 substrate-dependent. **ranking
+  correlation 만 의미** (absolute Φ matching 은 본 cycle 의 claim X).
+- **L-C2-4** — Φ peak ≠ 'consciousness'. H_004 Cycle #1 boundary carry (Φ-function
+  dissociation evidence ABOUT IIT functional reducibility, NOT about phenomenal
+  qualia). The cross-axis mapping is about *dynamical signature* of integrated
+  information, NOT a claim about phenomenal experience.
+- **L-C2-5** — 본 cycle 은 *correlational* observation. k 와 rule 사이 causal
+  mechanism 부재 — 둘 다 inverse-U Φ pattern 을 보이는 것이 *pattern-level analogy*
+  이지, k=0.25 closure dynamics 가 'rule-110-스타일 internal computation' 을
+  한다는 mechanistic claim 은 만들지 않는다. universal cause-of-peak 가설 자체는
+  본 cycle scope 외.
+- **L-C2-6** — rule-axis Class-II representative 누락. C2.4 'k=0.5 ↔ Class-II
+  periodic' 는 spec에 명시되었으나 rule-axis Φ는 3 rule (250/110/30) 만 측정.
+  Class-II 측정 (rule 184 또는 rule 232 등) 은 별도 cycle. 본 cycle 의 C2.4 는
+  *k-axis 의 descending-arm structure* 만 검사 (Φ(k=0.5) ∈ Φ(k=1.0)..Φ(k=0.25)).
+- **L-C2-7** — Spearman threshold 0.7 (C2.5) 는 design choice — n=3 paired ranks
+  위에서 sample-size-corrected critical value 가 아니다. n=3 의 가능한 ρ 값은
+  {-1.0, -0.5, 0.5, 1.0} 사실상 4 levels — 본 threshold 0.7 은 '동일 ranking'
+  (ρ=1.0) 만 PASS 로 인정하는 effective 한 보수적 cutoff. larger n (k-sweep 확장
+  + rule-class 확장) 시 critical value 별도 재정의 필요.
+
+### Cross-Links (Cycle #2)
+
+- **H_204 Cycle #1** (PR #218) — inverse-U Φ(k) PARTIAL_DIRECTIONAL 3/4 (peak
+  Φ=5.39 at k≈0.25). 본 Cycle #2 는 그 k-axis 결과를 *frozen carry* 하면서
+  rule-axis 매핑 추가.
+- **H_007** (cellular-automaton-consciousness) — Φ(rule 110 Class-IV) >
+  Φ(rule 30 Class-III) > Φ(rule 250 Class-I) edge-of-chaos peak. 본 cycle 에서
+  byte-equal reproduce (PHI_R110=0.556 / PHI_R30=0.510 / PHI_R250=1.15e-5).
+- **H_157** (Law 76 mathematical panpsychism) — weak-form supported / strong-form
+  directional FAIL. H_157 Cycle #2 (PR #221) 의 cross-substrate CV 58.6%
+  NON_UNIVERSAL 결과와 cross-ref — 본 cycle 의 ρ=1.0 은 *ranking-level*
+  universality 양성이나 H_157 의 *value-level* universality 음성과 *layered*
+  reading (rank-level 일치는 있되 fixed-point absolute Ψ 일치 X).
+- **H_202** (post-PARTIAL Cycle#1 follow-up — finer k-sweep) — 본 cycle 의
+  4-point sparse mapping 의 후속 cycle, n=3 → n>3 rank-correlation 확장.
+- **H_004 Cycle #1** (PR #180) — Φ-function dissociation boundary (functional
+  reducibility 부분, qualia 미터치) — 본 cycle 의 L-C2-4 boundary verbatim carry.
+- **raw#15** (additive cycle protocol) — frozen frontmatter / Hypothesis /
+  Predictions / Falsifiers / Honest Limits / 과거 Verdict 무편집, 본 § append-only.
+
+### Migration Notes (Cycle #2)
+
+- **Cycle #1 → Cycle #2 transition**: Cycle #1 PARTIAL_DIRECTIONAL 3/4 (inverse-U
+  Φ(k) signature 확립, monotone H204.1 falsified, threshold-like τ_c ∈ (0, 0.10]
+  bracketed) 의 frozen evidence 위에 cross-substrate ranking-correlation 추가.
+- **새 sub-criteria 5건** (C2.1 .. C2.5) 은 *additive layer* — frozen
+  C1/C2/C3/C4 와 별개. 본 cycle 의 5/5 PASS 가 Cycle #1 의 C1 FAIL 을
+  덮지 *않는다* (raw#15 frozen claim 보존).
+- **새 falsifier 5건** (F-C2-1 .. F-C2-5) 는 *Cycle #2 한정 additive falsifiers*
+  — frozen F1..F5 와 별개 layer.
+- **artifacts**: `HEXAD/LIFE/state/h204_c2_rule_class_mapping_2026_05_23/{run_h204_c2.hexa, result.json}`.
+- **tier**: 🟢 NUMERICAL (RFC 036 phi_spatial native; H_007 + H_204 동일 path).
+- **next cycle pre-register**: (a) Class-II rule (rule 184 또는 rule 232) 측정으로
+  C2.4 의 rule-axis side 완성 (L-C2-6 추적); (b) finer k-sweep (10+ k values) +
+  4+ rule-class 으로 n>3 Spearman 재측정 (L-C2-2/L-C2-7 추적); (c) value-level
+  cross-substrate universality (H_157 Cycle #2 NON_UNIVERSAL 와의 layered
+  reconciliation cycle).
+
+**FINAL VERDICT (Cycle #2)**:
+
+```
+verdict_class: MAPPING_STRONG
+evidence_summary: k-axis ↔ Wolfram-class-axis Φ ranking byte-equal — Spearman ρ=1.0
+                  on 3 paired ranks (k=0 ↔ r250 lowest · k=0.25 ↔ r110 peak ·
+                  k=1.0 ↔ r30 middle); inverse-U pattern 의 cross-substrate
+                  ranking-level reproduction
+falsifiers_triggered: none (F-C2-1..F-C2-5 all NOT_TRIGGERED)
+sub_criteria_met: 5/5  (C2.1 · C2.2 · C2.3 · C2.4 · C2.5 ALL PASS)
+honest_tier: 🟢 SUPPORTED-NUMERICAL (ranking-correlation, NOT 🔵 formal)
+cross_link: H_007 edge-of-chaos byte-equal reproduce · H_204 Cycle#1 inverse-U cross-substrate corroboration · H_157 Cycle#2 layered reading (rank-level yes / value-level no)
+post_hoc_edit: forbidden (raw#15); Cycle#1 frozen block 무편집, 본 § append-only
+```
