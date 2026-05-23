@@ -337,7 +337,21 @@ async def ws_akida_ingest(ws: WebSocket):
             except Exception as e:
                 log.warning("akida ingest json drop: %s raw=%r", e, raw[:200])
                 continue
+            if not isinstance(msg, dict):
+                log.warning("akida ingest non-dict frame drop: %r", str(msg)[:200])
+                continue
+            # normalize so /akida/recent always surfaces a stable ts (pi5 frames
+            # carry t_rel/step, the bridge stamps _bridge_ts; neither is a wall ts)
+            msg.setdefault("ts", msg.get("_bridge_ts", time.time()))
             STATE.akida_history.append(msg)
+            # disambiguation telemetry (inbox PR #203): make the append observable
+            # so a future incident cleanly separates "append never fired" (upstream
+            # websocat / ws_send FIFO background-write race — frame never reached the
+            # broker) from "append fired but /akida/recent empty" (deque clobber).
+            # Source-level review already FALSIFIED hypotheses (a)/(b)/(c)/(d) —
+            # append exists, /akida/recent reads the SAME STATE.akida_history deque,
+            # maxlen=200 (non-zero), and JSON parse round-trips on bridge frames.
+            log.info("akida append now=%d", len(STATE.akida_history))
             # fan-out to akida subscribers
             dead = []
             for sub in STATE.akida_subscribers:
