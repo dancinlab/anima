@@ -1,10 +1,12 @@
 // HEXAD/PURE/launchers/dispatch_p21h_v3_smoke.hexa
 //
-// Smoke for dispatch_p21h_v3.hexa — 4 falsifiers:
+// Smoke for dispatch_p21h_v3.hexa — 6 falsifiers:
 //   F-DISP-PARSE        — import succeeds (dispatcher parses)
 //   F-DISP-ARG-CONTRACT — argv defaults + per-init LR vs ENV_CONTRACT.md
 //   F-DISP-SHA256       — match / mismatch / missing-file / skip
 //   F-DISP-RESUME       — pick largest <= cap / absolute max / none / empty
+//   F-DISP-IMPORT       — stdlib/cloud + stdlib/cloud/runpod imports resolve
+//   F-DISP-DRYRUN       — default dry-run prints plan, exits 0, zero real calls
 
 import "./dispatch_p21h_v3.hexa"
 
@@ -95,6 +97,37 @@ fn _f_disp_resume() -> int {
     return _assert(ok, "F-DISP-RESUME — pick largest <= cap + absolute max + none + empty")
 }
 
+fn _f_disp_import() -> int {
+    // F-DISP-IMPORT — the `use "stdlib/cloud/cloud"` + `use ".../runpod"` in
+    // the dispatcher resolve at parse time (this smoke imports it). Exercise
+    // runpod_pod_opts (pure helper, no remote call) to prove the symbols are
+    // live in scope, not merely parsed.
+    let opts = runpod_pod_opts("12345")
+    let mut ok = len(opts) >= 2
+    if opts[0] != "-p" { ok = false }
+    if opts[1] != "12345" { ok = false }
+    return _assert(ok, "F-DISP-IMPORT — stdlib/cloud + stdlib/cloud/runpod symbols live")
+}
+
+fn _f_disp_dryrun() -> int {
+    // F-DISP-DRYRUN — run the dispatcher with no --fire flag in a subprocess;
+    // it must print the plan, exit 0, and make zero real calls (every step
+    // prints a [dry-run] line; no real-fire stdlib markers). The dispatcher
+    // is the smoke's sibling; locate it via the first matching path.
+    let disp = exec("ls HEXAD/PURE/launchers/dispatch_p21h_v3.hexa 2>/dev/null || find . -name dispatch_p21h_v3.hexa -not -name '*smoke*' 2>/dev/null | head -1").trim()
+    let out = exec("hexa run " + disp + " P21H_alpha random 1337 2>&1; echo __RC__=$?")
+    let mut ok = out.index_of("__RC__=0") >= 0
+    // default-dry-run banner + per-step dry-run lines present.
+    if out.index_of("[DRY-RUN]") < 0 { ok = false }
+    if out.index_of("[dry-run] pod_create") < 0 { ok = false }
+    if out.index_of("[dry-run] train_launch") < 0 { ok = false }
+    if out.index_of("[dry-run] result_pull") < 0 { ok = false }
+    // zero real fire — no real stdlib success markers should appear.
+    if out.index_of("started; remote pid") >= 0 { ok = false }
+    if out.index_of("[pod_create] pod-") >= 0 { ok = false }
+    return _assert(ok, "F-DISP-DRYRUN — default dry-run prints plan, rc=0, zero real calls")
+}
+
 fn main() {
     println("[dispatch_p21h_v3_smoke] START")
     let mut n_pass = 0
@@ -102,7 +135,9 @@ fn main() {
     n_pass = n_pass + _f_disp_arg_contract()
     n_pass = n_pass + _f_disp_sha256()
     n_pass = n_pass + _f_disp_resume()
-    println("[dispatch_p21h_v3_smoke] END: " + to_string(n_pass) + "/4 PASS")
-    if n_pass < 4 { exit(1) }
+    n_pass = n_pass + _f_disp_import()
+    n_pass = n_pass + _f_disp_dryrun()
+    println("[dispatch_p21h_v3_smoke] END: " + to_string(n_pass) + "/6 PASS")
+    if n_pass < 6 { exit(1) }
     exit(0)
 }
