@@ -644,7 +644,33 @@ def main():
     # CE plateau 감지 → save + early stop
     ap.add_argument("--early-stop-patience", type=int, default=0,
                     help="early-stop if CE no-improvement for N consecutive log entries (0=disable)")
+    # AXIS-MAP 6 axes — MVP: parse + log only, train loop wiring is follow-up
+    # stacked PR. TODO[axis-impl] marks per-axis impl gates (H_257 cycle 16-3).
+    ap.add_argument("--curriculum-phase-steps", type=int, default=0,
+                    help="TODO[axis-impl] axis-A curriculum phase length in steps (0=disable)")
+    ap.add_argument("--distill-teacher", type=str, default="",
+                    help="TODO[axis-impl] axis-B teacher model id / path for KD (empty=disable)")
+    ap.add_argument("--head-g-objective", type=str, default="",
+                    help="TODO[axis-impl] axis-C head-G auxiliary objective name (empty=disable)")
+    ap.add_argument("--head-g-enable", type=int, default=0,
+                    help="TODO[axis-impl] axis-C2 enable head-G aux head (0=off 1=on)")
+    ap.add_argument("--freeze-embed", type=int, default=0,
+                    help="TODO[axis-impl] axis-D freeze input/output embeddings (0=off 1=on)")
+    ap.add_argument("--lang-balanced", type=int, default=0,
+                    help="TODO[axis-impl] axis-E lang-balanced sampler (0=off 1=on)")
+    ap.add_argument("--contrastive-lang", type=float, default=0.0,
+                    help="TODO[axis-impl] axis-F contrastive lang loss weight (0.0=disable)")
     args = ap.parse_args()
+    # AXIS-MAP read-back log (MVP): confirm env-var passthrough is wired.
+    # H_257 silent-bypass fix — dispatcher env-var must reach this print.
+    print(f"[P21H][axis] curriculum_phase_steps={args.curriculum_phase_steps} "
+          f"distill_teacher={args.distill_teacher!r} "
+          f"head_g_objective={args.head_g_objective!r} "
+          f"head_g_enable={args.head_g_enable} "
+          f"freeze_embed={args.freeze_embed} "
+          f"lang_balanced={args.lang_balanced} "
+          f"contrastive_lang={args.contrastive_lang}",
+          flush=True)
     cfg = dict(
         wiki_corpus=args.wiki_corpus,
         anima_corpus=args.anima_corpus,
