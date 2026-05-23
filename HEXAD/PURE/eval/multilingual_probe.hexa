@@ -40,6 +40,16 @@
 // named _selftest_ml (not _selftest) to avoid clashing with bilingual's.
 import "./bilingual_mi_probe.hexa"
 
+// Corpus quality 6-metric anchor wiring (PR #287). score_corpus_jsonl(path, sample_bytes)
+// returns the 6-metric block (M1 entropy / M2 bigram MI / M3 TTR / M4 avg-line /
+// M5 hangul / M6 KL-uniform) + n_lines / n_bytes / sample_bytes. Embedded into
+// result.json when `score --corpus <path>` is used, so each per-lang verdict
+// carries a corpus signature (Track-N future fires self-contained for
+// H_241/H_242 evidence accumulation). corpus_quality_probe's private CLI
+// helpers are `_cqp_*`-namespaced so the import is side-effect-free (no shadow
+// on this file's `_arg_kv` / `_argv_user` / `_usage`).
+import "./corpus_quality_probe.hexa"
+
 // -------------------------------------------------------------------
 // 1. fixture I/O
 // -------------------------------------------------------------------
@@ -366,7 +376,7 @@ fn _aggregate(per_lang: list) -> dict {
 // 7. score mode — read run_json with raw rows, compute verdicts
 // -------------------------------------------------------------------
 
-fn _score_run(run_json_path: str, fixture_path: str, out_path: str) {
+fn _score_run(run_json_path: str, fixture_path: str, out_path: str, corpus_path: str) {
     let fx = _load_fixture(fixture_path)
     if !file_exists(run_json_path) {
         println("[multilingual_probe] ERROR run_json not found: " + run_json_path)
@@ -404,13 +414,34 @@ fn _score_run(run_json_path: str, fixture_path: str, out_path: str) {
     if max_per_lang == 0 { max_per_lang = 20 }
     let hc = _compute_hc(per_lang, max_per_lang)
     let agg = _aggregate(per_lang)
-    let summary = #{
+    // PR #287 wiring — corpus_quality 6-metric anchor (M1 entropy / M2 bigram_mi /
+    // M3 TTR / M4 avg_line / M5 hangul / M6 kl_uniform + n_lines / n_bytes).
+    // When --corpus <path> is supplied, embed the block as a TOP-LEVEL key in the
+    // emitted result.json so each Track-N fire's result.json is self-contained
+    // (H_241/H_242 evidence accumulates across runs without re-scoring corpora).
+    let mut summary = #{
         "fixture_version": fx["fixture_version"],
         "run_json": run_json_path,
         "per_lang": per_lang,
         "aggregate": agg,
         "Hc": hc,
         "max_per_lang": max_per_lang
+    }
+    if corpus_path != "" {
+        if !file_exists(corpus_path) {
+            println("[multilingual_probe] WARN --corpus " + corpus_path + " not found — skipping corpus_quality block")
+        } else {
+            let cq = score_corpus_jsonl(corpus_path, 1000000)
+            summary["corpus_quality"] = cq
+            println("[multilingual_probe] corpus_quality: M1=" + to_string(cq["m1_entropy"])
+                  + " M2=" + to_string(cq["m2_bigram_mi"])
+                  + " M3=" + to_string(cq["m3_ttr"])
+                  + " M4=" + to_string(cq["m4_avg_line"])
+                  + " M5=" + to_string(cq["m5_hangul"])
+                  + " M6=" + to_string(cq["m6_kl_uniform"])
+                  + " · n_lines=" + to_string(cq["n_lines"])
+                  + " n_bytes=" + to_string(cq["n_bytes"]))
+        }
     }
     // print one-line verdict
     let v_line = "PURE_EVAL: en=" + per_lang[0]["verdict"]
@@ -642,7 +673,45 @@ fn _selftest_ml() -> int {
         n_fail = n_fail + 1
     }
 
-    println("[multilingual_probe] selftest END: " + to_string(n_pass) + "/5 PASS, " + to_string(n_fail) + " FAIL")
+    // F-PURE-EVAL-6: corpus_quality wiring (PR #287). Write synthetic 3-line corpus,
+    // invoke score_corpus_jsonl + _score_run end-to-end, then assert the emitted
+    // result.json carries a top-level corpus_quality block with the 6 metric keys
+    // and non-degenerate M1 + M5 (Hangul fixture line guarantees M5 > 0).
+    println("--- F-PURE-EVAL-6 corpus_quality wiring (PR #287 import + result.json embed)")
+    let cq_corpus = "/tmp/__pure_eval_6_corpus.jsonl"
+    let cq_run    = "/tmp/__pure_eval_6_run.json"
+    let cq_out    = "/tmp/__pure_eval_6_summary.json"
+    write_file(cq_corpus, "the quick brown fox jumps over\n안녕하세요 반갑습니다 의식의 첫 만남\naaaa aaaa aaaa\n")
+    let cq_score = score_corpus_jsonl(cq_corpus, 1000000)
+    let cq_keys_ok = has_key(cq_score, "m1_entropy") && has_key(cq_score, "m2_bigram_mi")
+                  && has_key(cq_score, "m3_ttr") && has_key(cq_score, "m4_avg_line")
+                  && has_key(cq_score, "m5_hangul") && has_key(cq_score, "m6_kl_uniform")
+    // Minimal run_json with 5 empty per-lang row arrays — exercises _score_run's
+    // corpus_quality embed path end-to-end without depending on real ckpt rows.
+    let empty_rows = #{ "en": [], "ko": [], "zh": [], "ru": [], "ja": [] }
+    write_file(cq_run, json_stringify(#{ "rows_by_lang": empty_rows }))
+    _score_run(cq_run, _default_fixture_path(), cq_out, cq_corpus)
+    let cq_summary = json_parse(read_file(cq_out))
+    let cq_embed_ok = type_of(cq_summary) == "map" && has_key(cq_summary, "corpus_quality")
+    let mut m5_ok = false
+    let mut m1_ok = false
+    if cq_embed_ok {
+        let cq_block = cq_summary["corpus_quality"]
+        if type_of(cq_block) == "map" {
+            if has_key(cq_block, "m5_hangul") && cq_block["m5_hangul"] > 0.0 { m5_ok = true }
+            if has_key(cq_block, "m1_entropy") && cq_block["m1_entropy"] > 0.0 { m1_ok = true }
+        }
+    }
+    if cq_keys_ok && cq_embed_ok && m5_ok && m1_ok {
+        println("  PASS corpus_quality wired: 6 keys present, embedded in result.json, M1>0 + M5>0")
+        n_pass = n_pass + 1
+    } else {
+        println("  FAIL keys=" + to_string(cq_keys_ok) + " embed=" + to_string(cq_embed_ok)
+              + " m1>0=" + to_string(m1_ok) + " m5>0=" + to_string(m5_ok))
+        n_fail = n_fail + 1
+    }
+
+    println("[multilingual_probe] selftest END: " + to_string(n_pass) + "/6 PASS, " + to_string(n_fail) + " FAIL")
     if n_fail > 0 { return 1 }
     return 0
 }
@@ -654,9 +723,10 @@ fn _selftest_ml() -> int {
 fn _usage() {
     println("USAGE:")
     println("  hexa run HEXAD/PURE/eval/multilingual_probe.hexa selftest")
-    println("  hexa run HEXAD/PURE/eval/multilingual_probe.hexa score <run_json> [--fixture <p>] [--out <p>]")
+    println("  hexa run HEXAD/PURE/eval/multilingual_probe.hexa score <run_json> [--fixture <p>] [--out <p>] [--corpus <p>]")
     println("  hexa run HEXAD/PURE/eval/multilingual_probe.hexa emit <ckpt> [--fixture <p>] [--out <p>] [--driver-out <p>]")
     println("  hexa run HEXAD/PURE/eval/multilingual_probe.hexa fixture [--fixture <p>]")
+    println("  --corpus <p>: embed corpus_quality 6-metric anchor (PR #287) as top-level key in out_json")
 }
 
 fn _arg_kv(argv: list, key: str, default_v: str) -> str {
@@ -712,7 +782,8 @@ fn main() {
         let run_json = argv[1]
         let fx_path = _arg_kv(argv, "--fixture", _default_fixture_path())
         let out_path = _arg_kv(argv, "--out", "")
-        _score_run(run_json, fx_path, out_path)
+        let corpus_path = _arg_kv(argv, "--corpus", "")
+        _score_run(run_json, fx_path, out_path, corpus_path)
         return
     }
     if mode == "emit" {

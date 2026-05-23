@@ -227,14 +227,19 @@ fn compare_corpora(path_a: str, path_b: str, sample_bytes: int) -> dict {
     }}
 }
 
-fn _arg_kv(argv: list, key: str, dv: str) -> str {
+// _cqp_arg_kv / _cqp_argv_user / _cqp_usage — namespaced (`_cqp_*`) so this
+// file can be `import`-ed by multilingual_probe.hexa (PR #240) without the
+// generic `_arg_kv` / `_argv_user` / `_usage` defs shadowing the caller's
+// same-named helpers. Imported defs override caller defs on name collision;
+// the namespaced names keep the import side-effect-free.
+fn _cqp_arg_kv(argv: list, key: str, dv: str) -> str {
     let n = len(argv)
     let mut i = 0
     while i < n { if argv[i] == key && (i + 1) < n { return argv[i + 1] }  i = i + 1 }
     return dv
 }
 
-fn _argv_user() -> list {
+fn _cqp_argv_user() -> list {
     let a = args()
     let n = len(a)
     if n <= 1 { return [] }
@@ -274,7 +279,7 @@ fn _selftest() -> int {
     return 1
 }
 
-fn _usage() {
+fn _cqp_usage() {
     println("USAGE:")
     println("  hexa run HEXAD/PURE/eval/corpus_quality_probe.hexa selftest")
     println("  hexa run HEXAD/PURE/eval/corpus_quality_probe.hexa score <path> [--sample-bytes N] [--out json]")
@@ -282,32 +287,32 @@ fn _usage() {
 }
 
 fn main() {
-    let argv = _argv_user()
+    let argv = _cqp_argv_user()
     let n = len(argv)
-    if n == 0 { _usage()  return }
+    if n == 0 { _cqp_usage()  return }
     let mode = argv[0]
     if mode == "selftest" { let rc = _selftest()  if rc != 0 { exit(rc) }  return }
     if mode == "score" {
         if n < 2 { println("[corpus_quality_probe] ERROR score requires <path>")  exit(2) }
-        let s = score_corpus_jsonl(argv[1], to_int(_arg_kv(argv, "--sample-bytes", "1000000")))
+        let s = score_corpus_jsonl(argv[1], to_int(_cqp_arg_kv(argv, "--sample-bytes", "1000000")))
         _print_score(s)
-        let out = _arg_kv(argv, "--out", "")
+        let out = _cqp_arg_kv(argv, "--out", "")
         if out != "" { write_file(out, json_stringify(s))  println("[corpus_quality_probe] wrote " + out) }
         return
     }
     if mode == "compare" {
         if n < 3 { println("[corpus_quality_probe] ERROR compare requires <a> <b>")  exit(2) }
-        let c = compare_corpora(argv[1], argv[2], to_int(_arg_kv(argv, "--sample-bytes", "1000000")))
+        let c = compare_corpora(argv[1], argv[2], to_int(_cqp_arg_kv(argv, "--sample-bytes", "1000000")))
         _print_score(c["a"])
         _print_score(c["b"])
         let d = c["diff"]
         println("[corpus_quality_probe] diff (b - a):")
         println("  ΔM1=" + to_string(d["m1_entropy"]) + "  ΔM2=" + to_string(d["m2_bigram_mi"]) + "  ΔM3=" + to_string(d["m3_ttr"]))
         println("  ΔM4=" + to_string(d["m4_avg_line"]) + "  ΔM5=" + to_string(d["m5_hangul"]) + "  ΔM6=" + to_string(d["m6_kl_uniform"]))
-        let out = _arg_kv(argv, "--out", "")
+        let out = _cqp_arg_kv(argv, "--out", "")
         if out != "" { write_file(out, json_stringify(c))  println("[corpus_quality_probe] wrote " + out) }
         return
     }
-    _usage()
+    _cqp_usage()
     exit(2)
 }

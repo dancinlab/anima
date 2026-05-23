@@ -117,8 +117,24 @@ fn _nested_cell(d: dict, outer: str, inner: str, flat_key: str) -> str {
     return "—"
 }
 
+// PR #287 wiring — corpus_quality 6-metric anchor lookup. Read result["corpus_quality"][key]
+// if the multilingual_probe `score --corpus <path>` flag was used (top-level block embed).
+// Back-compat: results WITHOUT corpus_quality render "—" (no breakage of legacy rows).
+fn _corpus_cell(d: dict, key: str) -> str {
+    if has_key(d, "corpus_quality") {
+        let cq = d["corpus_quality"]
+        if type_of(cq) == "map" && has_key(cq, key) {
+            let v = cq[key]
+            let t = type_of(v)
+            if t == "int" || t == "float" { return to_string(v) }
+            if t == "string" { return v }
+        }
+    }
+    return "—"
+}
+
 fn format_axis_map_row(variant: str, result: dict, judgement: dict) -> str {
-    // | variant | closure | agg | n_pass/n_total | per-lang | reg hits | regress | init CE | final CE | wall s |
+    // | variant | closure | agg | n_pass/n_total | per-lang | reg hits | regress | init CE | final CE | wall s | M3 TTR | M5 hangul |
     return "| " + variant + " | " + judgement["closure"] + " | " + _cell(result, "verdict")
          + " | " + to_string(judgement["n_pass"]) + "/" + to_string(judgement["n_total"])
          + " | " + _per_lang_compact(result["per_lang_verdicts"])
@@ -126,14 +142,16 @@ fn format_axis_map_row(variant: str, result: dict, judgement: dict) -> str {
          + " | " + _cell(result, "register_regress")
          + " | " + _nested_cell(result, "init_log", "L_ce", "init_log_ce")
          + " | " + _nested_cell(result, "final_log", "L_ce", "final_log_ce")
-         + " | " + _cell(result, "train_wall_s") + " |"
+         + " | " + _cell(result, "train_wall_s")
+         + " | " + _corpus_cell(result, "m3_ttr")
+         + " | " + _corpus_cell(result, "m5_hangul") + " |"
 }
 
 fn _usage() {
     println("USAGE:")
     println("  hexa run HEXAD/PURE/eval/result_to_axis_map.hexa [--floor PARTIAL|PASS] [--min-langs N] <variant> <result_json>")
-    println("AXIS_MAP_RESULTS header:")
-    println("| variant | closure | agg | n_pass/n_total | per-lang | reg hits | regress | init CE | final CE | wall s |")
+    println("AXIS_MAP_RESULTS header (M3/M5 from corpus_quality block, PR #287; render '—' when absent):")
+    println("| variant | closure | agg | n_pass/n_total | per-lang | reg hits | regress | init CE | final CE | wall s | M3 TTR | M5 hangul |")
 }
 
 fn _arg_kv(argv: list, key: str, def: str) -> str {
