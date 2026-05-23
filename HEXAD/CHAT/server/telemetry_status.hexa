@@ -1,0 +1,297 @@
+// ═══════════════════════════════════════════════════════════════════════════
+//  HEXAD/CHAT/server/telemetry_status.hexa — short-running CLI
+//  Reads ${ANIMA_TELEMETRY:-$HOME/.cache/anima/spontaneous_evidence.jsonl}
+//  (from telemetry_harness.hexa, PR #139) → prints Phase 2 activation-gate
+//  status (SW_CONDITION_DESIGN §6: ≥7d · ≥1000 events · ≥2 regimes ·
+//  ≥5 regime transitions · KS drift ≤10% [deferred]).
+//
+//  RUN  hexa run telemetry_status.hexa [selftest]   (default = status report)
+//  ENV  ANIMA_TELEMETRY                              (override default path)
+//  pure-hexa · g13 portable · void-safe.
+// ═══════════════════════════════════════════════════════════════════════════
+
+// ── §1 helpers ────────────────────────────────────────────────────────────
+fn _env(n: string, d: string) -> string {
+    let v = env(n)
+    if to_string(v) == "void" { return d }
+    if len(to_string(v)) == 0 { return d }   return to_string(v)
+}
+fn _gs(d: dict, k: string) -> string {
+    if !d.has_key(k) { return "" }
+    let v = d[k]   if to_string(v) == "void" { return "" }   return to_string(v)
+}
+fn _gf(d: dict, k: string) -> float {
+    if !d.has_key(k) { return 0.0 }
+    let v = d[k]   if to_string(v) == "void" { return 0.0 }   return to_float(to_string(v))
+}
+fn default_jsonl_path() -> string {
+    let ex = _env("ANIMA_TELEMETRY", "")
+    if len(ex) > 0 { return ex }
+    return _env("HOME", "/tmp") + "/.cache/anima/spontaneous_evidence.jsonl"
+}
+fn _sw_regime(r: dict) -> string {
+    let sw = r["spike_window"]
+    if type_of(sw) != "map" { return "" }   return _gs(sw, "regime_mode")
+}
+
+// ── §2 JSONL load ─────────────────────────────────────────────────────────
+fn load_rows(path: string) -> list {
+    if !file_exists(path) { return [] }
+    let raw = read_file(path)
+    if len(raw) == 0 { return [] }
+    let lines = raw.split("\n")
+    let mut rows = []   let mut i = 0
+    while i < len(lines) {
+        let ln = lines[i]
+        if len(ln) > 0 {
+            let p = json_parse(ln)
+            if type_of(p) == "map" { rows = rows + [p] }
+        }
+        i = i + 1
+    }
+    return rows
+}
+
+// ── §3 aggregation ────────────────────────────────────────────────────────
+fn compute_span(rows: list) -> dict {
+    let n = len(rows)
+    if n == 0 { return #{ "first_ts": 0.0, "last_ts": 0.0, "duration_s": 0.0 } }
+    let mut f = _gf(rows[0], "ts")   let mut l = f   let mut i = 1
+    while i < n {
+        let t = _gf(rows[i], "ts")
+        if t < f { f = t }   if t > l { l = t }   i = i + 1
+    }
+    return #{ "first_ts": f, "last_ts": l, "duration_s": l - f }
+}
+fn regime_counts(rows: list) -> dict {
+    let mut c = #{}   let mut i = 0
+    while i < len(rows) {
+        let r = _sw_regime(rows[i])
+        if len(r) > 0 { c[r] = if c.has_key(r) { to_int(c[r]) + 1 } else { 1 } }
+        i = i + 1
+    }
+    return c
+}
+fn count_transitions(rows: list) -> int {
+    let mut k = 0   let mut prev = ""   let mut i = 0
+    while i < len(rows) {
+        let cur = _sw_regime(rows[i])
+        if len(cur) > 0 {
+            if len(prev) > 0 { if cur != prev { k = k + 1 } }
+            prev = cur
+        }
+        i = i + 1
+    }
+    return k
+}
+fn lang_counts(rows: list) -> dict {
+    let mut c = #{}   let mut i = 0
+    while i < len(rows) {
+        let lg = _gs(rows[i], "lang")
+        let key = if len(lg) > 0 { lg } else { "(empty)" }
+        c[key] = if c.has_key(key) { to_int(c[key]) + 1 } else { 1 }
+        i = i + 1
+    }
+    return c
+}
+fn sort_counts_desc(c: dict) -> list {
+    let ks = c.keys()   let mut s = []   let mut p = 0
+    while p < len(ks) {
+        let kk = to_string(ks[p])   let cur = #{ "k": kk, "v": to_int(c[kk]) }
+        let mut tmp = []   let mut ins = false   let mut q = 0
+        while q < len(s) {
+            if !ins { if to_int(cur["v"]) > to_int(s[q]["v"]) { tmp = tmp + [cur]   ins = true } }
+            tmp = tmp + [s[q]]   q = q + 1
+        }
+        if !ins { tmp = tmp + [cur] }
+        s = tmp   p = p + 1
+    }
+    return s
+}
+
+// ── §4 gate + render ──────────────────────────────────────────────────────
+fn evaluate_gate(rows: list, span: dict, regimes: dict, n_trans: int) -> dict {
+    let dur_h = _gf(span, "duration_s") / 3600.0
+    let c1 = dur_h >= 168.0   let c2 = len(rows) >= 1000
+    let c3 = len(regimes.keys()) >= 2   let c4 = n_trans >= 5
+    let mut unmet = []
+    if !c1 { unmet = unmet + ["7d telemetry"] }
+    if !c2 { unmet = unmet + ["1000 events"] }
+    if !c3 { unmet = unmet + ["2 regimes"] }
+    if !c4 { unmet = unmet + ["5 transitions"] }
+    return #{ "c1": c1, "c2": c2, "c3": c3, "c4": c4, "unmet": unmet }
+}
+fn _iso(ts: float) -> string {
+    if ts <= 0.0 { return "n/a" }
+    let s = to_string(exec("date -u -r " + to_string(to_int(ts))
+            + " +%Y-%m-%dT%H:%M:%SZ | tr -d '\\n'")).trim()
+    if len(s) == 0 { return to_string(ts) }   return s
+}
+fn _dur(secs: float) -> string {
+    if secs < 0.0 { return "0s" }
+    let t = to_int(secs)   let d = t / 86400
+    let h = (t - d * 86400) / 3600   let m = (t - d * 86400 - h * 3600) / 60
+    if d > 0 { return to_string(d) + "d " + to_string(h) + "h" }
+    if h > 0 { return to_string(h) + "h " + to_string(m) + "m" }
+    return to_string(t) + "s"
+}
+fn _mk(b: bool) -> string { if b { return "[x]" }   return "[ ]" }
+fn _bar(n: int) -> string {
+    let mut s = ""   let mut i = 0
+    while i < n { s = s + "#"   i = i + 1 }   return s
+}
+fn _trim5(s: string) -> string { if len(s) > 5 { return s.substring(0, 5) }   return s }
+fn render_histogram(rates: list) -> string {
+    let n = len(rates)
+    if n == 0 { return "  (no data)\n" }
+    let mut mx = 0.0   let mut i = 0
+    while i < n { if rates[i] > mx { mx = rates[i] }   i = i + 1 }
+    if mx > 30.0 { mx = 30.0 }
+    if mx <= 0.0 { mx = 1.0 }
+    let nb = 10   let w = mx / to_float(to_string(nb))
+    let mut bk = []   let mut b = 0
+    while b < nb { bk = bk + [0]   b = b + 1 }
+    let mut j = 0
+    while j < n {
+        let mut idx = to_int(rates[j] / w)
+        if idx < 0 { idx = 0 }
+        if idx >= nb { idx = nb - 1 }
+        bk[idx] = to_int(bk[idx]) + 1   j = j + 1
+    }
+    let mut mc = 0   let mut kk = 0
+    while kk < nb { let c = to_int(bk[kk])   if c > mc { mc = c }   kk = kk + 1 }
+    let mut out = ""   let mut m = 0
+    while m < nb {
+        let lo = to_float(to_string(m)) * w   let hi = to_float(to_string(m + 1)) * w
+        let c = to_int(bk[m])   let bn = if mc > 0 { (c * 30) / mc } else { 0 }
+        out = out + "  [" + _trim5(to_string(lo)) + "," + _trim5(to_string(hi))
+              + "):  " + _bar(bn) + "   (" + to_string(c) + " rows)\n"
+        m = m + 1
+    }
+    return out
+}
+fn render_report(path: string, rows: list) -> string {
+    let span = compute_span(rows)   let regimes = regime_counts(rows)
+    let n_trans = count_transitions(rows)
+    let gate = evaluate_gate(rows, span, regimes, n_trans)
+    let total = len(rows)
+    let rk = regimes.keys()   let mut rlist = ""   let mut ri = 0
+    while ri < len(rk) {
+        if ri > 0 { rlist = rlist + ", " }
+        rlist = rlist + to_string(rk[ri])   ri = ri + 1
+    }
+    let mut out = "=== anima spontaneous-evidence status ===\n"
+        + "file       : " + path + "\n"
+        + "total_rows : " + to_string(total) + "\n"
+        + "span       : " + _iso(_gf(span, "first_ts")) + "  ->  "
+        + _iso(_gf(span, "last_ts")) + "  (" + _dur(_gf(span, "duration_s")) + ")\n\n"
+        + "=== Phase 2 activation gate (SW_CONDITION_DESIGN section 6) ===\n"
+        + _mk(gate["c1"]) + " >= 7d telemetry            actual: "
+        + _dur(_gf(span, "duration_s")) + "   (need >= 168h)\n"
+        + _mk(gate["c2"]) + " >= 1000 paired emit events  actual: "
+        + to_string(total) + "   (need >= 1000)\n"
+        + _mk(gate["c3"]) + " >= 2 distinct regimes        actual: "
+        + to_string(len(rk)) + " {" + rlist + "}   (need >= 2)\n"
+        + _mk(gate["c4"]) + " >= 5 regime transitions      actual: "
+        + to_string(n_trans) + "   (need >= 5)\n"
+        + "[~] KS drift <= 10%             skipped (deferred — manual run)\n"
+    let unmet = gate["unmet"]
+    if len(unmet) == 0 { out = out + "overall: READY\n" }
+    else {
+        let mut s = "overall: NOT_READY: "   let mut u = 0
+        while u < len(unmet) {
+            if u > 0 { s = s + ", " }
+            s = s + to_string(unmet[u])   u = u + 1
+        }
+        out = out + s + "\n"
+    }
+    out = out + "\n=== regime distribution ===\n"
+    let sr_l = sort_counts_desc(regimes)
+    if len(sr_l) == 0 { out = out + "  (no data)\n" }
+    let mut sr = 0
+    while sr < len(sr_l) {
+        let p = sr_l[sr]   let c = to_int(p["v"])
+        let pct = if total > 0 { (c * 100) / total } else { 0 }
+        out = out + "  " + to_string(p["k"]) + ": " + to_string(c)
+              + "   (" + to_string(pct) + "%)\n"
+        sr = sr + 1
+    }
+    let mut rates = []   let mut ri2 = 0
+    while ri2 < len(rows) {
+        let sw = rows[ri2]["spike_window"]
+        if type_of(sw) == "map" { rates = rates + [_gf(sw, "spike_rate_hz")] }
+        ri2 = ri2 + 1
+    }
+    out = out + "\n=== spike-rate histogram (10 buckets, 0-30 Hz) ===\n" + render_histogram(rates)
+    out = out + "\n=== language distribution (top 5) ===\n"
+    let sl_l = sort_counts_desc(lang_counts(rows))
+    if len(sl_l) == 0 { out = out + "  (no data)\n" }
+    let mut li = 0
+    while li < len(sl_l) {
+        if li < 5 { let p = sl_l[li]
+            out = out + "  " + to_string(p["k"]) + ": " + to_string(p["v"]) + "\n" }
+        li = li + 1
+    }
+    return out
+}
+
+// ── §5 selftest F-STATUS-1..3 ─────────────────────────────────────────────
+fn _chk(p: bool, msg: string, c: dict) {
+    if p { c["pass"] = to_int(c["pass"]) + 1   println("  PASS " + msg) }
+    else { c["fail"] = to_int(c["fail"]) + 1   println("  FAIL " + msg) }
+}
+fn _mk_row(ts: float, lg: string, rg: string, rate: float, step: int) -> dict {
+    return #{ "ts": ts, "emit_id": "e", "lang": lg,
+              "spike_window": #{ "spike_count": 4, "spike_rate_hz": rate,
+                                 "regime_mode": rg, "n_unique_regimes": 1,
+                                 "isi_cv": 0.1, "last_step": step } }
+}
+fn _status_selftest() {
+    println("telemetry_status selftest — F-STATUS-1..3")
+    let counts = #{"pass": 0, "fail": 0}
+    let nonce = to_string(exec("date +%s%N | tr -d '\\n'")).trim()
+    let jsonl = "/tmp/hexa_telemetry_status_st_" + nonce + ".jsonl"
+    let _r = exec("rm -f '" + jsonl + "'")
+    // 5 rows: regimes R3,R3,R1,R3,R2 → 3 transitions, 3 distinct.
+    let synth = [
+        _mk_row(100.0, "ko", "R3_tonic_zero_input", 1.5, 10),
+        _mk_row(101.0, "ko", "R3_tonic_zero_input", 2.0, 11),
+        _mk_row(102.0, "en", "R1_phasic",           3.0, 12),
+        _mk_row(103.0, "ko", "R3_tonic_zero_input", 4.5, 13),
+        _mk_row(104.0, "en", "R2_burst",            5.0, 14),
+    ]
+    let mut i = 0
+    while i < len(synth) {
+        let _w = append_file(jsonl, json_stringify(synth[i]) + "\n")
+        i = i + 1
+    }
+    let rows = load_rows(jsonl)
+    _chk(len(rows) == 5, "F-STATUS-1 total_rows == 5 (got " + to_string(len(rows)) + ")", counts)
+    let span = compute_span(rows)
+    _chk(_gf(span, "first_ts") == 100.0, "F-STATUS-1 first_ts == 100.0", counts)
+    _chk(_gf(span, "last_ts") == 104.0, "F-STATUS-1 last_ts == 104.0", counts)
+    _chk(_gf(span, "duration_s") == 4.0, "F-STATUS-1 duration_s == 4.0", counts)
+    let n_trans = count_transitions(rows)
+    _chk(n_trans == 3, "F-STATUS-2 transitions == 3 (got " + to_string(n_trans) + ")", counts)
+    let regimes = regime_counts(rows)
+    _chk(len(regimes.keys()) == 3, "F-STATUS-2 distinct regimes == 3", counts)
+    let gate = evaluate_gate(rows, span, regimes, n_trans)
+    _chk(!gate["c1"], "F-STATUS-3 c1 (7d) unmet", counts)
+    _chk(!gate["c2"], "F-STATUS-3 c2 (1000 events) unmet", counts)
+    _chk(gate["c3"], "F-STATUS-3 c3 (>=2 regimes) met", counts)
+    _chk(!gate["c4"], "F-STATUS-3 c4 (>=5 transitions) unmet", counts)
+    _chk(len(gate["unmet"]) == 3, "F-STATUS-3 unmet list size == 3", counts)
+    println("--- sample status report (synthetic 5-row JSONL) ---")
+    println(render_report(jsonl, rows))
+    println("telemetry_status selftest: " + to_string(to_int(counts["pass"]))
+            + " PASS, " + to_string(to_int(counts["fail"])) + " FAIL")
+    let _r2 = exec("rm -f '" + jsonl + "'")
+}
+
+// ── §6 entry ──────────────────────────────────────────────────────────────
+fn main() {
+    let cli = args()
+    if len(cli) > 1 { if cli[1] == "selftest" { _status_selftest()   return } }
+    let path = default_jsonl_path()
+    println(render_report(path, load_rows(path)))
+}
