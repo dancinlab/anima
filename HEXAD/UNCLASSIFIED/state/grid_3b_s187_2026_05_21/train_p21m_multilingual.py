@@ -21,6 +21,16 @@ Eval1 register-leak detection layer (2026-05-23 expansion):
   NOTE: metric scale change — pre-2026-05-23 anima_register_hits values are
   not directly comparable to post-merge cycles.
 
+Eval1 continuous hit-count (2026-05-23 additive layer):
+  count_register_hits_continuous() = uncapped per-output hit count
+  (text.count for substring keys + len(rx.findall) for regex keys). Removes the
+  binary saturation floor where classify_output caps each row at MEMORIZE once
+  hits>=2 (v5/v6/v7 all read 5/20 despite v7 stripping 840k patterns). Result
+  JSON now also exposes: register_hits_continuous_total, register_hits_per_output,
+  register_hits_mean / _median / _max. Binary metric (n_anima_register_hits_total)
+  unchanged — additive, no break for past comparison. Becomes the lever
+  indicator for future corpus/adapter cycles.
+
 Variant tag: P21M_MULTILINGUAL.
 """
 import os
@@ -162,6 +172,23 @@ def classify_output(text: str) -> str:
     if not text or len(text.strip()) < 4:
         return "EMPTY"
     return "GENERALIZE"
+
+
+def count_register_hits_continuous(text: str) -> int:
+    """Continuous (uncapped) register-leak hit count for one output.
+
+    Unlike classify_output (which saturates each row at MEMORIZE once hits>=2),
+    this sums EVERY occurrence of every key — substring keys use str.count,
+    regex keys use re.findall. Lets corpus/adapter ablations (e.g. v7 prune of
+    840k patterns) show signal that the binary saturated metric hides.
+    Additive — binary metric unchanged. Introduced 2026-05-23 per PR #125
+    follow-up (feat/trainer-eval1-continuous-hit-count).
+    """
+    if not text:
+        return 0
+    sub_hits = sum(text.count(k) for k in ANIMA_KEYS)
+    re_hits = sum(len(rx.findall(text)) for rx in ANIMA_REGEX_KEYS)
+    return sub_hits + re_hits
 
 
 def native_ratio(text, lang):
@@ -418,6 +445,7 @@ def gen_probes(model, tokenizer, device, probes, max_new=64, mode="greedy"):
             out.append({
                 "name": name, "prompt": prompt, "text": cont,
                 "class": classify_output(cont),
+                "n_register_hits_continuous": count_register_hits_continuous(cont),
             })
         except Exception as e:
             out.append({
@@ -629,6 +657,22 @@ def run(cfg):
     anima_coherent = anima_greedy_sum["MEMORIZE"] + anima_sample_sum["MEMORIZE"]
     register_regress = anima_coherent < 5
 
+    # ----- continuous register-leak metric (additive — binary above unchanged)
+    # Removes the binary saturation floor: classify_output caps each row at
+    # MEMORIZE once hits>=2, so v5/v6/v7 all read 5/20 even though v7 stripped
+    # 840k corpus patterns. The continuous total preserves the corpus/adapter
+    # ablation signal. Aggregates over greedy+sample rows (20 outputs).
+    register_hits_per_output = [
+        r.get("n_register_hits_continuous", 0)
+        for r in (after_anima_greedy + after_anima_sample)
+    ]
+    register_hits_continuous_total = sum(register_hits_per_output)
+    _n_per = len(register_hits_per_output) or 1
+    register_hits_mean = register_hits_continuous_total / _n_per
+    _sorted = sorted(register_hits_per_output)
+    register_hits_median = _sorted[_n_per // 2] if _sorted else 0
+    register_hits_max = max(register_hits_per_output) if register_hits_per_output else 0
+
     # aggregate verdict
     n_strong = sum(1 for v in per_lang_verdicts if v["verdict"] == "STRONG")
     n_partial = sum(1 for v in per_lang_verdicts if v["verdict"] == "PARTIAL")
@@ -648,6 +692,10 @@ def run(cfg):
           f"PURE_MEMORIZE={n_purem} → {agg_verdict}", flush=True)
     print(f"[P21M] anima_register_hits={anima_coherent}/20 "
           f"register_regress={register_regress}", flush=True)
+    print(f"[P21M] register_hits_continuous: total={register_hits_continuous_total} "
+          f"mean={register_hits_mean:.2f} median={register_hits_median} "
+          f"max={register_hits_max} per_out={register_hits_per_output}",
+          flush=True)
 
     result = dict(
         battery="P21M — vP21 LoRA continue-training on 5-lang wiki + anima mix",
@@ -671,6 +719,11 @@ def run(cfg):
         anima_eval1_greedy_summary=anima_greedy_sum,
         anima_eval1_sample_summary=anima_sample_sum,
         n_anima_register_hits_total=anima_coherent,
+        register_hits_continuous_total=register_hits_continuous_total,
+        register_hits_per_output=register_hits_per_output,
+        register_hits_mean=register_hits_mean,
+        register_hits_median=register_hits_median,
+        register_hits_max=register_hits_max,
         n_strong=n_strong, n_partial=n_partial,
         n_weak=n_weak, n_pure_memorize=n_purem,
         verdict=agg_verdict,
@@ -708,6 +761,11 @@ def run(cfg):
         summary_greedy=anima_greedy_sum,
         summary_sample=anima_sample_sum,
         register_regress=register_regress,
+        register_hits_continuous_total=register_hits_continuous_total,
+        register_hits_per_output=register_hits_per_output,
+        register_hits_mean=register_hits_mean,
+        register_hits_median=register_hits_median,
+        register_hits_max=register_hits_max,
     )
     with open(os.path.join(out_dir, "vp21m_eval1.json"), "w") as f:
         json.dump(eval1, f, indent=2, default=str)
