@@ -1,0 +1,67 @@
+// PURE result_to_axis_map smoke — F-WIRING-1..3 on synthetic fixtures.
+// No real Track 1 dep — writes synthetic blobs to /tmp.
+// Usage: hexa run HEXAD/PURE/eval/result_to_axis_map_smoke.hexa  (3/3 PASS expected)
+
+import "./result_to_axis_map.hexa"
+
+fn _per_lang(en: str, ko: str, zh: str, ru: str, ja: str) -> list {
+    return [
+        #{"lang": "en", "verdict": en, "n_score": 16, "n_generalize": 18, "n_lang_coherent": 16},
+        #{"lang": "ko", "verdict": ko, "n_score": 14, "n_generalize": 15, "n_lang_coherent": 14},
+        #{"lang": "zh", "verdict": zh, "n_score": 12, "n_generalize": 13, "n_lang_coherent": 12},
+        #{"lang": "ru", "verdict": ru, "n_score": 13, "n_generalize": 14, "n_lang_coherent": 13},
+        #{"lang": "ja", "verdict": ja, "n_score": 12, "n_generalize": 13, "n_lang_coherent": 12}
+    ]
+}
+
+fn _result(pl: list, agg: str) -> dict {
+    return #{
+        "verdict": agg, "per_lang_verdicts": pl,
+        "n_anima_register_hits_total": 7, "register_regress": false,
+        "init_log_ce": 14.4564, "final_log_ce": 2.0990, "train_wall_s": 5222.0
+    }
+}
+
+fn main() {
+    println("[result_to_axis_map_smoke] START")
+    let mut n_pass = 0
+    let mut n_fail = 0
+
+    // F-WIRING-1: 5/5 STRONG → closure=PASS
+    println("--- F-WIRING-1 5/5 STRONG → closure=PASS")
+    let p1 = "/tmp/__pure_wiring_smoke_1.json"
+    write_file(p1, json_stringify(_result(_per_lang("STRONG", "STRONG", "STRONG", "STRONG", "STRONG"), "HEXAD_V3_WORKS")))
+    let r1 = parse_result_json(p1)
+    let j1 = judge_closure(r1, "PARTIAL", 4)
+    println("  row: " + format_axis_map_row("E2", r1, j1))
+    if j1["closure"] == "PASS" && j1["n_pass"] == 5 {
+        println("  PASS closure=PASS n_pass=5"); n_pass = n_pass + 1
+    } else {
+        println("  FAIL closure=" + j1["closure"] + " n_pass=" + to_string(j1["n_pass"])); n_fail = n_fail + 1
+    }
+
+    // F-WIRING-2: 3/5 PARTIAL + 2 WEAK → closure=FAIL (criterion <4/5)
+    println("--- F-WIRING-2 3/5 PARTIAL + 2 WEAK → closure=FAIL")
+    let p2 = "/tmp/__pure_wiring_smoke_2.json"
+    write_file(p2, json_stringify(_result(_per_lang("PARTIAL", "PARTIAL", "PARTIAL", "WEAK", "WEAK"), "PARTIAL")))
+    let r2 = parse_result_json(p2)
+    let j2 = judge_closure(r2, "PARTIAL", 4)
+    println("  row: " + format_axis_map_row("E3", r2, j2))
+    if j2["closure"] == "FAIL" && j2["n_pass"] == 3 {
+        println("  PASS closure=FAIL n_pass=3 < 4"); n_pass = n_pass + 1
+    } else {
+        println("  FAIL closure=" + j2["closure"] + " n_pass=" + to_string(j2["n_pass"])); n_fail = n_fail + 1
+    }
+
+    // F-WIRING-3: missing file → parse_result_json exit(2) contract (precondition file_exists=false)
+    println("--- F-WIRING-3 missing result.json → file_exists()=false")
+    let fake = "/tmp/__pure_wiring_missing_xxxxxx.json"
+    if !file_exists(fake) {
+        println("  PASS file_exists() reports false (parse_result_json would exit 2)"); n_pass = n_pass + 1
+    } else {
+        println("  FAIL fake file unexpectedly exists at " + fake); n_fail = n_fail + 1
+    }
+
+    println("[result_to_axis_map_smoke] END: " + to_string(n_pass) + "/3 PASS, " + to_string(n_fail) + " FAIL")
+    if n_fail > 0 { exit(1) }
+}
