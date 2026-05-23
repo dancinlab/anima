@@ -1,0 +1,139 @@
+// HEXAD/PURE/launchers/_common.hexa
+//
+// Shared helpers for PURE closure launchers (Track 1 / B 증류 / C head_g /
+// A 커리큘럼 / head_g activation logger / ...).  Each launcher emits one or
+// more runpod-dispatched `.sh` files into a workspace dir under
+// `state/pure_<closure>_<date>/`.  This module factors the boilerplate
+// that was duplicated across the initial 4 launchers (cycle-1 finding,
+// 2026-05-23 /gap F6+F3):
+//
+//   - uid generation (timestamp + 6-hex)
+//   - argv parsing (`dry-run` | `emit [--uid <tag>]`)
+//   - inline whitespace strip (avoid 4x `_X_strip_ws` clones)
+//   - .sh write + chmod +x
+//
+// Adopt incrementally — a launcher does `import "_common.hexa"` and
+// switches its private helpers to `pure_launcher_*` one by one.  Old
+// helpers remain valid (just call through).
+//
+// ┌─────────────────────────────────────────────────────────────┐
+// │ HEXAD/PURE/launchers/                                       │
+// │   _common.hexa            ← THIS FILE (shared, no fire)     │
+// │   track1_corpus_reburn_launcher.hexa     [adopts: 4 fns]    │
+// │   b_distill_launcher.hexa                [adopts: TBD]      │
+// │   c_head_g_obj_launcher.hexa             [adopts: TBD]      │
+// │   a_curriculum_launcher.hexa             [adopts: TBD]      │
+// │   head_g_activation_logger.hexa          [adopts: TBD]      │
+// └─────────────────────────────────────────────────────────────┘
+//
+// Anchored against: HEXAD/PURE/ENV_CONTRACT.md  (sister doc)
+
+// -------------------------------------------------------------------
+// 1. uid — timestamp + 6-hex random tag (shell-backed, Track 1 pattern)
+// -------------------------------------------------------------------
+
+fn pure_launcher_uid() -> str {
+    let ts = pure_launcher_strip_ws(exec("date -u +%Y%m%dT%H%M%SZ"))
+    let rnd = pure_launcher_strip_ws(exec("od -An -tx1 -N3 /dev/urandom | tr -d ' '"))
+    return ts + "_" + rnd
+}
+
+// -------------------------------------------------------------------
+// 2. argv — `dry-run` | `emit [--uid <tag>]`
+// -------------------------------------------------------------------
+
+fn pure_launcher_parse_argv(args: list) -> dict {
+    let n = len(args)
+    let mut mode = "dry-run"
+    let mut uid_override = ""
+    let mut i = 0
+    while i < n {
+        let a = args[i]
+        if a == "dry-run" || a == "emit" { mode = a }
+        if a == "--uid" && i + 1 < n { uid_override = args[i + 1]   i = i + 1 }
+        i = i + 1
+    }
+    return #{
+        "mode": mode,
+        "uid": uid_override,
+    }
+}
+
+// -------------------------------------------------------------------
+// 3. inline whitespace strip (replaces _X_strip_ws clones)
+// -------------------------------------------------------------------
+
+fn pure_launcher_strip_ws(s: str) -> str {
+    // Thin wrapper around the builtin .trim() — single SSOT for launchers
+    // and survives a future hexa-lang revision renaming .trim().
+    return s.trim()
+}
+
+// -------------------------------------------------------------------
+// 4. .sh write + chmod +x
+// -------------------------------------------------------------------
+
+fn pure_launcher_write_sh(path: str, body: str) -> bool {
+    let ok = write_file(path, body)
+    if !ok { return false }
+    let _ = exec("chmod +x " + path)
+    return true
+}
+
+// -------------------------------------------------------------------
+// 5. selftest (F-PURE-LAUNCHER-COMMON-1..3)
+// -------------------------------------------------------------------
+
+fn _selftest() -> int {
+    println("[_common] selftest START")
+    let mut n_pass = 0
+    let mut n_fail = 0
+
+    // F-PURE-LAUNCHER-COMMON-1 strip_ws idempotence
+    let s1 = pure_launcher_strip_ws("   hello   ")
+    let s2 = pure_launcher_strip_ws(s1)
+    if s1 == "hello" && s2 == "hello" {
+        println("  PASS F-PURE-LAUNCHER-COMMON-1 strip_ws idempotent")
+        n_pass = n_pass + 1
+    } else {
+        println("  FAIL F-PURE-LAUNCHER-COMMON-1 s1='" + s1 + "' s2='" + s2 + "'")
+        n_fail = n_fail + 1
+    }
+
+    // F-PURE-LAUNCHER-COMMON-2 argv parse defaults + emit + --uid
+    let p_default = pure_launcher_parse_argv([])
+    let p_emit = pure_launcher_parse_argv(["emit"])
+    let p_uid = pure_launcher_parse_argv(["emit", "--uid", "my_tag"])
+    if to_string(p_default["mode"]) == "dry-run"
+       && to_string(p_emit["mode"]) == "emit"
+       && to_string(p_uid["uid"]) == "my_tag" {
+        println("  PASS F-PURE-LAUNCHER-COMMON-2 argv parse")
+        n_pass = n_pass + 1
+    } else {
+        println("  FAIL F-PURE-LAUNCHER-COMMON-2 default=" + to_string(p_default["mode"])
+                + " emit=" + to_string(p_emit["mode"])
+                + " uid=" + to_string(p_uid["uid"]))
+        n_fail = n_fail + 1
+    }
+
+    // F-PURE-LAUNCHER-COMMON-3 uid shape (ts 16 chars + _ + 6-hex = 23)
+    let u = pure_launcher_uid()
+    let u_len = len(u)
+    if u_len >= 22 && u_len <= 26 {
+        println("  PASS F-PURE-LAUNCHER-COMMON-3 uid='" + u + "' len=" + to_string(u_len))
+        n_pass = n_pass + 1
+    } else {
+        println("  FAIL F-PURE-LAUNCHER-COMMON-3 uid='" + u + "' len=" + to_string(u_len))
+        n_fail = n_fail + 1
+    }
+
+    println("[_common] selftest END: " + to_string(n_pass) + "/3 PASS, "
+            + to_string(n_fail) + " FAIL")
+    if n_fail > 0 { return 1 }
+    return 0
+}
+
+fn main() {
+    let rc = _selftest()
+    exit(rc)
+}
