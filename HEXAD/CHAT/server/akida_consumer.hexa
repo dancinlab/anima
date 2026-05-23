@@ -1,0 +1,270 @@
+// ═══════════════════════════════════════════════════════════════════════════
+//  HEXAD/CHAT/server/akida_consumer.hexa
+//  pure-hexa AKIDA broker → per-window spike feature stream daemon
+//
+//  Phase 1 (HEXAD/SPONTANEOUS/AKIDA_FIRST.md) consumer downstream of the
+//  broker (.py) /akida/recent deque-200. Materializes a JSONL feature stream
+//  the anima participant + telemetry harness can tail. No .py edit required.
+//
+//  DATA FLOW
+//    broker GET /akida/recent  → window slice by t_rel (default last
+//    AKIDA_WIN_MS=2000 ms)  → features (spike_rate_hz, mean_spike_ids_count,
+//    regime mode, isi_cv, last_step, n_records)  → JSONL append.
+//
+//  RUN     hexa run akida_consumer.hexa            — daemon (1 Hz default)
+//          hexa run akida_consumer.hexa selftest   — F-AKIDA-CONSUMER-1..3
+//          hexa run akida_consumer.hexa once       — one poll + write
+//
+//  ENV (g13 portable)
+//    AKIDA_BROKER_PORT       default 8000
+//    AKIDA_CONSUMER_TICK_MS  default 1000
+//    AKIDA_WIN_MS            default 2000
+//    ANIMA_AKIDA_FEATURES    default $HOME/.cache/anima/akida_features.jsonl
+//
+//  CONSTRAINTS — pure-hexa; void-safe `to_string(d[k]) == "void"`; portable.
+// ═══════════════════════════════════════════════════════════════════════════
+
+use "stdlib/net/http_client"
+
+// ── §1 env + void-safe helpers ────────────────────────────────────────────
+fn _ac_env(name: string, fallback: string) -> string {
+    let v = env(name)
+    if to_string(v) == "void" { return fallback }
+    if len(to_string(v)) == 0 { return fallback }
+    return to_string(v)
+}
+fn _ac_shq(s: string) -> string { return "'" + s.replace("'", "'\\''") + "'" }
+fn _ac_log(s: string) { let _e = exec("printf '%s\\n' " + _ac_shq(s) + " >&2") }
+fn _ac_home() -> string {
+    let h = _ac_env("HOME", "")
+    if len(h) == 0 { return "/tmp" }
+    return h
+}
+fn _ac_now() -> string {
+    let s = to_string(exec("date +%s | tr -d '\\n'")).trim()
+    if len(s) == 0 { return "0" }
+    return s
+}
+fn _ac_gf(d: dict, k: string) -> float {
+    let v = d[k]   if to_string(v) == "void" { return 0.0 }   return to_float(to_string(v))
+}
+fn _ac_gi(d: dict, k: string) -> int {
+    let v = d[k]   if to_string(v) == "void" { return 0 }   return to_int(to_string(v))
+}
+fn _ac_gs(d: dict, k: string) -> string {
+    let v = d[k]   if to_string(v) == "void" { return "" }   return to_string(v)
+}
+
+// ── §2 feature computation ────────────────────────────────────────────────
+// compute_features — records list → 6-field feature dict. Window slice on
+// t_rel ∈ [max_t_rel - win_ms/1000, max_t_rel]. ISI-CV = std(t_rel diffs) /
+// mean(t_rel diffs). Non-map records silently skipped (F-AKIDA-CONSUMER-3).
+fn compute_features(records: list, win_ms: int) -> dict {
+    let n = len(records)
+    let win_sec = (win_ms + 0.0) / 1000.0
+    let mut out = #{
+        "spike_rate_hz": 0.0, "mean_spike_ids_count": 0.0, "regime": "",
+        "isi_cv": 0.0, "last_step": 0, "n_records": 0,
+    }
+    if n == 0 { return out }
+    let mut max_t = 0.0
+    let mut i = 0
+    while i < n {
+        let r = records[i]
+        if type_of(r) == "map" {
+            let t = _ac_gf(r, "t_rel")
+            if t > max_t { max_t = t }
+        }
+        i = i + 1
+    }
+    let lo = max_t - win_sec
+    let mut sum_ns = 0.0
+    let mut last_step = 0
+    let mut regime = ""
+    let mut t_rels = []
+    let mut j = 0
+    while j < n {
+        let r = records[j]
+        if type_of(r) == "map" {
+            let t = _ac_gf(r, "t_rel")
+            if t >= lo {
+                sum_ns = sum_ns + (_ac_gi(r, "n_spikes") + 0.0)
+                let st = _ac_gi(r, "step")
+                if st > last_step { last_step = st }
+                let rg = _ac_gs(r, "regime")
+                if len(rg) > 0 { regime = rg }
+                t_rels = t_rels + [t]
+            }
+        }
+        j = j + 1
+    }
+    let m = len(t_rels)
+    if m == 0 { return out }
+    let mut isi_cv = 0.0
+    if m >= 2 {
+        let mut isi_sum = 0.0
+        let mut k = 1
+        while k < m { isi_sum = isi_sum + (t_rels[k] - t_rels[k-1])   k = k+1 }
+        let isi_mean = isi_sum / (m - 1 + 0.0)
+        if isi_mean > 0.0 {
+            let mut var_sum = 0.0
+            let mut q = 1
+            while q < m {
+                let d = (t_rels[q] - t_rels[q-1]) - isi_mean
+                var_sum = var_sum + d * d
+                q = q + 1
+            }
+            isi_cv = sqrt(var_sum / (m - 1 + 0.0)) / isi_mean
+        }
+    }
+    out["spike_rate_hz"]        = (m + 0.0) / win_sec
+    out["mean_spike_ids_count"] = sum_ns / (m + 0.0)
+    out["regime"]               = regime
+    out["isi_cv"]               = isi_cv
+    out["last_step"]            = last_step
+    out["n_records"]            = m
+    return out
+}
+
+// ── §3 broker fetch (graceful-offline) ────────────────────────────────────
+fn fetch_recent(port: int) -> list {
+    let body = http_get("http://localhost:" + to_string(port) + "/akida/recent", 5)
+    if len(body) == 0 { return [] }
+    let parsed = json_parse(body)
+    if type_of(parsed) != "map" { return [] }
+    let recs = parsed["akida"]
+    if type_of(recs) != "list" { return [] }
+    return recs
+}
+
+// ── §4 JSONL writer + in-memory ring (last 60 rows) ───────────────────────
+fn _ac_jsonl_line(f: dict, win_ms: int) -> string {
+    let mut s = "{\"ts\":" + _ac_now()
+    s = s + ",\"win_ms\":" + to_string(win_ms)
+    s = s + ",\"spike_rate_hz\":" + to_string(_ac_gf(f, "spike_rate_hz"))
+    s = s + ",\"mean_spike_ids_count\":" + to_string(_ac_gf(f, "mean_spike_ids_count"))
+    s = s + ",\"regime\":\"" + _ac_gs(f, "regime").replace("\"", "\\\"") + "\""
+    s = s + ",\"isi_cv\":" + to_string(_ac_gf(f, "isi_cv"))
+    s = s + ",\"last_step\":" + to_string(_ac_gi(f, "last_step"))
+    s = s + ",\"n_records\":" + to_string(_ac_gi(f, "n_records"))
+    return s + "}"
+}
+fn append_feature_line(path: string, line: string) -> bool {
+    let dir = to_string(exec("dirname " + _ac_shq(path) + " | tr -d '\\n'")).trim()
+    if len(dir) > 0 { let _ = exec("mkdir -p " + _ac_shq(dir)) }
+    let _ = exec("printf '%s\\n' " + _ac_shq(line) + " >> " + _ac_shq(path))
+    return true
+}
+fn ring_push(ring: list, item: dict, cap: int) -> list {
+    let mut r = ring + [item]
+    while len(r) > cap {
+        let mut nr = []
+        let mut i = 1
+        while i < len(r) { nr = nr + [r[i]]   i = i + 1 }
+        r = nr
+    }
+    return r
+}
+
+// ── §5 daemon loop ────────────────────────────────────────────────────────
+fn run_once_cycle(port: int, win_ms: int, out_path: string) -> dict {
+    let feats = compute_features(fetch_recent(port), win_ms)
+    let _ok = append_feature_line(out_path, _ac_jsonl_line(feats, win_ms))
+    return feats
+}
+fn run_daemon() {
+    let port = to_int(_ac_env("AKIDA_BROKER_PORT", "8000"))
+    let tick_ms = to_int(_ac_env("AKIDA_CONSUMER_TICK_MS", "1000"))
+    let win_ms = to_int(_ac_env("AKIDA_WIN_MS", "2000"))
+    let out_path = _ac_env("ANIMA_AKIDA_FEATURES",
+                           _ac_home() + "/.cache/anima/akida_features.jsonl")
+    let tick = if tick_ms > 0 { tick_ms } else { 1000 }
+    let win  = if win_ms  > 0 { win_ms  } else { 2000 }
+    _ac_log("[akida_consumer] start port=" + to_string(port)
+            + " tick_ms=" + to_string(tick) + " win_ms=" + to_string(win)
+            + " out=" + out_path)
+    let mut ring = []
+    let mut n = 0
+    while true {
+        n = n + 1
+        let feats = run_once_cycle(port, win, out_path)
+        ring = ring_push(ring, #{
+            "n": n, "spike_rate_hz": _ac_gf(feats, "spike_rate_hz"),
+            "regime": _ac_gs(feats, "regime"), "last_step": _ac_gi(feats, "last_step"),
+        }, 60)
+        if n == 1 || n % 30 == 0 {
+            _ac_log("[akida_consumer] tick " + to_string(n)
+                    + " rate=" + to_string(_ac_gf(feats, "spike_rate_hz"))
+                    + " regime=" + _ac_gs(feats, "regime"))
+        }
+        let secs = if tick >= 1000 { tick / 1000 } else { 1 }
+        let _s = exec("sleep " + to_string(secs))
+    }
+}
+
+// ── §6 offline selftest (F-AKIDA-CONSUMER-1..3) ───────────────────────────
+fn _approx(a: float, b: float, tol: float) -> bool {
+    let mut d = a - b   if d < 0.0 { d = 0.0 - d }   return d < tol
+}
+fn _check(p: bool, msg: string, counts: dict) {
+    if p { counts["pass"] = _ac_gi(counts, "pass") + 1   _ac_log("  PASS " + msg) }
+    else { counts["fail"] = _ac_gi(counts, "fail") + 1   _ac_log("  FAIL " + msg) }
+}
+fn _selftest() {
+    _ac_log("akida_consumer selftest — F-AKIDA-CONSUMER-1..3")
+    let counts = #{"pass": 0, "fail": 0}
+    // F-1 — ISI-CV on 5-record window {t_rel = 0,1,3,4,6} → diffs [1,2,1,2]
+    // mean=1.5 var=0.25 std=0.5 → CV = 0.5/1.5 = 0.33333... (hand-computed).
+    let recs1 = [
+        #{"step": 1, "t_rel": 0.0, "n_spikes": 2, "regime": "R3_tonic_zero_input"},
+        #{"step": 2, "t_rel": 1.0, "n_spikes": 3, "regime": "R3_tonic_zero_input"},
+        #{"step": 3, "t_rel": 3.0, "n_spikes": 4, "regime": "R3_tonic_zero_input"},
+        #{"step": 4, "t_rel": 4.0, "n_spikes": 5, "regime": "R3_tonic_zero_input"},
+        #{"step": 5, "t_rel": 6.0, "n_spikes": 6, "regime": "R3_tonic_zero_input"},
+    ]
+    let f1 = compute_features(recs1, 10000)
+    _check(_approx(_ac_gf(f1, "isi_cv"), 0.5 / 1.5, 0.0001),
+           "F-1 isi_cv ≈ 0.33333 (got " + to_string(_ac_gf(f1, "isi_cv")) + ")", counts)
+    // F-2 — spike_rate_hz = 5/10 = 0.5 Hz; mean_spike_ids = (2+3+4+5+6)/5 = 4.0.
+    _check(_approx(_ac_gf(f1, "spike_rate_hz"), 0.5, 0.0001),
+           "F-2 spike_rate_hz = 0.5 Hz", counts)
+    _check(_approx(_ac_gf(f1, "mean_spike_ids_count"), 4.0, 0.0001),
+           "F-2 mean_spike_ids_count = 4.0", counts)
+    _check(_ac_gi(f1, "last_step") == 5, "F-2 last_step = 5", counts)
+    _check(_ac_gs(f1, "regime") == "R3_tonic_zero_input", "F-2 regime preserved", counts)
+    // F-3 — non-map record skipped; broker-offline (port 1) → empty list.
+    let recs2 = [
+        #{"step": 10, "t_rel": 0.0, "n_spikes": 1, "regime": "R3_tonic_zero_input"},
+        "not-a-map-record",
+        #{"step": 11, "t_rel": 1.0, "n_spikes": 2, "regime": "R3_tonic_zero_input"},
+    ]
+    _check(_ac_gi(compute_features(recs2, 5000), "n_records") == 2,
+           "F-3 malformed record skipped (n_records=2)", counts)
+    _check(_ac_gi(compute_features(fetch_recent(1), 2000), "n_records") == 0,
+           "F-3 broker-offline graceful (n_records=0)", counts)
+    _ac_log("--- example feature row ---")
+    _ac_log(_ac_jsonl_line(f1, 10000))
+    _ac_log("akida_consumer selftest: " + to_string(_ac_gi(counts, "pass"))
+            + " PASS, " + to_string(_ac_gi(counts, "fail")) + " FAIL")
+}
+
+// ── §7 entry ──────────────────────────────────────────────────────────────
+fn main() {
+    let cli = args()
+    let mut mode = "daemon"
+    if len(cli) > 1 {
+        if cli[1] == "selftest" { mode = "selftest" }
+        if cli[1] == "once"     { mode = "once" }
+    }
+    if mode == "selftest" { _selftest()   return }
+    if mode == "once" {
+        let port = to_int(_ac_env("AKIDA_BROKER_PORT", "8000"))
+        let win_ms = to_int(_ac_env("AKIDA_WIN_MS", "2000"))
+        let out_path = _ac_env("ANIMA_AKIDA_FEATURES",
+                               _ac_home() + "/.cache/anima/akida_features.jsonl")
+        let feats = run_once_cycle(port, win_ms, out_path)
+        _ac_log("[akida_consumer] once: " + _ac_jsonl_line(feats, win_ms))
+        return
+    }
+    run_daemon()
+}
