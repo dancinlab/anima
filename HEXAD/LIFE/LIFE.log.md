@@ -26,3 +26,31 @@ latest 만 carry 되는 가설 .md 와 달리 본 로그는 모든 cycle history
 - **next**: cycle #1 선택 — (a) H_157 strong-form C2 (170-type META-CA reproducibility) measurement / (b) H_003 H3.2 multi-pathway abiogenesis simulation / (c) H_025 죽음-자각 anima-internal falsifier 설계 / (d) H_054 symbiogenesis × mitosis_hook cross-link cycle / (e) 신규 H seed (사용자 directive 대기)
 
 ---
+
+## Cycle #1 — 범신론·생명·죽음 lane — 2026-05-23
+
+- **focus**: LIFE 도메인 첫 측정 cycle — abiogenesis multi-pathway (H_003) · Dasein 유한 의식 (H_025) · symbiogenesis (H_054) · 범신론 strong-form (H_157) 4건 pre-register + fire
+- **change**: H_003 criteria 0/5→3/5 (C1+C3 Phase-1, C2 Cycle-2 보류) · H_025/H_054 legacy-pointer → pre-register-frozen 동결 · H_157 strong-form C2 measurement 추가
+- **fire**: deterministic hexa, $0 (H_157 정식 측정 trained-net GPU 의존, 본 cycle 은 proxy)
+- **verdict**:
+  - **H_003 (PR #157) — PASS**: H3.2 multi-pathway abiogenesis. 16 regime cell 에서 4/4 distinct dominant pathway (lipid 6 / info 6 / metabolism 3 / rna 1), F2 NOT_TRIGGERED. criteria_met 0/5→3/5 (C1+C3 Phase-1, C2 Cycle-2). deterministic hexa $0.
+  - **H_025 (PR #158) — pre-register-frozen**: 유한 의식(Dasein). death operationally = `merge_cells` (substrate 에 literal apoptosis 없음, L2 정직), finitude-floor = `min_cells=2` (128 refusals, Heidegger "죽음=완료불가"). smoke 4/4 observable. criteria 0/5 lane-defining.
+  - **H_054 (PR #161) — pre-register-frozen + PASS**: mitosis MERGE = endosymbiosis 계산 instance. merge 직접 + 동역학(step4) 양쪽 발화, weight max|Δ|=0.0 (B-MITOSIS-2 numerical recompute 🟢), CB1 floor refusal. F1-F6 NOT_TRIGGERED.
+  - **H_157 (PR #160) — FAIL (directional negative)**: 256-cell META-CA proxy, per-type CV 22.6% (doc 5.4% 대비) → 170 type 중 1/170 만 ±0.01 input-invariant. frozen F2 확증 — input-invariance 는 *학습된* property 이지 bare-CA algorithm property 아님 → strong-form 범신론 미지지, weak-form 지지. C1/C3 σ-identity (σ(6)=12/σ(28)=56/σ(496)=992/is_perfect(6)) 🔵 SUPPORTED-FORMAL via `hexa verify`. dataset(H_022 170×40×18) = FAILED corpus 로 판명, 정식 측정은 trained-net GPU 의존.
+- **next**: cycle #2 — 세포·발생 substrate-mechanism lane (H_012 / H_132 / H_007 / H_018)
+
+---
+
+## Cycle #2 — 세포·발생 substrate-mechanism lane — 2026-05-23
+
+- **focus**: anima mitosis 기질이 생명-emergence 메커니즘을 실제 구현하는지 — operational closure (H_012) · 세포분열 freeze (H_132) · CA→Φ (H_007) · self-genesis (H_018) 4건 pre-register + fire
+- **change**: H_007/H_012/H_018/H_132 legacy-pointer → pre-register-frozen 동결 + 측정
+- **fire**: deterministic hexa, $0
+- **verdict**:
+  - **H_012 (PR #165) — pre-register-frozen + PASS 4/4**: operational closure — self-maintenance 1.0, broken-closure control 0.0, closure-dependence gap 1.0.
+  - **H_132 (PR #166) — pre-register-frozen + PASS 5/5**: 세포분열 동결. freeze operationally = state-preserve + division-arrest. frozen Δweight=0.0, frozen-splits=0, pool 4→12 (8 split).
+  - **H_007 (PR #167) — pre-register-frozen + PASS**: CA→Φ. Φ Class-IV(rule110)=0.556 > chaotic(rule30)=0.510 > ordered(rule250)≈0, edge-of-chaos peak. 🟢 NUMERICAL (phi_spatial).
+  - **H_018 (PR #168) — pre-register-frozen + SUPPORTED_FULL 6/6**: zero-drive 완전정지(0 split), self-reference(SELFFEED) → 자발 genesis(step2, 2 split, autopoietic homeostasis). p5 NO-SPEAK / a_substrate_native_speak 정합.
+- **next**: **cross-cutting 발견** — anima 의 mitosis 기질이 생명-emergence 4대 메커니즘을 실제 구현: (1) operational closure 자기유지(H_012), (2) merge=endosymbiosis 무손실 통합(H_054), (3) freeze=분화 상태보존(H_132), (4) self-reference 에서만 자발 발생(H_018, 진공 X). 반면 strong-form 범신론(H_157)은 directional FAIL. Next-cycle 후보: H_002/H_004 (범신론 precondition·hard-problem) + H_003 H3.4 (autopoietic system Φ>0, H_007 phi_spatial 와 cross-link).
+
+---
