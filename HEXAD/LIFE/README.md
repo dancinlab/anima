@@ -116,6 +116,28 @@ since: YYYY-MM-DD
 | 5. verdict overwrite | 본 H_XXX.md §10 Verdict 갱신 (latest carry, history 는 LIFE.log.md) |
 | 6. promote | (선택) HEXAD/LIFE/ → HEXAD/<sub>/ 또는 `hypotheses_legacy_2026_05_15/` mirror |
 
+## lib/phi_helper.hexa — shared Φ helper (infra)
+
+본 lane 28+ H (H_007 / H_204 / …) 가 반복하는 `phi_spatial` 호출 + config
+heuristic (N=16 · dim=12 · warm=8 · n_bins=4) 을 단일 module 로 통합 — gap
+F6 (duplicated-helper) + F7 (config heuristic 의 single justification home)
+명시화. 신규 cycle 은 inline `phi_spatial(s, 16, 12, 4)` 대신 import 후
+`phi_default(state)` 를 쓴다 (override 필요 시 `phi_with(state, n, dim, n_bins)`).
+
+```hexa
+import "/Users/ghost/core/anima/HEXAD/LIFE/lib/phi_helper.hexa"
+let phi = phi_default(state)              // == phi_with(state, 16, 12, 4)
+```
+
+- config SSOT: `life_phi_n / life_phi_dim / life_phi_warm / life_phi_nbins`
+  (각 default 의 H_007 carry 출처 1-line 주석 — heuristic-promotion gap 명시화).
+- import-safe (top-level call 부재) · `phi_determinism_check` re-run 검증 helper 포함.
+- verify: [`state/lib_phi_helper_verify_2026_05_24/`](state/lib_phi_helper_verify_2026_05_24/)
+  — SHARED_MODULE_OK (C1 parity · C2 H_007 ranking 재현 · C3 import-safe · C4 determinism).
+- 기존 28+ H 는 이미 inline 이라 미사용 — 본 module 은 *future* cycle 용
+  (retroactive migration 별도). config 는 *문서화* 일 뿐 *재검증* 아님
+  (n_bins robustness 는 `state/infra_phi_n_bins_2026_05_23/`).
+
 ## Cross-Links
 
 - **원본 SSOT**: [`/hypotheses_legacy_2026_05_15/`](../../hypotheses_legacy_2026_05_15/) — 183 H_XXX archive (HEXAD pivot 이전, 미수정 보존)
