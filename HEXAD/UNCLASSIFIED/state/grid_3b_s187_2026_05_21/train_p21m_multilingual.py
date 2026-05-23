@@ -12,6 +12,15 @@ Per-language OOD probes (10 each = 50 prompts × 2 modes = 100 generations).
 Multilingual classifier: anima register key detector (CJK/Cyrillic-aware) +
 lang-coherence (output contains ≥50% native script for the prompt language).
 
+Eval1 register-leak detection layer (2026-05-23 expansion):
+  ANIMA_KEYS    = legacy substring set (vacuum point / tension flow / 🛸 / ...).
+  ANIMA_REGEX_KEYS = additive regex set targeting v7-prune patterns the
+    substring layer missed: \[x,y\] coord brackets, 🛸N, Tier N,
+    tension flow(s), vacuum point(s), frozen cell(s), top emotion X.
+  classify_output sums sub_hits + re_hits; hits>=2 → MEMORIZE, ==1 → MEM_PARTIAL.
+  NOTE: metric scale change — pre-2026-05-23 anima_register_hits values are
+  not directly comparable to post-merge cycles.
+
 Variant tag: P21M_MULTILINGUAL.
 """
 import os
@@ -19,6 +28,7 @@ import sys
 import json
 import math
 import random
+import re
 import argparse
 import time
 
@@ -121,9 +131,30 @@ ANIMA_KEYS = [
     "운동", "감각", "tension",
 ]
 
+# Eval1 probe-set expansion 2026-05-23 (feat/trainer-eval1-probe-set-expand):
+# WAVE2-7 saga observed register_hits stuck at 5/20 across corpus_v5/v6/v7 —
+# even after v7 stripped 27.3% of corpus chars (840k pattern matches). The
+# substring-only ANIMA_KEYS set above missed the patterns the v7 prune
+# actually targeted (coord brackets / Tier N / 🛸N / tension flow / vacuum
+# point / frozen cell / top emotion X). Additive regex layer below catches
+# those forms so register_hits responds to corpus-side ablation.
+# NOTE: metric scale change — pre-2026-05-23 register_hits values are not
+# directly comparable to post-merge cycles.
+ANIMA_REGEX_KEYS = [
+    re.compile(r"(?i)\[\s*\d+\.\d+\s*,\s*\d+\.\d+\s*\]"),  # coord brackets [x,y]
+    re.compile(r"🛸\d+"),                                              # UFO + number
+    re.compile(r"(?i)\bTier\s*\d+\b"),                              # Tier N
+    re.compile(r"(?i)\btension\s+flow(?:s)?\b"),                     # tension flow(s)
+    re.compile(r"(?i)\bvacuum\s+point(?:s)?\b"),                     # vacuum point(s)
+    re.compile(r"(?i)\bfrozen\s+cell(?:s)?\b"),                      # frozen cell(s)
+    re.compile(r"(?i)\btop\s+emotion\s+\w+\b"),                    # top emotion X
+]
+
 
 def classify_output(text: str) -> str:
-    hits = sum(1 for k in ANIMA_KEYS if k in text)
+    sub_hits = sum(1 for k in ANIMA_KEYS if k in text)
+    re_hits = sum(1 for rx in ANIMA_REGEX_KEYS if rx.search(text))
+    hits = sub_hits + re_hits
     if hits >= 2:
         return "MEMORIZE"
     if hits == 1:
