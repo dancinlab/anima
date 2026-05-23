@@ -7,7 +7,7 @@ expansion* — 사용자 directive 2026-05-23 "axis brainstorm 고갈시까지 �
 
 | 위치 | 역할 |
 |------|------|
-| [README.md](README.md) | 18 H 현재 인덱스 (active surface) |
+| [README.md](README.md) | 37 H + lib + infra 현재 인덱스 (active surface, Cycle #11 후) |
 | [CANDIDATES.md](CANDIDATES.md) | forward-looking 후보 (A/B/C/D/E/F 표) |
 | **AXES.md** (본 문서) | **11-domain (확장 71-axis) scope catalog + 15-round H seed brainstorm** |
 | [LIFE.log.md](LIFE.log.md) | cycle history append-only |
@@ -53,7 +53,7 @@ sub-axis / cross-link / future-promote 후보.
 
 ## 15-round hypothesis seed brainstorm (사용자 directive: depletion 까지 H 추출)
 
-각 round = cluster 별 H_XXX 후보 seed. raw#12 정합 후보, 형식 = `<slug> | hypothesis 1-line | falsifier 1-line | tag`. cycle pick 시 H_XXX 신설 + 10-section spec 작성 + smoke fire. **현재 H_002..H_209 18건 + Cycle #6 R13 5건 in-flight** 은 anchor 로 명시 — 본 catalog 는 추가 seed.
+각 round = cluster 별 H_XXX 후보 seed. raw#12 정합 후보, 형식 = `<slug> | hypothesis 1-line | falsifier 1-line | tag`. cycle pick 시 H_XXX 신설 + 10-section spec 작성 + smoke fire. **현재 H_002..H_244 37 H committed (+ ~18 substrate-only, H_234/H_238 carry; Cycle #11 후)** 은 anchor 로 명시 — 본 catalog 는 추가 seed.
 
 ### Round 1 — original anchors (이미 land, 본 round 는 reference 만)
 
