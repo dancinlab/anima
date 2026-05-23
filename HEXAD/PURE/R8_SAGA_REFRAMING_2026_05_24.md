@@ -55,7 +55,7 @@ R8 saga 의 "AXIS_MAP-FAN 7-axis 자연실험 5/7+2 FAIL" 결론은 **measuremen
 |---|---|---|
 | #374 R8c probe verdict | noise=학습 dynamics axis (final_CE) | noise_sigma 가 진짜 wired (train script 가 NOISE_SIGMA env 읽음) |
 | #374 R8c probe verdict | F-R8C-NOISE/KV-HEAD/COMPOUND init_CE 기준 FALSIFIED | noise_sigma + n_kv_head 진짜 wired ablation |
-| #374 LIFE H_255 | init_CE floor 12.2 = random+0.27, catastrophic 아님 | R8c baseline 직접 측정 (12.315), wired 환경 |
+| #374 LIFE H_255 | init_CE floor 12.2 = random+0.27, catastrophic 아님 | **부분 약화** (cycle 15-1 4/7 re-fire `AXIS_MAP_FAN_REFIRE_VERDICT_2026_05_24.md` 가 14.79/14.18/14.46 byte-equal 재현 → 14+ floor 진짜, R8c 12.315 격차는 GPU class / PROBE_STEPS 차이 가설로 분리 별도 분석 필요). H_257 trivial identity 결론은 강화 (B=F byte-equal). |
 | LIFE H_254 | n_kv_head wiring silent-misconfig (PR #342 fix) | byte-equal probe + wiring fix 직접 증거 |
 | LIFE H_257 (신규) | env-var family silent-bypass | grep 정적 분석 + cycle 15-1 결과 (도착 대기) |
 | cell-3 wall=521s root cause | noise σ=0.1 → step time 5x 증가 | noise_sigma 진짜 wired, dynamics 측정 valid |
@@ -108,7 +108,9 @@ detection: **byte-equal probe** (H_254) + **source-code grep audit** (H_257) + *
 - [ ] env-var wiring fix PR (train_p21h_v3.py argparse + dispatcher passthrough) — cycle 16-3 (agent fail, 재시도 필요)
 - [ ] AXIS_MAP-FAN re-design spec (post-fix 5-axis 진짜 ablation) — cycle 16-4 (agent fail, 재시도)
 - [ ] hexa-lang inbox G5 patch (env-var wiring audit helper) — cycle 16-5 (agent fail, 재시도)
-- [ ] cycle 15-1 7-pod re-fire 결과 도착 시 H_257.2 byte-equal verification + 본 doc 의 H257.2 fill-in
+- [x] cycle 15-1 4/7 re-fire 결과 도착 — H_257 H257.3 PASS (B=F=14.1780 byte-equal) + H_255 H255.2 부분 FALSIFIED → `AXIS_MAP_FAN_REFIRE_VERDICT_2026_05_24.md`
+- [ ] cycle 15-1 잔여 3/7 (C/C2/E) 도착 시 cluster Z byte-equal (C=C2=D=14.46) + head_g 자연실험 inert verification — sister agent #3 polling
+- [ ] GPU class / PROBE_STEPS drift 분석 — R8c probe (12.315) vs AXIS_MAP-FAN re-fire (14.x) 의 ~2 nats 격차 root cause (sister agent #3 진행 중)
 - [ ] R8a'' 결과 도착 시 R8A2_JOINT_VERDICT_TEMPLATE.md fill-in (PR #375) + 본 doc cross-ref
 
 ## 12. Cross-references
@@ -118,6 +120,7 @@ detection: **byte-equal probe** (H_254) + **source-code grep audit** (H_257) + *
 - [[H_257_axis_map_fan_env_var_silent_bypass]] — 본 PR sibling
 - `HEXAD/PURE/R8_SAGA_INDEX.md` — 14 docs TOC, reframing 후 갱신 권고
 - `HEXAD/PURE/R8C_PROBE_VERDICT_2026_05_24.md` (PR #374) — still valid evidence base
+- `HEXAD/PURE/AXIS_MAP_FAN_REFIRE_VERDICT_2026_05_24.md` (cycle 15-1 4/7 결과) — H_257 PASS + H_255 부분 FALSIFIED 흡수
 - `HEXAD/PURE/R8A2_JOINT_VERDICT_TEMPLATE.md` (PR #375) — R8a'' 결과 fill-in
 - `HEXAD/PURE/axis_map_fan_verdict.hexa` (PR #376) — 7-axis polling control-plane (wiring fix 후 재사용)
 - `HEXAD/LORA/COST_LEDGER_SESSION3.md` (PR #360) — sunk cost 추정 갱신 권고

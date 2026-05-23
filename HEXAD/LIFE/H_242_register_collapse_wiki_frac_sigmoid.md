@@ -251,3 +251,51 @@ honest_note: L1 (1-point underdetermined) ex-ante 명시 — 본 verdict 는 SUP
              PARTIAL (C1∧¬C2), endpoint inversion 이면 FALSIFIED — post-hoc
              retraction 없이 frozen claim 그대로 채점.
 ```
+
+## §A1 Variable amend (2026-05-24, PR #340 실측 반영)
+
+**요지 (TL;DR)**: H_242 의 sigmoid *input* 변수 후보를 **M5 HANGUL_COVERAGE → M3
+TOKEN_DIVERSITY (TTR)** 으로 이동한다. 원래 §2 의 PR #303 anchor (anima-OWN
+hangul 24-32%) 가 PR #340 corpus_s101 600MB 직접 측정에서 **1.66-2.34% 로 실측
+반증** (proxy 가정 falsified) — register-sink 의 *진짜* anima-side anchor 는
+M3 TTR ≈ 0.03 (extreme repetition). 본 amend 는 §2/§3 의 input-axis 기재를
+M3 로 명시 보강하고, 역사적 M5 prediction 은 §3 H242.2 legacy / §7 F5 / §9
+PR #303 cross-link 로 보존 (raw#82 post-hoc retraction 금지 정합).
+
+### 변경 entry (in-place 갱신 위치)
+
+| 위치 | 갱신 | 내용 |
+|------|------|------|
+| frontmatter `revision` | 신규 | `v2 amend 2026-05-24 (M5→M3 per PR #340 corpus_s101 실측)` |
+| §3 H242.6 M3-DOMINANT | 신규 | `corpus M3 TOKEN_DIVERSITY (TTR) × register_hits Pearson |r| ≥ 0.7` (M5 H242.2 demoted, M3 primary) |
+| §7 F6 M3-DECORRELATED | 신규 | M3-축 falsifier (|r| < 0.3 → H242.6 strong-FAIL) |
+| §10 verdict v2_amend_caveat | 신규 | PR #340 실측 반영 + raw#82 frozen interval 보존 |
+
+### 보존 (raw#82 정합)
+
+- **frozen sigmoid claim (f_c ∈ [0.5,0.7])**: 갱신 없음 — wiki_frac axis
+  자체는 PR #340 영향 밖 (E2/E3 endpoint 그대로 채점).
+- **H242.2 ANTI-COLLAPSE (M5 legacy)**: §3 표에서 **demoted (legacy)** 표기
+  로 남김. M5 hangul 의 collapse-prediction historical 가치는 PR #303 cross-section
+  evidence 로 §2 + §9 에 보존 — verdict_rule 핵심에서만 제외.
+- **F5 INIT-DRIVER**: 갱신 없음 — axis2 control 측 falsifier (input 변수 무관).
+
+### 근거 PR / 측정
+
+- **PR #340** (MERGED 2026-05-24): `corpus_quality_probe.hexa` (PR #287) 로
+  실 Track 1 입력 `corpus_s101.jsonl` 600 MB 측정 — head 1MB+5MB exit 0
+  verbatim: M3 TTR = 0.0344/0.0297, M5 hangul = 1.66%/2.34%. proxy 24-32%
+  대역 밖 (1/10-1/19), proxy↔실 corpus equivalence 반증.
+- **PR #301** (E2 lineage): wiki_frac=0.5 → register_hits=4/20,
+  ko=PURE_MEMORIZE — M3 extreme-repetition ↔ memorize chain 정합.
+
+### Honest C3 (amend-specific)
+
+- **non-controversial**: PR #340 6-metric measurement 이 verbatim numerical
+  anchor — M5 proxy 가정 반증은 *측정-derived*, debate 불요.
+- **frozen sigmoid axis (wiki_frac) 불변**: input-axis (M3 vs M5) 변경은
+  *predictor candidate* 의 demotion 일 뿐, sigmoid 자체의 frozen claim 은
+  무관 — raw#82 위반 없음.
+- **M3-축 sigmoid 추가 frozen 아님**: H242.6 은 Pearson |r| coupling 만
+  pre-register — M3 위 sigmoid fit (별도 phase-transition) 은 본 amend 의
+  대상 아님. 별도 cycle 에서 측정-anchor 도착 시 신규 frozen H 가능.

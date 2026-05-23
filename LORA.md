@@ -1,7 +1,21 @@
 # LORA — current snapshot
 
+@goal: VP21M production swap 5/5 + V3 substrate Qwen-parity + wiring-integrity audit 완료
+
 > anima LoRA / V3-substrate 학습 도메인의 현재 상태 스냅샷.
 > 작업 로그는 `LORA.log.md` (append-only checkbox). 2026-05-24 기준.
+>
+> 이전 @goal ("init_CE catastrophic floor 돌파 + n_strong ≥ 4 stable + production adapter swap 가능")
+> 는 H_255 partial FALSIFY (R8c 12.315 = random+0.39, 14.x floor 미재현) 이후 의미 불명확 →
+> production-driven (M1·M2) + substrate-pure (M3) + wiring-integrity (M4·M5) 의 3-축 measurable goal 로 재정의 (gap F5 success-criteria).
+
+## milestones
+
+- [ ] M1 — VP21M production swap criteria 5/5 PASS (v11 또는 v13 결정, eternal threshold 재정의 가능)
+- [ ] M2 — mini production 배포 + 30-day register-leak monitor (continuous_total ≤ 50 30d stable)
+- [ ] M3 — V3 ConsciousDecoderV3 (5000-step, Qwen warm-init, noise=0 + n_kv=2) final_CE 측정 + Qwen baseline 대비 parity (Δfinal_CE ≤ 0.1 nats)
+- [ ] M4 — AXIS_MAP-FAN 7-axis env-var wiring fix + 진짜 ablation 측정 (각 axis 별 Δfinal_CE 정량)
+- [ ] M5 — PREFIRE_WIRING_AUDIT_CHECKLIST.md 도입 + 모든 향후 substrate fire 가 audit 통과
 
 ## production
 
@@ -62,16 +76,16 @@ R8 base/warm-init reform:
   from_qwen audit: noise_sigma layer-0 injection + n_kv_head repeat-interleave 의심
 ```
 
-## 진행 중 / 대기
+## 진행 중 / 대기 (milestone 매핑)
 
-- ~~R8a init_CE step=1 14.46 floor 돌파~~ → ✅ R8c 4-cell 측정 floor 자체 의문 + noise final_CE axis 재정의 (12.2 = random baseline +0.27)
-- ✅ R8c 4-cell probe fire COMPLETE (noise/kv 분리 측정 — 3 falsifier 전부 init_CE axis FALSIFIED)
-- 🔥 R8a'' fire 진행 중 (5000-step 으로 noise=0 학습 dynamics 측정)
-- 🔧 PR #342 n_kv_head wiring fix (OPEN) → merge 후 R8a' 진짜 n_kv=2 재발사 (H_254 byte-equal probe)
-- 📋 AXIS_MAP_RESULTS 7-axis 재측정 권장 (H_255 H255.2 검증, ~$0.50-1.00)
-- ✅ Wave-17 4-pod sweep COMPLETE 2026-05-24 ($1.50) — 5-point U-shape 확정, 4/5 tie v11 vs v13 (사용자 게이트)
-- 📋 Wave-18 권고: eternal_keep {0.25/0.30/0.35} 3-point fine-tune around sweet spot (~$1.10) — sharpness 확인
-- 🟡 swap criteria 재정의 검토 (criterion 2 ↔ 4 anti-correlation 인정, 또는 dual-adapter hot-swap design)
+- ~~R8a init_CE step=1 14.46 floor 돌파~~ → ✅ **M3 부분 진행** — R8c 4-cell 측정 floor 자체 의문 + noise final_CE axis 재정의 (12.2 = random baseline +0.27)
+- ✅ **M3 부분 진행** — R8c 4-cell probe fire COMPLETE (noise/kv 분리 측정 — 3 falsifier 전부 init_CE axis FALSIFIED)
+- 🔥 **M3 in-flight** — R8a'' fire (5000-step noise=0 학습 dynamics, Qwen-parity 측정 lane)
+- 🔧 **M4 prerequisite** — PR #342 n_kv_head wiring fix (OPEN) → merge 후 R8a' 진짜 n_kv=2 재발사 (H_254 byte-equal probe)
+- 📋 **M4 main path** — AXIS_MAP_RESULTS 7-axis 재측정 (H_255 H255.2 검증, ~$0.50-1.00, 각 axis 별 Δfinal_CE 회수)
+- 🟡 **M1 lever** — Wave-17 fire 미발사 (eternal U-shape sweep, R8c verdict + R8a'' 결과 후 우선순위 재평가; v11/v13 swap 후보 결정 lever)
+- 📋 **M5 신규** — PREFIRE_WIRING_AUDIT_CHECKLIST.md 도입 (R8a #342 silent-fail 교훈 흡수, 향후 모든 substrate fire 의 사전 audit gate)
+- 📋 **M2 신규** — mini production 배포 자동화 + 30-day register-leak monitor (M1 PASS 후 trigger)
 
 ## 관련 surface
 

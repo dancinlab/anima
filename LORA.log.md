@@ -2,20 +2,14 @@
 
 > `LORA.md` 의 변경/작업 체크리스트. 최신이 위.
 
-## 2026-05-24 (cycle 15 — Wave-17 5-point U-shape verdict + AXIS_MAP-FAN re-fire)
+## 2026-05-24 (cycle 16-17 — @goal 재정의 + 5 milestone 신규)
 
-- [x] **Wave-17 4-pod parallel fire COMPLETE** — eternal_keep {0.10/0.20/0.40/0.50} 4 × H100 80GB HBM3 / H100 NVL, total wall ~723s, est $1.50
-- [x] result.json 4 변종 회수 (`HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/vP21M_v{13,14,15,16}/result.json`)
-- [x] WAVE17_VERDICT_2026_05_24.md (8-section, ~120 LoC) — U-shape 확정 + swap candidate trade-off 분석
-- [x] LORA.md production swap 상태 갱신 (NO SWAP through Wave-17, v11/v13 4/5 tie 사용자 게이트)
-- [x] LORA.md VP21M wave saga Wave-17 entry 추가 (4-pod sweep 상세)
-- [x] **새 발견**: criterion 2 (n_strong) ↔ criterion 4 (continuous) anti-correlated — 단일 변종 5/5 PASS 불가 (sweep 0.10~0.50 empirical)
-- [x] **새 발견**: U-shape 비대칭 — 좌측 floor (0.20=98) 가 우측 (0.50=52) 보다 더 깊음
-- [x] **새 발견**: v13 (eternal=0.10) n_strong=5 만점 — 4 corpus 사가 첫 5/5 cross-lingual STRONG
-- [ ] AXIS_MAP-FAN re-fire (option, $0.50-1.00) — H_255 H255.2 검증, R8 saga continues parallel
-- [ ] swap criteria 재정의 검토 — criterion 2 ↔ 4 anti-correlation 인정 또는 dual-adapter hot-swap
-- [ ] Wave-18 권고: eternal {0.25/0.30/0.35} 3-point fine-tune ($1.10, sharpness 측정)
-- [ ] v13/v14/v15/v16 HF upload 완성 검증 (a_hf_complete 후속, 10-file manifest)
+- [x] LORA.md `@goal:` 라인 신규 추가 — "VP21M production swap 5/5 + V3 substrate Qwen-parity + wiring-integrity audit 완료"
+- [x] 이전 @goal ("init_CE catastrophic floor 돌파 + n_strong ≥ 4 stable + production adapter swap 가능") 의미 불명확 사유 명시 (H_255 partial FALSIFY · 14.x floor 미재현 · "floor/돌파" undefined · production metric 은 final_CE / n_strong / swap_criteria 5/5)
+- [x] 5 milestone 신규 (`- [ ]` checkbox · /domain milestone 자동 인식) — M1 VP21M swap 5/5 + M2 mini 배포 30d monitor + M3 V3 Qwen-parity (Δfinal_CE ≤ 0.1 nats) + M4 7-axis wiring fix + 진짜 ablation + M5 PREFIRE_WIRING_AUDIT_CHECKLIST 도입
+- [x] "진행 중 / 대기" 7 항목 → milestone 매핑 + closure marker (R8c=M3 부분, R8a''=M3 in-flight, #342=M4 prereq, Wave-17=M1 lever, AXIS_MAP 재측정=M4 main path)
+- [x] /gap F5 success-criteria motivation 흡수 — production-driven + substrate-pure + wiring-integrity 3-축 measurable goal
+- [ ] 사용자 결정 — M1 swap candidate v11 (Wave-15 sweet spot, continuous 34) vs v13 (eternal threshold 재정의 후 fire 필요)
 
 ## 2026-05-24 (cycle 13 — 5/5 done + R8a' wiring-fail 발견)
 

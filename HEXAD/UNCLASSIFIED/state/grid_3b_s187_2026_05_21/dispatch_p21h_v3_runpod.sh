@@ -72,6 +72,15 @@ P21H_CKPT_EVERY=${P21H_CKPT_EVERY:-500}                   # intermediate ckpt ev
 P21H_CKPT_OSC_THRESHOLD=${P21H_CKPT_OSC_THRESHOLD:-0.0}   # CE std > X → save + early-stop (0=disable)
 P21H_CKPT_OSC_WINDOW=${P21H_CKPT_OSC_WINDOW:-10}          # rolling window for osc
 P21H_EARLY_STOP_PATIENCE=${P21H_EARLY_STOP_PATIENCE:-0}   # CE no-improve N log entries (0=disable)
+# AXIS-MAP 6 axes (H_257 cycle 16-3 fix) — env-var → cmdline passthrough.
+# MVP: train script reads + logs values only; train-loop impl is follow-up PR.
+P21H_CURRICULUM_PHASE_STEPS=${P21H_CURRICULUM_PHASE_STEPS:-0}
+P21H_DISTILL_TEACHER=${P21H_DISTILL_TEACHER:-}
+P21H_HEAD_G_OBJECTIVE=${P21H_HEAD_G_OBJECTIVE:-}
+P21H_HEAD_G_ENABLE=${P21H_HEAD_G_ENABLE:-0}
+P21H_FREEZE_EMBED=${P21H_FREEZE_EMBED:-0}
+P21H_LANG_BALANCED=${P21H_LANG_BALANCED:-0}
+P21H_CONTRASTIVE_LANG=${P21H_CONTRASTIVE_LANG:-0.0}
 
 # LR per init variant (random needs higher LR than warm)
 case "$INIT_VARIANT" in
@@ -247,7 +256,14 @@ CMD="bash $P21HR/launch_trainer_p21h.sh $P21HR/train_p21h_v3.py \
   --noise-sigma $P21H_NOISE_SIGMA --lambda-mitosis $P21H_LAMBDA_MITOSIS --n-kv-head $P21H_N_KV_HEAD \
   --mitosis-max $P21H_MITOSIS_MAX --ckpt-every $P21H_CKPT_EVERY \
   --ckpt-osc-threshold $P21H_CKPT_OSC_THRESHOLD --ckpt-osc-window $P21H_CKPT_OSC_WINDOW \
-  --early-stop-patience $P21H_EARLY_STOP_PATIENCE"
+  --early-stop-patience $P21H_EARLY_STOP_PATIENCE \
+  --curriculum-phase-steps $P21H_CURRICULUM_PHASE_STEPS \
+  --distill-teacher \"$P21H_DISTILL_TEACHER\" \
+  --head-g-objective \"$P21H_HEAD_G_OBJECTIVE\" \
+  --head-g-enable $P21H_HEAD_G_ENABLE \
+  --freeze-embed $P21H_FREEZE_EMBED \
+  --lang-balanced $P21H_LANG_BALANCED \
+  --contrastive-lang $P21H_CONTRASTIVE_LANG"
 
 echo "[train] P21H V3 launch ($INIT_VARIANT)"
 $SSH "cd $P21HR && nohup $CMD > $P21HR/train.log 2>&1 & echo TRAIN_PID \$!"
