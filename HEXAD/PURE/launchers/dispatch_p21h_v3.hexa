@@ -41,8 +41,15 @@ fn parse_argv(args: list) -> dict {
     // --measure-motivation OPTIONAL: post-fire 8-factor motivation calc
     // (spontaneous_lib.hexa) embedded into result.json. Back-compat: absent
     // flag → behaviour unchanged.
+    // --corpus-path <path> OPTIONAL: skip both corpus_s101 + multi_wiki
+    // builds on the pod, scp the supplied local jsonl to BOTH the anima
+    // and wiki corpus paths instead (Phase D corpus is already
+    // multilingual + lang-balanced + stream/qa-structured, so it serves
+    // as a drop-in replacement for both feeds). Back-compat: absent flag
+    // → builds fire on the pod as before.
     let mut fire = "0"
     let mut measure_motiv = "0"
+    let mut corpus_path = ""
     let mut pos = []
     let mut k = 0
     while k < len(args) {
@@ -50,6 +57,12 @@ fn parse_argv(args: list) -> dict {
         if a == "--fire" { fire = "1" }
         else if a == "--dry-run" { fire = "0" }
         else if a == "--measure-motivation" { measure_motiv = "1" }
+        else if a == "--corpus-path" {
+            if k + 1 < len(args) {
+                corpus_path = args[k + 1]
+                k = k + 1
+            }
+        }
         else { pos = pos + [a] }
         k = k + 1
     }
@@ -66,6 +79,7 @@ fn parse_argv(args: list) -> dict {
         "seed": seed,
         "fire": fire,
         "measure_motivation": measure_motiv,
+        "corpus_path": corpus_path,
     }
 }
 
@@ -148,6 +162,23 @@ fn pod_terminate(api_key: str, pod_id: str, save_pod: str, dry_run: bool) -> boo
 }
 
 // 3. corpus build (stdlib/cloud cloud_run-wired) ---------------------------
+//
+// Default path: build corpus_s101 (anima feed) + multi_wiki (wiki feed) on
+// the pod via cloud_run_opts.
+//
+// Bypass path (--corpus-path <local.jsonl> set on argv): SKIP both builds;
+// instead, scp the local jsonl to both the anima and wiki corpus paths on
+// the pod via cloud_copy_to_opts. Used by Phase D fires where the corpus
+// has been built locally with stricter quality gates (M3 TTR ≥ 0.3,
+// 도우미 0, stream/qa 80/20, lang-uniform; see PR #368).
+
+fn _pod_anima_corpus_path(p21hr: str) -> str {
+    return p21hr + "/state/corpus_s101_build_s102_2026_05_19/corpus_s101.jsonl"
+}
+
+fn _pod_wiki_corpus_path(p21hr: str) -> str {
+    return p21hr + "/multi_wiki_corpus.jsonl"
+}
 
 fn corpus_build_anima(host: str, opts: list, p21hr: str, dry_run: bool) -> dict {
     let argv = ["python3", p21hr + "/build_corpus_s101.py", "--out-dir", p21hr, "--s1-n", "777000", "--seed", "1337"]
@@ -176,6 +207,43 @@ fn corpus_build_multilingual_wiki(host: str, opts: list, p21hr: str, langs: str,
         return #{"sha": "", "size": "0"}
     }
     return #{"sha": "", "size": "0"}
+}
+
+fn corpus_scp_override(host: str, opts: list, p21hr: str, local_path: str, dry_run: bool) -> dict {
+    // --corpus-path bypass: scp local jsonl to BOTH the anima and wiki
+    // corpus paths on the pod (Phase D corpus is multilingual + lang-
+    // balanced + stream/qa-structured, drop-in for both feeds).
+    let anima_pod = _pod_anima_corpus_path(p21hr)
+    let wiki_pod  = _pod_wiki_corpus_path(p21hr)
+    let mkdir_argv = ["mkdir", "-p", p21hr + "/state/corpus_s101_build_s102_2026_05_19"]
+    if dry_run {
+        println("[dry-run] corpus_scp_override: cloud_run_opts(" + host + ", mkdir -p " + p21hr + "/state/corpus_s101_build_s102_2026_05_19)")
+        println("[dry-run] corpus_scp_override: cloud_copy_to_opts(" + host + ", " + local_path + " -> " + anima_pod + ")")
+        println("[dry-run] corpus_scp_override: cloud_copy_to_opts(" + host + ", " + local_path + " -> " + wiki_pod + ")")
+        return #{"status": "dry-run", "anima_pod": anima_pod, "wiki_pod": wiki_pod}
+    }
+    let exists = exec("test -f " + local_path + " && echo yes || echo no").trim()
+    if exists != "yes" {
+        println("[corpus_scp_override] FATAL — local corpus not found: " + local_path)
+        return #{"status": "fail", "reason": "local file missing"}
+    }
+    let mk = cloud_run_opts(host, opts, mkdir_argv)
+    if mk.ok != 1 {
+        println("[corpus_scp_override] FATAL mkdir " + mk.message)
+        return #{"status": "fail", "reason": "mkdir failed"}
+    }
+    let a = cloud_copy_to_opts(host, opts, local_path, anima_pod)
+    if a.ok != 1 {
+        println("[corpus_scp_override] FATAL anima scp " + a.message)
+        return #{"status": "fail", "reason": "anima scp failed"}
+    }
+    let w = cloud_copy_to_opts(host, opts, local_path, wiki_pod)
+    if w.ok != 1 {
+        println("[corpus_scp_override] FATAL wiki scp " + w.message)
+        return #{"status": "fail", "reason": "wiki scp failed"}
+    }
+    println("[corpus_scp_override] uploaded " + local_path + " -> " + anima_pod + " + " + wiki_pod)
+    return #{"status": "ok", "anima_pod": anima_pod, "wiki_pod": wiki_pod}
 }
 
 // 4. train launch (stdlib/cloud cloud_nohup-wired) -------------------------
@@ -390,6 +458,8 @@ fn main() {
     let seed = to_string(parsed["seed"])
     let dry_run = to_string(parsed["fire"]) != "1"
     let measure_motiv = to_string(parsed["measure_motivation"]) == "1"
+    let corpus_path = to_string(parsed["corpus_path"])
+    let use_corpus_override = corpus_path != ""
     let env = build_env(init_variant)
     let p21hr = "/workspace/p21hr"
     let mode = "FIRE"
@@ -400,6 +470,9 @@ fn main() {
             + " bsz=" + to_string(env["P21H_BSZ"])
             + " lr="  + to_string(env["P21H_LR"]))
     println("    teacher_sha=" + to_string(env["P21H_TEACHER_CKPT_SHA256"]))
+    if use_corpus_override {
+        println("    corpus_override=" + corpus_path + " (SKIP corpus_s101 + multi_wiki builds)")
+    }
     if dry_run {
         println("    (default dry-run — pass --fire to incur real GPU cost)")
     }
@@ -421,8 +494,12 @@ fn main() {
     let port = to_string(ssh["port"])
     let host = "root@" + ip
     let opts = runpod_pod_opts(port)
-    let _ = corpus_build_anima(host, opts, p21hr, dry_run)
-    let _ = corpus_build_multilingual_wiki(host, opts, p21hr, "en,ko,zh,ru,ja", "10", dry_run)
+    if use_corpus_override {
+        let _ = corpus_scp_override(host, opts, p21hr, corpus_path, dry_run)
+    } else {
+        let _ = corpus_build_anima(host, opts, p21hr, dry_run)
+        let _ = corpus_build_multilingual_wiki(host, opts, p21hr, "en,ko,zh,ru,ja", "10", dry_run)
+    }
     let _ = train_launch(host, opts, p21hr, env, init_variant, seed, dry_run)
     let _ = result_pull(host, opts, p21hr, "v" + variant, dry_run)
     if measure_motiv {

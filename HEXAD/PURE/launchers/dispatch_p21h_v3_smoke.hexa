@@ -1,6 +1,6 @@
 // HEXAD/PURE/launchers/dispatch_p21h_v3_smoke.hexa
 //
-// Smoke for dispatch_p21h_v3.hexa — 8 falsifiers:
+// Smoke for dispatch_p21h_v3.hexa — 9 falsifiers:
 //   F-DISP-PARSE        — import succeeds (dispatcher parses)
 //   F-DISP-ARG-CONTRACT — argv defaults + per-init LR vs ENV_CONTRACT.md
 //   F-DISP-SHA256       — match / mismatch / missing-file / skip
@@ -9,6 +9,8 @@
 //   F-DISP-DRYRUN       — default dry-run prints plan, exits 0, zero real calls
 //   F-DISP-MOT          — 8-factor motivation calc returns score >= 0 (synthetic)
 //   F-DISP-MIT16        — P21H_MITOSIS_MAX default == 16 (R6 cap, PR #310)
+//   F-DISP-CORPUS-PATH  — --corpus-path flag parses + dry-run branches to scp
+//                         override (skip corpus_s101 + multi_wiki builds)
 
 import "./dispatch_p21h_v3.hexa"
 
@@ -172,6 +174,42 @@ fn _f_disp_mit16() -> int {
     return _assert(ok, "F-DISP-MIT16 — P21H_MITOSIS_MAX default == 16 (R6 cap, PR #310)")
 }
 
+fn _f_disp_corpus_path() -> int {
+    // F-DISP-CORPUS-PATH — --corpus-path flag (a) parses on argv (b) is
+    // absent → empty default (back-compat) (c) dry-run branches to
+    // corpus_scp_override (skip both legacy build fns; print the override
+    // banner with the supplied local path).
+    let mut ok = true
+    // (a) flag parses + carries value.
+    let p1 = parse_argv(["--corpus-path", "/tmp/xc.jsonl", "P21H_PhaseD_v1", "qwen", "1337"])
+    if to_string(p1["corpus_path"]) != "/tmp/xc.jsonl" { ok = false }
+    if to_string(p1["variant"]) != "P21H_PhaseD_v1" { ok = false }
+    if to_string(p1["init_variant"]) != "qwen" { ok = false }
+    if to_string(p1["seed"]) != "1337" { ok = false }
+    // (b) flag absent → empty default (back-compat).
+    let p2 = parse_argv(["P21H_alpha", "random", "1337"])
+    if to_string(p2["corpus_path"]) != "" { ok = false }
+    // (c) flag mixed with --fire + --measure-motivation still parses.
+    let p3 = parse_argv(["--fire", "--measure-motivation", "--corpus-path", "/x/y.jsonl", "V", "qwen", "42"])
+    if to_string(p3["fire"]) != "1" { ok = false }
+    if to_string(p3["measure_motivation"]) != "1" { ok = false }
+    if to_string(p3["corpus_path"]) != "/x/y.jsonl" { ok = false }
+    // (d) dry-run end-to-end: invoke dispatcher in subprocess with
+    // --corpus-path; expect the override banner + corpus_scp_override
+    // dry-run line; expect NO corpus_build_anima / multi_wiki dry-run
+    // lines (the branch SKIPs them).
+    let disp = exec("ls HEXAD/PURE/launchers/dispatch_p21h_v3.hexa 2>/dev/null || find . -name dispatch_p21h_v3.hexa -not -name '*smoke*' 2>/dev/null | head -1").trim()
+    let out = exec("hexa run " + disp + " --corpus-path /tmp/phaseD.jsonl P21H_PhaseD_smoke qwen 1337 2>&1; echo __RC__=$?")
+    if out.index_of("__RC__=0") < 0 { ok = false }
+    if out.index_of("corpus_override=/tmp/phaseD.jsonl") < 0 { ok = false }
+    if out.index_of("[dry-run] corpus_scp_override") < 0 { ok = false }
+    if out.index_of("SKIP corpus_s101 + multi_wiki builds") < 0 { ok = false }
+    // legacy build fns MUST NOT fire in override mode.
+    if out.index_of("[dry-run] corpus_build_anima") >= 0 { ok = false }
+    if out.index_of("[dry-run] corpus_build_multilingual_wiki") >= 0 { ok = false }
+    return _assert(ok, "F-DISP-CORPUS-PATH — flag parses + dry-run branches to scp override (skip legacy builds)")
+}
+
 fn main() {
     println("[dispatch_p21h_v3_smoke] START")
     let mut n_pass = 0
@@ -183,7 +221,8 @@ fn main() {
     n_pass = n_pass + _f_disp_dryrun()
     n_pass = n_pass + _f_disp_mot()
     n_pass = n_pass + _f_disp_mit16()
-    println("[dispatch_p21h_v3_smoke] END: " + to_string(n_pass) + "/8 PASS")
-    if n_pass < 8 { exit(1) }
+    n_pass = n_pass + _f_disp_corpus_path()
+    println("[dispatch_p21h_v3_smoke] END: " + to_string(n_pass) + "/9 PASS")
+    if n_pass < 9 { exit(1) }
     exit(0)
 }
