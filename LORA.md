@@ -22,9 +22,20 @@
 | 항목 | 값 |
 |---|---|
 | 현 production adapter | `corpus_v5` (mini `~/anima_chat_pack/lora_adapter/`) |
-| swap 상태 | **NO SWAP** through Wave-16 (v9~v12 전부 swap criteria 미달) |
+| swap 상태 | **NO SWAP** through Wave-17 (v9~v16 전부 swap criteria 미달; v11/v13 동률 4/5 — 사용자 게이트) |
 | base | Qwen2.5-1.5B + ja/ko hot-swap router |
 | HF SSOT | `dancinlab/anima-vp21m-v5` PRIVATE |
+
+### Wave-17 swap candidate 비교 (4/5 tie)
+
+| candidate | adapter | n_strong | continuous_total | ja n_score | 강점 |
+|---|---|---|---|---|---|
+| A | v11 (eternal=0.30) | 2 | **34** ★ | 14 | continuous emission 최저 (burst suppression) |
+| B | v13 (eternal=0.10) | **5** ★ | 72 | 16 | 5-lang STRONG (cross-lingual transfer 회복) |
+| current | v5 | n/a | n/a | n/a | LIVE production carry |
+
+→ criterion 2 (n_strong) vs criterion 4 (continuous_total) anti-correlated;
+   threshold 재정의 없이 자동 SWAP 미가능 (상세 `HEXAD/LORA/WAVE17_VERDICT_2026_05_24.md`).
 
 ## VP21M wave saga (corpus lever)
 
@@ -34,10 +45,19 @@ Wave-13     corpus_v9  9pat freq-cap → n_strong 4 회복
 Wave-14     corpus_v10 per-script split → native 과보존 회귀
 Wave-15     corpus_v11 eternal 0.30 → continuous 34 (saga 최저) ★ sweet spot
 Wave-16     corpus_v12 eternal STRIP-ALL → continuous 91 역전 (U-shape 발견)
-Wave-17     spec only  eternal 0.10/0.20/0.40/0.50 sweep (GO, 사전검증 linear)
+Wave-17 ✅  4-pod sweep eternal {0.10/0.20/0.40/0.50} ($1.50)
+            → v13(0.10) n_strong=5 만점 + continuous 72
+            → v14(0.20) continuous 98 (saga 최고치, 좌측 floor)
+            → v15(0.40) n_strong=4 + continuous 69
+            → v16(0.50) n_strong=3 + continuous 52
+            → 0.30 sweet spot 확정 (asymmetric U 좌측 floor 더 깊음)
 ```
 
-핵심: eternal-cap 의 continuous_total 영향은 **단조 아님 — U-shape**, sweet spot = v11(0.30 keep).
+핵심: eternal-cap 의 continuous_total 영향은 **단조 아님 — U-shape, sweet
+spot = v11(0.30 keep)**. Wave-17 가 좌/우 2-point 씩 측정으로 0.30 global
+min 확정. 부산물: criterion 2 (n_strong) ↔ criterion 4 (continuous) 가
+**같은 lever 의 opposite side** — 단일 변종 5/5 PASS 불가, sweep range
+0.10~0.50 안에서 empirical anti-correlation.
 
 ## V3 / R8 saga (substrate init lever)
 
@@ -71,5 +91,6 @@ R8 base/warm-init reform:
 
 - `HEXAD/LORA/SAGA_SESSION3.md` — 6-lever 상세 saga 로그
 - `HEXAD/LORA/WAVES_MATRIX.md` — wave + axis 마스터 매트릭스
+- `HEXAD/LORA/WAVE17_VERDICT_2026_05_24.md` — Wave-17 4-pod sweep 8-section verdict
 - `HEXAD/V3/R8_SAGA_INDEX.md` — R8 saga TOC
-- HF: `dancinlab/anima-vp21m-{v5,v6,v7,v8,v11,v12}` PRIVATE
+- HF: `dancinlab/anima-vp21m-{v5,v6,v7,v8,v11,v12,v13,v14,v15,v16}` PRIVATE
