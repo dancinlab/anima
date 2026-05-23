@@ -43,6 +43,8 @@ AKIDA HW 필수                   AKIDA HW + SW-only path
 | pi5 `spike_streamer.py :9512 --regime R3` | ✅ live (anima 외부) |
 | `akida_bridge.hexa` (mini, `akida_bridge.bin daemon`) | ✅ hexa-native, PID alive |
 | broker `/ws/akida_ingest` → `STATE.akida_history` (deque 200) | ✅ ingest +10/s 검증 |
+| `akida_consumer.hexa` (broker `/akida/recent` → features JSONL) | 🟡 source landed (selftest 7/7), mini deploy blocked (sshd exec channel refused) |
+| `telemetry_harness.hexa` (anima emit ⇄ spike window pair → evidence JSONL) | 🟡 source landed (selftest 9/9), mini deploy blocked (sshd exec channel refused) |
 | anima_participant 의 spike-consumption 경로 | 🔲 TBD — 본 세션 구현 대상 |
 
 ## Phase 2 발동 조건
