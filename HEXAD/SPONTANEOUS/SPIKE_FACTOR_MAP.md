@@ -58,6 +58,7 @@ dict 를 제공한다.
 
 각 row "Phase 1 initial — refined by telemetry harness evidence" —
 `[[telemetry_harness]]` 가 누적한 correlation evidence 로 재조정.
+refit advisory 산출은 `[[EVIDENCE_ANALYZER]]` §3 / §6 SSOT.
 
 | feature | threshold | delta to factor | rationale |
 |---|---|---|---|
@@ -88,7 +89,8 @@ Unknown / 신규 regime tag → modulator 1.0 (no-op, forward-compat).
 | (unknown tag) | 1.0 | conservative no-op (forward-compat) |
 
 R1 / R2 modulator 값은 R3 만 live 인 현 시점 placeholder —
-`[[REGIME_EXPANSION]]` §7(c) verbatim 으로 telemetry 후 refit 대상.
+`[[REGIME_EXPANSION]]` §7(c) verbatim 으로 telemetry 후 refit 대상
+(refit pipeline = `[[EVIDENCE_ANALYZER]]` §3 `regime_modulator_observed`).
 `HEXAD/NEUROMORPHIC/AKD1000.md` regime taxonomy 가 R3 외 확장될 때
 본 표 1 row 추가 + `_spike_modulator` switch 1 branch 추가 (live tag =
 `spike_streamer.py --regime R3`).

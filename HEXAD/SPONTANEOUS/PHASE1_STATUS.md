@@ -164,7 +164,7 @@ ordered list — blocker resolution 시 순차 발화:
 
 1. **mini sshd 회복 (blocker #1) →** `akida_consumer.hexa` + `telemetry_harness.hexa` mini deploy + `akida_bridge.hexa` restart → cycle-4/E sanity rerun (deploy smoke) → 첫 evidence JSONL row 누적 개시.
 2. **pi5 R1/R2 schedule 출시 (blocker #2) →** broker `/akida/recent` 가 `≥ 2` distinct regime + transition `≥ 5` 관측 → `telemetry_status.hexa` 4-condition gate 의 regime row PASS 누적 시작.
-3. **≥ 7 일 telemetry 누적 →** `telemetry_status.hexa` 의 spans / rows / regime dist / spike-rate hist 4 row all-PASS → Phase 2 SW emitter (`sw_spike_emitter.hexa`) 구현 발화 ([[SW_CONDITION_DESIGN]] §3 daemon outline 기반).
+3. **≥ 7 일 telemetry 누적 →** `telemetry_status.hexa` 의 spans / rows / regime dist / spike-rate hist 4 row all-PASS → [[EVIDENCE_ANALYZER]] 1-shot run 으로 [[SPIKE_FACTOR_MAP]] §3/§4 (re)검증 + KS drift 게이트 충족 확정 → Phase 2 SW emitter (`sw_spike_emitter.hexa`) 구현 발화 ([[SW_CONDITION_DESIGN]] §3 daemon outline 기반).
 4. **PR #134 (SPIKE_FACTOR_MAP) + PR #135 (SW_CONDITION_DESIGN) merge →** 두 design doc 가 main 진입 → cross-link `[[SW_CONDITION_DESIGN]]` / `[[SPIKE_FACTOR_MAP]]` 모두 main 에서 dead-link 해소.
 5. **`feat/telemetry-modulated-factors` branch merge →** telemetry_harness 의 `modulated_factors` 필드 production line 진입 → path D ([[PARTICIPANT_SPIKE_INTEGRATION]] §4.1) observability 활성 → 100 row 누적 시 F-PARTICIPANT-INTEG-1..3 측정 가능.
 6. **anima_participant `.hexa` 포팅 완료 OR `.py` guard 완화 →** path D 의 `modulated_factors` evidence 가 live `decision["factors"]` 로 wire-in (path B 발동, [[PARTICIPANT_SPIKE_INTEGRATION]] §4.2) → spike-grounded 자연발화 production 확립.
