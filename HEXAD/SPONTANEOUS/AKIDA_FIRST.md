@@ -45,6 +45,8 @@ AKIDA HW 필수                   AKIDA HW + SW-only path
 | broker `/ws/akida_ingest` → `STATE.akida_history` (deque 200) | ✅ ingest +10/s 검증 |
 | `akida_consumer.hexa` (broker `/akida/recent` → features JSONL) | 🟡 source landed (selftest 7/7), mini deploy blocked (sshd exec channel refused) |
 | `telemetry_harness.hexa` (anima emit ⇄ spike window pair → evidence JSONL) | 🟡 source landed (selftest 9/9), mini deploy blocked (sshd exec channel refused) |
+| `spontaneous_lib.hexa::apply_spike_features` (spike features → 8-factor delta + regime modulator, substrate-only `relevance`/`balance` invariant) | ✅ source landed (PR #143 squash `3bce310a1`, selftest F-SPIKE-APPLY-1..4 4/4 PASS) |
+| `server/telemetry_status.hexa` (Phase-2-gate CLI: spans / rows / regime dist / spike-rate histogram / 4-condition gate) | ✅ source landed (PR #144 squash `a311e3eae`, selftest F-STATUS 11/11 PASS) |
 | anima_participant 의 spike-consumption 경로 | 🔲 TBD — 본 세션 구현 대상 |
 
 ## Phase 2 발동 조건
