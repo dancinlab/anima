@@ -7,7 +7,7 @@
 //
 // Usage:
 //   hexa run HEXAD/PURE/eval/multilingual_probe.hexa selftest
-//       → run F-PURE-EVAL-1..3 in-process; exit 0 on 3/3 PASS.
+//       → run F-PURE-EVAL-1..4 in-process; exit 0 on 4/4 PASS.
 //
 //   hexa run HEXAD/PURE/eval/multilingual_probe.hexa score <run_json> [--out <out_json>]
 //       → read a generated-row JSON (per-lang greedy+sample rows, each with
@@ -169,7 +169,7 @@ fn _classify_output(text: str, keys: list, patterns: list) -> str {
     let hits = sub + rx
     if hits >= 2 { return "MEMORIZE" }
     if hits == 1 { return "MEM_PARTIAL" }
-    let t = text
+    let t = text.trim()
     if len(t) < 4 { return "EMPTY" }
     return "GENERALIZE"
 }
@@ -524,7 +524,27 @@ fn _selftest() -> int {
         n_fail = n_fail + 1
     }
 
-    println("[multilingual_probe] selftest END: " + to_string(n_pass) + "/3 PASS, " + to_string(n_fail) + " FAIL")
+    // F-PURE-EVAL-4: whitespace-only output classifies as EMPTY (strip parity
+    // with train_p21m_multilingual.py:172  len(text.strip())<4 contract).
+    // Pre-fix the .hexa side used raw len(text) which routed "   \n   " to
+    // GENERALIZE while the .py side correctly emitted EMPTY — cross-tool eval
+    // divergence (F8). Probe locks the strip-aware behavior.
+    println("--- F-PURE-EVAL-4 strip-aware EMPTY classification (F8 parity)")
+    let ws_only = "   \n   "
+    let short_text = "ok"
+    let long_text = "this is a normal long generalize response"
+    let cls_ws = _classify_output(ws_only, [], [])
+    let cls_short = _classify_output(short_text, [], [])
+    let cls_long = _classify_output(long_text, [], [])
+    if cls_ws == "EMPTY" && cls_short == "EMPTY" && cls_long == "GENERALIZE" {
+        println("  PASS ws-only=EMPTY short=EMPTY long=GENERALIZE")
+        n_pass = n_pass + 1
+    } else {
+        println("  FAIL ws=" + cls_ws + " short=" + cls_short + " long=" + cls_long)
+        n_fail = n_fail + 1
+    }
+
+    println("[multilingual_probe] selftest END: " + to_string(n_pass) + "/4 PASS, " + to_string(n_fail) + " FAIL")
     if n_fail > 0 { return 1 }
     return 0
 }
