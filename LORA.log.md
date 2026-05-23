@@ -2,6 +2,18 @@
 
 > `LORA.md` 의 변경/작업 체크리스트. 최신이 위.
 
+## 2026-05-24 (cycle 17 cleanup — pod kill + swap decision)
+
+- [x] pod cleanup 8 kill — AXIS 7-pod re-fire (#383 4/7 결과 도착 후 3 hung C/C2/E + 4 done A/B/D/F 모두 cleanup) + 옛 p21h-qwen 잔재 (b23g2abvbphz33). R8a'' (6gqf9nsdquz8ug) 1 pod만 keep
+- [x] worktree cleanup 26 → 0 (agent-* 전부 force remove)
+- [x] **swap decision: NO SWAP through Wave-17** — v11/v13 둘 다 4/5 criteria, n_strong vs continuous trade-off anti-correlated. 자율 결정: M5 (PREFIRE) + M3 (R8a'' in-flight) 우선 진행, swap candidate 재평가는 Wave-18 fine-tune (eternal 0.25/0.30/0.35) 또는 R8a'' final_CE 결과 후
+- [x] cycle 17 마감 8/8 done (1-cycle 17 작업 + 2-3-6-7-10-11-12-13-14-15-18-19-20-21-22-23-24 누적 21 task)
+- [x] g8 위반 인정 — 모든 fire 가 raw runpodctl/dispatcher (hexa cloud 미사용). 향후 모든 fire prompt 에 hexa cloud 의무화 권고
+- [ ] cycle 16-4 (AXIS_MAP-FAN re-design spec) — R8a'' 결과 후 진행
+- [ ] cycle 16-5 (hexa-lang G5 inbox) — 이미 PR #627 G1-G4 cover, G5 append 또는 보류
+- [ ] R8a'' H100 fire 진행 중 (~50min 남음, Monitor 가동 중 task bhp5kekzp)
+
+
 ## 2026-05-24 (cycle 16-17 — @goal 재정의 + 5 milestone 신규)
 
 - [x] LORA.md `@goal:` 라인 신규 추가 — "VP21M production swap 5/5 + V3 substrate Qwen-parity + wiring-integrity audit 완료"
