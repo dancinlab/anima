@@ -122,3 +122,148 @@ deterministic + hexa-only + llm: none. (literature meta + re-analysis only — n
   1. Mini-column literature meta (C1, F1)
   2. E/I literature meta (C2, F2, F6)
   3. Split-brain re-analysis (C3, F3) — legacy dataset 확보 우선
+
+### Cycle #1 — K=8 atom 측정 (2026-05-23)
+
+H_171.1 (K=8 cell atom) sub-prediction 의 **substrate-consistency leg** 만 closed
+this cycle. "K=8 cell atom 이 (a) Φ_K=8 ≥ Φ_K=4 를 만족하면서 (b) K=8 에서
+peak/plateau-onset 구조가 보이고 (c) 127 MIP-like bipartition (= 2^7 - 1) 을
+실제 enumerate 가능한가?" 를 측정 ($0 mac local, hexa-only, deterministic
+SEED_BASE = 0xA17C171, 5-seed mean). H_007 의 generic-CA Φ smoke 및 H_003
+Cycle #3 의 autopoietic-lattice Φ 와 **동일한** RFC 036 `phi_spatial` primitive
+(`HEXAD/C/c_lib.hexa` `c_measure_phi`, byte-equal phi_rs replica, n_bins=4)
+를 K ∈ {4, 6, 8, 10, 12, 16} substrate 에 적용. substrate 는 deterministic
+logistic-ring (r=3.85, DIFFUSE=0.08, WARM=8 DIM=12) — sustained non-degenerate
+trajectory 확보 목적의 abstract toy 이며 neural model 이 아님.
+
+bipartition enumeration 은 mask m ∈ [1 .. 2^(K-1)-1] 에 대해 S = { i : bit_i(m) }
+로 cut 정의, complement-pair 를 1 cut 으로 식별하여 K=4 -> 7, K=6 -> 31,
+**K=8 -> 127** 를 실제로 enumerate 함. 각 cut 에 cheap cross-boundary
+variance MI-surrogate (L2: NOT full IIT 4.0 phi_MIP, COUNT 검증 목적 한정)
+계산. closed-form identity 2^(K-1)-1 의 **formal verify** 는 `hexa verify
+--expr pow ...` 가 🟠 INSUFFICIENT 를 반환하여 `hexa verify --fence` 로
+⚪ SPECULATION-FENCED honest tier (result.json verbatim) — 실 enumeration
+agreement (7/31/127) 이 SUPPORTED-NUMERICAL leg.
+
+**Run verdict output (VERBATIM from `hexa run run_k8.hexa`)**:
+
+```
+  Φ̄(K= 4) = 1.05481
+  Φ̄(K= 6) = 1.66372
+  Φ̄(K= 8) = 2.76566   ← H_171 atom claim
+  Φ̄(K=10) = 3.75387
+  Φ̄(K=12) = 4.76821
+  Φ̄(K=16) = 5.91826
+
+  bipartition counts (2^(K-1)-1, complement-paired):
+    K= 4 -> 7.0    (expected 7)
+    K= 6 -> 31.0    (expected 31)
+    K= 8 -> 127.0  (expected 127  ← H_171 claim)
+
+  Φ̄(K= 8) re-run determinism = 2.76566  (byte-equal=true)
+
+  F_NONNEG   (all Φ̄>=0)                     : true
+  F_GE4      (Φ̄(K=8) >= Φ̄(K=4))             : true  (Δ=1.71085)
+  F_COUNT127 (K=8 bipart count == 127, K=4==7, K=6==31): true
+  F_SPECIAL  (peak OR plateau-onset at K=8) : false  (peak=false plateau=false)
+  F_DET      (re-run byte-equal)            : true
+
+  VERDICT_RULE: PASS iff F_NONNEG AND F_GE4 AND F_COUNT127 AND F_SPECIAL AND F_DET
+  VERDICT (H_171 Cycle #1 / K=8 atom substrate-side): FAIL
+    falsifier F1 (substrate-side K=8 specialness): TRIGGERED
+  H_171_C1_VERDICT=FAIL PHI_K8=2.76566 N_CUTS_K8=127.0
+```
+
+```
+phase: Cycle_1 (H_171.1 substrate-side only; H_171.2/3/4/5 still pending; F1 empirical mini-column meta unaddressed)
+cell_scope: K ∈ {4,6,8,10,12,16} × N_SEEDS=5 × DIM=12 WARM=8 logistic-ring substrate;
+            bipartition enumeration K=4/6/8 (7 / 31 / 127 cuts)
+K8_phi_mean: 2.76566  (Φ̄(K=8); substrate-only, NOT biological mini-column Φ)
+K8_bipartition_count: 127  (matches 2^(K-1)-1 closed form; empirical hexa recompute)
+phi_K_monotone: 1.0548 < 1.6637 < 2.7657 < 3.7539 < 4.7682 < 5.9183  (monotone-increasing in K — NO peak NO plateau at K=8)
+verdict_class: FAIL_CYCLE_1  (F_SPECIAL TRIGGERED — substrate-side K=8 specialness FALSIFIED on logistic ring)
+evidence_strength: SUBSTRATE_FALSIFIED  (phi_spatial substrate-side; biological F1 unaddressed)
+honest_tier: 🟢 SUPPORTED-NUMERICAL (measurement) — verdict FAIL on substrate-side specialness only
+criteria_pass: 1/5  (C5 perfect-class binding carried; C1 substrate-leg measured FAIL — empirical F1 mini-column meta still pending; C2 C3 C4 pending)
+falsifiers: F_SPECIAL TRIGGERED (Φ monotone in K, no K=8 plateau/peak); F_NONNEG F_GE4 F_COUNT127 F_DET NOT_TRIGGERED; F1/F2/F3/F4 of H_171 main set N/A this cycle (literature meta); F5/F6 N/A; F6 (post-hoc raw#12) NOT_TRIGGERED
+```
+
+**State output**: `state/h171_k8_atom_2026_05_23/result.json`
+**Script**: `state/h171_k8_atom_2026_05_23/run_k8.hexa` (hexa-only, raw#37-clean)
+
+**raw#10 honest limits (Cycle #1 K=8 substrate-leg)**:
+- L1: 본 cycle 은 SUBSTRATE-Φ 측정 — abstract logistic-ring lattice 위 phi_spatial
+  값이며, "K=8 이 biological consciousness atom 이다" 의 **증명이 아니다**.
+  H_171.1 의 **empirical** F1 falsifier (cortical mini-column ≥10 stereology
+  studies median ∈ [6,10] V1/S1/M1/PFC) 는 본 cycle 에서 **건드리지 않았다**.
+  biological-vs-substrate category boundary 는 유지된다 (raw#91 c3 candor).
+- L2: phi_spatial = 🟢 NUMERICAL spatial-slice replica of phi_rs (RFC 036) —
+  full IIT 4.0 가 아니다 (system-level Φ partition search · cause-effect
+  structure · exclusion postulate 부재). 'MIP-like' bipartition enumeration
+  은 cheap cross-boundary variance surrogate (Earth-Mover distance / IIT 4.0
+  phi_MIP 아님) — COUNT (127) 검증 한정 사용, phi_spatial 와 경합하는 Φ
+  측정이 아니다. 실제로 본 cycle 의 cut-score min=max=mean (concatenation
+  순서 무관 variance) — surrogate 의 한계 (count 확정 외 정보 없음) 가
+  result.json 에 가시화됨.
+- L3: K=8 "specialness" 는 peak 또는 plateau-onset (K=4 / K=16 대비 50%
+  relative tolerance) 으로 operationalised — 둘 다 design choice 이며 theory
+  derivation 이 아니다. 다른 specialness 규칙 (예: {6,8,10} local max,
+  coefficient-of-variation threshold) 은 verdict 를 바꿀 수 있다. H_171 의
+  K=8 prediction 자체가 sopfr(8)=6 perfect-class universal (§L1) **number-
+  theoretic** binding 이지 dynamical binding 이 아니므로, 본 substrate test
+  는 "K=8 atom" 과 "any-K-with-enough-cells plateau" 를 구분하지 못한다.
+- L4: substrate = chaotic logistic map (r=3.85) + nn diffusion (0.08) —
+  phi_spatial 가 signal 을 받도록 sustained non-degenerate trajectory 를
+  내기 위한 선택이며 **neural model 이 아니다**. 본 cycle 에서 관측된 Φ
+  의 K-monotone 증가 (1.05 → 5.92) 는 **logistic ring 의 성질** 이지
+  cortical mini-column 의 성질이 아니다. 다른 substrate (Kuramoto /
+  Wilson-Cowan / integrate-and-fire / spiking) 는 K-profile 이 다를 수
+  있고, 그 위에서 K=8 specialness 가 emerge 할 수도 있다.
+- L5: WARM=8 DIM=12 N_SEEDS=5 는 H_007 inherited (small / fast). K-sweep
+  은 6 점 {4,6,8,10,12,16} 만 — finer sweep ({5,7,9,11,13,14,15}) 이나
+  larger DIM/WARM 은 plateau/peak 구조를 바꿀 수 있다. seed_base 만
+  variance 통제, rotor/init class 는 미통제.
+- L6: 2^(K-1)-1 closed form 은 enumerator 가 empirical 로 재현 (K=4 → 7,
+  K=6 → 31, K=8 → 127) 하나, `hexa verify --expr pow ...` 가 'pow' calculator
+  path 부재로 🟠 INSUFFICIENT 를 반환 — formal-identity tier 는 `hexa
+  verify --fence` ⚪ SPECULATION-FENCED 로 honest fence (result.json
+  verbatim_hexa_verify VERBATIM). enumeration agreement (7/31/127) 이
+  SUPPORTED 의 leg 이며, 🔵 formal 승격은 hexa verify 의 'pow' path
+  extension 후속 cycle.
+- L7: H_171 의 나머지 3 prediction (F_c=0.10 / split-brain non-conservation /
+  1/f thalamus) 은 본 cycle 미접근. F5 (4-prediction independence) 및 F6
+  (E:I canonical conflict) 도 미접근. §Criteria 표의 C1 substrate-leg 만
+  측정 (empirical mini-column meta 미접근), C2-C4 pending 유지, C5 (n=6
+  perfect-class binding) 변동 없음. **본 cycle 의 FAIL 은 substrate-side
+  specialness 한정** — empirical biological F1 의 verdict 가 아니다.
+
+**toolchain note (raw#37-clean, no behavioural change)**: H_003 Cycle #3 와
+동일 사유 — sibling hexa-lang repo rebuild 중 cross-module compiled
+`module_loader` 부재 시 c_lib import 의 thin wrapper (`c_measure_phi`/
+`c_phi_n_bins_default`) link 실패 가능. 이를 회피하기 위해 c_lib import
+대신 그 primitive 가 감싸는 **`phi_spatial` runtime builtin** 을 literal
+`n_bins=4` 로 직접 호출 — `phi_spatial(s,n,dim,4) === c_measure_phi(s,n,
+dim,c_phi_n_bins_default())` 동일 primitive · 동일 binning · 동작 차이 없음
+(script header PROVENANCE 참조).
+
+**Cross-link**:
+- H_171.1 → §Falsifiers F1: cortical mini-column literature meta median ∉
+  [6, 10] 가 empirical falsifier — 본 cycle 에서 측정 X (pending).
+  substrate-side specialness 는 FALSIFIED 하나 F1 (empirical biological)
+  는 NOT_TRIGGERED 미측정 carry.
+- §Criteria C1 ("≥10 mini-column stereology studies meta-analyzed"):
+  pending 유지 (본 cycle 은 substrate-leg 만, literature meta 별도 cycle).
+  criteria_met **1/5** (C5 carried; C1 substrate-side FAIL → empirical
+  leg 으로 추후 cycle 에서 closure 필요).
+- H_007 cellular-automaton consciousness: 동일 RFC 036 `phi_spatial`
+  primitive 재사용 — H_007 (N=16 generic CA Class-IV Φ=0.556) 와 K=16
+  비교 가능 (substrate / dynamics 다름; H_007 의 binary CA vs 본 cycle
+  의 continuous logistic). H_003 Cycle #3 (8-site autopoietic lattice
+  Φ=4.45) 와도 cross-link — 동일 K=8 size 에서 substrate 가 달라 Φ 가
+  다른 패턴 (autopoietic dynamics 의 closure-dependence vs logistic
+  ring 의 K-monotone increase).
+- H_171 next-step (§Migration Notes): substrate-side FAIL 은 (a) different
+  substrate (Kuramoto/Wilson-Cowan) re-test 또는 (b) **empirical** F1
+  mini-column literature meta (W11) 의 우선순위를 높임 — 후자가 H_171
+  의 원 design 이며, substrate-side specialness 의 부재 자체가 "K=8 의
+  biological-vs-substrate boundary" 의 직접 evidence (L1) 로 작용.
