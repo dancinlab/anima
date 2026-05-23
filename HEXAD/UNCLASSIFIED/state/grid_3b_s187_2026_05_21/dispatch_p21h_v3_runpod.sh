@@ -18,6 +18,23 @@
 #     nohup bash dispatch_p21h_v3_runpod.sh $VAR $INIT 1337 > $VAR.log 2>&1 &
 #   done
 
+# ─── CALLER WARNING: env-var concat anti-pattern ─────────────────────────
+# Each P21H_* must be a SEPARATE inline assignment. Concatenating multiple
+# vars into ONE string value breaks `--steps $P21H_STEPS` expansion.
+#
+# ✗ WRONG (single string, all extra args land in $P21H_STEPS):
+#   P21H_STEPS="5000 P21H_BSZ=2 P21H_BLOCK=512 ..." bash dispatch_p21h_v3_runpod.sh ...
+#   → CMD: --steps 5000 P21H_BSZ=2 P21H_BLOCK=512 ...  (argparse FAIL)
+#
+# ✓ CORRECT (each var separate inline assignment, space-separated):
+#   env P21H_STEPS=5000 P21H_BSZ=2 P21H_BLOCK=512 P21H_LR=5e-5 \
+#       SAVE_POD=1 \
+#       bash dispatch_p21h_v3_runpod.sh P21H_axis_C qwen 1337
+#
+# Observed failure: 4 of 7 AXIS_MAP-FAN pods (C/C2/D/E) crashed at launch
+# with this bug on 2026-05-23 04:34Z fan-out. Archived as vP21H_axis_*.envbug_*.
+# ─────────────────────────────────────────────────────────────────────────
+
 set -uo pipefail
 
 VARIANT="${1:-P21H_alpha}"
