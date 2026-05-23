@@ -1,0 +1,168 @@
+// PURE Track-1 result.json → AXIS_MAP_RESULTS row auto-wiring (SSOT for F4 closure judge).
+// PASS = "≥ min_langs of 5 langs ≥ floor on multilingual_probe.hexa" (PR #264).
+// Default floor=PARTIAL, min_langs=4. Verdict rank: STRONG > PARTIAL > {WEAK,PURE_MEMORIZE,EMPTY}.
+//
+// Usage: hexa run .../result_to_axis_map.hexa [--floor PARTIAL|PASS] [--min-langs N] <variant> <result_json>
+//
+// Result.json shape: {verdict, per_lang_verdicts:[{lang, verdict, n_score, n_generalize, n_lang_coherent}],
+// n_anima_register_hits_total, register_regress, init_log_ce, final_log_ce, train_wall_s}
+
+fn _verdict_rank(v: str) -> int {
+    if v == "STRONG" { return 2 }
+    if v == "PARTIAL" { return 1 }
+    return 0
+}
+
+fn _floor_rank(floor: str) -> int {
+    if floor == "PASS" { return 2 }
+    if floor == "STRONG" { return 2 }
+    return 1
+}
+
+fn parse_result_json(path: str) -> dict {
+    if !file_exists(path) {
+        println("[result_to_axis_map] ERROR result.json not found: " + path)
+        exit(2)
+    }
+    let r = json_parse(read_file(path))
+    if type_of(r) != "map" {
+        println("[result_to_axis_map] ERROR root not a map (got " + type_of(r) + ")")
+        exit(2)
+    }
+    return r
+}
+
+fn count_pass_langs(per_lang: list, floor: str) -> int {
+    if type_of(per_lang) != "array" { return 0 }
+    let need = _floor_rank(floor)
+    let n = len(per_lang)
+    let mut hits = 0
+    let mut i = 0
+    while i < n {
+        let row = per_lang[i]
+        if type_of(row) == "map" {
+            let v = row["verdict"]
+            if type_of(v) == "string" && _verdict_rank(v) >= need { hits = hits + 1 }
+        }
+        i = i + 1
+    }
+    return hits
+}
+
+fn judge_closure(result: dict, floor: str, min_langs: int) -> dict {
+    let per_lang = result["per_lang_verdicts"]
+    let mut total = 5
+    if type_of(per_lang) == "array" && len(per_lang) > 0 { total = len(per_lang) }
+    let n_pass = count_pass_langs(per_lang, floor)
+    let mut closure = "FAIL"
+    if n_pass >= min_langs { closure = "PASS" }
+    return #{
+        "closure": closure, "n_pass": n_pass, "n_total": total,
+        "floor": floor, "min_langs": min_langs,
+        "criterion": to_string(min_langs) + "/" + to_string(total) + " langs ≥ " + floor
+    }
+}
+
+fn _per_lang_compact(per_lang: list) -> str {
+    if type_of(per_lang) != "array" || len(per_lang) == 0 { return "—" }
+    let n = len(per_lang)
+    let mut out = ""
+    let mut i = 0
+    while i < n {
+        let r = per_lang[i]
+        let mut lang = "?"
+        let mut v = "?"
+        if type_of(r) == "map" {
+            if type_of(r["lang"]) == "string" { lang = r["lang"] }
+            if type_of(r["verdict"]) == "string" { v = r["verdict"] }
+        }
+        if i > 0 { out = out + " " }
+        out = out + lang + "=" + v
+        i = i + 1
+    }
+    return out
+}
+
+fn _cell(d: dict, key: str) -> str {
+    let v = d[key]
+    let t = type_of(v)
+    if t == "int" || t == "float" { return to_string(v) }
+    if t == "string" { return v }
+    if t == "bool" { if v { return "yes" } return "no" }
+    return "—"
+}
+
+fn format_axis_map_row(variant: str, result: dict, judgement: dict) -> str {
+    // | variant | closure | agg | n_pass/n_total | per-lang | reg hits | regress | init CE | final CE | wall s |
+    return "| " + variant + " | " + judgement["closure"] + " | " + _cell(result, "verdict")
+         + " | " + to_string(judgement["n_pass"]) + "/" + to_string(judgement["n_total"])
+         + " | " + _per_lang_compact(result["per_lang_verdicts"])
+         + " | " + _cell(result, "n_anima_register_hits_total")
+         + " | " + _cell(result, "register_regress")
+         + " | " + _cell(result, "init_log_ce") + " | " + _cell(result, "final_log_ce")
+         + " | " + _cell(result, "train_wall_s") + " |"
+}
+
+fn _usage() {
+    println("USAGE:")
+    println("  hexa run HEXAD/PURE/eval/result_to_axis_map.hexa [--floor PARTIAL|PASS] [--min-langs N] <variant> <result_json>")
+    println("AXIS_MAP_RESULTS header:")
+    println("| variant | closure | agg | n_pass/n_total | per-lang | reg hits | regress | init CE | final CE | wall s |")
+}
+
+fn _arg_kv(argv: list, key: str, def: str) -> str {
+    let n = len(argv)
+    let mut i = 0
+    while i < n {
+        if argv[i] == key && (i + 1) < n { return argv[i + 1] }
+        i = i + 1
+    }
+    return def
+}
+
+fn _positional(argv: list) -> list {
+    let n = len(argv)
+    let mut out = []
+    let mut i = 0
+    while i < n {
+        let a = argv[i]
+        if a == "--floor" || a == "--min-langs" { i = i + 2 }
+        else { out = out + [a]; i = i + 1 }
+    }
+    return out
+}
+
+fn _argv_user() -> list {
+    let a = args()
+    let n = len(a)
+    if n <= 1 { return [] }
+    let mut out = []
+    let mut i = 1
+    while i < n { out = out + [a[i]]; i = i + 1 }
+    return out
+}
+
+fn main() {
+    let argv = _argv_user()
+    if len(argv) == 0 || argv[0] == "-h" || argv[0] == "--help" {
+        _usage()
+        return
+    }
+    let floor = _arg_kv(argv, "--floor", "PARTIAL")
+    let min_langs = to_int(_arg_kv(argv, "--min-langs", "4"))
+    let pos = _positional(argv)
+    if len(pos) < 2 {
+        println("[result_to_axis_map] ERROR need <variant> <result_json>")
+        _usage()
+        exit(2)
+    }
+    let result = parse_result_json(pos[1])
+    let judgement = judge_closure(result, floor, min_langs)
+    println("AXIS_MAP_RESULTS row (variant=" + pos[0] + "):")
+    println(format_axis_map_row(pos[0], result, judgement))
+    println("CLOSURE: " + judgement["closure"]
+          + " (" + to_string(judgement["n_pass"]) + "/" + to_string(judgement["n_total"])
+          + " langs ≥ " + floor + ", criterion ≥" + to_string(min_langs) + "/" + to_string(judgement["n_total"]) + ")")
+    if judgement["closure"] == "PASS" { return }
+    exit(1)
+}
