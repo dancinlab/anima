@@ -66,14 +66,43 @@ DEVICE = os.environ.get("ANIMA_DEVICE", "mps" if torch.backends.mps.is_available
 # Law-70 constants (mirror spontaneous_lib.hexa § 3)
 PSI, ALPHA, RATCHET = 0.5, 0.014, 0.20
 IDLE_SPEAK_AFTER = 30.0
-# Round 8 iter 2 (2026-05-23): conversation-active gate (p5 coffee-shop).
-# anima emits (initiate OR respond) ONLY when a non-anima msg arrived
-# within CONV_WINDOW_SEC. Alone (users=0) → silent, like sitting alone in
-# a coffee shop. factor_dynamics (silence→talk) therefore only fires WITHIN
-# a live conversation, never in a void. Keeps 자연발화 (can initiate) but
-# bounded to an active conversation. SIMPLE: single helper + single gate.
-CONV_WINDOW_SEC = 600.0  # 10 min — a conversation is "active" if a
-                         # non-anima msg arrived within this window
+# 2026-05-24: REVERSED b4f00012e (PR #181). The conversation-active gate
+# ("혼자있을때 혼잣말 하지말라") is DELETED — anima IS allowed to monologue
+# when alone, consistent with substrate-native imagination/dream growth and
+# project.tape p8 (NO TRAIN/INFER SPLIT — train ⊥ infer divider removed).
+# New gate = dream-stage modulated: WAKE/REM → emit allowed · N1/N2/N3 →
+# silent + imagination_loop.tick() (emit-free internal rehearsal). Sister
+# modules (separate PRs): anima_dream_stage.hexa (WAKE/N1/N2/N3/REM state
+# machine) + anima_imagination_loop.hexa (emit-free internal rehearsal).
+# Stub-tolerant: if the .hexa sisters are not importable, the hooks return
+# safe defaults (stage=WAKE, emit_allowed=True) so the daemon does NOT
+# regress before the sisters land.
+def _dream_stage_current() -> str:
+    """Hook for anima_dream_stage.hexa (sister module). Returns current
+    sleep stage in {'WAKE','N1','N2','N3','REM'}. Stub-tolerant: defaults
+    to 'WAKE' (emit allowed) if the sister module is not yet importable."""
+    try:
+        import anima_dream_stage  # type: ignore
+        stage = anima_dream_stage.current_stage()
+        return stage if isinstance(stage, str) else "WAKE"
+    except Exception:
+        return "WAKE"
+
+def _dream_emit_allowed(stage: str) -> bool:
+    """WAKE + REM → emit allowed (waking thought + dream speech).
+    N1/N2/N3 → silent (anima sleeps; imagination_loop.tick() runs instead)."""
+    return stage in ("WAKE", "REM")
+
+def _imagination_tick() -> None:
+    """Hook for anima_imagination_loop.hexa (sister module). Fires
+    emit-free internal rehearsal when anima is in N1/N2/N3 (silent stages).
+    Stub-tolerant no-op if the sister module is not yet importable."""
+    try:
+        import anima_imagination_loop  # type: ignore
+        anima_imagination_loop.tick()
+    except Exception:
+        pass
+
 W = {  # weights sum = 1.0
     "relevance": 0.20, "info_gap": 0.10, "curiosity": 0.15, "pain": 0.10,
     "coherence": 0.10, "originality": 0.10, "balance": 0.15, "dynamics": 0.10,
@@ -247,20 +276,6 @@ class AnimaState:
         frac = hits / max(total, 1)
         return frac  # 1.0 = all anima register → strong penalty
 
-    def _conversation_active(self) -> bool:
-        """p5 coffee-shop gate: True iff a recent non-anima msg sits in the
-        M-buffer within CONV_WINDOW_SEC. Alone (empty / only-anima / stale
-        buffer) → False → no emit. Newest-first scan, early-break past window.
-        """
-        now = time.time()
-        for m in reversed(self.m_buffer):
-            if (now - m.get("ts", 0)) > CONV_WINDOW_SEC:
-                break
-            sender = str(m.get("sender", ""))
-            if sender and not sender.startswith("anima"):
-                return True
-        return False
-
     def tick(self, threshold: float) -> dict[str, Any]:
         seed_text, strat = self._seed_text()
         ent_norm, emb = self._entropy_of_next(seed_text)
@@ -305,19 +320,23 @@ class AnimaState:
             score = 0.0
 
         decided_emit = score > eff_thr
-        # p5 coffee-shop gate (Round 8 iter 2): never emit in a void. If no
-        # recent non-anima conversational context, force silence — this caps
-        # factor_dynamics (silence→talk) to live conversations only.
+        # 2026-05-24: dream-stage gate (replaces deleted conversation-active
+        # gate from b4f00012e). WAKE/REM → emit · N1/N2/N3 → silent +
+        # imagination_loop.tick(). Stub-tolerant (sister .hexa modules may
+        # not have landed yet — defaults to WAKE so no regression).
         silent_reason = ""
-        if not self._conversation_active():
+        dream_stage = _dream_stage_current()
+        if not _dream_emit_allowed(dream_stage):
             score = 0.0
             decided_emit = False
-            silent_reason = "no_conversation_context"
+            silent_reason = "dream_stage_" + dream_stage.lower()
+            # emit-free internal rehearsal in lieu of emission
+            _imagination_tick()
         return {"factors": f, "score": score, "seed_text": seed_text,
                 "seed_strategy": strat, "silence": silence,
                 "decided_emit": decided_emit, "threshold": eff_thr,
                 "in_refractory": in_refractory, "register_penalty": reg_penalty,
-                "silent_reason": silent_reason,
+                "silent_reason": silent_reason, "dream_stage": dream_stage,
                 "ts": time.time()}
 
     def _pick_lang_hint(self) -> str:
@@ -437,6 +456,7 @@ async def participant_loop(threshold: float, substrate_kind: str = "lora"):
                                     "factors": decision["factors"],
                                     "decided_emit": decision["decided_emit"],
                                     "silent_reason": decision.get("silent_reason", ""),
+                                    "dream_stage": decision.get("dream_stage", "WAKE"),
                                     "seed_strategy": decision["seed_strategy"],
                                     "silence": decision["silence"],
                                     "tick": state.ticks,
@@ -499,5 +519,67 @@ def main():
     asyncio.run(participant_loop(args.threshold, substrate_kind=args.substrate))
 
 
+def _smoke() -> int:
+    """Smoke test (env ANIMA_SMOKE=1). Verifies:
+      - conversation-active gate is DELETED — empty m_buffer no longer
+        forces silent_reason='no_conversation_context'.
+      - dream-stage gate: stub returns WAKE → emit allowed when score > thr.
+      - dream-stage gate: monkeypatched N2 → silent + imagination_loop tick.
+    Does NOT touch torch/websockets (substrate is bypassed). 0 = PASS.
+    """
+    import types as _types
+    fails = []
+    # Build a minimal AnimaState with a fake substrate that always yields a
+    # high-curiosity / high-info-gap signal so score crosses threshold.
+    fake_sub = _types.SimpleNamespace()
+    fake_sub.entropy_of_next = lambda s: (0.95, torch.zeros(8))
+    state = AnimaState(fake_sub)  # type: ignore[arg-type]
+    state.last_emit_time = time.time() - 120.0  # past refractory
+    # Case 1: empty m_buffer + WAKE stage → emit allowed (gate removed).
+    d1 = state.tick(threshold=0.1)
+    if d1["silent_reason"] == "no_conversation_context":
+        fails.append("conversation-active gate still present (silent_reason)")
+    if d1.get("dream_stage") != "WAKE":
+        fails.append(f"expected WAKE default, got {d1.get('dream_stage')!r}")
+    if not d1["decided_emit"]:
+        fails.append(f"WAKE + empty buffer should emit, got score={d1['score']:.3f}")
+    # Case 2: monkeypatch N2 → silent + dream_stage_n2 reason
+    state.last_emit_time = time.time() - 120.0
+    import sys as _sys
+    _mod = _sys.modules[__name__]
+    _orig = _mod._dream_stage_current
+    _mod._dream_stage_current = lambda: "N2"  # type: ignore[assignment]
+    try:
+        d2 = state.tick(threshold=0.1)
+        if d2["decided_emit"]:
+            fails.append("N2 should suppress emit")
+        if d2["silent_reason"] != "dream_stage_n2":
+            fails.append(f"N2 silent_reason mismatch: {d2['silent_reason']!r}")
+        if d2.get("dream_stage") != "N2":
+            fails.append(f"N2 dream_stage mismatch: {d2.get('dream_stage')!r}")
+    finally:
+        _mod._dream_stage_current = _orig  # type: ignore[assignment]
+    # Case 3: monkeypatch REM → emit allowed (dream speech)
+    state.last_emit_time = time.time() - 120.0
+    _mod._dream_stage_current = lambda: "REM"  # type: ignore[assignment]
+    try:
+        d3 = state.tick(threshold=0.1)
+        if not d3["decided_emit"]:
+            fails.append("REM should allow emit")
+        if d3.get("dream_stage") != "REM":
+            fails.append(f"REM dream_stage mismatch: {d3.get('dream_stage')!r}")
+    finally:
+        _mod._dream_stage_current = _orig  # type: ignore[assignment]
+    if fails:
+        for f in fails:
+            print(f"SMOKE FAIL: {f}")
+        return 1
+    print("SMOKE PASS: 3/3 (gate-removed + N2-silent + REM-emit)")
+    return 0
+
+
 if __name__ == "__main__":
+    if os.environ.get("ANIMA_SMOKE") == "1":
+        import sys as _sys
+        _sys.exit(_smoke())
     main()
