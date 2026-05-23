@@ -1,0 +1,322 @@
+// HEXAD/PURE/launchers/dispatch_p21h_v3.hexa
+//
+// 0. version + spec ref — v0.2 STDLIB-WIRED (dry-run default)
+//   Spec  : HEXAD/PURE/ENV_CONTRACT.md (PR #265 SSOT)
+//   Source: HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/
+//           dispatch_p21h_v3_runpod.sh (304 LoC bash)
+//   Sister: HEXAD/PURE/launchers/_common.hexa (PR #265, deferred adoption)
+//
+//   Unblocks F4 patch B + C (PR #264 deferred — anima tape blocks .py/.sh).
+//   REAL: sha256_verify (F4 B kernel) · resume_glob (F4 C kernel) · argv/env.
+//   v0.2: pod / corpus / train / pull TODO[*] resolved via stdlib/cloud +
+//   stdlib/cloud/runpod (hexa-lang RFC 1eb47746). Pattern mirrors the landed
+//   dispatch_s126.hexa. SAFETY: main() defaults to --dry-run (prints the plan,
+//   zero remote calls); `--fire` must be passed explicitly to incur GPU cost.
+
+use "stdlib/cloud/cloud"
+use "stdlib/cloud/runpod"
+
+// 1. arg + env contract (matches ENV_CONTRACT.md PR #265) ------------------
+
+fn _env_or(key: str, fallback: str) -> str {
+    let v = exec("printenv " + key + " 2>/dev/null").trim()
+    if v == "" { return fallback }
+    return v
+}
+
+fn _lr_default_for_init(init_variant: str) -> str {
+    if init_variant == "random" { return "3e-4" }
+    if init_variant == "qwen"   { return "5e-5" }
+    if init_variant == "vp21m"  { return "1e-4" }
+    return "3e-4"
+}
+
+fn parse_argv(args: list) -> dict {
+    // Strip flags first; --fire opts into real GPU dispatch (default dry-run).
+    let mut fire = "0"
+    let mut pos = []
+    let mut k = 0
+    while k < len(args) {
+        let a = args[k]
+        if a == "--fire" { fire = "1" }
+        else if a == "--dry-run" { fire = "0" }
+        else { pos = pos + [a] }
+        k = k + 1
+    }
+    let n = len(pos)
+    let mut variant = "P21H_alpha"
+    let mut init_variant = "random"
+    let mut seed = "1337"
+    if n >= 1 { variant = pos[0] }
+    if n >= 2 { init_variant = pos[1] }
+    if n >= 3 { seed = pos[2] }
+    return #{
+        "variant": variant,
+        "init_variant": init_variant,
+        "seed": seed,
+        "fire": fire,
+    }
+}
+
+fn build_env(init_variant: str) -> dict {
+    // ENV_CONTRACT.md §1 — keep keys aligned with the bash source.
+    return #{
+        "P21H_STEPS":                _env_or("P21H_STEPS", "2000"),
+        "P21H_BSZ":                  _env_or("P21H_BSZ", "2"),
+        "P21H_BLOCK":                _env_or("P21H_BLOCK", "512"),
+        "P21H_LR":                   _env_or("P21H_LR", _lr_default_for_init(init_variant)),
+        "P21H_WARMUP":               _env_or("P21H_WARMUP", "100"),
+        "P21H_WIKI_FRAC":            _env_or("P21H_WIKI_FRAC", "0.3"),
+        "P21H_CORPUS_MB":            _env_or("P21H_CORPUS_MB", "72"),
+        "P21H_NOISE_SIGMA":          _env_or("P21H_NOISE_SIGMA", "0.1"),
+        "P21H_LAMBDA_MITOSIS":       _env_or("P21H_LAMBDA_MITOSIS", "0.05"),
+        "P21H_MITOSIS_MAX":          _env_or("P21H_MITOSIS_MAX", "128"),
+        "P21H_CKPT_EVERY":           _env_or("P21H_CKPT_EVERY", "500"),
+        "P21H_TEACHER_CKPT_SHA256":  _env_or("P21H_TEACHER_CKPT_SHA256", ""),
+        "WATCHDOG_SEC":              _env_or("WATCHDOG_SEC", "5400"),
+        "SAVE_POD":                  _env_or("SAVE_POD", "1"),
+    }
+}
+
+// 2. pod lifecycle (stdlib/cloud/runpod-wired) -----------------------------
+//
+// GPU cascade per ENV_CONTRACT.md — RunPod capacity for any single GPU is
+// bursty, so runpod_create_cascade tries each in order; first that wins.
+fn _gpu_cascade() -> list {
+    return ["NVIDIA A100-SXM4-80GB", "NVIDIA A100 80GB PCIe", "NVIDIA H100 80GB HBM3", "NVIDIA H100 NVL", "NVIDIA H100 PCIe"]
+}
+
+fn _pod_image() -> str {
+    return "runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04"
+}
+
+fn pod_create(api_key: str, pubkey: str, init_variant: str, dry_run: bool) -> str {
+    let gpus = _gpu_cascade()
+    if dry_run {
+        println("[dry-run] pod_create: runpod_create_cascade(" + to_string(len(gpus)) + " gpus) image=" + _pod_image() + " name=p21h-" + init_variant)
+        return ""
+    }
+    let pod = runpod_create_cascade(api_key, gpus, _pod_image(), pubkey, "p21h-" + init_variant)
+    if pod.ok != 1 {
+        println("[pod_create] FATAL " + pod.message)
+        return ""
+    }
+    println("[pod_create] " + pod.message + " — pod " + pod.pod_id)
+    return pod.pod_id
+}
+
+fn pod_ssh_wait(api_key: str, pod_id: str, max_tries: int, dry_run: bool) -> dict {
+    if dry_run {
+        println("[dry-run] pod_ssh_wait: runpod_wait_ssh(pod=" + pod_id + ", tries=" + to_string(max_tries) + ", sleep=10)")
+        return #{"ip": "", "port": "0"}
+    }
+    let p = runpod_wait_ssh(api_key, pod_id, max_tries, 10)
+    if p.ok != 1 {
+        println("[pod_ssh_wait] FATAL " + p.message)
+        return #{"ip": "", "port": "0"}
+    }
+    println("[pod_ssh_wait] ready " + p.ip + ":" + p.port)
+    return #{"ip": p.ip, "port": p.port}
+}
+
+fn pod_terminate(api_key: str, pod_id: str, save_pod: str, dry_run: bool) -> bool {
+    if save_pod == "1" {
+        println("[pod_terminate] SAVE_POD=1 — pod " + pod_id + " RETAINED")
+        return true
+    }
+    if dry_run {
+        println("[dry-run] pod_terminate: runpod_terminate(pod=" + pod_id + ")")
+        return false
+    }
+    runpod_terminate(api_key, pod_id)
+    println("[pod_terminate] terminated pod " + pod_id)
+    return true
+}
+
+// 3. corpus build (stdlib/cloud cloud_run-wired) ---------------------------
+
+fn corpus_build_anima(host: str, opts: list, p21hr: str, dry_run: bool) -> dict {
+    let argv = ["python3", p21hr + "/build_corpus_s101.py", "--out-dir", p21hr, "--s1-n", "777000", "--seed", "1337"]
+    if dry_run {
+        println("[dry-run] corpus_build_anima: cloud_run_opts(" + host + ", build_corpus_s101.py n=777000 seed=1337)")
+        return #{"sha": "", "size": "0"}
+    }
+    let r = cloud_run_opts(host, opts, argv)
+    if r.ok != 1 {
+        println("[corpus_build_anima] FATAL " + r.message)
+        return #{"sha": "", "size": "0"}
+    }
+    let sha = cloud_run_opts(host, opts, ["sha256sum", p21hr + "/corpus_s101.txt"])
+    return #{"sha": sha.stdout_.trim(), "size": "0"}
+}
+
+fn corpus_build_multilingual_wiki(host: str, opts: list, p21hr: str, langs: str, mb_per_lang: str, dry_run: bool) -> dict {
+    let argv = ["python3", p21hr + "/build_multilingual_corpus_p21m.py", "--out-dir", p21hr, "--langs", langs, "--mb-per-lang", mb_per_lang]
+    if dry_run {
+        println("[dry-run] corpus_build_multilingual_wiki: cloud_run_opts(" + host + ", langs=" + langs + " mb=" + mb_per_lang + ")")
+        return #{"sha": "", "size": "0"}
+    }
+    let r = cloud_run_opts(host, opts, argv)
+    if r.ok != 1 {
+        println("[corpus_build_multilingual_wiki] FATAL " + r.message)
+        return #{"sha": "", "size": "0"}
+    }
+    return #{"sha": "", "size": "0"}
+}
+
+// 4. train launch (stdlib/cloud cloud_nohup-wired) -------------------------
+
+fn train_launch(host: str, opts: list, p21hr: str, env: dict, init_variant: str, seed: str, dry_run: bool) -> bool {
+    let argv = ["bash", p21hr + "/launch_trainer_p21h.sh", init_variant, seed]
+    if dry_run {
+        println("[dry-run] train_launch: cloud_nohup_opts(" + host + ", launch_trainer_p21h.sh " + init_variant + " " + seed + ", log=" + p21hr + "/train.log)")
+        return false
+    }
+    let r = cloud_nohup_opts(host, opts, argv, p21hr + "/train.log")
+    if r.ok != 1 {
+        println("[train_launch] FATAL " + r.message)
+        return false
+    }
+    println("[train_launch] " + r.message)
+    return true
+}
+
+// 5. result pull (stdlib/cloud cloud_copy_from-wired) ----------------------
+
+fn result_pull(host: str, opts: list, p21hr: str, vdir: str, dry_run: bool) -> bool {
+    if dry_run {
+        println("[dry-run] result_pull: cloud_copy_from_opts(" + host + ", " + p21hr + "/result.json -> " + vdir + "/result.json)")
+        return false
+    }
+    let r = cloud_copy_from_opts(host, opts, p21hr + "/result.json", vdir + "/result.json")
+    if r.ok != 1 {
+        println("[result_pull] FATAL " + r.message)
+        return false
+    }
+    println("[result_pull] pulled result.json -> " + vdir)
+    return true
+}
+
+// 6. teacher-ckpt sha256 verify (F4 patch B — REAL IMPL) -------------------
+
+fn sha256_verify(path: str, expected: str) -> dict {
+    // CPU-only kernel; expected="" → skip (back-compat per ENV_CONTRACT.md §5 C3).
+    if expected == "" {
+        return #{"status": "skip", "reason": "no expected sha set", "actual": ""}
+    }
+    let exists = exec("test -f " + path + " && echo yes || echo no").trim()
+    if exists != "yes" {
+        return #{"status": "fail", "reason": "file not found: " + path, "actual": ""}
+    }
+    let raw = exec("shasum -a 256 " + path + " 2>/dev/null | awk '{print $1}'").trim()
+    if raw == "" {
+        return #{"status": "fail", "reason": "shasum produced no output", "actual": ""}
+    }
+    if raw == expected {
+        return #{"status": "ok", "reason": "match", "actual": raw}
+    }
+    return #{"status": "fail", "reason": "mismatch", "actual": raw}
+}
+
+// 7. resume-from-step glob (F4 patch C — REAL IMPL) ------------------------
+
+fn _parse_step_from_ckpt(name: str) -> int {
+    // ckpt_step<N>.pt naming per ENV_CONTRACT.md §4.
+    let s = name.replace("ckpt_step", "").replace(".pt", "").trim()
+    if s == "" { return -1 }
+    let digits = ["0","1","2","3","4","5","6","7","8","9"]
+    let mut acc = 0
+    let mut i = 0
+    while i < len(s) {
+        let c = s[i]
+        let mut d = -1
+        let mut j = 0
+        while j < 10 { if c == digits[j] { d = j } j = j + 1 }
+        if d < 0 { return -1 }
+        acc = acc * 10 + d
+        i = i + 1
+    }
+    return acc
+}
+
+fn resume_glob(out_dir: str, max_step: int) -> dict {
+    // Pick largest ckpt_step<N>.pt with N <= max_step (max_step < 0 = any).
+    let listing = exec("ls -1 " + out_dir + " 2>/dev/null").trim()
+    if listing == "" {
+        return #{"status": "none", "step": -1, "path": ""}
+    }
+    let lines = listing.split("\n")
+    let mut best_step = -1
+    let mut best_name = ""
+    let mut i = 0
+    while i < len(lines) {
+        let line = lines[i].trim()
+        if line.starts_with("ckpt_step") && line.ends_with(".pt") {
+            let step = _parse_step_from_ckpt(line)
+            if step >= 0 {
+                let ok_cap = max_step < 0 || step <= max_step
+                if ok_cap && step > best_step {
+                    best_step = step
+                    best_name = line
+                }
+            }
+        }
+        i = i + 1
+    }
+    if best_step < 0 {
+        return #{"status": "none", "step": -1, "path": ""}
+    }
+    return #{"status": "ok", "step": best_step, "path": out_dir + "/" + best_name}
+}
+
+// 8. main — argv parse + orchestration outline -----------------------------
+
+fn main() {
+    let argv = args()
+    let n = len(argv)
+    let mut user_args = []
+    let mut i = 1
+    while i < n { user_args = user_args + [argv[i]]   i = i + 1 }
+    let parsed = parse_argv(user_args)
+    let variant = to_string(parsed["variant"])
+    let init_variant = to_string(parsed["init_variant"])
+    let seed = to_string(parsed["seed"])
+    let dry_run = to_string(parsed["fire"]) != "1"
+    let env = build_env(init_variant)
+    let p21hr = "/workspace/p21hr"
+    let mode = "FIRE"
+    if dry_run { mode = "DRY-RUN" }
+    println("=== dispatch_p21h_v3.hexa v0.2 [" + mode + "] ===")
+    println("    variant=" + variant + " init=" + init_variant + " seed=" + seed)
+    println("    steps=" + to_string(env["P21H_STEPS"])
+            + " bsz=" + to_string(env["P21H_BSZ"])
+            + " lr="  + to_string(env["P21H_LR"]))
+    println("    teacher_sha=" + to_string(env["P21H_TEACHER_CKPT_SHA256"]))
+    if dry_run {
+        println("    (default dry-run — pass --fire to incur real GPU cost)")
+    }
+    // Credentials only read on a real fire (no secret access in dry-run).
+    let mut api_key = ""
+    let mut pubkey = ""
+    if !dry_run {
+        api_key = exec("secret get runpod.api_key 2>/dev/null").trim()
+        pubkey = read_file(env_var("HOME") + "/.ssh/id_ed25519.pub").trim()
+        if len(api_key) == 0 || len(pubkey) == 0 {
+            println("FATAL: --fire requires runpod.api_key + ~/.ssh/id_ed25519.pub")
+            exit(1)
+        }
+    }
+    // Orchestration — pod lifecycle → corpus → train → pull → teardown.
+    let pod_id = pod_create(api_key, pubkey, init_variant, dry_run)
+    let ssh = pod_ssh_wait(api_key, pod_id, 90, dry_run)
+    let ip = to_string(ssh["ip"])
+    let port = to_string(ssh["port"])
+    let host = "root@" + ip
+    let opts = runpod_pod_opts(port)
+    let _ = corpus_build_anima(host, opts, p21hr, dry_run)
+    let _ = corpus_build_multilingual_wiki(host, opts, p21hr, "en,ko,zh,ru,ja", "10", dry_run)
+    let _ = train_launch(host, opts, p21hr, env, init_variant, seed, dry_run)
+    let _ = result_pull(host, opts, p21hr, "v" + variant, dry_run)
+    let _ = pod_terminate(api_key, pod_id, to_string(env["SAVE_POD"]), dry_run)
+    println("=== dispatch_p21h_v3.hexa end [" + mode + "] ===")
+}

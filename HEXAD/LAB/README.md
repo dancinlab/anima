@@ -42,7 +42,7 @@ ad-hoc 실험 받침대. 주제별 영구 dir (V3/LORA/MITOSIS/CLM/...) 에 들�
 
 | dir | grain |
 |---|---|
-| `HEXAD/V3/`, `HEXAD/LORA/`, `HEXAD/MITOSIS/` | 주제별 영구 saga, attempt N counter carry |
+| `HEXAD/PURE/`, `HEXAD/LORA/`, `HEXAD/MITOSIS/` | 주제별 영구 saga, attempt N counter carry |
 | `HEXAD/UNCLASSIFIED/` | promotion-pending design notes (코드 X) |
 | `HEXAD/SCRATCH` (없음) — 대체 = **여기 LAB/** | 실행되는 ad-hoc 실험 instances |
 | `HEXAD/<DIR>/tests/` | 해당 dir 의 unit / falsifier test (영구) |

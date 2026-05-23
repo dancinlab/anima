@@ -1,4 +1,4 @@
-# HEXAD/V3 — corpus 외 미탐색 축 map
+# HEXAD/PURE — corpus 외 미탐색 축 map
 
 > V3 closure 의 "multilingual = corpus-bound" verdict 는 5 fire 가 전부 동일
 > 코퍼스(`wiki_frac=0.3`, 70% anima)에서 나왔다. 재설계 axis R1~R7 은
@@ -64,5 +64,5 @@ Track 1 corpus 재발사 (E3 anima0% · E2 50%)
 
 - corpus 재발사 (1차 후속): [`README.md`](README.md)
 - closure 보고서: [`../UNCLASSIFIED/state/grid_3b_s187_2026_05_21/HEXAD_V3_FIRE_2026_05_22.md`](../UNCLASSIFIED/state/grid_3b_s187_2026_05_21/HEXAD_V3_FIRE_2026_05_22.md) §8
-- V3 spec (브레인스토밍 §2 에 E2/E3 corpus 변종 원안): [`HEXAD_NATIVE_V3.md`](HEXAD_NATIVE_V3.md)
+- V3 spec (브레인스토밍 §2 에 E2/E3 corpus 변종 원안): [`HEXAD_NATIVE_PURE.md`](HEXAD_NATIVE_PURE.md)
 - production baseline: [`../LORA/README.md`](../LORA/README.md)
