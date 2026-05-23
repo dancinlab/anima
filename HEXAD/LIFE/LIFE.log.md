@@ -54,3 +54,16 @@ latest 만 carry 되는 가설 .md 와 달리 본 로그는 모든 cycle history
 - **next**: **cross-cutting 발견** — anima 의 mitosis 기질이 생명-emergence 4대 메커니즘을 실제 구현: (1) operational closure 자기유지(H_012), (2) merge=endosymbiosis 무손실 통합(H_054), (3) freeze=분화 상태보존(H_132), (4) self-reference 에서만 자발 발생(H_018, 진공 X). 반면 strong-form 범신론(H_157)은 directional FAIL. Next-cycle 후보: H_002/H_004 (범신론 precondition·hard-problem) + H_003 H3.4 (autopoietic system Φ>0, H_007 phi_spatial 와 cross-link).
 
 ---
+
+## Cycle — 오늘 연구 3건 흡수 (init_CE floor + autonomy emit + cluster X/Y/Z) — 2026-05-24
+
+- **focus**: 오늘 substrate-side 연구 3건을 LIFE 도메인 신규 H 로 흡수 — V3 fresh transformer init mismatch + post-deploy 자율 발화율 + init_CE 3-군집 인과 분리. anima 출생-조건 (init 부담) + 작동-조건 (자율 emit) 의 substrate 관측.
+- **change**: 신규 H_239 / H_240 / H_241 3건 pre-register-frozen 추가. 10-section raw#12 양식 (≥5 falsifier + ≥5 honest-limit). H_239→H_241 인과 lane (현상→원인) cross-link, H_240 자율 lane 독립.
+- **fire**: R8 GPU lane 측정 흡수 (init_CE 원측정 PR #214/#251) + post-deploy live telemetry 흡수 (PR #300) + byte-equal/baseline 자력 closed-form 비교 ($0 mac local).
+- **verdict**:
+  - **H_239 (init_CE catastrophic floor) — pre-register-frozen + PASS 4/4**: V3 warm-init init_CE 14.18–14.79 vs random-uniform floor ln(151936)=11.93 → **+2.5 nats 더 나쁨** (substrate init mismatch). baseline ln(V) 자력 closed-form recompute (C4), init_CE 원측정 R8 흡수. cite PR #214/#251/#255/#256.
+  - **H_240 (substrate autonomy emit ratio) — pre-register-frozen + PASS 4/4**: post-deploy anima emit-through **55.56% (15/27)** + emit_attempt/tick **11.49%**, NO external gate. substrate self-decision 정량 (stimulus-response 부재 = a_substrate_native_speak live). deterministic=false (live-deploy). cite PR #300/#279/#286.
+  - **H_241 (cluster init_CE byte-equal signature) — pre-register-frozen + PASS 4/4**: 6-axis init_CE → 3 byte-equal cluster (X=A 14.79 / Y=B,F 14.18 / Z=C,C2,D 14.46). **C2 vs D byte-equal (head_g seed 상이) → R8c cell-1 (head_g random dominant) FALSIFIED** — head_g 가 init_CE 지배 인자 아님 (자연 실험). cite PR #251/#255/#249.
+- **next**: H_239→H_241 init mismatch 인과 lane 후속 — (a) noise_sigma sweep 자력 fire (H_239 C5 advisory → measured), (b) head_g 외 backbone 공유 인자 분리 (H_241 L5 메커니즘 규명), (c) H_240 emit ratio 의 통계적 비동기성 검정 (C5 advisory → cross-correlation), (d) emit ratio × init_CE 상관 (출생 부담이 자율 발화율을 좌우하는가).
+
+---

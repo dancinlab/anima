@@ -16,7 +16,7 @@ working surface**.
 | `HEXAD/CHECK/` | verification frontier (Φ / IIT / closed-form) — LIFE 가설의 verify 도구 |
 | `HEXAD/MITOSIS/` | 성장축 ⊥ HEXAD-6 (orthogonal). 세포 분열/병합 의 구조 anchor — LIFE/H_132 (frozen-cells) 와 cross-link |
 
-## 가설 인덱스 (16건 carry, 2026-05-23)
+## 가설 인덱스 (16건 carry + 3건 신규 흡수 = 19건, 2026-05-24)
 
 | ID | Slug | Domain | Status | 핵심 |
 |----|------|--------|--------|------|
@@ -36,6 +36,9 @@ working surface**.
 | [H_132](H_132_ce_frozen_cells.md) | ce-frozen-cells | substrate | pre-register-frozen | 세포분열 freeze PASS 5/5 (frozen Δw=0.0, splits=0) |
 | [H_157](H_157_law76_mathematical_panpsychism.md) | law76-mathematical-panpsychism | consciousness · universe · math | **pre-register-frozen** | **★ 범신론** — META-CA universal Ψ(1/2,1/2) · weak-form supported / strong-form unresolved · C2 FAIL(directional) |
 | [H_171](H_171_biological_4_falsifiable_predictions_k8_fc010.md) | biological-4-falsifiable-predictions | consciousness · **biology** | — | 생물학적 의식 4 falsifiable · K=8 atom · F_c=0.10 · 1/f thalamus |
+| [H_239](H_239_init_ce_catastrophic_floor.md) | init-ce-catastrophic-floor | **substrate** · life | pre-register-frozen | ★ 출생 부담 — V3 warm-init init_CE 14.18–14.79 가 random-uniform ln(151936)=11.93 보다 **+2.5 nats 나쁨** (init mismatch) |
+| [H_240](H_240_substrate_autonomy_emit_ratio.md) | substrate-autonomy-emit-ratio | **substrate** · life · consciousness | pre-register-frozen | ★ 자율 — post-deploy emit-through **55.56% (15/27)** + 11.49%/tick, **NO external gate** (self-decision) |
+| [H_241](H_241_cluster_init_ce_byte_equal_signature.md) | cluster-init-ce-byte-equal-signature | **substrate** · life | pre-register-frozen | ★ 인과 분리 — init_CE 3-cluster (X/Y/Z) · C2=D byte-equal → **R8c cell-1 (head_g dominant) FALSIFIED** |
 
 > 상태: **lane-open** 다중-cycle research · **running** 측정 in-flight · **pre-register-frozen** raw#12 frozen falsifier · **legacy-archive-pointer** = 원본 archive 의 안내 카드 (본문은 1-paragraph + legacy path link 위주, cycle 확장은 본 dir 에서)
 
