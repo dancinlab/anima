@@ -20,7 +20,7 @@ PURE closure launcher + dispatch + train 모듈이 공유하는 환경 변수 ·
 | `P21H_BSZ` | 🟢 | 2 | 동상 |
 | `P21H_LR` | 🟢 | init-variant 기반 default | 동상 |
 | `P21H_WIKI_FRAC` | 🟢 | 0.3 (E2=0.5 · E3=1.0) | corpus mix |
-| `P21H_TEACHER_CKPT_SHA256` | 🟢 | (없음 → skip) | F4 patch B — vp21m adapter 검증 |
+| `P21H_TEACHER_CKPT_SHA256` | 🟢 | (없음 → skip) | F4 patch B — vp21m adapter 검증 (adopted 2026-05-24, PR #295 — `HEXAD/PURE/launchers/dispatch_p21h_v3.hexa::sha256_verify(path, expected)`) |
 | `WATCHDOG_SEC` | 🟢 | 5400 (90 min) | dispatch script 자체 watchdog |
 | `SAVE_POD` | 🟢 | 1 (V3 fire 는 항상 retain) | teardown 시 pod 보존 여부 |
 
@@ -101,9 +101,12 @@ glob 대상 SSOT — `<N>` 은 zero-pad 없이 정수 그대로 (예: `ckpt_step
    하며, 누락 시 SSOT drift 발생.
 2. P21H dispatcher/trainer 는 현재 `.sh`/`.py` — hexa-port 가 land 되기
    전까지 `_common.hexa` helpers 와 직접 통합 불가. emit 단계만 hexa 표준화.
-3. `P21H_TEACHER_CKPT_SHA256` 는 contract 에 등록했으나 dispatch script
-   adoption 은 F4 patch B (DEFERRED) — 본 변수 set 해도 현 dispatch
-   script 는 무시한다 (back-compat). adoption 후 활성화.
+3. `P21H_TEACHER_CKPT_SHA256` 는 2026-05-24 PR #295 로 adopted —
+   `HEXAD/PURE/launchers/dispatch_p21h_v3.hexa::sha256_verify(path, expected)`
+   가 F4 patch B kernel 을 실제 구현하여 본 변수를 active 하게 consume 한다.
+   원본 `.sh` dispatcher 는 project tape 가 `.sh` 수정 차단으로 그대로지만
+   hexa skeleton 측은 enforce. 정직: 본 PR 은 contract 갱신만, dispatcher
+   full impl (resume kernel + 전체 wiring) 은 별도 cycle.
 4. `pure_launcher_uid` 의 6-hex 랜덤은 충돌 방지가 weak — 동일 초에 두
    런처가 같은 closure 에서 emit 하면 충돌 가능. 본 directive 하에서는
    런처가 sequential emit 이므로 실용상 문제 없음.
