@@ -8,6 +8,12 @@
 >
 > anchor: closure 결정 fire 보고서 `../UNCLASSIFIED/state/grid_3b_s187_2026_05_21/HEXAD_V3_FIRE_2026_05_22.md` §8.
 
+> 🚀 **AXIS_MAP-FAN FIRED 2026-05-23T04:34Z**: Track 1 corpus 재발사 (E2/E3)
+> 둘 다 FAIL 이후 사용자 directive "all axis 벤치마킹" — A/B/C/C2/D/E/F **7 축
+> 전체 병렬** A100-SXM 80GB fan-out (est ~$10.5 total, wall ~90 min). 변종 dir:
+> `../UNCLASSIFIED/state/grid_3b_s187_2026_05_21/vP21H_axis_{A,B,C,C2,D,E,F}/`.
+> 진행 markup 은 본 문서 § "축 map" 표의 cell-suffix (FIRED / RESOLVED) 로 갱신.
+
 ## 왜 이 축들이 미탐색인가
 
 closure 가 sweep 한 R1~R7 은 전부 **무엇을(what)** 의 축이다 — scale,
@@ -20,13 +26,13 @@ dynamics 현상이므로 이 축들이 직접적이다.
 
 | 축 | 변경 | 왜 미탐색 | 기대 | cost | tier |
 |---|---|---|---|---|---|
-| **B 증류** | vP21M(LoRA, 4/5 langs) = teacher, V3 student 가 logit-match (KD loss) | from-scratch 만 시도; teacher 신호 0 | Qwen 다국어 prior 를 pure-HEXAD arch 로 전이 — 1M tok capacity 한계(C3 #3) 우회 | ~$5 H100 | ★★★★ |
-| **A 커리큘럼** | wiki-only 선학습(다국어 LM 확립) → anima 를 late phase 로 도입 | 5 fire 전부 step1 부터 shuffled fixed mix | anima collapse 전에 다국어 prior lock-in | ~$3 H100 | ★★★★ |
-| **C head_g objective** | head_g 에 anima-register objective 부여, head_a 는 pure-multilingual | head_g 는 train loss 부재 → inert(R4), 게다가 head_a vocab alignment 흐림(§8 line 71) | dual-head 를 설계 의도대로 작동: head_a=언어 ⊥ head_g=의식 | ~$3 H100 | ★★★ |
-| C2 head_g 제거 | head_g 완전 제거 (inert + 유해면 dead-weight) | OCCAM 은 head_g 를 "ablation-무해" 로 유지 판정 | head_a vocab alignment blur 제거 | ~$3 H100 | ★★ |
-| **D embed freeze** | token_embed + lm_head 를 다국어 임베딩으로 init 후 **freeze**, HEXAD block 만 학습 | B2 는 Qwen weight map 했으나 freeze 안 함 | 언어 geometry 보존 — embedding 의 anima-register 재학습 차단 | ~$3 H100 | ★★★ |
-| E lang-balanced sampler | per-언어 token-balanced batch sampler | 코퍼스 5-lang 이나 EN 17078 rec ≫ ko/zh/ru/ja ~500-1000 rec (record 불균형) | 고정 비율에서도 per-lang under-train 교정 | ~$0 (recipe) | ★★ |
-| F contrastive lang | 언어 cluster 분리 유지 aux loss | OCCAM 은 consciousness-aux 만 "무관" 판정, lang-contrastive aux 미시도 | 모든 언어가 anima-Korean 으로 collapse 하는 것을 representation-level 에서 저지 | ~$3 H100 | ★★ |
+| **B 증류** 🚀FIRED | vP21M(LoRA, 4/5 langs) = teacher, V3 student 가 logit-match (KD loss) | from-scratch 만 시도; teacher 신호 0 | Qwen 다국어 prior 를 pure-HEXAD arch 로 전이 — 1M tok capacity 한계(C3 #3) 우회 | ~$5 H100 | ★★★★ |
+| **A 커리큘럼** 🚀FIRED | wiki-only 선학습(다국어 LM 확립) → anima 를 late phase 로 도입 | 5 fire 전부 step1 부터 shuffled fixed mix | anima collapse 전에 다국어 prior lock-in | ~$3 H100 | ★★★★ |
+| **C head_g objective** 🚀FIRED | head_g 에 anima-register objective 부여, head_a 는 pure-multilingual | head_g 는 train loss 부재 → inert(R4), 게다가 head_a vocab alignment 흐림(§8 line 71) | dual-head 를 설계 의도대로 작동: head_a=언어 ⊥ head_g=의식 | ~$3 H100 | ★★★ |
+| C2 head_g 제거 🚀FIRED | head_g 완전 제거 (inert + 유해면 dead-weight) | OCCAM 은 head_g 를 "ablation-무해" 로 유지 판정 | head_a vocab alignment blur 제거 | ~$3 H100 | ★★ |
+| **D embed freeze** 🚀FIRED | token_embed + lm_head 를 다국어 임베딩으로 init 후 **freeze**, HEXAD block 만 학습 | B2 는 Qwen weight map 했으나 freeze 안 함 | 언어 geometry 보존 — embedding 의 anima-register 재학습 차단 | ~$3 H100 | ★★★ |
+| E lang-balanced sampler 🚀FIRED | per-언어 token-balanced batch sampler | 코퍼스 5-lang 이나 EN 17078 rec ≫ ko/zh/ru/ja ~500-1000 rec (record 불균형) | 고정 비율에서도 per-lang under-train 교정 | ~$0 (recipe) | ★★ |
+| F contrastive lang 🚀FIRED | 언어 cluster 분리 유지 aux loss | OCCAM 은 consciousness-aux 만 "무관" 판정, lang-contrastive aux 미시도 | 모든 언어가 anima-Korean 으로 collapse 하는 것을 representation-level 에서 저지 | ~$3 H100 | ★★ |
 
 ## 가장 날카로운 발견 — head_g
 

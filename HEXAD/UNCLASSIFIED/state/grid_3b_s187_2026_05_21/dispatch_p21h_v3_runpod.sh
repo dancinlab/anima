@@ -55,6 +55,19 @@ P21H_CKPT_OSC_THRESHOLD=${P21H_CKPT_OSC_THRESHOLD:-0.0}   # CE std > X → save 
 P21H_CKPT_OSC_WINDOW=${P21H_CKPT_OSC_WINDOW:-10}          # rolling window for osc
 P21H_EARLY_STOP_PATIENCE=${P21H_EARLY_STOP_PATIENCE:-0}   # CE no-improve N log entries (0=disable)
 
+# === AXIS_MAP-FAN (2026-05-23) — 7-axis env-var-gated fan-out ===
+P21H_DISTILL_TEACHER=${P21H_DISTILL_TEACHER:-}                     # B: local dir or HF id
+P21H_CURRICULUM_PHASE_STEPS=${P21H_CURRICULUM_PHASE_STEPS:-0}      # A: wiki-only first N steps
+P21H_CURRICULUM_LATE_WIKI_FRAC=${P21H_CURRICULUM_LATE_WIKI_FRAC:-0.3}
+P21H_HEAD_G_OBJECTIVE=${P21H_HEAD_G_OBJECTIVE:-}                   # C: empty | "anima_register_ce"
+P21H_HEAD_G_ENABLE=${P21H_HEAD_G_ENABLE:-1}                        # C2: 0 = disable head_g
+P21H_FREEZE_EMBED=${P21H_FREEZE_EMBED:-0}                          # D: 1 = freeze tok_emb+head_a
+P21H_LANG_BALANCED=${P21H_LANG_BALANCED:-0}                        # E: 1 = per-lang round-robin
+P21H_CONTRASTIVE_LANG=${P21H_CONTRASTIVE_LANG:-0}                  # F: 1 = InfoNCE aux
+P21H_KD_ALPHA=${P21H_KD_ALPHA:-0.5}
+P21H_KD_T=${P21H_KD_T:-2.0}
+P21H_CONTRASTIVE_W=${P21H_CONTRASTIVE_W:-0.1}
+
 # LR per init variant (random needs higher LR than warm)
 case "$INIT_VARIANT" in
   random) P21H_LR=${P21H_LR:-3e-4} ;;
@@ -231,8 +244,35 @@ CMD="bash $P21HR/launch_trainer_p21h.sh $P21HR/train_p21h_v3.py \
   --ckpt-osc-threshold $P21H_CKPT_OSC_THRESHOLD --ckpt-osc-window $P21H_CKPT_OSC_WINDOW \
   --early-stop-patience $P21H_EARLY_STOP_PATIENCE"
 
-echo "[train] P21H V3 launch ($INIT_VARIANT)"
-$SSH "cd $P21HR && nohup $CMD > $P21HR/train.log 2>&1 & echo TRAIN_PID \$!"
+# Upload teacher dir if axis B and local dir (LoRA adapter)
+P21H_DISTILL_TEACHER_POD=""
+if [ -n "$P21H_DISTILL_TEACHER" ]; then
+  if [ -d "$P21H_DISTILL_TEACHER" ]; then
+    echo "[B][teacher] uploading local teacher dir: $P21H_DISTILL_TEACHER"
+    $SSH "mkdir -p $P21HR/distill_teacher"
+    $SCP -r "$P21H_DISTILL_TEACHER"/* "root@$IP:$P21HR/distill_teacher/"
+    P21H_DISTILL_TEACHER_POD="$P21HR/distill_teacher"
+  else
+    P21H_DISTILL_TEACHER_POD="$P21H_DISTILL_TEACHER"   # assume HF repo id
+  fi
+  echo "[B][teacher] pod-side path: $P21H_DISTILL_TEACHER_POD"
+fi
+
+# AXIS env var prefix for remote shell
+AXIS_ENV="P21H_DISTILL_TEACHER='$P21H_DISTILL_TEACHER_POD' \
+P21H_CURRICULUM_PHASE_STEPS='$P21H_CURRICULUM_PHASE_STEPS' \
+P21H_CURRICULUM_LATE_WIKI_FRAC='$P21H_CURRICULUM_LATE_WIKI_FRAC' \
+P21H_HEAD_G_OBJECTIVE='$P21H_HEAD_G_OBJECTIVE' \
+P21H_HEAD_G_ENABLE='$P21H_HEAD_G_ENABLE' \
+P21H_FREEZE_EMBED='$P21H_FREEZE_EMBED' \
+P21H_LANG_BALANCED='$P21H_LANG_BALANCED' \
+P21H_CONTRASTIVE_LANG='$P21H_CONTRASTIVE_LANG' \
+P21H_KD_ALPHA='$P21H_KD_ALPHA' \
+P21H_KD_T='$P21H_KD_T' \
+P21H_CONTRASTIVE_W='$P21H_CONTRASTIVE_W'"
+
+echo "[train] P21H V3 launch ($INIT_VARIANT) AXIS=$AXIS_ENV"
+$SSH "cd $P21HR && nohup env $AXIS_ENV $CMD > $P21HR/train.log 2>&1 & echo TRAIN_PID \$!"
 
 sleep 20
 ENV_CHECK=$($SSH "grep -m1 -E '^\\[launch\\] PYTORCH_CUDA_ALLOC_CONF=' $P21HR/train.log 2>/dev/null || echo NO_STAMP")

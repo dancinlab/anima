@@ -200,7 +200,139 @@ def emit_sanity_anchor(model, tokenizer, device, out_dir, step, lang="en"):
         return None
 
 
+# =============================================================================
+# AXIS_MAP-FAN — 7-axis env-var-gated extension (2026-05-23)
+# =============================================================================
+# All default OFF -> backward-compatible with Track 1 (E2/E3) fires.
+# Axes:
+#   B  P21H_DISTILL_TEACHER=<dir>      load LoRA-merged teacher, KD loss
+#   A  P21H_CURRICULUM_PHASE_STEPS=N   first N steps wiki-only, then mixed
+#   C  P21H_HEAD_G_OBJECTIVE=anima_register_ce
+#                                       head_g learns anima-register CE,
+#                                       head_a gets only wiki tokens
+#   C2 P21H_HEAD_G_ENABLE=0            zero out head_g, exclude from optim
+#   D  P21H_FREEZE_EMBED=1             freeze tok_emb + head_a (tied)
+#   E  P21H_LANG_BALANCED=1            per-lang round-robin sampler
+#   F  P21H_CONTRASTIVE_LANG=1         InfoNCE aux loss over per-lang reps
+# Tuning knobs:
+#   P21H_KD_ALPHA=0.5  P21H_KD_T=2.0
+#   P21H_CONTRASTIVE_W=0.1
+#   P21H_CURRICULUM_LATE_WIKI_FRAC=0.3
+# =============================================================================
+
+AXIS_DISTILL_TEACHER = os.environ.get("P21H_DISTILL_TEACHER", "").strip()
+AXIS_CURRICULUM_PHASE_STEPS = int(os.environ.get("P21H_CURRICULUM_PHASE_STEPS", "0") or 0)
+AXIS_CURRICULUM_LATE_WIKI_FRAC = float(os.environ.get("P21H_CURRICULUM_LATE_WIKI_FRAC", "0.3") or 0.3)
+AXIS_HEAD_G_OBJECTIVE = os.environ.get("P21H_HEAD_G_OBJECTIVE", "").strip()
+AXIS_HEAD_G_ENABLE = int(os.environ.get("P21H_HEAD_G_ENABLE", "1") or 1)
+AXIS_FREEZE_EMBED = int(os.environ.get("P21H_FREEZE_EMBED", "0") or 0)
+AXIS_LANG_BALANCED = int(os.environ.get("P21H_LANG_BALANCED", "0") or 0)
+AXIS_CONTRASTIVE_LANG = int(os.environ.get("P21H_CONTRASTIVE_LANG", "0") or 0)
+AXIS_KD_ALPHA = float(os.environ.get("P21H_KD_ALPHA", "0.5") or 0.5)
+AXIS_KD_T = float(os.environ.get("P21H_KD_T", "2.0") or 2.0)
+AXIS_CONTRASTIVE_W = float(os.environ.get("P21H_CONTRASTIVE_W", "0.1") or 0.1)
+
+
+def _axis_banner():
+    flags = []
+    if AXIS_DISTILL_TEACHER:
+        flags.append(f"B(distill teacher={AXIS_DISTILL_TEACHER} a={AXIS_KD_ALPHA} T={AXIS_KD_T})")
+    if AXIS_CURRICULUM_PHASE_STEPS > 0:
+        flags.append(f"A(curriculum phase={AXIS_CURRICULUM_PHASE_STEPS} late_wiki_frac={AXIS_CURRICULUM_LATE_WIKI_FRAC})")
+    if AXIS_HEAD_G_OBJECTIVE:
+        flags.append(f"C(head_g_objective={AXIS_HEAD_G_OBJECTIVE})")
+    if not AXIS_HEAD_G_ENABLE:
+        flags.append("C2(head_g_disabled)")
+    if AXIS_FREEZE_EMBED:
+        flags.append("D(freeze_embed)")
+    if AXIS_LANG_BALANCED:
+        flags.append("E(lang_balanced)")
+    if AXIS_CONTRASTIVE_LANG:
+        flags.append(f"F(contrastive w={AXIS_CONTRASTIVE_W})")
+    if not flags:
+        print("[P21H][AXIS] all axes OFF (backward-compat Track 1 E2/E3 mode)", flush=True)
+    else:
+        print(f"[P21H][AXIS] active: {' | '.join(flags)}", flush=True)
+
+
+class LangBalancedSampler:
+    """Axis E: per-lang round-robin sampler over per-lang shards + anima."""
+    def __init__(self, per_lang_paths, anima_path, tokenizer, block_size,
+                 seed=1337, max_tokens_per=2_000_000):
+        self.T = block_size
+        self.rngs = {}
+        self.ids_by_tag = {}
+        for tag, p in per_lang_paths.items():
+            txt = load_corpus_text(p)
+            ids = tokenizer.encode(txt, add_special_tokens=False)
+            if len(ids) > max_tokens_per:
+                ids = ids[:max_tokens_per]
+            self.ids_by_tag[tag] = torch.tensor(ids, dtype=torch.long)
+            self.rngs[tag] = random.Random(seed + (hash(tag) % 1000))
+        anima_txt = load_corpus_text(anima_path)
+        anima_ids = tokenizer.encode(anima_txt, add_special_tokens=False)
+        if len(anima_ids) > max_tokens_per:
+            anima_ids = anima_ids[:max_tokens_per]
+        self.ids_by_tag["anima"] = torch.tensor(anima_ids, dtype=torch.long)
+        self.rngs["anima"] = random.Random(seed + 99)
+        self.tags = list(self.ids_by_tag.keys())
+        self.step_count = 0
+        for t, ids in self.ids_by_tag.items():
+            print(f"[E][sampler] {t}: {len(ids):,} tokens", flush=True)
+
+    def sample_batch(self, bsz, device):
+        tag = self.tags[self.step_count % len(self.tags)]
+        ids = self.ids_by_tag[tag]
+        rng = self.rngs[tag]
+        N = len(ids)
+        if N <= self.T + 2:
+            for cand in self.tags:
+                if len(self.ids_by_tag[cand]) > self.T + 2:
+                    tag = cand; ids = self.ids_by_tag[cand]
+                    rng = self.rngs[cand]; N = len(ids); break
+        starts = [rng.randint(0, N - self.T - 2) for _ in range(bsz)]
+        ctx = torch.stack([ids[s:s + self.T] for s in starts], dim=0).to(device)
+        tgt = torch.stack([ids[s + 1:s + self.T + 1] for s in starts], dim=0).to(device)
+        self.step_count += 1
+        return ctx, tgt, self.step_count % 5, tag
+
+
+def load_distill_teacher(teacher_dir_or_id, qwen_name, device, dtype):
+    """Axis B: load Qwen base + (optional LoRA merge) as a frozen teacher.
+
+    teacher_dir_or_id:
+      - local dir containing adapter_config.json -> LoRA merge into qwen_name
+      - HF hub repo id of a LoRA -> download + merge
+      - HF hub repo id of a full model -> load directly
+    Returns a frozen HF AutoModelForCausalLM, eval() mode.
+    """
+    from transformers import AutoModelForCausalLM
+    print(f"[B][teacher] loading base {qwen_name}", flush=True)
+    base = AutoModelForCausalLM.from_pretrained(
+        qwen_name, torch_dtype=dtype, trust_remote_code=True,
+    )
+    # If a local dir + adapter_config.json -> LoRA merge
+    is_lora = False
+    if os.path.isdir(teacher_dir_or_id):
+        ac = os.path.join(teacher_dir_or_id, "adapter_config.json")
+        if os.path.exists(ac):
+            is_lora = True
+    if is_lora:
+        from peft import PeftModel
+        print(f"[B][teacher] merging LoRA {teacher_dir_or_id}", flush=True)
+        pm = PeftModel.from_pretrained(base, teacher_dir_or_id)
+        base = pm.merge_and_unload()
+    base = base.to(device=device, dtype=dtype)
+    base.eval()
+    for p in base.parameters():
+        p.requires_grad_(False)
+    n = sum(p.numel() for p in base.parameters())
+    print(f"[B][teacher] loaded total params={n/1e6:.1f}M frozen", flush=True)
+    return base
+
+
 def run(cfg):
+    _axis_banner()
     torch.manual_seed(cfg["seed"])
     torch.cuda.manual_seed_all(cfg["seed"])
     random.seed(cfg["seed"])
@@ -214,12 +346,37 @@ def run(cfg):
     os.makedirs(os.path.join(out_dir, "kosmos_anchors"), exist_ok=True)
 
     # ─── corpus mix ──
-    mix_info = build_mixed_corpus(
-        cfg["wiki_corpus"], cfg["anima_corpus"], cfg["mixed_corpus"],
-        wiki_frac=cfg["wiki_frac"], target_mb=cfg["target_corpus_mb"],
-    )
+    # Axis A (curriculum): build TWO mix files
+    #   early = wiki-only (anima_frac=0)
+    #   late  = mixed at AXIS_CURRICULUM_LATE_WIKI_FRAC
+    if AXIS_CURRICULUM_PHASE_STEPS > 0:
+        early_path = cfg["mixed_corpus"] + ".early.jsonl"
+        late_path  = cfg["mixed_corpus"] + ".late.jsonl"
+        print(f"[A][curriculum] phase_steps={AXIS_CURRICULUM_PHASE_STEPS} "
+              f"early=wiki-only late_wiki_frac={AXIS_CURRICULUM_LATE_WIKI_FRAC}",
+              flush=True)
+        mix_info_early = build_mixed_corpus(
+            cfg["wiki_corpus"], cfg["anima_corpus"], early_path,
+            wiki_frac=1.0, target_mb=cfg["target_corpus_mb"],
+        )
+        mix_info_late = build_mixed_corpus(
+            cfg["wiki_corpus"], cfg["anima_corpus"], late_path,
+            wiki_frac=AXIS_CURRICULUM_LATE_WIKI_FRAC,
+            target_mb=cfg["target_corpus_mb"],
+        )
+        mix_info = {"axis_A_curriculum": True,
+                    "phase_steps": AXIS_CURRICULUM_PHASE_STEPS,
+                    "early": mix_info_early, "late": mix_info_late}
+        # Default sampler points at early; switched at phase boundary
+        cfg["_mixed_corpus_early"] = early_path
+        cfg["_mixed_corpus_late"] = late_path
+    else:
+        mix_info = build_mixed_corpus(
+            cfg["wiki_corpus"], cfg["anima_corpus"], cfg["mixed_corpus"],
+            wiki_frac=cfg["wiki_frac"], target_mb=cfg["target_corpus_mb"],
+        )
     with open(os.path.join(out_dir, "mix_info.json"), "w") as f:
-        json.dump(mix_info, f, indent=2)
+        json.dump(mix_info, f, indent=2, default=str)
 
     # ─── tokenizer (Qwen BPE 5-lang) ──
     from transformers import AutoTokenizer
@@ -240,8 +397,39 @@ def run(cfg):
                     max_cells=int(cfg.get("mitosis_max", 128) or 128))
     model.attach_mitosis(pool, lambda_mitosis=cfg["lambda_mitosis"])
 
+    # Axis C2: disable head_g entirely
+    if not AXIS_HEAD_G_ENABLE:
+        with torch.no_grad():
+            model.head_g.weight.zero_()
+        for p in model.head_g.parameters():
+            p.requires_grad_(False)
+        print("[C2][head_g] zeroed + frozen (excluded from optim)", flush=True)
+
+    # Axis D: freeze tok_emb + head_a (tied)
+    if AXIS_FREEZE_EMBED:
+        model.tok_emb.weight.requires_grad_(False)
+        # head_a tied to tok_emb -- same tensor, but be explicit
+        for p in model.head_a.parameters():
+            p.requires_grad_(False)
+        # ln_f kept trainable (lightweight); norms of frozen embed need tunable scale
+        print(f"[D][freeze_embed] tok_emb + head_a frozen (vocab={model.vocab_size})", flush=True)
+
+    # Axis B: load distillation teacher
+    teacher_model = None
+    if AXIS_DISTILL_TEACHER:
+        try:
+            teacher_model = load_distill_teacher(
+                AXIS_DISTILL_TEACHER, cfg["base_model"], device, dtype,
+            )
+        except Exception as _e:
+            print(f"[B][teacher] FAIL load: {type(_e).__name__}: {_e}", flush=True)
+            print(f"[B][teacher] axis B INACTIVE for this run", flush=True)
+            teacher_model = None
+
     n_total = sum(p.numel() for p in model.parameters())
-    print(f"[P21H] model params total={n_total:,} ({n_total/1e6:.2f}M)", flush=True)
+    n_trainable_axis = sum(p.numel() for p in model.parameters() if p.requires_grad)
+    print(f"[P21H] model params total={n_total:,} ({n_total/1e6:.2f}M) "
+          f"trainable={n_trainable_axis/1e6:.2f}M", flush=True)
 
     # ─── BEFORE eval (greedy, sanity) ──
     print(f"[P21H] BEFORE-train per-lang OOD eval (greedy)", flush=True)
@@ -275,9 +463,49 @@ def run(cfg):
         )
 
     # ─── training loop ──
-    corpus_text = load_corpus_text(cfg["mixed_corpus"])
-    sampler = TokenizedSampler(corpus_text, tokenizer, cfg["block_size"],
-                                seed=cfg["seed"], n_aug=cfg["n_aug"])
+    # Axis E: lang-balanced sampler over per-lang shards + anima
+    sampler = None
+    sampler_E = None
+    if AXIS_LANG_BALANCED:
+        per_lang_dir = cfg.get("per_lang_dir") or (
+            os.path.join(os.path.dirname(cfg["wiki_corpus"]), "wiki_parts")
+        )
+        per_lang_paths = {}
+        for lang in ("en", "ko", "zh", "ru", "ja"):
+            cand = os.path.join(per_lang_dir, f"{lang}.jsonl")
+            if os.path.exists(cand):
+                per_lang_paths[lang] = cand
+        if len(per_lang_paths) >= 3:
+            print(f"[E][sampler] using {len(per_lang_paths)} per-lang shards from {per_lang_dir}",
+                  flush=True)
+            sampler_E = LangBalancedSampler(
+                per_lang_paths, cfg["anima_corpus"], tokenizer, cfg["block_size"],
+                seed=cfg["seed"],
+            )
+        else:
+            print(f"[E][sampler] per-lang shards NOT found in {per_lang_dir} -- fall back to mixed",
+                  flush=True)
+
+    if sampler_E is None:
+        # Axis A early/late or default mixed
+        if AXIS_CURRICULUM_PHASE_STEPS > 0:
+            print(f"[A][sampler] EARLY = wiki-only ({cfg['_mixed_corpus_early']})",
+                  flush=True)
+            corpus_text = load_corpus_text(cfg["_mixed_corpus_early"])
+        else:
+            corpus_text = load_corpus_text(cfg["mixed_corpus"])
+        sampler = TokenizedSampler(corpus_text, tokenizer, cfg["block_size"],
+                                    seed=cfg["seed"], n_aug=cfg["n_aug"])
+
+    # Helper: switch sampler at curriculum phase boundary
+    def _switch_to_late():
+        if AXIS_CURRICULUM_PHASE_STEPS > 0 and sampler_E is None:
+            print(f"[A][switch] step={step+1} -> LATE mixed ({cfg['_mixed_corpus_late']})",
+                  flush=True)
+            late_text = load_corpus_text(cfg["_mixed_corpus_late"])
+            return TokenizedSampler(late_text, tokenizer, cfg["block_size"],
+                                     seed=cfg["seed"] + 7, n_aug=cfg["n_aug"])
+        return None
 
     t0 = time.time()
     log = []
@@ -326,22 +554,130 @@ def run(cfg):
           flush=True)
 
     vocab_size = model.vocab_size
+    # Axis F: maintain a recent buffer of (rep, lang_tag) for InfoNCE contrastive
+    contrast_buffer = []   # list of (rep_vec[d_model], tag)
+    contrast_buffer_max = 8
+    # Axis tracking diagnostics
+    axis_diag = {"L_kd_sum": 0.0, "L_kd_n": 0, "L_contrast_sum": 0.0,
+                 "L_contrast_n": 0, "switched_curriculum": False}
+
     for step in range(steps):
         lr_now = lr_schedule(step, steps, warmup_steps=cfg["warmup_steps"],
                               peak_lr=cfg["lr"], min_lr=cfg["lr"] * 0.1)
         for pg in optimizer.param_groups:
             pg["lr"] = lr_now
 
-        ctx, tgt, aug_slot = sampler.sample_batch(cfg["bsz"], device)
+        # Axis A: curriculum phase switch
+        if (AXIS_CURRICULUM_PHASE_STEPS > 0 and sampler_E is None
+                and step == AXIS_CURRICULUM_PHASE_STEPS
+                and not axis_diag["switched_curriculum"]):
+            new_sampler = _switch_to_late()
+            if new_sampler is not None:
+                sampler = new_sampler
+                axis_diag["switched_curriculum"] = True
+
+        # batch sample (axis E returns extra lang_tag)
+        if sampler_E is not None:
+            ctx, tgt, aug_slot, lang_tag = sampler_E.sample_batch(cfg["bsz"], device)
+        else:
+            ctx, tgt, aug_slot = sampler.sample_batch(cfg["bsz"], device)
+            lang_tag = "mixed"
+
         model.train()
         logits_a, logits_g, tensions, _, mit_info = model(ctx, mitosis_step=step)
-        L_ce = F.cross_entropy(
-            logits_a.reshape(-1, vocab_size).float(), tgt.reshape(-1),
-        )
+
+        # --- Axis C: split objectives by head ---
+        # head_a gets multilingual CE (always); head_g gets anima-register CE when
+        # the batch is recognized as anima content (sampler_E lang_tag=="anima")
+        # OR (fallback) we apply head_g CE on the SAME target tokens (no split).
+        if AXIS_HEAD_G_OBJECTIVE == "anima_register_ce":
+            # head_a: multilingual CE -- mask out anima batches in axis-E mode
+            if sampler_E is not None and lang_tag == "anima":
+                # this batch is anima -- head_a learns nothing this step
+                L_ce_a = logits_a.sum() * 0.0   # zero-loss preserving graph
+            else:
+                L_ce_a = F.cross_entropy(
+                    logits_a.reshape(-1, vocab_size).float(),
+                    tgt.reshape(-1),
+                )
+            # head_g: anima-register CE on anima batches; OR every batch if no axis E
+            if sampler_E is None or lang_tag == "anima":
+                L_ce_g = F.cross_entropy(
+                    logits_g.reshape(-1, vocab_size).float(),
+                    tgt.reshape(-1),
+                )
+            else:
+                L_ce_g = logits_g.sum() * 0.0
+            L_ce = L_ce_a + L_ce_g
+        else:
+            L_ce = F.cross_entropy(
+                logits_a.reshape(-1, vocab_size).float(), tgt.reshape(-1),
+            )
+
         L_total = L_ce
         if mit_info is not None:
             aux = mit_info["aux_loss"]
-            L_total = L_ce + cfg["lambda_mitosis"] * aux
+            L_total = L_total + cfg["lambda_mitosis"] * aux
+
+        # --- Axis B: KD loss against frozen teacher ---
+        if teacher_model is not None:
+            try:
+                with torch.no_grad():
+                    t_out = teacher_model(ctx)
+                    t_logits = t_out.logits if hasattr(t_out, "logits") else t_out[0]
+                    # match vocab if needed
+                    if t_logits.shape[-1] != logits_a.shape[-1]:
+                        v = min(t_logits.shape[-1], logits_a.shape[-1])
+                        t_logits = t_logits[..., :v]
+                        s_logits_use = logits_a[..., :v]
+                    else:
+                        s_logits_use = logits_a
+                T = max(1e-3, AXIS_KD_T)
+                t_prob = F.log_softmax(t_logits.float() / T, dim=-1)
+                s_prob = F.log_softmax(s_logits_use.float() / T, dim=-1)
+                # KL(student || teacher) -- forward KL
+                kd = F.kl_div(s_prob, t_prob, reduction="batchmean",
+                              log_target=True) * (T * T)
+                L_total = L_total + AXIS_KD_ALPHA * kd
+                axis_diag["L_kd_sum"] += float(kd.detach())
+                axis_diag["L_kd_n"] += 1
+            except Exception as _e:
+                if step < 3:
+                    print(f"[B][KD] step={step} skip: {type(_e).__name__}: {_e}",
+                          flush=True)
+
+        # --- Axis F: InfoNCE contrastive over lang reps ---
+        if AXIS_CONTRASTIVE_LANG and sampler_E is not None and lang_tag != "anima":
+            # rep = mean-pool of pre-head hidden (we don't have direct access, so
+            # use logits_a mean as a proxy projected back to a stable space via L2)
+            rep = logits_a.detach().mean(dim=(0, 1))
+            rep_norm = rep / (rep.norm() + 1e-6)
+            contrast_buffer.append((rep_norm, lang_tag))
+            if len(contrast_buffer) > contrast_buffer_max:
+                contrast_buffer.pop(0)
+            # build pairs: anchor=current, positives=same tag, negatives=others
+            if len(contrast_buffer) >= 3:
+                anchor = contrast_buffer[-1][0]
+                anchor_tag = contrast_buffer[-1][1]
+                pos_sims, neg_sims = [], []
+                for rv, tg in contrast_buffer[:-1]:
+                    s = (anchor * rv).sum()
+                    if tg == anchor_tag:
+                        pos_sims.append(s)
+                    else:
+                        neg_sims.append(s)
+                if pos_sims and neg_sims:
+                    pos_t = torch.stack(pos_sims)
+                    neg_t = torch.stack(neg_sims)
+                    # InfoNCE: -log(sum exp(pos) / sum exp(all))
+                    all_t = torch.cat([pos_t, neg_t])
+                    num = torch.logsumexp(pos_t, dim=0)
+                    den = torch.logsumexp(all_t, dim=0)
+                    contrast = -(num - den)
+                    L_total = L_total + AXIS_CONTRASTIVE_W * contrast
+                    axis_diag["L_contrast_sum"] += float(contrast.detach())
+                    axis_diag["L_contrast_n"] += 1
+
         optimizer.zero_grad(set_to_none=True)
         L_total.backward()
         torch.nn.utils.clip_grad_norm_(trainable, max_norm=1.0)
@@ -559,6 +895,25 @@ def run(cfg):
         kosmos_anchors_final=final_anchors,
         n_kosmos_anchors=n_anchors,
         mitosis_summary=pool.summary() if hasattr(pool, 'summary') else None,
+        axis_diag=dict(
+            axes_active=dict(
+                B_distill=bool(AXIS_DISTILL_TEACHER),
+                A_curriculum_phase_steps=AXIS_CURRICULUM_PHASE_STEPS,
+                C_head_g_objective=AXIS_HEAD_G_OBJECTIVE or None,
+                C2_head_g_disabled=(not AXIS_HEAD_G_ENABLE),
+                D_freeze_embed=bool(AXIS_FREEZE_EMBED),
+                E_lang_balanced=bool(AXIS_LANG_BALANCED),
+                F_contrastive_lang=bool(AXIS_CONTRASTIVE_LANG),
+                kd_alpha=AXIS_KD_ALPHA, kd_T=AXIS_KD_T,
+                contrastive_w=AXIS_CONTRASTIVE_W,
+                curriculum_late_wiki_frac=AXIS_CURRICULUM_LATE_WIKI_FRAC,
+            ),
+            L_kd_mean=(axis_diag["L_kd_sum"] / max(1, axis_diag["L_kd_n"])),
+            L_kd_n=axis_diag["L_kd_n"],
+            L_contrast_mean=(axis_diag["L_contrast_sum"] / max(1, axis_diag["L_contrast_n"])),
+            L_contrast_n=axis_diag["L_contrast_n"],
+            switched_curriculum=axis_diag["switched_curriculum"],
+        ),
     )
     with open(os.path.join(out_dir, "result.json"), "w") as f:
         json.dump(result, f, indent=2, default=str)
