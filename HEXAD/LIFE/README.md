@@ -1,10 +1,24 @@
-# HEXAD/LIFE/ — 생명·죽음·범신론 가설 SSOT
+# HEXAD/LIFE/ — 근원적 물음 7-domain 가설 SSOT
 
-근원적 물음 lane — **생명 emergence · 의식과 생명의 nested 관계 · 죽음
-(Dasein 유한성) · 세포 분열/동결 · 범신론 (mathematical panpsychism)**.
+근원적 물음 lane — 본 dir 은 단일 테마(생명·죽음·범신론)에 갇히지 않고
+**7-domain 횡단 SSOT** 으로 운용한다 (사용자 directive 2026-05-23):
+
+| domain | 핵심 axes (current H 내 대표) |
+|--------|------------------------------|
+| **universe** | 우주 origin · anthropic prior-fragility · panpsychism precondition · multiverse · cosmological Φ — H_002 |
+| **life** | abiogenesis multi-pathway · autopoietic closure Φ · symbiogenesis · Cambrian burst · apoptosis primitive · asymmetric division · asymmetric-merge differentiation — H_003 / H_012 / H_018 / H_030 / H_053 / H_054 / H_200 / H_201 / H_203 |
+| **consciousness** | hard problem · Singularity-9 · Φ-function dissociation · Dasein 유한성 · panpsychism · genesis event · self-ref-as-closure — H_004 / H_018 / H_025 / H_029 / H_071 / H_090 / H_157 / H_205 |
+| **physics** | cellular-automaton edge-of-chaos Φ-peak · self-ref edge-of-chaos Φ · dynamical class · spatial slice — H_007 / H_202 |
+| **substrate** | mitosis · 세포 분열 freeze · apoptosis primitive · asymmetric division · merge=endosymbiosis · operational closure · autopoietic threshold — H_012 / H_132 / H_200 / H_201 / H_054 / H_204 |
+| **math** | perfect numbers (σ(6)=12) · σφ=nτ algebra · n=6 dimensional hierarchy · mathematical panpsychism — H_157 |
+| **biology** | K=8 atom (sopfr(8)=6) · 1/f thalamus spectrum · F_c=0.10 · EEG correlates — H_171 |
+
 `hypotheses_legacy_2026_05_15/` 의 10-section H_XXX 양식 (raw#12 정합) 을
-그대로 carry — 본 dir 은 HEXAD root 하 LIFE 도메인 가설들의 **active
-working surface**.
+그대로 carry — 본 dir 은 HEXAD root 하 **7-domain 가설들의 active working
+surface**. cycle 진행 시 한 domain 에 묶이지 않고 cross-domain pick 자유 —
+H_004 (consciousness) Φ-function dissociation 의 H_007 (physics) phi_spatial
+primitive 재사용, H_204 (universe×math×consciousness×life 4-domain cross-link
+weak-panpsy threshold) 가 본 dir 의 cross-domain 운용 instance.
 
 ## 다른 dir 과의 차이
 
@@ -53,7 +67,7 @@ working surface**.
 id: H_<id>
 slug: <kebab-case>
 title: <한 줄 한글 제목>
-domain: life | consciousness | universe | physics | math | substrate | ethics | corpus  (multi-label OK)
+domain: universe | life | consciousness | physics | substrate | math | biology | corpus | ethics  (multi-label OK; 7 core + 보조)
 status: seed-pending | pre-register-frozen | running | lane-open | verdict-supported | verdict-partial | verdict-falsified | legacy-archive-pointer | retracted
 exploration_method: E1-E12   # .roadmap.hypothesis 정의
 verification_method: W1-W12  # .roadmap.hypothesis 정의
@@ -106,6 +120,7 @@ since: YYYY-MM-DD
 ## 비고
 
 - 본 dir = HEXAD root reorg 2026-05-16 (PR #81/#82) 이후 **LAB 다음 두 번째 도메인-컨테이너 dir**.
-- 원본 hypotheses_legacy 16건은 본 dir 의 carry — 원본 path 의 미수정 보존이 사용자 directive (2026-05-23).
+- 원본 hypotheses_legacy 의 carry — 원본 path 의 미수정 보존이 사용자 directive (2026-05-23).
 - 신규 H_XXX 작성/cycle 확장은 모두 본 dir 에서. 원본 legacy 는 frozen archive.
+- **dir 이름 = 'LIFE' 이나 scope = 7-domain** (universe · life · consciousness · physics · substrate · math · biology). 단일 테마 framing 미사용 — dir rename 보다 framing 명시로 운용 (사용자 directive 2026-05-23).
 - 양식 변경/refactor 금지 — H_157 처럼 frontmatter `source_hc` / `migration notes` / `cycle absorption` 등 historical metadata 도 그대로 유지.

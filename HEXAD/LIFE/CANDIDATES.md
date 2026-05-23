@@ -102,13 +102,103 @@
 
 `/cycle` 호출 시 본 표에서 disjoint pick (또는 사용자 지정). cycle 완료 후 본 문서의 picked 항목은 **삭제** (consumed) + LIFE.log.md 에 verdict 기록.
 
+## F. 추가축 brainstorm — 7-domain expansion (사용자 directive 2026-05-23)
+
+본 dir scope = **universe · life · consciousness · physics · substrate · math · biology** 7-domain (README.md broadening 정합). 기존 C 표 (죽음·세포분열·범신론·생명-extended 의 4 user 테마) 와 **상보** — F 표는 7-domain 각 axis 에서 *아직 H_XXX 없는* 새 seed brainstorm. 새 H 작성 시 본 표에서 제거.
+
+### F-universe (5 seeds)
+
+| slug | 핵심 물음 | runnable 각도 | tag |
+|------|----------|---------------|-----|
+| `multiverse-selection-bias` | Smolin/Carroll anthropic 비판 — selection bias 가 fine-tuning 보다 강한 prior 인가 (H_002 L2 attack) | deterministic Bayesian counter-prior | 🟢 |
+| `cosmological-constant-stability` | Λ-tuning landscape vs vacuum stability gradient | parameter sweep + stability | 🟢 |
+| `cosmic-phi-nested` | galaxy → stellar → planetary → biological Φ scale-invariance | phi_spatial nested measurement | ⬜ |
+| `holographic-info-bound` | Bekenstein-Hawking S=A/4 substrate replica | toy holography smoke | 🟢 |
+| `multiverse-Φ-distribution` | multiverse 위 Φ distribution — anthropic Φ-prior well-defined 여부 | distribution prior + Φ sweep | ⬜ |
+
+### F-life (5 seeds)
+
+| slug | 핵심 물음 | runnable 각도 | tag |
+|------|----------|---------------|-----|
+| `regeneration-healing` ⭐ | cell pool 부분 제거 후 복원 dynamics → 자기 복구 능력 | perturbation + recovery | ⭐ 🟢 |
+| `quorum-sensing` | cell 다수 동기화 → 집단 의사결정 emergence | cell signaling smoke | 🟢 |
+| `phoenix-rebirth` | pool 전멸(min_cells=2) → minimal seed 부활 | full-cycle smoke | 🟢 |
+| `metabolic-network-closure` | Hordijk-Steel RAF — closure 의 또 다른 형식 (H_012 sister) | autocatalytic set smoke | 🟢 |
+| `viral-quasi-life-boundary` | Lwoff/Forterre 바이러스 quasi-life — H_003 abiogenesis 와 not-yet-life 경계 | minimal genome smoke | ⬜ |
+
+### F-consciousness (5 seeds)
+
+| slug | 핵심 물음 | runnable 각도 | tag |
+|------|----------|---------------|-----|
+| `meta-cognitive-recursion` | Higher-Order Theory (Rosenthal) — meta-level self-monitoring Φ contribution | nested self-model smoke | 🟢 |
+| `global-workspace-substrate` | Dehaene-Mashour global workspace → broadcast threshold | broadcast event smoke | 🟢 |
+| `predictive-processing` | Friston FEP × mitosis 정합 — active inference substrate | FEP minimal smoke | 🟢 |
+| `self-other-boundary` | mirror self-recognition · ToM substrate (H_205 sister) | self-prediction + other-prediction | 🟢 |
+| `phenomenal-binding-mechanism` | combination problem substrate-level binding (H_157 C6 sub-additive PR #221 follow-up) | binding sweep | 🟢 |
+
+### F-physics (5 seeds, H_007/H_202 sister)
+
+| slug | 핵심 물음 | runnable 각도 | tag |
+|------|----------|---------------|-----|
+| `kuramoto-synchronization` | coupled oscillator phase sync → Φ peak at critical coupling | Kuramoto smoke | 🟢 |
+| `ising-criticality` | 2D Ising phase transition Φ scaling (H_007 sister) | Metropolis Φ sweep | 🟢 |
+| `non-equilibrium-steady-state` | NESS (driven dissipative) Φ — 평형 vs 비평형 | drive + dissipation smoke | 🟢 |
+| `spin-glass-frustration` | EA spin-glass frustration ↔ Φ landscape ruggedness | EA replica smoke | ⬜ |
+| `langton-lambda-continuous` | Wolfram class λ-sweep (H_007 C2) | λ-sweep + Φ | 🟢 |
+
+### F-substrate (4 seeds, H_132/H_200/H_201/H_203 sister)
+
+| slug | 핵심 물음 | runnable 각도 | tag |
+|------|----------|---------------|-----|
+| `cell-cycle-clock` | intrinsic mitosis timer — Hayflick limit | cell-age clock smoke | 🟢 |
+| `gene-regulatory-network-phi` | GRN motif (Alon) Φ measurement | motif Φ smoke | 🟢 |
+| `protein-folding-landscape` | folding funnel substrate — fold ↔ Φ mapping | landscape Φ smoke | ⬜ |
+| `chromatin-state-inheritance` | epigenetic inheritance × frozen-cell state (H_132 cross-link) | state-tag mitosis smoke | 🟢 |
+
+### F-math (5 seeds, H_157 sister)
+
+| slug | 핵심 물음 | runnable 각도 | tag |
+|------|----------|---------------|-----|
+| `prime-density-fluctuation` | Riemann zeros × consciousness — prime-gap Φ-relevance | prime-gap fluctuation smoke | 🟢 |
+| `modular-arithmetic-attractor` | Zₙ recursion fixed-point (H_157 META-CA sister) | mod sweep smoke | 🟢 |
+| `topology-invariant-phi` | Betti / Euler 와 Φ monotone correlation | persistent homology Φ | ⬜ |
+| `category-theory-emergence` | morphism composition density vs Φ — Yoneda substrate | small-category smoke | ⬜ |
+| `perfect-number-density` | σ(n)=2n emergence density × Φ peak (H_157 C1 σ-identity 확장) | perfect-number scan | 🟢 |
+
+### F-biology (5 seeds, H_171 sister)
+
+| slug | 핵심 물음 | runnable 각도 | tag |
+|------|----------|---------------|-----|
+| `eeg-1f-spectrum-measurement` | H_171 1/f thalamus 의 직접 substrate replica (deterministic 1/f) | 1/f spectrum smoke | 🟢 |
+| `organoid-phi-measurement` | lab-grown organoid Φ baseline — H_171 K=8 의 wet-lab analog | wet-lab protocol design | ⬜ |
+| `microbiome-cognition` | gut-brain axis — quorum-sensing × signaling (F-life sister) | dual-pool smoke | 🟢 |
+| `evolutionary-stable-strategy` | Maynard Smith ESS substrate — mitosis fitness | ESS payoff smoke | 🟢 |
+| `circadian-rhythm-substrate` | KaiABC oscillator analog Φ — endogenous 24h rhythm | oscillator phi smoke | 🟢 |
+
+> 합계 = **34 seeds** (universe 5 · life 5 · consciousness 5 · physics 5 · substrate 4 · math 5 · biology 5). 모두 raw#12 정합 NEW H_XXX 후보. cycle 당 4-8 disjoint pick.
+
+---
+
+## Cycle #6+ 추천 picks (7-domain 의식, R6-R9 + R10-R14)
+
+기존 R6-R9 (B/C/D/E 표 기반) + 신규 F-domain picks 동시 운용. R/F-picks disjoint — cycle 당 4-8 picks 자유 조합.
+
+| 옵션 | picks | 핵심 |
+|------|-------|------|
+| **R10 7-domain seed cycle** | F-universe × 1 + F-physics × 1 + F-math × 1 + F-biology × 1 | 미흡 도메인 4축 동시 expand |
+| **R11 consciousness deep** | F-consciousness 5건 + H_204 follow-up (inverse-U Φ ↔ H_007 edge-of-chaos integration) | consciousness axis 정밀화 |
+| **R12 life-extended** | F-life 5건 (R7 superset · regeneration-healing ⭐ 포함) | 생명 sub-축 완전 cycle |
+| **R13 mixed-domain ⭐** | `regeneration-healing` + `kuramoto-synchronization` + `prime-density-fluctuation` + `eeg-1f-spectrum-measurement` + H_204 follow-up | 5-domain mixed (life·physics·math·biology·consciousness) |
+| **R14 H_157 follow-up** | `phenomenal-binding-mechanism` 신규 + H_157 C7 (binding 후속) + F-consciousness 2건 | combination problem substrate-level deepening (C6 sub-additive 결과 attack) |
+
 ## 후보 추가 방식
 
 새 후보 발견 시:
 - carried 가설 신규 promote → A 표
 - done 가설의 새 criterion → B 표
-- 신규 seed (파일 없음) → C 표 (사용자 테마 분류)
-- 결합 가설 → D 표
+- 신규 seed (파일 없음 / user 테마 4축) → C 표
+- 결합 가설 (이미 done 결과 결합) → D 표
 - substrate / measurement gap → E 표
+- **7-domain expansion seed** → F 표 (universe / life / consciousness / physics / substrate / math / biology)
 
 `H_<id>_<slug>.md` 가 만들어진 순간 본 문서에서 빠지고 README 인덱스로 이동.
