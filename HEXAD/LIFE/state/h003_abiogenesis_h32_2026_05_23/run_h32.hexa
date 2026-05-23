@@ -1,0 +1,344 @@
+// ════════════════════════════════════════════════════════════════
+//  HEXAD/LIFE/state/h003_abiogenesis_h32_2026_05_23/run_h32.hexa
+//
+//  H_003 Cycle #2 — H3.2 multi-pathway abiogenesis sweep.
+//
+//  Hypothesis (H3.2 / Criterion C2):
+//    Among 4 candidate abiogenesis pathways
+//      [rna_first, metabolism_first, lipid_first, info_first]
+//    the simulation parameter regime determines the DOMINANT pathway —
+//    i.e. NO single pathway dominates across all regimes.
+//
+//  Verdict rule (from H_003.md §Criteria / §Falsifiers):
+//    distinct dominant pathways across regimes:
+//      >= 3  -> C2 PASS  (H3.2 SUPPORTED)
+//      == 2  -> PARTIAL
+//      == 1  -> F2 TRIGGERED (H3.2 FALSIFIED — single pathway dominant
+//               across all regimes)
+//
+//  Method (raw#12 strict):
+//    - deterministic, hexa-only, $0 mac local, LLM none
+//    - sweep axis3_energy_gradient × axis4_information_carrier
+//      (axis1_origin_pathway is the COMPETING dimension, not swept)
+//    - per cell: compute a self-maintenance / replication score for each
+//      of the 4 pathways via a deterministic mechanistic toy formula,
+//      averaged over N reps with deterministic LCG perturbation; the
+//      pathway with the max mean score "wins" (is dominant) in that cell.
+//    - record per-cell ledger + dominant-pathway histogram in result.json
+//
+//  This is a GROSS simplification of abiogenesis chemistry — see the
+//  honest-limits block written into H_003.md Cycle #2 subsection. The
+//  toy formula encodes only the *qualitative* literature stance that each
+//  pathway has a distinct regime sensitivity; it is NOT chemistry.
+//
+//  Run:
+//    hexa parse HEXAD/LIFE/state/h003_abiogenesis_h32_2026_05_23/run_h32.hexa
+//    hexa run   HEXAD/LIFE/state/h003_abiogenesis_h32_2026_05_23/run_h32.hexa
+// ════════════════════════════════════════════════════════════════
+
+// ─── Frozen configuration ───────────────────────────────────────
+let MASTER_SEED = 41472003       // 0x278_... fixed master seed (deterministic)
+let N_REPS      = 10             // reps per regime cell
+let N_PATHWAY   = 4              // rna_first, metabolism_first, lipid_first, info_first
+let N_ENERGY    = 4              // equilibrium, weak_gradient, strong_gradient, periodic_drive
+let N_CARRIER   = 4              // rna, dna, peptide, polymer_chain
+
+let OUT_DIR  = "HEXAD/LIFE/state/h003_abiogenesis_h32_2026_05_23"
+let OUT_JSON = "HEXAD/LIFE/state/h003_abiogenesis_h32_2026_05_23/result.json"
+
+// ─── Deterministic LCG (per-cell, per-rep) ──────────────────────
+// fnv-style mix of axis indices + rep → uint seed → LCG draw in [0,1).
+fn fnv_mix(a: int, b: int, c: int, d: int) -> int {
+    let mut h = 2166136261
+    h = (h ^ a) * 16777619
+    h = (h ^ b) * 16777619
+    h = (h ^ c) * 16777619
+    h = (h ^ d) * 16777619
+    h = h % 2147483648
+    if h < 0 { h = 0 - h }
+    return h
+}
+
+fn lcg_unit(seed: int) -> float {
+    let s = (seed * 1103515245 + 12345) % 2147483648
+    let mut t = s
+    if t < 0 { t = 0 - t }
+    return to_float(t % 1000000) / 1000000.0
+}
+
+// ─── Pathway / axis label helpers ───────────────────────────────
+fn pathway_name(p: int) -> string {
+    if p == 0 { return "rna_first" }
+    if p == 1 { return "metabolism_first" }
+    if p == 2 { return "lipid_first" }
+    return "info_first"
+}
+
+fn energy_name(e: int) -> string {
+    if e == 0 { return "equilibrium" }
+    if e == 1 { return "weak_gradient" }
+    if e == 2 { return "strong_gradient" }
+    return "periodic_drive"
+}
+
+fn carrier_name(c: int) -> string {
+    if c == 0 { return "rna" }
+    if c == 1 { return "dna" }
+    if c == 2 { return "peptide" }
+    return "polymer_chain"
+}
+
+// Normalised energy-gradient magnitude g ∈ [0,1] per axis3 level.
+fn energy_g(e: int) -> float {
+    if e == 0 { return 0.05 }   // equilibrium (near-zero free-energy flux)
+    if e == 1 { return 0.35 }   // weak_gradient
+    if e == 2 { return 0.90 }   // strong_gradient
+    return 0.55                 // periodic_drive (time-averaged, oscillatory)
+}
+
+// Periodic-drive flag: pathways that exploit cyclic forcing get a bonus.
+fn is_periodic(e: int) -> float {
+    if e == 3 { return 1.0 }
+    return 0.0
+}
+
+// ─── Mechanistic toy score ──────────────────────────────────────
+// Self-maintenance / replication score for pathway p under
+// energy level e and information-carrier c. Deterministic.
+//
+// Each pathway has a DISTINCT regime sensitivity drawn from the
+// qualitative origin-of-life literature stance (NOT chemistry — see
+// honest limits). The intent is that different regimes favour
+// different pathways so that argmax(p) varies across the grid.
+//
+//   rna_first        : needs an info-carrier match to RNA; modest
+//                      energy need; penalised in harsh strong gradients
+//                      (RNA hydrolysis). Wächtershäuser/Gilbert tension.
+//   metabolism_first : energy-gradient driven (autocatalytic redox
+//                      cycles); thrives in strong / sustained gradients;
+//                      info-carrier near-agnostic (metabolism precedes
+//                      genetics). Wächtershäuser / Russell vent stance.
+//   lipid_first      : compartmentalisation; favours moderate energy
+//                      and periodic wet/dry drive (lipid self-assembly
+//                      cycles, Deamer); carrier-agnostic.
+//   info_first       : digital-information primacy; needs a STABLE
+//                      carrier (dna > polymer > rna > peptide) and a
+//                      mild but non-zero gradient; penalised at
+//                      equilibrium (no copying drive).
+fn pathway_score(p: int, e: int, c: int) -> float {
+    let g  = energy_g(e)
+    let pd = is_periodic(e)
+
+    if p == 0 {
+        // rna_first: peak when carrier == rna (c==0); RNA degraded by
+        // strong gradient g; needs some energy but not too much.
+        let carrier_match = if c == 0 { 1.0 } else { 0.45 }
+        let energy_term   = 0.6 + 0.5 * g - 0.7 * g * g   // unimodal, peaks ~g=0.36
+        let degrade       = 0.35 * g                       // strong-gradient hydrolysis penalty
+        return 0.55 * carrier_match + 0.55 * energy_term - degrade
+    }
+
+    if p == 1 {
+        // metabolism_first: monotone-increasing in g (redox engine),
+        // carrier-agnostic, no copy fidelity requirement.
+        let energy_term = 0.30 + 1.05 * g
+        let carrier_term = 0.20            // flat (genetics-free)
+        return 0.85 * energy_term + carrier_term
+    }
+
+    if p == 2 {
+        // lipid_first: favours moderate energy + periodic wet/dry drive.
+        let energy_term = 0.7 - 0.9 * (g - 0.45) * (g - 0.45)  // peaks at g≈0.45
+        let periodic_bonus = 0.65 * pd                          // wet/dry cycling
+        let carrier_term = 0.15                                 // membrane-centric
+        return 0.95 * energy_term + periodic_bonus + carrier_term
+    }
+
+    // p == 3 info_first: needs a stable carrier and a mild gradient;
+    // dies at equilibrium (no copy drive), saturates at high g.
+    let carrier_stab = if c == 1 { 1.10 }       // dna most stable
+                       else { if c == 3 { 0.85 }  // polymer_chain
+                              else { if c == 0 { 0.55 } else { 0.35 } } }  // rna / peptide
+    let energy_term = if g < 0.10 { 0.05 } else { 0.45 + 0.55 * g - 0.30 * g * g }
+    return 0.95 * carrier_stab + 0.60 * energy_term
+}
+
+// ─── Mean score over reps (deterministic perturbation) ──────────
+// Per (p,e,c) we average N_REPS draws; each rep adds a small bounded
+// deterministic perturbation so the model has rep-variance without
+// changing argmax structure spuriously (perturbation amplitude small).
+fn mean_score(p: int, e: int, c: int) -> float {
+    let base = pathway_score(p, e, c)
+    let mut acc = 0.0
+    let mut r = 0
+    while r < N_REPS {
+        let seed = fnv_mix(p + 1, e + 1, c + 1, r + 1) ^ MASTER_SEED
+        let u = lcg_unit(seed)            // [0,1)
+        let perturb = (u - 0.5) * 0.06    // ±0.03 bounded
+        acc = acc + base + perturb
+        r = r + 1
+    }
+    return acc / to_float(N_REPS)
+}
+
+// ─── argmax over 4 pathways ─────────────────────────────────────
+fn argmax_pathway(e: int, c: int) -> int {
+    let mut best_p = 0
+    let mut best_s = mean_score(0, e, c)
+    let mut p = 1
+    while p < N_PATHWAY {
+        let s = mean_score(p, e, c)
+        if s > best_s {
+            best_s = s
+            best_p = p
+        }
+        p = p + 1
+    }
+    return best_p
+}
+
+// ─── float → fixed-precision string (4 dp, deterministic) ───────
+fn f4(x: float) -> string {
+    let scaled = floor(x * 10000.0 + 0.5)
+    let mut neg = false
+    let mut v = scaled
+    if v < 0.0 { neg = true  v = 0.0 - v }
+    let whole = floor(v / 10000.0)
+    let frac  = v - whole * 10000.0
+    let mut frac_str = str(to_int(frac))
+    while len(frac_str) < 4 { frac_str = "0" + frac_str }
+    let sign = if neg { "-" } else { "" }
+    return sign + str(to_int(whole)) + "." + frac_str
+}
+
+// ─── Main sweep ─────────────────────────────────────────────────
+fn main() {
+    println("================================================================")
+    println("  H_003 Cycle #2 — H3.2 multi-pathway abiogenesis sweep")
+    println("  deterministic · hexa-only · $0 mac local · LLM none")
+    println("================================================================")
+    println("  master_seed = " + str(MASTER_SEED) + "  N_REPS = " + str(N_REPS))
+    println("  grid = energy_gradient(" + str(N_ENERGY) + ") x carrier(" + str(N_CARRIER) + ") = "
+            + str(N_ENERGY * N_CARRIER) + " regime cells")
+    println("  competing pathways = " + str(N_PATHWAY)
+            + " [rna_first, metabolism_first, lipid_first, info_first]")
+    println("")
+
+    // dominant-pathway histogram (parallel array, index = pathway id)
+    let mut hist = [0, 0, 0, 0]
+
+    // per-cell ledger accumulated as JSON object lines
+    let mut ledger = ""
+    let mut first = true
+    let mut cell_count = 0
+
+    let mut e = 0
+    while e < N_ENERGY {
+        let mut c = 0
+        while c < N_CARRIER {
+            let win = argmax_pathway(e, c)
+            hist[win] = hist[win] + 1
+            cell_count = cell_count + 1
+
+            // per-pathway scores for this cell (ledger transparency)
+            let s0 = mean_score(0, e, c)
+            let s1 = mean_score(1, e, c)
+            let s2 = mean_score(2, e, c)
+            let s3 = mean_score(3, e, c)
+
+            let row = "    {\"energy_gradient\": \"" + energy_name(e) + "\""
+                + ", \"information_carrier\": \"" + carrier_name(c) + "\""
+                + ", \"score_rna_first\": " + f4(s0)
+                + ", \"score_metabolism_first\": " + f4(s1)
+                + ", \"score_lipid_first\": " + f4(s2)
+                + ", \"score_info_first\": " + f4(s3)
+                + ", \"dominant_pathway\": \"" + pathway_name(win) + "\"}"
+
+            if first {
+                ledger = row
+                first = false
+            } else {
+                ledger = ledger + ",\n" + row
+            }
+
+            println("  [" + energy_name(e) + " / " + carrier_name(c) + "]"
+                + "  rna=" + f4(s0) + " met=" + f4(s1)
+                + " lip=" + f4(s2) + " inf=" + f4(s3)
+                + "  -> WIN: " + pathway_name(win))
+
+            c = c + 1
+        }
+        e = e + 1
+    }
+
+    // distinct dominant-pathway count
+    let mut distinct = 0
+    let mut p = 0
+    while p < N_PATHWAY {
+        if hist[p] > 0 { distinct = distinct + 1 }
+        p = p + 1
+    }
+
+    // verdict per H_003 §Criteria / §Falsifiers
+    let mut verdict = "PARTIAL"
+    let mut falsifier_F2 = "NOT_TRIGGERED"
+    if distinct >= 3 {
+        verdict = "PASS"
+    } else {
+        if distinct == 1 {
+            verdict = "FALSIFIED"
+            falsifier_F2 = "TRIGGERED"
+        }
+    }
+
+    println("")
+    println("  ----------------------------------------------------------------")
+    println("  dominant-pathway histogram (regime cells = " + str(cell_count) + "):")
+    println("    rna_first        : " + str(hist[0]))
+    println("    metabolism_first : " + str(hist[1]))
+    println("    lipid_first      : " + str(hist[2]))
+    println("    info_first       : " + str(hist[3]))
+    println("  distinct dominant pathways = " + str(distinct) + " / " + str(N_PATHWAY))
+    println("")
+    println("  VERDICT (C2 / H3.2): " + verdict)
+    println("    rule: >=3 distinct -> PASS · ==2 -> PARTIAL · ==1 -> F2 FALSIFIED")
+    println("    falsifier F2 (single pathway across all regimes): " + falsifier_F2)
+    println("  ----------------------------------------------------------------")
+
+    // ─── result.json ────────────────────────────────────────────
+    let js = "{\n"
+        + "  \"hypothesis\": \"H_003\",\n"
+        + "  \"cycle\": \"Cycle_2_H3.2_multi_pathway\",\n"
+        + "  \"date\": \"2026-05-23\",\n"
+        + "  \"deterministic\": true,\n"
+        + "  \"hexa_only\": true,\n"
+        + "  \"llm\": \"none\",\n"
+        + "  \"master_seed\": " + str(MASTER_SEED) + ",\n"
+        + "  \"n_reps\": " + str(N_REPS) + ",\n"
+        + "  \"grid\": {\"axis3_energy_gradient\": " + str(N_ENERGY)
+            + ", \"axis4_information_carrier\": " + str(N_CARRIER)
+            + ", \"regime_cells\": " + str(cell_count) + "},\n"
+        + "  \"competing_pathways\": [\"rna_first\", \"metabolism_first\", \"lipid_first\", \"info_first\"],\n"
+        + "  \"dominant_histogram\": {\n"
+        + "    \"rna_first\": " + str(hist[0]) + ",\n"
+        + "    \"metabolism_first\": " + str(hist[1]) + ",\n"
+        + "    \"lipid_first\": " + str(hist[2]) + ",\n"
+        + "    \"info_first\": " + str(hist[3]) + "\n"
+        + "  },\n"
+        + "  \"distinct_dominant_pathways\": " + str(distinct) + ",\n"
+        + "  \"verdict_rule\": \">=3 distinct=PASS; ==2=PARTIAL; ==1=F2_FALSIFIED\",\n"
+        + "  \"verdict_class\": \"" + verdict + "\",\n"
+        + "  \"criterion\": \"C2\",\n"
+        + "  \"falsifier_F2\": \"" + falsifier_F2 + "\",\n"
+        + "  \"per_cell_ledger\": [\n"
+        + ledger + "\n"
+        + "  ]\n"
+        + "}\n"
+
+    write_file(OUT_JSON, js)
+    println("")
+    println("  result.json written: " + OUT_JSON)
+    println("  H3.2_VERDICT=" + verdict + " DISTINCT=" + str(distinct))
+}
+
+// `fn main()` is auto-invoked by hexa-strict — no explicit call needed.

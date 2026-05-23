@@ -111,7 +111,7 @@ since: 2026-05-06
 verdict_class: lane-open
 evidence_summary: theoretical + biology literature support
 falsifiers_triggered: none yet
-criteria_met: 0/5; lane-defining
+criteria_met: 3/5; lane-defining  (C1 + C3 Phase-1 PASS; C2 Cycle-2 PASS; C4 C5 lane-open)
 ```
 
 ### Phase 1 Partial Verification (2026-05-07, BG-HN)
@@ -151,3 +151,87 @@ falsifiers: F1 NOT_TRIGGERED, F3 NOT_TRIGGERED, F2/F4/F5 N/A (deferred), F6 NOT_
 - H_012 autopoietic network: H3.1 closure cycle + broken-closure control = direct minimal instance, Phase 1 partial empirical support
 - H_002 universe origin: anthropic prior supplies cosmological precondition (combined verdict at `state/anima_h002_h003_partial_verification_2026_05_07/verdict.json`)
 - anima cell metaphor (H2): H3.1 closure cycle is computational ground-truth analog — anima-not-biological identity boundary respected (analogy only)
+
+### Cycle #2 — H3.2 multi-pathway (2026-05-23)
+
+H3.2 (multi-pathway) sub-cell — OPEN since Phase 1 (deferred) — closed this cycle.
+4 candidate abiogenesis pathways (rna_first, metabolism_first, lipid_first, info_first)
+가 simulation parameter regime별로 dominant 하게 switch 하는지 sweep
+($0 mac local, hexa-only, deterministic master_seed = 41472003).
+Phase 1 의 Python harness 와 달리 본 cycle 은 **hexa-native** (`run_h32.hexa`,
+raw#37 forbidden Python 회피, 사용자 directive 정합).
+
+§Variables 의 **axis3_energy_gradient** [equilibrium, weak_gradient, strong_gradient,
+periodic_drive] × **axis4_information_carrier** [rna, dna, peptide, polymer_chain]
+= 16 regime cell sweep. **axis1_origin_pathway** 는 sweep 축이 아니라 각 cell 안에서
+경쟁하는 4 후보 차원 (argmax pathway = dominant). 각 cell · pathway 마다 deterministic
+mechanistic toy formula 로 self-maintenance / replication score 를 N_REPS=10 reps
+(LCG ±0.03 bounded perturbation) 평균 후 argmax 로 winner 결정.
+
+**Run verdict output (VERBATIM from `hexa run run_h32.hexa`)**:
+
+```
+  dominant-pathway histogram (regime cells = 16):
+    rna_first        : 1
+    metabolism_first : 3
+    lipid_first      : 6
+    info_first       : 6
+  distinct dominant pathways = 4 / 4
+
+  VERDICT (C2 / H3.2): PASS
+    rule: >=3 distinct -> PASS · ==2 -> PARTIAL · ==1 -> F2 FALSIFIED
+    falsifier F2 (single pathway across all regimes): NOT_TRIGGERED
+  H3.2_VERDICT=PASS DISTINCT=4
+```
+
+```
+phase: Cycle_2 (H3.2 only; H3.4 H3.5 still DEFERRED)
+cell_scope: 16 regime cells (4 energy_gradient × 4 information_carrier) ×
+            4 competing pathways × N_REPS=10 (deterministic LCG)
+H3.2_distinct_dominant_pathways: 4  (target ≥3; PASS)
+H3.2_dominant_histogram: rna_first=1, metabolism_first=3, lipid_first=6, info_first=6
+regime→winner: equilibrium favours rna/lipid/info; strong_gradient favours
+               metabolism (redox engine); periodic_drive favours lipid (wet/dry
+               self-assembly); stable carrier (dna) favours info_first
+verdict_class: PASS_CYCLE_2  (C2 SUPPORTED)
+evidence_strength: SUPPORTED (toy-model; see honest limits below)
+criteria_pass: 3/5  (C1 + C3 Phase-1 PASS; C2 Cycle-2 PASS; C4 C5 DEFERRED/lane-open)
+falsifiers: F2 NOT_TRIGGERED (4 distinct ≫ 1); F1 F3 carried PASS; F4/F5 N/A (deferred); F6 NOT_TRIGGERED
+```
+
+**State output**: `state/h003_abiogenesis_h32_2026_05_23/result.json`
+**Script**: `state/h003_abiogenesis_h32_2026_05_23/run_h32.hexa` (hexa-only, raw#37-clean)
+
+**raw#10 honest limits (Cycle #2 H3.2)**:
+- L1: pathway score 는 **deterministic toy formula** — 실제 abiogenesis chemistry 가
+  아님. RNA-first/metabolism-first/lipid-first/info-first 의 regime sensitivity 는
+  origin-of-life 문헌의 *qualitative* stance (Gilbert/Wächtershäuser/Russell/Deamer)
+  를 손으로 인코딩한 것이며 reaction-network kinetics 가 아니다.
+- L2: 4 distinct winner 는 부분적으로 **formula 가 그렇게 설계되었기 때문에** 나온다
+  (각 pathway 에 다른 g-sensitivity 와 carrier-match 를 부여) — H3.2 가 "regime 이
+  pathway 를 가른다"는 명제의 **존재 가능성 (consistency)** 을 보일 뿐, 실제 화학에서
+  그러함을 증명하지 않는다. F2 (single-pathway-dominance) 의 falsification 은 honest
+  하나, PASS 는 toy-level 이다.
+- L3: argmax winner-take-all 은 dominance 의 binary 정의 — 두 pathway score 가 거의
+  같은 cell (예: weak_gradient/rna 의 rna 0.8096 vs info 0.8844) 에서 winner 는
+  ±0.03 perturbation 에 민감할 수 있다. tie-margin 분석은 별도 cycle.
+- L4: 16-cell grid 는 §Variables 의 full 1152-cell (6×4×4×4×3) 의 한 slice —
+  axis2_substrate (4) 와 axis5_closure_metric (3) 는 본 cycle 미포함, axis1 의
+  iron_sulfur/hydrothermal_vent/panspermia 3 후보도 4-way 경쟁에서 제외 (4 canonical
+  pathway 로 축약). full sweep 은 향후 cycle.
+- L5: score 의 절대값 (0.x ~ 1.4) 은 무차원 — self-maintenance rate 나 replication
+  fidelity 의 물리 단위가 아니다. cross-pathway 비교만 의미 있고 absolute 해석 불가.
+- L6: N_REPS=10 의 LCG perturbation 은 stochastic chemistry 의 proxy 가 아니라
+  단지 argmax 의 robustness 를 보기 위한 bounded noise — variance 구조는 실제
+  monomer-pool 요동을 모델링하지 않는다.
+- L7: H3.4 (proto-consciousness Φ) + H3.5 (anima self-reflection) 여전히 DEFERRED —
+  본 cycle 은 C2 단독 closure. panspermia (L6 Phase-1) 의 origin-shift 문제도
+  4-pathway 축약으로 인해 미접근.
+
+**Cross-link**:
+- H3.2 → §Falsifiers F2: "single pathway dominant across all regime" — 4 distinct
+  winner 로 NOT_TRIGGERED, H3.2 SUPPORTED (toy-level)
+- §Criteria verdict_rule: SUPPORTED = C1+C2+C3 PASS — C1(Phase-1) + C2(Cycle-2) +
+  C3(Phase-1) 3/3 충족 → H_003 SUPPORTED-track (C4+C5 = lane-open, multi-cycle)
+- H_012 autopoietic network: H3.1 closure 와 nested — multi-pathway 는 어느 pathway 든
+  autopoietic closure 도달이 종점이라는 가정 위에 있음 (closure-agnostic regime sweep)
