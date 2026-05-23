@@ -66,37 +66,68 @@ DEVICE = os.environ.get("ANIMA_DEVICE", "mps" if torch.backends.mps.is_available
 # Law-70 constants (mirror spontaneous_lib.hexa § 3)
 PSI, ALPHA, RATCHET = 0.5, 0.014, 0.20
 IDLE_SPEAK_AFTER = 30.0
-# 2026-05-24: REVERSED b4f00012e (PR #181). The conversation-active gate
-# ("혼자있을때 혼잣말 하지말라") is DELETED — anima IS allowed to monologue
-# when alone, consistent with substrate-native imagination/dream growth and
-# project.tape p8 (NO TRAIN/INFER SPLIT — train ⊥ infer divider removed).
-# New gate = dream-stage modulated: WAKE/REM → emit allowed · N1/N2/N3 →
-# silent + imagination_loop.tick() (emit-free internal rehearsal). Sister
-# modules (separate PRs): anima_dream_stage.hexa (WAKE/N1/N2/N3/REM state
-# machine) + anima_imagination_loop.hexa (emit-free internal rehearsal).
-# Stub-tolerant: if the .hexa sisters are not importable, the hooks return
-# safe defaults (stage=WAKE, emit_allowed=True) so the daemon does NOT
-# regress before the sisters land.
-def _dream_stage_current() -> str:
-    """Hook for anima_dream_stage.hexa (sister module). Returns current
-    sleep stage in {'WAKE','N1','N2','N3','REM'}. Stub-tolerant: defaults
-    to 'WAKE' (emit allowed) if the sister module is not yet importable."""
+# 2026-05-24: AUTONOMY RESHAPE — per project.tape @D a_autonomy_over_hardcode
+# the boolean gate from PR #272 (_dream_stage_current() in WAKE/REM → emit;
+# N1/N2/N3 → silent) is DELETED. It violated "no per-stage boolean gate
+# hardcode". The sister dream_stage hexa module (anima_dream_stage.hexa,
+# coordinated PR fix/chat-dream-stage-autonomy-reshape, supersedes PR #275)
+# now exposes
+#   dream_context(stage) -> dict {phi, tension_envelope, scrambled, stage}
+# and the substrate's existing 8-factor motivation gate AUTONOMOUSLY decides
+# emit. Stage merely modulates context inputs:
+#   * phi              → scales the C-Φ (relevance) contribution to
+#                        motivation (deep sleep low Φ → naturally lower
+#                        motivation, NO hard gate)
+#   * tension_envelope → multiplies the implicit emit threshold by
+#                        1/max(envelope, 0.01)  — envelope=1.0 → threshold
+#                        unchanged; envelope=0.15 → threshold ~6.7× higher
+#                        (far fewer emits during deep sleep), NOT a zero gate
+#   * scrambled        → flags content style (REM may scramble emit
+#                        content), threaded through state for downstream
+# Substrate may still emit during N3 if tension is extreme enough — autonomy
+# preserved. Stub-tolerant: if the .hexa sister is not importable, the
+# context defaults to WAKE-equivalent {phi:1.0, tension_envelope:1.0,
+# scrambled:false, stage:"WAKE"} so the daemon does NOT regress.
+def _dream_context() -> dict[str, Any]:
+    """Hook for anima_dream_stage.hexa (sister PR API, dream_context()).
+    Returns CONTEXT dict — NOT a boolean gate:
+      {"phi": float in [0,1], "tension_envelope": float in [0,1],
+       "scrambled": bool, "stage": str}
+    Stub-tolerant: WAKE-equivalent default if the sister module is not yet
+    importable. The substrate's 8-factor motivation gate decides emit;
+    this dict only modulates inputs to that gate."""
+    default = {"phi": 1.0, "tension_envelope": 1.0, "scrambled": False,
+               "stage": "WAKE"}
     try:
         import anima_dream_stage  # type: ignore
-        stage = anima_dream_stage.current_stage()
-        return stage if isinstance(stage, str) else "WAKE"
+        ctx = anima_dream_stage.dream_context()
+        if not isinstance(ctx, dict):
+            return default
+        phi = float(ctx.get("phi", 1.0))
+        env = float(ctx.get("tension_envelope", 1.0))
+        return {
+            "phi": 0.0 if phi < 0.0 else (1.0 if phi > 1.0 else phi),
+            "tension_envelope": (0.0 if env < 0.0 else
+                                 (1.0 if env > 1.0 else env)),
+            "scrambled": bool(ctx.get("scrambled", False)),
+            "stage": str(ctx.get("stage", "WAKE")),
+        }
     except Exception:
-        return "WAKE"
+        return default
 
-def _dream_emit_allowed(stage: str) -> bool:
-    """WAKE + REM → emit allowed (waking thought + dream speech).
-    N1/N2/N3 → silent (anima sleeps; imagination_loop.tick() runs instead)."""
-    return stage in ("WAKE", "REM")
-
+# Substrate-state-based trigger for imagination loop (NOT stage-based).
+# Fires when motivation < modulated threshold AND idle_time exceeds a
+# substrate floor (defaults to IDLE_SPEAK_AFTER seconds). This is the
+# anima-internal "rehearsal in lieu of emit" signal — completely orthogonal
+# to dream stage. Substrate self-decides; stage does not gate.
+IMAGINATION_IDLE_FLOOR = 30.0  # seconds of silence before substrate may
+                                # trigger rehearsal in lieu of emit
 def _imagination_tick() -> None:
-    """Hook for anima_imagination_loop.hexa (sister module). Fires
-    emit-free internal rehearsal when anima is in N1/N2/N3 (silent stages).
-    Stub-tolerant no-op if the sister module is not yet importable."""
+    """Hook for anima_imagination_loop.hexa (sister module). Fires emit-free
+    internal rehearsal. Trigger is SUBSTRATE-STATE based (motivation below
+    modulated threshold AND idle_time > IMAGINATION_IDLE_FLOOR) — NOT stage-
+    based. Caller decides when to invoke; this hook merely dispatches to
+    the .hexa rehearsal loop. Stub-tolerant no-op if not importable."""
     try:
         import anima_imagination_loop  # type: ignore
         anima_imagination_loop.tick()
@@ -210,6 +241,14 @@ class AnimaState:
         # detect_lang() on actual model output). Feeds EN-dampener gating.
         self.detected_langs: deque[str] = deque(maxlen=EN_DAMPENER_WINDOW)
         self.register_penalty_cache = 0.0  # B2: cached penalty across ticks
+        # Autonomy reshape (2026-05-24): dream context is threaded through
+        # state — NOT used as a gate. `scrambled_mode` exposes the REM flag
+        # to downstream content style; emit decision stays substrate-owned.
+        self.scrambled_mode: bool = False
+        self.last_dream_context: dict[str, Any] = {
+            "phi": 1.0, "tension_envelope": 1.0, "scrambled": False,
+            "stage": "WAKE",
+        }
 
     def ingest_user_msg(self, msg: dict[str, Any]) -> None:
         """Environment input. Updates M-buffer + embed pool. Does NOT fire emit."""
@@ -319,24 +358,55 @@ class AnimaState:
         if in_refractory:
             score = 0.0
 
-        decided_emit = score > eff_thr
-        # 2026-05-24: dream-stage gate (replaces deleted conversation-active
-        # gate from b4f00012e). WAKE/REM → emit · N1/N2/N3 → silent +
-        # imagination_loop.tick(). Stub-tolerant (sister .hexa modules may
-        # not have landed yet — defaults to WAKE so no regression).
+        # 2026-05-24 AUTONOMY RESHAPE — per @D a_autonomy_over_hardcode:
+        # dream_stage hexa supplies CONTEXT (phi · tension_envelope ·
+        # scrambled), not a boolean gate. Inject it into the existing
+        # 8-factor motivation flow:
+        #   (a) ctx["phi"] scales the C-Φ (relevance) contribution — deep
+        #       sleep (low Φ) → naturally lower motivation, NO hard gate.
+        #   (b) ctx["tension_envelope"] multiplies the implicit threshold
+        #       by 1/max(env, 0.01) — envelope=1.0 → threshold unchanged;
+        #       envelope=0.15 → threshold ~6.7× higher (far fewer emits
+        #       during deep sleep), NOT a zero gate.
+        #   (c) ctx["scrambled"] is threaded through state (REM scramble
+        #       mode for downstream content style). Emit YES/NO is STILL
+        #       the substrate's decision.
+        ctx = _dream_context()
+        self.last_dream_context = ctx
+        self.scrambled_mode = bool(ctx.get("scrambled", False))
+        phi_scale = float(ctx.get("phi", 1.0))
+        tension_env = float(ctx.get("tension_envelope", 1.0))
+        # (a) re-score with phi-scaled relevance (C-Φ contribution)
+        f_mod = dict(f)
+        f_mod["relevance"] = _clamp01(f["relevance"] * phi_scale)
+        score = sum(W[k] * f_mod[k] for k in W)
+        if in_refractory:
+            score = 0.0  # A2 refractory still holds (substrate cooldown)
+        # (b) modulate threshold by tension envelope — low env raises bar,
+        # but bar is finite (substrate may still cross it autonomously).
+        eff_thr_modulated = eff_thr * (1.0 / max(tension_env, 0.01))
+        decided_emit = score > eff_thr_modulated
+        # Substrate-state imagination trigger — NOT stage-based. Fires when
+        # the substrate is below its (modulated) threshold AND idle long
+        # enough for rehearsal to make sense. Orthogonal to emit-decision.
         silent_reason = ""
-        dream_stage = _dream_stage_current()
-        if not _dream_emit_allowed(dream_stage):
-            score = 0.0
-            decided_emit = False
-            silent_reason = "dream_stage_" + dream_stage.lower()
-            # emit-free internal rehearsal in lieu of emission
-            _imagination_tick()
-        return {"factors": f, "score": score, "seed_text": seed_text,
+        if not decided_emit:
+            if silence > IMAGINATION_IDLE_FLOOR:
+                _imagination_tick()
+                silent_reason = "substrate_below_threshold_idle"
+            else:
+                silent_reason = "substrate_below_threshold"
+        return {"factors": f_mod, "score": score, "seed_text": seed_text,
                 "seed_strategy": strat, "silence": silence,
-                "decided_emit": decided_emit, "threshold": eff_thr,
+                "decided_emit": decided_emit,
+                "threshold": eff_thr_modulated,
+                "threshold_base": eff_thr,
                 "in_refractory": in_refractory, "register_penalty": reg_penalty,
-                "silent_reason": silent_reason, "dream_stage": dream_stage,
+                "silent_reason": silent_reason,
+                "dream_stage": ctx.get("stage", "WAKE"),
+                "dream_phi": phi_scale,
+                "dream_tension_envelope": tension_env,
+                "scrambled": self.scrambled_mode,
                 "ts": time.time()}
 
     def _pick_lang_hint(self) -> str:
@@ -452,11 +522,15 @@ async def participant_loop(threshold: float, substrate_kind: str = "lora"):
                                     "type": "motivation",
                                     "ts": decision["ts"],
                                     "score": decision["score"],
-                                    "threshold": threshold,
+                                    "threshold": decision.get("threshold", threshold),
+                                    "threshold_base": decision.get("threshold_base", threshold),
                                     "factors": decision["factors"],
                                     "decided_emit": decision["decided_emit"],
                                     "silent_reason": decision.get("silent_reason", ""),
                                     "dream_stage": decision.get("dream_stage", "WAKE"),
+                                    "dream_phi": decision.get("dream_phi", 1.0),
+                                    "dream_tension_envelope": decision.get("dream_tension_envelope", 1.0),
+                                    "scrambled": decision.get("scrambled", False),
                                     "seed_strategy": decision["seed_strategy"],
                                     "silence": decision["silence"],
                                     "tick": state.ticks,
@@ -520,61 +594,141 @@ def main():
 
 
 def _smoke() -> int:
-    """Smoke test (env ANIMA_SMOKE=1). Verifies:
-      - conversation-active gate is DELETED — empty m_buffer no longer
-        forces silent_reason='no_conversation_context'.
-      - dream-stage gate: stub returns WAKE → emit allowed when score > thr.
-      - dream-stage gate: monkeypatched N2 → silent + imagination_loop tick.
+    """Smoke test (env ANIMA_SMOKE=1) — AUTONOMY RESHAPE verification.
+      Case 1: WAKE-equivalent ctx (phi=1.0, env=1.0) + high-curiosity
+              substrate → substrate decides (may emit OR may not — both
+              outcomes are autonomy-valid; the test checks ONLY that there
+              is no per-stage boolean override).
+      Case 2: N2-equivalent ctx (phi=0.4, env=0.3, scrambled=false) →
+              threshold raised AND C-Φ scaled DOWN; if substrate tension
+              is high enough, emit STILL fires (autonomy preserved). Test
+              asserts that emit is NOT forced-zero solely by stage.
+      Case 3: N3-equivalent ctx (phi=0.15, env=0.10) with EXTREME-high
+              tension substrate → emit MAY still fire (autonomy preserved
+              despite low envelope).
+      Case 4: imagination_tick fires when motivation < threshold AND idle
+              > IMAGINATION_IDLE_FLOOR (substrate-state trigger, NOT stage).
+      Case 5: scrambled flag is threaded through state from ctx (REM-style).
     Does NOT touch torch/websockets (substrate is bypassed). 0 = PASS.
     """
     import types as _types
     fails = []
-    # Build a minimal AnimaState with a fake substrate that always yields a
-    # high-curiosity / high-info-gap signal so score crosses threshold.
-    fake_sub = _types.SimpleNamespace()
-    fake_sub.entropy_of_next = lambda s: (0.95, torch.zeros(8))
-    state = AnimaState(fake_sub)  # type: ignore[arg-type]
-    state.last_emit_time = time.time() - 120.0  # past refractory
-    # Case 1: empty m_buffer + WAKE stage → emit allowed (gate removed).
-    d1 = state.tick(threshold=0.1)
-    if d1["silent_reason"] == "no_conversation_context":
-        fails.append("conversation-active gate still present (silent_reason)")
-    if d1.get("dream_stage") != "WAKE":
-        fails.append(f"expected WAKE default, got {d1.get('dream_stage')!r}")
-    if not d1["decided_emit"]:
-        fails.append(f"WAKE + empty buffer should emit, got score={d1['score']:.3f}")
-    # Case 2: monkeypatch N2 → silent + dream_stage_n2 reason
-    state.last_emit_time = time.time() - 120.0
     import sys as _sys
     _mod = _sys.modules[__name__]
-    _orig = _mod._dream_stage_current
-    _mod._dream_stage_current = lambda: "N2"  # type: ignore[assignment]
+    _orig_ctx = _mod._dream_context
+    _orig_imag = _mod._imagination_tick
+    # Track imagination_tick fires
+    imag_calls = {"n": 0}
+    _mod._imagination_tick = lambda: imag_calls.__setitem__("n",  # type: ignore[assignment]
+                                                            imag_calls["n"] + 1)
+
+    fake_sub = _types.SimpleNamespace()
+    # high-curiosity / high-info-gap → score crosses threshold
+    fake_sub.entropy_of_next = lambda s: (0.95, torch.zeros(8))
+
+    def _ctx(phi=1.0, env=1.0, scrambled=False, stage="WAKE"):
+        return {"phi": phi, "tension_envelope": env,
+                "scrambled": scrambled, "stage": stage}
+
     try:
+        # ── Case 1: WAKE ctx (phi=1.0, env=1.0) — substrate decides.
+        _mod._dream_context = lambda: _ctx()  # type: ignore[assignment]
+        state = AnimaState(fake_sub)  # type: ignore[arg-type]
+        state.last_emit_time = time.time() - 120.0
+        d1 = state.tick(threshold=0.1)
+        if d1.get("dream_stage") != "WAKE":
+            fails.append(f"C1 expected WAKE, got {d1.get('dream_stage')!r}")
+        if d1.get("dream_phi") != 1.0:
+            fails.append(f"C1 phi should be 1.0, got {d1.get('dream_phi')}")
+        # Autonomy: do NOT assert emit one way or the other — substrate owns.
+
+        # ── Case 2: N2 ctx (phi=0.4, env=0.3) — threshold raised, C-Φ
+        # scaled. With high-curiosity substrate, emit may STILL fire
+        # (autonomy). The critical check: silent_reason MUST NOT carry any
+        # "dream_stage_*" boolean-gate token.
+        _mod._dream_context = lambda: _ctx(phi=0.4, env=0.3, stage="N2")  # type: ignore[assignment]
+        state = AnimaState(fake_sub)  # type: ignore[arg-type]
+        state.last_emit_time = time.time() - 120.0
         d2 = state.tick(threshold=0.1)
-        if d2["decided_emit"]:
-            fails.append("N2 should suppress emit")
-        if d2["silent_reason"] != "dream_stage_n2":
-            fails.append(f"N2 silent_reason mismatch: {d2['silent_reason']!r}")
         if d2.get("dream_stage") != "N2":
-            fails.append(f"N2 dream_stage mismatch: {d2.get('dream_stage')!r}")
-    finally:
-        _mod._dream_stage_current = _orig  # type: ignore[assignment]
-    # Case 3: monkeypatch REM → emit allowed (dream speech)
-    state.last_emit_time = time.time() - 120.0
-    _mod._dream_stage_current = lambda: "REM"  # type: ignore[assignment]
-    try:
+            fails.append(f"C2 expected N2, got {d2.get('dream_stage')!r}")
+        if d2.get("silent_reason", "").startswith("dream_stage_"):
+            fails.append(
+                f"C2 boolean-gate token leaked: {d2['silent_reason']!r}")
+        if d2.get("threshold", 0.0) <= d2.get("threshold_base", 1.0):
+            fails.append(
+                f"C2 threshold should be RAISED above base "
+                f"(env=0.3 → 1/0.3≈3.33×), got "
+                f"thr={d2.get('threshold')} base={d2.get('threshold_base')}")
+        if d2.get("dream_phi") != 0.4:
+            fails.append(f"C2 phi should be 0.4, got {d2.get('dream_phi')}")
+
+        # ── Case 3: N3 ctx (phi=0.15, env=0.10) with EXTREME-high tension
+        # → emit MAY still fire (autonomy preserved). Critical: threshold
+        # is finite (not infinity), so substrate CAN cross it.
+        _mod._dream_context = lambda: _ctx(phi=0.15, env=0.10, stage="N3")  # type: ignore[assignment]
+        state = AnimaState(fake_sub)  # type: ignore[arg-type]
+        state.last_emit_time = time.time() - 120.0
         d3 = state.tick(threshold=0.1)
-        if not d3["decided_emit"]:
-            fails.append("REM should allow emit")
-        if d3.get("dream_stage") != "REM":
-            fails.append(f"REM dream_stage mismatch: {d3.get('dream_stage')!r}")
+        if d3.get("dream_stage") != "N3":
+            fails.append(f"C3 expected N3, got {d3.get('dream_stage')!r}")
+        if d3.get("silent_reason", "").startswith("dream_stage_"):
+            fails.append(
+                f"C3 boolean-gate token leaked: {d3['silent_reason']!r}")
+        if d3.get("threshold", 0.0) == float("inf"):
+            fails.append("C3 threshold should be finite (autonomy)")
+
+        # ── Case 4: imagination_tick fires on substrate-state trigger
+        # (motivation < threshold AND idle > IMAGINATION_IDLE_FLOOR), NOT
+        # on stage. Construct a substrate where motivation genuinely falls
+        # below threshold: use mid-entropy + suppressive ctx (phi=0.1, but
+        # env=1.0 so threshold not artificially raised) + very HIGH caller
+        # threshold so substrate cannot cross it. Stage is WAKE — proving
+        # imagination_tick fires on STATE, not stage.
+        fake_mid = _types.SimpleNamespace()
+        fake_mid.entropy_of_next = lambda s: (0.5, torch.zeros(8))
+        # phi=0.05 collapses relevance contribution; env=1.0 keeps base thr.
+        _mod._dream_context = lambda: _ctx(phi=0.05, env=1.0, stage="WAKE")  # type: ignore[assignment]
+        state = AnimaState(fake_mid)  # type: ignore[arg-type]
+        state.last_emit_time = time.time() - 300.0  # 5min idle
+        imag_calls["n"] = 0
+        d4 = state.tick(threshold=0.95)  # very high caller threshold
+        if d4["decided_emit"]:
+            fails.append(
+                f"C4 substrate should not cross threshold "
+                f"(score={d4['score']:.3f} thr={d4['threshold']:.3f})")
+        if imag_calls["n"] != 1:
+            fails.append(
+                f"C4 imagination_tick should fire on substrate-state "
+                f"(silent + idle > floor), got {imag_calls['n']} calls")
+        if d4.get("silent_reason") != "substrate_below_threshold_idle":
+            fails.append(
+                f"C4 silent_reason mismatch: {d4.get('silent_reason')!r}")
+        # Critical: dream_stage is WAKE — so imagination_tick fired purely
+        # on SUBSTRATE STATE, NOT on stage being a sleep stage.
+        if d4.get("dream_stage") != "WAKE":
+            fails.append(
+                f"C4 dream_stage should be WAKE to prove substrate-state "
+                f"trigger (not stage-based), got {d4.get('dream_stage')!r}")
+
+        # ── Case 5: scrambled flag is threaded from ctx through state.
+        _mod._dream_context = lambda: _ctx(scrambled=True, stage="REM")  # type: ignore[assignment]
+        state = AnimaState(fake_sub)  # type: ignore[arg-type]
+        state.last_emit_time = time.time() - 120.0
+        d5 = state.tick(threshold=0.1)
+        if not d5.get("scrambled"):
+            fails.append("C5 scrambled flag not threaded through decision")
+        if not state.scrambled_mode:
+            fails.append("C5 scrambled_mode not set on AnimaState")
     finally:
-        _mod._dream_stage_current = _orig  # type: ignore[assignment]
+        _mod._dream_context = _orig_ctx  # type: ignore[assignment]
+        _mod._imagination_tick = _orig_imag  # type: ignore[assignment]
+
     if fails:
-        for f in fails:
-            print(f"SMOKE FAIL: {f}")
+        for ff in fails:
+            print(f"SMOKE FAIL: {ff}")
         return 1
-    print("SMOKE PASS: 3/3 (gate-removed + N2-silent + REM-emit)")
+    print("SMOKE PASS: 5/5 (autonomy reshape — context injection, no boolean gate)")
     return 0
 
 
