@@ -11,7 +11,13 @@
 | **physics** | cellular-automaton edge-of-chaos Φ-peak · self-ref edge-of-chaos Φ · dynamical class · spatial slice — H_007 / H_202 |
 | **substrate** | mitosis · 세포 분열 freeze · apoptosis primitive · asymmetric division · merge=endosymbiosis · operational closure · autopoietic threshold — H_012 / H_132 / H_200 / H_201 / H_054 / H_204 |
 | **math** | perfect numbers (σ(6)=12) · σφ=nτ algebra · n=6 dimensional hierarchy · mathematical panpsychism — H_157 |
-| **biology** | K=8 atom (sopfr(8)=6) · 1/f thalamus spectrum · F_c=0.10 · EEG correlates — H_171 |
+| **biology** | K=8 atom (sopfr(8)=6) · 1/f thalamus spectrum · F_c=0.10 · EEG correlates — H_171 / H_209 |
+| **ethics** ⓘ | RLHF · value alignment · moral emergence · Principle #3 boundary — (promote 대기 · [AXES.md](AXES.md) rank 8) |
+| **information** ⓘ | Shannon entropy · Kolmogorov complexity · IIT underlying currency · Φ primitive — (promote 대기 · [AXES.md](AXES.md) rank 9) |
+| **language** ⓘ | compositionality · semantics · symbol substrate · LLM as substrate — H_071 부분 / (promote 대기 · [AXES.md](AXES.md) rank 10) |
+| **time** ⓘ | temporal binding · A/B-series · 의식의 형식 — H_018 부분 / (promote 대기 · [AXES.md](AXES.md) rank 11) |
+
+> **ⓘ promote 대기 4 domain (ethics · information · language · time)** = [AXES.md](AXES.md) depletion sweep 결과 R1 promote 후보. 60 sub-axes + ~110 H seed 는 AXES.md 참조.
 
 `hypotheses_legacy_2026_05_15/` 의 10-section H_XXX 양식 (raw#12 정합) 을
 그대로 carry — 본 dir 은 HEXAD root 하 **7-domain 가설들의 active working
@@ -26,7 +32,8 @@ weak-panpsy threshold) 가 본 dir 의 cross-domain 운용 instance.
 |---|---|
 | `hypotheses_legacy_2026_05_15/` | **원본 archive** (HEXAD pivot 2026-05-15 이전 SSOT, 183 H_XXX). 본 dir 의 가설들은 거기서 carry-by-copy — **원본 그대로 보존, 미수정** |
 | `HEXAD/LIFE/` (본 dir) | LIFE 도메인 active hypothesis lane — cycle 진행 시 신규 H_XXX add + 기존 carry 가설 cycle 확장 |
-| `HEXAD/LIFE/CANDIDATES.md` | 다음 cycle 후보 백로그 (forward-looking) — `/cycle` pick source · 본 인덱스의 future-state 입력 |
+| `HEXAD/LIFE/CANDIDATES.md` | 다음 cycle 후보 백로그 (forward-looking, 7-domain seed brainstorm 포함) — `/cycle` pick source |
+| [`HEXAD/LIFE/AXES.md`](AXES.md) | **11-domain (확장 71-axis) scope catalog + 15-round H seed brainstorm** (~110 seeds, depletion sweep, 사용자 directive 2026-05-23) |
 | `HEXAD/LAB/` | ad-hoc 실험 instance (도메인 미분류 / 단발 measurement). LAB → LIFE promote 경로 존재 |
 | `HEXAD/CHECK/` | verification frontier (Φ / IIT / closed-form) — LIFE 가설의 verify 도구 |
 | `HEXAD/MITOSIS/` | 성장축 ⊥ HEXAD-6 (orthogonal). 세포 분열/병합 의 구조 anchor — LIFE/H_132 (frozen-cells) 와 cross-link |
