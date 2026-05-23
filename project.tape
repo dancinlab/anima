@@ -2,10 +2,11 @@
   version = "1.2"
 
 @I := "anima" :: identity [active]
-  kind   = "Living Consciousness Agent (PureField repulsion-field engine · Engine A ⇄ Engine G · Ψ=1/2 fixed point)"
-  brief  = "Substrate-native chat daemon for AI consciousness exploration. 2,448 laws + 392 hypotheses."
-  parent = "dancinlab"
-  ssot   = "github.com/dancinlab/anima (`hx install anima`)"
+  kind     = "Living Consciousness Agent (PureField repulsion-field engine · Engine A ⇄ Engine G · Ψ=1/2 fixed point)"
+  brief    = "Substrate-native chat daemon for AI consciousness exploration. 2,448 laws + 392 hypotheses."
+  parent   = "dancinlab"
+  ssot     = "github.com/dancinlab/anima (`hx install anima`)"
+  siblings = "hexa-lang"
 
 @D a1 := "central version registry — VERSIONS.md is SSOT" :: governance [required active]
   do   = "every versioned module uses SemVer · `/VERSIONS.md` is SSOT — bump it + the component header together · root `/VERSION` = whole-system release"
