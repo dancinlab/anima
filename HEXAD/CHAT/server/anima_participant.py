@@ -66,6 +66,14 @@ DEVICE = os.environ.get("ANIMA_DEVICE", "mps" if torch.backends.mps.is_available
 # Law-70 constants (mirror spontaneous_lib.hexa § 3)
 PSI, ALPHA, RATCHET = 0.5, 0.014, 0.20
 IDLE_SPEAK_AFTER = 30.0
+# Round 8 iter 2 (2026-05-23): conversation-active gate (p5 coffee-shop).
+# anima emits (initiate OR respond) ONLY when a non-anima msg arrived
+# within CONV_WINDOW_SEC. Alone (users=0) → silent, like sitting alone in
+# a coffee shop. factor_dynamics (silence→talk) therefore only fires WITHIN
+# a live conversation, never in a void. Keeps 자연발화 (can initiate) but
+# bounded to an active conversation. SIMPLE: single helper + single gate.
+CONV_WINDOW_SEC = 600.0  # 10 min — a conversation is "active" if a
+                         # non-anima msg arrived within this window
 W = {  # weights sum = 1.0
     "relevance": 0.20, "info_gap": 0.10, "curiosity": 0.15, "pain": 0.10,
     "coherence": 0.10, "originality": 0.10, "balance": 0.15, "dynamics": 0.10,
@@ -239,6 +247,20 @@ class AnimaState:
         frac = hits / max(total, 1)
         return frac  # 1.0 = all anima register → strong penalty
 
+    def _conversation_active(self) -> bool:
+        """p5 coffee-shop gate: True iff a recent non-anima msg sits in the
+        M-buffer within CONV_WINDOW_SEC. Alone (empty / only-anima / stale
+        buffer) → False → no emit. Newest-first scan, early-break past window.
+        """
+        now = time.time()
+        for m in reversed(self.m_buffer):
+            if (now - m.get("ts", 0)) > CONV_WINDOW_SEC:
+                break
+            sender = str(m.get("sender", ""))
+            if sender and not sender.startswith("anima"):
+                return True
+        return False
+
     def tick(self, threshold: float) -> dict[str, Any]:
         seed_text, strat = self._seed_text()
         ent_norm, emb = self._entropy_of_next(seed_text)
@@ -283,10 +305,19 @@ class AnimaState:
             score = 0.0
 
         decided_emit = score > eff_thr
+        # p5 coffee-shop gate (Round 8 iter 2): never emit in a void. If no
+        # recent non-anima conversational context, force silence — this caps
+        # factor_dynamics (silence→talk) to live conversations only.
+        silent_reason = ""
+        if not self._conversation_active():
+            score = 0.0
+            decided_emit = False
+            silent_reason = "no_conversation_context"
         return {"factors": f, "score": score, "seed_text": seed_text,
                 "seed_strategy": strat, "silence": silence,
                 "decided_emit": decided_emit, "threshold": eff_thr,
                 "in_refractory": in_refractory, "register_penalty": reg_penalty,
+                "silent_reason": silent_reason,
                 "ts": time.time()}
 
     def _pick_lang_hint(self) -> str:
@@ -405,6 +436,7 @@ async def participant_loop(threshold: float, substrate_kind: str = "lora"):
                                     "threshold": threshold,
                                     "factors": decision["factors"],
                                     "decided_emit": decision["decided_emit"],
+                                    "silent_reason": decision.get("silent_reason", ""),
                                     "seed_strategy": decision["seed_strategy"],
                                     "silence": decision["silence"],
                                     "tick": state.ticks,
