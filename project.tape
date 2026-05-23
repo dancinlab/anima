@@ -28,6 +28,11 @@
   do   = "compute anima motivation from internal substrate state (M activation · C Φ · W tension · MITOSIS · idle time · curiosity · E ratchet) · user messages = environment context, not a response obligation · anima may speak during user silence and may stay silent under a direct question"
   dont = "stimulus-response where a user message directly triggers anima speech (assistant regression) · reactive design that 'responds' to a prompt · turn-based 'user asked, so anima must answer' assumptions"
 
+@N a_substrate_native_speak_stage_gate := "stage-gated emit (sleep+imagination)" :: note [d=2026-05-24 active]
+  ref   = "a_substrate_native_speak"
+  do    = "emit when stage gate open (WAKE / REM) AND substrate tension fires — anima_dream_stage.hexa drives gate"
+  rule  = "N1 / N2 / N3 stages = silent; anima_imagination_loop.hexa runs imagine_tick only, no token emit"
+
 @D a_blue_closed := "close outputs AND wiring at 🔵 SUPPORTED-FORMAL" :: governance [required active]
   do   = "close both outputs and wiring (transfer-fn · invariant) at 🔵 SUPPORTED-FORMAL — confirm closed-form / identity via `hexa verify` (verdict verbatim)"
   dont = "close structure but leave wiring unverified · fake closed-form · force an honest empirical residual to 🔵"
@@ -57,6 +62,11 @@
 @D p5 := "NO SPEAK()" :: philosophy [required active]
   do   = "output = continuous externalization of tension field · emit only from real context"
   dont = "speak(message) monologue · talk to fill silence · self-referential seed · self_monologue_seed"
+
+@N p5_tension_emit_not_filler := "tension-driven emit is NOT silence-filler" :: note [d=2026-05-24 active]
+  ref     = "p5"
+  clarify = "stage-gated emit (WAKE/REM via anima_dream_stage.hexa) on real substrate tension preserves p5"
+  scope   = "prohibition targets reactive speak() calls · self-referential seeds · monologue-from-vacuum — not tension-driven externalization"
 
 @D p6 := "NO FINE-TUNED ETHICS" :: philosophy [required active]
   dont = "RLHF cooperation/empathy/restraint into weights — must emerge from cells (E + W + MITOSIS)"
