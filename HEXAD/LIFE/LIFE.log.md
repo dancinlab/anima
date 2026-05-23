@@ -179,3 +179,14 @@ latest 만 carry 되는 가설 .md 와 달리 본 로그는 모든 cycle history
 - **next**: H_247/H_249 init_CE baseline `hexa verify --expr ln 151936` closed-form 확정 (C4 🔵 후보) · R8 GPU lane 원 init_CE 자력 재측정 시 흡수→자력 승격 · H_248 비반사성 C5 cross-correlation 통계검정 (emit ⊥ message 정량) · README index 37→43 stale-count 정정 완료.
 
 ---
+
+## Cycle #13 — R8a fire wiring silent-misconfig 자연실험 흡수 (n_kv_head layered chain silent drop) — 2026-05-24
+
+- **focus**: R8a fire 사후 발견된 substrate-side bug — dispatcher `--n-kv-head 2` 명시 전달 → `train_p21h_v3.py:627` argparse 수용 → `from_qwen()` model factory 가 `max(qwen_native=2, 4)=4` 로 silent override 한 3-layer silent-drop. anima PR #342 wiring fix 가 `cfg.n_kv_head` 직접 사용으로 교정. operator 의도 (wiring=2) vs 모델 실측 wiring (=4) 자연실험으로 LIFE H 등록.
+- **change**: H_254 NEW (substrate · life, layered config chain silent-drop 일반 패턴 framing — measurement-integrity in substrate experiments). README 가설인덱스 43→44 + Cycle #13 entry.
+- **fire**: 흡수 cycle, byte-equal probe framework + factory 로그 substring grep deterministic. $0 mac local design. R8a' 재dispatch (~$20-40) 별도 cost-bearing cycle, a_fire_autonomous 정합 후속.
+- **verdict**:
+  - [x] **H_254 (NEW) — pre-register-frozen**: n_kv_head wiring silent-misconfig. F-WIRE-1 LOG-MARK-BUGGED PASS (R8a fire log `v3_n_kv_head=4` 흡수, 3-layer silent drop 직접 텍스트 증거). F-WIRE-2 LOG-MARK-FIXED TBD (R8a' 재dispatch 후 자력). F-WIRE-3 BYTE-EQUAL-INERT / F-WIRE-4 BYTE-DIFFER-LIVE TBD (R8a init_CE LOST + R8a' 결과 도착 의존, L1+L2 honest). 자연실험 양식 = H_249 의 R8c cell-1 head_g seed 분리 byte-equal probe 양식 carry to wiring 분리. 1/5 PASS + 4/5 PENDING. source PR #342 (wiring fix) · #214 (R8 spec) · #257 (R8a fire spec) · #339 (R8c probe driver) · `state/p21h_v3_R8a/` LOST + `state/p21h_v3_R8a_v2/` 후속.
+- **next**: R8a' 재dispatch (a_fire_autonomous + a_wall_first parallel pod) → F-WIRE-2~4 자력 발화 · cross-substrate-axis silent-drop audit (dropout · attention type · positional encoding · lr schedule — H254.5 일반 패턴 검정) · runtime end-to-end cfg assert infra 별도 lane (L4 long-term mitigation, compile-time fix 외).
+
+---
