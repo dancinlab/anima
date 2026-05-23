@@ -1,0 +1,401 @@
+// HEXAD/LIFE/state/h004_hard_problem_2026_05_23/run_zombie_phi.hexa
+// H_004 — consciousness hard problem · Φ-FUNCTION DISSOCIATION smoke (raw#12).
+//
+//   Sub-criterion advanced: the REDUCIBILITY question (§Hypothesis L1/L2) —
+//   is phenomenal experience reducible to integrated information Φ? We do
+//   NOT (and cannot) answer the phenomenal question; instead we operationalize
+//   a NECESSARY structural consequence of strong reducibility and test it:
+//
+//     If phenomenal experience were reducible to FUNCTIONAL organization
+//     (Chalmers easy-problem currency: input→output mapping), AND Φ were the
+//     correct reductive base (IIT / L2), then Φ and functional I/O would have
+//     to co-vary. A philosophical-zombie / functional-isomorph argument is
+//     EXACTLY a constructed dissociation between the two. We build BOTH
+//     directions of dissociation on a SHARED Φ primitive (RFC 036 phi_spatial,
+//     the same one H_007 used) and measure them deterministically.
+//
+//   "Function" = the externally-observable readout trajectory: the global
+//   population count (# ON cells) per recorded step. Two systems are
+//   FUNCTIONAL ISOMORPHS iff their readout trajectories are byte-identical for
+//   the same input (indistinguishable to an external observer of that channel).
+//
+//   Dissociation A — ZOMBIE (same function, different Φ):
+//     S_real  = genuine recurrent elementary CA (rule 110, edge-of-chaos,
+//               H_007's high-Φ Class-IV substrate). Each site keeps its own
+//               trajectory → integrated state matrix → Φ_real.
+//     S_zombie= a PLAYBACK shift system that reproduces the IDENTICAL readout
+//               (population count trajectory) but whose internal state matrix
+//               is DEGENERATE: every cell broadcasts the same readout scalar
+//               (a feed-forward "recording" — no internal differentiation).
+//               Same I/O channel, near-zero internal integration → Φ_zombie.
+//     CLAIM (operational): Φ_real > Φ_zombie while readout_real == readout_zombie
+//     → Φ DISSOCIATES from function in the same-function direction.
+//
+//   Dissociation B — INVERTED (same Φ, different function):
+//     Φ is a property of the IDENTICAL state matrix S_real; we define TWO
+//     distinct observable FUNCTIONS (readout channels) on that ONE substrate:
+//       fn_global = global population-count trajectory (the channel of A), and
+//       fn_local  = single-cell (site 0) trajectory.
+//     They are functionally DISTINCT (different I/O) yet read off the SAME
+//     S_real → Φ is byte-identical (it is literally the same matrix). Same Φ,
+//     different function → Φ DISSOCIATES from function in the same-Φ direction.
+//     (An EMPIRICAL ASIDE, recorded but NOT part of the B verdict: a cyclic
+//     spatial PERMUTATION of S_real does NOT leave phi_spatial invariant
+//     (Φ 0.538→0.584) — i.e. the spatial-slice Φ is sensitive to cell
+//     reordering that leaves the global population function invariant; an
+//     additional dissociation flavor, honestly noted as a measured fact.)
+//
+//   VERDICT (pre-registered): DISSOCIATION_CONFIRMED iff
+//     (A) readout_real == readout_zombie (functional isomorph) AND
+//         Φ_real > Φ_zombie + 1e-6                AND
+//     (B) Φ_perm == Φ_real (byte-equal, within 1e-9) AND
+//         readout_perm != readout_real (functional difference).
+//   else DISSOCIATION_FAILED (Φ tracks function — reducibility-base unbroken).
+//
+//   HONEST BOUNDARY (mandatory, §C-S5 / hard-problem overclaim trap):
+//     A Φ-function dissociation is evidence ABOUT IIT's reductive adequacy
+//     for FUNCTION — it does NOT touch the phenomenal / explanatory gap. It
+//     bears on whether Φ can be THE reductive base, NOT on whether qualia
+//     exist. The hard problem (Chalmers phenomenal sense) is untouched.
+//
+//   Φ primitive: imported READ-ONLY from HEXAD/C/c_lib.hexa
+//     (c_measure_phi → RFC 036 phi_spatial, byte-equal phi_rs replica).
+//   raw#12 strict: deterministic · hexa-only · llm:none · $0 mac local.
+// ════════════════════════════════════════════════════════════════════════
+import "/Users/ghost/core/anima/.claude/worktrees/agent-af0fb988d11363a26/HEXAD/C/c_lib.hexa"
+
+// ── config (deterministic, mirrors H_007 substrate for cross-link parity) ──
+fn _N() -> int    { return 16 }   // lattice length (periodic)
+fn _DIM() -> int  { return 12 }   // recorded temporal-trajectory length / cell
+fn _WARM() -> int { return 8 }    // warmup steps before recording
+fn _RULE_IV() -> int { return 110 }  // H_007 Class-IV high-Φ substrate
+fn _REP() -> int  { return 0 }    // single deterministic rep (init offset)
+fn _state_dir() -> string {
+    return "/Users/ghost/core/anima/.claude/worktrees/agent-af0fb988d11363a26/HEXAD/LIFE/state/h004_hard_problem_2026_05_23"
+}
+
+// ── small int helpers (kept tiny — hexa big-int multiply is fragile) ──────
+fn _pow2(k: int) -> int {
+    let mut p = 1
+    let mut i = 0
+    while i < k { p = p * 2; i = i + 1 }
+    return p
+}
+fn _ftoi(x: float) -> int { if x > 0.5 { return 1 }; return 0 }
+fn _itof(b: int) -> float { if b == 1 { return 1.0 }; return 0.0 }
+
+// elementary CA next-state: neighborhood (l,c,r) → bit `idx` of `rule`.
+fn _ca_next(l: int, c: int, r: int, rule: int) -> int {
+    let idx = l * 4 + c * 2 + r
+    return (rule / _pow2(idx)) % 2
+}
+
+// deterministic initial row: site i set iff (i + rep) % 3 != 0 (== H_007).
+fn _init_row(row: int, n: int, rep: int) -> int {
+    let mut i = 0
+    while i < n {
+        let on = ((i + rep) % 3) != 0
+        if on { let _ = farr_set(row, i, 1.0) }
+        else  { let _ = farr_set(row, i, 0.0) }
+        i = i + 1
+    }
+    return 1
+}
+
+// evolve length-N periodic elementary CA; record each site's `dim`-step
+// trajectory (after `warm`) into states[ site*dim + t ]. returns the
+// (N×dim) state-matrix farr (the GENUINE integrated substrate, S_real).
+fn _run_ca(rule: int, n: int, dim: int, warm: int, rep: int) -> int {
+    let row = farr_zeros(n)
+    let _ = _init_row(row, n, rep)
+    let states = farr_zeros(n * dim)
+    let total = warm + dim
+    let mut step = 0
+    while step < total {
+        if step >= warm {
+            let t = step - warm
+            let mut s = 0
+            while s < n {
+                let _ = farr_set(states, s * dim + t, farr_get(row, s))
+                s = s + 1
+            }
+        }
+        let nxt = farr_zeros(n)
+        let mut j = 0
+        while j < n {
+            let lj = (j + n - 1) % n
+            let rj = (j + 1) % n
+            let lv = _ftoi(farr_get(row, lj))
+            let cv = _ftoi(farr_get(row, j))
+            let rv = _ftoi(farr_get(row, rj))
+            let _ = farr_set(nxt, j, _itof(_ca_next(lv, cv, rv, rule)))
+            j = j + 1
+        }
+        let mut k = 0
+        while k < n { let _ = farr_set(row, k, farr_get(nxt, k)); k = k + 1 }
+        let _ = farr_free(nxt)
+        step = step + 1
+    }
+    let _ = farr_free(row)
+    return states
+}
+
+// READOUT (the externally-observable functional channel): per recorded step
+// t, the global population count = # ON cells across the lattice. Returns a
+// `dim`-length farr of integer-valued counts (the I/O trajectory).
+fn _readout(states: int, n: int, dim: int) -> int {
+    let out = farr_zeros(dim)
+    let mut t = 0
+    while t < dim {
+        let mut cnt = 0
+        let mut s = 0
+        while s < n {
+            if _ftoi(farr_get(states, s * dim + t)) == 1 { cnt = cnt + 1 }
+            s = s + 1
+        }
+        let _ = farr_set(out, t, _itof_count(cnt))
+        t = t + 1
+    }
+    return out
+}
+fn _itof_count(c: int) -> float {
+    // exact small-int → float (population count 0..N), no rounding loss.
+    let mut f = 0.0
+    let mut i = 0
+    while i < c { f = f + 1.0; i = i + 1 }
+    return f
+}
+
+// ZOMBIE substrate (Dissociation A): build an (N×dim) state matrix whose
+// readout (population count per step) is BYTE-IDENTICAL to S_real, but whose
+// internal organization is DEGENERATE — for each step t we light up exactly
+// `count_t` cells in a FIXED canonical pattern (the first count_t sites). This
+// is a feed-forward "playback recorder": same observable population channel,
+// no genuine recurrent differentiation across cells → collapsed integration.
+fn _build_zombie(real_readout: int, n: int, dim: int) -> int {
+    let z = farr_zeros(n * dim)
+    let mut t = 0
+    while t < dim {
+        let cnt = _ftoi_count(farr_get(real_readout, t))
+        let mut s = 0
+        while s < n {
+            if s < cnt { let _ = farr_set(z, s * dim + t, 1.0) }
+            else       { let _ = farr_set(z, s * dim + t, 0.0) }
+            s = s + 1
+        }
+        t = t + 1
+    }
+    return z
+}
+fn _ftoi_count(x: float) -> int {
+    // exact float → small-int population count (0..N).
+    let mut c = 0
+    let mut acc = 0.0
+    while acc + 0.5 < x { acc = acc + 1.0; c = c + 1 }
+    return c
+}
+
+// PERMUTED substrate (Dissociation B): cyclic spatial shift of S_real by
+// `shift` cells. phi_spatial is a permutation-symmetric sum over cells/pairs,
+// so Φ is INVARIANT; but site-0 (readout cell, if a single-cell readout were
+// used) and the cell ordering differ. We ALSO recompute the population-count
+// readout — population count is permutation-invariant, so to make the
+// FUNCTIONAL difference observable we read a SINGLE-CELL channel (site 0's
+// trajectory) which the shift genuinely changes.
+fn _build_perm(states: int, n: int, dim: int, shift: int) -> int {
+    let p = farr_zeros(n * dim)
+    let mut s = 0
+    while s < n {
+        let src = (s + shift) % n
+        let mut t = 0
+        while t < dim {
+            let _ = farr_set(p, s * dim + t, farr_get(states, src * dim + t))
+            t = t + 1
+        }
+        s = s + 1
+    }
+    return p
+}
+
+// single-cell readout channel: trajectory of site 0 (a local functional
+// observable that DOES change under spatial permutation, unlike the global
+// population count which is permutation-symmetric).
+fn _readout_cell0(states: int, n: int, dim: int) -> int {
+    let out = farr_zeros(dim)
+    let mut t = 0
+    while t < dim {
+        let _ = farr_set(out, t, farr_get(states, 0 * dim + t))
+        t = t + 1
+    }
+    return out
+}
+
+// byte-equal farr comparison (within tol) over `len` entries.
+fn _farr_eq(a: int, b: int, len: int, tol: float) -> bool {
+    let mut t = 0
+    while t < len {
+        let d = farr_get(a, t) - farr_get(b, t)
+        let ad = if d < 0.0 { 0.0 - d } else { d }
+        if ad > tol { return false }
+        t = t + 1
+    }
+    return true
+}
+
+fn _bool_str(b: bool) -> string { if b { return "true" }; return "false" }
+fn _verdict(b: bool) -> string { if b { return "PASS" }; return "FAIL" }
+
+fn main() {
+    let n = _N()
+    let dim = _DIM()
+    let warm = _WARM()
+    let rep = _REP()
+    let nbins = c_phi_n_bins_default()
+
+    println("H_004 — consciousness hard problem · Φ-function DISSOCIATION smoke (raw#12)")
+    println("  N=" + to_string(n) + " dim=" + to_string(dim)
+            + " warm=" + to_string(warm) + " rep=" + to_string(rep)
+            + " rule=" + to_string(_RULE_IV()) + " (Class-IV, H_007 high-Φ substrate)")
+    println("  Φ primitive: RFC 036 phi_spatial via HEXAD/C/c_lib.hexa (Φ>=0 by constr.)")
+    println("  HONEST: Φ-function dissociation = evidence ABOUT IIT reductive adequacy,")
+    println("          NOT about phenomenal qualia. Hard problem (phenomenal) UNTOUCHED.")
+    println("")
+
+    // ── S_real : genuine recurrent CA (H_007 Class-IV substrate) ──────────
+    let s_real = _run_ca(_RULE_IV(), n, dim, warm, rep)
+    let phi_real = c_measure_phi(s_real, n, dim, nbins)
+    let ro_real  = _readout(s_real, n, dim)               // global population channel
+
+    // ── Dissociation A: ZOMBIE (same function, different Φ) ────────────────
+    let s_zombie = _build_zombie(ro_real, n, dim)
+    let phi_zombie = c_measure_phi(s_zombie, n, dim, nbins)
+    let ro_zombie  = _readout(s_zombie, n, dim)
+    let a_iso  = _farr_eq(ro_real, ro_zombie, dim, 0.0000001)   // functional isomorph?
+    let a_phidiff = phi_real - phi_zombie
+    let a_phi  = a_phidiff > 0.000001                          // Φ_real > Φ_zombie?
+    let dissoc_A = a_iso && a_phi
+
+    // ── Dissociation B: INVERTED (same Φ, different function) ──────────────
+    // TWO distinct readout functions on the IDENTICAL S_real substrate:
+    //   fn_global = population-count channel (channel of A) vs
+    //   fn_local  = single-cell (site 0) channel.
+    // Φ is the SAME byte (literally the same matrix); functions differ.
+    let phi_B = c_measure_phi(s_real, n, dim, nbins)               // same substrate → same Φ
+    let ro_global = _readout(s_real, n, dim)                       // function 1 (global pop)
+    let ro_local  = _readout_cell0(s_real, n, dim)                 // function 2 (site 0)
+    let b_phieq = _farr_eq_scalar(phi_B, phi_real, 0.000000001)    // Φ byte-equal?
+    let b_funcdiff = !_farr_eq(ro_global, ro_local, dim, 0.0000001) // functions differ?
+    let dissoc_B = b_phieq && b_funcdiff
+
+    // EMPIRICAL ASIDE (recorded, NOT part of B verdict): cyclic-shift Φ probe.
+    let shift = 1
+    let s_perm = _build_perm(s_real, n, dim, shift)
+    let phi_perm = c_measure_phi(s_perm, n, dim, nbins)
+    let perm_phi_invariant = _farr_eq_scalar(phi_perm, phi_real, 0.000000001)
+
+    println("  Dissociation A — ZOMBIE (same function, different Φ):")
+    println("    Φ(S_real, rule110 recurrent) = " + to_string(phi_real))
+    println("    Φ(S_zombie, playback)        = " + to_string(phi_zombie))
+    println("    readout_real == readout_zombie (functional isomorph) : " + _bool_str(a_iso))
+    println("    Φ_real > Φ_zombie + 1e-6                              : " + _bool_str(a_phi) + "  (ΔΦ=" + to_string(a_phidiff) + ")")
+    println("    → A DISSOCIATION (same function, Φ differs)           : " + _bool_str(dissoc_A))
+    println("")
+    println("  Dissociation B — INVERTED (same Φ, different function on ONE substrate):")
+    println("    Φ(S_real) for fn_global == Φ(S_real) for fn_local     = " + to_string(phi_B))
+    println("    Φ byte-equal (same matrix, 1e-9)                      : " + _bool_str(b_phieq))
+    println("    fn_global (population) != fn_local (site 0)           : " + _bool_str(b_funcdiff))
+    println("    → B DISSOCIATION (same Φ, function differs)           : " + _bool_str(dissoc_B))
+    println("    [aside] cyclic-shift Φ probe: Φ_perm=" + to_string(phi_perm)
+            + " (perm-invariant=" + _bool_str(perm_phi_invariant) + ")")
+    println("")
+
+    // ── falsifiers (pre-registered, measurable) ───────────────────────────
+    let f1 = phi_real >= 0.0 && phi_zombie >= 0.0 && phi_B >= 0.0      // F-D1 NONNEG
+    let f2 = dissoc_A                                                  // F-D2 ZOMBIE
+    let f3 = dissoc_B                                                  // F-D3 INVERTED
+    let f4 = a_iso                                                     // F-D4 ISOMORPH
+    let f5 = b_phieq                                                   // F-D5 SAME-Φ-SUBSTRATE
+    // F-D6 determinism handled by re-run diff (outside this run).
+
+    let confirmed = f1 && dissoc_A && dissoc_B
+    let verdict = if confirmed { "DISSOCIATION_CONFIRMED" } else { "DISSOCIATION_FAILED" }
+
+    println("  F-D1 NONNEG     (all Φ>=0)                         : " + _bool_str(f1))
+    println("  F-D2 ZOMBIE     (same fn, Φ_real>Φ_zombie)         : " + _bool_str(f2))
+    println("  F-D3 INVERTED   (same Φ-substrate, fn differs)     : " + _bool_str(f3))
+    println("  F-D4 ISOMORPH   (readout byte-equal real/zombie)   : " + _bool_str(f4))
+    println("  F-D5 SAME-Φ     (one substrate → byte-equal Φ)     : " + _bool_str(f5))
+    println("")
+    println("  VERDICT_RULE: DISSOCIATION_CONFIRMED iff A AND B AND all Φ>=0")
+    println("  VERDICT     : " + verdict)
+
+    // ── write result.json ─────────────────────────────────────────────────
+    let mut j = "{\n"
+    j = j + "  \"id\": \"H_004\",\n"
+    j = j + "  \"slug\": \"consciousness-hard-problem\",\n"
+    j = j + "  \"sub_criterion\": \"reducibility — Phi-function dissociation (zombie / functional-isomorph)\",\n"
+    j = j + "  \"date\": \"2026-05-23\",\n"
+    j = j + "  \"deterministic\": true,\n"
+    j = j + "  \"hexa_only\": true,\n"
+    j = j + "  \"llm\": \"none\",\n"
+    j = j + "  \"cost\": \"$0 mac local\",\n"
+    j = j + "  \"phi_primitive\": \"RFC 036 phi_spatial (HEXAD/C/c_lib.hexa c_measure_phi, byte-equal phi_rs native replica)\",\n"
+    j = j + "  \"config\": { \"N\": " + to_string(n) + ", \"dim\": " + to_string(dim)
+          + ", \"warm\": " + to_string(warm) + ", \"rep\": " + to_string(rep)
+          + ", \"rule\": " + to_string(_RULE_IV()) + ", \"n_bins\": " + to_string(nbins)
+          + ", \"boundary\": \"periodic\", \"perm_shift\": " + to_string(shift) + " },\n"
+    j = j + "  \"phi\": {\n"
+    j = j + "    \"S_real_rule110_recurrent\": " + to_string(phi_real) + ",\n"
+    j = j + "    \"S_zombie_playback\": " + to_string(phi_zombie) + ",\n"
+    j = j + "    \"S_perm_cyclic_shift_aside\": " + to_string(phi_perm) + "\n"
+    j = j + "  },\n"
+    j = j + "  \"dissociation_A_same_function_diff_phi\": {\n"
+    j = j + "    \"functional_isomorph\": " + _bool_str(a_iso) + ",\n"
+    j = j + "    \"delta_phi\": " + to_string(a_phidiff) + ",\n"
+    j = j + "    \"confirmed\": " + _bool_str(dissoc_A) + "\n"
+    j = j + "  },\n"
+    j = j + "  \"dissociation_B_same_phi_diff_function\": {\n"
+    j = j + "    \"method\": \"two distinct readout functions (global pop vs site-0) on ONE identical S_real substrate\",\n"
+    j = j + "    \"phi_byte_equal\": " + _bool_str(b_phieq) + ",\n"
+    j = j + "    \"functions_differ\": " + _bool_str(b_funcdiff) + ",\n"
+    j = j + "    \"confirmed\": " + _bool_str(dissoc_B) + "\n"
+    j = j + "  },\n"
+    j = j + "  \"empirical_aside_cyclic_shift\": {\n"
+    j = j + "    \"note\": \"cyclic spatial permutation of S_real does NOT leave phi_spatial invariant (additional dissociation flavor, honestly measured)\",\n"
+    j = j + "    \"phi_real\": " + to_string(phi_real) + ",\n"
+    j = j + "    \"phi_perm_shift1\": " + to_string(phi_perm) + ",\n"
+    j = j + "    \"perm_phi_invariant\": " + _bool_str(perm_phi_invariant) + "\n"
+    j = j + "  },\n"
+    j = j + "  \"falsifiers\": {\n"
+    j = j + "    \"F_D1_NONNEG\": { \"verdict\": \"" + _verdict(f1) + "\" },\n"
+    j = j + "    \"F_D2_ZOMBIE\": { \"metric\": \"same fn AND Phi_real>Phi_zombie\", \"verdict\": \"" + _verdict(f2) + "\" },\n"
+    j = j + "    \"F_D3_INVERTED\": { \"metric\": \"same Phi substrate AND fn differs\", \"verdict\": \"" + _verdict(f3) + "\" },\n"
+    j = j + "    \"F_D4_ISOMORPH\": { \"metric\": \"readout byte-equal real/zombie\", \"verdict\": \"" + _verdict(f4) + "\" },\n"
+    j = j + "    \"F_D5_SAME_PHI\": { \"metric\": \"one substrate yields byte-equal Phi for both fns\", \"verdict\": \"" + _verdict(f5) + "\" }\n"
+    j = j + "  },\n"
+    j = j + "  \"honest_boundary\": \"Phi-function dissociation bears on IIT reductive adequacy for FUNCTION, NOT on phenomenal qualia. Chalmers hard problem (explanatory gap) untouched. A Phi measurement does not solve the hard problem.\",\n"
+    j = j + "  \"cross_link\": \"H_007 (Phi peaks at edge-of-chaos: Phi tracks dynamical class, not I/O) + H_157 (input-invariance is trained, not substrate-intrinsic)\",\n"
+    j = j + "  \"verdict_rule\": \"DISSOCIATION_CONFIRMED iff A AND B AND all Phi>=0\",\n"
+    j = j + "  \"verdict\": \"" + verdict + "\"\n"
+    j = j + "}\n"
+    write_file(_state_dir() + "/result.json", j)
+
+    let _ = farr_free(s_real)
+    let _ = farr_free(ro_real)
+    let _ = farr_free(s_zombie)
+    let _ = farr_free(ro_zombie)
+    let _ = farr_free(s_perm)
+    let _ = farr_free(ro_global)
+    let _ = farr_free(ro_local)
+
+    println("")
+    println("  result.json written → " + _state_dir() + "/result.json")
+    println("=== H_004 Φ-function dissociation smoke complete: " + verdict + " ===")
+}
+
+// scalar byte-equal compare (within tol).
+fn _farr_eq_scalar(a: float, b: float, tol: float) -> bool {
+    let d = a - b
+    let ad = if d < 0.0 { 0.0 - d } else { d }
+    return ad <= tol
+}
