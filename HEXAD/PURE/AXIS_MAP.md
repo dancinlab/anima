@@ -51,6 +51,34 @@ Track 1 corpus 재발사 (E3 anima0% · E2 50%)
        D/E/F 는 위 결과에 따라 조합
 ```
 
+### Track 1 closure rejection criterion (pre-declared 2026-05-23)
+
+> Track 1 closure rejection: if E2 OR E3 reburn fails to reach PASS on the
+> `multilingual_probe.hexa` harness (≥ floor X for at least 4/5 langs), the
+> Track 1 path is NOT closed and must re-fire. Pre-declared 2026-05-23
+> before fire dispatch.
+
+이 조항은 closure 판정을 fire 이후 사후 합리화로 흐리는 것을 차단한다.
+"4/5 langs ≥ floor X" 만이 closure 신호이며, 1-2 lang 부분 PASS / floor
+미만 / harness 변경 후 PASS 는 전부 **re-fire trigger** 다. floor X 는
+`multilingual_probe.hexa` 의 PARTIAL threshold (현 spec 기준) 를 채택하며,
+fire dispatch 직전 frozen — fire 이후 lowering 은 본 criterion 위반.
+
+### F4 — sha256 verify + --resume-from-step (DEFERRED)
+
+`/gap` F4 의 잔여 두 patch 는 본 PR 에서 ship 불가:
+
+| patch | target | 상태 |
+|-------|--------|------|
+| B teacher-ckpt sha256 verify | `dispatch_p21h_v3_runpod.sh` | 🟠 DEFERRED |
+| C `--resume-from-step N` | `train_p21h_v3.py` | 🟠 DEFERRED |
+
+차단 이유 — anima 의 project-tape 가 `.py` / `.sh` write 를 의도적으로
+거부한다 (`feedback_hexa_only_authoring.md` + project tape guard). 두
+patch 는 P21H dispatcher / trainer 의 `.hexa` 포팅이 선결 prereq.
+포팅 land 후 별도 stack 으로 재상정. 본 PR 은 **A (closure rejection)
+단독** 으로 진행.
+
 ## honest C3
 
 1. B 증류는 "pure-HEXAD substrate" 의 순수성 일부를 양보 — arch 는 HEXAD 지만 capability 는 Qwen 유래. 사용자 의도("Qwen 위 옷 아님")와의 정합은 arch-순수 ⊥ capability-전이 구분에 달림.
