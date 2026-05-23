@@ -18,6 +18,7 @@ PR #206 에서 AXIS_MAP_RESULTS.md 가 3 axis (A · B · F) 결과를 기록 —
 | C2 | P21H_HEAD_G_ENABLE=0 | ABORT @375 | — | — | — | 14.4564 | (abort) | ~2301 | Z | head_g 완전 disable, R8c 자연실험 falsification 후 abort |
 | D | P21H_FREEZE_EMBED=1 | DONE | FAIL | 0 | en PURE_MEMORIZE 8/20, ko WEAK 1/20 | 14.4564 | 2.0990 | 2171 | Z | embed freeze, 5000-step full |
 | E | P21H_LANG_BALANCED=1 | ABORT (OOM) | — | — | — | — | — | (start) | — | LangBalancedSampler 누수, ~79 GB GPU 점유 후 18 MiB alloc 실패 |
+| E2 | P21H_LANG_BALANCED=1 (retry, leak fixed) | DONE | FAIL | 0 | en/zh/ru/ja WEAK, ko PURE_MEMORIZE 5/20 | 14.1780 | 0.9846 | 2105.83 | Y | LangBalancedSampler 누수 fix 후 retry, 5000-step full (qwen init, pod 4nrcm80g8fwqf7 A100-80GB) |
 | F | P21H_CONTRASTIVE_INFONCE=1 | DONE | FAIL | 0 | en/ko WEAK 6-7/20 | 14.1780 | 2.1746 | 671 | Y | InfoNCE contrastive aux, early-stop |
 
 ## § Cluster X/Y/Z 자연실험 finding
@@ -101,6 +102,23 @@ E (LangBalancedSampler) 는 axis 자체로 별개 — code-bug fix 후 별도 re
 | E abort (OOM @start) | 1.10 | <60 |
 | bug saga (env-bug retries) | ~14.00 | — |
 | **total V3** | **~21.14** | ~16K cum |
+
+## § 분석 (E2 only)
+
+Track 1 E2 (LangBalancedSampler retry, leak fixed) 결과 — `result_to_axis_map.hexa` (PR #290) 자동 판정.
+
+- **closure = FAIL** — criterion ≥4/5 langs ≥ PARTIAL, 실측 0/5 (n_strong=0 · n_partial=0 · n_weak=4 · n_pure_memorize=1)
+- **ko = PURE_MEMORIZE** — anima corpus 기억 (V3 register-leak 패턴 재현, anima_register_hits_total=4/20 · register_regress=True)
+- **en/zh/ru/ja = WEAK** — Qwen init lang 능력 보존 부족 (per-lang n_score en=5 / zh=3 / ru=6 / ja=2 of 20)
+- **50 % wiki mix 가 register collapse 차단 부족** — LangBalancedSampler 의 lang-uniform sampling 만으로는 ko-register monopoly 해소 안 됨
+- **init→final CE 14.1780 → 0.9846 정상 수렴** — train 결함 아님, 0.98 final 은 cluster Y aux-loss-class 와 비교 가능 (B 2.23 / F 2.17 보다 낮음 · LangBalanced 가 loss curve 자체는 가장 좋음)
+- **E3 대기** — pod f5c0kn54wuqgfl in-flight, E3 도 FAIL 이면 corpus 축 소진 → AXIS_MAP B / A / C 3-axis fan-out 활성화
+
+**Honest C3**
+
+1. E2 단독 — E3 최종 corpus-axis 판단은 in-flight 결과 대기 후 확정
+2. register_regress=True ⊥ anima_register_hits_total=4/20 (낮음) — metric semantics 불일치, regress flag trigger 조건 정밀화 필요
+3. 5000 step 만 측정 — 10000+ retry 시 lang-uniform sampling 효과 누적 가능성 미배제
 
 ## § Cross-reference
 
