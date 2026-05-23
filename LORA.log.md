@@ -2,6 +2,21 @@
 
 > `LORA.md` 의 변경/작업 체크리스트. 최신이 위.
 
+## 2026-05-24 (cycle 15 — Wave-17 5-point U-shape verdict + AXIS_MAP-FAN re-fire)
+
+- [x] **Wave-17 4-pod parallel fire COMPLETE** — eternal_keep {0.10/0.20/0.40/0.50} 4 × H100 80GB HBM3 / H100 NVL, total wall ~723s, est $1.50
+- [x] result.json 4 변종 회수 (`HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/vP21M_v{13,14,15,16}/result.json`)
+- [x] WAVE17_VERDICT_2026_05_24.md (8-section, ~120 LoC) — U-shape 확정 + swap candidate trade-off 분석
+- [x] LORA.md production swap 상태 갱신 (NO SWAP through Wave-17, v11/v13 4/5 tie 사용자 게이트)
+- [x] LORA.md VP21M wave saga Wave-17 entry 추가 (4-pod sweep 상세)
+- [x] **새 발견**: criterion 2 (n_strong) ↔ criterion 4 (continuous) anti-correlated — 단일 변종 5/5 PASS 불가 (sweep 0.10~0.50 empirical)
+- [x] **새 발견**: U-shape 비대칭 — 좌측 floor (0.20=98) 가 우측 (0.50=52) 보다 더 깊음
+- [x] **새 발견**: v13 (eternal=0.10) n_strong=5 만점 — 4 corpus 사가 첫 5/5 cross-lingual STRONG
+- [ ] AXIS_MAP-FAN re-fire (option, $0.50-1.00) — H_255 H255.2 검증, R8 saga continues parallel
+- [ ] swap criteria 재정의 검토 — criterion 2 ↔ 4 anti-correlation 인정 또는 dual-adapter hot-swap
+- [ ] Wave-18 권고: eternal {0.25/0.30/0.35} 3-point fine-tune ($1.10, sharpness 측정)
+- [ ] v13/v14/v15/v16 HF upload 완성 검증 (a_hf_complete 후속, 10-file manifest)
+
 ## 2026-05-24 (cycle 13 — 5/5 done + R8a' wiring-fail 발견)
 
 - [x] cycle 13 phase-0 brainstorm depletion (5 cap) + fan-out parallel
