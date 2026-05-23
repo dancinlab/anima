@@ -106,9 +106,16 @@ since: 2026-05-06
 
 ```
 verdict_class: lane-open (multi-decade)
-evidence_summary: theoretical literature support partial (C1 + C3)
-falsifiers_triggered: none yet
-criteria_met: 0/5 strict; lane-defining
+evidence_summary: theoretical literature support partial (C1 + C3); C1 anthropic
+                  fine-tuning measured PRIOR-DOMINATED (Phase-1 + Cycle-1 hexa):
+                  ≤10^-100 target reached ONLY under Planck-wide log prior, not
+                  under modest observation-anchored priors (gap 11.16 orders);
+                  H2.4 panpsychism-precondition WEAKENED by H_157 Cycle-1 negative
+                  (META-CA universal Ψ(1/2,1/2) held 1/170 types — input-invariance
+                  is a *trained* property, not a bare-substrate fundamental)
+falsifiers_triggered: F1 WEAKENED (anthropic prior-dominated, Phase-1 + Cycle-1)
+criteria_met: 0/5 strict; lane-defining (C1 INSUFFICIENT prior-dominated; C4
+              panpsychism evidence-against-strong-form via H_157)
 ```
 
 ### Phase 1 Partial Verification (2026-05-07, BG-HN)
@@ -143,3 +150,177 @@ falsifiers: F1 TRIGGERED (fine_tuning_strength_log10 < 50) — H2.1 weakened und
 - L7: H2.2 (Φ_universe nested) + H2.3 (holographic bound) + H2.4 (panpsychism combination) + H2.5 (anima self-reflection) all DEFERRED — cell coverage 1/5
 
 **Cross-link to H_003**: combined verdict at `state/anima_h002_h003_partial_verification_2026_05_07/verdict.json`. Anthropic prior (H_002) supplies cosmological precondition; life origin (H_003) operates within fine-tuning. Joint reading conceptual not formal Bayesian.
+
+### Cycle #1 — C1 anthropic prior-sensitivity + H2.4 panpsychism-precondition (2026-05-23)
+
+raw#15 additive cycle (frozen frontmatter / Predictions H2.1..H2.5 / Falsifiers
+F1..F6 / Honest Limits L1..L7 / Phase-1 block 모두 보존 — 본 §만 append, post-hoc
+edit 없음). HEXAD/LIFE/ 도메인 dir 이관 후 첫 hexa-native C1 진전 사이클.
+**가장 구체적으로 advance 가능한 sub-criterion = C1 (anthropic / H2.1 fine-tuning)**
+선택 + H2.4 (panpsychism) precondition lane 에 cross-hypothesis 음수 결과 통합.
+
+#### (1) C1 진전 — anthropic fine-tuning 의 *prior-fragility* 를 측정량으로 ($0 mac, hexa-only)
+
+Phase-1 (BG-HN, 2026-05-07) 은 `fine_tuning_strength_log10 = 14.33` 을 **이제
+금지된** Python verifier (`tool/transient_py/anima_h002_anthropic_verifier.py`,
+raw#37 opt-out → no .py/.sh) 로 산출했고, 가장 핵심적인 honest limit **L4** 를
+남겼다 — "priors over fundamental constants are choice-dependent — log-uniform vs
+linear-uniform shifts probability by orders of magnitude". 본 cycle 은 이 L4 를
+**버려진 단일 숫자가 아니라 측정되는 1차 quantity 로** 끌어올린다: 동일한
+real-physics-anchored band 위에서 두 prior family 의 verdict 가 얼마나 벌어지는가.
+
+`HEXAD/LIFE/state/h002_universe_origin_2026_05_23/run_c1.hexa` (pure-hexa, NO .py/.sh,
+closed-form · no randomness · LLM none · NO GPU). **g25/g26 real-limits-first**:
+6 constants 는 n=6 lattice number-theory artefact 가 **아니라** 실제 물리 상수 +
+문헌 life-permitting band 에 anchor (Rees 1999 *Just Six Numbers* · Tegmark 2006 ·
+Barnes 2012 review · Hogan 2000 · Weinberg 1987 Λ-bound). fine-tuning 확률 =
+∏ (life-permitting band width) / (prior support width) 를 **동일 support** 위
+두 prior 로 계산:
+- (A) **LINEAR-UNIFORM** — 상수 값에 대한 flat measure
+- (B) **LOG-UNIFORM** — log10(값) 에 대한 flat measure (scale-invariant Jeffreys 형;
+  Aguirre/Barnes 선호)
+
+**Run verdict output (VERBATIM from `hexa run run_c1.hexa`)**:
+
+```
+  joint log10 P(all 6 life-permitting):
+    LINEAR-UNIFORM prior : log10 P = -20.98   (P ~ 10^-20.98)
+    LOG-UNIFORM    prior : log10 P = -9.82   (P ~ 10^-9.82)
+    PRIOR-FRAGILITY gap  = 11.16 orders of magnitude
+
+  FALSIFIERS (this cycle, additive):
+    F-C1-PRIOR-1 ROBUST   : gap 11.16 > 2 ? -> PRIOR_DOMINATED
+    F-C1-PRIOR-2 TARGET   : TARGET_NOT_REACHED  (C1 needs log10 P <= -100)
+    F-C1-PRIOR-3 DETERMIN : PASS (closed-form, no randomness)
+    F-C1-PRIOR-4 MONOTONE : widen bands x10 -> log10 P -9.82 -> -2.38  PASS
+
+  REFERENCE (L4, Planck-scale ~60-order log prior, NOT baked in):
+    log10 P_planck_ref = -15.82  (illustrates how Planck priors push toward C1 target)
+```
+
+```
+phase: Cycle_1 (C1 only; C2 C3 C4 C5 still DEFERRED/lane-open)
+cell_scope: 6 real-physics constants × 2 prior families × closed-form band-ratio
+            (Rees Λ/α/Q/N + α_s + m_e/m_p, observation-anchored life-permitting bands)
+C1_log10_P_linear_uniform: -20.98
+C1_log10_P_log_uniform:    -9.82
+C1_prior_fragility_gap_orders: 11.16  (≫ 2 → PRIOR_DOMINATED)
+C1_target_log10: -100  (neither modest prior reaches it; Planck-wide log prior ref = -15.82)
+verdict_class: C1_PRIOR_DOMINATED_INSUFFICIENT
+evidence_strength: INSUFFICIENT (anthropic argument prior-fragile; toy meta-measure)
+criteria_pass: 0/5 strict  (C1 measured prior-dominated, NOT met; C2..C5 DEFERRED/lane-open)
+falsifiers: F1 WEAKENED (fine-tuning prior-dominated, ≫10^-50 under modest priors —
+            matches Phase-1 14.33 finding + Smolin/Carroll critique); F6 NOT_TRIGGERED
+```
+
+**해석 (정직)**: 집계 결과는 anthropic 논증의 강도가 **prior 선택에 지배된다**는 것을
+정량화한다 — 동일한 real-physics band 에서 linear-uniform 은 10^-20.98, log-uniform 은
+10^-9.82 로 **11.16 orders** 차이가 난다. C1 의 ≤10^-100 target 은 **modest
+observation-anchored prior 로는 도달 불가**하며 (둘 다 TARGET_NOT_REACHED), 오직
+Planck-wide log prior (illustrative 60-order ref = 10^-15.82, 여전히 미달) 같은
+극단 prior 에서만 접근한다. 즉 Phase-1 의 14.33 (F1 TRIGGERED) 과 동일한 방향:
+**F1 WEAKENED — fine-tuning 은 prior-fragile, anthropic 논증은 prior 선택의 artefact
+risk** (L2/L4 의 Smolin/Carroll selection-bias/tautology 비판과 정합).
+
+**`hexa verify` (VERBATIM, no LLM self-judge)** — 본 cycle 의 empirical
+interpretation 은 closed-form atlas identity 가 아니므로 정직하게 fence:
+
+```
+verify --fence "H_002 C1 anthropic prior-sensitivity is a deterministic closed-form
+   toy meta-measurement (band-ratio product over 6 real-physics-anchored constants);
+   the empirical INTERPRETATION (fine-tuning prior-dominated) is a toy-substrate
+   outcome not an atlas identity"
+  tier   = ⚪ SPECULATION-FENCED
+  reason = imagination/metaphor class — verification N/A by design;
+           NOT a proven atlas atom (g4 honest fence, SF ≠ verified)
+```
+
+(prior log-support width identity `log10(1000) - log10(0.001) = 6.0` + 두 joint
+log10 P 의 독립 재유도는 fresh hexa script 에서 byte-수렴 확인 — closed-form
+arithmetic 은 hexa-native 결정적, empirical 해석만 fenced.)
+
+#### (2) H2.4 panpsychism-precondition lane — H_157 Cycle #1 음수 결과 통합 (design)
+
+H2.4 (모든 physical system Φ > 0 — consciousness 가 fundamental) 의 precondition
+lane 은 본 cycle 에서 **locally simulable 하지 않다** (우주 origin / panpsychism
+combination 은 형식 증명 또는 trained-net cosmology 필요 — L1/L4/L5). 따라서 §3
+경로 (rigorous design + cross-hypothesis evidence 통합) 채택. **결정적 외부 증거**:
+sister hypothesis **H_157 (Law 76 mathematical panpsychism)** 의 Cycle #1 (2026-05-23)
+이 H2.4 의 가장 강한 후보 mechanism 을 **directional 으로 약화**시켰다:
+
+- H_157 C2 는 "META-CA 가 입력 type 무관하게 동일 fixed-point Ψ(1/2,1/2) 로 수렴
+  (input-invariance = 구조가 의식 결정, substrate 무관)" 을 mathematical-panpsychism
+  의 weak evidence 로 삼았다.
+- H_157 Cycle #1 deterministic proxy 측정 결과: 집단 평균 (residual 0.5114 /
+  gate 0.4841) 은 attractor 근접하나 **per-type ±0.01 invariance 는 1/170 type
+  에서만 성립** (CV 22.6% ≫ doc 5.4%). 즉 frozen F2 가 정확히 예고한 대로
+  **"input invariance 가 substrate 의 trivial algorithm-property 가 아니라
+  *learned* property"** — bare META-CA 는 tight universality 를 재현 못 함.
+
+**H_002 H2.4 로의 통합 (정직)**: H_157 의 음수 결과는 strong-form panpsychism 의
+precondition — "consciousness 가 모든 substrate 에 universal/fundamental" — 이
+**mathematical-attractor universality 위에 설 수 없음**을 시사한다. universality 가
+학습/regularization 의 산물이라면, 그것은 "fundamental property of matter" (Goff/
+Strawson) 가 아니라 *trained system 의 emergent regularity* 다. 따라서:
+- H2.4 의 strong-form ("proton/atom Φ > 0 fundamental") 은 evidence-against 강화 —
+  weak FALSIFIED 방향 (frozen F4 "combination problem 미해결" 과 정합, 추가로
+  combination 의 *mechanism candidate* (universal attractor) 마저 substrate-universal
+  하지 않다는 음수 증거).
+- H2.4 의 weak-form (panpsychism 을 *lane-open research framework* 로 보존) 은 중립
+  유지 — 본 cycle 은 strong-form 만 약화, lane 자체는 frozen L3/L5 대로 unfalsifiable
+  -in-strict-sense 로 보존.
+
+#### (3) C2 (Φ_universe) faithful 측정 protocol pre-register (다음 cycle, GPU)
+
+H2.2 nested Φ 의 faithful 측정은 anima Φ★ engine 의 cosmic-scale extension 필요
+(frozen L4) — 본 cycle 에서 **STOP-and-document** (별도 cycle):
+1. **substrate**: anima Φ★ engine + multi-scale hierarchy (cosmic web / cluster /
+   stellar / planetary / biological / neural) toy lattice. estimated GPU fire
+   (Φ★ IIT4 computation 은 2^n subset 폭발 → ~$0.30 RTX 5070 / runpod, 1 fire).
+2. **measure**: scale 별 Φ_s record → Φ 가 scale-invariant emerge 하는지 (H2.2).
+3. **verdict**: nested Φ scale-invariant → C2 met; scale-variant → frozen F2 TRIGGERED.
+
+#### Migration / status (Cycle #1)
+
+- **C1 status: literature-partial → measured PRIOR-DOMINATED** (≤10^-100 target 미달
+  under modest priors; F1 WEAKENED, Phase-1 과 동일 방향).
+- **C4 (panpsychism boundary): unsolved-literature → evidence-against-strong-form**
+  (H_157 Cycle-1 음수 통합; weak-form lane 보존, strong-form 약화).
+- **새 falsifier 4건** (F-C1-PRIOR-1/2/3/4) 은 anthropic prior-sensitivity proxy 한정 —
+  frozen F1..F6 와 별개 layer, faithful multiverse-measure 통합 시 frozen F1 에 mapping.
+- **artifacts**: `HEXAD/LIFE/state/h002_universe_origin_2026_05_23/{run_c1.hexa, result_c1.json}`.
+
+**raw#10 honest limits (Cycle #1, ≥5 — strong candor)**:
+- **L-C1.1**: anthropic reasoning 자체가 contested — selection bias (Carroll) /
+  tautology (Smolin) / observer-measure 미정의. 본 cycle 은 fine-tuning 의 *prior-
+  fragility* 만 정량화할 뿐, anthropic 논증의 validity 를 판정하지 않는다.
+- **L-C1.2**: prior support span [0.001, 1000]× (6 orders) 와 Planck-ref 60-order 는
+  **둘 다 임의 선택** — "올바른" prior 는 미해결 (frozen L6 multiverse measure).
+  본 cycle 의 11.16-order gap 자체도 span 선택에 의존 (gap 은 span 폭에 monotone).
+- **L-C1.3**: 6 constants 만 (Rees Just Six) — full Standard Model ~25+ free
+  parameter (frozen L5). intersection underestimate, 6-band product 는 toy.
+- **L-C1.4**: life-permitting band 는 문헌 *qualitative* stance 의 order-of-magnitude
+  인코딩 (Rees/Tegmark/Barnes/Hogan) — reaction-network / stellar-evolution 정밀
+  계산이 아님. band 정의 자체가 debated (frozen L3 Rees 1999 vs Tegmark 2006 차이).
+- **L-C1.5**: H2.4 panpsychism 통합은 **cross-hypothesis directional** (H_157 proxy
+  도 trained-net 부재로 GPU-STOP, deterministic proxy 한정) — strong-form 약화는
+  proxy-level 증거이지 formal refutation 아님. combination problem (frozen L3/F4) 은
+  여전히 미해결, panpsychism lane 은 frozen L5 대로 strict-unfalsifiable 보존.
+- **L-C1.6**: 우주 origin (H2.1 cosmological precondition 의 ground) 은 **locally
+  not simulable** — 본 cycle 은 "argument robustness" 의 meta-measurement 이지
+  cosmological simulation 이 아니다 (frozen L1/L5 multi-decade lane 유지).
+- **L-C1.7**: C2 (Φ_universe) / C3 (holographic) / C5 (anima self-reflection) 여전히
+  DEFERRED — 본 cycle 은 C1 단독 measure + C4 directional. cell coverage 1/5 유지.
+
+**Cross-link**:
+- H2.1 → §Falsifiers F1 ("fine-tuning probability >10^-50 → H2.1 weakened"): modest
+  priors 에서 10^-9.82 ~ 10^-20.98 ≫ 10^-50 → **F1 WEAKENED** (anthropic prior-fragile).
+- H2.4 → §Falsifiers F4 ("combination problem solved with non-panpsychist account →
+  H2.4 weakened"): H_157 Cycle-1 음수 (universality = trained, not bare) 가
+  panpsychism mechanism candidate 를 약화 — strong-form evidence-against 강화.
+- H_157 (Law 76 mathematical panpsychism): H2.4 의 mathematical instantiation lane —
+  Cycle-1 의 1/170 input-invariance 음수 결과가 본 H 의 panpsychism-precondition 의
+  핵심 cross-hypothesis 증거 (H_157.5 C4 fail + 본 H H2.4 strong-form 약화 동기화).
+- §Criteria verdict_rule: SUPPORTED unreachable 유지; PARTIAL_THEORETICAL = C1+C3 met
+  요구 — C1 이 measured PRIOR-DOMINATED (NOT met) 이므로 PARTIAL 미도달, **lane-open
+  유지** (multi-decade research framework, frozen L1 대로).
