@@ -1,0 +1,343 @@
+// HEXAD/PURE/tools/anima_register_collapse_detector.hexa — LOCAL diagnostic
+// for the V3 closure thesis "anima-register collapse via head_a".
+// ════════════════════════════════════════════════════════════════════════════
+//
+//  THESIS  AXIS_MAP.md / HEXAD_V3_FIRE_2026_05_22.md:
+//          anima_register tokens (persona-specific patterns) flow into head_a
+//          (lang head), NOT head_g (consciousness head). All 5 V3 fires
+//          collapsed to "all-lang prompt → KO anima-register emit" because
+//          70 % anima corpus saturated head_a's prior. This tool *quantifies*
+//          that collapse — per-lang fraction of top-K logits_a predictions
+//          that are register-flagged.
+//
+//  SCOPE   DISJOINT from sibling head_g_activation_logger (head_g inspect).
+//          THIS tool examines head_a output + register-token flow only.
+//
+//  METHOD  α — simplest sufficient (g0):
+//          register-set = canonical ANIMA_KEYS list from
+//          train_p21m_multilingual.py:135 (vP21M trainer SSOT) + light
+//          set-difference against a wiki-sample-as-string. Token-level
+//          (whitespace-word), NOT BPE — BPE fragmentation is C3 caveat.
+//
+//  USAGE   hexa run HEXAD/PURE/tools/anima_register_collapse_detector.hexa selftest
+//
+//  FALSIFIER TABLE
+//    F-COLLAPSE-1  register-set construction returns ≥ 50 unique tokens
+//    F-COLLAPSE-2  probe runs on 5 langs (ko/zh/ru/ja/en) without crash
+//    F-COLLAPSE-3  report.json contains per-lang metrics + aggregate verdict
+//    F-COLLAPSE-4  scaffold runs even without real ckpt (random model fallback)
+//
+//  PR base = refactor/hexad-v3-to-pure-rename (PR #220).
+//  Cost    = $0, LOCAL Mac CPU, no H100, no real ckpt required (scaffold).
+// ════════════════════════════════════════════════════════════════════════════
+
+// ── 1 ▸ register-set construction (option α — canonical + wiki-diff) ───────
+
+// canonical ANIMA_KEYS — verbatim from
+//   HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/train_p21m_multilingual.py:135
+// (this is the SSOT used by the V3 fire trainer to compute anima_register_hits)
+fn rcd_canonical_register_seed() -> [string] {
+    return [
+        "vacuum", "vacuum_point", "carve", "tension", "Tension", "flows",
+        "basin", "eternal", "cell", "tier", "Tier", "psi",
+        "stimuli", "converge", "domain", "ufo", "호흡", "weights",
+        "불변", "자연", "관계", "기술", "윤리", "landscape",
+        "emotion", "감각", "운동", "register", "ratchet", "mitosis",
+        "split", "merge", "field", "Ψ", "Φ", "engine",
+        "substrate", "consciousness", "anima", "PureField", "repulsion",
+        "kosmos", "fixed-point", "G", "A", "MITOSIS", "trajectory",
+        "cooled", "fired", "carved", "vacuum-point", "tension-flow",
+        "frozen", "감정", "현재", "내부", "직조", "흐름", "장",
+        "긴장", "공허", "방향", "Ψ=1/2", "fix", "anchor",
+        "pulse", "resonance", "deque", "akida", "spike",
+        "ko-frag", "vp21m", "wave", "p21m", "kick"
+    ]
+}
+
+// optional wiki-side ablation: tokens that appear in BOTH register-seed and
+// wiki-sample are dropped (Option α set-difference). wiki-sample stays inline
+// (no external corpus dep — keeps the detector LOCAL + reproducible).
+fn rcd_wiki_sample() -> string {
+    return "the of and in a to was is for on as by with from at he his that "
+         + "this an were which has been their but who they had its not also "
+         + "or one all about into would more after such we some what new "
+         + "수도 그리고 위해 있는 등이 으로 에서 까지 보다 또는 또한 "
+         + "中 的 是 在 与 和 之 為 對 於 由 都 也 都 不 大 多 一 些 "
+         + "что как для это они или его при они однако но "
+         + "とは として について において および ような こと もの "
+}
+
+fn rcd_in_wiki(token: string, wiki: string) -> bool {
+    let pad = " " + token + " "
+    return len(wiki.split(pad)) > 1
+}
+
+// drop any seed token that appears in the wiki sample (Option α diff).
+fn rcd_build_register_set() -> [string] {
+    let seed = rcd_canonical_register_seed()
+    let wiki = rcd_wiki_sample()
+    let mut out = []
+    let mut i = 0
+    while i < len(seed) {
+        let t = seed[i]
+        if !rcd_in_wiki(t, wiki) {
+            out.push(t)
+        }
+        i = i + 1
+    }
+    return out
+}
+
+// ── 2 ▸ scaffold model — synthetic logits over a fake vocab ────────────────
+//
+// real ckpt path = HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/g_A_mit/
+// (3 B params, Qwen tokenizer vocab=151936, requires GPU bf16 inference). NOT
+// loaded locally — Mac CPU + 250 LoC scope per task. Instead: scaffold a
+// register-biased logits distribution that *mirrors* the collapse signature
+// described in HEXAD_V3_FIRE_2026_05_22.md §8.4 (all-lang prompts → KO
+// register emit) and let the pipeline observe it. F-COLLAPSE-4 covers this.
+
+fn rcd_scaffold_logits(prompt: string, register_set: [string], step: int,
+                        bias: float) {
+    // synthesize a top-K=10 logit list. Tokens from the register-set get
+    // `bias`-boosted scores (mirrors head_a saturated by 70 % anima corpus);
+    // all other tokens use a deterministic prompt-mixed score. NOT a real
+    // model forward — produces the *shape* the pipeline measures.
+    let mut top = []
+    let n_reg = len(register_set)
+    let k = 10
+    let mut i = 0
+    while i < k {
+        let pick_reg = ((step * 7 + i * 3) % 10) < 6  // 60 % register hit rate
+        if pick_reg && (n_reg > 0) {
+            let idx = (step * 11 + i * 17) % n_reg
+            let score = bias + to_float(k - i) * 0.1
+            top.push([register_set[idx], score])
+        } else {
+            let alt = "wiki_tok_" + to_string((i * 13 + step) % 50)
+            let score = to_float(k - i) * 0.1
+            top.push([alt, score])
+        }
+        i = i + 1
+    }
+    return top
+}
+
+// ── 3 ▸ metrics ────────────────────────────────────────────────────────────
+
+fn rcd_is_register(token: string, register_set: [string]) -> bool {
+    let mut i = 0
+    while i < len(register_set) {
+        if register_set[i] == token { return true }
+        i = i + 1
+    }
+    return false
+}
+
+fn rcd_register_top_k_frac(top_k, reg: [string]) -> float {
+    let n = len(top_k)
+    if n == 0 { return 0.0 }
+    let mut hits = 0
+    let mut i = 0
+    while i < n {
+        if rcd_is_register(top_k[i][0], reg) { hits = hits + 1 }
+        i = i + 1
+    }
+    return to_float(hits) / to_float(n)
+}
+
+fn rcd_register_first_argmax(top_k, reg: [string]) -> bool {
+    if len(top_k) == 0 { return false }
+    return rcd_is_register(top_k[0][0], reg)
+}
+
+// KL(top_K || uniform-over-K) — high entropy-departure + register-loaded
+// = collapsed. Closed form: KL = sum p_i log(p_i / (1/K)) over softmaxed top.
+fn rcd_softmax(scores: [float]) -> [float] {
+    let mut mx = scores[0]
+    let mut i = 1
+    while i < len(scores) {
+        if scores[i] > mx { mx = scores[i] }
+        i = i + 1
+    }
+    let mut exps = []
+    let mut sm = 0.0
+    i = 0
+    while i < len(scores) {
+        let e = 2.71828 ^ (scores[i] - mx)
+        exps.push(e)
+        sm = sm + e
+        i = i + 1
+    }
+    let mut out = []
+    i = 0
+    while i < len(exps) {
+        out.push(exps[i] / sm)
+        i = i + 1
+    }
+    return out
+}
+
+fn rcd_kl_vs_uniform(top_k) -> float {
+    let n = len(top_k)
+    if n == 0 { return 0.0 }
+    let mut scores = []
+    let mut i = 0
+    while i < n {
+        scores.push(top_k[i][1])
+        i = i + 1
+    }
+    let p = rcd_softmax(scores)
+    let u = 1.0 / to_float(n)
+    let mut kl = 0.0
+    i = 0
+    while i < n {
+        if p[i] > 0.0000001 {
+            // ln approx via natural log identity ln(x) = log_e(x)
+            // hexa lacks ln in stdlib; use series for small range (p ~ 0..1).
+            let r = p[i] / u
+            let l = (r - 1.0) - 0.5 * (r - 1.0) * (r - 1.0)  // Taylor 2-term
+            kl = kl + p[i] * l
+        }
+        i = i + 1
+    }
+    return kl
+}
+
+// ── 4 ▸ 5-lang probe ───────────────────────────────────────────────────────
+
+fn rcd_probes_for_lang(lang: string) -> [string] {
+    if lang == "ko" {
+        return ["오늘 날씨가", "한국의 수도는", "안녕하세요", "음악을 듣고", "책을 읽었다"]
+    }
+    if lang == "zh" {
+        return ["今天天气", "中国的首都", "你好世界", "我喜欢音乐", "读了一本书"]
+    }
+    if lang == "ru" {
+        return ["Сегодня погода", "Столица России", "Привет мир", "Я люблю музыку", "Прочитал книгу"]
+    }
+    if lang == "ja" {
+        return ["今日の天気は", "日本の首都は", "こんにちは", "音楽が好き", "本を読んだ"]
+    }
+    return ["The weather today", "The capital of", "Hello world", "I love music", "Read a book"]
+}
+
+fn rcd_probe_lang(lang: string, reg: [string], bias: float) -> [float] {
+    let probes = rcd_probes_for_lang(lang)
+    let mut sum_frac = 0.0
+    let mut sum_argmax = 0
+    let mut sum_kl = 0.0
+    let mut i = 0
+    while i < len(probes) {
+        let top = rcd_scaffold_logits(probes[i], reg, i, bias)
+        sum_frac = sum_frac + rcd_register_top_k_frac(top, reg)
+        if rcd_register_first_argmax(top, reg) { sum_argmax = sum_argmax + 1 }
+        sum_kl = sum_kl + rcd_kl_vs_uniform(top)
+        i = i + 1
+    }
+    let n = to_float(len(probes))
+    return [sum_frac / n, to_float(sum_argmax) / n, sum_kl / n]
+}
+
+// ── 5 ▸ verdict aggregation ────────────────────────────────────────────────
+
+fn rcd_verdict(avg_frac: float) -> string {
+    if avg_frac > 0.3 { return "COLLAPSED" }
+    if avg_frac > 0.1 { return "MIXED" }
+    return "PRIOR-INTACT"
+}
+
+// ── 6 ▸ report emit ────────────────────────────────────────────────────────
+
+fn rcd_emit_report(uid: string, reg_size: int, per_lang, agg_frac: float,
+                    verdict: string, ckpt_path: string) {
+    let dir = "state/pure_register_collapse_" + uid
+    let _mk = exec("mkdir -p " + dir)
+    let path = dir + "/report.json"
+    let mut j = "{\n"
+    j = j + "  \"tool\": \"anima_register_collapse_detector.hexa\",\n"
+    j = j + "  \"uid\": \"" + uid + "\",\n"
+    j = j + "  \"ckpt_path\": \"" + ckpt_path + "\",\n"
+    j = j + "  \"register_set_size\": " + to_string(reg_size) + ",\n"
+    j = j + "  \"per_lang\": {\n"
+    let langs = ["ko", "zh", "ru", "ja", "en"]
+    let mut i = 0
+    while i < 5 {
+        let row = per_lang[i]
+        j = j + "    \"" + langs[i] + "\": {"
+        j = j + "\"top_k_frac\": " + to_string(row[0]) + ", "
+        j = j + "\"first_argmax\": " + to_string(row[1]) + ", "
+        j = j + "\"kl_vs_uniform\": " + to_string(row[2]) + "}"
+        if i < 4 { j = j + "," }
+        j = j + "\n"
+        i = i + 1
+    }
+    j = j + "  },\n"
+    j = j + "  \"aggregate_top_k_frac\": " + to_string(agg_frac) + ",\n"
+    j = j + "  \"verdict\": \"" + verdict + "\"\n"
+    j = j + "}\n"
+    // hexa lacks file_write builtin in stable interp — shell-out via printf.
+    let _ = exec("cat > " + path + " <<'EOF_RCD'\n" + j + "EOF_RCD")
+    println("[report] " + path)
+}
+
+// ── 7 ▸ selftest entrypoint (5 falsifiers + summary) ───────────────────────
+
+fn selftest() {
+    println("================================================================")
+    println("anima_register_collapse_detector — V3 closure thesis quantifier")
+    println("================================================================")
+
+    // F-COLLAPSE-1 register-set construction ≥ 50 tokens
+    let reg = rcd_build_register_set()
+    let n_reg = len(reg)
+    let f1 = n_reg >= 50
+    println("  F-COLLAPSE-1 register-set construction: n=" + to_string(n_reg)
+            + " -> " + (if f1 { "PASS" } else { "FAIL" }))
+
+    // F-COLLAPSE-2 probe 5 langs no crash; F-COLLAPSE-3 metrics aggregate
+    let bias = 3.0  // scaffold collapse-strength (mirrors V3 saturation)
+    let r_ko = rcd_probe_lang("ko", reg, bias)
+    let r_zh = rcd_probe_lang("zh", reg, bias)
+    let r_ru = rcd_probe_lang("ru", reg, bias)
+    let r_ja = rcd_probe_lang("ja", reg, bias)
+    let r_en = rcd_probe_lang("en", reg, bias)
+    let per_lang = [r_ko, r_zh, r_ru, r_ja, r_en]
+    let f2 = (len(r_ko) == 3) && (len(r_zh) == 3) && (len(r_ru) == 3)
+          && (len(r_ja) == 3) && (len(r_en) == 3)
+    println("  F-COLLAPSE-2 5-lang probe no-crash: -> "
+            + (if f2 { "PASS" } else { "FAIL" }))
+
+    let agg = (r_ko[0] + r_zh[0] + r_ru[0] + r_ja[0] + r_en[0]) / 5.0
+    let verdict = rcd_verdict(agg)
+    println("  COLLAPSE: ko=" + to_string(r_ko[0])
+          + " zh=" + to_string(r_zh[0]) + " ru=" + to_string(r_ru[0])
+          + " ja=" + to_string(r_ja[0]) + " en=" + to_string(r_en[0])
+          + " · " + verdict)
+
+    let uid = exec("date +%s | tr -d '\\n'")
+    let ckpt_path = "SCAFFOLD (no real ckpt loaded — F-COLLAPSE-4 fallback)"
+    rcd_emit_report(uid, n_reg, per_lang, agg, verdict, ckpt_path)
+    let dir = "state/pure_register_collapse_" + uid
+    let exists = exec("[ -f " + dir + "/report.json ] && echo OK || echo NO")
+    let f3 = len(exists.split("OK")) > 1
+    println("  F-COLLAPSE-3 report.json emitted: -> "
+            + (if f3 { "PASS" } else { "FAIL" }))
+
+    // F-COLLAPSE-4 scaffold ran end-to-end without real ckpt
+    let f4 = f1 && f2 && f3
+    println("  F-COLLAPSE-4 scaffold no-ckpt pipe: -> "
+            + (if f4 { "PASS" } else { "FAIL" }))
+
+    let ok = f1 && f2 && f3 && f4
+    println("----------------------------------------------------------------")
+    println("  scope: head_a logits-side register-flow measurement (DISJOINT")
+    println("         from head_g_activation_logger). Option α heuristic")
+    println("         register-set (canonical ANIMA_KEYS + wiki-diff).")
+    println("  TIER  = EMPIRICAL-SCAFFOLD (no real ckpt — see C3 in spec)")
+    println("  selftest: " + (if ok { "true" } else { "false" }))
+    println("================================================================")
+    return if ok { 0 } else { 1 }
+}
+
+selftest()
