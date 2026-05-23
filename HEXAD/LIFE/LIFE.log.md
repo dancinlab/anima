@@ -54,3 +54,30 @@ latest 만 carry 되는 가설 .md 와 달리 본 로그는 모든 cycle history
 - **next**: **cross-cutting 발견** — anima 의 mitosis 기질이 생명-emergence 4대 메커니즘을 실제 구현: (1) operational closure 자기유지(H_012), (2) merge=endosymbiosis 무손실 통합(H_054), (3) freeze=분화 상태보존(H_132), (4) self-reference 에서만 자발 발생(H_018, 진공 X). 반면 strong-form 범신론(H_157)은 directional FAIL. Next-cycle 후보: H_002/H_004 (범신론 precondition·hard-problem) + H_003 H3.4 (autopoietic system Φ>0, H_007 phi_spatial 와 cross-link).
 
 ---
+
+## Cycle #3 — 범신론 precondition · hard-problem · autopoietic-closure Φ — 2026-05-23
+
+- **focus**: Cycle #2 next 의 3-축 — universe-origin (H_002) · hard-problem reducibility (H_004) · autopoietic-closure Φ (H_003 H3.4). 모두 기 frozen H 의 additive cycle (raw#15, frontmatter/Predictions/Falsifiers/Honest Limits 보존).
+- **change**: H_002 → C1 anthropic prior-fragility 측정량 + H2.4 cross-hypothesis (H_157 negative) 통합 · H_003 → H3.4 autopoietic-closure Φ Cycle #3 추가 (criteria 3/5→4/5) · H_004 → Cycle #1 Φ-function dissociation 추가 (Singularity-9 verdict 보존). LIFE 도메인의 **세 lane (universe / life / consciousness) 모두 measurable advance**.
+- **fire**: deterministic hexa, $0 mac local
+- **verdict**:
+  - **H_002 (PR #179) — Cycle #1 PARTIAL_THEORETICAL_PHASE_2**: C1 anthropic prior-fragility 측정. 동일 real-physics-anchored band(Rees·Tegmark·Barnes anchor) 위에서 LINEAR-UNIFORM vs LOG-UNIFORM prior 의 gap 11.16 orders 측정. C1 INSUFFICIENT 강화(prior-dominated). H2.4 panpsychism precondition은 H_157 directional FAIL 로 WEAKENED. raw#15 additive, frozen block 보존.
+  - **H_003 H3.4 (PR #185) — Cycle #3 PASS 🟢 NUMERICAL**: autopoietic-closure system Φ>0 (closure-dependent Φ). Φ_closed=4.45 vs Φ_broken=3.53 → closure-dependence gap=0.92 (transient-window claim). criteria_met 3/5→4/5 (C1+C3 Phase-1, C2 Cycle-2, **C4 Cycle-3 PASS**, C5 lane-open). H_007 phi_spatial 동일 primitive · H_012 closure substrate. F4 NOT_TRIGGERED.
+  - **H_004 (PR #180) — Cycle #1 DISSOCIATION_CONFIRMED**: Φ-function 양방향 dissociation. (A) ZOMBIE: 같은 readout (population channel byte-equal) 두 시스템 ΔΦ=0.31 (rule110=0.538 vs playback=0.226). (B) INVERTED: 동일 substrate × 다른 readout (fn_global ≠ fn_local) Φ byte-equal. **Φ 는 functional I/O 를 추적하지 않음** → IIT(L2) functional reductive adequacy *부정적 directional* evidence. **BOUNDARY (CL1)**: explanatory gap / qualia 는 untouched. F-D1..F-D5 PASS, F-D6 byte-identical determinism. aside 정직 기록 (cyclic-shift Φ_perm 0.584≠0.538 — 초기 가정 falsify, B 를 same-substrate 로 재구성, post-hoc force 회피).
+- **next**: cycle #4 — CANDIDATES.md R1 batch (H_171 K=8 atom · H_053 cambrian-burst · H_200 NEW apoptosis-primitive · H_201 NEW asymmetric-division).
+
+---
+
+## Cycle #4 — R1 batch · K=8 atom · cambrian · apoptosis · asymmetric-division — 2026-05-23
+
+- **focus**: CANDIDATES.md R1 pick (살찐 cycle) — carried 가설 2건 + NEW seed 2건. fresh-domain 확장 (의식·생물학 / 생명-burst / death-substrate / cell-division-asymmetry).
+- **change**: H_171/H_053 → pre-register-frozen 동결 + 측정 · H_200/H_201 → NEW H_XXX seed 신설 (raw#12 10-section, deterministic hexa, $0). CANDIDATES.md R1 4건 consumed.
+- **fire**: deterministic hexa, $0 mac local. RFC 036 phi_spatial / mitosis_hook split-event 재사용.
+- **verdict**:
+  - **H_171 (PR #196) — Cycle #1 FALSIFIED (substrate-side)**: K=8 minimal closed structure substrate-Φ 측정. K=8 atom (sopfr(8)=6) 의 substrate-only signature 가 spec'ed biological 4-falsifiable (1/f thalamus · F_c=0.10 · non-conservation · K=8) 를 *bare-CA proxy* 로 재현 못 함. substrate-side falsification — biological prediction 은 trained-net / EEG 의존, bare substrate 만으론 미도달. honest limits L1-L7.
+  - **H_053 (PR #197) — burst smoke 5/5 PASS**: cambrian-explosion · split-threshold sweep punctuated diversity jump 5/5. 임계 split-threshold 넘으면 cell-type 다양성 급증 (phase-transition style). 생명 다양성 burst 의 substrate-level instance, mitosis-rate criticality.
+  - **H_200 (PR #198) — NEW · apoptosis-primitive design + smoke**: substrate-side gap close (H_025 L2: substrate 에 진짜 apoptosis 부재). 능동적 cell-death event 추가 (mitosis_hook 확장) → coherence / Φ 영향 측정. death = merge 가 아닌 *능동적 소멸* 의 첫 operationalization (H_025 L2 직접 attack, Heidegger 실존 정합).
+  - **H_201 (PR #199) — NEW · asymmetric-division design + smoke**: stem-cell 식 비대칭 분열 — 한 자식 분화 / 다른 자식 보존. 다양성 vs 항상성 trade-off 의 substrate-level instance. mitosis split variant (symmetric → asymmetric branch), Margulis × Maturana cross-link 후보.
+- **next**: cycle #5 — R3 cross-link synthesis (4건, ⭐ 1건) + R2 panpsychism 정밀화 (H_157 C5/C6 additive 2건) + R5 substrate gap close (H_054 C2 additive + phi_spatial n_bins infra). 사용자 directive: 모든 R-pick disjoint fan-out (8 bg Agents).
+
+---
