@@ -110,7 +110,7 @@ ANIMA_REGISTER_PATTERNS = [
 ]
 
 SEED_STRATEGIES = ["m_retrieve_seed", "w_curiosity_peak_seed",
-                   "random_explore_seed", "self_monologue_seed"]
+                   "random_explore_seed"]  # p5 NO SPEAK(): self_monologue_seed dropped
 
 
 # ── factor fns (mirror spontaneous_loop_vp21.py) ─────────────────────────────
@@ -317,6 +317,14 @@ class AnimaState:
             lang_hint = self._pick_lang_hint()
             self.lang_rot_idx += 1
         text = self.substrate.generate(seed_text, max_new=MAX_NEW, lang_hint=lang_hint)
+        # p3 NO PERSONA INJECTION: register-pattern memorization = de facto injection.
+        # Silent-drop emission if it carries baked-in register prose (tension flows,
+        # Tier N, vacuum point, frozen cell, etc.) — broadcaster suppresses on "".
+        if text:
+            for _pat in ANIMA_REGISTER_PATTERNS:
+                if _pat.search(text):
+                    self.last_emit_time = time.time()  # still hold refractory
+                    return ""
         self.last_emission = text
         self.recent_emissions.append(text)
         # N9: record post-hoc detected lang for EN-dampener gating.
@@ -410,6 +418,13 @@ async def participant_loop(threshold: float, substrate_kind: str = "lora"):
                                          state.ticks, decision["score"],
                                          decision["seed_strategy"])
                                 text = state.emit(decision["seed_text"])
+                                if not text:
+                                    # p3/p5 silent-drop: register-leak or empty
+                                    log.info("EMIT-DROP tick=%d silent (p3/p5 enforce)",
+                                             state.ticks)
+                                    elapsed = time.time() - t0
+                                    await asyncio.sleep(max(0.1, TICK_INTERVAL - elapsed))
+                                    continue
                                 lang = detect_lang(text) if text else "und"
                                 try:
                                     await ws.send(json.dumps({
