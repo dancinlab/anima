@@ -38,11 +38,13 @@ AKIDA HW 필수                   AKIDA HW + SW-only path
 
 ## 현재 라이브 (Phase 1 인프라)
 
+> 2026-05-23 cycle 9/DA-2: row 44-45 stale claim 정정 — 라이브 chain 복구는 cycle 10/EA 진행 중
+
 | 컴포넌트 | 상태 |
 |---|---|
 | pi5 `spike_streamer.py :9512 --regime R3` | ✅ live (anima 외부) |
-| `akida_bridge.hexa` (mini, `akida_bridge.bin daemon`) | ✅ hexa-native, PID alive |
-| broker `/ws/akida_ingest` → `STATE.akida_history` (deque 200) | ✅ ingest +10/s 검증 |
+| `akida_bridge.hexa` (mini, `akida_bridge.bin daemon`) | ⚠ DOWN — fork exhaustion 후 daemon 종료 (cycle 9/DA-2 측정) |
+| broker `/ws/akida_ingest` → `STATE.akida_history` (deque 200) | ⚠ ingest DEAD — bridge 종료로 deque length=0 (cycle 9/DA-2 측정) |
 | `akida_consumer.hexa` (broker `/akida/recent` → features JSONL) | 🟡 source landed (selftest 7/7), mini deploy blocked (sshd exec channel refused) |
 | `telemetry_harness.hexa` (anima emit ⇄ spike window pair → evidence JSONL) | 🟡 source landed (selftest 9/9), mini deploy blocked (sshd exec channel refused) |
 | `spontaneous_lib.hexa::apply_spike_features` (spike features → 8-factor delta + regime modulator, substrate-only `relevance`/`balance` invariant) | ✅ source landed (PR #143 squash `3bce310a1`, selftest F-SPIKE-APPLY-1..4 4/4 PASS) |
