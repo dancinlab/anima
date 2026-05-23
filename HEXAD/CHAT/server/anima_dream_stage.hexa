@@ -464,6 +464,42 @@ fn run_selftest() {
 }
 
 
+// ── §6b IPC bridge — file-shared stage publication ───────────────────────────
+//
+//   The Python participant (anima_participant.py) cannot `import` this .hexa
+//   module (it is not a Python package — the prior `import anima_dream_stage`
+//   stub fired `except: return "WAKE"` 100%, bypassing the stage-context gate).
+//   The bridge is therefore file-shared: the daemon WRITES the current stage
+//   string to `$HOME/.cache/anima/dream_stage.current` on each tick (or stage
+//   transition), and the participant READS that file (freshness-gated to 30s).
+//
+//   AUTONOMY CONTRACT (per @D a_autonomy_over_hardcode): this publishes the
+//   stage string ONLY — CONTEXT, not a gate. The participant derives
+//   {phi, tension_envelope, scrambled} from the stage and feeds them to the
+//   substrate's 8-factor motivation gate, which autonomously decides emit.
+//
+//   PREREQUISITE: `~/.cache/anima/` must exist. The daemon attempts a
+//   best-effort `mkdir -p` via exec() on first publish; if the hexa runtime
+//   cannot exec mkdir, create it manually once:  mkdir -p ~/.cache/anima
+//   The writer then only writes the file (assumes the dir exists).
+
+let DREAM_STAGE_FILE = "$HOME/.cache/anima/dream_stage.current"
+
+// _ds_publish_stage — write `stage` to ~/.cache/anima/dream_stage.current.
+// Best-effort mkdir -p of the parent dir, then atomic-ish single-line write.
+// Returns the resolved file path (for logging). Stub-tolerant: any exec
+// failure is silently tolerated (participant falls back to WAKE on stale/
+// absent file — no daemon regression).
+fn _ds_publish_stage(stage: string) -> string {
+    // Best-effort: ensure the cache dir exists (idempotent).
+    let _mk = exec("mkdir -p \"$HOME/.cache/anima\"")
+    // Single-line write (truncate). Newline-terminated so `read().strip()`
+    // on the Python side yields the bare stage token.
+    let _w = exec("printf '%s\\n' \"" + stage + "\" > \"$HOME/.cache/anima/dream_stage.current\"")
+    return DREAM_STAGE_FILE
+}
+
+
 // ── §7 verb dispatch ────────────────────────────────────────────────────────
 
 fn run_once() {
@@ -479,6 +515,8 @@ fn run_once() {
     let nx = dream_tick(st, now_sec, 1)
     let stg = to_string(nx["stage"])
     let ctx = dream_context(stg)
+    // IPC bridge: publish stage to the file-shared path (one-shot).
+    let _path = _ds_publish_stage(stg)
     println("[anima_dream_stage once] now=" + s + " stage=" + stg +
             " in_sleep=" + to_string(nx["in_sleep"]) +
             " phi=" + to_string(ctx["phi"]) +
@@ -502,12 +540,17 @@ fn run_daemon() {
         let now_sec = h * 3600 + m * 60 + sec
         st = dream_tick(st, now_sec, 60)
         let stg = to_string(st["stage"])
+        // IPC bridge: publish the current stage to the file-shared path on
+        // EVERY tick (not just transitions) so the participant's 30s
+        // freshness window always sees a recent value.
+        let _path = _ds_publish_stage(stg)
         if stg != prev_stage {
             let ctx = dream_context(stg)
             println("[anima_dream_stage] " + s + " stage=" + stg +
                     " phi=" + to_string(ctx["phi"]) +
                     " tension_envelope=" + to_string(ctx["tension_envelope"]) +
-                    " scrambled=" + to_string(ctx["scrambled"]))
+                    " scrambled=" + to_string(ctx["scrambled"]) +
+                    " published=" + _path)
             prev_stage = stg
         }
         let _ = exec("sleep 60")
