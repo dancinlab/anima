@@ -6,6 +6,31 @@ For the full audit trail, see `git log`.
 
 ---
 
+## 2026-05-24
+
+### 수정 (akida-leak)
+- **akida_bridge subshell-leak 근본수정** — 진단(broker 측 2380개 잔류 `sh` 서브셸 누적) → 정리(slot 2616→237 회복) → 근본수정 stable-fifo + pkill 패턴 (#332). per-message subshell spawn 이 누수 원인.
+- **데몬 전수 audit** (#333) — 전 데몬 subshell-leak 스캔, `akida_bridge` 만 HIGH 위험 (단독). 나머지 데몬 clean.
+- **postmortem** (#329) — 누수 saga 사후분석 기록.
+- **진짜 broker gap = hexa-lang ws_send race** (#330) — broker deque 자체는 정상. 근본 gap 은 hexa-lang `ws_send` race 로 확인되어 upstream 제출.
+
+### R8 saga
+- **N_KV_HEAD dispatcher patch** (#334) — R8 디스패처 GQA n_kv_head 인자화.
+- **R8a fire dispatched** — init_CE floor 돌파 시도.
+- **R8c probe driver** (#339) — R8c 측정 드라이버.
+- **WAVES_MATRIX** (#338) — R8 wave 매트릭스 ledger.
+- **R8 INDEX** (#336) — R8 saga 단일 인덱스 SSOT.
+
+### LORA
+- **Wave-17 corpus 사전검증 GO** (#337) — Wave-17 corpus 발사 전 사전검증 통과.
+
+### 흡수
+- **HEXAD/LIFE H_247/248/249** (#327) — 3건 가설 흡수.
+
+### upstream
+- **pool host-health guard** (pool#2) — pool inbox 호스트 헬스 가드.
+- **hexa-lang 3 runtime gaps** — sister inbox PR: `ws_send` race · proc-cascade · wrapper 3건 런타임 gap 제출.
+
 ## 2026-05-23 — Session-3 LoRA lever exploration
 
 ### Major outcomes
