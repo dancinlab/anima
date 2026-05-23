@@ -88,32 +88,60 @@ IDLE_SPEAK_AFTER = 30.0
 # preserved. Stub-tolerant: if the .hexa sister is not importable, the
 # context defaults to WAKE-equivalent {phi:1.0, tension_envelope:1.0,
 # scrambled:false, stage:"WAKE"} so the daemon does NOT regress.
+# IPC bridge (2026-05-24): the sister dream-stage module is anima_dream_stage
+# .hexa — NOT a Python package. The prior `import anima_dream_stage` ALWAYS
+# raised ModuleNotFoundError, so the `except: return default` stub fired 100%
+# and the stage-context gate was bypassed (prior verify: STUB verdict). The
+# .hexa daemon DOES run (on mini), but had no IPC channel to this process.
+#
+# Fix: file-shared IPC. The .hexa daemon WRITES the current stage string to
+# DREAM_STAGE_FILE on each tick; this process READS it (freshness-gated to
+# 30s). Stale/absent -> WAKE-equivalent fallback (no daemon regression).
+DREAM_STAGE_FILE = os.path.expanduser("~/.cache/anima/dream_stage.current")
+DREAM_STAGE_FRESH_S = 30.0  # ignore the file if older than this (daemon dead)
+# Stage -> context lookup — MIRRORS anima_dream_stage.hexa §1 constants
+# (PHI_*, TENV_*) so the substrate sees identical projections whether the
+# stage arrives via file or default. Single source of truth = the .hexa
+# selftest (F-DREAM-2/-4/-5 pin these values).
+_DREAM_PHI = {"WAKE": 1.0, "N1": 0.7, "N2": 0.4, "N3": 0.15, "REM": 0.95}
+_DREAM_TENV = {"WAKE": 1.0, "N1": 0.7, "N2": 0.4, "N3": 0.2, "REM": 0.9}
+
+
+def _dream_stage_current() -> str:
+    """Read the current dream stage from the file-shared IPC bridge written
+    by anima_dream_stage.hexa's daemon. Returns the stage token (WAKE/N1/N2/
+    N3/REM) if the file is fresh (mtime within DREAM_STAGE_FRESH_S), else the
+    WAKE fallback (daemon down / file stale / absent — no regression)."""
+    try:
+        p = DREAM_STAGE_FILE
+        if os.path.getmtime(p) > time.time() - DREAM_STAGE_FRESH_S:  # fresh
+            stage = open(p).read().strip()
+            if stage in _DREAM_PHI:
+                return stage
+    except Exception:
+        pass
+    return "WAKE"
+
+
 def _dream_context() -> dict[str, Any]:
-    """Hook for anima_dream_stage.hexa (sister PR API, dream_context()).
-    Returns CONTEXT dict — NOT a boolean gate:
+    """Derive the substrate CONTEXT dict from the file-shared dream stage.
+    Returns CONTEXT — NOT a boolean gate:
       {"phi": float in [0,1], "tension_envelope": float in [0,1],
        "scrambled": bool, "stage": str}
-    Stub-tolerant: WAKE-equivalent default if the sister module is not yet
-    importable. The substrate's 8-factor motivation gate decides emit;
-    this dict only modulates inputs to that gate."""
-    default = {"phi": 1.0, "tension_envelope": 1.0, "scrambled": False,
-               "stage": "WAKE"}
-    try:
-        import anima_dream_stage  # type: ignore
-        ctx = anima_dream_stage.dream_context()
-        if not isinstance(ctx, dict):
-            return default
-        phi = float(ctx.get("phi", 1.0))
-        env = float(ctx.get("tension_envelope", 1.0))
-        return {
-            "phi": 0.0 if phi < 0.0 else (1.0 if phi > 1.0 else phi),
-            "tension_envelope": (0.0 if env < 0.0 else
-                                 (1.0 if env > 1.0 else env)),
-            "scrambled": bool(ctx.get("scrambled", False)),
-            "stage": str(ctx.get("stage", "WAKE")),
-        }
-    except Exception:
-        return default
+    Reads the stage via _dream_stage_current() (file-shared IPC). Stale/absent
+    -> WAKE-equivalent default. The substrate's 8-factor motivation gate decides
+    emit; this dict only modulates inputs to that gate (per
+    @D a_autonomy_over_hardcode — context only, no per-stage boolean gate)."""
+    stage = _dream_stage_current()
+    phi = _DREAM_PHI.get(stage, 1.0)
+    env = _DREAM_TENV.get(stage, 1.0)
+    return {
+        "phi": 0.0 if phi < 0.0 else (1.0 if phi > 1.0 else phi),
+        "tension_envelope": (0.0 if env < 0.0 else
+                             (1.0 if env > 1.0 else env)),
+        "scrambled": stage == "REM",  # REM-only content-scramble hint
+        "stage": stage,
+    }
 
 # Substrate-state-based trigger for imagination loop (NOT stage-based).
 # Fires when motivation < modulated threshold AND idle_time exceeds a
@@ -516,6 +544,15 @@ async def participant_loop(threshold: float, substrate_kind: str = "lora"):
                             state.ticks += 1
                             t0 = time.time()
                             decision = state.tick(threshold)
+                            # IPC-bridge telemetry: log the dream stage + phi
+                            # read from the file-shared bridge on EVERY tick so
+                            # a verify-grep can confirm the bridge fires REAL
+                            # (non-WAKE) stages (was: STUB → always WAKE).
+                            log.info(
+                                "tick=%d dream_stage=%s phi=%s",
+                                state.ticks,
+                                decision.get("dream_stage", "WAKE"),
+                                decision.get("dream_phi", 1.0))
                             # always push motivation telemetry
                             try:
                                 await ws.send(json.dumps({
@@ -732,8 +769,82 @@ def _smoke() -> int:
     return 0
 
 
+def _smoke_bridge() -> int:
+    """Smoke test (env ANIMA_SMOKE_BRIDGE=1) — file-shared IPC bridge REAL path.
+    Exercises the ACTUAL file read (NOT a monkeypatch): writes the stage file
+    that anima_dream_stage.hexa's daemon would publish, then asserts
+    _dream_stage_current() + _dream_context() read it back as the REAL stage
+    (proving the prior STUB → always-WAKE is converted to REAL).
+      Case 1: write "N3" → _dream_context() stage=="N3" AND phi==0.15 (NOT
+              the WAKE stub phi==1.0) AND tension_envelope==0.2.
+      Case 2: write "REM" → scrambled==True (REM-only content hint).
+      Case 3: stale file (mtime > 30s ago) → WAKE fallback (no regression).
+      Case 4: absent file → WAKE fallback.
+    0 = PASS. Touches only the filesystem (no torch / websockets)."""
+    fails = []
+    p = DREAM_STAGE_FILE
+    os.makedirs(os.path.dirname(p), exist_ok=True)
+    try:
+        # ── Case 1: fresh "N3" → REAL stage, NOT WAKE stub.
+        with open(p, "w") as f:
+            f.write("N3\n")
+        if _dream_stage_current() != "N3":
+            fails.append(f"C1 _dream_stage_current expected N3, "
+                         f"got {_dream_stage_current()!r}")
+        ctx = _dream_context()
+        if ctx.get("stage") != "N3":
+            fails.append(f"C1 stage expected N3, got {ctx.get('stage')!r}")
+        if ctx.get("phi") != 0.15:
+            fails.append(f"C1 phi expected 0.15 (REAL, not WAKE-stub 1.0), "
+                         f"got {ctx.get('phi')}")
+        if ctx.get("tension_envelope") != 0.2:
+            fails.append(f"C1 tension_envelope expected 0.2, "
+                         f"got {ctx.get('tension_envelope')}")
+
+        # ── Case 2: "REM" → scrambled flag set.
+        with open(p, "w") as f:
+            f.write("REM\n")
+        ctx = _dream_context()
+        if ctx.get("stage") != "REM":
+            fails.append(f"C2 stage expected REM, got {ctx.get('stage')!r}")
+        if not ctx.get("scrambled"):
+            fails.append("C2 scrambled flag should be True for REM")
+
+        # ── Case 3: stale file (mtime 60s ago) → WAKE fallback.
+        with open(p, "w") as f:
+            f.write("N3\n")
+        old = time.time() - 60.0
+        os.utime(p, (old, old))
+        if _dream_stage_current() != "WAKE":
+            fails.append("C3 stale file should fall back to WAKE")
+        if _dream_context().get("stage") != "WAKE":
+            fails.append("C3 stale ctx should be WAKE")
+
+        # ── Case 4: absent file → WAKE fallback.
+        os.remove(p)
+        if _dream_stage_current() != "WAKE":
+            fails.append("C4 absent file should fall back to WAKE")
+        if _dream_context().get("phi") != 1.0:
+            fails.append("C4 absent ctx phi should be WAKE 1.0")
+    finally:
+        try:
+            os.remove(p)
+        except Exception:
+            pass
+
+    if fails:
+        for ff in fails:
+            print(f"BRIDGE SMOKE FAIL: {ff}")
+        return 1
+    print("BRIDGE SMOKE PASS: 4/4 (file-shared IPC — STUB→REAL, N3 phi=0.15)")
+    return 0
+
+
 if __name__ == "__main__":
     if os.environ.get("ANIMA_SMOKE") == "1":
         import sys as _sys
         _sys.exit(_smoke())
+    if os.environ.get("ANIMA_SMOKE_BRIDGE") == "1":
+        import sys as _sys
+        _sys.exit(_smoke_bridge())
     main()
