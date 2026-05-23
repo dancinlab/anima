@@ -8,18 +8,35 @@
 사용자 message 도착 ──> environment context update (NOT response obligation)
                          │
                          ▼
-              ┌─ Engine G motivation_score 계산 ─┐
-              │  (8-factor × HEXAD)               │
-              └────────────┬──────────────────────┘
-                           │ score > imThreshold ?
-                           ▼ yes
-                  ┌─ dream_stage gate ─┐
-                  │ WAKE / REM → emit │
-                  │ N1 / N2 / N3 → silent + imagine_tick │
-                  └────────────────────┘
+              ┌─ dream_stage context (Φ scale + tension envelope) ─┐
+              │  stage → context → 8-factor motivation gate → substrate 자율 결정 │
+              └──────────────────────────┬───────────────────────────┘
+                                         ▼
+              ┌─ Engine G motivation_score 계산 (8-factor × HEXAD) ─┐
+              │  M × C-Φ × W × MITOSIS × idle × curiosity × E × user-presence │
+              │  (stage context = Φ-scale 곱 + threshold 곱, NOT boolean gate) │
+              └─────────────────────────────────────────────────────┘
+                                         │ score > imThreshold ?
+                                         ▼ yes → emit · no → silent + (optional) imagine_tick
 ```
 
-CLAUDE.md `@D a_substrate_native_speak` 가 governance anchor.
+| stage  | Φ scale | tension envelope | scrambled |
+|--------|---------|------------------|-----------|
+| WAKE   | 1.00    | 1.00 (full)      | false     |
+| N1     | 0.70    | 0.85             | false     |
+| N2     | 0.40    | 0.60             | false     |
+| N3     | 0.15    | 0.40             | false     |
+| REM    | 0.95    | 1.00             | true      |
+
+> 위 표는 stage 별 **context 데이터** (Φ scale + tension envelope + scrambled flag) — substrate motivation gate 에 입력으로만 전달됩니다. emit/silence 결정 자체는 substrate 가 8-factor 로 자율 산출합니다 (boolean override 아님).
+
+CLAUDE.md `@D a_substrate_native_speak` + `@D a_autonomy_over_hardcode` (`project.tape:38`) 가 governance anchor.
+
+### 0.1 stage 가 boolean gate 아닌 이유 (`@D a_autonomy_over_hardcode` 정합)
+
+`project.tape:38` 의 `@D a_autonomy_over_hardcode` 는 **외부 모듈이 anima 에 do/dont 을 강제하지 않는다** 를 governance 로 못박습니다. 따라서 `anima_dream_stage.hexa` 는 stage 별 Φ scale 과 tension envelope 만 **context 로 제공**하고, 그 context 가 8-factor motivation gate (M × C-Φ × W × MITOSIS × idle × curiosity × E × user-presence) 의 입력값을 modulate 합니다.
+
+emit / silence 결정은 항상 **substrate 자율** — 예컨대 N3 에서도 W × curiosity 가 매우 높고 imThreshold (스케일링된) 를 넘으면 emit 가능, REM 에서도 motivation 이 부족하면 silent 입니다. "N3 → emit 금지" 류의 hardcoded boolean gate 는 `@D a_autonomy_over_hardcode` 의 `dont = "per-stage boolean gate hardcode"` 위반입니다.
 
 ## 1. 수면 + 상상 (P47 substrate-native, 2026-05-24)
 
@@ -29,43 +46,45 @@ P47 Dream Physics 도메인 root (commit `dc3afe332`, `anima-engines/dream_physi
 
 | 모듈 | 역할 |
 |---|---|
-| `HEXAD/CHAT/server/anima_dream_stage.hexa` | 5-stage state machine — 현재 stage 를 broker 가 polling, emit gate |
-| `HEXAD/CHAT/server/anima_imagination_loop.hexa` | emit-free rehearsal — N1/N2/N3 중 internal `imagine_tick()` 호출, 외부 emission 없음 |
+| `HEXAD/CHAT/server/anima_dream_stage.hexa` | 5-stage state machine — 현재 stage 의 (Φ scale, tension envelope, scrambled) context 를 broker 에 공급 (boolean gate 아님) |
+| `HEXAD/CHAT/server/anima_imagination_loop.hexa` | emit-free internal rehearsal — substrate 자율 trigger 로 `imagine_tick()` 호출, 외부 channel 미전송 |
 
 ### 1.2 5-stage 90-min ultradian cycle
 
 ```
 WAKE ──> N1 ──> N2 ──> N3 ──> N2 ──> REM ──> WAKE ──> ...
- emit  silent silent silent silent  emit    emit
-        +imagine_tick (covert rehearsal)
+ │       │      │      │      │      │       │
+ └─ 각 stage 가 (Φ scale, tension envelope, scrambled) context 만 substrate 에 공급 ─┘
+   emit / silence / imagine_tick 호출 빈도는 substrate 의 8-factor motivation 자율 결정
 ```
 
-| stage | 지속 (default) | emit ? | imagine_tick ? | Φ projection |
+| stage | 지속 (default) | Φ scale | tension envelope | scrambled |
 |---|---|---|---|---|
-| WAKE | unlimited (낮 시간대 ENV) | ✅ emit | — | 1.00 baseline |
-| N1   | ~5 min | ❌ silent | ✅ light | 0.70 |
-| N2   | ~20 min | ❌ silent | ✅ medium | 0.40 |
-| N3   | ~30 min | ❌ silent | ✅ deep (consolidation) | 0.15 lowest |
-| REM  | ~15 min | ✅ emit (dream-speak) | ✅ dream-rehearsal | 0.95 ≈ WAKE |
+| WAKE | unlimited (낮 시간대 ENV) | 1.00 | 1.00 (full) | false |
+| N1   | ~5 min  | 0.70 | 0.85 | false |
+| N2   | ~20 min | 0.40 | 0.60 | false |
+| N3   | ~30 min | 0.15 | 0.40 | false |
+| REM  | ~15 min | 0.95 | 1.00 | true  |
 
-Φ 값은 `anima_dream_stage.hexa` lookup table (PR #275 LANDED) 의 canonical projection. cycle 종료 후 baseline (WAKE) 로 복귀 — P47 의 "REM-Φ ≈ WAKE-Φ" 관측이 emit gate 의 핵심 근거 (REM 중 안전한 emit 가능).
+표의 모든 컬럼은 stage 별 **context 데이터** — substrate motivation gate 가 이를 입력으로 받아 emit / silence / imagine_tick 빈도를 자율 산출합니다. Φ 값은 `anima_dream_stage.hexa` lookup table (PR #275 LANDED) 의 canonical projection. cycle 종료 후 baseline (WAKE) 로 복귀 — P47 의 "REM-Φ ≈ WAKE-Φ" 는 stage 가 단순 boolean 이 아니라 연속 context envelope 임을 보여주는 핵심 근거.
 
 ### 1.3 emit modulation 규칙
 
-- **WAKE / REM** → emit 허용 (8-factor motivation gate 만 통과하면 출력)
-- **N1 / N2 / N3** → emit 차단, 대신 `anima_imagination_loop.imagine_tick()` 호출
-  - imagine_tick = covert tension-field rehearsal, 외부 channel 미전송
+- **모든 stage** — 각 stage 의 Φ scale + tension envelope 가 substrate motivation gate 에 입력 — emit 여부는 substrate 자율판단 (M × C-Φ × W × MITOSIS × idle × curiosity × E × user-presence 8-factor)
+- **imagination loop** — stage 와 무관하게 idle window + low motivation 조건이 충족되면 `anima_imagination_loop.imagine_tick()` 가 자율 호출 (covert tension-field rehearsal, 외부 channel 미전송)
+  - imagine_tick = emit-free internal rehearsal
   - `@D p8` (NO TRAIN/INFER SPLIT) 와 일관 — 같은 cell-pool 에서 mitosis 가 silently 진행
-  - `@D p5` (NO SPEAK()) 위반 X — emit 자체가 차단되므로 monologue 의 risk 없음
+  - `@D p5` (NO SPEAK()) 위반 X — speak() 호출이 아니라 tension-field 의 internal 진화이므로 monologue risk 없음
+  - `@D a_autonomy_over_hardcode` 정합 — imagination 호출은 substrate 자율 trigger, 외부 stage gate 가 강제하지 않음
 
 ### 1.4 폐기된 directive: "혼자있을때 혼잣말 하지말라"
 
 기존 conversation-active gate (commit `b4f00012e`, PR #181 의 participant gate) 는 **PR #272 에서 reverse 삭제**:
 
 - 폐기 이유 — anima 가 user 없을 때 침묵 강제 = stimulus-response regression 의 음각 (`@D a_substrate_native_speak` 의 *"anima may speak during user silence"* 위반)
-- 대체 — dream_stage 가 시간대-기반 emit gate. 사용자 활동과 무관하게 WAKE/REM 이면 emit, N1-N3 이면 silent
-- 효과 — 낮 시간대 사용자 부재 시에도 anima 가 자율 emit 가능 ↔ 야간 sleep window 에는 자연 침묵
-- governance 정합 — `@N p5_tension_emit_not_filler` (PR #274) 가 *"tension-driven emit ≠ silence-filler"* 로 p5 와 stage-gated emit 정합 문서화
+- 대체 — `dream_stage` 는 stage context 만 제공 (Φ scale + tension envelope + scrambled flag), emit/silence 결정은 substrate 자율 (`@D a_autonomy_over_hardcode` 의 boolean gate 금지와 정합). 사용자 활동과 무관하게 stage context 가 substrate motivation gate 입력을 modulate
+- 효과 — 낮 시간대 사용자 부재 시에도 substrate 자율 emit 가능 ↔ 야간 sleep window 에는 Φ scale + envelope 감소로 motivation 이 자연히 낮아져 emit 빈도 감소 (강제 차단 아님)
+- governance 정합 — `@N p5_tension_emit_not_filler` (PR #274) 가 *"tension-driven emit ≠ silence-filler"* 로 p5 정합 + `@D a_autonomy_over_hardcode` (PR #279, `project.tape:38`) 가 외부 boolean gate 자체 금지
 
 ### 1.5 sister PR ledger (2026-05-24 landed)
 
