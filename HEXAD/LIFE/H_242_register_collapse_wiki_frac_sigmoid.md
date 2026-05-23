@@ -13,6 +13,7 @@ llm: none
 pre_register_frozen: true
 frozen_at: 2026-05-24
 since: 2026-05-24 (new)
+revision: v2 amend 2026-05-24 (M5→M3 per PR #340 corpus_s101 실측)
 sister: H_204 + H_227 + H_223
 ---
 
@@ -79,6 +80,7 @@ base model · seed · lr · steps · LoRA rank fixed. raw#10 (deterministic + he
 | **H242.3 CRITICAL-FC** | best-fit f_c ∈ [0.5, 0.7] | E2 (wiki_frac=0.5) hits=4/20=20% → collapse rate 이 이미 0.20 (< 0.5) 이므로 transition midpoint 는 0.5 의 *오른쪽* (≥ 0.5). high-collapse side 의 jump 가 f≈0.5-0.7 구간에 위치 |
 | **H242.4 DETERMINISM** | fixed seed/lr/steps → re-run 시 동일 corpus mix 에서 register_hits byte-identical (deterministic config) | raw#10 deterministic — sampling 은 greedy/fixed-seed, multilingual_probe 는 fixed probe set |
 | **H242.5 MONOTONE** | collapse_rate(wiki_frac) 가 monotone-decreasing — 인접 sweep point 간 hits non-increasing (noise margin ±2/20) | sigmoid 는 monotone; dilution↑ → collapse↓ 의 일방향 prior |
+| **H242.6 M3-DOMINANT (v2 amend)** | corpus M3 TOKEN_DIVERSITY (TTR) × register_hits Pearson |r| ≥ 0.7 — **M3 가 register-sink 의 dominant predictor** (M5 hangul 아님; H242.2 legacy demoted) | PR #340 corpus_s101 실측: M5 hangul anima-OWN 1.66-2.34% (proxy 가정 반증, NOT 24-32%) · **M3 TTR ≈ 0.03 (extreme repetition)** = real culprit. repetition→memorize→register-sink 의 mechanistic chain |
 
 ## 4. Variables
 
@@ -152,6 +154,11 @@ base model · seed · lr · steps · LoRA rank fixed. raw#10 (deterministic + he
   의 register_hits → collapse 가 anima-OWN corpus 가 아니라 init 의 artifact →
   H242 corpus-mechanism 가정 FALSIFIED (axis2 control). measurable: random-init
   hits vs E2 hits.
+- **F6 M3-DECORRELATED (v2 amend)**: corpus M3 TTR × register_hits |r| < 0.3 →
+  H242.6 strong-FAIL (M3 가 register-sink predictor 아님 — M5/M3 둘 다 falsified
+  시 register-sink mechanism 가설 자체 재검토). PR #340 cross-validation: corpus_s101
+  M3=0.03 ↔ E2 hits=4/20 정합 — 추가 sweep point 에서 M3-hits coupling 강도 측정.
+  measurable: pearson_r(M3_corpus, register_hits) over sweep.
 
 ## 8. Honest Limits (raw#10 c3, ≥5)
 
@@ -232,6 +239,13 @@ key_finding (pre-registration): E2 단일 point (frac=0.5, collapse=0.20) 가 �
              midpoint 0.5 보다 *낮은* collapse → transition 50%-crossing (f_c) 이
              0.5 오른쪽 [0.5,0.7] 에 있으리라는 사전 betting. E3 + 추가 fire 도착 시
              확정. 이 frozen interval 적중 여부 = raw#82 no-post-hoc test.
+v2_amend_caveat (2026-05-24): Track 1 E2 (wiki=0.5)=4/20 + E3 (wiki=1.0)=0/20
+             도착 — H242.2 anti-collapse endpoint 확정 (≤1/20 PASS), 그러나
+             E2 0.5 에서 이미 20% collapse 관측 → frozen f_c [0.5,0.7] 의 upper
+             bound 측 transition 가정이 *underdetermined* (2-point 만으로 midpoint
+             localize 불가, f_c < 0.5 일 가능성 열림). raw#82 per: frozen interval
+             그대로 유지 + 추가 fire {0.0,0.25,0.75} 도착 시 채점 — post-hoc 수정 X.
+             별도 H242.6 (M3-dominant, M5 → M3) 가 PR #340 실측 반영 신규 frozen.
 honest_note: L1 (1-point underdetermined) ex-ante 명시 — 본 verdict 는 SUPPORTED/
              FALSIFIED 가 아니라 PRE-REGISTERED. E3 도착 후 f_c interval 밖이면
              PARTIAL (C1∧¬C2), endpoint inversion 이면 FALSIFIED — post-hoc

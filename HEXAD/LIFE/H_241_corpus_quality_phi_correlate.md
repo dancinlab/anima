@@ -13,6 +13,7 @@ llm: none
 pre_register_frozen: true
 frozen_at: 2026-05-24
 since: 2026-05-24 (new)
+revision: v2 amend 2026-05-24 (M5→M3 per PR #340 corpus_s101 실측)
 sister: H_211 + H_234 + H_157
 ---
 
@@ -73,10 +74,11 @@ inverse (낮은 CE = 높은 representation density = 높은 Φ-proxy) 가정 하
 | ID | 예측 | 근거 |
 |----|------|------|
 | **H241.1** | M2 BIGRAM_MI × downstream Φ Pearson |r| ≥ 0.5 | compression↔Φ 가설 · `oracle_ce` 의 `-0.15·bigram_mi` term · corpus_quality_engine T3 ≥2-metric strong |
-| **H241.2** | M5 HANGUL_COVERAGE × ko-corpus Φ Pearson |r| ≥ 0.4 | PR #303 measured M5 anima-OWN(24-32%) vs wiki(3%) strong-differentiate · `oracle_ce` 의 `-0.30·hangul_coverage` term (가장 큰 음의 weight 중 하나) |
+| **H241.2 (v2 demoted)** | M5 HANGUL_COVERAGE × ko-corpus Φ Pearson |r| ≥ 0.4 — **PR #340 실측 반증된 proxy 가정 위에 세워진 예측** (M5 anima-OWN 1.66-2.34%, 24-32% 아님). legacy 유지하되 H241.6 로 대체 — verdict_rule 핵심에서 제외 | (legacy: PR #303 proxy 24-32% vs 3% · oracle `-0.30·hangul`) |
 | **H241.3** | M6 KL_TO_UNIFORM ≈ 0 (byte≈uniform) corpus → Φ 매우 낮음 (panel 최저 quartile) | incompressible-noise 가설 — uniform byte distribution = integrable structure 부재 = Φ floor |
 | **H241.4** | re-run byte-identical metric + ranking | raw#10 deterministic (no RNG, fixed panel/preproc — engine T6 carry) |
 | **H241.5** | M3 TOKEN_DIVERSITY 가 panel 위 |r| 최고 (Q* top-1) | `oracle_ce` 의 `-0.45·diversity` (panel 최대 음의 weight) · engine T4 Q* beats baseline |
+| **H241.6 M3-REGISTER-LEAK (v2 amend)** | M3 TOKEN_DIVERSITY (TTR) × register-leak Pearson |r| ≥ 0.7 — **M3 가 register-leak/memorize 의 primary signal** (M5 hangul 아님; H241.2 demoted 대체) | PR #340 corpus_s101 실측: M3 TTR ≈ 0.03 (extreme repetition) ↔ E2 ko=PURE_MEMORIZE 정합. repetition-driven memorize → register-sink chain — surface-quality 신호 중 M3 만이 register-leak 과 mechanistic 연결 (L6 oracle tautology 외부의 real-corpus evidence) |
 
 ## 4. Variables
 
@@ -138,7 +140,14 @@ C3/C4/C5 는 directional (criteria_met 카운트엔 포함, verdict_rule 핵심�
   3%) 가 PR #303 의 E2 ko=PURE_MEMORIZE diagnosis 와 cross-validate **실패** → M5 가
   ko-corpus Φ signal 의 valid proxy 아님 (M5 imbalance 가 Φ-discriminative 아닌
   register-collapse artifact 였다면 fire). (measurable: M5 anima-OWN vs wiki gap sign
-  이 Φ-proxy gap sign 과 align 여부.)
+  이 Φ-proxy gap sign 과 align 여부.) **v2 amend (2026-05-24)**: **F5 FIRED** —
+  PR #340 corpus_s101 실측 M5 hangul anima-OWN 1.66-2.34% (24-32% proxy 가정 반증) ·
+  proxy collapse 확정. F5 결과 → H241.2 demoted, H241.6 (M3) primary 로 승격.
+- **F6 M3-DECORRELATED (v2 amend)** — corpus M3 TTR × register-leak (또는 ko=
+  PURE_MEMORIZE flag) |r| < 0.3 → H241.6 strong-FAIL (M3 가 primary register-leak
+  predictor 아님). PR #340 corpus_s101 M3=0.03 + E2 ko=PURE_MEMORIZE 정합 cross-
+  validation 이 본 falsifier 의 first anchor — sweep 확장 시 |r| 추정 정밀화.
+  (measurable: pearson_r(M3_corpus, register_leak_flag_or_hits) over corpus panel.)
 
 ## 8. Honest Limits (raw#10 c3, 6)
 
@@ -172,6 +181,11 @@ C3/C4/C5 는 directional (criteria_met 카운트엔 포함, verdict_rule 핵심�
   진짜 information 은 oracle-미포함 metric (M1, M4) r 거동 + F2 sign 에서만. raw=oracle-CE
   가 llm:none 충족하나 oracle 자체가 "rich → low CE" 설계자 prior 를 encode (corpus 에
   inject 안 함 — P3/P4 위반 아님, 측정만; prior 검증은 L4 trained-model cycle 의존).
+  **v2 amend (2026-05-24)**: H241.6 (M3 × register-leak) 는 *real-corpus 실측* 에서
+  emerge — PR #340 corpus_s101 600MB 직접 측정 M3=0.03 ↔ E2 ko=PURE_MEMORIZE 정합
+  → oracle linear-function tautology *밖* 의 evidence. (oracle 은 M3 를 `-0.45·diversity`
+  weight 로 prior-encode 하나, register-leak flag 는 oracle 출력이 아닌 multilingual_probe
+  의 별도 measurement — H241.6 의 |r| 은 oracle algebra 가 아닌 cross-source empirical.)
 
 ## 9. Cross-Links
 
