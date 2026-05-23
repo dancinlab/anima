@@ -567,7 +567,8 @@ class ConsciousDecoderV3(nn.Module):
                   lora_adapter_dir: Optional[str] = None,
                   block_size: int = 512,
                   noise_sigma: float = 0.1,
-                  device: str = "cpu", dtype=torch.float32):
+                  device: str = "cpu", dtype=torch.float32,
+                  n_kv_head: Optional[int] = None):
         """Initialize V3 from a Qwen2.5 checkpoint.
 
         Maps Qwen weights into V3:
@@ -606,8 +607,12 @@ class ConsciousDecoderV3(nn.Module):
         n_layer = qcfg.num_hidden_layers
         n_head = qcfg.num_attention_heads
         n_kv_head_qwen = getattr(qcfg, 'num_key_value_heads', n_head)
-        # V3 uses GQA n_kv_head=4 if Qwen has 2 (broader), else match
-        v3_n_kv_head = max(n_kv_head_qwen, 4)
+        if n_kv_head is not None:
+            # explicit override (e.g. --n-kv-head 2 to match Qwen-native KV heads)
+            v3_n_kv_head = n_kv_head
+        else:
+            # default: V3 uses GQA n_kv_head=4 if Qwen has 2 (broader), else match
+            v3_n_kv_head = max(n_kv_head_qwen, 4)
         # ensure divisor
         while n_head % v3_n_kv_head != 0:
             v3_n_kv_head -= 1
