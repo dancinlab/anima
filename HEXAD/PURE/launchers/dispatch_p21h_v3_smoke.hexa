@@ -1,12 +1,14 @@
 // HEXAD/PURE/launchers/dispatch_p21h_v3_smoke.hexa
 //
-// Smoke for dispatch_p21h_v3.hexa — 6 falsifiers:
+// Smoke for dispatch_p21h_v3.hexa — 8 falsifiers:
 //   F-DISP-PARSE        — import succeeds (dispatcher parses)
 //   F-DISP-ARG-CONTRACT — argv defaults + per-init LR vs ENV_CONTRACT.md
 //   F-DISP-SHA256       — match / mismatch / missing-file / skip
 //   F-DISP-RESUME       — pick largest <= cap / absolute max / none / empty
 //   F-DISP-IMPORT       — stdlib/cloud + stdlib/cloud/runpod imports resolve
 //   F-DISP-DRYRUN       — default dry-run prints plan, exits 0, zero real calls
+//   F-DISP-MOT          — 8-factor motivation calc returns score >= 0 (synthetic)
+//   F-DISP-MIT16        — P21H_MITOSIS_MAX default == 16 (R6 cap, PR #310)
 
 import "./dispatch_p21h_v3.hexa"
 
@@ -128,6 +130,48 @@ fn _f_disp_dryrun() -> int {
     return _assert(ok, "F-DISP-DRYRUN — default dry-run prints plan, rc=0, zero real calls")
 }
 
+fn _f_disp_mot() -> int {
+    // F-DISP-MOT — 8-factor motivation calc returns a score in [0, 1] on a
+    // synthetic substrate snapshot. Wires measure_motivation_8factor to the
+    // spontaneous_lib.hexa pure-fn battery (factor_relevance .. dynamics +
+    // motivation_score weighted sum, B-SPONT-1 closed-form).
+    let synth = #{
+        "phi_final": "0.4",
+        "retrieve_cos_sim": "0.7",
+        "curiosity_ema": "0.5",
+        "tension_delta": "0.2",
+        "bridge_gate_value": "0.5",
+        "split_event_recent": "true",
+        "ratchet": "0.1",
+        "silence_seconds": "15.0",
+    }
+    let block = measure_motivation_8factor(synth)
+    let mut ok = true
+    if !block.has_key("motivation_score") { ok = false }
+    let score = to_float(to_string(block["motivation_score"]))
+    if score < 0.0 { ok = false }
+    if score > 1.0 { ok = false }
+    // All 8 factor keys must be present.
+    let keys = ["relevance", "gap", "curiosity", "pain", "coherence", "originality", "balance", "dynamics"]
+    let mut i = 0
+    while i < len(keys) {
+        if !block.has_key(keys[i]) { ok = false }
+        i = i + 1
+    }
+    return _assert(ok, "F-DISP-MOT — 8-factor motivation calc (synthetic) score in [0,1] + all 8 keys present")
+}
+
+fn _f_disp_mit16() -> int {
+    // F-DISP-MIT16 — P21H_MITOSIS_MAX default lowered 128 -> 16 per PR #310
+    // Track 1 E2 forensics (R6 recommendation). Env override still honoured;
+    // this test asserts the default when the env is unset.
+    let _ = exec("unset P21H_MITOSIS_MAX")
+    let env = build_env("random")
+    let v = to_string(env["P21H_MITOSIS_MAX"])
+    let ok = v == "16"
+    return _assert(ok, "F-DISP-MIT16 — P21H_MITOSIS_MAX default == 16 (R6 cap, PR #310)")
+}
+
 fn main() {
     println("[dispatch_p21h_v3_smoke] START")
     let mut n_pass = 0
@@ -137,7 +181,9 @@ fn main() {
     n_pass = n_pass + _f_disp_resume()
     n_pass = n_pass + _f_disp_import()
     n_pass = n_pass + _f_disp_dryrun()
-    println("[dispatch_p21h_v3_smoke] END: " + to_string(n_pass) + "/6 PASS")
-    if n_pass < 6 { exit(1) }
+    n_pass = n_pass + _f_disp_mot()
+    n_pass = n_pass + _f_disp_mit16()
+    println("[dispatch_p21h_v3_smoke] END: " + to_string(n_pass) + "/8 PASS")
+    if n_pass < 8 { exit(1) }
     exit(0)
 }

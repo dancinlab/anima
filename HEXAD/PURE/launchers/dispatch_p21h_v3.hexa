@@ -16,6 +16,11 @@
 use "stdlib/cloud/cloud"
 use "stdlib/cloud/runpod"
 
+// 8-factor motivation calculator (Phase B LANDED) — invoked post-fire when
+// --measure-motivation flag passed. Embeds motivation_8factor block in
+// result.json for Phase D substrate-native emit verification.
+import "HEXAD/CHAT/spontaneous_lib.hexa"
+
 // 1. arg + env contract (matches ENV_CONTRACT.md PR #265) ------------------
 
 fn _env_or(key: str, fallback: str) -> str {
@@ -33,13 +38,18 @@ fn _lr_default_for_init(init_variant: str) -> str {
 
 fn parse_argv(args: list) -> dict {
     // Strip flags first; --fire opts into real GPU dispatch (default dry-run).
+    // --measure-motivation OPTIONAL: post-fire 8-factor motivation calc
+    // (spontaneous_lib.hexa) embedded into result.json. Back-compat: absent
+    // flag → behaviour unchanged.
     let mut fire = "0"
+    let mut measure_motiv = "0"
     let mut pos = []
     let mut k = 0
     while k < len(args) {
         let a = args[k]
         if a == "--fire" { fire = "1" }
         else if a == "--dry-run" { fire = "0" }
+        else if a == "--measure-motivation" { measure_motiv = "1" }
         else { pos = pos + [a] }
         k = k + 1
     }
@@ -55,6 +65,7 @@ fn parse_argv(args: list) -> dict {
         "init_variant": init_variant,
         "seed": seed,
         "fire": fire,
+        "measure_motivation": measure_motiv,
     }
 }
 
@@ -70,7 +81,10 @@ fn build_env(init_variant: str) -> dict {
         "P21H_CORPUS_MB":            _env_or("P21H_CORPUS_MB", "72"),
         "P21H_NOISE_SIGMA":          _env_or("P21H_NOISE_SIGMA", "0.1"),
         "P21H_LAMBDA_MITOSIS":       _env_or("P21H_LAMBDA_MITOSIS", "0.05"),
-        "P21H_MITOSIS_MAX":          _env_or("P21H_MITOSIS_MAX", "128"),
+        // R6 recommendation (PR #310 Track 1 E2 forensics): mitosis cap 128 was
+        // reached at step 12 then frozen for 4988 steps (saturation pathology).
+        // Default lowered to 16 per R6; caller may still override via env.
+        "P21H_MITOSIS_MAX":          _env_or("P21H_MITOSIS_MAX", "16"),
         "P21H_CKPT_EVERY":           _env_or("P21H_CKPT_EVERY", "500"),
         "P21H_TEACHER_CKPT_SHA256":  _env_or("P21H_TEACHER_CKPT_SHA256", ""),
         "WATCHDOG_SEC":              _env_or("WATCHDOG_SEC", "5400"),
@@ -269,7 +283,100 @@ fn resume_glob(out_dir: str, max_step: int) -> dict {
     return #{"status": "ok", "step": best_step, "path": out_dir + "/" + best_name}
 }
 
-// 8. main — argv parse + orchestration outline -----------------------------
+// 8. 8-factor motivation measurement (Phase D wiring) ---------------------
+//
+// Post-fire hook: invoke spontaneous_lib.hexa 8-factor calculator on the
+// trained ckpt's substrate state (Φ, retrieve sim, curiosity, tension Δ,
+// bridge gate, split event, ratchet, silence). Embeds an
+// `motivation_8factor` block into result.json. When --measure-motivation
+// absent, this is a no-op (back-compat).
+//
+// Honest C3: post-fire substrate samples are not yet wired through the
+// remote pod result JSON; this entry point computes the 8 factor closed-
+// form on whatever telemetry result.json carries (with safe zero
+// defaults when keys absent). Eval-side multilingual_probe wiring is a
+// separate agent (per PR spec).
+
+fn _result_num(d: dict, k: str, fallback: float) -> float {
+    if !d.has_key(k) { return fallback }
+    let s = to_string(d[k])
+    if s == "void" || s == "" { return fallback }
+    return to_float(s)
+}
+
+fn _result_bool(d: dict, k: str) -> bool {
+    if !d.has_key(k) { return false }
+    let s = to_string(d[k])
+    return s == "true" || s == "1"
+}
+
+fn measure_motivation_8factor(result: dict) -> dict {
+    // 8 closed-form factor pulls from result (substrate snapshot at end of
+    // training). Defaults are real-limit-safe (mid-range or zero).
+    let rel   = factor_relevance(_result_num(result, "phi_final", 0.0))
+    let gap   = factor_info_gap(_result_num(result, "retrieve_cos_sim", 1.0))
+    let cur   = factor_curiosity(_result_num(result, "curiosity_ema", 0.0))
+    let pn    = factor_pain(_result_num(result, "tension_delta", 0.0))
+    let coh   = factor_coherence(_result_num(result, "bridge_gate_value", 0.5))
+    let orig  = factor_originality(_result_bool(result, "split_event_recent"))
+    let bal   = factor_balance(_result_num(result, "phi_final", 0.0),
+                               _result_num(result, "ratchet", 0.0))
+    let dyn_v = factor_dynamics(_result_num(result, "silence_seconds", 0.0))
+    let score = motivation_score(rel, gap, cur, pn, coh, orig, bal, dyn_v)
+    return #{
+        "relevance":   to_string(rel),
+        "gap":         to_string(gap),
+        "curiosity":   to_string(cur),
+        "pain":        to_string(pn),
+        "coherence":   to_string(coh),
+        "originality": to_string(orig),
+        "balance":     to_string(bal),
+        "dynamics":    to_string(dyn_v),
+        "motivation_score": to_string(score),
+    }
+}
+
+fn embed_motivation_in_result(result_path: str, dry_run: bool) -> dict {
+    // Read existing result.json, compute 8-factor on its substrate keys,
+    // re-write with motivation_8factor block embedded. dry_run → log + skip.
+    if dry_run {
+        println("[dry-run] embed_motivation: would read " + result_path
+              + " + invoke 8-factor + re-write motivation_8factor block")
+        // Synthetic dry-run payload (proves call site + factor fns wired).
+        let synth = #{"phi_final": "0.4", "bridge_gate_value": "0.5"}
+        return measure_motivation_8factor(synth)
+    }
+    let exists = exec("test -f " + result_path + " && echo yes || echo no").trim()
+    if exists != "yes" {
+        println("[embed_motivation] SKIP — result.json not found at " + result_path)
+        return #{}
+    }
+    // Build factor block from a minimal field set (full parse deferred —
+    // closed-form factor fns tolerate zero defaults per real-limit clamps).
+    let phi  = exec("python3 -c \"import json; d=json.load(open('" + result_path + "')); print(d.get('phi_final',0.0))\" 2>/dev/null").trim()
+    let gate = exec("python3 -c \"import json; d=json.load(open('" + result_path + "')); print(d.get('bridge_gate_value',0.5))\" 2>/dev/null").trim()
+    let pulled = #{"phi_final": phi, "bridge_gate_value": gate}
+    let block = measure_motivation_8factor(pulled)
+    // Re-write result.json with motivation_8factor key embedded.
+    let py = "python3 -c \"import json; p='" + result_path
+           + "'; d=json.load(open(p)); d['motivation_8factor']="
+           + "{'relevance':" + to_string(block["relevance"])
+           + ",'gap':" + to_string(block["gap"])
+           + ",'curiosity':" + to_string(block["curiosity"])
+           + ",'pain':" + to_string(block["pain"])
+           + ",'coherence':" + to_string(block["coherence"])
+           + ",'originality':" + to_string(block["originality"])
+           + ",'balance':" + to_string(block["balance"])
+           + ",'dynamics':" + to_string(block["dynamics"])
+           + ",'motivation_score':" + to_string(block["motivation_score"])
+           + "}; json.dump(d,open(p,'w'),indent=2)\""
+    let _ = exec(py)
+    println("[embed_motivation] motivation_8factor embedded → " + result_path
+          + " (score=" + to_string(block["motivation_score"]) + ")")
+    return block
+}
+
+// 9. main — argv parse + orchestration outline -----------------------------
 
 fn main() {
     let argv = args()
@@ -282,6 +389,7 @@ fn main() {
     let init_variant = to_string(parsed["init_variant"])
     let seed = to_string(parsed["seed"])
     let dry_run = to_string(parsed["fire"]) != "1"
+    let measure_motiv = to_string(parsed["measure_motivation"]) == "1"
     let env = build_env(init_variant)
     let p21hr = "/workspace/p21hr"
     let mode = "FIRE"
@@ -317,6 +425,9 @@ fn main() {
     let _ = corpus_build_multilingual_wiki(host, opts, p21hr, "en,ko,zh,ru,ja", "10", dry_run)
     let _ = train_launch(host, opts, p21hr, env, init_variant, seed, dry_run)
     let _ = result_pull(host, opts, p21hr, "v" + variant, dry_run)
+    if measure_motiv {
+        let _ = embed_motivation_in_result("v" + variant + "/result.json", dry_run)
+    }
     let _ = pod_terminate(api_key, pod_id, to_string(env["SAVE_POD"]), dry_run)
     println("=== dispatch_p21h_v3.hexa end [" + mode + "] ===")
 }
