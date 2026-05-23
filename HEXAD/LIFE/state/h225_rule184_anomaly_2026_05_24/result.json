@@ -1,0 +1,34 @@
+{
+  "id": "H_225",
+  "slug": "rule-184-class-ii-phi-anomaly",
+  "date": "2026-05-24",
+  "deterministic": true,
+  "hexa_only": true,
+  "llm": "none",
+  "cost": "$0 mac local",
+  "phi_primitive": "RFC 036 phi_spatial (HEXAD/C/c_lib.hexa c_measure_phi, byte-equal phi_rs native replica)",
+  "config": { "N": 16, "dim": 12, "warm": 8, "reps": 5, "n_bins": 4, "boundary": "periodic" },
+  "rules": { "class_iv": 110, "class_ii_tasep": 184, "class_ii_xor_l": 60, "class_ii_xor_r": 102 },
+  "wolfram_class": { "110": "IV", "184": "II", "60": "II", "102": "II" },
+  "phi_mean": {
+    "class_iv_rule110": 0.556454,
+    "class_ii_rule184": 1.19781,
+    "class_ii_rule60": 1.6832,
+    "class_ii_rule102": 1.6832
+  },
+  "h211_baseline": { "rule184_phi": 0.863, "rule110_phi": 0.538 },
+  "criteria": {
+    "C1_RULE184_REPRO": { "rel_diff": 0.387966, "floor": 0.05, "verdict": "FAIL" },
+    "C2_CLASS_II_COHERENT": { "band": 0.20, "rule60_in": false, "rule102_in": false, "verdict": "FAIL" },
+    "C3_CLASS_II_GT_IV": { "all_beat_IV": true, "184_beat_IV": true, "60_beat_IV": true, "102_beat_IV": true, "verdict": "PASS" }
+  },
+  "falsifiers": {
+    "F1_RULE184_REGRESSION": "FAIL",
+    "F2_CLASS_II_DIVERGE": "FAIL",
+    "F3_CLASS_II_LE_IV": "PASS",
+    "F4_BYTE_IDENT_CONTRACT": "PASS",
+    "F5_PHI_NEGATIVE": "PASS"
+  },
+  "verdict_rule": "SUPPORTED iff C1∧C2∧C3; ANOMALY_LOCALIZED iff C1∧(rule184>rule110)∧¬C2; else FALSIFIED",
+  "verdict": "FALSIFIED"
+}

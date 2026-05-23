@@ -105,7 +105,8 @@ fn fetch_anima_history(url: string) -> list {
     if type_of(p) != "map" { return [] }
     if !p.has_key("history") { return [] }
     let h = p["history"]
-    if type_of(h) != "list" { return [] }
+    // hexa type_of: array literal → "array" (NOT "list") — cycle 13 sweep
+    if type_of(h) != "array" { return [] }
     let mut out = []
     let mut i = 0
     while i < len(h) {
@@ -124,7 +125,8 @@ fn fetch_akida_recent(url: string) -> list {
     if type_of(p) != "map" { return [] }
     if !p.has_key("akida") { return [] }
     let a = p["akida"]
-    if type_of(a) != "list" { return [] }
+    // hexa type_of: array literal → "array" (NOT "list") — cycle 13 sweep
+    if type_of(a) != "array" { return [] }
     return a
 }
 

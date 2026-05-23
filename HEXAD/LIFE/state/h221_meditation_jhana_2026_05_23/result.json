@@ -1,0 +1,32 @@
+{
+  "id": "H_221",
+  "slug": "meditation-jhana-phi-modulation",
+  "domain": "consciousness · practice · substrate",
+  "date": "2026-05-23",
+  "host": "mac-local",
+  "deterministic": true,
+  "hexa_only": true,
+  "llm": "none",
+  "cost": "$0 mac local",
+  "seed": 42,
+  "phi_primitive": "RFC 036 phi_spatial runtime builtin (n_bins=4)",
+  "config": { "N": 16, "dim": 12, "warm": 8, "reps": 20, "rule": 110, "boundary": "periodic" },
+  "regimes": {
+    "A_baseline": { "sigma": 0.3, "attractor": 0.0, "phi_mean": 0.588955, "phi_var": 0.00678869, "phis": [0.639272, 0.637893, 0.601111, 0.500394, 0.690522, 0.698851, 0.512723, 0.497208, 0.555399, 0.575124, 0.49209, 0.640746, 0.649925, 0.531259, 0.641991, 0.411852, 0.661876, 0.60796, 0.726993, 0.505923] },
+    "B_jhana":    { "sigma": 0.05, "attractor": 0.4, "phi_mean": 0.474829, "phi_var": 0.00555948, "phis": [0.444787, 0.595728, 0.453725, 0.465177, 0.361514, 0.591446, 0.513646, 0.482378, 0.475484, 0.467373, 0.554392, 0.540508, 0.497964, 0.374897, 0.529647, 0.356195, 0.335702, 0.510957, 0.408668, 0.536383] },
+    "C_random":   { "sigma": 0.0, "attractor": 0.0, "phi_mean": 0.589896, "phi_var": 0.00542396, "phis": [0.517701, 0.536306, 0.576756, 0.531471, 0.753935, 0.530127, 0.554811, 0.693932, 0.685059, 0.511452, 0.698102, 0.532446, 0.543747, 0.574617, 0.677908, 0.628072, 0.628246, 0.491485, 0.575309, 0.55643] }
+  },
+  "falsifiers": {
+    "F1_JHANA_LE_BASELINE":  { "metric": "Φ_jhan - Φ_base",  "delta": -0.114127, "verdict": "PASS" },
+    "F2_JHANA_STABLE":       { "metric": "var_jhan*10 < var_base", "var_jhan_x10": 0.0555948, "var_base": 0.00678869, "verdict": "FAIL" },
+    "F3_JHANA_GT_RAND":      { "metric": "Φ_jhan > 1.05 * Φ_rand", "delta": -0.115067, "verdict": "FAIL" },
+    "F4_RERUN_DETERMINISTIC":{ "metric": "fixed LCG seed", "verdict": "PASS" },
+    "F5_ALL_FINITE_NONNEG":  { "metric": "all Φ finite & ≥ 0", "verdict": "PASS" }
+  },
+  "core_pass": 1,
+  "verdict_rule": "SUPPORTED iff (C1 ∧ C2 ∧ C3); PARTIAL if 2 core PASS; FALSIFIED otherwise",
+  "verdict": "FALSIFIED",
+  "cross_link": "H_018 zero-drive (low-Φ stable silence) ⊕ H_007 Class-IV (rule110 base) ⊕ H_202 selfref edge-of-chaos ⊕ H_004 phenomenal boundary",
+  "h221_5_advisory": { "phi_jhana": 0.474829, "phi_h018_zero": 0.158279, "delta": 0.31655 },
+  "honest_tier": "🟢 SUPPORTED-NUMERICAL (phi_spatial spatial-slice proxy; substrate ≠ phenomenal jhana)"
+}

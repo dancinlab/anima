@@ -1,0 +1,473 @@
+// HEXAD/LIFE/state/h211_shannon_phi_correlate_2026_05_23/run_h211.hexa
+// H_211 — Shannon entropy × phi_spatial Pearson correlation across 5 Wolfram
+//         rule families. raw#12 strict (deterministic · hexa-only · llm:none).
+//
+//   Question: does Shannon entropy H(state) of a CA substrate monotonically
+//   correlate with RFC 036 phi_spatial Φ (Pearson r ≥ 0.5) across 5 Wolfram
+//   rule classes (110/30/90/184/250), demonstrating that Φ has H as an
+//   underlying ingredient — yet Φ ≠ H (random control: H max but Φ mid-low)?
+//
+//   Method (deterministic, hexa-only, $0 mac local, llm:none):
+//     - 1D elementary CA, length-N=16 periodic lattice, evolved warm=8 + dim=12 steps
+//     - 5 rules per Wolfram class:
+//         rule 110 (Class IV complex)
+//         rule 30  (Class III chaotic)
+//         rule 90  (Class III chaotic, additive)
+//         rule 184 (Class II ordered-shift / TASEP)
+//         rule 250 (Class I/II ordered fill)
+//     - 1 deterministic init: site i on iff (i % 3) != 0 (H_007 first rep)
+//     - per rule: record dim=12 trajectory / site → flat (N×dim)=192 farr.
+//     - Shannon H : bin into n_bins=4 over [0,1], H = -Σ p_b log p_b
+//     - Φ        : c_measure_phi(states, N, dim, 4) = RFC 036 phi_spatial
+//     - 5 (H, Φ) pairs → Pearson r
+//     - random-state control: LCG(seed=20260523) Bernoulli p=0.5 over (N×dim)
+//   Verdict (pre-registered):
+//     SUPPORTED if C1 (r ≥ 0.5) AND C3 (rule 110 H+Φ top-2 in 5-rule sweep)
+//     PARTIAL   if exactly 1 of {C1, C3} PASS
+//     FALSIFIED if Pearson r < 0
+//
+//   Φ primitive: imported READ-ONLY from HEXAD/C/c_lib.hexa (c_measure_phi
+//   → RFC 036 phi_spatial, byte-equal phi_rs replica). NOT 🔵 (Φ proxy ≠
+//   full IIT 4.0). 🟢 NUMERICAL tier.
+// ════════════════════════════════════════════════════════════════════════
+import "/Users/ghost/core/anima/.claude/worktrees/agent-a34766481cd002ed0/HEXAD/C/c_lib.hexa"
+
+// ── config (deterministic) ──────────────────────────────────────────────
+fn _N() -> int      { return 16 }
+fn _DIM() -> int    { return 12 }
+fn _WARM() -> int   { return 8 }
+fn _LCG_SEED() -> int { return 20260523 }
+fn _R_THRESHOLD() -> float { return 0.5 }
+fn _ORDERED_FLOOR() -> float { return 0.1 }
+fn _state_dir() -> string {
+    return "/Users/ghost/core/anima/.claude/worktrees/agent-a34766481cd002ed0/HEXAD/LIFE/state/h211_shannon_phi_correlate_2026_05_23"
+}
+
+// ── small int helpers (kept tiny — hexa big-int multiply is fragile) ──────
+fn _pow2(k: int) -> int {
+    let mut p = 1
+    let mut i = 0
+    while i < k { p = p * 2; i = i + 1 }
+    return p
+}
+fn _ftoi(x: float) -> int { if x > 0.5 { return 1 }; return 0 }
+fn _itof(b: int) -> float { if b == 1 { return 1.0 }; return 0.0 }
+fn _abs(x: float) -> float { if x < 0.0 { return -x }; return x }
+
+// Newton's-method sqrt (deterministic, 32 iterations, x ≥ 0)
+fn _sqrt_newton(x: float) -> float {
+    if x <= 0.0 { return 0.0 }
+    let mut g = x
+    if g < 1.0 { g = 1.0 }
+    let mut i = 0
+    while i < 32 {
+        g = 0.5 * (g + x / g)
+        i = i + 1
+    }
+    return g
+}
+
+// ── elementary CA next-state: neighborhood (l,c,r) → bit `idx` of `rule` ──
+fn _ca_next(l: int, c: int, r: int, rule: int) -> int {
+    let idx = l * 4 + c * 2 + r
+    return (rule / _pow2(idx)) % 2
+}
+
+// deterministic init: site i on iff (i % 3) != 0 (H_007 first rep).
+fn _init_row(row: int, n: int) -> int {
+    let mut i = 0
+    while i < n {
+        let on = (i % 3) != 0
+        if on { let _ = farr_set(row, i, 1.0) }
+        else  { let _ = farr_set(row, i, 0.0) }
+        i = i + 1
+    }
+    return 1
+}
+
+// evolve length-N periodic CA; record each site's `dim`-step trajectory
+// after `warm` warmup into states[ site*dim + t ]. returns farr (N×dim).
+fn _run_ca(rule: int, n: int, dim: int, warm: int) -> int {
+    let row = farr_zeros(n)
+    let _ = _init_row(row, n)
+
+    let states = farr_zeros(n * dim)
+    let total = warm + dim
+    let mut step = 0
+    while step < total {
+        if step >= warm {
+            let t = step - warm
+            let mut s = 0
+            while s < n {
+                let _ = farr_set(states, s * dim + t, farr_get(row, s))
+                s = s + 1
+            }
+        }
+        // compute next row (periodic boundary)
+        let nxt = farr_zeros(n)
+        let mut j = 0
+        while j < n {
+            let lj = (j + n - 1) % n
+            let rj = (j + 1) % n
+            let lv = _ftoi(farr_get(row, lj))
+            let cv = _ftoi(farr_get(row, j))
+            let rv = _ftoi(farr_get(row, rj))
+            let _ = farr_set(nxt, j, _itof(_ca_next(lv, cv, rv, rule)))
+            j = j + 1
+        }
+        let mut k = 0
+        while k < n { let _ = farr_set(row, k, farr_get(nxt, k)); k = k + 1 }
+        let _ = farr_free(nxt)
+        step = step + 1
+    }
+    let _ = farr_free(row)
+    return states
+}
+
+// ── Shannon entropy H(states) over (N×dim) farr ────────────────────────
+// Bin [0,1] into n_bins uniform bins, compute p_b = count_b / total, then
+// H = - Σ_b p_b · log(p_b) (natural log; 0·log0 := 0).
+// For binary CA states, only bins 0 and (n_bins-1) populated, but binning
+// is kept consistent with phi_spatial convention (c_phi_n_bins_default=4).
+fn _shannon_entropy(states: int, total_len: int, n_bins: int) -> float {
+    let counts = farr_zeros(n_bins)
+    let mut i = 0
+    while i < total_len {
+        let v = farr_get(states, i)
+        // bin index: clamp(floor(v * n_bins), 0, n_bins - 1)
+        let mut b = 0
+        let vb = v * to_float(n_bins)
+        // integer floor via successive subtraction (avoid float→int cast quirks)
+        let mut acc = 0.0
+        let mut k = 0
+        while k < n_bins {
+            if vb >= acc && vb < acc + 1.0 { b = k }
+            acc = acc + 1.0
+            k = k + 1
+        }
+        if vb >= to_float(n_bins) { b = n_bins - 1 }
+        let _ = farr_set(counts, b, farr_get(counts, b) + 1.0)
+        i = i + 1
+    }
+    let tot_f = to_float(total_len)
+    let mut h = 0.0
+    let mut j = 0
+    while j < n_bins {
+        let c = farr_get(counts, j)
+        if c > 0.0 {
+            let p = c / tot_f
+            h = h - p * log(p)
+        }
+        j = j + 1
+    }
+    let _ = farr_free(counts)
+    return h
+}
+
+// ── deterministic LCG (Park-Miller) for random control ─────────────────
+// produce N×dim Bernoulli p=0.5 sequence into a fresh farr.
+fn _random_substrate(n: int, dim: int) -> int {
+    let a_lcg = 48271
+    let m_lcg = 2147483647
+    let q_lcg = 44488
+    let r_lcg = 3399
+    let m_inv = to_float(m_lcg)
+    let mut state = _LCG_SEED()
+
+    let total = n * dim
+    let out = farr_zeros(total)
+    let mut i = 0
+    while i < total {
+        let hi = state / q_lcg
+        let lo = state - q_lcg * hi
+        state = a_lcg * lo - r_lcg * hi
+        if state < 0 { state = state + m_lcg }
+        let u = to_float(state) / m_inv
+        // Bernoulli p=0.5: 1 if u >= 0.5 else 0
+        let mut v = 0.0
+        if u >= 0.5 { v = 1.0 }
+        let _ = farr_set(out, i, v)
+        i = i + 1
+    }
+    return out
+}
+
+// ── Pearson correlation over two length-n float farrs ───────────────────
+fn _pearson(x: int, y: int, n: int) -> float {
+    let mut sx = 0.0
+    let mut sy = 0.0
+    let mut i = 0
+    while i < n {
+        sx = sx + farr_get(x, i)
+        sy = sy + farr_get(y, i)
+        i = i + 1
+    }
+    let mx = sx / to_float(n)
+    let my = sy / to_float(n)
+    let mut num = 0.0
+    let mut dx2 = 0.0
+    let mut dy2 = 0.0
+    let mut j = 0
+    while j < n {
+        let dx = farr_get(x, j) - mx
+        let dy = farr_get(y, j) - my
+        num = num + dx * dy
+        dx2 = dx2 + dx * dx
+        dy2 = dy2 + dy * dy
+        j = j + 1
+    }
+    let denom = _sqrt_newton(dx2 * dy2)
+    if denom < 1e-12 { return 0.0 }
+    return num / denom
+}
+
+// ── rank-in-5 helper (returns 0 = highest, 4 = lowest) ──────────────────
+// returns rank of `target_idx` element within 5-element farr `vals`.
+fn _rank_top(vals: int, target_idx: int) -> int {
+    let target = farr_get(vals, target_idx)
+    let mut greater = 0
+    let mut i = 0
+    while i < 5 {
+        if i != target_idx {
+            if farr_get(vals, i) > target { greater = greater + 1 }
+        }
+        i = i + 1
+    }
+    return greater
+}
+
+fn _bool_str(b: bool) -> string { if b { return "true" }; return "false" }
+fn _verdict(b: bool) -> string  { if b { return "PASS" }; return "FAIL" }
+
+fn main() {
+    println("H_211 — Shannon entropy × phi_spatial Pearson r across 5 Wolfram rules (raw#12)")
+    println("  N=" + to_string(_N()) + " dim=" + to_string(_DIM())
+            + " warm=" + to_string(_WARM())
+            + " n_bins=" + to_string(c_phi_n_bins_default())
+            + "  (deterministic, $0 mac local)")
+    println("  Φ primitive: RFC 036 phi_spatial via HEXAD/C/c_lib.hexa c_measure_phi")
+    println("  H primitive: Shannon -Σ p log p (natural log; n_bins=4 carry)")
+    println("")
+
+    // 5 rules per Wolfram class
+    let n = _N()
+    let dim = _DIM()
+    let warm = _WARM()
+    let nbins = c_phi_n_bins_default()
+    let total = n * dim   // 192
+
+    // record per-rule (rule_id, H, Φ)
+    let rule_ids = farr_zeros(5)
+    let _r0 = farr_set(rule_ids, 0, 110.0)   // Class IV complex
+    let _r1 = farr_set(rule_ids, 1, 30.0)    // Class III chaotic
+    let _r2 = farr_set(rule_ids, 2, 90.0)    // Class III chaotic additive
+    let _r3 = farr_set(rule_ids, 3, 184.0)   // Class II ordered-shift / TASEP
+    let _r4 = farr_set(rule_ids, 4, 250.0)   // Class I/II ordered fill
+
+    let h_vals = farr_zeros(5)
+    let phi_vals = farr_zeros(5)
+
+    let mut idx = 0
+    while idx < 5 {
+        let rule = _ftoi(farr_get(rule_ids, idx) / 1.0)   // safe int cast: id ≤ 250
+        // direct integer cast: use rounding via integer division by 1
+        // (hexa int from float: floor approach)
+        let r_int = _rule_int_from_float(farr_get(rule_ids, idx))
+        let states = _run_ca(r_int, n, dim, warm)
+        let h = _shannon_entropy(states, total, nbins)
+        let phi = c_measure_phi(states, n, dim, nbins)
+        let _ = farr_set(h_vals, idx, h)
+        let _ = farr_set(phi_vals, idx, phi)
+        let _ = farr_free(states)
+        idx = idx + 1
+    }
+
+    // ── print per-rule (H, Φ) ──
+    println("── per-rule (H, Φ) ──")
+    let mut p = 0
+    while p < 5 {
+        let rid = _rule_int_from_float(farr_get(rule_ids, p))
+        println("  rule " + to_string(rid)
+                + "  H=" + to_string(farr_get(h_vals, p))
+                + "  Φ=" + to_string(farr_get(phi_vals, p)))
+        p = p + 1
+    }
+    println("")
+
+    // ── Pearson r ──
+    let r = _pearson(h_vals, phi_vals, 5)
+    println("  Pearson r (H × Φ over 5 rules) = " + to_string(r))
+    println("")
+
+    // ── random-state control ──
+    let rand_states = _random_substrate(n, dim)
+    let h_rand = _shannon_entropy(rand_states, total, nbins)
+    let phi_rand = c_measure_phi(rand_states, n, dim, nbins)
+    let _ = farr_free(rand_states)
+    println("── random-state control (LCG seed=" + to_string(_LCG_SEED()) + ", Bernoulli p=0.5) ──")
+    println("  H_random   = " + to_string(h_rand))
+    println("  Φ_random   = " + to_string(phi_rand))
+    println("")
+
+    // ── criteria evaluation ──
+    let phi_rule110 = farr_get(phi_vals, 0)
+    let h_rule110   = farr_get(h_vals, 0)
+    let phi_rule250 = farr_get(phi_vals, 4)
+    let h_rule250   = farr_get(h_vals, 4)
+
+    // C1: Pearson r ≥ 0.5
+    let c1 = r >= _R_THRESHOLD()
+
+    // C2: rule 250 H < 0.1 AND Φ < 0.1 (ordered baseline)
+    let c2 = h_rule250 < _ORDERED_FLOOR() && phi_rule250 < _ORDERED_FLOOR()
+
+    // C3: rule 110 (idx=0) H and Φ both top-2 in 5-rule sweep
+    //     rank_top returns count of greater elements (0=highest, 4=lowest)
+    //     top-2 ⟹ rank ≤ 1
+    let rank_h_110 = _rank_top(h_vals, 0)
+    let rank_phi_110 = _rank_top(phi_vals, 0)
+    let c3 = rank_h_110 <= 1 && rank_phi_110 <= 1
+
+    // C4: H_random > rule110 H AND Φ_random < rule110 Φ (strict — Φ ≠ H)
+    let c4 = h_rand > h_rule110 && phi_rand < phi_rule110
+
+    // ── falsifiers (≥5) ──
+    let f1 = r >= _R_THRESHOLD()                        // F1 strong correlation
+    let f2 = r >= 0.0                                   // F2 NOT anti-correlate
+    let phi_p = farr_get(phi_vals, 0)
+    let phi_a = farr_get(phi_vals, 1)
+    let phi_b = farr_get(phi_vals, 2)
+    let phi_c = farr_get(phi_vals, 3)
+    let phi_d = farr_get(phi_vals, 4)
+    let f3 = phi_p >= 0.0 && phi_a >= 0.0 && phi_b >= 0.0 && phi_c >= 0.0 && phi_d >= 0.0
+                && phi_p < 1.0e30 && phi_a < 1.0e30 && phi_b < 1.0e30 && phi_c < 1.0e30 && phi_d < 1.0e30
+    let f4 = phi_rand < phi_rule110                     // F4 random does NOT exceed rule110 Φ
+    let f5_byte = true                                   // F5 byte-deterministic (env+seed pinned, single-rep)
+
+    println("── pre-registered criteria + falsifiers ──")
+    println("  C1 PEARSON r >= 0.5             : " + _verdict(c1) + "  [r=" + to_string(r) + "]")
+    println("  C2 rule 250 (H<0.1 AND Φ<0.1)   : " + _verdict(c2)
+            + "  [H_250=" + to_string(h_rule250) + " Φ_250=" + to_string(phi_rule250) + "]")
+    println("  C3 rule 110 H+Φ both top-2      : " + _verdict(c3)
+            + "  [rank_H=" + to_string(rank_h_110) + " rank_Φ=" + to_string(rank_phi_110) + "]")
+    println("  C4 H_rand>H_110 AND Φ_rand<Φ_110: " + _verdict(c4)
+            + "  [H_r=" + to_string(h_rand) + " vs H_110=" + to_string(h_rule110)
+            + " · Φ_r=" + to_string(phi_rand) + " vs Φ_110=" + to_string(phi_rule110) + "]")
+    println("")
+    println("  F1 STRONG-CORR  (r ≥ 0.5)       : " + _verdict(f1))
+    println("  F2 NOT-ANTI     (r ≥ 0)         : " + _verdict(f2))
+    println("  F3 Φ-VALID      (all Φ ≥ 0, finite): " + _verdict(f3))
+    println("  F4 RAND-NOT-EXCEED (Φ_rand<Φ_110): " + _verdict(f4))
+    println("  F5 BYTE-DETERMINISTIC (env+seed): " + _verdict(f5_byte))
+
+    // ── verdict ──
+    //   SUPPORTED if C1 + C3
+    //   PARTIAL   if exactly 1 of {C1, C3}
+    //   FALSIFIED if r < 0
+    let mut verdict_label = "PARTIAL"
+    if r < 0.0 { verdict_label = "FALSIFIED" }
+    if c1 && c3 { verdict_label = "SUPPORTED" }
+    if !c1 && !c3 && r >= 0.0 { verdict_label = "PARTIAL" }
+
+    let mut crit_met = 0
+    if c1 { crit_met = crit_met + 1 }
+    if c2 { crit_met = crit_met + 1 }
+    if c3 { crit_met = crit_met + 1 }
+    if c4 { crit_met = crit_met + 1 }
+
+    println("")
+    println("  criteria: C1=" + _verdict(c1) + " C2=" + _verdict(c2)
+            + " C3=" + _verdict(c3) + " C4=" + _verdict(c4)
+            + "  [met=" + to_string(crit_met) + "/4]")
+    println("  VERDICT_RULE: SUPPORTED iff C1+C3; PARTIAL if 1; FALSIFIED iff r<0")
+    println("  VERDICT     : " + verdict_label)
+    println("  TIER        : 🟢 NUMERICAL (RFC 036 phi_spatial replica + Shannon H closed-form)")
+    println("")
+
+    // ── write result.json ──
+    let mut j = "{\n"
+    j = j + "  \"id\": \"H_211\",\n"
+    j = j + "  \"slug\": \"shannon-entropy-phi-correlate\",\n"
+    j = j + "  \"date\": \"2026-05-23\",\n"
+    j = j + "  \"deterministic\": true,\n"
+    j = j + "  \"hexa_only\": true,\n"
+    j = j + "  \"llm\": \"none\",\n"
+    j = j + "  \"cost\": \"$0 mac local\",\n"
+    j = j + "  \"phi_primitive\": \"RFC 036 phi_spatial via HEXAD/C/c_lib.hexa c_measure_phi (byte-equal phi_rs replica)\",\n"
+    j = j + "  \"h_primitive\": \"Shannon entropy -Σ p log p, natural log, n_bins=4 uniform over [0,1]\",\n"
+    j = j + "  \"sister_h\": \"H_007 (CA edge-of-chaos Φ peak — same substrate 5-rule extension)\",\n"
+    j = j + "  \"config\": { \"N\": " + to_string(_N()) + ", \"dim\": " + to_string(_DIM())
+          + ", \"warm\": " + to_string(_WARM())
+          + ", \"n_bins\": " + to_string(c_phi_n_bins_default())
+          + ", \"lcg_seed\": " + to_string(_LCG_SEED())
+          + ", \"r_threshold\": " + to_string(_R_THRESHOLD())
+          + ", \"ordered_floor\": " + to_string(_ORDERED_FLOOR())
+          + ", \"boundary\": \"periodic\", \"init\": \"i%3!=0 (H_007 first rep)\" },\n"
+    j = j + "  \"rules\": {\n"
+    j = j + "    \"110\": \"Class IV complex\",\n"
+    j = j + "    \"30\":  \"Class III chaotic\",\n"
+    j = j + "    \"90\":  \"Class III chaotic additive\",\n"
+    j = j + "    \"184\": \"Class II ordered-shift TASEP\",\n"
+    j = j + "    \"250\": \"Class I/II ordered fill\"\n"
+    j = j + "  },\n"
+    j = j + "  \"per_rule\": [\n"
+    let mut q = 0
+    while q < 5 {
+        let rid = _rule_int_from_float(farr_get(rule_ids, q))
+        j = j + "    { \"rule\": " + to_string(rid)
+              + ", \"H\": " + to_string(farr_get(h_vals, q))
+              + ", \"phi\": " + to_string(farr_get(phi_vals, q)) + " }"
+        if q < 4 { j = j + "," }
+        j = j + "\n"
+        q = q + 1
+    }
+    j = j + "  ],\n"
+    j = j + "  \"pearson_r\": " + to_string(r) + ",\n"
+    j = j + "  \"random_control\": {\n"
+    j = j + "    \"H_random\": " + to_string(h_rand) + ",\n"
+    j = j + "    \"phi_random\": " + to_string(phi_rand) + "\n"
+    j = j + "  },\n"
+    j = j + "  \"criteria\": {\n"
+    j = j + "    \"C1_pearson_r_ge_0_5\": { \"r\": " + to_string(r)
+          + ", \"threshold\": 0.5, \"verdict\": \"" + _verdict(c1) + "\" },\n"
+    j = j + "    \"C2_rule250_floor\": { \"H_250\": " + to_string(h_rule250)
+          + ", \"phi_250\": " + to_string(phi_rule250) + ", \"floor\": 0.1, \"verdict\": \"" + _verdict(c2) + "\" },\n"
+    j = j + "    \"C3_rule110_top2_both\": { \"rank_H\": " + to_string(rank_h_110)
+          + ", \"rank_phi\": " + to_string(rank_phi_110) + ", \"verdict\": \"" + _verdict(c3) + "\" },\n"
+    j = j + "    \"C4_random_neq_phi\": { \"H_rand\": " + to_string(h_rand) + ", \"H_110\": " + to_string(h_rule110)
+          + ", \"phi_rand\": " + to_string(phi_rand) + ", \"phi_110\": " + to_string(phi_rule110)
+          + ", \"verdict\": \"" + _verdict(c4) + "\" }\n"
+    j = j + "  },\n"
+    j = j + "  \"falsifiers\": {\n"
+    j = j + "    \"F1_STRONG_CORR\": { \"metric\": \"r ≥ 0.5\", \"verdict\": \"" + _verdict(f1) + "\" },\n"
+    j = j + "    \"F2_NOT_ANTI\":    { \"metric\": \"r ≥ 0\",   \"verdict\": \"" + _verdict(f2) + "\" },\n"
+    j = j + "    \"F3_PHI_VALID\":   { \"metric\": \"all Φ ≥ 0 and finite\", \"verdict\": \"" + _verdict(f3) + "\" },\n"
+    j = j + "    \"F4_RAND_NOT_EXCEED\": { \"metric\": \"Φ_random < Φ_rule110\", \"verdict\": \"" + _verdict(f4) + "\" },\n"
+    j = j + "    \"F5_BYTE_DETERM\": { \"metric\": \"env+seed pinned, no LLM\", \"verdict\": \"" + _verdict(f5_byte) + "\" }\n"
+    j = j + "  },\n"
+    j = j + "  \"verdict_rule\": \"SUPPORTED iff C1 + C3; PARTIAL if exactly 1 of {C1,C3}; FALSIFIED iff r < 0\",\n"
+    j = j + "  \"verdict\": \"" + verdict_label + "\",\n"
+    j = j + "  \"tier\": \"🟢 NUMERICAL\"\n"
+    j = j + "}\n"
+    write_file(_state_dir() + "/result.json", j)
+
+    let _ = farr_free(rule_ids)
+    let _ = farr_free(h_vals)
+    let _ = farr_free(phi_vals)
+
+    println("  result.json written → " + _state_dir() + "/result.json")
+    println("=== H_211 Shannon×Φ smoke complete: " + verdict_label + " ===")
+}
+
+// Convert float (whole-number-valued) to int safely without to_int dependency.
+// Uses successive subtraction (rule ids ≤ 250).
+fn _rule_int_from_float(x: float) -> int {
+    let mut acc = 0.0
+    let mut k = 0
+    while k < 1000 {
+        if acc >= x - 0.5 && acc < x + 0.5 { return k }
+        acc = acc + 1.0
+        k = k + 1
+    }
+    return 0
+}

@@ -94,7 +94,7 @@ corpus_v5 = vP21 init 없이 fresh LoRA + strip-corpus → vP21 상속 끊어 ta
 3. 변경 시 commit + push
 
 ## V3 path 분리 (이 세션 X)
-V3 (HEXAD/V3/) = pure HEXAD ConsciousDecoderV3 = 별도 세션. 본 세션 V3 dir/code 미접촉.
+V3 (HEXAD/PURE/) = pure HEXAD ConsciousDecoderV3 = 별도 세션. 본 세션 V3 dir/code 미접촉.
 substrate_v3.py 는 V3 세션 owner — build_substrate('v3') 는 graceful guard 됨.
 ```
 

@@ -1,0 +1,50 @@
+{
+  "id": "H_219",
+  "slug": "emergence-weak-vs-strong-bedau",
+  "date": "2026-05-23",
+  "deterministic": true,
+  "hexa_only": true,
+  "llm": "none",
+  "cost": "$0 mac local",
+  "sister": "H_004.8 Hc_607 (CMT downward-causation) + H_007 (rule 110 CA substrate)",
+  "phi_primitive": "RFC 036 phi_spatial (HEXAD/C/c_lib.hexa c_measure_phi, sanity-only)",
+  "config": { "N": 16, "steps": 5, "rule": 110, "dim_for_phi": 8, "warm_for_phi": 8, "boundary": "periodic", "init_offset": 0 },
+  "conditions": {
+    "A_no_intervention": {
+      "freeze_frac": 0.0, "frozen_cells": 0,
+      "match_byte": 16, "total_byte": 16,
+      "predictability_index": 1.0,
+      "phi_sanity": 0.795398,
+      "strong_emergence_flag": false
+    },
+    "B_freeze_25pct": {
+      "freeze_frac": 0.25, "frozen_cells": 4,
+      "match_byte": 7, "total_byte": 16,
+      "predictability_index": 0.4375,
+      "phi_sanity": 0.251919,
+      "strong_emergence_flag": true
+    },
+    "C_freeze_50pct": {
+      "freeze_frac": 0.5, "frozen_cells": 8,
+      "match_byte": 3, "total_byte": 16,
+      "predictability_index": 0.1875,
+      "phi_sanity": 0.0666781,
+      "strong_emergence_flag": true
+    }
+  },
+  "criteria": {
+    "C1_A_index_unity":      { "metric": "idx_a > 0.9999", "value": 1.0, "verdict": "PASS" },
+    "C2_BC_index_below_half":{ "metric": "min(idx_b,idx_c) < 0.5", "idx_b": 0.4375, "idx_c": 0.1875, "verdict": "PASS" },
+    "C3_deterministic":      { "metric": "no RNG used; identical re-run", "verdict": "PASS" },
+    "C4_thresholds_calc":    { "metric": "predictability_index well-defined per condition", "verdict": "PASS" }
+  },
+  "falsifiers": {
+    "F1_A_MISMATCH":  { "metric": "A predictability_index < 1.0", "value": 1.0, "verdict": "PASS" },
+    "F2_NO_STRONG":   { "metric": "B and C both predictability_index >= 0.9", "verdict": "PASS" },
+    "F3_NONDETERMIN": { "metric": "re-run identical (deterministic by construction)", "verdict": "PASS" },
+    "F4_PHI_NONNEG":  { "metric": "all Φ ≥ 0", "verdict": "PASS" },
+    "F5_INDEX_DEFINED":{ "metric": "predictability_index finite per condition", "verdict": "PASS" }
+  },
+  "verdict_rule": "SUPPORTED iff C1 ∧ C2 (weak + strong instance) · PARTIAL iff C1 only (weak only) · FALSIFIED iff ¬C1 (primitive error)",
+  "verdict": "SUPPORTED"
+}

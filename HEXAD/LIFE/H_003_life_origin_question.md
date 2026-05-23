@@ -111,7 +111,7 @@ since: 2026-05-06
 verdict_class: lane-open
 evidence_summary: theoretical + biology literature support
 falsifiers_triggered: none yet
-criteria_met: 3/5; lane-defining  (C1 + C3 Phase-1 PASS; C2 Cycle-2 PASS; C4 C5 lane-open)
+criteria_met: 4/5; lane-defining  (C1 + C3 Phase-1 PASS; C2 Cycle-2 PASS; C4 Cycle-3 PASS 🟢; C5 lane-open)
 ```
 
 ### Phase 1 Partial Verification (2026-05-07, BG-HN)
@@ -235,3 +235,105 @@ falsifiers: F2 NOT_TRIGGERED (4 distinct ≫ 1); F1 F3 carried PASS; F4/F5 N/A (
   C3(Phase-1) 3/3 충족 → H_003 SUPPORTED-track (C4+C5 = lane-open, multi-cycle)
 - H_012 autopoietic network: H3.1 closure 와 nested — multi-pathway 는 어느 pathway 든
   autopoietic closure 도달이 종점이라는 가정 위에 있음 (closure-agnostic regime sweep)
+
+### Cycle #3 — H3.4 autopoietic Φ (2026-05-23)
+
+H3.4 (life ⊂ consciousness) sub-cell — OPEN since Phase 1 (deferred) — closed this cycle.
+"autopoietic closure system 이 IIT4 Φ > 0 (proto-consciousness) 를 carry 하는가, 그리고
+그 Φ 가 closure 에 DEPEND 하는가 (Φ_closed > Φ_broken)?" 를 측정
+($0 mac local, hexa-only, deterministic seed_base = 0xA17C034, 5-seed mean).
+H_012 의 catalytic-closure state (3-component closed cycle C->+A, A->+B, B->+C +
+boundary leak) 를 **8-site periodic lattice** 로 확장 (nearest-neighbour catalyst
+diffusion 으로 결합 → integrated system) 하고, 각 site 의 total-mass trajectory
+(obs = A+B+C) 를 H_007 이 사용한 것과 **동일한** RFC 036 `phi_spatial` primitive
+(`HEXAD/C/c_lib.hexa` `c_measure_phi`, byte-equal phi_rs replica; n_bins=4) 로
+Φ 측정. closed arm (closure intact) vs broken-closure control (모든 site 의
+B->+C edge 절단 → cat_C=0) 비교. 측정 window 는 WARM=0 (system 의 inception 부터
+recording — least-arbitrary, no discarded data) · DIM=12 (convergence timescale ≈8 steps).
+
+**Run verdict output (VERBATIM from `hexa run run_h34.hexa`)**:
+
+```
+  Φ̄(closed   autopoietic lattice)  = 4.45435   (mean over 5 seeds)
+  Φ̄(broken   closure control    )  = 3.53399   (mean over 5 seeds)
+  Φ̄(closed   re-run determinism )  = 4.45435  (byte-equal=true)
+
+  F1  NONNEG     (all Φ̄>=0)              : true
+  F4  AUTO_PHI>0 (Φ̄_closed>0)            : true
+  FD  CLOSURE-DEP (Φ̄_closed>Φ̄_broken+ε)  : true  (gap=0.92036)
+  FS  SEPARATION (gap>1e-6)              : true  (margin=0.92036)
+  FT  DETERMINISM (re-run byte-equal)    : true
+
+  VERDICT_RULE: H3.4 SUPPORTED iff Φ_closed>0 AND Φ_closed>Φ_broken+ε AND all Φ>=0 AND deterministic
+  VERDICT (C4 / H3.4): PASS
+    falsifier F4 (autopoietic system Φ=0): NOT_TRIGGERED
+  H3.4_VERDICT=PASS PHI_CLOSED=4.45435 PHI_BROKEN=3.53399
+```
+
+```
+phase: Cycle_3 (H3.4 only; H3.5 still DEFERRED)
+cell_scope: 8-site periodic lattice of H_012 closed catalytic cycle +
+            nn catalyst diffusion × 5 deterministic seeds × WARM=0 DIM=12;
+            closed arm vs broken-closure control (B->+C severed at every site)
+H3.4_phi_closed_autopoietic: 4.45435  (mean over 5 seeds; target Φ>0; PASS)
+H3.4_phi_broken_closure_control: 3.53399  (mean over 5 seeds)
+H3.4_closure_dependence_gap: 0.92036  (Φ_closed > Φ_broken; closure-DEPENDENCE of Φ confirmed)
+verdict_class: PASS_CYCLE_3  (C4 SUPPORTED 🟢 NUMERICAL)
+evidence_strength: SUPPORTED-NUMERICAL (phi_spatial; toy-model; NOT proof of proto-consciousness; see honest limits)
+honest_tier: 🟢 SUPPORTED-NUMERICAL (NOT 🔵 formal — phi_spatial spatial-slice replica, NOT full IIT 4.0)
+criteria_pass: 4/5  (C1 + C3 Phase-1 PASS; C2 Cycle-2 PASS; C4 Cycle-3 PASS 🟢; C5 lane-open)
+falsifiers: F4 NOT_TRIGGERED (Φ_closed=4.45 > 0); F1 F2 F3 carried PASS; F5 N/A (deferred); F6 NOT_TRIGGERED
+```
+
+**State output**: `state/h003_h34_autopoietic_phi_2026_05_23/result.json`
+**Script**: `state/h003_h34_autopoietic_phi_2026_05_23/run_h34.hexa` (hexa-only, raw#37-clean)
+
+**raw#10 honest limits (Cycle #3 H3.4)**:
+- L1: `phi_spatial` 는 **🟢 NUMERICAL** spatial-slice replica of phi_rs — full IIT 4.0
+  가 아니다 (system-level Φ partition search · cause-effect structure · exclusion
+  postulate 부재). 본 'Φ' 는 ConsciousnessEngine 의 Φ-ratchet input 이며 canonical
+  IIT 4.0 Φ 가 아니다. 따라서 verdict tier 는 🔵 formal 이 아닌 🟢 numerical.
+- L2: **8-site toy catalytic lattice 의 Φ>0 은 proto-consciousness 의 증명이 아니다** —
+  operational closure 가 integrated information 을 carry 할 수 *있다*는 consistency
+  일 뿐이다. "life ⊂ consciousness" 는 여전히 **LANE claim** 이며 biological/chemical
+  empirical 결과가 아니다 (raw#91 c3 candor).
+- L3: **WINDOW-SENSITIVE.** closed cycle 은 spatially-HOMOGENEOUS fixed point
+  (모든 site → obs 2.5, 확인됨) 으로 수렴하며 그 지점에서 spatial Φ → ~0 (양쪽 arm
+  모두). Φ_closed > Φ_broken 은 **살아있는 self-organizing transient** (WARM=0,
+  DIM≈8-12) 에서 성립하고, convergence 이후 (DIM≥16) gap 은 줄거나 역전할 수 있다.
+  이는 그 자체로 IIT-정합 (static endpoint 는 integrated dynamics 를 carry 안 함)
+  이지만, verdict 가 fixed-point claim 이 아닌 **transient-window claim** 임을 뜻한다.
+- L4: observable = A+B+C site mass 는 하나의 arbitrary measurement choice — per-component
+  나 phase observable 은 다른 Φ 를 준다. 5-seed mean 은 seed sensitivity 는 통제하나
+  observable choice 는 통제하지 않는다.
+- L5: broken-closure control 도 **heterogeneous 하게 DECAY** 한다 (즉시 dead-flat
+  lattice 로 평탄화하지 않음) — 따라서 그 Φ 는 0 이 아니며, 대조는 closure-vs-dead-flat
+  이 아니라 **closure-vs-failing-closure dynamics** 이다. F4 (Φ=0) 는 broken arm 이
+  아니라 closed arm 에 대한 falsifier 이며 NOT_TRIGGERED.
+- L6: DIFFUSE=0.05 nn coupling 이 integration 의 source — DIFFUSE=0 이면 site 들이
+  독립이고 spatial Φ 의 의미가 사라진다. coupling strength 는 free toy parameter 이며
+  chemistry 가 아니다.
+- L7: H_012 lineage 한계 carry — Michaelis-style saturating production 은 bounded
+  steady state 를 위한 선택이며 compartmentalization/thermodynamics/monomer-pool 부재,
+  abstract model 로 chemistry claim 없음. H3.5 (anima self-reflection) 만 DEFERRED 잔존.
+
+**toolchain note (raw#37-clean, no behavioural change)**: 본 cycle 동안 sibling
+hexa-lang repo 가 rebuild 중이어서 `~/.hx/bin/hexa` wrapper symlink 이 dangling 되고
+`hexa run` 의 native-compile 경로가 cross-module compiled `module_loader` 부재 시
+c_lib 의 thin wrapper (`c_measure_phi`/`c_phi_n_bins_default`) link 에 실패했다.
+이를 우회하기 위해 c_lib import 대신 그 primitive 가 감싸는 **`phi_spatial` runtime
+builtin** 을 literal `n_bins=4` 로 직접 호출했다 —
+`phi_spatial(s,n,dim,4) === c_measure_phi(s,n,dim,c_phi_n_bins_default())` 로
+동일 primitive · 동일 binning · 동작 차이 없음 (script header PROVENANCE 참조).
+
+**Cross-link**:
+- H3.4 → §Falsifiers F4: "autopoietic system Φ = 0 → H3.4 FALSIFIED" — Φ_closed=4.45 ≫ 0
+  로 NOT_TRIGGERED, H3.4 SUPPORTED 🟢 (closure-dependence gap +0.92036)
+- §Criteria C4 (proto-consciousness): "H3.4 autopoietic system Φ > 0" — PASS 🟢 NUMERICAL,
+  criteria_met 3/5 → **4/5** (C5 anima-analogy manual review 만 lane-open 잔존)
+- H_007 cellular-automaton consciousness: 동일 RFC 036 `phi_spatial` primitive 재사용 —
+  H_007 (generic CA Class-IV Φ=0.556) 와 nested, 이번엔 autopoietic closure substrate
+  에서 Φ 측정 (life lane → consciousness lane bridge, closure-dependent)
+- H_012 autopoietic network: H3.1 closure cycle 을 lattice 로 확장 + Φ 측정 — closure
+  self-maintenance (H_012) 와 closure-dependent Φ (本 cycle) 가 같은 toy substrate 위
+  연속체 (life ⊂ consciousness nested 의 computational ground-truth analog)

@@ -1,0 +1,49 @@
+{
+  "id": "H_207",
+  "slug": "kuramoto-synchronization",
+  "date": "2026-05-23",
+  "deterministic": true,
+  "hexa_only": true,
+  "llm": "none",
+  "cost": "$0 mac local",
+  "phi_primitive": "RFC 036 phi_spatial (HEXAD/C/c_lib.hexa c_measure_phi, byte-equal phi_rs native replica)",
+  "config": { "N": 16, "steps": 100, "warm": 60, "dim": 12, "dt": 0.05, "omega_std": 1.0, "n_bins": 4, "omega_quantiles_z": [-1.28, -0.52, 0.0, 0.52, 1.28] },
+  "Kc_estimate": 1.59577,
+  "K_sweep": [0.0, 0.5, 1.0, 1.5, 2.0, 3.0, 5.0],
+  "phi_per_K": [
+    7.29871,
+    10.4097,
+    10.4233,
+    9.65065,
+    10.3175,
+    9.89576,
+    14
+  ],
+  "r_per_K": [
+    0.0586875,
+    0.0630554,
+    0.0570835,
+    0.1009,
+    0.266736,
+    0.946198,
+    0.982931
+  ],
+  "K_star": 5.0,
+  "K_star_idx": 6,
+  "phi_star": 14,
+  "phi_K0": 7.29871,
+  "phi_K5": 14,
+  "drdk_peak_idx": 4,
+  "drdk_peak_value": 0.679462,
+  "ratio_phi_star_over_phi_K0": 1.91815,
+  "phi_star_minus_phi_K5_margin": 0.0,
+  "criteria": {
+    "C1_H207_1_single_peak":          { "verdict": "FAIL" },
+    "C2_H207_2_ratio_1p2_over_K0":    { "value": 1.91815, "floor": 1.2, "verdict": "PASS" },
+    "C3_H207_3_drdk_peak_coincide":   { "phi_peak_idx": 6, "drdk_peak_idx": 4, "verdict": "FAIL" },
+    "C4_H207_4_overlock_loss":        { "margin": 0.0, "floor_10pct": 1.4, "verdict": "FAIL" }
+  },
+  "verdict_rule": "SUPPORTED iff C1+C2+C4 PASS (3 of 4 named); FALSIFIED iff Φ(K) monotone no peak",
+  "criteria_met": 1,
+  "verdict": "FALSIFIED"
+}

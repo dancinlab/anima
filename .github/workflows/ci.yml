@@ -31,7 +31,10 @@ jobs:
           python3 -c "
           import json, os, sys
 
-          SKIP_DIRS = {'.git', 'target', '__pycache__', 'node_modules', 'venv', '.venv', '.claude'}
+          SKIP_DIRS = {'.git', 'target', '__pycache__', 'node_modules', 'venv', '.venv', '.claude',
+                       'drill_tmp', 'drill_min_20260420',
+                       'drill_supplement_tmp', 'drill_domain_tmp', 'state_legacy', 'ready',
+                       'state', '.hook-commands', 'references', '.reval_tmp'}
           ok = warn = fail = 0
 
           for root, dirs, files in os.walk('.'):

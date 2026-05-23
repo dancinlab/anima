@@ -1,0 +1,143 @@
+// HEXAD/PURE/launchers/dispatch_p21h_v3_smoke.hexa
+//
+// Smoke for dispatch_p21h_v3.hexa — 6 falsifiers:
+//   F-DISP-PARSE        — import succeeds (dispatcher parses)
+//   F-DISP-ARG-CONTRACT — argv defaults + per-init LR vs ENV_CONTRACT.md
+//   F-DISP-SHA256       — match / mismatch / missing-file / skip
+//   F-DISP-RESUME       — pick largest <= cap / absolute max / none / empty
+//   F-DISP-IMPORT       — stdlib/cloud + stdlib/cloud/runpod imports resolve
+//   F-DISP-DRYRUN       — default dry-run prints plan, exits 0, zero real calls
+
+import "./dispatch_p21h_v3.hexa"
+
+fn _assert(cond: bool, name: str) -> int {
+    if cond { println("  PASS " + name)   return 1 }
+    println("  FAIL " + name)
+    return 0
+}
+
+fn _f_disp_parse() -> int {
+    // F-DISP-PARSE — by virtue of `import` above succeeding, the
+    // dispatcher parses. We additionally exercise one no-side-effect call.
+    let parsed = parse_argv(["P21H_alpha", "random", "1337"])
+    let ok = to_string(parsed["variant"]) == "P21H_alpha"
+    return _assert(ok, "F-DISP-PARSE — dispatcher imported + parse_argv smoke")
+}
+
+fn _f_disp_arg_contract() -> int {
+    let mut ok = true
+    // Defaults when no argv.
+    let p_def = parse_argv([])
+    if to_string(p_def["variant"]) != "P21H_alpha" { ok = false }
+    if to_string(p_def["init_variant"]) != "random" { ok = false }
+    if to_string(p_def["seed"]) != "1337" { ok = false }
+    // Per-init LR defaults — bash case statement: random=3e-4, qwen=5e-5,
+    // vp21m=1e-4 (dispatch_p21h_v3_runpod.sh lines 59-64).
+    let e_random = build_env("random")
+    let e_qwen   = build_env("qwen")
+    let e_vp21m  = build_env("vp21m")
+    if to_string(e_random["P21H_LR"]) != "3e-4" { ok = false }
+    if to_string(e_qwen["P21H_LR"])   != "5e-5" { ok = false }
+    if to_string(e_vp21m["P21H_LR"])  != "1e-4" { ok = false }
+    // ENV_CONTRACT.md table defaults sample (3 keys).
+    if to_string(e_random["P21H_STEPS"])     != "2000" { ok = false }
+    if to_string(e_random["P21H_WIKI_FRAC"]) != "0.3"  { ok = false }
+    if to_string(e_random["SAVE_POD"])       != "1"    { ok = false }
+    return _assert(ok, "F-DISP-ARG-CONTRACT — argv defaults + per-init LR + ENV_CONTRACT table sample")
+}
+
+fn _f_disp_sha256() -> int {
+    let tmp_dir = exec("mktemp -d").trim()
+    let path = tmp_dir + "/payload.bin"
+    let _ = exec("printf 'hexa-pure-skeleton' > " + path)
+    let known = exec("shasum -a 256 " + path + " | awk '{print $1}'").trim()
+    let mut ok = true
+    // (a) match.
+    let r_ok = sha256_verify(path, known)
+    if to_string(r_ok["status"]) != "ok" { ok = false }
+    // (b) mismatch — flip one hex char.
+    let bad = "deadbeef" + known.substring(8, len(known))
+    let r_bad = sha256_verify(path, bad)
+    if to_string(r_bad["status"]) != "fail" { ok = false }
+    if to_string(r_bad["reason"]) != "mismatch" { ok = false }
+    // (c) missing file.
+    let r_miss = sha256_verify(tmp_dir + "/nope.bin", known)
+    if to_string(r_miss["status"]) != "fail" { ok = false }
+    // (d) skip (back-compat — empty expected per ENV_CONTRACT.md §5 C3).
+    let r_skip = sha256_verify(path, "")
+    if to_string(r_skip["status"]) != "skip" { ok = false }
+    let _ = exec("rm -rf " + tmp_dir)
+    return _assert(ok, "F-DISP-SHA256 — match + mismatch + missing + skip")
+}
+
+fn _f_disp_resume() -> int {
+    let tmp_dir = exec("mktemp -d").trim()
+    let _ = exec("touch " + tmp_dir + "/ckpt_step100.pt")
+    let _ = exec("touch " + tmp_dir + "/ckpt_step500.pt")
+    let _ = exec("touch " + tmp_dir + "/other.txt")
+    let mut ok = true
+    // (a) max_step=300 → pick 100.
+    let r1 = resume_glob(tmp_dir, 300)
+    if to_string(r1["status"]) != "ok" { ok = false }
+    if to_string(r1["step"]) != "100" { ok = false }
+    // (b) max_step=500 → pick 500.
+    let r2 = resume_glob(tmp_dir, 500)
+    if to_string(r2["step"]) != "500" { ok = false }
+    // (c) max_step=-1 → absolute max (500).
+    let r3 = resume_glob(tmp_dir, -1)
+    if to_string(r3["step"]) != "500" { ok = false }
+    // (d) max_step=50 → none.
+    let r4 = resume_glob(tmp_dir, 50)
+    if to_string(r4["status"]) != "none" { ok = false }
+    // (e) empty dir.
+    let empty_dir = exec("mktemp -d").trim()
+    let r5 = resume_glob(empty_dir, -1)
+    if to_string(r5["status"]) != "none" { ok = false }
+    let _ = exec("rm -rf " + tmp_dir + " " + empty_dir)
+    return _assert(ok, "F-DISP-RESUME — pick largest <= cap + absolute max + none + empty")
+}
+
+fn _f_disp_import() -> int {
+    // F-DISP-IMPORT — the `use "stdlib/cloud/cloud"` + `use ".../runpod"` in
+    // the dispatcher resolve at parse time (this smoke imports it). Exercise
+    // runpod_pod_opts (pure helper, no remote call) to prove the symbols are
+    // live in scope, not merely parsed.
+    let opts = runpod_pod_opts("12345")
+    let mut ok = len(opts) >= 2
+    if opts[0] != "-p" { ok = false }
+    if opts[1] != "12345" { ok = false }
+    return _assert(ok, "F-DISP-IMPORT — stdlib/cloud + stdlib/cloud/runpod symbols live")
+}
+
+fn _f_disp_dryrun() -> int {
+    // F-DISP-DRYRUN — run the dispatcher with no --fire flag in a subprocess;
+    // it must print the plan, exit 0, and make zero real calls (every step
+    // prints a [dry-run] line; no real-fire stdlib markers). The dispatcher
+    // is the smoke's sibling; locate it via the first matching path.
+    let disp = exec("ls HEXAD/PURE/launchers/dispatch_p21h_v3.hexa 2>/dev/null || find . -name dispatch_p21h_v3.hexa -not -name '*smoke*' 2>/dev/null | head -1").trim()
+    let out = exec("hexa run " + disp + " P21H_alpha random 1337 2>&1; echo __RC__=$?")
+    let mut ok = out.index_of("__RC__=0") >= 0
+    // default-dry-run banner + per-step dry-run lines present.
+    if out.index_of("[DRY-RUN]") < 0 { ok = false }
+    if out.index_of("[dry-run] pod_create") < 0 { ok = false }
+    if out.index_of("[dry-run] train_launch") < 0 { ok = false }
+    if out.index_of("[dry-run] result_pull") < 0 { ok = false }
+    // zero real fire — no real stdlib success markers should appear.
+    if out.index_of("started; remote pid") >= 0 { ok = false }
+    if out.index_of("[pod_create] pod-") >= 0 { ok = false }
+    return _assert(ok, "F-DISP-DRYRUN — default dry-run prints plan, rc=0, zero real calls")
+}
+
+fn main() {
+    println("[dispatch_p21h_v3_smoke] START")
+    let mut n_pass = 0
+    n_pass = n_pass + _f_disp_parse()
+    n_pass = n_pass + _f_disp_arg_contract()
+    n_pass = n_pass + _f_disp_sha256()
+    n_pass = n_pass + _f_disp_resume()
+    n_pass = n_pass + _f_disp_import()
+    n_pass = n_pass + _f_disp_dryrun()
+    println("[dispatch_p21h_v3_smoke] END: " + to_string(n_pass) + "/6 PASS")
+    if n_pass < 6 { exit(1) }
+    exit(0)
+}

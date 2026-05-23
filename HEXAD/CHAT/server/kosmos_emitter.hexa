@@ -117,7 +117,8 @@ fn poll_anima_messages(history_url: string) -> list {
     let parsed = json_parse(body)
     if type_of(parsed) != "map" { return [] }
     let hist = parsed["history"]
-    if type_of(hist) != "list" { return [] }
+    // hexa type_of: array literal → "array" (NOT "list") — cycle 13 sweep
+    if type_of(hist) != "array" { return [] }
     let mut out = []
     let mut i = 0
     while i < len(hist) {

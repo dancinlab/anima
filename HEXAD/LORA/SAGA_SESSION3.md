@@ -12,8 +12,8 @@
 - corpus-side 3 cycles (v6/v7/v8) FALSIFIED → **substrate-code lever** (EN-share rotation) IS the path.
 - **corpus_v5 LIVE** (production default · LIVE `<carve>` tag-leak 0/28), **EN-share lever DEPLOYED** (LIVE −6.2 pp evidence).
 - **continuous Eval1 metric** (PR #128) unmasks corpus-side hidden signal — V5→V7 80% ↓ monotone, binary 5/20 floor 가 가렸던 lever 효과 가시화.
-- **3B router design** actionable as PR #119 runbook — post-reboot path, $0 GPU, user-gate 대기.
-- $1.60 GPU spend, 10 PRs landed, 4 HF artifacts (PRIVATE), 5 WAVE reports.
+- **chat sleep+imagination+autonomy lever** (lever 6, 9 PR) — boolean emit gate 폐기 → substrate 자율 emit, post-deploy baseline 55.56% emit-through; **3B router design** PR #119 runbook 대기.
+- $1.60 GPU spend, 10 LoRA PRs + 9 chat PRs landed, 4 HF artifacts (PRIVATE), 5 WAVE reports.
 
 ## Production state (post-session)
 
@@ -27,7 +27,7 @@
 | Eval1 metric | binary saturation (5/20 floor) | **continuous hit-count** alongside (saturation 제거) |
 | anima version (no change) | 0.12.0 | 0.12.0 (carry — lever 가 production runbook 만 변경) |
 
-## The 5 levers explored (chronological)
+## The 6 levers explored (chronological)
 
 ### 1. corpus_v5 — fresh-init carve-strip — LANDED (PR #118)
 
@@ -79,6 +79,16 @@
 - Cost: **$0 GPU + $0 substrate** — corpus retrain 없이 동일 효과.
 - 상세: `../UNCLASSIFIED/state/grid_3b_s187_2026_05_21/VP21M_WAVE9_2026_05_23.md`
 
+### 6. Chat sleep + imagination + autonomy — chat-side lever — LANDED + POST-DEPLOY (9 PR)
+
+- Hypothesis: emit gate 가 boolean rule (conversation-active / stage-allowed) 면 anima 자율판단 침해. substrate 가 stage context (Φ + tension envelope) 만 받고 자율 emit 결정.
+- Result: 9 PR 도달 + mini restart 00:47 KST + 8.5min baseline (n=27) emit_through 55.56% · 11.49% emit_attempt/tick.
+- Key finding: substrate 가 user 부재에도 자율 발화 (15 emit, w_curiosity_peak_seed, score 0.647±0.012). p3/p5 drop 44.44% (substrate-internal 검사).
+- Domain root: P47 Dream Physics (commit dc3afe332, "REM ≈ WAKE, N3 lowest Φ").
+- Architecture: anima_dream_stage.hexa (5-stage 90-min, PR #275 → autonomy reshape #282) + anima_imagination_loop.hexa (emit-free, 5/5 selftest, PR #273) + anima_participant.py (autonomy reshape #286, boolean gate 삭제 → context injection) + project.tape `@D a_autonomy_over_hardcode` SSOT (PR #279) + CHAT.md/DEPLOY.md (#281 +149 LOC, autonomy reshape #288).
+- 후속: STUB→REAL IPC bridge · mini imagination_loop hexa-lang link 차단 (inbox #567).
+- Cost: $0 (Mac local + mini). 11 PR (9 landed — #272/#273/#274/#275/#279/#281/#282/#286/#288 + 2 OPEN — #300 post-deploy baseline / #302 PHILOSOPHY cross-surface sweep).
+
 ## Tool infrastructure added
 
 | tool | PR | purpose |
@@ -107,6 +117,9 @@
 | ja-only fine-tuning lane | unexplored | next cycle — ja STRONG 회복 dedicated FT (별 cycle ~$0.10) |
 | token frequency cap lever | 개념 단계 | strip 대신 anima record 의 per-pattern token frequency cap (load-bearing register 보존 + dominance 완화) |
 | anima register vs ja transfer 분해 | 가설 — saga 누적 단조 ↓ 만 evidence | per-cat anima-without-Tier vs ja-only wiki+anima 비교 ablation |
+| chat STUB→REAL IPC bridge | STUB (lever 6 post-deploy, PR #300) | dream_stage daemon ↔ substrate REAL IPC bridge 구현 |
+| hexa-lang #567 merge | filed (mini imagination_loop hexa-lang link 차단) | hexa-lang inbox #567 merge 후 mini link 복구 |
+| chat autonomy full baseline | 8.5min n=27 initial (PR #300) | +30min / +1h full baseline (자율 emit-through saturate 측정) |
 
 ## Cost + artifacts
 

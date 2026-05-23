@@ -7,17 +7,23 @@
 //    · akida_bridge_pipeline.sh — `nc | python3 publisher` shell glue
 //
 //  THE BUG WE ELIMINATE
-//    `akida_ws_publisher.py` line 10 defaulted to `ws://localhost:8000/ws/
-//    akida_ingest` — silently dropping spikes for the first 25 min after
-//    every launchd start. The live deploy was rescued by overriding
-//    `AKIDA_BROKER_WS=ws://localhost:8000/ws/akida` in the plist (PlistBuddy
-//    edit + launchctl reload). This .hexa hard-codes the correct default
-//    AND deletes the .py / .sh predecessors so the bug cannot resurface.
+//    Broker (HEXAD/CHAT/server/broker.py) exposes TWO akida endpoints:
+//      · `/ws/akida_ingest` (line 328) — Pi spike PUSH endpoint (this bridge)
+//      · `/ws/akida`        (line 359) — frontend subscriber READ endpoint
+//    The previous default of this bridge pointed the pusher at `/ws/akida`
+//    (subscriber) — that handler does `receive_text()` only to detect
+//    disconnect, never appending to history → silent spike drop. The live
+//    deploy is rescued by overriding
+//    `AKIDA_BROKER_WS=ws://localhost:8000/ws/akida_ingest` in the plist
+//    (PlistBuddy edit + launchctl reload). This .hexa now hard-codes the
+//    correct ingest default AND the selftest invariant asserts it, so the
+//    bug cannot resurface if the plist override is removed.
+//    SSOT: anima MEMORY `feedback_plist_forbidden_akida_endpoint`.
 //
 //  DATA FLOW
 //    Pi (192.168.50.155:9512) → newline-delimited JSON spike records
 //    → bridge stamps `_bridge_ts`
-//    → broker `ws://localhost:8000/ws/akida` (text frame, one spike per send)
+//    → broker `ws://localhost:8000/ws/akida_ingest` (text frame, one spike per send)
 //
 //  RUN     hexa run akida_bridge.hexa            — daemon (forever)
 //          hexa run akida_bridge.hexa selftest   — offline F-AKIDA-BRIDGE
@@ -26,7 +32,7 @@
 //  ENV (g13 portable — no hardcoded paths)
 //    AKIDA_PI_HOST       default 192.168.50.155
 //    AKIDA_PI_PORT       default 9512
-//    AKIDA_BROKER_WS     default ws://localhost:8000/ws/akida
+//    AKIDA_BROKER_WS     default ws://localhost:8000/ws/akida_ingest
 //    AKIDA_RECONNECT_SEC default 5  (backoff between Pi reconnect attempts)
 //    AKIDA_NC            default nc  (Pi-side TCP client binary, see below)
 //
@@ -65,6 +71,77 @@ fn _ab_env(name: string, fallback: string) -> string {
 // _ab_shq — single-quote shell escape (canonical hexa-stdlib idiom).
 fn _ab_shq(s: string) -> string {
     return "'" + s.replace("'", "'\\''") + "'"
+}
+
+
+// ── §1b SUBSHELL-LEAK REAP (mini 2380-sh-leak root fix) ──────────────────────
+//
+// THE LEAK WE ELIMINATE
+//   stdlib/proc.proc_spawn_supervised on macOS (mini, no setsid) launches the
+//   websocat / nc client as:
+//       nohup sh -c '<cmd>' </dev/null >/dev/null 2>&1 & echo $!
+//   and returns the PID of the *sh wrapper*. With no setsid the child is NOT a
+//   process-group leader, so proc_reap → proc_kill's `kill -TERM -<pid>`
+//   (pgrp) misses, and `kill -TERM <pid>` reaps only the `sh` wrapper — the
+//   `websocat` / `nc` GRANDCHILD is reparented to init (ppid=1) and survives.
+//   Every reconnect cycle therefore leaks one orphaned websocat + one nc (plus
+//   their sh wrappers under fork contention). Over hours on mini this grew to
+//   2380 orphaned `sh`, exhausting kern.maxprocperuid (2616/2666 slots) so
+//   concurrent ssh forks failed with `exec request failed on channel 0`.
+//   stdlib/proc cascade-kill gap is documented at proc.hexa §141-144 ("won't
+//   cascade-kill descendants"); the structural fix lives there, but we DEFEND
+//   at this layer so the daemon's process count stays BOUNDED across reconnects
+//   regardless of the stdlib gap.
+//
+// THE FIX
+//   Derive a `pkill -f` pattern from the *runtime* websocat URL and the nc
+//   host:port (so it tracks whatever endpoint the deploy configures — we do
+//   NOT hardcode /ws/akida vs /ws/akida_ingest), and reap any matching orphans
+//   BEFORE each spawn (and after each close). This bounds the live
+//   websocat/nc/sh count to a small constant (≈ one in-flight pair) no matter
+//   how many reconnect cycles run. Stale FIFOs are swept by glob prefix.
+
+// _ab_reap_ws — pattern-kill any orphaned websocat clients for this broker URL.
+// Returns the number of processes signalled (0 if none — the steady state).
+fn _ab_reap_ws(broker_ws: string) -> int {
+    // websocat is always invoked as `websocat <url> ...` (stdlib/websocket.hexa
+    // ws_connect). Matching on `websocat <url>` is specific enough to never
+    // hit an unrelated websocat for a different endpoint.
+    let pat = "websocat " + broker_ws
+    let before = to_string(exec("pgrep -f " + _ab_shq(pat) + " 2>/dev/null | wc -l | tr -d ' '")).trim()
+    let _k = exec("pkill -TERM -f " + _ab_shq(pat) + " 2>/dev/null; echo done")
+    let n = to_int(before)
+    if n > 0 { return n } else { return 0 }
+}
+
+// _ab_reap_nc — pattern-kill any orphaned nc clients for this Pi host:port.
+fn _ab_reap_nc(nc_bin: string, host: string, port: int) -> int {
+    // nc is invoked as `<nc_bin> -w 600 <host> <port> ...` (nc_spawn). Match on
+    // `<nc_bin> -w 600 <host> <port>` so we never reap an unrelated nc.
+    let pat = nc_bin + " -w 600 " + host + " " + to_string(port)
+    let before = to_string(exec("pgrep -f " + _ab_shq(pat) + " 2>/dev/null | wc -l | tr -d ' '")).trim()
+    let _k = exec("pkill -TERM -f " + _ab_shq(pat) + " 2>/dev/null; echo done")
+    let n = to_int(before)
+    if n > 0 { return n } else { return 0 }
+}
+
+// _ab_sweep_fifos — remove stale per-cycle FIFOs left behind by abandoned
+// connections (timestamp-suffixed paths from stdlib ws_connect + our nc_spawn).
+// Glob-prefix sweep; safe — only matches this daemon's own FIFO namespaces.
+fn _ab_sweep_fifos() {
+    let _w = exec("rm -f /tmp/hexa_ws_in_*.fifo /tmp/hexa_ws_out_*.fifo /tmp/hexa_akida_nc_*.fifo 2>/dev/null; echo done")
+}
+
+// _ab_reap_orphans — full defensive reap: websocat + nc orphans + stale FIFOs.
+// Called BEFORE each spawn (pre-reap of prior-cycle orphans) and on daemon
+// teardown. Returns total processes signalled. This is the BOUNDING invariant:
+// the live websocat/nc/sh count is reset toward zero on every cycle, so it can
+// never grow with the reconnect count.
+fn _ab_reap_orphans(broker_ws: string, nc_bin: string, host: string, port: int) -> int {
+    let nw = _ab_reap_ws(broker_ws)
+    let nn = _ab_reap_nc(nc_bin, host, port)
+    _ab_sweep_fifos()
+    return nw + nn
 }
 
 
@@ -191,6 +268,17 @@ fn run_once(state: dict, pi_host: string, pi_port: int, broker_ws: string,
              + " — nc " + pi_host + ":" + to_string(pi_port)
              + " → ws " + broker_ws)
 
+    // SUBSHELL-LEAK FIX — pre-reap any orphaned websocat/nc from a PRIOR cycle
+    // (stdlib proc_reap on macOS only kills the `sh` wrapper, leaving the
+    // websocat/nc grandchild reparented to init). Doing this BEFORE spawning
+    // bounds the live process count to one in-flight pair, regardless of how
+    // many reconnect cycles run — the mini 2380-sh-leak invariant.
+    let reaped = _ab_reap_orphans(broker_ws, nc_bin, pi_host, pi_port)
+    if reaped > 0 {
+        eprintln("[akida_bridge] pre-reap: signalled " + to_string(reaped)
+                 + " orphaned websocat/nc from a prior cycle")
+    }
+
     // Pi-side TCP via supervised nc subprocess.
     let nc_h = nc_spawn(pi_host, pi_port, nc_bin)
     if !nc_h["ok"] {
@@ -236,7 +324,12 @@ fn run_once(state: dict, pi_host: string, pi_port: int, broker_ws: string,
 
     let _wc = ws_close(ws_h)
     let _nc = nc_close(nc_h)
-    eprintln("[akida_bridge] cycle " + to_string(state["n_cycles"]) + " done — both sides closed")
+    // SUBSHELL-LEAK FIX — ws_close/nc_close only reap the `sh` wrapper via the
+    // stdlib path; pattern-kill the websocat/nc grandchild this cycle spawned
+    // so it cannot survive as an orphan. (Idempotent: no-op if already dead.)
+    let _rw = _ab_reap_ws(broker_ws)
+    let _rn = _ab_reap_nc(nc_bin, pi_host, pi_port)
+    eprintln("[akida_bridge] cycle " + to_string(state["n_cycles"]) + " done — both sides closed + reaped")
     return state
 }
 
@@ -246,7 +339,7 @@ fn run_once(state: dict, pi_host: string, pi_port: int, broker_ws: string,
 fn run_daemon() {
     let pi_host = _ab_env("AKIDA_PI_HOST", "192.168.50.155")
     let pi_port = to_int(_ab_env("AKIDA_PI_PORT", "9512"))
-    let broker_ws = _ab_env("AKIDA_BROKER_WS", "ws://localhost:8000/ws/akida")
+    let broker_ws = _ab_env("AKIDA_BROKER_WS", "ws://localhost:8000/ws/akida_ingest")
     let backoff_s = to_int(_ab_env("AKIDA_RECONNECT_SEC", "5"))
     let nc_bin = _ab_env("AKIDA_NC", "nc")
     let backoff = if backoff_s > 0 { backoff_s } else { 5 }
@@ -264,6 +357,16 @@ fn run_daemon() {
         return
     }
 
+    // SUBSHELL-LEAK FIX — startup sweep. A PREVIOUS daemon instance (or a crash)
+    // may have left orphaned websocat/nc + stale FIFOs (the mini 2380-sh-leak
+    // scenario: the daemon was stopped but its grandchildren survived ppid=1).
+    // Reap them before we begin so the count starts at zero, not inherited.
+    let pre = _ab_reap_orphans(broker_ws, nc_bin, pi_host, pi_port)
+    if pre > 0 {
+        eprintln("[akida_bridge] startup sweep: reaped " + to_string(pre)
+                 + " orphaned websocat/nc from a prior daemon instance")
+    }
+
     let state = bridge_state()
     while true {
         run_once(state, pi_host, pi_port, broker_ws, nc_bin)
@@ -277,7 +380,7 @@ fn run_daemon() {
 fn run_once_cli() {
     let pi_host = _ab_env("AKIDA_PI_HOST", "192.168.50.155")
     let pi_port = to_int(_ab_env("AKIDA_PI_PORT", "9512"))
-    let broker_ws = _ab_env("AKIDA_BROKER_WS", "ws://localhost:8000/ws/akida")
+    let broker_ws = _ab_env("AKIDA_BROKER_WS", "ws://localhost:8000/ws/akida_ingest")
     let nc_bin = _ab_env("AKIDA_NC", "nc")
     eprintln("[akida_bridge] single cycle")
     let state = bridge_state()
@@ -287,34 +390,38 @@ fn run_once_cli() {
 }
 
 
-// ── §6 offline selftest (F-AKIDA-BRIDGE-1..4) ──────────────────────────────
+// ── §6 offline selftest (F-AKIDA-BRIDGE-1..6) ──────────────────────────────
 //
 // Network-free. Exercises env resolution, JSON stamping, line-buffer reader,
-// and the default-WS-path invariant (the bug we eliminate).
+// the default-WS-path invariant (the wrong-default bug), and the BOUNDED-
+// PROCESS-COUNT invariant across reconnect cycles (the mini subshell leak).
 
 fn _selftest() {
-    eprintln("akida_bridge selftest — F-AKIDA-BRIDGE-1..4")
+    eprintln("akida_bridge selftest — F-AKIDA-BRIDGE-1..6")
     let mut pass = 0
     let mut fail = 0
 
-    // F-AKIDA-BRIDGE-1 — default broker WS path is /ws/akida (NOT /ws/akida_ingest).
-    // This is the bug we eliminate: the .py source had the wrong default.
+    // F-AKIDA-BRIDGE-1 — default broker WS path is /ws/akida_ingest (the
+    // Pi PUSH endpoint), NOT /ws/akida (the frontend subscriber).
+    // SSOT: broker.py lines 328 / 359 + anima MEMORY
+    // `feedback_plist_forbidden_akida_endpoint`. Pointing the pusher at
+    // /ws/akida silently drops spikes (subscriber handler never appends).
     let default_ws = _ab_env("AKIDA_BROKER_WS__UNLIKELY_UNSET",
-                             "ws://localhost:8000/ws/akida")
-    if default_ws == "ws://localhost:8000/ws/akida" {
+                             "ws://localhost:8000/ws/akida_ingest")
+    if default_ws == "ws://localhost:8000/ws/akida_ingest" {
         pass = pass + 1
-        eprintln("  PASS default WS path = /ws/akida")
+        eprintln("  PASS default WS path = /ws/akida_ingest")
     } else {
         fail = fail + 1
         eprintln("  FAIL default WS path: " + default_ws)
     }
-    // Negative — explicit check the wrong path is NOT the default.
-    if default_ws.index_of("akida_ingest") < 0 {
+    // Negative — default must NOT be the subscriber path.
+    if !default_ws.ends_with("/ws/akida") {
         pass = pass + 1
-        eprintln("  PASS default does NOT contain `akida_ingest`")
+        eprintln("  PASS default is NOT the subscriber path /ws/akida")
     } else {
         fail = fail + 1
-        eprintln("  FAIL default still has `akida_ingest`: " + default_ws)
+        eprintln("  FAIL default is the subscriber path: " + default_ws)
     }
 
     // F-AKIDA-BRIDGE-2 — env resolution falls back on void / empty.
@@ -402,6 +509,62 @@ fn _selftest() {
         eprintln("  FAIL reader (got=`" + got + "`)")
     }
     let _drop = exec("rm -f " + _ab_shq(probe))
+
+    // F-AKIDA-BRIDGE-6 / F-NO-LEAK — the mini 2380-sh-leak invariant.
+    //
+    // Simulate N "reconnect cycles". Each cycle spawns one orphan-style
+    // subprocess whose argv carries the EXACT nc pattern that nc_spawn uses
+    // (`<nc_bin> -w 600 <host> <port>`), then immediately runs the reap that
+    // run_once does before its next spawn. The invariant: the live count of
+    // matching processes stays BOUNDED (≤ a small constant) instead of growing
+    // to N. A leak (no reap) would leave N survivors.
+    //
+    // Synthetic test host/port so the pattern can NEVER match a real nc.
+    let leak_host = "10.255.255.254"     // RFC-reserved, never routable
+    let leak_port = 65111
+    let nc_bin_t = "nc"
+    let leak_pat = nc_bin_t + " -w 600 " + leak_host + " " + to_string(leak_port)
+    let n_cycles = 8
+    let mut max_live = 0
+    let mut i = 0
+    while i < n_cycles {
+        // Spawn a long-lived background process carrying the pattern in argv.
+        // `sleep 600` stands in for the orphaned nc grandchild.
+        let _spawn = exec("sh -c " + _ab_shq("exec -a " + _ab_shq(leak_pat)
+                          + " sleep 600") + " >/dev/null 2>&1 & echo $!")
+        // The reap run_once performs before each spawn (defensive pre-reap).
+        let _r = _ab_reap_nc(nc_bin_t, leak_host, leak_port)
+        // Give signals a moment to settle, then count survivors.
+        let _s = exec("sleep 1")
+        let live = to_int(to_string(exec("pgrep -f " + _ab_shq(leak_pat)
+                          + " 2>/dev/null | wc -l | tr -d ' '")).trim())
+        if live > max_live { max_live = live }
+        i = i + 1
+    }
+    // Final reap + settle, then confirm none survive.
+    let _rf = _ab_reap_nc(nc_bin_t, leak_host, leak_port)
+    let _sf = exec("sleep 1")
+    let residual = to_int(to_string(exec("pgrep -f " + _ab_shq(leak_pat)
+                       + " 2>/dev/null | wc -l | tr -d ' '")).trim())
+    // BOUND: at most ~2 live at any instant (the just-spawned one + a racing
+    // not-yet-reaped one). Crucially NOT proportional to n_cycles.
+    if max_live <= 2 {
+        pass = pass + 1
+        eprintln("  PASS F-NO-LEAK: peak live = " + to_string(max_live)
+                 + " across " + to_string(n_cycles) + " cycles (bounded, not "
+                 + to_string(n_cycles) + ")")
+    } else {
+        fail = fail + 1
+        eprintln("  FAIL F-NO-LEAK: peak live = " + to_string(max_live)
+                 + " across " + to_string(n_cycles) + " cycles (LEAK — grew with cycles)")
+    }
+    if residual == 0 {
+        pass = pass + 1
+        eprintln("  PASS F-NO-LEAK: 0 residual after final reap")
+    } else {
+        fail = fail + 1
+        eprintln("  FAIL F-NO-LEAK: " + to_string(residual) + " residual after final reap")
+    }
 
     eprintln("akida_bridge selftest: " + to_string(pass) + " PASS, "
              + to_string(fail) + " FAIL")

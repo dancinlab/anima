@@ -87,7 +87,7 @@ register leak) — § 4 의 "학습된 토큰" 한계. vP21G/K/M 의 diverse-cor
 - ⚠️ KOSMOS + tension wiring 없음
 
 → 이 한계가 V3 (pure HEXAD substrate) 시도의 이유. V3 attempt 1 은 3/3 FAIL
-했고 (`HEXAD/V3/EASY.md`), production path = LoRA 유지로 결정.
+했고 (`HEXAD/PURE/EASY.md`), production path = LoRA 유지로 결정.
 
 ---
 

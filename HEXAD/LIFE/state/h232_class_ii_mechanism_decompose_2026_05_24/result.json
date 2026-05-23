@@ -1,0 +1,41 @@
+{
+  "id": "H_232",
+  "slug": "class-ii-mechanism-decompose",
+  "date": "2026-05-24",
+  "deterministic": true,
+  "hexa_only": true,
+  "llm": "none",
+  "cost": "$0 mac local",
+  "phi_primitive": "RFC 036 phi_spatial (HEXAD/C/c_lib.hexa c_measure_phi, byte-equal phi_rs native replica)",
+  "config": { "N": 16, "dim": 12, "warm": 8, "traj_len": 20, "reps": 5, "n_bins": 4, "boundary": "periodic" },
+  "rules": { "class_ii_tasep": 184, "class_ii_xor_l": 60, "class_ii_xor_r": 102 },
+  "mechanism": { "184": "TASEP shift (information conservation)", "60": "XOR-additive L (Sierpinski)", "102": "XOR-additive R (Sierpinski mirror)" },
+  "phi_trajectory": {
+    "rule184": [1.19781, 1.19781, 1.19781, 1.19781, 1.19781, 1.19781, 1.19781, 1.19781, 1.19781, 1.19781, 1.19781, 1.19781, 1.19781, 1.19781, 1.19781, 1.19781, 1.19781, 1.19781, 1.19781, 1.19781],
+    "rule60":  [1.6832, 1.86873, 2.034, 2.33065, 2.51472, 2.56563, 2.78794, 1.73804, 1.14511e-05, 1.14511e-05, 1.14511e-05, 1.14511e-05, 1.14511e-05, 1.14511e-05, 1.14511e-05, 1.14511e-05, 1.14511e-05, 1.14511e-05, 1.14511e-05, 1.14511e-05],
+    "rule102": [1.6832, 1.86873, 2.034, 2.33065, 2.51472, 2.56563, 2.78794, 1.73804, 1.14511e-05, 1.14511e-05, 1.14511e-05, 1.14511e-05, 1.14511e-05, 1.14511e-05, 1.14511e-05, 1.14511e-05, 1.14511e-05, 1.14511e-05, 1.14511e-05, 1.14511e-05]
+  },
+  "metrics": {
+    "r2_linear_fit":      { "rule184": 0.0, "rule60": 0.642327, "rule102": 0.642327 },
+    "monotone_nondec_frac": { "rule184": 0.789474, "rule60": 0.894737, "rule102": 0.894737 },
+    "sign_change_density":  { "rule184": 0.0, "rule60": 0.0555556, "rule102": 0.0555556 },
+    "autocorr_lag1":        { "rule184": 0.675, "rule60": 0.880831, "rule102": 0.880831 },
+    "argmax_peak_t":        { "rule184": 11, "rule60": 6, "rule102": 6 }
+  },
+  "criteria": {
+    "C1_RULE184_MONOTONE":  { "r2_floor": 0.7, "r2": 0.0, "mono_nd": 0.789474, "verdict": "FAIL" },
+    "C2_XOR_OSCILLATING":   { "osc_floor": 0.3, "60_osc": 0.0555556, "102_osc": 0.0555556, "verdict": "FAIL" },
+    "C3_ACORR_RANK":        { "ac_184": 0.675, "ac_60": 0.880831, "ac_102": 0.880831, "184>60": false, "184>102": false, "verdict": "FAIL" },
+    "C4_BYTE_IDENT":        { "verdict": "PASS" },
+    "C_PEAK_DISTINCT":      { "peak_184": 11, "peak_60": 6, "peak_102": 6, "any_distinct": true }
+  },
+  "falsifiers": {
+    "F1_RULE184_OSCILLATING":  "PASS",
+    "F2_XOR_MONOTONE":         "PASS",
+    "F3_ACORR_INVERSION":      "FAIL",
+    "F4_BYTE_IDENT_CONTRACT":  "PASS",
+    "F5_PHI_NONFINITE":        "PASS"
+  },
+  "verdict_rule": "SUPPORTED iff C1∧C2; PARTIAL iff C1⊕C2; else FALSIFIED",
+  "verdict": "FALSIFIED"
+}

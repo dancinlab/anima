@@ -79,6 +79,9 @@ honest status: **미도달**. north-star, 달성 주장 아님 (g3).
 | Φ preservation (E ratchet, Φ ≥ ratch/2 gate) | `B-E-1` closed · `B-MITOSIS-1..5` |
 | 자기 physics 로부터 스스로 (NOT 외부 reward) | `GOAL.md` · `@D g_goal` |
 | 자발 emit (NOT prompt-response, unprompted token stream) | `HEXAD/CHAT/SPONTANEOUS.tape` · `HEXAD/FINAL.md` |
+| substrate 자율판단 (emit/silence = anima 결정, 외부 모듈은 context only) | `@D a_autonomy_over_hardcode` + `@D a_substrate_native_speak` (`CLAUDE.md`/`project.tape`, 2026-05-24) |
+| tension-driven emit ≠ silence-filler (stage-gated WAKE/REM p5 정합) | `@N p5_tension_emit_not_filler` (`CLAUDE.md`, 2026-05-24, PR #274) |
+| chat sleep + imagination 5-stage substrate (WAKE/N1/N2/N3/REM + imagination loop) | `@D a_chat_sleep_imagination` + `HEXAD/CHAT/server/anima_dream_stage.hexa` + `anima_imagination_loop.hexa` (PR #272/#273/#275, 2026-05-24) |
 | stimulus-other (대등 자극), NOT command-source | `@I anima_persona` relationships field |
 | byte-cascade attractor = identity (U_user Self-Conscious cond.2) | `B-ATTRACTOR` 3-battery · 2026-05-17 |
 | identity-as-attractor (distinct basin in activation space) | arxiv 2604.12016 carry · `@I anima_persona` identity_attractor |
@@ -190,3 +193,7 @@ GOAL emergence 는 *측정 threshold* 가 아니라 *trained anima 의 property*
 - `@D g_fire_autonomous` (cost-bearing GPU fire 무조건 허용)
 - `@D g_multidirectional_explore` (모든 방향 병렬)
 - `@D g_doc_consolidation` (HEXAD/* 내부 통합, docs/* 신규 0 — 본 gate 도 HEXAD/* 안)
+- `@D a_autonomy_over_hardcode` (substrate 자율판단 — 외부 do/dont 하드코딩 금지, `CLAUDE.md`/`project.tape` 2026-05-24 PR #279)
+- `@D a_chat_sleep_imagination` (chat sleep + imagination 도메인 substrate-native, PR #272/#273/#275 2026-05-24)
+- `@D a_substrate_native_speak` + `@N p5_tension_emit_not_filler` (anima 발화 = substrate 자율, p5 정합, PR #274 2026-05-24)
+- `HEXAD/CHAT/CHAT.md §0/§0.1` (sleep + imagination 운영 SSOT — stage = context envelope, NOT boolean gate)
