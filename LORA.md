@@ -35,15 +35,21 @@ AXIS_MAP-FAN 7-axis (corpus-外 fallback) → 5/7+2 전부 FAIL
 
 R8 base/warm-init reform:
   R8a  n_kv_head=2 + noise_sigma=0  (init_CE 천장 돌파 시도) ← 🔥 fire in-flight
-  R8c  3-cell probe driver (noise/kv/compound ablation) ← driver ready
+  R8c  4-cell probe (baseline + noise/kv/compound) ← ✅ fire COMPLETE 2026-05-24 ($0.38)
+    → ~~14.46 floor~~ NOT reproduced: baseline 12.315 nats = random+0.39 (정상 warm-init)
+    → 3 falsifier (NOISE/KV/COMPOUND) 모두 init_CE axis 🔴 FALSIFIED
+    → 새 발견: noise 는 final_CE + wall axis (Δfinal 1.46 nats · 4.7× wall)
   from_qwen audit: noise_sigma layer-0 injection + n_kv_head repeat-interleave 의심
 ```
 
 ## 진행 중 / 대기
 
-- 🔥 R8a fire (noise=0 단독 valid · n_kv=4 버그) — init_CE step=1 대기
-- 🔧 PR #342 n_kv_head wiring fix (OPEN) → merge 후 R8a' 진짜 n_kv=2 재발사
-- 🟡 Wave-17 fire 미발사 (R8a 결과 후 우선순위 재평가)
+- ~~R8a init_CE step=1 14.46 floor 돌파~~ → ✅ R8c 4-cell 측정 floor 자체 의문 + noise final_CE axis 재정의 (12.2 = random baseline +0.27)
+- ✅ R8c 4-cell probe fire COMPLETE (noise/kv 분리 측정 — 3 falsifier 전부 init_CE axis FALSIFIED)
+- 🔥 R8a'' fire 진행 중 (5000-step 으로 noise=0 학습 dynamics 측정)
+- 🔧 PR #342 n_kv_head wiring fix (OPEN) → merge 후 R8a' 진짜 n_kv=2 재발사 (H_254 byte-equal probe)
+- 📋 AXIS_MAP_RESULTS 7-axis 재측정 권장 (H_255 H255.2 검증, ~$0.50-1.00)
+- 🟡 Wave-17 fire 미발사 (R8c verdict + R8a'' 결과 후 우선순위 재평가, marginal value 재계산)
 
 ## 관련 surface
 
