@@ -239,10 +239,12 @@ fn spont_meta_tag_enabled(env_meta: bool) -> bool { return env_meta }
 fn spont_meta_prefix() -> string { return "(spontaneous) " }
 
 
-// ── §10 spike → 8-factor map (HEXAD/SPONTANEOUS/SPIKE_FACTOR_MAP.md) ─────────
+// ── §10 spike → 8-factor map ────────────────────────────────────────────────
+// spec  : HEXAD/SPONTANEOUS/SPIKE_FACTOR_MAP.md  (prose form, §1-§7)
+// impl  : 본 §10 = SSOT for numerics (deltas / thresholds / modulators)
 // apply_spike_features — pure: features → 8-factor delta + §4 regime modulator
-// + [0,1] clamp. Substrate-only `relevance` + `balance` pass through (§2).
-// Numeric values mirror SPIKE_FACTOR_MAP.md byte-by-byte (see inline § anchors).
+// + [0,1] clamp. Substrate-only `relevance` + `balance` + `dynamics`
+// pass-through (§2). Inline § anchors below cross-reference the .md.
 
 fn _spike_num(d: dict, k: string) -> float {
     if !d.has_key(k) { return 0.0 }
