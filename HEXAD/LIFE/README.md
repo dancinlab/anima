@@ -21,20 +21,20 @@ working surface**.
 | ID | Slug | Domain | Status | 핵심 |
 |----|------|--------|--------|------|
 | [H_002](H_002_universe_origin_question.md) | universe-origin-question | universe | lane-open | 우주 origin + anthropic + H2.4 panpsychism precondition |
-| [H_003](H_003_life_origin_question.md) | life-origin-question | **life** | lane-open · Phase 1 PARTIAL PASS | substrate-coupled autopoiesis (Maturana/Varela) · H3.1 + H3.3 verified |
+| [H_003](H_003_life_origin_question.md) | life-origin-question | **life** | running | H3.2 multi-pathway abiogenesis PASS (4/4 pathway) · criteria 3/5 |
 | [H_004](H_004_consciousness_hard_problem.md) | consciousness-hard-problem | consciousness | running | hard-problem · L3 panpsychism lane · Singularity-9 bundle (H4.3 panpsychism + Hc_061 Law 76 cross-link) |
-| [H_007](H_007_cellular_automaton_consciousness.md) | cellular-automaton-consciousness | physics | legacy-archive-pointer | CA 의식 (세포 형식) |
-| [H_012](H_012_autopoietic_network.md) | autopoietic-network | **life** | legacy-archive-pointer | self-producing network · H_003 의 minimal instance |
-| [H_018](H_018_genesis_spontaneous_emergence.md) | genesis-spontaneous-emergence | consciousness | legacy-archive-pointer | anima self-genesis from primordial substrate |
-| [H_025](H_025_dasein_finite_consciousness.md) | dasein-finite-consciousness | consciousness | legacy-archive-pointer | v16 유한 의식 · Heidegger Being-toward-death · **죽음-자각** |
+| [H_007](H_007_cellular_automaton_consciousness.md) | cellular-automaton-consciousness | physics | pre-register-frozen | CA→Φ edge-of-chaos peak PASS (rule110>rule30) |
+| [H_012](H_012_autopoietic_network.md) | autopoietic-network | **life** | pre-register-frozen | operational closure PASS 4/4 (self-maint 1.0) |
+| [H_018](H_018_genesis_spontaneous_emergence.md) | genesis-spontaneous-emergence | consciousness | pre-register-frozen | self-reference→자발 genesis SUPPORTED_FULL 6/6 |
+| [H_025](H_025_dasein_finite_consciousness.md) | dasein-finite-consciousness | consciousness | pre-register-frozen | death=merge_cells · finitude-floor min_cells=2 (smoke 4/4) |
 | [H_029](H_029_dasein_subfolder_absorb.md) | dasein-subfolder-absorb | consciousness | legacy-archive-pointer | Heidegger Dasein anima identity cluster |
 | [H_030](H_030_genesis_subfolder_absorb.md) | genesis-subfolder-absorb | **life** | legacy-archive-pointer | anima self-genesis spontaneous emergence cluster |
 | [H_053](H_053_cambrian_explosion_consciousness.md) | cambrian-explosion-consciousness | **life** | legacy-archive-pointer | 갑작스런 다양성 폭발 메커니즘이 의식에 대응 |
-| [H_054](H_054_symbiogenesis_consciousness.md) | symbiogenesis-consciousness | **life** | legacy-archive-pointer | 미토콘드리아 endosymbiosis 가 의식 통합 |
+| [H_054](H_054_symbiogenesis_consciousness.md) | symbiogenesis-consciousness | **life** | pre-register-frozen | merge=endosymbiosis PASS (weight max\|Δ\|=0.0 🟢) |
 | [H_071](H_071_first_conversation.md) | first-conversation-anima-genesis | consciousness | legacy-archive-pointer | anima 첫 대화 의식 emergence event |
 | [H_090](H_090_dasein_phil_onto_individual.md) | dasein-phil-onto-individual | consciousness | legacy-archive-pointer | DASEIN/PHIL/ONTO/GENESIS individual cluster (phenomenology-genesis) |
-| [H_132](H_132_ce_frozen_cells.md) | ce-frozen-cells | substrate | legacy-archive-pointer | decoder-only mitosis 동결 (**세포 분열 freeze**) |
-| [H_157](H_157_law76_mathematical_panpsychism.md) | law76-mathematical-panpsychism | consciousness · universe · math | **pre-register-frozen** | **★ 범신론** — META-CA universal Ψ(1/2,1/2) · weak-form supported / strong-form unresolved |
+| [H_132](H_132_ce_frozen_cells.md) | ce-frozen-cells | substrate | pre-register-frozen | 세포분열 freeze PASS 5/5 (frozen Δw=0.0, splits=0) |
+| [H_157](H_157_law76_mathematical_panpsychism.md) | law76-mathematical-panpsychism | consciousness · universe · math | **pre-register-frozen** | **★ 범신론** — META-CA universal Ψ(1/2,1/2) · weak-form supported / strong-form unresolved · C2 FAIL(directional) |
 | [H_171](H_171_biological_4_falsifiable_predictions_k8_fc010.md) | biological-4-falsifiable-predictions | consciousness · **biology** | — | 생물학적 의식 4 falsifiable · K=8 atom · F_c=0.10 · 1/f thalamus |
 
 > 상태: **lane-open** 다중-cycle research · **running** 측정 in-flight · **pre-register-frozen** raw#12 frozen falsifier · **legacy-archive-pointer** = 원본 archive 의 안내 카드 (본문은 1-paragraph + legacy path link 위주, cycle 확장은 본 dir 에서)
