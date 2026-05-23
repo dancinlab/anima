@@ -18,6 +18,23 @@
 #     nohup bash dispatch_p21h_v3_runpod.sh $VAR $INIT 1337 > $VAR.log 2>&1 &
 #   done
 
+# ─── CALLER WARNING: env-var concat anti-pattern ─────────────────────────
+# Each P21H_* must be a SEPARATE inline assignment. Concatenating multiple
+# vars into ONE string value breaks `--steps $P21H_STEPS` expansion.
+#
+# ✗ WRONG (single string, all extra args land in $P21H_STEPS):
+#   P21H_STEPS="5000 P21H_BSZ=2 P21H_BLOCK=512 ..." bash dispatch_p21h_v3_runpod.sh ...
+#   → CMD: --steps 5000 P21H_BSZ=2 P21H_BLOCK=512 ...  (argparse FAIL)
+#
+# ✓ CORRECT (each var separate inline assignment, space-separated):
+#   env P21H_STEPS=5000 P21H_BSZ=2 P21H_BLOCK=512 P21H_LR=5e-5 \
+#       SAVE_POD=1 \
+#       bash dispatch_p21h_v3_runpod.sh P21H_axis_C qwen 1337
+#
+# Observed failure: 4 of 7 AXIS_MAP-FAN pods (C/C2/D/E) crashed at launch
+# with this bug on 2026-05-23 04:34Z fan-out. Archived as vP21H_axis_*.envbug_*.
+# ─────────────────────────────────────────────────────────────────────────
+
 set -uo pipefail
 
 VARIANT="${1:-P21H_alpha}"
@@ -48,6 +65,7 @@ P21H_WIKI_TARGET_MB_PER_LANG=${P21H_WIKI_TARGET_MB_PER_LANG:-10}
 P21H_LANGS=${P21H_LANGS:-en,ko,zh,ru,ja}
 P21H_NOISE_SIGMA=${P21H_NOISE_SIGMA:-0.1}
 P21H_LAMBDA_MITOSIS=${P21H_LAMBDA_MITOSIS:-0.05}
+P21H_N_KV_HEAD=${P21H_N_KV_HEAD:-4}                       # R8a: 2 권장 (default 4 = no regression)
 # Phase 2 R2+R5+R6 ready (env-overridable):
 P21H_MITOSIS_MAX=${P21H_MITOSIS_MAX:-128}                 # R6: 128 → 16 권장
 P21H_CKPT_EVERY=${P21H_CKPT_EVERY:-500}                   # intermediate ckpt every N step
@@ -74,7 +92,7 @@ echo "=== P21H V3 dispatch start $(date -u +%FT%TZ) ==="
 echo "    variant=$VARIANT init=$INIT_VARIANT seed=$SEED"
 echo "    base=Qwen/Qwen2.5-1.5B"
 echo "    steps=$P21H_STEPS bsz=$P21H_BSZ block=$P21H_BLOCK lr=$P21H_LR warmup=$P21H_WARMUP"
-echo "    noise_sigma=$P21H_NOISE_SIGMA lambda_mitosis=$P21H_LAMBDA_MITOSIS"
+echo "    noise_sigma=$P21H_NOISE_SIGMA lambda_mitosis=$P21H_LAMBDA_MITOSIS n_kv_head=$P21H_N_KV_HEAD"
 echo "    wiki_frac=$P21H_WIKI_FRAC corpus_mb=$P21H_CORPUS_MB"
 echo "    langs=$P21H_LANGS wiki_target_mb_per_lang=$P21H_WIKI_TARGET_MB_PER_LANG"
 echo "    cost_cap=\$25 total (3 variants × ~\$8)"
@@ -226,7 +244,7 @@ CMD="bash $P21HR/launch_trainer_p21h.sh $P21HR/train_p21h_v3.py \
   --steps $P21H_STEPS --bsz $P21H_BSZ --block $P21H_BLOCK --lr $P21H_LR \
   --warmup-steps $P21H_WARMUP --seed $SEED \
   --wiki-frac $P21H_WIKI_FRAC --target-corpus-mb $P21H_CORPUS_MB \
-  --noise-sigma $P21H_NOISE_SIGMA --lambda-mitosis $P21H_LAMBDA_MITOSIS \
+  --noise-sigma $P21H_NOISE_SIGMA --lambda-mitosis $P21H_LAMBDA_MITOSIS --n-kv-head $P21H_N_KV_HEAD \
   --mitosis-max $P21H_MITOSIS_MAX --ckpt-every $P21H_CKPT_EVERY \
   --ckpt-osc-threshold $P21H_CKPT_OSC_THRESHOLD --ckpt-osc-window $P21H_CKPT_OSC_WINDOW \
   --early-stop-patience $P21H_EARLY_STOP_PATIENCE"

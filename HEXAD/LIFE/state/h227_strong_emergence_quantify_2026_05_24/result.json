@@ -1,0 +1,49 @@
+{
+  "id": "H_227",
+  "slug": "strong-emergence-phase-transition",
+  "date": "2026-05-24",
+  "deterministic": true,
+  "hexa_only": true,
+  "llm": "none",
+  "cost": "$0 mac local",
+  "sister": "H_219 (3-point seed) + H_004.8 Hc_607 (CMT downward-causation) + H_007 (rule 110 CA substrate)",
+  "phi_primitive": "RFC 036 phi_spatial (HEXAD/C/c_lib.hexa c_measure_phi, sanity-only)",
+  "config": { "N": 16, "steps": 5, "rule": 110, "n_fractions": 8, "dim_for_phi": 8, "warm_for_phi": 8, "boundary": "periodic", "init_offset": 0 },
+  "sweep": [
+    { "i": 0, "frac": 0.0, "count": 0.0, "P_obs": 1.0, "P_fit": 0.705785, "phi_sanity": 0.795398 },
+    { "i": 1, "frac": 0.125, "count": 2.0, "P_obs": 0.625, "P_fit": 0.637031, "phi_sanity": 0.595295 },
+    { "i": 2, "frac": 0.25, "count": 4.0, "P_obs": 0.4375, "P_fit": 0.562177, "phi_sanity": 0.251919 },
+    { "i": 3, "frac": 0.375, "count": 6.0, "P_obs": 0.3125, "P_fit": 0.48438, "phi_sanity": 0.400011 },
+    { "i": 4, "frac": 0.5, "count": 8.0, "P_obs": 0.1875, "P_fit": 0.407333, "phi_sanity": 0.0666781 },
+    { "i": 5, "frac": 0.625, "count": 10.0, "P_obs": 0.4375, "P_fit": 0.334589, "phi_sanity": 0.0666781 },
+    { "i": 6, "frac": 0.75, "count": 12.0, "P_obs": 0.375, "P_fit": 0.268941, "phi_sanity": 0.0136403 },
+    { "i": 7, "frac": 0.875, "count": 14.0, "P_obs": 0.3125, "P_fit": 0.212069, "phi_sanity": 1.14553e-05 }
+  ],
+  "sigmoid_fit": {
+    "form": "P(f) = 1 / (1 + exp(k * (f - f_c)))",
+    "f_c": 0.35,
+    "k": 2.5,
+    "sse": 0.212046,
+    "sst": 0.444824,
+    "r_squared": 0.523303
+  },
+  "linear_fit_compare": {
+    "sse_linear": 0.216936,
+    "r_squared_linear": 0.51231
+  },
+  "criteria": {
+    "C1_r2_sigmoid":   { "metric": "R² sigmoid ≥ 0.8", "value": 0.523303, "verdict": "FAIL" },
+    "C2_fc_localized": { "metric": "f_c ∈ (0, 1)", "value": 0.35, "verdict": "PASS" },
+    "C3_endpoint":     { "metric": "P(f=0) = 1.0", "value": 1.0, "verdict": "PASS" },
+    "C4_deterministic":{ "metric": "no RNG; byte-identical re-run", "verdict": "PASS" }
+  },
+  "falsifiers": {
+    "F1_NOT_LINEAR":  { "metric": "sigmoid R² > linear R² + 0.05 OR linear R² < 0.95", "verdict": "PASS" },
+    "F2_MONOTONE":    { "metric": "P(f) non-increasing across sweep", "verdict": "FAIL" },
+    "F3_P0_UNITY":    { "metric": "P(f=0) = 1.0", "verdict": "PASS" },
+    "F4_BYTE_IDENT":  { "metric": "deterministic by construction", "verdict": "PASS" },
+    "F5_R2_FLOOR":    { "metric": "R² sigmoid ≥ 0.5", "verdict": "PASS" }
+  },
+  "verdict_rule": "SUPPORTED iff C1 ∧ C2 ∧ C3 · PARTIAL iff C1 ∧ C2 ∧ ¬C3 · else FALSIFIED",
+  "verdict": "FALSIFIED"
+}

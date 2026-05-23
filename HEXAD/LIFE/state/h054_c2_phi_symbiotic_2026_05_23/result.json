@@ -1,0 +1,67 @@
+{
+  "hypothesis": "H_054",
+  "cycle": "Cycle_2_phi_symbiotic",
+  "slug": "symbiogenesis-consciousness",
+  "sub_criterion": "C2 — Φ_symbiotic > Φ_sum (super-additive integration)",
+  "date": "2026-05-23",
+  "deterministic": true,
+  "hexa_only": true,
+  "llm": "none",
+  "cost": "$0 mac local",
+  "honest_tier": "🟢 SUPPORTED-NUMERICAL (phi_spatial RFC 036 + B-MITOSIS-2 🔵 mass-conserving merge cross-link)",
+  "phi_primitive": "RFC 036 phi_spatial (NOT 🔵 IIT 4.0 MIP)",
+  "merge_primitive": "H_054 Cycle #1 mass-conserving linear avg ((w1+w2)/2; B-MITOSIS-2 cross-link 🔵 sympy 27/27)",
+  "substrate": "2 isolated H_003-style catalytic cell-pools (closed A/B/C cycle + nn diffusion) seeded distinctly; per-cell obs=A+B+C site mass",
+  "config": {
+    "n_cells": 8,
+    "dim": 8,
+    "warm": 4,
+    "K_rate": 0.6,
+    "decay": 0.1,
+    "diffuse": 0.05,
+    "n_bins": 4,
+    "seed_a": 347178,
+    "seed_b": 347179,
+    "tol": 0.000001
+  },
+  "phi": {
+    "phi_a_isolated":    4.646387,
+    "phi_b_isolated":    4.646387,
+    "phi_sum":           9.292773,
+    "phi_max":           4.646387,
+    "phi_symbiotic":     4.646387,
+    "phi_a_rerun":       4.646387,
+    "ratio_symbiotic_over_sum": 0.500000,
+    "gap_super_additive":       -4.646387,
+    "gap_max_dominant":         0.000000
+  },
+  "merge_invariant_regression": {
+    "max_dev_obs_trajectory": 0.000000,
+    "tol":                   0.000001,
+    "conserved":             true
+  },
+  "falsifiers": {
+    "F_C2_1_super_additive":   { "metric": "Φ_symbiotic > Φ_sum",        "verdict": "FAIL", "falsifier_state": "TRIGGERED" },
+    "F_C2_2_max_dominant":     { "metric": "Φ_symbiotic ≥ max(Φ_A,Φ_B)", "verdict": "PASS", "falsifier_state": "NOT_TRIGGERED" },
+    "F_C2_3_finite_nonneg":    { "metric": "Φ_symbiotic ≥ 0 (no NaN)",   "verdict": "PASS", "falsifier_state": "NOT_TRIGGERED" },
+    "F_C2_4_determinism":      { "metric": "re-run byte-equal",          "verdict": "PASS", "falsifier_state": "NOT_TRIGGERED" },
+    "F_C2_5_merge_conservation":{ "metric": "max|Δ| obs traj ≤ tol",      "verdict": "PASS", "falsifier_state": "NOT_TRIGGERED" }
+  },
+  "verdict_rule": "PASS = C2.1 (super-additive) + C2.2 (max-dominant) + C2.4 (finite) + determinism + merge-conservation; F-C2-1 TRIGGERED => FALSIFIED; max-dominant only => PARTIAL",
+  "verdict_class": "FALSIFIED",
+  "criterion": "C2 (Φ_symbiotic > Φ_sum; strong form of H54.4)",
+  "cross_link": {
+    "cycle_1": "H_054 Cycle #1 (MERGE primitive PASS, weight max|Δ|=0.0 🟢)",
+    "phi_primitive_origin": "H_007 / H_003 H3.4 / H_171 — RFC 036 phi_spatial baseline",
+    "sister_H": "H_203 (asymmetric-merge differentiation), H_204 (parallel-firing weak-panpsy threshold), H_157 (combination problem)"
+  },
+  "honest_limits": [
+    "L-C2-1: phi_spatial proxy is 🟢 NUMERICAL (RFC 036 spatial-slice replica of phi_rs with n_bins=4), NOT 🔵 IIT 4.0 full MIP / cause-effect structure / exclusion. 'Φ' here = production Φ-ratchet input, not canonical IIT Φ.",
+    "L-C2-2: merge operationalization = element-wise linear average (0.5*(s_A[i,t]+s_B[i,t])) on obs trajectories — the H_054 Cycle #1 mass-conserving primitive (B-MITOSIS-2). Alternative merge primitives (asymmetric/keeper-preserve = H_203 sister; max-pool; multiplicative) would yield different Φ patterns and are not tested here.",
+    "L-C2-3: pre-merge 'isolated' = two distinct seeds on the SAME lattice geometry. Truly disconnected substrate (separate physical lattices with their own diffusion topology) is a stronger isolation; here we use seed-divergence as the operationalization (cheap proxy).",
+    "L-C2-4: super-additivity (Φ_symbiotic > Φ_sum) — even if observed — does NOT entail phenomenal binding (H_004 hard problem boundary carries unchanged); IIT super-additivity is necessary, not sufficient for unified macro-consciousness.",
+    "L-C2-5: small substrate (N=8 cells × DIM=8 steps × n_bins=4) — endosymbiotic real-organism scale (eukaryote ≥ 10^13 mitochondria) is many orders out; this is a toy substrate sanity probe, NOT a scaling claim.",
+    "L-C2-6: ratio Φ_symbiotic/Φ_sum substrate-dependent — running C2 on different lattice topologies/coupling/seed-base yields different ratios. The numerical value reported here is one (frozen) substrate instance, not a universal constant.",
+    "L-C2-7: single-cycle one-shot — no multi-seed averaging across (SEED_A,SEED_B) pairs. A robust effect would require ≥5 seed-pair sweep; this is a single deterministic measurement (cheap-path 🟢)."
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "hypothesis": "H_157",
+  "cycle": 2,
+  "date": "2026-05-23",
+  "sub_criteria": ["C5", "C6"],
+  "deterministic": true,
+  "hexa_only": true,
+  "llm": "none",
+  "cost": "$0 mac local",
+  "substrate_note": "proxy CA-rule-family carry (trained-net absent · faithful run = separate GPU cycle pre-registered Cycle#1 §4)",
+  "phi_primitive": "RFC 036 phi_spatial via HEXAD/C/c_lib.hexa (byte-equal phi_rs native replica)",
+  "config": {"N": 16, "dim": 12, "warm": 8, "rep": 0, "n_bins": 4},
+  "C5": {
+    "rules": {
+      "030_chaotic_classIII":  {"residual": 0.510417, "gate": 0.5625, "dev_from_half": 0.0104167},
+      "090_additive_classIII": {"residual": 0.0, "gate": 0.0, "dev_from_half": 0.5},
+      "110_complex_classIV":   {"residual": 0.541667, "gate": 0.625, "dev_from_half": 0.0416667},
+      "184_traffic_classII":   {"residual": 0.625, "gate": 0.625, "dev_from_half": 0.125}
+    },
+    "cross_rule": {"residual_mean": 0.419271, "residual_std": 0.245663, "residual_cv_pct": 58.5929},
+    "falsifiers": {
+      "F_C5_1_UNIVERSAL":    {"metric": "CV<=5%",         "cv_pct": 58.5929, "verdict": "FAIL"},
+      "F_C5_2_CLASS_IV_ONLY":{"metric": "only r110 ±0.01", "verdict": "FAIL"},
+      "F_C5_3_DETERMINISM":  {"metric": "byte-equal rerun","verdict": "PASS"}
+    },
+    "verdict": "C5_NON_UNIVERSAL"
+  },
+  "C6": {
+    "phi_A_rule110": 0.538242,
+    "phi_B_rule030": 0.571954,
+    "phi_merged": 1.08678,
+    "sum_micro": 1.1102,
+    "delta": -0.023417,
+    "falsifiers": {
+      "F_C6_1_PRIMITIVE_OK":  {"metric": "all Φ>=0",   "verdict": "PASS"},
+      "F_C6_2_SUPER_ADDITIVE":{"metric": "Δ>+1e-6",    "verdict": "FAIL"},
+      "F_C6_3_SUB_ADDITIVE":  {"metric": "Δ<-1e-6",    "verdict": "PASS"}
+    },
+    "verdict": "C6_SUB_ADDITIVE",
+    "class": "sub-additive    (destructive interference · combination failure substrate-instance)"
+  },
+  "cycle2_verdict": "C5_NON_UNIVERSAL · C6_SUB_ADDITIVE",
+  "tier": "🟢 NUMERICAL"
+}

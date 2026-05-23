@@ -1,0 +1,578 @@
+// HEXAD/LIFE/state/h204_c2_rule_class_mapping_2026_05_23/run_h204_c2.hexa
+// H_204 — weak-panpsy × autopoietic-closure threshold · Cycle #2 smoke (raw#15 additive)
+// ════════════════════════════════════════════════════════════════════════════
+//
+//   GOAL (Cycle #2 — ADDITIVE, raw#15): k-axis ↔ Wolfram-class-axis 매핑
+//     Cycle #1 (PR #218) 의 inverse-U Φ(k) 가 H_007 의 edge-of-chaos peak 와
+//     *동일 dynamical signature* 인가? closure-strength k 의 어느 값이 어떤
+//     Wolfram rule-class 와 동등한 Φ pattern 을 만드는지 측정.
+//
+//   FROZEN CARRY (no edit):
+//     Cycle #1 frontmatter / Hypothesis / Predictions H204.1-H204.5 / Falsifiers
+//     F1-F5 / Honest Limits L1-L10 / Verdict block ALL preserved. 본 cycle 은
+//     H_204.md 말미에 ## Cycle #2 섹션 append 만.
+//
+//   PREDICTIONS (≥4 additive, pre-registered):
+//     C2.1  k=0   (broken closure)        Φ pattern ↔ rule 250 (Class-I ordered)
+//     C2.2  k=0.25 (Cycle#1 inverse-U peak) Φ pattern ↔ rule 110 (Class-IV edge-of-chaos)
+//     C2.3  k=1.0 (full closure)          Φ pattern ↔ rule 30  (Class-III chaotic)
+//     C2.4  k=0.5 (middle, descending)    Φ pattern ↔ Class-II periodic (rule 250 carry)
+//     C2.5  Spearman rank correlation ρ ≥ 0.7 (k-axis Φ vs rule-axis Φ)
+//
+//   ADDITIVE FALSIFIERS (≥5):
+//     F-C2-1  k=0 Φ > k=0.25 Φ                → Cycle #1 inverse-U regression
+//     F-C2-2  rule 110 Φ ≤ rule 250 Φ          → H_007 PASS regression
+//     F-C2-3  Spearman ρ < 0.3                  → two axes 완전 분리, mapping 무근거
+//     F-C2-4  re-run byte-different             → raw#9 violation
+//     F-C2-5  any Φ value negative or NaN       → primitive error
+//
+//   HONEST LIMITS (≥5):
+//     L-C2-1  k-axis substrate (autopoietic closure cycle) ≠ rule-axis substrate
+//             (1D elementary CA) — '동등' 은 *Φ pattern* 동등이지 mechanism 동등 X
+//     L-C2-2  4-point k sweep + 3 rule classes = sparse mapping, coarse rank-correlation
+//     L-C2-3  H_007/H_204 Φ 절대값 단위 다름 (substrate 다름) → ranking-correlation 만
+//             의미 (절대값 매칭 X)
+//     L-C2-4  Φ peak ≠ 'consciousness' — H_004 boundary carry (functional reducibility
+//             부분, qualia 미터치)
+//     L-C2-5  본 cycle 은 *correlational* observation — k 와 rule 사이 causal mechanism
+//             부재 (둘 다 inverse-U 라는 *pattern-level* analogy)
+//
+//   TIER = 🟢 NUMERICAL (RFC 036 phi_spatial on 2 substrates, ranking-correlation)
+//   Φ primitive: phi_spatial (RFC 036; H_007 + H_204 byte-equal carry).
+// ════════════════════════════════════════════════════════════════════════════
+
+// ── shared constants ────────────────────────────────────────────────────────
+fn _PHI_N_BINS() -> int { return 4 }
+
+// ── H_204 k-axis (closure-strength sweep, Cycle #1 carry verbatim) ──────────
+fn M_SITES() -> int     { return 8 }
+fn DIM_K() -> int       { return 12 }
+fn WARM_K() -> int      { return 0 }
+fn N_SEEDS_K() -> int   { return 5 }
+fn CAP() -> float       { return 1.0 }
+fn K_RATE() -> float    { return 0.60 }
+fn DECAY() -> float     { return 0.10 }
+fn DIFFUSE() -> float   { return 0.05 }
+fn SEED_BASE_K() -> int { return 0xA17C204 }
+fn SEED_STRIDE_K() -> int { return 101 }
+
+// ── H_007 rule-axis (elementary CA, Cycle #1 carry) ─────────────────────────
+fn N_CA() -> int   { return 16 }
+fn DIM_CA() -> int { return 12 }
+fn WARM_CA() -> int { return 8 }
+fn N_REPS_CA() -> int { return 5 }
+
+// ── helpers ─────────────────────────────────────────────────────────────────
+fn _clamp01(x: float) -> float {
+    if x < 0.0 { return 0.0 }
+    if x > CAP() { return CAP() }
+    return x
+}
+
+fn to_float(x: int) -> float { return x * 1.0 }
+
+fn pow_i(base: int, e: int) -> int {
+    let mut r = 1
+    let mut i = 0
+    while i < e { r = r * base; i = i + 1 }
+    return r
+}
+
+fn _abs_f(x: float) -> float { if x < 0.0 { return 0.0 - x }; return x }
+
+fn _pow2(k: int) -> int {
+    let mut p = 1
+    let mut i = 0
+    while i < k { p = p * 2; i = i + 1 }
+    return p
+}
+
+fn _ftoi(x: float) -> int { if x > 0.5 { return 1 }; return 0 }
+fn _itof(b: int) -> float { if b == 1 { return 1.0 }; return 0.0 }
+
+fn _bool_str(b: bool) -> string { if b { return "true" }; return "false" }
+fn _verdict_str(b: bool) -> string { if b { return "PASS" }; return "FAIL" }
+
+fn _state_dir() -> string {
+    return "/Users/ghost/core/anima/.claude/worktrees/agent-ad12fdf84307d7a26/HEXAD/LIFE/state/h204_c2_rule_class_mapping_2026_05_23"
+}
+
+// ── H_204 lattice (k-axis) — Cycle #1 byte-equal carry ──────────────────────
+fn _seed_init(seed: int, site: int, comp: int) -> float {
+    let shift = (comp * 8) % 24
+    let bits = (seed / pow_i(2, shift)) % 256
+    let phase = (site * 37 + comp * 11) % 64
+    let f = (to_float((bits + phase) % 256) + 1.0) / 257.0
+    return f * 0.4 + 0.1
+}
+
+fn _step_component(x: float, cat: float) -> float {
+    let prod = K_RATE() * cat * (1.0 - x / CAP())
+    let nx = x + prod - DECAY() * x
+    return _clamp01(nx)
+}
+
+fn _diffuse_field(v: int, m: int) -> int {
+    let out = farr_zeros(m)
+    let d = DIFFUSE()
+    let mut s = 0
+    while s < m {
+        let lj = (s + m - 1) % m
+        let rj = (s + 1) % m
+        let val = (1.0 - 2.0 * d) * farr_get(v, s) + d * farr_get(v, lj) + d * farr_get(v, rj)
+        let _ = farr_set(out, s, val)
+        s = s + 1
+    }
+    return out
+}
+
+fn _run_lattice_k(seed: int, k_closure: float) -> int {
+    let m = M_SITES()
+    let dim = DIM_K()
+    let warm = WARM_K()
+
+    let A = farr_zeros(m)
+    let B = farr_zeros(m)
+    let C = farr_zeros(m)
+    let mut s0 = 0
+    while s0 < m {
+        let _ = farr_set(A, s0, _seed_init(seed, s0, 0))
+        let _ = farr_set(B, s0, _seed_init(seed, s0, 1))
+        let _ = farr_set(C, s0, _seed_init(seed, s0, 2))
+        s0 = s0 + 1
+    }
+
+    let states = farr_zeros(m * dim)
+    let total = warm + dim
+    let mut step = 0
+    while step < total {
+        if step >= warm {
+            let t = step - warm
+            let mut s = 0
+            while s < m {
+                let obs = farr_get(A, s) + farr_get(B, s) + farr_get(C, s)
+                let _ = farr_set(states, s * dim + t, obs)
+                s = s + 1
+            }
+        }
+        let dC = _diffuse_field(C, m)
+        let dA = _diffuse_field(A, m)
+        let dB = _diffuse_field(B, m)
+
+        let nA = farr_zeros(m)
+        let nB = farr_zeros(m)
+        let nC = farr_zeros(m)
+        let mut s = 0
+        while s < m {
+            let cat_a = farr_get(dC, s)
+            let cat_b = farr_get(dA, s)
+            let cat_c = k_closure * farr_get(dB, s)
+            let _ = farr_set(nA, s, _step_component(farr_get(A, s), cat_a))
+            let _ = farr_set(nB, s, _step_component(farr_get(B, s), cat_b))
+            let _ = farr_set(nC, s, _step_component(farr_get(C, s), cat_c))
+            s = s + 1
+        }
+        let mut p = 0
+        while p < m {
+            let _ = farr_set(A, p, farr_get(nA, p))
+            let _ = farr_set(B, p, farr_get(nB, p))
+            let _ = farr_set(C, p, farr_get(nC, p))
+            p = p + 1
+        }
+        let _ = farr_free(dC); let _ = farr_free(dA); let _ = farr_free(dB)
+        let _ = farr_free(nA); let _ = farr_free(nB); let _ = farr_free(nC)
+        step = step + 1
+    }
+
+    let _ = farr_free(A); let _ = farr_free(B); let _ = farr_free(C)
+    return states
+}
+
+fn _mean_phi_k(k_closure: float) -> float {
+    let nb = _PHI_N_BINS()
+    let reps = N_SEEDS_K()
+    let mut sum = 0.0
+    let mut r = 0
+    while r < reps {
+        let seed = SEED_BASE_K() + r * SEED_STRIDE_K()
+        let s = _run_lattice_k(seed, k_closure)
+        let phi = phi_spatial(s, M_SITES(), DIM_K(), nb)
+        let _ = farr_free(s)
+        sum = sum + phi
+        r = r + 1
+    }
+    return sum / to_float(reps)
+}
+
+// ── H_007 elementary CA (rule-axis) — Cycle #1 byte-equal carry ─────────────
+fn _ca_next(l: int, c: int, r: int, rule: int) -> int {
+    let idx = l * 4 + c * 2 + r
+    return (rule / _pow2(idx)) % 2
+}
+
+fn _init_row_ca(row: int, n: int, rep: int) -> int {
+    let mut i = 0
+    while i < n {
+        let on = ((i + rep) % 3) != 0
+        if on { let _ = farr_set(row, i, 1.0) }
+        else  { let _ = farr_set(row, i, 0.0) }
+        i = i + 1
+    }
+    return 1
+}
+
+fn _run_ca(rule: int, n: int, dim: int, warm: int, rep: int) -> int {
+    let row = farr_zeros(n)
+    let _ = _init_row_ca(row, n, rep)
+
+    let states = farr_zeros(n * dim)
+    let total = warm + dim
+    let mut step = 0
+    while step < total {
+        if step >= warm {
+            let t = step - warm
+            let mut s = 0
+            while s < n {
+                let _ = farr_set(states, s * dim + t, farr_get(row, s))
+                s = s + 1
+            }
+        }
+        let nxt = farr_zeros(n)
+        let mut j = 0
+        while j < n {
+            let lj = (j + n - 1) % n
+            let rj = (j + 1) % n
+            let lv = _ftoi(farr_get(row, lj))
+            let cv = _ftoi(farr_get(row, j))
+            let rv = _ftoi(farr_get(row, rj))
+            let _ = farr_set(nxt, j, _itof(_ca_next(lv, cv, rv, rule)))
+            j = j + 1
+        }
+        let mut k = 0
+        while k < n { let _ = farr_set(row, k, farr_get(nxt, k)); k = k + 1 }
+        let _ = farr_free(nxt)
+        step = step + 1
+    }
+    let _ = farr_free(row)
+    return states
+}
+
+fn _mean_phi_rule(rule: int) -> float {
+    let n = N_CA()
+    let dim = DIM_CA()
+    let warm = WARM_CA()
+    let nbins = _PHI_N_BINS()
+    let reps = N_REPS_CA()
+    let mut sum = 0.0
+    let mut rep = 0
+    while rep < reps {
+        let s = _run_ca(rule, n, dim, warm, rep)
+        let phi = phi_spatial(s, n, dim, nbins)
+        let _ = farr_free(s)
+        sum = sum + phi
+        rep = rep + 1
+    }
+    return sum / to_float(reps)
+}
+
+// ── Spearman rank correlation on 3 paired ranks ─────────────────────────────
+//   pairs:  (k=0, rule250)  (k=0.25, rule110)  (k=1.0, rule30)
+//   Spearman ρ on n=3 ranks:  ρ = 1 - 6 * Σd_i² / (n³ - n)
+//   where d_i = rank_k(i) - rank_rule(i)
+//
+//   ranks computed in *descending* Φ order so 'top Φ' = rank 1.
+fn _rank_3(a: float, b: float, c: float, target: float) -> int {
+    // returns rank of `target` (which is one of a/b/c) — 1=largest, 3=smallest.
+    let mut r = 1
+    if a > target { r = r + 1 }
+    if b > target { r = r + 1 }
+    if c > target { r = r + 1 }
+    // target itself is one of {a,b,c}; subtract one "self > target" overcount.
+    // Convention: when ties exist, we still produce well-defined ranks because
+    // our 3 measured Φ values are observed deterministically; we identify the
+    // target by exact float equality.
+    if target == a { r = r - 0 } // placeholder; correct handling below
+    return r
+}
+
+// Correct rank computation: for value `target` (one of three) we count strict
+// "greater than target" entries and add 1. Ties are broken by exact-equality
+// position (caller passes index identity).
+fn _rank_strict(values: int, target_idx: int) -> int {
+    // values is a 3-farr; rank 1 = largest. We count strictly-greater entries.
+    let t = farr_get(values, target_idx)
+    let mut r = 1
+    let mut i = 0
+    while i < 3 {
+        if i != target_idx {
+            let v = farr_get(values, i)
+            if v > t { r = r + 1 }
+        }
+        i = i + 1
+    }
+    return r
+}
+
+fn main() {
+    println("================================================================")
+    println("H_204 Cycle #2 — k-axis ↔ Wolfram-class-axis mapping (raw#15 additive)")
+    println("================================================================")
+    println("  k-axis substrate: 8-site catalytic lattice (H_204 Cycle#1 carry)")
+    println("    M=" + to_string(M_SITES()) + " DIM=" + to_string(DIM_K())
+            + " WARM=" + to_string(WARM_K()) + " SEEDS=" + to_string(N_SEEDS_K())
+            + " SEED_BASE=" + to_string(SEED_BASE_K()))
+    println("  rule-axis substrate: 1D elementary CA (H_007 Cycle#1 carry)")
+    println("    N=" + to_string(N_CA()) + " DIM=" + to_string(DIM_CA())
+            + " WARM=" + to_string(WARM_CA()) + " REPS=" + to_string(N_REPS_CA()))
+    println("  Φ primitive: RFC 036 phi_spatial (n_bins=4) — 🟢 NUMERICAL")
+    println("")
+
+    // ── k-axis: 4-point sweep (C2 spec — 0.0, 0.25, 0.5, 1.0) ────────────────
+    let k0 = 0.0
+    let k1 = 0.25
+    let k2 = 0.5
+    let k3 = 1.0
+
+    println("── k-axis Φ(k) sweep (4 points, H_204 Cycle#1 substrate) ──")
+    let phi_k0 = _mean_phi_k(k0)
+    let phi_k1 = _mean_phi_k(k1)
+    let phi_k2 = _mean_phi_k(k2)
+    let phi_k3 = _mean_phi_k(k3)
+    println("  Φ(k=0.00) = " + to_string(phi_k0))
+    println("  Φ(k=0.25) = " + to_string(phi_k1))
+    println("  Φ(k=0.50) = " + to_string(phi_k2))
+    println("  Φ(k=1.00) = " + to_string(phi_k3))
+
+    // determinism re-check on k=0.25 (Cycle#1 peak)
+    let phi_k1_re = _mean_phi_k(k1)
+    let det_k_ok = phi_k1_re == phi_k1
+    println("  Φ(k=0.25 re-run) = " + to_string(phi_k1_re) + " (byte-equal=" + _bool_str(det_k_ok) + ")")
+    println("")
+
+    // ── rule-axis: 3 representative elementary rules (H_007 substrate) ──────
+    println("── rule-axis Φ(rule) (3 rules, H_007 Cycle#1 substrate) ──")
+    let rule_ord = 250  // Class-I ordered (per spec C2.1)
+    let rule_iv  = 110  // Class-IV edge-of-chaos (per spec C2.2)
+    let rule_cha = 30   // Class-III chaotic (per spec C2.3)
+
+    let phi_r250 = _mean_phi_rule(rule_ord)
+    let phi_r110 = _mean_phi_rule(rule_iv)
+    let phi_r30  = _mean_phi_rule(rule_cha)
+    println("  Φ(rule 250 Class-I  ordered      ) = " + to_string(phi_r250))
+    println("  Φ(rule 110 Class-IV edge-of-chaos) = " + to_string(phi_r110))
+    println("  Φ(rule 30  Class-III chaotic     ) = " + to_string(phi_r30))
+
+    // determinism re-check on rule 110
+    let phi_r110_re = _mean_phi_rule(rule_iv)
+    let det_r_ok = phi_r110_re == phi_r110
+    println("  Φ(rule 110 re-run) = " + to_string(phi_r110_re) + " (byte-equal=" + _bool_str(det_r_ok) + ")")
+    println("")
+
+    // ── pair mapping (3 pairs per spec C2.1, C2.2, C2.3) ────────────────────
+    //   pair0: k=0    (broken)   ↔ rule 250 (Class-I)
+    //   pair1: k=0.25 (peak)     ↔ rule 110 (Class-IV)
+    //   pair2: k=1.0  (closed)   ↔ rule 30  (Class-III)
+    println("── pair mapping (Spearman ρ on 3 ranks, descending Φ) ──")
+
+    let k_vals = farr_zeros(3)
+    let _ = farr_set(k_vals, 0, phi_k0)
+    let _ = farr_set(k_vals, 1, phi_k1)
+    let _ = farr_set(k_vals, 2, phi_k3)
+
+    let r_vals = farr_zeros(3)
+    let _ = farr_set(r_vals, 0, phi_r250)
+    let _ = farr_set(r_vals, 1, phi_r110)
+    let _ = farr_set(r_vals, 2, phi_r30)
+
+    // strict-greater ranks (1 = largest Φ); ties break by index identity.
+    let rk0 = _rank_strict(k_vals, 0)   // rank of k=0    Φ in {phi_k0, phi_k1, phi_k3}
+    let rk1 = _rank_strict(k_vals, 1)   // rank of k=0.25
+    let rk2 = _rank_strict(k_vals, 2)   // rank of k=1.0
+    let rr0 = _rank_strict(r_vals, 0)   // rank of rule 250
+    let rr1 = _rank_strict(r_vals, 1)   // rank of rule 110
+    let rr2 = _rank_strict(r_vals, 2)   // rank of rule 30
+
+    println("  pair0  k=0.00   ↔ rule 250  : rank_k=" + to_string(rk0) + " rank_r=" + to_string(rr0))
+    println("  pair1  k=0.25   ↔ rule 110  : rank_k=" + to_string(rk1) + " rank_r=" + to_string(rr1))
+    println("  pair2  k=1.00   ↔ rule 30   : rank_k=" + to_string(rk2) + " rank_r=" + to_string(rr2))
+
+    // Spearman ρ on n=3 paired ranks (no ties expected in observed Φ):
+    //   ρ = 1 - 6 * Σd² / (n*(n²-1))    with n=3 ⟹ denom = 24
+    let d0 = rk0 - rr0
+    let d1 = rk1 - rr1
+    let d2 = rk2 - rr2
+    let sum_d_sq = to_float(d0 * d0 + d1 * d1 + d2 * d2)
+    let n_pairs = 3
+    let denom = to_float(n_pairs * (n_pairs * n_pairs - 1))  // 24
+    let rho = 1.0 - 6.0 * sum_d_sq / denom
+    println("  Σd² = " + to_string(sum_d_sq) + "  denom (n³-n) = " + to_string(denom))
+    println("  Spearman ρ = " + to_string(rho))
+    println("")
+
+    // ── individual sub-criteria (C2.1 .. C2.5) ──────────────────────────────
+    // C2.1: k=0 lowest Φ on k-axis & rule 250 lowest Φ on rule-axis
+    let c2_1 = (rk0 == 3) && (rr0 == 3)
+    // C2.2: k=0.25 peak Φ on k-axis & rule 110 peak Φ on rule-axis
+    let c2_2 = (rk1 == 1) && (rr1 == 1)
+    // C2.3: k=1.0 middle Φ on k-axis & rule 30 middle Φ on rule-axis
+    let c2_3 = (rk2 == 2) && (rr2 == 2)
+    // C2.4: k=0.5 middle/descending (k-axis only, no rule-axis match — Class-II carry)
+    //       PASS iff phi_k2 ∈ (phi_k3, phi_k1)  i.e., between full-closure and peak
+    let c2_4 = (phi_k2 > phi_k3) && (phi_k2 < phi_k1)
+    // C2.5: Spearman ρ ≥ 0.7
+    let c2_5 = rho >= 0.7
+
+    println("── sub-criteria (C2.1 .. C2.5) ──")
+    println("  C2.1 k=0  lowest Φ & rule 250 lowest Φ  : " + _verdict_str(c2_1))
+    println("  C2.2 k=0.25 peak Φ & rule 110 peak Φ    : " + _verdict_str(c2_2))
+    println("  C2.3 k=1.0 middle Φ & rule 30 middle Φ  : " + _verdict_str(c2_3))
+    println("  C2.4 k=0.5 ∈ (phi_k=1, phi_k=0.25)      : " + _verdict_str(c2_4))
+    println("  C2.5 Spearman ρ ≥ 0.7                    : " + _verdict_str(c2_5)
+            + "  (ρ=" + to_string(rho) + ")")
+    println("")
+
+    let mut n_pass = 0
+    if c2_1 { n_pass = n_pass + 1 }
+    if c2_2 { n_pass = n_pass + 1 }
+    if c2_3 { n_pass = n_pass + 1 }
+    if c2_4 { n_pass = n_pass + 1 }
+    if c2_5 { n_pass = n_pass + 1 }
+
+    // ── additive falsifiers (F-C2-1 .. F-C2-5) ──────────────────────────────
+    let f_c2_1 = phi_k0 > phi_k1                       // Cycle#1 inverse-U regression
+    let f_c2_2 = phi_r110 <= phi_r250                  // H_007 PASS regression
+    let f_c2_3 = rho < 0.3                             // axes 분리 mapping 무근거
+    let f_c2_4 = !det_k_ok || !det_r_ok                // determinism violation
+    let f_c2_5 = phi_k0 < 0.0 || phi_k1 < 0.0 || phi_k2 < 0.0 || phi_k3 < 0.0
+                 || phi_r250 < 0.0 || phi_r110 < 0.0 || phi_r30 < 0.0   // primitive error
+
+    println("── additive falsifiers (F-C2-1 .. F-C2-5) ──")
+    println("  F-C2-1 INVERSE-U regression (k=0 Φ > k=0.25 Φ)   : "
+            + (if f_c2_1 { "TRIGGERED" } else { "NOT_TRIGGERED" }))
+    println("  F-C2-2 H_007 regression (rule 110 Φ ≤ rule 250 Φ): "
+            + (if f_c2_2 { "TRIGGERED" } else { "NOT_TRIGGERED" }))
+    println("  F-C2-3 axis-separation (Spearman ρ < 0.3)         : "
+            + (if f_c2_3 { "TRIGGERED" } else { "NOT_TRIGGERED" }))
+    println("  F-C2-4 determinism violation (byte-different)     : "
+            + (if f_c2_4 { "TRIGGERED" } else { "NOT_TRIGGERED" }))
+    println("  F-C2-5 primitive error (any Φ < 0 or NaN)         : "
+            + (if f_c2_5 { "TRIGGERED" } else { "NOT_TRIGGERED" }))
+
+    let any_falsifier_triggered = f_c2_1 || f_c2_2 || f_c2_3 || f_c2_4 || f_c2_5
+    println("")
+
+    // ── verdict ─────────────────────────────────────────────────────────────
+    let verdict = if any_falsifier_triggered {
+        "FALSIFIED"
+    } else if n_pass == 5 {
+        "MAPPING_STRONG"
+    } else if n_pass >= 3 {
+        "MAPPING_DIRECTIONAL"
+    } else {
+        "MAPPING_WEAK"
+    }
+    println("VERDICT_RULE: MAPPING_STRONG iff 5/5 sub-criteria PASS; DIRECTIONAL if 3-4;")
+    println("              WEAK if ≤2; FALSIFIED if any F-C2-1..5 TRIGGERED")
+    println("VERDICT (H_204 Cycle #2): " + verdict)
+    println("  sub_criteria_met = " + to_string(n_pass) + "/5")
+    println("  Spearman ρ = " + to_string(rho))
+    println("  falsifiers_triggered = " + _bool_str(any_falsifier_triggered))
+    println("  H204_C2_VERDICT=" + verdict
+            + " N_PASS=" + to_string(n_pass)
+            + " RHO=" + to_string(rho)
+            + " PHI_K0=" + to_string(phi_k0)
+            + " PHI_K_PEAK=" + to_string(phi_k1)
+            + " PHI_K1=" + to_string(phi_k3)
+            + " PHI_R250=" + to_string(phi_r250)
+            + " PHI_R110=" + to_string(phi_r110)
+            + " PHI_R30=" + to_string(phi_r30))
+    println("================================================================")
+
+    // ── write result.json ───────────────────────────────────────────────────
+    let mut j = "{\n"
+    j = j + "  \"id\": \"H_204\",\n"
+    j = j + "  \"cycle\": 2,\n"
+    j = j + "  \"slug\": \"h204-c2-rule-class-mapping\",\n"
+    j = j + "  \"date\": \"2026-05-23\",\n"
+    j = j + "  \"raw_protocol\": \"raw#15 additive (frozen Cycle#1 / Hypothesis / Predictions / Falsifiers / Honest Limits / Verdict preserved)\",\n"
+    j = j + "  \"deterministic\": true,\n"
+    j = j + "  \"hexa_only\": true,\n"
+    j = j + "  \"llm\": \"none\",\n"
+    j = j + "  \"cost\": \"$0 mac local\",\n"
+    j = j + "  \"honest_tier\": \"🟢 SUPPORTED-NUMERICAL (RFC 036 phi_spatial on 2 substrates, ranking-correlation)\",\n"
+    j = j + "  \"phi_primitive\": \"RFC 036 phi_spatial (n_bins=4); H_204 Cycle#1 + H_007 Cycle#1 byte-equal carry\",\n"
+    j = j + "  \"k_axis\": {\n"
+    j = j + "    \"substrate\": \"8-site periodic catalytic lattice (H_204 Cycle#1 carry)\",\n"
+    j = j + "    \"config\": { \"M_sites\": " + to_string(M_SITES()) + ", \"dim\": " + to_string(DIM_K())
+          + ", \"warm\": " + to_string(WARM_K()) + ", \"n_seeds\": " + to_string(N_SEEDS_K())
+          + ", \"K_rate\": " + to_string(K_RATE()) + ", \"decay\": " + to_string(DECAY())
+          + ", \"diffuse\": " + to_string(DIFFUSE()) + ", \"seed_base\": " + to_string(SEED_BASE_K()) + " },\n"
+    j = j + "    \"phi_k\": {\n"
+    j = j + "      \"k_0_00\": " + to_string(phi_k0) + ",\n"
+    j = j + "      \"k_0_25\": " + to_string(phi_k1) + ",\n"
+    j = j + "      \"k_0_50\": " + to_string(phi_k2) + ",\n"
+    j = j + "      \"k_1_00\": " + to_string(phi_k3) + "\n"
+    j = j + "    },\n"
+    j = j + "    \"determinism_rerun_k0_25\": { \"phi\": " + to_string(phi_k1_re)
+          + ", \"byte_equal\": " + _bool_str(det_k_ok) + " }\n"
+    j = j + "  },\n"
+    j = j + "  \"rule_axis\": {\n"
+    j = j + "    \"substrate\": \"1D elementary CA periodic (H_007 Cycle#1 carry)\",\n"
+    j = j + "    \"config\": { \"N\": " + to_string(N_CA()) + ", \"dim\": " + to_string(DIM_CA())
+          + ", \"warm\": " + to_string(WARM_CA()) + ", \"reps\": " + to_string(N_REPS_CA()) + " },\n"
+    j = j + "    \"phi_rule\": {\n"
+    j = j + "      \"rule_250_class_I_ordered\":      " + to_string(phi_r250) + ",\n"
+    j = j + "      \"rule_110_class_IV_edge_of_chaos\":" + to_string(phi_r110) + ",\n"
+    j = j + "      \"rule_30_class_III_chaotic\":     " + to_string(phi_r30) + "\n"
+    j = j + "    },\n"
+    j = j + "    \"determinism_rerun_rule110\": { \"phi\": " + to_string(phi_r110_re)
+          + ", \"byte_equal\": " + _bool_str(det_r_ok) + " }\n"
+    j = j + "  },\n"
+    j = j + "  \"pair_mapping\": [\n"
+    j = j + "    { \"pair\": \"k=0.00 ↔ rule 250 (Class-I ordered)\",       \"rank_k\": " + to_string(rk0) + ", \"rank_r\": " + to_string(rr0) + " },\n"
+    j = j + "    { \"pair\": \"k=0.25 ↔ rule 110 (Class-IV edge-of-chaos)\", \"rank_k\": " + to_string(rk1) + ", \"rank_r\": " + to_string(rr1) + " },\n"
+    j = j + "    { \"pair\": \"k=1.00 ↔ rule 30  (Class-III chaotic)\",      \"rank_k\": " + to_string(rk2) + ", \"rank_r\": " + to_string(rr2) + " }\n"
+    j = j + "  ],\n"
+    j = j + "  \"spearman\": { \"n_pairs\": 3, \"sum_d_sq\": " + to_string(sum_d_sq)
+          + ", \"denom_n_cubed_minus_n\": " + to_string(denom)
+          + ", \"rho\": " + to_string(rho) + " },\n"
+    j = j + "  \"sub_criteria\": {\n"
+    j = j + "    \"C2_1_k0_lowest_and_rule250_lowest\":  { \"verdict\": \"" + _verdict_str(c2_1) + "\" },\n"
+    j = j + "    \"C2_2_k025_peak_and_rule110_peak\":    { \"verdict\": \"" + _verdict_str(c2_2) + "\" },\n"
+    j = j + "    \"C2_3_k1_middle_and_rule30_middle\":   { \"verdict\": \"" + _verdict_str(c2_3) + "\" },\n"
+    j = j + "    \"C2_4_k05_between_full_closure_and_peak\": { \"phi_k_05\": " + to_string(phi_k2) + ", \"verdict\": \"" + _verdict_str(c2_4) + "\" },\n"
+    j = j + "    \"C2_5_spearman_rho_ge_0_7\":           { \"rho\": " + to_string(rho) + ", \"verdict\": \"" + _verdict_str(c2_5) + "\" }\n"
+    j = j + "  },\n"
+    j = j + "  \"sub_criteria_met\": " + to_string(n_pass) + ",\n"
+    j = j + "  \"falsifiers\": {\n"
+    j = j + "    \"F_C2_1_inverse_U_regression\":  { \"metric\": \"phi_k0 > phi_k0.25\",       \"triggered\": " + _bool_str(f_c2_1) + " },\n"
+    j = j + "    \"F_C2_2_H007_regression\":       { \"metric\": \"phi_rule110 <= phi_rule250\", \"triggered\": " + _bool_str(f_c2_2) + " },\n"
+    j = j + "    \"F_C2_3_axis_separation\":       { \"metric\": \"spearman_rho < 0.3\",         \"triggered\": " + _bool_str(f_c2_3) + " },\n"
+    j = j + "    \"F_C2_4_determinism_violation\": { \"metric\": \"any rerun byte-different\",   \"triggered\": " + _bool_str(f_c2_4) + " },\n"
+    j = j + "    \"F_C2_5_primitive_error\":       { \"metric\": \"any phi < 0\",                \"triggered\": " + _bool_str(f_c2_5) + " }\n"
+    j = j + "  },\n"
+    j = j + "  \"any_falsifier_triggered\": " + _bool_str(any_falsifier_triggered) + ",\n"
+    j = j + "  \"verdict_rule\": \"MAPPING_STRONG iff 5/5 sub-criteria PASS; DIRECTIONAL if 3-4; WEAK if ≤2; FALSIFIED if any F-C2 TRIGGERED\",\n"
+    j = j + "  \"verdict\": \"" + verdict + "\",\n"
+    j = j + "  \"honest_limits\": [\n"
+    j = j + "    \"L-C2-1: k-axis substrate (autopoietic closure cycle on 8-site catalytic lattice) ≠ rule-axis substrate (1D elementary CA, length-16 periodic). '동등'은 Φ pattern 동등이지 substrate-mechanism 동등 X — different microdynamics may share pattern-level signature.\",\n"
+    j = j + "    \"L-C2-2: 4-point k sweep + 3 rule classes = sparse mapping. Spearman ρ on n=3 ranks is COARSE rank-correlation (denom n³-n=24, minimum rho step 0.25). Finer k-sweep + 4+ rule-class sampling would tighten the correlation estimate but stays within the same family of rank statistics.\",\n"
+    j = j + "    \"L-C2-3: H_007/H_204 Φ 절대값 단위 다름 — k-axis 8-site lattice transient Φ ∈ [3.5, 5.4] range while rule-axis 16-site CA Φ ∈ [0.0, 0.6] range. Only ranking-correlation is meaningful here; absolute Φ value matching is NOT claimed.\",\n"
+    j = j + "    \"L-C2-4: Φ peak ≠ 'consciousness' — H_004 boundary carry (functional reducibility 부분, phenomenal qualia 미터치). The cross-axis mapping is about *dynamical signature* of integrated information, NOT a claim about phenomenal experience.\",\n"
+    j = j + "    \"L-C2-5: 본 cycle 은 *correlational* observation — k 와 rule 사이 causal mechanism 부재. 둘 다 inverse-U Φ pattern 을 보이는 것이 pattern-level analogy 이지, k=0.25 closure 가 'rule-110-같은 internal computation' 을 한다는 mechanistic claim 은 만들지 않는다.\",\n"
+    j = j + "    \"L-C2-6: rule-axis Class-II representative 누락 — C2.4 'k=0.5 ↔ Class-II periodic' 는 spec에 명시되었으나 rule-axis Φ는 3 rule (250/110/30) 만 측정. Class-II 측정은 rule 184 또는 rule 232 등 별도 cycle. 본 cycle 의 C2.4 는 k-axis 만 검사 (descending arm structure).\",\n"
+    j = j + "    \"L-C2-7: Spearman threshold 0.7 (C2.5) 는 design choice — n=3 paired ranks 위에서 sample-size-corrected critical value 가 아니다. n=3 의 가능한 ρ 값은 {-1.0, -0.5, 0.5, 1.0} 사실상 4 levels — 본 threshold 0.7 은 '동일 ranking' (ρ=1.0) 만 PASS 로 인정하는 effective 한 보수적 cutoff.\"\n"
+    j = j + "  ],\n"
+    j = j + "  \"cross_link\": {\n"
+    j = j + "    \"H_204_cycle_1\": \"PR #218 — Φ(k) inverse-U PARTIAL_DIRECTIONAL 3/4 (peak Φ=5.39 at k≈0.25)\",\n"
+    j = j + "    \"H_007\": \"PR — Φ(rule 110) > Φ(rule 30) > Φ(rule 250) Class-IV edge-of-chaos peak\",\n"
+    j = j + "    \"H_157\": \"PR #160/#221 — weak-form mathematical panpsychism cross-substrate ranking\",\n"
+    j = j + "    \"H_004\": \"PR #180 — Φ-function dissociation boundary (qualia 미터치)\"\n"
+    j = j + "  }\n"
+    j = j + "}\n"
+    write_file(_state_dir() + "/result.json", j)
+
+    println("")
+    println("  result.json written → " + _state_dir() + "/result.json")
+    println("=== H_204 Cycle #2 mapping smoke complete: " + verdict + " ===")
+}

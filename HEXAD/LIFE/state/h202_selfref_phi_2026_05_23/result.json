@@ -1,0 +1,36 @@
+{
+  "id": "H_202",
+  "slug": "selfref-edge-of-chaos-phi",
+  "domain": "life · consciousness · physics",
+  "date": "2026-05-23",
+  "deterministic": true,
+  "hexa_only": true,
+  "llm": "none",
+  "cost": "$0 mac local",
+  "seed": 42,
+  "phi_primitive": "RFC 036 phi_spatial runtime builtin (n_bins=4)",
+  "config": { "N": 16, "dim": 12, "warm": 8, "rep": 0, "rule": 110, "boundary": "periodic" },
+  "baselines": {
+    "phi_zero_drive": 0.538242,
+    "phi_random_drive_gain1": 0.49116
+  },
+  "selfref_sweep": {
+    "gains": [0.0, 0.25, 0.5, 0.75, 1.0],
+    "phi":   [0.538242, 0.741615, 0.619323, 0.586545, 1.14511e-05],
+    "peak_index": 1,
+    "peak_gain": 0.25,
+    "phi_peak": 0.741615
+  },
+  "falsifiers": {
+    "F1_SELFREF_GT_ZERO": { "metric": "Φ_peak - Φ_zero",  "delta": 0.203373, "verdict": "PASS" },
+    "F2_SELFREF_GT_RAND": { "metric": "Φ_peak - Φ_random", "delta": 0.250455, "verdict": "PASS" },
+    "F3_MID_PEAK":        { "metric": "argmax ∈ {0.25,0.5,0.75}", "peak_gain": 0.25, "verdict": "PASS" },
+    "F4_NONNEG_FINITE":   { "metric": "all Φ finite & ≥ 0", "verdict": "PASS" },
+    "F5_RERUN_DETERMINISTIC": { "metric": "fixed LCG seed", "verdict": "PASS" }
+  },
+  "core_pass": 3,
+  "verdict_rule": "SUPPORTED iff (F1 ∧ F2 ∧ F3); PARTIAL if ≥1 core PASS; FALSIFIED if 0",
+  "verdict": "SUPPORTED",
+  "cross_link": "H_007 (Class-IV rule110 edge-of-chaos Φ peak — rule-axis) ⊕ H_018 (SELFFEED self-genesis self-reference) ⊕ H_004 (Φ-function dissociation honest boundary)",
+  "honest_tier": "🟢 SUPPORTED-NUMERICAL (phi_spatial spatial-slice proxy; NOT 🔵 full IIT 4.0)"
+}

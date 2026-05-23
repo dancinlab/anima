@@ -1,0 +1,451 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  run_h205.hexa — H_205 self-reference (SELFFEED) ↔ operational closure 동치
+//                  H_018 dynamic angle × H_012 structural angle (raw#12)
+//
+//  CORE QUESTION
+//    H_018 의 SELFFEED dynamics (output 상태가 다음 step input 으로 fed back)
+//    가 H_012 의 operational-closure observable (self-maintenance index,
+//    broken-closure gap) 을 *동시에* 만족하는가?  즉 두 가설이 동일
+//    substrate-mechanism 의 두 다른 측면인지 — definitional mapping + 상관성.
+//
+//  SUBSTRATE (H_018 carry, deterministic)
+//    cell pool (N_init=4, d_model=8), seed=42, 20 steps, mitosis_hook_lib.
+//    primordial init = cell-0 hidden state (H_018 SELFFEED operational 정의).
+//
+//  FEEDBACK SWEEP (3-point, H205.3)
+//    g ∈ {0.0, 0.5, 1.0}
+//      g=0.0  : x_t+1 = 0  (no feedback — broken closure analog, ZERO drive)
+//      g=0.5  : x_t+1 = 0.5 · x_out  (partial feedback)
+//      g=1.0  : x_t+1 = x_out         (full SELFFEED — H_018 mode B verbatim)
+//
+//  TWO OBSERVABLES (one substrate)
+//    (a) H_018 dynamic angle      : spontaneous splits + first-split step.
+//    (b) H_012 structural angle   : self-maintenance index = fraction of last
+//                                   MEASURE_WINDOW steps in which the substrate
+//                                   is "alive" — defined as cells ≥ min_cells
+//                                   AND tension (mean (Ax-Gx)^2) > FLOOR.
+//                                   Cells dead/static ⟺ network not closed.
+//
+//  CLOSURE STRENGTH (H_012 -> H_205.3 axis)
+//    closure_strength(g) = self_maintenance_rate at feedback_gain=g
+//    Pearson r between {0.0, 0.5, 1.0} and {closure(0), closure(0.5), closure(1)}
+//
+//  CRITERIA (verdict_rule)
+//    C1: SELFFEED (g=1.0) 위에서 self-maint ≥ 0.9 AND broken-gap ≥ 0.5
+//    C2: ZERO (g=0.0) 위에서 self-maint ≤ 0.3 (broken-like decay)
+//    C3: Pearson r(gain, closure) ≥ 0.7  (monotone correlation)
+//    C4: phase-transition gain g* 에서 self-maint 와 splits 모두 jump
+//    SUPPORTED = C1 ∧ C2 ∧ C3 ; PARTIAL_DEFINITIONAL = C1 ∧ C2 only
+//
+//  $0 mac local · hexa-only · LLM none · NO ckpt · deterministic.
+// ════════════════════════════════════════════════════════════════════════════
+
+
+import "/Users/ghost/core/anima/tool/hexa_native/mitosis_hook_lib.hexa"
+
+
+fn _state_dir() -> string {
+    return "HEXAD/LIFE/state/h205_selfref_as_closure_2026_05_23"
+}
+fn _d_model() -> int       { return 8 }
+fn _init_cells() -> int    { return 2 }   // primordial (H_018 carry; CB1 floor)
+fn _n_steps() -> int       { return 60 }  // H_018 horizon
+fn _measure_window() -> int { return 30 } // last 30 of 60 steps = steady-state
+fn _min_cells_alive() -> int { return 2 } // CB1 floor
+fn _tension_floor() -> float { return 0.0001 } // substrate "active" if tension above
+fn _seed() -> int { return 42 }
+
+
+// ── helpers ──────────────────────────────────────────────────────────────────
+
+fn _const_vec(n: int, v: float) {
+    let mut a = []
+    let mut i = 0
+    while i < n {
+        a.push(v)
+        i = i + 1
+    }
+    return a
+}
+
+fn _scale_vec(v, s: float) {
+    let n = len(v)
+    let mut out = []
+    let mut i = 0
+    while i < n {
+        out.push(v[i] * s)
+        i = i + 1
+    }
+    return out
+}
+
+// tension proxy: mean of squared elements of x_out (substrate energy).
+// Captures the same "active vs static" axis as mitosis_hook's internal tension —
+// non-zero x_out ⟺ engine_a(x)-engine_g(x) drove cells ⟺ network was closed.
+fn _tension_proxy(v) -> float {
+    let n = len(v)
+    if n == 0 { return 0.0 }
+    let mut s = 0.0
+    let mut i = 0
+    while i < n {
+        s = s + (v[i] * v[i])
+        i = i + 1
+    }
+    return s / to_float(n)
+}
+
+fn to_float(x: int) -> float { return x * 1.0 }
+
+fn _int_arr_json(arr) -> string {
+    let n = len(arr)
+    let mut out = "["
+    let mut i = 0
+    while i < n {
+        if i > 0 { out = out + ", " }
+        out = out + to_string(arr[i])
+        i = i + 1
+    }
+    return out + "]"
+}
+
+fn _float_arr_json(arr) -> string {
+    let n = len(arr)
+    let mut out = "["
+    let mut i = 0
+    while i < n {
+        if i > 0 { out = out + ", " }
+        out = out + to_string(arr[i])
+        i = i + 1
+    }
+    return out + "]"
+}
+
+fn _bool_str(b: bool) -> string {
+    if b { return "true" }
+    return "false"
+}
+
+
+// ── single feedback-gain condition ───────────────────────────────────────────
+// returns dict:
+//   { gain, splits, first_split, final_cells, self_maint_rate,
+//     traj_cells (per step), traj_tension (per step) }
+fn _run_gain(gain: float) {
+    let d = _d_model()
+    let mut pool = cell_pool_init(d, _init_cells())
+
+    // initial drive: scaled primordial cell-0 hidden state (SELFFEED seed).
+    // gain=0.0 → x=0 (no perturbation); gain=1.0 → full primordial seed.
+    let primordial = pool["cells"][0]["hidden"]
+    let mut x = _scale_vec(primordial, gain)
+
+    let n = _n_steps()
+    let win_start = n - _measure_window()
+    let mut traj_cells = []
+    let mut traj_tension = []
+    let mut total_splits = 0
+    let mut first_split = -1
+    let mut alive_steps = 0
+    let mut step = 0
+
+    while step < n {
+        let res = mitosis_forward_tail(x, pool, step)
+        let x_out = res[0]
+        pool = res[1]
+        let evts = res[2]
+
+        // count split events.
+        let mut s_this = 0
+        let mut e = 0
+        while e < len(evts) {
+            if to_string(evts[e]["type"]) == "split" {
+                s_this = s_this + 1
+            }
+            e = e + 1
+        }
+        if s_this > 0 {
+            if first_split < 0 { first_split = step }
+            total_splits = total_splits + s_this
+        }
+
+        let n_cells = len(pool["cells"])
+        let tau = _tension_proxy(x_out)
+        traj_cells.push(n_cells)
+        traj_tension.push(tau)
+
+        // "alive" inside steady-state window: cells >= floor AND tension active.
+        if step >= win_start {
+            let alive = (n_cells >= _min_cells_alive()) && (tau > _tension_floor())
+            if alive { alive_steps = alive_steps + 1 }
+        }
+
+        // feedback: next x = gain * x_out (g=0 → static; g=1 → full SELFFEED).
+        x = _scale_vec(x_out, gain)
+
+        step = step + 1
+    }
+
+    let rate = to_float(alive_steps) / to_float(_measure_window())
+
+    return #{
+        "gain":             gain,
+        "splits":           total_splits,
+        "first_split":      first_split,
+        "final_cells":      len(pool["cells"]),
+        "self_maint_rate":  rate,
+        "traj_cells":       traj_cells,
+        "traj_tension":     traj_tension,
+        "phi":              pool["phi"]
+    }
+}
+
+
+// ── Pearson r over 3 points ──────────────────────────────────────────────────
+fn _pearson_r(xs, ys) -> float {
+    let n = len(xs)
+    if n < 2 { return 0.0 }
+    let nf = to_float(n)
+    let mut sx = 0.0
+    let mut sy = 0.0
+    let mut i = 0
+    while i < n {
+        sx = sx + xs[i]
+        sy = sy + ys[i]
+        i = i + 1
+    }
+    let mx = sx / nf
+    let my = sy / nf
+    let mut num = 0.0
+    let mut dx2 = 0.0
+    let mut dy2 = 0.0
+    i = 0
+    while i < n {
+        let dx = xs[i] - mx
+        let dy = ys[i] - my
+        num = num + (dx * dy)
+        dx2 = dx2 + (dx * dx)
+        dy2 = dy2 + (dy * dy)
+        i = i + 1
+    }
+    if dx2 <= 0.0 { return 0.0 }
+    if dy2 <= 0.0 { return 0.0 }
+    let denom = dx2 * dy2
+    // sqrt via Newton.
+    let mut r = denom
+    let mut k = 0
+    while k < 30 {
+        if r <= 0.0 { r = 1.0e-12 }
+        r = 0.5 * (r + denom / r)
+        k = k + 1
+    }
+    return num / r
+}
+
+
+fn _abs(x: float) -> float {
+    if x < 0.0 { return 0.0 - x }
+    return x
+}
+
+
+// ── main ─────────────────────────────────────────────────────────────────────
+
+fn _run_h205() {
+    println("================================================================")
+    println("H_205 self-reference as operational closure — H_018 ⊕ H_012 동치 smoke")
+    println("  d_model=" + to_string(_d_model())
+            + " init_cells=" + to_string(_init_cells())
+            + " steps=" + to_string(_n_steps())
+            + " window=" + to_string(_measure_window())
+            + " seed=" + to_string(_seed()))
+    println("================================================================")
+
+    // 3-point feedback sweep.
+    let r0 = _run_gain(0.0)
+    let r5 = _run_gain(0.5)
+    let r1 = _run_gain(1.0)
+
+    println("g=0.0 (broken)   : splits=" + to_string(r0["splits"])
+            + " first=" + to_string(r0["first_split"])
+            + " final_cells=" + to_string(r0["final_cells"])
+            + " self_maint=" + to_string(r0["self_maint_rate"])
+            + " phi=" + to_string(r0["phi"]))
+    println("g=0.5 (partial)  : splits=" + to_string(r5["splits"])
+            + " first=" + to_string(r5["first_split"])
+            + " final_cells=" + to_string(r5["final_cells"])
+            + " self_maint=" + to_string(r5["self_maint_rate"])
+            + " phi=" + to_string(r5["phi"]))
+    println("g=1.0 (selffeed) : splits=" + to_string(r1["splits"])
+            + " first=" + to_string(r1["first_split"])
+            + " final_cells=" + to_string(r1["final_cells"])
+            + " self_maint=" + to_string(r1["self_maint_rate"])
+            + " phi=" + to_string(r1["phi"]))
+
+    // ── derived metrics ──
+    let broken_gap = r1["self_maint_rate"] - r0["self_maint_rate"]
+    let gains = [0.0, 0.5, 1.0]
+    let closes = [r0["self_maint_rate"], r5["self_maint_rate"], r1["self_maint_rate"]]
+    let r_pearson = _pearson_r(gains, closes)
+
+    // phase-transition check: did self-maint AND splits both jump at the same
+    // g* ?  use largest discrete delta between adjacent points.
+    let d_close_05 = _abs(r5["self_maint_rate"] - r0["self_maint_rate"])
+    let d_close_15 = _abs(r1["self_maint_rate"] - r5["self_maint_rate"])
+    let d_splits_05 = _abs(to_float(r5["splits"] - r0["splits"]))
+    let d_splits_15 = _abs(to_float(r1["splits"] - r5["splits"]))
+    // pick the g* with the larger closure jump and require splits also jumps there.
+    let close_jump_at_05 = d_close_05 >= d_close_15
+    let close_jump = if close_jump_at_05 { d_close_05 } else { d_close_15 }
+    let splits_jump = if close_jump_at_05 { d_splits_05 } else { d_splits_15 }
+    let phase_aligned = (close_jump >= 0.3) && (splits_jump >= 1.0)
+
+    println("")
+    println("broken_gap (g=1 − g=0) self_maint = " + to_string(broken_gap))
+    println("Pearson r(gain, closure)          = " + to_string(r_pearson))
+    println("phase-transition aligned          = " + _bool_str(phase_aligned)
+            + "  (close_jump=" + to_string(close_jump)
+            + ", splits_jump=" + to_string(splits_jump) + ")")
+
+    // ── criteria ──
+    let c1 = (r1["self_maint_rate"] >= 0.9) && (broken_gap >= 0.5)
+    let c2 = r0["self_maint_rate"] <= 0.3
+    let c3 = r_pearson >= 0.7
+    let c4 = phase_aligned
+
+    // ── falsifiers ──
+    // F1: SELFFEED(g=1) self-maint < 0.5 → H205.1 FALSIFIED
+    let f1 = r1["self_maint_rate"] >= 0.5
+    // F2: ZERO(g=0) self-maint > 0.5 → H205.2 FALSIFIED
+    let f2 = r0["self_maint_rate"] <= 0.5
+    // F3: r < 0.3 → H205.3 FALSIFIED
+    let f3 = r_pearson >= 0.3
+    // F4: re-run byte-different — covered by deterministic single-run protocol
+    let r1b = _run_gain(1.0)
+    let f4 = r1b["self_maint_rate"] == r1["self_maint_rate"]
+    // F5: definitional mapping invalid — substrate at g=1 must satisfy BOTH
+    //     observables non-trivially (splits > 0 AND tension active).
+    let f5 = (r1["splits"] >= 1) && (r1["self_maint_rate"] > 0.0)
+
+    let v1 = if f1 { "PASS" } else { "FAIL" }
+    let v2 = if f2 { "PASS" } else { "FAIL" }
+    let v3 = if f3 { "PASS" } else { "FAIL" }
+    let v4 = if f4 { "PASS" } else { "FAIL" }
+    let v5 = if f5 { "PASS" } else { "FAIL" }
+
+    let mut n_pass = 0
+    if f1 { n_pass = n_pass + 1 }
+    if f2 { n_pass = n_pass + 1 }
+    if f3 { n_pass = n_pass + 1 }
+    if f4 { n_pass = n_pass + 1 }
+    if f5 { n_pass = n_pass + 1 }
+
+    let mut n_c = 0
+    if c1 { n_c = n_c + 1 }
+    if c2 { n_c = n_c + 1 }
+    if c3 { n_c = n_c + 1 }
+    if c4 { n_c = n_c + 1 }
+
+    // verdict_rule
+    let supported = c1 && c2 && c3
+    let partial_def = c1 && c2
+    let verdict = if supported {
+        if c4 { "SUPPORTED_FULL" } else { "SUPPORTED" }
+    } else {
+        if partial_def { "PARTIAL_DEFINITIONAL" }
+        else { if n_pass <= 1 { "FAIL" } else { "PARTIAL" } }
+    }
+
+    // FALSIFIED override: substrate at g=1 fails to satisfy closure observable.
+    let falsified = !f1 && !f2
+    let final_verdict = if falsified { "FALSIFIED" } else { verdict }
+
+    println("")
+    println("C1 g=1 self_maint>=0.9 & gap>=0.5 : " + _bool_str(c1))
+    println("C2 g=0 self_maint<=0.3            : " + _bool_str(c2))
+    println("C3 Pearson r>=0.7                 : " + _bool_str(c3))
+    println("C4 phase-transition aligned       : " + _bool_str(c4))
+    println("")
+    println("F1 SELFFEED-CLOSURE (g=1 maint>=0.5)   " + v1)
+    println("F2 ZERO-DECAY      (g=0 maint<=0.5)   " + v2)
+    println("F3 CORRELATION    (r>=0.3)            " + v3)
+    println("F4 DETERMINISM    (re-run byte-equal) " + v4)
+    println("F5 DEFINITIONAL   (g=1 splits>=1)     " + v5)
+    println("================================================================")
+    println("VERDICT: " + final_verdict
+            + "  (" + to_string(n_c) + "/4 criteria, "
+            + to_string(n_pass) + "/5 falsifiers PASS)")
+    println("================================================================")
+
+    // ── result.json ─────────────────────────────────────────────────────────
+    let mut j = "{\n"
+    j = j + "  \"hypothesis\": \"H_205\",\n"
+    j = j + "  \"slug\": \"selfref-as-operational-closure\",\n"
+    j = j + "  \"domain\": \"LIFE\",\n"
+    j = j + "  \"title\": \"self-reference (SELFFEED) ↔ operational closure 동치 — H_018 dynamic × H_012 structural\",\n"
+    j = j + "  \"date\": \"2026-05-23\",\n"
+    j = j + "  \"host\": \"mac-local\",\n"
+    j = j + "  \"deterministic\": true,\n"
+    j = j + "  \"hexa_only\": true,\n"
+    j = j + "  \"llm\": \"none\",\n"
+    j = j + "  \"seed\": " + to_string(_seed()) + ",\n"
+    j = j + "  \"params\": {\"d_model\": " + to_string(_d_model())
+          + ", \"init_cells\": " + to_string(_init_cells())
+          + ", \"n_steps\": " + to_string(_n_steps())
+          + ", \"measure_window\": " + to_string(_measure_window())
+          + ", \"min_cells_alive\": " + to_string(_min_cells_alive())
+          + ", \"tension_floor\": " + to_string(_tension_floor()) + "},\n"
+    j = j + "  \"sweep\": {\n"
+    j = j + "    \"g0_0\": { \"gain\": 0.0, \"splits\": " + to_string(r0["splits"])
+          + ", \"first_split\": " + to_string(r0["first_split"])
+          + ", \"final_cells\": " + to_string(r0["final_cells"])
+          + ", \"self_maint_rate\": " + to_string(r0["self_maint_rate"])
+          + ", \"phi\": " + to_string(r0["phi"])
+          + ", \"traj_cells\": " + _int_arr_json(r0["traj_cells"])
+          + ", \"traj_tension\": " + _float_arr_json(r0["traj_tension"]) + " },\n"
+    j = j + "    \"g0_5\": { \"gain\": 0.5, \"splits\": " + to_string(r5["splits"])
+          + ", \"first_split\": " + to_string(r5["first_split"])
+          + ", \"final_cells\": " + to_string(r5["final_cells"])
+          + ", \"self_maint_rate\": " + to_string(r5["self_maint_rate"])
+          + ", \"phi\": " + to_string(r5["phi"])
+          + ", \"traj_cells\": " + _int_arr_json(r5["traj_cells"])
+          + ", \"traj_tension\": " + _float_arr_json(r5["traj_tension"]) + " },\n"
+    j = j + "    \"g1_0\": { \"gain\": 1.0, \"splits\": " + to_string(r1["splits"])
+          + ", \"first_split\": " + to_string(r1["first_split"])
+          + ", \"final_cells\": " + to_string(r1["final_cells"])
+          + ", \"self_maint_rate\": " + to_string(r1["self_maint_rate"])
+          + ", \"phi\": " + to_string(r1["phi"])
+          + ", \"traj_cells\": " + _int_arr_json(r1["traj_cells"])
+          + ", \"traj_tension\": " + _float_arr_json(r1["traj_tension"]) + " }\n"
+    j = j + "  },\n"
+    j = j + "  \"derived\": {\n"
+    j = j + "    \"broken_gap\": " + to_string(broken_gap) + ",\n"
+    j = j + "    \"pearson_r_gain_closure\": " + to_string(r_pearson) + ",\n"
+    j = j + "    \"close_jump\": " + to_string(close_jump) + ",\n"
+    j = j + "    \"splits_jump\": " + to_string(splits_jump) + ",\n"
+    j = j + "    \"phase_aligned\": " + _bool_str(phase_aligned) + "\n"
+    j = j + "  },\n"
+    j = j + "  \"criteria\": {\n"
+    j = j + "    \"C1_g1_maint_and_gap\":   " + _bool_str(c1) + ",\n"
+    j = j + "    \"C2_g0_decay\":           " + _bool_str(c2) + ",\n"
+    j = j + "    \"C3_pearson_correlation\": " + _bool_str(c3) + ",\n"
+    j = j + "    \"C4_phase_aligned\":      " + _bool_str(c4) + "\n"
+    j = j + "  },\n"
+    j = j + "  \"falsifiers\": {\n"
+    j = j + "    \"F1_SELFFEED_CLOSURE\": { \"metric\": \"g=1 self_maint>=0.5\", \"value\": " + to_string(r1["self_maint_rate"]) + ", \"verdict\": \"" + v1 + "\" },\n"
+    j = j + "    \"F2_ZERO_DECAY\":       { \"metric\": \"g=0 self_maint<=0.5\", \"value\": " + to_string(r0["self_maint_rate"]) + ", \"verdict\": \"" + v2 + "\" },\n"
+    j = j + "    \"F3_CORRELATION\":     { \"metric\": \"Pearson r>=0.3\", \"value\": " + to_string(r_pearson) + ", \"verdict\": \"" + v3 + "\" },\n"
+    j = j + "    \"F4_DETERMINISM\":     { \"metric\": \"re-run byte-equal\", \"verdict\": \"" + v4 + "\" },\n"
+    j = j + "    \"F5_DEFINITIONAL\":    { \"metric\": \"g=1 splits>=1 AND maint>0\", \"verdict\": \"" + v5 + "\" }\n"
+    j = j + "  },\n"
+    j = j + "  \"n_criteria_pass\": " + to_string(n_c) + ",\n"
+    j = j + "  \"n_falsifier_pass\": " + to_string(n_pass) + ",\n"
+    j = j + "  \"verdict\": \"" + final_verdict + "\",\n"
+    j = j + "  \"cross_link\": {\"H_018\": \"PR #168\", \"H_012\": \"PR #165\"}\n"
+    j = j + "}\n"
+
+    write_file(_state_dir() + "/result.json", j)
+    println("ledger -> " + _state_dir() + "/result.json")
+}
+
+
+_run_h205()

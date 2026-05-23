@@ -1,0 +1,103 @@
+{
+  "id": "anima_d4_live_real_ckpt_2026_05_23",
+  "date_kst": "2026-05-23",
+  "harness": "tool/anima_d4_live_real_ckpt_smoke.hexa",
+  "ckpt_path": "/Users/ghost/core/anima/state/anima_phase1a1_color_cosmology_2026_05_12/ckpts/ckpt_phase1a1_sft.safetensors",
+  "ckpt_size_bytes": 597550688,
+  "ckpt_format": "safetensors BF16",
+  "n_keys_loaded": 218,
+  "n_layers": 24,
+  "d_real": 1024,
+  "vocab_size": 32000,
+  "cap_len": 64,
+  "initial_cells": 2,
+  "prompt": "안녕? 너는 누구야?",
+  "mode": "greedy",
+  "max_new": 5,
+  "result_summary": "F-D4-REAL SMOKE PASS  (3/3)",
+  "post_run": {
+    "mitosis_invocations": 30,
+    "kv_cache_cur_len": 30,
+    "mitosis_event_count": 6,
+    "split_count": 6,
+    "merge_count": 0,
+    "cells_initial": 2,
+    "cells_final": 8,
+    "next_id_final": 8,
+    "first_split_step": 2,
+    "response_len_bytes": 5
+  },
+  "event_log": [
+    {"idx": 0, "step": 2,  "type": "split"},
+    {"idx": 1, "step": 2,  "type": "split"},
+    {"idx": 2, "step": 8,  "type": "split"},
+    {"idx": 3, "step": 8,  "type": "split"},
+    {"idx": 4, "step": 11, "type": "split"},
+    {"idx": 5, "step": 11, "type": "split"}
+  ],
+  "falsifiers": {
+    "F-D4-REAL-1_INVOCATION-MATCH": {
+      "verdict": "PASS",
+      "observed": "mitosis_invocations (30) == kv_cache cur_len (30)",
+      "invariant": "one hook fire per forward call; 26 prefill + (max_new=5 - 1) decode (first decode reuses prefill_last_logits, chat_lib.hexa reused_prefill guard)"
+    },
+    "F-D4-REAL-2_SPLIT-OBSERVED": {
+      "verdict": "PASS",
+      "observed": "6 split events over 30-forward horizon",
+      "invariant": "≥ 1 event of type split required (anti-trivial existence check)"
+    },
+    "F-D4-REAL-3_D-MODEL-PARITY": {
+      "verdict": "PASS",
+      "observed": "cell_pool[d_model] == 1024 == d_real",
+      "invariant": "architectural parity — no synthetic-dim leak into real-ckpt run"
+    }
+  },
+  "wall": {
+    "real_s": 16.54,
+    "user_s": 13.90,
+    "sys_s": 0.56,
+    "max_rss_bytes": 3628449792,
+    "max_rss_gb": 3.38,
+    "envelope_budget_min": 20,
+    "envelope_actual_s": 16.54,
+    "speedup_vs_pscc43_estimate": "≈ 70x faster than PSCC §43's 37 s/forward estimate (≈ 0.5 s/forward observed on real ckpt — native C farr_matmul optimization since §43)"
+  },
+  "env": {
+    "HEXA_MEM_UNLIMITED": "1",
+    "platform": "darwin",
+    "host": "Mac CPU local"
+  },
+  "honest_c3": [
+    "max_new=5 (Mac CPU wall budget choice). Full V5.8 horizon (max_new=200+) is a separate H100 dispatch — harness signature is dispatch-ready via env ANIMA_D4_CKPT override.",
+    "Synthetic harness (anima_chat_split_merge_smoke.hexa, PSCC §41) produced 21 splits in 65 calls on d=8; here 6 splits in 30 calls on d=1024 — split rate is roughly proportional to forward count, not d_model (split_threshold = 0.0 default makes the absolute tension scale irrelevant to the existence check).",
+    "Real-ckpt forward (24L Phase 1A.1 BF16) wall observed 0.5 s vs PSCC §43 envelope 37 s — RFC 032 native C farr_matmul has been substantially optimized since §43 (2026-05-12). Single-data-point, not yet cross-validated against the v58_hexa_multi_parity reference.",
+    "Response length 5 bytes (\"도\\udcb4\") — short greedy chain on a 5-token max_new; not a chat-quality signal, only a forward-path liveness signal.",
+    "0 merge events observed (merge_patience=30, horizon=30 hook fires — boundary case; merges typically require longer windows).",
+    "Principle #3 preserved: chat_init_cell_pool + mitosis_forward_tail touch only numeric hidden state (chat[\"cell_pool\"]); chat[\"history\"] / chat_build_prompt unchanged.",
+    "kv_cache cur_len=30 confirms BOTH paths active (prefill + decode); 'map key dims not found' warnings are benign void-safe fallback to chat_default_dims_24l (chat_lib.hexa §9d L2421-2426).",
+    "max_rss 3.38 GB — well below the 8.49 GB v0.2 load-smoke peak (PSCC §39); KV cache + cell_pool weights fit comfortably under HEXA_MEM_UNLIMITED."
+  ],
+  "synthetic_to_real_bridge_summary": {
+    "synthetic_d4_live": {
+      "harness": "HEXAD/CHAT/tool/anima_chat_split_merge_smoke.hexa",
+      "verdict": "3/3 PASS (PSCC §41)",
+      "d_model": 8,
+      "n_layers": 2,
+      "vocab": 16,
+      "max_new": 40,
+      "split_events": 21,
+      "cells_final": 23
+    },
+    "real_d4_live": {
+      "harness": "tool/anima_d4_live_real_ckpt_smoke.hexa",
+      "verdict": "3/3 PASS",
+      "d_model": 1024,
+      "n_layers": 24,
+      "vocab": 32000,
+      "max_new": 5,
+      "split_events": 6,
+      "cells_final": 8
+    },
+    "gap_closed": "synthetic→real architecture parity confirmed; cell-pool mitosis fires identically under production weight shape"
+  }
+}

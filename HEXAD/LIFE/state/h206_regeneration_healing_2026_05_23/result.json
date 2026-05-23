@@ -1,0 +1,31 @@
+{
+  "hypothesis": "H_206",
+  "slug": "regeneration-healing",
+  "date": "2026-05-23",
+  "host": "mac-local",
+  "determinism": { "gauss_seed": 42, "llm": "none", "cost_usd": 0.0 },
+  "params": { "pool_n": 8, "d_model": 8, "baseline_steps": 10, "recovery_cap": 40, "dim_phi": 10, "phi_n_bins": 4, "phi_ratio_band": [0.5, 1.5], "r2_threshold": 0.7, "phase_margin": 0.2 },
+  "operational_perturbation": "harness-imposed cell drop + farr_free at step=baseline_steps; floor-clamped to min_cells=2",
+  "phi_primitive": "RFC 036 phi_spatial (HEXAD/C/c_lib.hexa, byte-equal phi_rs replica)",
+  "honest_tier": "🟢 SUPPORTED-NUMERICAL (phi_spatial proxy; harness-imposed cell drop ≠ biological wound; toy N=8 substrate)",
+  "results": [
+    { "fraction": 0.0, "n_pre": 19, "requested_remove": 0, "effective_remove": 0, "n_after_wound": 19, "recovery_steps": 1, "n_post_final": 83, "n_post_window": 83, "phi_pre": 3.44114, "phi_post": 4.68694, "phi_ratio": 1.36203, "splits_pre": 11, "splits_total": 75, "bounds_ok": true },
+    { "fraction": 0.25, "n_pre": 21, "requested_remove": 5, "effective_remove": 5, "n_after_wound": 16, "recovery_steps": 5, "n_post_final": 32, "n_post_window": 32, "phi_pre": 3.07249, "phi_post": 4.74142, "phi_ratio": 1.54319, "splits_pre": 13, "splits_total": 29, "bounds_ok": true },
+    { "fraction": 0.5, "n_pre": 16, "requested_remove": 8, "effective_remove": 8, "n_after_wound": 8, "recovery_steps": 5, "n_post_final": 81, "n_post_window": 81, "phi_pre": 2.79588, "phi_post": 4.9263, "phi_ratio": 1.76198, "splits_pre": 8, "splits_total": 81, "bounds_ok": true },
+    { "fraction": 0.75, "n_pre": 16, "requested_remove": 12, "effective_remove": 12, "n_after_wound": 4, "recovery_steps": 10, "n_post_final": 77, "n_post_window": 98, "phi_pre": 2.68483, "phi_post": 4.5312, "phi_ratio": 1.6877, "splits_pre": 8, "splits_total": 102, "bounds_ok": true },
+    { "fraction": 0.875, "n_pre": 8, "requested_remove": 7, "effective_remove": 6, "n_after_wound": 2, "recovery_steps": -1, "n_post_final": 2, "n_post_window": 2, "phi_pre": 3.13876, "phi_post": 5.44059, "phi_ratio": 1.73336, "splits_pre": 0, "splits_total": 0, "bounds_ok": true }
+  ],
+  "monotone": { "r2": 0.572974, "nondecreasing": true },
+  "phase_transition_check": { "slope": 0.0, "intercept": 5.0, "pred_75": 5.0, "actual_75": 10.0, "dev_75": 1.0, "pred_875": 5.0, "actual_875": 41.0, "dev_875": 7.2 },
+  "falsifiers": {
+    "F_REGEN_1_MONOTONE":         { "verdict": "FAIL", "r2": 0.572974 },
+    "F_REGEN_2_STATE_RECOVERY":   { "verdict": "FAIL", "ratio_25": 1.54319, "ratio_50": 1.76198 },
+    "F_REGEN_3_DETERMINISM":      { "verdict": "PASS" },
+    "F_REGEN_4_PHASE_TRANSITION": { "verdict": "PASS" },
+    "F_REGEN_5_RECOVERY_EXIST":   { "verdict": "FAIL" },
+    "F_REGEN_6_BOUNDS":           { "verdict": "PASS" }
+  },
+  "n_pass": 3,
+  "verdict": "PARTIAL",
+  "verdict_rule": "SUPPORTED = F1+F2+F3 all PASS; PARTIAL = 2-3 PASS; FALSIFIED = <=1 PASS; SUPPORTED_FULL = 6/6"
+}
