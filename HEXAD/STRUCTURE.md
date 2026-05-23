@@ -90,7 +90,7 @@ ConsciousDecoderV3 (n_ca_rules 제거 + mitosis 통합 + KOSMOS+tension). attemp
 | `V3/README.md` | path overview + 재설계 axes R1-R7 |
 | `V3/EASY.md` | ConsciousDecoderV3 attempt 1 + 재설계 쉬운 설명 |
 | `V3/SESSION_PROMPT.md` | 새 V3 세션 부트스트랩 |
-| `V3/HEXAD_NATIVE_V3.md` | V3 full spec (10-axes brainstorm) |
+| `V3/HEXAD_NATIVE_PURE.md` | V3 full spec (10-axes brainstorm) |
 
 V3 code + state: `UNCLASSIFIED/state/grid_3b_s187_2026_05_21/{conscious_decoder_v3.py, kosmos_io.py, train_p21h_v3.py, vP21H_*}`.
 

@@ -1,4 +1,4 @@
-# HEXAD/V3 — pure HEXAD-native substrate (ConsciousDecoderV3 path) — 🔴 CLOSED
+# HEXAD/PURE — pure HEXAD-native substrate (ConsciousDecoderV3 path) — 🔴 CLOSED
 
 > 사용자 directive 2026-05-22: "LoRA 가 아닌 자체 HEXAD substrate". OCCAM Phase
 > 2.3 의 단독 floor 범인 `n_ca_rules` 제거한 ConsciousDecoderV3 fork 로 pure
@@ -76,7 +76,7 @@ V3 의 KOSMOS anchor + 8→5-channel tension wiring 은 ground-truth 작동
 
 - saga 쉬운 요약: [`EASY.md § 6`](EASY.md)
 - 결정 fire 보고서: [`../UNCLASSIFIED/state/grid_3b_s187_2026_05_21/HEXAD_V3_FIRE_2026_05_22.md § 8`](../UNCLASSIFIED/state/grid_3b_s187_2026_05_21/HEXAD_V3_FIRE_2026_05_22.md)
-- full spec: [`HEXAD_NATIVE_V3.md`](HEXAD_NATIVE_V3.md)
+- full spec: [`HEXAD_NATIVE_PURE.md`](HEXAD_NATIVE_PURE.md)
 - OCCAM verdict (n_ca_rules): `../EASY.md § 6`
 - LoRA 비교 baseline (production path): [`../LORA/README.md`](../LORA/README.md)
 
@@ -85,7 +85,7 @@ V3 의 KOSMOS anchor + 8→5-channel tension wiring 은 ground-truth 작동
 ### 2026-05-22 — V3/ folder 신설 + 재설계 spec
 
 V3 attempt 1 (α/β/γ 3/3 FAIL) verdict 후 사용자 directive: "V3 재설계 방향 +
-LoRA 별도 폴더". `HEXAD/V3/` + `HEXAD/LORA/` 분리. 재설계 axis 7 (R1-R7).
+LoRA 별도 폴더". `HEXAD/PURE/` + `HEXAD/LORA/` 분리. 재설계 axis 7 (R1-R7).
 
 ### 2026-05-23 — 🔴 V3 PATH CLOSED
 

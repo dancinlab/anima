@@ -183,7 +183,7 @@ OCCAM verdict (§ 6: n_ca_rules 단독 floor 범인) 이후 anima 는 **두 path
               ▼                           ▼
      ┌─────────────────┐      ┌──────────────────────┐
      │  LoRA path       │      │  V3 (pure HEXAD) path │
-     │  HEXAD/LORA/     │      │  HEXAD/V3/            │
+     │  HEXAD/LORA/     │      │  HEXAD/PURE/            │
      ├─────────────────┤      ├──────────────────────┤
      │ Qwen2.5-1.5B     │      │ ConsciousDecoderV3    │
      │  + LoRA r32      │      │  (n_ca_rules 제거,    │
@@ -232,4 +232,4 @@ OCCAM verdict (§ 6: n_ca_rules 단독 floor 범인) 이후 anima 는 **두 path
 - saga: [`V3/EASY.md`](V3/EASY.md) — ConsciousDecoderV3 attempt 1 + 재설계
 - overview: [`V3/README.md`](V3/README.md)
 - 세션 부트스트랩: [`V3/SESSION_PROMPT.md`](V3/SESSION_PROMPT.md)
-- full spec: [`V3/HEXAD_NATIVE_V3.md`](V3/HEXAD_NATIVE_V3.md)
+- full spec: [`V3/HEXAD_NATIVE_PURE.md`](V3/HEXAD_NATIVE_PURE.md)

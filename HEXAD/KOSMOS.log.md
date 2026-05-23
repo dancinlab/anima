@@ -42,9 +42,9 @@ LANDED: `HEXAD/CHAT/server/kosmos_emitter.hexa` (~375 LoC, pure-hexa) —
 entry 로 띄워야 production 활성화 — `hexa run kosmos_emitter.hexa daemon`.
 broker / mini 재시작 없음. 활성화 노트는 PR description 참조.
 
-### 2026-05-23 — `@payload tension` WIRED — HEXAD/V3 KOSMOS+tension 회수 (production path)
+### 2026-05-23 — `@payload tension` WIRED — HEXAD/PURE KOSMOS+tension 회수 (production path)
 
-User directive 2026-05-23: HEXAD/V3 (🔴 CLOSED — multilingual FAIL) 의 작동하던
+User directive 2026-05-23: HEXAD/PURE (🔴 CLOSED — multilingual FAIL) 의 작동하던
 **KOSMOS anchor + 8→5-channel tension wiring** 을 production LoRA chat path 로
 salvage. V3 substrate 자체만 실패 — KOSMOS+tension feature 는 fire 마다 anchor
 생성 ground-truth 작동 (V3/README.md §"KOSMOS+tension 통합" 보존 권고).
@@ -53,7 +53,7 @@ LANDED: `HEXAD/CHAT/server/kosmos_anchor.hexa` (~270 LoC, pure-hexa, no torch) �
 - `map_8factor_to_5channel` : 8-factor motivation snapshot → TENSION-LINK
   5-channel (relevance+coherence→concept · info_gap→context ·
   curiosity+originality→meaning · pain+balance→authenticity · dynamics→sender),
-  HEXAD_NATIVE_V3.md §0.5 mapping table SSOT.
+  HEXAD_NATIVE_PURE.md §0.5 mapping table SSOT.
 - `write_kosmos_anchor` / `emit_kosmos_from_factors` : kosmos/1.1 `.kosmos`
   anchor writer — text payload = emission text · tension payload = 5-channel ·
   coord = [Φ, mean tension] · lane = mitosis cell_id · tier = invocation count

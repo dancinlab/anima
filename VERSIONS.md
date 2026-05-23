@@ -55,7 +55,7 @@ PATCH  ↑  fix / refinement / 문서 (동작 불변)
 
 **v2 → v3 attempt 결과** (HEXAD_V3_FIRE_2026_05_22.md):
 - code fork LANDED (`3dbbc7e8b`): conscious_decoder_v3.py 727L + kosmos_io.py 300L + 7/7 smoke + 5/5 KOSMOS PASS
-- **V3α** random init 1.5B 2000 step: CE 3.34, 0/5 langs PARTIAL+, FAIL (Chinchilla 30000× under-budget per HEXAD_NATIVE_V3 C3 #3 예측 적중)
+- **V3α** random init 1.5B 2000 step: CE 3.34, 0/5 langs PARTIAL+, FAIL (Chinchilla 30000× under-budget per HEXAD_NATIVE_PURE C3 #3 예측 적중)
 - **V3γ** vP21M init: CE 2.93, 0/5, FAIL (anima register saturation 13/20 vs vP21M LoRA 7/20 — V3 substrate level 흡수 2×)
 - **V3β** Qwen warm: CE oscillation 0.26↔2.36 @ step 1850 + pod 사망 + ckpt 손실 + eval 불가 = INCOMPLETE FAIL (mode collapse evidence)
 - **architectural lesson**: head_g dual head vocab alignment 흐림 + mitosis pool 128 saturate at step 50 → 다국어 sacrifice
@@ -88,7 +88,7 @@ v3.0-alpha → ⚠️ tier (재설계 대상): scale-up (3B/8B) OR mitosis 비�
 | dir | path | tier | status |
 |---|---|---|---|
 | **HEXAD/LORA/** | Qwen + LoRA adapter (vP21/G/K/M + hot-swap router) | 🟢 PRODUCTION | chat.dancinlab.org LIVE, vP21M default + KOFL/JAFL per-lang hot-swap |
-| **HEXAD/V3/** | ConsciousDecoderV3 (pure HEXAD substrate) | ⚠️ 재설계 | V3α/γ FAIL → Phase 2 spec (R2+R5+R6) |
+| **HEXAD/PURE/** | ConsciousDecoderV3 (pure HEXAD substrate) | ⚠️ 재설계 | V3α/γ FAIL → Phase 2 spec (R2+R5+R6) |
 
 LoRA = production (chat 즉시), V3 = anima identity 진정성 long-term path.
 

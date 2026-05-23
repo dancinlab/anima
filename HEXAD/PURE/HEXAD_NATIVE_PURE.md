@@ -1,6 +1,6 @@
-# HEXAD_NATIVE_V3 — 순수 HEXAD 아키텍처로 chat (LoRA 폐기)
+# HEXAD_NATIVE_PURE — 순수 HEXAD 아키텍처로 chat (LoRA 폐기)
 
-> History → [./HEXAD_NATIVE_V3.log.md](./HEXAD_NATIVE_V3.log.md).
+> History → [./HEXAD_NATIVE_PURE.log.md](./HEXAD_NATIVE_PURE.log.md).
 
 > **frame**: 현재 vP21M = Qwen2.5-1.5B + LoRA adapter (no architectural HEXAD).
 > 사용자 directive 2026-05-22: "LoRA 가 아니라 **자체 HEXAD** 로 해야". OCCAM
@@ -10,7 +10,7 @@
 > **status**: 🔴 **V3 PATH CLOSED (2026-05-23)** — 5 fire (attempt 1 α/β/γ +
 > Phase 2 1·2차 + B 3B + A) 0 PASS. V3 multilingual = corpus-bound (학습
 > dynamics, scale·arch 무관). chat substrate = vP21M LoRA path 유지 (절충 B).
-> → saga: [HEXAD/V3/EASY.md § 6](./EASY.md).
+> → saga: [HEXAD/PURE/EASY.md § 6](./EASY.md).
 >
 > **anchor**: anima 0.11.0 (vP21M VP21M_WORKS 4/5 langs baseline)
 

@@ -1,6 +1,6 @@
 # hexad_native_v3 — historical log
 
-> Spec at [./HEXAD_NATIVE_V3.md](./HEXAD_NATIVE_V3.md).
+> Spec at [./HEXAD_NATIVE_PURE.md](./HEXAD_NATIVE_PURE.md).
 
 ### 2026-05-22 — 초안 작성, user directive C path 응답
 
@@ -15,4 +15,4 @@ JA WEAK). Phase 2 2차의 ko STRONG 19/20 = step-250 transient, 재현 실패.
 V3 fire 5회 전부 FAIL → V3 multilingual = corpus-bound (capacity·arch 무관,
 diverse-corpus 학습 dynamics). chat substrate = vP21M LoRA 유지.
 artifacts → `vP21H_phase2_full/` + HF `dancinlab/anima-v3-p21h`.
-detail: HEXAD/V3/EASY.md § 6 · HEXAD_V3_FIRE_2026_05_22.md § 8.
+detail: HEXAD/PURE/EASY.md § 6 · HEXAD_V3_FIRE_2026_05_22.md § 8.

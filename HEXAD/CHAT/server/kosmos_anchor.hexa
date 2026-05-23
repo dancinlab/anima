@@ -1,10 +1,10 @@
 // ════════════════════════════════════════════════════════════════════════════
 //  kosmos_anchor.hexa — production anima emission → .kosmos anchor writer
 //
-//  Salvaged from HEXAD/V3 (CLOSED 2026-05-23). The V3 substrate failed
+//  Salvaged from HEXAD/PURE (CLOSED 2026-05-23). The V3 substrate failed
 //  multilingual generalization, but its KOSMOS anchor + 8→5-channel tension
 //  wiring WORKED (every V3 fire emitted .kosmos anchors as ground truth — see
-//  HEXAD/V3/README.md §"KOSMOS + tension 통합"). This module ports that working
+//  HEXAD/PURE/README.md §"KOSMOS + tension 통합"). This module ports that working
 //  feature into the PRODUCTION path so production anima emissions also generate
 //  .kosmos anchors carrying a tension payload — un-pending HEXAD/KOSMOS.md
 //  `@payload tension`.
@@ -15,12 +15,12 @@
 //  Each production anima emission writes one .kosmos anchor (kosmos/1.1):
 //    text payload    = the emission text
 //    tension payload = the 8-factor motivation snapshot mapped to the 5
-//                      TENSION-LINK channels (HEXAD_NATIVE_V3.md §0.5 table)
+//                      TENSION-LINK channels (HEXAD_NATIVE_PURE.md §0.5 table)
 //    coord           = [C-module Φ, mean tension]  (Ψ-space)
 //    lane            = active mitosis cell_id      (default cell_0)
 //    tier            = invocation count            (Knuth ordinal)
 //
-//  8-factor → 5-channel mapping (HEXAD_NATIVE_V3.md §0.5 / ADAPTER.md SSOT):
+//  8-factor → 5-channel mapping (HEXAD_NATIVE_PURE.md §0.5 / ADAPTER.md SSOT):
 //    relevance + coherence    → concept
 //    info_gap                 → context
 //    curiosity + originality  → meaning
