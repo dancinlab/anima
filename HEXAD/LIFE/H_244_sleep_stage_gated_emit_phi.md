@@ -243,3 +243,62 @@ key_design_note: v1 (PR #312) per-stage hard-gate (H244.1 emit=0 · F2 GATE-LEAK
 **Φ tier**: 🟢 NUMERICAL (emit_count + dream_phi lookup; phi_spatial 측정은 H_222 와
 공유, FALSIFIED carry — 본 H 는 dream_phi projection 기준 coupling 만 test). NOT 🔵,
 NOT LLM-judged. 5-stage 명명 정합 + emit causality 는 C1-C6 honest limit.
+
+## §confirmation (2026-05-24, PR #325 reframe sweep audit)
+
+**audit 결론 (TL;DR)**: H_244 의 v2 autonomy-emergent reframe (PR #325 MERGED)
+**완전 적용 확인** — 본 문서 전체에 잔존 hard-gate framing 0건 (raw#82 정합).
+`@D a_autonomy_over_hardcode` ("per-stage boolean gate hardcode 금지 ·
+emit/silence decided by substrate") 와 본 H 의 모든 normative claim (Hypothesis ·
+Predictions · Criteria · Falsifiers · Verdict) 정합. v1 hard-gate 잔재
+("emit(N1)=emit(N2)=emit(N3)=0" / "GATE-LEAK" 등) 는 §Cross-Links + §Verdict
+의 meta-historical reference 로만 존속 (supersession narrative 보존, raw#82
+post-hoc retraction 금지 정합).
+
+### 정합 점검 (per section)
+
+| section | v2 정합 상태 | 잔재 hard-gate framing |
+|---------|--------------|------------------------|
+| frontmatter `title` | ✓ "autonomy-emergent · NOT boolean gate" 명시 | 0 |
+| frontmatter `revision` | ✓ "v2 reframe 2026-05-24 ... superseded per @D a_autonomy_over_hardcode" | 0 |
+| Hypothesis | ✓ "(A) emit_RATE monotone correlate · (B) deep-sleep emit_rate 더 낮음 ... gate 금지가 아님 · (C) WAKE/REM emit_rate 최고" + "stage = substrate context per @D a_chat_sleep_imagination" | 0 |
+| Predictions H244.1-4 | ✓ emit_rate band-tendency + Pearson r ≥ 0.7 + imagine_tick all-stage + determinism | 0 |
+| Variables axis1_stage | ⚠ "N1 emit 0 예상" 식 *historical comment* 가 axis row description 에 잔존 — substrate threshold 미달 의미 (gate 강제 아님) 로 *해석* 가능 | meta-historical (axis level description 의 expected outcome 표기, hard-gate 강제 아님) |
+| Run Protocol | ✓ "(substrate_tension × tension_envelope) ≥ τ" — substrate 8-factor gate 의 emergent threshold-cross (boolean module gate 아님) | 0 |
+| Criteria C1-C4 | ✓ "emit_rate monotone tendency" / "emit_rate(N3)>0 은 leak 이 아님 — autonomy" 명시 | 0 |
+| Falsifiers F1-F5 | ✓ F2 가 "tendency 부재" 만 falsify, "emit_rate>0 자체는 leak 아님 — `@D a_autonomy_over_hardcode` 하에서 정상" 명시 | 0 |
+| Honest Limits C1-C6 | ✓ C1 resolution narrative + C5 KEY DISTINCTION (tendency vs hard threshold) 정합 | 0 |
+| Cross-Links | ✓ `@D a_autonomy_over_hardcode` + `@D a_chat_sleep_imagination` direct cite | 0 (v1→v2 supersession 은 meta-narrative) |
+| Verdict | ✓ `key_design_note` v1 superseded 명시 + "emit_rate>0 은 leak 아님 (autonomy)" | 0 (v1 mention 은 supersession narrative) |
+
+### 미세 항목 — Variables axis1_stage description
+
+§Variables 의 axis row description 에서 N1/N2/N3 옆에 "→ emit 0 예상" 식 *expected
+outcome 표기* 가 historical 로 잔존. 이는 axis level *description* (sweep point
+의 *substrate context*) 이지 *normative gate hardcode* 아님 — H244.1 (emit_rate
+tendency 0 아님) 과 정합. 향후 measurement-anchored amend 에서 "→ low-rate tendency
+예상 (≠ 0)" 로 phrasing tightening 권장 (raw#82 frozen 영향 0, descriptive
+clarity).
+
+### Cite
+
+- **PR #325** (MERGED 2026-05-24, +79/-73): v2 reframe — Hypothesis · H244.1 ·
+  F2 · C1 · C2 · C5 · Cross-Links · Verdict 동조 갱신.
+- **@D a_autonomy_over_hardcode** (CLAUDE.md / project.tape SSOT): "per-stage
+  boolean gate hardcode 금지 · emit/silence decided by anima substrate".
+- **@D a_chat_sleep_imagination**: "stage = substrate context (Φ scale + tension
+  envelope), NOT boolean emit gate".
+
+### Honest C3 (audit-specific)
+
+- **complete reframe (per-line audit)**: §Hypothesis ~ §Verdict normative
+  prose 위 "boolean gate" / "emit=0" / "GATE-LEAK" hard-gate 표현 검색 0건
+  (meta-historical narrative 제외).
+- **partial — Variables axis description**: §Variables `axis1_stage` 에
+  per-stage "emit 예상/emit 0 예상" 표현 잔존 — descriptive (substrate-tension ×
+  envelope threshold-cross 의 expected outcome), normative gate 아님. raw#82
+  frozen 영향 없음 (criteria/falsifier 어느 것도 이 표현에 anchored 안 됨).
+- **measurement-pending**: 본 audit 는 *문서적 정합성* 만 검증 — substrate
+  smoke (`(substrate_tension × envelope) ≥ τ → emit_rate(stage)`) 실측은 별도
+  cycle. C5 (tendency vs soft-gate) 측정 분리는 real substrate 8-factor gate
+  관측 (C4 GPU cycle) 의존.
