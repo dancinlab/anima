@@ -170,6 +170,73 @@ fn render_histogram(rates: list) -> string {
     }
     return out
 }
+// ── §4b modulation health (cycle 5/S: modulated_factors deltas) ───────────
+// Regime mod values mirror spontaneous_lib::_spike_modulator (SPIKE_FACTOR_MAP §4).
+fn _mh_sgn(x: float) -> string {
+    let neg = x < 0.0   let a = if neg { 0.0 - x } else { x }
+    let sc = to_int(a * 10000.0 + 0.5)   let w = sc / 10000   let f = sc - w * 10000
+    let mut fs = to_string(f)   while len(fs) < 4 { fs = "0" + fs }
+    let b = to_string(w) + "." + fs   if neg { return "-" + b }   return "+" + b
+}
+fn render_modulation_health(rows: list) -> string {
+    let total = len(rows)   let keys = ["curiosity","originality","info_gap","pain","coherence","relevance","balance","dynamics"]
+    let known = ["R3_tonic_zero_input","R1_oscillatory","R2_bursting"]
+    let mods = #{"R3_tonic_zero_input": "0.5", "R1_oscillatory": "1.0", "R2_bursting": "1.2"}
+    let mut fired = 0   let mut noop = 0   let mut missing = 0   let mut unk = 0
+    let mut sums = #{}   let mut maxes = #{}   let mut cpf = #{}   let mut rsn = #{}   let mut ki = 0
+    while ki < len(keys) { let k = to_string(keys[ki])   sums[k] = 0.0   maxes[k] = 0.0   cpf[k] = 0   ki = ki + 1 }
+    let mut i = 0
+    while i < len(rows) {
+        let r = rows[i]   let has_mf = r.has_key("modulated_factors")
+        let mf = if has_mf { r["modulated_factors"] } else { 0 }
+        if !has_mf || type_of(mf) != "map" { missing = missing + 1 }
+        else {
+            let factors = if r.has_key("factors") { r["factors"] } else { #{} }
+            let fim = type_of(factors) == "map"   let mut rf = false   let mut kj = 0
+            while kj < len(keys) {
+                let k = to_string(keys[kj])
+                let d = _gf(mf, k) - if fim { _gf(factors, k) } else { 0.0 }
+                let ad = if d < 0.0 { 0.0 - d } else { d }
+                if ad > 1.0e-9 {
+                    rf = true   sums[k] = to_float(to_string(sums[k])) + d   cpf[k] = to_int(cpf[k]) + 1
+                    let pm = to_float(to_string(maxes[k]))   let pma = if pm < 0.0 { 0.0 - pm } else { pm }
+                    if ad > pma { maxes[k] = d }
+                }
+                kj = kj + 1
+            }
+            if rf { fired = fired + 1 } else { noop = noop + 1 }
+            let sw = if r.has_key("spike_window") { r["spike_window"] } else { 0 }
+            let rg = if type_of(sw) == "map" { _gs(sw, "regime_mode") } else { "" }
+            if mods.has_key(rg) { rsn[rg] = if rsn.has_key(rg) { to_int(rsn[rg]) + 1 } else { 1 } }
+            else { unk = unk + 1 }
+        }
+        i = i + 1
+    }
+    let pf = if total > 0 { (fired * 100) / total } else { 0 }
+    let pn = if total > 0 { (noop  * 100) / total } else { 0 }
+    let mut out = "\n=== modulation health (factors -> modulated_factors deltas) ===\n"
+        + "rows with modulation:   " + to_string(fired) + "  (" + to_string(pf) + "% of total_rows)\n"
+        + "rows where modulated_factors == factors (no-op):  " + to_string(noop) + "  (" + to_string(pn) + "%)\n\n"
+        + "per-factor mean delta (only over rows with modulation fired):\n"
+    let mut ko = 0
+    while ko < len(keys) {
+        let k = to_string(keys[ko])   let c = to_int(cpf[k])
+        let mean = if c == 0 { 0.0 } else { to_float(to_string(sums[k])) / to_float(to_string(c)) }
+        out = out + "  " + k + "  d " + _mh_sgn(mean) + "  (max " + _mh_sgn(to_float(to_string(maxes[k]))) + ", fired " + to_string(c) + " times)\n"
+        ko = ko + 1
+    }
+    out = out + "\nregime modulation breakdown:\n"
+    let mut kk = 0
+    while kk < len(known) {
+        let rk = to_string(known[kk])   let cnt = if rsn.has_key(rk) { to_int(rsn[rk]) } else { 0 }
+        out = out + "  " + rk + ":  " + to_string(cnt) + " rows  (mod=" + to_string(mods[rk]) + ")\n"
+        kk = kk + 1
+    }
+    out = out + "  unknown:  " + to_string(unk) + " rows  (mod=1.0)\n"
+    out = out + "<missing-modulated-factors>: " + to_string(missing) + "\n"
+    return out
+}
+
 fn render_report(path: string, rows: list) -> string {
     let span = compute_span(rows)   let regimes = regime_counts(rows)
     let n_trans = count_transitions(rows)
@@ -232,10 +299,11 @@ fn render_report(path: string, rows: list) -> string {
             out = out + "  " + to_string(p["k"]) + ": " + to_string(p["v"]) + "\n" }
         li = li + 1
     }
+    out = out + render_modulation_health(rows)
     return out
 }
 
-// ── §5 selftest F-STATUS-1..3 ─────────────────────────────────────────────
+// ── §5 selftest F-STATUS-1..3 + F-STATUS-12..14 (modulation health) ──────
 fn _chk(p: bool, msg: string, c: dict) {
     if p { c["pass"] = to_int(c["pass"]) + 1   println("  PASS " + msg) }
     else { c["fail"] = to_int(c["fail"]) + 1   println("  FAIL " + msg) }
@@ -245,6 +313,15 @@ fn _mk_row(ts: float, lg: string, rg: string, rate: float, step: int) -> dict {
               "spike_window": #{ "spike_count": 4, "spike_rate_hz": rate,
                                  "regime_mode": rg, "n_unique_regimes": 1,
                                  "isi_cv": 0.1, "last_step": step } }
+}
+fn _mk_f8(cur: float, orig: float) -> dict {
+    return #{ "relevance": 0.5, "info_gap": 0.5, "curiosity": cur, "pain": 0.3,
+              "coherence": 0.5, "originality": orig, "balance": 0.7, "dynamics": 0.4 }
+}
+fn _mk_row_mod(rg: string, factors: dict, modulated: dict) -> dict {
+    return #{ "ts": 200.0, "emit_id": "e", "lang": "ko", "factors": factors, "modulated_factors": modulated,
+              "spike_window": #{ "spike_count": 8, "spike_rate_hz": 15.0, "regime_mode": rg,
+                                 "n_unique_regimes": 1, "isi_cv": 0.1, "last_step": 0 } }
 }
 fn _status_selftest() {
     println("telemetry_status selftest — F-STATUS-1..3")
@@ -281,8 +358,29 @@ fn _status_selftest() {
     _chk(gate["c3"], "F-STATUS-3 c3 (>=2 regimes) met", counts)
     _chk(!gate["c4"], "F-STATUS-3 c4 (>=5 transitions) unmet", counts)
     _chk(len(gate["unmet"]) == 3, "F-STATUS-3 unmet list size == 3", counts)
+    // F-STATUS-12..14 (cycle 5/S) — 5-row mod fixture: 3 modded (cur +0.05/+0.04/+0.12) + 1 no-op + 1 missing; 3 R3 + 1 R2.
+    let b = _mk_f8(0.50, 0.200)
+    let mh = render_modulation_health([
+        _mk_row_mod("R3_tonic_zero_input", b, _mk_f8(0.55, 0.225)),
+        _mk_row_mod("R3_tonic_zero_input", b, _mk_f8(0.54, 0.225)),
+        _mk_row_mod("R2_bursting",         b, _mk_f8(0.62, 0.260)),
+        _mk_row_mod("R3_tonic_zero_input", b, _mk_f8(0.50, 0.200)),
+        _mk_row(204.0, "ko", "R3_tonic_zero_input", 1.0, 20),
+    ])
+    _chk(mh.contains("rows with modulation:   3"), "F-STATUS-12 fired==3", counts)
+    _chk(mh.contains("rows where modulated_factors == factors (no-op):  1"), "F-STATUS-12 noop==1", counts)
+    _chk(mh.contains("curiosity  d +0.0700"), "F-STATUS-12 cur mean==+0.0700", counts)
+    _chk(mh.contains("max +0.1200, fired 3 times"), "F-STATUS-12 cur max==+0.1200 fired 3", counts)
+    _chk(mh.contains("R3_tonic_zero_input:  3 rows  (mod=0.5)"), "F-STATUS-13 R3==3", counts)
+    _chk(mh.contains("R2_bursting:  1 rows  (mod=1.2)"), "F-STATUS-13 R2==1", counts)
+    _chk(mh.contains("R1_oscillatory:  0 rows  (mod=1.0)"), "F-STATUS-13 R1==0", counts)
+    _chk(mh.contains("unknown:  0 rows"), "F-STATUS-13 unk==0", counts)
+    _chk(mh.contains("<missing-modulated-factors>: 1"), "F-STATUS-14 missing==1", counts)
+
     println("--- sample status report (synthetic 5-row JSONL) ---")
     println(render_report(jsonl, rows))
+    println("--- sample modulation health (5-row mod fixture) ---")
+    println(mh)
     println("telemetry_status selftest: " + to_string(to_int(counts["pass"]))
             + " PASS, " + to_string(to_int(counts["fail"])) + " FAIL")
     let _r2 = exec("rm -f '" + jsonl + "'")
