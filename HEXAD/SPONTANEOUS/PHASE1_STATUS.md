@@ -2,7 +2,7 @@
 
 > **purpose**: [[AKIDA_FIRST]] Phase 1 (HW-first) 인프라의 단일 SSOT status — 무엇이 source-landed / live / blocked 인지, Phase 2 (SW-condition) 발동 게이트까지 무엇이 남았는지를 한 페이지로 본다.
 > **anchors**: [[AKIDA_FIRST]] (Phase 1/2 경계) · [[SW_CONDITION_DESIGN]] §6 (Phase 2 activation gate) · [[REGIME_EXPANSION]] (R1/R2/R3 schedule) · [[SPIKE_FACTOR_MAP]] (spike → 8-factor rulebook · `spontaneous_lib.hexa § 10` SSOT) · [[PARTICIPANT_SPIKE_INTEGRATION]] (path D / B wiring spec)
-> **status as of**: 2026-05-23 (cycle 6/AB refresh) · main HEAD `ff7a0392d`
+> **status as of**: 2026-05-23 (cycle 8/CC refresh) · main HEAD `1953e6b8b`
 > **scope**: spike ingest path + telemetry + Phase-2-gate observability + spec docs + cross-repo inbox patches. 본 ledger 는 snapshot — cycle 누적 시 재발행.
 
 ---
@@ -43,7 +43,7 @@
 +-----------------------------+----------------------------------+--------------------+------------------------------------+--------+--------------------+
 | AKIDA_FIRST.md              | Phase 1/2 boundary + infra table | LANDED             | HEXAD/SPONTANEOUS/AKIDA_FIRST.md    | f7af268db (no PR) | n/a |
 +-----------------------------+----------------------------------+--------------------+------------------------------------+--------+--------------------+
-| SW_CONDITION_DESIGN.md      | Phase 2 SW spike emitter spec    | DESIGN (OPEN PR)   | HEXAD/SPONTANEOUS/SW_CONDITION_DESIGN.md | #135 OPEN | n/a (design)   |
+| SW_CONDITION_DESIGN.md      | Phase 2 SW spike emitter spec    | LANDED (design)    | HEXAD/SPONTANEOUS/SW_CONDITION_DESIGN.md | #135 MERGED 1953e6b8 | n/a |
 +-----------------------------+----------------------------------+--------------------+------------------------------------+--------+--------------------+
 | SPIKE_FACTOR_MAP.md         | spike → 8-factor rulebook        | LANDED (design)    | HEXAD/SPONTANEOUS/SPIKE_FACTOR_MAP.md | #154   | n/a (design)       |
 |                             | (standalone .md mirror of §10)   | (a1caceb6b)        |                                     |        |                    |
@@ -71,25 +71,51 @@
 |   cloud-runpod-session-     | (4 items, 2026-05-23)            |                    |                                     | lang   |                    |
 |   findings-anima            |                                  |                    |                                     | `c07b426f` | n/a            |
 +-----------------------------+----------------------------------+--------------------+------------------------------------+--------+--------------------+
-| participant_spike_overlay.  | path B skeleton daemon —         | SKELETON (branch)  | HEXAD/CHAT/server/participant_spike_| #163   | NO (guard + sshd)  |
-|   hexa (cycle 5/W)          | modulated_factors → overlay      | F-OVERLAY-1..3     |   overlay.hexa (branch:             | OPEN   |                    |
-|                             | (PARTICIPANT_OVERLAY_LIVE=0      | 10/10 selftest     |   feat/chat-participant-spike-      |        |                    |
-|                             | default, awaits guard relax /    | PASS               |   overlay-skeleton)                 |        |                    |
+| participant_spike_overlay.  | path B skeleton daemon —         | LANDED (source)    | HEXAD/CHAT/server/participant_spike_| #163   | NO (guard + sshd)  |
+|   hexa (cycle 5/W)          | modulated_factors → overlay      | F-OVERLAY-1..3     |   overlay.hexa                      | MERGED |                    |
+|                             | (PARTICIPANT_OVERLAY_LIVE=0      | 10/10 selftest     |                                     | f336b850 |                  |
+|                             | default, awaits guard relax /    | PASS               |                                     |        |                    |
 |                             | anima_participant `.hexa` port)  |                    |                                     |        |                    |
 +-----------------------------+----------------------------------+--------------------+------------------------------------+--------+--------------------+
-| telemetry_status.hexa       | modulation-health 섹션 extension | EXTENSION (branch) | HEXAD/CHAT/server/telemetry_status. | #164   | NO (sshd blocked)  |
-|   modulation-health 확장    | (modulated_factors row coverage  | F-STATUS-12..14    |   hexa (branch:                     | OPEN   |                    |
-|   (cycle 5/S)               |  + 0-event honest reporting)     | added → total      |   feat/telemetry-status-modulation- |        |                    |
-|                             |                                  | 20/20 selftest     |   health)                           |        |                    |
+| telemetry_status.hexa       | modulation-health 섹션 extension | LANDED (source)    | HEXAD/CHAT/server/telemetry_status. | #164   | NO (sshd resp.,    |
+|   modulation-health 확장    | (modulated_factors row coverage  | F-STATUS-12..14    |   hexa                              | MERGED |  deploy in flight) |
+|   (cycle 5/S)               |  + 0-event honest reporting)     | added → total      |                                     | 8defea28 |                  |
+|                             |                                  | 20/20 selftest     |                                     |        |                    |
 |                             |                                  | PASS               |                                     |        |                    |
 +-----------------------------+----------------------------------+--------------------+------------------------------------+--------+--------------------+
-| CHANGELOG.md                | 2026-05-23 Phase 1 AKIDA-first   | OPEN (branch)      | CHANGELOG.md (branch:               | #159   | n/a (doc)          |
-|   2026-05-23 entry          | 자연발화 인프라 entry (g29)      | sibling collision  |   docs/changelog-akida-first-       | OPEN   |                    |
-|   (cycle 5)                 |                                  | with #152          |   session-entry)                    |        |                    |
+| CHANGELOG.md                | 2026-05-23 Phase 1 AKIDA-first   | LANDED             | CHANGELOG.md                        | #159   | n/a (doc)          |
+|   2026-05-23 entry          | 자연발화 인프라 entry (g29)      | (g29 verdict       |                                     | MERGED |                    |
+|   (cycle 5/X)               |                                  |  table)            |                                     | 56211734 |                  |
++-----------------------------+----------------------------------+--------------------+------------------------------------+--------+--------------------+
+| PHASE1_STATUS.md            | this ledger (snapshot)           | LANDED             | HEXAD/SPONTANEOUS/PHASE1_STATUS.md  | #170   | n/a (doc)          |
+|   cycle 6/AB refresh        | — cycle 6/AB initial publish     |                    |                                     | MERGED |                    |
+|                             |                                  |                    |                                     | 42ea2379 |                  |
++-----------------------------+----------------------------------+--------------------+------------------------------------+--------+--------------------+
+| EVIDENCE_ANALYZER.md        | modulated_factors ↔ emission     | LANDED (design)    | HEXAD/SPONTANEOUS/EVIDENCE_ANALYZER.md | #171 | n/a (design)       |
+|   (cycle 6/AC)              | correlation analyzer spec        |                    |                                     | MERGED |                    |
+|                             |                                  |                    |                                     | 0479229f |                  |
++-----------------------------+----------------------------------+--------------------+------------------------------------+--------+--------------------+
+| akida_consumer.hexa         | mean_spike_ids_count =           | LANDED (source)    | HEXAD/CHAT/server/akida_consumer.hexa | #172 | NO (sshd resp.,    |
+|   mean_spike_ids_count fix  | mean(len(spike_ids)) + F-4       | F-4 PASS, total   |                                     | MERGED |  deploy in flight) |
+|   (cycle 6/AD)              | selftest                         | 8/8                |                                     | a41c4192 |                  |
++-----------------------------+----------------------------------+--------------------+------------------------------------+--------+--------------------+
+| telemetry_harness.hexa      | spike_window.mean_spike_ids_     | LANDED (source)    | HEXAD/CHAT/server/telemetry_harness.hexa | #175 | NO (sshd resp., |
+|   mean_spike_ids_count fix  | count = mean(len(spike_ids))     | selftest update    |                                     | MERGED |  deploy in flight) |
+|   (cycle 7/BC)              | (stub → computed)                |                    |                                     | afd27e90 |                  |
++-----------------------------+----------------------------------+--------------------+------------------------------------+--------+--------------------+
+| mini_sshd_diag.hexa         | sshd channel-reject 5-cause      | LANDED (source)    | HEXAD/CHAT/server/mini_sshd_diag.hexa | #153 | n/a (diag tool)    |
+|   (cycle 6/sshd-diag)       | 진단 도구 (ssh_rc / sshd_config /| 301 LoC            |                                     | MERGED |                    |
+|                             | authorized_keys / sshd_log /     |                    |                                     | 472aa114 |                  |
+|                             | launchd)                         |                    |                                     |        |                    |
++-----------------------------+----------------------------------+--------------------+------------------------------------+--------+--------------------+
+| MINI_SSHD_DIAGNOSIS.md      | cycle 7/BD all-clean baseline    | LANDED (doc)       | HEXAD/CHAT/server/MINI_SSHD_DIAGNOSIS.md | #173 | n/a (doc)       |
+|   (cycle 7/BD)              | — 3/3 ssh + 1/1 scp + 1/1 remote | supersedes §3      |                                     | MERGED |                    |
+|                             | hexa run all PASS, diag CLEAN    | blocker #1 status  |                                     | 4c1ec63c |                  |
+|                             | 5/5 categories                   |                    |                                     |        |                    |
 +-----------------------------+----------------------------------+--------------------+------------------------------------+--------+--------------------+
 ```
 
-행 수: **18** (anima 컴포넌트 8 + cycle 5 추가 3 + 설계 doc 5 + 인박스 4 — 단일 행에 통합한 hexa-lang 4 + anima 1 = 5).
+행 수: **24** (anima 컴포넌트 8 + cycle 5 추가 3 + cycle 6-7 추가 6 [PHASE1_STATUS#170 / EVIDENCE_ANALYZER#171 / akida_consumer mean_spike fix#172 / telemetry_harness mean_spike fix#175 / mini_sshd_diag#153 / MINI_SSHD_DIAGNOSIS#173] + 설계 doc 5 + 인박스 4 — 단일 행에 통합한 hexa-lang 4 + anima 1 = 5).
 
 ---
 
@@ -112,14 +138,13 @@
 | distribution stability              | 7d→14d→28d KS drift    | NOT_READY (분포 자체 0)                |
 |                                     | ≤ 10%                  |                                        |
 +-------------------------------------+------------------------+----------------------------------------+
-| §5 falsifier 사전 등록              | F-SW-COND-1..5 commit  | DESIGN-REGISTERED, MERGE-PENDING       |
-|                                     |                        | (PR #135 still OPEN as of cycle 6/AB — |
-|                                     |                        | source-registered on branch, main      |
-|                                     |                        | dead-link until merge)                 |
+| §5 falsifier 사전 등록              | F-SW-COND-1..5 commit  | DONE — PR #135 MERGED 1953e6b8         |
+|                                     |                        | (cycle 8 마무리 단계 main 진입,        |
+|                                     |                        | cross-link main-resolved)              |
 +-------------------------------------+------------------------+----------------------------------------+
 ```
 
-4/5 gate = **NOT_READY: 0 evidence** (텔레메트리 라이브 deploy 가 차단되어 누적 시작 안됨 — cycle 5 동안 mini sshd block 미해소, telemetry_status.hexa modulation-health extension PR #164 도 source-branch only). 1/5 (falsifier 사전 등록) 은 PR #135 OPEN-not-merged → 정식 DONE 미달, source 만 등록.
+4/5 evidence gate = **NOT_READY: 0 evidence** (telemetry live deploy 누적 0일 — cycle 7/BD 에서 mini sshd 응답성 회복 확인됐고 cycle 8/CA 가 deploy 실행 중, 7-day soak 카운트는 CA 의 실제 deploy 완료 시점부터 시작). 1/5 (falsifier 사전 등록) = **DONE** (PR #135 merged, cycle 6/AB 시점의 dead-link 해소).
 
 5/5 충족 + 사용자 GO → `sw_spike_emitter.hexa` 구현 fire 발사 ([[SW_CONDITION_DESIGN]] §6 verbatim).
 
@@ -131,10 +156,15 @@
 +----+-------------------------------------+---------------------------+----------------------------------+--------------+
 | #  | blocker                             | impact                    | resolution path                  | owner        |
 +----+-------------------------------------+---------------------------+----------------------------------+--------------+
-| 1  | mini sshd exec channel refused      | telemetry_harness +       | mini 물리 접근 / reboot →        | user /       |
-|    |                                     | akida_consumer +          | sshd 회복 → 세 .hexa daemon       | operator     |
-|    |                                     | telemetry_status 모두     | nohup deploy → 7 일 telemetry    |              |
-|    |                                     | mini live deploy 불가     | soak start                       |              |
+| 1  | mini sshd exec channel refused      | (was) telemetry_harness + | RESOLVED 2026-05-23 18:06 KST    | (resolved)   |
+|    | — RESOLVED cycle 7/BD               | akida_consumer +          | (cycle 7/BD): 3/3 ssh exec +     |              |
+|    | (MINI_SSHD_DIAGNOSIS.md #173)       | telemetry_status mini     | 1/1 scp + 1/1 remote hexa run    |              |
+|    |                                     | deploy 불가 → (now)       | all PASS, mini_sshd_diag CLEAN   |              |
+|    |                                     | deploy unblocked,         | 5/5 categories. Root cause       |              |
+|    |                                     | cycle 8/CA in flight      | unknown (likely operator reboot  |              |
+|    |                                     |                           | / transient launchd state).      |              |
+|    |                                     |                           | Deploy in flight (cycle 8/CA),   |              |
+|    |                                     |                           | outcome not yet evidenced here.  |              |
 +----+-------------------------------------+---------------------------+----------------------------------+--------------+
 | 2  | pi5 streamer R1/R2 미존재           | gate "≥ 2 종 + ≥ 5 전환"  | inbox patch #145 (anima 측 SSOT) | external     |
 |    | (R3 단독 라이브)                    | 충족 0 → Phase 2 발동     | → pi5 maintainer 가 streamer.py  | (pi5         |
@@ -146,15 +176,16 @@
 |    |                                     | 실제 emission gate 흔듦)  | anima_participant.hexa full       |              |
 |    |                                     | 영구 deferred             | substrate-plugin re-impl 성숙    |              |
 +----+-------------------------------------+---------------------------+----------------------------------+--------------+
-| 4  | hexa-lang `hexa run` exec-capture   | hexa daemon stdout 살균   | hexa-lang upstream PR #398 +     | external     |
-|    | (PR #398, 2-layer block:            | / silent-swallow → daemon | sibling `1fa08afd` merge → 다음   | (hexa-lang   |
-|    | merge + require_last_push_approval  | 진단 비가시               | hexa-lang release pull-in        | maintainer)  |
-|    | per cycle 4/N) + sibling proc-      |                           | (approval-flag 동시 해소 필수)   |              |
-|    | spawn-supervised silent-exit        |                           |                                  |              |
+| 4  | hexa-lang `hexa run` exec-capture   | hexa daemon stdout 살균   | spec accepted upstream            | external     |
+|    | — PARTIALLY RESOLVED                | / silent-swallow → daemon | (PR #398 MERGED, observed         | (hexa-lang   |
+|    | (spec PR #398 MERGED upstream,      | 진단 비가시 (impl path    | cycle 6/check), downstream impl   | maintainer)  |
+|    | downstream impl path                | 미배포 동안 동일 증상)    | (`exec_capture` + caller-stdout  |              |
+|    | exec_capture + caller-stdout        |                           | inherit) shipping pending next    |              |
+|    | inherit pending)                    |                           | hexa-lang release pull-in.        |              |
 +----+-------------------------------------+---------------------------+----------------------------------+--------------+
 ```
 
-총 blocker 수: **4** (전부 외부 또는 user-directive 의존). cycle 5 중 해소된 blocker: 0. 신규 격상 항목 없음 (PR #135 OPEN-not-merged 는 blocker 가 아닌 게이트 §2 row 의 status 정밀화 — main 측 dead-link 만 잔존).
+총 blocker 수: **4** (1 RESOLVED, 1 PARTIALLY RESOLVED, 2 unchanged). cycle 6-7 중 해소된 blocker: **#1 (cycle 7/BD)** + 부분 해소 **#4 spec (cycle 6/check)**. cycle 8/CC 신규 격상 항목 없음. 게이트 §2 row "falsifier 사전 등록" 은 PR #135 MERGED 로 DONE 승격, blocker 아닌 게이트 status 정밀화.
 
 ---
 
@@ -174,14 +205,15 @@ ordered list — blocker resolution 시 순차 발화:
 ## §5 — Honest C3
 
 - (a) **본 doc 은 snapshot — cycle 단위로 stale 됨.** 매 cycle 종료 시 재발행 (또는 인박스 핸드오프 노트로 보강) 필요. `live-on-mini?` 컬럼은 mini sshd 회복 시점에 전수 재검증 필수.
-- (b) **`live-on-mini?` 컬럼은 sshd 복구 전엔 진위 확인 불가.** akida_bridge / kosmos_anchor / kosmos_emitter 의 "YES" 는 본 세션 이전 마지막 정상 ping 시점 기준 — 실제 mini 머신이 reboot 됐거나 PID 가 OOM-killed 됐는지 본 cycle 에선 검증 0.
+- (b) **`live-on-mini?` 컬럼 — cycle 7/BD 시점 sshd 응답성 회복 확인, 단 daemon PID 상태는 cycle 8/CA deploy 결과로 별도 evidence 필요.** akida_bridge / kosmos_anchor / kosmos_emitter 의 "YES" 는 prior 정상 ping 기준; 새 daemon (akida_consumer / telemetry_harness / telemetry_status) 의 "NO (sshd resp., deploy in flight)" 는 CA 의 actual deploy 완료 시점에 본 ledger 전수 재검증 필요.
 - (c) **Phase 2 gate criteria 자체가 추측 — [[SW_CONDITION_DESIGN]] §7-(d) verbatim**: "표본 크기 threshold (§4 ≥7d ≥1000 events) 는 추측치 — Phase 1 evidence 가 도착하기 전엔 distribution stability 의 실제 saturation point 미관측. 1차 활성화 후 distribution drift 측정으로 threshold 재조정 필요할 가능성 농후."
 - (d) **pi5 maintainer 응답성 미상 — anima PR #145 inbox 패치는 external action 대기.** anima repo 측 통제권 0, 무한 deferred 가능 (worst-case Phase 2 영구 hold).
 - (e) **`modulated_factors` (cycle-4/O) 는 observability-only — [[PARTICIPANT_SPIKE_INTEGRATION]] §1 non-goals verbatim**: "(c) user-message-driven fire (substrate-native speak 위배), (d) AKIDA HW 부재 시 SW fallback (Phase 2 carry), (e) broker.py 편집". live `decision["factors"]` 영향 0, hypothetical mirror.
-- (f) **PR #135 (SW_CONDITION_DESIGN) 가 OPEN — cross-link 의 일부가 main 에 미존재.** SPIKE_FACTOR_MAP.md 는 PR #154 (`a1caceb6b`) 로 main 진입 (cycle 4/P), `[[SPIKE_FACTOR_MAP]]` cross-link main-resolve 완료. `[[SW_CONDITION_DESIGN]]` reference 는 여전히 branch-only resolution; main HEAD 만 보는 reader 에겐 dead-link.
+- (f) **cycle 6/AB 시점의 cross-link dead-link 해소 (cycle 8/CC) — PR #135 (SW_CONDITION_DESIGN) MERGED `1953e6b8` + PR #154 (SPIKE_FACTOR_MAP) MERGED `a1caceb6b`.** 본 ledger 의 `[[SW_CONDITION_DESIGN]]` / `[[SPIKE_FACTOR_MAP]]` cross-link 모두 main-resolved. PR #135 의 main merge 는 cycle 8 마무리 단계 (HEAD `1953e6b8b`) 에 합류.
 - (g) **inbox 패치 5종 (anima 1 + hexa-lang 4) 모두 upstream action 의존** — anima repo 측은 "filed + tracked" 까지만 책임. merge 시점 / 적용 책임이 split 되므로 본 ledger 의 inbox 행은 진척 추적 단독.
 - (h) **`participant_spike_overlay.hexa` (cycle 5/W, PR #163) 은 selftest-only skeleton** — [[PARTICIPANT_SPIKE_INTEGRATION]] §4 Step 1 (`anima_participant.hexa` 포팅) + Step 2 (`PARTICIPANT_OVERLAY_LIVE=1` 환경 게이트 활성) 둘 다 외부 발생 전까지 live 행동 신호 0. pre-position 의의만 카운트.
-- (i) **modulation-health 섹션 (cycle 5/S, PR #164) 의 row 카운트는 `telemetry_harness` 의 `modulated_factors` 필드 production 진입 의존** — mini sshd block 으로 telemetry_harness deploy 불가 → 모든 deploy 가능 시점까지 modulation-health 섹션은 `total_rows: 0` 무한 보고. 코드 path 는 PASS, evidence path 는 0.
+- (i) **modulation-health 섹션 (cycle 5/S, PR #164) 의 row 카운트는 `telemetry_harness` 의 `modulated_factors` 필드 production 진입 의존** — cycle 7/BD 에서 sshd 응답성 회복 + cycle 8/CA 가 deploy 중, CA 완료 + 첫 row 누적 시점까지 modulation-health 섹션은 `total_rows: 0` 보고. 코드 path 는 PASS, evidence path 는 CA 결과 미평가 (본 ledger 는 cycle 8/CC = CC ⊥ CA disjoint per g34).
+- (j) **mini sshd RESOLVED 는 cycle 7/BD 시점 baseline 만 — 재발 가능성 미배제.** MINI_SSHD_DIAGNOSIS §3 "What changed between round 9 and now: Unknown" 명시 — diag 도구가 5 카테고리 zero misconfig 검출했으므로 재발 시 원인은 TCC / kernel session faults / launchd throttling 범위 (도구 미커버). cycle 8/CA deploy 가 완료 + sustained 시점까지 RESOLVED 는 잠정.
 
 ---
 
