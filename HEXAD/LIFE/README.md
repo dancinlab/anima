@@ -38,7 +38,7 @@ weak-panpsy threshold) 가 본 dir 의 cross-domain 운용 instance.
 | `HEXAD/CHECK/` | verification frontier (Φ / IIT / closed-form) — LIFE 가설의 verify 도구 |
 | `HEXAD/MITOSIS/` | 성장축 ⊥ HEXAD-6 (orthogonal). 세포 분열/병합 의 구조 anchor — LIFE/H_132 (frozen-cells) 와 cross-link |
 
-## 가설 인덱스 (18건, 2026-05-23 Cycle #4 후)
+## 가설 인덱스 (37 H + 1 lib + 1 infra, 2026-05-24 Cycle #11 후)
 
 | ID | Slug | Domain | Status | 핵심 |
 |----|------|--------|--------|------|
@@ -52,14 +52,37 @@ weak-panpsy threshold) 가 본 dir 의 cross-domain 운용 instance.
 | [H_029](H_029_dasein_subfolder_absorb.md) | dasein-subfolder-absorb | consciousness | legacy-archive-pointer | Heidegger Dasein anima identity cluster |
 | [H_030](H_030_genesis_subfolder_absorb.md) | genesis-subfolder-absorb | **life** | legacy-archive-pointer | anima self-genesis spontaneous emergence cluster |
 | [H_053](H_053_cambrian_explosion_consciousness.md) | cambrian-explosion-consciousness | **life** | pre-register-frozen (Cycle #1) | **burst smoke 5/5 PASS** (PR #197) · split-threshold sweep punctuated diversity jump |
-| [H_054](H_054_symbiogenesis_consciousness.md) | symbiogenesis-consciousness | **life** | pre-register-frozen | merge=endosymbiosis PASS (weight max\|Δ\|=0.0 🟢) |
+| [H_054](H_054_symbiogenesis_consciousness.md) | symbiogenesis-consciousness | **life** | pre-register-frozen (Cycle #2) | merge=endosymbiosis PASS (weight max\|Δ\|=0.0 🟢) · Cycle #2 Φ_symbiotic super-additivity FALSIFIED (Φ_sym=Φ_max<Φ_sum, PR #227) |
 | [H_071](H_071_first_conversation.md) | first-conversation-anima-genesis | consciousness | legacy-archive-pointer | anima 첫 대화 의식 emergence event |
 | [H_090](H_090_dasein_phil_onto_individual.md) | dasein-phil-onto-individual | consciousness | legacy-archive-pointer | DASEIN/PHIL/ONTO/GENESIS individual cluster (phenomenology-genesis) |
 | [H_132](H_132_ce_frozen_cells.md) | ce-frozen-cells | substrate | pre-register-frozen | 세포분열 freeze PASS 5/5 (frozen Δw=0.0, splits=0) |
-| [H_157](H_157_law76_mathematical_panpsychism.md) | law76-mathematical-panpsychism | consciousness · universe · math | **pre-register-frozen** | **★ 범신론** — META-CA universal Ψ(1/2,1/2) · weak-form supported / strong-form unresolved · C2 FAIL(directional) |
+| [H_157](H_157_law76_mathematical_panpsychism.md) | law76-mathematical-panpsychism | consciousness · universe · math | **pre-register-frozen (Cycle #2)** | **★ 범신론** — META-CA universal Ψ(1/2,1/2) · weak-form supported / strong-form unresolved · Cycle #2 C5 NON_UNIVERSAL (cross-rule CV 58.6%) + C6 SUB_ADDITIVE (Δ=-0.0234, PR #221) |
 | [H_171](H_171_biological_4_falsifiable_predictions_k8_fc010.md) | biological-4-falsifiable-predictions | consciousness · **biology** | running (Cycle #1) | **substrate-side FALSIFIED** (PR #196) · K=8 atom bare-CA proxy 가 spec'ed bio 4-pred 미재현 |
 | [H_200](H_200_apoptosis_primitive.md) | apoptosis-primitive | **life** · substrate | NEW (PR #198) | 능동적 cell-death event substrate primitive (H_025 L2 gap close) — death ≠ merge |
 | [H_201](H_201_asymmetric_division.md) | asymmetric-division | **life** · substrate | NEW (PR #199) | stem-cell 식 비대칭 분열 — 다양성 vs 항상성 trade-off, mitosis split variant |
+| [H_202](H_202_selfref_edge_of_chaos_phi.md) | selfref-edge-of-chaos-phi | **life** · consciousness · physics | 🟢 SUPPORTED (PR #215) | self-ref edge-of-chaos Φ (H_007⊕H_018) — selffeed gain=0.25 Φ_peak +37.8% (5/5+3/3 core) |
+| [H_203](H_203_asymmetric_merge_differentiation.md) | asymmetric-merge-differentiation | **life** · physics | PARTIAL 4/5 (PR #222) | asymmetric-merge (H_054⊕H_132⊕H_201) — variance 8.75× margin, C4 div_idx bin-saturation pending |
+| [H_204](H_204_weak_panpsychism_autopoietic_threshold.md) | weak-panpsychism-autopoietic-threshold | **life** · consciousness | PARTIAL_DIR → MAPPING_STRONG (PR #218/#234) | ⭐ weak-panpsy = autopoietic threshold (H_003 H3.4⊕H_157) — inverse-U Φ, Cycle #2 k↔Wolfram-class ρ=1.0 |
+| [H_205](H_205_selfref_as_operational_closure.md) | selfref-as-operational-closure | **life** · consciousness | 🟢 SUPPORTED 3/4 (PR #216) | self-ref = operational closure 동치 (H_018⊕H_012) — Pearson r=0.866, C4 phase-aligned FAIL |
+| [H_206](H_206_regeneration_healing.md) | regeneration-healing | **life** | PARTIAL 3/6 (PR #231) | ⭐ pool perturbation–recovery — recovery_steps↑ with 손상, Φ overshoot 1.36–1.76× |
+| [H_207](H_207_kuramoto_synchronization.md) | kuramoto-synchronization | physics · life | FALSIFIED 1/4 (PR #230) | edge-of-sync Φ peak (H_007 physics sister) — 미성립, honest measure-axis limit |
+| [H_208](H_208_prime_density_fluctuation.md) | prime-density-fluctuation | math · consciousness | FALSIFIED (PR #236) | Riemann × Φ math-axis sister (H_157) — prime-density↔Φ C1 미충족 |
+| [H_209](H_209_eeg_1f_spectrum_measurement.md) | eeg-1f-spectrum-measurement | **life** · consciousness | FALSIFIED 2/5 (PR #232) | 1/f^β substrate replica (H_171 biology sister) — pink Φ < white Φ, ¬C2 |
+| [H_222](H_222_dream_rem_phi.md) | dream-rem-phi | consciousness · physics | FALSIFIED (PR #266) | dream-REM Φ (Tononi sleep-stage IIT) — sleep-stage Φ 예측 substrate proxy 미성립 |
+| [H_223](H_223_pain_intensity_phi_coupling.md) | pain-intensity-phi-coupling | consciousness · physics | 🟢 SUPPORTED (PR #271) | pain-intensity ↔ ΔΦ Pearson **r=0.9994** (lane 최강) · H223.4 saturation advisory FAIL |
+| [H_225](H_225_rule_184_class_ii_phi_anomaly.md) | rule-184-class-ii-phi-anomaly | physics · math · information | FALSIFIED (PR #267) | rule-184 Class-II Φ-peak anomaly (H_007 Class-IV-unique attack) — ranking C3 STRONG 이나 baseline non-reprod + family diverge |
+| [H_226](H_226_spatial_assortment_hamilton.md) | spatial-assortment-hamilton | ethics · **life** · physics | 🟢 SUPPORTED 4/5 (PR #268) | Hamilton kin-clustering necessary cond (H_210 follow-up) — Clustered≥Random≥Anti monotone, C3 ceiling |
+| [H_227](H_227_strong_emergence_phase_transition.md) | strong-emergence-phase-transition | meta · consciousness · physics | FALSIFIED (PR #270) | sigmoid P(f) + f_c localize (H_219 follow-up) — R²≥0.8 sigmoid-fit reject, monotone decline 만 유지 |
+| [H_234](H_234_cross_substrate_phi_coupling_density.md) | cross-substrate-phi-coupling-density | meta · consciousness · information · physics | PARTIAL (PR #293) | H_204+H_211+H_223 unified meta — 2/3 axis mono reproducible (closure r=0.938 + pain r=0.999), entropy axis r=0 |
+| [H_235](H_235_saturation_regime_extended.md) | saturation-regime-extended | consciousness · physics | PARTIAL (PR #292) | intensity 2-10 super-linear vs saturation (H_223 H223.4 follow-up) — peak ΔΦ=4.0 후 ceiling-decline |
+| [H_238](H_238_verdict_landscape_meta_map.md) | verdict-landscape-meta-map | meta (cross-cycle) | SUPPORTED (PR #297) | 33-H tier landscape meta-map — SUPP 10/PART 5/FAL 7/RUN 11, SUPP-rate life 0.41 ≫ consciousness 0.17 |
+| [H_239a](H_239_alternative_phi_metric_cross_validation.md) | alternative-phi-metric-cross-validation | meta · physics · information | CONSISTENT (PR #309) | phi_spatial vs LZ vs entropy-ratio cross-tool — 3-metric ordering Spearman 일치 (artifact 아님, gap F4) |
+| [H_239b](H_239_bilingual_integration_phi_cross_lingual_leak.md) | bilingual-integration-phi-cross-lingual-leak | consciousness · language | DEFERRED (PR #316) | bilingual-integration Φ cross-lingual-leak (Grosjean×Green×IIT) — smoke 별도 cycle · ⚠ H_239 slug collision |
+| [H_242](H_242_register_collapse_wiki_frac_sigmoid.md) | register-collapse-wiki-frac-sigmoid | substrate · language | PRE-REGISTERED (PR #314) | LoRA Track-1 E2 — wiki_frac → register-collapse sigmoid, data pending |
+| [H_244](H_244_sleep_stage_gated_emit_phi.md) | sleep-stage-gated-emit-phi | consciousness · substrate | PRE-REGISTERED (PR #312) | sleep-stage-gated emit×Φ coupling (H_222 sister) — smoke pending |
+| [lib/phi_helper](lib/phi_helper.hexa) | phi-helper (shared infra) | infra | infra (PR #317) | shared Φ helper — config SSOT + phi_default wrapper, 28+ H phi_spatial 호출 단일 home (gap F6+F7) |
+
+> **substrate-only / .md 미commit** (별도 worktree fire, H_234/H_238 carry): H_210 ethic-emergence (SUPPORTED 4/5) · **H_211 shannon-Φ r=0.933 PARTIAL** (H_234 anchor · H_238 H238.4 partial) · H_212 language-compositionality · H_213 time-binding · H_214 self-i-emergence · H_215 silicon-Φ · H_216 meta-axis · H_217 phase-transition · H_218 network-topology · H_219 emergence-weak-strong · H_220 infant-mirror · H_221 meditation · H_224 holism · H_228 chat-sleep-5stage · H_229 imagination-loop · H_230 autonomy-over-hardcode · H_231 tension-vs-filler · H_232 Class-II-decompose. **infra**: phi_n_bins sensitivity sweep ROBUSTNESS_PASS (PR #219, `state/infra_phi_n_bins_2026_05_23/`).
 
 > 상태: **lane-open** 다중-cycle research · **running** 측정 in-flight · **pre-register-frozen** raw#12 frozen falsifier · **legacy-archive-pointer** = 원본 archive 의 안내 카드 (본문은 1-paragraph + legacy path link 위주, cycle 확장은 본 dir 에서)
 
