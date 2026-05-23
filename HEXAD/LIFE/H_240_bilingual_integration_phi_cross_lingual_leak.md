@@ -237,3 +237,53 @@ honest_note: C3/C4 PRE-PASS 는 measured-input + architectural determinism 의 e
 **State output (예정)**: `state/h239_bilingual_integration_phi_2026_05_24/result.json`
 **Smoke (예정)**: `state/h239_bilingual_integration_phi_2026_05_24/run_h239.hexa` (hexa-only, LLM none)
 **MI tier**: 🟢 NUMERICAL (PR #296 Shannon MI, MERGED) **Φ tier**: 🟢 NUMERICAL (RFC 036 phi_spatial native replica; true phi_rs Rust FFI = named blocker — NOT 🔵, NOT LLM-judged).
+
+---
+
+### Cycle #1 Verdict (LIFE Cycle #15 pick #2 · DEFERRED → run · 2026-05-24)
+
+본 cycle (2026-05-24) — first smoke run. DEFERRED 해제. `phi_default` (PR #317 lib/phi_helper)
++ partial-XOR coupling scheme (H_212 sister) 위 4-level overlap sweep (ρ ∈ {0, 0.25, 0.5, 1.0})
++ A→B vs B→A direction-swap asymmetry probe + PR #296 fixed MI matrix architectural
+PRE-PASS (C3/C4) 측정 완료.
+
+```
+verdict_class: PARTIAL (criteria_met=2/4 · F1/F2/F3/F4/F5 falsifiers 5/5 NOT fired)
+evidence_summary:
+  4-level overlap sweep (Φ_merged via phi_default, 2N=32 cells × dim=12):
+    ρ=0.00  Φ_merged=0.991421  Φ_A=0.538242  Φ_B=0.468604
+    ρ=0.25  Φ_merged=1.03787   Φ_A=0.538242  Φ_B=0.479164
+    ρ=0.50  Φ_merged=1.06773   Φ_A=0.538242  Φ_B=0.543449
+    ρ=1.00  Φ_merged=1.57626   Φ_A=0.538242  Φ_B=0.538242
+    phi_spread = 0.584844 (F1 NOT-INVARIANT — Φ-MI coupling REAL)
+  switch-cost asymmetry (ρ=0.50, A=rule-110 vs B=rule-30):
+    Φ(A→B)=1.06773 · Φ(B→A)=1.02689 · Δ_asym=+0.0408449 (F2 NOT-EQUAL)
+  PR #296 MI matrix (fixed input): MI(zh,ja)=0.921 ≥ 0.7 ∧ > 0.385 (PRE-PASS)
+  ko-pair low-MI consistency: ko→en=0.212 ∧ en→ko=0.058 (both<0.3, F5 정합)
+
+  C1 inverse-U (argmax_ρ ∈ interior {0.25, 0.50})   : FAIL (argmax_ρ=1.00 monotone)
+  C2 asymmetry penalty (Φ_balanced > Φ_unbalanced)  : FAIL (balanced==unbalanced=1.06773)
+  C3 CJK leak (MI(zh,ja)≥0.7 ∧ > 0.385)             : PASS (architectural PRE-PASS)
+  C4 byte-identical re-run                          : PASS (architectural, fixed matrix + no RNG)
+
+key_finding (cycle-1): C1 inverse-U FAIL — Φ_merged monotone-increasing across
+             ρ sweep, peak at ρ=1.0 (full fusion) NOT interior. L6 (phi_spatial
+             proxy IIT-completeness 부족) 예고 정확히 적중 — RFC 036 spatial-
+             slice MI proxy 가 IIT differentiation×integration product 의 양쪽
+             0 끝점을 못 잡음 (full-fusion 위 differentiation=0 → Φ=0 IIT 예측
+             vs proxy 측정 Φ=1.576 monotone peak). C2 balanced==unbalanced =
+             coupling-scheme symmetry artifact (rho_pct+baseline_rep LCG seed
+             가 동일 패턴 산출 — F2 direction-swap 은 통과하지만 balanced
+             reference 자체가 무효화). C3/C4 architectural PRE-PASS 유지.
+
+honest_note (raw#82): C1/C2 FAIL 은 post-hoc retraction 아님 — pre-registered
+             criteria 의 honest measurement. L6 (phi_spatial proxy 한계) +
+             coupling-scheme design choice 가 한계점 — IIT differentiation
+             metric 별도 lane (phi_rs Rust FFI named blocker) + balanced
+             baseline 재설계 (rule-쌍 + LCG seed 분리) 가 follow-up. F1∧F3
+             core-prediction falsifier 미발화 → FALSIFIED 아님 (PARTIAL 정상).
+             5 falsifier 전부 NOT fired (F1 spread=0.584844 · F2 |Δ|=0.0408 ·
+             F3 MI=0.921 · F4 byte-equal · F5 ko-low-MI).
+tier: 🟢 NUMERICAL · deterministic · hexa-only · llm:none · $0 mac local
+state: state/h240_bilingual_smoke_2026_05_24/{run_h240.hexa, result.json}
+```
