@@ -7,17 +7,23 @@
 //    · akida_bridge_pipeline.sh — `nc | python3 publisher` shell glue
 //
 //  THE BUG WE ELIMINATE
-//    `akida_ws_publisher.py` line 10 defaulted to `ws://localhost:8000/ws/
-//    akida_ingest` — silently dropping spikes for the first 25 min after
-//    every launchd start. The live deploy was rescued by overriding
-//    `AKIDA_BROKER_WS=ws://localhost:8000/ws/akida` in the plist (PlistBuddy
-//    edit + launchctl reload). This .hexa hard-codes the correct default
-//    AND deletes the .py / .sh predecessors so the bug cannot resurface.
+//    Broker (HEXAD/CHAT/server/broker.py) exposes TWO akida endpoints:
+//      · `/ws/akida_ingest` (line 328) — Pi spike PUSH endpoint (this bridge)
+//      · `/ws/akida`        (line 359) — frontend subscriber READ endpoint
+//    The previous default of this bridge pointed the pusher at `/ws/akida`
+//    (subscriber) — that handler does `receive_text()` only to detect
+//    disconnect, never appending to history → silent spike drop. The live
+//    deploy is rescued by overriding
+//    `AKIDA_BROKER_WS=ws://localhost:8000/ws/akida_ingest` in the plist
+//    (PlistBuddy edit + launchctl reload). This .hexa now hard-codes the
+//    correct ingest default AND the selftest invariant asserts it, so the
+//    bug cannot resurface if the plist override is removed.
+//    SSOT: anima MEMORY `feedback_plist_forbidden_akida_endpoint`.
 //
 //  DATA FLOW
 //    Pi (192.168.50.155:9512) → newline-delimited JSON spike records
 //    → bridge stamps `_bridge_ts`
-//    → broker `ws://localhost:8000/ws/akida` (text frame, one spike per send)
+//    → broker `ws://localhost:8000/ws/akida_ingest` (text frame, one spike per send)
 //
 //  RUN     hexa run akida_bridge.hexa            — daemon (forever)
 //          hexa run akida_bridge.hexa selftest   — offline F-AKIDA-BRIDGE
@@ -26,7 +32,7 @@
 //  ENV (g13 portable — no hardcoded paths)
 //    AKIDA_PI_HOST       default 192.168.50.155
 //    AKIDA_PI_PORT       default 9512
-//    AKIDA_BROKER_WS     default ws://localhost:8000/ws/akida
+//    AKIDA_BROKER_WS     default ws://localhost:8000/ws/akida_ingest
 //    AKIDA_RECONNECT_SEC default 5  (backoff between Pi reconnect attempts)
 //    AKIDA_NC            default nc  (Pi-side TCP client binary, see below)
 //
@@ -246,7 +252,7 @@ fn run_once(state: dict, pi_host: string, pi_port: int, broker_ws: string,
 fn run_daemon() {
     let pi_host = _ab_env("AKIDA_PI_HOST", "192.168.50.155")
     let pi_port = to_int(_ab_env("AKIDA_PI_PORT", "9512"))
-    let broker_ws = _ab_env("AKIDA_BROKER_WS", "ws://localhost:8000/ws/akida")
+    let broker_ws = _ab_env("AKIDA_BROKER_WS", "ws://localhost:8000/ws/akida_ingest")
     let backoff_s = to_int(_ab_env("AKIDA_RECONNECT_SEC", "5"))
     let nc_bin = _ab_env("AKIDA_NC", "nc")
     let backoff = if backoff_s > 0 { backoff_s } else { 5 }
@@ -277,7 +283,7 @@ fn run_daemon() {
 fn run_once_cli() {
     let pi_host = _ab_env("AKIDA_PI_HOST", "192.168.50.155")
     let pi_port = to_int(_ab_env("AKIDA_PI_PORT", "9512"))
-    let broker_ws = _ab_env("AKIDA_BROKER_WS", "ws://localhost:8000/ws/akida")
+    let broker_ws = _ab_env("AKIDA_BROKER_WS", "ws://localhost:8000/ws/akida_ingest")
     let nc_bin = _ab_env("AKIDA_NC", "nc")
     eprintln("[akida_bridge] single cycle")
     let state = bridge_state()
@@ -297,24 +303,27 @@ fn _selftest() {
     let mut pass = 0
     let mut fail = 0
 
-    // F-AKIDA-BRIDGE-1 — default broker WS path is /ws/akida (NOT /ws/akida_ingest).
-    // This is the bug we eliminate: the .py source had the wrong default.
+    // F-AKIDA-BRIDGE-1 — default broker WS path is /ws/akida_ingest (the
+    // Pi PUSH endpoint), NOT /ws/akida (the frontend subscriber).
+    // SSOT: broker.py lines 328 / 359 + anima MEMORY
+    // `feedback_plist_forbidden_akida_endpoint`. Pointing the pusher at
+    // /ws/akida silently drops spikes (subscriber handler never appends).
     let default_ws = _ab_env("AKIDA_BROKER_WS__UNLIKELY_UNSET",
-                             "ws://localhost:8000/ws/akida")
-    if default_ws == "ws://localhost:8000/ws/akida" {
+                             "ws://localhost:8000/ws/akida_ingest")
+    if default_ws == "ws://localhost:8000/ws/akida_ingest" {
         pass = pass + 1
-        eprintln("  PASS default WS path = /ws/akida")
+        eprintln("  PASS default WS path = /ws/akida_ingest")
     } else {
         fail = fail + 1
         eprintln("  FAIL default WS path: " + default_ws)
     }
-    // Negative — explicit check the wrong path is NOT the default.
-    if default_ws.index_of("akida_ingest") < 0 {
+    // Negative — default must NOT be the subscriber path.
+    if !default_ws.ends_with("/ws/akida") {
         pass = pass + 1
-        eprintln("  PASS default does NOT contain `akida_ingest`")
+        eprintln("  PASS default is NOT the subscriber path /ws/akida")
     } else {
         fail = fail + 1
-        eprintln("  FAIL default still has `akida_ingest`: " + default_ws)
+        eprintln("  FAIL default is the subscriber path: " + default_ws)
     }
 
     // F-AKIDA-BRIDGE-2 — env resolution falls back on void / empty.
