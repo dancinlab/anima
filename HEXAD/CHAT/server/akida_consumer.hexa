@@ -12,7 +12,7 @@
 //    regime mode, isi_cv, last_step, n_records)  → JSONL append.
 //
 //  RUN     hexa run akida_consumer.hexa            — daemon (1 Hz default)
-//          hexa run akida_consumer.hexa selftest   — F-AKIDA-CONSUMER-1..3
+//          hexa run akida_consumer.hexa selftest   — F-AKIDA-CONSUMER-1..4
 //          hexa run akida_consumer.hexa once       — one poll + write
 //
 //  ENV (g13 portable)
@@ -54,11 +54,24 @@ fn _ac_gi(d: dict, k: string) -> int {
 fn _ac_gs(d: dict, k: string) -> string {
     let v = d[k]   if to_string(v) == "void" { return "" }   return to_string(v)
 }
+// _ac_spike_ids_len — defensive len(record.spike_ids). Returns 0 if the
+// `spike_ids` key is missing or non-list (g32 assumption: each broker
+// /akida/recent record carries `spike_ids: [int...]`; cycle 2/E live
+// evidence `[0,2,4,6,8,10,12,14]`).
+fn _ac_spike_ids_len(r: dict) -> int {
+    let v = r["spike_ids"]
+    if to_string(v) == "void" { return 0 }
+    let t = type_of(v)
+    if t != "array" && t != "list" { return 0 }
+    return len(v)
+}
 
 // ── §2 feature computation ────────────────────────────────────────────────
 // compute_features — records list → 6-field feature dict. Window slice on
 // t_rel ∈ [max_t_rel - win_ms/1000, max_t_rel]. ISI-CV = std(t_rel diffs) /
 // mean(t_rel diffs). Non-map records silently skipped (F-AKIDA-CONSUMER-3).
+// mean_spike_ids_count = mean(len(record.spike_ids)) over all records in
+// the window; missing `spike_ids` → length 0 (defensive, F-AKIDA-CONSUMER-4).
 fn compute_features(records: list, win_ms: int) -> dict {
     let n = len(records)
     let win_sec = (win_ms + 0.0) / 1000.0
@@ -88,7 +101,7 @@ fn compute_features(records: list, win_ms: int) -> dict {
         if type_of(r) == "map" {
             let t = _ac_gf(r, "t_rel")
             if t >= lo {
-                sum_ns = sum_ns + (_ac_gi(r, "n_spikes") + 0.0)
+                sum_ns = sum_ns + (_ac_spike_ids_len(r) + 0.0)
                 let st = _ac_gi(r, "step")
                 if st > last_step { last_step = st }
                 let rg = _ac_gs(r, "regime")
@@ -202,7 +215,7 @@ fn run_daemon() {
     }
 }
 
-// ── §6 offline selftest (F-AKIDA-CONSUMER-1..3) ───────────────────────────
+// ── §6 offline selftest (F-AKIDA-CONSUMER-1..4) ───────────────────────────
 fn _approx(a: float, b: float, tol: float) -> bool {
     let mut d = a - b   if d < 0.0 { d = 0.0 - d }   return d < tol
 }
@@ -211,21 +224,22 @@ fn _check(p: bool, msg: string, counts: dict) {
     else { counts["fail"] = _ac_gi(counts, "fail") + 1   _ac_log("  FAIL " + msg) }
 }
 fn _selftest() {
-    _ac_log("akida_consumer selftest — F-AKIDA-CONSUMER-1..3")
+    _ac_log("akida_consumer selftest — F-AKIDA-CONSUMER-1..4")
     let counts = #{"pass": 0, "fail": 0}
     // F-1 — ISI-CV on 5-record window {t_rel = 0,1,3,4,6} → diffs [1,2,1,2]
     // mean=1.5 var=0.25 std=0.5 → CV = 0.5/1.5 = 0.33333... (hand-computed).
+    let R = "R3_tonic_zero_input"
     let recs1 = [
-        #{"step": 1, "t_rel": 0.0, "n_spikes": 2, "regime": "R3_tonic_zero_input"},
-        #{"step": 2, "t_rel": 1.0, "n_spikes": 3, "regime": "R3_tonic_zero_input"},
-        #{"step": 3, "t_rel": 3.0, "n_spikes": 4, "regime": "R3_tonic_zero_input"},
-        #{"step": 4, "t_rel": 4.0, "n_spikes": 5, "regime": "R3_tonic_zero_input"},
-        #{"step": 5, "t_rel": 6.0, "n_spikes": 6, "regime": "R3_tonic_zero_input"},
+        #{"step": 1, "t_rel": 0.0, "n_spikes": 2, "spike_ids": [0,1], "regime": R},
+        #{"step": 2, "t_rel": 1.0, "n_spikes": 3, "spike_ids": [0,1,2], "regime": R},
+        #{"step": 3, "t_rel": 3.0, "n_spikes": 4, "spike_ids": [0,1,2,3], "regime": R},
+        #{"step": 4, "t_rel": 4.0, "n_spikes": 5, "spike_ids": [0,1,2,3,4], "regime": R},
+        #{"step": 5, "t_rel": 6.0, "n_spikes": 6, "spike_ids": [0,1,2,3,4,5], "regime": R},
     ]
     let f1 = compute_features(recs1, 10000)
     _check(_approx(_ac_gf(f1, "isi_cv"), 0.5 / 1.5, 0.0001),
            "F-1 isi_cv ≈ 0.33333 (got " + to_string(_ac_gf(f1, "isi_cv")) + ")", counts)
-    // F-2 — spike_rate_hz = 5/10 = 0.5 Hz; mean_spike_ids = (2+3+4+5+6)/5 = 4.0.
+    // F-2 — spike_rate_hz = 5/10 = 0.5 Hz; mean len(spike_ids) = (2+3+4+5+6)/5 = 4.0.
     _check(_approx(_ac_gf(f1, "spike_rate_hz"), 0.5, 0.0001),
            "F-2 spike_rate_hz = 0.5 Hz", counts)
     _check(_approx(_ac_gf(f1, "mean_spike_ids_count"), 4.0, 0.0001),
@@ -242,6 +256,29 @@ fn _selftest() {
            "F-3 malformed record skipped (n_records=2)", counts)
     _check(_ac_gi(compute_features(fetch_recent(1), 2000), "n_records") == 0,
            "F-3 broker-offline graceful (n_records=0)", counts)
+    // F-4 — mean_spike_ids_count = mean(len(spike_ids)) on lengths [4,8,12,16,0]
+    // → (4+8+12+16+0)/5 = 8.0. Missing-spike_ids record treated as 0 (defensive).
+    let ids4  = [0,1,2,3]
+    let ids8  = [0,1,2,3,4,5,6,7]
+    let ids12 = [0,1,2,3,4,5,6,7,8,9,10,11]
+    let ids16 = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+    let recs4 = [
+        #{"step": 1, "t_rel": 0.0, "n_spikes": 4,  "spike_ids": ids4,  "regime": R},
+        #{"step": 2, "t_rel": 1.0, "n_spikes": 8,  "spike_ids": ids8,  "regime": R},
+        #{"step": 3, "t_rel": 2.0, "n_spikes": 12, "spike_ids": ids12, "regime": R},
+        #{"step": 4, "t_rel": 3.0, "n_spikes": 16, "spike_ids": ids16, "regime": R},
+        #{"step": 5, "t_rel": 4.0, "n_spikes": 0,  "spike_ids": [],    "regime": R},
+    ]
+    let f4 = compute_features(recs4, 10000)
+    _check(_approx(_ac_gf(f4, "mean_spike_ids_count"), 8.0, 0.001),
+           "F-4 mean_spike_ids_count = 8.0 on lengths [4,8,12,16,0]", counts)
+    let recs4b = [
+        #{"step": 10, "t_rel": 0.0, "n_spikes": 4, "spike_ids": ids4, "regime": R},
+        #{"step": 11, "t_rel": 1.0, "n_spikes": 5,                    "regime": R},
+    ]
+    let f4b = compute_features(recs4b, 5000)
+    _check(_approx(_ac_gf(f4b, "mean_spike_ids_count"), 2.0, 0.001),
+           "F-4 missing spike_ids treated as 0 (mean = (4+0)/2 = 2.0)", counts)
     _ac_log("--- example feature row ---")
     _ac_log(_ac_jsonl_line(f1, 10000))
     _ac_log("akida_consumer selftest: " + to_string(_ac_gi(counts, "pass"))
