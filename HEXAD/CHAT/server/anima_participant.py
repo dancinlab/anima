@@ -46,12 +46,17 @@ ADAPTER_DIR = os.environ.get("ANIMA_ADAPTER",
                              os.path.expanduser("~/anima_chat_pack/lora_adapter"))
 # P2 hot-swap router (2026-05-22): per-msg lang adapter switch.
 # Set ANIMA_ADAPTER_KO=... ANIMA_ADAPTER_JA=... to point at KOFL/JAFL dirs.
+# Extended 2026-05-23: ZHFL/RUFL native-script adapters from Wave-2.
 # Adapters absent (dir missing) → router falls back to default for that lang.
 ADAPTER_KO = os.environ.get("ANIMA_ADAPTER_KO",
                             os.path.expanduser("~/anima_chat_pack/kofl_adapter"))
 ADAPTER_JA = os.environ.get("ANIMA_ADAPTER_JA",
                             os.path.expanduser("~/anima_chat_pack/jafl_adapter"))
-ROUTER_LANG_TO_ADAPTER = {"ko": "ko", "ja": "ja"}  # rest → "default"
+ADAPTER_ZH = os.environ.get("ANIMA_ADAPTER_ZH",
+                            os.path.expanduser("~/anima_chat_pack/zhfl_adapter"))
+ADAPTER_RU = os.environ.get("ANIMA_ADAPTER_RU",
+                            os.path.expanduser("~/anima_chat_pack/rufl_adapter"))
+ROUTER_LANG_TO_ADAPTER = {"ko": "ko", "ja": "ja", "zh": "zh", "ru": "ru"}  # rest → "default"
 BROKER_URL = os.environ.get("ANIMA_BROKER_URL", "ws://127.0.0.1:8000/ws/anima")
 TICK_INTERVAL = float(os.environ.get("ANIMA_TICK", "2.0"))
 IM_THRESHOLD_DEFAULT = float(os.environ.get("ANIMA_THRESHOLD", "0.45"))
@@ -129,7 +134,8 @@ def build_substrate(kind: str) -> Substrate:
     if kind == "lora":
         from substrate_lora import LoraSubstrate
         return LoraSubstrate(adapter_dir=ADAPTER_DIR, adapter_ko=ADAPTER_KO,
-                             adapter_ja=ADAPTER_JA, base_model=BASE_MODEL,
+                             adapter_ja=ADAPTER_JA, adapter_zh=ADAPTER_ZH,
+                             adapter_ru=ADAPTER_RU, base_model=BASE_MODEL,
                              device=DEVICE)
     if kind == "v3":
         # substrate_v3.py is owned by the V3 session (SUBSTRATE_PLUGIN.md).
