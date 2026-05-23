@@ -34,3 +34,7 @@
 @D a_fire_recover_complete := "pull all fire artifacts + HF upload before pod teardown" :: governance [required active]
   do   = "before pod teardown: pull ckpt(s) + result + log + anchors, verify, HF upload — then teardown"
   dont = "pull only JSONs, leave ckpt on a doomed pod · teardown before HF · PULL_FAILED ≠ pod dead"
+
+@D a_runpod_inbox := "runpod trouble → hexa-lang inbox" :: governance [required active]
+  do   = "file runpod findings to `hexa-lang/inbox/patches/<slug>.md` for hexa cloud"
+  dont = "anima-side-only patches that lock the workaround in this repo"
