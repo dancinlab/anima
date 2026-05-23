@@ -377,6 +377,9 @@ fn train_launch(host: str, opts: list, p21hr: str, env: dict, init_variant: str,
 }
 
 // 5. result pull (stdlib/cloud cloud_copy_from-wired) ----------------------
+//
+// `result_pull` = single-shot attempt. Use `result_pull_with_wait` for the
+// nohup-train case where result.json arrives minutes-to-hours after launch.
 
 fn result_pull(host: str, opts: list, p21hr: str, vdir: str, dry_run: bool) -> bool {
     if dry_run {
@@ -390,6 +393,123 @@ fn result_pull(host: str, opts: list, p21hr: str, vdir: str, dry_run: bool) -> b
     }
     println("[result_pull] pulled result.json -> " + vdir)
     return true
+}
+
+// 5b. result_pull_with_wait — dispatcher-internal poll loop. Fixes the
+// nohup-then-immediate-pull race (M6) where train.py has just started and
+// result.json doesn't exist yet, so cloud_copy_from_opts fires `scp exit 1`
+// and the dispatcher bails to FATAL while the pod silently keeps burning.
+//
+// Spec:
+//   • Poll cloud_copy_from_opts up to max_retries × interval_s budget.
+//   • Between polls, tail train.log for crash patterns (Traceback / FATAL /
+//     OOM / Killed / RuntimeError) → early-exit + write FAILURE.txt locally.
+//   • Between polls, scrape `step=N | loss=X` from the log and emit one
+//     progress line per detection (deduped via last-step memo).
+//   • On result.json arrival → pull it + log SUCCESS + return true.
+//   • On budget timeout → emit RESULT_TIMEOUT + return false (caller may
+//     attach an external Monitor; pod stays alive because SAVE_POD=1).
+//
+// Default budget: max_retries=90 × interval_s=60 = 90 min. The dispatcher
+// currently targets qwen 1.5B × 5000 step on A100 (today's v2b ETA 60-90 min
+// per Track 1 R8 ledger). 30 retries = 30 min would be too tight; 90 covers
+// the long tail without burning a wall-clock guard against a stalled pod
+// (the per-iteration crash sniff + train.log tail catches early failure
+// fast — typically within 1-3 polls of the actual fault).
+//
+// TODO[cloud_poll_until-swap]: when hexa-lang stdlib lands
+// cloud_poll_until(host, opts, remote_path, max_retries, interval_s,
+// on_progress_fn, on_crash_fn) (per hexa-lang inbox PR #629), replace this
+// hand-rolled loop with that builtin. The swap is mechanical — same arg
+// list, same return semantics. Marker grep: `cloud_poll_until-swap`.
+
+fn _crash_pattern_in(log_tail: str) -> str {
+    // Honest C3: pattern coverage matches today's external Monitor heuristics
+    // (Traceback / FATAL / OOM / Killed). RuntimeError added for completeness
+    // (torch surfaces it via cuda OOM as well as user mistakes). Order matters
+    // — we want the most specific match first so reason= is informative.
+    if log_tail.index_of("OOM") >= 0          { return "OOM" }
+    if log_tail.index_of("CUDA out of memory") >= 0 { return "OOM_CUDA" }
+    if log_tail.index_of("Killed") >= 0       { return "Killed" }
+    if log_tail.index_of("Traceback") >= 0    { return "Traceback" }
+    if log_tail.index_of("RuntimeError") >= 0 { return "RuntimeError" }
+    if log_tail.index_of("FATAL") >= 0        { return "FATAL" }
+    return ""
+}
+
+fn _progress_step_from(log_tail: str) -> str {
+    // Today's monitor catches `step=N | loss=X`. We grep the last `step=N`
+    // and return it as a "step=N" cookie (memoized by caller to dedup the
+    // emit). Empty return = no step found.
+    let lines = log_tail.split("\n")
+    let mut last = ""
+    let mut i = 0
+    while i < len(lines) {
+        let line = lines[i]
+        let idx = line.index_of("step=")
+        if idx >= 0 {
+            // crude scrape: take from `step=` to end-of-line, trim.
+            let tail = line.substring(idx, len(line)).trim()
+            last = tail
+        }
+        i = i + 1
+    }
+    return last
+}
+
+fn result_pull_with_wait(host: str, opts: list, p21hr: str, vdir: str,
+                         max_retries: int, interval_s: int, dry_run: bool) -> dict {
+    // TODO[cloud_poll_until-swap]: replace body with stdlib cloud_poll_until
+    // once hexa-lang inbox PR #629 lands.
+    let remote_result = p21hr + "/result.json"
+    let local_result  = vdir + "/result.json"
+    let remote_log    = p21hr + "/train.log"
+    if dry_run {
+        println("[dry-run] result_pull_with_wait: poll " + remote_result
+              + " every " + to_string(interval_s) + "s up to "
+              + to_string(max_retries) + " tries (budget="
+              + to_string(max_retries * interval_s) + "s)")
+        println("[dry-run] result_pull_with_wait: tails " + remote_log
+              + " between polls for crash patterns (Traceback/FATAL/OOM/Killed/RuntimeError) + progress (step=N | loss=X)")
+        return #{"status": "dry-run", "reason": "dry-run", "tries": "0"}
+    }
+    let sleep_cmd = "sleep " + to_string(interval_s)
+    let mut i = 0
+    let mut last_step = ""
+    while i < max_retries {
+        // (a) try the result.json pull.
+        let r = cloud_copy_from_opts(host, opts, remote_result, local_result)
+        if r.ok == 1 {
+            println("[result_pull_with_wait] SUCCESS after " + to_string(i + 1) + " tries — result.json -> " + vdir)
+            return #{"status": "ok", "reason": "result.json arrived", "tries": to_string(i + 1)}
+        }
+        // (b) result not there yet — tail train.log + sniff crash / progress.
+        let tail = cloud_run_opts(host, opts, ["tail", "-n", "60", remote_log])
+        if tail.ok == 1 {
+            let logtail = to_string(tail.stdout_)
+            let crash = _crash_pattern_in(logtail)
+            if crash != "" {
+                // crash detected — write FAILURE.txt locally + bail.
+                let fail_path = vdir + "/FAILURE.txt"
+                let _ = exec("mkdir -p " + vdir)
+                let _ = exec("printf '%s\\n%s\\n' 'CRASH=" + crash + "' 'tries=" + to_string(i + 1) + "' > " + fail_path)
+                println("[result_pull_with_wait] CRASH detected (" + crash + ") after " + to_string(i + 1) + " tries — wrote " + fail_path)
+                return #{"status": "crash", "reason": crash, "tries": to_string(i + 1)}
+            }
+            let step = _progress_step_from(logtail)
+            if step != "" && step != last_step {
+                println("[result_pull_with_wait] try " + to_string(i + 1) + "/" + to_string(max_retries) + " · " + step)
+                last_step = step
+            }
+        }
+        // (c) sleep + retry.
+        exec(sleep_cmd)
+        i = i + 1
+    }
+    // (d) budget exhausted — emit RESULT_TIMEOUT. SAVE_POD=1 keeps pod alive
+    //     so the caller's external Monitor can attach.
+    println("[result_pull_with_wait] RESULT_TIMEOUT after " + to_string(max_retries) + " tries (budget=" + to_string(max_retries * interval_s) + "s) — pod retained for external Monitor")
+    return #{"status": "timeout", "reason": "RESULT_TIMEOUT", "tries": to_string(max_retries)}
 }
 
 // 6. teacher-ckpt sha256 verify (F4 patch B — REAL IMPL) -------------------
@@ -618,7 +738,12 @@ fn main() {
         let _ = corpus_build_multilingual_wiki(host, opts, p21hr, "en,ko,zh,ru,ja", "10", dry_run)
     }
     let _ = train_launch(host, opts, p21hr, env, init_variant, seed, dry_run)
-    let _ = result_pull(host, opts, p21hr, "v" + variant, dry_run)
+    // M6 fix: dispatcher-internal wait-loop instead of immediate single-shot
+    // pull. 90 × 60s = 90 min budget covers qwen 1.5B × 5000 step on A100
+    // (Track 1 R8 ledger ETA 60-90 min). Crash patterns / progress emitted
+    // between polls. On RESULT_TIMEOUT, SAVE_POD=1 keeps the pod alive so an
+    // external Monitor can take over.
+    let _wait = result_pull_with_wait(host, opts, p21hr, "v" + variant, 90, 60, dry_run)
     if measure_motiv {
         let _ = embed_motivation_in_result("v" + variant + "/result.json", dry_run)
     }

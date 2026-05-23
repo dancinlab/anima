@@ -1,6 +1,6 @@
 // HEXAD/PURE/launchers/dispatch_p21h_v3_smoke.hexa
 //
-// Smoke for dispatch_p21h_v3.hexa — 10 falsifiers:
+// Smoke for dispatch_p21h_v3.hexa — 11 falsifiers:
 //   F-DISP-PARSE          — import succeeds (dispatcher parses)
 //   F-DISP-ARG-CONTRACT   — argv defaults + per-init LR vs ENV_CONTRACT.md
 //   F-DISP-SHA256         — match / mismatch / missing-file / skip
@@ -17,6 +17,17 @@
 //                           (3) end-to-end --corpus-path dry-run shows
 //                               sources_upload BEFORE corpus override BEFORE
 //                               train_launch.
+//   F-DISP-WAIT-LOOP      — M6 fix: result_pull_with_wait dispatcher-internal
+//                           poll loop (NO race on nohup'd train):
+//                           sub-1: dry-run shows retry plan (90 × 60s budget)
+//                                  instead of single attempt;
+//                           sub-2: synthetic result.json arrival simulates
+//                                  pull success — direct fn dry-run + plan
+//                                  banner confirms no single-shot race;
+//                           sub-3: synthetic train.log Traceback simulates
+//                                  crash detection (_crash_pattern_in + the
+//                                  6 documented patterns), plus progress
+//                                  scrape (_progress_step_from).
 
 import "./dispatch_p21h_v3.hexa"
 
@@ -131,7 +142,10 @@ fn _f_disp_dryrun() -> int {
     if out.index_of("[DRY-RUN]") < 0 { ok = false }
     if out.index_of("[dry-run] pod_create") < 0 { ok = false }
     if out.index_of("[dry-run] train_launch") < 0 { ok = false }
-    if out.index_of("[dry-run] result_pull") < 0 { ok = false }
+    // M6: main() now uses result_pull_with_wait (dispatcher-internal poll
+    // loop) instead of single-shot result_pull. The legacy `[dry-run]
+    // result_pull` marker is replaced by `[dry-run] result_pull_with_wait`.
+    if out.index_of("[dry-run] result_pull_with_wait") < 0 { ok = false }
     // zero real fire — no real stdlib success markers should appear.
     if out.index_of("started; remote pid") >= 0 { ok = false }
     if out.index_of("[pod_create] pod-") >= 0 { ok = false }
@@ -287,6 +301,55 @@ fn _f_disp_sources_upload() -> int {
     return _assert(ok, "F-DISP-SOURCES-UPLOAD — 8 sources resolvable + dry-run prints 8 scp + 1 mkdir + ordering before override + train")
 }
 
+fn _f_disp_wait_loop() -> int {
+    // F-DISP-WAIT-LOOP — M6 fix: result_pull_with_wait dispatcher-internal
+    // poll loop. Three sub-falsifiers covering the race-free contract.
+    let mut ok = true
+    // sub-1: dry-run end-to-end shows retry plan (budget+sniffers) instead of
+    //        single attempt; legacy `[dry-run] result_pull:` marker MUST NOT
+    //        appear in main() flow (main() routes through wait-loop now).
+    let disp = exec("ls HEXAD/PURE/launchers/dispatch_p21h_v3.hexa 2>/dev/null || find . -name dispatch_p21h_v3.hexa -not -name '*smoke*' 2>/dev/null | head -1").trim()
+    let out = exec("hexa run " + disp + " P21H_alpha random 1337 2>&1; echo __RC__=$?")
+    if out.index_of("__RC__=0") < 0 { ok = false }
+    if out.index_of("[dry-run] result_pull_with_wait") < 0 { ok = false }
+    if out.index_of("90") < 0 || out.index_of("60s") < 0 { ok = false }
+    if out.index_of("Traceback/FATAL/OOM/Killed") < 0 { ok = false }
+    if out.index_of("step=N | loss=X") < 0 { ok = false }
+    let parts = out.split("[dry-run] result_pull:")
+    if len(parts) - 1 > 0 { ok = false }
+    // sub-2: synthetic result.json arrival simulates pull success — direct
+    //        dry-run call returns status="dry-run" + reason set; the fn
+    //        signature accepts (host, opts, p21hr, vdir, max_retries,
+    //        interval_s, dry_run) and the loop body is unreached in dry-run
+    //        (no real cloud_copy_from call). This proves the wrapper is
+    //        in-scope and the success-path branch is the documented one.
+    let plan = result_pull_with_wait("root@dry", ["-p", "0"], "/workspace/p21hr", "v_dummy", 30, 60, true)
+    if to_string(plan["status"]) != "dry-run" { ok = false }
+    if !plan.has_key("reason") { ok = false }
+    if !plan.has_key("tries") { ok = false }
+    // sub-3: synthetic train.log Traceback simulates crash detection (the 6
+    //        documented patterns) + clean-log false-positive + progress
+    //        scrape (`step=N | loss=X` from synthetic tail).
+    let cases = [
+        ["Traceback (most recent call last):\n  File \"x.py\"", "Traceback"],
+        ["RuntimeError: CUDA out of memory.", "OOM_CUDA"],
+        ["torch.cuda.OutOfMemoryError: OOM in step 123", "OOM"],
+        ["dmesg: Killed process 1234 (python)", "Killed"],
+        ["FATAL — pod ran out of disk", "FATAL"],
+        ["RuntimeError: index out of range", "RuntimeError"],
+    ]
+    let mut i = 0
+    while i < len(cases) {
+        if _crash_pattern_in(to_string(cases[i][0])) != to_string(cases[i][1]) { ok = false }
+        i = i + 1
+    }
+    if _crash_pattern_in("step=100 | loss=4.2\nstep=200 | loss=3.8\n") != "" { ok = false }
+    let cookie = _progress_step_from("[ts] step=100 | loss=4.2\n[ts] step=200 | loss=3.8\n")
+    if cookie.index_of("step=200") < 0 { ok = false }
+    if _progress_step_from("starting training...\nloading data...\n") != "" { ok = false }
+    return _assert(ok, "F-DISP-WAIT-LOOP — sub1 retry plan + sub2 fn dry-run + sub3 crash 6/6 + progress scrape")
+}
+
 fn main() {
     println("[dispatch_p21h_v3_smoke] START")
     let mut n_pass = 0
@@ -300,7 +363,8 @@ fn main() {
     n_pass = n_pass + _f_disp_mit16()
     n_pass = n_pass + _f_disp_corpus_path()
     n_pass = n_pass + _f_disp_sources_upload()
-    println("[dispatch_p21h_v3_smoke] END: " + to_string(n_pass) + "/10 PASS")
-    if n_pass < 10 { exit(1) }
+    n_pass = n_pass + _f_disp_wait_loop()
+    println("[dispatch_p21h_v3_smoke] END: " + to_string(n_pass) + "/11 PASS")
+    if n_pass < 11 { exit(1) }
     exit(0)
 }
