@@ -1,6 +1,6 @@
-// PURE result_to_axis_map smoke — F-WIRING-1..3 on synthetic fixtures.
+// PURE result_to_axis_map smoke — F-WIRING-1..4 on synthetic fixtures.
 // No real Track 1 dep — writes synthetic blobs to /tmp.
-// Usage: hexa run HEXAD/PURE/eval/result_to_axis_map_smoke.hexa  (3/3 PASS expected)
+// Usage: hexa run HEXAD/PURE/eval/result_to_axis_map_smoke.hexa  (4/4 PASS expected)
 
 import "./result_to_axis_map.hexa"
 
@@ -62,6 +62,28 @@ fn main() {
         println("  FAIL fake file unexpectedly exists at " + fake); n_fail = n_fail + 1
     }
 
-    println("[result_to_axis_map_smoke] END: " + to_string(n_pass) + "/3 PASS, " + to_string(n_fail) + " FAIL")
+    // F-WIRING-4: nested CE schema (real Track-1 shape) — init_log.L_ce + final_log.L_ce render (not "—")
+    println("--- F-WIRING-4 nested init_log.L_ce + final_log.L_ce → row contains 14.18 + 0.98")
+    let p4 = "/tmp/__pure_wiring_smoke_4.json"
+    let nested = #{
+        "verdict": "HEXAD_V3_WORKS",
+        "per_lang_verdicts": _per_lang("STRONG", "STRONG", "STRONG", "STRONG", "STRONG"),
+        "n_anima_register_hits_total": 4, "register_regress": false,
+        "init_log": #{"step": 1, "L_ce": 14.18, "L_total": 14.18},
+        "final_log": #{"step": 5000, "L_ce": 0.98, "L_total": 0.98},
+        "train_wall_s": 2105.83
+    }
+    write_file(p4, json_stringify(nested))
+    let r4 = parse_result_json(p4)
+    let j4 = judge_closure(r4, "PARTIAL", 4)
+    let row4 = format_axis_map_row("E2", r4, j4)
+    println("  row: " + row4)
+    if contains(row4, "14.18") && contains(row4, "0.98") && !contains(row4, "| — | — |") {
+        println("  PASS nested CE rendered (14.18 + 0.98)"); n_pass = n_pass + 1
+    } else {
+        println("  FAIL nested CE not rendered — row: " + row4); n_fail = n_fail + 1
+    }
+
+    println("[result_to_axis_map_smoke] END: " + to_string(n_pass) + "/4 PASS, " + to_string(n_fail) + " FAIL")
     if n_fail > 0 { exit(1) }
 }
