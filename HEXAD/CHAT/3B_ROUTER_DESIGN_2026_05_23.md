@@ -2,7 +2,10 @@
 
 > 2026-05-23 KST · 본 doc 의 단일 source-of-truth: `HEXAD/CHAT/3B_ROUTER_DESIGN_2026_05_23.md`.
 > production = mini, chat.dancinlab.org LIVE. 본 design 은 1.5B router → 3B router
-> migration 의 wiring spec. **메모리 budget 은 결정적 위험** — § 7 + § 9 참조.
+> migration 의 wiring spec. **메모리 budget 은 reboot 으로 해소** — § 13 procedure 참조.
+> Round 2 #4 측정 (2026-05-23T~14:08Z): compressor 4.48 GB 는 uptime-accumulated 일과성 →
+> mini reboot 후 unused ~10 GB → 3B fits with margin. § 13 reboot runbook + § 14 quant fallback
+> + § 15 deploy runbook + § 16 acceptance criteria 로 PR 은 actionable playbook.
 
 ## 1. Motivation
 
@@ -286,20 +289,22 @@ cloudflared RSS: ~27 MB
 - **swap 의존 시 latency**: 매 emit 마다 disk page-in → 2 s tick 이 8-15 s 까지 늘어남. UX 영향.
 - **MPS OOM**: Apple Silicon MPS 는 swap 안 됨. Metal allocator 실패 → process crash + launchd KeepAlive 재시도 루프.
 
-### 결정 — **FEASIBLE? NO (현 상태) / CONDITIONAL YES (대책 적용 시)**
+### 결정 — **FEASIBLE: YES post-reboot — § 13 procedure required. Fallback quant § 14 if reboot insufficient.**
 
-**조건부 가능** — 다음 중 하나가 필요:
+위 측정 표는 **pre-reboot baseline** (point-in-time snapshot). Round 2 #4 가 확인한 핵심
+관측: PhysMem 의 compressor 4.2 GB 는 uptime-accumulated 일과성 — process-kill 로는
+회수 INFEASIBLE (kernel-owned compressed pool), 그러나 **reboot 으로 자연 회수**됨.
 
-1. **다른 메모리 사용 정리**: corespotlightd (153 MB), mediaanalysisd (130 MB),
-   기타 user app 종료. 가용 ~500-800 MB 추가.
-2. **dtype 다운**: f16 → q4/q8 quantization (bitsandbytes/mlx). f16 6.2 GB → q4 ~1.6 GB.
-   단 LoRA 와의 호환 검증 필요 (peft + bnb 4bit on MPS = 비주류). 별도 cycle.
-3. **adapter lazy load**: 3 개 동시 로딩 대신 호출 시 swap. peft 의 `set_adapter` 가
-   메모리에 모두 들고 있으므로 코드 변경 필요. § 12 open question.
-4. **이주 hosting**: mini 외 GPU host (pool on ubu2 / runpod) 로 production 이전 —
-   FIRST-PACK 원래 spec 위반, 큰 작업.
+**Post-reboot 예상 상태** (§ 13 측정 gate):
+- wired ~3 GB (idle macOS baseline)
+- compressor < 500 MB (reboot 직후 fresh)
+- unused ≥ 4 GB (실측 목표 ~10 GB)
+- → 3B f16 6.2 GB + LoRA 480 MB + runtime 600 MB ≈ 7.4 GB fits with ~2 GB margin
 
-**권장 path** = 1 (메모리 정리) + 측정 후 실패 시 3 (lazy load) 또는 2 (quant).
+**Path 결정**:
+1. **First-line: § 13 reboot procedure** (production downtime ~3 min, 자연 reversible).
+2. **Fallback: § 14 quant** (post-reboot unused < 4 GB 일 때 — 드물지만 가능).
+3. (참고로 prior 안 1 메모리 정리 / 안 3 lazy load / 안 4 host 이주는 reboot 으로 해결됨).
 
 ## 8. Migration steps (numbered, mini-side)
 
@@ -477,8 +482,11 @@ curl -s http://mini.local:8000/motivation/recent | jq '.motivation[-1].factors |
 
 ## Honest C3 (본 design 의 위험)
 
-1. **메모리 budget 은 borderline-INFEASIBLE** — § 7 의 권장 path 1 (메모리 정리) 가
-   확실히 가능한지 measurement-first 정합. 본 design 은 "feasible IF X" — X 측정 우선.
+1. **메모리 budget — pre-reboot INFEASIBLE / post-reboot FEASIBLE** — round 2 #4 측정
+   (2026-05-23T~14:08Z) 으로 compressor 4.48 GB 가 uptime-accumulated 일과성임 확인됨;
+   § 13 reboot procedure 가 unblocker. § 14 quant 는 reboot 부족 시 fallback.
+   잔여 risk: post-reboot mini 의 실측 unused 가 예상 ~10 GB 보다 작을 가능성
+   (별도 user daemon 등) — § 13 step 3 verification gate 가 이를 잡음.
 2. **본 design 자체는 zero-edit (참여자 .py / 서브스트레이트 .py)** — 위험은
    100% deploy artifact + env 측. python 코드는 안전.
 3. **JAFL-3B 의 ko 망각은 ja 라우팅에서 무관** — ko 발화 시 default(KOFL-3B ko 18) 로
@@ -491,3 +499,264 @@ curl -s http://mini.local:8000/motivation/recent | jq '.motivation[-1].factors |
    필요 시 tick → 3 s 로 늘림.
 6. **rollback 은 plist + dir rename 단순** — 그러나 mini 가 응답 안 하면 (OOM crash
    loop) ssh 도 느려질 수 있음. mDNS `mini.local` 보다 IP 직접 ssh 권장.
+
+## 13. Pre-deploy memory recovery procedure (REQUIRED)
+
+### 측정 evidence (round 2 #4, 2026-05-23T~14:08Z)
+
+```
+PhysMem snapshot (pre-reboot, uptime ~수일):
+  total:        16 GB
+  wired:         ~5 GB (kernel + LaunchAgents + anima 1.5B path)
+  compressor:   4.48 GB (uptime-accumulated, kernel-owned)
+  unused:       ~372 MB
+  →  3B f16 6.2 GB 추가 INFEASIBLE (process-kill 로 compressor 회수 불가)
+
+Round 2 #4 verdict: compressor 4.48 GB 는 transient — reboot 으로 자연 회수.
+Post-reboot 예상: wired ~3 GB + compressor < 500 MB → unused ~10 GB → 3B fits + margin.
+```
+
+### 4-step reboot procedure (verification gates)
+
+각 step 은 다음 step 진행 전 verification 통과 필수. fail 시 step 1 으로 되돌아가지
+말고 — reboot 은 한 번만 — log + skip → § 14 quant fallback 검토.
+
+**Step 1 — display sleep (cosmetic preparation)**
+```bash
+ssh mini 'pmset displaysleepnow'
+```
+- wall: < 1 s
+- verification: 없음 (cosmetic)
+- rollback: 자연 wake (mouse/key)
+
+**Step 2 — reboot mini**
+```bash
+ssh mini 'sudo shutdown -r now'
+```
+- wall: 명령 즉시 return, mini reboot ~60-90 s
+- verification: ssh 접속이 일시 끊김 (정상)
+- rollback: 없음 (reboot 진행 중 강제 중단 시 디스크 손상 위험 — wait it out)
+
+**Step 3 — wait ~90 s, verify memory recovered**
+```bash
+sleep 90
+ssh mini 'top -l 1 | head -8'
+```
+- 기대치:
+  - `PhysMem: ~3G used (~3G wired, <500M compressor), ≥4G unused`
+  - 실측 목표: unused ≥ 4 GB, compressor < 500 MB
+- verification gate: **unused < 4 GB 이면 § 14 quant fallback 으로 전환**
+- rollback: 자연 — 다른 work 으로 mini 메모리가 다시 차오를 뿐, 추가 risk 없음
+
+**Step 4 — verify production restored (anima auto-start via LaunchAgent)**
+```bash
+sleep 30  # LaunchAgent 가 RunAtLoad=true 로 자동 기동, model load 시간 흡수
+curl -s https://chat.dancinlab.org/health | jq .
+```
+- 기대치: `{"ok":true, "anima_alive":true, ...}`
+- 시점: reboot 완료 후 ~30-60 s
+- verification gate: 5 분 내 health OK 못 받으면 — `ssh mini 'tail -50 ~/anima_chat_pack/logs/anima.err'` 로 진단
+- rollback: 없음 (1.5B path 는 reboot 으로 영향 없음)
+
+### Production downtime estimate
+
+- step 2 shutdown 명령 → step 4 health OK 까지: **~3 분 wall**
+- chat.dancinlab.org 다운: ~2.5-3 분 (mini boot + LaunchAgent 기동 + cloudflared 재연결)
+
+### Rollback
+
+reboot 자체는 자연 reversible — 또 다른 reboot 으로 동일 상태 복귀 가능. § 13
+procedure 는 destructive 작업 없음 (코드/디스크 무변경, 단순 메모리 정리).
+
+## 14. Quantization fallback path (if reboot insufficient)
+
+### Trigger
+
+§ 13 Step 3 verification 에서 post-reboot unused < 4 GB. Mac mini 16 GB 에서는
+드문 경우지만 (별도 user-installed daemon 이 ~5 GB 점유 등) 가능성 잔존.
+
+### Approach: f16 → bnb 4-bit quant (bitsandbytes)
+
+```
+base Qwen2.5-3B
+  f16: 3.09e9 params × 2 B = 6.18 GB
+  q4:  3.09e9 params × 0.5 B ≈ 1.55 GB  (NF4 quantization)
+  memory delta: ~4.6 GB 절감 (~75% cut)
+```
+
+- 구현: `transformers` `BitsAndBytesConfig(load_in_4bit=True, bnb_4bit_quant_type="nf4")`.
+- LoRA 호환: peft 가 4bit quantized base 위에 LoRA adapter 운영 지원 (QLoRA 표준).
+- **MPS 호환성**: bitsandbytes MPS 지원은 partial — 실제 mini 에서 검증 필요.
+  (linux/cuda 가 first-class, MPS 는 일부 op fallback to CPU 가능 → latency 영향).
+
+### Alternative: mlx (Apple-native quant)
+
+- mlx 는 Apple Silicon native, MPS 보다 효율적.
+- 단점: `transformers` → `mlx` 코드 변환은 substrate_lora.py 전면 rewrite 수준.
+- 별도 cycle 권장 — 본 PR 의 fallback 1차 안은 bnb (코드 변경 최소).
+
+### Memory delta 요약
+
+| dtype | base size | total resident (예상) | mini fit (16 GB) |
+|---|---|---|---|
+| f16 | 6.18 GB | ~7.4 GB | post-reboot 가능 (§ 13) |
+| bnb-q4 | 1.55 GB | ~2.8 GB | 거의 항상 가능 |
+| mlx-q4 | ~1.4 GB | ~2.5 GB | 항상 가능 (별도 cycle) |
+
+### Risk: quant quality regression
+
+- KOFL-3B 5S property 는 f16 측정값 — q4 후 동일 5S 유지 보장 없음.
+- **필수**: q4 적용 후 Eval1 (per-lang 5×4 = 20 prompt) 재측정 → 5S 유지 확인.
+- 실패 시: q8 (~3.1 GB) 로 대체 또는 § 13 정리 path 우선 시도.
+
+### Status
+
+**Deferred path** — 1차 안은 § 13 reboot. § 14 는 reboot 으로 부족할 때만 발동.
+코드 변경 (substrate_lora.py 의 from_pretrained 인자) 필요 → 본 PR scope 밖,
+별도 cycle.
+
+## 15. Migration runbook (post-reboot, deploy-ready)
+
+본 runbook 은 § 13 reboot 통과 후 (= unused ≥ 4 GB 확인) executable as-is. 각 step
+verification gate + 1-line rollback + wall time estimate 포함.
+
+### Pre-flight (Mac local)
+
+```bash
+# § 13 가 통과한 후에만 진행
+ssh mini 'top -l 1 | head -8' | grep -E 'PhysMem|Compressor'
+# gate: unused ≥ 4 GB AND compressor < 500 MB 확인
+```
+
+### Step A — artifact prep (Mac local, $0)
+```bash
+ls -la HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/vP21M_KOFL3B/lora_adapter/
+ls -la HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/vP21M_JAFL3B/lora_adapter/
+# gate: adapter_model.safetensors + adapter_config.json + tokenizer.* 존재
+# wall: < 1 min
+# rollback: 진행 안 함 (read-only check)
+```
+
+### Step B — rollback bak rename (mini)
+```bash
+ssh mini 'cd ~/anima_chat_pack && \
+  mv lora_adapter lora_adapter_1_5b_bak && \
+  mv kofl_adapter kofl_adapter_1_5b_bak && \
+  mv jafl_adapter jafl_adapter_1_5b_bak'
+# gate: ls 로 _1_5b_bak suffix 3 디렉터리 확인
+# wall: < 5 s
+# rollback: mv 역방향 (`mv lora_adapter_1_5b_bak lora_adapter` 등)
+# NOTE: 이 step 후 mini production 은 broken 상태 — Step E 까지 빠르게 진행
+```
+
+### Step C — 3B artifact rsync (Mac → mini)
+```bash
+rsync -av HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/vP21M_KOFL3B/lora_adapter/ \
+  mini:~/anima_chat_pack/lora_adapter/
+rsync -av HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/vP21M_JAFL3B/lora_adapter/ \
+  mini:~/anima_chat_pack/jafl_adapter/
+# gate: rsync exit 0; mini 측 ls -la 로 240 MB safetensors 확인
+# wall: ~30-90 s (LAN, 480 MB total)
+# rollback: rm 후 Step B rollback 으로 복귀
+```
+
+### Step D — HF cache warmup (mini, first-emit latency 단축)
+```bash
+ssh mini "cd ~/anima_chat_pack && venv/bin/python3 -c '
+from transformers import AutoModelForCausalLM, AutoTokenizer
+AutoTokenizer.from_pretrained(\"Qwen/Qwen2.5-3B\")
+AutoModelForCausalLM.from_pretrained(\"Qwen/Qwen2.5-3B\")
+'"
+# gate: exit 0; ~/.cache/huggingface/hub/models--Qwen--Qwen2.5-3B/ 6 GB 존재
+# wall: ~3-5 min (HF download 6 GB at LAN speed)
+# rollback: rm -rf ~/.cache/huggingface/hub/models--Qwen--Qwen2.5-3B/ (디스크 138 GB 여유 — 보존도 무관)
+```
+
+### Step E — plist 갱신 + LaunchAgent reload (mini)
+```bash
+# § 6 의 EnvironmentVariables 블록을 plist 에 작성 (편집 도구는 user 선택)
+ssh mini 'launchctl unload ~/Library/LaunchAgents/com.dancinlab.anima.plist && \
+  launchctl load ~/Library/LaunchAgents/com.dancinlab.anima.plist'
+# gate: launchctl list | grep com.dancinlab.anima 의 status = 0
+# wall: ~5 s unload + load; 첫 emit 까지 30-60 s (3B cold load)
+# rollback: plist 의 EnvironmentVariables 블록 제거 후 다시 unload+load
+```
+
+### Step F — health gate (자동 reload 후 60-90 s 대기)
+```bash
+sleep 60
+curl -s http://mini.local:8000/health | jq .
+ssh mini 'tail -50 ~/anima_chat_pack/logs/anima.err | grep LoraSubstrate'
+# gate 1: health.ok = true
+# gate 2: anima.err 의 "LoraSubstrate ready: base=Qwen/Qwen2.5-3B adapters=['default','ja']"
+# gate 3: ssh mini 'top -l 1 | head -8' → unused ≥ 2 GB (sustained)
+# wall: ~1 min (health check)
+# rollback: Step E rollback (plist env 제거) → 1.5B path 자동 복귀
+```
+
+### Step G — 20-emission live measurement (~5-10 min)
+```bash
+ssh mini 'cd ~/anima_chat_pack && venv/bin/python3 anima_emission_analyze.py \
+  --history-url http://localhost:8000/history --n 20'
+# gate: lang dist en ≤ 30%, register hit ≤ 25%, no crash loop in anima.err
+# wall: ~5-10 min (live emit at tick=2s)
+# rollback: 결과 미달 시 § 10 full rollback path (plist + dir rename)
+```
+
+### Total wall (post-reboot)
+
+- Step A-F: ~6-10 분 (rsync + HF warmup 이 dominant)
+- Step G: ~5-10 분 (20-emission live)
+- **Total: ~15-20 분** (reboot 3 분 + migration 12-17 분)
+
+## 16. Acceptance criteria (deploy-ready signal)
+
+본 design 의 deploy 가 성공적으로 완료된 signal — 4 개 모두 충족 시 PR #119 의
+playbook 이 verified-deployed 상태.
+
+### AC1 — health endpoint OK
+```bash
+curl -s https://chat.dancinlab.org/health | jq '.ok, .anima_alive'
+# expect: true, true
+```
+
+### AC2 — anima loaded 3B substrate (log evidence)
+```bash
+ssh mini 'tail -100 ~/anima_chat_pack/logs/anima.err | grep "LoraSubstrate ready"'
+# expect: "LoraSubstrate ready: base=Qwen/Qwen2.5-3B adapters=['default','ja']"
+#         (kofl_adapter 선택 1 적용 시 'ko' 없음 — 그래도 OK; ko 발화는 default 폴백)
+```
+
+### AC3 — 20-emission live, register/lang 분포 healthy
+```bash
+ssh mini 'cd ~/anima_chat_pack && venv/bin/python3 anima_emission_analyze.py \
+  --history-url http://localhost:8000/history --n 20'
+# expect:
+#   lang dist: en ≤ 30% (N7 prime 효과 + 5S balance)
+#   register hit (전체): ≤ 25% (vs 1.5B vP21M 34-42%)
+#   no crash loop in anima.err (process restart 0회)
+```
+
+### AC4 — memory sustained (5 min post-warmup)
+```bash
+for i in 1 2 3 4 5; do
+  ssh mini 'top -l 1 | head -3 | grep PhysMem'
+  sleep 60
+done
+# expect: 매 분 unused ≥ 2 GB sustained (post-warmup)
+#         compressor < 2 GB (initial 정도 — 운영 중 자연 증가 허용)
+```
+
+### 4-AC 충족 시
+- chat.dancinlab.org 의 substrate 가 3B KOFL-3B (5S generalist) 로 전환 완료.
+- 본 PR (#119) 의 design 이 deploy-verified.
+- v0.13.x router 의 production fielded — 후속은 corpus_v5 (R1 cycle) / KOSMOS daemon
+  (PR #117) merge 등 별도 cycle.
+
+### 1-AC 라도 미달 시
+- § 10 rollback path 실행 → 1.5B 복귀.
+- 미달 원인 별 next action:
+  - AC1 fail → § 13 step 4 verification 실패 → anima.err 진단
+  - AC2 fail → plist env / adapter dir 오설치 → Step E 재확인
+  - AC3 fail → quality regression → product judgment (3B identity vs 1.5B)
+  - AC4 fail → § 14 quant fallback 가동 (post-reboot 이라도 unused < 2 GB sustained)
