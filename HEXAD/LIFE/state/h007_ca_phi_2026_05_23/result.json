@@ -1,0 +1,27 @@
+{
+  "id": "H_007",
+  "slug": "cellular-automaton-consciousness",
+  "date": "2026-05-23",
+  "deterministic": true,
+  "hexa_only": true,
+  "llm": "none",
+  "cost": "$0 mac local",
+  "phi_primitive": "RFC 036 phi_spatial (HEXAD/C/c_lib.hexa c_measure_phi, byte-equal phi_rs native replica)",
+  "config": { "N": 16, "dim": 12, "warm": 8, "reps": 5, "n_bins": 4, "boundary": "periodic" },
+  "rules": { "ordered": 250, "chaotic": 30, "class_iv": 110 },
+  "wolfram_class": { "250": "II", "30": "III", "110": "IV" },
+  "phi_mean": {
+    "ordered_rule250": 1.14511e-05,
+    "chaotic_rule30": 0.509944,
+    "class_iv_rule110": 0.556454
+  },
+  "falsifiers": {
+    "F1_NONNEG": { "metric": "all Φ>=0", "verdict": "PASS" },
+    "F2_IV_GT_ORD": { "metric": "Φ(IV)-Φ(ord)", "delta": 0.556443, "verdict": "PASS" },
+    "F3_IV_GT_CHA": { "metric": "Φ(IV)-Φ(cha)", "delta": 0.0465102, "verdict": "PASS" },
+    "F4_IV_POS": { "metric": "Φ(IV)>0", "value": 0.556454, "verdict": "PASS" },
+    "F5_SEPARATION": { "metric": "Φ(IV)-max(Φ_ord,Φ_cha)", "margin": 0.0465102, "floor": 0.000001, "verdict": "PASS" }
+  },
+  "verdict_rule": "PASS iff Φ(IV)>Φ(ord) AND Φ(IV)>Φ(cha) AND all Φ>=0; else FAIL",
+  "verdict": "PASS"
+}
