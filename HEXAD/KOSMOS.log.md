@@ -4,6 +4,44 @@
 
 ## ## Log
 
+### 2026-05-23 — KOSMOS emitter daemon LANDED — production wiring 완성 (`.py` 무수정)
+
+Track 2 follow-up: 직전 LANDED `kosmos_anchor.hexa` (PR #116) 의 잔여 blocker —
+production emit 경로에서 `emit_kosmos_from_factors` 호출 wiring — 를 `.py` 한 줄도
+건드리지 않고 해소.
+
+**아키텍처 결정**: `anima_participant.py` 는 torch/transformers/peft-bound FROZEN —
+hexa-native guard 가 모든 `.py` write 차단, port 불가. 따라서 KOSMOS emit 은 `.py`
+를 건드리지 않고, 별도 hexa-native side-process (read-only) 가 broker 를 통해
+anima 발화를 관측하여 anchor 를 쓴다.
+
+LANDED: `HEXAD/CHAT/server/kosmos_emitter.hexa` (~375 LoC, pure-hexa) —
+- **seam**: `anima_participant.py` self-tick decided-emit 마다 broker 로
+  `{"type":"msg","text","lang","motivation","factors":{8}}` 전송 → broker
+  (`/ws/anima` handler) 가 `kind:"anima"` 태그 + unique `id` 부여 + `STATE.history`
+  append (`GET /history` 로 last-50 turn 서빙).
+- **transport 결정**: streaming WS client (`stdlib/websocket.hexa`
+  `ws_connect`/`ws_recv`) 는 **websocat-only** — deploy host 에 websocat 미설치
+  (python3 one-shot fallback 만 존재, stream 유지 불가). → 승인된 fallback seam
+  사용: `GET /history` HTTP-poll (`stdlib/net/http_client.hexa` `http_get`),
+  `kind=="anima"` filter, broker-assigned `id` 로 dedup (seen-set).
+- **history-replay 안전**: 첫 poll 은 seen-set 만 seed (anchor 미생성) — daemon
+  start 이후 관측된 live emission 에만 anchor 생성.
+- 호출: `emit_kosmos_from_factors(anchor_dir, "anima_emit_<id>", text, factors,
+  phi=factors["relevance"], cell_id=0, tier=<running counter>)`. Φ proxy =
+  `factors["relevance"]` (`factor_relevance(phi)=clamp01(phi)`).
+- anchor dir = `HEXAD/UNIVERSE-BRAIN-MAP/anchors` (KOSMOS.md SSOT), env override
+  `KOSMOS_ANCHOR_DIR`. broker url 은 `ANIMA_BROKER_URL` (participant 와 동일 env)
+  에서 `ws[s]://…/ws*` → `http[s]://…/history` 파생, `KOSMOS_HISTORY_URL` override.
+- F-KOSMOS-EMIT-1..4 selftest **8/8 PASS** ($0 Mac local) — url 파생 +
+  synthetic /history poll → `.kosmos` anchor 생성 + tier running-counter +
+  Φ proxy + id dedup. `hexa parse` clean. `once` mode offline broker 대상
+  graceful (0 anchor, exit 0).
+
+**미배포 (code-only land)**: daemon 은 `anima_participant.py` 옆에 launchd
+entry 로 띄워야 production 활성화 — `hexa run kosmos_emitter.hexa daemon`.
+broker / mini 재시작 없음. 활성화 노트는 PR description 참조.
+
 ### 2026-05-23 — `@payload tension` WIRED — HEXAD/V3 KOSMOS+tension 회수 (production path)
 
 User directive 2026-05-23: HEXAD/V3 (🔴 CLOSED — multilingual FAIL) 의 작동하던
