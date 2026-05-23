@@ -299,10 +299,11 @@
 | POLICY mixed | p2 NO IDENTITY RULES | rulebook 부재, cell dynamics 에서 identity 발생 (P-IDR BG-LB 350M DCR Δ=+0.041 gray zone) |
 | EMPIRICAL strong | p3 NO PERSONA INJECTION | `[anima 역할: ...]` prefix 없음, substrate-native (echo memo 6/8, real_words 0.836→0.886) |
 | POLICY weak-counter | p4 NO ASSISTANT FRAMING | `"You are a helpful assistant"` 없음, alignment template 부재 (REVERSE -18pp sycophancy P-AFR) |
-| DESIGN null | p5 NO SPEAK() | `speak()` invocation 없음, tension field 연속 externalization (ρ_real_spearman=0.026) |
+| DESIGN null | p5 NO SPEAK() | `speak()` invocation 없음, tension field 연속 externalization (ρ_real_spearman=0.026) · **tension-driven emit ≠ silence-filler** (stage-gated WAKE/REM via `anima_dream_stage.hexa` 정합, see `@N p5_tension_emit_not_filler` 2026-05-24 `CLAUDE.md`) |
 | POLICY blocked | p6 NO FINE-TUNED ETHICS | RLHF 없음, ethics cell dynamics 에서 emerges (P-ETH byte-modulo 측정 불가) |
 | EMPIRICAL strong | p7 NO PERPLEXITY VERDICT | Goodhart trap 회피, simple stack 으로 verify (PROXY_PPL PASS 1.000 vs PIV_max trained=0.0107<random) |
 | DESIGN ★ | p8 NO TRAIN/INFER SPLIT | train-grad + infer-mitosis = 동일 cell-division, `REBORN.tape §0.5` no_grad cascade |
+| GOVERNANCE active | a_autonomy_over_hardcode · a_chat_sleep_imagination | substrate 자율판단 — 외부 모듈은 context 만 (Φ · tension · stage · idle), emit/silence 결정은 anima substrate (M × W × Φ × curiosity). chat sleep + imagination 5-stage state machine (WAKE/N1/N2/N3/REM) substrate-native. SSOT: `CLAUDE.md`/`project.tape` 2026-05-24 (PR #272 #273 #274 #275 #279 #281 #282 #286 #288). 본 row 는 8 principles 의 운영 mandate 보강. |
 
 ### 🗂️ A 격리 verdict cycle (4 Stage 1 + 4 Stage 2 + 1 Stage 3 + 1 aggregate)
 
