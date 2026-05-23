@@ -124,16 +124,53 @@ fn main() {
     // F-WIRING-6: back-compat — a result.json WITHOUT corpus_quality still renders fine,
     // M3+M5 trail as "—". This is what FRESHly-emitted closure-fire result.json looks like
     // BEFORE the operator passes `--corpus <path>` on next emit (gradual rollout).
-    println("--- F-WIRING-6 back-compat: result.json WITHOUT corpus_quality → M3 + M5 as '—'")
-    let row1_trail_ok = contains(row4, "| 2105.83 | — | — |")
+    // Now also covers absence of dream_stage_at_eval (Phase D 4th criterion) — trails as
+    // `| — | — | — |` (M3 · M5 · dream stage).
+    println("--- F-WIRING-6 back-compat: result.json WITHOUT corpus_quality + dream_stage_at_eval → trails '— — —'")
+    let row1_trail_ok = contains(row4, "| 2105.83 | — | — | — |")
     if row1_trail_ok {
-        println("  PASS legacy F-WIRING-4 row trails as '| 2105.83 | — | — |' (back-compat)")
+        println("  PASS legacy F-WIRING-4 row trails as '| 2105.83 | — | — | — |' (back-compat)")
         n_pass = n_pass + 1
     } else {
-        println("  FAIL legacy row missing trailing '— —' columns — row: " + row4)
+        println("  FAIL legacy row missing trailing '— — —' columns — row: " + row4)
         n_fail = n_fail + 1
     }
 
-    println("[result_to_axis_map_smoke] END: " + to_string(n_pass) + "/6 PASS, " + to_string(n_fail) + " FAIL")
+    // F-WIRING-7: dream_stage_at_eval block (Phase D 4th closure criterion) — when the
+    // multilingual_probe captured the chat daemon's IPC stage at eval start, the AXIS_MAP
+    // row's dream-stage column renders the stage token (REM/N2/...). Back-compat with
+    // F-WIRING-1..4 already covered by F-WIRING-6 (no dream_stage_at_eval → '—').
+    println("--- F-WIRING-7 dream_stage_at_eval → dream-stage column rendered (REM)")
+    let p7 = "/tmp/__pure_wiring_smoke_7.json"
+    let with_ds = #{
+        "verdict": "HEXAD_V3_WORKS",
+        "per_lang_verdicts": _per_lang("STRONG", "STRONG", "STRONG", "STRONG", "STRONG"),
+        "n_anima_register_hits_total": 3, "register_regress": false,
+        "init_log": #{"step": 1, "L_ce": 14.18, "L_total": 14.18},
+        "final_log": #{"step": 5000, "L_ce": 0.92, "L_total": 0.92},
+        "train_wall_s": 1987.42,
+        "dream_stage_at_eval": #{
+            "stage": "REM",
+            "phi_envelope": 0.95,
+            "tension_envelope": 0.9,
+            "ipc_path": "/Users/x/.cache/anima/dream_stage.current"
+        }
+    }
+    write_file(p7, json_stringify(with_ds))
+    let r7 = parse_result_json(p7)
+    let j7 = judge_closure(r7, "PARTIAL", 4)
+    let row7 = format_axis_map_row("E2-ds", r7, j7)
+    println("  row: " + row7)
+    // Trailing `| — | — | REM |` proves dream-stage column renders via _dream_stage_cell lookup
+    // (no corpus_quality on this fixture → M3+M5 still '—', only dream-stage column populated).
+    if contains(row7, "| — | — | REM |") {
+        println("  PASS dream-stage=REM rendered from dream_stage_at_eval block")
+        n_pass = n_pass + 1
+    } else {
+        println("  FAIL dream-stage column not rendered — row: " + row7)
+        n_fail = n_fail + 1
+    }
+
+    println("[result_to_axis_map_smoke] END: " + to_string(n_pass) + "/7 PASS, " + to_string(n_fail) + " FAIL")
     if n_fail > 0 { exit(1) }
 }

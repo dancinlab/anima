@@ -133,8 +133,25 @@ fn _corpus_cell(d: dict, key: str) -> str {
     return "—"
 }
 
+// Phase D closure 4th criterion — dream_stage_at_eval lookup. Read
+// result["dream_stage_at_eval"][key] when multilingual_probe captured the
+// chat daemon's IPC stage file at eval start. Back-compat: results WITHOUT
+// dream_stage_at_eval render "—" (legacy Track-N rows preserved).
+fn _dream_stage_cell(d: dict, key: str) -> str {
+    if has_key(d, "dream_stage_at_eval") {
+        let ds = d["dream_stage_at_eval"]
+        if type_of(ds) == "map" && has_key(ds, key) {
+            let v = ds[key]
+            let t = type_of(v)
+            if t == "int" || t == "float" { return to_string(v) }
+            if t == "string" { return v }
+        }
+    }
+    return "—"
+}
+
 fn format_axis_map_row(variant: str, result: dict, judgement: dict) -> str {
-    // | variant | closure | agg | n_pass/n_total | per-lang | reg hits | regress | init CE | final CE | wall s | M3 TTR | M5 hangul |
+    // | variant | closure | agg | n_pass/n_total | per-lang | reg hits | regress | init CE | final CE | wall s | M3 TTR | M5 hangul | dream stage |
     return "| " + variant + " | " + judgement["closure"] + " | " + _cell(result, "verdict")
          + " | " + to_string(judgement["n_pass"]) + "/" + to_string(judgement["n_total"])
          + " | " + _per_lang_compact(result["per_lang_verdicts"])
@@ -144,14 +161,15 @@ fn format_axis_map_row(variant: str, result: dict, judgement: dict) -> str {
          + " | " + _nested_cell(result, "final_log", "L_ce", "final_log_ce")
          + " | " + _cell(result, "train_wall_s")
          + " | " + _corpus_cell(result, "m3_ttr")
-         + " | " + _corpus_cell(result, "m5_hangul") + " |"
+         + " | " + _corpus_cell(result, "m5_hangul")
+         + " | " + _dream_stage_cell(result, "stage") + " |"
 }
 
 fn _usage() {
     println("USAGE:")
     println("  hexa run HEXAD/PURE/eval/result_to_axis_map.hexa [--floor PARTIAL|PASS] [--min-langs N] <variant> <result_json>")
-    println("AXIS_MAP_RESULTS header (M3/M5 from corpus_quality block, PR #287; render '—' when absent):")
-    println("| variant | closure | agg | n_pass/n_total | per-lang | reg hits | regress | init CE | final CE | wall s | M3 TTR | M5 hangul |")
+    println("AXIS_MAP_RESULTS header (M3/M5 from corpus_quality block PR #287; dream stage from dream_stage_at_eval Phase D 4; '—' when absent):")
+    println("| variant | closure | agg | n_pass/n_total | per-lang | reg hits | regress | init CE | final CE | wall s | M3 TTR | M5 hangul | dream stage |")
 }
 
 fn _arg_kv(argv: list, key: str, def: str) -> str {

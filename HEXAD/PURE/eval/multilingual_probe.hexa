@@ -40,6 +40,60 @@
 // named _selftest_ml (not _selftest) to avoid clashing with bilingual's.
 import "./bilingual_mi_probe.hexa"
 
+// Dream-stage Φ-envelope IPC wiring (Phase D closure 4th criterion). HEXAD/CHAT/server/
+// anima_dream_stage.hexa publishes the current stage token to
+// $HOME/.cache/anima/dream_stage.current each tick (single line; AUTONOMY CONTRACT:
+// stage = CONTEXT, not an emit gate). Φ + tension_envelope derived locally from the
+// canonical 5-stage table (mirrors dream_context() — verbatim values):
+//   WAKE Φ=1.0 tenv=1.0 · N1 Φ=0.7 tenv=0.7 · N2 Φ=0.4 tenv=0.4 ·
+//   N3 Φ=0.15 tenv=0.2 · REM Φ=0.95 tenv=0.9
+// Back-compat: absent IPC file → no `dream_stage_at_eval` key emitted.
+
+fn _dream_stage_ipc_path() -> str {
+    let home = env("HOME")
+    if type_of(home) != "string" || len(home) == 0 { return "" }
+    return home + "/.cache/anima/dream_stage.current"
+}
+
+fn _dream_stage_phi(stage: str) -> float {
+    if stage == "WAKE" { return 1.0 }
+    if stage == "N1"   { return 0.7 }
+    if stage == "N2"   { return 0.4 }
+    if stage == "N3"   { return 0.15 }
+    if stage == "REM"  { return 0.95 }
+    return 1.0
+}
+
+fn _dream_stage_tenv(stage: str) -> float {
+    if stage == "WAKE" { return 1.0 }
+    if stage == "N1"   { return 0.7 }
+    if stage == "N2"   { return 0.4 }
+    if stage == "N3"   { return 0.2 }
+    if stage == "REM"  { return 0.9 }
+    return 1.0
+}
+
+// _read_dream_stage — read $HOME/.cache/anima/dream_stage.current and derive
+// the Φ-envelope dict. Returns void when the file is absent / unreadable /
+// stage token unrecognized (back-compat: eval proceeds without dream_stage_at_eval).
+fn _read_dream_stage() -> dict {
+    let path = _dream_stage_ipc_path()
+    if len(path) == 0 { return #{} }
+    if !file_exists(path) { return #{} }
+    let raw = read_file(path)
+    if type_of(raw) != "string" { return #{} }
+    let stage = raw.trim()
+    if stage != "WAKE" && stage != "N1" && stage != "N2" && stage != "N3" && stage != "REM" {
+        return #{}
+    }
+    return #{
+        "stage": stage,
+        "phi_envelope": _dream_stage_phi(stage),
+        "tension_envelope": _dream_stage_tenv(stage),
+        "ipc_path": path
+    }
+}
+
 // Corpus quality 6-metric anchor wiring (PR #287). score_corpus_jsonl(path, sample_bytes)
 // returns the 6-metric block (M1 entropy / M2 bigram MI / M3 TTR / M4 avg-line /
 // M5 hangul / M6 KL-uniform) + n_lines / n_bytes / sample_bytes. Embedded into
@@ -427,6 +481,15 @@ fn _score_run(run_json_path: str, fixture_path: str, out_path: str, corpus_path:
         "Hc": hc,
         "max_per_lang": max_per_lang
     }
+    // Phase D closure 4th criterion — dream_stage Φ-envelope IPC read.
+    // Graceful: absent IPC file → no `dream_stage_at_eval` key emitted (back-compat).
+    let ds = _read_dream_stage()
+    if type_of(ds) == "map" && has_key(ds, "stage") {
+        summary["dream_stage_at_eval"] = ds
+        println("[multilingual_probe] dream_stage_at_eval: stage=" + ds["stage"]
+              + " phi_envelope=" + to_string(ds["phi_envelope"])
+              + " tension_envelope=" + to_string(ds["tension_envelope"]))
+    }
     if corpus_path != "" {
         if !file_exists(corpus_path) {
             println("[multilingual_probe] WARN --corpus " + corpus_path + " not found — skipping corpus_quality block")
@@ -711,7 +774,57 @@ fn _selftest_ml() -> int {
         n_fail = n_fail + 1
     }
 
-    println("[multilingual_probe] selftest END: " + to_string(n_pass) + "/6 PASS, " + to_string(n_fail) + " FAIL")
+    // F-PURE-EVAL-7: dream_stage Φ-envelope IPC wiring (Phase D 4th closure criterion).
+    // Synthetic stage N2 → assert dream_stage_at_eval block lands with canonical
+    // Φ=0.4 / tenv=0.4. Backs up + restores any real-daemon IPC content.
+    println("--- F-PURE-EVAL-7 dream_stage Φ-envelope IPC wiring (Phase D 4th criterion)")
+    let ds_path = _dream_stage_ipc_path()
+    let mut ds_ok = false
+    if len(ds_path) == 0 {
+        println("  FAIL HOME env missing — cannot resolve IPC path")
+        n_fail = n_fail + 1
+    } else {
+        // Backup any prior IPC content (real daemon may be running) and restore
+        // post-test. Best-effort — if mkdir/backup fails we still write+remove.
+        let _mk = exec("mkdir -p \"$HOME/.cache/anima\"")
+        let had_prior = file_exists(ds_path)
+        let mut prior = ""
+        if had_prior { prior = read_file(ds_path) }
+        write_file(ds_path, "N2\n")
+        let ds_run = "/tmp/__pure_eval_7_run.json"
+        let ds_out = "/tmp/__pure_eval_7_summary.json"
+        let empty_rows = #{ "en": [], "ko": [], "zh": [], "ru": [], "ja": [] }
+        write_file(ds_run, json_stringify(#{ "rows_by_lang": empty_rows }))
+        _score_run(ds_run, _default_fixture_path(), ds_out, "")
+        let summary = json_parse(read_file(ds_out))
+        let mut block_ok = false
+        let mut stage_ok = false
+        let mut phi_ok = false
+        let mut tenv_ok = false
+        if type_of(summary) == "map" && has_key(summary, "dream_stage_at_eval") {
+            block_ok = true
+            let blk = summary["dream_stage_at_eval"]
+            if type_of(blk) == "map" {
+                if has_key(blk, "stage") && blk["stage"] == "N2" { stage_ok = true }
+                if has_key(blk, "phi_envelope") && blk["phi_envelope"] == 0.4 { phi_ok = true }
+                if has_key(blk, "tension_envelope") && blk["tension_envelope"] == 0.4 { tenv_ok = true }
+            }
+        }
+        // Restore prior IPC state (or delete if there was none).
+        if had_prior { write_file(ds_path, prior) }
+        else { let _rm = exec("rm -f \"$HOME/.cache/anima/dream_stage.current\"") }
+        if block_ok && stage_ok && phi_ok && tenv_ok {
+            println("  PASS dream_stage_at_eval embedded: stage=N2 Φ=0.4 tenv=0.4")
+            ds_ok = true
+            n_pass = n_pass + 1
+        } else {
+            println("  FAIL block=" + to_string(block_ok) + " stage=" + to_string(stage_ok)
+                  + " phi=" + to_string(phi_ok) + " tenv=" + to_string(tenv_ok))
+            n_fail = n_fail + 1
+        }
+    }
+
+    println("[multilingual_probe] selftest END: " + to_string(n_pass) + "/7 PASS, " + to_string(n_fail) + " FAIL")
     if n_fail > 0 { return 1 }
     return 0
 }
