@@ -338,6 +338,7 @@ async def ws_akida_ingest(ws: WebSocket):
                 log.warning("akida ingest json drop: %s raw=%r", e, raw[:200])
                 continue
             STATE.akida_history.append(msg)
+            log.info("akida append now=%d", len(STATE.akida_history))
             # fan-out to akida subscribers
             dead = []
             for sub in STATE.akida_subscribers:
