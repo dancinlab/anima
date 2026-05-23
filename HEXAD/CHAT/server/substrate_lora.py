@@ -31,7 +31,7 @@ LANG_PRIMES = {
     "ru": "Я вдруг замечаю, что ",
     "ja": "ふと、こんなことを思った。",
 }
-ROUTER_LANG_TO_ADAPTER = {"ko": "ko", "ja": "ja"}  # rest → "default"
+ROUTER_LANG_TO_ADAPTER = {"ko": "ko", "ja": "ja", "zh": "zh", "ru": "ru"}  # rest → "default"
 
 # Unicode script ranges for cross-lang seed detection (N7).
 _SCRIPT_RANGES = {
@@ -65,7 +65,9 @@ class LoraSubstrate(Substrate):
     name = "lora"
 
     def __init__(self, adapter_dir: str, adapter_ko: str | None = None,
-                 adapter_ja: str | None = None, base_model: str = "Qwen/Qwen2.5-1.5B",
+                 adapter_ja: str | None = None, adapter_zh: str | None = None,
+                 adapter_ru: str | None = None,
+                 base_model: str = "Qwen/Qwen2.5-1.5B",
                  device: str = "cpu", dtype: torch.dtype | None = None):
         self.device = device
         self.base_model = base_model
@@ -79,7 +81,8 @@ class LoraSubstrate(Substrate):
         self.model = PeftModel.from_pretrained(base, adapter_dir,
                                                adapter_name="default").to(device).eval()
         self.adapters_loaded = {"default"}
-        for lang_key, adir in (("ko", adapter_ko), ("ja", adapter_ja)):
+        for lang_key, adir in (("ko", adapter_ko), ("ja", adapter_ja),
+                               ("zh", adapter_zh), ("ru", adapter_ru)):
             if adir and os.path.isfile(os.path.join(adir, "adapter_model.safetensors")):
                 try:
                     self.model.load_adapter(adir, adapter_name=lang_key)
