@@ -253,3 +253,62 @@ post_hoc_edit: forbidden (raw#10 + raw#82); measurement cycle 에 frozen thresho
 trained-model phi_spatial = named blocker — NOT 🔵 formal, NOT LLM-judged).
 **State output (pending)**: `state/h241_corpus_quality_phi_2026_05_24/result.json` ·
 **Engine (read-only)**: `anima-engines/corpus_quality_engine.hexa` (CLM-P22-1 oracle).
+
+## §A1 Variable amend (2026-05-24, PR #340 실측 반영)
+
+**요지 (TL;DR)**: H_241 의 *register-leak primary predictor* 후보를 **M5
+HANGUL_COVERAGE → M3 TOKEN_DIVERSITY (TTR)** 으로 이동한다. correlate *target*
+(downstream Φ) 은 유지 — 변경은 *input metric* 측에서만 발생. PR #303 의 anima-
+OWN hangul 24-32% proxy 가정이 PR #340 corpus_s101 600MB 직접 측정에서
+**1.66-2.34% 로 실측 반증**. ko-corpus register-leak 의 진짜 syntactic-quality
+anchor 는 M3 TTR ≈ 0.03 (extreme repetition → memorize → register-sink chain).
+역사적 M5 prediction 은 §3 H241.2 (demoted) / §7 F5 (FIRED) / §9 PR #303
+cross-link 로 보존 (raw#82 post-hoc retraction 금지 정합).
+
+### 변경 entry (in-place 갱신 위치)
+
+| 위치 | 갱신 | 내용 |
+|------|------|------|
+| frontmatter `revision` | 신규 | `v2 amend 2026-05-24 (M5→M3 per PR #340 corpus_s101 실측)` |
+| §3 H241.6 M3-REGISTER-LEAK | 신규 | `corpus M3 TTR × register-leak Pearson |r| ≥ 0.7` (M5 H241.2 demoted, M3 primary) |
+| §3 H241.2 표기 | 갱신 | "v2 demoted — PR #340 실측 반증된 proxy 가정 위" 명시 + verdict_rule 핵심 제외 |
+| §7 F5 status | 갱신 | `v2 amend: F5 FIRED — proxy collapse 확정` |
+| §7 F6 M3-DECORRELATED | 신규 | M3-축 falsifier (|r| < 0.3 → H241.6 strong-FAIL) |
+| §8 L6 amend | 신규 | H241.6 는 oracle-tautology 밖 (real-corpus 실측-derived) — measurement claim 강화 |
+
+### 보존 (raw#82 정합)
+
+- **correlate target (downstream Φ / Φ-proxy = base − oracle_CE)**: 갱신 없음 —
+  Φ-축은 PR #340 영향 밖. H241.1/H241.3/H241.4/H241.5 frozen prediction 그대로.
+- **H241.2 ko-Φ × M5 |r|≥0.4 (legacy)**: §3 표에서 demoted 표기로 남김 —
+  PR #303 anima-OWN(24-32%) vs wiki(3%) historical claim 의 PR #340 후속 측정
+  결과를 §9 cross-link 에서 explicit 화. legacy prediction historical 가치 보존.
+- **C1/C2/C3/C4/C5 verdict_rule**: 갱신 없음 — C2 HANGUL_R PASS/FAIL 측정은
+  ko-subset 위 여전히 valid (L3 confound caveat 명시), demote 는 verdict 핵심 weight 축소.
+
+### 근거 PR / 측정
+
+- **PR #340** (MERGED 2026-05-24): `corpus_quality_probe.hexa` (PR #287, MERGED) 로
+  실 Track 1 입력 `corpus_s101.jsonl` 600 MB 측정 — head 1MB+5MB exit 0
+  verbatim: **M3 TTR = 0.0344/0.0297** (extreme repetition), **M5 hangul =
+  1.66%/2.34%** (PR #303 proxy 24-32% 대역 밖, 1/10-1/19). proxy↔실 corpus
+  equivalence 반증 (F5 first-anchor).
+- **PR #301** (E2 lineage): wiki_frac=0.5 → register_hits=4/20,
+  ko=PURE_MEMORIZE — M3 extreme-repetition ↔ register-leak chain cross-validation.
+- **PR #303** (legacy proxy anchor, demoted): anima-OWN(24-32%) vs wiki(3%)
+  hangul-imbalance — proxy 측정 historical, PR #340 실측에 의해 superseded.
+
+### Honest C3 (amend-specific)
+
+- **non-controversial**: PR #340 6-metric measurement 이 verbatim numerical
+  anchor — M5 proxy 가정 반증은 *측정-derived*, debate 불요. H241.6 (M3) 의
+  Pearson |r| coupling 도 PR #340 corpus_s101 M3=0.03 ↔ E2 ko=PURE_MEMORIZE
+  cross-validation 이 first-anchor.
+- **correlate target Φ 불변**: input-axis (M3 vs M5) 변경은 *predictor
+  candidate* 의 demotion 일 뿐, Φ-축 verdict_rule 자체는 무관 — raw#82
+  위반 없음.
+- **L6 oracle-tautology 외부 evidence**: H241.6 의 cross-source 측정
+  (M3=oracle-encoded weight `-0.45·diversity` × register_leak_flag=multilingual_probe
+  output) 는 oracle linear-function tautology 밖 — *real-corpus* anchor 강화.
+  M5 H241.2 의 oracle weight `-0.30·hangul` 은 demoted 후에도 tautology
+  caveat 그대로 (verdict 핵심엔 영향 없음).
