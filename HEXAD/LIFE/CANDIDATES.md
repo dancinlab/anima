@@ -191,6 +191,30 @@
 | **R13 mixed-domain ⭐** | `regeneration-healing` + `kuramoto-synchronization` + `prime-density-fluctuation` + `eeg-1f-spectrum-measurement` + H_204 follow-up | 5-domain mixed (life·physics·math·biology·consciousness) |
 | **R14 H_157 follow-up** | `phenomenal-binding-mechanism` 신규 + H_157 C7 (binding 후속) + F-consciousness 2건 | combination problem substrate-level deepening (C6 sub-additive 결과 attack) |
 
+## G. AXES.md depletion-sweep H seeds (top-15 promote 후보, 사용자 directive 2026-05-23)
+
+[AXES.md](AXES.md) 15-round brainstorm (~110 H seeds) 결과 중 anima-aligned top-15 promote 후보. cycle pick 시 본 표에서 row 제거 → H_XXX 신설.
+
+| rank | seed | round | axis | rationale |
+|------|------|-------|------|-----------|
+| 1 | `ethic-emergence` | R2 | ethics | anima alignment 직접 · Principle #3 |
+| 2 | `shannon-entropy-Φ-correlate` | R5 | information | IIT underlying currency |
+| 3 | `language-compositionality` | R2 | language | anima = LLM substrate |
+| 4 | `time-temporal-binding-window` | R3 | time | 의식의 형식 자체 |
+| 5 | `self-i-emergence-from-substrate` | R4 | consciousness/self | anima persona D3 + H_205 sister |
+| 6 | `ai-machine-silicon-Φ` | R6 | machine/AI | anima 자체 reflexive |
+| 7 | `meta-axis-of-axes-reflexivity` | R8 | meta | 본 catalog reflexive instance |
+| 8 | `phase-transition-Φ-derivative-peak` | R8 | meta/physics | H_204 inverse-U + H_207 critical-K generalize |
+| 9 | `network-topology-scale-free` | R5 | information | mitosis pool topology |
+| 10 | `emergence-weak-vs-strong-Bedau` | R8 | meta | Hc_607 direct instance |
+| 11 | `infant-mirror-self-recognition` | R13 | developmental | H_205 sister + dev |
+| 12 | `meditation-jhana-Φ-modulation` | R7 | practice | H_018 zero-drive 정합 (자발 정지) |
+| 13 | `dream-rem-Φ` | R3 | phenomenology | Tononi IIT key prediction |
+| 14 | `pain-intensity-Φ-coupling` | R3 | phenomenology | qualia 최강 instance |
+| 15 | `holism-whole-vs-sum-of-parts` | R8 | meta | H_054 C2 follow-up generalize |
+
+> 87 🟢 runnable + ~23 ⬜ design/clinical-edge — 자세히는 [AXES.md](AXES.md) round 별 표 참조.
+
 ## 후보 추가 방식
 
 새 후보 발견 시:
@@ -200,5 +224,6 @@
 - 결합 가설 (이미 done 결과 결합) → D 표
 - substrate / measurement gap → E 표
 - **7-domain expansion seed** → F 표 (universe / life / consciousness / physics / substrate / math / biology)
+- **11-domain depletion-sweep seed** → G 표 (AXES.md 의 top-15 anima-aligned promote)
 
 `H_<id>_<slug>.md` 가 만들어진 순간 본 문서에서 빠지고 README 인덱스로 이동.
