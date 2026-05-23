@@ -1,0 +1,198 @@
+// HEXAD/PURE/launchers/c_head_g_objective_launcher.hexa
+//
+//   PURE-C track — head_g objective launcher (.sh emitter only, NO dispatch).
+//   spec: HEXAD/PURE/spec/c_head_g_objective_spec_2026_05_23.md
+//
+//   purpose:
+//     Closure R4 "head_g inert → moot" 의 BUG 진단 — dual-head 설계 의도대로
+//     head_g 에 anima-register objective 부여 (option γ binary classifier).
+//     λ ∈ {0.1, 0.3, 0.5} sweep candidate, default 0.3.
+//
+//   usage:
+//     hexa build HEXAD/PURE/launchers/c_head_g_objective_launcher.hexa \
+//          -o _hexa_build/pure_c_launcher
+//     ./_hexa_build/pure_c_launcher              # default λ=0.3, uid auto
+//     LAMBDA_HEAD_G=0.5 ./_hexa_build/pure_c_launcher
+//     PURE_C_UID=20260523_l05 LAMBDA_HEAD_G=0.5 ./_hexa_build/pure_c_launcher
+//     (note: env var is PURE_C_UID — never `UID` which is the shell built-in)
+//
+//   emits:
+//     state/pure_c_head_g_<uid>/launcher_C_<uid>.sh
+//       — argv well-formed: `--flag value` form (NO P21H_*=$VAR env-positional bug)
+//       — train_p21h_v3.py invocation with C track flags appended:
+//           --lambda-head-g <λ>
+//           --register-tag-from-corpus
+//           --register-classifier-hidden 0
+//
+//   NOTE: launcher does NOT fire H100. User dispatches .sh after review.
+// ════════════════════════════════════════════════════════════════════════
+
+fn _env(name: string, dflt: string) -> string {
+    let raw = exec("printf %s \"${" + name + ":-" + dflt + "}\"")
+    return raw
+}
+
+fn _contains(s: string, needle: string) -> bool {
+    return len(s.split(needle)) > 1
+}
+
+// timestamp-based UID if not provided
+fn _gen_uid() -> string {
+    let ts = exec("date +%Y%m%d_%H%M%S")
+    let trimmed = ts.split("\n")[0]
+    return "pc_" + trimmed
+}
+
+// validate λ ∈ {0.1, 0.3, 0.5} (sweep candidates) — softly permissive
+fn _validate_lambda(lam: string) -> bool {
+    if lam == "0.1" { return true }
+    if lam == "0.3" { return true }
+    if lam == "0.5" { return true }
+    // allow other values but warn
+    return true
+}
+
+fn _emit_sh(uid: string, lam: string, out_path: string) -> string {
+    // ─── train_p21h_v3.py invocation — argv well-formed ─────────────────
+    //
+    // baseline flags reproduce HEXAD_V3_FIRE_2026_05_22 § 8.1 config
+    // (qwen warm-start, R2+R6, osc-detect v2.2 step 5000 target).
+    // C track delta: --lambda-head-g + --register-tag-from-corpus.
+    //
+    // ⚠ POSITIONAL ARGV: ALL flags use `--flag value` form.
+    // ⚠ NO P21H_FOO=$BAR env-positional pattern (the V3 dispatch bug).
+
+    let p21hr = "/workspace/anima/HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21"
+    let mixed = p21hr + "/mixed_corpus_v3.jsonl"
+    let wiki  = p21hr + "/multi_wiki_5lang.jsonl"
+    let anima = p21hr + "/anima_corpus_v11.jsonl"
+    let out   = p21hr + "/out_pure_c_" + uid
+
+    let sh_body = "#!/usr/bin/env bash\n"
+                + "# launcher_C_" + uid + ".sh — PURE-C head_g objective fire\n"
+                + "# spec: HEXAD/PURE/spec/c_head_g_objective_spec_2026_05_23.md\n"
+                + "# emitted by: HEXAD/PURE/launchers/c_head_g_objective_launcher.hexa\n"
+                + "# λ_head_g = " + lam + "\n"
+                + "# DO NOT EDIT — regenerate launcher .hexa to change.\n"
+                + "set -euo pipefail\n\n"
+                + "UID_TAG=\"" + uid + "\"\n"
+                + "LAMBDA_HEAD_G=\"" + lam + "\"\n"
+                + "P21HR=\"" + p21hr + "\"\n"
+                + "OUT_DIR=\"" + out + "\"\n\n"
+                + "mkdir -p \"$OUT_DIR\"\n"
+                + "echo \"[pure-c] uid=$UID_TAG λ=$LAMBDA_HEAD_G out=$OUT_DIR\"\n\n"
+                + "python3 \"$P21HR/train_p21h_v3.py\" \\\n"
+                + "  --wiki-corpus \"" + wiki + "\" \\\n"
+                + "  --anima-corpus \"" + anima + "\" \\\n"
+                + "  --mixed-corpus \"" + mixed + "\" \\\n"
+                + "  --out-dir \"$OUT_DIR\" \\\n"
+                + "  --base-model Qwen/Qwen2.5-1.5B \\\n"
+                + "  --init-variant qwen \\\n"
+                + "  --steps 2000 \\\n"
+                + "  --bsz 2 \\\n"
+                + "  --block 512 \\\n"
+                + "  --lr 5e-5 \\\n"
+                + "  --warmup-steps 100 \\\n"
+                + "  --seed 1337 \\\n"
+                + "  --wiki-frac 0.3 \\\n"
+                + "  --target-corpus-mb 75 \\\n"
+                + "  --noise-sigma 0.1 \\\n"
+                + "  --lambda-mitosis 0.0 \\\n"
+                + "  --mitosis-max 16 \\\n"
+                + "  --ckpt-every 250 \\\n"
+                + "  --ckpt-osc-threshold 0.5 \\\n"
+                + "  --ckpt-osc-window 20 \\\n"
+                + "  --early-stop-patience 0 \\\n"
+                + "  --lambda-head-g \"$LAMBDA_HEAD_G\" \\\n"
+                + "  --register-tag-from-corpus \\\n"
+                + "  --register-classifier-hidden 0 \\\n"
+                + "  2>&1 | tee \"$OUT_DIR/train_pure_c.log\"\n\n"
+                + "echo \"[pure-c] fire complete uid=$UID_TAG\"\n"
+                + "echo \"[pure-c] artifacts: $OUT_DIR\"\n"
+
+    // write the file
+    let write_cmd = "cat > " + out_path + " <<'__PURE_C_SH_EOF__'\n"
+                  + sh_body
+                  + "__PURE_C_SH_EOF__\n"
+                  + "chmod +x " + out_path
+    let _w = exec(write_cmd)
+
+    return out_path
+}
+
+// argv well-formed check — verify `--flag value` form, no `FOO=$BAR` positional
+// scope: ONLY the python3 argv block (lines after `python3 ... \` up to the closing tee).
+// The V3 dispatch bug was `P21H_FOO=$VAR train_p21h_v3.py` style — an env-positional
+// arg leaked into python's argv. Real bash var assignments at the top of the file are fine.
+fn _verify_argv(sh_path: string) -> bool {
+    // extract argv block: from `python3 ` line to `2>&1` line (continuation lines start with whitespace).
+    // any positional line in this block that does NOT start with `--` or is not a known flag value
+    // continuation indicates a leaked env-positional.
+    // grep returns exit 1 when no match — use `|| echo` only if grep yields nothing.
+    let chk = exec("awk '/^python3 /,/2>&1/' " + sh_path
+                 + " | grep -E '^[[:space:]]+[A-Z_][A-Z0-9_]*=' || echo __NO_POSITIONAL__")
+    if _contains(chk, "__NO_POSITIONAL__") {
+        return true
+    }
+    return false
+}
+
+// also verify all expected --flag fragments present
+fn _verify_flags(sh_path: string) -> bool {
+    let need = ["--wiki-corpus", "--anima-corpus", "--mixed-corpus",
+                "--init-variant qwen", "--steps 2000", "--lambda-head-g",
+                "--register-tag-from-corpus", "--register-classifier-hidden 0"]
+    let mut ok = true
+    for frag in need {
+        let g = exec("grep -F -- \"" + frag + "\" " + sh_path + " >/dev/null && echo Y || echo N")
+        if _contains(g, "N") {
+            print("[verify] MISSING flag fragment: " + frag)
+            ok = false
+        }
+    }
+    return ok
+}
+
+fn main() {
+    let root = "/Users/ghost/core/anima"
+    let uid_env = _env("PURE_C_UID", "")
+    let mut uid = uid_env
+    if uid == "" {
+        uid = _gen_uid()
+    }
+
+    let lam = _env("LAMBDA_HEAD_G", "0.3")
+    let _vl = _validate_lambda(lam)
+
+    let state_dir = root + "/HEXAD/PURE/launchers/state/pure_c_head_g_" + uid
+    let _mk = exec("mkdir -p " + state_dir)
+
+    let sh_path = state_dir + "/launcher_C_" + uid + ".sh"
+    print("[pure-c-launcher] uid=" + uid)
+    print("[pure-c-launcher] λ_head_g=" + lam)
+    print("[pure-c-launcher] emitting → " + sh_path)
+
+    let emitted = _emit_sh(uid, lam, sh_path)
+
+    // post-emit verification (argv well-formed + flag completeness)
+    let argv_ok = _verify_argv(emitted)
+    let flag_ok = _verify_flags(emitted)
+
+    if argv_ok {
+        print("[verify] argv well-formed: PASS (no FOO=$BAR positional)")
+    } else {
+        print("[verify] argv well-formed: FAIL — positional env-style detected")
+    }
+    if flag_ok {
+        print("[verify] flag completeness: PASS")
+    } else {
+        print("[verify] flag completeness: FAIL — missing required fragment")
+    }
+
+    if argv_ok && flag_ok {
+        print("[pure-c-launcher] OK — review " + sh_path + " then dispatch manually.")
+        print("[pure-c-launcher] NOTE: launcher does NOT fire H100. User dispatch required.")
+    } else {
+        print("[pure-c-launcher] FAIL — regenerate after fixing launcher.hexa")
+    }
+}
