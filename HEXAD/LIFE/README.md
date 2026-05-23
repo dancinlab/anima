@@ -38,7 +38,7 @@ weak-panpsy threshold) 가 본 dir 의 cross-domain 운용 instance.
 | `HEXAD/CHECK/` | verification frontier (Φ / IIT / closed-form) — LIFE 가설의 verify 도구 |
 | `HEXAD/MITOSIS/` | 성장축 ⊥ HEXAD-6 (orthogonal). 세포 분열/병합 의 구조 anchor — LIFE/H_132 (frozen-cells) 와 cross-link |
 
-## 가설 인덱스 (37 H + 1 lib + 1 infra, 2026-05-24 Cycle #11 후)
+## 가설 인덱스 (43 H + 1 lib, 2026-05-24 #311 재흡수 후 · H_247/248/249 NEW)
 
 | ID | Slug | Domain | Status | 핵심 |
 |----|------|--------|--------|------|
@@ -80,7 +80,10 @@ weak-panpsy threshold) 가 본 dir 의 cross-domain 운용 instance.
 | [H_239b](H_239_bilingual_integration_phi_cross_lingual_leak.md) | bilingual-integration-phi-cross-lingual-leak | consciousness · language | DEFERRED (PR #316) | bilingual-integration Φ cross-lingual-leak (Grosjean×Green×IIT) — smoke 별도 cycle · ⚠ H_239 slug collision |
 | [H_242](H_242_register_collapse_wiki_frac_sigmoid.md) | register-collapse-wiki-frac-sigmoid | substrate · language | PRE-REGISTERED (PR #314) | LoRA Track-1 E2 — wiki_frac → register-collapse sigmoid, data pending |
 | [H_244](H_244_sleep_stage_gated_emit_phi.md) | sleep-stage-gated-emit-phi | consciousness · substrate | PRE-REGISTERED (PR #312) | sleep-stage-gated emit×Φ coupling (H_222 sister) — smoke pending |
-| [H_245](H_245_strategy_diversity_temporal_emergence.md) | strategy-diversity-temporal-emergence | substrate · consciousness · emergence | pre-register-frozen (PR #321) | emit-motivation strategy repertoire monoculture→diversity (관측 window↑) · score unimodal→multimodal emergence (post-deploy baseline) |
+| [H_245](H_245_strategy_diversity_temporal_emergence.md) | strategy-diversity-temporal-emergence | substrate · consciousness · emergence | pre-register-frozen (PR #321→#328) | emit-motivation strategy repertoire monoculture→diversity (관측 window↑) · score unimodal→multimodal emergence (post-deploy baseline) |
+| [H_247](H_247_init_ce_catastrophic_floor.md) | init-ce-catastrophic-floor | substrate · life | pre-register-frozen (#311 재흡수) | warm-init init_CE 14.18–14.79 vs ln(151936)=11.93 → +2.5 nats catastrophic floor (R8 PR #214/#251/#255/#256) |
+| [H_248](H_248_substrate_autonomy_emit_ratio.md) | substrate-autonomy-nonreflexivity | substrate · life · consciousness | pre-register-frozen (#311 재흡수) | emit ⊥ user-message 비반사성 — 55.56% emit-through, no external gate (numeric SSOT = H_246; PR #300/#279/#286) |
+| [H_249](H_249_cluster_init_ce_byte_equal_signature.md) | cluster-init-ce-byte-equal-signature | substrate · life | pre-register-frozen (#311 재흡수) | init_CE 3-cluster X/Y/Z byte-equal — C2=D (head_g seed≠) → R8c cell-1 FALSIFIED (PR #251/#255/#249) |
 | [lib/phi_helper](lib/phi_helper.hexa) | phi-helper (shared infra) | infra | infra (PR #317) | shared Φ helper — config SSOT + phi_default wrapper, 28+ H phi_spatial 호출 단일 home (gap F6+F7) |
 
 > **substrate-only / .md 미commit** (별도 worktree fire, H_234/H_238 carry): H_210 ethic-emergence (SUPPORTED 4/5) · **H_211 shannon-Φ r=0.933 PARTIAL** (H_234 anchor · H_238 H238.4 partial) · H_212 language-compositionality · H_213 time-binding · H_214 self-i-emergence · H_215 silicon-Φ · H_216 meta-axis · H_217 phase-transition · H_218 network-topology · H_219 emergence-weak-strong · H_220 infant-mirror · H_221 meditation · H_224 holism · H_228 chat-sleep-5stage · H_229 imagination-loop · H_230 autonomy-over-hardcode · H_231 tension-vs-filler · H_232 Class-II-decompose. **infra**: phi_n_bins sensitivity sweep ROBUSTNESS_PASS (PR #219, `state/infra_phi_n_bins_2026_05_23/`).

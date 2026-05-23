@@ -166,3 +166,16 @@ latest 만 carry 되는 가설 .md 와 달리 본 로그는 모든 cycle history
 - **next**: cycle #12 — H_239 slug-collision renumber · H_242/H_244 data fire · phi_helper 전 H 마이그레이션 · 본 consolidation (Cycle #5-#11 log + index sync).
 
 ---
+
+## Cycle #12 — R8 init_CE floor + substrate autonomy 비반사성 + cluster X/Y/Z 재흡수 (#311 대체) — 2026-05-24
+
+- **focus**: PR #311 (`feat/life-absorb-r8-autonomy-cluster`) 가 H_239/240/241 충돌 + rebase force-push 차단으로 막힘 → close 후 깨끗한 번호 (main max=H_246) 로 3 가설 재흡수. R8 spec 산출 substrate-side 발견 3건의 LIFE-domain 흡수.
+- **change**: #311 close (H_239/240/241 claim 해제) · current origin/main 분기 후 H_247/H_248/H_249 NEW (각 10-section Korean raw#12 양식, ≥5 falsifier + ≥7 honest limit). 既-landed H_246 (substrate-autonomy emit ratio, PR #319 renumber) 와 numeric content 중복 발견 → H_248 을 *비반사성 framing lane* 으로 재정의하고 H_246 을 numeric SSOT 로 명시 (L0 honest).
+- **fire**: design + 흡수 cycle, deterministic baseline recompute lane $0 mac local. init_CE 원측정 = R8 GPU lane (흡수만).
+- **verdict**:
+  - [x] **H_247 (NEW) — pre-register-frozen**: init_CE catastrophic floor. warm-init init_CE 14.18–14.79 nats vs random-uniform `ln(151936)=11.931` → +2.3~+2.9 nats catastrophic gap (mis-calibrated confidence birth-debt). 4/4 PASS (흡수, C4 baseline closed-form 자력 · C5 noise advisory). source PR #214/#251/#255/#256.
+  - [x] **H_248 (NEW) — pre-register-frozen**: substrate autonomy 비반사성. post-deploy emit-through 55.56% (15/27) + emit_attempt/tick 11.49%, no external gate, emit ⊥ user-message (a_substrate_native_speak live). 4/4 PASS (흡수, C5 비반사성 통계검정 미실시 advisory). ⚠ numeric SSOT = 既-landed H_246 (동일 PR #300 telemetry, framing-axis 분리 — deployment-cadence vs 비반사성). source PR #300/#279/#286.
+  - [x] **H_249 (NEW) — pre-register-frozen**: cluster X/Y/Z init_CE byte-equal signature. 6-axis → 3 byte-equal cluster (X={A}=14.79, Y={B,F}=14.18, Z={C,C2,D}=14.46). C2 vs D byte-equal (head_g seed 상이) → R8c cell-1 (head_g random dominant) FALSIFIED (natural experiment). 4/4 PASS (흡수 + byte-equal 자력 비교 · C5 ordering advisory). source PR #251/#255/#249.
+- **next**: H_247/H_249 init_CE baseline `hexa verify --expr ln 151936` closed-form 확정 (C4 🔵 후보) · R8 GPU lane 원 init_CE 자력 재측정 시 흡수→자력 승격 · H_248 비반사성 C5 cross-correlation 통계검정 (emit ⊥ message 정량) · README index 37→43 stale-count 정정 완료.
+
+---
