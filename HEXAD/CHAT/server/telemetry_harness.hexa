@@ -7,8 +7,19 @@
 //  poll GET /history (kind=="anima", dedup by broker id, first-poll seed) +
 //  poll GET /akida/recent (last TELEMETRY_WIN_MS by _bridge_ts) → JSONL row
 //  {ts, emit_id, emit_text, lang, motivation, factors,
+//   modulated_factors:{...8...},
 //   spike_window:{spike_count, spike_rate_hz, regime_mode,
 //                 n_unique_regimes, isi_cv, last_step}}.
+//
+//  `modulated_factors` — observability-only mirror of what the participant's
+//  8-factor map WOULD be if `apply_spike_features` (spontaneous_lib.hexa §10,
+//  PR #143) ran live. Path D of [[PARTICIPANT_SPIKE_INTEGRATION]] (PR #146):
+//  production `anima_participant.py` 8-factor compute stays untouched
+//  (`.py` guard); Phase-1 evidence accumulates so future Phase-2 wiring has
+//  a calibration target. INVARIANCE: when spike_window.spike_count == 0
+//  (akida offline / empty), modulated_factors == factors (no-op,
+//  F-PARTICIPANT-INTEG-2 — apply_spike_features §3 L66 sparsity gate fires
+//  on n_records < 5).
 //
 //  USAGE  hexa run telemetry_harness.hexa [daemon|once|selftest]   selftest default.
 //  ENV    ANIMA_BROKER_URL · TELEMETRY_HISTORY_URL · TELEMETRY_AKIDA_URL ·
@@ -18,6 +29,7 @@
 // ════════════════════════════════════════════════════════════════════════════
 
 use "stdlib/net/http_client"
+import "/Users/ghost/core/anima/HEXAD/CHAT/spontaneous_lib.hexa"
 
 // ── §1 env + url derivation ────────────────────────────────────────────────
 fn _th_env(name: string, fallback: string) -> string {
@@ -199,18 +211,42 @@ fn _th_trunc(s: string, n: int) -> string {
     if len(s) <= n { return s }
     return s.substring(0, n)
 }
+// Map spike_window summary → apply_spike_features features schema (§10).
+// inputs expected by apply_spike_features: spike_rate_hz, isi_cv,
+// mean_spike_ids_count, regime, regime_change, n_records (sparsity gate).
+// spike_window doesn't expose mean_spike_ids_count → default 0 (akida_consumer
+// SSOT carries it but the telemetry window summary doesn't — honest C3 #c in
+// PR #146 covers this imperfection). regime_change = (n_unique_regimes > 1)
+// is a telemetry-window-local proxy. n_records = spike_count drives the
+// sparsity gate so spike_count == 0 ⇒ no-op invariance (F-TELEMETRY-5).
+fn spike_window_to_features(sw: dict) -> dict {
+    let count = _th_int(sw, "spike_count")
+    let regime_change = _th_int(sw, "n_unique_regimes") > 1
+    return #{
+        "spike_rate_hz":        _th_num(sw, "spike_rate_hz"),
+        "isi_cv":               _th_num(sw, "isi_cv"),
+        "mean_spike_ids_count": 0.0,
+        "regime":               _th_str(sw, "regime_mode"),
+        "regime_change":        if regime_change { "true" } else { "false" },
+        "n_records":            count,
+    }
+}
 fn build_row(msg: dict, akida: list, win_ms: int) -> dict {
     let emit_ts = if msg.has_key("ts") { _th_num(msg, "ts") } else { _th_now() }
     let factors = if msg.has_key("factors") {
         let fv = msg["factors"]
         if type_of(fv) == "map" { fv } else { #{} }
     } else { #{} }
+    let spike_window = summarize_window(akida, emit_ts, win_ms)
+    let features = spike_window_to_features(spike_window)
+    let modulated = apply_spike_features(factors, features)
     return #{
         "ts": emit_ts, "emit_id": _th_str(msg, "id"),
         "emit_text": _th_trunc(_th_str(msg, "text"), 80),
         "lang": _th_str(msg, "lang"),
         "motivation": _th_num(msg, "motivation"), "factors": factors,
-        "spike_window": summarize_window(akida, emit_ts, win_ms),
+        "modulated_factors": modulated,
+        "spike_window": spike_window,
     }
 }
 fn append_row(path: string, row: dict) -> bool {
@@ -277,9 +313,9 @@ fn run_once() {
     eprintln("[telemetry] once done — " + to_string(n) + " pair(s) recorded (seed cycle never writes)")
 }
 
-// ── §6 offline selftest F-TELEMETRY-1..3 ───────────────────────────────────
+// ── §6 offline selftest F-TELEMETRY-1..5 ───────────────────────────────────
 fn _telemetry_selftest() {
-    eprintln("telemetry_harness selftest — F-TELEMETRY-1..3")
+    eprintln("telemetry_harness selftest — F-TELEMETRY-1..5")
     let mut pass = 0   let mut fail = 0
     let nonce = to_string(exec("date +%s%N | tr -d '\\n'")).trim()
     let jsonl = "/tmp/hexa_telemetry_st_" + nonce + ".jsonl"
@@ -343,8 +379,68 @@ fn _telemetry_selftest() {
     if wrote == 0 { pass = pass + 1 } else { fail = fail + 1   eprintln("  FAIL seed wrote " + to_string(wrote)) }
     let exists = to_string(exec("[ -f '" + jsonl2 + "' ] && printf yes || printf no")).trim()
     if exists == "no" { pass = pass + 1 } else { fail = fail + 1   eprintln("  FAIL jsonl created during seed") }
+    // F-TELEMETRY-4  modulated_factors: non-trivial spike_rate_hz raises curiosity.
+    // 15 R3 spikes packed into a 1s window ⇒ rate = 15 Hz > 12 (§3 L60
+    // d_cur +0.10) × R3 modulator 0.5 (§4) ⇒ effective curiosity delta
+    // +0.05. n_records=15 ≥ 5 ⇒ sparsity gate cleared.
+    let mut synth_hi = []
+    let mut hi_i = 0
+    while hi_i < 15 {
+        let bts = 200.06 + to_float(to_string(hi_i)) * 0.06
+        synth_hi = synth_hi + [#{ "step": 20 + hi_i, "n_spikes": 1,
+                                  "regime": "R3_tonic_zero_input", "_bridge_ts": bts }]
+        hi_i = hi_i + 1
+    }
+    let msg_hi = #{
+        "id": "em_hi", "kind": "anima", "ts": 200.95, "lang": "ko",
+        "text": "high-rate evidence row", "motivation": 0.5,
+        "factors": #{ "relevance": 0.5, "coherence": 0.5, "info_gap": 0.5,
+                      "curiosity": 0.5, "originality": 0.2, "pain": 0.3,
+                      "balance": 0.7, "dynamics": 0.4 },
+    }
+    let row_hi = build_row(msg_hi, synth_hi, 1000)
+    let sw_hi = row_hi["spike_window"]
+    let rate_hi = to_float(to_string(sw_hi["spike_rate_hz"]))
+    if rate_hi > 12.0 { pass = pass + 1 } else { fail = fail + 1   eprintln("  FAIL F-TELEMETRY-4 rate not > 12 Hz: " + to_string(rate_hi)) }
+    let mod_hi = row_hi["modulated_factors"]
+    let fac_hi = row_hi["factors"]
+    let cur_mod = to_float(to_string(mod_hi["curiosity"]))
+    let cur_base = to_float(to_string(fac_hi["curiosity"]))
+    if cur_mod > cur_base { pass = pass + 1 } else { fail = fail + 1   eprintln("  FAIL F-TELEMETRY-4 curiosity not lifted: mod=" + to_string(cur_mod) + " base=" + to_string(cur_base)) }
+    let delta = cur_mod - cur_base
+    let abs_delta = if delta < 0.0 { 0.0 - delta } else { delta }
+    let off = if (abs_delta - 0.05) < 0.0 { 0.05 - abs_delta } else { abs_delta - 0.05 }
+    if off < 0.001 { pass = pass + 1 } else { fail = fail + 1   eprintln("  FAIL F-TELEMETRY-4 curiosity delta ≠ 0.05: " + to_string(delta)) }
+    // F-TELEMETRY-5  empty spike_window ⇒ modulated_factors == factors (no-op invariance).
+    let msg_empty = #{
+        "id": "em_empty", "kind": "anima", "ts": 300.0, "lang": "ko",
+        "text": "empty-window evidence row", "motivation": 0.5,
+        "factors": #{ "relevance": 0.5, "coherence": 0.5, "info_gap": 0.5,
+                      "curiosity": 0.5, "originality": 0.2, "pain": 0.3,
+                      "balance": 0.7, "dynamics": 0.4 },
+    }
+    let row_e = build_row(msg_empty, [], 3000)
+    let sw_e = row_e["spike_window"]
+    if to_int(sw_e["spike_count"]) == 0 { pass = pass + 1 } else { fail = fail + 1   eprintln("  FAIL F-TELEMETRY-5 spike_count != 0") }
+    let mod_e = row_e["modulated_factors"]
+    let fac_e = row_e["factors"]
+    let mod_keys = ["relevance","info_gap","curiosity","pain","coherence","originality","balance","dynamics"]
+    let mut noop_ok = true
+    let mut kk = 0
+    while kk < len(mod_keys) {
+        let kn = to_string(mod_keys[kk])
+        let mv = to_float(to_string(mod_e[kn]))
+        let bv = to_float(to_string(fac_e[kn]))
+        let dd = mv - bv
+        let ad = if dd < 0.0 { 0.0 - dd } else { dd }
+        if ad > 1e-9 { noop_ok = false }
+        kk = kk + 1
+    }
+    if noop_ok { pass = pass + 1 } else { fail = fail + 1   eprintln("  FAIL F-TELEMETRY-5 no-op invariance violated") }
     eprintln("--- sample evidence row (synthetic) ---")
     eprintln(json_stringify(row))
+    eprintln("--- sample evidence row (high-rate, modulated) ---")
+    eprintln(json_stringify(row_hi))
     eprintln("telemetry_harness selftest: " + to_string(pass) + " PASS, " + to_string(fail) + " FAIL")
     let _rm3 = exec("rm -f '" + jsonl + "' '" + jsonl2 + "'")
 }
