@@ -230,6 +230,39 @@ fn _spike_escape_json(s: string) -> string {
     return out
 }
 
+// response_text 는 byte-level decoder 산물이라 raw non-UTF-8 byte 를 품을 수
+// 있다 (truncated multibyte 등). 그대로 quote 사이에 넣으면 invalid-UTF-8 JSON
+// 이 되어 cdo-validate 가 깨진다. → base64 (ASCII-only, 무손실) 로 인코딩하고
+// sibling `response_text_b64:true` flag 를 붙여 NEVER invalid-UTF-8 보장.
+fn _spike_b64_char(v: int) -> string {
+    let alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
+    return alphabet.substring(v, v + 1)
+}
+
+fn _spike_b64_encode(s: string) -> string {
+    let n = len(s)
+    let mut out = ""
+    let mut i = 0
+    while i < n {
+        let b0 = char_code(s, i) & 0xFF
+        let mut b1 = 0
+        let mut b2 = 0
+        let mut have1 = false
+        let mut have2 = false
+        if i + 1 < n { b1 = char_code(s, i + 1) & 0xFF; have1 = true }
+        if i + 2 < n { b2 = char_code(s, i + 2) & 0xFF; have2 = true }
+        let c0 = (b0 >> 2) & 0x3F
+        let c1 = ((b0 << 4) | (b1 >> 4)) & 0x3F
+        let c2 = ((b1 << 2) | (b2 >> 6)) & 0x3F
+        let c3 = b2 & 0x3F
+        out = out + _spike_b64_char(c0) + _spike_b64_char(c1)
+        if have1 { out = out + _spike_b64_char(c2) } else { out = out + "=" }
+        if have2 { out = out + _spike_b64_char(c3) } else { out = out + "=" }
+        i = i + 3
+    }
+    return out
+}
+
 fn _spike_int_list_json(xs: array) -> string {
     let n = len(xs)
     let mut out = "["
@@ -271,7 +304,8 @@ fn spike_to_json(spike: any) -> string {
     out = out + "\"response_len\":" + to_string(to_int(spike["response_len"])) + ","
     out = out + "\"kv_cur_len\":" + to_string(to_int(spike["kv_cur_len"])) + ","
     out = out + "\"wall_ms\":" + to_string(to_int(spike["wall_ms"])) + ","
-    out = out + "\"response_text\":\"" + _spike_escape_json(to_string(spike["response_text"])) + "\","
+    out = out + "\"response_text\":\"" + _spike_b64_encode(to_string(spike["response_text"])) + "\","
+    out = out + "\"response_text_b64\":true,"
     out = out + "\"event_steps\":" + _spike_int_list_json(spike["event_steps"]) + ","
     out = out + "\"event_types\":" + _spike_str_list_json(spike["event_types"])
     out = out + "}"
