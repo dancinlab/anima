@@ -2,6 +2,21 @@
 
 > `LORA.md` 의 변경/작업 체크리스트. 최신이 위.
 
+## 2026-05-24 (cycle 13 — 5/5 done + R8a' wiring-fail 발견)
+
+- [x] cycle 13 phase-0 brainstorm depletion (5 cap) + fan-out parallel
+- [x] mini production swap dry-run — READY 5/5 (v11 drop-in compat · base byte-identical · adapter 147,770,496B · v5 backup OK)
+- [x] swap_criteria_check.hexa (#365) — VP21M 5-criteria 자동측정 selftest 5/5 PASS, Wave-16 real-data 1/5 NO_SWAP 일치
+- [x] R8_SAGA_FINAL_TEMPLATE (#361) — 9-section R8a'/R8b/R8c fill-in (BREAKTHROUGH/NO-CHANGE/PARTIAL 3-branch decision tree)
+- [x] COST_LEDGER_SESSION3 (#360) — session-3 누적 $21.54 SSOT (R8 saga $4 · AXIS_MAP-FAN $13 · Wave $1.5 · V3 P2 $3.3)
+- [x] R8A_VS_R8A2_BYTE_EQUAL_NATURAL_EXPERIMENT (#362) — 4-가설 lock-in (A inert / B noise only / C kv only / D BREAKTHROUGH)
+- [x] **R8a' 폴링 발견: PR #342 wiring fix production silent-FAIL** — `[from_qwen] v3_n_kv_head=4` 출력 (의도=2), train step=250 CE=1.0992 정상 학습
+- [x] **R8a' init_CE step=1 = 14.3743** — cluster Z (14.46) 와 byte-equal 수준 (n_kv_head=4 환경에서 noise=0 측정)
+- [ ] **PR #342 root cause 검증** — conscious_decoder_v3.py + train_p21h_v3.py dispatcher scp 시점 + args.n_kv_head 전달 path 추적 (read-only autonomous)
+- [ ] R8a'' 진짜 fix 발사 (root cause 해결 후, noise=0 + 실제 n_kv=2 동시)
+- [ ] R8c probe fire 분리 ($0.25) — cluster Z floor 원인 noise/kv 무관 가설 직접 검증
+- [ ] R8a' 완료 대기 (~53min 남음, n_kv=4 환경 final_CE + verdict 회수)
+
 ## 2026-05-24 (late session)
 
 - [x] R8a fire n_kv_head 무효 버그 발견 — v3_n_kv_head=4 despite --n-kv-head 2 (arg→from_qwen wiring 누락)
