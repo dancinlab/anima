@@ -5,15 +5,15 @@
 >
 > SSOT: 본 dir + `HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/`
 > SESSION_PROMPT.md / README.md 가 운영-context, 본 doc 은 session-3 history-surface.
-> 상세는 5 WAVE report (#118/#122/#124/#127/#129) + 10 PR 본문 링크.
+> 상세는 6 WAVE report (#118/#122/#124/#127/#129/#205) + 11+ PR 본문 링크.
 
 ## TL;DR (5-line)
 
-- corpus-side 3 cycles (v6/v7/v8) FALSIFIED → **substrate-code lever** (EN-share rotation) IS the path.
+- corpus-side 4 cycles (v6/v7/v8/v12) FALSIFIED → **substrate-code lever** (EN-share rotation) IS the path; eternal-cap **U-shape sweet spot = v11**.
 - **corpus_v5 LIVE** (production default · LIVE `<carve>` tag-leak 0/28), **EN-share lever DEPLOYED** (LIVE −6.2 pp evidence).
 - **continuous Eval1 metric** (PR #128) unmasks corpus-side hidden signal — V5→V7 80% ↓ monotone, binary 5/20 floor 가 가렸던 lever 효과 가시화.
-- **3B router design** actionable as PR #119 runbook — post-reboot path, $0 GPU, user-gate 대기.
-- $1.60 GPU spend, 10 PRs landed, 4 HF artifacts (PRIVATE), 5 WAVE reports.
+- **Wave-16 eternal STRIP-ALL** monotone 가설 FALSIFIED — eternal 템플릿이 register density "스폰지", 0% strip → continuous 34→91 역전.
+- $1.87 GPU spend, 11+ PRs landed, 5 HF artifacts (PRIVATE), 6 WAVE reports.
 
 ## Production state (post-session)
 
@@ -27,7 +27,7 @@
 | Eval1 metric | binary saturation (5/20 floor) | **continuous hit-count** alongside (saturation 제거) |
 | anima version (no change) | 0.12.0 | 0.12.0 (carry — lever 가 production runbook 만 변경) |
 
-## The 5 levers explored (chronological)
+## The 6 levers explored (chronological)
 
 ### 1. corpus_v5 — fresh-init carve-strip — LANDED (PR #118)
 
@@ -79,6 +79,15 @@
 - Cost: **$0 GPU + $0 substrate** — corpus retrain 없이 동일 효과.
 - 상세: `../UNCLASSIFIED/state/grid_3b_s187_2026_05_21/VP21M_WAVE9_2026_05_23.md`
 
+### 6. Wave-16 / corpus_v12 — eternal STRIP-ALL (monotone 가설 FALSIFIED · PR #205)
+
+- Hypothesis: Wave-15 의 eternal 0.30 → continuous 34 lever 의 단조 외삽 (0% strip = continuous < 30, register density 가 eternal 비율에 단조 의존).
+- Result: continuous_total **34→91 역전 (saga 평균 부근)**, n_strong 2→3 (회복하나 v9=4 미달). VP21M_WORKS but **NO SWAP** (criteria 1/5).
+- Key finding: **U-shape — eternal 템플릿이 register density 의 "스폰지"**, sweet spot = v11 (30% retain). 0% strip 이 오히려 register 압력을 anima record 본문으로 재분산시키는 역효과.
+- per-lang: en S19, zh S17, ru S18 / ko P14, ja P12 (ko/ja regress vs v11 STRONG floor).
+- Cost: ~$0.27 · HF `dancinlab/anima-vp21m-v12` PRIVATE 10 files (a_hf_complete). NO SWAP.
+- 상세: `../UNCLASSIFIED/state/grid_3b_s187_2026_05_21/VP21M_WAVE16_2026_05_23.md`
+
 ## Tool infrastructure added
 
 | tool | PR | purpose |
@@ -107,12 +116,13 @@
 | ja-only fine-tuning lane | unexplored | next cycle — ja STRONG 회복 dedicated FT (별 cycle ~$0.10) |
 | token frequency cap lever | 개념 단계 | strip 대신 anima record 의 per-pattern token frequency cap (load-bearing register 보존 + dominance 완화) |
 | anima register vs ja transfer 분해 | 가설 — saga 누적 단조 ↓ 만 evidence | per-cat anima-without-Tier vs ja-only wiki+anima 비교 ablation |
+| Wave-17 eternal-cap U-shape mapping | Wave-16 단일 점 (0%) → U-shape 가설만, sweet spot evidence = v11 (30%) 단일 점 | eternal 0.10 / 0.20 / 0.40 / 0.50 sweep 4 cycle (~$1.10) — U-shape minimum 정밀 추정 |
 
 ## Cost + artifacts
 
-- **Cumulative GPU spend**: ~$1.60 (4 cycles · v5/v6/v7/v8 · A100 SXM each ~$0.40-$0.50)
+- **Cumulative GPU spend**: ~$1.87 (5 cycles · v5/v6/v7/v8/v12 · A100 SXM each ~$0.27-$0.50)
 - **Substrate lever**: $0 (code-only, PR #123)
-- **HF artifacts**: `dancinlab/anima-vp21m-{v5,v6,v7,v8}` PRIVATE — all a_hf_complete (9-10 files each, model card + adapter_config + safetensors + tokenizer).
+- **HF artifacts**: `dancinlab/anima-vp21m-{v5,v6,v7,v8,v12}` PRIVATE — all a_hf_complete (9-10 files each, model card + adapter_config + safetensors + tokenizer).
 - **PRs merged** (chronological order):
   - #118 (docs) WAVE5 corpus_v5 fresh-init carve-strip
   - #122 (docs) WAVE6 corpus_v6 RB wiki_frac=0.50 FALSIFIED
@@ -124,7 +134,8 @@
   - #125 (feat) Eval1 probe set expansion (5/20 floor 제거)
   - #123 (feat) EN-share lever weighted LANG_ROTATION
   - #129 (docs) WAVE9 EN-share lever production deploy + LIVE evidence
-- **WAVE reports**: 5 (WAVE5/6/7/8/9)
+  - #205 (docs) WAVE16 corpus_v12 eternal STRIP-ALL FALSIFIED (U-shape sweet spot = v11)
+- **WAVE reports**: 6 (WAVE5/6/7/8/9/16)
 - **PR not merged**: #117 KOSMOS emitter daemon (CLOSED, V3 split 미해결)
 
 ## 관련 link
@@ -133,5 +144,5 @@
 - session-2 → session-3 bridge: [`SESSION_PROMPT.md`](SESSION_PROMPT.md)
 - 운영 context (현재 production): [`README.md`](README.md) §"현재 production 위치"
 - 3B migration runbook: [`../CHAT/3B_ROUTER_DESIGN_2026_05_23.md`](../CHAT/3B_ROUTER_DESIGN_2026_05_23.md)
-- WAVE 5-9 상세: `../UNCLASSIFIED/state/grid_3b_s187_2026_05_21/VP21M_WAVE{5,6,7,8,9}_2026_05_23.md`
+- WAVE 5-9 + 16 상세: `../UNCLASSIFIED/state/grid_3b_s187_2026_05_21/VP21M_WAVE{5,6,7,8,9,16}_2026_05_23.md`
 - V3 path (별도): [`../V3/README.md`](../V3/README.md) (CLOSED)
