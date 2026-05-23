@@ -38,7 +38,7 @@ substrate 측 형식: **R8c 4-cell probe 자연실험 (2026-05-23~24)** — `AXI
 ## Predictions
 
 - **H255.1 (baseline reproduction floor)**: R8c baseline cell init_CE = 12.315 nats (실측) — R8a cluster A 의 14.79 nats 와 −2.475 nats 격차. 같은 head_g random + noise=0.1 + n_kv_head=4 + 동일 corpus + 동일 seed 로 fire 시 random baseline +0.385 nats 정상 범위 (catastrophic 아님).
-- **H255.2 (AXIS_MAP re-fire 12.2 nats 재현)**: AXIS_MAP-FAN 7-axis 를 본 fire env (Qwen tokenizer hash + torch version + corpus sha + seed=1337 모두 고정) 로 재측정 시 7-axis init_CE 평균 = 12.2 ± 0.1 nats — R8a 측정값과 ~2 nats 격차로 재현 → cluster X/Y/Z 의 14+ floor 는 env-artifact.
+- **H255.2 (AXIS_MAP re-fire 12.2 nats 재현)**: AXIS_MAP-FAN 7-axis 를 본 fire env (Qwen tokenizer hash + torch version + corpus sha + seed=1337 모두 고정) 로 재측정 시 7-axis init_CE 평균 = 12.2 ± 0.1 nats — R8a 측정값과 ~2 nats 격차로 재현 → cluster X/Y/Z 의 14+ floor 는 env-artifact. **(2026-05-24 cycle 15-1 4/7 결과 도착 — A=14.7927, B=14.1780, D=14.4564, F=14.1780, R8a prior 측정값과 소수점 4자리 byte-equal 재현 → 🔴 FALSIFIED, 4-axis 표본 한정. 14+ floor 가 진짜 재현 가능, env-drift 가설 약화. R8c-vs-AXIS_MAP ~2 nats 격차는 GPU class / PROBE_STEPS 차이 가설로 분리 (sister agent #3 진단 중). 흡수 doc: `HEXAD/PURE/AXIS_MAP_FAN_REFIRE_VERDICT_2026_05_24.md`.)**
 - **H255.3 (cluster byte-equal artifact)**: H_249 cluster X/Y/Z 의 byte-equal 14.4564 nats 는 본 fire 의 4-cell ±0.09 nats 일관성 과 같은 mechanism — 동일 fire env 안 RNG seed + corpus shuffling 의 deterministic 결과. cluster 라벨은 model intrinsic property 가 아니라 *fire env signature*.
 - **H255.4 (env-drift detection method)**: 두 fire 의 init_CE step=1 가 ±0.1 nats 안 재현 시 env match, ±2 nats 격차 시 env-drift — *byte-equal probe* (H_254 양식) 보다 약한 *±0.1 nats neighbor probe* 가 env-drift 의 첫 catch method. byte-equal 은 RNG seed + driver version + host hardware 까지 매칭 요구하나, neighbor probe 는 corpus + tokenizer + seed level 만 매칭으로 충분.
 - **H255.5 (random baseline +0.3 nats 가 정상 warm-init floor)**: Qwen2.5-1.5B + ConsciousDecoderV3 의 init_CE 자연 floor = `ln(151936) + ~0.3 nats = ~12.2 nats`. 14+ nats 측정값은 다른 hypothesis (env-drift / silent-misconfig / corpus-target mismatch) 가 필요. 본 H 는 base model + arch 조합의 floor 를 **post-hoc empirical 정의**.
@@ -66,7 +66,7 @@ substrate 측 형식: **R8c 4-cell probe 자연실험 (2026-05-23~24)** — `AXI
 
 - **C1 (baseline 12.2 nats 재현)**: R8c baseline init_CE = 12.315 nats — random + 0.385 nats (정상 warm-init 범위) → H255.1 흡수 PASS.
 - **C2 (4-cell 일관성)**: 4 cell init_CE 범위 12.225~12.315 (±0.09 nats) → 본 fire window 안 env 는 stable, displacement 가 baseline cell 단독 이슈 아님.
-- **C3 (AXIS_MAP re-fire 12.2 nats 재현)**: AXIS_MAP-FAN 7-axis 재측정 시 평균 = 12.2 ± 0.1 nats → H255.2 PASS, R8a 측정값이 artifact 확정.
+- **C3 (AXIS_MAP re-fire 12.2 nats 재현)**: AXIS_MAP-FAN 7-axis 재측정 시 평균 = 12.2 ± 0.1 nats → H255.2 PASS, R8a 측정값이 artifact 확정. **(2026-05-24: cycle 15-1 4/7 결과 14.79/14.18/14.46/14.18 byte-equal 재현 → 🔴 FAIL, H255.2 FALSIFIED 4-axis 표본 한정. verdict_rule 의 FALSIFIED branch 활성화.)**
 - **C4 (env-drift root cause 분리)**: corpus sha / tokenizer hash / torch version / seed / RNG state 중 어느 axis 가 displacement source 인지 단일 axis sweep 으로 분리 (~$0.20 추가 fire) → H255.4 PASS, env-drift detection method 확립.
 - **C5 (intrinsic floor 자연 정의)**: Qwen2.5-1.5B + ConsciousDecoderV3 의 init_CE 자연 floor = ~12.2 nats (random + 0.3) → H255.5 흡수 PASS, R8 saga 의 "14+ floor 돌파" 전제 폐기.
 - **verdict_rule**: STRONG = C1+C2+C3+C4 (재측정 + root cause 분리 후). MODERATE = C1+C2+C5 (R8c 단독 흡수, AXIS_MAP re-fire pending). PARTIAL = C1+C2 (현 상태). FALSIFIED = AXIS_MAP re-fire 가 14+ 재현 (intrinsic floor 진짜).
@@ -114,12 +114,12 @@ evidence_summary: R8a cluster A 14.79 / cluster Z 14.46 nats 의 "catastrophic i
                   가 displacement source 가설.
 F-R8C-BASELINE-REPRO       : R8c baseline 12.315 nats vs R8a 14.79 nats (−2.475)  → PASS (흡수)
 F-R8C-4-CELL-CONSISTENT    : 4 cell ±0.09 nats 안 (12.225~12.315)                 → PASS (흡수)
-F-AXIS-MAP-REFIRE-CONVERGE : AXIS_MAP-FAN 재측정 12.2±0.1 nats                    → TBD (재fire 의존)
-F-AXIS-MAP-REFIRE-DIVERGE  : 재측정 14+ nats 재현                                  → TBD (재fire 의존)
+F-AXIS-MAP-REFIRE-CONVERGE : AXIS_MAP-FAN 재측정 12.2±0.1 nats                    → 🔴 FAIL (cycle 15-1 4/7 = 14.18~14.79)
+F-AXIS-MAP-REFIRE-DIVERGE  : 재측정 14+ nats 재현                                  → ✅ PASS (4/7 byte-equal 14.79/14.18/14.46)
 F-CORPUS-SHA-AUDIT         : R8a vs R8c corpus_s101 sha 비교                       → TBD (R8a state 회수 의존, L1)
 F-TOKENIZER-HASH-DRIFT     : R8a vs R8c Qwen tokenizer hash 비교                   → TBD (R8a state 회수 의존, L1)
 F-SEED-RNG-POLLUTION       : R8a seed 4-way pin audit                              → TBD (R8a fire log 회수 의존, L1)
-criteria_met: 2/5 PASS (C1 + C2 흡수) + 3/5 PENDING (C3/C4/C5 재fire + root cause 분리 의존)
+criteria_met: 2/5 PASS (C1 + C2 흡수) + 1/5 🔴 FALSIFIED (C3 — cycle 15-1 4/7 re-fire 14+ byte-equal 재현) + 2/5 PENDING (C4/C5 root cause 분리 의존). verdict_class → 🔴 H255.2 FALSIFIED (4-axis 표본 한정), H255.1/H255.5 (R8c baseline 흡수) 별도 보존, ConsciousDecoderV3 intrinsic floor 최종 verdict 는 R8c env audit (GPU class / PROBE_STEPS) 도착 후 확정.
 cost: $0 mac local 비교 + ~$0.50-1.00 AXIS_MAP re-fire (a_fire_autonomous, 별도 cycle)
 ```
 
