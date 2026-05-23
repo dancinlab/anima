@@ -94,6 +94,11 @@ WAKE ──> N1 ──> N2 ──> N3 ──> N2 ──> REM ──> WAKE ──
 | #273 | `anima_imagination_loop.hexa` | emit-free internal rehearsal + mitosis tick |
 | #275 | `anima_dream_stage.hexa` | WAKE/N1/N2/N3/REM 5-stage 상태기계 + Φ projection |
 | #274 | `project.tape` / `README.md` | governance 정합 (@N a_substrate_native_speak_stage_gate + @N p5_tension_emit_not_filler) |
+| #279 | `project.tape` | `@D a_autonomy_over_hardcode` + `@D a_chat_sleep_imagination` 신규 등재 (autonomy-first governance · SSOT) |
+| #281 | `CHAT.md` / `DEPLOY.md` | 운영 SSOT + sleep/imagination daemon 배포 절차 |
+| #282 | `anima_dream_stage.hexa` | `emit_allowed` boolean API 폐기 → `dream_context` dict (autonomy reshape) |
+| #286 | `anima_participant` | `_dream_stage_current()` boolean gate 폐기 → `_dream_context` dict 주입 |
+| #288 | `CHAT.md` | sleep stage boolean gate 표현 정정 (autonomy reshape 후속) |
 
 ### 1.6 cross-link
 
