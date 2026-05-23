@@ -94,3 +94,26 @@ Per PR #187 commit caveat:
 3. If still empty AND no warning logs → inspect `STATE.akida_history` maxlen (hypothesis (d))
 
 This patch document remains the SSOT measurement record; status will be updated when the restart-driven verification fires.
+
+## Local repro verdict (2026-05-23T20:15 · pre-mini-restart)
+
+mini broker 재시작 전, anima 측 worktree 에서 진행한 source-level 검증 결과 (b)/(c)/(d) 3 가설 모두 falsified 되었으며 실 root cause 는 bridge ↔ websocat 채널 race 로 옮겨졌다.
+
+- (b) **FALSIFIED** — `STATE.akida_history` 는 `maxlen=200` 으로 정의되어 있다 (citation: `HEXAD/CHAT/server/broker.py:69` — `self.akida_history: deque[dict[str, Any]] = deque(maxlen=200)`). `/akida/recent` 는 같은 deque 를 `broker.py:163-165` 에서 읽는다. handler append target ↔ endpoint read target 일치 확인.
+- (c) **FALSIFIED** — bridge frame 은 유효한 JSON 이다. `stamp_spike()` (`HEXAD/CHAT/server/akida_bridge.hexa:162-176`) 가 생성하는 frame 예시는 `{"step": 42, "n_spikes": 7, "regime": "R3_tonic_zero_input", "_bridge_ts": 1779534874.0217}`. Python `json.loads(<that>)` 는 dict 로 정상 round-trip 한다. broker `json.loads()` 가 이 형식에서 실패할 이유 없음.
+- (d) **FALSIFIED** — maxlen 은 0 이 아닌 200 이다 (위 (b) citation 동일).
+- (a) 는 main-HEAD review 단계에서 이미 DISPROVED (handler line 340 append 존재).
+
+Bridge send mode 는 **TEXT** 로 일관 확인되어 `broker.py:334` `receive_text` 와 호환:
+  - websocat backend (`hexa-lang/stdlib/websocket.hexa:408-422`) — default line-oriented text mode
+  - native backend (`hexa-lang/stdlib/net/websocket_native.hexa:337-345`) — `_ws_encode_frame(1, message)` (opcode 1 = TEXT)
+
+**Most-likely root cause (hypothesis e / upstream)** — `ws_send` (`hexa-lang/stdlib/websocket.hexa:419-420`) 는 FIFO 에 `printf %s <escaped> > $fifo &` 로 write 한다. 후행 `&` 가 write 를 background 로 돌리며, FIFO reader (websocat stdin) 가 이미 죽어 있으면 write 가 silently no-op 되더라도 `ws_send` 는 `exec()` 호출 성공 여부만 보고 `true` 를 return 한다. 즉 bridge 측 counter 상승 ≠ 실제로 frame 이 host 밖으로 나간다는 보장이 아니다.
+
+**Mini-side check on restart** — `pgrep websocat` 와 `ss -tnp | grep :8000` 로 bridge 의 TCP peer 가 현재 broker PID 와 매칭하는지 확인한다. websocat process 가 사라져 있거나 peer 가 stale PID 면 위 race 가 confirm.
+
+**Broker-side disambiguation (separate PR, parallel)** — `broker.py:340` 다음에 `log.info("akida append now=%d", len(STATE.akida_history))` 를 추가한다. 이 라인이 live 인 상태에서 차후 incident 가 발생하면 "append 호출 자체가 없음" (websocat dead / broker stuck) 과 "append 는 발화하지만 `/akida/recent` 가 empty" (deque write clobbered) 두 모드를 명확히 분리할 수 있다.
+
+**Upstream filing** — `hexa-lang/inbox/patches/<slug>.md` (parallel agent 가 동시 작성 중) 에 `ws_send` 의 `&` race 를 hexa-lang 측 inbox 로 escalate.
+
+요약: 4-가설 트리는 closed (a/b/c/d 모두 FALSIFIED), 잔여 가설은 anima repo 가 아닌 hexa-lang stdlib 의 `ws_send` FIFO background-write race 로 이동했다. mini broker 재시작 후 logs/process snapshot 으로 최종 확정 예정.
