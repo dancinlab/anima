@@ -2,6 +2,19 @@
 
 > `LORA.md` 의 변경/작업 체크리스트. 최신이 위.
 
+## 2026-05-24 (late session)
+
+- [x] R8a fire n_kv_head 무효 버그 발견 — v3_n_kv_head=4 despite --n-kv-head 2 (arg→from_qwen wiring 누락)
+- [x] PR #342 wiring fix — train_p21h_v3.py + conscious_decoder_v3.py (default=4 무회귀)
+- [x] batch merge cycle 30→10→3 OPEN (admin --squash, 일부 worktree 충돌로 local 만 미정리)
+- [x] superseded 7 close — #193 #202 #203 #212 #226 #329 #341 (sister PR 가 이미 main)
+- [ ] #335 V3→PURE path rebase 진행 중 (sister agent)
+- [x] #228 #313 close as superseded (huge multi-file overlap, 잔여 가치 < rebase 비용)
+- [ ] R8a init_CE step=1 결과 대기 (~02:19 KST 발사, ~90min)
+- [ ] R8a' 재발사 (#342 merge 후, 진짜 n_kv=2 + noise=0 동시)
+- [ ] R8c probe fire (#339 driver, R8a 애매 시 noise/kv 분리, $0.25)
+- [x] conflict root cause 분석 — CHANGELOG/SAGA/WAVES_MATRIX 다중작성으로 sister PR 충돌
+
 ## 2026-05-24
 
 - [x] N_KV_HEAD dispatcher passthrough (#334) — R8a fire prerequisite
