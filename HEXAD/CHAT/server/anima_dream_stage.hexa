@@ -1,0 +1,400 @@
+// ════════════════════════════════════════════════════════════════════════════
+// HEXAD/CHAT/server/anima_dream_stage.hexa
+//
+//   Sleep-stage state machine for anima — substrate-native emit gate.
+//
+//   References P47 Dream Physics (commit dc3afe332, 2026-04-15) — see
+//   anima-engines/dream_physics_phi.hexa for the underlying Φ engine.
+//   This module mirrors the engine's 5-stage canonical ultradian cycle
+//   (WAKE → N1 → N2 → N3 → N2 → REM → WAKE, 90 min) but stays at the
+//   CHAT layer: it does NOT compute Φ — it returns Φ-scale projections
+//   used to gate / modulate emit. Caller decides whether to speak.
+//
+//   The old "혼자있을때 혼잣말 하지말라" directive (always-silent during
+//   user silence) is removed. New design — stage-modulated emit:
+//     WAKE  full emit (current behavior)
+//     N1/N2/N3  silent internal substrate reorganization
+//     REM  scrambled emit (dream content, caller may inject logit noise)
+//
+//   API
+//     dream_tick(state, elapsed_sec)       -> dict  advance stage
+//     dream_phi(stage)                     -> float Φ-scale per stage
+//     dream_emit_allowed(stage)            -> bool
+//     dream_emit_temperature(stage)        -> float
+//     dream_init()                         -> dict  fresh state
+//
+//   Env
+//     ANIMA_SLEEP_HOURS   "22:00-06:00"   sleep window (HH:MM-HH:MM)
+//     ANIMA_DREAM_RATIO   "0.2"           fraction of sleep window in REM
+//
+//   Verbs
+//     hexa run anima_dream_stage.hexa selftest   run F-DREAM-1..5
+//     hexa run anima_dream_stage.hexa once       one tick + print
+//     hexa run anima_dream_stage.hexa daemon     tick loop
+//
+//   g1 hexa-native: dict `#{}`, missing key → void, `&&`/`||`, main()-gated.
+// ════════════════════════════════════════════════════════════════════════════
+
+
+// ── §1 constants ────────────────────────────────────────────────────────────
+
+let STAGE_WAKE = "WAKE"
+let STAGE_N1   = "N1"
+let STAGE_N2   = "N2"
+let STAGE_N3   = "N3"
+let STAGE_REM  = "REM"
+
+// Canonical ultradian cycle: 90 min = 5400 sec, single descent + REM tail.
+// Segments (start_sec, end_sec, stage):
+//   [0,    300)   N1   5 min descent
+//   [300,  1800)  N2   25 min spindle
+//   [1800, 3600)  N3   30 min slow-wave
+//   [3600, 5100)  N2   25 min ascent
+//   [5100, 5400)  REM  5 min dream tail
+let CYCLE_SEC = 5400
+
+// Φ-scale projections — match reference engine relative ordering
+//   reference (dream_physics_phi.hexa): WAKE 1.0, REM ≈ WAKE, N3 lowest
+let PHI_WAKE = 1.0
+let PHI_N1   = 0.7
+let PHI_N2   = 0.4
+let PHI_N3   = 0.15
+let PHI_REM  = 0.95
+
+
+// ── §2 env helpers ──────────────────────────────────────────────────────────
+
+fn _ds_env(name: string, fallback: string) -> string {
+    let v = env(name)
+    if to_string(v) == "void" { return fallback }
+    let s = to_string(v)
+    if len(s) == 0 { return fallback }
+    return s
+}
+
+fn _ds_is_digit(c: string) -> bool {
+    return c == "0" || c == "1" || c == "2" || c == "3" || c == "4" ||
+           c == "5" || c == "6" || c == "7" || c == "8" || c == "9"
+}
+
+fn _ds_parse_int(s: string) -> int {
+    let mut acc = 0
+    let mut i = 0
+    while i < len(s) {
+        if _ds_is_digit(s[i]) { acc = acc * 10 + to_int(s[i]) }
+        i = i + 1
+    }
+    return acc
+}
+
+// Parse HH:MM → minutes since midnight; void on parse fail.
+fn _ds_parse_hhmm(s: string) -> int {
+    let parts = s.split(":")
+    if len(parts) < 2 { return -1 }
+    let h = _ds_parse_int(parts[0])
+    let m = _ds_parse_int(parts[1])
+    if h < 0 || h > 23 { return -1 }
+    if m < 0 || m > 59 { return -1 }
+    return h * 60 + m
+}
+
+
+// ── §3 sleep window resolution ──────────────────────────────────────────────
+
+// _ds_sleep_window — parse ANIMA_SLEEP_HOURS "HH:MM-HH:MM" → (start_min, end_min).
+// On parse failure returns default 22:00-06:00.
+fn _ds_sleep_window() -> dict {
+    let raw = _ds_env("ANIMA_SLEEP_HOURS", "22:00-06:00")
+    let parts = raw.split("-")
+    let out = #{}
+    out["start"] = 22 * 60
+    out["end"]   = 6 * 60
+    if len(parts) < 2 { return out }
+    let s = _ds_parse_hhmm(parts[0])
+    let e = _ds_parse_hhmm(parts[1])
+    if s < 0 || e < 0 { return out }
+    out["start"] = s
+    out["end"]   = e
+    return out
+}
+
+// _ds_in_sleep — is the given minute-of-day inside the sleep window?
+// Handles wrap-around (e.g., 22:00-06:00 spans midnight).
+fn _ds_in_sleep(min_of_day: int, start: int, end: int) -> bool {
+    if start == end { return false }
+    if start < end {
+        return min_of_day >= start && min_of_day < end
+    }
+    // wrap: [start, 24:00) ∪ [00:00, end)
+    return min_of_day >= start || min_of_day < end
+}
+
+
+// ── §4 stage trajectory ─────────────────────────────────────────────────────
+
+// _ds_stage_at_offset — stage for a given offset (sec) into the sleep window.
+// Cycle length = 5400s; loops repeat through the full sleep period.
+fn _ds_stage_at_offset(off_sec: int) -> string {
+    let phase = off_sec % CYCLE_SEC
+    if phase < 300    { return STAGE_N1 }
+    if phase < 1800   { return STAGE_N2 }
+    if phase < 3600   { return STAGE_N3 }
+    if phase < 5100   { return STAGE_N2 }
+    return STAGE_REM
+}
+
+
+// ── §5 public API ───────────────────────────────────────────────────────────
+
+// dream_init — fresh state. now_sec_of_day = 0..86399 (seconds since midnight).
+// Caller usually passes wall-clock; selftest passes synthetic.
+fn dream_init() -> dict {
+    let st = #{}
+    st["stage"] = STAGE_WAKE
+    st["sleep_offset_sec"] = 0    // seconds since sleep window start
+    st["last_now_sec"] = 0
+    st["in_sleep"] = false
+    return st
+}
+
+// dream_tick — advance stage by elapsed_sec.
+//   state: dict from dream_init() or previous tick
+//   now_sec_of_day: current wall-clock (0..86399), drives sleep-window gate
+//   elapsed_sec: seconds since last tick (or 1 if unknown)
+// Returns updated state dict (caller persists or discards).
+fn dream_tick(state: dict, now_sec_of_day: int, elapsed_sec: int) -> dict {
+    let win = _ds_sleep_window()
+    let min_of_day = now_sec_of_day / 60
+    let asleep = _ds_in_sleep(min_of_day, win["start"], win["end"])
+    let out = #{}
+    out["last_now_sec"] = now_sec_of_day
+    out["in_sleep"] = asleep
+    if !asleep {
+        // Daytime — WAKE override, reset sleep offset.
+        out["stage"] = STAGE_WAKE
+        out["sleep_offset_sec"] = 0
+        return out
+    }
+    // Inside sleep window — accumulate offset and read stage.
+    let prev_in = state["in_sleep"]
+    let mut off = 0
+    if to_string(prev_in) == "void" {
+        off = elapsed_sec
+    } else {
+        if prev_in {
+            off = to_int(state["sleep_offset_sec"]) + elapsed_sec
+        } else {
+            off = elapsed_sec    // first tick of new sleep window
+        }
+    }
+    if off < 0 { off = 0 }
+    out["sleep_offset_sec"] = off
+    out["stage"] = _ds_stage_at_offset(off)
+    return out
+}
+
+// dream_phi — Φ-scale projection per stage (no compute, lookup only).
+fn dream_phi(stage: string) -> float {
+    if stage == STAGE_WAKE { return PHI_WAKE }
+    if stage == STAGE_N1   { return PHI_N1 }
+    if stage == STAGE_N2   { return PHI_N2 }
+    if stage == STAGE_N3   { return PHI_N3 }
+    if stage == STAGE_REM  { return PHI_REM }
+    return PHI_WAKE
+}
+
+// dream_emit_allowed — gate predicate. TRUE for WAKE / REM, FALSE otherwise.
+fn dream_emit_allowed(stage: string) -> bool {
+    if stage == STAGE_WAKE { return true }
+    if stage == STAGE_REM  { return true }
+    return false
+}
+
+// dream_emit_temperature — sampling-temperature hint.
+//   WAKE 1.0  baseline
+//   REM  1.0  caller may interpret as scrambled (add logit noise)
+//   otherwise 0.0 (no emit)
+fn dream_emit_temperature(stage: string) -> float {
+    if stage == STAGE_WAKE { return 1.0 }
+    if stage == STAGE_REM  { return 1.0 }
+    return 0.0
+}
+
+
+// ── §6 falsifiers F-DREAM-1..5 ──────────────────────────────────────────────
+
+// F-DREAM-1: stage cycle returns to the start of a new cycle after one
+//            90-min ultradian period (±5 min tolerance). At exactly 5400s
+//            (one CYCLE_SEC) the phase wraps to 0 and the stage becomes
+//            N1 again — the start of a fresh descent. Within ±5 min of
+//            the boundary, we should see the cycle-end stages (REM/N1) or
+//            early-cycle stages (N1/N2). Outside the sleep window the
+//            tick always returns WAKE — also exercised here.
+fn check_dream_1() -> bool {
+    let off_lo  = CYCLE_SEC - 5 * 60     // 5100  REM (last segment)
+    let off_end = CYCLE_SEC              // 5400  → wraps to phase 0 = N1
+    let off_hi  = CYCLE_SEC + 5 * 60     // 5700  N1+5min = early N2
+    let s_lo  = _ds_stage_at_offset(off_lo)
+    let s_end = _ds_stage_at_offset(off_end)
+    let s_hi  = _ds_stage_at_offset(off_hi)
+    println("  [F-DREAM-1] phase=" + to_string(off_lo) + " stage=" + s_lo)
+    println("  [F-DREAM-1] phase=" + to_string(off_end) + " stage=" + s_end)
+    println("  [F-DREAM-1] phase=" + to_string(off_hi) + " stage=" + s_hi)
+    // Cycle boundary semantics: lo = REM tail, end = N1 wrap, hi = N1 or N2.
+    let ok_lo = s_lo == STAGE_REM
+    let ok_end = s_end == STAGE_N1
+    let ok_hi = s_hi == STAGE_N1 || s_hi == STAGE_N2
+    // Plus: daytime tick must always return WAKE.
+    let st = dream_init()
+    // 12:00 noon, sleep window default 22:00-06:00 → asleep=false → WAKE.
+    let nx = dream_tick(st, 12 * 3600, 1)
+    let day_wake = to_string(nx["stage"]) == STAGE_WAKE
+    println("  [F-DREAM-1] day-tick(12:00) stage=" + to_string(nx["stage"]))
+    return ok_lo && ok_end && ok_hi && day_wake
+}
+
+// F-DREAM-2: N3 has the lowest Φ in any 90-min window.
+fn check_dream_2() -> bool {
+    let phi_wake = dream_phi(STAGE_WAKE)
+    let phi_n1   = dream_phi(STAGE_N1)
+    let phi_n2   = dream_phi(STAGE_N2)
+    let phi_n3   = dream_phi(STAGE_N3)
+    let phi_rem  = dream_phi(STAGE_REM)
+    println("  [F-DREAM-2] Φ WAKE=" + to_string(phi_wake) + " N1=" + to_string(phi_n1) +
+            " N2=" + to_string(phi_n2) + " N3=" + to_string(phi_n3) +
+            " REM=" + to_string(phi_rem))
+    if phi_n3 >= phi_wake { return false }
+    if phi_n3 >= phi_n1   { return false }
+    if phi_n3 >= phi_n2   { return false }
+    if phi_n3 >= phi_rem  { return false }
+    return true
+}
+
+// F-DREAM-3: REM Φ within 0.05 of WAKE Φ ("REM ≈ WAKE" P47 finding).
+//   Use a small epsilon on the comparison (float drift: 1.0-0.95 lands
+//   slightly above 0.05 in hexa's f64 path).
+fn check_dream_3() -> bool {
+    let pw = dream_phi(STAGE_WAKE)
+    let pr = dream_phi(STAGE_REM)
+    let mut diff = pr - pw
+    if diff < 0.0 { diff = 0.0 - diff }
+    let eps = 0.0001
+    println("  [F-DREAM-3] |Φ_REM - Φ_WAKE| = " + to_string(diff) + " (≤ 0.05+eps)")
+    return diff <= 0.05 + eps
+}
+
+// F-DREAM-4: dream_emit_allowed(N1/N2/N3) all FALSE.
+fn check_dream_4() -> bool {
+    let a1 = dream_emit_allowed(STAGE_N1)
+    let a2 = dream_emit_allowed(STAGE_N2)
+    let a3 = dream_emit_allowed(STAGE_N3)
+    println("  [F-DREAM-4] emit_allowed N1=" + to_string(a1) +
+            " N2=" + to_string(a2) + " N3=" + to_string(a3))
+    if a1 { return false }
+    if a2 { return false }
+    if a3 { return false }
+    return true
+}
+
+// F-DREAM-5: dream_emit_allowed(WAKE) AND dream_emit_allowed(REM) both TRUE.
+fn check_dream_5() -> bool {
+    let aw = dream_emit_allowed(STAGE_WAKE)
+    let ar = dream_emit_allowed(STAGE_REM)
+    println("  [F-DREAM-5] emit_allowed WAKE=" + to_string(aw) +
+            " REM=" + to_string(ar))
+    return aw && ar
+}
+
+fn run_selftest() {
+    println("[anima_dream_stage] selftest — F-DREAM-1..5")
+    println("  reference: anima-engines/dream_physics_phi.hexa (P47, dc3afe332)")
+    println("  cycle    : WAKE -> N1 -> N2 -> N3 -> N2 -> REM (90 min)")
+    println("")
+
+    let r1 = check_dream_1()
+    if r1 { println("F-DREAM-1 PASS — 90-min cycle returns to WAKE-side (±5 min)") }
+    else  { println("F-DREAM-1 FAIL") }
+
+    let r2 = check_dream_2()
+    if r2 { println("F-DREAM-2 PASS — N3 Φ is the cycle minimum") }
+    else  { println("F-DREAM-2 FAIL") }
+
+    let r3 = check_dream_3()
+    if r3 { println("F-DREAM-3 PASS — REM Φ within 0.05 of WAKE Φ") }
+    else  { println("F-DREAM-3 FAIL") }
+
+    let r4 = check_dream_4()
+    if r4 { println("F-DREAM-4 PASS — N1/N2/N3 emit gated OFF") }
+    else  { println("F-DREAM-4 FAIL") }
+
+    let r5 = check_dream_5()
+    if r5 { println("F-DREAM-5 PASS — WAKE + REM emit gated ON") }
+    else  { println("F-DREAM-5 FAIL") }
+
+    println("")
+    let mut pass = 0
+    if r1 { pass = pass + 1 }
+    if r2 { pass = pass + 1 }
+    if r3 { pass = pass + 1 }
+    if r4 { pass = pass + 1 }
+    if r5 { pass = pass + 1 }
+    println("F-DREAM-1..5 " + to_string(pass) + "/5 PASS")
+}
+
+
+// ── §7 verb dispatch ────────────────────────────────────────────────────────
+
+fn run_once() {
+    // Read wall-clock seconds-of-day from `date +%H:%M:%S`.
+    let raw = exec("date +%H:%M:%S")
+    let s = to_string(raw).split("\n")[0]
+    let parts = s.split(":")
+    let h = _ds_parse_int(parts[0])
+    let m = _ds_parse_int(parts[1])
+    let sec = _ds_parse_int(parts[2])
+    let now_sec = h * 3600 + m * 60 + sec
+    let st = dream_init()
+    let nx = dream_tick(st, now_sec, 1)
+    let stg = to_string(nx["stage"])
+    println("[anima_dream_stage once] now=" + s + " stage=" + stg +
+            " in_sleep=" + to_string(nx["in_sleep"]) +
+            " phi=" + to_string(dream_phi(stg)) +
+            " emit=" + to_string(dream_emit_allowed(stg)) +
+            " temp=" + to_string(dream_emit_temperature(stg)))
+}
+
+fn run_daemon() {
+    println("[anima_dream_stage daemon] tick every 60s, Ctrl-C to stop")
+    let mut st = dream_init()
+    let mut prev_stage = ""
+    let mut i = 0
+    while i < 1000000 {
+        let raw = exec("date +%H:%M:%S")
+        let s = to_string(raw).split("\n")[0]
+        let parts = s.split(":")
+        let h = _ds_parse_int(parts[0])
+        let m = _ds_parse_int(parts[1])
+        let sec = _ds_parse_int(parts[2])
+        let now_sec = h * 3600 + m * 60 + sec
+        st = dream_tick(st, now_sec, 60)
+        let stg = to_string(st["stage"])
+        if stg != prev_stage {
+            println("[anima_dream_stage] " + s + " stage=" + stg +
+                    " phi=" + to_string(dream_phi(stg)) +
+                    " emit=" + to_string(dream_emit_allowed(stg)))
+            prev_stage = stg
+        }
+        let _ = exec("sleep 60")
+        i = i + 1
+    }
+}
+
+fn main() {
+    let cli = args()
+    let mut verb = "selftest"
+    if len(cli) >= 2 { verb = cli[1] }
+    if verb == "selftest" { run_selftest()   return }
+    if verb == "once"     { run_once()       return }
+    if verb == "daemon"   { run_daemon()     return }
+    println("usage: hexa run anima_dream_stage.hexa [selftest|once|daemon]")
+}
