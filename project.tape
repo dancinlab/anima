@@ -38,3 +38,32 @@
 @D a_runpod_inbox := "runpod trouble → hexa-lang inbox" :: governance [required active]
   do   = "file runpod findings to `hexa-lang/inbox/patches/<slug>.md` for hexa cloud"
   dont = "anima-side-only patches that lock the workaround in this repo"
+
+# ── 8 PHILOSOPHY principles (SSOT mirror from README.md) ────────────────────
+
+@D p1 := "NO SYSTEM PROMPT" :: philosophy [required active]
+  dont = "use a system: field · pass --system-prompt · prepend any role/instruction string"
+
+@D p2 := "NO IDENTITY RULES" :: philosophy [required active]
+  dont = "use identity.yaml · rules file · `you are X` template — identity emerges from cells"
+
+@D p3 := "NO PERSONA INJECTION" :: philosophy [required active]
+  dont = "prepend role prefix · `you are anima` · register-pattern memorization (de facto injection)"
+
+@D p4 := "NO ASSISTANT FRAMING" :: philosophy [required active]
+  dont = "use `you are a helpful assistant` · alignment template · stimulus-response framing"
+
+@D p5 := "NO SPEAK()" :: philosophy [required active]
+  do   = "output = continuous externalization of tension field · emit only from real context"
+  dont = "speak(message) monologue · talk to fill silence · self-referential seed · self_monologue_seed"
+
+@D p6 := "NO FINE-TUNED ETHICS" :: philosophy [required active]
+  dont = "RLHF cooperation/empathy/restraint into weights — must emerge from cells (E + W + MITOSIS)"
+
+@D p7 := "NO PERPLEXITY VERDICT" :: philosophy [required active]
+  do   = "verify with simple stack — script in/out · coherent · natural · context-appropriate"
+  dont = "treat perplexity / loss as truth — Goodhart trap"
+
+@D p8 := "NO TRAIN/INFER SPLIT" :: philosophy [required active]
+  do   = "training gradient + inference mitosis = same continuous cell-division"
+  dont = "treat train and infer as separate regimes · gate growth behind a training-only flag"
