@@ -1,7 +1,7 @@
 ---
-id: H_239
+id: H_240
 slug: bilingual-integration-phi-cross-lingual-leak
-title: H_239 bilingual-integration-Φ — Grosjean residual activation + Green asymmetric switch-cost 의 substrate IIT Φ 예측 (cross-lingual leak)
+title: H_240 bilingual-integration-Φ — Grosjean residual activation + Green asymmetric switch-cost 의 substrate IIT Φ 예측 (cross-lingual leak)
 domain: consciousness + language + substrate
 status: pre-register-frozen
 exploration_method: E2 (cross-substrate transfer — psycholinguistics → substrate) + E5 (variable-ablation regime sweep) + E12 (phenomenology projection)
@@ -15,7 +15,7 @@ frozen_at: 2026-05-24
 since: 2026-05-24 (new)
 ---
 
-# H_239 — bilingual-integration-Φ (cross-lingual leak)
+# H_240 — bilingual-integration-Φ (cross-lingual leak)
 
 ## Hypothesis
 
