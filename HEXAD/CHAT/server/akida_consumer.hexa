@@ -146,7 +146,8 @@ fn fetch_recent(port: int) -> list {
     let parsed = json_parse(body)
     if type_of(parsed) != "map" { return [] }
     let recs = parsed["akida"]
-    if type_of(recs) != "list" { return [] }
+    // hexa type_of: array literal → "array" (NOT "list") — cycle 12 fix
+    if type_of(recs) != "array" { return [] }
     return recs
 }
 
