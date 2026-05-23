@@ -237,3 +237,92 @@ fn should_reject_emit(text: string) -> bool {
 fn spont_meta_tag_enabled(env_meta: bool) -> bool { return env_meta }
 
 fn spont_meta_prefix() -> string { return "(spontaneous) " }
+
+
+// ── §10 spike → 8-factor map (HEXAD/SPONTANEOUS/SPIKE_FACTOR_MAP.md) ─────────
+// apply_spike_features — pure: features → 8-factor delta + §4 regime modulator
+// + [0,1] clamp. Substrate-only `relevance` + `balance` pass through (§2).
+// Numeric values mirror SPIKE_FACTOR_MAP.md byte-by-byte (see inline § anchors).
+
+fn _spike_num(d: dict, k: string) -> float {
+    if !d.has_key(k) { return 0.0 }
+    let s = to_string(d[k])
+    if s == "void" { return 0.0 }
+    return to_float(s)
+}
+
+fn _spike_str(d: dict, k: string) -> string {
+    if !d.has_key(k) { return "" }
+    let s = to_string(d[k])
+    if s == "void" { return "" }
+    return s
+}
+
+fn _spike_clamp01(x: float) -> float {
+    if x < 0.0 { return 0.0 }
+    if x > 1.0 { return 1.0 }
+    return x
+}
+
+fn _spike_modulator(regime: string) -> float {
+    if regime == "R3_tonic_zero_input" { return 0.5 }
+    if regime == "R2_bursting"         { return 1.2 }
+    return 1.0  // R1_oscillatory + unknown forward-compat (§4 L80, L82)
+}
+
+// apply_spike_features — pure: returns NEW 8-key dict; missing key = no delta.
+pub fn apply_spike_features(factors: dict, features: dict) -> dict {
+    let rel   = _spike_num(factors, "relevance")
+    let gap   = _spike_num(factors, "info_gap")
+    let cur   = _spike_num(factors, "curiosity")
+    let pn    = _spike_num(factors, "pain")
+    let coh   = _spike_num(factors, "coherence")
+    let orig  = _spike_num(factors, "originality")
+    let bal   = _spike_num(factors, "balance")
+    let dyn_v = _spike_num(factors, "dynamics")
+
+    // §3 L66 sparsity gate — invariant §5.2 (output == input deep equal).
+    let n_present = features.has_key("n_records")
+    if n_present { if _spike_num(features, "n_records") < 5.0 {
+        return #{
+            "relevance":   _spike_clamp01(rel),  "info_gap":    _spike_clamp01(gap),
+            "curiosity":   _spike_clamp01(cur),  "pain":        _spike_clamp01(pn),
+            "coherence":   _spike_clamp01(coh),  "originality": _spike_clamp01(orig),
+            "balance":     _spike_clamp01(bal),  "dynamics":    _spike_clamp01(dyn_v),
+        }
+    } }
+
+    let mut d_cur=0.0  let mut d_orig=0.0  let mut d_coh=0.0
+    let mut d_gap=0.0  let mut d_pain=0.0
+
+    if features.has_key("spike_rate_hz") {
+        let r = _spike_num(features, "spike_rate_hz")
+        if r > 12.0 { d_cur = d_cur + 0.10   d_orig = d_orig + 0.05 }  // §3 L60
+        if r <  2.0 { d_cur = d_cur - 0.05 }                            // §3 L61
+    }
+    if features.has_key("isi_cv") {
+        let cv = _spike_num(features, "isi_cv")
+        if cv > 1.5 { d_cur = d_cur + 0.08   d_coh = d_coh - 0.10 }     // §3 L62
+        if cv < 0.3 { d_coh = d_coh + 0.05 }                            // §3 L63
+    }
+    if features.has_key("mean_spike_ids_count") {
+        if _spike_num(features, "mean_spike_ids_count") > 8.0 { d_gap = d_gap + 0.10 }  // §3 L64
+    }
+    if features.has_key("regime_change") {
+        if to_string(features["regime_change"]) == "true" {
+            d_pain = d_pain + 0.15   d_orig = d_orig + 0.10              // §3 L65
+        }
+    }
+
+    let m = _spike_modulator(_spike_str(features, "regime"))  // §4
+    return #{
+        "relevance":   _spike_clamp01(rel),                           // §2 substrate-only
+        "info_gap":    _spike_clamp01(gap   + d_gap  * m),
+        "curiosity":   _spike_clamp01(cur   + d_cur  * m),
+        "pain":        _spike_clamp01(pn    + d_pain * m),
+        "coherence":   _spike_clamp01(coh   + d_coh  * m),
+        "originality": _spike_clamp01(orig  + d_orig * m),
+        "balance":     _spike_clamp01(bal),                           // §2 substrate-only
+        "dynamics":    _spike_clamp01(dyn_v),                         // dynamics: not mapped in §3
+    }
+}
