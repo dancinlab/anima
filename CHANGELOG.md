@@ -6,6 +6,11 @@ For the full audit trail, see `git log`.
 
 ---
 
+## 2026-05-24
+
+### 수정/운영
+- **akida_bridge subshell-leak 사건** — `mini` 에서 `akida_bridge.bin daemon` (PID 2350) 이 2380 개의 `sh -c websocat/nc` subshell 을 누수 → uid proc 슬롯 2616/2666 고갈 → ssh `exec request failed on channel 0` 간헐 장애 (pool dispatch 동일 영향). daemon 정지 + 고아 reap + fifo cleanup 으로 슬롯 2616 → 237 회복, ssh 안정화. 근본 수정(`fix/akida-bridge-subshell-leak`) + pool host-health guard (`pool#2`) in flight. Postmortem → [`HEXAD/CHAT/server/AKIDA_BRIDGE_LEAK_POSTMORTEM_2026_05_24.md`](HEXAD/CHAT/server/AKIDA_BRIDGE_LEAK_POSTMORTEM_2026_05_24.md). 관련 PR #203 (broker akida deque gap).
+
 ## 2026-05-23 — Session-3 LoRA lever exploration
 
 ### Major outcomes
