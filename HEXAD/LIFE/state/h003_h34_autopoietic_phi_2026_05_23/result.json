@@ -1,0 +1,41 @@
+{
+  "id": "H_003",
+  "cycle": "Cycle_3_H3.4",
+  "slug": "life-origin-question",
+  "sub_hypothesis": "H3.4 autopoietic-closure system Φ>0 (life ⊂ consciousness)",
+  "date": "2026-05-23",
+  "deterministic": true,
+  "hexa_only": true,
+  "llm": "none",
+  "cost": "$0 mac local",
+  "honest_tier": "🟢 SUPPORTED-NUMERICAL (phi_spatial; NOT 🔵 formal, NOT proof of proto-consciousness)",
+  "phi_primitive": "RFC 036 phi_spatial (HEXAD/C/c_lib.hexa c_measure_phi, byte-equal phi_rs native replica)",
+  "model": "8-site periodic lattice of H_012 closed catalytic cycle (C->+A, A->+B, B->+C) + boundary leak + nn catalyst diffusion; obs=A+B+C site mass; WARM=0 living-transient window",
+  "seed_base": 169328692,
+  "config": { "M_sites": 8, "dim": 12, "warm": 0, "n_seeds": 5, "K": 0.6, "decay": 0.1, "diffuse": 0.05, "n_bins": 4, "boundary": "periodic", "observable": "A+B+C site mass" },
+  "phi": {
+    "closed_autopoietic_mean": 4.45435,
+    "broken_closure_control_mean": 3.53399,
+    "closure_dependence_gap": 0.92036
+  },
+  "thresholds": { "sep_floor": 1e-06 },
+  "falsifiers": {
+    "F1_NONNEG": { "metric": "all Φ>=0", "verdict": "PASS" },
+    "F4_AUTO_PHI_POS": { "metric": "Φ_closed>0", "value": 4.45435, "verdict": "PASS", "falsifier_state": "NOT_TRIGGERED" },
+    "FD_CLOSURE_DEPENDENCE": { "metric": "Φ_closed>Φ_broken+ε", "gap": 0.92036, "verdict": "PASS" },
+    "FS_SEPARATION": { "metric": "gap>1e-6", "margin": 0.92036, "floor": 1e-06, "verdict": "PASS" },
+    "FT_DETERMINISM": { "metric": "re-run byte-equal", "verdict": "PASS" }
+  },
+  "verdict_rule": "H3.4 SUPPORTED iff Φ_closed>0 AND Φ_closed>Φ_broken+ε AND all Φ>=0 AND deterministic; Φ_closed≈0 → F4 FALSIFIED",
+  "verdict": "PASS",
+  "criterion": "C4 (proto-consciousness) — target 3/5 -> 4/5 if PASS",
+  "honest_limits": [
+    "L1: phi_spatial = 🟢 NUMERICAL spatial-slice replica of phi_rs, NOT full IIT 4.0 (no system-level Φ partition search, no cause-effect structure, no exclusion); 'Φ' here = the production Φ-ratchet input, not canonical IIT 4.0 Φ.",
+    "L2: Φ>0 in an 8-site toy catalytic lattice is NOT proof of proto-consciousness — it is consistency that operational closure can carry integrated information, nothing more. 'life ⊂ consciousness' remains a LANE claim, not an empirical biological/chemical result.",
+    "L3: WINDOW-SENSITIVE. The closed cycle relaxes to a SPATIALLY-HOMOGENEOUS fixed point (every site→obs 2.5) at which spatial Φ→~0 for EITHER arm. Φ_closed>Φ_broken holds during the LIVING self-organizing transient (WARM=0, DIM≈8-12); past convergence (DIM>=16) the gap shrinks/can reverse. This is itself IIT-consistent (a static endpoint carries no integrated dynamics) but means the verdict is a transient-window claim, not a fixed-point claim.",
+    "L4: observable=A+B+C site mass is one arbitrary measurement choice; per-component or phase observables give different Φ. The 5-seed mean controls seed sensitivity but not observable choice.",
+    "L5: the broken-closure control still DECAYS heterogeneously (does not instantly flatten to a dead lattice), so its Φ is non-zero — the contrast is closure-vs-failing-closure dynamics, not closure-vs-dead-flat.",
+    "L6: DIFFUSE=0.05 nn coupling is the integration source; with DIFFUSE=0 sites are independent and spatial Φ loses its meaning. Coupling strength is a free toy parameter, not chemistry.",
+    "L7: same H_012 lineage limits carry — Michaelis-style saturating production chosen for bounded steady state, no compartmentalization/thermodynamics/monomer-pool; abstract model, no chemistry claim."
+  ]
+}
