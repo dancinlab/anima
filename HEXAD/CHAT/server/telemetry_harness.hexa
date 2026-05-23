@@ -88,6 +88,16 @@ fn _th_int(d: dict, k: string) -> int {
     if dot >= 0 { return to_int(s.substring(0, dot)) }
     return to_int(s)
 }
+// _th_spike_ids_len — defensive len(record.spike_ids). Mirrors
+// akida_consumer._ac_spike_ids_len (PR #172): missing/non-list ⇒ 0.
+fn _th_spike_ids_len(r: dict) -> int {
+    if !r.has_key("spike_ids") { return 0 }
+    let v = r["spike_ids"]
+    if to_string(v) == "void" { return 0 }
+    let t = type_of(v)
+    if t != "array" && t != "list" { return 0 }
+    return len(v)
+}
 fn fetch_anima_history(url: string) -> list {
     let body = http_get(url, 10)
     if len(body) == 0 { return [] }
@@ -123,6 +133,7 @@ fn summarize_window(akida: list, emit_ts: float, win_ms: int) -> dict {
     let win_s = to_float(to_string(win_ms)) / 1000.0
     let lo = emit_ts - win_s
     let mut count = 0
+    let mut sum_ids = 0
     let mut regimes = #{}
     let mut last_step = 0
     let mut ts_list = []
@@ -133,6 +144,7 @@ fn summarize_window(akida: list, emit_ts: float, win_ms: int) -> dict {
             let bts = _th_num(r, "_bridge_ts")
             if bts >= lo { if bts <= emit_ts {
                 count = count + 1
+                sum_ids = sum_ids + _th_spike_ids_len(r)
                 let rg = _th_str(r, "regime")
                 let pc = if regimes.has_key(rg) { to_int(regimes[rg]) } else { 0 }
                 regimes[rg] = pc + 1
@@ -196,7 +208,9 @@ fn summarize_window(akida: list, emit_ts: float, win_ms: int) -> dict {
         }
     }
     let rate_hz = if win_s > 0.0 { to_float(to_string(count)) / win_s } else { 0.0 }
+    let mean_ids = if count > 0 { to_float(to_string(sum_ids)) / to_float(to_string(count)) } else { 0.0 }
     return #{ "spike_count": count, "spike_rate_hz": rate_hz,
+              "mean_spike_ids_count": mean_ids,
               "regime_mode": mode, "n_unique_regimes": len(keys),
               "isi_cv": isi_cv, "last_step": last_step }
 }
@@ -214,18 +228,19 @@ fn _th_trunc(s: string, n: int) -> string {
 // Map spike_window summary → apply_spike_features features schema (§10).
 // inputs expected by apply_spike_features: spike_rate_hz, isi_cv,
 // mean_spike_ids_count, regime, regime_change, n_records (sparsity gate).
-// spike_window doesn't expose mean_spike_ids_count → default 0 (akida_consumer
-// SSOT carries it but the telemetry window summary doesn't — honest C3 #c in
-// PR #146 covers this imperfection). regime_change = (n_unique_regimes > 1)
-// is a telemetry-window-local proxy. n_records = spike_count drives the
-// sparsity gate so spike_count == 0 ⇒ no-op invariance (F-TELEMETRY-5).
+// mean_spike_ids_count source-path (a): computed inline inside
+// summarize_window from the same broker /akida/recent records the harness
+// already iterates (mirrors akida_consumer PR #172). regime_change =
+// (n_unique_regimes > 1) is a telemetry-window-local proxy. n_records =
+// spike_count drives the sparsity gate so spike_count == 0 ⇒ no-op
+// invariance (F-TELEMETRY-5).
 fn spike_window_to_features(sw: dict) -> dict {
     let count = _th_int(sw, "spike_count")
     let regime_change = _th_int(sw, "n_unique_regimes") > 1
     return #{
         "spike_rate_hz":        _th_num(sw, "spike_rate_hz"),
         "isi_cv":               _th_num(sw, "isi_cv"),
-        "mean_spike_ids_count": 0.0,
+        "mean_spike_ids_count": _th_num(sw, "mean_spike_ids_count"),
         "regime":               _th_str(sw, "regime_mode"),
         "regime_change":        if regime_change { "true" } else { "false" },
         "n_records":            count,
@@ -313,9 +328,9 @@ fn run_once() {
     eprintln("[telemetry] once done — " + to_string(n) + " pair(s) recorded (seed cycle never writes)")
 }
 
-// ── §6 offline selftest F-TELEMETRY-1..5 ───────────────────────────────────
+// ── §6 offline selftest F-TELEMETRY-1..6 ───────────────────────────────────
 fn _telemetry_selftest() {
-    eprintln("telemetry_harness selftest — F-TELEMETRY-1..5")
+    eprintln("telemetry_harness selftest — F-TELEMETRY-1..6")
     let mut pass = 0   let mut fail = 0
     let nonce = to_string(exec("date +%s%N | tr -d '\\n'")).trim()
     let jsonl = "/tmp/hexa_telemetry_st_" + nonce + ".jsonl"
@@ -437,10 +452,34 @@ fn _telemetry_selftest() {
         kk = kk + 1
     }
     if noop_ok { pass = pass + 1 } else { fail = fail + 1   eprintln("  FAIL F-TELEMETRY-5 no-op invariance violated") }
+    // F-TELEMETRY-6  mean_spike_ids_count = mean(len(spike_ids)) over window.
+    // 3 in-window records with spike_ids lengths [4, 8, 12] ⇒ mean = 8.0.
+    let synth_ids = [
+        #{ "step": 40, "n_spikes": 4,  "spike_ids": [0,1,2,3],
+           "regime": "R3_tonic_zero_input", "_bridge_ts": 400.0 },
+        #{ "step": 41, "n_spikes": 8,  "spike_ids": [0,1,2,3,4,5,6,7],
+           "regime": "R3_tonic_zero_input", "_bridge_ts": 400.5 },
+        #{ "step": 42, "n_spikes": 12, "spike_ids": [0,1,2,3,4,5,6,7,8,9,10,11],
+           "regime": "R3_tonic_zero_input", "_bridge_ts": 401.0 },
+    ]
+    let msg_ids = #{
+        "id": "em_ids", "kind": "anima", "ts": 401.0, "lang": "ko",
+        "text": "mean-spike-ids evidence row", "motivation": 0.5,
+        "factors": #{ "relevance": 0.5, "coherence": 0.5, "info_gap": 0.5,
+                      "curiosity": 0.5, "originality": 0.2, "pain": 0.3,
+                      "balance": 0.7, "dynamics": 0.4 },
+    }
+    let row_ids = build_row(msg_ids, synth_ids, 3000)
+    let sw_ids = row_ids["spike_window"]
+    let mean_ids = to_float(to_string(sw_ids["mean_spike_ids_count"]))
+    let mids_off = if (mean_ids - 8.0) < 0.0 { 8.0 - mean_ids } else { mean_ids - 8.0 }
+    if mids_off < 0.001 { pass = pass + 1 } else { fail = fail + 1   eprintln("  FAIL F-TELEMETRY-6 spike_window.mean_spike_ids_count != 8.0: " + to_string(mean_ids)) }
     eprintln("--- sample evidence row (synthetic) ---")
     eprintln(json_stringify(row))
     eprintln("--- sample evidence row (high-rate, modulated) ---")
     eprintln(json_stringify(row_hi))
+    eprintln("--- sample evidence row (mean_spike_ids_count) ---")
+    eprintln(json_stringify(row_ids))
     eprintln("telemetry_harness selftest: " + to_string(pass) + " PASS, " + to_string(fail) + " FAIL")
     let _rm3 = exec("rm -f '" + jsonl + "' '" + jsonl2 + "'")
 }
