@@ -103,6 +103,37 @@ E (LangBalancedSampler) 는 axis 자체로 별개 — code-bug fix 후 별도 re
 | bug saga (env-bug retries) | ~14.00 | — |
 | **total V3** | **~21.14** | ~16K cum |
 
+## § E3 saga (throttle → zombie-race → E3v3 refire · 2026-05-24)
+
+E3 (wiki_frac=1.0 · anima 0%) Track 1 variant 의 3-attempt 재발사 기록. wiki-only endpoint 측정 fire.
+
+| attempt | pod_id | 결과 | 원인 | 조치 |
+|---|---|---|---|---|
+| 1차 | f5c0kn54wuqgfl | TERMINATED | A100 throttle/starvation (GPU util 1%, 6.24 s/step) | partial train.log 보존 후 terminate |
+| 2차 | 7dt6k35zd58o1o | ENV_PASSTHROUGH_FAILED | zombie launcher race (PID 9358 미살해 → shared vDIR FAILURE collision) | zombie launcher 전수 kill 후 terminate |
+| 3차 (E3v3) | eece02rl2k1wz2 | IN-PROGRESS | — (fresh variant 깨끗 재발사) | 별도 vDIR `P21H_E3v3_2026_05_24`, collision 0 |
+
+### 1차 — A100 throttle 진단
+GPU util **1%**, 6.24 s/step — E2 의 0.42 s/step 대비 **15× slow**. step 1000/5000 @ 104 min, ETA 8.7 hr. E2 가 다른 pod 에서 35 min 정상 완주한 것과 대조 → pod 개체 throttle/starvation 으로 진단. partial train.log 를 `train_partial_step1000.log` 로 보존 (best CE 5.60 @ step750, mitosis pool=128 이 step 12 부터 frozen).
+
+### 2차 — zombie launcher race root cause
+ENV_PASSTHROUGH_FAILED 의 진짜 원인은 ENV 전달이 아니라 **zombie launcher race**. 1차 launcher PID 9358 이 1차 pod terminate 시 함께 죽지 않아 계속 살아 shared vDIR 에 FAILURE.txt 를 써내려갔고, 2차 launcher 와 같은 vDIR 에서 충돌. ENV_PASSTHROUGH_FAILED 는 그 collision 의 표면 증상.
+
+### 3차 — E3v3 깨끗 재발사
+모든 zombie launcher 를 전수 kill 한 뒤, fresh variant `P21H_E3v3_2026_05_24` (별도 vDIR) 로 재발사 → collision 0. 작성 시점 in-progress.
+
+### 운영 교훈
+**pod terminate 시 반드시 해당 launcher PID 도 함께 kill** — 안 그러면 좀비 launcher 가 shared vDIR 를 오염시켜 다음 발사를 ENV_PASSTHROUGH_FAILED 로 위장 실패시킨다. sidecar worktree-prune note 와 같은 계열의 운영 부채 (자식 프로세스/리소스가 부모 teardown 후 잔존).
+
+### closure 영향
+- E3 결과는 **E3v3 완주 대기** — wiki_frac=1.0 endpoint, register≈0 예상 (anima 0%)
+- E2 FAIL 은 이미 확정 (별도 PR), 본 saga 는 E3 측정 path 만
+
+### honest C3
+1. 1차 throttle 원인 **미확정** — pod 개체 결함인지 config 측 문제인지 분리 안 됨 (E2 가 다른 pod 정상 ≈ pod 개체 시사하나 confirm 아님)
+2. E3v3 도 동일 throttle 재발 가능 — pod 추첨 의존, 재현성 미확보
+3. partial step1000 (best CE 5.60) 은 학습 초기 구간이라 register collapse 측정 불가 — endpoint 판정 자료 아님
+
 ## § 분석 (E2 only)
 
 Track 1 E2 (LangBalancedSampler retry, leak fixed) 결과 — `result_to_axis_map.hexa` (PR #290) 자동 판정.
