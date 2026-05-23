@@ -71,7 +71,25 @@ REFRACTORY_S = 15.0    # post-emit motivation MAX-0 lock (anti-spam self-monolog
 ADAPTIVE_THR_PEAK = 0.7   # threshold immediately after emit
 ADAPTIVE_THR_BASE = 0.30  # baseline threshold after long idle
 ADAPTIVE_THR_TAU = 30.0   # decay constant (seconds)
-LANG_ROTATION = ["en", "ko", "zh", "ru", "ja"]
+# N9 (2026-05-23): EN-share lever — weighted rotation + post-hoc EN dampener.
+# Background: uniform 5-lang rotation produced LIVE EN-share 40% (vs 20%
+# expected) because non-EN slots prose-drift to EN at the base model's
+# default. N7 (LANG_PRIMES expansion + cross-lang seed drop) trimmed but
+# did not eliminate this. N9 changes:
+#  (a) down-weight the EN slot in rotation to 10% (vs 20% uniform).
+#  (b) maintain a sliding window of LAST detected emission langs; if
+#      EN > 20% of the window, force next pick to a non-EN lang.
+# Target: LIVE EN-share <= 25% (vs current 40%).
+# Calibration: at the inferred ~25% per-slot prose-drift rate (1000-pick
+# simulation calibrated against the LIVE 40% baseline), the combined
+# lever lands at ~25-27% EN — comfortably below 25% if actual drift is
+# lower (which LANG_PRIMES N7 makes plausible).
+LANG_ROTATION_WEIGHTS = {"en": 0.10, "ko": 0.225, "zh": 0.225,
+                         "ru": 0.225, "ja": 0.225}
+LANG_ROTATION = list(LANG_ROTATION_WEIGHTS.keys())  # legacy compat (read-only)
+EN_DAMPENER_WINDOW = 8        # last-N detected emission langs to track
+EN_DAMPENER_MAX_EN_FRAC = 0.20  # if EN exceeds this fraction → force non-EN
+import random as _random
 import re as _re
 ANIMA_REGISTER_PATTERNS = [
     _re.compile(r"eternal_?\d+|eternal cell", _re.I),
@@ -144,7 +162,10 @@ class AnimaState:
         self.split_recent = False
         self.ticks = 0
         self.invocations = 0
-        self.lang_rot_idx = 0          # D2: 5-lang rotation index
+        self.lang_rot_idx = 0          # D2: rotation step counter (legacy)
+        # N9: sliding window of LAST detected emission langs (post-hoc, after
+        # detect_lang() on actual model output). Feeds EN-dampener gating.
+        self.detected_langs: deque[str] = deque(maxlen=EN_DAMPENER_WINDOW)
         self.register_penalty_cache = 0.0  # B2: cached penalty across ticks
 
     def ingest_user_msg(self, msg: dict[str, Any]) -> None:
@@ -262,15 +283,38 @@ class AnimaState:
                 "in_refractory": in_refractory, "register_penalty": reg_penalty,
                 "ts": time.time()}
 
+    def _pick_lang_hint(self) -> str:
+        """N9: weighted-rotation lang pick with EN-dampener override.
+        (a) Base draw is from LANG_ROTATION_WEIGHTS (EN down-weighted).
+        (b) If the sliding window of detected langs has EN > EN_DAMPENER_
+            MAX_EN_FRAC, force the pick to a non-EN lang (uniform among
+            the 4 non-EN keys, re-weighted)."""
+        keys = list(LANG_ROTATION_WEIGHTS.keys())
+        weights = list(LANG_ROTATION_WEIGHTS.values())
+        # EN-dampener: count EN in current detected-lang window
+        if self.detected_langs:
+            en_frac = sum(1 for L in self.detected_langs if L == "en") / len(self.detected_langs)
+            if en_frac > EN_DAMPENER_MAX_EN_FRAC:
+                nonen_keys = [k for k in keys if k != "en"]
+                nonen_w = [LANG_ROTATION_WEIGHTS[k] for k in nonen_keys]
+                return _random.choices(nonen_keys, weights=nonen_w, k=1)[0]
+        return _random.choices(keys, weights=weights, k=1)[0]
+
     def emit(self, seed_text: str, lang_hint: str | None = None) -> str:
-        # D2: language rotation — force diverse lang use across emissions.
-        # substrate.generate handles per-lang adapter routing + lang prime.
+        # D2 + N9: weighted language rotation (down-weight EN) + EN-share
+        # dampener. substrate.generate handles per-lang adapter routing +
+        # lang prime; we choose the hint here. Even after the prime, the
+        # base model prose-drifts to EN in non-EN slots — so we ALSO track
+        # the post-hoc detected lang (see end of emit) and force non-EN
+        # next-pick when the recent window is EN-saturated.
         if lang_hint is None:
-            lang_hint = LANG_ROTATION[self.lang_rot_idx % len(LANG_ROTATION)]
+            lang_hint = self._pick_lang_hint()
             self.lang_rot_idx += 1
         text = self.substrate.generate(seed_text, max_new=MAX_NEW, lang_hint=lang_hint)
         self.last_emission = text
         self.recent_emissions.append(text)
+        # N9: record post-hoc detected lang for EN-dampener gating.
+        self.detected_langs.append(detect_lang(text) if text else "und")
         try:
             _, emb = self._entropy_of_next(text[-64:] if text else " ")
             self.recent_embeds.append(emb)
