@@ -1,0 +1,302 @@
+// PURE A — curriculum schedule launcher
+//
+// Emits 3 runpod-dispatched train scripts (launcher_A_S<step>_<uid>.sh)
+// into a workspace dir under state/pure_a_curriculum_<uid>/. Does NOT
+// dispatch any pod — emit only. Caller runs the emitted .sh in parallel.
+//
+// Usage:
+//   hexa run HEXAD/PURE/launchers/a_curriculum_launcher.hexa dry-run
+//   hexa run HEXAD/PURE/launchers/a_curriculum_launcher.hexa emit [--uid <tag>]
+//
+// Anchored against:
+//   - spec: HEXAD/PURE/spec/a_curriculum_spec_2026_05_23.md
+//   - dispatch precedent: HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/dispatch_p21h_v3_runpod.sh
+//   - train script: HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/train_p21h_v3.py
+//
+// IMPORTANT (cycle-1 P21H bug lesson):
+//   Use argparse --key value ONLY. Do NOT mix env-style positional args
+//   (KEY=V KEY=V python3 ...) — closure fires used argparse exclusively.
+//   The env exports below configure dispatch_sh's defaults; the dispatch
+//   script itself calls python with `--flag value` argv form.
+
+// -------------------------------------------------------------------
+// Helpers
+// -------------------------------------------------------------------
+
+fn _a_is_ws(c: str) -> bool {
+    return c == " " || c == "\t" || c == "\n" || c == "\r"
+}
+
+fn _a_strip_ws(s: str) -> str {
+    let n = len(s)
+    let mut lo = 0
+    while lo < n && _a_is_ws(s[lo]) { lo = lo + 1 }
+    let mut hi = n
+    while hi > lo && _a_is_ws(s[hi - 1]) { hi = hi - 1 }
+    let mut out = ""
+    let mut i = lo
+    while i < hi { out = out + s[i]   i = i + 1 }
+    return out
+}
+
+// -------------------------------------------------------------------
+// Constants — closure A fire hyperparams (§ 4 of spec)
+// -------------------------------------------------------------------
+
+fn _a_constants() -> dict {
+    return #{
+        "base_model": "Qwen/Qwen2.5-1.5B",
+        "init_variant": "qwen",
+        "steps": 5000,
+        "bsz": 2,
+        "block": 512,
+        "lr": "5e-5",
+        "warmup": 100,
+        "noise_sigma": "0.1",
+        "lambda_mitosis": "0.05",
+        "mitosis_max": 128,
+        "ckpt_every": 500,
+        "ckpt_osc_threshold": "0.0",
+        "ckpt_osc_window": 20,
+        "early_stop_patience": 0,
+        "target_corpus_mb": 72,
+        "seed": 1337,
+        "wiki_target_mb_per_lang": 10,
+        "langs": "en,ko,zh,ru,ja",
+        "phase1_wiki_frac": "1.0",
+        "phase2_wiki_frac": "0.3",
+        "dispatch_sh": "HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/dispatch_p21h_v3_runpod.sh"
+    }
+}
+
+fn _a_variants() -> list {
+    // S₁ ∈ {1000, 2000, 3000} — curriculum switch step
+    return [
+        #{ "tag": "S1000", "switch_step": 1000, "rationale": "early switch (20% wiki-only)" },
+        #{ "tag": "S2000", "switch_step": 2000, "rationale": "default (40% wiki-only)" },
+        #{ "tag": "S3000", "switch_step": 3000, "rationale": "late switch (60% wiki-only)" }
+    ]
+}
+
+// -------------------------------------------------------------------
+// argv parsing
+// -------------------------------------------------------------------
+
+fn _a_parse_argv(argv) -> dict {
+    let mut mode = "dry-run"
+    let mut uid = ""
+    let n = len(argv)
+    let mut i = 0
+    while i < n {
+        let a = argv[i]
+        if a == "emit" { mode = "emit"   i = i + 1 }
+        else if a == "dry-run" { mode = "dry-run"   i = i + 1 }
+        else if a == "--uid" && (i + 1) < n { uid = argv[i + 1]   i = i + 2 }
+        else if a == "-h" || a == "--help" { mode = "help"   i = i + 1 }
+        else { i = i + 1 }
+    }
+    if uid == "" {
+        // default uid = today's date YYYY_MM_DD via shell `date`
+        uid = _a_strip_ws(exec("date -u +%Y_%m_%d"))
+    }
+    return #{ "mode": mode, "uid": uid }
+}
+
+fn _a_usage() {
+    println("USAGE: hexa run a_curriculum_launcher.hexa <dry-run|emit> [--uid <tag>]")
+    println("")
+    println("  dry-run  — print what would be emitted, no files written (DEFAULT)")
+    println("  emit     — write 3 .sh files into state/pure_a_curriculum_<uid>/")
+    println("  --uid    — override workspace tag (default = YYYY_MM_DD UTC)")
+    println("")
+    println("  Each variant = curriculum switch step S₁ ∈ {1000, 2000, 3000}.")
+    println("  phase1: step < S₁  → wiki-only (anima_frac=0)")
+    println("  phase2: step ≥ S₁  → mixed (anima_frac=0.7, wiki_frac=0.3)")
+}
+
+// -------------------------------------------------------------------
+// .sh body generation
+// -------------------------------------------------------------------
+
+fn _a_render_sh(tag: str, switch_step: int, rationale: str, uid: str, K: dict) -> str {
+    // Build a bash script that wraps `bash <dispatch_sh> <VARIANT> <INIT> <SEED>`
+    // with all A-curriculum hyperparams as env exports. dispatch_sh reads them
+    // as ${P21H_KEY:-default} and passes to python via argparse --key value.
+    //
+    // NEW curriculum flags (require train_p21h_v3.py wiring patch — see § 8 C3 #5):
+    //   P21H_CURR_SWITCH_STEP   → --curriculum-switch-step
+    //   P21H_PHASE1_WIKI_FRAC   → --phase1-wiki-frac
+    //   P21H_PHASE2_WIKI_FRAC   → --phase2-wiki-frac
+    // These env vars are also passed inline to a wrapped python --flag override
+    // block at the tail of dispatch_sh (sibling-agent patch lands the train side).
+    let variant = "P21H_A_" + tag + "_" + uid
+    let lines = []
+    lines = lines + ["#!/usr/bin/env bash"]
+    lines = lines + ["# PURE A curriculum — variant " + tag + " (" + rationale + ")"]
+    lines = lines + ["# Auto-emitted by a_curriculum_launcher.hexa @ " + uid]
+    lines = lines + ["# DO NOT EDIT — re-emit from .hexa launcher."]
+    lines = lines + ["#"]
+    lines = lines + ["# Curriculum schedule:"]
+    lines = lines + ["#   step 0..S - 1     wiki-only (anima_frac=0, wiki_frac=" + K["phase1_wiki_frac"] + ")"]
+    lines = lines + ["#   step S..5000     mixed (wiki_frac=" + K["phase2_wiki_frac"] + ")"]
+    lines = lines + ["#   where S = " + to_string(switch_step)]
+    lines = lines + [""]
+    lines = lines + ["set -uo pipefail"]
+    lines = lines + [""]
+    lines = lines + ["# A-curriculum hyperparams (closure A fire byte-identical, + 3 curriculum flags)"]
+    lines = lines + ["export P21H_STEPS=" + to_string(K["steps"])]
+    lines = lines + ["export P21H_BSZ=" + to_string(K["bsz"])]
+    lines = lines + ["export P21H_BLOCK=" + to_string(K["block"])]
+    lines = lines + ["export P21H_WARMUP=" + to_string(K["warmup"])]
+    lines = lines + ["export P21H_LR=" + K["lr"]]
+    lines = lines + ["export P21H_WIKI_FRAC=" + K["phase2_wiki_frac"] + "  # phase-2 baseline; phase-1 forced 1.0"]
+    lines = lines + ["export P21H_CORPUS_MB=" + to_string(K["target_corpus_mb"])]
+    lines = lines + ["export P21H_WIKI_TARGET_MB_PER_LANG=" + to_string(K["wiki_target_mb_per_lang"])]
+    lines = lines + ["export P21H_LANGS=" + K["langs"]]
+    lines = lines + ["export P21H_NOISE_SIGMA=" + K["noise_sigma"]]
+    lines = lines + ["export P21H_LAMBDA_MITOSIS=" + K["lambda_mitosis"]]
+    lines = lines + ["export P21H_MITOSIS_MAX=" + to_string(K["mitosis_max"])]
+    lines = lines + ["export P21H_CKPT_EVERY=" + to_string(K["ckpt_every"])]
+    lines = lines + ["export P21H_CKPT_OSC_THRESHOLD=" + K["ckpt_osc_threshold"]]
+    lines = lines + ["export P21H_CKPT_OSC_WINDOW=" + to_string(K["ckpt_osc_window"])]
+    lines = lines + ["export P21H_EARLY_STOP_PATIENCE=" + to_string(K["early_stop_patience"])]
+    lines = lines + ["export P21H_BASE_MODEL=" + K["base_model"]]
+    lines = lines + [""]
+    lines = lines + ["# === CURRICULUM AXIS ==="]
+    lines = lines + ["export P21H_CURR_SWITCH_STEP=" + to_string(switch_step) + "  # ← variant axis"]
+    lines = lines + ["export P21H_PHASE1_WIKI_FRAC=" + K["phase1_wiki_frac"]]
+    lines = lines + ["export P21H_PHASE2_WIKI_FRAC=" + K["phase2_wiki_frac"]]
+    lines = lines + ["# These three require train_p21h_v3.py step-conditional sampler patch."]
+    lines = lines + ["# Until that patch lands, python argparse will reject unknown args (intentional gate)."]
+    lines = lines + [""]
+    lines = lines + ["# Watchdog: 5000 step × ~1.5s/step ≈ 7500s + eval + corpus build → 10800s (3 hr)"]
+    lines = lines + ["export WATCHDOG_SEC=10800"]
+    lines = lines + [""]
+    lines = lines + ["# Variant tag · init · seed → positional argv of dispatch_p21h_v3_runpod.sh"]
+    lines = lines + ["VARIANT=\"" + variant + "\""]
+    lines = lines + ["INIT=\"" + K["init_variant"] + "\""]
+    lines = lines + ["SEED=" + to_string(K["seed"])]
+    lines = lines + [""]
+    lines = lines + ["cd /Users/ghost/core/anima"]
+    lines = lines + ["bash " + K["dispatch_sh"] + " \"$VARIANT\" \"$INIT\" \"$SEED\""]
+    lines = lines + [""]
+    let mut body = ""
+    let mut j = 0
+    let nl = len(lines)
+    while j < nl {
+        body = body + lines[j] + "\n"
+        j = j + 1
+    }
+    return body
+}
+
+// -------------------------------------------------------------------
+// Workspace + emit
+// -------------------------------------------------------------------
+
+fn _a_workspace(uid: str) -> str {
+    return "state/pure_a_curriculum_" + uid
+}
+
+fn _a_emit(cfg: dict) {
+    let uid = cfg["uid"]
+    let mode = cfg["mode"]
+    let K = _a_constants()
+    let vs = _a_variants()
+    let wdir = _a_workspace(uid)
+
+    if mode == "emit" {
+        let _ = exec("mkdir -p " + wdir)
+    }
+
+    let mut i = 0
+    let n = len(vs)
+    while i < n {
+        let v = vs[i]
+        let tag = v["tag"]
+        let ss = v["switch_step"]
+        let rationale = v["rationale"]
+        let body = _a_render_sh(tag, ss, rationale, uid, K)
+        let path = wdir + "/launcher_A_" + tag + "_" + uid + ".sh"
+
+        if mode == "dry-run" {
+            println("=== [dry-run] would emit: " + path)
+            println("    variant=A-" + tag + "  switch_step=" + to_string(ss) + "  (" + rationale + ")")
+            println("    bytes=" + to_string(len(body)))
+        } else {
+            write_file(path, body)
+            let _ = exec("chmod +x " + path)
+            println("[emit] " + path + "  (" + to_string(len(body)) + " bytes)")
+        }
+        i = i + 1
+    }
+
+    // README-style manifest in the workspace
+    let manifest_lines = []
+    let manifest_lines2 = manifest_lines + ["# PURE A curriculum workspace " + uid]
+    let manifest_lines3 = manifest_lines2 + [""]
+    let manifest_lines4 = manifest_lines3 + ["Generated by: HEXAD/PURE/launchers/a_curriculum_launcher.hexa"]
+    let manifest_lines5 = manifest_lines4 + ["Spec: HEXAD/PURE/spec/a_curriculum_spec_2026_05_23.md"]
+    let manifest_lines6 = manifest_lines5 + [""]
+    let manifest_lines7 = manifest_lines6 + ["## variants"]
+    let manifest_lines8 = manifest_lines7 + [""]
+    let manifest_lines9 = manifest_lines8 + ["- A-S1000: S₁=1000 (early switch — 20% wiki-only)"]
+    let manifest_lines10 = manifest_lines9 + ["- A-S2000: S₁=2000 (default — 40% wiki-only)"]
+    let manifest_lines11 = manifest_lines10 + ["- A-S3000: S₁=3000 (late switch — 60% wiki-only)"]
+    let manifest_lines12 = manifest_lines11 + [""]
+    let manifest_lines13 = manifest_lines12 + ["## schedule"]
+    let manifest_lines14 = manifest_lines13 + [""]
+    let manifest_lines15 = manifest_lines14 + ["    step 0..S        wiki-only (anima_frac=0, wiki_frac=1.0)"]
+    let manifest_lines16 = manifest_lines15 + ["    step S..5000     mixed (wiki_frac=0.3, anima_frac=0.7)"]
+    let manifest_lines17 = manifest_lines16 + [""]
+    let manifest_lines18 = manifest_lines17 + ["## fire (caller-driven; @D a_wall_first → parallel):"]
+    let manifest_lines19 = manifest_lines18 + [""]
+    let manifest_lines20 = manifest_lines19 + ["    nohup bash launcher_A_S1000_" + uid + ".sh > A_S1000.log 2>&1 &"]
+    let manifest_lines21 = manifest_lines20 + ["    nohup bash launcher_A_S2000_" + uid + ".sh > A_S2000.log 2>&1 &"]
+    let manifest_lines22 = manifest_lines21 + ["    nohup bash launcher_A_S3000_" + uid + ".sh > A_S3000.log 2>&1 &"]
+    let manifest_lines23 = manifest_lines22 + [""]
+    let manifest_lines24 = manifest_lines23 + ["Expected wall: ~2 hr (parallel) · cost ~$9 (3 × H100 × 2hr × $1.49/hr)"]
+    let manifest_lines25 = manifest_lines24 + [""]
+    let manifest_lines26 = manifest_lines25 + ["## prerequisite"]
+    let manifest_lines27 = manifest_lines26 + [""]
+    let manifest_lines28 = manifest_lines27 + ["train_p21h_v3.py must accept these 3 new flags (sibling-agent patch):"]
+    let manifest_lines29 = manifest_lines28 + ["  --curriculum-switch-step <int>"]
+    let manifest_lines30 = manifest_lines29 + ["  --phase1-wiki-frac <float>"]
+    let manifest_lines31 = manifest_lines30 + ["  --phase2-wiki-frac <float>"]
+    let manifest_lines32 = manifest_lines31 + [""]
+    let manifest_lines33 = manifest_lines32 + ["Until the train script wiring lands, fire will fail at argparse (intentional gate)."]
+    let manifest_lines34 = manifest_lines33 + [""]
+    let mlines = manifest_lines34
+    let mut mbody = ""
+    let mut k = 0
+    let mn = len(mlines)
+    while k < mn {
+        mbody = mbody + mlines[k] + "\n"
+        k = k + 1
+    }
+    let mpath = wdir + "/README.md"
+    if mode == "dry-run" {
+        println("=== [dry-run] would emit manifest: " + mpath + "  (" + to_string(len(mbody)) + " bytes)")
+    } else {
+        write_file(mpath, mbody)
+        println("[emit] " + mpath + "  (" + to_string(len(mbody)) + " bytes)")
+    }
+}
+
+// -------------------------------------------------------------------
+// main — args() → parse → emit
+// -------------------------------------------------------------------
+
+fn main() {
+    let cfg = _a_parse_argv(args())
+    if cfg["mode"] == "help" {
+        _a_usage()
+        return
+    }
+    println("[a-curriculum-launcher] mode=" + cfg["mode"] + "  uid=" + cfg["uid"])
+    _a_emit(cfg)
+    println("[a-curriculum-launcher] done.")
+    if cfg["mode"] == "dry-run" {
+        println("[a-curriculum-launcher] re-run with `emit` to actually write the .sh files.")
+    }
+}
