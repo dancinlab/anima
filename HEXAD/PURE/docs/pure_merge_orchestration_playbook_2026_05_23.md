@@ -19,14 +19,20 @@
               │ (V3 → PURE rename · 16 f)│
               └─────────────┬────────────┘
                             │
-       ┌──────┬─────────────┼──────────────┬─────────┐
-       ▼      ▼             ▼              ▼         ▼
-  PR #228  PR #229      PR #233       <agent A>  <agent eval>
-  Track 1   B 증류    C head_g            ...        ...
-  (E2/E3)            objective
+       ┌──────┬──────┬──────┼──────┬──────┬──────┬──────┐
+       ▼      ▼      ▼      ▼      ▼      ▼      ▼      ▼
+  PR #228  #229   #233  <agtA> #240   #264   #265  <diag>
+  Track1  B증류  C head_g  A  eval  F4    launcher  ...
+  E2/E3                  커리큘럼 harness 가정    common
+                                    │
+                                    ▼
+                                 PR #263
+                                 F8 strip
+                                 parity
 ```
 
 추가로 head_g activation logger, register collapse detector 등 진단용 sibling 도 동일 base.
+PR #263 은 유일하게 base ≠ #220 (base = #240 eval harness) — eval harness 의 child.
 
 ## §2 머지 순서 (least-friction first)
 
@@ -37,7 +43,10 @@
    - **#229 B 증류** — Track 1 fallback.
    - **#233 C head_g objective** — Track 1 fallback.
    - **(agent A 커리큘럼)** — B∥A∥C 평행 트리오 완성.
-   - **(agent eval harness)** — 재사용 infra.
+   - **#240 eval harness** — 재사용 infra (5-lang multilingual probe SSOT).
+     - **#263 F8 strip parity** — #240 머지 후 rebase (eval harness child).
+   - **#264 F4 가정 surfacing** — closure rejection criterion docs (base=#220).
+   - **#265 launcher _common** — launcher SSOT skeleton (base=#220).
    - **(agent head_g logger)** — 로컬 진단.
    - **(agent register collapse detector)** — 로컬 진단.
 
@@ -63,7 +72,11 @@ gh pr edit <N> --base main  # switch base: refactor/hexad-v3-to-pure-rename → 
 | #228 × #233 | NO | trivial parallel |
 | #229 × #233 | NO | trivial parallel |
 | <agent A> × #228/#229/#233 | NO (다른 spec+launcher 이름) | trivial |
-| <agent eval> × all | maybe (launcher 가 eval probe path 사용 시 — 단 본 cycle 의 eval harness PR 은 신규 파일만 ADD) | rebase 시 review |
+| #240 eval × all | maybe (launcher 가 eval probe path 사용 시 — 단 본 cycle 의 eval harness PR 은 신규 파일만 ADD) | rebase 시 review |
+| #240 × #263 | NO (#263 = child stack, eval harness API surface 만 touch) | sequential merge (#240 먼저) |
+| #220 × #264 | NO (`HEXAD/PURE/docs/` F4 docs 만 신규 ADD) | trivial |
+| #220 × #265 | NO (`HEXAD/PURE/launchers/_common.hexa` + `ENV_CONTRACT.md` 신규 ADD) | trivial |
+| #265 × #228/#229/#233 | maybe (launcher 들이 `_common.hexa` import 채택 시) | #265 머지 후 sibling rebase 시 import 추가 |
 | <agent head_g logger> × <agent register collapse detector> | maybe (양쪽 모두 `HEXAD/PURE/tools/` touch 가능) | rebase 시 review |
 
 ## §5 PR 별 pre-merge gate
