@@ -161,6 +161,119 @@ fn pod_terminate(api_key: str, pod_id: str, save_pod: str, dry_run: bool) -> boo
     return true
 }
 
+// 3a. sources_upload — pod bootstrap (Phase D fire prereq) ----------------
+//
+// The pod image is stock `runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-
+// ubuntu22.04` — no anima sources pre-baked. Before any corpus build /
+// train launch, the 8 training-source python/bash files MUST be scp'd to
+// $P21HR on the pod, and the directory skeleton (state/corpus_s101_...,
+// state/carving_..., HEXAD/UNIVERSE-BRAIN-MAP/anchors, out_main,
+// wiki_parts, vp21m_adapter) MUST be mkdir'd to host the corpus build
+// outputs + adapter inputs.
+//
+// Legacy parity (HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/
+// dispatch_p21h_v3_runpod.sh lines 181-196): the bash sibling does the
+// same mkdir + 8-scp BEFORE any pod-side work. Without this, train_launch
+// fails at `bash $P21HR/launch_trainer_p21h.sh: No such file or directory`.
+//
+// Source files (resolved from $ANIMA_REPO subdirs):
+//   $S187_DIR := HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21
+//     - train_p21h_v3.py
+//     - launch_trainer_p21.sh           (renamed launch_trainer_p21h.sh on pod)
+//     - build_multilingual_corpus_p21m.py
+//     - conscious_decoder_v3.py
+//     - kosmos_io.py
+//     - mitosis_lib.py
+//   $BUILD_DIR := state/corpus_s101_build_s102_2026_05_19
+//     - build_corpus_s101.py
+//   $S16_DIR   := state/carving_dataregime_s16_2026_05_18
+//     - corpus_carving_s16_generator.py
+//
+// dry_run prints the planned scp + mkdir lines; no remote calls.
+
+fn _anima_repo_root() -> str {
+    // Static project root — `pwd` would point to the smoke's cwd in some
+    // invocations, which is unsafe. The launcher always runs from inside
+    // the anima checkout; the script + sources live at a known path.
+    return "/Users/ghost/core/anima"
+}
+
+fn sources_upload(host: str, opts: list, p21hr: str, dry_run: bool) -> bool {
+    let root = _anima_repo_root()
+    let s187 = root + "/HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21"
+    let bdir = root + "/state/corpus_s101_build_s102_2026_05_19"
+    let s16  = root + "/state/carving_dataregime_s16_2026_05_18"
+    // mkdir set — matches legacy dispatch_p21h_v3_runpod.sh line 185 EXACTLY.
+    let mkdir_argv = ["mkdir", "-p",
+        p21hr + "/state/corpus_s101_build_s102_2026_05_19",
+        p21hr + "/state/carving_dataregime_s16_2026_05_18",
+        p21hr + "/HEXAD/UNIVERSE-BRAIN-MAP/anchors",
+        p21hr + "/out_main",
+        p21hr + "/wiki_parts",
+        p21hr + "/vp21m_adapter",
+    ]
+    // 8 source files — local path → pod path. Note launch_trainer_p21.sh is
+    // renamed to launch_trainer_p21h.sh on the pod (legacy line 195).
+    let pairs = [
+        [s187 + "/train_p21h_v3.py",                  p21hr + "/train_p21h_v3.py"],
+        [s187 + "/launch_trainer_p21.sh",             p21hr + "/launch_trainer_p21h.sh"],
+        [s187 + "/build_multilingual_corpus_p21m.py", p21hr + "/build_multilingual_corpus_p21m.py"],
+        [s187 + "/conscious_decoder_v3.py",           p21hr + "/conscious_decoder_v3.py"],
+        [s187 + "/kosmos_io.py",                      p21hr + "/kosmos_io.py"],
+        [s187 + "/mitosis_lib.py",                    p21hr + "/mitosis_lib.py"],
+        [s16  + "/corpus_carving_s16_generator.py",   p21hr + "/state/carving_dataregime_s16_2026_05_18/corpus_carving_s16_generator.py"],
+        [bdir + "/build_corpus_s101.py",              p21hr + "/state/corpus_s101_build_s102_2026_05_19/build_corpus_s101.py"],
+    ]
+    if dry_run {
+        println("[dry-run] sources_upload: cloud_run_opts(" + host + ", mkdir -p 6 dirs under " + p21hr + ")")
+        let mut i = 0
+        while i < len(pairs) {
+            let local = to_string(pairs[i][0])
+            let remote = to_string(pairs[i][1])
+            println("[dry-run] sources_upload: cloud_copy_to_opts(" + host + ", " + local + " -> " + remote + ")")
+            i = i + 1
+        }
+        return true
+    }
+    // Pre-verify all 8 local sources exist (fail fast — better here than at
+    // train-launch time when the pod is already burning meter).
+    let mut j = 0
+    while j < len(pairs) {
+        let local = to_string(pairs[j][0])
+        let exists = exec("test -f " + local + " && echo yes || echo no").trim()
+        if exists != "yes" {
+            println("[sources_upload] FATAL — local source missing: " + local)
+            return false
+        }
+        j = j + 1
+    }
+    let mk = cloud_run_opts(host, opts, mkdir_argv)
+    if mk.ok != 1 {
+        println("[sources_upload] FATAL mkdir " + mk.message)
+        return false
+    }
+    let mut k = 0
+    while k < len(pairs) {
+        let local = to_string(pairs[k][0])
+        let remote = to_string(pairs[k][1])
+        let r = cloud_copy_to_opts(host, opts, local, remote)
+        if r.ok != 1 {
+            println("[sources_upload] FATAL scp " + local + " -> " + remote + ": " + r.message)
+            return false
+        }
+        println("[sources_upload] OK " + local + " -> " + remote)
+        k = k + 1
+    }
+    // chmod +x on launch_trainer_p21h.sh (legacy line 196).
+    let chmod_argv = ["chmod", "+x", p21hr + "/launch_trainer_p21h.sh"]
+    let cm = cloud_run_opts(host, opts, chmod_argv)
+    if cm.ok != 1 {
+        println("[sources_upload] WARN chmod +x launch_trainer_p21h.sh failed: " + cm.message)
+    }
+    println("[sources_upload] uploaded 8 sources + 6 mkdir dirs to " + host + ":" + p21hr)
+    return true
+}
+
 // 3. corpus build (stdlib/cloud cloud_run-wired) ---------------------------
 //
 // Default path: build corpus_s101 (anima feed) + multi_wiki (wiki feed) on
@@ -494,6 +607,10 @@ fn main() {
     let port = to_string(ssh["port"])
     let host = "root@" + ip
     let opts = runpod_pod_opts(port)
+    // Phase D fire prereq — pod image is stock; scp 8 sources + mkdir 6 dirs
+    // BEFORE corpus build / scp + BEFORE train_launch (else launch_trainer_p21h.sh
+    // doesn't exist on pod). Matches legacy dispatch_p21h_v3_runpod.sh:185-196.
+    let _ = sources_upload(host, opts, p21hr, dry_run)
     if use_corpus_override {
         let _ = corpus_scp_override(host, opts, p21hr, corpus_path, dry_run)
     } else {

@@ -1,16 +1,22 @@
 // HEXAD/PURE/launchers/dispatch_p21h_v3_smoke.hexa
 //
-// Smoke for dispatch_p21h_v3.hexa — 9 falsifiers:
-//   F-DISP-PARSE        — import succeeds (dispatcher parses)
-//   F-DISP-ARG-CONTRACT — argv defaults + per-init LR vs ENV_CONTRACT.md
-//   F-DISP-SHA256       — match / mismatch / missing-file / skip
-//   F-DISP-RESUME       — pick largest <= cap / absolute max / none / empty
-//   F-DISP-IMPORT       — stdlib/cloud + stdlib/cloud/runpod imports resolve
-//   F-DISP-DRYRUN       — default dry-run prints plan, exits 0, zero real calls
-//   F-DISP-MOT          — 8-factor motivation calc returns score >= 0 (synthetic)
-//   F-DISP-MIT16        — P21H_MITOSIS_MAX default == 16 (R6 cap, PR #310)
-//   F-DISP-CORPUS-PATH  — --corpus-path flag parses + dry-run branches to scp
-//                         override (skip corpus_s101 + multi_wiki builds)
+// Smoke for dispatch_p21h_v3.hexa — 10 falsifiers:
+//   F-DISP-PARSE          — import succeeds (dispatcher parses)
+//   F-DISP-ARG-CONTRACT   — argv defaults + per-init LR vs ENV_CONTRACT.md
+//   F-DISP-SHA256         — match / mismatch / missing-file / skip
+//   F-DISP-RESUME         — pick largest <= cap / absolute max / none / empty
+//   F-DISP-IMPORT         — stdlib/cloud + stdlib/cloud/runpod imports resolve
+//   F-DISP-DRYRUN         — default dry-run prints plan, exits 0, zero real calls
+//   F-DISP-MOT            — 8-factor motivation calc returns score >= 0 (synthetic)
+//   F-DISP-MIT16          — P21H_MITOSIS_MAX default == 16 (R6 cap, PR #310)
+//   F-DISP-CORPUS-PATH    — --corpus-path flag parses + dry-run branches to scp
+//                           override (skip corpus_s101 + multi_wiki builds)
+//   F-DISP-SOURCES-UPLOAD — sources_upload pod-bootstrap (Phase D fire prereq):
+//                           (1) fn exists + 8 local sources resolvable;
+//                           (2) dry-run prints 8 scp lines + 1 mkdir line;
+//                           (3) end-to-end --corpus-path dry-run shows
+//                               sources_upload BEFORE corpus override BEFORE
+//                               train_launch.
 
 import "./dispatch_p21h_v3.hexa"
 
@@ -210,6 +216,77 @@ fn _f_disp_corpus_path() -> int {
     return _assert(ok, "F-DISP-CORPUS-PATH — flag parses + dry-run branches to scp override (skip legacy builds)")
 }
 
+fn _f_disp_sources_upload() -> int {
+    // F-DISP-SOURCES-UPLOAD — pod-bootstrap fn must (a) be in scope, (b) emit
+    // 8 scp + 1 mkdir line on dry-run, (c) when wired into main() with
+    // --corpus-path, sources_upload fires BEFORE corpus_scp_override BEFORE
+    // train_launch (legacy parity vs dispatch_p21h_v3_runpod.sh:185-196).
+    let mut ok = true
+    // (1) 8 local sources resolvable (would fail-fast on a real fire).
+    let root = "/Users/ghost/core/anima"
+    let s187 = root + "/HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21"
+    let bdir = root + "/state/corpus_s101_build_s102_2026_05_19"
+    let s16  = root + "/state/carving_dataregime_s16_2026_05_18"
+    let sources = [
+        s187 + "/train_p21h_v3.py",
+        s187 + "/launch_trainer_p21.sh",
+        s187 + "/build_multilingual_corpus_p21m.py",
+        s187 + "/conscious_decoder_v3.py",
+        s187 + "/kosmos_io.py",
+        s187 + "/mitosis_lib.py",
+        s16  + "/corpus_carving_s16_generator.py",
+        bdir + "/build_corpus_s101.py",
+    ]
+    let mut i = 0
+    while i < len(sources) {
+        let exists = exec("test -f " + sources[i] + " && echo yes || echo no").trim()
+        if exists != "yes" {
+            println("    [sub-1] MISSING source: " + sources[i])
+            ok = false
+        }
+        i = i + 1
+    }
+    // (2) Direct dry-run call → 8 scp lines + 1 mkdir line printed.
+    //     We invoke the function in-process (dispatcher imported).
+    let tmp_log = exec("mktemp").trim()
+    let _ = exec("rm -f " + tmp_log)
+    // Capture sources_upload's dry-run println output. The dispatcher's
+    // sources_upload uses println which goes to stdout; we proxy via a
+    // subprocess wrapper (no stdout-capture builtin available).
+    let disp = exec("ls HEXAD/PURE/launchers/dispatch_p21h_v3.hexa 2>/dev/null || find . -name dispatch_p21h_v3.hexa -not -name '*smoke*' 2>/dev/null | head -1").trim()
+    let out2 = exec("hexa run " + disp + " P21H_test random 1337 2>&1; echo __RC__=$?")
+    if out2.index_of("__RC__=0") < 0 { ok = false }
+    if out2.index_of("[dry-run] sources_upload: cloud_run_opts") < 0 { ok = false }
+    // 8 scp lines expected — count substring occurrences via split.
+    let parts = out2.split("[dry-run] sources_upload: cloud_copy_to_opts")
+    if len(parts) - 1 != 8 {
+        println("    [sub-2] expected 8 scp lines, got " + to_string(len(parts) - 1))
+        ok = false
+    }
+    // mkdir line must mention 6 dirs marker.
+    if out2.index_of("mkdir -p 6 dirs") < 0 { ok = false }
+    // (3) End-to-end ordering with --corpus-path: sources_upload BEFORE
+    //     corpus_scp_override BEFORE train_launch.
+    let out3 = exec("hexa run " + disp + " --corpus-path /tmp/phaseD.jsonl P21H_PhaseD_smoke qwen 1337 2>&1; echo __RC__=$?")
+    if out3.index_of("__RC__=0") < 0 { ok = false }
+    let i_src = out3.index_of("[dry-run] sources_upload:")
+    let i_ovr = out3.index_of("[dry-run] corpus_scp_override:")
+    let i_trn = out3.index_of("[dry-run] train_launch:")
+    if i_src < 0 || i_ovr < 0 || i_trn < 0 {
+        println("    [sub-3] missing one of: sources_upload / corpus_scp_override / train_launch")
+        ok = false
+    }
+    if i_src >= i_ovr {
+        println("    [sub-3] sources_upload must precede corpus_scp_override")
+        ok = false
+    }
+    if i_ovr >= i_trn {
+        println("    [sub-3] corpus_scp_override must precede train_launch")
+        ok = false
+    }
+    return _assert(ok, "F-DISP-SOURCES-UPLOAD — 8 sources resolvable + dry-run prints 8 scp + 1 mkdir + ordering before override + train")
+}
+
 fn main() {
     println("[dispatch_p21h_v3_smoke] START")
     let mut n_pass = 0
@@ -222,7 +299,8 @@ fn main() {
     n_pass = n_pass + _f_disp_mot()
     n_pass = n_pass + _f_disp_mit16()
     n_pass = n_pass + _f_disp_corpus_path()
-    println("[dispatch_p21h_v3_smoke] END: " + to_string(n_pass) + "/9 PASS")
-    if n_pass < 9 { exit(1) }
+    n_pass = n_pass + _f_disp_sources_upload()
+    println("[dispatch_p21h_v3_smoke] END: " + to_string(n_pass) + "/10 PASS")
+    if n_pass < 10 { exit(1) }
     exit(0)
 }
