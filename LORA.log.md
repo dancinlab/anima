@@ -2,6 +2,15 @@
 
 > `LORA.md` 의 변경/작업 체크리스트. 최신이 위.
 
+## 2026-05-24 (cycle 16-17 — @goal 재정의 + 5 milestone 신규)
+
+- [x] LORA.md `@goal:` 라인 신규 추가 — "VP21M production swap 5/5 + V3 substrate Qwen-parity + wiring-integrity audit 완료"
+- [x] 이전 @goal ("init_CE catastrophic floor 돌파 + n_strong ≥ 4 stable + production adapter swap 가능") 의미 불명확 사유 명시 (H_255 partial FALSIFY · 14.x floor 미재현 · "floor/돌파" undefined · production metric 은 final_CE / n_strong / swap_criteria 5/5)
+- [x] 5 milestone 신규 (`- [ ]` checkbox · /domain milestone 자동 인식) — M1 VP21M swap 5/5 + M2 mini 배포 30d monitor + M3 V3 Qwen-parity (Δfinal_CE ≤ 0.1 nats) + M4 7-axis wiring fix + 진짜 ablation + M5 PREFIRE_WIRING_AUDIT_CHECKLIST 도입
+- [x] "진행 중 / 대기" 7 항목 → milestone 매핑 + closure marker (R8c=M3 부분, R8a''=M3 in-flight, #342=M4 prereq, Wave-17=M1 lever, AXIS_MAP 재측정=M4 main path)
+- [x] /gap F5 success-criteria motivation 흡수 — production-driven + substrate-pure + wiring-integrity 3-축 measurable goal
+- [ ] 사용자 결정 — M1 swap candidate v11 (Wave-15 sweet spot, continuous 34) vs v13 (eternal threshold 재정의 후 fire 필요)
+
 ## 2026-05-24 (cycle 13 — 5/5 done + R8a' wiring-fail 발견)
 
 - [x] cycle 13 phase-0 brainstorm depletion (5 cap) + fan-out parallel
