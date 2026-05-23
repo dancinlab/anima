@@ -1,0 +1,61 @@
+// PURE bilingual_mi_probe smoke — selftest + 5x5 matrix shape check.
+// Confirms F-BILINGUAL-1..3 PASS 3/3, then score_cross_lingual_leak yields
+// 5x5 mi_matrix (diag=0) + 20 cross-pair asymmetry entries on a synthetic
+// per-lang row dict with intentional cross-script leak.
+// Run: hexa run HEXAD/PURE/eval/bilingual_mi_probe_smoke.hexa
+
+import "HEXAD/PURE/eval/bilingual_mi_probe.hexa"
+
+fn _row(text: str) -> dict { return #{ "text": text } }
+
+fn _mixed_fixture() -> dict {
+    return #{
+        "en": [_row("Hello world this is English"),
+               _row("Quick brown fox 안녕 sneaks in"),
+               _row("Photosynthesis converts light")],
+        "ko": [_row("한국어 문장 입니다"),
+               _row("안녕하세요 hello 반갑습니다"),
+               _row("광합성은 빛을 화학에너지로")],
+        "zh": [_row("北京是中国的首都"),
+               _row("我喜欢学习 English 语言"),
+               _row("光合作用把光能转化")],
+        "ru": [_row("Москва столица России"),
+               _row("Привет hello как дела"),
+               _row("Фотосинтез превращает свет")],
+        "ja": [_row("こんにちは ありがとう"),
+               _row("私は English を勉強します"),
+               _row("光合成は光をエネルギー")]
+    }
+}
+
+fn main() {
+    println("[smoke] running module selftest ...")
+    let rc = _selftest()
+    if rc != 0 { println("[smoke] selftest FAIL rc=" + to_string(rc))  exit(rc) }
+
+    println("[smoke] selftest 3/3 PASS — exercising score_cross_lingual_leak ...")
+    let out = score_cross_lingual_leak(_mixed_fixture())
+    let langs = out["langs"]  let mi = out["mi_matrix"]  let asym = out["asymmetry"]
+
+    println("[mi_matrix] rows=src, cols=tgt, diag=0.0")
+    println("      en        ko        zh        ru        ja")
+    let mut i = 0
+    while i < 5 {
+        let src = langs[i]  let row = mi[src]
+        let mut line = src + "  "  let mut j = 0
+        while j < 5 { line = line + to_string(row[langs[j]]) + "  "  j = j + 1 }
+        println(line)
+        i = i + 1
+    }
+
+    let mut diag_zero = true  let mut k = 0
+    while k < 5 {
+        if mi[langs[k]][langs[k]] != 0.0 { diag_zero = false }
+        k = k + 1
+    }
+    let n_asym = len(keys(asym))
+    println("[smoke] diag_zero=" + to_string(diag_zero) + " · asymmetry entries=" + to_string(n_asym) + " (expect 20)")
+
+    if !diag_zero || n_asym != 20 { println("[smoke] SHAPE FAIL")  exit(1) }
+    println("[smoke] SHAPE PASS — wrapper skeleton ready for multilingual_probe wiring (separate PR)")
+}
