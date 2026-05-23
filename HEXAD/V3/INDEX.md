@@ -33,6 +33,9 @@ HEXAD/PURE/
 | `AXIS_R8_UPDATE_CLUSTER_FINDING_2026_05_23.md` | cluster X/Y/Z + cell-1 FALSIFIED 결과 (this cycle) | open | #214 stack | cell-1 FALSIFIED |
 | `AXIS_R8C_DIAGNOSTIC_PROBE.md` | 5-cell ablation protocol | open | #224 | spec |
 | `AXIS_R8C_PROBE_UPDATE_3_CELL_2026_05_23.md` | 3-cell 축소 (head_g cell-1 SKIP, this cycle) | open | #224 stack | 3-cell ready |
+| `eval/multilingual_probe.hexa` (F8) | eval harness — strip parity, whitespace-only → EMPTY | open | #263 | F8 strip fixed |
+| `AXIS_MAP.md` (F4 amendment) | closure rejection criterion pre-declaration (F4) | open | #264 | criterion declared |
+| `launchers/_common.hexa` + `ENV_CONTRACT.md` | launcher SSOT skeleton + env-var contract | open | #265 | skeleton landed |
 
 ## Reading order (recommended)
 
