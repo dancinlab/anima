@@ -2,7 +2,7 @@
 
 > **purpose**: [[AKIDA_FIRST]] Phase 1 (HW-first) 인프라의 단일 SSOT status — 무엇이 source-landed / live / blocked 인지, Phase 2 (SW-condition) 발동 게이트까지 무엇이 남았는지를 한 페이지로 본다.
 > **anchors**: [[AKIDA_FIRST]] (Phase 1/2 경계) · [[SW_CONDITION_DESIGN]] §6 (Phase 2 activation gate) · [[REGIME_EXPANSION]] (R1/R2/R3 schedule) · [[SPIKE_FACTOR_MAP]] (spike → 8-factor rulebook · `spontaneous_lib.hexa § 10` SSOT) · [[PARTICIPANT_SPIKE_INTEGRATION]] (path D / B wiring spec)
-> **status as of**: 2026-05-23 · main HEAD `0663e6c20`
+> **status as of**: 2026-05-23 (cycle 6/AB refresh) · main HEAD `ff7a0392d`
 > **scope**: spike ingest path + telemetry + Phase-2-gate observability + spec docs + cross-repo inbox patches. 본 ledger 는 snapshot — cycle 누적 시 재발행.
 
 ---
@@ -45,8 +45,8 @@
 +-----------------------------+----------------------------------+--------------------+------------------------------------+--------+--------------------+
 | SW_CONDITION_DESIGN.md      | Phase 2 SW spike emitter spec    | DESIGN (OPEN PR)   | HEXAD/SPONTANEOUS/SW_CONDITION_DESIGN.md | #135 OPEN | n/a (design)   |
 +-----------------------------+----------------------------------+--------------------+------------------------------------+--------+--------------------+
-| SPIKE_FACTOR_MAP.md         | spike → 8-factor rulebook        | DESIGN (OPEN PR)   | HEXAD/SPONTANEOUS/SPIKE_FACTOR_MAP.md | #134 OPEN | n/a (design)    |
-|                             | (standalone .md mirror of §10)   |                    |                                     |        |                    |
+| SPIKE_FACTOR_MAP.md         | spike → 8-factor rulebook        | LANDED (design)    | HEXAD/SPONTANEOUS/SPIKE_FACTOR_MAP.md | #154   | n/a (design)       |
+|                             | (standalone .md mirror of §10)   | (a1caceb6b)        |                                     |        |                    |
 +-----------------------------+----------------------------------+--------------------+------------------------------------+--------+--------------------+
 | REGIME_EXPANSION.md         | pi5 streamer R1/R2/R3 schedule   | LANDED (design)    | HEXAD/SPONTANEOUS/REGIME_EXPANSION.md| #141  | n/a (design)       |
 +-----------------------------+----------------------------------+--------------------+------------------------------------+--------+--------------------+
@@ -71,9 +71,25 @@
 |   cloud-runpod-session-     | (4 items, 2026-05-23)            |                    |                                     | lang   |                    |
 |   findings-anima            |                                  |                    |                                     | `c07b426f` | n/a            |
 +-----------------------------+----------------------------------+--------------------+------------------------------------+--------+--------------------+
+| participant_spike_overlay.  | path B skeleton daemon —         | SKELETON (branch)  | HEXAD/CHAT/server/participant_spike_| #163   | NO (guard + sshd)  |
+|   hexa (cycle 5/W)          | modulated_factors → overlay      | F-OVERLAY-1..3     |   overlay.hexa (branch:             | OPEN   |                    |
+|                             | (PARTICIPANT_OVERLAY_LIVE=0      | 10/10 selftest     |   feat/chat-participant-spike-      |        |                    |
+|                             | default, awaits guard relax /    | PASS               |   overlay-skeleton)                 |        |                    |
+|                             | anima_participant `.hexa` port)  |                    |                                     |        |                    |
++-----------------------------+----------------------------------+--------------------+------------------------------------+--------+--------------------+
+| telemetry_status.hexa       | modulation-health 섹션 extension | EXTENSION (branch) | HEXAD/CHAT/server/telemetry_status. | #164   | NO (sshd blocked)  |
+|   modulation-health 확장    | (modulated_factors row coverage  | F-STATUS-12..14    |   hexa (branch:                     | OPEN   |                    |
+|   (cycle 5/S)               |  + 0-event honest reporting)     | added → total      |   feat/telemetry-status-modulation- |        |                    |
+|                             |                                  | 20/20 selftest     |   health)                           |        |                    |
+|                             |                                  | PASS               |                                     |        |                    |
++-----------------------------+----------------------------------+--------------------+------------------------------------+--------+--------------------+
+| CHANGELOG.md                | 2026-05-23 Phase 1 AKIDA-first   | OPEN (branch)      | CHANGELOG.md (branch:               | #159   | n/a (doc)          |
+|   2026-05-23 entry          | 자연발화 인프라 entry (g29)      | sibling collision  |   docs/changelog-akida-first-       | OPEN   |                    |
+|   (cycle 5)                 |                                  | with #152          |   session-entry)                    |        |                    |
++-----------------------------+----------------------------------+--------------------+------------------------------------+--------+--------------------+
 ```
 
-행 수: **15** (anima 컴포넌트 8 + 설계 doc 5 + 인박스 4 — 단일 행에 통합한 hexa-lang 4 + anima 1 = 5).
+행 수: **18** (anima 컴포넌트 8 + cycle 5 추가 3 + 설계 doc 5 + 인박스 4 — 단일 행에 통합한 hexa-lang 4 + anima 1 = 5).
 
 ---
 
@@ -96,12 +112,14 @@
 | distribution stability              | 7d→14d→28d KS drift    | NOT_READY (분포 자체 0)                |
 |                                     | ≤ 10%                  |                                        |
 +-------------------------------------+------------------------+----------------------------------------+
-| §5 falsifier 사전 등록              | F-SW-COND-1..5 commit  | DONE (design landed in PR #135 OPEN —  |
-|                                     |                        | merge pending)                         |
+| §5 falsifier 사전 등록              | F-SW-COND-1..5 commit  | DESIGN-REGISTERED, MERGE-PENDING       |
+|                                     |                        | (PR #135 still OPEN as of cycle 6/AB — |
+|                                     |                        | source-registered on branch, main      |
+|                                     |                        | dead-link until merge)                 |
 +-------------------------------------+------------------------+----------------------------------------+
 ```
 
-4/5 gate = **NOT_READY: 0 evidence** (텔레메트리 라이브 deploy 가 차단되어 누적 시작 안됨). 1/5 (falsifier 사전 등록) 은 PR #135 merge 시 DONE 확정.
+4/5 gate = **NOT_READY: 0 evidence** (텔레메트리 라이브 deploy 가 차단되어 누적 시작 안됨 — cycle 5 동안 mini sshd block 미해소, telemetry_status.hexa modulation-health extension PR #164 도 source-branch only). 1/5 (falsifier 사전 등록) 은 PR #135 OPEN-not-merged → 정식 DONE 미달, source 만 등록.
 
 5/5 충족 + 사용자 GO → `sw_spike_emitter.hexa` 구현 fire 발사 ([[SW_CONDITION_DESIGN]] §6 verbatim).
 
@@ -129,12 +147,14 @@
 |    |                                     | 영구 deferred             | substrate-plugin re-impl 성숙    |              |
 +----+-------------------------------------+---------------------------+----------------------------------+--------------+
 | 4  | hexa-lang `hexa run` exec-capture   | hexa daemon stdout 살균   | hexa-lang upstream PR #398 +     | external     |
-|    | (PR #398) + sibling proc-spawn-     | / silent-swallow → daemon | sibling `1fa08afd` merge → 다음   | (hexa-lang   |
-|    | supervised silent-exit              | 진단 비가시               | hexa-lang release pull-in        | maintainer)  |
+|    | (PR #398, 2-layer block:            | / silent-swallow → daemon | sibling `1fa08afd` merge → 다음   | (hexa-lang   |
+|    | merge + require_last_push_approval  | 진단 비가시               | hexa-lang release pull-in        | maintainer)  |
+|    | per cycle 4/N) + sibling proc-      |                           | (approval-flag 동시 해소 필수)   |              |
+|    | spawn-supervised silent-exit        |                           |                                  |              |
 +----+-------------------------------------+---------------------------+----------------------------------+--------------+
 ```
 
-총 blocker 수: **4** (전부 외부 또는 user-directive 의존).
+총 blocker 수: **4** (전부 외부 또는 user-directive 의존). cycle 5 중 해소된 blocker: 0. 신규 격상 항목 없음 (PR #135 OPEN-not-merged 는 blocker 가 아닌 게이트 §2 row 의 status 정밀화 — main 측 dead-link 만 잔존).
 
 ---
 
@@ -158,8 +178,10 @@ ordered list — blocker resolution 시 순차 발화:
 - (c) **Phase 2 gate criteria 자체가 추측 — [[SW_CONDITION_DESIGN]] §7-(d) verbatim**: "표본 크기 threshold (§4 ≥7d ≥1000 events) 는 추측치 — Phase 1 evidence 가 도착하기 전엔 distribution stability 의 실제 saturation point 미관측. 1차 활성화 후 distribution drift 측정으로 threshold 재조정 필요할 가능성 농후."
 - (d) **pi5 maintainer 응답성 미상 — anima PR #145 inbox 패치는 external action 대기.** anima repo 측 통제권 0, 무한 deferred 가능 (worst-case Phase 2 영구 hold).
 - (e) **`modulated_factors` (cycle-4/O) 는 observability-only — [[PARTICIPANT_SPIKE_INTEGRATION]] §1 non-goals verbatim**: "(c) user-message-driven fire (substrate-native speak 위배), (d) AKIDA HW 부재 시 SW fallback (Phase 2 carry), (e) broker.py 편집". live `decision["factors"]` 영향 0, hypothetical mirror.
-- (f) **PR #134 (SPIKE_FACTOR_MAP) + PR #135 (SW_CONDITION_DESIGN) 가 OPEN — cross-link 의 절반이 main 에 미존재.** 본 doc 의 `[[SW_CONDITION_DESIGN]]` / `[[SPIKE_FACTOR_MAP]]` reference 는 branch-only resolution; main HEAD 만 보는 reader 에겐 dead-link.
+- (f) **PR #135 (SW_CONDITION_DESIGN) 가 OPEN — cross-link 의 일부가 main 에 미존재.** SPIKE_FACTOR_MAP.md 는 PR #154 (`a1caceb6b`) 로 main 진입 (cycle 4/P), `[[SPIKE_FACTOR_MAP]]` cross-link main-resolve 완료. `[[SW_CONDITION_DESIGN]]` reference 는 여전히 branch-only resolution; main HEAD 만 보는 reader 에겐 dead-link.
 - (g) **inbox 패치 5종 (anima 1 + hexa-lang 4) 모두 upstream action 의존** — anima repo 측은 "filed + tracked" 까지만 책임. merge 시점 / 적용 책임이 split 되므로 본 ledger 의 inbox 행은 진척 추적 단독.
+- (h) **`participant_spike_overlay.hexa` (cycle 5/W, PR #163) 은 selftest-only skeleton** — [[PARTICIPANT_SPIKE_INTEGRATION]] §4 Step 1 (`anima_participant.hexa` 포팅) + Step 2 (`PARTICIPANT_OVERLAY_LIVE=1` 환경 게이트 활성) 둘 다 외부 발생 전까지 live 행동 신호 0. pre-position 의의만 카운트.
+- (i) **modulation-health 섹션 (cycle 5/S, PR #164) 의 row 카운트는 `telemetry_harness` 의 `modulated_factors` 필드 production 진입 의존** — mini sshd block 으로 telemetry_harness deploy 불가 → 모든 deploy 가능 시점까지 modulation-health 섹션은 `total_rows: 0` 무한 보고. 코드 path 는 PASS, evidence path 는 0.
 
 ---
 
