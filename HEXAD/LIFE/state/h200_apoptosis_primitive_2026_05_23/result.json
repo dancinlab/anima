@@ -1,0 +1,44 @@
+{
+  "id": "H_200",
+  "slug": "apoptosis-primitive",
+  "phase": "directional_proxy_smoke",
+  "date": "2026-05-23",
+  "deterministic": true,
+  "hexa_only": true,
+  "llm": "none",
+  "cost": "$0 mac local",
+  "honest_tier": "🟢 SUPPORTED-NUMERICAL (phi_spatial; pseudo-apoptosis is still a proxy — true semantics requires upstream apoptose_cell primitive)",
+  "phi_primitive": "RFC 036 phi_spatial (HEXAD/C/c_lib.hexa c_measure_phi, byte-equal phi_rs native replica)",
+  "config": { "N_INIT": 8, "DIM": 16, "N_DEATHS": 3, "DEATH_STRIDE": 4, "PHI_N_BINS": 4, "SEP_FLOOR": 1e-06 },
+  "phi": {
+    "arm_a_baseline": 1.75717,
+    "arm_b_merge_as_death": 1.73465,
+    "arm_c_pseudo_apoptosis": 1.67608,
+    "arm_b_rerun": 1.73465,
+    "arm_c_rerun": 1.67608,
+    "gap_b_minus_c": 0.0585765,
+    "abs_gap_bc": 0.0585765,
+    "gap_a_minus_b": 0.0225199,
+    "gap_a_minus_c": 0.0810964
+  },
+  "counts": {
+    "alive_a": 8,
+    "alive_b": 5,
+    "alive_c": 5,
+    "expected_alive_a": 8,
+    "expected_alive_bc": 5,
+    "deaths_a": 0,
+    "deaths_b": 3,
+    "deaths_c": 3
+  },
+  "falsifiers": {
+    "F1_NONNEG": true,
+    "F2_DISTINCT_b_c": true,
+    "F3_DETERMINISM": true,
+    "F4_COUNT_CONSERVATION": true,
+    "AUX_phi_c_ge_phi_b": false
+  },
+  "verdict": "PASS",
+  "verdict_rule": "directional SUPPORTED iff F1 + F2 + F3 + F4 PASS",
+  "note": "directional only — apoptosis primitive substrate gap (H_025 L2) is real: merge-as-death and pseudo-apoptosis give DISTINCT Φ. True primitive = inbox/patches/apoptosis-primitive.md upstream filing."
+}
