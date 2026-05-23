@@ -1,0 +1,41 @@
+{
+  "id": "H_251",
+  "slug": "ising-criticality",
+  "date": "2026-05-24",
+  "deterministic": true,
+  "hexa_only": true,
+  "llm": "none",
+  "cost": "$0 mac local",
+  "phi_primitive": "RFC 036 phi_spatial (byte-equal phi_rs native replica)",
+  "config": { "lattice_side": 16, "n_cells": 256, "dim": 12, "steps_eq": 200, "frame_interval": 64, "n_bins": 4, "J": 1.0, "seed_base": 202236497, "boundary": "periodic" },
+  "T_c_onsager": 2.2692,
+  "T_sweep": [1.0, 2.0, 2.27, 2.5, 4.0],
+  "phi_at_T": {
+    "T_1.00_frozen":       0.000209392,
+    "T_2.00_subcritical":  0.000432591,
+    "T_2.27_near_Tc":      0.000432591,
+    "T_2.50_supercritical":0.000608564,
+    "T_4.00_chaotic":      0.0175665
+  },
+  "phi_T_2.27_rerun": 0.000432591,
+  "peak_T": 4.0,
+  "peak_phi": 0.0175665,
+  "peak_idx": 4,
+  "criteria": {
+    "C1_SINGLE_PEAK":  { "verdict": "FAIL", "peak_idx": 4 },
+    "C2_PEAK_NEAR_TC": { "verdict": "FAIL", "peak_T": 4.0, "window": [1.8, 2.7] },
+    "C3_ORDERED_LOW":  { "verdict": "FAIL", "phi_T1": 0.000209392, "phi_T4": 0.0175665 },
+    "C4_BYTE_IDENT":   { "verdict": "PASS" }
+  },
+  "falsifiers": {
+    "F1_MONOTONE":      { "triggered": true },
+    "F2_BOUNDARY_PEAK": { "triggered": true },
+    "F3_PEAK_FAR_TC":   { "triggered": true },
+    "F4_BYTE_DIFF":     { "triggered": false },
+    "F5_PHI_INVALID":   { "triggered": false }
+  },
+  "verdict_rule": "SUPPORTED iff C1+C2+C3 PASS; PARTIAL_DIRECTIONAL if C1 PASS AND (C2 OR C3); FAIL if C1 FAIL; FALSIFIED if any F1-F5 TRIGGERED",
+  "verdict": "FALSIFIED",
+  "criteria_met": 1,
+  "honest_tier": "🟢 SUPPORTED-NUMERICAL (phi_spatial RFC 036 native; NOT 🔵 formal IIT 4.0)"
+}
