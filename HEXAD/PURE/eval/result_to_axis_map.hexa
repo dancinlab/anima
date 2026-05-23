@@ -5,7 +5,8 @@
 // Usage: hexa run .../result_to_axis_map.hexa [--floor PARTIAL|PASS] [--min-langs N] <variant> <result_json>
 //
 // Result.json shape: {verdict, per_lang_verdicts:[{lang, verdict, n_score, n_generalize, n_lang_coherent}],
-// n_anima_register_hits_total, register_regress, init_log_ce, final_log_ce, train_wall_s}
+// n_anima_register_hits_total, register_regress, init_log:{L_ce,...}, final_log:{L_ce,...}, train_wall_s}
+// Legacy flat keys init_log_ce / final_log_ce are still accepted as fallback.
 
 fn _verdict_rank(v: str) -> int {
     if v == "STRONG" { return 2 }
@@ -92,6 +93,30 @@ fn _cell(d: dict, key: str) -> str {
     return "—"
 }
 
+// Nested lookup: result[outer][inner] — actual Track-1 schema for init_log / final_log.
+// Falls back to flat result[flat_key] (legacy fixtures), then "—" if truly missing.
+// has_key guards suppress hexa interp's "map key not found" stderr noise.
+fn _nested_cell(d: dict, outer: str, inner: str, flat_key: str) -> str {
+    if has_key(d, outer) {
+        let sub = d[outer]
+        if type_of(sub) == "map" && has_key(sub, inner) {
+            let v = sub[inner]
+            let t = type_of(v)
+            if t == "int" || t == "float" { return to_string(v) }
+            if t == "string" { return v }
+            if t == "bool" { if v { return "yes" } return "no" }
+        }
+    }
+    // Legacy flat fallback: result["init_log_ce"] / result["final_log_ce"].
+    if has_key(d, flat_key) {
+        let flat = d[flat_key]
+        let ft = type_of(flat)
+        if ft == "int" || ft == "float" { return to_string(flat) }
+        if ft == "string" { return flat }
+    }
+    return "—"
+}
+
 fn format_axis_map_row(variant: str, result: dict, judgement: dict) -> str {
     // | variant | closure | agg | n_pass/n_total | per-lang | reg hits | regress | init CE | final CE | wall s |
     return "| " + variant + " | " + judgement["closure"] + " | " + _cell(result, "verdict")
@@ -99,7 +124,8 @@ fn format_axis_map_row(variant: str, result: dict, judgement: dict) -> str {
          + " | " + _per_lang_compact(result["per_lang_verdicts"])
          + " | " + _cell(result, "n_anima_register_hits_total")
          + " | " + _cell(result, "register_regress")
-         + " | " + _cell(result, "init_log_ce") + " | " + _cell(result, "final_log_ce")
+         + " | " + _nested_cell(result, "init_log", "L_ce", "init_log_ce")
+         + " | " + _nested_cell(result, "final_log", "L_ce", "final_log_ce")
          + " | " + _cell(result, "train_wall_s") + " |"
 }
 
