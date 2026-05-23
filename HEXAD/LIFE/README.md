@@ -12,6 +12,7 @@ working surface**.
 |---|---|
 | `hypotheses_legacy_2026_05_15/` | **원본 archive** (HEXAD pivot 2026-05-15 이전 SSOT, 183 H_XXX). 본 dir 의 가설들은 거기서 carry-by-copy — **원본 그대로 보존, 미수정** |
 | `HEXAD/LIFE/` (본 dir) | LIFE 도메인 active hypothesis lane — cycle 진행 시 신규 H_XXX add + 기존 carry 가설 cycle 확장 |
+| `HEXAD/LIFE/CANDIDATES.md` | 다음 cycle 후보 백로그 (forward-looking) — `/cycle` pick source · 본 인덱스의 future-state 입력 |
 | `HEXAD/LAB/` | ad-hoc 실험 instance (도메인 미분류 / 단발 measurement). LAB → LIFE promote 경로 존재 |
 | `HEXAD/CHECK/` | verification frontier (Φ / IIT / closed-form) — LIFE 가설의 verify 도구 |
 | `HEXAD/MITOSIS/` | 성장축 ⊥ HEXAD-6 (orthogonal). 세포 분열/병합 의 구조 anchor — LIFE/H_132 (frozen-cells) 와 cross-link |
