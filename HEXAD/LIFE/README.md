@@ -38,7 +38,10 @@ weak-panpsy threshold) 가 본 dir 의 cross-domain 운용 instance.
 | `HEXAD/CHECK/` | verification frontier (Φ / IIT / closed-form) — LIFE 가설의 verify 도구 |
 | `HEXAD/MITOSIS/` | 성장축 ⊥ HEXAD-6 (orthogonal). 세포 분열/병합 의 구조 anchor — LIFE/H_132 (frozen-cells) 와 cross-link |
 
-## 가설 인덱스 (18건, 2026-05-23 Cycle #4 후)
+## 가설 인덱스 (40건, 2026-05-24 H_245 후)
+
+> 아래 표는 R1 batch (Cycle #4) 시점 핵심 18건 + 후속 cycle 신규 H (H_202~H_245) 누적.
+> 전체 40 H_XXX 파일은 `HEXAD/LIFE/H_*.md` 참조 (R3~R8 cycle + post-deploy baseline 흡수분 포함).
 
 | ID | Slug | Domain | Status | 핵심 |
 |----|------|--------|--------|------|
@@ -60,6 +63,7 @@ weak-panpsy threshold) 가 본 dir 의 cross-domain 운용 instance.
 | [H_171](H_171_biological_4_falsifiable_predictions_k8_fc010.md) | biological-4-falsifiable-predictions | consciousness · **biology** | running (Cycle #1) | **substrate-side FALSIFIED** (PR #196) · K=8 atom bare-CA proxy 가 spec'ed bio 4-pred 미재현 |
 | [H_200](H_200_apoptosis_primitive.md) | apoptosis-primitive | **life** · substrate | NEW (PR #198) | 능동적 cell-death event substrate primitive (H_025 L2 gap close) — death ≠ merge |
 | [H_201](H_201_asymmetric_division.md) | asymmetric-division | **life** · substrate | NEW (PR #199) | stem-cell 식 비대칭 분열 — 다양성 vs 항상성 trade-off, mitosis split variant |
+| [H_245](H_245_strategy_diversity_temporal_emergence.md) | strategy-diversity-temporal-emergence | **substrate** · consciousness | NEW (PR #306 흡수) | post-deploy baseline — emit-motivation strategy repertoire 시간-다양화 (monoculture→diversity) + score unimodal→bimodal · H_240 sister |
 
 > 상태: **lane-open** 다중-cycle research · **running** 측정 in-flight · **pre-register-frozen** raw#12 frozen falsifier · **legacy-archive-pointer** = 원본 archive 의 안내 카드 (본문은 1-paragraph + legacy path link 위주, cycle 확장은 본 dir 에서)
 
