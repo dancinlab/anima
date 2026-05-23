@@ -110,3 +110,50 @@ glob 대상 SSOT — `<N>` 은 zero-pad 없이 정수 그대로 (예: `ckpt_step
 4. `pure_launcher_uid` 의 6-hex 랜덤은 충돌 방지가 weak — 동일 초에 두
    런처가 같은 closure 에서 emit 하면 충돌 가능. 본 directive 하에서는
    런처가 sequential emit 이므로 실용상 문제 없음.
+5. §6 corpus_quality 6-metric 은 **syntactic-only** (byte/공백토큰/Hangul
+   triplet 통계). 의미·진실성·register 자체를 직접 측정하지 않으며 p7
+   NO PERPLEXITY VERDICT 준수 (PR #287 C3 참조). M5 가 register-imbalance
+   의 *신호* 이지 정의가 아님 — 진단은 model dynamics 와 합작 해석한다.
+
+---
+
+## 6. corpus_quality 산출물 계약
+
+`HEXAD/PURE/eval/corpus_quality_probe.hexa` (PR #287) 의 6-metric scorer
+출력 계약. closure-fire launcher / eval consumer 가 corpus 측 품질을
+정량화할 때의 SSOT. 측정은 **byte 관측만** (p7 · Law 2 observe-never-inject).
+
+| metric | 정의 | 범위 | 용도 |
+|--------|------|------|------|
+| M1 `m1_entropy` | byte freq Shannon 엔트로피 (bit) | 0 – 8 | 전반 정보 밀도 |
+| M2 `m2_bigram_mi` | 인접 byte 상호정보 (cap 512B) | ≥ 0 | 국소 구조성 |
+| M3 `m3_ttr` | 공백 토큰 TTR (uniq/total) | 0 – 1 | 어휘 다양성 |
+| M4 `m4_avg_line` | 비어있지 않은 줄 평균 길이 (byte) | > 0 | 줄 형태 프로파일 |
+| M5 `m5_hangul` | distinct Hangul triplet / 2350 | ≥ 0 | register/언어 비중 신호 |
+| M6 `m6_kl_uniform` | KL(P_byte ‖ U_256), 클수록 skew | ≥ 0 | byte 분포 편향 |
+
+### `score <path> [--sample-bytes N] [--out json]`
+
+```json
+{ "path": "<path>", "n_bytes": int, "n_lines": int, "sample_bytes": int,
+  "m1_entropy": float, "m2_bigram_mi": float, "m3_ttr": float,
+  "m4_avg_line": float, "m5_hangul": float, "m6_kl_uniform": float }
+```
+
+`--sample-bytes` (default 1000000) 는 corpus 앞부분 truncate 상한;
+`n_lines` 는 비어있지 않은 줄 수, `n_bytes` 는 실제 샘플 길이.
+
+### `compare <a> <b> [--sample-bytes N] [--out json]`
+
+```json
+{ "a": { ...score(a)... }, "b": { ...score(b)... },
+  "diff": { "m1_entropy": float, "m2_bigram_mi": float, "m3_ttr": float,
+            "m4_avg_line": float, "m5_hangul": float, "m6_kl_uniform": float } }
+```
+
+`diff` 는 항상 **b − a** (pairwise). `a`/`b` 는 각각 위 `score` 스키마.
+
+**PR #303 발견 anchor** — Track 1 5건 측정: M1 entropy · M6 KL_uniform 가
+거의 동일 (Δ ≤ 0.07) → "corpus quality 부족" 가설 비지지. **M5 hangul** 만
+anima-OWN 24–32% vs wiki 3% 로 갈림 → M5 = **register-imbalance 신호**
+(E2 ko PURE_MEMORIZE 진단의 corpus-side 정합 증거).
