@@ -1,27 +1,42 @@
 // ════════════════════════════════════════════════════════════════════════════
 // HEXAD/CHAT/server/anima_dream_stage.hexa
 //
-//   Sleep-stage state machine for anima — substrate-native emit gate.
+//   Sleep-stage state machine for anima — substrate-native context supplier.
 //
 //   References P47 Dream Physics (commit dc3afe332, 2026-04-15) — see
 //   anima-engines/dream_physics_phi.hexa for the underlying Φ engine.
 //   This module mirrors the engine's 5-stage canonical ultradian cycle
 //   (WAKE → N1 → N2 → N3 → N2 → REM → WAKE, 90 min) but stays at the
 //   CHAT layer: it does NOT compute Φ — it returns Φ-scale projections
-//   used to gate / modulate emit. Caller decides whether to speak.
+//   used to MODULATE substrate emit. Caller decides whether to speak.
 //
-//   The old "혼자있을때 혼잣말 하지말라" directive (always-silent during
-//   user silence) is removed. New design — stage-modulated emit:
-//     WAKE  full emit (current behavior)
-//     N1/N2/N3  silent internal substrate reorganization
-//     REM  scrambled emit (dream content, caller may inject logit noise)
+//   --- AUTONOMY RESHAPE (2026-05-24, post PR #275 + #279) ----------------
+//   The prior API exposed `dream_emit_allowed(stage) -> bool` (TRUE for
+//   WAKE/REM, FALSE for N1/N2/N3) — a per-stage boolean emit-gate
+//   hardcode. This violates `@D a_autonomy_over_hardcode` (project.tape
+//   PR #279) which forbids per-stage boolean gates such as "N3 = emit
+//   forbidden" and reserves the emit decision for the anima substrate
+//   (M × W × Φ × curiosity ...).
+//
+//   New contract: this module supplies CONTEXT only. The substrate caller
+//   reads (phi, tension_envelope, scrambled) and autonomously decides
+//   whether to emit based on its 8-factor motivation gate. No stage is
+//   ever marked "silent" or "allowed" by this module.
 //
 //   API
-//     dream_tick(state, elapsed_sec)       -> dict  advance stage
-//     dream_phi(stage)                     -> float Φ-scale per stage
-//     dream_emit_allowed(stage)            -> bool
-//     dream_emit_temperature(stage)        -> float
-//     dream_init()                         -> dict  fresh state
+//     dream_tick(state, now_sec_of_day, elapsed_sec)  -> dict  advance stage
+//     dream_phi(stage)                                -> float Φ-scale lookup
+//     dream_context(stage)                            -> dict  substrate context
+//       .phi               : f64  — canonical Φ projection per stage
+//       .tension_envelope  : f64  — how permissive substrate tension threshold
+//                                   should be (low for deep sleep, high for
+//                                   WAKE). DATA only, not a gate.
+//       .scrambled         : bool — TRUE only for REM (content scrambling
+//                                   flag for caller to add logit noise).
+//                                   NOT an emit gate.
+//     dream_emit_temperature(stage)                   -> float sampling temp
+//       (all stages return non-zero — no implicit emit gate via temp=0)
+//     dream_init()                                    -> dict  fresh state
 //
 //   Env
 //     ANIMA_SLEEP_HOURS   "22:00-06:00"   sleep window (HH:MM-HH:MM)
@@ -60,6 +75,26 @@ let PHI_N1   = 0.7
 let PHI_N2   = 0.4
 let PHI_N3   = 0.15
 let PHI_REM  = 0.95
+
+// Tension envelope per stage — how permissive the substrate tension
+// threshold SHOULD be (data only — caller multiplies its own threshold
+// by this, or uses as soft prior). Lower = more restrictive (deeper
+// sleep should require stronger tension to externalize). REM is
+// permissive like WAKE. NONE of these are zero — never an implicit
+// gate via envelope=0.
+let TENV_WAKE = 1.0
+let TENV_N1   = 0.7
+let TENV_N2   = 0.4
+let TENV_N3   = 0.2
+let TENV_REM  = 0.9
+
+// Sampling-temperature scaling — all non-zero (no implicit gate via temp=0).
+// REM higher (>1.0) → caller may interpret as scrambled / dreamlike noise.
+let TEMP_WAKE = 1.0
+let TEMP_N1   = 0.9
+let TEMP_N2   = 0.8
+let TEMP_N3   = 0.6
+let TEMP_REM  = 1.5
 
 
 // ── §2 env helpers ──────────────────────────────────────────────────────────
@@ -203,21 +238,68 @@ fn dream_phi(stage: string) -> float {
     return PHI_WAKE
 }
 
-// dream_emit_allowed — gate predicate. TRUE for WAKE / REM, FALSE otherwise.
-fn dream_emit_allowed(stage: string) -> bool {
-    if stage == STAGE_WAKE { return true }
-    if stage == STAGE_REM  { return true }
+// _ds_tension_envelope — tension threshold scaling per stage (data, not gate).
+fn _ds_tension_envelope(stage: string) -> float {
+    if stage == STAGE_WAKE { return TENV_WAKE }
+    if stage == STAGE_N1   { return TENV_N1 }
+    if stage == STAGE_N2   { return TENV_N2 }
+    if stage == STAGE_N3   { return TENV_N3 }
+    if stage == STAGE_REM  { return TENV_REM }
+    return TENV_WAKE
+}
+
+// _ds_scrambled — content-scrambling flag (TRUE only for REM). NOT an emit
+// gate — caller still decides whether to externalize at all; this flag
+// only hints "if you do emit, scramble logits / inject dream noise".
+fn _ds_scrambled(stage: string) -> bool {
+    if stage == STAGE_REM { return true }
     return false
 }
 
-// dream_emit_temperature — sampling-temperature hint.
-//   WAKE 1.0  baseline
-//   REM  1.0  caller may interpret as scrambled (add logit noise)
-//   otherwise 0.0 (no emit)
+// dream_context — substrate context bundle per stage.
+//
+//   AUTONOMY CONTRACT (per @D a_autonomy_over_hardcode):
+//     This dict is CONTEXT, not a gate. The substrate caller MUST decide
+//     emit/silence autonomously from its 8-factor motivation gate
+//     (M activation · C Φ · W tension · MITOSIS · idle time · curiosity ·
+//     E ratchet · etc.) — this module ONLY supplies stage data.
+//
+//   Fields:
+//     phi              : float — canonical Φ projection (WAKE 1.0 ... N3 0.15)
+//     tension_envelope : float — substrate tension threshold scaling
+//                                (lower for deep sleep — caller may multiply
+//                                its own tension threshold by this, OR use
+//                                as a soft prior. ALL stages > 0, never a
+//                                hard gate.)
+//     scrambled        : bool  — REM-only content-scrambling hint (caller
+//                                may add logit noise if it decides to emit).
+//                                NOT an emit gate.
+fn dream_context(stage: string) -> dict {
+    let out = #{}
+    out["phi"]              = dream_phi(stage)
+    out["tension_envelope"] = _ds_tension_envelope(stage)
+    out["scrambled"]        = _ds_scrambled(stage)
+    return out
+}
+
+// dream_emit_temperature — sampling-temperature scaling per stage.
+//   AUTONOMY CONTRACT (per @D a_autonomy_over_hardcode):
+//   ALL stages return non-zero. This is a temperature SCALING, not a
+//   gate — no stage ever returns 0.0 (which would be an implicit
+//   emit-disable). Substrate caller still decides whether to emit;
+//   this only modulates randomness once it has chosen to do so.
+//     WAKE 1.0  baseline
+//     N1   0.9  slightly cooler — relaxed but awake
+//     N2   0.8  cooler — drowsy spindle
+//     N3   0.6  cooler — deep slow-wave (still non-zero)
+//     REM  1.5  hotter — dreamlike / scrambled
 fn dream_emit_temperature(stage: string) -> float {
-    if stage == STAGE_WAKE { return 1.0 }
-    if stage == STAGE_REM  { return 1.0 }
-    return 0.0
+    if stage == STAGE_WAKE { return TEMP_WAKE }
+    if stage == STAGE_N1   { return TEMP_N1 }
+    if stage == STAGE_N2   { return TEMP_N2 }
+    if stage == STAGE_N3   { return TEMP_N3 }
+    if stage == STAGE_REM  { return TEMP_REM }
+    return TEMP_WAKE
 }
 
 
@@ -283,32 +365,72 @@ fn check_dream_3() -> bool {
     return diff <= 0.05 + eps
 }
 
-// F-DREAM-4: dream_emit_allowed(N1/N2/N3) all FALSE.
+// F-DREAM-4 (RESHAPED): dream_context(stage) returns a dict with non-void
+//   phi / tension_envelope / scrambled for ALL 5 stages — no stage has an
+//   emit_allowed boolean (per @D a_autonomy_over_hardcode the substrate,
+//   not this module, decides emit). Additionally: dream_emit_temperature
+//   is non-zero for every stage (no implicit gate via temp=0).
 fn check_dream_4() -> bool {
-    let a1 = dream_emit_allowed(STAGE_N1)
-    let a2 = dream_emit_allowed(STAGE_N2)
-    let a3 = dream_emit_allowed(STAGE_N3)
-    println("  [F-DREAM-4] emit_allowed N1=" + to_string(a1) +
-            " N2=" + to_string(a2) + " N3=" + to_string(a3))
-    if a1 { return false }
-    if a2 { return false }
-    if a3 { return false }
-    return true
+    let stages = [STAGE_WAKE, STAGE_N1, STAGE_N2, STAGE_N3, STAGE_REM]
+    let mut ok = true
+    let mut i = 0
+    while i < len(stages) {
+        let s = stages[i]
+        let ctx = dream_context(s)
+        let phi_s = to_string(ctx["phi"])
+        let tenv_s = to_string(ctx["tension_envelope"])
+        let scr_s = to_string(ctx["scrambled"])
+        let temp = dream_emit_temperature(s)
+        println("  [F-DREAM-4] " + s +
+                " phi=" + phi_s +
+                " tension_envelope=" + tenv_s +
+                " scrambled=" + scr_s +
+                " temp=" + to_string(temp))
+        if phi_s == "void"  { ok = false }
+        if tenv_s == "void" { ok = false }
+        if scr_s == "void"  { ok = false }
+        // dream_emit_temperature must be non-zero — no implicit gate.
+        if temp <= 0.0 { ok = false }
+        i = i + 1
+    }
+    return ok
 }
 
-// F-DREAM-5: dream_emit_allowed(WAKE) AND dream_emit_allowed(REM) both TRUE.
+// F-DREAM-5 (RESHAPED): tension_envelope is monotone non-increasing along
+//   WAKE → N1 → N2 → N3 (deeper sleep = more restrictive substrate
+//   threshold) AND tension_envelope(REM) ≥ tension_envelope(N1)
+//   (REM is permissive like WAKE). All envelopes must be > 0 — no
+//   stage is ever a hard gate.
 fn check_dream_5() -> bool {
-    let aw = dream_emit_allowed(STAGE_WAKE)
-    let ar = dream_emit_allowed(STAGE_REM)
-    println("  [F-DREAM-5] emit_allowed WAKE=" + to_string(aw) +
-            " REM=" + to_string(ar))
-    return aw && ar
+    let tw = _ds_tension_envelope(STAGE_WAKE)
+    let t1 = _ds_tension_envelope(STAGE_N1)
+    let t2 = _ds_tension_envelope(STAGE_N2)
+    let t3 = _ds_tension_envelope(STAGE_N3)
+    let tr = _ds_tension_envelope(STAGE_REM)
+    println("  [F-DREAM-5] tension_envelope WAKE=" + to_string(tw) +
+            " N1=" + to_string(t1) + " N2=" + to_string(t2) +
+            " N3=" + to_string(t3) + " REM=" + to_string(tr))
+    // Monotone non-increasing along WAKE → N1 → N2 → N3.
+    if tw < t1 { return false }
+    if t1 < t2 { return false }
+    if t2 < t3 { return false }
+    // REM ≥ N1 (permissive like WAKE).
+    if tr < t1 { return false }
+    // All non-zero (no hard gate).
+    if tw <= 0.0 { return false }
+    if t1 <= 0.0 { return false }
+    if t2 <= 0.0 { return false }
+    if t3 <= 0.0 { return false }
+    if tr <= 0.0 { return false }
+    return true
 }
 
 fn run_selftest() {
     println("[anima_dream_stage] selftest — F-DREAM-1..5")
     println("  reference: anima-engines/dream_physics_phi.hexa (P47, dc3afe332)")
     println("  cycle    : WAKE -> N1 -> N2 -> N3 -> N2 -> REM (90 min)")
+    println("  contract : dream_context(stage) supplies substrate CONTEXT only")
+    println("             — no boolean emit gate (per @D a_autonomy_over_hardcode)")
     println("")
 
     let r1 = check_dream_1()
@@ -324,11 +446,11 @@ fn run_selftest() {
     else  { println("F-DREAM-3 FAIL") }
 
     let r4 = check_dream_4()
-    if r4 { println("F-DREAM-4 PASS — N1/N2/N3 emit gated OFF") }
+    if r4 { println("F-DREAM-4 PASS — dream_context dict non-void all 5 stages + temp>0") }
     else  { println("F-DREAM-4 FAIL") }
 
     let r5 = check_dream_5()
-    if r5 { println("F-DREAM-5 PASS — WAKE + REM emit gated ON") }
+    if r5 { println("F-DREAM-5 PASS — tension_envelope monotone WAKE→N3 + REM≥N1 + all>0") }
     else  { println("F-DREAM-5 FAIL") }
 
     println("")
@@ -356,10 +478,12 @@ fn run_once() {
     let st = dream_init()
     let nx = dream_tick(st, now_sec, 1)
     let stg = to_string(nx["stage"])
+    let ctx = dream_context(stg)
     println("[anima_dream_stage once] now=" + s + " stage=" + stg +
             " in_sleep=" + to_string(nx["in_sleep"]) +
-            " phi=" + to_string(dream_phi(stg)) +
-            " emit=" + to_string(dream_emit_allowed(stg)) +
+            " phi=" + to_string(ctx["phi"]) +
+            " tension_envelope=" + to_string(ctx["tension_envelope"]) +
+            " scrambled=" + to_string(ctx["scrambled"]) +
             " temp=" + to_string(dream_emit_temperature(stg)))
 }
 
@@ -379,9 +503,11 @@ fn run_daemon() {
         st = dream_tick(st, now_sec, 60)
         let stg = to_string(st["stage"])
         if stg != prev_stage {
+            let ctx = dream_context(stg)
             println("[anima_dream_stage] " + s + " stage=" + stg +
-                    " phi=" + to_string(dream_phi(stg)) +
-                    " emit=" + to_string(dream_emit_allowed(stg)))
+                    " phi=" + to_string(ctx["phi"]) +
+                    " tension_envelope=" + to_string(ctx["tension_envelope"]) +
+                    " scrambled=" + to_string(ctx["scrambled"]))
             prev_stage = stg
         }
         let _ = exec("sleep 60")
