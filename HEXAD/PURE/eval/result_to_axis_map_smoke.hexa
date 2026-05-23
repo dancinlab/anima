@@ -78,12 +78,62 @@ fn main() {
     let j4 = judge_closure(r4, "PARTIAL", 4)
     let row4 = format_axis_map_row("E2", r4, j4)
     println("  row: " + row4)
-    if contains(row4, "14.18") && contains(row4, "0.98") && !contains(row4, "| — | — |") {
-        println("  PASS nested CE rendered (14.18 + 0.98)"); n_pass = n_pass + 1
+    // Targeted check: init CE 14.18 + final CE 0.98 rendered (substring presence).
+    // PR-#287 wiring adds two trailing corpus_quality columns (M3 TTR, M5 hangul) that
+    // render '—' when absent — the prior `!contains "| — | — |"` guard was retired
+    // because absence-of-corpus_quality is now expected back-compat behavior.
+    if contains(row4, "14.18") && contains(row4, "0.98") && contains(row4, "| 2105.83 |") {
+        println("  PASS nested CE rendered (14.18 + 0.98) + wall 2105.83 anchor"); n_pass = n_pass + 1
     } else {
         println("  FAIL nested CE not rendered — row: " + row4); n_fail = n_fail + 1
     }
 
-    println("[result_to_axis_map_smoke] END: " + to_string(n_pass) + "/4 PASS, " + to_string(n_fail) + " FAIL")
+    // F-WIRING-5: corpus_quality block embedded (PR #287 wiring) — M3 TTR + M5 hangul render
+    // as numerics from the corpus_quality block instead of "—". Back-compat tested by F-WIRING-1..4
+    // (none of those carry corpus_quality, so their M3/M5 columns are dashes — already passing).
+    println("--- F-WIRING-5 corpus_quality block → M3 TTR + M5 hangul rendered numeric (PR #287)")
+    let p5 = "/tmp/__pure_wiring_smoke_5.json"
+    let with_cq = #{
+        "verdict": "HEXAD_V3_WORKS",
+        "per_lang_verdicts": _per_lang("STRONG", "STRONG", "STRONG", "STRONG", "STRONG"),
+        "n_anima_register_hits_total": 4, "register_regress": false,
+        "init_log": #{"step": 1, "L_ce": 14.18, "L_total": 14.18},
+        "final_log": #{"step": 5000, "L_ce": 0.98, "L_total": 0.98},
+        "train_wall_s": 2105.83,
+        "corpus_quality": #{
+            "path": "/tmp/syn_corpus.jsonl", "n_bytes": 12345, "n_lines": 42, "sample_bytes": 1000000,
+            "m1_entropy": 5.1234, "m2_bigram_mi": 3.7654,
+            "m3_ttr": 0.61234, "m4_avg_line": 78.5,
+            "m5_hangul": 0.04321, "m6_kl_uniform": 2.8765
+        }
+    }
+    write_file(p5, json_stringify(with_cq))
+    let r5 = parse_result_json(p5)
+    let j5 = judge_closure(r5, "PARTIAL", 4)
+    let row5 = format_axis_map_row("E2-cq", r5, j5)
+    println("  row: " + row5)
+    // Trailing `| 0.61234 | 0.04321 |` proves both columns render via _corpus_cell lookup.
+    if contains(row5, "| 0.61234 | 0.04321 |") {
+        println("  PASS M3=0.61234 + M5=0.04321 rendered from corpus_quality block")
+        n_pass = n_pass + 1
+    } else {
+        println("  FAIL M3+M5 not rendered — row: " + row5)
+        n_fail = n_fail + 1
+    }
+
+    // F-WIRING-6: back-compat — a result.json WITHOUT corpus_quality still renders fine,
+    // M3+M5 trail as "—". This is what FRESHly-emitted closure-fire result.json looks like
+    // BEFORE the operator passes `--corpus <path>` on next emit (gradual rollout).
+    println("--- F-WIRING-6 back-compat: result.json WITHOUT corpus_quality → M3 + M5 as '—'")
+    let row1_trail_ok = contains(row4, "| 2105.83 | — | — |")
+    if row1_trail_ok {
+        println("  PASS legacy F-WIRING-4 row trails as '| 2105.83 | — | — |' (back-compat)")
+        n_pass = n_pass + 1
+    } else {
+        println("  FAIL legacy row missing trailing '— —' columns — row: " + row4)
+        n_fail = n_fail + 1
+    }
+
+    println("[result_to_axis_map_smoke] END: " + to_string(n_pass) + "/6 PASS, " + to_string(n_fail) + " FAIL")
     if n_fail > 0 { exit(1) }
 }
