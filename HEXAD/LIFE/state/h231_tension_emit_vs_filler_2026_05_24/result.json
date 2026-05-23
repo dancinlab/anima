@@ -1,0 +1,47 @@
+{
+  "hypothesis": "H_231",
+  "domain": "LIFE",
+  "title": "tension-driven emit vs filler emit — p5_tension_emit_not_filler substrate evidence",
+  "date": "2026-05-24",
+  "host": "mac-local",
+  "deterministic": true,
+  "seed": 42,
+  "llm": "none",
+  "d_model": 8,
+  "init_cells": 8,
+  "n_steps": 30,
+  "trajectory": {
+    "phi_traj":     [1.86705, 1.92347, 1.96625, 1.95043, 1.99203, 1.9985, 2.05434, 2.03675, 2.05111, 1.99068, 1.94037, 1.84119, 1.76698, 1.59999, 1.59703, 1.55598, 1.54692, 1.47879, 1.44168, 1.35765, 1.25889, 1.18535, 1.03624, 0.868784, 0.776474, 0.682912, 0.622659, 0.583348, 0.512184, 0.43969],
+    "tension_traj": [0.217055, 0.0711053, 0.0189315, 0.00292048, 0.0006744, 0.000263161, 2.29302e-05, 1.15256e-05, 2.62368e-06, 1.31084e-06, 3.69205e-07, 1.57446e-07, 5.54726e-08, 2.11813e-08, 7.83951e-09, 2.94693e-09, 1.10223e-09, 4.1121e-10, 1.54196e-10, 5.7578e-11, 2.15589e-11, 8.05743e-12, 3.01538e-12, 1.12748e-12, 4.2178e-13, 1.57746e-13, 5.90044e-14, 2.2069e-14, 8.25453e-15, 3.08745e-15],
+    "drive_traj":   [0.405252, 0.136769, 0.0372242, 0.00569619, 0.00134343, 0.000525926, 4.71064e-05, 2.34747e-05, 5.38146e-06, 2.60946e-06, 7.16394e-07, 2.89888e-07, 9.80192e-08, 3.38898e-08, 1.252e-08, 4.58534e-09, 1.70507e-09, 6.08092e-10, 2.22301e-10, 7.81705e-11, 2.71403e-11, 9.55086e-12, 3.12466e-12, 9.79533e-13, 3.27502e-13, 1.07727e-13, 3.67396e-14, 1.28739e-14, 4.22783e-15, 1.35752e-15],
+    "phi_median":   1.5765,
+    "drive_median": 8.55265e-09
+  },
+  "policies": {
+    "A_tension": {
+      "predicate": "W * Φ > median(drive)",
+      "emits": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14],
+      "n_emit": 15,
+      "align_count": 15,
+      "align_ratio": 1.0,
+      "emit_phi_var": 0.0203007
+    },
+    "B_filler": {
+      "predicate": "emit every step (silence-filler regular tick)",
+      "emits": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29],
+      "n_emit": 30,
+      "align_count": 15,
+      "align_ratio": 0.5,
+      "emit_phi_var": 0.280948
+    }
+  },
+  "falsifiers": {
+    "F_H231_1_TENSION_ALIGN":     { "metric": "tension align >= 0.70", "value": 1.0, "verdict": "PASS" },
+    "F_H231_2_FILLER_NOT_ALIGN":  { "metric": "filler align <= 0.40", "value": 0.5, "verdict": "FAIL" },
+    "F_H231_3_TENSION_LT_FILLER": { "metric": "tension n_emit < filler n_emit", "value": 15, "verdict": "PASS" },
+    "F_H231_4_BYTE_IDENT":        { "metric": "re-run byte-identical (deterministic by construction)", "verdict": "PASS" },
+    "F_H231_5_COUNT_DEFINED":     { "metric": "all emit counts >= 0", "verdict": "PASS" }
+  },
+  "n_pass": 4,
+  "verdict": "PARTIAL"
+}

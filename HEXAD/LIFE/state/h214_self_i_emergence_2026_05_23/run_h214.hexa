@@ -1,0 +1,482 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  run_h214.hexa — H_214 self-i-emergence-from-substrate
+//                  closure-partition Φ as substrate-level 'I' indicator
+//                  (H_205 sister · H_132 frozen-cell carry · D3 design 정합)
+//
+//  CORE QUESTION
+//    cell pool 을 self-region (tight closure, k_self=0.8) 과 non-self-region
+//    (loose, k_other=0.2) 으로 partition 하면 Φ_self > Φ_other margin ≥ 10%
+//    인가? step 15 self-fragmentation (k_self → 0.2) 시 Φ_self 가 Φ_other
+//    level 로 dissolve 하는가?
+//
+//  SUBSTRATE
+//    sub_pool_self  = cell_pool_init(d_model=8, initial_cells=8)
+//    sub_pool_other = cell_pool_init(d_model=8, initial_cells=8)
+//    seed via __HEXA_FARR_GAUSS_SEED__=42 (RFC 033) — deterministic.
+//
+//  COUPLING (per step)
+//    x_self_next  = k_self_active  * mean(x_out_self)
+//    x_other_next = k_other        * mean(x_out_other)
+//    k_self_active = 0.8 for step < 15, else 0.2 (fragmentation event).
+//    k_other = 0.2 (constant).
+//
+//  MEASURE (per step)
+//    phi_self  = compute_phi_proxy(self_pool["cells"])
+//    phi_other = compute_phi_proxy(other_pool["cells"])
+//    dw_self   = L2(self_pool[0]["hidden"] - prev_self_hidden) 누적
+//    dw_other  = L2(other_pool[0]["hidden"] - prev_other_hidden) 누적
+//    splits_self, splits_other  (mitosis_forward_tail events 안)
+//
+//  CRITERIA
+//    C1 phi_margin_pre  ≥ 0.10 at step 10 (pre-frag)
+//    C2 dw_margin       ≥ 0.20 at step 20 (self drift ≤ other - 20%)
+//    C3 phi_converge    ≤ 0.10 at step 20 (post-frag dissolution)
+//    C4 re-run byte-equal
+//    SUPPORTED = C1 ∧ C3 ∧ C4 ; FALSIFIED if phi_self[10] ≤ phi_other[10]
+//
+//  $0 mac local · hexa-only · LLM none · NO ckpt · deterministic.
+// ════════════════════════════════════════════════════════════════════════════
+
+
+import "/Users/ghost/core/anima/tool/hexa_native/mitosis_hook_lib.hexa"
+
+
+fn _state_dir() -> string {
+    return "HEXAD/LIFE/state/h214_self_i_emergence_2026_05_23"
+}
+fn _d_model() -> int        { return 8 }
+fn _init_cells_per_region() -> int { return 8 }
+fn _n_steps() -> int        { return 20 }
+fn _frag_step() -> int      { return 15 }
+fn _k_self_pre() -> float   { return 0.8 }
+fn _k_self_post() -> float  { return 0.2 }
+fn _k_other() -> float      { return 0.2 }
+fn _seed() -> int { return 42 }
+
+
+// ── helpers ──────────────────────────────────────────────────────────────────
+
+fn to_float(x: int) -> float { return x * 1.0 }
+
+fn _scale_vec(v, s: float) {
+    let n = len(v)
+    let mut out = []
+    let mut i = 0
+    while i < n {
+        out.push(v[i] * s)
+        i = i + 1
+    }
+    return out
+}
+
+fn _zero_vec(n: int) {
+    let mut a = []
+    let mut i = 0
+    while i < n {
+        a.push(0.0)
+        i = i + 1
+    }
+    return a
+}
+
+fn _vec_l2(v) -> float {
+    let n = len(v)
+    let mut s = 0.0
+    let mut i = 0
+    while i < n {
+        s = s + (v[i] * v[i])
+        i = i + 1
+    }
+    if s <= 0.0 { return 0.0 }
+    // Newton sqrt.
+    let mut r = s
+    let mut k = 0
+    while k < 30 {
+        if r <= 0.0 { r = 1.0e-12 }
+        r = 0.5 * (r + s / r)
+        k = k + 1
+    }
+    return r
+}
+
+fn _vec_sub(a, b) {
+    let n = len(a)
+    let mut out = []
+    let mut i = 0
+    while i < n {
+        out.push(a[i] - b[i])
+        i = i + 1
+    }
+    return out
+}
+
+fn _vec_copy(v) {
+    return _scale_vec(v, 1.0)
+}
+
+fn _abs(x: float) -> float {
+    if x < 0.0 { return 0.0 - x }
+    return x
+}
+
+fn _bool_str(b: bool) -> string {
+    if b { return "true" }
+    return "false"
+}
+
+fn _float_arr_json(arr) -> string {
+    let n = len(arr)
+    let mut out = "["
+    let mut i = 0
+    while i < n {
+        if i > 0 { out = out + ", " }
+        out = out + to_string(arr[i])
+        i = i + 1
+    }
+    return out + "]"
+}
+
+fn _int_arr_json(arr) -> string {
+    let n = len(arr)
+    let mut out = "["
+    let mut i = 0
+    while i < n {
+        if i > 0 { out = out + ", " }
+        out = out + to_string(arr[i])
+        i = i + 1
+    }
+    return out + "]"
+}
+
+// count split events in evts list.
+fn _count_splits(evts) -> int {
+    let mut c = 0
+    let mut e = 0
+    while e < len(evts) {
+        if to_string(evts[e]["type"]) == "split" {
+            c = c + 1
+        }
+        e = e + 1
+    }
+    return c
+}
+
+
+// ── partitioned-pool simulator ───────────────────────────────────────────────
+// Two sub-pools driven by independent gains; returns full trajectory.
+// Returns dict:
+//   { phi_self_traj, phi_other_traj, dw_self_traj, dw_other_traj,
+//     splits_self_traj, splits_other_traj, n_self_traj, n_other_traj,
+//     k_self_active_traj }
+fn _run_partition() {
+    let d = _d_model()
+    let nc = _init_cells_per_region()
+    let mut self_pool  = cell_pool_init(d, nc)
+    let mut other_pool = cell_pool_init(d, nc)
+
+    // initial drive: zero (no perturbation pre-step-0).
+    let mut x_self  = _zero_vec(d)
+    let mut x_other = _zero_vec(d)
+
+    // tracking previous cell-0 hidden for drift L2.
+    let mut prev_self_h  = _vec_copy(self_pool["cells"][0]["hidden"])
+    let mut prev_other_h = _vec_copy(other_pool["cells"][0]["hidden"])
+
+    let mut phi_self_traj    = []
+    let mut phi_other_traj   = []
+    let mut dw_self_traj     = []
+    let mut dw_other_traj    = []
+    let mut splits_self_traj = []
+    let mut splits_other_traj= []
+    let mut n_self_traj      = []
+    let mut n_other_traj     = []
+    let mut k_self_traj      = []
+
+    let mut dw_self_cum  = 0.0
+    let mut dw_other_cum = 0.0
+    let mut splits_self_cum  = 0
+    let mut splits_other_cum = 0
+
+    let n = _n_steps()
+    let frag_at = _frag_step()
+    let k_pre  = _k_self_pre()
+    let k_post = _k_self_post()
+    let k_oth  = _k_other()
+
+    let mut step = 0
+    while step < n {
+        // k_self schedule: pre-frag = 0.8 ; post-frag = 0.2 (drop at step >= frag_at).
+        let k_self_now = if step < frag_at { k_pre } else { k_post }
+        k_self_traj.push(k_self_now)
+
+        // forward both sub-pools.
+        let res_s = mitosis_forward_tail(x_self, self_pool, step)
+        let x_out_s = res_s[0]
+        self_pool = res_s[1]
+        let evts_s = res_s[2]
+        let ds_s = _count_splits(evts_s)
+        splits_self_cum = splits_self_cum + ds_s
+        splits_self_traj.push(splits_self_cum)
+
+        let res_o = mitosis_forward_tail(x_other, other_pool, step)
+        let x_out_o = res_o[0]
+        other_pool = res_o[1]
+        let evts_o = res_o[2]
+        let ds_o = _count_splits(evts_o)
+        splits_other_cum = splits_other_cum + ds_o
+        splits_other_traj.push(splits_other_cum)
+
+        // Φ per region.
+        let phi_s = compute_phi_proxy(self_pool["cells"])
+        let phi_o = compute_phi_proxy(other_pool["cells"])
+        phi_self_traj.push(phi_s)
+        phi_other_traj.push(phi_o)
+
+        // hidden drift (cell-0 only, persistent across splits since cell_id=0
+        // retained at index 0).
+        let cur_self_h  = self_pool["cells"][0]["hidden"]
+        let cur_other_h = other_pool["cells"][0]["hidden"]
+        let d_self  = _vec_l2(_vec_sub(cur_self_h,  prev_self_h))
+        let d_other = _vec_l2(_vec_sub(cur_other_h, prev_other_h))
+        dw_self_cum  = dw_self_cum  + d_self
+        dw_other_cum = dw_other_cum + d_other
+        dw_self_traj.push(dw_self_cum)
+        dw_other_traj.push(dw_other_cum)
+        prev_self_h  = _vec_copy(cur_self_h)
+        prev_other_h = _vec_copy(cur_other_h)
+
+        // cell counts.
+        n_self_traj.push(len(self_pool["cells"]))
+        n_other_traj.push(len(other_pool["cells"]))
+
+        // next drive = k * x_out.
+        x_self  = _scale_vec(x_out_s, k_self_now)
+        x_other = _scale_vec(x_out_o, k_oth)
+
+        step = step + 1
+    }
+
+    return #{
+        "phi_self":     phi_self_traj,
+        "phi_other":    phi_other_traj,
+        "dw_self":      dw_self_traj,
+        "dw_other":     dw_other_traj,
+        "splits_self":  splits_self_traj,
+        "splits_other": splits_other_traj,
+        "n_self":       n_self_traj,
+        "n_other":      n_other_traj,
+        "k_self":       k_self_traj
+    }
+}
+
+
+// ── main ─────────────────────────────────────────────────────────────────────
+
+fn _run_h214() {
+    println("================================================================")
+    println("H_214 self-i-emergence-from-substrate — closure-partition Φ smoke")
+    println("  d_model=" + to_string(_d_model())
+            + " per_region=" + to_string(_init_cells_per_region())
+            + " steps=" + to_string(_n_steps())
+            + " frag_step=" + to_string(_frag_step())
+            + " k_self_pre=" + to_string(_k_self_pre())
+            + " k_self_post=" + to_string(_k_self_post())
+            + " k_other=" + to_string(_k_other())
+            + " seed=" + to_string(_seed()))
+    println("================================================================")
+
+    let r = _run_partition()
+
+    let phi_s = r["phi_self"]
+    let phi_o = r["phi_other"]
+    let dw_s  = r["dw_self"]
+    let dw_o  = r["dw_other"]
+    let sp_s  = r["splits_self"]
+    let sp_o  = r["splits_other"]
+    let nc_s  = r["n_self"]
+    let nc_o  = r["n_other"]
+
+    // print compact per-step table.
+    println("step  k_self  phi_self   phi_other  dw_self    dw_other   n_self  n_other  splits_self  splits_other")
+    let n_steps = _n_steps()
+    let mut t = 0
+    while t < n_steps {
+        println(to_string(t)
+                + "    " + to_string(r["k_self"][t])
+                + "    " + to_string(phi_s[t])
+                + "    " + to_string(phi_o[t])
+                + "    " + to_string(dw_s[t])
+                + "    " + to_string(dw_o[t])
+                + "    " + to_string(nc_s[t])
+                + "    " + to_string(nc_o[t])
+                + "    " + to_string(sp_s[t])
+                + "    " + to_string(sp_o[t]))
+        t = t + 1
+    }
+    println("")
+
+    // ── derived ──
+    // index step 10 = phi_s[10] (0-indexed step 10 = 11th step; spec says "step 10")
+    let idx_pre  = 10
+    let idx_post = n_steps - 1   // step 19 (post-frag, 5 steps after frag at 15)
+    let denom_pre = if phi_o[idx_pre] > 1.0e-12 { phi_o[idx_pre] } else { 1.0e-12 }
+    let phi_margin_pre = (phi_s[idx_pre] - phi_o[idx_pre]) / denom_pre
+
+    let denom_dw = if dw_s[idx_post] > 1.0e-12 { dw_s[idx_post] } else { 1.0e-12 }
+    let dw_margin = (dw_o[idx_post] - dw_s[idx_post]) / denom_dw
+
+    let denom_post = if phi_o[idx_post] > 1.0e-12 { phi_o[idx_post] } else { 1.0e-12 }
+    let phi_converge_post = _abs(phi_s[idx_post] - phi_o[idx_post]) / denom_post
+
+    let splits_self_total  = sp_s[n_steps - 1]
+    let splits_other_total = sp_o[n_steps - 1]
+
+    println("phi_margin_pre   (step 10)              = " + to_string(phi_margin_pre)
+            + "  [phi_self=" + to_string(phi_s[idx_pre])
+            + " phi_other=" + to_string(phi_o[idx_pre]) + "]")
+    println("dw_margin        (step " + to_string(idx_post) + ")              = " + to_string(dw_margin)
+            + "  [dw_self=" + to_string(dw_s[idx_post])
+            + " dw_other=" + to_string(dw_o[idx_post]) + "]")
+    println("phi_converge_post(step " + to_string(idx_post) + ", post-frag)   = " + to_string(phi_converge_post)
+            + "  [phi_self=" + to_string(phi_s[idx_post])
+            + " phi_other=" + to_string(phi_o[idx_post]) + "]")
+    println("splits self="   + to_string(splits_self_total)
+            + "  other=" + to_string(splits_other_total))
+
+    // ── criteria ──
+    let c1 = phi_margin_pre >= 0.10
+    let c2 = dw_margin >= 0.20
+    let c3 = phi_converge_post <= 0.10
+    // C4 determinism — verified by F4 re-run below.
+
+    // ── falsifiers ──
+    // F1 self-Φ-dominance
+    let f1 = phi_s[idx_pre] > phi_o[idx_pre]
+    // F2 frozen-like — self drift <= other drift
+    let f2 = dw_s[idx_post] <= dw_o[idx_post]
+    // F3 fragmentation dissolves — phi_self[20] <= 1.5 * phi_other[20]
+    let dissolve_bound = phi_o[idx_post] * 1.5
+    let f3 = phi_s[idx_post] <= dissolve_bound
+    // F4 determinism: re-run partition and check phi_self[10] byte-equal
+    let r2 = _run_partition()
+    let f4 = r2["phi_self"][idx_pre] == phi_s[idx_pre]
+    // F5 primitive sanity — all phi finite, non-negative.
+    let mut f5 = true
+    let mut u = 0
+    while u < n_steps {
+        if phi_s[u] < 0.0 { f5 = false }
+        if phi_o[u] < 0.0 { f5 = false }
+        u = u + 1
+    }
+
+    // C4 = F4 PASS
+    let c4 = f4
+
+    let v1 = if f1 { "PASS" } else { "FAIL" }
+    let v2 = if f2 { "PASS" } else { "FAIL" }
+    let v3 = if f3 { "PASS" } else { "FAIL" }
+    let v4 = if f4 { "PASS" } else { "FAIL" }
+    let v5 = if f5 { "PASS" } else { "FAIL" }
+
+    let mut n_pass = 0
+    if f1 { n_pass = n_pass + 1 }
+    if f2 { n_pass = n_pass + 1 }
+    if f3 { n_pass = n_pass + 1 }
+    if f4 { n_pass = n_pass + 1 }
+    if f5 { n_pass = n_pass + 1 }
+
+    let mut n_c = 0
+    if c1 { n_c = n_c + 1 }
+    if c2 { n_c = n_c + 1 }
+    if c3 { n_c = n_c + 1 }
+    if c4 { n_c = n_c + 1 }
+
+    // verdict
+    let supported_full   = c1 && c2 && c3 && c4
+    let supported_lane   = c1 && c3 && c4
+    let falsified = !f1  // F1 FAIL (no self-emergence) is FALSIFIED
+    let verdict = if falsified { "FALSIFIED" }
+                  else { if supported_full { "SUPPORTED_FULL" }
+                         else { if supported_lane { "SUPPORTED" }
+                                else { if c1 { "PARTIAL" }
+                                       else { if n_pass <= 1 { "FAIL" } else { "PARTIAL_FALSIFIERS" } } } } }
+
+    println("")
+    println("C1 phi_margin_pre   >= 0.10   : " + _bool_str(c1) + "  (" + to_string(phi_margin_pre) + ")")
+    println("C2 dw_margin        >= 0.20   : " + _bool_str(c2) + "  (" + to_string(dw_margin) + ")")
+    println("C3 phi_converge_post<= 0.10   : " + _bool_str(c3) + "  (" + to_string(phi_converge_post) + ")")
+    println("C4 re-run byte-equal          : " + _bool_str(c4))
+    println("")
+    println("F1 SELF-Φ-DOMINANCE (pre-frag)    " + v1)
+    println("F2 FROZEN-LIKE     (dw_self<=other) " + v2)
+    println("F3 FRAG-DISSOLVE   (phi_self<=1.5x other post-frag) " + v3)
+    println("F4 DETERMINISM     (re-run byte-equal) " + v4)
+    println("F5 PRIMITIVE-SANITY (Φ finite>=0)  " + v5)
+    println("================================================================")
+    println("VERDICT: " + verdict
+            + "  (" + to_string(n_c) + "/4 criteria, "
+            + to_string(n_pass) + "/5 falsifiers PASS)")
+    println("================================================================")
+
+    // ── result.json ─────────────────────────────────────────────────────────
+    let mut j = "{\n"
+    j = j + "  \"hypothesis\": \"H_214\",\n"
+    j = j + "  \"slug\": \"self-i-emergence-from-substrate\",\n"
+    j = j + "  \"domain\": \"LIFE\",\n"
+    j = j + "  \"title\": \"self-i-emergence-from-substrate — closure-partition Φ as 'I' indicator\",\n"
+    j = j + "  \"date\": \"2026-05-23\",\n"
+    j = j + "  \"host\": \"mac-local\",\n"
+    j = j + "  \"deterministic\": true,\n"
+    j = j + "  \"hexa_only\": true,\n"
+    j = j + "  \"llm\": \"none\",\n"
+    j = j + "  \"seed\": " + to_string(_seed()) + ",\n"
+    j = j + "  \"params\": {\"d_model\": " + to_string(_d_model())
+          + ", \"init_cells_per_region\": " + to_string(_init_cells_per_region())
+          + ", \"n_steps\": " + to_string(_n_steps())
+          + ", \"frag_step\": " + to_string(_frag_step())
+          + ", \"k_self_pre\": " + to_string(_k_self_pre())
+          + ", \"k_self_post\": " + to_string(_k_self_post())
+          + ", \"k_other\": " + to_string(_k_other()) + "},\n"
+    j = j + "  \"trajectory\": {\n"
+    j = j + "    \"phi_self\":     " + _float_arr_json(phi_s) + ",\n"
+    j = j + "    \"phi_other\":    " + _float_arr_json(phi_o) + ",\n"
+    j = j + "    \"dw_self\":      " + _float_arr_json(dw_s) + ",\n"
+    j = j + "    \"dw_other\":     " + _float_arr_json(dw_o) + ",\n"
+    j = j + "    \"splits_self\":  " + _int_arr_json(sp_s) + ",\n"
+    j = j + "    \"splits_other\": " + _int_arr_json(sp_o) + ",\n"
+    j = j + "    \"n_self\":       " + _int_arr_json(nc_s) + ",\n"
+    j = j + "    \"n_other\":      " + _int_arr_json(nc_o) + ",\n"
+    j = j + "    \"k_self_active\":" + _float_arr_json(r["k_self"]) + "\n"
+    j = j + "  },\n"
+    j = j + "  \"derived\": {\n"
+    j = j + "    \"phi_margin_pre\":    " + to_string(phi_margin_pre) + ",\n"
+    j = j + "    \"dw_margin\":         " + to_string(dw_margin) + ",\n"
+    j = j + "    \"phi_converge_post\": " + to_string(phi_converge_post) + ",\n"
+    j = j + "    \"splits_self_total\": " + to_string(splits_self_total) + ",\n"
+    j = j + "    \"splits_other_total\":" + to_string(splits_other_total) + "\n"
+    j = j + "  },\n"
+    j = j + "  \"criteria\": {\n"
+    j = j + "    \"C1_phi_margin_pre_ge_0p10\":   " + _bool_str(c1) + ",\n"
+    j = j + "    \"C2_dw_margin_ge_0p20\":        " + _bool_str(c2) + ",\n"
+    j = j + "    \"C3_phi_converge_post_le_0p10\":" + _bool_str(c3) + ",\n"
+    j = j + "    \"C4_re_run_byte_equal\":        " + _bool_str(c4) + "\n"
+    j = j + "  },\n"
+    j = j + "  \"falsifiers\": {\n"
+    j = j + "    \"F1_SELF_PHI_DOMINANCE\": { \"metric\": \"phi_self[10] > phi_other[10]\", \"verdict\": \"" + v1 + "\" },\n"
+    j = j + "    \"F2_FROZEN_LIKE\":        { \"metric\": \"dw_self[final] <= dw_other[final]\", \"verdict\": \"" + v2 + "\" },\n"
+    j = j + "    \"F3_FRAG_DISSOLVE\":      { \"metric\": \"phi_self[final] <= 1.5*phi_other[final]\", \"verdict\": \"" + v3 + "\" },\n"
+    j = j + "    \"F4_DETERMINISM\":        { \"metric\": \"re-run phi_self[10] byte-equal\", \"verdict\": \"" + v4 + "\" },\n"
+    j = j + "    \"F5_PRIMITIVE_SANITY\":   { \"metric\": \"all phi finite >= 0\", \"verdict\": \"" + v5 + "\" }\n"
+    j = j + "  },\n"
+    j = j + "  \"n_criteria_pass\": " + to_string(n_c) + ",\n"
+    j = j + "  \"n_falsifier_pass\": " + to_string(n_pass) + ",\n"
+    j = j + "  \"verdict\": \"" + verdict + "\",\n"
+    j = j + "  \"cross_link\": {\"H_205\": \"PR #216\", \"H_132\": \"frozen-cell sister\", \"D3\": \"docs/anima_persona_substrate_native_design_2026_05_12.md\"}\n"
+    j = j + "}\n"
+
+    write_file(_state_dir() + "/result.json", j)
+    println("ledger -> " + _state_dir() + "/result.json")
+}
+
+
+_run_h214()

@@ -45,9 +45,11 @@ ssh mini 'cd ~/anima_chat_pack && PORT=8000 nohup ./venv/bin/python broker.py \
 
 ssh mini 'sleep 4; curl -s -m 4 http://127.0.0.1:8000/health'   # broker bind 확인
 
-ssh mini 'cd ~/anima_chat_pack && nohup ./venv/bin/python anima_participant.py --threshold 0.30 \
+ssh mini 'cd ~/anima_chat_pack && nohup venv/bin/python3 anima_participant.py --threshold 0.30 \
   </dev/null >> logs/anima.out 2>> logs/anima.err & echo "PARTICIPANT_PID=$!"'
 ```
+
+> mini production python interpreter = `venv/bin/python3` (torch 2.12.0 의존성, system `python3` 미설치). bare `python3` 호출 금지. PID 권장: `~/anima_chat_pack/.participant.pid` (echo `$!` → 파일 redirect). sleep+상상 daemon 절은 PR #281 참조.
 
 ### 4. 검증 — health + logs (45s 대기 후)
 
@@ -97,3 +99,55 @@ scp HEXAD/CHAT/server/anima_participant.py mini:~/anima_chat_pack/
 | `HEXAD/CHAT/server/anima_monologue_sim.hexa` | monologue vs responsive 측정 (사용자 #1 목표 검증) |
 | `HEXAD/CHAT/server/mini_sshd_diag.hexa` | sshd flapping 진단 (mini 콘솔) |
 | `HEXAD/CHAT/server/telemetry_status.hexa` | Phase 2 gate observability |
+| `HEXAD/CHAT/server/anima_dream_stage.hexa` | 5-stage sleep state machine (P47 substrate-native, 2026-05-24) |
+| `HEXAD/CHAT/server/anima_imagination_loop.hexa` | emit-free internal rehearsal — N1/N2/N3 중 imagine_tick |
+
+## 6. 수면 + 상상 daemon (2026-05-24, P47 substrate-native)
+
+P47 Dream Physics (commit `dc3afe332` · `anima-engines/dream_physics_phi.hexa`) 의 5-stage cycle 을 chat-side 에 wiring. `CHAT.md §1` 가 design SSOT, 본 절은 운영 절차만.
+
+### 6.1 dream_stage daemon
+
+```bash
+ssh mini 'cd ~/anima_chat_pack && \
+  ANIMA_SLEEP_HOURS="22:00-06:00" \
+  ANIMA_DREAM_RATIO=0.2 \
+  nohup hexa-fast run anima_dream_stage.hexa daemon \
+  </dev/null >> logs/dream_stage.out 2>> logs/dream_stage.err & \
+  echo "DREAM_STAGE_PID=$!"'
+```
+
+> mini production hexa binary = `hexa-fast` (`~/core/hexa-lang/bin/hexa-fast`, self/native/hexa_v2 Mach-O arm64 + `~/.hexa-cache/` 캐시). 래퍼 `~/core/hexa-lang/hexa` 는 AMFI rename saga 로 `hxv2`/`hexa.real` symlink 부재 — broken. hexa-lang inbox PR #567 진행 중.
+
+- broker / participant 는 `current_stage()` polling 으로 WAKE/REM 시 emit, N1-N3 시 silent
+- LaunchAgent plist 사용 금지 (user directive · `feedback_plist_forbidden_akida_endpoint`)
+- mini reboot 시 수동 재기동 (broker / participant 와 동일 패턴)
+- PID 권장: `~/anima_chat_pack/.dream_stage.pid` (echo `$!` → 파일 redirect; 후속 watchdog 참조)
+
+### 6.2 imagination_loop daemon
+
+```bash
+ssh mini 'cd ~/anima_chat_pack && \
+  ANIMA_IMAGINATION_INTERVAL_SEC=60 \
+  ANIMA_IMAGINATION_TRIGGER_IDLE_SEC=300 \
+  nohup hexa-fast run anima_imagination_loop.hexa daemon \
+  </dev/null >> logs/imagination.out 2>> logs/imagination.err & \
+  echo "IMAGINATION_PID=$!"'
+```
+
+- ⚠ **mini arm64 toolchain regression — 해결 전 imagination_loop daemon 가동 불가**. `mitosis_hook` lib link fail (hexa-lang inbox PR #567); 위 launch 명령은 upstream 수정 후 활성.
+- N1/N2/N3 stage 중에만 `imagine_tick()` 호출, emit 채널 미사용
+- `ANIMA_IMAGINATION_TRIGGER_IDLE_SEC` (default 300s) 만큼 idle 누적 후 first tick — WAKE 시간에도 long-idle 시 light rehearsal 허용
+
+### 6.3 ENV 참조
+
+| env | default | 용도 |
+|---|---|---|
+| `ANIMA_SLEEP_HOURS` | `22:00-06:00` | N1-N3 진입이 허용되는 시간대 (그 외는 WAKE 고정) |
+| `ANIMA_DREAM_RATIO` | `0.2` | sleep window 중 REM 비율 (0.2 = 20%) |
+| `ANIMA_IMAGINATION_INTERVAL_SEC` | `60` | imagine_tick 호출 주기 |
+| `ANIMA_IMAGINATION_TRIGGER_IDLE_SEC` | `300` | idle 누적 임계 — 초과 시 WAKE 중에도 light rehearsal 허용 |
+
+### 6.4 participant gate 폐기 (PR #272, commit b4f00012e 역전)
+
+기존 `anima_participant.py` 의 conversation-active gate ("혼자있을때 혼잣말 하지말라") 는 dream_stage gate 로 대체 — `b4f00012e` 의 변경분이 PR #272 에서 revert. participant 가 `_dream_stage_current()` + `_dream_emit_allowed(stage)` 로 stage 를 확인하며, sister hook 미import 시 WAKE default → daemon 회귀 없음. 자세한 rationale 은 `CHAT.md §1.4`.

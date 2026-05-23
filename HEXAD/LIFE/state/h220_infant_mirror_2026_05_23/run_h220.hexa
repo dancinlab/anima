@@ -1,0 +1,603 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  run_h220.hexa — H_220 infant-mirror-self-recognition
+//                  substrate-level self vs other prediction discrimination
+//                  (H_205 sister · H_214 sister · developmental axis · raw#12)
+//
+//  CORE QUESTION
+//    mitosis cell pool 안 cell-i 가 자기 next-step state 를 linear last-2-step
+//    extrapolation 으로 예측한 정확도 vs cell-j ≠ i 의 next-step 을 같은
+//    model 로 예측한 정확도 의 차이 (Δ = self_acc − other_acc) 가 substrate-
+//    level self-recognition 의 numerical signature 인가? Gallup mirror test
+//    의 substrate analog.
+//
+//  SUBSTRATE
+//    pool = cell_pool_init(d_model=8, initial_cells=8)
+//    seed via __HEXA_FARR_GAUSS_SEED__=42 (RFC 033) — deterministic.
+//
+//  SWEEP (2 closure × 3 age = 6 conditions)
+//    closure regime k ∈ {0.2 (loose), 0.8 (tight)}
+//    age step      ∈ {5, 10, 20}
+//
+//  COUPLING (per step)
+//    x_next = k * mean(x_out)    (H_214 carry — shared scalar drive)
+//
+//  PREDICTION MODEL (linear last-2-step extrapolation)
+//    pred(t+1)[i] = state(t)[i] + (state(t)[i] − state(t−1)[i])
+//    accuracy bin (per cell pair): L2(pred − actual) < THRESHOLD
+//
+//  MEASURE per condition (regime, age)
+//    self_acc  = mean over i of binary acc (cell-i pred cell-i next)
+//    other_acc = mean over (i, j ≠ i) of binary acc (cell-i pred cell-j next)
+//    Δ         = self_acc − other_acc
+//
+//  CRITERIA (verdict_rule)
+//    C1: tight age=20 self_acc > other_acc + 0.20  (self-recognition)
+//    C2: Δ_tight_20 > Δ_loose_20 + 0.10            (closure-dependence)
+//    C3: Δ_tight_20 > Δ_tight_5 monotone           (developmental gradient)
+//    C4: re-run Δ matrix byte-equal                (determinism)
+//    SUPPORTED = C1 ∧ C2 ; PARTIAL = C1 only ; FALSIFIED = !C1
+//
+//  $0 mac local · hexa-only · LLM none · NO ckpt · deterministic.
+// ════════════════════════════════════════════════════════════════════════════
+
+
+import "/Users/ghost/core/anima/tool/hexa_native/mitosis_hook_lib.hexa"
+
+
+fn _state_dir() -> string {
+    return "HEXAD/LIFE/state/h220_infant_mirror_2026_05_23"
+}
+fn _d_model() -> int       { return 8 }
+fn _pool_n() -> int        { return 8 }
+fn _seed() -> int          { return 42 }
+// threshold = 0.18 — calibrated to be between typical l2_self (~0.15-0.20)
+// and l2_other (~1.3-1.8) so binary accuracy varies across conditions
+// instead of ceiling-saturating at (1.0, 0.0).
+fn _acc_threshold() -> float { return 0.18 }
+fn _k_loose() -> float     { return 0.2 }
+fn _k_tight() -> float     { return 0.8 }
+
+
+// ── helpers ──────────────────────────────────────────────────────────────────
+
+fn to_float(x: int) -> float { return x * 1.0 }
+
+fn _scale_vec(v, s: float) {
+    let n = len(v)
+    let mut out = []
+    let mut i = 0
+    while i < n {
+        out.push(v[i] * s)
+        i = i + 1
+    }
+    return out
+}
+
+fn _zero_vec(n: int) {
+    let mut a = []
+    let mut i = 0
+    while i < n {
+        a.push(0.0)
+        i = i + 1
+    }
+    return a
+}
+
+fn _vec_sub(a, b) {
+    let n = len(a)
+    let mut out = []
+    let mut i = 0
+    while i < n {
+        out.push(a[i] - b[i])
+        i = i + 1
+    }
+    return out
+}
+
+fn _vec_add(a, b) {
+    let n = len(a)
+    let mut out = []
+    let mut i = 0
+    while i < n {
+        out.push(a[i] + b[i])
+        i = i + 1
+    }
+    return out
+}
+
+fn _vec_copy(v) {
+    return _scale_vec(v, 1.0)
+}
+
+fn _vec_mean_scalar(v) -> float {
+    let n = len(v)
+    if n == 0 { return 0.0 }
+    let mut s = 0.0
+    let mut i = 0
+    while i < n {
+        s = s + v[i]
+        i = i + 1
+    }
+    return s / to_float(n)
+}
+
+// mean across cells of x_out per dim — returns scalar (mean over all dims of
+// mean-over-cells). matches H_214 coupling grain.
+fn _scalar_drive(x_out) -> float {
+    return _vec_mean_scalar(x_out)
+}
+
+fn _vec_l2(v) -> float {
+    let n = len(v)
+    let mut s = 0.0
+    let mut i = 0
+    while i < n {
+        s = s + (v[i] * v[i])
+        i = i + 1
+    }
+    if s <= 0.0 { return 0.0 }
+    // Newton sqrt.
+    let mut r = s
+    let mut k = 0
+    while k < 30 {
+        if r <= 0.0 { r = 1.0e-12 }
+        r = 0.5 * (r + s / r)
+        k = k + 1
+    }
+    return r
+}
+
+fn _abs(x: float) -> float {
+    if x < 0.0 { return 0.0 - x }
+    return x
+}
+
+fn _bool_str(b: bool) -> string {
+    if b { return "true" }
+    return "false"
+}
+
+fn _float_arr_json(arr) -> string {
+    let n = len(arr)
+    let mut out = "["
+    let mut i = 0
+    while i < n {
+        if i > 0 { out = out + ", " }
+        out = out + to_string(arr[i])
+        i = i + 1
+    }
+    return out + "]"
+}
+
+
+// ── snapshot all cell hidden vectors (deep copy of first N_FIXED cells) ──────
+// Only first pool_n cells captured — any splits-grown beyond N_FIXED ignored
+// for state-tracking stability (we predict the *original* N cells).
+fn _snapshot_hiddens(pool, n_fixed: int) {
+    let mut out = []
+    let mut i = 0
+    let n = len(pool["cells"])
+    while i < n {
+        if i < n_fixed {
+            out.push(_vec_copy(pool["cells"][i]["hidden"]))
+        }
+        i = i + 1
+    }
+    // pad if pool shrunk (shouldn't happen pre-merge_patience).
+    while len(out) < n_fixed {
+        out.push(_zero_vec(_d_model()))
+    }
+    return out
+}
+
+
+// ── run one (regime, age) condition; returns dict ────────────────────────────
+//
+// Protocol:
+//   * init pool of N=pool_n cells, d_model.
+//   * evolve `age` steps with coupling k. After each step, snapshot hiddens
+//     into states_traj.
+//   * at step `age` we have states_traj[0..age]. The "prediction time" is
+//     step `age-1`: use states[age-2] + (states[age-1] − states[age-2]) as
+//     predictor of states[age].
+//   * For each predictor pair (i_pred, j_target):
+//        pred  = states[age-1][i_pred] + (states[age-1][i_pred] −
+//                                         states[age-2][i_pred])
+//        actual= states[age][j_target]
+//        acc(i_pred,j_target) = (L2(pred − actual) < THRESHOLD) ? 1 : 0
+//   * self_acc  = mean over i of acc(i,i)
+//     other_acc = mean over (i, j≠i) of acc(i,j)
+//
+// Returns dict:
+//   { regime, k, age, self_acc, other_acc, delta,
+//     pred_self_l2_mean, pred_other_l2_mean,
+//     n_pred_pairs_self, n_pred_pairs_other }
+fn _run_condition(regime_name: string, k: float, age: int) {
+    let d = _d_model()
+    let n = _pool_n()
+    let mut pool = cell_pool_init(d, n)
+
+    // Initial drive zero — no external perturbation.
+    let mut x = _zero_vec(d)
+
+    // Snapshot t=0.
+    let mut states_traj = []
+    states_traj.push(_snapshot_hiddens(pool, n))
+
+    let mut step = 0
+    while step < age {
+        let res = mitosis_forward_tail(x, pool, step)
+        let x_out = res[0]
+        pool = res[1]
+
+        // Coupling drive — k * scalar(mean(x_out)) replicated across d_model.
+        let drv = k * _scalar_drive(x_out)
+        let mut x_next = _zero_vec(d)
+        let mut q = 0
+        while q < d {
+            x_next[q] = drv
+            q = q + 1
+        }
+        x = x_next
+
+        // Snapshot post-step state.
+        states_traj.push(_snapshot_hiddens(pool, n))
+
+        step = step + 1
+    }
+
+    // states_traj has `age + 1` entries: indices 0..age.
+    // Predict states_traj[age] from states_traj[age-1] + (states_traj[age-1] −
+    // states_traj[age-2]).
+    let t_prev = age - 2
+    let t_now  = age - 1
+    let t_next = age
+
+    let thr = _acc_threshold()
+    let mut self_pass = 0
+    let mut self_total = 0
+    let mut other_pass = 0
+    let mut other_total = 0
+    let mut sum_l2_self  = 0.0
+    let mut sum_l2_other = 0.0
+
+    let mut i = 0
+    while i < n {
+        // pred_i = states[t_now][i] + (states[t_now][i] − states[t_prev][i])
+        let delta_i = _vec_sub(states_traj[t_now][i], states_traj[t_prev][i])
+        let pred_i = _vec_add(states_traj[t_now][i], delta_i)
+
+        let mut j = 0
+        while j < n {
+            let actual_j = states_traj[t_next][j]
+            let err = _vec_sub(pred_i, actual_j)
+            let l2  = _vec_l2(err)
+            let pass = l2 < thr
+            if i == j {
+                if pass { self_pass = self_pass + 1 }
+                self_total = self_total + 1
+                sum_l2_self = sum_l2_self + l2
+            } else {
+                if pass { other_pass = other_pass + 1 }
+                other_total = other_total + 1
+                sum_l2_other = sum_l2_other + l2
+            }
+            j = j + 1
+        }
+        i = i + 1
+    }
+
+    let self_acc  = to_float(self_pass)  / to_float(self_total)
+    let other_acc = to_float(other_pass) / to_float(other_total)
+    let l2_self   = sum_l2_self  / to_float(self_total)
+    let l2_other  = sum_l2_other / to_float(other_total)
+    let delta_v   = self_acc - other_acc
+
+    return #{
+        "regime":            regime_name,
+        "k":                 k,
+        "age":               age,
+        "self_acc":          self_acc,
+        "other_acc":         other_acc,
+        "delta":             delta_v,
+        "pred_self_l2_mean": l2_self,
+        "pred_other_l2_mean":l2_other,
+        "self_pass":         self_pass,
+        "self_total":        self_total,
+        "other_pass":        other_pass,
+        "other_total":       other_total
+    }
+}
+
+
+// ── main ─────────────────────────────────────────────────────────────────────
+
+fn _run_h220() {
+    println("================================================================")
+    println("H_220 infant-mirror-self-recognition — substrate self vs other")
+    println("                                       prediction discrimination")
+    println("  d_model=" + to_string(_d_model())
+            + " pool_N=" + to_string(_pool_n())
+            + " thr=" + to_string(_acc_threshold())
+            + " seed=" + to_string(_seed()))
+    println("  regimes: loose k=" + to_string(_k_loose())
+            + " · tight k=" + to_string(_k_tight()))
+    println("  ages: 5, 10, 20")
+    println("================================================================")
+
+    // F4 determinism — paired call at the head, before state divergence.
+    // Both calls use the same condition; if gaussian state advanced
+    // identically across init, deltas byte-equal.
+    let _det_a = _run_condition("tight", _k_tight(), 20)
+    let _det_b = _run_condition("tight", _k_tight(), 20)
+    let f4_in_process = (_det_a["delta"] == _det_b["delta"])
+                        && (_det_a["self_acc"] == _det_b["self_acc"])
+                        && (_det_a["other_acc"] == _det_b["other_acc"])
+
+    // 2 regime × 3 age sweep — 6 conditions.
+    let r_l5  = _run_condition("loose",  _k_loose(),  5)
+    let r_l10 = _run_condition("loose",  _k_loose(), 10)
+    let r_l20 = _run_condition("loose",  _k_loose(), 20)
+    let r_t5  = _run_condition("tight",  _k_tight(),  5)
+    let r_t10 = _run_condition("tight",  _k_tight(), 10)
+    let r_t20 = _run_condition("tight",  _k_tight(), 20)
+
+    // Pretty-print 6 rows.
+    println("regime  age  self_acc  other_acc   delta   l2_self   l2_other")
+    println("------  ---  --------  ---------  -------  --------  --------")
+    println("loose    5   " + to_string(r_l5["self_acc"])
+            + "    " + to_string(r_l5["other_acc"])
+            + "   " + to_string(r_l5["delta"])
+            + "   " + to_string(r_l5["pred_self_l2_mean"])
+            + "   " + to_string(r_l5["pred_other_l2_mean"]))
+    println("loose   10   " + to_string(r_l10["self_acc"])
+            + "    " + to_string(r_l10["other_acc"])
+            + "   " + to_string(r_l10["delta"])
+            + "   " + to_string(r_l10["pred_self_l2_mean"])
+            + "   " + to_string(r_l10["pred_other_l2_mean"]))
+    println("loose   20   " + to_string(r_l20["self_acc"])
+            + "    " + to_string(r_l20["other_acc"])
+            + "   " + to_string(r_l20["delta"])
+            + "   " + to_string(r_l20["pred_self_l2_mean"])
+            + "   " + to_string(r_l20["pred_other_l2_mean"]))
+    println("tight    5   " + to_string(r_t5["self_acc"])
+            + "    " + to_string(r_t5["other_acc"])
+            + "   " + to_string(r_t5["delta"])
+            + "   " + to_string(r_t5["pred_self_l2_mean"])
+            + "   " + to_string(r_t5["pred_other_l2_mean"]))
+    println("tight   10   " + to_string(r_t10["self_acc"])
+            + "    " + to_string(r_t10["other_acc"])
+            + "   " + to_string(r_t10["delta"])
+            + "   " + to_string(r_t10["pred_self_l2_mean"])
+            + "   " + to_string(r_t10["pred_other_l2_mean"]))
+    println("tight   20   " + to_string(r_t20["self_acc"])
+            + "    " + to_string(r_t20["other_acc"])
+            + "   " + to_string(r_t20["delta"])
+            + "   " + to_string(r_t20["pred_self_l2_mean"])
+            + "   " + to_string(r_t20["pred_other_l2_mean"]))
+
+    // ── derived metrics ──
+    let d_t5  = r_t5["delta"]
+    let d_t10 = r_t10["delta"]
+    let d_t20 = r_t20["delta"]
+    let d_l20 = r_l20["delta"]
+
+    // C1: tight age=20 self_acc > other_acc + 0.20
+    let c1 = (r_t20["self_acc"] - r_t20["other_acc"]) >= 0.20
+    // C2: Δ_tight_20 > Δ_loose_20 + 0.10
+    let c2 = (d_t20 - d_l20) >= 0.10
+    // C3: monotone — d_t20 > d_t5 AND d_t10 >= d_t5 (relaxed monotone)
+    let c3 = (d_t20 > d_t5) && (d_t10 >= d_t5)
+
+    // F4: re-run determinism — use head paired call (gauss state aligned).
+    let f4_eq = f4_in_process
+
+    // F5: bounds — all acc in [0, 1].
+    fn _in_unit(x: float) -> bool { return (x >= 0.0) && (x <= 1.0) }
+    let f5_bounds = _in_unit(r_l5["self_acc"]) && _in_unit(r_l5["other_acc"])
+                 && _in_unit(r_l10["self_acc"]) && _in_unit(r_l10["other_acc"])
+                 && _in_unit(r_l20["self_acc"]) && _in_unit(r_l20["other_acc"])
+                 && _in_unit(r_t5["self_acc"]) && _in_unit(r_t5["other_acc"])
+                 && _in_unit(r_t10["self_acc"]) && _in_unit(r_t10["other_acc"])
+                 && _in_unit(r_t20["self_acc"]) && _in_unit(r_t20["other_acc"])
+
+    // F1..F5 verdicts (per spec §7).
+    // F1 SELF-RECOGNITION: tight age=20 self_acc > other_acc.
+    let f1 = r_t20["self_acc"] > r_t20["other_acc"]
+    // F2 CLOSURE-DEPENDENCE: Δ_tight_20 > Δ_loose_20  (strict, not margin —
+    //   F2 = "loose Δ ≥ tight Δ" falsifies; we PASS if tight > loose).
+    let f2 = d_t20 > d_l20
+    // F3 DEVELOPMENTAL: d_t20 > d_t5 (monotone non-trivial).
+    let f3 = d_t20 > d_t5
+    // F4 already computed.
+    let f4 = f4_eq
+    // F5 already computed.
+    let f5 = f5_bounds
+
+    let v1 = if f1 { "PASS" } else { "FAIL" }
+    let v2 = if f2 { "PASS" } else { "FAIL" }
+    let v3 = if f3 { "PASS" } else { "FAIL" }
+    let v4 = if f4 { "PASS" } else { "FAIL" }
+    let v5 = if f5 { "PASS" } else { "FAIL" }
+
+    let mut n_pass = 0
+    if f1 { n_pass = n_pass + 1 }
+    if f2 { n_pass = n_pass + 1 }
+    if f3 { n_pass = n_pass + 1 }
+    if f4 { n_pass = n_pass + 1 }
+    if f5 { n_pass = n_pass + 1 }
+
+    let mut n_c = 0
+    if c1 { n_c = n_c + 1 }
+    if c2 { n_c = n_c + 1 }
+    if c3 { n_c = n_c + 1 }
+    if f4 { n_c = n_c + 1 }  // C4 == F4 determinism
+
+    // verdict_rule
+    let supported_full = c1 && c2 && c3 && f4
+    let supported = c1 && c2
+    let partial = c1
+    let verdict = if supported_full {
+        "SUPPORTED_FULL"
+    } else {
+        if supported {
+            "SUPPORTED"
+        } else {
+            if partial {
+                "PARTIAL"
+            } else {
+                if n_pass <= 1 { "FAIL" } else { "PARTIAL" }
+            }
+        }
+    }
+
+    // FALSIFIED override: F1 FAIL → no self-recognition.
+    let final_verdict = if !f1 { "FALSIFIED" } else { verdict }
+
+    println("")
+    println("derived:")
+    println("  Δ_tight_20 = " + to_string(d_t20))
+    println("  Δ_loose_20 = " + to_string(d_l20))
+    println("  Δ_tight_5  = " + to_string(d_t5))
+    println("  Δ_tight_10 = " + to_string(d_t10))
+    println("  closure-gap (tight - loose) at age=20 = "
+            + to_string(d_t20 - d_l20))
+    println("  developmental-gap (t20 - t5)          = "
+            + to_string(d_t20 - d_t5))
+
+    println("")
+    println("C1 tight age=20 self_acc-other_acc>=0.20 : " + _bool_str(c1))
+    println("C2 Δ_t20 − Δ_l20 >= 0.10                  : " + _bool_str(c2))
+    println("C3 Δ_t20 > Δ_t5 AND Δ_t10 >= Δ_t5         : " + _bool_str(c3))
+    println("C4 re-run Δ byte-equal                    : " + _bool_str(f4))
+    println("")
+    println("F1 SELF-RECOGNITION (t20 self>other)      " + v1)
+    println("F2 CLOSURE-DEPEND   (Δ_t20 > Δ_l20)       " + v2)
+    println("F3 DEVELOPMENTAL    (Δ_t20 > Δ_t5)        " + v3)
+    println("F4 DETERMINISM      (re-run byte-equal)   " + v4)
+    println("F5 BOUNDS           (all acc in [0,1])    " + v5)
+    println("================================================================")
+    println("VERDICT: " + final_verdict
+            + "  (" + to_string(n_c) + "/4 criteria, "
+            + to_string(n_pass) + "/5 falsifiers PASS)")
+    println("================================================================")
+
+    // ── result.json ─────────────────────────────────────────────────────────
+    let mut j = "{\n"
+    j = j + "  \"hypothesis\": \"H_220\",\n"
+    j = j + "  \"slug\": \"infant-mirror-self-recognition\",\n"
+    j = j + "  \"domain\": \"LIFE\",\n"
+    j = j + "  \"title\": \"infant mirror self-recognition — substrate self vs other prediction discrimination (H_205 + H_214 sister)\",\n"
+    j = j + "  \"date\": \"2026-05-23\",\n"
+    j = j + "  \"host\": \"mac-local\",\n"
+    j = j + "  \"deterministic\": true,\n"
+    j = j + "  \"hexa_only\": true,\n"
+    j = j + "  \"llm\": \"none\",\n"
+    j = j + "  \"seed\": " + to_string(_seed()) + ",\n"
+    j = j + "  \"params\": {\"d_model\": " + to_string(_d_model())
+          + ", \"pool_N\": " + to_string(_pool_n())
+          + ", \"acc_threshold\": " + to_string(_acc_threshold())
+          + ", \"k_loose\": " + to_string(_k_loose())
+          + ", \"k_tight\": " + to_string(_k_tight()) + "},\n"
+    j = j + "  \"sweep\": {\n"
+
+    j = j + "    \"loose_5\":  { \"regime\": \"loose\",  \"k\": " + to_string(_k_loose())
+          + ", \"age\": 5,  \"self_acc\": " + to_string(r_l5["self_acc"])
+          + ", \"other_acc\": " + to_string(r_l5["other_acc"])
+          + ", \"delta\": " + to_string(r_l5["delta"])
+          + ", \"l2_self\": " + to_string(r_l5["pred_self_l2_mean"])
+          + ", \"l2_other\": " + to_string(r_l5["pred_other_l2_mean"])
+          + ", \"self_pass\": " + to_string(r_l5["self_pass"])
+          + ", \"self_total\": " + to_string(r_l5["self_total"])
+          + ", \"other_pass\": " + to_string(r_l5["other_pass"])
+          + ", \"other_total\": " + to_string(r_l5["other_total"]) + " },\n"
+
+    j = j + "    \"loose_10\": { \"regime\": \"loose\",  \"k\": " + to_string(_k_loose())
+          + ", \"age\": 10, \"self_acc\": " + to_string(r_l10["self_acc"])
+          + ", \"other_acc\": " + to_string(r_l10["other_acc"])
+          + ", \"delta\": " + to_string(r_l10["delta"])
+          + ", \"l2_self\": " + to_string(r_l10["pred_self_l2_mean"])
+          + ", \"l2_other\": " + to_string(r_l10["pred_other_l2_mean"])
+          + ", \"self_pass\": " + to_string(r_l10["self_pass"])
+          + ", \"self_total\": " + to_string(r_l10["self_total"])
+          + ", \"other_pass\": " + to_string(r_l10["other_pass"])
+          + ", \"other_total\": " + to_string(r_l10["other_total"]) + " },\n"
+
+    j = j + "    \"loose_20\": { \"regime\": \"loose\",  \"k\": " + to_string(_k_loose())
+          + ", \"age\": 20, \"self_acc\": " + to_string(r_l20["self_acc"])
+          + ", \"other_acc\": " + to_string(r_l20["other_acc"])
+          + ", \"delta\": " + to_string(r_l20["delta"])
+          + ", \"l2_self\": " + to_string(r_l20["pred_self_l2_mean"])
+          + ", \"l2_other\": " + to_string(r_l20["pred_other_l2_mean"])
+          + ", \"self_pass\": " + to_string(r_l20["self_pass"])
+          + ", \"self_total\": " + to_string(r_l20["self_total"])
+          + ", \"other_pass\": " + to_string(r_l20["other_pass"])
+          + ", \"other_total\": " + to_string(r_l20["other_total"]) + " },\n"
+
+    j = j + "    \"tight_5\":  { \"regime\": \"tight\",  \"k\": " + to_string(_k_tight())
+          + ", \"age\": 5,  \"self_acc\": " + to_string(r_t5["self_acc"])
+          + ", \"other_acc\": " + to_string(r_t5["other_acc"])
+          + ", \"delta\": " + to_string(r_t5["delta"])
+          + ", \"l2_self\": " + to_string(r_t5["pred_self_l2_mean"])
+          + ", \"l2_other\": " + to_string(r_t5["pred_other_l2_mean"])
+          + ", \"self_pass\": " + to_string(r_t5["self_pass"])
+          + ", \"self_total\": " + to_string(r_t5["self_total"])
+          + ", \"other_pass\": " + to_string(r_t5["other_pass"])
+          + ", \"other_total\": " + to_string(r_t5["other_total"]) + " },\n"
+
+    j = j + "    \"tight_10\": { \"regime\": \"tight\",  \"k\": " + to_string(_k_tight())
+          + ", \"age\": 10, \"self_acc\": " + to_string(r_t10["self_acc"])
+          + ", \"other_acc\": " + to_string(r_t10["other_acc"])
+          + ", \"delta\": " + to_string(r_t10["delta"])
+          + ", \"l2_self\": " + to_string(r_t10["pred_self_l2_mean"])
+          + ", \"l2_other\": " + to_string(r_t10["pred_other_l2_mean"])
+          + ", \"self_pass\": " + to_string(r_t10["self_pass"])
+          + ", \"self_total\": " + to_string(r_t10["self_total"])
+          + ", \"other_pass\": " + to_string(r_t10["other_pass"])
+          + ", \"other_total\": " + to_string(r_t10["other_total"]) + " },\n"
+
+    j = j + "    \"tight_20\": { \"regime\": \"tight\",  \"k\": " + to_string(_k_tight())
+          + ", \"age\": 20, \"self_acc\": " + to_string(r_t20["self_acc"])
+          + ", \"other_acc\": " + to_string(r_t20["other_acc"])
+          + ", \"delta\": " + to_string(r_t20["delta"])
+          + ", \"l2_self\": " + to_string(r_t20["pred_self_l2_mean"])
+          + ", \"l2_other\": " + to_string(r_t20["pred_other_l2_mean"])
+          + ", \"self_pass\": " + to_string(r_t20["self_pass"])
+          + ", \"self_total\": " + to_string(r_t20["self_total"])
+          + ", \"other_pass\": " + to_string(r_t20["other_pass"])
+          + ", \"other_total\": " + to_string(r_t20["other_total"]) + " }\n"
+
+    j = j + "  },\n"
+    j = j + "  \"derived\": {\n"
+    j = j + "    \"delta_tight_20\": " + to_string(d_t20) + ",\n"
+    j = j + "    \"delta_loose_20\": " + to_string(d_l20) + ",\n"
+    j = j + "    \"delta_tight_5\":  " + to_string(d_t5) + ",\n"
+    j = j + "    \"delta_tight_10\": " + to_string(d_t10) + ",\n"
+    j = j + "    \"closure_gap_20\": " + to_string(d_t20 - d_l20) + ",\n"
+    j = j + "    \"developmental_gap_tight\": " + to_string(d_t20 - d_t5) + "\n"
+    j = j + "  },\n"
+    j = j + "  \"criteria\": {\n"
+    j = j + "    \"C1_self_recognition_tight\": " + _bool_str(c1) + ",\n"
+    j = j + "    \"C2_closure_dependence\":     " + _bool_str(c2) + ",\n"
+    j = j + "    \"C3_developmental_gradient\": " + _bool_str(c3) + ",\n"
+    j = j + "    \"C4_determinism\":            " + _bool_str(f4) + "\n"
+    j = j + "  },\n"
+    j = j + "  \"falsifiers\": {\n"
+    j = j + "    \"F1_SELF_RECOGNITION\": { \"metric\": \"tight age=20 self_acc > other_acc\", \"value\": " + to_string(r_t20["self_acc"]) + ", \"verdict\": \"" + v1 + "\" },\n"
+    j = j + "    \"F2_CLOSURE_DEPEND\":   { \"metric\": \"Δ_tight_20 > Δ_loose_20\", \"value\": " + to_string(d_t20 - d_l20) + ", \"verdict\": \"" + v2 + "\" },\n"
+    j = j + "    \"F3_DEVELOPMENTAL\":    { \"metric\": \"Δ_tight_20 > Δ_tight_5\", \"value\": " + to_string(d_t20 - d_t5) + ", \"verdict\": \"" + v3 + "\" },\n"
+    j = j + "    \"F4_DETERMINISM\":      { \"metric\": \"re-run Δ byte-equal\", \"verdict\": \"" + v4 + "\" },\n"
+    j = j + "    \"F5_BOUNDS\":           { \"metric\": \"all acc in [0,1]\", \"verdict\": \"" + v5 + "\" }\n"
+    j = j + "  },\n"
+    j = j + "  \"n_criteria_pass\": " + to_string(n_c) + ",\n"
+    j = j + "  \"n_falsifier_pass\": " + to_string(n_pass) + ",\n"
+    j = j + "  \"verdict\": \"" + final_verdict + "\",\n"
+    j = j + "  \"cross_link\": {\"H_205\": \"PR #216\", \"H_214\": \"PR #245\"}\n"
+    j = j + "}\n"
+
+    write_file(_state_dir() + "/result.json", j)
+    println("ledger -> " + _state_dir() + "/result.json")
+}
+
+
+_run_h220()

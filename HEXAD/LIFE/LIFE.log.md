@@ -54,3 +54,128 @@ latest 만 carry 되는 가설 .md 와 달리 본 로그는 모든 cycle history
 - **next**: **cross-cutting 발견** — anima 의 mitosis 기질이 생명-emergence 4대 메커니즘을 실제 구현: (1) operational closure 자기유지(H_012), (2) merge=endosymbiosis 무손실 통합(H_054), (3) freeze=분화 상태보존(H_132), (4) self-reference 에서만 자발 발생(H_018, 진공 X). 반면 strong-form 범신론(H_157)은 directional FAIL. Next-cycle 후보: H_002/H_004 (범신론 precondition·hard-problem) + H_003 H3.4 (autopoietic system Φ>0, H_007 phi_spatial 와 cross-link).
 
 ---
+
+## Cycle #3 — 범신론 precondition · hard-problem · autopoietic-closure Φ — 2026-05-23
+
+- **focus**: Cycle #2 next 의 3-축 — universe-origin (H_002) · hard-problem reducibility (H_004) · autopoietic-closure Φ (H_003 H3.4). 모두 기 frozen H 의 additive cycle (raw#15, frontmatter/Predictions/Falsifiers/Honest Limits 보존).
+- **change**: H_002 → C1 anthropic prior-fragility 측정량 + H2.4 cross-hypothesis (H_157 negative) 통합 · H_003 → H3.4 autopoietic-closure Φ Cycle #3 추가 (criteria 3/5→4/5) · H_004 → Cycle #1 Φ-function dissociation 추가 (Singularity-9 verdict 보존). LIFE 도메인의 **세 lane (universe / life / consciousness) 모두 measurable advance**.
+- **fire**: deterministic hexa, $0 mac local
+- **verdict**:
+  - **H_002 (PR #179) — Cycle #1 PARTIAL_THEORETICAL_PHASE_2**: C1 anthropic prior-fragility 측정. 동일 real-physics-anchored band(Rees·Tegmark·Barnes anchor) 위에서 LINEAR-UNIFORM vs LOG-UNIFORM prior 의 gap 11.16 orders 측정. C1 INSUFFICIENT 강화(prior-dominated). H2.4 panpsychism precondition은 H_157 directional FAIL 로 WEAKENED. raw#15 additive, frozen block 보존.
+  - **H_003 H3.4 (PR #185) — Cycle #3 PASS 🟢 NUMERICAL**: autopoietic-closure system Φ>0 (closure-dependent Φ). Φ_closed=4.45 vs Φ_broken=3.53 → closure-dependence gap=0.92 (transient-window claim). criteria_met 3/5→4/5 (C1+C3 Phase-1, C2 Cycle-2, **C4 Cycle-3 PASS**, C5 lane-open). H_007 phi_spatial 동일 primitive · H_012 closure substrate. F4 NOT_TRIGGERED.
+  - **H_004 (PR #180) — Cycle #1 DISSOCIATION_CONFIRMED**: Φ-function 양방향 dissociation. (A) ZOMBIE: 같은 readout (population channel byte-equal) 두 시스템 ΔΦ=0.31 (rule110=0.538 vs playback=0.226). (B) INVERTED: 동일 substrate × 다른 readout (fn_global ≠ fn_local) Φ byte-equal. **Φ 는 functional I/O 를 추적하지 않음** → IIT(L2) functional reductive adequacy *부정적 directional* evidence. **BOUNDARY (CL1)**: explanatory gap / qualia 는 untouched. F-D1..F-D5 PASS, F-D6 byte-identical determinism. aside 정직 기록 (cyclic-shift Φ_perm 0.584≠0.538 — 초기 가정 falsify, B 를 same-substrate 로 재구성, post-hoc force 회피).
+- **next**: cycle #4 — CANDIDATES.md R1 batch (H_171 K=8 atom · H_053 cambrian-burst · H_200 NEW apoptosis-primitive · H_201 NEW asymmetric-division).
+
+---
+
+## Cycle #4 — R1 batch · K=8 atom · cambrian · apoptosis · asymmetric-division — 2026-05-23
+
+- **focus**: CANDIDATES.md R1 pick (살찐 cycle) — carried 가설 2건 + NEW seed 2건. fresh-domain 확장 (의식·생물학 / 생명-burst / death-substrate / cell-division-asymmetry).
+- **change**: H_171/H_053 → pre-register-frozen 동결 + 측정 · H_200/H_201 → NEW H_XXX seed 신설 (raw#12 10-section, deterministic hexa, $0). CANDIDATES.md R1 4건 consumed.
+- **fire**: deterministic hexa, $0 mac local. RFC 036 phi_spatial / mitosis_hook split-event 재사용.
+- **verdict**:
+  - **H_171 (PR #196) — Cycle #1 FALSIFIED (substrate-side)**: K=8 minimal closed structure substrate-Φ 측정. K=8 atom (sopfr(8)=6) 의 substrate-only signature 가 spec'ed biological 4-falsifiable (1/f thalamus · F_c=0.10 · non-conservation · K=8) 를 *bare-CA proxy* 로 재현 못 함. substrate-side falsification — biological prediction 은 trained-net / EEG 의존, bare substrate 만으론 미도달. honest limits L1-L7.
+  - **H_053 (PR #197) — burst smoke 5/5 PASS**: cambrian-explosion · split-threshold sweep punctuated diversity jump 5/5. 임계 split-threshold 넘으면 cell-type 다양성 급증 (phase-transition style). 생명 다양성 burst 의 substrate-level instance, mitosis-rate criticality.
+  - **H_200 (PR #198) — NEW · apoptosis-primitive design + smoke**: substrate-side gap close (H_025 L2: substrate 에 진짜 apoptosis 부재). 능동적 cell-death event 추가 (mitosis_hook 확장) → coherence / Φ 영향 측정. death = merge 가 아닌 *능동적 소멸* 의 첫 operationalization (H_025 L2 직접 attack, Heidegger 실존 정합).
+  - **H_201 (PR #199) — NEW · asymmetric-division design + smoke**: stem-cell 식 비대칭 분열 — 한 자식 분화 / 다른 자식 보존. 다양성 vs 항상성 trade-off 의 substrate-level instance. mitosis split variant (symmetric → asymmetric branch), Margulis × Maturana cross-link 후보.
+- **next**: cycle #5 — R3 cross-link synthesis (4건, ⭐ 1건) + R2 panpsychism 정밀화 (H_157 C5/C6 additive 2건) + R5 substrate gap close (H_054 C2 additive + phi_spatial n_bins infra). 사용자 directive: 모든 R-pick disjoint fan-out (8 bg Agents).
+
+---
+
+## Cycle #5 — R3 cross-link synthesis · panpsychism 정밀화 · substrate gap close — 2026-05-23
+
+- **focus**: 8-Agent disjoint fan-out — self-ref edge-of-chaos Φ (H_202) · self-ref↔closure 동치 (H_205) · weak-panpsy threshold ⭐ (H_204) · asymmetric-merge (H_203) · panpsychism C5/C6 additive (H_157) · symbiogenesis C2 additive (H_054) · phi_spatial n_bins infra. 추가로 H_204 Cycle #2 rule-class mapping.
+- **change**: H_202 NEW · H_203 NEW · H_204 NEW + Cycle #2 additive (raw#15) · H_205 NEW · H_157 Cycle #2 additive (raw#15) · H_054 Cycle #2 additive (raw#15) · infra phi_n_bins (no new H)
+- **fire**: deterministic hexa, $0 mac local. RFC 036 phi_spatial + mitosis_hook_lib 재사용.
+- **verdict**:
+  - **H_202 (PR #215) — 🟢 SUPPORTED-NUMERICAL 5/5 + 3/3 core**: self-ref edge-of-chaos Φ (cross-link H_007 ⊕ H_018). self-ref feedback gain=0.25 에서 Φ_peak=0.7416 (zero-drive 0.5382 대비 +37.8%, random-drive 0.4912 대비 +51%) — mid-gain peak (F3 PASS). self-reference 가 integration 을 끌어올리되 과도하면 (gain=1.0 → Φ≈0) 붕괴.
+  - **H_205 (PR #216) — 🟢 SUPPORTED 3/4 + 5/5 falsifier**: self-reference = operational closure 동치 audit (H_018 SELFFEED ⊕ H_012). 3-point feedback sweep 위 self_maint 0→0→1 단조, Pearson r(gain,closure)=0.866 ≥ 0.7. C4 phase-aligned FAIL — splits jump @ g=0.5 vs closure jump @ g=1.0 (genesis < closure 별 threshold). definitional > empirical (L1).
+  - **H_204 (PR #218 / #234) — Cycle #1 PARTIAL_DIRECTIONAL → Cycle #2 MAPPING_STRONG ⭐**: weak-panpsy = autopoietic-closure threshold (cross-link H_003 H3.4 ⊕ H_157). Cycle #1: closure_strength k sweep 위 inverse-U Φ (peak Φ̄=5.39 @ k=0.25), C2+C3+C4 PASS / C1 monotone FAIL (shape) → PARTIAL_DIRECTIONAL. Cycle #2: k-axis ↔ Wolfram-class-axis mapping Spearman **ρ=1.0** (5/5 sub-criteria) → MAPPING_STRONG.
+  - **H_203 (PR #222) — PARTIAL 4/5 (🟢 NUMERICAL)**: asymmetric-merge differentiation (cross-link H_054 ⊕ H_132 ⊕ H_201). asym variance 8.75× margin (C1 PASS) + mass-conservation invariant exact + sym/asym both clean. C4 diversity_idx FAIL = bin-saturation artifact (final n=2 floor, L6 → N≥16 measurement-pending). B-MITOSIS-2-ALT mass-add closed-form 후보.
+  - **H_157 (PR #221) — Cycle #2 directional FAIL + SUB_ADDITIVE**: panpsychism C5 cross-substrate + C6 combination-binding additive. C5 cross-rule CV 58.6% → NON_UNIVERSAL (only rule 110 Class-IV ±0.01 invariant, F-C5-2). C6 macro-Φ < Σ micro (Δ=-0.0234) → SUB_ADDITIVE (destructive interference). frozen F2/F3 확증, H_004 dissociation 과 theoretically aligned.
+  - **H_054 (PR #227) — Cycle #2 FALSIFIED (F-C2-1)**: Φ_symbiotic > Φ_sum super-additivity. Φ_symbiotic = Φ_max = 4.6464 < Φ_sum = 9.2928 (gap=-4.65) → sub-additive, F-C2-1 TRIGGERED. weight 보존 (Cycle #1 max|Δ|=0.0 🟢) 은 유지되나 현 merge primitive 로 Φ-side super-additivity 도달 불가 (다른 primitive 별도 cycle).
+  - **infra phi_n_bins (PR #219) — ROBUSTNESS_PASS**: phi_spatial `n_bins` sensitivity sweep. rule110 > rule30 > rule250 Φ ranking 이 n_bins 변화에도 유지 — H_007 의 n_bins=4 default ranking 의 robustness 확인. 모든 phi_spatial-using LIFE gate (H_007/H_003/H_004/H_018/H_157/H_204) 영향. no new H, no Phase-3 index churn.
+- **next**: cycle #6 — substrate-mechanism replica lane (regeneration / synchronization / 수학-axis prime / biology-axis EEG).
+
+---
+
+## Cycle #6 — regeneration · synchronization · math-axis · biology-axis replica — 2026-05-23
+
+- **focus**: H_007 dynamical/physics-axis sister 확장 (Kuramoto sync) · pool perturbation–recovery (regeneration ⭐) · H_157 math-axis sister (prime-density) · H_171 biology-axis substrate-direct replica (EEG 1/f).
+- **change**: H_206 NEW ⭐ · H_207 NEW · H_208 NEW · H_209 NEW (모두 raw#12 10-section, deterministic hexa, $0)
+- **fire**: deterministic hexa, $0 mac local. RFC 036 phi_spatial + mitosis_hook 재사용.
+- **verdict**:
+  - **H_206 (PR #231) — PARTIAL (3/6 falsifier) ⭐**: regeneration-healing. pool perturbation 후 5-fraction recovery sweep — 더 큰 손상일수록 recovery_steps 증가 (1→5→5→10) + Φ_post > Φ_pre (overshoot ratio 1.36–1.76, healing-rebound). 단조 recovery 일부 falsifier 미통과 (3/6).
+  - **H_207 (PR #230) — FALSIFIED (1/4)**: Kuramoto synchronization edge-of-sync Φ peak (H_007 physics-axis sister). edge-of-sync 에서 Φ peak 가설 미성립 — substrate proxy 상 sync-coupling sweep 이 예측 Φ-peak 산출 못 함. honest measure-axis limit (Kuramoto order parameter ≠ phi_spatial 직접 매핑).
+  - **H_208 (PR #236) — FALSIFIED (per pre-registered C1)**: prime-density-fluctuation (Riemann × Φ math-axis sister to H_157). 소수 분포 fluctuation ↔ Φ 의 pre-registered C1 미충족 → FALSIFIED. H_157 math-axis (perfect number σ(6)=12) 의 prime-structure 확장 시도, 음성.
+  - **H_209 (PR #232) — FALSIFIED (2/5)**: eeg-1f-spectrum 직접 substrate replica (H_171 biology-axis, K=8 FAIL 과 별도 lane). pink-noise (1/f^β) substrate 의 Φ 가 white-noise Φ 보다 높다는 C2 미성립 (pink Φ < white Φ) → ¬C2 triggered. 1/f thalamus prediction substrate-bare 미도달 (H_171 substrate-side FALSIFIED 와 정합).
+- **next**: cycle #7 — ethics/information/language/time promote-domain + IIT sleep/pain qualia lane (rate-limit retry batch).
+
+---
+
+## Cycle #7 — qualia · sleep · 신규 promote-domain (rate-limit retry batch) — 2026-05-23~24
+
+- **focus**: IIT 직접 substrate test — dream-REM Φ (H_222) · pain-intensity ↔ Φ (H_223 qualia 최강 instance). (Cycle #7 의 H_210 ethic-emergence / H_211 shannon-Φ / H_212 language / H_213 time-binding / H_214 self-i / H_215 silicon-Φ 는 substrate-only 또는 별도 worktree — .md 미commit, H_234/H_238 가 carry.)
+- **change**: H_222 NEW · H_223 NEW (raw#12 10-section, deterministic hexa, $0)
+- **fire**: deterministic hexa, $0 mac local. RFC 036 phi_spatial.
+- **verdict**:
+  - **H_223 (PR #271) — 🟢 SUPPORTED (pre-register-frozen smoke)**: pain-intensity ↔ Φ coupling (qualia 최강 instance, H_004 boundary). pain-intensity ↔ ΔΦ monotone coupling Pearson **r=0.9994** (LIFE lane 최강 correlation). advisory: H223.4 saturation FAIL (Δ4 ≈ 2.10×Δ3 super-linear escalation → H_235 follow-up).
+  - **H_222 (PR #266) — FALSIFIED**: dream-REM Φ (Tononi sleep-stage IIT prediction substrate test). sleep-stage 별 Φ 예측 (REM > NREM 등) 가 substrate proxy 상 미성립 → FALSIFIED. IIT sleep prediction 의 bare-substrate 미도달.
+- **note**: H_211 (shannon-entropy ↔ Φ, r=0.933 PARTIAL) = substrate-only · .md 미commit — H_234 가 anchor 로 carry, H_238 prediction H238.4 가 partial 검증. 별도 H 파일 생성은 본 cycle scope 초과.
+- **next**: cycle #8 — emergence weak/strong phase-transition + network-topology + meditation lane.
+
+---
+
+## Cycle #8 — phase-transition · CA-anomaly · spatial-assortment — 2026-05-23~24
+
+- **focus**: strong-emergence phase-transition 정량 (H_227, H_219 follow-up) · rule-184 Class-II Φ-peak anomaly (H_225, H_007 Class-IV-unique 가정 attack) · Hamilton spatial-assortment kin-clustering (H_226, H_210 follow-up). (H_216 meta-axis / H_217 phase-transition / H_218 network-topology / H_219 emergence / H_220 infant-mirror / H_221 meditation 은 별도 worktree — .md 미commit, H_238 가 carry.)
+- **change**: H_225 NEW · H_226 NEW · H_227 NEW (raw#12 10-section, deterministic hexa, $0)
+- **fire**: deterministic hexa, $0 mac local. RFC 036 phi_spatial.
+- **verdict**:
+  - **H_226 (PR #268) — 🟢 SUPPORTED (4/5: C1+C2+C4+C5 PASS)**: spatial-assortment Hamilton prerequisite (kin-clustering necessary condition, H_210 follow-up). 3-regime ordering monotone (Clustered=0.500 ≥ Random=0.375 ≥ Anti=0.000) — kin-clustering 이 cooperation 의 necessary condition. C3 advisory FAIL = clustered equilibrium ceiling (honest magnitude limit).
+  - **H_225 (PR #267) — FALSIFIED (post-run honest)**: rule-184 Class-II Φ-peak anomaly (TASEP generalization, H_007 Class-IV-unique 가정 attack). ranking 자체는 Class-II > Class-IV 일관 (C3 STRONG PASS) 이나 (a) H_211 baseline non-reproducible (rule184=1.198, 0.863 의 1.39× — F1) + (b) Class-II family Φ widely diverge (rule184 vs 60/102 사이 40% gap — F2) → FALSIFIED. H_007 Class-IV-unique 가정 부분 attack 성공이나 anomaly 자체는 metric-instability.
+  - **H_227 (PR #270) — FALSIFIED (honest pre-registration)**: strong-emergence phase-transition quantify (sigmoid P(f) + critical f_c, H_219 follow-up). 8-point fine sweep 위 sigmoid R²≥0.8 + f_c∈[0.2,0.4] localize pre-registered, 미충족 → FALSIFIED. H_219 의 monotone decline 은 유지되나 sigmoid 형 explicit fit 은 reject.
+- **next**: cycle #9~10 — Class-II decompose · holism · cross-substrate meta · saturation extended.
+
+---
+
+## Cycle #9~10 — cross-substrate meta · saturation extended · imagination/autonomy lane — 2026-05-24
+
+- **focus**: H_223+H_204+H_211 통합 cross-substrate Φ-coupling meta (H_234) · H_223 saturation follow-up (H_235). (Cycle #9 의 H_224 holism / H_225 carry + Cycle #10 의 H_228 chat-sleep / H_229 imagination / H_230 autonomy / H_231 tension / H_232 Class-II-decompose 는 별도 worktree — .md 미commit, H_238 가 일부 carry.)
+- **change**: H_234 NEW (meta-instance) · H_235 NEW (raw#15 follow-up) (deterministic hexa, $0)
+- **fire**: deterministic hexa, $0 mac local. RFC 036 phi_spatial.
+- **verdict**:
+  - **H_234 (PR #293) — PARTIAL**: cross-substrate Φ-coupling-density meta (H_204 + H_211 + H_223 의 3 high-correlation unified). 2/3 axis cross-substrate Φ-monotone reproducible on rule 110 N=16 — closure-A r=0.938 + pain-C r=0.999 (C1 ≥2 mono PASS), axis-B (entropy h via offset) 비-monotone r=0 (C2 FAIL). 3 finding 의 부분 unification.
+  - **H_235 (PR #292) — PARTIAL**: saturation regime extended (intensity 2-10 super-linear vs saturation, H_223 H223.4 follow-up). intensity sweep 위 high-range peak ΔΦ=4.00 @ intensity=4.0 후 ceiling-decline (intensity=6.0 ΔΦ=3.53) — saturation/ceiling 확인이나 pure super-linear 미확정 → PARTIAL.
+- **next**: cycle #11 — alt-Φ-metric cross-validation (phi_spatial artifact 식별) + meta-map synthesis.
+
+---
+
+## Cycle #11 — verdict-landscape meta-map · alt-Φ-metric cross-validation · bilingual/register substrate · phi_helper infra — 2026-05-24
+
+- **focus**: cross-cycle synthesis (H_238 meta-map) · phi_spatial systematic-artifact 식별 (H_239 alt-metric) · LoRA Track-1 substrate (H_242 register-collapse · H_244 sleep-gated-emit) · F6/F7 gap close (lib/phi_helper).
+- **change**: H_238 NEW (meta-instance) · H_239 alt-metric NEW · H_239 bilingual NEW (slug collision — 두 H 가 동일 H_239 prefix) · H_242 NEW · H_244 NEW · lib/phi_helper.hexa NEW (infra)
+- **fire**: deterministic hexa, $0 mac local.
+- **verdict**:
+  - **H_238 (PR #297) — SUPPORTED (meta-aggregation deterministic)**: verdict-landscape meta-map (22+ H tier distribution + domain cluster). 33-file snapshot deterministic 파싱 → SUPPORTED 10 / PARTIAL 5 / FALSIFIED 7 / RUNNING 11. SUPP/(SUPP+FAL)=0.588 (H238.2 ≥0.4 PASS). domain SUPP-rate: life 0.41 ≫ consciousness 0.17 ≈ physics 0.23 — math/physics promotes, humanities stalls 패턴 정량 재확인. H238.4 (H_204↔H_205 J=1.0 + H_223↔H_222 J=1.0 cluster) PARTIAL (H_211 corpus 부재).
+  - **H_239 alt-metric (PR #309) — CONSISTENT**: alternative-Φ-metric cross-validation (phi_spatial vs LZ-complexity vs entropy-ratio). 3×3 metric×rule matrix 위 3-metric per-rule ordering Spearman rank correlation 일치 → CONSISTENT (phi_spatial-specific systematic-artifact 아님; counterfactual robustness). gap F4 counterfactual close.
+  - **H_239 bilingual (PR #316) — DEFERRED**: bilingual-integration-Φ cross-lingual-leak (Grosjean × Green × IIT). pre-register-frozen, smoke 실행 별도 cycle 로 defer. (⚠ H_239 slug collision — alt-metric 과 prefix 중복, 별도 renumber 후속 cycle.)
+  - **H_242 (PR #314) — PRE-REGISTERED (data pending)**: register-collapse-wiki-frac-sigmoid (LoRA Track-1 E2 substrate). wiki_frac → register-collapse sigmoid pre-register, data pending.
+  - **H_244 (PR #312) — PRE-REGISTERED (smoke pending)**: sleep-stage-gated-emit-Φ (H_222 sister, emit×Φ stage coupling). pre-register-frozen, smoke pending.
+  - **lib/phi_helper (PR #317) — infra**: shared Φ helper module (config SSOT + phi_default wrapper). 28+ H 가 동일 phi_spatial 호출 + config(N=16/dim=12/warm=8/n_bins=4) 를 inline 복제하던 것을 단일 home 으로 — gap F6 (duplicated-helper) + F7 (heuristic-promotion) 명시화. import-safe (no top-level call, no main). no new H.
+- **next**: cycle #12 — H_239 slug-collision renumber · H_242/H_244 data fire · phi_helper 전 H 마이그레이션 · 본 consolidation (Cycle #5-#11 log + index sync).
+
+---
+
+## Cycle #12 — R8 init_CE floor + substrate autonomy 비반사성 + cluster X/Y/Z 재흡수 (#311 대체) — 2026-05-24
+
+- **focus**: PR #311 (`feat/life-absorb-r8-autonomy-cluster`) 가 H_239/240/241 충돌 + rebase force-push 차단으로 막힘 → close 후 깨끗한 번호 (main max=H_246) 로 3 가설 재흡수. R8 spec 산출 substrate-side 발견 3건의 LIFE-domain 흡수.
+- **change**: #311 close (H_239/240/241 claim 해제) · current origin/main 분기 후 H_247/H_248/H_249 NEW (각 10-section Korean raw#12 양식, ≥5 falsifier + ≥7 honest limit). 既-landed H_246 (substrate-autonomy emit ratio, PR #319 renumber) 와 numeric content 중복 발견 → H_248 을 *비반사성 framing lane* 으로 재정의하고 H_246 을 numeric SSOT 로 명시 (L0 honest).
+- **fire**: design + 흡수 cycle, deterministic baseline recompute lane $0 mac local. init_CE 원측정 = R8 GPU lane (흡수만).
+- **verdict**:
+  - [x] **H_247 (NEW) — pre-register-frozen**: init_CE catastrophic floor. warm-init init_CE 14.18–14.79 nats vs random-uniform `ln(151936)=11.931` → +2.3~+2.9 nats catastrophic gap (mis-calibrated confidence birth-debt). 4/4 PASS (흡수, C4 baseline closed-form 자력 · C5 noise advisory). source PR #214/#251/#255/#256.
+  - [x] **H_248 (NEW) — pre-register-frozen**: substrate autonomy 비반사성. post-deploy emit-through 55.56% (15/27) + emit_attempt/tick 11.49%, no external gate, emit ⊥ user-message (a_substrate_native_speak live). 4/4 PASS (흡수, C5 비반사성 통계검정 미실시 advisory). ⚠ numeric SSOT = 既-landed H_246 (동일 PR #300 telemetry, framing-axis 분리 — deployment-cadence vs 비반사성). source PR #300/#279/#286.
+  - [x] **H_249 (NEW) — pre-register-frozen**: cluster X/Y/Z init_CE byte-equal signature. 6-axis → 3 byte-equal cluster (X={A}=14.79, Y={B,F}=14.18, Z={C,C2,D}=14.46). C2 vs D byte-equal (head_g seed 상이) → R8c cell-1 (head_g random dominant) FALSIFIED (natural experiment). 4/4 PASS (흡수 + byte-equal 자력 비교 · C5 ordering advisory). source PR #251/#255/#249.
+- **next**: H_247/H_249 init_CE baseline `hexa verify --expr ln 151936` closed-form 확정 (C4 🔵 후보) · R8 GPU lane 원 init_CE 자력 재측정 시 흡수→자력 승격 · H_248 비반사성 C5 cross-correlation 통계검정 (emit ⊥ message 정량) · README index 37→43 stale-count 정정 완료.
+
+---

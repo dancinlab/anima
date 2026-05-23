@@ -1,0 +1,46 @@
+{
+  "hypothesis": "H_220",
+  "slug": "infant-mirror-self-recognition",
+  "domain": "LIFE",
+  "title": "infant mirror self-recognition — substrate self vs other prediction discrimination (H_205 + H_214 sister)",
+  "date": "2026-05-23",
+  "host": "mac-local",
+  "deterministic": true,
+  "hexa_only": true,
+  "llm": "none",
+  "seed": 42,
+  "params": {"d_model": 8, "pool_N": 8, "acc_threshold": 0.18, "k_loose": 0.2, "k_tight": 0.8},
+  "sweep": {
+    "loose_5":  { "regime": "loose",  "k": 0.2, "age": 5,  "self_acc": 0.375, "other_acc": 0.0, "delta": 0.375, "l2_self": 0.187629, "l2_other": 1.43349, "self_pass": 3, "self_total": 8, "other_pass": 0, "other_total": 56 },
+    "loose_10": { "regime": "loose",  "k": 0.2, "age": 10, "self_acc": 0.5, "other_acc": 0.0, "delta": 0.5, "l2_self": 0.196909, "l2_other": 1.50026, "self_pass": 4, "self_total": 8, "other_pass": 0, "other_total": 56 },
+    "loose_20": { "regime": "loose",  "k": 0.2, "age": 20, "self_acc": 0.625, "other_acc": 0.0, "delta": 0.625, "l2_self": 0.145564, "l2_other": 1.43348, "self_pass": 5, "self_total": 8, "other_pass": 0, "other_total": 56 },
+    "tight_5":  { "regime": "tight",  "k": 0.8, "age": 5,  "self_acc": 0.375, "other_acc": 0.0, "delta": 0.375, "l2_self": 0.213643, "l2_other": 1.56872, "self_pass": 3, "self_total": 8, "other_pass": 0, "other_total": 56 },
+    "tight_10": { "regime": "tight",  "k": 0.8, "age": 10, "self_acc": 0.375, "other_acc": 0.0, "delta": 0.375, "l2_self": 0.215562, "l2_other": 1.30004, "self_pass": 3, "self_total": 8, "other_pass": 0, "other_total": 56 },
+    "tight_20": { "regime": "tight",  "k": 0.8, "age": 20, "self_acc": 0.5, "other_acc": 0.0, "delta": 0.5, "l2_self": 0.186264, "l2_other": 1.53858, "self_pass": 4, "self_total": 8, "other_pass": 0, "other_total": 56 }
+  },
+  "derived": {
+    "delta_tight_20": 0.5,
+    "delta_loose_20": 0.625,
+    "delta_tight_5":  0.375,
+    "delta_tight_10": 0.375,
+    "closure_gap_20": -0.125,
+    "developmental_gap_tight": 0.125
+  },
+  "criteria": {
+    "C1_self_recognition_tight": true,
+    "C2_closure_dependence":     false,
+    "C3_developmental_gradient": true,
+    "C4_determinism":            true
+  },
+  "falsifiers": {
+    "F1_SELF_RECOGNITION": { "metric": "tight age=20 self_acc > other_acc", "value": 0.5, "verdict": "PASS" },
+    "F2_CLOSURE_DEPEND":   { "metric": "Δ_tight_20 > Δ_loose_20", "value": -0.125, "verdict": "FAIL" },
+    "F3_DEVELOPMENTAL":    { "metric": "Δ_tight_20 > Δ_tight_5", "value": 0.125, "verdict": "PASS" },
+    "F4_DETERMINISM":      { "metric": "re-run Δ byte-equal", "verdict": "PASS" },
+    "F5_BOUNDS":           { "metric": "all acc in [0,1]", "verdict": "PASS" }
+  },
+  "n_criteria_pass": 3,
+  "n_falsifier_pass": 4,
+  "verdict": "PARTIAL",
+  "cross_link": {"H_205": "PR #216", "H_214": "PR #245"}
+}

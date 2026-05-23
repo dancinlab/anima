@@ -258,3 +258,157 @@ falsifiers: F1..F5 NOT_TRIGGERED, F6 NOT_TRIGGERED
 - HEXAD/MITOSIS B-MITOSIS-2: PART A 가 그 closed-form invariant 의 살아있는 merge-event numerical 재확인
 - H_012 autopoietic network: merge = 두 autopoietic closure 의 fusion (self-producing → self-integrating)
 - H_157 combination problem: endosymbiosis-as-merge = micro→macro binding 의 candidate 계산 메커니즘 (위상 analogy)
+
+## Cycle #2 — C2 Φ_symbiotic > Φ_sum — 2026-05-23
+
+raw#15 strict additive: Cycle #1 frozen verdict (PASS 3/5 strict + C4 finite-only + C5 lane-open)
+보존, 본 섹션은 H54.4 의 *strong* 형태 (Φ_symbiotic > Φ_sum) 를 Φ-side 에서 advance.
+Margulis (1967) endosymbiosis × IIT — post-merge organism (mitochondrion + host) 의 통합 Φ 가
+pre-merge separate organisms 의 Φ 합을 넘어서는지 (super-additive integration / combination
+problem candidate mechanism). Cycle #1 은 weight 보존만 검증 (max|Δ|=0.0 🟢), Φ-side 는
+honest L2 명시 — 본 cycle 이 그 honest gap 의 first probe.
+
+### Cycle #2 sub-criteria (pre-registered)
+
+- **C2.1 (super-additive)**: Φ_symbiotic > Φ_sum (= Φ_A + Φ_B) → true symbiotic emergence
+- **C2.2 (max-dominant)**: Φ_symbiotic ≥ max(Φ_A, Φ_B) → 최소 한 partner 보다 높음 (필요조건)
+- **C2.3 (substrate-dependent ratio)**: Φ_symbiotic / Φ_sum 의 비가 universal 상수 아님 (예측)
+- **C2.4 (finite)**: phi_spatial(traj_merged) finite, NaN/Inf-free
+
+### Additive falsifiers (raw#15)
+
+- **F-C2-1**: Φ_symbiotic ≤ Φ_sum → C2.1 FALSIFIED (super-additivity 부재, 단순 separable merge)
+- **F-C2-2**: Φ_symbiotic < max(Φ_A, Φ_B) → C2.2 FALSIFIED (merge 가 integration 손상)
+- **F-C2-3**: Φ_symbiotic = NaN or negative → primitive error
+- **F-C2-4**: re-run byte-different → raw#9 violation (non-determinism)
+- **F-C2-5**: merge primitive weight non-conservation → Cycle #1 regression (invalid run)
+
+### Run protocol
+
+`HEXAD/LIFE/state/h054_c2_phi_symbiotic_2026_05_23/run_h054_c2.hexa`
+($0 mac local, deterministic, no LLM, hexa-only).
+
+- substrate: 2 isolated cell-pools (CA-A, CA-B) — each N=8 cells, dim=8 trajectory, warm=4
+- 각 cell evolves under H_003-style closed catalytic A/B/C cycle (C→+A, A→+B, B→+C) + nn
+  catalyst diffusion. obs = A+B+C site mass (H_007 / H_003 H3.4 / H_171 와 동일 observable)
+- distinct seeds (SEED_A=0x054C2A=347178, SEED_B=0x054C2B=347179) → two distinct lineages
+- Φ_A = phi_spatial(traj_A, 8, 8, 4) · Φ_B = phi_spatial(traj_B, 8, 8, 4) · Φ_sum = Φ_A + Φ_B
+- MERGE = element-wise linear average traj_merged[i,t] = 0.5 * (traj_A[i,t] + traj_B[i,t])
+  (H_054 Cycle #1 mass-conserving primitive = B-MITOSIS-2 linear avg, applied to obs trajectory)
+- Φ_symbiotic = phi_spatial(traj_merged, 8, 8, 4)
+- determinism: re-run Φ_A, verify byte-equal
+- regression check: merge primitive max|Δ| ≤ 1e-6 (Cycle #1 F2 regression)
+
+### Run verdict (VERBATIM)
+
+```
+================================================================
+  H_054 Cycle #2 — C2 Φ_symbiotic > Φ_sum (endosymbiosis-Φ)
+  deterministic · hexa-only · $0 mac local · LLM none · raw#15
+  N=8 DIM=8 WARM=4 K=0.6 DECAY=0.1 DIFFUSE=0.05 n_bins=4
+  SEED_A=347178 SEED_B=347179
+  Φ primitive: RFC 036 phi_spatial (🟢 NUMERICAL · NOT 🔵 IIT 4.0 MIP)
+  MERGE primitive: H_054 Cycle #1 mass-conserving (B-MITOSIS-2 🔵 sympy carry)
+================================================================
+  Φ_A   (isolated pool A, seed=347178)  = 4.646387
+  Φ_B   (isolated pool B, seed=347179)  = 4.646387
+  Φ_sum (= Φ_A + Φ_B)                                = 9.292773
+  Φ_max (= max(Φ_A, Φ_B))                            = 4.646387
+  Φ_symbiotic (post-merge integrated organism)       = 4.646387
+  merge invariant max|Δ| = 0.000000 (≤ tol=0.000001)
+  Φ_A re-run = 4.646387  (byte-equal=true)
+  ratio Φ_symbiotic / Φ_sum                          = 0.500000
+
+  ----------------------------------------------------------------
+  C2.1  SUPER-ADDITIVE (Φ_symbiotic > Φ_sum)   : false  (gap=-4.646387)
+  C2.2  MAX-DOMINANT  (Φ_symbiotic ≥ Φ_max)    : true  (gap=0.000000)
+  C2.4  FINITE & NONNEG (Φ_symbiotic ≥ 0)      : true
+  F-C2-4 DETERMINISM    (re-run byte-equal)    : true
+  F-C2-5 MERGE CONSERV  (Cycle #1 regression)  : true  (max|Δ|=0.000000)
+
+  VERDICT_RULE: PASS = C2.1 + C2.2 + C2.4 + det + merge-conserv
+  VERDICT (C2 / H54.4 strong): FALSIFIED
+    F-C2-1(sub-add)=TRIGGERED  F-C2-2(max-dom)=NOT_TRIGGERED
+    F-C2-3(finite)=NOT_TRIGGERED  F-C2-4(det)=NOT_TRIGGERED  F-C2-5(merge)=NOT_TRIGGERED
+  ----------------------------------------------------------------
+  H54.4_C2_VERDICT=FALSIFIED  PHI_A=4.646387  PHI_B=4.646387  PHI_SUM=9.292773  PHI_SYMBIOTIC=4.646387
+
+  result.json written → HEXAD/LIFE/state/h054_c2_phi_symbiotic_2026_05_23/result.json
+=== H_054 Cycle #2 C2 Φ_symbiotic smoke complete: FALSIFIED ===
+```
+
+### Cycle #2 verdict
+
+```
+phase: Cycle_2 (C2.1 super-additivity FALSIFIED; C2.2 max-dominant PASS; C2.4 finite PASS)
+verdict_class: FALSIFIED  (F-C2-1 TRIGGERED)
+phi_a: 4.646387   phi_b: 4.646387   phi_sum: 9.292773   phi_symbiotic: 4.646387
+gap_super_additive: -4.646387   (Φ_symbiotic = Φ_max < Φ_sum)
+ratio_symbiotic_over_sum: 0.500000   (collapsed to max-dominant, not super-additive)
+falsifiers: F-C2-1 TRIGGERED · F-C2-2..F-C2-5 NOT_TRIGGERED
+evidence_strength: STRONG (numerical recompute exact, deterministic byte-equal)
+invariant_tier: 🟢 NUMERICAL (phi_spatial proxy + B-MITOSIS-2 🔵 mass-conserving merge carry)
+```
+
+**Honest finding**: 본 cycle 의 operationalization (mass-conserving linear average on per-cell obs
+trajectory = H_054 Cycle #1 의 B-MITOSIS-2 primitive 그대로 적용) 에서는 **Φ_symbiotic = Φ_max,
+NOT super-additive**. 두 동등 Φ-lineage 가 element-wise 평균으로 collapse 되면 Φ 도 정확히
+한 lineage 수준으로 평탄화 (Φ_sum 의 절반, ratio=0.5). 이는 **B-MITOSIS-2 linear-avg merge 가
+Φ-additive 가 아니라 Φ-collapsing** 임을 시사 — Cycle #1 의 honest L3 ('선형 평균은
+information-theoretic 손실: under-determined') 가 Φ-side 에서도 numerically 재확인됨.
+
+**Cycle #1 → Cycle #2 종합**: weight 보존 (max|Δ|=0.0 🟢) 은 PASS 지만 *Φ-side super-additivity
+는 FALSIFIED* — 두 결과는 모순이 아니라 *complementary*: 'linear-conservation (sum 보존) ≠
+injective 보존' 이라는 Cycle #1 L3 의 직접 numerical 입증. endosymbiosis 의 *strong* 형태
+(Φ_symbiotic > Φ_sum) 는 *현재 merge primitive 로는 도달 불가* — 다른 merge primitive
+(asymmetric H_203 sister · multiplicative · concatenation-preserving) 가 필요.
+
+### Additive Honest Limits (raw#91 c3)
+
+- **L-C2-1**: phi_spatial proxy = 🟢 NUMERICAL (RFC 036 spatial-slice replica of phi_rs,
+  n_bins=4), NOT 🔵 IIT 4.0 MIP. canonical IIT Φ (system-level partition search + cause-effect
+  structure + exclusion) 는 본 측정 범위 밖.
+- **L-C2-2**: merge operationalization = element-wise (1/2)*(s_A[i,t]+s_B[i,t]) on obs trajectory
+  — H_054 Cycle #1 mass-conserving primitive (B-MITOSIS-2 cross-link 🔵). Alternative merge
+  primitives (asymmetric/keeper-preserve = **H_203** sister 'asymmetric-merge differentiation';
+  concat 으로 cell count 두 배 보존 = parallel-firing **H_204** weak-panpsy threshold;
+  multiplicative) 는 다른 Φ pattern — 본 cycle 미검증.
+- **L-C2-3**: pre-merge 'isolated' = 같은 lattice 위 두 distinct seed (운영적 isolation).
+  Truly disconnected substrate (각자의 lattice + 자기 diffusion topology) 는 더 강한 isolation —
+  본 cycle 은 cheap seed-divergence proxy.
+- **L-C2-4**: super-additivity 가 *관찰되었더라도* phenomenal binding 자동 성립 ≠
+  (H_004 hard problem boundary 동일 carry). IIT super-additive Φ 는 necessary, not sufficient
+  for unified macro-consciousness. 본 cycle 은 그 *necessary* side 의 numerical test.
+- **L-C2-5**: small substrate (N=8 cells × DIM=8 × n_bins=4) — eukaryote real-organism scale
+  (≥10^13 mitochondria) 은 many orders 너머. toy substrate sanity probe, NOT scaling claim.
+- **L-C2-6**: ratio Φ_symbiotic/Φ_sum 은 substrate-dependent — 다른 lattice topology /
+  coupling / seed-base / merge primitive 는 다른 ratio. 본 0.500000 은 단일 frozen substrate
+  instance, universal 상수 아님 (C2.3 expected).
+- **L-C2-7**: single-cycle one-shot — (SEED_A, SEED_B) pair 5-pair 평균 미수행. robust
+  super-additivity / sub-additivity 결론은 별도 multi-seed sweep cycle 필요. 본 결과는
+  *single-instance deterministic* (cheap-path 🟢) — falsification 은 robust (단일 counterexample
+  로도 universal claim FALSIFY 충분), 일반화 (universal sub-additive 인지) 는 후속 cycle.
+
+### Cross-link
+
+- **H_054 Cycle #1**: weight 보존 PASS (max|Δ|=0.0 🟢) — 본 Cycle #2 가 같은 primitive 의
+  Φ-side advance. Cycle #1 L3 ('linear-conservation ≠ injective 보존') 의 직접 numerical 입증.
+- **HEXAD/MITOSIS B-MITOSIS-2 MERGE-WEIGHT-LINEAR** (🔵 SUPPORTED-FORMAL sympy 27/27):
+  본 cycle merge primitive 의 closed-form anchor. Φ-collapse 는 closed-form 자체의 직접 귀결.
+- **H_007 cellular_automaton_consciousness**: phi_spatial primitive baseline (RFC 036, n_bins=4).
+- **H_003 H3.4 autopoietic-Φ**: 동일 catalytic A/B/C closed cycle + nn diffusion substrate 재사용.
+- **H_203 asymmetric_merge_differentiation** (parallel firing, LIFE Cycle #5): asymmetric merge
+  primitive 가 Φ-additive 인지 별도 검증 lane — 본 cycle 의 symmetric mass-conserving 한계 보완.
+- **H_204 parallel_firing_weak_panpsy_threshold** (parallel firing, LIFE Cycle #5): N=8 toy
+  substrate Φ threshold scaling — 본 cycle 의 N=8 vs N=16 substrate sensitivity sister.
+- **H_157 panpsychism / combination problem**: 본 결과는 mass-conserving merge 가 combination
+  problem 의 *positive* candidate mechanism 이 *아님* 을 시사 — Goff/Coleman binding gap 의
+  computational instance 부재 (negative evidence for *this specific* merge operationalization).
+- **H_004 hard problem**: phenomenal binding boundary 동일 carry (L-C2-4).
+- **raw**: raw#15 (additive multi-cycle pattern) + raw#9 (deterministic) + raw#91 c3 (honest limits)
+
+**State output**: `HEXAD/LIFE/state/h054_c2_phi_symbiotic_2026_05_23/result.json` (deterministic,
+sha256 reproducible across re-runs)
+**Script**: `HEXAD/LIFE/state/h054_c2_phi_symbiotic_2026_05_23/run_h054_c2.hexa` (hexa-only,
+borrows H_003 H3.4 catalytic-lattice + RFC 036 phi_spatial)
+**Cross-link to Cycle #1 PR**: #161

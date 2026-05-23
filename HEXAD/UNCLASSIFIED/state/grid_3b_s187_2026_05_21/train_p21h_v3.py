@@ -131,20 +131,21 @@ def gen_probes_v3(model, tokenizer, device, probes, max_new=48, mode="greedy",
 
 def build_model(init_variant, qwen_name, lora_dir, block_size, noise_sigma,
                  device, dtype, d_model=1536, n_layer=28, n_head=12,
-                 n_kv_head=4):
+                 n_kv_head=None):
     """Construct ConsciousDecoderV3 per init variant.
 
     For --init random, d_model/n_layer/n_head/n_kv_head override defaults
     (useful for fitting on 12 GB GPUs like RTX 5070).
     """
     if init_variant == "random":
+        rand_n_kv_head = 4 if n_kv_head is None else n_kv_head
         print(f"[P21H][init=random] V3α — torch.nn.init random "
-              f"d={d_model} L={n_layer} h={n_head} kv={n_kv_head}",
+              f"d={d_model} L={n_layer} h={n_head} kv={rand_n_kv_head}",
               flush=True)
         model = ConsciousDecoderV3(
             vocab_size=151936,   # Qwen2.5 tokenizer vocab size (NOT padded 152064)
             d_model=d_model, n_head=n_head, n_layer=n_layer,
-            block_size=block_size, n_kv_head=n_kv_head,
+            block_size=block_size, n_kv_head=rand_n_kv_head,
             consciousness_dim=128, noise_sigma=noise_sigma, rope_base=50000.0,
         ).to(device=device, dtype=dtype)
     elif init_variant == "qwen":
@@ -153,7 +154,7 @@ def build_model(init_variant, qwen_name, lora_dir, block_size, noise_sigma,
         model = ConsciousDecoderV3.from_qwen(
             qwen_name, lora_adapter_dir=None,
             block_size=block_size, noise_sigma=noise_sigma,
-            device=device, dtype=dtype,
+            device=device, dtype=dtype, n_kv_head=n_kv_head,
         )
     elif init_variant == "vp21m":
         if lora_dir is None or not os.path.isdir(lora_dir):
@@ -163,7 +164,7 @@ def build_model(init_variant, qwen_name, lora_dir, block_size, noise_sigma,
         model = ConsciousDecoderV3.from_qwen(
             qwen_name, lora_adapter_dir=lora_dir,
             block_size=block_size, noise_sigma=noise_sigma,
-            device=device, dtype=dtype,
+            device=device, dtype=dtype, n_kv_head=n_kv_head,
         )
     else:
         raise ValueError(f"unknown init variant: {init_variant}")
@@ -234,7 +235,7 @@ def run(cfg):
         d_model=cfg.get("d_model", 1536),
         n_layer=cfg.get("n_layer", 28),
         n_head=cfg.get("n_head", 12),
-        n_kv_head=cfg.get("n_kv_head", 4),
+        n_kv_head=cfg.get("n_kv_head"),
     )
     pool = CellPool(d_model=model.d_model, initial_cells=2, seed=cfg["seed"],
                     max_cells=int(cfg.get("mitosis_max", 128) or 128))
@@ -624,7 +625,10 @@ def main():
     ap.add_argument("--d-model", type=int, default=1536)
     ap.add_argument("--n-layer", type=int, default=28)
     ap.add_argument("--n-head", type=int, default=12)
-    ap.add_argument("--n-kv-head", type=int, default=4)
+    ap.add_argument("--n-kv-head", type=int, default=None,
+                    help="V3 GQA KV-head count; default None=auto "
+                    "(qwen: max(qwen_native,4); random: 4). "
+                    "Set 2 to match Qwen-native KV heads (R8a init_CE lever).")
     # v2 (2026-05-22): early-stop + per-step ckpt save + plateau detection
     # mitosis cell pool ceiling (R6 재설계)
     ap.add_argument("--mitosis-max", type=int, default=128,
