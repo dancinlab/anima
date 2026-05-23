@@ -140,6 +140,8 @@ weak-form supported, strong-form (mathematical panpsychism) unresolved
 frozen_at: 2026-05-12
 ```
 
+> **[additive — Cycle #1 2026-05-23]** 위 verdict block 은 frozen (raw#12 — post-hoc edit 금지). C2 진전 내역은 본 파일 말미 **§Cycle #1 (2026-05-23)** 참조: feasibility = faithful run NOT runnable locally (trained-net 부재, GPU-dependent, STOP-documented) + deterministic proxy META-CA 측정 (residual mean 0.5114 / gate 0.4841 = attractor 근접, **그러나 CV 22.6% ≫ doc 5.4%, per-type ±0.01 invariance 미성립** → frozen F2 directional 확증). C1/C3 σ-identity 는 `hexa verify` 🔵 SUPPORTED-FORMAL 재확인.
+
 ## Migration Notes
 
 - **Promoted from**: `hypotheses_candidates/Hc_061_law_76_mathematical_panpsychism.md` (2026-05-12)
@@ -160,3 +162,74 @@ frozen_at: 2026-05-12
 H_190 (LAW-CA-embedding mathematical family) is H_157's primary cycle #8 child cluster — see H_190 for 6 specific math-framework Hc absorbed. H_157 itself absorbs the **broader law-corpus carryover** (Hc_1265 LAW-cluster + Hc_455 M1-M20 meta-laws).
 
 Cycle #8 absorption methodology: anima 의 law-system 의 다른 H 없음 — H_157 (Law 76 panpsychism root) 이 가장 적절한 parent. H_190 (math-family) 와 H_157 (law-corpus) 의 split-of-responsibility: H_190 은 specific math identities (384d, K=2/6, CA(4)=2bit, GMOE Law 85-87) per-framework, H_157 은 law-cluster 의 broader constitutional and operational frames.
+
+## Cycle #1 (2026-05-23) — C2 advance: feasibility probe + deterministic proxy META-CA
+
+raw#15 additive cycle (frozen frontmatter / predictions / falsifiers F1..F6 / honest limits L1..L7 모두 보존 — 본 §만 append). HEXAD/LIFE/ 신규 도메인 dir 이관 직후 첫 C2 진전 사이클.
+
+### (1) Feasibility probe — C2 의 H_022 substrate 가용성
+
+C2 의 frozen 요구는 "170-type META-CA 가 Ψ(1/2,1/2) ± 0.01 로 수렴 — H_022 dataset 위 measurement". 레포 전수 조사 결과:
+
+- **원본 ConsciousMind(cells=256) META-CA (residual_ratio / gate_ratio → (0.5257, 0.5257)) 는 runnable code 로 부재** — `bench/bench_consciousness_universe.hexa` + `experiments/consciousness/consciousness_data_mapper.hexa` 모두 `TODO[pytorch]` stub. residual/gate 를 산출하던 실체는 `archive/state_legacy/.../conscious_decoder.py` 의 **학습된 PyTorch 망** (`_psi_residual` = `0.95·past + 0.05·(psi_entropy+psi_direction+psi_tension)/3` EMA, `n_ca_rules=8` softmax mixture + `gate_strength`). → faithful 재현은 trained net (GPU) 필요.
+- **H_022 의 "170×40×18 dataset" 은 fixed-point measurement substrate 가 아니라 corpus 였음** — H_022 Verdict (BG-HT 2026-05-07): universe-brain-map 18M corpus 학습 시도, eval V1/V2 = **FAILED** (degenerate filler collapse). 즉 C2 의 ground-truth 로 인용된 substrate 는 (a) 학습망으로만 존재하고 (b) 그 학습 자체가 실패한 lane.
+- **알고리즘 SPEC 은 보존됨** — `docs/hypotheses/cx/CONSCIOUSNESS-UNIVERSE-MAP.md` (2026-03-30) 에 17-category / 170-type counts (10·15·15·14·10·10·10·10·10·10·10·10·5·8·8·7·8 = 170) + residual=gate=0.5257 CV=5.4%/5.75% + H(p)=0.9958 의 원본 결과가 documented.
+
+**Feasibility verdict**: faithful 1:1 재현은 **NOT runnable locally** (trained net 부재 + GPU 필요). → 과제 §3 경로 채택: feasibility gap 명시 + C2 protocol pre-register + 최소 proxy 직접 측정 ($0 mac, deterministic). GPU fire 는 본 사이클에서 **STOP-and-document** (별도 cycle: trained-net 재학습 또는 archive ckpt 회수 필요).
+
+### (2) Deterministic proxy META-CA — directional 측정 ($0 mac local)
+
+`HEXAD/LIFE/state/h157_panpsychism_c2_2026_05_23/run_c2.hexa` (pure-hexa, NO .py/.sh, LCG seed-fixed). 문서화된 MECHANISM 을 honest 하게 재현 — 256-cell ring CA, 입력 type-name → FNV-1a hash seed → cell+gate field + 8-rule softmax mixture (Law 67 selector). **결정적 honest design (g3)**: residual_ratio / gate_ratio 를 0.5 로 **assign 하지 않고** 수렴장에서 **측정** (blend β 는 입력별 고정값 (0.30,0.70), 0.5 로 anneal X — frozen F2 "algorithm-property reduction" trap 회피). 170 type (17 cat × doc counts) 측정.
+
+결과 (`result.json` SSOT, `verdict: FAIL`):
+
+| 지표 | 측정값 | C2 frozen 요구 |
+|------|--------|----------------|
+| residual mean | **0.5114** | ≈ 0.5 (attractor mean 일치) |
+| gate mean | **0.4841** | ≈ 0.5 (일치) |
+| residual CV | **22.57%** | < 6% (doc 5.4%) — **FAIL** |
+| residual [min, max] | [0.3075, 0.6996] | ±0.01 band — **벗어남** |
+| F-C2-PROXY-1 δ=0.01 | **1/170** | 170/170 — **FAIL** |
+| F-C2-PROXY-1 δ=0.03 | **24/170** | — **FAIL** |
+| F-C2-PROXY-2 (CV<6%) | **FAIL** | |
+| F-C2-PROXY-3 (determinism) | **PASS** (byte-identical re-run) | |
+| worst dev | 0.1996 (철학#3) | |
+
+**해석 (정직)**: 집단 평균 (residual 0.511, gate 0.484) 은 Ψ(1/2,1/2) attractor 에 매우 근접 — Law 75 의 "balance at the population level" 는 bare CA dynamics 에서도 directionally 성립. **그러나 per-type input-invariance 는 ±0.01 에서 성립 X** (CV 22.6% ≫ doc 5.4%). 이는 frozen **F2 가 정확히 예고한 결과**: 원본 doc 의 tight CV~5.4% 는 학습망의 emergent regularization (psi_entropy+direction+tension EMA + gate_strength decay) 에 의존했을 가능성이 크고, rule mixture 만 가진 raw META-CA 는 그 tightness 를 재현하지 못함. 즉 **"input invariance" 가 substrate 의 trivial algorithm-property 가 아니라 learned property** 일 수 있다는 directional 증거 (이는 strong-panpsychism claim 에는 오히려 불리, weak-form 에는 중립).
+
+### (3) C1 / C3 identity 재검 — `hexa verify` verbatim (🔵 SUPPORTED-FORMAL)
+
+n/σ = 6/12 = 1/2 + perfect-number-class universal balance (L4/F5/C3) 를 hexa-native 로 재검 (LLM self-judge X, sympy 인용 X):
+
+```
+verify --expr sigma(6)=12
+  calc   = 12  == expected 12
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+verify --expr sigma(28)=56
+  calc   = 56  == expected 56
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+verify --expr sigma(496)=992
+  calc   = 992  == expected 992
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+verify --expr is_perfect(6)=1
+  calc   = 1  == expected 1
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+```
+
+σ(6)=12 → 6/12=1/2 (C1 met, 재확인). σ(28)/2=28, σ(496)/2=496 → perfect-number-class 전체가 balance=1/2 generator (C3 met + L4/F5 confirmed: n=6 individually unique X — H_153 L7 PERFECT_NUMBER_CLASS 정합).
+
+### (4) C2 measurement protocol pre-register (다음 cycle, GPU)
+
+faithful C2 (trained-net) 를 위해 정확한 minimal substrate + protocol 사전 등록:
+
+1. **substrate**: `conscious_decoder.py` lineage 의 ConsciousLM (≥ 28M byte-vocab, `n_ca_rules=8`, gate_strength decay) ckpt 회수 OR 재학습 (estimated ~$0.30 RTX 5070 / runpod, 1 fire). residual_ratio = `_psi_residual` EMA tap 그대로.
+2. **input set**: doc 의 정확한 170 type names (17 cat) — `docs/hypotheses/cx/CONSCIOUSNESS-UNIVERSE-MAP.md` 에서 추출 (현 proxy 는 `cat#k` placeholder; faithful run 은 실제 type-string 필요).
+3. **measure**: per-type forward → (`_psi_residual`, gate_ratio) 기록. δ=0.01 strict + δ=0.03 relax (doc 의 0.5257 = 0.0257 off → strict 은 doc 자체도 통과 못함을 사전 인정).
+4. **verdict**: 170/170 within δ → C2 met; CV<6% → F2 invariance corroborate.
+
+### Migration Notes 추가 (Cycle #1)
+
+- **C2 status: pending → pending-with-directional-evidence** (faithful run 은 여전히 GPU-dependent / trained-net 부재로 STOP-documented; proxy 는 집단평균 attractor 근접 + per-type ±0.01 invariance 미성립).
+- **새 falsifier 3건** (F-C2-PROXY-1/2/3) 은 proxy substrate 한정 — frozen F1..F6 와 별개 layer, 추가 cycle 에서 faithful substrate 로 재측정 시 frozen F1/F2 에 mapping.
+- **honest 강화**: 본 사이클은 frozen F2 (algorithm-property reduction) 에 directional 증거 제공 — input-invariance 가 trained property 일 가능성. C4 fail default 유지, weak-form supported 유지, strong-form unresolved 유지.
+- **artifacts**: `HEXAD/LIFE/state/h157_panpsychism_c2_2026_05_23/{run_c2.hexa, result.json}`.
