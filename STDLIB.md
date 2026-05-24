@@ -76,7 +76,8 @@ HEXAD/LIFE/lib/                    stdlib/
   - **signal/DSP**: 🔥 60+ fn in `VOICE/anima-voice/dsp_core.hexa` (FFT · STFT · window **26 dup** · biquad · MEL · pitch) → `signal/` 6-module 제안 (~230 LoC sweep) = **다음 promote 1순위**
   - clustering/classification: NONE (anima 미구현 = 설계 선택, info-theoretic distance 는 phase-1 MI/KL 로 커버) · DEFER (RFC-037)
   - MITOSIS / CHAT general: 신규 0 (전부 phase-1 dup, M1-M5 pipeline 대기)
-- [ ] **signal/ DSP promote** (phase3 M1) — `signal/{core_fft, core_stft, core_window, core_filter, core_pitch, core_resample}` hexa-lang stdlib land + window 26-dup sweep
+- [x] **signal/ DSP promote — phase3 M1 6/6 module LAND** (hexa-lang origin/main) — `stdlib/signal/{core_fft, core_window, core_filter, core_stft, core_resample, core_pitch}.hexa` 전 6 module merged across 2 cycles (#847 filter · #848 window · #849 fft · #854 stft · #855 resample · #857 pitch). **libm trig policy 확정**: anima dsp_core 의 Taylor `sin/cos + fmod_native` 가 range-reduction collapse → constant output 으로 **실측 broken** 임이 진단됨 — 6 module 전부 hexa-lang libm trig (`hexa_sin` / `hexa_cos` / `hexa_atan2`) 사용 = 정합. governance lockstep: project.tape **@D stdlib_trig_libm** (#851) + commons.tape **@D g61** (general stdlib SSOT, sidecar 0.10.4).
+- [ ] **anima 측 26-dup window sweep** — dsp_core.hexa 의 Hann/Hamming/Blackman duplicate (~26 호출 site) 를 `signal/core_window` import 로 교체 (sibling agent in flight this cycle, BEHAVIOR FIX = Taylor broken → libm correct)
 - [ ] clustering primitive — DEFERRED (RFC-037, 현 anima 불요)
 
 ## Honest limits
