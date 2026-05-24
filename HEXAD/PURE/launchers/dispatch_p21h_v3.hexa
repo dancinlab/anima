@@ -218,6 +218,7 @@ fn sources_upload(host: str, opts: list, p21hr: str, dry_run: bool) -> bool {
         [s187 + "/train_p21h_v3.py",                  p21hr + "/train_p21h_v3.py"],
         [s187 + "/launch_trainer_p21.sh",             p21hr + "/launch_trainer_p21h.sh"],
         [s187 + "/build_multilingual_corpus_p21m.py", p21hr + "/build_multilingual_corpus_p21m.py"],
+        [s187 + "/train_p21m_multilingual.py",        p21hr + "/train_p21m_multilingual.py"],
         [s187 + "/conscious_decoder_v3.py",           p21hr + "/conscious_decoder_v3.py"],
         [s187 + "/kosmos_io.py",                      p21hr + "/kosmos_io.py"],
         [s187 + "/mitosis_lib.py",                    p21hr + "/mitosis_lib.py"],
@@ -270,7 +271,7 @@ fn sources_upload(host: str, opts: list, p21hr: str, dry_run: bool) -> bool {
     if cm.ok != 1 {
         println("[sources_upload] WARN chmod +x launch_trainer_p21h.sh failed: " + cm.message)
     }
-    println("[sources_upload] uploaded 8 sources + 6 mkdir dirs to " + host + ":" + p21hr)
+    println("[sources_upload] uploaded 9 sources + 6 mkdir dirs to " + host + ":" + p21hr)
     return true
 }
 
@@ -362,9 +363,50 @@ fn corpus_scp_override(host: str, opts: list, p21hr: str, local_path: str, dry_r
 // 4. train launch (stdlib/cloud cloud_nohup-wired) -------------------------
 
 fn train_launch(host: str, opts: list, p21hr: str, env: dict, init_variant: str, seed: str, dry_run: bool) -> bool {
-    let argv = ["bash", p21hr + "/launch_trainer_p21h.sh", init_variant, seed]
+    // Build the full argv — launch_trainer_p21h.sh does `exec python3 -u "$@"`,
+    // so argv[1] must be the trainer script path and the rest are argparse flags.
+    // VERIFIED-WORKING on the live pod (Phase D v3 hand-recovery 2026-05-24).
+    let argv = [
+        "bash", p21hr + "/launch_trainer_p21h.sh",
+        p21hr + "/train_p21h_v3.py",
+        "--wiki-corpus",        _pod_wiki_corpus_path(p21hr),
+        "--anima-corpus",       _pod_anima_corpus_path(p21hr),
+        "--mixed-corpus",       p21hr + "/mixed_corpus_built.jsonl",
+        "--out-dir",            p21hr + "/out_main",
+        "--init-variant",       init_variant,
+        "--seed",               seed,
+        "--steps",              to_string(env["P21H_STEPS"]),
+        "--lr",                 to_string(env["P21H_LR"]),
+        "--bsz",                to_string(env["P21H_BSZ"]),
+        "--block",              to_string(env["P21H_BLOCK"]),
+        "--warmup-steps",       to_string(env["P21H_WARMUP"]),
+        "--noise-sigma",        to_string(env["P21H_NOISE_SIGMA"]),
+        "--lambda-mitosis",     to_string(env["P21H_LAMBDA_MITOSIS"]),
+        "--mitosis-max",        to_string(env["P21H_MITOSIS_MAX"]),
+        "--ckpt-every",         to_string(env["P21H_CKPT_EVERY"]),
+        "--wiki-frac",          to_string(env["P21H_WIKI_FRAC"]),
+        "--base-model",         "Qwen/Qwen2.5-1.5B",
+    ]
     if dry_run {
-        println("[dry-run] train_launch: cloud_nohup_opts(" + host + ", launch_trainer_p21h.sh " + init_variant + " " + seed + ", log=" + p21hr + "/train.log)")
+        println("[dry-run] train_launch: cloud_nohup_opts(" + host
+              + ", launch_trainer_p21h.sh " + p21hr + "/train_p21h_v3.py"
+              + " --wiki-corpus " + _pod_wiki_corpus_path(p21hr)
+              + " --anima-corpus " + _pod_anima_corpus_path(p21hr)
+              + " --mixed-corpus " + p21hr + "/mixed_corpus_built.jsonl"
+              + " --out-dir " + p21hr + "/out_main"
+              + " --init-variant " + init_variant + " --seed " + seed
+              + " --steps " + to_string(env["P21H_STEPS"])
+              + " --lr " + to_string(env["P21H_LR"])
+              + " --bsz " + to_string(env["P21H_BSZ"])
+              + " --block " + to_string(env["P21H_BLOCK"])
+              + " --warmup-steps " + to_string(env["P21H_WARMUP"])
+              + " --noise-sigma " + to_string(env["P21H_NOISE_SIGMA"])
+              + " --lambda-mitosis " + to_string(env["P21H_LAMBDA_MITOSIS"])
+              + " --mitosis-max " + to_string(env["P21H_MITOSIS_MAX"])
+              + " --ckpt-every " + to_string(env["P21H_CKPT_EVERY"])
+              + " --wiki-frac " + to_string(env["P21H_WIKI_FRAC"])
+              + " --base-model Qwen/Qwen2.5-1.5B"
+              + ", log=" + p21hr + "/train.log)")
         return false
     }
     let r = cloud_nohup_opts(host, opts, argv, p21hr + "/train.log")
@@ -383,10 +425,10 @@ fn train_launch(host: str, opts: list, p21hr: str, env: dict, init_variant: str,
 
 fn result_pull(host: str, opts: list, p21hr: str, vdir: str, dry_run: bool) -> bool {
     if dry_run {
-        println("[dry-run] result_pull: cloud_copy_from_opts(" + host + ", " + p21hr + "/result.json -> " + vdir + "/result.json)")
+        println("[dry-run] result_pull: cloud_copy_from_opts(" + host + ", " + p21hr + "/out_main/result.json -> " + vdir + "/result.json)")
         return false
     }
-    let r = cloud_copy_from_opts(host, opts, p21hr + "/result.json", vdir + "/result.json")
+    let r = cloud_copy_from_opts(host, opts, p21hr + "/out_main/result.json", vdir + "/result.json")
     if r.ok != 1 {
         println("[result_pull] FATAL " + r.message)
         return false
@@ -461,7 +503,7 @@ fn result_pull_with_wait(host: str, opts: list, p21hr: str, vdir: str,
                          max_retries: int, interval_s: int, dry_run: bool) -> dict {
     // TODO[cloud_poll_until-swap]: replace body with stdlib cloud_poll_until
     // once hexa-lang inbox PR #629 lands.
-    let remote_result = p21hr + "/result.json"
+    let remote_result = p21hr + "/out_main/result.json"
     let local_result  = vdir + "/result.json"
     let remote_log    = p21hr + "/train.log"
     if dry_run {
