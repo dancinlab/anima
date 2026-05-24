@@ -279,10 +279,6 @@ fn run_facade() -> bool {
 // model. f ≈ 1/(2·N·τ_p), power = C·V²·f. No ngspice call in falsifier.
 // ═══════════════════════════════════════════════════════════════
 
-fn abs_f_cm(x: float) -> float {
-    if x < 0.0 { return 0.0 - x }
-    return x
-}
 
 fn sqrt_f_cm(x: float) -> float {
     if x <= 0.0 { return 0.0 }
@@ -349,7 +345,7 @@ fn fc_cm_3() -> bool {
     let p2 = dynamic_power(c, 2.0 * v, f)
     // doubling V → 4× power
     let ratio = p2 / p1
-    let dev = abs_f_cm(ratio - 4.0)
+    let dev = fabs(ratio - 4.0)
     println("  [F-CMOS-3] P_2V/P_V=" + to_string(ratio) + " expected=4 dev=" + to_string(dev))
     return dev < 0.01
 }

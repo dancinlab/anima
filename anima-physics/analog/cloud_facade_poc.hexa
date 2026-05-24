@@ -265,10 +265,6 @@ fn write_marker(creds_present: bool, dry_run_mode: bool, degraded: bool, backend
 // falsifier follows actual substrate mechanism per spec preservation rule.
 // ═══════════════════════════════════════════════════════════════
 
-fn abs_f_an(x: float) -> float {
-    if x < 0.0 { return 0.0 - x }
-    return x
-}
 
 fn ln_f(x: float) -> float {
     // crude natural-log via series around 1 (good for 0<x<=2);
@@ -334,7 +330,7 @@ fn fa_an_1() -> bool {
     let mut s = 0.0
     let mut i = 0
     while i < len(p) { s = s + p[i]; i = i + 1 }
-    let dev = abs_f_an(s - 1.0)
+    let dev = fabs(s - 1.0)
     println("  [F-ANALOG-1] mis_sum=" + to_string(s) + " dev=" + to_string(dev))
     return dev < 0.001
 }

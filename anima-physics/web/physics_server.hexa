@@ -161,10 +161,6 @@ fn physics_server_run(srv: PhysicsServer) {
 // $0 Mac local, no websocket server bind required.
 // ═══════════════════════════════════════════════════════════════
 
-fn abs_f_we(x: float) -> float {
-    if x < 0.0 { return 0.0 - x }
-    return x
-}
 
 fn lcg_next_we(s: int) -> int { return (s * 1103515245 + 12345) % 2147483648 }
 fn lcg_unit_we(s: int) -> float {
