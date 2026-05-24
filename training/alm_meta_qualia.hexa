@@ -96,6 +96,8 @@
 
 // ─── Constants ────────────────────────────────────────────────
 
+import "stdlib/linalg/list_matvec.hexa"
+
 let MI_BINS = 8           // log-bin count for MI estimator (T3)
 let EPS     = 0.0000001
 
@@ -192,22 +194,6 @@ fn det_rand(n: int, seed: int) -> array {
 }
 
 // ─── Matrix primitive (row-major flat) ───────────────────────
-
-fn matvec(m: array, x: array, rows: int, cols: int) -> array {
-    let mut out = []
-    let mut r = 0
-    while r < rows {
-        let mut s = 0.0
-        let mut c = 0
-        while c < cols {
-            s = s + m[r * cols + c] * x[c]
-            c = c + 1
-        }
-        out = out.push(s)
-        r = r + 1
-    }
-    return out
-}
 
 fn vec_add(a: array, b: array) -> array {
     let n = len(a)

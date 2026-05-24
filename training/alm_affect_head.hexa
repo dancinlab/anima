@@ -58,6 +58,8 @@
 
 // ─── Constants ──────────────────────────────────────────────
 
+import "stdlib/linalg/list_matvec.hexa"
+
 let N_EMO        = 7
 let D_DEFAULT    = 64
 let WALL_BUDGET  = 50.0       // ms — T3 latency budget per spec
@@ -141,22 +143,6 @@ fn det_noise(n: int, seed: int) -> array {
 }
 
 // matvec — row-major flat: y[r] = Σ_c m[r*cols + c] * x[c].
-fn matvec(m: array, x: array, rows: int, cols: int) -> array {
-    let mut out = []
-    let mut r = 0
-    while r < rows {
-        let mut s = 0.0
-        let mut c = 0
-        while c < cols {
-            s = s + m[r * cols + c] * x[c]
-            c = c + 1
-        }
-        out = out.push(s)
-        r = r + 1
-    }
-    return out
-}
-
 // ─── Ekman 7 centroids (SoA — parallel flat arrays) ─────────
 
 fn ekman_valence() -> array {
