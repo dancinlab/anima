@@ -1,0 +1,297 @@
+// PURE closure auto-judge — single-command 4-criterion eval harness (B3).
+//
+// USAGE
+//   hexa run HEXAD/PURE/eval/closure_auto_judge.hexa <path-to-result.json>
+//
+// EXIT
+//   0  closure ACHIEVED  (4/4 PASS)
+//   1  closure FAIL      (≥ 1 criterion FAIL)
+//   2  malformed input / file not found
+//
+// 4 CRITERIA (mirrors phase_d_result_schema_2026_05_24.md § 6)
+//   1. multilingual_probe       — count(per_lang_verdicts[].verdict ∈ {STRONG,PARTIAL}) ≥ 4 / 5
+//   2. register_collapse        — n_anima_register_hits_total < 4
+//   3. motivation_8factor       — motivation_8factor.motivation_score ≥ 0.30  (Phase B B-SPONT)
+//   4. dream_stage_at_eval      — block present + phi_envelope ∈ canonical 5-stage table
+//
+// Decoupled from result_to_axis_map.hexa (which renders AXIS_MAP_RESULTS rows). This CLI is
+// single-purpose: print verdicts, set exit code, no row formatting.
+
+// ------------------------------ helpers -----------------------------------
+
+fn _verdict_passing(v: str) -> bool {
+    // Phase D: STRONG or PARTIAL count as passing per-lang.
+    return v == "STRONG" || v == "PARTIAL"
+}
+
+fn _phi_in_canonical(phi: float) -> bool {
+    // canonical 5-stage table (phase_d_result_schema § 4):
+    //   WAKE 1.0 · N1 0.7 · N2 0.4 · N3 0.15 · REM 0.95
+    // Use absolute tolerance 0.0001 (floats from JSON round-trip cleanly).
+    let tol = 0.0001
+    let table = [1.0, 0.7, 0.4, 0.15, 0.95]
+    let mut i = 0
+    while i < len(table) {
+        let d = phi - table[i]
+        let ad = d
+        if ad < 0.0 { ad = 0.0 - ad }
+        if ad <= tol { return true }
+        i = i + 1
+    }
+    return false
+}
+
+fn _short_sha(path: str) -> str {
+    // 16-char prefix of sha256. Returns "?" on missing file / shasum failure (non-fatal —
+    // sha is provenance metadata, not a closure criterion).
+    let raw = exec("shasum -a 256 " + path + " 2>/dev/null | awk '{print $1}'").trim()
+    if raw == "" { return "?" }
+    let n = len(raw)
+    if n < 16 { return raw }
+    let mut out = ""
+    let mut i = 0
+    while i < 16 { out = out + raw[i]; i = i + 1 }
+    return out
+}
+
+// ------------------------------ load --------------------------------------
+
+fn _load_result(path: str) -> dict {
+    if !file_exists(path) {
+        println("[closure_auto_judge] ERROR result.json not found: " + path)
+        exit(2)
+    }
+    let raw = read_file(path)
+    if raw == "" {
+        println("[closure_auto_judge] ERROR result.json empty: " + path)
+        exit(2)
+    }
+    let r = json_parse(raw)
+    if type_of(r) != "map" {
+        println("[closure_auto_judge] ERROR malformed JSON (root not a map, got " + type_of(r) + "): " + path)
+        exit(2)
+    }
+    return r
+}
+
+// ------------------------------ criterion 1 -------------------------------
+
+fn judge_multilingual(result: dict) -> dict {
+    let per_lang = result["per_lang_verdicts"]
+    let mut total = 0
+    let mut n_pass = 0
+    let mut compact = ""
+    let mut passing = ""
+    if type_of(per_lang) == "array" {
+        total = len(per_lang)
+        let mut i = 0
+        while i < total {
+            let row = per_lang[i]
+            let mut lang = "?"
+            let mut v = "?"
+            if type_of(row) == "map" {
+                if type_of(row["lang"]) == "string" { lang = row["lang"] }
+                if type_of(row["verdict"]) == "string" { v = row["verdict"] }
+            }
+            if i > 0 { compact = compact + " · " }
+            compact = compact + lang + "=" + v
+            if _verdict_passing(v) {
+                if n_pass > 0 { passing = passing + ", " }
+                passing = passing + lang
+                n_pass = n_pass + 1
+            }
+            i = i + 1
+        }
+    }
+    let mut verdict = "FAIL"
+    if n_pass >= 4 { verdict = "PASS" }
+    return #{
+        "criterion": "multilingual_probe",
+        "compact": compact,
+        "passing_list": passing,
+        "n_pass": n_pass, "n_total": total,
+        "threshold": "≥4",
+        "verdict": verdict
+    }
+}
+
+// ------------------------------ criterion 2 -------------------------------
+
+fn judge_register(result: dict) -> dict {
+    let mut hits = -1
+    let v = result["n_anima_register_hits_total"]
+    let t = type_of(v)
+    if t == "int" || t == "float" { hits = to_int(v) }
+    let mut verdict = "FAIL"
+    let mut hits_disp = to_string(hits)
+    if hits < 0 {
+        // Absence: treat as FAIL (the train script should always stamp this — missing field
+        // = malformed Phase D result).
+        verdict = "FAIL"
+        hits_disp = "missing"
+    } else {
+        if hits < 4 { verdict = "PASS" }
+    }
+    return #{
+        "criterion": "register_collapse",
+        "hits": hits_disp,
+        "threshold": "< 4",
+        "verdict": verdict
+    }
+}
+
+// ------------------------------ criterion 3 -------------------------------
+
+fn judge_motivation(result: dict) -> dict {
+    let mut score = -1.0
+    let mut score_disp = "missing"
+    if has_key(result, "motivation_8factor") {
+        let m = result["motivation_8factor"]
+        if type_of(m) == "map" && has_key(m, "motivation_score") {
+            let s = m["motivation_score"]
+            let t = type_of(s)
+            if t == "float" || t == "int" {
+                score = to_float(s)
+                score_disp = to_string(score)
+            }
+        }
+    }
+    let mut verdict = "FAIL"
+    if score >= 0.30 { verdict = "PASS" }
+    return #{
+        "criterion": "motivation_8factor",
+        "score": score_disp,
+        "threshold": "≥ 0.30",
+        "verdict": verdict
+    }
+}
+
+// ------------------------------ criterion 4 -------------------------------
+
+fn judge_dream_stage(result: dict) -> dict {
+    let mut present = false
+    let mut phi_ok = false
+    let mut phi_disp = "—"
+    if has_key(result, "dream_stage_at_eval") {
+        let ds = result["dream_stage_at_eval"]
+        if type_of(ds) == "map" {
+            present = true
+            if has_key(ds, "phi_envelope") {
+                let p = ds["phi_envelope"]
+                let t = type_of(p)
+                if t == "float" || t == "int" {
+                    let phi = to_float(p)
+                    phi_disp = to_string(phi)
+                    if _phi_in_canonical(phi) { phi_ok = true }
+                }
+            }
+        }
+    }
+    let mut verdict = "FAIL"
+    if present && phi_ok { verdict = "PASS" }
+    return #{
+        "criterion": "dream_stage_at_eval",
+        "present": present,
+        "phi": phi_disp,
+        "verdict": verdict
+    }
+}
+
+// ------------------------------ aggregate ---------------------------------
+
+fn judge_all(result: dict) -> dict {
+    let j1 = judge_multilingual(result)
+    let j2 = judge_register(result)
+    let j3 = judge_motivation(result)
+    let j4 = judge_dream_stage(result)
+    let mut n_pass = 0
+    if j1["verdict"] == "PASS" { n_pass = n_pass + 1 }
+    if j2["verdict"] == "PASS" { n_pass = n_pass + 1 }
+    if j3["verdict"] == "PASS" { n_pass = n_pass + 1 }
+    if j4["verdict"] == "PASS" { n_pass = n_pass + 1 }
+    let mut closure = "FAIL"
+    if n_pass == 4 { closure = "ACHIEVED" }
+    return #{
+        "j1": j1, "j2": j2, "j3": j3, "j4": j4,
+        "n_pass": n_pass, "n_total": 4,
+        "closure": closure
+    }
+}
+
+// ------------------------------ render ------------------------------------
+
+fn render_report(path: str, sha: str, judged: dict) {
+    let j1 = judged["j1"]
+    let j2 = judged["j2"]
+    let j3 = judged["j3"]
+    let j4 = judged["j4"]
+
+    println("=== PURE closure auto-judge ===")
+    println("result: " + path)
+    println("sha:    " + sha)
+    println("")
+
+    println("[criterion 1] multilingual_probe")
+    println("  per-lang verdicts: " + j1["compact"])
+    println("  passing langs:     " + to_string(j1["n_pass"]) + "/" + to_string(j1["n_total"]) + "  (" + j1["passing_list"] + ")")
+    println("  threshold:         " + j1["threshold"])
+    println("  verdict:           " + j1["verdict"])
+    println("")
+
+    println("[criterion 2] register_collapse")
+    println("  n_anima_register_hits_total: " + j2["hits"])
+    println("  threshold:                   " + j2["threshold"])
+    println("  verdict:                     " + j2["verdict"])
+    println("")
+
+    println("[criterion 3] motivation_8factor")
+    println("  motivation_score: " + j3["score"])
+    println("  threshold:        " + j3["threshold"])
+    println("  verdict:          " + j3["verdict"])
+    println("")
+
+    println("[criterion 4] dream_stage_at_eval")
+    let mut present_str = "false"
+    if j4["present"] { present_str = "true" }
+    println("  phi_envelope present: " + present_str + " (phi=" + j4["phi"] + ")")
+    println("  verdict:              " + j4["verdict"])
+    println("")
+
+    println("=== AGGREGATE ===")
+    let mut tail = " · closure FAIL"
+    if judged["closure"] == "ACHIEVED" { tail = " · closure ACHIEVED" }
+    println(to_string(judged["n_pass"]) + "/" + to_string(judged["n_total"]) + " PASS" + tail)
+}
+
+// ------------------------------ main --------------------------------------
+
+fn _usage() {
+    println("USAGE:")
+    println("  hexa run HEXAD/PURE/eval/closure_auto_judge.hexa <path-to-result.json>")
+    println("EXIT: 0 = PASS · 1 = FAIL · 2 = malformed")
+}
+
+fn _argv_user() -> list {
+    let a = args()
+    let n = len(a)
+    if n <= 1 { return [] }
+    let mut out = []
+    let mut i = 1
+    while i < n { out = out + [a[i]]; i = i + 1 }
+    return out
+}
+
+fn main() {
+    let argv = _argv_user()
+    if len(argv) == 0 || argv[0] == "-h" || argv[0] == "--help" {
+        _usage()
+        return
+    }
+    let path = argv[0]
+    let result = _load_result(path)
+    let sha = _short_sha(path)
+    let judged = judge_all(result)
+    render_report(path, sha, judged)
+    if judged["closure"] == "ACHIEVED" { return }
+    exit(1)
+}
