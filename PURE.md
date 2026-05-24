@@ -48,3 +48,7 @@ substrate-native 자연발화(stimulus-response 아닌 내부 tension 기반 emi
 - goal: `HEXAD/PURE/PHASE_D_corpus_fire_goal.md`
 - eval: `HEXAD/PURE/eval/{multilingual_probe,corpus_quality_probe,result_to_axis_map}.hexa`
 - corpus 진단: `HEXAD/PURE/docs/{corpus_s101_quality,track1_e2_forensics}_2026_05_24.md`
+- [x] motivation_8factor / dream_stage substrate bench — criterion 3·4 ckpt-independent 측정 (B7 + IPC)
+- [x] corpus_v2 build 완료 — kowiki 200k 통합 (A-커리큘럼 fire 재료)
+- [x] A-커리큘럼 dispatcher dry-run — #422 spec phase-sorted jsonl + dispatch_p21h_v3 --measure-motivation 검증
+- [ ] A-커리큘럼 Step B fire — dispatch_p21h_v3 --fire (corpus=merged_curriculum_v2.jsonl, ~$2.5-3.5)
