@@ -190,3 +190,19 @@ latest 만 carry 되는 가설 .md 와 달리 본 로그는 모든 cycle history
 - **next**: R8a' 재dispatch (a_fire_autonomous + a_wall_first parallel pod) → F-WIRE-2~4 자력 발화 · cross-substrate-axis silent-drop audit (dropout · attention type · positional encoding · lr schedule — H254.5 일반 패턴 검정) · runtime end-to-end cfg assert infra 별도 lane (L4 long-term mitigation, compile-time fix 외).
 
 ---
+
+## Cycle #14 — life-extended + division-dynamics 6-seed 병렬 (mortality · aging · contact · embryo · quorum · phoenix) — 2026-05-25
+
+- **focus**: CANDIDATES §C NEW seed (사용자 4축: 죽음·세포분열·범신론·생명) 중 runnable 6건을 격리 worktree 6-agent 병렬 fan-out (`/cycle`). mirror-self-model 은 기존 H_220 중복으로 SKIP.
+- **change**: H_258~H_263 NEW 6건. README 가설인덱스 45→51 (+lib). 각 PR main 직착지 (pr-cycle auto-merge, stacked 아님).
+- **fire**: 전건 $0 mac-local/pool deterministic hexa smoke, LLM none, ckpt 없음. `state/h2{58..63}_*_2026_05_25/`.
+- **verdict**: 5 SUPPORTED + 1 FALSIFIED
+  - [x] **H_258 mortality-salience — SUPPORTED 3/3** (PR #472): min_cells floor 근접 → split/curiosity 변화 (|Δ|split loose=0.60 tight=0.20). 발견: 방향 反-naive Heidegger — floor 근접 = 동역학 위축(조용해짐).
+  - [x] **H_259 aging-senescence — SUPPORTED 3/3** (PR #468): `w*=(1-d)^age` → death-rate age-단조↑ Gompertz-유사, decay 6× → median lifespan 10× 단축 (50→15→5). L1 계단형(smooth 지수 아님).
+  - [x] **H_260 contact-inhibition — SUPPORTED 4/4** (PR #469): 밀도 임계 split 억제 → carrying-capacity K=floor(thr×cap)=8/16/24 정확 포화 logistic. L2 one-sided brake (above-K 수축 X).
+  - [x] **H_261 embryogenesis-gradient — SUPPORTED 4/4** (PR #470): 공간 gradient → position-state |r|=0.76(steep) vs 0.13(flat), axis-gap +0.635 발생-축 (French-flag analog). L3 norm-clamp 포화로 mid>steep 비단조.
+  - [x] **H_262 quorum-sensing — SUPPORTED_FULL 4/4** (PR #474): coupling=0.2 q_thr=0.3 switch_step=29 full-ON cascade ΔQ=0.375 bistable, sub-threshold gate (q_thr 0.5/0.7 정직 미발생).
+  - [x] **H_263 phoenix-rebirth — 🔴 FALSIFIED 3/6** (PR #471): floor(2/3 cell) = absorbing state, minimal seed regrowth_splits=0 (양 depth) → 죽음↔발생 연결 부재. H_206 F4 catastrophic-floor 의 일반화. valid closed negative.
+- **next**: CANDIDATES §C 잔여 2건 (death=merge cross-link · trained-vs-bare CA Φ) · §D cross-link · §G AXES R1 promote (ethics·info·language·time). 발견된 hexa 실행 함정(pool-route gate · RNG single-stream 결정론)은 hexa-lang inbox 후보.
+
+---

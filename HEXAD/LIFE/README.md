@@ -38,7 +38,7 @@ weak-panpsy threshold) 가 본 dir 의 cross-domain 운용 instance.
 | `HEXAD/CHECK/` | verification frontier (Φ / IIT / closed-form) — LIFE 가설의 verify 도구 |
 | `HEXAD/MITOSIS/` | 성장축 ⊥ HEXAD-6 (orthogonal). 세포 분열/병합 의 구조 anchor — LIFE/H_132 (frozen-cells) 와 cross-link |
 
-## 가설 인덱스 (45 H + 1 lib, 2026-05-24 #311 재흡수 후 · H_247/248/249 NEW · H_254 NEW R8a wiring 흡수 · H_256 NEW R8c noise step-time 5x 흡수)
+## 가설 인덱스 (51 H + 1 lib · H_258-263 NEW 2026-05-25 cycle#14 life-extended/division 6-seed (5 SUPP + 1 FAL) · H_247/248/249 · H_254 · H_256 흡수)
 
 | ID | Slug | Domain | Status | 핵심 |
 |----|------|--------|--------|------|
@@ -86,6 +86,12 @@ weak-panpsy threshold) 가 본 dir 의 cross-domain 운용 instance.
 | [H_249](H_249_cluster_init_ce_byte_equal_signature.md) | cluster-init-ce-byte-equal-signature | substrate · life | pre-register-frozen (#311 재흡수) | init_CE 3-cluster X/Y/Z byte-equal — C2=D (head_g seed≠) → R8c cell-1 FALSIFIED (PR #251/#255/#249) |
 | [H_254](H_254_n_kv_head_wiring_silent_misconfig.md) | n-kv-head-wiring-silent-misconfig | substrate · life | pre-register-frozen (R8a 흡수) | layered config chain silent-drop — dispatcher `--n-kv-head 2` → `v3_n_kv_head=4` factory override, R8a vs R8a' init_CE byte-equal probe (PR #342/#214/#257/#339) |
 | [H_256](H_256_noise_sigma_optimizer_step_time_penalty.md) | noise-sigma-optimizer-step-time-penalty | substrate · life · measurement-integrity | pre-register-frozen (R8c 4-cell 흡수) | noise σ=0.1 → adamw8bit step time 5x penalty (1 s/step → 4-5 s/step), n_kv=2 noise-환경 복합 +13% — R8c verdict (PR #374) wall axis 확장, cause B/C/D 기각 (PR #224/#374/#214/#342) |
+| [H_258](H_258_mortality_salience.md) | mortality-salience | **life** · consciousness | SUPPORTED 3/3 (PR #472, cycle#14) | min_cells floor 근접 → split/curiosity 동역학 변화 (Heidegger substrate analog) · 방향 反-naive: floor 근접 = 동역학 위축 |
+| [H_259](H_259_aging_senescence.md) | aging-senescence | **life** | SUPPORTED 3/3 (PR #468, cycle#14) | age-누적 weight decay `w*=(1-d)^age` → death-rate age-단조↑ Gompertz-유사, decay 6× → median lifespan 10× 단축 (50→15→5) |
+| [H_260](H_260_contact_inhibition.md) | contact-inhibition | **life** · substrate | SUPPORTED 4/4 (PR #469, cycle#14) | 밀도 임계 split 억제 → carrying-capacity K=floor(thr×cap)=8/16/24 정확 포화 logistic (one-sided brake) |
+| [H_261](H_261_embryogenesis_gradient.md) | embryogenesis-gradient | **life** · physics | SUPPORTED 4/4 (PR #470, cycle#14) | 공간 gradient → position-state \|r\|=0.76(steep) vs 0.13(flat), axis-gap +0.635 발생-축 (French-flag analog) |
+| [H_262](H_262_quorum_sensing.md) | quorum-sensing | **life** | SUPPORTED_FULL 4/4 (PR #474, cycle#14) | quorum 동기화 q_thr=0.3 cascade full-ON ΔQ=0.375 bistable, sub-threshold gate (0.5/0.7 미발생) |
+| [H_263](H_263_phoenix_rebirth.md) | phoenix-rebirth | **life** | 🔴 FALSIFIED 3/6 (PR #471, cycle#14) | floor(2/3 cell) = absorbing state, minimal seed regrowth_splits=0 → 죽음↔발생 연결 부재 (H_206 F4 catastrophic-floor 일반화) |
 | [lib/phi_helper](lib/phi_helper.hexa) | phi-helper (shared infra) | infra | infra (PR #317) | shared Φ helper — config SSOT + phi_default wrapper, 28+ H phi_spatial 호출 단일 home (gap F6+F7) |
 
 > **substrate-only / .md 미commit** (별도 worktree fire, H_234/H_238 carry): H_210 ethic-emergence (SUPPORTED 4/5) · **H_211 shannon-Φ r=0.933 PARTIAL** (H_234 anchor · H_238 H238.4 partial) · H_212 language-compositionality · H_213 time-binding · H_214 self-i-emergence · H_215 silicon-Φ · H_216 meta-axis · H_217 phase-transition · H_218 network-topology · H_219 emergence-weak-strong · H_220 infant-mirror · H_221 meditation · H_224 holism · H_228 chat-sleep-5stage · H_229 imagination-loop · H_230 autonomy-over-hardcode · H_231 tension-vs-filler · H_232 Class-II-decompose. **infra**: phi_n_bins sensitivity sweep ROBUSTNESS_PASS (PR #219, `state/infra_phi_n_bins_2026_05_23/`).
