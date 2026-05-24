@@ -1,0 +1,80 @@
+{
+  "schema": "pure.phase_d.corpus.anima_own_poc.v1",
+  "milestone": "M9b'",
+  "date": "2026-05-24",
+  "corpus_path": "state/pure_phase_d_corpus_anima_own_poc_2026_05_24/corpus.jsonl",
+  "sha256": "fbce5f56d5c541bb27fdff28a378e438f70729c230e035984bf80e688676ec4f",
+  "n_bytes": 1122958,
+  "n_records": 1457,
+  "cap_bytes": 1048576,
+  "capped": true,
+  "source_root": "~/.claude/projects/-Users-ghost-core-anima/",
+  "source_file_count_total": 82,
+  "source_files_surveyed": 6,
+  "source_files_processed": [
+    "f678cd98-889c-4c4b-9c9f-f5b759c1894f.jsonl",
+    "05f3d0d0-3e09-419b-b84e-ee482828f714.jsonl",
+    "7f2f6f50-4326-43a3-98d9-1d0966de87bc.jsonl",
+    "00057a13-2d6c-49a1-be17-f4b85b0fbbe7.jsonl",
+    "664f70b7-3ab3-4f96-a1ce-91baef91e9e5.jsonl",
+    "8992862f-5544-412d-8574-7e23c1927e37.jsonl"
+  ],
+  "source_volume_total_bytes": 868220928,
+  "filter": {
+    "type": "assistant",
+    "content_subtype": "text",
+    "helper_role_drop_regex": [
+      "[role",
+      "you are anima",
+      "you are a helpful",
+      "페르소나",
+      "anima:",
+      "당신은 anima 입니다"
+    ],
+    "dedupe": "FNV-1a 64-bit limb-split fingerprint (text-exact)"
+  },
+  "extraction_stats": {
+    "tot_kept": 1457,
+    "tot_dup_dropped": 34,
+    "tot_helper_dropped": 0
+  },
+  "lang_distribution": {
+    "ko": 30,
+    "en": 325,
+    "mixed": 1102,
+    "other": 0
+  },
+  "six_metric": {
+    "m1_byte_entropy": 6.17271,
+    "m2_bigram_mi": 3.64694,
+    "m3_token_diversity": 0.235545,
+    "m4_avg_line_length": 769.733,
+    "m5_hangul_coverage": 0.334468,
+    "m6_kl_to_uniform": 1.84469,
+    "probe": "HEXAD/PURE/eval/corpus_quality_probe.hexa",
+    "sample_bytes": 1122958
+  },
+  "harness": {
+    "path": "HEXAD/PURE/corpus/extract_anima_session_emit.hexa",
+    "loc": 420,
+    "recovered_from": "agent-ac56b72db06ad419e (worktree, locked but file readable)",
+    "selftest": "PASS 4/4 (lang detector · helper-role regex · json escape · fingerprint stable/distinct)"
+  },
+  "build_command": "hexa run HEXAD/PURE/corpus/extract_anima_session_emit.hexa extract --inputs <30 most-recent JSONL files comma-sep> --out state/pure_phase_d_corpus_anima_own_poc_2026_05_24/corpus.jsonl --cap-bytes 1048576 --manifest state/pure_phase_d_corpus_anima_own_poc_2026_05_24/extract_summary.json",
+  "privacy": {
+    "scope": "USER's personal Claude Code session log",
+    "handling": "local only, NEVER upload to HF/git/external",
+    "gitignore": "state/pure_phase_d_corpus_anima_own_poc_2026_05_24/corpus.jsonl gitignored — only manifest.json + quality_6metric.json + extract_summary.json land in PR",
+    "redaction": "NONE applied — paths/hostnames/tool-use prose preserved verbatim; consume locally only"
+  },
+  "honest_c3": [
+    "harness recovered (not re-authored) from sibling worktree agent-ac56b72db06ad419e",
+    "6 of 82 session files consumed before 1 MiB cap hit (mid-file 8992862f); remaining 76 unseen",
+    "assistant-text ratio not separately measured — kept=1457, dup=34, helper=0 within consumed prefix",
+    "FNV-1a fingerprint is coarse (limb-split 32-bit arithmetic, not full sha1); collision risk dominated by exact-dup match — adequate for in-mem dedupe but not adversarial",
+    "lang detector counts UTF-8 hangul lead bytes 234-237 vs ASCII A-Za-z — code-fenced output (lots of tool-use JSON / commands) skews `mixed` upward (1102/1457 = 75.6%)",
+    "M3 TTR 0.236 is low for chat — expected: corpus dominated by tool-use commands + path strings (repeating tokens like 'state/' / 'HEXAD/' / 'json')",
+    "M4 avg-line 769 bytes is high vs natural prose — assistant emit often contains multi-paragraph blocks + embedded code/JSON within a single text item",
+    "privacy posture: gitignore corpus.jsonl, ship only metric numbers + summary; raw text stays on user's machine"
+  ]
+}
