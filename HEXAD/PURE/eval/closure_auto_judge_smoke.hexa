@@ -1,0 +1,150 @@
+// PURE closure_auto_judge smoke — F-CAJ-1..7 on synthetic result.json fixtures.
+// No real fire dep — writes synthetic blobs to /tmp.
+// Usage: hexa run HEXAD/PURE/eval/closure_auto_judge_smoke.hexa  (7/7 PASS expected)
+
+import "./closure_auto_judge.hexa"
+
+fn _per_lang(en: str, ko: str, zh: str, ru: str, ja: str) -> list {
+    return [
+        #{"lang": "en", "verdict": en, "n_score": 16, "n_generalize": 18, "n_lang_coherent": 16},
+        #{"lang": "ko", "verdict": ko, "n_score": 14, "n_generalize": 15, "n_lang_coherent": 14},
+        #{"lang": "zh", "verdict": zh, "n_score": 12, "n_generalize": 13, "n_lang_coherent": 12},
+        #{"lang": "ru", "verdict": ru, "n_score": 13, "n_generalize": 14, "n_lang_coherent": 13},
+        #{"lang": "ja", "verdict": ja, "n_score": 12, "n_generalize": 13, "n_lang_coherent": 12}
+    ]
+}
+
+fn _result_all_pass(pl_overrides: list, reg_hits: int, mot_score: float, with_dream: bool) -> dict {
+    let mut r = #{
+        "verdict": "HEXAD_V3_WORKS",
+        "per_lang_verdicts": pl_overrides,
+        "n_anima_register_hits_total": reg_hits,
+        "register_regress": "no",
+        "init_log": #{"step": 1, "L_ce": 14.18},
+        "final_log": #{"step": 2000, "L_ce": 0.92},
+        "train_wall_s": 1987.42,
+        "motivation_8factor": #{
+            "relevance": 0.42, "gap": 0.0, "curiosity": 0.0, "pain": 0.0,
+            "coherence": 0.785714, "originality": 0.0, "balance": 1.0, "dynamics": 0.0,
+            "motivation_score": mot_score
+        }
+    }
+    if with_dream {
+        r["dream_stage_at_eval"] = #{
+            "stage": "REM",
+            "phi_envelope": 0.95,
+            "tension_envelope": 0.9,
+            "ipc_path": "/Users/x/.cache/anima/dream_stage.current"
+        }
+    }
+    return r
+}
+
+fn _check(name: str, expect_closure: str, judged: dict) -> int {
+    let got = judged["closure"]
+    if got == expect_closure {
+        println("  PASS " + name + " closure=" + got + " (" + to_string(judged["n_pass"]) + "/4)")
+        return 1
+    }
+    println("  FAIL " + name + " closure=" + got + " (expect " + expect_closure + ", " + to_string(judged["n_pass"]) + "/4)")
+    return 0
+}
+
+fn _check_criterion(name: str, expect: str, j: dict) -> int {
+    let got = j["verdict"]
+    if got == expect {
+        println("  PASS " + name + " (criterion=" + j["criterion"] + " verdict=" + got + ")")
+        return 1
+    }
+    println("  FAIL " + name + " (criterion=" + j["criterion"] + " verdict=" + got + " expect=" + expect + ")")
+    return 0
+}
+
+fn main() {
+    println("[closure_auto_judge_smoke] START")
+    let mut n_pass = 0
+    let mut n_fail = 0
+
+    // F-CAJ-1: all-pass — 5/5 PARTIAL+ · reg=2 · mot=0.42 · dream present → AGGREGATE 4/4 ACHIEVED
+    println("--- F-CAJ-1 all-pass → 4/4 ACHIEVED")
+    let pl1 = _per_lang("PARTIAL", "STRONG", "PARTIAL", "WEAK", "PARTIAL")
+    // 4 langs ≥ PARTIAL (en, ko, zh, ja); ru=WEAK. Threshold = 4/5 → PASS.
+    let r1 = _result_all_pass(pl1, 2, 0.42, true)
+    let j1 = judge_all(r1)
+    n_pass = n_pass + _check("F-CAJ-1", "ACHIEVED", j1)
+    if j1["closure"] != "ACHIEVED" { n_fail = n_fail + 1 }
+
+    // F-CAJ-2: 3/5 langs only → criterion 1 FAIL → AGGREGATE FAIL (3/4)
+    println("--- F-CAJ-2 3/5 langs only → criterion 1 FAIL")
+    let pl2 = _per_lang("PARTIAL", "STRONG", "WEAK", "WEAK", "PARTIAL")
+    let r2 = _result_all_pass(pl2, 2, 0.42, true)
+    let j2 = judge_all(r2)
+    n_pass = n_pass + _check_criterion("F-CAJ-2 criterion 1", "FAIL", j2["j1"])
+    if j2["j1"]["verdict"] != "FAIL" { n_fail = n_fail + 1 }
+    n_pass = n_pass + _check("F-CAJ-2 aggregate", "FAIL", j2)
+    if j2["closure"] != "FAIL" { n_fail = n_fail + 1 }
+
+    // F-CAJ-3: register_hits=5 (≥ 4) → criterion 2 FAIL
+    println("--- F-CAJ-3 reg_hits=5 → criterion 2 FAIL")
+    let pl3 = _per_lang("STRONG", "STRONG", "STRONG", "STRONG", "STRONG")
+    let r3 = _result_all_pass(pl3, 5, 0.42, true)
+    let j3 = judge_all(r3)
+    n_pass = n_pass + _check_criterion("F-CAJ-3 criterion 2", "FAIL", j3["j2"])
+    if j3["j2"]["verdict"] != "FAIL" { n_fail = n_fail + 1 }
+
+    // F-CAJ-4: motivation_score=0.20 (< 0.30) → criterion 3 FAIL
+    println("--- F-CAJ-4 mot=0.20 → criterion 3 FAIL")
+    let pl4 = _per_lang("STRONG", "STRONG", "STRONG", "STRONG", "STRONG")
+    let r4 = _result_all_pass(pl4, 2, 0.20, true)
+    let j4 = judge_all(r4)
+    n_pass = n_pass + _check_criterion("F-CAJ-4 criterion 3", "FAIL", j4["j3"])
+    if j4["j3"]["verdict"] != "FAIL" { n_fail = n_fail + 1 }
+
+    // F-CAJ-5: dream_stage_at_eval missing → criterion 4 FAIL
+    println("--- F-CAJ-5 dream block missing → criterion 4 FAIL")
+    let pl5 = _per_lang("STRONG", "STRONG", "STRONG", "STRONG", "STRONG")
+    let r5 = _result_all_pass(pl5, 2, 0.42, false)
+    let j5 = judge_all(r5)
+    n_pass = n_pass + _check_criterion("F-CAJ-5 criterion 4", "FAIL", j5["j4"])
+    if j5["j4"]["verdict"] != "FAIL" { n_fail = n_fail + 1 }
+
+    // F-CAJ-6: mixed — 5 langs PASS · reg=2 · mot=0.20 (FAIL) · dream MISSING (FAIL) → 2/4 partial
+    println("--- F-CAJ-6 mixed: c1+c2 PASS · c3+c4 FAIL → 2/4")
+    let pl6 = _per_lang("STRONG", "STRONG", "STRONG", "STRONG", "STRONG")
+    let r6 = _result_all_pass(pl6, 2, 0.20, false)
+    let j6 = judge_all(r6)
+    if j6["n_pass"] == 2 && j6["closure"] == "FAIL" {
+        println("  PASS F-CAJ-6 aggregate=2/4 closure=FAIL")
+        n_pass = n_pass + 1
+    } else {
+        println("  FAIL F-CAJ-6 aggregate=" + to_string(j6["n_pass"]) + "/4 closure=" + j6["closure"])
+        n_fail = n_fail + 1
+    }
+
+    // F-CAJ-7: malformed JSON → graceful error contract.
+    // The CLI's _load_result() invokes exit(2) on json_parse non-map; we exercise the
+    // upstream signal: write a deliberately broken blob and confirm json_parse rejects.
+    // (Calling _load_result here would exit the smoke harness — instead emulate the
+    // type_of guard that _load_result uses.)
+    println("--- F-CAJ-7 malformed JSON → json_parse non-map / exit(2) contract")
+    let p7 = "/tmp/__pure_caj_smoke_malformed.json"
+    write_file(p7, "this is not json at all {{{")
+    let raw7 = read_file(p7)
+    let parsed7 = json_parse(raw7)
+    let t7 = type_of(parsed7)
+    // hexa json_parse returns void/null on malformed (NOT a map). _load_result rejects → exit(2).
+    if t7 != "map" {
+        println("  PASS F-CAJ-7 malformed JSON detected (type_of=" + t7 + " ≠ map → CLI would exit(2))")
+        n_pass = n_pass + 1
+    } else {
+        println("  FAIL F-CAJ-7 malformed JSON unexpectedly parsed as map")
+        n_fail = n_fail + 1
+    }
+
+    // Also smoke-test the CLI's full render path on F-CAJ-1 (visual smoke; passes if render emits all 4 criteria + AGGREGATE line).
+    println("--- F-CAJ-render visual on F-CAJ-1 (full report)")
+    render_report("/tmp/__pure_caj_smoke_1.json", "abc123def4567890", j1)
+
+    println("[closure_auto_judge_smoke] END: " + to_string(n_pass) + "/7 PASS, " + to_string(n_fail) + " FAIL")
+    if n_fail > 0 { exit(1) }
+}
