@@ -273,10 +273,6 @@ fn write_marker(creds_present: bool, dry_run_mode: bool, degraded: bool, backend
 // + LCG-driven Born-rule readout sample, $0 Mac local, no cloud call.
 // ═══════════════════════════════════════════════════════════════
 
-fn abs_f(x: float) -> float {
-    if x < 0.0 { return 0.0 - x }
-    return x
-}
 
 fn sqrt_newton_ti(x: float) -> float {
     if x <= 0.0 { return 0.0 }
@@ -351,7 +347,7 @@ fn ft_ion_1() -> bool {
     let theta = 1.234
     let sv = ry_apply(theta)
     let n2 = sv[0] * sv[0] + sv[1] * sv[1]
-    let dev = abs_f(n2 - 1.0)
+    let dev = fabs(n2 - 1.0)
     println("  [F-TRAPPED_ION-1] |R_y|^2=" + to_string(n2) + " dev=" + to_string(dev))
     return dev < 0.0001
 }
@@ -370,7 +366,7 @@ fn ft_ion_2() -> bool {
         t = t + 1
     }
     let frac = to_float(ones) / 1000.0
-    let dev = abs_f(frac - 0.5)
+    let dev = fabs(frac - 0.5)
     println("  [F-TRAPPED_ION-2] ones=" + to_string(ones) + "/1000 frac=" + to_string(frac))
     return dev < 0.07
 }
@@ -380,7 +376,7 @@ fn ft_ion_3() -> bool {
     let sv = ry_apply(3.141592653589793)
     let p1 = sv[1] * sv[1]
     println("  [F-TRAPPED_ION-3] P(1) at theta=pi = " + to_string(p1))
-    return abs_f(p1 - 1.0) < 0.0001
+    return fabs(p1 - 1.0) < 0.0001
 }
 
 // F-TRAPPED_ION-4: 2-qubit GHZ correlation — product state |00>+|11>/sqrt2 → corr=1
