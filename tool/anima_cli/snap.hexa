@@ -73,8 +73,8 @@ fn _shq(s: string) -> string {
 }
 
 fn _user_argv(raw) -> array {
-    let out = []
-    let i = 0
+    let mut out = []
+    let mut i = 0
     while i < len(raw) {
         let s = _str(raw[i])
         if !s.contains("/.hexa-cache/") { out = out + [s] }
@@ -84,7 +84,7 @@ fn _user_argv(raw) -> array {
 }
 
 fn _arg_present(argv, key: string) -> bool {
-    let i = 0
+    let mut i = 0
     while i < len(argv) {
         if _str(argv[i]) == key { return true }
         i = i + 1
@@ -130,7 +130,7 @@ fn _scan_lines(root: string, sub: string) -> string {
 
 fn _collect_all(root: string, roots: array) -> string {
     let mut all = ""
-    let i = 0
+    let mut i = 0
     while i < len(roots) {
         let sub = _str(roots[i])
         let part = _scan_lines(root, sub)
@@ -154,7 +154,7 @@ fn _root_sha_from(lines_body: string) -> string {
     if tmp == "" { return "" }
     write_file(tmp, lines_body)
     let sha_cmd = _sha256_bin()
-    let out = _str(exec(sha_cmd + " " + _shq(tmp) + " 2>/dev/null | awk '{print $1}'")).trim()
+    let mut out = _str(exec(sha_cmd + " " + _shq(tmp) + " 2>/dev/null | awk '{print $1}'")).trim()
     exec("rm -f " + _shq(tmp))
     return out
 }
@@ -168,7 +168,7 @@ fn _build_baseline_json(root: string, roots: array) -> string {
     let mut tree_body = ""
     let mut canonical = ""   // "path\tsha\n..." for root_sha256
     let mut first = true
-    let i = 0
+    let mut i = 0
     while i < len(lines) {
         let ln = _str(lines[i]).trim()
         if ln != "" {
@@ -190,7 +190,7 @@ fn _build_baseline_json(root: string, roots: array) -> string {
     }
     let root_sha = _root_sha_from(canonical)
     let mut roots_json = "["
-    let k = 0
+    let mut k = 0
     while k < len(roots) {
         if k > 0 { roots_json = roots_json + ", " }
         roots_json = roots_json + _json_escape(_str(roots[k]))
@@ -217,7 +217,7 @@ fn _roots_list() -> array {
 
 fn sub_create(root: string, json_mode: bool) -> int {
     let out_path = root + "/state/anima_snap_baseline.json"
-    let body = _build_baseline_json(root, _roots_list())
+    let mut body = _build_baseline_json(root, _roots_list())
     write_file(out_path, body)
     if json_mode {
         println(_str(exec("cat " + _shq(out_path))))
@@ -249,7 +249,7 @@ fn _current_tree(root: string) -> string {
     let raw = _collect_all(root, _roots_list())
     let lines = raw.split("\n")
     let mut out = ""
-    let i = 0
+    let mut i = 0
     while i < len(lines) {
         let ln = _str(lines[i]).trim()
         if ln != "" {
@@ -270,9 +270,9 @@ fn _current_tree(root: string) -> string {
 
 // build map path→sha from "path\tsha\n" body
 fn _lines_to_pairs(body: string) -> array {
-    let out = []
+    let mut out = []
     let lines = body.split("\n")
-    let i = 0
+    let mut i = 0
     while i < len(lines) {
         let ln = _str(lines[i])
         if ln != "" {
@@ -300,7 +300,7 @@ fn _pair_sha(p: string) -> string {
 
 fn _find_sha(pairs: array, path: string) -> string {
     // linear search (OK for <10k files). For larger repos switch to sorted merge.
-    let i = 0
+    let mut i = 0
     while i < len(pairs) {
         let pp = _str(pairs[i])
         if _pair_path(pp) == path { return _pair_sha(pp) }
@@ -310,7 +310,7 @@ fn _find_sha(pairs: array, path: string) -> string {
 }
 
 fn _contains_path(pairs: array, path: string) -> bool {
-    let i = 0
+    let mut i = 0
     while i < len(pairs) {
         if _pair_path(_str(pairs[i])) == path { return true }
         i = i + 1
@@ -327,7 +327,7 @@ fn _diff_trees(baseline_body: string, current_body: string) -> array {
     let mut modified = []
     let mut unchanged = 0
     // removed + modified: baseline not in current OR sha differs
-    let i = 0
+    let mut i = 0
     while i < len(bp) {
         let pp = _str(bp[i])
         let pth = _pair_path(pp)
@@ -342,7 +342,7 @@ fn _diff_trees(baseline_body: string, current_body: string) -> array {
         i = i + 1
     }
     // added: in current not in baseline
-    let j = 0
+    let mut j = 0
     while j < len(cp) {
         let pp = _str(cp[j])
         let pth = _pair_path(pp)
@@ -367,7 +367,7 @@ fn _emit_verify_json(out_path: string, added, removed, modified, unchanged: int,
 
 fn _json_array_of(arr: array) -> string {
     let mut out = ""
-    let i = 0
+    let mut i = 0
     while i < len(arr) {
         if i > 0 { out = out + ", " }
         out = out + _json_escape(_str(arr[i]))
@@ -379,7 +379,7 @@ fn _json_array_of(arr: array) -> string {
 fn _print_list(label: string, items: array, max_show: int) {
     if len(items) == 0 { return }
     println("  " + label + " (" + to_string(len(items)) + ")")
-    let i = 0
+    let mut i = 0
     while i < len(items) && i < max_show {
         println("    - " + _str(items[i]))
         i = i + 1
@@ -399,10 +399,10 @@ fn sub_verify(root: string, json_mode: bool, detailed: bool) -> int {
     let bb = _load_baseline_tree(baseline)
     let cc = _current_tree(root)
     let d = _diff_trees(bb, cc)
-    let added    = d[0]
-    let removed  = d[1]
-    let modified = d[2]
-    let unchanged = d[3]   // already int from _diff_trees
+    let mut added    = d[0]
+    let mut removed  = d[1]
+    let mut modified = d[2]
+    let mut unchanged = d[3]   // already int from _diff_trees
     let drift = len(added) + len(removed) + len(modified)
     let out_path = root + "/state/anima_snap_verify_last.json"
     _emit_verify_json(out_path, added, removed, modified, unchanged, drift)
@@ -440,7 +440,7 @@ fn sub_selftest() {
 
     // 1) create baseline at tmp
     let roots = _roots_list()
-    let body = _build_baseline_json(tmp, roots)
+    let mut body = _build_baseline_json(tmp, roots)
     write_file(tmp + "/state/anima_snap_baseline.json", body)
     let fc_raw = _str(exec("jq -r '.file_count' " + _shq(tmp + "/state/anima_snap_baseline.json"))).trim()
     let rs_raw = _str(exec("jq -r '.root_sha256' " + _shq(tmp + "/state/anima_snap_baseline.json"))).trim()
@@ -554,4 +554,3 @@ fn main() {
     exit(2)
 }
 
-main()

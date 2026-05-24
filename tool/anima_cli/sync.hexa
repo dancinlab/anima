@@ -115,7 +115,7 @@ fn _sync_status_path() -> string {
 }
 
 fn _arg_present(argv, key: string) -> bool {
-    let i = 0
+    let mut i = 0
     while i < len(argv) {
         if _str(argv[i]) == key { return true }
         i = i + 1
@@ -124,8 +124,8 @@ fn _arg_present(argv, key: string) -> bool {
 }
 
 fn _user_argv(raw) -> array {
-    let out = []
-    let i = 0
+    let mut out = []
+    let mut i = 0
     while i < len(raw) {
         let s = _str(raw[i])
         if !s.contains("/.hexa-cache/") {
@@ -153,7 +153,7 @@ fn _nexus_available() -> bool {
 
 fn _append_log(mode: string, pushed: int, pulled: int, conflicts: int, available: bool) {
     let root = _resolve_root()
-    let avs = "false"
+    let mut avs = "false"
     if available { avs = "true" }
     let line = "{\"ts\":\"" + _ts_iso() + "\","
              + "\"tool\":\"anima_cli/sync.hexa\","
@@ -168,7 +168,7 @@ fn _append_log(mode: string, pushed: int, pulled: int, conflicts: int, available
 
 fn _write_status(mode: string, pushed: int, pulled: int, conflicts: int, available: bool) {
     let path = _sync_status_path()
-    let avs = "false"
+    let mut avs = "false"
     if available { avs = "true" }
     let json = "{\"schema\":\"anima/sync_status/1\","
              + "\"ts\":\"" + _ts_iso() + "\","
@@ -195,9 +195,9 @@ fn _list_pending_titles() -> array {
             + "printf '%s\\t%s\\n' \"$id\" \"$ti\"; "
             + "done 2>/dev/null"
     let raw = _str(exec(cmd))
-    let out = []
+    let mut out = []
     let lines = raw.split("\n")
-    let i = 0
+    let mut i = 0
     while i < len(lines) {
         let ln = _str(lines[i]).trim()
         if ln != "" { out = out + [ln] }
@@ -219,7 +219,7 @@ fn _nexus_seen_title(title: string) -> bool {
 
 fn _submit_to_nexus(title: string, kind: string, prompt_ref: string) -> bool {
     let tool = _upstream_tool()
-    let tail = "submit --to nexus --from anima --kind " + kind
+    let mut tail = "submit --to nexus --from anima --kind " + kind
              + " --title " + _sh_q(title)
     if prompt_ref != "" {
         tail = tail + " --prompt-ref " + _sh_q(prompt_ref)
@@ -231,15 +231,15 @@ fn _submit_to_nexus(title: string, kind: string, prompt_ref: string) -> bool {
 fn do_push() -> array {
     // returns [pushed, conflicts]
     let items = _list_pending_titles()
-    let pushed = 0
-    let conflicts = 0
-    let i = 0
+    let mut pushed = 0
+    let mut conflicts = 0
+    let mut i = 0
     let max_per_cycle = 20    // flood protection
     while i < len(items) && pushed < max_per_cycle {
         let ln = _str(items[i])
         let tab = ln.index_of("\t")
-        let id = ""
-        let title = ln
+        let mut id = ""
+        let mut title = ln
         if tab >= 0 {
             id = ln.substring(0, tab)
             title = ln.substring(tab + 1, len(ln))
@@ -273,7 +273,7 @@ fn do_pull() -> int {
     if !_fexists(tool) { return 0 }
     let cmd = _hexa_bin() + " run " + tool + " list --repo anima 2>/dev/null"
              + " | grep -c '^' || echo 0"
-    let out = _str(exec(cmd)).trim()
+    let mut out = _str(exec(cmd)).trim()
     if out == "" { return 0 }
     return out.parse_int()
 }
@@ -304,7 +304,7 @@ fn sub_status() {
     if _fexists(lg) {
         println("")
         println("recent log (tail 3):")
-        let tail = _str(exec("tail -n 3 " + lg))
+        let mut tail = _str(exec("tail -n 3 " + lg))
         println(tail.trim())
     }
 }
@@ -318,9 +318,9 @@ fn _run(mode: string) {
         _write_status(mode, 0, 0, 0, false)
         return
     }
-    let pushed = 0
-    let pulled = 0
-    let conflicts = 0
+    let mut pushed = 0
+    let mut pulled = 0
+    let mut conflicts = 0
     if mode == "push" || mode == "both" {
         let r = do_push()
         pushed = r[0]
@@ -379,4 +379,3 @@ fn main() {
     exit(2)
 }
 
-main()
