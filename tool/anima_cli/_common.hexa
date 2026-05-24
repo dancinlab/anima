@@ -56,15 +56,15 @@ fn _exec_line(cmd: string) -> string {
 fn _json_field(path: string, key: string) -> string {
     // returns raw string value (no quotes) via jq; empty string if missing
     if !_fexists(path) { return "" }
-    let out = _str(exec("jq -r '" + key + " // \"\"' " + path + " 2>/dev/null"))
+    let mut out = _str(exec("jq -r '" + key + " // \"\"' " + path + " 2>/dev/null"))
     return out.trim()
 }
 
 fn _user_argv(raw) -> array {
-    let out = []
-    let i = 0
+    let mut out = []
+    let mut i = 0
     while i < len(raw) {
-        let s = _str(raw[i])
+        let mut s = _str(raw[i])
         if !s.contains("/.hexa-cache/") {
             out = out + [s]
         }
@@ -74,7 +74,7 @@ fn _user_argv(raw) -> array {
 }
 
 fn _arg_present(argv, key: string) -> bool {
-    let i = 0
+    let mut i = 0
     while i < len(argv) {
         if _str(argv[i]) == key { return true }
         i = i + 1
@@ -83,7 +83,7 @@ fn _arg_present(argv, key: string) -> bool {
 }
 
 fn _arg_value(argv, key: string, dflt: string) -> string {
-    let i = 0
+    let mut i = 0
     while i < len(argv) {
         if _str(argv[i]) == key && i + 1 < len(argv) {
             return _str(argv[i + 1])
@@ -94,8 +94,8 @@ fn _arg_value(argv, key: string, dflt: string) -> string {
 }
 
 fn _table_row(cells) -> string {
-    let s = ""
-    let i = 0
+    let mut s = ""
+    let mut i = 0
     while i < len(cells) {
         if i > 0 { s = s + "  " }
         s = s + _str(cells[i])
@@ -181,4 +181,3 @@ fn main() {
     exit(0)
 }
 
-main()

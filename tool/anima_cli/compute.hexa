@@ -62,7 +62,7 @@ fn _json_field(path: string, key: string) -> string {
 }
 
 fn _arg_present(argv, key: string) -> bool {
-    let i = 0
+    let mut i = 0
     while i < len(argv) {
         if _str(argv[i]) == key { return true }
         i = i + 1
@@ -71,7 +71,7 @@ fn _arg_present(argv, key: string) -> bool {
 }
 
 fn _arg_value(argv, key: string, dflt: string) -> string {
-    let i = 0
+    let mut i = 0
     while i < len(argv) {
         if _str(argv[i]) == key && i + 1 < len(argv) {
             return _str(argv[i + 1])
@@ -82,8 +82,8 @@ fn _arg_value(argv, key: string, dflt: string) -> string {
 }
 
 fn _user_argv(raw) -> array {
-    let out = []
-    let i = 0
+    let mut out = []
+    let mut i = 0
     while i < len(raw) {
         let s = _str(raw[i])
         if !s.contains("/.hexa-cache/") {
@@ -127,7 +127,7 @@ fn sub_status_statusline(as_json: bool) {
         exit(1)
     }
     let flags = if as_json { "--live --json" } else { "--live" }
-    let out = _str(exec("/Users/ghost/.hx/bin/hexa run " + tool + " " + flags + " 2>&1"))
+    let mut out = _str(exec("/Users/ghost/.hx/bin/hexa run " + tool + " " + flags + " 2>&1"))
     println(out.trim())
 }
 
@@ -147,7 +147,7 @@ fn sub_status() {
     let auto_charge_active = reason == "auto_charge_enabled"
 
     let has_rpc = _has_runpodctl()
-    let pods_line = "pods      : runpodctl_not_installed"
+    let mut pods_line = "pods      : runpodctl_not_installed"
     if has_rpc {
         // runpodctl 1.x emits JSON array (default -o json); count via jq not line wc.
         let pods = _str(exec("runpodctl pod list 2>/dev/null | jq 'length' 2>/dev/null | tr -d ' '")).trim()
@@ -221,7 +221,7 @@ fn sub_pods_sync() {
         println("compute pods-sync: h100_pods_sync.bash missing")
         exit(1)
     }
-    let out = _str(exec("bash " + tool + " 2>&1"))
+    let mut out = _str(exec("bash " + tool + " 2>&1"))
     println(out.trim())
 }
 
@@ -235,7 +235,7 @@ fn sub_watch(arm: bool) {
     let mode = if arm { "--apply (ARMED — live runpodctl stop on idle)" } else { "dry-run" }
     println("compute watch: delegating to h100_auto_kill.hexa · " + mode)
     let flag = if arm { " --apply" } else { "" }
-    let out = _str(exec("/Users/ghost/.hx/bin/hexa run " + tool + flag + " 2>&1"))
+    let mut out = _str(exec("/Users/ghost/.hx/bin/hexa run " + tool + flag + " 2>&1"))
     println(out)
 }
 
@@ -268,7 +268,7 @@ fn sub_recover(pod: string) {
     let tool = root + "/tool/h100_pod_resume.bash"
     if !_fexists(tool) { println("compute recover: tool missing"); exit(1) }
     println("compute recover: pod=" + pod)
-    let out = _str(exec("bash " + tool + " " + pod + " 2>&1"))
+    let mut out = _str(exec("bash " + tool + " " + pod + " 2>&1"))
     println(out)
 }
 
@@ -277,7 +277,7 @@ fn sub_ingest() {
     let tool = root + "/tool/h100_post_launch_ingest.hexa"
     if !_fexists(tool) { println("compute ingest: tool missing"); exit(1) }
     println("compute ingest: delegating")
-    let out = _str(exec("/Users/ghost/.hx/bin/hexa run " + tool + " 2>&1"))
+    let mut out = _str(exec("/Users/ghost/.hx/bin/hexa run " + tool + " 2>&1"))
     println(out)
 }
 
@@ -287,7 +287,7 @@ fn sub_preflight() {
     if !_fexists(tool) { println("compute preflight: tool missing"); exit(1) }
     println("compute preflight: stage2 dry-run")
     // capture stdout + stderr and emit for the caller
-    let out = _str(exec("bash " + tool + " --dry-run 2>&1"))
+    let mut out = _str(exec("bash " + tool + " --dry-run 2>&1"))
     println(out)
 }
 
@@ -335,4 +335,3 @@ fn main() {
     exit(2)
 }
 
-main()
