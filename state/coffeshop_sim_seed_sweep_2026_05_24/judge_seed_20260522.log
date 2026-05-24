@@ -1,0 +1,26 @@
+=== PURE closure auto-judge ===
+result: state/coffeshop_sim_seed_sweep_2026_05_24/result_seed_20260522.json
+sha:    d3f9e3d2922c900d
+
+[criterion 1] multilingual_probe
+  per-lang verdicts: ko=STRONG · en=PARTIAL · zh=PARTIAL · ru=PARTIAL · ja=PARTIAL
+  passing langs:     5/5  (ko, en, zh, ru, ja)
+  threshold:         ≥4
+  verdict:           PASS
+
+[criterion 2] register_collapse
+  n_anima_register_hits_total: 0
+  threshold:                   < 4
+  verdict:                     PASS
+
+[criterion 3] motivation_8factor
+  motivation_score: 0.530912
+  threshold:        ≥ 0.30
+  verdict:          PASS
+
+[criterion 4] dream_stage_at_eval
+  phi_envelope present: true (phi=1.0)
+  verdict:              PASS
+
+=== AGGREGATE ===
+4/4 PASS · closure ACHIEVED

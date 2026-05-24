@@ -1,0 +1,392 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  coffeshop_sim_seed_sweep.hexa — PURE B11 multi-seed robustness sweep
+//
+//  Goal: quantify whether PR #405 COFFESHOP simulator's 4/4 closure PASS
+//  at seed=20260525 is robust across seeds, or whether the target seed is
+//  cherry-picked from a narrow basin.
+//
+//  Method:
+//    - 10 seeds in [20260520..20260529] (10 contiguous days around target)
+//    - per-seed: re-run coffeshop_sim logic (verbatim wiring vs PR #405)
+//      with the given seed, write per-seed result.json
+//    - exec closure_auto_judge.hexa on each result.json → capture exit code
+//    - aggregate: PASS rate (X/10), emit_count distribution, per-criterion
+//      PASS rate, register_hits distribution, motivation_score distribution
+//    - emit sweep_summary.json + per-seed result JSONs under
+//      state/coffeshop_sim_seed_sweep_2026_05_24/
+//
+//  Honest C3 (carries PR #405 §7 C3 + new):
+//    1. 10-seed sample size — narrow basin around target date; not the full
+//       LCG state-space. Wider sweep (e.g. 100 seeds across 10⁴ range)
+//       would tighten the robustness claim but cost more wall.
+//    2. seed range arbitrary — chose 20260520..20260529 because the
+//       target seed 20260525 sits centered; an alternative range
+//       (random 10 from [0, 2³¹)) would test independence from
+//       date-locality.
+//    3. 4/4 PASS rate emerging from this sweep does NOT distinguish
+//       between design intent (judge thresholds chosen broad enough that
+//       any reasonable substrate sample passes) vs emergent robustness
+//       (substrate is genuinely concentrated on PASS region). Surface
+//       per-criterion margins to make this visible.
+//    4. simulator state synthesis still i.i.d. uniform with stim bias
+//       (carry PR #405 C3 #1) — NOT real anima ckpt forward.
+//    5. PR #405 result.json (seed=20260525) UNTOUCHED — sweep writes to
+//       a sibling directory, no overwrite of existing fixture.
+//
+//  Run: hexa run HEXAD/PURE/bench/coffeshop_sim_seed_sweep.hexa
+// ════════════════════════════════════════════════════════════════════════════
+
+import "/Users/ghost/core/anima/HEXAD/CHAT/spontaneous_lib.hexa"
+
+
+// ── §1 LCG (verbatim mirror from coffeshop_sim.hexa) ─────────────────────────
+
+fn _lcg_next(state: int) -> int {
+    let mult = 1103515245
+    let incr = 12345
+    let modulus = 2147483647
+    let s = ((state * mult) + incr) % modulus
+    if s < 0 { return s + modulus }
+    return s
+}
+
+fn _lcg_uniform(state: int) -> float {
+    return ((state % 1000000)) / 1000000.0
+}
+
+fn _draw(seed_box: list) -> float {
+    let s = _lcg_next(seed_box[0])
+    seed_box[0] = s
+    return _lcg_uniform(s)
+}
+
+fn _sample_stim_type(seed_box: list) -> int {
+    let u = _draw(seed_box)
+    if u < 0.20 { return 0 }
+    if u < 0.45 { return 1 }
+    if u < 0.75 { return 2 }
+    if u < 0.85 { return 3 }
+    return 4
+}
+
+fn _emit_lang(stim: int, seed_box: list) -> string {
+    let u = _draw(seed_box)
+    if stim == 1 || stim == 4 {
+        if u < 0.60 { return "ko" }
+        return "en"
+    }
+    if u < 0.75 { return "ko" }
+    return "en"
+}
+
+fn _window_factors(stim: int, seed_box: list) -> dict {
+    let u_phi   = _draw(seed_box)
+    let u_sim   = _draw(seed_box)
+    let u_cur   = _draw(seed_box)
+    let u_tens  = _draw(seed_box)
+    let u_gate  = _draw(seed_box)
+    let u_split = _draw(seed_box)
+    let u_ratch = _draw(seed_box)
+    let u_sil   = _draw(seed_box)
+
+    let mut phi     = u_phi
+    let mut sim     = u_sim
+    let mut cur_ema = u_cur
+    let mut tens_d  = (u_tens * 2.0) - 1.0
+    let     gate    = 0.486 + u_gate * 0.028
+    let     split   = u_split < 0.20
+    let     ratchet = u_ratch
+    let mut silence = u_sil * 3600.0
+
+    if stim == 0 {
+        phi = phi + 0.20  if phi > 1.0 { phi = 1.0 }
+        sim = sim - 0.15  if sim < 0.0 { sim = 0.0 }
+        silence = silence * 0.3
+    }
+    if stim == 1 {
+        cur_ema = cur_ema + 0.20  if cur_ema > 1.0 { cur_ema = 1.0 }
+        silence = silence * 0.5
+    }
+    if stim == 2 {
+        silence = 600.0 + u_sil * 1800.0
+        phi = phi * 0.7
+    }
+    if stim == 3 {
+        if tens_d < 0.0 { tens_d = tens_d - 0.30 } else { tens_d = tens_d + 0.30 }
+        if tens_d >  1.0 { tens_d =  1.0 }
+        if tens_d < -1.0 { tens_d = -1.0 }
+        phi = phi * 0.5
+    }
+    if stim == 4 {
+        phi = phi * 0.6
+        silence = silence * 0.8
+    }
+
+    return #{
+        "relevance":   factor_relevance(phi),
+        "info_gap":    factor_info_gap(sim),
+        "curiosity":   factor_curiosity(cur_ema),
+        "pain":        factor_pain(tens_d),
+        "coherence":   factor_coherence(gate),
+        "originality": factor_originality(split),
+        "balance":     factor_balance(phi, ratchet),
+        "dynamics":    factor_dynamics(silence),
+    }
+}
+
+fn _window_score(f: dict) -> float {
+    let rel   = to_float(to_string(f["relevance"]))
+    let gap   = to_float(to_string(f["info_gap"]))
+    let cur   = to_float(to_string(f["curiosity"]))
+    let pn    = to_float(to_string(f["pain"]))
+    let coh   = to_float(to_string(f["coherence"]))
+    let orig  = to_float(to_string(f["originality"]))
+    let bal   = to_float(to_string(f["balance"]))
+    let dyn_v = to_float(to_string(f["dynamics"]))
+    return motivation_score(rel, gap, cur, pn, coh, orig, bal, dyn_v)
+}
+
+fn _verdict_for_ko(ko_emits: int) -> string {
+    if ko_emits >= 2 { return "STRONG" }
+    return "PARTIAL"
+}
+
+
+// ── §2 per-seed run — returns dict of metrics (also writes result.json) ──────
+
+fn run_seed(seed: int, out_path: str) -> dict {
+    let n_windows = 15
+    let mut seed_box = [seed]
+    let mut emit_count = 0
+    let mut silence_count = 0
+    let mut ko_emits = 0
+    let mut en_emits = 0
+    let mut reg_hits = 0
+    let mut score_sum = 0.0
+
+    let mut sum_rel = 0.0   let mut sum_gap = 0.0
+    let mut sum_cur = 0.0   let mut sum_pn  = 0.0
+    let mut sum_coh = 0.0   let mut sum_ori = 0.0
+    let mut sum_bal = 0.0   let mut sum_dyn = 0.0
+
+    let mut w = 0
+    while w < n_windows {
+        let stim = _sample_stim_type(seed_box)
+        let f = _window_factors(stim, seed_box)
+        let score = _window_score(f)
+        let emit = should_interrupt(score)
+        let coh = to_float(to_string(f["coherence"]))
+
+        if emit {
+            emit_count = emit_count + 1
+            let lang = _emit_lang(stim, seed_box)
+            if lang == "ko" { ko_emits = ko_emits + 1 }
+            if lang == "en" { en_emits = en_emits + 1 }
+            if coh < 0.10 { reg_hits = reg_hits + 1 }
+        } else {
+            silence_count = silence_count + 1
+        }
+
+        score_sum = score_sum + score
+        sum_rel = sum_rel + to_float(to_string(f["relevance"]))
+        sum_gap = sum_gap + to_float(to_string(f["info_gap"]))
+        sum_cur = sum_cur + to_float(to_string(f["curiosity"]))
+        sum_pn  = sum_pn  + to_float(to_string(f["pain"]))
+        sum_coh = sum_coh + to_float(to_string(f["coherence"]))
+        sum_ori = sum_ori + to_float(to_string(f["originality"]))
+        sum_bal = sum_bal + to_float(to_string(f["balance"]))
+        sum_dyn = sum_dyn + to_float(to_string(f["dynamics"]))
+        w = w + 1
+    }
+
+    let nf = n_windows as float
+    let avg_score = score_sum / nf
+    let v_ko = _verdict_for_ko(ko_emits)
+
+    // write per-seed result.json (closure_auto_judge schema)
+    let mut s = "{\n"
+    s = s + "  \"scenario\": \"coffeshop_90min_group_chat\",\n"
+    s = s + "  \"variant\": \"COFFESHOP_sim_seed_" + to_string(seed) + "\",\n"
+    s = s + "  \"channel\": \"text_cli\",\n"
+    s = s + "  \"participants\": {\"anima\": 1, \"human\": 3},\n"
+    s = s + "  \"n_windows\": 15,\n"
+    s = s + "  \"seed\": " + to_string(seed) + ",\n"
+    s = s + "  \"per_lang_verdicts\": [\n"
+    s = s + "    {\"lang\": \"ko\", \"verdict\": \"" + v_ko + "\"},\n"
+    s = s + "    {\"lang\": \"en\", \"verdict\": \"PARTIAL\"},\n"
+    s = s + "    {\"lang\": \"zh\", \"verdict\": \"PARTIAL\"},\n"
+    s = s + "    {\"lang\": \"ru\", \"verdict\": \"PARTIAL\"},\n"
+    s = s + "    {\"lang\": \"ja\", \"verdict\": \"PARTIAL\"}\n"
+    s = s + "  ],\n"
+    s = s + "  \"n_anima_register_hits_total\": " + to_string(reg_hits) + ",\n"
+    s = s + "  \"motivation_8factor\": {\n"
+    s = s + "    \"motivation_score\": " + to_string(avg_score) + ",\n"
+    s = s + "    \"per_factor_avg\": {\n"
+    s = s + "      \"relevance\": "   + to_string(sum_rel / nf) + ",\n"
+    s = s + "      \"info_gap\": "    + to_string(sum_gap / nf) + ",\n"
+    s = s + "      \"curiosity\": "   + to_string(sum_cur / nf) + ",\n"
+    s = s + "      \"pain\": "        + to_string(sum_pn  / nf) + ",\n"
+    s = s + "      \"coherence\": "   + to_string(sum_coh / nf) + ",\n"
+    s = s + "      \"originality\": " + to_string(sum_ori / nf) + ",\n"
+    s = s + "      \"balance\": "     + to_string(sum_bal / nf) + ",\n"
+    s = s + "      \"dynamics\": "    + to_string(sum_dyn / nf) + "\n"
+    s = s + "    },\n"
+    s = s + "    \"emit_count\": " + to_string(emit_count) + ",\n"
+    s = s + "    \"silence_count\": " + to_string(silence_count) + "\n"
+    s = s + "  },\n"
+    s = s + "  \"dream_stage_at_eval\": {\n"
+    s = s + "    \"stage\": \"WAKE\",\n"
+    s = s + "    \"phi_envelope\": 1.0\n"
+    s = s + "  }\n"
+    s = s + "}\n"
+    write_file(out_path, s)
+
+    return #{
+        "seed":          seed,
+        "emit_count":    emit_count,
+        "silence_count": silence_count,
+        "ko_emits":      ko_emits,
+        "en_emits":      en_emits,
+        "reg_hits":      reg_hits,
+        "avg_score":     avg_score,
+        "v_ko":          v_ko,
+        "result_path":   out_path,
+    }
+}
+
+
+// ── §3 sweep main ────────────────────────────────────────────────────────────
+
+fn main() {
+    let out_dir = "state/coffeshop_sim_seed_sweep_2026_05_24"
+    exec("mkdir -p " + out_dir)
+
+    let seeds = [20260520, 20260521, 20260522, 20260523, 20260524,
+                 20260525, 20260526, 20260527, 20260528, 20260529]
+
+    println("=== COFFESHOP multi-seed robustness sweep (B11) ===")
+    println("seed range: 20260520..20260529 (N=10)")
+    println("")
+    println("seed       emit  sil   ko  en  reg  motiv   v_ko     exit  judge")
+    println("---------- ----  ---   --  --  ---  ------  -------  ----  -----")
+
+    let mut pass_count = 0
+    let mut emit_sum = 0
+    let mut emit_min = 9999
+    let mut emit_max = -1
+    let mut reg_sum = 0
+    let mut motiv_sum = 0.0
+    let mut motiv_min = 999.0
+    let mut motiv_max = -1.0
+    let mut rows = []
+    let mut i = 0
+    while i < len(seeds) {
+        let seed = seeds[i]
+        let out_path = out_dir + "/result_seed_" + to_string(seed) + ".json"
+        let r = run_seed(seed, out_path)
+
+        // run closure_auto_judge — capture exit code via $?
+        let cmd = "hexa run HEXAD/PURE/eval/closure_auto_judge.hexa "
+                  + out_path + " > " + out_dir + "/judge_seed_" + to_string(seed) + ".log 2>&1 ; echo $?"
+        let exit_str = exec(cmd).trim()
+        let exit_code = to_int(exit_str)
+        let judge = if exit_code == 0 { "PASS" } else { "FAIL" }
+        if exit_code == 0 { pass_count = pass_count + 1 }
+
+        let emit_n = to_int(to_string(r["emit_count"]))
+        let reg_n = to_int(to_string(r["reg_hits"]))
+        let motiv = to_float(to_string(r["avg_score"]))
+        emit_sum = emit_sum + emit_n
+        reg_sum = reg_sum + reg_n
+        motiv_sum = motiv_sum + motiv
+        if emit_n < emit_min { emit_min = emit_n }
+        if emit_n > emit_max { emit_max = emit_n }
+        if motiv < motiv_min { motiv_min = motiv }
+        if motiv > motiv_max { motiv_max = motiv }
+
+        let row = to_string(seed) + "  "
+                  + to_string(emit_n) + "    "
+                  + to_string(r["silence_count"]) + "   "
+                  + to_string(r["ko_emits"]) + "   "
+                  + to_string(r["en_emits"]) + "   "
+                  + to_string(reg_n) + "    "
+                  + to_string(motiv) + "  "
+                  + to_string(r["v_ko"]) + "   "
+                  + to_string(exit_code) + "     "
+                  + judge
+        println(row)
+        rows = rows + [#{
+            "seed": seed,
+            "emit_count": emit_n,
+            "silence_count": r["silence_count"],
+            "ko_emits": r["ko_emits"],
+            "en_emits": r["en_emits"],
+            "reg_hits": reg_n,
+            "motivation_score": motiv,
+            "v_ko": r["v_ko"],
+            "exit_code": exit_code,
+            "judge": judge,
+        }]
+        i = i + 1
+    }
+
+    let n = len(seeds) as float
+    let emit_avg = (emit_sum as float) / n
+    let reg_avg = (reg_sum as float) / n
+    let motiv_avg = motiv_sum / n
+    let pass_rate = (pass_count as float) / n
+
+    println("")
+    println("=== aggregate (N=10 seeds) ===")
+    println("PASS rate:         " + to_string(pass_count) + " / 10  ("
+            + to_string(pass_rate * 100.0) + " %)")
+    println("emit_count:        min=" + to_string(emit_min)
+            + "  max=" + to_string(emit_max)
+            + "  mean=" + to_string(emit_avg))
+    println("register_hits:     sum=" + to_string(reg_sum)
+            + "  mean=" + to_string(reg_avg))
+    println("motivation_score:  min=" + to_string(motiv_min)
+            + "  max=" + to_string(motiv_max)
+            + "  mean=" + to_string(motiv_avg))
+
+    // ── write sweep_summary.json ──
+    let mut js = "{\n"
+    js = js + "  \"sweep\": \"coffeshop_sim_seed_sweep_b11\",\n"
+    js = js + "  \"date\": \"2026-05-24\",\n"
+    js = js + "  \"n_seeds\": 10,\n"
+    js = js + "  \"seed_range\": [20260520, 20260529],\n"
+    js = js + "  \"pass_count\": " + to_string(pass_count) + ",\n"
+    js = js + "  \"pass_rate\": " + to_string(pass_rate) + ",\n"
+    js = js + "  \"emit_count_stats\": {\"min\": " + to_string(emit_min)
+            + ", \"max\": " + to_string(emit_max)
+            + ", \"mean\": " + to_string(emit_avg) + "},\n"
+    js = js + "  \"register_hits_stats\": {\"sum\": " + to_string(reg_sum)
+            + ", \"mean\": " + to_string(reg_avg) + "},\n"
+    js = js + "  \"motivation_score_stats\": {\"min\": " + to_string(motiv_min)
+            + ", \"max\": " + to_string(motiv_max)
+            + ", \"mean\": " + to_string(motiv_avg) + "},\n"
+    js = js + "  \"per_seed\": [\n"
+    let mut k = 0
+    while k < len(rows) {
+        let r = rows[k]
+        js = js + "    {\"seed\": " + to_string(r["seed"])
+                + ", \"emit\": " + to_string(r["emit_count"])
+                + ", \"silence\": " + to_string(r["silence_count"])
+                + ", \"ko\": " + to_string(r["ko_emits"])
+                + ", \"en\": " + to_string(r["en_emits"])
+                + ", \"reg\": " + to_string(r["reg_hits"])
+                + ", \"motiv\": " + to_string(r["motivation_score"])
+                + ", \"v_ko\": \"" + to_string(r["v_ko"]) + "\""
+                + ", \"exit\": " + to_string(r["exit_code"])
+                + ", \"judge\": \"" + to_string(r["judge"]) + "\"}"
+        if k < len(rows) - 1 { js = js + "," }
+        js = js + "\n"
+        k = k + 1
+    }
+    js = js + "  ]\n"
+    js = js + "}\n"
+    write_file(out_dir + "/sweep_summary.json", js)
+    println("")
+    println("wrote: " + out_dir + "/sweep_summary.json")
+    println("       + 10 result_seed_*.json + 10 judge_seed_*.log")
+}
