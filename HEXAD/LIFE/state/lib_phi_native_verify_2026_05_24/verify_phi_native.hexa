@@ -30,6 +30,7 @@
 
 import "/Users/ghost/core/anima/HEXAD/LIFE/lib/phi_helper.hexa"
 import "/Users/ghost/core/anima/HEXAD/LIFE/lib/phi_native.hexa"
+import "stdlib/verify/byte_equal.hexa"
 
 // ── STUB gate ────────────────────────────────────────────────────────────────
 // While phi_native is absent the harness compares phi_c to itself (vacuous
@@ -66,12 +67,14 @@ fn _init_row(row: int, n: int, seed_off: int) -> int {
     return 1
 }
 
-// ── byte-equal float comparison ─────────────────────────────────────────────
-// hexa float == is bit-equal for finite values (IEEE-754 representation).
-// NaN-vs-NaN is intentionally false (treat as non-equal — would indicate
-// degenerate Φ pipeline).
+// ── byte-equal float comparison (stdlib/verify/byte_equal) ───────────────────
+// byte_equal_f64 is a TRUE bit comparison, unlike `==`: it catches +0.0 vs -0.0
+// (which `==` conflates) and treats NaN-vs-NaN as equal. The PHI frozen
+// baselines are all finite/non-NaN, so a degenerate computed NaN still
+// mismatches (real-vs-NaN → 0) — degeneracy detection preserved, signed-zero
+// edge now caught (closes the gap behind frozen-path migration verification).
 fn cmp_byte_equal(a: float, b: float) -> bool {
-    return a == b
+    return byte_equal_f64(a, b) == 1
 }
 
 // ── CA generator (small fixture: n_cells=8, n_steps=8) ──────────────────────
