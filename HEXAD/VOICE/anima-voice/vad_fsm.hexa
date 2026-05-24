@@ -88,7 +88,7 @@ fn state_name(s: int) -> str {
 fn compute_energy(tension: float, arousal: float, frame_idx: int) -> float {
     let base = arousal * 0.5
     let tension_boost = tension * PSI_ALPHA * 10.0
-    let energy = base * (1.0 + tension_boost)
+    let mut energy = base * (1.0 + tension_boost)
     // Breathing rhythm micro-variation (20-frame = 200ms cycle)
     let breath_phase = frame_idx % 20
     if breath_phase < 10 {
@@ -113,7 +113,7 @@ fn compute_energy(tension: float, arousal: float, frame_idx: int) -> float {
 fn compute_zcr(tension: float, frame_idx: int) -> float {
     let base_zcr = 0.04
     let tension_mod = tension * PSI_ALPHA * 20.0
-    let zcr = base_zcr + tension_mod
+    let mut zcr = base_zcr + tension_mod
     if zcr > 0.3 { zcr = 0.3 }
     if zcr < 0.001 { zcr = 0.001 }
     return zcr
@@ -132,9 +132,9 @@ fn compute_zcr(tension: float, frame_idx: int) -> float {
 // ────────────────────────────────────────────────────────────────────
 
 fn is_speech_active(energy: float, zcr: float) -> int {
-    let energy_ok = 0
+    let mut energy_ok = 0
     if energy > ENERGY_THRESH { energy_ok = 1 }
-    let zcr_ok = 0
+    let mut zcr_ok = 0
     if zcr > ZCR_LO && zcr < ZCR_HI { zcr_ok = 1 }
     if energy_ok == 1 && zcr_ok == 1 { return 1 }
     return 0
@@ -142,8 +142,8 @@ fn is_speech_active(energy: float, zcr: float) -> int {
 
 // Convenience: compute and classify in one call
 fn classify_frame(tension: float, arousal: float, frame_idx: int) -> int {
-    let energy = compute_energy(tension, arousal, frame_idx)
-    let zcr = compute_zcr(tension, frame_idx)
+    let mut energy = compute_energy(tension, arousal, frame_idx)
+    let mut zcr = compute_zcr(tension, frame_idx)
     return is_speech_active(energy, zcr)
 }
 
@@ -330,10 +330,10 @@ fn demo_fsm_trace() {
     println("  Scenario: 5 silent, 8 active, 3 pause, 5 active, 20 trail")
     println("")
 
-    let state = S_SILENCE
-    let counter = 0
-    let hangover = 0
-    let t = 0
+    let mut state = S_SILENCE
+    let mut counter = 0
+    let mut hangover = 0
+    let mut t = 0
 
     // Phase 1: silence
     println("  t=0-4:  " + state_name(state) + " (no speech)")
@@ -384,7 +384,7 @@ fn demo_fsm_trace() {
     state = parse_state(r5)
     hangover = HANGOVER_FRAMES
     println("  t=22:   act=0 -> " + state_name(state) + " (hangover=" + to_string(hangover) + ")")
-    let drain_t = 23
+    let mut drain_t = 23
     while hangover > 0 {
         hangover = hangover - 1
         if hangover == 0 {
@@ -452,4 +452,3 @@ fn main() {
     println("────────────────────────────────────────────────────────────")
 }
 
-main()

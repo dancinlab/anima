@@ -84,11 +84,11 @@ fn fmt(x: float, d: int) -> string {
 // ─── 인접 행렬 생성 ───
 
 fn make_ring(n: int) -> list {
-    let adj = []
-    let i = 0
+    let mut adj = []
+    let mut i = 0
     while i < n {
-        let row = []
-        let j = 0
+        let mut row = []
+        let mut j = 0
         while j < n { row = row.push(0.0); j = j + 1 }
         let left = (i - 1 + n) % n
         let right = (i + 1) % n
@@ -101,11 +101,11 @@ fn make_ring(n: int) -> list {
 }
 
 fn make_complete(n: int) -> list {
-    let adj = []
-    let i = 0
+    let mut adj = []
+    let mut i = 0
     while i < n {
-        let row = []
-        let j = 0
+        let mut row = []
+        let mut j = 0
         while j < n {
             if i == j { row = row.push(0.0) } else { row = row.push(1.0) }
             j = j + 1
@@ -117,14 +117,14 @@ fn make_complete(n: int) -> list {
 }
 
 fn make_star(n: int) -> list {
-    let adj = []
-    let i = 0
+    let mut adj = []
+    let mut i = 0
     while i < n {
-        let row = []
-        let j = 0
+        let mut row = []
+        let mut j = 0
         while j < n { row = row.push(0.0); j = j + 1 }
         if i == 0 {
-            let k = 1
+            let mut k = 1
             while k < n { row[k] = 1.0; k = k + 1 }
         } else {
             row[0] = 1.0
@@ -137,13 +137,13 @@ fn make_star(n: int) -> list {
 
 fn make_small_world(n: int, k: int, p: float) -> list {
     // Watts-Strogatz: ring lattice + random rewiring
-    let adj = []
-    let i = 0
+    let mut adj = []
+    let mut i = 0
     while i < n {
-        let row = []
-        let j = 0
+        let mut row = []
+        let mut j = 0
         while j < n { row = row.push(0.0); j = j + 1 }
-        let ki = 1
+        let mut ki = 1
         while ki <= k {
             let right = (i + ki) % n
             let left = (i - ki + n) % n
@@ -157,7 +157,7 @@ fn make_small_world(n: int, k: int, p: float) -> list {
     // Rewire with probability p
     i = 0
     while i < n {
-        let j = 0
+        let mut j = 0
         while j < n {
             if adj[i][j] > 0.5 {
                 if random() < p {
@@ -180,8 +180,8 @@ fn make_small_world(n: int, k: int, p: float) -> list {
 // ─── 그래프 측정 ───
 
 fn degree(adj: list, node: int) -> int {
-    let d = 0
-    let j = 0
+    let mut d = 0
+    let mut j = 0
     while j < adj[node].len() {
         if adj[node][j] > 0.5 { d = d + 1 }
         j = j + 1
@@ -191,26 +191,26 @@ fn degree(adj: list, node: int) -> int {
 
 fn avg_degree(adj: list) -> float {
     let n = adj.len()
-    let sum = 0
-    let i = 0
+    let mut sum = 0
+    let mut i = 0
     while i < n { sum = sum + degree(adj, i); i = i + 1 }
     return to_float(sum) / to_float(n)
 }
 
 fn clustering_coeff(adj: list, node: int) -> float {
     let n = adj.len()
-    let neighbors = []
-    let j = 0
+    let mut neighbors = []
+    let mut j = 0
     while j < n {
         if adj[node][j] > 0.5 { neighbors = neighbors.push(j) }
         j = j + 1
     }
-    let k = neighbors.len()
+    let mut k = neighbors.len()
     if k < 2 { return 0.0 }
-    let triangles = 0
-    let a = 0
+    let mut triangles = 0
+    let mut a = 0
     while a < k {
-        let b = a + 1
+        let mut b = a + 1
         while b < k {
             if adj[neighbors[a]][neighbors[b]] > 0.5 { triangles = triangles + 1 }
             b = b + 1
@@ -222,18 +222,18 @@ fn clustering_coeff(adj: list, node: int) -> float {
 
 fn avg_clustering(adj: list) -> float {
     let n = adj.len()
-    let sum = 0.0
-    let i = 0
+    let mut sum = 0.0
+    let mut i = 0
     while i < n { sum = sum + clustering_coeff(adj, i); i = i + 1 }
     return sum / to_float(n)
 }
 
 fn total_edges(adj: list) -> int {
     let n = adj.len()
-    let e = 0
-    let i = 0
+    let mut e = 0
+    let mut i = 0
     while i < n {
-        let j = i + 1
+        let mut j = i + 1
         while j < n {
             if adj[i][j] > 0.5 { e = e + 1 }
             j = j + 1
@@ -246,8 +246,8 @@ fn total_edges(adj: list) -> int {
 fn hub_count(adj: list, threshold: float) -> int {
     let n = adj.len()
     let avg = avg_degree(adj)
-    let hubs = 0
-    let i = 0
+    let mut hubs = 0
+    let mut i = 0
     while i < n {
         if to_float(degree(adj, i)) > avg * threshold { hubs = hubs + 1 }
         i = i + 1
@@ -283,7 +283,7 @@ fn main() {
     println("")
     println("-- 2. 클러스터링 스케일링 --")
     let test_sizes = [4, 6, 8, 12, 16, 24]
-    let ti = 0
+    let mut ti = 0
     while ti < test_sizes.len() {
         let sz = test_sizes[ti]
         let sw_test = make_small_world(sz, 2, REWIRE_PROB)
@@ -295,9 +295,9 @@ fn main() {
     // ── 3. Hub 분포 ──
     println("")
     println("-- 3. Hub 분포 (small-world N=12) --")
-    let i = 0
+    let mut i = 0
     while i < n {
-        let d = degree(sw, i)
+        let mut d = degree(sw, i)
         let c = clustering_coeff(sw, i)
         let is_hub = if to_float(d) > avg_degree(sw) * 1.5 { "HUB" } else { "   " }
         println("  node " + to_string(i) + ": deg=" + to_string(d) + " cluster=" + fmt(c, 4) + " " + is_hub)
@@ -319,7 +319,7 @@ fn main() {
     // ── 5. n6 검증 ──
     println("")
     println("-- 5. n6 atlas 검증 --")
-    let n6_pass = 0
+    let mut n6_pass = 0
 
     let check_nodes = OPTIMAL_NODES == N6_SIGMA
     if check_nodes { n6_pass = n6_pass + 1 }
@@ -360,4 +360,3 @@ fn main() {
     println("============================================")
 }
 
-main()

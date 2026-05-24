@@ -55,17 +55,17 @@ fn clamp(x: float, lo: float, hi: float) -> float {
 
 // ── Modulo for floats: x mod m (always positive) ──
 
-fn fmod(x: float, m: float) -> float {
+fn fmod_native(x: float, m: float) -> float {
     if m == 0.0 { return 0.0 }
-    let n = x / m
+    let mut n = x / m
     // Truncate toward zero
-    let ni = 0
+    let mut ni = 0
     if n >= 0.0 {
         ni = n
     } else {
         ni = n - 1
     }
-    let result = x - ni * m
+    let mut result = x - ni * m
     if result < 0.0 { result = result + m }
     return result
 }
@@ -75,7 +75,7 @@ fn fmod(x: float, m: float) -> float {
 
 fn sin_approx(x: float) -> float {
     // Range reduction: bring x into [-PI, PI]
-    let t = fmod(x + PI, TWO_PI) - PI
+    let t = fmod_native(x + PI, TWO_PI) - PI
 
     // Taylor series: sin(t) = t - t^3/6 + t^5/120 - t^7/5040
     let t2 = t * t
@@ -112,8 +112,8 @@ fn exp_approx(x: float) -> float {
 
     // Taylor series for |x| <= 1: 1 + x + x^2/2! + ... + x^12/12!
     let t = x
-    let sum = 1.0
-    let term = 1.0
+    let mut sum = 1.0
+    let mut term = 1.0
 
     // term 1: x
     term = term * t / 1.0
@@ -163,8 +163,8 @@ fn log_approx(x: float) -> float {
     if x == 1.0 { return 0.0 }
 
     // Range reduction: x = m * 2^k, where 0.5 <= m < 1.0
-    let k = 0
-    let m = x
+    let mut k = 0
+    let mut m = x
     while m >= 2.0 {
         m = m / 2.0
         k = k + 1
@@ -179,8 +179,8 @@ fn log_approx(x: float) -> float {
     // where t = (m-1)/(m+1)
     let t = (m - 1.0) / (m + 1.0)
     let t2 = t * t
-    let sum = t
-    let power = t
+    let mut sum = t
+    let mut power = t
 
     // Terms: t + t^3/3 + t^5/5 + t^7/7 + t^9/9 + t^11/11
     power = power * t2
@@ -206,7 +206,7 @@ fn sqrt_approx(x: float) -> float {
     if x == 1.0 { return 1.0 }
 
     // Initial guess: start near x/2 or 1 for small values
-    let guess = x / 2.0
+    let mut guess = x / 2.0
     if x < 1.0 { guess = 1.0 }
 
     // Newton: g = (g + x/g) / 2
@@ -240,9 +240,9 @@ fn sigmoid(x: float) -> float {
 
 fn pow_int(base: float, n: int) -> float {
     if n == 0 { return 1.0 }
-    let result = 1.0
-    let b = base
-    let exp = n
+    let mut result = 1.0
+    let mut b = base
+    let mut exp = n
     if exp < 0 {
         b = 1.0 / b
         exp = 0 - exp
@@ -400,9 +400,9 @@ fn overlap_add_hann(chunk_a_sample: float, chunk_b_sample: float, i: int, overla
 // ── Bit reversal: reverse `bits` lowest bits of `x` ──
 
 fn bit_reverse(x: int, bits: int) -> int {
-    let result = 0
-    let val = x
-    let i = 0
+    let mut result = 0
+    let mut val = x
+    let mut i = 0
     while i < bits {
         result = result * 2 + (val - (val / 2) * 2)  // result = result*2 + val%2
         val = val / 2
@@ -414,8 +414,8 @@ fn bit_reverse(x: int, bits: int) -> int {
 // ── Log2 for powers of 2 ──
 
 fn log2_int(n: int) -> int {
-    let result = 0
-    let v = n
+    let mut result = 0
+    let mut v = n
     while v > 1 {
         v = v / 2
         result = result + 1
@@ -427,7 +427,7 @@ fn log2_int(n: int) -> int {
 
 fn is_power_of_2(n: int) -> int {
     if n <= 0 { return 0 }
-    let v = n
+    let mut v = n
     while v > 1 {
         if v - (v / 2) * 2 != 0 { return 0 }
         v = v / 2
@@ -538,9 +538,9 @@ fn istft_output_len(num_frames: int, fft_size: int, hop: int) -> int {
 fn istft_window_norm(win_type: int, fft_size: int, hop: int) -> float {
     // Compute sum of squared window values at any fully-covered position
     // For Hann window OLA with 50% overlap, this is exactly 1.0
-    let sum = 0.0
-    let frame = 0
-    let max_frames = fft_size / hop
+    let mut sum = 0.0
+    let mut frame = 0
+    let mut max_frames = fft_size / hop
     if max_frames < 1 { max_frames = 1 }
     while frame < max_frames {
         let pos = frame * hop  // position within the overlap region
@@ -737,8 +737,8 @@ fn db_to_linear(db: float) -> float {
 // Endpoints: w[0] = 0, w[n-1] = 0 (periodic-symmetric)
 
 fn dsp_hann_window(n: int) -> [float] {
-    let out = []
-    let i = 0
+    let mut out = []
+    let mut i = 0
     while i < n {
         out = out.push(hann_window(i, n))
         i = i + 1
@@ -751,8 +751,8 @@ fn dsp_hann_window(n: int) -> [float] {
 // Endpoints: w[0] = 0.08, w[n-1] = 0.08 (raised above zero)
 
 fn dsp_hamming_window(n: int) -> [float] {
-    let out = []
-    let i = 0
+    let mut out = []
+    let mut i = 0
     while i < n {
         out = out.push(hamming_window(i, n))
         i = i + 1
@@ -778,9 +778,9 @@ fn dsp_fft(real: [float], imag: [float], n: int) -> [float] {
     let bits = log2_int(n)
 
     // Step 1: bit-reversal permutation into working arrays
-    let re = []
-    let im = []
-    let i = 0
+    let mut re = []
+    let mut im = []
+    let mut i = 0
     while i < n {
         let rev = bit_reverse(i, bits)
         re = re.push(real[rev])
@@ -790,12 +790,12 @@ fn dsp_fft(real: [float], imag: [float], n: int) -> [float] {
 
     // Step 2: iterative butterfly passes
     // stride doubles each stage: 2, 4, 8 ... n
-    let stride = 2
+    let mut stride = 2
     while stride <= n {
         let half = stride / 2
-        let j = 0
+        let mut j = 0
         while j < n {
-            let k = 0
+            let mut k = 0
             while k < half {
                 // Twiddle factor: W_stride^k = exp(-j * 2*pi*k / stride)
                 let tw_re = cos_approx(0.0 - TWO_PI * k / stride)
@@ -818,9 +818,9 @@ fn dsp_fft(real: [float], imag: [float], n: int) -> [float] {
                 // Rebuild re and im with updated values at a_idx and b_idx.
                 // Since hexa arrays are pass-by-value and we cannot mutate in place,
                 // we rebuild the entire array. For small N (<=512) this is acceptable.
-                let re_new = []
-                let im_new = []
-                let q = 0
+                let mut re_new = []
+                let mut im_new = []
+                let mut q = 0
                 while q < n {
                     if q == a_idx {
                         re_new = re_new.push(new_a_re)
@@ -844,8 +844,8 @@ fn dsp_fft(real: [float], imag: [float], n: int) -> [float] {
     }
 
     // Pack output as interleaved [re0, im0, re1, im1, ...]
-    let out = []
-    let p = 0
+    let mut out = []
+    let mut p = 0
     while p < n {
         out = out.push(re[p])
         out = out.push(im[p])
@@ -863,8 +863,8 @@ fn dsp_ifft(real: [float], imag: [float], n: int) -> [float] {
     if n <= 0 { return [] }
 
     // Conjugate input: negate imaginary parts
-    let conj_im = []
-    let i = 0
+    let mut conj_im = []
+    let mut i = 0
     while i < n {
         conj_im = conj_im.push(0.0 - imag[i])
         i = i + 1
@@ -874,9 +874,9 @@ fn dsp_ifft(real: [float], imag: [float], n: int) -> [float] {
     let fft_out = dsp_fft(real, conj_im, n)
 
     // Conjugate output and divide by N
-    let out = []
+    let mut out = []
     let inv_n = 1.0 / n
-    let j = 0
+    let mut j = 0
     while j < n {
         let re_val = fft_out[j * 2] * inv_n
         let im_val = 0.0 - fft_out[j * 2 + 1] * inv_n
@@ -904,24 +904,24 @@ fn dsp_stft(audio: [float], n_fft: int, hop: int, win_type: int) -> [float] {
     let bins = n_fft / 2 + 1
 
     // Pre-compute window
-    let win = []
-    let wi = 0
+    let mut win = []
+    let mut wi = 0
     while wi < n_fft {
         win = win.push(window_sample(win_type, wi, n_fft))
         wi = wi + 1
     }
 
-    let out = []
-    let f = 0
+    let mut out = []
+    let mut f = 0
     while f < n_frames {
         let start = f * hop
         // Extract windowed frame
-        let frame_re = []
-        let frame_im = []
-        let k = 0
+        let mut frame_re = []
+        let mut frame_im = []
+        let mut k = 0
         while k < n_fft {
             let s = start + k
-            let sample = 0.0
+            let mut sample = 0.0
             if s < sig_len { sample = audio[s] }
             frame_re = frame_re.push(sample * win[k])
             frame_im = frame_im.push(0.0)
@@ -930,7 +930,7 @@ fn dsp_stft(audio: [float], n_fft: int, hop: int, win_type: int) -> [float] {
         // FFT of this frame
         let spec = dsp_fft(frame_re, frame_im, n_fft)
         // Extract one-sided spectrum (bins = n_fft/2 + 1)
-        let b = 0
+        let mut b = 0
         while b < bins {
             out = out.push(spec[b * 2])      // real
             out = out.push(spec[b * 2 + 1])  // imag
@@ -958,8 +958,8 @@ fn dsp_istft(spec_real: [float], spec_imag: [float], n_fft: int, hop: int, win_t
     if out_len <= 0 { return [] }
 
     // Pre-compute window
-    let win = []
-    let wi = 0
+    let mut win = []
+    let mut wi = 0
     while wi < n_fft {
         win = win.push(window_sample(win_type, wi, n_fft))
         wi = wi + 1
@@ -967,25 +967,25 @@ fn dsp_istft(spec_real: [float], spec_imag: [float], n_fft: int, hop: int, win_t
 
     // Accumulator buffers: audio and window-squared sum
     // Initialize to zeros
-    let audio_acc = []
-    let wsum_acc = []
-    let zi = 0
+    let mut audio_acc = []
+    let mut wsum_acc = []
+    let mut zi = 0
     while zi < out_len {
         audio_acc = audio_acc.push(0.0)
         wsum_acc = wsum_acc.push(0.0)
         zi = zi + 1
     }
 
-    let f = 0
+    let mut f = 0
     while f < n_frames {
         // Reconstruct full-length complex spectrum from one-sided
         // For real signals: X[n_fft - k] = conj(X[k]) for 0 < k < n_fft/2
-        let full_re = []
-        let full_im = []
+        let mut full_re = []
+        let mut full_im = []
         let off = f * bins
 
         // Copy bins 0 .. bins-1
-        let b = 0
+        let mut b = 0
         while b < n_fft {
             if b < bins {
                 full_re = full_re.push(spec_real[off + b])
@@ -1006,9 +1006,9 @@ fn dsp_istft(spec_real: [float], spec_imag: [float], n_fft: int, hop: int, win_t
         let start = f * hop
         // Rebuild accumulators with this frame's contribution
         // (pass-by-value: must rebuild entire arrays)
-        let new_audio = []
-        let new_wsum = []
-        let si = 0
+        let mut new_audio = []
+        let mut new_wsum = []
+        let mut si = 0
         while si < out_len {
             let local = si - start
             if local >= 0 && local < n_fft {
@@ -1028,9 +1028,9 @@ fn dsp_istft(spec_real: [float], spec_imag: [float], n_fft: int, hop: int, win_t
     }
 
     // COLA normalization: divide by sum of squared windows
-    let result = []
+    let mut result = []
     let eps = 0.00000001
-    let ri = 0
+    let mut ri = 0
     while ri < out_len {
         if wsum_acc[ri] > eps {
             result = result.push(audio_acc[ri] / wsum_acc[ri])
@@ -1073,9 +1073,9 @@ fn dsp_mel_filterbank(n_mels: int, n_fft: int, sr: int) -> [float] {
     let n_points = n_mels + 2
 
     // Generate mel-spaced points
-    let mel_points = []
-    let hz_points = []
-    let m = 0
+    let mut mel_points = []
+    let mut hz_points = []
+    let mut m = 0
     while m < n_points {
         let mel_val = mel_low + (mel_high - mel_low) * m / (n_points - 1)
         mel_points = mel_points.push(mel_val)
@@ -1084,8 +1084,8 @@ fn dsp_mel_filterbank(n_mels: int, n_fft: int, sr: int) -> [float] {
     }
 
     // Convert hz points to FFT bin indices (float for interpolation)
-    let bin_points = []
-    let bp = 0
+    let mut bin_points = []
+    let mut bp = 0
     while bp < n_points {
         // bin = hz * n_fft / sr
         bin_points = bin_points.push(hz_points[bp] * n_fft / sr)
@@ -1095,16 +1095,16 @@ fn dsp_mel_filterbank(n_mels: int, n_fft: int, sr: int) -> [float] {
     // Build triangular filters
     // For mel band m: triangle from bin_points[m] to bin_points[m+2],
     // peak at bin_points[m+1].
-    let fb = []
-    let mi = 0
+    let mut fb = []
+    let mut mi = 0
     while mi < n_mels {
         let f_left = bin_points[mi]
         let f_center = bin_points[mi + 1]
         let f_right = bin_points[mi + 2]
-        let b = 0
+        let mut b = 0
         while b < bins {
             let bf = b * 1.0
-            let val = 0.0
+            let mut val = 0.0
             if bf >= f_left && bf <= f_center && f_center > f_left {
                 // Rising slope: (bf - f_left) / (f_center - f_left)
                 val = (bf - f_left) / (f_center - f_left)
@@ -1130,11 +1130,11 @@ fn dsp_mel_filterbank(n_mels: int, n_fft: int, sr: int) -> [float] {
 
 fn dsp_spec_to_mel(spec_mag: [float], filterbank: [float], n_mels: int) -> [float] {
     let bins = len(spec_mag)
-    let mel_out = []
-    let m = 0
+    let mut mel_out = []
+    let mut m = 0
     while m < n_mels {
-        let sum = 0.0
-        let b = 0
+        let mut sum = 0.0
+        let mut b = 0
         while b < bins {
             sum = sum + spec_mag[b] * filterbank[m * bins + b]
             b = b + 1
@@ -1167,19 +1167,19 @@ fn dsp_griffin_lim(mag_spec: [float], n_fft: int, hop: int, n_iter: int) -> [flo
     if n_frames <= 0 { return [] }
 
     // Initialize phase to zero
-    let phase_re = []
-    let phase_im = []
-    let i = 0
+    let mut phase_re = []
+    let mut phase_im = []
+    let mut i = 0
     while i < n_frames * bins {
         phase_re = phase_re.push(mag_spec[i])  // magnitude * cos(0) = magnitude
         phase_im = phase_im.push(0.0)          // magnitude * sin(0) = 0
         i = i + 1
     }
 
-    let cur_re = phase_re
-    let cur_im = phase_im
+    let mut cur_re = phase_re
+    let mut cur_im = phase_im
 
-    let it = 0
+    let mut it = 0
     while it < n_iter {
         // iSTFT with current complex spectrum
         let audio = dsp_istft(cur_re, cur_im, n_fft, hop, WIN_HANN, n_frames)
@@ -1190,9 +1190,9 @@ fn dsp_griffin_lim(mag_spec: [float], n_fft: int, hop: int, n_iter: int) -> [flo
         if len(new_spec) == 0 { return [] }
 
         // Replace magnitude with original, keep phase from new_spec
-        let new_re = []
-        let new_im = []
-        let j = 0
+        let mut new_re = []
+        let mut new_im = []
+        let mut j = 0
         while j < n_frames * bins {
             let re_val = new_spec[j * 2]
             let im_val = new_spec[j * 2 + 1]
@@ -1222,11 +1222,11 @@ fn dsp_griffin_lim(mag_spec: [float], n_fft: int, hop: int, n_iter: int) -> [flo
 // Standard speech pre-emphasis to boost high frequencies.
 
 fn dsp_preemphasis(audio: [float], coeff: float) -> [float] {
-    let n = len(audio)
+    let mut n = len(audio)
     if n == 0 { return [] }
-    let out = []
+    let mut out = []
     out = out.push(audio[0])  // first sample unchanged
-    let i = 1
+    let mut i = 1
     while i < n {
         out = out.push(preemphasis_tick(audio[i], audio[i - 1], coeff))
         i = i + 1
@@ -1243,7 +1243,7 @@ fn dsp_preemphasis(audio: [float], coeff: float) -> [float] {
 // comes from the neural synthesis stage, not this utility).
 
 fn dsp_pitch_shift(audio: [float], semitones: float, sr: int) -> [float] {
-    let n = len(audio)
+    let mut n = len(audio)
     if n <= 1 { return audio }
 
     // shift_ratio: how much faster the signal plays
@@ -1253,12 +1253,12 @@ fn dsp_pitch_shift(audio: [float], semitones: float, sr: int) -> [float] {
 
     // Resample: read from source at rate `ratio`
     // Output has same length as input (pitch changes, duration preserved)
-    let out = []
-    let i = 0
+    let mut out = []
+    let mut i = 0
     while i < n {
         // Source position in original signal
         let src_pos = i * ratio
-        let src_idx = 0
+        let mut src_idx = 0
         // Compute integer part manually (floor for positive values)
         let src_idx_f = src_pos
         // Integer index
@@ -1291,11 +1291,11 @@ fn dsp_resample(audio: [float], sr_in: int, sr_out: int) -> [float] {
     if n_out <= 0 { return [] }
 
     let ratio = sr_in * 1.0 / sr_out  // input samples per output sample
-    let out = []
-    let i = 0
+    let mut out = []
+    let mut i = 0
     while i < n_out {
         let src_pos = i * ratio
-        let src_idx = 0
+        let mut src_idx = 0
         if src_pos >= 0.0 {
             src_idx = src_pos  // truncates to int
         }
@@ -1323,8 +1323,8 @@ fn self_test_dsp_core() {
     println("================================================================")
     println("")
 
-    let pass = 0
-    let fail = 0
+    let mut pass = 0
+    let mut fail = 0
 
     // ── Test 1: sin/cos accuracy ──
     println("-- T1: sin/cos accuracy --")
@@ -1374,8 +1374,8 @@ fn self_test_dsp_core() {
     // Endpoint check: w[0] should be ~0, w[N-1] should be ~0
     let ep_ok = abs_val(hann[0]) < 0.001 && abs_val(hann[N - 1]) < 0.001
     // Symmetry check: w[i] == w[N-1-i]
-    let sym_ok = 1
-    let si = 0
+    let mut sym_ok = 1
+    let mut si = 0
     while si < N / 2 {
         if abs_val(hann[si] - hann[N - 1 - si]) > 0.001 { sym_ok = 0 }
         si = si + 1
@@ -1408,9 +1408,9 @@ fn self_test_dsp_core() {
     // x[n] = cos(2*pi*2*n/8) = cos(pi*n/2)
     println("-- T6: FFT sinusoid peak detection (N=8) --")
     let fft_n = 8
-    let sig_re = []
-    let sig_im = []
-    let fi = 0
+    let mut sig_re = []
+    let mut sig_im = []
+    let mut fi = 0
     while fi < fft_n {
         // cos(2*pi*2*fi/8) — frequency at bin 2
         sig_re = sig_re.push(cos_approx(TWO_PI * 2.0 * fi / fft_n))
@@ -1419,9 +1419,9 @@ fn self_test_dsp_core() {
     }
     let fft_result = dsp_fft(sig_re, sig_im, fft_n)
     // Find peak bin by magnitude
-    let peak_bin = -1
-    let peak_mag = 0.0
-    let bi = 0
+    let mut peak_bin = -1
+    let mut peak_mag = 0.0
+    let mut bi = 0
     while bi < fft_n {
         let mag = sqrt_approx(fft_result[bi * 2] * fft_result[bi * 2] + fft_result[bi * 2 + 1] * fft_result[bi * 2 + 1])
         if mag > peak_mag {
@@ -1447,9 +1447,9 @@ fn self_test_dsp_core() {
     let rt_im = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
     let fwd = dsp_fft(rt_re, rt_im, rt_n)
     // Extract real and imag from interleaved output
-    let fwd_re = []
-    let fwd_im = []
-    let xi = 0
+    let mut fwd_re = []
+    let mut fwd_im = []
+    let mut xi = 0
     while xi < rt_n {
         fwd_re = fwd_re.push(fwd[xi * 2])
         fwd_im = fwd_im.push(fwd[xi * 2 + 1])
@@ -1457,9 +1457,9 @@ fn self_test_dsp_core() {
     }
     let inv = dsp_ifft(fwd_re, fwd_im, rt_n)
     // Compute SNR
-    let sig_power = 0.0
-    let noise_power = 0.0
-    let ri = 0
+    let mut sig_power = 0.0
+    let mut noise_power = 0.0
+    let mut ri = 0
     while ri < rt_n {
         let orig = rt_re[ri]
         let recon = inv[ri * 2]  // real part
@@ -1467,7 +1467,7 @@ fn self_test_dsp_core() {
         noise_power = noise_power + (orig - recon) * (orig - recon)
         ri = ri + 1
     }
-    let snr_db = 0.0
+    let mut snr_db = 0.0
     if noise_power > 0.0000000001 {
         snr_db = 10.0 * log_approx(sig_power / noise_power) / log_approx(10.0)
     } else {
@@ -1487,8 +1487,8 @@ fn self_test_dsp_core() {
     let stft_n_fft = 8
     let stft_hop = 4
     // Generate 24-sample test signal (mixed sinusoids)
-    let test_audio = []
-    let tai = 0
+    let mut test_audio = []
+    let mut tai = 0
     while tai < 24 {
         test_audio = test_audio.push(0.5 * cos_approx(TWO_PI * 2.0 * tai / 24.0) + 0.3 * sin_approx(TWO_PI * 5.0 * tai / 24.0))
         tai = tai + 1
@@ -1497,9 +1497,9 @@ fn self_test_dsp_core() {
     let stft_bins = stft_n_fft / 2 + 1
     let stft_nf = stft_num_frames(24, stft_n_fft, stft_hop)
     // Split interleaved spec into real and imag arrays
-    let stft_re = []
-    let stft_im = []
-    let spi = 0
+    let mut stft_re = []
+    let mut stft_im = []
+    let mut spi = 0
     while spi < stft_nf * stft_bins {
         stft_re = stft_re.push(stft_spec[spi * 2])
         stft_im = stft_im.push(stft_spec[spi * 2 + 1])
@@ -1508,11 +1508,11 @@ fn self_test_dsp_core() {
     let recon_audio = dsp_istft(stft_re, stft_im, stft_n_fft, stft_hop, WIN_HANN, stft_nf)
     // Compare over valid region (skip edge effects)
     let cmp_start = stft_n_fft   // skip first window to avoid edge effects
-    let cmp_end = 24
+    let mut cmp_end = 24
     if cmp_end > len(recon_audio) { cmp_end = len(recon_audio) }
-    let stft_sig_pow = 0.0
-    let stft_noise_pow = 0.0
-    let ci = cmp_start
+    let mut stft_sig_pow = 0.0
+    let mut stft_noise_pow = 0.0
+    let mut ci = cmp_start
     while ci < cmp_end {
         let orig_s = test_audio[ci]
         let recon_s = recon_audio[ci]
@@ -1520,7 +1520,7 @@ fn self_test_dsp_core() {
         stft_noise_pow = stft_noise_pow + (orig_s - recon_s) * (orig_s - recon_s)
         ci = ci + 1
     }
-    let stft_snr = 0.0
+    let mut stft_snr = 0.0
     if stft_noise_pow > 0.0000000001 {
         stft_snr = 10.0 * log_approx(stft_sig_pow / stft_noise_pow) / log_approx(10.0)
     } else {
@@ -1541,15 +1541,15 @@ fn self_test_dsp_core() {
     let mel_n_fft = 16
     let mel_sr = 8000
     let mel_bins = mel_n_fft / 2 + 1
-    let fb = dsp_mel_filterbank(mel_n_mels, mel_n_fft, mel_sr)
+    let mut fb = dsp_mel_filterbank(mel_n_mels, mel_n_fft, mel_sr)
     // Check: each mel band should have at least one non-zero value
-    let all_active = 1
-    let mel_m = 0
+    let mut all_active = 1
+    let mut mel_m = 0
     while mel_m < mel_n_mels {
-        let band_max = 0.0
-        let mel_b = 0
+        let mut band_max = 0.0
+        let mut mel_b = 0
         while mel_b < mel_bins {
-            let val = fb[mel_m * mel_bins + mel_b]
+            let mut val = fb[mel_m * mel_bins + mel_b]
             if val > band_max { band_max = val }
             mel_b = mel_b + 1
         }
@@ -1557,19 +1557,19 @@ fn self_test_dsp_core() {
         mel_m = mel_m + 1
     }
     // Check: filter values are in [0, 1] (triangular)
-    let in_range = 1
-    let fb_i = 0
+    let mut in_range = 1
+    let mut fb_i = 0
     while fb_i < len(fb) {
         if fb[fb_i] < -0.001 || fb[fb_i] > 1.001 { in_range = 0 }
         fb_i = fb_i + 1
     }
     // Check: sum across mel bands at each bin should provide some coverage
     // (not all bins need to be covered, but most non-DC bins should be)
-    let covered = 0
-    let cb = 1  // skip DC
+    let mut covered = 0
+    let mut cb = 1  // skip DC
     while cb < mel_bins {
-        let bsum = 0.0
-        let cm = 0
+        let mut bsum = 0.0
+        let mut cm = 0
         while cm < mel_n_mels {
             bsum = bsum + fb[cm * mel_bins + cb]
             cm = cm + 1
@@ -1589,16 +1589,16 @@ fn self_test_dsp_core() {
     // ── Test 10: dsp_spec_to_mel ──
     println("-- T10: spec_to_mel --")
     // Create a flat magnitude spectrum of ones
-    let flat_mag = []
-    let fmi = 0
+    let mut flat_mag = []
+    let mut fmi = 0
     while fmi < mel_bins {
         flat_mag = flat_mag.push(1.0)
         fmi = fmi + 1
     }
     let mel_result = dsp_spec_to_mel(flat_mag, fb, mel_n_mels)
     // Each mel band should be > 0 (since filter sums over non-zero bins)
-    let mel_all_pos = 1
-    let mri = 0
+    let mut mel_all_pos = 1
+    let mut mri = 0
     while mri < mel_n_mels {
         if mel_result[mri] <= 0.0 { mel_all_pos = 0 }
         mri = mri + 1
@@ -1619,8 +1619,8 @@ fn self_test_dsp_core() {
     let gl_hop = 4
     let gl_bins = gl_n_fft / 2 + 1
     // Create a simple magnitude spectrum (2 frames)
-    let gl_mag = []
-    let gl_fi = 0
+    let mut gl_mag = []
+    let mut gl_fi = 0
     while gl_fi < 2 * gl_bins {
         // Magnitude: peaked at bin 1 for both frames
         let gl_bin = gl_fi - (gl_fi / gl_bins) * gl_bins
@@ -1642,9 +1642,9 @@ fn self_test_dsp_core() {
         let spec_1 = dsp_stft(gl_audio_1, gl_n_fft, gl_hop, WIN_HANN)
         let spec_3 = dsp_stft(gl_audio_3, gl_n_fft, gl_hop, WIN_HANN)
         // Compare magnitude error vs original
-        let err_1 = 0.0
-        let err_3 = 0.0
-        let gli = 0
+        let mut err_1 = 0.0
+        let mut err_3 = 0.0
+        let mut gli = 0
         while gli < 2 * gl_bins && gli * 2 + 1 < len(spec_1) && gli * 2 + 1 < len(spec_3) {
             let mag1 = sqrt_approx(spec_1[gli * 2] * spec_1[gli * 2] + spec_1[gli * 2 + 1] * spec_1[gli * 2 + 1])
             let mag3 = sqrt_approx(spec_3[gli * 2] * spec_3[gli * 2] + spec_3[gli * 2 + 1] * spec_3[gli * 2 + 1])
@@ -1703,8 +1703,8 @@ fn self_test_dsp_core() {
     let ps_in = [0.0, 0.5, 1.0, 0.5, 0.0, -0.5, -1.0, -0.5]
     let ps_out = dsp_pitch_shift(ps_in, 0.0, 24000)
     // With 0 semitones, output should match input closely
-    let ps_err = 0.0
-    let psi = 0
+    let mut ps_err = 0.0
+    let mut psi = 0
     while psi < len(ps_in) {
         ps_err = ps_err + abs_val(ps_in[psi] - ps_out[psi])
         psi = psi + 1
@@ -1721,8 +1721,8 @@ fn self_test_dsp_core() {
     println("-- T15: bit reversal --")
     // N=8, 3 bits: 0->0, 1->4, 2->2, 3->6, 4->1, 5->5, 6->3, 7->7
     let br_expected = [0, 4, 2, 6, 1, 5, 3, 7]
-    let br_ok = 1
-    let bri = 0
+    let mut br_ok = 1
+    let mut bri = 0
     while bri < 8 {
         if bit_reverse(bri, 3) != br_expected[bri] { br_ok = 0 }
         bri = bri + 1
@@ -1766,4 +1766,3 @@ fn main() {
     self_test_dsp_core()
 }
 
-main()
