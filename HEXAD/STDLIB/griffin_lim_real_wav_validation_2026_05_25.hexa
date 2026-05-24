@@ -1,0 +1,708 @@
+// HEXAD/STDLIB/griffin_lim_real_wav_validation_2026_05_25.hexa
+//
+// CROSS-VALIDATION of griffin-lim convergence on a REAL WAV file.
+//
+// Companion / follow-up to:
+//   - HEXAD/STDLIB/griffin_lim_convergence_test_2026_05_25.hexa (PR #456)
+//     -- synthetic 2-tone + Hann envelope, n_samples=128, 4/4 PASS
+//
+// PR #456 demonstrated 92%+ reduction in rel-L2 magnitude error on a
+// synthetic signal at n_fft=32. The honest open question: does the same
+// convergence pattern hold on a REAL audio waveform with a real spectral
+// envelope (formants, voicing harmonics, broadband residual)?
+//
+// HYPOTHESIS (a priori):
+//   Real audio is HARDER to phase-recover than a clean 2-tone, because:
+//     - many simultaneous partials → more local minima in the phase-only
+//       optimization landscape
+//     - non-stationary envelope → window-edge artifacts amplify
+//     - real noise floor → mag values near 0 produce phase-undefined bins
+//   We therefore EXPECT (and pre-register):
+//     - the same monotone-ish decrease pattern,
+//     - but a HIGHER absolute floor (typically err_30 in [0.05, 0.30]
+//       range for real audio at this n_fft scale, vs the much smaller
+//       synthetic floor),
+//     - and POSSIBLY a slower descent (more iters needed to reach
+//       plateau).
+//
+// SCOPE:
+//   - read the existing tracked WAV at
+//       HEXAD/VOICE/hexa-senses-voice/proto/hexa_speak_demo.wav
+//     (24kHz mono int16 LE, 17280 samples, 0.72s) -- NO new binary checked in
+//   - extract a 256-sample window from the middle of the file (where the
+//     signal is at full amplitude, past any silence / onset transient)
+//   - run the convergence sweep n_iter ∈ {0, 1, 5, 10, 30} at the SAME
+//     n_fft=32 / hop=16 as PR #456 (apples-to-apples comparison)
+//   - run the EXACT SAME sweep on the PR #456 synthetic signal in the
+//     same process for delta-computation
+//
+// WHY n_fft=32 (not 64):
+//   - PR #456 already documented that fft_native is O(n²·log n) per frame
+//     because the inner butterfly does an immutable list rebuild; at
+//     n_fft=64 with 5+ iter the wall blows past acceptable CI budget.
+//   - Holding n_fft constant between the synthetic and real comparison
+//     isolates the contribution of "signal complexity" (the variable
+//     under test) from "spectral resolution" (a confound).
+//   - The convergence PATTERN is the falsifier's subject -- the absolute
+//     n_fft is a separable resolution dial that can be revisited when
+//     the hexa-lang FFT kernel becomes O(n·log n).
+//
+// COST / WALL:
+//   - n_fft=32 hop=16 n_samples=256 → 15 frames (vs 7 for PR #456)
+//   - per-iter cost ~2.1× PR #456 → 30-iter sweep ~3-5 min wall projection
+//   - Mac local, $0
+//
+// HONEST CAVEATS (pre-registered):
+//   1. We extract a 256-sample window (10.7 ms @ 24kHz) -- this is a
+//      SHORT window. It captures local voicing but not phrase-level
+//      structure. The convergence story on long-window real audio is
+//      a separate question (needs the O(n log n) FFT first).
+//   2. The "real" WAV is a hexa-native synthesized utterance (anima
+//      ω-audio organ output), not a microphone recording. It IS a real
+//      audio waveform shape (PCM int16 LE multi-tone with envelope),
+//      but it does not include microphone noise / room reverb. A true
+//      mic recording would likely show a yet HIGHER convergence floor.
+//   3. We measure rel-L2 magnitude error only. Time-domain SNR /
+//      perceptual quality (PESQ, ViSQOL) are not measured -- magnitude-
+//      reconstruction is the GL algorithm's optimization target by
+//      design.
+//
+// SELF-CONTAINED: inlines the same fft/stft/griffin code as PR #456
+// (no cross-file import flatten yet in hexa-lang). When that lands,
+// the inlined blocks here AND in PR #456 should drop together in one
+// follow-up PR.
+
+// ─── INLINED FROM stdlib/signal/core_fft.hexa ───────────────────────────────
+let GC_TWO_PI = 6.28318530717958647692
+
+fn _gc_bit_reverse(x: int, bits: int) -> int {
+    let mut result = 0
+    let mut val = x
+    let mut i = 0
+    while i < bits {
+        result = result * 2 + (val - (val / 2) * 2)
+        val = val / 2
+        i = i + 1
+    }
+    return result
+}
+
+fn _gc_log2_int(n: int) -> int {
+    let mut result = 0
+    let mut v = n
+    while v > 1 {
+        v = v / 2
+        result = result + 1
+    }
+    return result
+}
+
+fn fft_native(real: [float], imag: [float], n: int) -> [float] {
+    if n <= 0 { return [] }
+    let bits = _gc_log2_int(n)
+
+    let mut re = []
+    let mut im = []
+    let mut i = 0
+    while i < n {
+        let rev = _gc_bit_reverse(i, bits)
+        re = re.push(real[rev])
+        im = im.push(imag[rev])
+        i = i + 1
+    }
+
+    let mut stride = 2
+    while stride <= n {
+        let half = stride / 2
+        let mut j = 0
+        while j < n {
+            let mut k = 0
+            while k < half {
+                let tw_re = cos(0.0 - GC_TWO_PI * k / stride)
+                let tw_im = sin(0.0 - GC_TWO_PI * k / stride)
+                let a_idx = j + k
+                let b_idx = j + k + half
+                let tb_re = tw_re * re[b_idx] - tw_im * im[b_idx]
+                let tb_im = tw_re * im[b_idx] + tw_im * re[b_idx]
+                let a_re = re[a_idx]
+                let a_im = im[a_idx]
+                let new_a_re = a_re + tb_re
+                let new_a_im = a_im + tb_im
+                let new_b_re = a_re - tb_re
+                let new_b_im = a_im - tb_im
+                let mut re_new = []
+                let mut im_new = []
+                let mut q = 0
+                while q < n {
+                    if q == a_idx {
+                        re_new = re_new.push(new_a_re)
+                        im_new = im_new.push(new_a_im)
+                    } else if q == b_idx {
+                        re_new = re_new.push(new_b_re)
+                        im_new = im_new.push(new_b_im)
+                    } else {
+                        re_new = re_new.push(re[q])
+                        im_new = im_new.push(im[q])
+                    }
+                    q = q + 1
+                }
+                re = re_new
+                im = im_new
+                k = k + 1
+            }
+            j = j + stride
+        }
+        stride = stride * 2
+    }
+
+    let mut out = []
+    let mut p = 0
+    while p < n {
+        out = out.push(re[p])
+        out = out.push(im[p])
+        p = p + 1
+    }
+    return out
+}
+
+fn ifft_native(real: [float], imag: [float], n: int) -> [float] {
+    if n <= 0 { return [] }
+    let mut conj_im = []
+    let mut i = 0
+    while i < n {
+        conj_im = conj_im.push(0.0 - imag[i])
+        i = i + 1
+    }
+    let fft_out = fft_native(real, conj_im, n)
+    let mut out = []
+    let inv_n = 1.0 / n
+    let mut j = 0
+    while j < n {
+        let re_val = fft_out[j * 2] * inv_n
+        let im_val = 0.0 - fft_out[j * 2 + 1] * inv_n
+        out = out.push(re_val)
+        out = out.push(im_val)
+        j = j + 1
+    }
+    return out
+}
+// ─── END INLINE FFT ─────────────────────────────────────────────────────────
+
+// ─── INLINED FROM stdlib/signal/core_stft.hexa ──────────────────────────────
+let GC_STFT_TWO_PI = 6.28318530717958647692
+
+fn _gc_window_sample(win_type: int, n: int, N: int) -> float {
+    if N <= 1 { return 1.0 }
+    if win_type == 1 {
+        return 0.54 - 0.46 * cos(GC_STFT_TWO_PI * n / (N - 1))
+    }
+    if win_type == 2 {
+        let t = GC_STFT_TWO_PI * n / (N - 1)
+        return 0.42 - 0.5 * cos(t) + 0.08 * cos(2.0 * t)
+    }
+    return 0.5 * (1.0 - cos(GC_STFT_TWO_PI * n / (N - 1)))
+}
+
+fn stft_num_frames(signal_len: int, n_fft: int, hop: int) -> int {
+    if hop <= 0 { return 0 }
+    if signal_len < n_fft { return 0 }
+    return (signal_len - n_fft) / hop + 1
+}
+
+fn istft_output_len(n_frames: int, n_fft: int, hop: int) -> int {
+    if n_frames <= 0 { return 0 }
+    return n_fft + (n_frames - 1) * hop
+}
+
+fn stft_native(audio: [float], n_fft: int, hop: int, win_type: int) -> [float] {
+    let sig_len = len(audio)
+    let n_frames = stft_num_frames(sig_len, n_fft, hop)
+    if n_frames <= 0 { return [] }
+    let bins = n_fft / 2 + 1
+
+    let mut win = []
+    let mut wi = 0
+    while wi < n_fft {
+        win = win.push(_gc_window_sample(win_type, wi, n_fft))
+        wi = wi + 1
+    }
+
+    let mut out = []
+    let mut f = 0
+    while f < n_frames {
+        let start = f * hop
+        let mut frame_re = []
+        let mut frame_im = []
+        let mut k = 0
+        while k < n_fft {
+            let s = start + k
+            let mut sample = 0.0
+            if s < sig_len { sample = audio[s] }
+            frame_re = frame_re.push(sample * win[k])
+            frame_im = frame_im.push(0.0)
+            k = k + 1
+        }
+        let spec = fft_native(frame_re, frame_im, n_fft)
+        let mut b = 0
+        while b < bins {
+            out = out.push(spec[b * 2])
+            out = out.push(spec[b * 2 + 1])
+            b = b + 1
+        }
+        f = f + 1
+    }
+    return out
+}
+
+fn istft_native(spec_real: [float], spec_imag: [float], n_fft: int, hop: int, win_type: int, n_frames: int) -> [float] {
+    let bins = n_fft / 2 + 1
+    let out_len = istft_output_len(n_frames, n_fft, hop)
+    if out_len <= 0 { return [] }
+
+    let mut win = []
+    let mut wi = 0
+    while wi < n_fft {
+        win = win.push(_gc_window_sample(win_type, wi, n_fft))
+        wi = wi + 1
+    }
+
+    let mut audio_acc = []
+    let mut wsum_acc = []
+    let mut zi = 0
+    while zi < out_len {
+        audio_acc = audio_acc.push(0.0)
+        wsum_acc = wsum_acc.push(0.0)
+        zi = zi + 1
+    }
+
+    let mut f = 0
+    while f < n_frames {
+        let mut full_re = []
+        let mut full_im = []
+        let off = f * bins
+
+        let mut b = 0
+        while b < n_fft {
+            if b < bins {
+                full_re = full_re.push(spec_real[off + b])
+                full_im = full_im.push(spec_imag[off + b])
+            } else {
+                let mirror = n_fft - b
+                full_re = full_re.push(spec_real[off + mirror])
+                full_im = full_im.push(0.0 - spec_imag[off + mirror])
+            }
+            b = b + 1
+        }
+
+        let ifft_out = ifft_native(full_re, full_im, n_fft)
+
+        let start = f * hop
+        let mut new_audio = []
+        let mut new_wsum = []
+        let mut si = 0
+        while si < out_len {
+            let local = si - start
+            if local >= 0 && local < n_fft {
+                let ifft_sample = ifft_out[local * 2]
+                let w = win[local]
+                new_audio = new_audio.push(audio_acc[si] + ifft_sample * w)
+                new_wsum = new_wsum.push(wsum_acc[si] + w * w)
+            } else {
+                new_audio = new_audio.push(audio_acc[si])
+                new_wsum = new_wsum.push(wsum_acc[si])
+            }
+            si = si + 1
+        }
+        audio_acc = new_audio
+        wsum_acc = new_wsum
+        f = f + 1
+    }
+
+    let mut result = []
+    let eps = 0.00000001
+    let mut ri = 0
+    while ri < out_len {
+        if wsum_acc[ri] > eps {
+            result = result.push(audio_acc[ri] / wsum_acc[ri])
+        } else {
+            result = result.push(0.0)
+        }
+        ri = ri + 1
+    }
+    return result
+}
+// ─── END INLINE STFT ────────────────────────────────────────────────────────
+
+// ─── INLINED FROM stdlib/signal/core_griffin.hexa ───────────────────────────
+let GC_GL_EPS = 0.000001
+let GC_GL_WIN_HANN = 0
+
+fn griffin_lim(mag_spec: [float], n_fft: int, hop: int, n_iter: int) -> [float] {
+    let bins = n_fft / 2 + 1
+    let total = len(mag_spec)
+    if bins <= 0 { return [] }
+    let n_frames = total / bins
+    if n_frames <= 0 { return [] }
+
+    let mut cur_re = []
+    let mut cur_im = []
+    let mut i = 0
+    while i < n_frames * bins {
+        cur_re = cur_re.push(mag_spec[i])
+        cur_im = cur_im.push(0.0)
+        i = i + 1
+    }
+
+    let mut it = 0
+    while it < n_iter {
+        let audio = istft_native(cur_re, cur_im, n_fft, hop, GC_GL_WIN_HANN, n_frames)
+        if len(audio) == 0 { return [] }
+
+        let new_spec = stft_native(audio, n_fft, hop, GC_GL_WIN_HANN)
+        if len(new_spec) == 0 { return [] }
+
+        let mut new_re = []
+        let mut new_im = []
+        let mut j = 0
+        while j < n_frames * bins {
+            let re_val = new_spec[j * 2]
+            let im_val = new_spec[j * 2 + 1]
+            let new_mag = sqrt(re_val * re_val + im_val * im_val)
+            if new_mag > GC_GL_EPS {
+                let scale = mag_spec[j] / new_mag
+                new_re = new_re.push(re_val * scale)
+                new_im = new_im.push(im_val * scale)
+            } else {
+                new_re = new_re.push(mag_spec[j])
+                new_im = new_im.push(0.0)
+            }
+            j = j + 1
+        }
+        cur_re = new_re
+        cur_im = new_im
+        it = it + 1
+    }
+
+    return istft_native(cur_re, cur_im, n_fft, hop, GC_GL_WIN_HANN, n_frames)
+}
+// ─── END INLINE GRIFFIN ─────────────────────────────────────────────────────
+
+// ── helpers ─────────────────────────────────────────────────────────────────
+
+fn magnitude_spec(audio: [float], n_fft: int, hop: int) -> [float] {
+    let s = stft_native(audio, n_fft, hop, 0)
+    let nframes = stft_num_frames(len(audio), n_fft, hop)
+    let bins = n_fft / 2 + 1
+    let mut mag = []
+    let mut f = 0
+    while f < nframes {
+        let mut b = 0
+        while b < bins {
+            let idx = (f * bins + b) * 2
+            let re = s[idx]
+            let im = s[idx + 1]
+            mag = mag.push(sqrt(re * re + im * im))
+            b = b + 1
+        }
+        f = f + 1
+    }
+    return mag
+}
+
+fn rel_l2_mag_err(mag_target: [float], mag_recon: [float]) -> float {
+    let n = len(mag_target)
+    if n == 0 { return 0.0 }
+    if len(mag_recon) != n { return 1.0 / 0.0 }
+    let mut num = 0.0
+    let mut den = 0.0
+    let mut i = 0
+    while i < n {
+        let d = mag_target[i] - mag_recon[i]
+        num = num + d * d
+        den = den + mag_target[i] * mag_target[i]
+        i = i + 1
+    }
+    return sqrt(num / (den + 0.000000001))
+}
+
+// ─── WAV reader (lift of anima_audio.hexa::_read_wav_int16_le) ──────────────
+// Returns [n_samples, sample_rate, samples...] as one array; first two
+// entries are int metadata, remaining are float64 PCM samples in [-1, 1].
+fn read_wav_int16_le(path: string) -> [float] {
+    let raw = read_file_bytes(path)
+    if len(raw) < 44 { return [] }
+    let sr = raw[24] | (raw[25] << 8) | (raw[26] << 16) | (raw[27] << 24)
+    let dlen = raw[40] | (raw[41] << 8) | (raw[42] << 16) | (raw[43] << 24)
+    let mut n = dlen / 2
+    let avail = (len(raw) - 44) / 2
+    if n > avail { n = avail }
+    let mut out = []
+    out = out.push(n + 0.0)
+    out = out.push(sr + 0.0)
+    let mut i = 0
+    while i < n {
+        let lo = raw[44 + i*2]
+        let hi = raw[44 + i*2 + 1]
+        let mut u = lo | (hi << 8)
+        if u >= 32768 { u = u - 65536 }
+        out = out.push((u + 0.0) / 32768.0)
+        i = i + 1
+    }
+    return out
+}
+
+// Extract a contiguous slice [start, start+n) from a wav payload (metadata-
+// less). Caller must ensure bounds; returns [] on bad bounds.
+fn slice_samples(samples: [float], start: int, n: int) -> [float] {
+    let m = len(samples)
+    if start < 0 { return [] }
+    if start + n > m { return [] }
+    let mut out = []
+    let mut i = 0
+    while i < n {
+        out = out.push(samples[start + i])
+        i = i + 1
+    }
+    return out
+}
+
+// PR #456 synthetic signal — verbatim for apples-to-apples comparison.
+fn build_pr456_synthetic(n_samples: int) -> [float] {
+    let mut sig = []
+    let mut k = 0
+    let two_pi = 6.28318530717958647692
+    while k < n_samples {
+        let t1 = two_pi * 6.0 * k / n_samples
+        let t2 = two_pi * 17.0 * k / n_samples
+        let env = 0.5 * (1.0 - cos(two_pi * k / (n_samples - 1)))
+        let sample = env * (0.6 * sin(t1) + 0.35 * sin(t2))
+        sig = sig.push(sample)
+        k = k + 1
+    }
+    return sig
+}
+
+fn run_convergence_point(mag_target: [float], n_fft: int, hop: int, n_iter: int) -> float {
+    let recon = griffin_lim(mag_target, n_fft, hop, n_iter)
+    let mag_recon = magnitude_spec(recon, n_fft, hop)
+    return rel_l2_mag_err(mag_target, mag_recon)
+}
+
+fn print_sweep(label: string, mag_target: [float], n_fft: int, hop: int) -> [float] {
+    print("[" + label + "] per-iter rel_l2_mag_err:")
+    print("  n_iter   rel_l2_err")
+    print("  ------   ----------")
+    let e0  = run_convergence_point(mag_target, n_fft, hop, 0)
+    print("       0   " + to_string(e0))
+    let e1  = run_convergence_point(mag_target, n_fft, hop, 1)
+    print("       1   " + to_string(e1))
+    let e5  = run_convergence_point(mag_target, n_fft, hop, 5)
+    print("       5   " + to_string(e5))
+    let e10 = run_convergence_point(mag_target, n_fft, hop, 10)
+    print("      10   " + to_string(e10))
+    let e30 = run_convergence_point(mag_target, n_fft, hop, 30)
+    print("      30   " + to_string(e30))
+    let mut out = []
+    out = out.push(e0)
+    out = out.push(e1)
+    out = out.push(e5)
+    out = out.push(e10)
+    out = out.push(e30)
+    return out
+}
+
+fn pct_reduction(e0: float, eN: float) -> float {
+    if e0 <= 0.000000001 { return 0.0 }
+    return 100.0 * (e0 - eN) / e0
+}
+
+fn main() {
+    print("griffin_lim REAL-WAV cross-validation — stdlib/signal/core_griffin")
+    print("==================================================================")
+    print("Companion to PR #456 (synthetic). This: real WAV slice + side-by-side.")
+    print("")
+
+    // ── Read the existing tracked WAV ────────────────────────────────────
+    let wav_path = "HEXAD/VOICE/hexa-senses-voice/proto/hexa_speak_demo.wav"
+    let parsed = read_wav_int16_le(wav_path)
+    if len(parsed) < 2 {
+        print("FATAL: failed to parse WAV at " + wav_path)
+        exit(1)
+    }
+    let n_total = parsed[0]
+    let sr      = parsed[1]
+    print("WAV: " + wav_path)
+    print("     n_samples=" + to_string(n_total) + " sample_rate=" + to_string(sr) + " (24kHz mono int16 LE)")
+
+    // Strip the 2-element metadata prefix
+    let mut samples_only = []
+    let mut si = 2
+    while si < len(parsed) {
+        samples_only = samples_only.push(parsed[si])
+        si = si + 1
+    }
+
+    // ── Extract a 256-sample window from the MIDDLE of the WAV ────────────
+    // hexa_speak_demo.wav is 17280 samples (~0.72 s). Middle = sample 8512.
+    // 256 samples @ 24kHz = 10.67 ms — captures local voicing structure.
+    let win_start = 8512
+    let win_len = 256
+    let real_audio = slice_samples(samples_only, win_start, win_len)
+    if len(real_audio) != win_len {
+        print("FATAL: failed to slice " + to_string(win_len) +
+              " samples at offset " + to_string(win_start))
+        exit(1)
+    }
+
+    // Quick peak measurement — confirms we hit the voiced region (non-silent).
+    let mut peak = 0.0
+    let mut ri = 0
+    while ri < win_len {
+        let v = real_audio[ri]
+        let av = if v < 0.0 { 0.0 - v } else { v }
+        if av > peak { peak = av }
+        ri = ri + 1
+    }
+    print("Real slice : [" + to_string(win_start) + ", " + to_string(win_start + win_len) +
+          ") peak_abs=" + to_string(peak))
+
+    // ── Build the PR #456 synthetic signal for delta comparison ────────────
+    let synth_audio = build_pr456_synthetic(win_len)
+    print("Synthetic  : 2-tone + Hann envelope, n_samples=" + to_string(win_len))
+
+    // ── Apples-to-apples STFT config ────────────────────────────────────────
+    let n_fft = 32
+    let hop = 16
+    let nframes = stft_num_frames(win_len, n_fft, hop)
+    let bins = n_fft / 2 + 1
+    print("STFT cfg   : n_fft=" + to_string(n_fft) + " hop=" + to_string(hop) +
+          " win=Hann n_frames=" + to_string(nframes) +
+          " bins=" + to_string(bins) +
+          " mag_len=" + to_string(nframes * bins))
+    print("")
+
+    let mag_real  = magnitude_spec(real_audio,  n_fft, hop)
+    let mag_synth = magnitude_spec(synth_audio, n_fft, hop)
+
+    // Magnitude-energy comparison — sanity that both are non-degenerate.
+    let mut sum_real_sq = 0.0
+    let mut sum_synth_sq = 0.0
+    let mut mi = 0
+    while mi < len(mag_real) {
+        sum_real_sq = sum_real_sq + mag_real[mi] * mag_real[mi]
+        sum_synth_sq = sum_synth_sq + mag_synth[mi] * mag_synth[mi]
+        mi = mi + 1
+    }
+    print("Mag energy : real=" + to_string(sqrt(sum_real_sq)) +
+          "   synth=" + to_string(sqrt(sum_synth_sq)))
+    print("")
+
+    // ── Convergence sweeps ──────────────────────────────────────────────────
+    let errs_real  = print_sweep("REAL WAV ", mag_real,  n_fft, hop)
+    print("")
+    let errs_synth = print_sweep("SYNTHETIC", mag_synth, n_fft, hop)
+    print("")
+
+    // ── Side-by-side delta table ────────────────────────────────────────────
+    print("Side-by-side per-iter rel_l2_err  (real vs synthetic, same STFT cfg):")
+    print("  n_iter   real         synthetic    delta(real-synth)")
+    print("  ------   ----------   ----------   -----------------")
+    let labels = ["     0", "     1", "     5", "    10", "    30"]
+    let mut li = 0
+    while li < 5 {
+        let er = errs_real[li]
+        let es = errs_synth[li]
+        let delta = er - es
+        print("  " + labels[li] + "   " + to_string(er) + "   " + to_string(es) +
+              "   " + to_string(delta))
+        li = li + 1
+    }
+    print("")
+
+    // ── Percentage-reduction summary ────────────────────────────────────────
+    let red_real  = pct_reduction(errs_real[0],  errs_real[4])
+    let red_synth = pct_reduction(errs_synth[0], errs_synth[4])
+    print("Pct reduction err_0 → err_30 :")
+    print("  real      = " + to_string(red_real)  + " %")
+    print("  synthetic = " + to_string(red_synth) + " %  (PR #456 reported 92.3% on this signal)")
+    print("")
+
+    // ── Falsifier assertions on REAL signal ────────────────────────────────
+    //
+    // (R-a) err_1 ≤ err_0 + ε                — first iter must improve
+    // (R-b) err_10 ≤ err_1 + ε               — sustained improvement
+    // (R-c) err_30 within plateau band of err_10  — near-plateau by iter 30
+    // (R-d) err_30 < 0.5                     — converged to meaningful basin
+    //                                          (same threshold as PR #456;
+    //                                           real audio expected to land
+    //                                           HIGHER than synthetic but
+    //                                           still under 0.5 at n_fft=32)
+    // (R-e) pct_reduction(real) ≥ 50.0       — real signal must achieve at
+    //                                          LEAST 50% reduction; pre-
+    //                                          registered LOWER bar than the
+    //                                          92.3% synthetic, allowing for
+    //                                          real-signal hardness.
+
+    let e_r_0  = errs_real[0]
+    let e_r_1  = errs_real[1]
+    let e_r_10 = errs_real[3]
+    let e_r_30 = errs_real[4]
+
+    let mut pass = 0
+    let mut fail = 0
+
+    let a_ok = e_r_1 <= e_r_0 + 0.000001
+    if a_ok {
+        print("PASS  (R-a) err_1 (" + to_string(e_r_1) + ") <= err_0 (" + to_string(e_r_0) + ")")
+        pass = pass + 1
+    } else {
+        print("FAIL  (R-a) err_1 (" + to_string(e_r_1) + ") > err_0 (" + to_string(e_r_0) + ")")
+        fail = fail + 1
+    }
+
+    let b_ok = e_r_10 <= e_r_1 + 0.000001
+    if b_ok {
+        print("PASS  (R-b) err_10 (" + to_string(e_r_10) + ") <= err_1 (" + to_string(e_r_1) + ")")
+        pass = pass + 1
+    } else {
+        print("FAIL  (R-b) err_10 (" + to_string(e_r_10) + ") > err_1 (" + to_string(e_r_1) + ")")
+        fail = fail + 1
+    }
+
+    let plateau_band = e_r_10 * 0.05 + 0.001
+    let c_ok = e_r_30 <= e_r_10 + plateau_band
+    if c_ok {
+        print("PASS  (R-c) err_30 (" + to_string(e_r_30) + ") within plateau band of err_10 (" + to_string(e_r_10) + ")")
+        pass = pass + 1
+    } else {
+        print("FAIL  (R-c) err_30 (" + to_string(e_r_30) + ") exceeds err_10 (" + to_string(e_r_10) + ") + band (" + to_string(plateau_band) + ")")
+        fail = fail + 1
+    }
+
+    let d_ok = e_r_30 < 0.5
+    if d_ok {
+        print("PASS  (R-d) err_30 (" + to_string(e_r_30) + ") < 0.5 (converged to meaningful basin)")
+        pass = pass + 1
+    } else {
+        print("FAIL  (R-d) err_30 (" + to_string(e_r_30) + ") >= 0.5 (did not converge to meaningful basin)")
+        fail = fail + 1
+    }
+
+    let e_ok = red_real >= 50.0
+    if e_ok {
+        print("PASS  (R-e) real pct_reduction (" + to_string(red_real) + " %) >= 50.0 % bar")
+        pass = pass + 1
+    } else {
+        print("FAIL  (R-e) real pct_reduction (" + to_string(red_real) + " %) < 50.0 % bar")
+        fail = fail + 1
+    }
+
+    print("")
+    print("real-WAV cross-validation: " + to_string(pass) + "/" + to_string(pass + fail) + " passed")
+    if fail == 0 {
+        print("ALL PASS — griffin-lim convergence pattern reproduces on real WAV slice")
+    } else {
+        print("FAILURES — see per-iter table; convergence pattern degrades on real audio")
+        exit(1)
+    }
+}
