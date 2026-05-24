@@ -95,6 +95,13 @@
 // Expect:
 //   [alm_finitude_loss] ALL 5/5 PASS
 
+// 2026-05-25 phase 5 M1 wave 2a: vec_norm body delegated to
+// stdlib/linalg/norm l2_norm (hexa-lang #885). Byte-equal — local
+// `sqrt_safe(Σ v²)` == `l2_norm(v, d)` for real arrays. cosine_sim +
+// vec_normalize kept local (EPS=1e-7 guard + zero-fallback differ from
+// stdlib defaults).
+import "stdlib/linalg/norm.hexa"
+
 // ─── Constants ──────────────────────────────────────────────
 
 let LAMBDA_FINITUDE   = 0.01    // outer weight in the full training loop
@@ -159,13 +166,8 @@ fn vec_dot(a: array, b: array, d: int) -> float {
 }
 
 fn vec_norm(v: array, d: int) -> float {
-    let mut s = 0.0
-    let mut i = 0
-    while i < d {
-        s = s + v[i] * v[i]
-        i = i + 1
-    }
-    return sqrt_safe(s)
+    // L2 norm via stdlib/linalg/norm — was inline sqrt_safe(Σ v²).
+    return l2_norm(v, d)
 }
 
 // Cosine similarity in [-1, 1]. Returns 0 for zero-norm vectors.
