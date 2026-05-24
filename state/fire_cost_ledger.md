@@ -6,18 +6,18 @@
 
 scope = anima repo 발사 fire 만 (HEXAD/LORA + HEXAD/PURE 두 saga). hexa-lang / hexa-cloud 측 fire 는 본 ledger 범위 밖.
 
-## § Cumulative snapshot (as of 2026-05-24 KST)
+## § Cumulative snapshot (as of 2026-05-24 KST late, post-PR #412)
 
 | 합산 항목 | 값 | 근거 |
 |---|---|---|
-| 누적 fire 수 | **20** (LORA 15 wave + PURE 5 today) | 아래 entries |
-| 누적 cost | **~$22-30** | LORA $22-26 (#360) + PURE today $0-7 (extras) |
-| LOST/TIMEOUT 건수 | **3** | R8a SSH-drop · Phase D v1 stale-branch · AXIS_MAP E OOM |
-| LOST/TIMEOUT 비율 | **15%** (3/20) | — |
-| worst-incident | **AXIS_MAP 1차 envbug $4 burn** (PR #211) 또는 **Phase D v1 LOST ckpt** (PR #378) | 단일 saga 최대 단일 burn = envbug $4; 단일 ckpt 손실은 Phase D v1 |
+| 누적 fire 수 | **20** (LORA 15 wave + PURE 5 today) | 아래 entries · v2b LOST 갱신 후 신규 fire 0 |
+| 누적 cost | **~$23-32** | LORA $22-26 (#360) + PURE today $1-6 (v1 ~$1.5 + v2b ~$1.5 + rogue + E2/E3) |
+| LOST/TIMEOUT 건수 | **4** | R8a SSH-drop · Phase D v1 stale-branch · AXIS_MAP E OOM · **Phase D v2b 사용자 cleanup** |
+| LOST/TIMEOUT 비율 | **20%** (4/20) | v2b 추가로 +5% |
+| worst-incident | **AXIS_MAP 1차 envbug $8 burn** (PR #211) | 단일 saga 최대 단일 burn; 단일 ckpt 손실은 v1+v2b 두 번 (~$3 누적) |
 | 본 ledger 비용 | **$0** (Mac local doc) | — |
 
-cross-ref postmortems: PR #211 (envbug saga) · PR #248 (E OOM addendum) · PR #378 (Phase D v1 stale-branch). hexa-lang inbox: #629 (cloud bootstrap verbs) · #646 (cloud-guard UX).
+cross-ref postmortems: PR #211 (envbug saga) · PR #248 (E OOM addendum) · PR #378 (Phase D v1 stale-branch) · **PR #412 (PHASE_D_BLOCKERS_CLOSURE — v1+v2b 두 fire LOST 후 synthetic framework 완성 deferred marker)**. hexa-lang inbox: #629 · #646 · #699 · #700 · #728 (5 patches 시리즈).
 
 ---
 
@@ -95,17 +95,17 @@ cross-ref postmortems: PR #211 (envbug saga) · PR #248 (E OOM addendum) · PR #
 - lineage       : Phase D v1 (7rhh18i1h1klcp) recovery cycle · PR #378 § 부가 사고 (a)
 - dispatcher    : hexa (v2 agent 첫 시도)
 
-### 2026-05-24 · Phase D v2b (in-flight at ledger 시점)
+### 2026-05-24 · Phase D v2b (사용자 cleanup 으로 LOST, ledger 갱신 2026-05-24 KST late)
 
 - pod_id        : b23g2abvbphz33
 - gpu           : NVIDIA A100-SXM4-80GB
 - cost_estimate : ~$1.5-2 (~$1.49/hr × ~1 h, steps=2000)
-- cost_actual   : IN_FLIGHT (Monitor bwjvpbkog)
+- cost_actual   : ~$1.50 ±0.30 (사용자 carryover sweep 으로 외부 terminate · billing 미회수)
 - eta_planned   : ~20-30 분 (steps=2000 · 짧은 sweep)
-- eta_actual    : TBD
-- result        : IN_FLIGHT — dispatch.log 의 `[result_pull] FATAL scp exit 1` 은 wait-loop 진입 직전 1차 시도 (PR #380 dispatcher 내부 wait-loop fix 후속). v2b 의 최종 result.json 회수 후 본 entry 갱신
-- lessons       : (PENDING — v2b 완료 후) 잠정: (1) 신규 pod 154.54.102.55, clean main branch 위 발사; (2) `sources_upload` 8 sources + 6 mkdir 정상 실행 (v1 stale 와 직교 검증); (3) Monitor 는 `hexa cloud copy-from` / `hexa cloud run` 로 호출 (pool-route silent failure 회피, PR #378 § 5-4)
-- lineage       : Phase D v1 (LOST recovery) · PR #380 (dispatcher wait-loop)
+- eta_actual    : ~25-45 분 (terminate 시점 추정, result.json 도착 전)
+- result        : **LOST** — 사용자 carryover sweep 중 b23g2abv 포함 다수 pod terminate · result.json 미회수 · Monitor blvdsmuiv 가 `[cloud] scp exit 1` false-success → 새 Monitor bbsrt11v9 도 timeout, ckpt 사라짐
+- lessons       : (1) dispatcher 자체는 main 위 clean 발사 (PR #372/#373 통합) → v1 의 stale-branch 사고와 직교; (2) **외부 terminate (사용자 cleanup) 가 SAVE_POD=1 무력화** = runpod-side owner_lock 부재 (hexa-lang inbox #646 F5 권장 변종); (3) `hexa cloud copy-from` 의 exit 0 false-success (remote file missing 시) 발견 → hexa-lang inbox #699 등재; (4) ckpt 미회수 = COFFESHOP 4-criterion 실 데이터 부재 확정, synthetic baseline (PR #405) 만으로 framework 검증 완성
+- lineage       : Phase D v1 (LOST recovery) · PR #380 (dispatcher wait-loop) · PR #410 (B14 fire-sanity Phase 2) · PR #412 (PHASE_D_BLOCKERS_CLOSURE)
 - dispatcher    : hexa (`HEXAD/PURE/launchers/dispatch_p21h_v3.hexa` main 머지 후)
 
 ---
