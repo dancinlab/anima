@@ -176,10 +176,12 @@ fn _poll_three(repos: array, final_tag: string, min_ckpts: int, log_path: string
 // ─── verdict tool integrity check (raw#10 caveat d) ────────────────────
 
 fn _verify_verdict_tool_sha() -> bool {
-    let q = "shasum -a 256 /Users/ghost/core/anima/tool/p9_a_prime_verdict.hexa 2>/dev/null | awk '{print $1}'"
-    let r = exec_with_status(q)
-    if r[1] != 0 { return false }
-    let sha = to_string(r[0]).trim()
+    // body rewired to stdlib FIPS 180-4 builtin (hexa-lang #884 sha256 alias surface);
+    // shell-out + exec_with_status exit-code branch removed. The builtin returns
+    // "" on an I/O error (missing/unreadable file), which we treat as the prior
+    // `r[1] != 0` failure path → return false. Byte-equal digest on success.
+    let sha = sha256_file("/Users/ghost/core/anima/tool/p9_a_prime_verdict.hexa")
+    if sha == "" { return false }
     if sha != VERDICT_TOOL_SHA_LOCK {
         eprintln("[3seed-watchdog] WARN: verdict tool sha drift expected=" + VERDICT_TOOL_SHA_LOCK + " actual=" + sha)
         return false
