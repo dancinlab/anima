@@ -107,3 +107,9 @@
 - kosmos 단일 SSOT 이관 (PR #3 + anima cleanup) — spec + impl + 11 knuth anchor 전부 dancinlab/kosmos
 - sidecar INBOX: worktree/branch 하네스 4-gap handoff (anima 세션 발견)
 - [x] **corpus_v2 ready** — anima v1 (0.8) + kowiki reservoir-sample (0.2 · cap 200k) · sha `ddcd399c761af0b7…` · 114,586 lines · **M3 TTR 0.51** (v1 0.34 → +50%) · M2 MI 3.91 · M5 hangul 0.52 — A-커리큘럼 fire 재료 준비 완료
+
+### criterion 4 dream_stage Φ-envelope 채움 (LIFE absorb)
+- [x] criterion 4 dream_stage Φ-envelope filled via H_228 smoke — verdict FALSIFIED · phi WAKE 1.11636/N1 0.675995/N2 0.743594/N3 1.42684/REM 0.545746 · PURE judgment FAIL
+- 매핑: H_228 substrate Φ band 가 canonical 5-stage envelope (WAKE 1.0>N1 0.7>N2 0.4>N3 0.15·REM 0.95) 를 FALSIFIED — F3 발화 (Φ_REM 0.55 ≤ Φ_N3 1.43) · phi_spatial L3 decay-synchrony 가 N3 MI inflate → distinct 5-band 미형성 · criterion 4 = "missing(embed 미실행)" → **measured FAIL** (substrate 근거 확보, $0 mac local)
+- 결과: `state/pure_phase_d_v3_result_2026_05_24/criterion4_dream_stage_h228.json` · source `HEXAD/LIFE/state/h228_chat_sleep_5stage_2026_05_24/result.json` (sha `4d82e5f212f501a9`)
+- AGGREGATE 불변: 1/4 PASS · closure FAIL (criterion 4 FAIL 유지, corpus 축 한계 실측 재확인)
