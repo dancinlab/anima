@@ -2,6 +2,19 @@
 
 Append-only history sister of `STDLIB.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
+## 2026-05-25T00:40:00Z — cycle-full 2nd-wave · hexa-lang stdlib 4 module 병렬 LAND 🛸
+
+- [x] `/cycle-full` phase-0 depletion brainstorm (round 4 depleted) → 4 disjoint module fan-out (background agent each)
+- [x] PR #780 MERGED — `stdlib/consciousness/phi_spatial.hexa` (`phi_spatial` · phi_native_spatial byte-equal port · imports info/mutual_info + math/bitops). 발견: n_cells==2 spatial Φ ≡ 0.0 (수학적, 포팅버그 아님) → test 3-cell control 교정
+- [x] PR #781 MERGED — `stdlib/stats/correlation.hexa` (`pearson_r` · `spearman_rho`). 발견: anima에 pearson 2 canonical form (h234-family farr 4곳 byte-identical vs h252 변형, 대수적 동일) → h234 farr SSOT 채택. spearman tie 평균랭크 검증
+- [x] PR #782 MERGED — `stdlib/wolfram/ca.hexa` (`wolfram_init_row` · `wolfram_run_ca`). Rule 30/90 교과서 oracle 대조 15/15 PASS. dominant rep-form (h007 canonical) SSOT, binary/density 변형은 out-of-scope
+- [x] PR #783 MERGED — `stdlib/signal/voss_mccartney.hexa` (`gen_1fbeta`). anima 원본과 byte-identical (white[0..4] + sum digest 일치). stdlib rng 미재사용 (LCG 상수 다름 → byte-equality 보존), Taylor helper 유지 (libm pow/exp ulp 다름)
+- [x] 4개 전부 CI 3-platform bootstrap + grace-consent PASS · agent self-cleanup (worktree/branch) 완료 · 내 open PR 0
+- [!] **반복 발견 (M3와 동일 패턴)**: 모든 agent가 builtin 우선 확인 → log2/abs/sqrt/fabs/pow/floor/log 전부 builtin. "missing primitive" 가정의 dup sprawl 은 사실 builtin 미사용이 root cause. byte-equal 필요 시 libm builtin 대신 frozen 알고리즘 유지 (entropy log/log(2.0) · voss Taylor)
+- [!] **pr-cycle hook 관측**: agent `gh pr create` 에 `&& gh pr merge --admin` 자동 append → CI pending 중 조기 머지 (사후 전부 green, additive stdlib 라 무해)
+- [ ] g59 INBOX note (CI stdlib 미테스트 · build flatten DX · builtin-first RFC 규칙) — hexa-lang 측 filing
+- [ ] M5 migration / M4 verify — anima phi_native 분해 → stdlib import (cross-import flatten 실증 + byte-equal regression)
+
 ## 2026-05-25T00:10:00Z — M3 (impl phase 1) · hexa-lang stdlib 4 module LAND ⭐️
 
 - [x] hexa-lang PR #769 MERGED (2026-05-24T12:01:44Z UTC) — https://github.com/dancinlab/hexa-lang/pull/769 · CI 3-platform bootstrap + grace-consent PASS

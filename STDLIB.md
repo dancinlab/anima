@@ -57,7 +57,7 @@ HEXAD/LIFE/lib/                    stdlib/
 - [x] `stdlib/info/entropy.hexa` — `shannon_entropy` (`log(x)/log(2.0)` byte-equal) — MERGED #769
 - [x] `stdlib/info/binning.hexa` — `bin_values_minmax` (min-max histogram) — MERGED #769
 - [x] `stdlib/info/mutual_info.hexa` — `mutual_info_pair` (imports binning+entropy) — MERGED #769
-- [ ] `stdlib/consciousness/phi_spatial.hexa` — info/* 합성 wrapper (RFC §5 2nd-wave 로 분리 · 별도 cycle)
+- [x] `stdlib/consciousness/phi_spatial.hexa` — info/* 합성 wrapper (phi_native_spatial byte-equal port) — MERGED #780
 
 ### byte-equal verify
 
