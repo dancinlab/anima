@@ -1,0 +1,42 @@
+# diag_rust_oracle — L1a (C-style binning diff) + L1b (phi_rs oracle)
+# fixture: 5 rules x 8x8 x n_bins=4
+
+## L1a -- bin diff (hexa f64-faithful vs C f32-cast simulation)
+  rule=110  diff_cells=0/8  diff_idx=0/64
+  rule= 30  diff_cells=0/8  diff_idx=0/64
+  rule=250  diff_cells=0/8  diff_idx=0/64
+  rule=184  diff_cells=0/8  diff_idx=0/64
+  rule= 60  diff_cells=0/8  diff_idx=0/64
+  TOTAL: diff_cells=0/40  diff_idx=0/320
+
+## L1b -- Rust phi_rs oracle vs hexa-native vs C-replica
+  rule        spatial_phi_rs        phi_hexa           phi_c        d(hexa-rs)         d(c-rs)
+   110         4.9772983e-09      4.9773e-09     4.90943e-06        -8.272e-25       4.904e-06
+    30          0.4225850815        0.422585        0.422588         6.106e-16       2.918e-06
+   250         4.9772983e-09      4.9773e-09     4.90943e-06        -8.272e-25       4.904e-06
+   184           0.585841523        0.585842        0.585839         9.992e-16      -2.523e-06
+    60          0.7900283296        0.790028        0.790029         5.551e-16       6.704e-07
+
+## L1b -- byte-equal verdict per rule (IEEE-754 repr)
+  rule=110  byte_eq(h,r)=False  byte_eq(c,r)=False  num1e12(h,r)=True  num1e12(c,r)=False
+           hexa=4.977298299530722e-09
+           rust=4.977298299530723e-09
+           c   =4.90943e-06
+  rule= 30  byte_eq(h,r)=False  byte_eq(c,r)=False  num1e12(h,r)=True  num1e12(c,r)=False
+           hexa=0.4225850815306895
+           rust=0.4225850815306889
+           c   =0.422588
+  rule=250  byte_eq(h,r)=False  byte_eq(c,r)=False  num1e12(h,r)=True  num1e12(c,r)=False
+           hexa=4.977298299530722e-09
+           rust=4.977298299530723e-09
+           c   =4.90943e-06
+  rule=184  byte_eq(h,r)=False  byte_eq(c,r)=False  num1e12(h,r)=True  num1e12(c,r)=False
+           hexa=0.5858415229693067
+           rust=0.5858415229693057
+           c   =0.585839
+  rule= 60  byte_eq(h,r)=False  byte_eq(c,r)=False  num1e12(h,r)=True  num1e12(c,r)=False
+           hexa=0.7900283296344673
+           rust=0.7900283296344668
+           c   =0.790029
+
+# end diag_rust_oracle
