@@ -100,14 +100,16 @@ fn _json_escape(s: string) -> string {
 }
 
 fn _sha256_of_file(path: string) -> string {
+    // body rewired to stdlib FIPS 180-4 builtin (hexa-lang #884 sha256 alias surface);
+    // shell-out + exec_with_status tuple unwrap removed (byte-equal output; "" on missing file).
     if !_is_file(path) { return "" }
-    let r = exec_with_status("shasum -a 256 " + _sh_quote(path) + " 2>/dev/null | awk '{print $1}'")
-    return to_string(r[0]).trim()
+    return sha256_file(path)
 }
 
 fn _sha256_of_string(s: string) -> string {
-    let r = exec_with_status("printf %s " + _sh_quote(s) + " | shasum -a 256 | awk '{print $1}'")
-    return to_string(r[0]).trim()
+    // body rewired to stdlib FIPS 180-4 builtin (hexa-lang #884 sha256 alias surface);
+    // shell-out removed (byte-equal output, no fork-exec).
+    return sha256(s)
 }
 
 // ─── public API ──────────────────────────────────────────────────────────────

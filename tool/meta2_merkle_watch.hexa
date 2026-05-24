@@ -87,7 +87,9 @@ fn _read_file(path: string) -> string {
 }
 
 fn _sha256_file(path: string) -> string {
-    return _trim(_exec("shasum -a 256 " + _sh_quote(path) + " 2>/dev/null | awk '{print $1}'"))
+    // body rewired to stdlib FIPS 180-4 builtin (hexa-lang #884 sha256 alias surface);
+    // shell-out removed (byte-equal output).
+    return sha256_file(path)
 }
 
 fn _file_size(path: string) -> string {
