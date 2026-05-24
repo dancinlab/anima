@@ -26,16 +26,15 @@
 //   generic-parameter opener. The math is unchanged; comments keep the
 //   logical [B, T, D] wording.
 //
-// This file is meant to be CONCATENATED with phi_probe_wire.hexa at run
-// time (hexa's stage1 interpreter does not yet support cross-file use
-// chains for library-style multi-file programs — see feedback_hexa_silent
-// _exit_5_imports). Concatenation is safe because phi_probe_wire.hexa has
-// NO main() and this file owns the only main().
+// phi_probe_wire.hexa (probe_wire / phi16_all_finite / phi16_dist) is pulled
+// in via the modern hexa import below — the compiler now supports cross-file
+// imports, so the legacy cat-concatenation run path is no longer required.
+// phi_probe_wire.hexa has NO main() and this file owns the only main().
 //
 // Run:
-//   cat training/phi_probe_wire.hexa training/phi_probe_wire_test.hexa \
-//       > /tmp/phi_probe_combined.hexa
-//   hexa run /tmp/phi_probe_combined.hexa
+//   hexa run training/phi_probe_wire_test.hexa
+
+import "/Users/ghost/core/anima/training/phi_probe_wire.hexa"
 
 // ─── Synthetic residual-stream generators ───────────────────────
 
@@ -250,4 +249,3 @@ fn main() {
     }
 }
 
-main()

@@ -205,7 +205,7 @@ fn _count_score(o) -> int {
 }
 
 fn _zero_counts() {
-    return {
+    return #{
         "pending": 0, "approved": 0, "rejected": 0, "archived": 0,
         "debate": 0, "clusters": 0, "refinement": 0
     }
@@ -454,4 +454,3 @@ fn main() {
     exit(rc)
 }
 
-main()

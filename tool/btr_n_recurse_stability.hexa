@@ -75,6 +75,25 @@ let OUT_TEMPLATE = "state/n_recurse_10gen_"
 
 struct Rng { state: int }
 
+// ── tension-link 5-channel weight vector + 6-channel state tick ──
+struct W5 {
+    c: float, x: float, m: float, a: float, s: float
+}
+
+struct Tick {
+    i:              int,
+    phi:            float,
+    brain_like_pct: float,
+    dstate:         float,
+    cos_prev:       float,
+    sat_state:      int,
+    w_frob_drift:   float,
+    w1: float, w2: float, w3: float, w4: float, w5: float,
+    v1: float, v2: float, v3: float, v4: float, v5: float, v6: float
+}
+
+fn bool_str(b: bool) -> string { return if b { "true" } else { "false" } }
+
 fn rng_new(seed: int) -> Rng {
     let s0 = if seed == 0 { 1 } else { seed }
     return Rng { state: s0 }
@@ -104,7 +123,7 @@ fn clampf(x: float, lo: float, hi: float) -> float {
     return x
 }
 
-fn sqrtf(x: float) -> float {
+fn sqrtf_native(x: float) -> float {
     if x <= 0.0 { return 0.0 }
     let mut g = x
     let mut i = 0
@@ -113,6 +132,12 @@ fn sqrtf(x: float) -> float {
         i = i + 1
     }
     return g
+}
+
+// gen-0 inherited TL weights: uniform 5-channel distribution (matches the
+// seed-tick w1..w5 = 0.20 each used by state_vec_for).
+fn tl_init() -> W5 {
+    return W5 { c: 0.2, x: 0.2, m: 0.2, a: 0.2, s: 0.2 }
 }
 
 fn tl_update(prev: W5, t: Tick) -> W5 {
@@ -132,7 +157,7 @@ fn tl_frob_drift(a: W5, b: W5) -> float {
     let d3 = a.m - b.m
     let d4 = a.a - b.a
     let d5 = a.s - b.s
-    return sqrtf(d1*d1 + d2*d2 + d3*d3 + d4*d4 + d5*d5)
+    return sqrtf_native(d1*d1 + d2*d2 + d3*d3 + d4*d4 + d5*d5)
 }
 
 // ── 6-d state vector (with gen-level brain-like lift) ───────────
@@ -237,7 +262,7 @@ fn cos6(a: Tick, b: Tick) -> float {
     let dot = a.v1*b.v1 + a.v2*b.v2 + a.v3*b.v3 + a.v4*b.v4 + a.v5*b.v5 + a.v6*b.v6
     let na2 = a.v1*a.v1 + a.v2*a.v2 + a.v3*a.v3 + a.v4*a.v4 + a.v5*a.v5 + a.v6*a.v6
     let nb2 = b.v1*b.v1 + b.v2*b.v2 + b.v3*b.v3 + b.v4*b.v4 + b.v5*b.v5 + b.v6*b.v6
-    let denom = sqrtf(na2) * sqrtf(nb2)
+    let denom = sqrtf_native(na2) * sqrtf_native(nb2)
     if denom < 0.00001 { return 1.0 }
     return dot / denom
 }
@@ -249,7 +274,7 @@ fn l2_6(a: Tick, b: Tick) -> float {
     let d4 = a.v4 - b.v4
     let d5 = a.v5 - b.v5
     let d6 = a.v6 - b.v6
-    return sqrtf(d1*d1 + d2*d2 + d3*d3 + d4*d4 + d5*d5 + d6*d6)
+    return sqrtf_native(d1*d1 + d2*d2 + d3*d3 + d4*d4 + d5*d5 + d6*d6)
 }
 
 fn sat_classify(dstate: float) -> int {
@@ -813,4 +838,3 @@ fn main() {
     }
 }
 
-main()

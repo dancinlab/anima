@@ -84,7 +84,7 @@ fn _read_current_phase() -> str {
     if line.len() == 0 { return "P0" }
     // crude extraction: line like "\"current_phase\": \"P3\","
     let parts = line.split("\"")
-    let i = 0
+    let mut i = 0
     while i < parts.len() {
         if parts[i] == "current_phase" {
             // value is at i+2 (after ": \")
@@ -98,8 +98,8 @@ fn _read_current_phase() -> str {
 // ─── Phase transition (manual trigger; design-time spec) ───────────────────
 fn cmd_transition(target: str) -> int {
     _ensure_state_dir()
-    let valid = false
-    let i = 0
+    let mut valid = false
+    let mut i = 0
     while i < PHASE_IDS.len() {
         if PHASE_IDS[i] == target { valid = true }
         i = i + 1
@@ -224,7 +224,7 @@ fn cmd_selftest() -> int {
     }
     print("[OUROBOROS selftest] phases: " + PHASE_IDS.join(" → ") + " → (cycle close → P0)")
     // each phase has meta
-    let i = 0
+    let mut i = 0
     while i < PHASE_IDS.len() {
         let m = _phase_meta(PHASE_IDS[i])
         if m == "{}" {
@@ -247,10 +247,11 @@ fn cmd_selftest() -> int {
 
 // ─── Argv dispatch ─────────────────────────────────────────────────────────
 fn _flag(name: str) -> str {
-    let i = 0
-    while i < ARGV.len() {
-        if ARGV[i] == name {
-            if i + 1 < ARGV.len() { return ARGV[i+1] }
+    let av = argv()
+    let mut i = 0
+    while i < av.len() {
+        if av[i] == name {
+            if i + 1 < av.len() { return av[i+1] }
         }
         i = i + 1
     }
@@ -258,9 +259,10 @@ fn _flag(name: str) -> str {
 }
 
 fn _has_flag(name: str) -> bool {
-    let i = 0
-    while i < ARGV.len() {
-        if ARGV[i] == name { return true }
+    let av = argv()
+    let mut i = 0
+    while i < av.len() {
+        if av[i] == name { return true }
         i = i + 1
     }
     return false
@@ -288,4 +290,3 @@ fn main() -> int {
     return 0
 }
 
-main()

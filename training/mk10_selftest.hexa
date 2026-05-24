@@ -37,7 +37,7 @@ fn nexus_root() -> str {
     return env("HOME") + "/Dev/nexus"
 }
 
-fn hexa_bin() -> str {
+fn hexa_bin_path() -> str {
     let h = env("HEXA")
     if h.len() > 0 { return h }
     let c1 = env("HOME") + "/.hx/bin/hexa"
@@ -74,7 +74,7 @@ fn _count(haystack: str, needle: str) -> int {
 fn main() {
     println("[mk10_selftest] Mk.X drill wire validation — 5 checks")
     let nx = nexus_root()
-    let hx = hexa_bin()
+    let hx = hexa_bin_path()
     let mut pass = 0
     let mut fail = 0
 
@@ -191,4 +191,3 @@ fn main() {
     }
 }
 
-main()
