@@ -323,7 +323,7 @@ fn ne555_operational(vcc: float) -> bool { return vcc >= 4.5 }
 // F-ARDUINO-1: duty cycle ≈ 2/3 at R1=R2=10k (textbook nominal)
 fn fa_ar_1() -> bool {
     let d = ne555_duty(10000.0, 10000.0)
-    let dev = fabs(d - 0.6666666666666666)
+    let dev = abs(d - 0.6666666666666666)
     println("  [F-ARDUINO-1] duty=" + to_string(d) + " expected=0.667 dev=" + to_string(dev))
     return dev < 0.001
 }
@@ -332,7 +332,7 @@ fn fa_ar_1() -> bool {
 fn fa_ar_2() -> bool {
     let f = ne555_freq(10000.0, 10000.0, 100.0e-9)
     let expected = 480.9   // 1/((10k+20k)·100n·ln2) = 481 Hz
-    let dev = fabs(f - expected)
+    let dev = abs(f - expected)
     println("  [F-ARDUINO-2] freq=" + to_string(f) + " Hz expected~" + to_string(expected) + " dev=" + to_string(dev))
     return dev < 1.0
 }
@@ -342,7 +342,7 @@ fn fa_ar_3() -> bool {
     let f1 = ne555_freq(10000.0, 10000.0, 100.0e-9)
     let f2 = ne555_freq(10000.0, 10000.0, 50.0e-9)
     let ratio = f2 / f1
-    let dev = fabs(ratio - 2.0)
+    let dev = abs(ratio - 2.0)
     println("  [F-ARDUINO-3] f(C/2)/f(C)=" + to_string(ratio) + " expected=2 dev=" + to_string(dev))
     return dev < 0.001
 }
