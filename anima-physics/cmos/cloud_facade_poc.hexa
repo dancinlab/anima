@@ -44,6 +44,8 @@
 //
 // raw#9 hexa-only strict / raw#37 .py FORBIDDEN / raw#15 SSOT this file
 
+import "/Users/ghost/core/hexa-lang/stdlib/core/hash/sha256.hexa"
+
 let SCHEMA           = "anima_physics/cloud_facade_cmos/1"
 let CIR_TEMPLATE     = "anima-physics/cmos/cmos_ring_osc.cir"
 let CIR_TMP_POS      = "/tmp/anima_cmos_ring_osc_pos.cir"
@@ -186,8 +188,8 @@ fn run_facade() -> bool {
     println("[backend] name=" + backend_name)
 
     // 4. Netlist sha256 (frozen-contract reproducibility marker).
-    let cmd_nlsha = "shasum -a 256 " + shell_escape(CIR_TEMPLATE) + " | cut -c1-64"
-    let netlist_sha = exec(cmd_nlsha).trim()
+    //    stdlib core/hash/sha256 (phase 5 M1 wave 2a · #884 alias surface).
+    let netlist_sha = sha256_of_file(CIR_TEMPLATE)
     println("[netlist] sha256=" + netlist_sha)
 
     // 5. Gates.
