@@ -16,6 +16,14 @@
   do   = "register every model / dataset / ckpt to HF Hub COMPLETE — all artifacts present · manifest = local"
   dont = "partial HF upload · model card referencing un-uploaded files · HF repo out of sync with local"
 
+@D a_hf_autonomous := "HF upload — autonomous, tier-gated visibility" :: governance [required active]
+  do   = "after fire artifact recovery: HF Hub upload runs automatically · no user gate · org = dancinlab"
+  do   = "PUBLIC = closure PASS · 🔵🟢 verified model · spec/format/tooling · clean-license corpus"
+  do   = "PRIVATE = closure FAIL · WIP/intermediate ckpt · negative-result · unclear-license data"
+  do   = "attach model card + manifest (sha256) — meets a_hf_complete totality"
+  dont = "gate HF upload on user · ask 'may I upload?' · skip HF before teardown"
+  dont = "publish a FAIL / WIP ckpt as PUBLIC"
+
 @D a_fire_autonomous := "cost-bearing fire — dispatch autonomously, in parallel, now" :: governance [required active]
   do   = "GPU / runpod work — state estimated cost in one line, then dispatch autonomously / parallel / bg · provider = runpod · no user gate"
   dont = "ask 'may I use GPU?' · defer a fire to shrink scope or avoid cost · stop work because it is cost-bearing"
