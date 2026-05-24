@@ -37,10 +37,10 @@ fn _read_file(p: string) -> string {
 }
 
 fn _sha256(p: string) -> string {
+    // body rewired to stdlib FIPS 180-4 builtin (hexa-lang #884 sha256 alias surface);
+    // shell-out + GNU/BSD fallback chain removed (byte-equal output; "" on missing file preserved).
     if !_file_exists(p) { return "" }
-    // Try sha256sum (Linux) then shasum (macOS), fallback empty
-    let out = to_string(exec("(sha256sum " + _sh_quote(p) + " 2>/dev/null || shasum -a 256 " + _sh_quote(p) + " 2>/dev/null) | awk '{print $1}'"))
-    return out.trim()
+    return sha256_file(p)
 }
 
 fn _atomic_write(p: string, content: string) -> bool {

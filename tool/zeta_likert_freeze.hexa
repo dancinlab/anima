@@ -27,6 +27,8 @@
 //   deterministic · LLM=none
 // ════════════════════════════════════════════════════════════════════════════
 
+use "stdlib/core/hash/sha256"
+
 let SRC_BENCH       = "bench/zeta_likert.hexa"
 let OUT_DIR         = "bench/zeta_likert"
 let OUT_FROZEN      = "bench/zeta_likert/v1_frozen.json"
@@ -57,8 +59,11 @@ fn now_utc() {
 }
 
 fn sha256_file(p) {
+    // body rewired to stdlib FIPS 180-4 builtin via the sha256_of_file alias
+    // (hexa-lang #884 — avoids local-vs-builtin name shadow); shell-out removed
+    // (byte-equal output; "" on missing file preserved).
     if !fexists(p) { return "" }
-    return _str(exec("shasum -a 256 " + p + " 2>/dev/null | awk '{print $1}'")).trim()
+    return sha256_of_file(p)
 }
 
 fn atomic_write(path, body) {
@@ -259,10 +264,10 @@ fn selftest(frozen_sha) {
     }
 
     // S5 deterministic re-build → same sha
+    // sha rewired to stdlib FIPS 180-4 builtin (hexa-lang #884); body2 bytes are
+    // in memory so the /tmp scratch + shasum is unnecessary (byte-equal output).
     let body2 = build_frozen_json()
-    let tmp = "/tmp/_zeta_freeze_repro.json"
-    write_file(tmp, body2)
-    let sha2 = _str(exec("shasum -a 256 " + tmp + " | awk '{print $1}'")).trim()
+    let sha2 = sha256_of_string(body2)
     let s5 = sha2 == frozen_sha
     if s5 {
         println("  S5 deterministic_rebuild   : PASS  (sha2=" + sha2.substring(0, 12) + "..)")

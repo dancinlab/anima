@@ -45,6 +45,8 @@
 
 // ── Constants ──────────────────────────────────────────────────────────
 
+use "stdlib/core/hash/sha256"
+
 let DEFAULT_CKPT_DIR = "/workspace/ckpt_clm1b_r4"
 let DEFAULT_STEPS    = 750000
 let DEFAULT_BATCH    = 8
@@ -478,7 +480,9 @@ fn live_fire(log_path: string) {
     let _chmod = run_step(6, "chmod +x hexa_v2 on pod",
         SSH + " 'chmod +x " + REMOTE_HEXA_BIN + "'", dry, log_path)
     // sha256 compare
-    let local_sha  = exec("shasum -a 256 " + bin_src + " | awk '{print $1}'").trim()
+    let local_sha  = sha256_of_file(bin_src)  // rewired to stdlib FIPS 180-4 builtin (hexa-lang #884); byte-equal, no fork-exec
+    // remote_sha stays a shell-out: sha256sum runs on the REMOTE pod over SSH —
+    // out of scope for the local-side stdlib sha256 sweep.
     let remote_sha_cmd = SSH + " 'sha256sum " + REMOTE_HEXA_BIN + " 2>/dev/null | awk \"{print \\$1}\"'"
     let remote_sha = (if dry { local_sha } else { exec(remote_sha_cmd).trim() })
     stamp_step("sha256 local=" + local_sha + " remote=" + remote_sha, log_path)

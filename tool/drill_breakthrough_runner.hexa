@@ -89,15 +89,12 @@ fn str_contains(s: string, sub: string) -> bool {
     return str_index_of(s, sub, 0) >= 0
 }
 
-// Deterministic string-digest using native sha256 (hex string). When the
-// builtin is absent, fall back to an exec-shasum of a tmp file. Returns a
-// 64-char hex string on success, empty on total failure.
+// Deterministic string-digest using native sha256 (hex string). Returns a
+// 64-char hex string. Body rewired to stdlib FIPS 180-4 builtin (hexa-lang
+// #884 sha256 alias surface); the prior /tmp scratch + shasum fallback is no
+// longer needed — sha256(s) is byte-equal and always available in the runtime.
 fn digest_str(s: string) -> string {
-    let tmp = "/tmp/drill_digest_" + str(s.len()) + "_" + str(s.len() * 31 + 7) + ".txt"
-    write_file(tmp, s)
-    let r = exec("shasum -a 256 " + tmp + " 2>/dev/null | awk '{print $1}'").trim()
-    let _ = exec("rm -f " + tmp)
-    return r
+    return sha256(s)
 }
 
 // Convert the first 12 hex chars of a digest to an integer (non-negative).

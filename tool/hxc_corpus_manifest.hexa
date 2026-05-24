@@ -43,6 +43,8 @@
 //   raw 137 deterministic (stable file order via lexicographic sort)
 // ════════════════════════════════════════════════════════════════════════════
 
+use "stdlib/core/hash/sha256"
+
 let CORE_ROOT      = "/Users/ghost/core"
 let ANIMA_ROOT     = "/Users/ghost/core/anima"
 let BASELINES_DIR  = "/Users/ghost/core/anima/state/baselines"
@@ -88,24 +90,14 @@ fn anima_head_sha() {
 }
 
 fn sha256_file(p) {
+    // body rewired to stdlib FIPS 180-4 builtin via the sha256_of_file alias
+    // (hexa-lang #884 — avoids local-vs-builtin name shadow); the GNU/BSD
+    // shasum/sha256sum fallback chain + PATH pinning + parts-split parsing are
+    // all removed. The original 64-char validity guard is preserved: the builtin
+    // returns the 64-char digest on success or "" on I/O error (byte-equal).
     if !fexists(p) { return "" }
-    let q = _sh_quote(p)
-    let cmd1 = "PATH=/usr/bin:/bin:/sbin:/opt/homebrew/bin shasum -a 256 " + q + " 2>/dev/null"
-    let raw1 = exec(cmd1)
-    let s1raw = _str(raw1).trim()
-    let parts = s1raw.split(" ")
-    if len(parts) >= 1 {
-        let s1 = parts[0].trim()
-        if s1.len() == 64 { return s1 }
-    }
-    let cmd2 = "PATH=/usr/bin:/bin:/sbin:/opt/homebrew/bin sha256sum " + q + " 2>/dev/null"
-    let raw2 = exec(cmd2)
-    let s2raw = _str(raw2).trim()
-    let parts2 = s2raw.split(" ")
-    if len(parts2) >= 1 {
-        let s2 = parts2[0].trim()
-        if s2.len() == 64 { return s2 }
-    }
+    let s = sha256_of_file(p)
+    if s.len() == 64 { return s }
     return ""
 }
 

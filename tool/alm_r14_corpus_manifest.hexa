@@ -35,6 +35,8 @@
 //   deterministic · idempotent · no external API · NO corpus line generation
 // ════════════════════════════════════════════════════════════════════════════
 
+use "stdlib/core/hash/sha256"
+
 let ANIMA_ROOT  = "/Users/ghost/core/anima"
 let OUT_PATH    = "/Users/ghost/core/anima/state/alm_r14_corpus_manifest.json"
 let DESIGN_DOC  = "/Users/ghost/core/anima/docs/alm_r14_design_v2_20260422.md"
@@ -72,8 +74,11 @@ fn now_utc() {
 }
 
 fn sha256_file(p) {
+    // body rewired to stdlib FIPS 180-4 builtin via the sha256_of_file alias
+    // (hexa-lang #884 — avoids local-vs-builtin name shadow); shell-out removed
+    // (byte-equal output; "" on missing file preserved).
     if !fexists(p) { return "" }
-    return _str(exec("shasum -a 256 " + _sh_quote(p) + " | awk '{print $1}'")).trim()
+    return sha256_of_file(p)
 }
 
 fn mtime_file(p) {

@@ -84,8 +84,10 @@ fn json_escape(s: string) -> string {
 }
 
 fn sha256_hex(s: string) -> string {
-    let cmd = "printf '%s' " + shell_escape(s) + " | sha256sum | cut -c1-64"
-    return exec(cmd).trim()
+    // body rewired to stdlib FIPS 180-4 builtin (hexa-lang #884 sha256 alias surface);
+    // shell-out removed (byte-equal output, no fork-exec). cut -c1-64 was the full
+    // 64-char digest, which sha256(s) already returns.
+    return sha256(s)
 }
 
 fn jq_str(path: string, expr: string) -> string {

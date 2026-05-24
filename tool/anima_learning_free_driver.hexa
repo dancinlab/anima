@@ -255,14 +255,10 @@ fn load_source_sha(path: string) -> string {
 }
 
 fn sha256_of_file(path: string) -> string {
+    // body rewired to stdlib FIPS 180-4 builtin (hexa-lang #884 sha256 alias surface);
+    // shell-out + GNU/BSD detection removed (byte-equal output; "" on missing file preserved).
     if !fexists(path) { return "" }
-    let gnu = _str(exec("command -v sha256sum 2>/dev/null")).trim()
-    let cmd = if gnu != "" {
-        "sha256sum " + path + " 2>/dev/null | awk '{print $1}'"
-    } else {
-        "shasum -a 256 " + path + " 2>/dev/null | awk '{print $1}'"
-    }
-    return _str(exec(cmd)).trim()
+    return sha256_file(path)
 }
 
 // ══════════════════════════════════════════════════════════════════════════

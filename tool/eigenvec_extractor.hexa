@@ -389,16 +389,16 @@ fn verify_orthogonality(eigenvecs: array) -> bool {
 // ─── SHA helpers ──────────────────────────────────────────────────────
 
 fn sha256_of_file(p: string) -> string {
+    // body rewired to stdlib FIPS 180-4 builtin (hexa-lang #884 sha256 alias surface);
+    // shell-out removed (byte-equal output; "" on missing file preserved).
     if !fexists(p) { return "" }
-    return _str(exec("shasum -a 256 " + p + " 2>/dev/null | awk '{print $1}'")).trim()
+    return sha256_file(p)
 }
 
 fn sha256_of_string(s: string) -> string {
-    let tmp = "/tmp/eigenvec_extractor_sha_" + to_string(len(s)) + ".txt"
-    write_file(tmp, s)
-    let r = _str(exec("shasum -a 256 " + tmp + " 2>/dev/null | awk '{print $1}'")).trim()
-    let _ = exec("rm -f " + tmp)
-    return r
+    // body rewired to stdlib FIPS 180-4 builtin (hexa-lang #884 sha256 alias surface);
+    // shell-out + tmp-file removed (byte-equal output, no fork-exec, no /tmp race).
+    return sha256(s)
 }
 
 fn verify_sha_chain(cert_sha: string) -> bool {

@@ -387,9 +387,10 @@ fn _resolve_token(req_token: str) -> str {
     return ""
 }
 
-// sha256 of a single file via /usr/bin/shasum (BSD + GNU compatible).
+// sha256 of a single file via stdlib FIPS 180-4 builtin (hexa-lang #884
+// sha256 alias surface); shell-out removed (byte-equal output).
 fn _sha256_file(p: str) -> str {
-    return exec("shasum -a 256 " + _sh_q(p) + " 2>/dev/null | awk '{print $1}'").trim()
+    return sha256_file(p)
 }
 
 // Walk files under root (file or dir). Returns list of absolute paths.

@@ -130,12 +130,18 @@ fn _pad_right(s: string, w: int) -> string {
 }
 
 fn _sha256_file(p: string) -> string {
+    // body rewired to stdlib FIPS 180-4 builtin (hexa-lang #884 sha256 alias surface);
+    // shell-out removed (byte-equal output; "" on missing file preserved).
     if !_fexists(p) { return "" }
-    return _str(exec("shasum -a 256 " + _shell_quote(p) + " | awk '{print $1}'")).trim()
+    return sha256_file(p)
 }
 
 fn _sha256_dir(p: string) -> string {
-    // stable sha across a whole directory: list · sort · concat contents · hash
+    // stable sha across a whole directory: list · sort · concat contents · hash.
+    // DEFERRED from the phase-5 sha256 sweep: the find | sort | xargs shasum |
+    // shasum composite is a directory walk + stream-of-streams hash, not a single
+    // file/string digest — out of stdlib sha256 scope this wave. A hexa-native
+    // dir-walk + per-file sha256_file loop is a follow-up.
     if !_dexists(p) { return "" }
     let cmd = "find " + _shell_quote(p) + " -type f | LC_ALL=C sort | "
             + "xargs shasum -a 256 2>/dev/null | shasum -a 256 | awk '{print $1}'"

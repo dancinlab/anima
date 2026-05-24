@@ -38,6 +38,8 @@
 //    1 = composite == DEFERRED OR pre-flight guard fails
 // ════════════════════════════════════════════════════════════════════════════
 
+use "stdlib/core/hash/sha256"
+
 let SPEC_DOC          = "docs/qmirror_2_closure_spec_2026_05_04.md"
 let CLOSURE_DOC_OUT   = "docs/qmirror_2_closure_2026_05_04.md"
 let HANDOFF_OUT       = "docs/qmirror_2_closure_landed_2026_05_04.ai.md"
@@ -73,8 +75,11 @@ fn now_utc() -> string {
 }
 
 fn sha256_file(p: string) -> string {
+    // body rewired to stdlib FIPS 180-4 builtin via the sha256_of_file alias
+    // (hexa-lang #884 — avoids local-vs-builtin name shadow); shell-out removed
+    // (byte-equal output; "" on missing file preserved).
     if !fexists(p) { return "" }
-    return exec("shasum -a 256 " + p + " | awk '{print $1}'").trim()
+    return sha256_of_file(p)
 }
 
 fn read_verdict_field(p: string) -> string {

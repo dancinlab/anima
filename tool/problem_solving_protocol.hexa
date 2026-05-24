@@ -103,8 +103,9 @@ fn _eta_plus_days(days: int) -> string {
 }
 
 fn _sha256_of_string(s: string) -> string {
-    let r = exec_with_status("printf %s " + _sh_quote(s) + " | shasum -a 256 | awk '{print $1}'")
-    return to_string(r[0]).trim()
+    // body rewired to stdlib FIPS 180-4 builtin (hexa-lang #884 sha256 alias surface);
+    // shell-out + exec_with_status tuple unwrap removed (byte-equal output, no fork-exec).
+    return sha256(s)
 }
 
 fn _git_head(cwd: string) -> string {

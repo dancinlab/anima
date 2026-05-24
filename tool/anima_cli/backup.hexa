@@ -170,11 +170,10 @@ fn _size_mb_str(bytes_s: string) -> string {
 }
 
 fn _sha256_file(p: string) -> string {
+    // body rewired to stdlib FIPS 180-4 builtin (hexa-lang #884 sha256 alias surface);
+    // shell-out + GNU/BSD fallback removed (byte-equal output; "" on missing file preserved).
     if !_fexists(p) { return "" }
-    // mac: shasum -a 256; linux: sha256sum — try both
-    let mut out = _str(exec("shasum -a 256 " + _sh_q(p) + " 2>/dev/null | awk '{print $1}'")).trim()
-    if out != "" { return out }
-    return _str(exec("sha256sum " + _sh_q(p) + " 2>/dev/null | awk '{print $1}'")).trim()
+    return sha256_file(p)
 }
 
 // ─── ledger append ──────────────────────────────────────────────────────────

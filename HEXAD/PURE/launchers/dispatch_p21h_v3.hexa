@@ -565,9 +565,11 @@ fn sha256_verify(path: str, expected: str) -> dict {
     if exists != "yes" {
         return #{"status": "fail", "reason": "file not found: " + path, "actual": ""}
     }
-    let raw = exec("shasum -a 256 " + path + " 2>/dev/null | awk '{print $1}'").trim()
+    // sha rewired to stdlib FIPS 180-4 builtin (hexa-lang #884 sha256 alias surface);
+    // shell-out removed (byte-equal output; "" → fail path preserved).
+    let raw = sha256_file(path)
     if raw == "" {
-        return #{"status": "fail", "reason": "shasum produced no output", "actual": ""}
+        return #{"status": "fail", "reason": "sha256 produced no output", "actual": ""}
     }
     if raw == expected {
         return #{"status": "ok", "reason": "match", "actual": raw}

@@ -46,8 +46,9 @@ fn _file_exists(p: string) -> bool {
 }
 
 fn _sha256_file(p: string) -> string {
-    let raw = _str(exec("shasum -a 256 " + _sh_quote(p) + " | awk '{print $1}'")).trim()
-    return raw
+    // body rewired to stdlib FIPS 180-4 builtin (hexa-lang #884 sha256 alias surface);
+    // shell-out removed (byte-equal output).
+    return sha256_file(p)
 }
 
 fn _is_hex64(s: string) -> bool {

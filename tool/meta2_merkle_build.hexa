@@ -71,11 +71,11 @@ fn now_stamp() -> string { return _str(exec("date -u +%FT%TZ")).trim() }
 // ─── sha256 helpers ────────────────────────────────────────────────────────
 
 fn sha256_of_bytes(s: string) -> string {
-    let tmp = "/tmp/meta2_merkle_buf_" + str(len(s)) + "_" + _str(exec("date +%s%N")).trim() + ".bin"
-    write_file(tmp, s)
-    let r = _str(exec("shasum -a 256 " + _sh_quote(tmp) + " 2>/dev/null | awk '{print $1}'")).trim()
-    let _ = exec("rm -f " + _sh_quote(tmp))
-    return r
+    // body rewired to stdlib FIPS 180-4 builtin (hexa-lang #884); the old
+    // write-to-/tmp-.bin + shasum + unlink dance is unnecessary — sha256(s)
+    // hashes the exact UTF-8 bytes of s, byte-equal to hashing those same
+    // bytes written to a file.
+    return sha256(s)
 }
 
 // canonical bytes for a cert entry: jq -S -c 'del(.current_hash)' <file> (no trailing newline)

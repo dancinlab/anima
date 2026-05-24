@@ -67,7 +67,9 @@ fn make_calls(n: int) -> array {
     let mut i = 0
     while i < n {
         let resp = exec("curl -s --max-time 2 -X POST -d '{\"prompt\":\"test_" + to_string(i) + "\"}' " + URL + "/infer")
-        let h = exec("printf '%s' " + shell_escape(resp.trim()) + " | shasum -a 256 | cut -c1-16").trim()
+        // hash rewired to stdlib FIPS 180-4 builtin (hexa-lang #884); shell-out
+        // removed (byte-equal). 16-char prefix preserved.
+        let h = sha256(resp.trim()).substring(0, 16)
         hashes.push(h)
         i = i + 1
     }

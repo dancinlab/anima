@@ -63,8 +63,9 @@ fn invoke_probe(program_kind: string, seed: int) -> string {
 }
 
 fn sha256_hex(s: string) -> string {
-    let cmd = "printf '%s' " + shell_escape(s) + " | shasum -a 256 | cut -c1-64"
-    return exec(cmd).trim()
+    // body rewired to stdlib FIPS 180-4 builtin (hexa-lang #884 sha256 alias surface);
+    // shell-out removed (byte-equal output). cut -c1-64 was the full 64-char digest.
+    return sha256(s)
 }
 
 fn extract_float(json_line: string, key: string) -> float {

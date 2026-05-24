@@ -76,8 +76,11 @@ fn _resolve_token() -> str {
 
 fn _sha256_prefix(s: str) -> str {
     if s.len() == 0 { return "(empty)" }
-    let cmd = "printf '%s' " + _sh_q(s) + " | (shasum -a 256 2>/dev/null || sha256sum) | awk '{print $1}' | cut -c1-8"
-    return exec(cmd).trim()
+    // body rewired to stdlib FIPS 180-4 builtin (hexa-lang #884 sha256 alias surface);
+    // printf-stdin shell-out + GNU/BSD fallback removed. raw#15 token-leak safety
+    // is strengthened — sha256(s) is in-process, so the token never reaches argv,
+    // a pipe, or a subprocess (no `ps` leak). 8-char prefix unchanged (byte-equal).
+    return sha256(s).substring(0, 8)
 }
 
 fn _ledger_append(line: str) {

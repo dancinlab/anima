@@ -71,7 +71,7 @@ fn _f_disp_sha256() -> int {
     let tmp_dir = exec("mktemp -d").trim()
     let path = tmp_dir + "/payload.bin"
     let _ = exec("printf 'hexa-pure-skeleton' > " + path)
-    let known = exec("shasum -a 256 " + path + " | awk '{print $1}'").trim()
+    let known = sha256_file(path)  // rewired to stdlib FIPS 180-4 builtin (hexa-lang #884); byte-equal, no fork-exec
     let mut ok = true
     // (a) match.
     let r_ok = sha256_verify(path, known)
