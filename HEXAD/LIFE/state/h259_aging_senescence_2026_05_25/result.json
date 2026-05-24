@@ -1,0 +1,40 @@
+{
+  "hypothesis": "H_259",
+  "slug": "aging-senescence",
+  "domain": "LIFE",
+  "title": "aging-senescence — age-cumulative weight decay → Gompertz-like death-rate curve",
+  "date": "2026-05-25",
+  "host": "mac-local",
+  "deterministic": true,
+  "hexa_only": true,
+  "llm": "none",
+  "seed": 42,
+  "params": {"d_model": 8, "pool_N": 8, "steps": 400, "death_threshold": 0.15, "bin_width": 5, "d_low": 0.02, "d_mid": 0.06, "d_high": 0.12},
+  "sweep": {
+    "low":  { "d_rate": 0.02, "total_deaths": 71, "median_age": 50, "mono_frac": 1.0, "first_pop_rate": 0.0, "last_pop_rate": 0.5, "c1_mono": true, "death_rate": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0401146, 0.168224, 0.365385, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], "survival": [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.959885, 0.798409, 0.506683, 0.253341, 0.253341, 0.253341, 0.253341, 0.253341, 0.253341, 0.253341, 0.253341, 0.253341, 0.253341, 0.253341, 0.253341, 0.253341, 0.253341, 0.253341], "deaths_per_bin": [0, 0, 0, 0, 0, 0, 0, 14, 36, 19, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "atrisk_per_bin": [312, 389, 385, 385, 379, 370, 361, 335, 178, 33, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
+    "mid":  { "d_rate": 0.06, "total_deaths": 221, "median_age": 15, "mono_frac": 1.0, "first_pop_rate": 0.0, "last_pop_rate": 0.695313, "c1_mono": true, "death_rate": [0.0, 0.0, 0.125595, 0.695313, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], "survival": [1.0, 1.0, 0.874405, 0.26642, 0.26642, 0.26642, 0.26642, 0.26642, 0.26642, 0.26642, 0.26642, 0.26642, 0.26642, 0.26642, 0.26642, 0.26642, 0.26642, 0.26642, 0.26642, 0.26642, 0.26642, 0.26642, 0.26642, 0.26642, 0.26642], "deaths_per_bin": [0, 0, 132, 89, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "atrisk_per_bin": [906, 1115, 919, 39, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
+    "high": { "d_rate": 0.12, "total_deaths": 444, "median_age": 5, "mono_frac": 1.0, "first_pop_rate": 0.0, "last_pop_rate": 0.31467, "c1_mono": true, "death_rate": [0.0, 0.31467, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], "survival": [1.0, 0.68533, 0.68533, 0.68533, 0.68533, 0.68533, 0.68533, 0.68533, 0.68533, 0.68533, 0.68533, 0.68533, 0.68533, 0.68533, 0.68533, 0.68533, 0.68533, 0.68533, 0.68533, 0.68533, 0.68533, 0.68533, 0.68533, 0.68533, 0.68533], "deaths_per_bin": [0, 444, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "atrisk_per_bin": [1789, 967, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] }
+  },
+  "derived": {
+    "median_age_low":  50,
+    "median_age_mid":  15,
+    "median_age_high": 5,
+    "left_shift_monotone": true
+  },
+  "criteria": {
+    "C1_senescence":  true,
+    "C2_decay_dose":  true,
+    "C3_determinism": true
+  },
+  "falsifiers": {
+    "F1_SENESCENCE":  { "metric": "death_rate monotone↑ all 3 conds", "verdict": "PASS" },
+    "F2_DECAY_DOSE":  { "metric": "median L(low)>L(mid)>L(high)", "verdict": "PASS" },
+    "F3_DETERMINISM": { "metric": "re-run byte-equal", "verdict": "PASS" },
+    "F4_BOUNDS":      { "metric": "rates/survival in [0,1]", "verdict": "PASS" },
+    "F5_NONTRIVIAL":  { "metric": "deaths>0 all conds", "verdict": "PASS" }
+  },
+  "n_criteria_pass": 3,
+  "n_falsifier_pass": 5,
+  "verdict": "SUPPORTED",
+  "cross_link": {"H_220": "infant-mirror developmental-age sister", "H_053": "cambrian life axis"}
+}
