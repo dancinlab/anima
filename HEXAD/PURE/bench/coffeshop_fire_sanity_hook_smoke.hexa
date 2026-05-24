@@ -1,0 +1,110 @@
+// HEXAD/PURE/bench/coffeshop_fire_sanity_hook_smoke.hexa
+// F-SAN-1..5 smoke for coffeshop_fire_sanity_hook Phase 2 IMPL (B14).
+//
+// Writes synthetic result.json blobs under /tmp/_san_smoke_b14/ and exercises
+// the hook against PR #405 single-seed + PR #406 sweep baselines.
+//
+// Usage: hexa run HEXAD/PURE/bench/coffeshop_fire_sanity_hook_smoke.hexa
+// Exit:  0 on 5/5 PASS, 1 otherwise.
+
+import "./coffeshop_fire_sanity_hook.hexa"
+
+fn _tmp_dir() -> str { return "/tmp/_san_smoke_b14/" }
+
+fn _ensure_dir() {
+    exec("mkdir -p " + _tmp_dir())
+}
+
+fn _write_result(name, mot, emit, reg, phi, lang_rows) -> str {
+    let path = _tmp_dir() + name
+    // Build per_lang verdicts: first `lang_rows` are STRONG, rest FAIL.
+    let langs = ["ko", "en", "zh", "ru", "ja"]
+    let mut pl = "["
+    let mut i = 0
+    while i < 5 {
+        if i > 0 { pl = pl + "," }
+        let mut v = "FAIL"
+        if i < lang_rows { v = "STRONG" }
+        pl = pl + "{\"lang\":\"" + langs[i] + "\",\"verdict\":\"" + v + "\"}"
+        i = i + 1
+    }
+    pl = pl + "]"
+    let body = "{\"scenario\":\"smoke\",\"per_lang_verdicts\":" + pl
+        + ",\"n_anima_register_hits_total\":" + to_string(reg)
+        + ",\"motivation_8factor\":{\"motivation_score\":" + to_string(mot)
+        + ",\"emit_count\":" + to_string(emit) + ",\"silence_count\":" + to_string(15 - emit) + "}"
+        + ",\"dream_stage_at_eval\":{\"stage\":\"WAKE\",\"phi_envelope\":" + to_string(phi) + "}}"
+    write_file(path, body)
+    return path
+}
+
+fn _write_empty(name) -> str {
+    let path = _tmp_dir() + name
+    write_file(path, "")
+    return path
+}
+
+fn _check(label, cond) -> int {
+    if cond {
+        println("  [PASS] " + label)
+        return 1
+    }
+    println("  [FAIL] " + label)
+    return 0
+}
+
+fn main() {
+    _ensure_dir()
+    let mut pass = 0
+    let mut total = 0
+
+    // --- F-SAN-1: synthetic == baseline (sweep) → SANE, all deltas small.
+    println("\n[F-SAN-1] synthetic = baseline (sweep) → SANE")
+    let p1 = _write_result("san1.json", 0.551841, 6, 0, 1.0, 5)  // matches sweep mean
+    let r1 = run_coffeshop_sanity(p1, "sweep")
+    total = total + 1
+    pass = pass + _check("verdict == SANE  (got " + r1["verdict"] + ")", r1["verdict"] == "SANE")
+
+    // --- F-SAN-2: motivation drift 0.10+ → DRIFT@C3, delta_motivation precise.
+    println("\n[F-SAN-2] motivation +0.15 drift → DRIFT@C3")
+    let p2 = _write_result("san2.json", 0.701841, 6, 0, 1.0, 5)  // +0.15 vs sweep
+    let r2 = run_coffeshop_sanity(p2, "sweep")
+    total = total + 1
+    let v2_drift = r2["verdict"] == "DRIFT"
+    let v2_axis = r2["axis"] == "C3"
+    let v2_delta_ok = r2["delta_motivation"] > 0.14
+    pass = pass + _check("verdict == DRIFT, axis == C3, delta_motivation ≈ 0.15  (got "
+        + r2["verdict"] + "@" + r2["axis"] + " δ=" + to_string(r2["delta_motivation"]) + ")",
+        v2_drift && v2_axis && v2_delta_ok)
+
+    // --- F-SAN-3: ckpt closure FAIL (motivation 0.10 < 0.30 floor) → DIVERGE@C3.
+    println("\n[F-SAN-3] ckpt closure FAIL (low motivation) → DIVERGE")
+    let p3 = _write_result("san3.json", 0.10, 6, 0, 1.0, 5)  // motivation < 0.30 closure floor
+    let r3 = run_coffeshop_sanity(p3, "sweep")
+    total = total + 1
+    pass = pass + _check("verdict == DIVERGE  (got " + r3["verdict"] + "@" + r3["axis"] + ")",
+        r3["verdict"] == "DIVERGE")
+
+    // --- F-SAN-4: baseline mode single (PR #405) — fixture vs itself → SANE.
+    println("\n[F-SAN-4] baseline mode single (PR #405) vs PR #405 fixture itself → SANE")
+    let r4 = run_coffeshop_sanity("state/coffeshop_sim_2026_05_24/result.json", 20260525)
+    total = total + 1
+    pass = pass + _check("verdict == SANE  (got " + r4["verdict"] + "@" + r4["axis"] + ")",
+        r4["verdict"] == "SANE")
+
+    // --- F-SAN-5: missing ckpt file → graceful ABORT (no exit, no crash).
+    println("\n[F-SAN-5] missing ckpt file → graceful ABORT")
+    let r5 = run_coffeshop_sanity("/tmp/_san_smoke_b14/does_not_exist.json", "sweep")
+    total = total + 1
+    pass = pass + _check("verdict == ABORT  (got " + r5["verdict"] + "@" + r5["axis"] + ")",
+        r5["verdict"] == "ABORT")
+
+    println("\n=== F-SAN smoke aggregate ===")
+    println(to_string(pass) + "/" + to_string(total) + " PASS")
+    if pass == total {
+        println("[OK] B14 Phase 2 IMPL smoke 5/5 PASS")
+        return
+    }
+    println("[FAIL] B14 smoke incomplete")
+    exit(1)
+}

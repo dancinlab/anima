@@ -100,8 +100,8 @@ penalize 한다.
 
 | phase | scope | LoC budget | 의존 |
 |---|---|---|---|
-| Phase 1 (본 PR) | spec + stub fn 시그니처 | < 250 (spec ~150 + stub ~80) | 없음 |
-| Phase 2 | `run_coffeshop_sanity` impl — JSON parse · delta 계산 · verdict 출력 | ~250 | PR #398 closure_auto_judge import 안정 |
+| Phase 1 (PR #408) | spec + stub fn 시그니처 | < 250 (spec ~150 + stub ~80) | 없음 |
+| Phase 2 ✅ B14 · synthetic 검증 only | `run_coffeshop_sanity` impl — JSON parse · delta 계산 · verdict 출력 + 5-falsifier smoke | ~280 hook + ~110 smoke | PR #398 closure_auto_judge import 안정 |
 | Phase 3 | `dispatch_p21h_v3.hexa --coffeshop-sanity` wire + auto-trigger branch | ~80 | 첫 ckpt-bearing fire 후 threshold calibrate |
 
 Phase 1 의 stub 은 `fn run_coffeshop_sanity(fire_result_path, baseline_seed) -> map`
@@ -145,3 +145,44 @@ caller 도 hook 결과를 신뢰해서는 안 된다.
    적 strict gate — 신규 stage 추가 시 hook spec 도 동시 갱신.
 9. multi-seed mean baseline 의 sample size 10 은 LCG state space 의 10⁻⁹ —
    PR #406 C3 인용. mean 신뢰구간 광범위, threshold ±0.10 은 보수적.
+
+## § 10 B14 결과 (Phase 2 IMPL — synthetic 검증 only)
+
+`HEXAD/PURE/bench/coffeshop_fire_sanity_hook.hexa` Phase 2 IMPL 완료
+(2026-05-24, B14). 6 TODO marker 전부 해소:
+
+1. **JSON parse** — `_load_json(path)` (file_exists + read_file + json_parse,
+   non-map 시 빈 list sentinel 반환).
+2. **closure_auto_judge nested call** — `_closure_pass(result)` 가
+   `closure_auto_judge.hexa#judge_all` 을 직접 호출 (exit 없는 pure-fn 경로,
+   `closure == "ACHIEVED"` bool 반환).
+3. **sweep aggregation** — `_aggregate_sweep(sweep_dir)` 가
+   `sweep_summary.json` (PR #406) 의 `motivation_score_stats.mean` +
+   `emit_count_stats.mean` + `register_hits_stats.mean` 을 추출, canonical
+   5-row per_lang (1 STRONG + 4 PARTIAL) + WAKE phi=1.0 envelope 와 합성한
+   synthesised baseline map 반환.
+4. **baseline-FAIL ABORT** — baseline closure 가 자체 PASS 아니면 verdict =
+   "ABORT" + axis = "BASELINE" 단락 반환 (simulator regression 가드).
+5. **single-seed branch** — `_load_baseline(baseline_seed)` 가 `int` seed
+   입력 시 PR #405 fixture (`state/coffeshop_sim_2026_05_24/result.json`) 를
+   `_load_json` 으로 직접 로드.
+6. **comparison logic** — 4-criterion (C1 lang-rows · C2 register · C3
+   motivation+emit · C4 dream-phi exact-match) per-axis delta 계산,
+   `_classify(n_fail)` 가 0/1/2+ 에 따라 SANE / DRIFT / DIVERGE 출력.
+
+**smoke F-SAN-1..5 5/5 PASS** (`coffeshop_fire_sanity_hook_smoke.hexa`):
+
+- F-SAN-1 synthetic = sweep mean → SANE ✓
+- F-SAN-2 motivation +0.15 drift → DRIFT@C3 (δ=0.15) ✓
+- F-SAN-3 motivation < 0.30 closure floor → DIVERGE ✓
+- F-SAN-4 single-seed (PR #405 self) → SANE ✓
+- F-SAN-5 missing ckpt file → ABORT@C0 (graceful, no crash) ✓
+
+selftest contract bump: `STUB` (Phase 1) → `IMPL` (Phase 2) — hook 의
+`fn main()` 이 fixture 양쪽 mode (sweep + single 20260525) 자가 호출 후
+verdict ∈ {SANE, DRIFT, DIVERGE, ABORT} (즉 ≠ "STUB") 확인.
+
+honest C3 잔여: ckpt-bearing fire 부재 → synthetic-fixture-only 검증.
+delta thresholds = design 값 (§ 5), 실 fire calibration 미선행. Phase 3
+dispatcher wire (`--coffeshop-sanity` flag + auto-trigger branch) 는 첫
+ckpt-bearing fire 의 result.json 도착 후 별도 PR.
