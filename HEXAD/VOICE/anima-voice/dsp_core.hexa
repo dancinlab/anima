@@ -20,6 +20,22 @@
 // BT reference: BT-SPEAK-DSP-00 (foundation primitives)
 // Mk stage:     Mk.III (real numeric computation)
 // Downstream:   neural_vocoder.hexa, rvq_codebook.hexa, vad_fsm.hexa, plc_crossfade.hexa
+//
+// 2026-05-25 BEHAVIOR FIX: window functions delegated to stdlib/signal/core_window.
+//   The local `hann_window` / `hamming_window` / `blackman_window` impls below
+//   spelled the formula via `cos_approx` (Taylor sin range-reduced through
+//   `fmod_native`) — under the current toolchain that chain collapses and every
+//   sample evaluates to a single constant (~0.46239), NOT the intended
+//   symmetric Hann/Hamming/Blackman shape. `import` of the stdlib module
+//   provides `pub fn hann_window` / `hamming_window` / `blackman_window` which
+//   use the native `cos` builtin (libm, IEEE-correct) and override the local
+//   impls. All downstream callers in this file (`dsp_hann_window`,
+//   `dsp_hamming_window`, `window_sample`, `overlap_add_hann`, `dsp_stft`,
+//   `dsp_istft`, …) thereby produce CORRECT windowed audio.
+//   The local impls are retained below as DEFERRED LEGACY (provenance + the
+//   pending toolchain fix for `fmod_native` / `cos_approx`).
+
+import "stdlib/signal/core_window.hexa"
 
 // ════════════════════════════════════════════════════════════════════
 // Section 1: Constants + Basic Math
@@ -259,6 +275,12 @@ fn pow_int(base: float, n: int) -> float {
 // ════════════════════════════════════════════════════════════════════
 
 // ── Hann window: w(n) = 0.5 * (1 - cos(2*pi*n / (N-1))) ──
+//
+// DEFERRED LEGACY (2026-05-25): the local impls below were the broken
+// `cos_approx` / `fmod_native` chain (every sample collapsed to ~0.46239).
+// The `import "stdlib/signal/core_window.hexa"` at the top of this file
+// overrides these three names with libm-`cos`-backed versions — these local
+// bodies are now unreachable, retained as provenance for the toolchain bug.
 
 fn hann_window(n: int, N: int) -> float {
     if N <= 1 { return 1.0 }
