@@ -2,6 +2,18 @@
 
 Append-only history sister of `STDLIB.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
+## 2026-05-25T00:10:00Z — M3 (impl phase 1) · hexa-lang stdlib 4 module LAND ⭐️
+
+- [x] hexa-lang PR #769 MERGED (2026-05-24T12:01:44Z UTC) — https://github.com/dancinlab/hexa-lang/pull/769 · CI 3-platform bootstrap + grace-consent PASS
+- [x] 4 module +232 LoC: `stdlib/math/bitops.hexa` · `stdlib/info/binning.hexa` · `stdlib/info/entropy.hexa` · `stdlib/info/mutual_info.hexa` + `scaffold_phase1_test.hexa`
+- [x] byte-equal algorithm port: phi_native 의 `phi_bin_values`/`phi_entropy`/`phi_native_mi_pair` 그대로, entropy 는 `log(x)/log(2.0)` 유지
+- [x] verify: 5/5 parse clean · 알고리즘 10/10 PASS (self-contained build) · cross-import flatten 은 M5 재부트스트랩에서 행사
+- [!] **RFC 수정 (실측)**: `stdlib/math/log.hexa::log2` DROP — `log2` 는 이미 builtin (`runtime_core.c::hexa_log2` → libm). RFC "missing" 전제 오류 (5 → 4 module). bitops 는 native shift/and (phi_native mult-workaround 불필요).
+- [!] **hexa-lang 측 발견 (g59 후보 INBOX)**: (1) CI bootstrap 이 stdlib 모듈 미테스트 — compiler bootstrap 만 검증 (2) 단일파일 `hexa build` 이 import flatten 안 함 — `module_loader` 선행 필요 (3) `log2` builtin 존재로 RFC 갱신 필요
+- [ ] M4 (verify) — anima phi_native byte-equal regression (baseline freeze 이미 완료)
+- [ ] M5 (migration) — anima `phi_native.hexa` 분해 → stdlib import 로 교체 (200→50 LoC) · 여기서 cross-import flatten 실제 검증
+- [ ] phi_spatial (RFC §5 2nd-wave) — info/* 합성 wrapper 별도 cycle
+
 ## 2026-05-24T23:30:00Z — cycle 3 (ship) · hexa-lang PR #712 LAND ⭐️
 
 - [x] hexa-lang PR #712: https://github.com/dancinlab/hexa-lang/pull/712 (review-only · g54)

@@ -52,12 +52,12 @@ HEXAD/LIFE/lib/                    stdlib/
 
 ### implement (phase 1 — phi_native 분해)
 
-- [ ] `stdlib/math/log.hexa` — `log2(x) = log(x) / log(2.0)` 등 (현재 phi_native L107 의 우회)
-- [ ] `stdlib/math/bitops.hexa` — `pow2(k)` · `bit_set(mask, b)` (현재 `_phi_pow2` / `_phi_bit_set` 우회)
-- [ ] `stdlib/info/entropy.hexa` — Shannon · differential (현재 `phi_entropy`)
-- [ ] `stdlib/info/binning.hexa` — `phi_bin_values` (min-max histogram)
-- [ ] `stdlib/info/mutual_info.hexa` — `phi_native_mi_pair` (joint distribution + entropy 조합)
-- [ ] `stdlib/consciousness/phi_spatial.hexa` — info/* 합성 wrapper (현재 `phi_native_spatial`)
+- [~] ~~`stdlib/math/log.hexa`~~ — **DROP**: `log2` 는 이미 동작하는 builtin (`runtime_core.c::hexa_log2` → libm). RFC "missing" 전제 오류. entropy 는 byte-equal 위해 `log(x)/log(2.0)` inline 유지 (libm log2 와 ulp 다름).
+- [x] `stdlib/math/bitops.hexa` — `pow2_int(k)` · `bit_set(mask, b)` (native shift/and; phi_native 의 mult-workaround 불필요) — MERGED #769
+- [x] `stdlib/info/entropy.hexa` — `shannon_entropy` (`log(x)/log(2.0)` byte-equal) — MERGED #769
+- [x] `stdlib/info/binning.hexa` — `bin_values_minmax` (min-max histogram) — MERGED #769
+- [x] `stdlib/info/mutual_info.hexa` — `mutual_info_pair` (imports binning+entropy) — MERGED #769
+- [ ] `stdlib/consciousness/phi_spatial.hexa` — info/* 합성 wrapper (RFC §5 2nd-wave 로 분리 · 별도 cycle)
 
 ### byte-equal verify
 
