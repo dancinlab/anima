@@ -60,7 +60,7 @@ fn _ts_iso() -> string {
 }
 
 fn _arg_present(argv, key: string) -> bool {
-    let i = 0
+    let mut i = 0
     while i < len(argv) {
         if _str(argv[i]) == key { return true }
         i = i + 1
@@ -69,10 +69,10 @@ fn _arg_present(argv, key: string) -> bool {
 }
 
 fn _user_argv(raw) -> array {
-    let out = []
-    let i = 0
+    let mut out = []
+    let mut i = 0
     while i < len(raw) {
-        let s = _str(raw[i])
+        let mut s = _str(raw[i])
         if !s.contains("/.hexa-cache/") {
             out = out + [s]
         }
@@ -99,8 +99,8 @@ fn check_binaries() -> array {
         "/opt/homebrew/bin/hf",
         "/opt/homebrew/bin/rclone"
     ]
-    let missing = []
-    let i = 0
+    let mut missing = []
+    let mut i = 0
     while i < len(paths) {
         let p = _str(paths[i])
         if !_xexists(p) { missing = missing + [p] }
@@ -109,7 +109,7 @@ fn check_binaries() -> array {
     if len(missing) == 0 {
         return ["ok", "4/4 binaries present"]
     }
-    let d = _str(len(missing)) + "/4 missing: " + _str(missing[0])
+    let mut d = _str(len(missing)) + "/4 missing: " + _str(missing[0])
     if len(missing) > 1 { d = d + " (+more)" }
     return ["fail", d]
 }
@@ -121,8 +121,8 @@ fn check_creds() -> array {
         h + "/.cache/huggingface/token",
         h + "/.config/rclone/rclone.conf"
     ]
-    let missing = []
-    let i = 0
+    let mut missing = []
+    let mut i = 0
     while i < len(items) {
         let p = _str(items[i])
         if !_fexists(p) { missing = missing + [p] }
@@ -137,7 +137,7 @@ fn check_r2_remote() -> array {
     if !_xexists("/opt/homebrew/bin/rclone") {
         return ["warn", "rclone binary missing — skipped"]
     }
-    let out = _str(exec("rclone listremotes 2>/dev/null"))
+    let mut out = _str(exec("rclone listremotes 2>/dev/null"))
     if out.contains("r2:") { return ["ok", "r2: remote configured"] }
     return ["fail", "r2: remote not in listremotes"]
 }
@@ -146,7 +146,7 @@ fn check_hf_auth() -> array {
     if !_xexists("/opt/homebrew/bin/hf") {
         return ["warn", "hf binary missing — skipped"]
     }
-    let out = _str(exec("hf auth whoami 2>&1"))
+    let mut out = _str(exec("hf auth whoami 2>&1"))
     if out.contains("Not logged in") || out.contains("not logged in") {
         return ["fail", "hf auth: not logged in"]
     }
@@ -194,8 +194,8 @@ fn check_4repo_links() -> array {
         ["airgenome", ag],
         ["anima",     ws + "/anima"]
     ]
-    let missing = []
-    let i = 0
+    let mut missing = []
+    let mut i = 0
     while i < len(items) {
         let name = _str(items[i][0])
         let p    = _str(items[i][1])
@@ -204,7 +204,7 @@ fn check_4repo_links() -> array {
     }
     if len(missing) == 0 { return ["ok", "4/4 repo roots linked"] }
     if len(missing) == 4 { return ["fail", "no repo roots visible"] }
-    let d = _str(len(missing)) + "/4 missing: " + _str(missing[0])
+    let mut d = _str(len(missing)) + "/4 missing: " + _str(missing[0])
     if len(missing) > 1 { d = d + " (+more)" }
     return ["warn", d]
 }
@@ -214,13 +214,13 @@ fn check_sandbox_env() -> array {
     let cc1 = _str(env("CLAUDECODE"))
     let cc2 = _str(env("CLAUDE_CODE_ENTRYPOINT"))
     if cc1 == "1" || cc2 != "" {
-        let ep = cc2
+        let mut ep = cc2
         if ep == "" { ep = "cli" }
         return ["ok", "sandbox=claude-code harness (" + ep + ")"]
     }
     let ssh = _str(env("SSH_CONNECTION"))
     if ssh != "" { return ["ok", "sandbox=ssh session"] }
-    let term = _str(env("TERM_PROGRAM"))
+    let mut term = _str(env("TERM_PROGRAM"))
     if term == "" { term = _str(env("TERM")) }
     if term == "" { term = "unknown" }
     return ["ok", "sandbox=terminal (" + term + ")"]
@@ -235,7 +235,7 @@ fn check_cert_gate_recent() -> array {
     let mt  = _str(exec("stat -f %m " + p + " 2>/dev/null")).trim()
     if now == "" || mt == "" { return ["warn", "mtime probe failed"] }
     let age = _str(exec("echo $(( " + now + " - " + mt + " ))")).trim()
-    let age_n = int(age)
+    let mut age_n = int(age)
     if age_n < 0 { age_n = 0 }
     let age_min = age_n / 60
     if age_n <= 21600 { return ["ok", "cert_gate ran " + _str(age_min) + "m ago"] }
@@ -244,7 +244,7 @@ fn check_cert_gate_recent() -> array {
 
 fn check_proposal_stack() -> array {
     let root = _resolve_root()
-    let d = root + "/state/proposals"
+    let mut d = root + "/state/proposals"
     if !_dexists(d) { return ["warn", "state/proposals/ missing"] }
     let pend = _str(exec("ls " + d + "/pending 2>/dev/null | wc -l")).trim()
     let appr = _str(exec("ls " + d + "/approved 2>/dev/null | wc -l")).trim()
@@ -305,8 +305,8 @@ fn run_all_checks() -> array {
     let r10 = check_proposal_stack()
     let r11 = check_qrng_federation()
     let results = [r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11]
-    let checks = []
-    let i = 0
+    let mut checks = []
+    let mut i = 0
     while i < len(names) {
         let st = _str(results[i][0])
         let dt = _str(results[i][1])
@@ -317,12 +317,12 @@ fn run_all_checks() -> array {
 }
 
 fn tally(checks) -> array {
-    let ok = 0
-    let wn = 0
-    let fl = 0
-    let i = 0
+    let mut ok = 0
+    let mut wn = 0
+    let mut fl = 0
+    let mut i = 0
     while i < len(checks) {
-        let s = _str(checks[i][2])
+        let mut s = _str(checks[i][2])
         if s == "ok"   { ok = ok + 1 }
         if s == "warn" { wn = wn + 1 }
         if s == "fail" { fl = fl + 1 }
@@ -340,17 +340,17 @@ fn verdict_of(tall) -> string {
 fn render_table(checks) {
     println("anima doctor — self-diagnose (10 checks)")
     println("────────────────────────────────────────────────────────────────")
-    let i = 0
+    let mut i = 0
     while i < len(checks) {
         let idx = _str(checks[i][0])
         let nm  = _str(checks[i][1])
         let st  = _str(checks[i][2])
         let dt  = _str(checks[i][3])
         let glyph = _glyph(st)
-        let pad_idx = idx
+        let mut pad_idx = idx
         if len(pad_idx) == 1 { pad_idx = " " + pad_idx }
         // pad name to 20 chars
-        let pad_nm = nm
+        let mut pad_nm = nm
         while len(pad_nm) < 20 { pad_nm = pad_nm + " " }
         println(pad_idx + ". " + glyph + "  " + pad_nm + "  " + dt)
         i = i + 1
@@ -360,8 +360,8 @@ fn render_table(checks) {
 
 fn jq_esc(s: string) -> string {
     // minimal escaping for embedding in JSON string literal
-    let out = ""
-    let i = 0
+    let mut out = ""
+    let mut i = 0
     while i < len(s) {
         let ch = s.substring(i, i + 1)
         if ch == "\\" { out = out + "\\\\" }
@@ -375,13 +375,13 @@ fn jq_esc(s: string) -> string {
 }
 
 fn build_json(ts: string, checks, tall, verdict: string) -> string {
-    let s = "{"
+    let mut s = "{"
     s = s + "\"schema\":\"anima.doctor.v1\","
     s = s + "\"ts\":\"" + ts + "\","
     s = s + "\"verdict\":\"" + verdict + "\","
     s = s + "\"counts\":{\"ok\":" + _str(tall[0]) + ",\"warn\":" + _str(tall[1]) + ",\"fail\":" + _str(tall[2]) + "},"
     s = s + "\"checks\":["
-    let i = 0
+    let mut i = 0
     while i < len(checks) {
         if i > 0 { s = s + "," }
         let idx = _str(checks[i][0])
@@ -451,7 +451,7 @@ fn sub_selftest() {
     let c9 = check_cert_gate_recent()
     let c10 = check_proposal_stack()
     let results = [c1, c2, c3, c4, c5, c6, c7, c8, c9, c10]
-    let i = 0
+    let mut i = 0
     while i < len(results) {
         let st = _str(results[i][0])
         let dt = _str(results[i][1])
@@ -482,7 +482,7 @@ fn sub_selftest() {
 
 fn sub_run(json_only: bool) {
     let ts = _ts_iso()
-    let checks = run_all_checks()
+    let mut checks = run_all_checks()
     let tall = tally(checks)
     let verdict = verdict_of(tall)
     let json_text = build_json(ts, checks, tall, verdict)
@@ -510,4 +510,3 @@ fn main() {
     sub_run(json_only)
 }
 
-main()

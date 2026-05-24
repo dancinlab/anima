@@ -62,7 +62,7 @@ fn _resolve_hexa_lang() -> string {
 }
 
 fn _arg_present(argv, key: string) -> bool {
-    let i = 0
+    let mut i = 0
     while i < len(argv) {
         if _str(argv[i]) == key { return true }
         i = i + 1
@@ -71,7 +71,7 @@ fn _arg_present(argv, key: string) -> bool {
 }
 
 fn _arg_value(argv, key: string, dflt: string) -> string {
-    let i = 0
+    let mut i = 0
     while i < len(argv) {
         if _str(argv[i]) == key && i + 1 < len(argv) {
             return _str(argv[i + 1])
@@ -82,8 +82,8 @@ fn _arg_value(argv, key: string, dflt: string) -> string {
 }
 
 fn _user_argv(raw) -> array {
-    let out = []
-    let i = 0
+    let mut out = []
+    let mut i = 0
     while i < len(raw) {
         let s = _str(raw[i])
         if !s.contains("/.hexa-cache/") {
@@ -191,35 +191,35 @@ fn sub_help() {
 }
 
 fn sub_list() {
-    let out = _call_upstream("list --repo anima")
+    let mut out = _call_upstream("list --repo anima")
     println(out)
 }
 
 fn sub_next() {
-    let out = _call_upstream("next --repo anima")
+    let mut out = _call_upstream("next --repo anima")
     println(out)
 }
 
 fn sub_ack(id: string) {
     if id == "" { println("usage: anima inbox ack <id>"); exit(2) }
-    let out = _call_upstream("ack " + id + " --repo anima")
+    let mut out = _call_upstream("ack " + id + " --repo anima")
     println(out)
     _write_last_action("ack", 1)
 }
 
 fn sub_done(id: string, reason: string) {
     if id == "" { println("usage: anima inbox done <id> [--reason TEXT]"); exit(2) }
-    let tail = "done " + id + " --repo anima"
+    let mut tail = "done " + id + " --repo anima"
     if reason != "" {
         tail = tail + " --note " + _sh_q(reason)
     }
-    let out = _call_upstream(tail)
+    let mut out = _call_upstream(tail)
     println(out)
     _write_last_action("done", 1)
 }
 
 fn sub_drain(resolution: string) {
-    let res = resolution
+    let mut res = resolution
     if res == "" {
         res = "merged_aggregate — D-batch resolved · raw#20 no standalone module"
     }
@@ -230,11 +230,11 @@ fn sub_drain(resolution: string) {
         _write_last_action("drain", 0)
         return
     }
-    let processed = 0
-    let last_id = ""
-    let stuck_count = 0
+    let mut processed = 0
+    let mut last_id = ""
+    let mut stuck_count = 0
     let max_iter = start + 8   // safety cap
-    let iter = 0
+    let mut iter = 0
     while iter < max_iter {
         let cur = _next_pending_id()
         if cur == "" { break }
@@ -290,7 +290,7 @@ fn main() {
         sub_done(_str(argv[1]), reason); return
     }
     if sub == "drain" {
-        let res = _arg_value(argv, "--resolution", "")
+        let mut res = _arg_value(argv, "--resolution", "")
         sub_drain(res); return
     }
     println("inbox: unknown subcmd '" + sub + "'")
@@ -298,4 +298,3 @@ fn main() {
     exit(2)
 }
 
-main()

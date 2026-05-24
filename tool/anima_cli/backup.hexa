@@ -72,7 +72,7 @@ fn _resolve_root() -> string {
 }
 
 fn _arg_present(argv, key: string) -> bool {
-    let i = 0
+    let mut i = 0
     while i < len(argv) {
         if _str(argv[i]) == key { return true }
         i = i + 1
@@ -81,7 +81,7 @@ fn _arg_present(argv, key: string) -> bool {
 }
 
 fn _arg_value(argv, key: string, dflt: string) -> string {
-    let i = 0
+    let mut i = 0
     while i < len(argv) {
         if _str(argv[i]) == key && i + 1 < len(argv) {
             return _str(argv[i + 1])
@@ -92,8 +92,8 @@ fn _arg_value(argv, key: string, dflt: string) -> string {
 }
 
 fn _user_argv(raw) -> array {
-    let out = []
-    let i = 0
+    let mut out = []
+    let mut i = 0
     while i < len(raw) {
         let s = _str(raw[i])
         if !s.contains("/.hexa-cache/") {
@@ -109,13 +109,13 @@ fn _sh_q(s: string) -> string { return "'" + s + "'" }
 // ─── r2 remote probe ────────────────────────────────────────────────────────
 
 fn _rclone_available() -> bool {
-    let out = _str(exec("command -v rclone 2>/dev/null")).trim()
+    let mut out = _str(exec("command -v rclone 2>/dev/null")).trim()
     return out != ""
 }
 
 fn _r2_remote_present() -> bool {
     if !_rclone_available() { return false }
-    let out = _str(exec("rclone listremotes 2>/dev/null | grep -Fx 'r2:'")).trim()
+    let mut out = _str(exec("rclone listremotes 2>/dev/null | grep -Fx 'r2:'")).trim()
     return out == "r2:"
 }
 
@@ -123,9 +123,9 @@ fn _r2_remote_present() -> bool {
 
 fn _src_dirs_present(root: string) -> array {
     // Return whichever of {state, config, .meta2-cert} actually exist.
-    let out = []
+    let mut out = []
     let candidates = ["state", "config", ".meta2-cert"]
-    let i = 0
+    let mut i = 0
     while i < len(candidates) {
         let name = _str(candidates[i])
         if _dexists(root + "/" + name) { out = out + [name] }
@@ -138,20 +138,20 @@ fn _build_tar_zst(root: string, out_path: string, exclude_pending: bool) -> stri
     // Returns "ok" on success, error string otherwise.
     let dirs = _src_dirs_present(root)
     if len(dirs) == 0 { return "no_src_dirs" }
-    let dir_args = ""
-    let i = 0
+    let mut dir_args = ""
+    let mut i = 0
     while i < len(dirs) {
         dir_args = dir_args + " " + _str(dirs[i])
         i = i + 1
     }
-    let excl = ""
+    let mut excl = ""
     if exclude_pending {
         excl = " --exclude=state/proposals/pending"
     }
     // GNU tar on mac (/usr/bin/tar is bsdtar) — both accept --exclude
     let cmd = "tar -C " + _sh_q(root) + excl + " -cf - " + dir_args
             + " 2>/dev/null | zstd -19 -q -o " + _sh_q(out_path) + " 2>/dev/null"
-    let rc = _str(exec(cmd + " ; echo __rc=$?")).trim()
+    let mut rc = _str(exec(cmd + " ; echo __rc=$?")).trim()
     if !_fexists(out_path) { return "tar_failed" }
     // rc is the last shell pipeline's exit, we encode it separately:
     return "ok"
@@ -172,7 +172,7 @@ fn _size_mb_str(bytes_s: string) -> string {
 fn _sha256_file(p: string) -> string {
     if !_fexists(p) { return "" }
     // mac: shasum -a 256; linux: sha256sum — try both
-    let out = _str(exec("shasum -a 256 " + _sh_q(p) + " 2>/dev/null | awk '{print $1}'")).trim()
+    let mut out = _str(exec("shasum -a 256 " + _sh_q(p) + " 2>/dev/null | awk '{print $1}'")).trim()
     if out != "" { return out }
     return _str(exec("sha256sum " + _sh_q(p) + " 2>/dev/null | awk '{print $1}'")).trim()
 }
@@ -244,8 +244,8 @@ fn sub_backup(argv) {
         println("backup: no source dirs present (state/, config/, .meta2-cert/) — aborting")
         exit(1)
     }
-    let dirs_csv = ""
-    let di = 0
+    let mut dirs_csv = ""
+    let mut di = 0
     while di < len(dirs) {
         if di > 0 { dirs_csv = dirs_csv + "," }
         dirs_csv = dirs_csv + _str(dirs[di])
@@ -293,7 +293,7 @@ fn sub_backup(argv) {
     let up_out = _str(exec(up_cmd + " ; echo __rc=$?"))
     // extract rc
     let rc_cmd = "printf '%s' " + _sh_q(up_out) + " | awk -F= '/^__rc=/{print $2}' | tail -n 1"
-    let rc = _str(exec(rc_cmd)).trim()
+    let mut rc = _str(exec(rc_cmd)).trim()
     if rc == "" { rc = "1" }
     if rc != "0" {
         println("backup --apply: rclone upload failed (rc=" + rc + ")")
@@ -315,7 +315,7 @@ fn sub_list(argv) {
         exit(2)
     }
     let cmd = "rclone ls r2:" + bucket + "/ 2>&1"
-    let out = _str(exec(cmd))
+    let mut out = _str(exec(cmd))
     println("anima backup list  (r2:" + bucket + "/)")
     println("─────────────────────────────────────────")
     if out.trim() == "" {
@@ -362,9 +362,9 @@ fn sub_restore(argv) {
     }
     let cmd = "rclone copyto " + _sh_q(r2_path) + " " + _sh_q(dst)
             + " --stats 0 2>&1 ; echo __rc=$?"
-    let out = _str(exec(cmd))
+    let mut out = _str(exec(cmd))
     let rc_cmd = "printf '%s' " + _sh_q(out) + " | awk -F= '/^__rc=/{print $2}' | tail -n 1"
-    let rc = _str(exec(rc_cmd)).trim()
+    let mut rc = _str(exec(rc_cmd)).trim()
     if rc != "0" {
         println("restore: rclone copyto failed (rc=" + rc + ")")
         println(out)
@@ -453,4 +453,3 @@ fn main() {
     exit(2)
 }
 
-main()

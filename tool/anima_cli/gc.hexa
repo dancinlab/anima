@@ -34,7 +34,7 @@
 // ════════════════════════════════════════════════════════════════════════════
 
 fn _str(x) -> string {
-    let t = type_of(x)
+    let mut t = type_of(x)
     if t == "str" || t == "string" { return x }
     if t == "int" || t == "float" || t == "number" { return str(x) }
     return ""
@@ -63,7 +63,7 @@ fn _ts_iso() -> string {
 }
 
 fn _arg_present(argv, key: string) -> bool {
-    let i = 0
+    let mut i = 0
     while i < len(argv) {
         if _str(argv[i]) == key { return true }
         i = i + 1
@@ -72,10 +72,10 @@ fn _arg_present(argv, key: string) -> bool {
 }
 
 fn _user_argv(raw) -> array {
-    let out = []
-    let i = 0
+    let mut out = []
+    let mut i = 0
     while i < len(raw) {
-        let s = _str(raw[i])
+        let mut s = _str(raw[i])
         if !s.contains("/.hexa-cache/") {
             out = out + [s]
         }
@@ -87,7 +87,7 @@ fn _user_argv(raw) -> array {
 fn _size_bytes(path: string) -> int {
     // stat -f %z on macOS; 0 on missing
     if !_fexists(path) { return 0 }
-    let s = _str(exec("stat -f %z " + path + " 2>/dev/null")).trim()
+    let mut s = _str(exec("stat -f %z " + path + " 2>/dev/null")).trim()
     if s == "" { return 0 }
     return int(s)
 }
@@ -110,8 +110,8 @@ fn _humanize(n: int) -> string {
 }
 
 fn _json_esc(s: string) -> string {
-    let out = ""
-    let i = 0
+    let mut out = ""
+    let mut i = 0
     while i < len(s) {
         let ch = s.substring(i, i + 1)
         if ch == "\\" { out = out + "\\\\" }
@@ -130,13 +130,13 @@ fn _json_esc(s: string) -> string {
 fn scan_tmp_anima() -> array {
     // /tmp/anima_* — FILES only (weight_precache dir etc. excluded).
     // Directories like /tmp/anima_weight_precache are NEVER removed.
-    let out = []
+    let mut out = []
     // /tmp is a symlink on macOS → traverse target via -L
     let listing = _str(exec(
       "find -L /tmp -maxdepth 1 -name 'anima_*' -type f 2>/dev/null"
     ))
     let lines = listing.split("\n")
-    let i = 0
+    let mut i = 0
     while i < len(lines) {
         let p = _str(lines[i]).trim()
         if p != "" {
@@ -157,20 +157,20 @@ fn scan_rejected_90d() -> array {
     // Filter: skip git-tracked.
     let root = _resolve_root()
     let dir = root + "/state/proposals/rejected"
-    let out = []
+    let mut out = []
     if !_dexists(dir) { return out }
     let listing = _str(exec(
       "find " + dir + " -maxdepth 1 -name '*.json' -type f -mtime +90 2>/dev/null"
     ))
     let lines = listing.split("\n")
-    let i = 0
+    let mut i = 0
     while i < len(lines) {
         let p = _str(lines[i]).trim()
         if p == "" { i = i + 1; continue }
         if _is_tracked(p) { i = i + 1; continue }
         let vc = _str(exec("jq -r '.veto_count // 0' " + p + " 2>/dev/null")).trim()
         let imp = _str(exec("jq -r '.implement_module_path // \"\"' " + p + " 2>/dev/null")).trim()
-        let qualifies = false
+        let mut qualifies = false
         if vc != "" && int(vc) >= 3 { qualifies = true }
         if imp != "" { qualifies = true }
         if qualifies {
@@ -187,20 +187,20 @@ fn scan_archived_90d() -> array {
     // Skip git-tracked.
     let root = _resolve_root()
     let dir = root + "/state/proposals/archived"
-    let out = []
+    let mut out = []
     if !_dexists(dir) { return out }
     let listing = _str(exec(
       "find " + dir + " -maxdepth 1 -name '*.json' -type f -mtime +90 2>/dev/null"
     ))
     let lines = listing.split("\n")
-    let i = 0
+    let mut i = 0
     while i < len(lines) {
         let p = _str(lines[i]).trim()
         if p == "" { i = i + 1; continue }
         if _is_tracked(p) { i = i + 1; continue }
         let vc = _str(exec("jq -r '.veto_count // 0' " + p + " 2>/dev/null")).trim()
         let imp = _str(exec("jq -r '.implement_module_path // \"\"' " + p + " 2>/dev/null")).trim()
-        let qualifies = false
+        let mut qualifies = false
         if vc != "" && int(vc) >= 3 { qualifies = true }
         if imp != "" { qualifies = true }
         if qualifies {
@@ -217,13 +217,13 @@ fn scan_pending_orphans() -> array {
     // lineage_parent populated (super-proposal absorbed). Skip git-tracked.
     let root = _resolve_root()
     let dir = root + "/state/proposals/pending"
-    let out = []
+    let mut out = []
     if !_dexists(dir) { return out }
     let listing = _str(exec(
       "find " + dir + " -maxdepth 1 -name '*.json' -type f 2>/dev/null"
     ))
     let lines = listing.split("\n")
-    let i = 0
+    let mut i = 0
     while i < len(lines) {
         let p = _str(lines[i]).trim()
         if p == "" { i = i + 1; continue }
@@ -243,13 +243,13 @@ fn scan_build_artifacts_c() -> array {
     // build/artifacts/*.c — AOT intermediate. Skip git-tracked (shouldn't be).
     let root = _resolve_root()
     let dir = root + "/build/artifacts"
-    let out = []
+    let mut out = []
     if !_dexists(dir) { return out }
     let listing = _str(exec(
       "find " + dir + " -maxdepth 1 -name '*.c' -type f 2>/dev/null"
     ))
     let lines = listing.split("\n")
-    let i = 0
+    let mut i = 0
     while i < len(lines) {
         let p = _str(lines[i]).trim()
         if p == "" { i = i + 1; continue }
@@ -263,12 +263,12 @@ fn scan_build_artifacts_c() -> array {
 
 fn scan_h100_logs_7d() -> array {
     // /tmp/h100_weight_precache_*.log older than 7 days
-    let out = []
+    let mut out = []
     let listing = _str(exec(
       "find -L /tmp -maxdepth 1 -name 'h100_weight_precache_*.log' -type f -mtime +7 2>/dev/null"
     ))
     let lines = listing.split("\n")
-    let i = 0
+    let mut i = 0
     while i < len(lines) {
         let p = _str(lines[i]).trim()
         if p != "" {
@@ -284,13 +284,13 @@ fn scan_dist_old() -> array {
     // dist/*.old — unused native build residuals. Skip git-tracked.
     let root = _resolve_root()
     let dir = root + "/dist"
-    let out = []
+    let mut out = []
     if !_dexists(dir) { return out }
     let listing = _str(exec(
       "find " + dir + " -maxdepth 2 -name '*.old' -type f 2>/dev/null"
     ))
     let lines = listing.split("\n")
-    let i = 0
+    let mut i = 0
     while i < len(lines) {
         let p = _str(lines[i]).trim()
         if p == "" { i = i + 1; continue }
@@ -305,8 +305,8 @@ fn scan_dist_old() -> array {
 // ─── aggregation + apply ───────────────────────────────────────────────────
 
 fn _total_bytes(items) -> int {
-    let t = 0
-    let i = 0
+    let mut t = 0
+    let mut i = 0
     while i < len(items) {
         t = t + int(items[i][1])
         i = i + 1
@@ -316,8 +316,8 @@ fn _total_bytes(items) -> int {
 
 fn _apply_delete(items) -> int {
     // rm -f each (idempotent). Returns count actually removed.
-    let n = 0
-    let i = 0
+    let mut n = 0
+    let mut i = 0
     while i < len(items) {
         let p = _str(items[i][0])
         if _fexists(p) {
@@ -334,19 +334,19 @@ fn _apply_delete(items) -> int {
 fn render_table(cats, verdict: string, mode: string) {
     println("anima gc — unused artifact cleanup (" + mode + ")")
     println("────────────────────────────────────────────────────────────────")
-    let i = 0
-    let total = 0
+    let mut i = 0
+    let mut total = 0
     while i < len(cats) {
         let nm  = _str(cats[i][0])
         let cnt = int(cats[i][1])
         let by  = int(cats[i][2])
         let note = _str(cats[i][3])
         total = total + by
-        let pad = nm
+        let mut pad = nm
         while len(pad) < 32 { pad = pad + " " }
-        let cs = _str(cnt)
+        let mut cs = _str(cnt)
         while len(cs) < 5 { cs = " " + cs }
-        let bs = _humanize(by)
+        let mut bs = _humanize(by)
         while len(bs) < 8 { bs = " " + bs }
         println("  " + pad + cs + "  " + bs + "  " + note)
         i = i + 1
@@ -357,14 +357,14 @@ fn render_table(cats, verdict: string, mode: string) {
 }
 
 fn build_json(ts: string, cats, total: int, mode: string, applied: bool) -> string {
-    let s = "{"
+    let mut s = "{"
     s = s + "\"schema\":\"anima.gc.v1\","
     s = s + "\"ts\":\"" + ts + "\","
     s = s + "\"mode\":\"" + mode + "\","
     s = s + "\"applied\":" + (if applied { "true" } else { "false" }) + ","
     s = s + "\"total_bytes\":" + _str(total) + ","
     s = s + "\"categories\":["
-    let i = 0
+    let mut i = 0
     while i < len(cats) {
         if i > 0 { s = s + "," }
         let nm  = _json_esc(_str(cats[i][0]))
@@ -425,7 +425,7 @@ fn sub_run(apply: bool, aggressive: bool, dry_json: bool) {
     let ts = _ts_iso()
     let c1 = scan_tmp_anima()
     let c2 = scan_rejected_90d()
-    let c3 = []
+    let mut c3 = []
     if aggressive { c3 = scan_archived_90d() }
     let c4 = scan_pending_orphans()
     let c5 = scan_build_artifacts_c()
@@ -449,7 +449,7 @@ fn sub_run(apply: bool, aggressive: bool, dry_json: bool) {
     let b7 = _total_bytes(c7)
 
     // apply deletes (gated by --apply)
-    let applied = false
+    let mut applied = false
     if apply {
         applied = true
         let _x1 = _apply_delete(c1)
@@ -461,13 +461,13 @@ fn sub_run(apply: bool, aggressive: bool, dry_json: bool) {
         let _x7 = _apply_delete(c7)
     }
 
-    let mode = "dry"
+    let mut mode = "dry"
     if apply { mode = "apply" }
     if aggressive {
         if apply { mode = "apply-aggressive" } else { mode = "dry-aggressive" }
     }
 
-    let arch_note = "(skipped — aggressive-only)"
+    let mut arch_note = "(skipped — aggressive-only)"
     if aggressive { arch_note = "(aggressive)" }
 
     let cats = [
@@ -480,8 +480,8 @@ fn sub_run(apply: bool, aggressive: bool, dry_json: bool) {
         ["7. dist/*.old native residuals",   n7, b7, ""]
     ]
 
-    let total = b1 + b2 + b3 + b4 + b5 + b6 + b7
-    let verdict = "clean"
+    let mut total = b1 + b2 + b3 + b4 + b5 + b6 + b7
+    let mut verdict = "clean"
     if total > 0 { verdict = "freeable" }
 
     let json_text = build_json(ts, cats, total, mode, applied)
@@ -532,7 +532,7 @@ fn sub_selftest() {
     let s6 = scan_h100_logs_7d()
     let s7 = scan_dist_old()
     let scans = [s1, s2, s3, s4, s5, s6, s7]
-    let i = 0
+    let mut i = 0
     while i < len(scans) {
         let r = scans[i]
         if type_of(r) != "array" && type_of(r) != "list" {
@@ -544,8 +544,8 @@ fn sub_selftest() {
     }
 
     // synthetic /tmp orphan must be detected as a category-1 candidate
-    let found = false
-    let j = 0
+    let mut found = false
+    let mut j = 0
     while j < len(s1) {
         if _str(s1[j][0]) == tmp_proposal { found = true }
         j = j + 1
@@ -618,4 +618,3 @@ fn main() {
     sub_run(apply, aggressive, dry_json)
 }
 
-main()

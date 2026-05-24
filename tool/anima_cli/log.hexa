@@ -63,7 +63,7 @@ fn _resolve_root() -> string {
 }
 
 fn _arg_present(argv, key: string) -> bool {
-    let i = 0
+    let mut i = 0
     while i < len(argv) {
         if _str(argv[i]) == key { return true }
         i = i + 1
@@ -72,7 +72,7 @@ fn _arg_present(argv, key: string) -> bool {
 }
 
 fn _arg_value(argv, key: string, dflt: string) -> string {
-    let i = 0
+    let mut i = 0
     while i < len(argv) {
         if _str(argv[i]) == key && i + 1 < len(argv) {
             return _str(argv[i + 1])
@@ -83,8 +83,8 @@ fn _arg_value(argv, key: string, dflt: string) -> string {
 }
 
 fn _user_argv(raw) -> array {
-    let out = []
-    let i = 0
+    let mut out = []
+    let mut i = 0
     while i < len(raw) {
         let s = _str(raw[i])
         if !s.contains("/.hexa-cache/") {
@@ -131,8 +131,8 @@ fn _build_merge_cmd(filter_src: string, n: string, since: string) -> string {
     // desc, prints last N in "[ts] [src   ] msg" format.
     let root = _resolve_root()
     let names = _source_names()
-    let src_csv = ""
-    let i = 0
+    let mut src_csv = ""
+    let mut i = 0
     while i < len(names) {
         let nm = _str(names[i])
         if filter_src == "" || filter_src == nm {
@@ -229,8 +229,8 @@ fn sub_show(argv, since_default: string) {
     let since = _arg_value(argv, "--since", since_default)
     if src != "" {
         let names = _source_names()
-        let ok = false
-        let i = 0
+        let mut ok = false
+        let mut i = 0
         while i < len(names) {
             if _str(names[i]) == src { ok = true }
             i = i + 1
@@ -241,7 +241,7 @@ fn sub_show(argv, since_default: string) {
         }
     }
     let cmd = _build_merge_cmd(src, n, since)
-    let out = _str(exec(cmd))
+    let mut out = _str(exec(cmd))
     // header only when ts not redacted-mode and output non-empty → keep quiet
     if out.trim() == "" {
         let tag = if src == "" { "any source" } else { "source=" + src }
@@ -260,9 +260,9 @@ fn sub_watch(argv) {
     println("# (running in-hexa fallback · may buffer until tails flush)")
     let src = _arg_value(argv, "--source", "")
     let names = _source_names()
-    let paths = []
-    let colors = []
-    let i = 0
+    let mut paths = []
+    let mut colors = []
+    let mut i = 0
     while i < len(names) {
         let nm = _str(names[i])
         if src == "" || src == nm {
@@ -280,8 +280,8 @@ fn sub_watch(argv) {
     }
     // bash subshell: parallel `tail -f` into a colorizer awk. Each line gets
     // the "[src  ] " prefix plus ANSI color when stdout is a tty.
-    let sh = "{\n"
-    let j = 0
+    let mut sh = "{\n"
+    let mut j = 0
     while j < len(paths) {
         let entry = _str(paths[j])
         let idx = entry.index_of("::")
@@ -314,8 +314,8 @@ fn sub_watch(argv) {
 fn _shell_quote(s: string) -> string {
     // Single-quote the blob; embedded single quotes are rare in our heredoc
     // content (awk uses double quotes), but be safe.
-    let out = "'"
-    let i = 0
+    let mut out = "'"
+    let mut i = 0
     while i < len(s) {
         let ch = s.substring(i, i + 1)
         if ch == "'" { out = out + "'\"'\"'" } else { out = out + ch }
@@ -353,7 +353,7 @@ fn sub_selftest() {
     exec("rm -f " + tmp_a + " " + tmp_b)
     // expected: beta-4 first, then alpha-3, beta-2, alpha-1
     let expected_first = "[2026-04-22T00:00:04Z] [beta  ] beta-4"
-    let first_line = got
+    let mut first_line = got
     let nl = got.index_of("\n")
     if nl >= 0 { first_line = got.substring(0, nl) }
     if first_line != expected_first {
@@ -374,7 +374,7 @@ fn sub_selftest() {
         println("FAIL anima_cli/log selftest (source catalog)")
         exit(1)
     }
-    let i = 0
+    let mut i = 0
     while i < len(names) {
         let p = _source_path(_str(names[i]))
         if p == "" {
@@ -395,8 +395,8 @@ fn main() {
     if _arg_present(argv, "--help")     { sub_help(); return }
 
     // parse positional subcommand (first non-flag token)
-    let sub = ""
-    let i = 0
+    let mut sub = ""
+    let mut i = 0
     while i < len(argv) {
         let t = _str(argv[i])
         if !t.starts_with("--") { sub = t; break }
@@ -409,4 +409,3 @@ fn main() {
     sub_show(argv, "")
 }
 
-main()
