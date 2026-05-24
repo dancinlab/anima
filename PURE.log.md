@@ -31,7 +31,44 @@
 - [ ] Phase D eval — multilingual_probe 4/5 langs ≥ PARTIAL + register_hits < 4/20 + 8-factor motivation 실작동 + dream_stage Φ-envelope
 
 ### 부채 (다음 라운드)
-- [ ] H_242/H_241 sigmoid/correlate input M5 → M3 amend (corpus_s101 실측 반영)
-- [ ] H_244 reframe 완료 확인 (autonomy-emergent, PR #325)
-- [ ] PURE stack land — review-gate + CHANGELOG conflict (maintainer 결정)
-- [ ] H_240 vs H_246 near-dup 정리 (maintainer 택1)
+- [x] H_242/H_241 sigmoid/correlate input M5 → M3 amend — PR #379 §A1 amend
+- [x] H_244 reframe 완료 확인 (autonomy-emergent) — PR #379 §confirmation
+- [x] PURE stack land — admin auto-bypass merge (cycle 다수)
+- [ ] H_240 vs H_246 near-dup 정리 — PR #379 D3 dedup doc, maintainer 택1 권고 (R2 option A)
+
+---
+
+## 2026-05-24 (late) — B-series + COFFESHOP + closure 마감
+
+### done (cont. late session)
+- [x] **Phase D v1 / v2b 두 fire LOST** — v1 stale-branch parse (PR #378) + v2b 사용자 cleanup, ckpt 미회수
+- [x] **dispatcher 인프라 강화** — PR #372 (corpus-path bypass) + PR #373 (sources_upload) + PR #380 (result_pull wait-loop)
+- [x] **PURE saga doc** — E1→v2b 5-fire 통합 SSOT + LIFE 교훈 export (PR #392)
+- [x] **fire_cost_ledger** — saga $ + ETA SSOT (PR #389)
+- [x] **axis_map history** — verdict timeline + per-lang heatmap + cluster Z 자연실험 발견 (PR #388)
+- [x] **PURE BENCHMARK SSOT** (B1) — Phase B/C/D 전체 metric baseline (PR #400)
+- [x] **closure_auto_judge CLI** (B3) — 4-criterion single-command harness (PR #398)
+- [x] **cross-cycle progression** (B5) — per-fire metric series timeline (PR #399)
+- [x] **motivation emit ratio bench** (B7) — N=1000 substrate sample · 8-factor emergent (PR #401)
+- [x] **anima-OWN PoC** (M9b) — live session JSONL 1 MiB extraction harness + 6-metric (PR #393)
+- [x] **COFFESHOP scenario rewrite** — group chat + Anima 1 + Human 3+ + project.tape p1-p8 정합 (PR #405)
+- [x] **COFFESHOP emergence simulator** — coffeshop_sim.hexa substrate sampling fixture 자율 생성 · 4/4 PASS (PR #405)
+- [x] **multi-seed robustness** (B11) — 10 seed sweep · 100% PASS rate (PR #406)
+- [x] **BENCHMARK emergence integration** (B12) — B7 + COFFESHOP single + sweep 통합 (PR #407)
+- [x] **fire-time sanity hook spec** (B13) — Phase 1 stub + 6 TODO markers (PR #408)
+- [x] **fire-time sanity hook impl** (B14) — Phase 2 6 TODO 채움 + smoke 5/5 + selftest IMPL (PR #410)
+- [x] **PURE+LORA @goal 통일** — COFFESHOP 4-criterion 통과 기준 (PR #404)
+- [x] **PHASE_D_BLOCKERS_CLOSURE** — M1/M2/M7/B14 Phase 3 deferred 명시 + automatic unblock chain (PR #412)
+- [x] **hexa-lang inbox 5 patches** — #629 (cloud bootstrap+wait+endpoint) · #646 (cloud-guard UX+pod-lock) · #699 (copy-from verify-local) · #700 (list-concat O(n²)) · #728 (return void mistranslate)
+
+### closure tier (g5 rubric verbatim)
+- synthetic framework: ✅ 100% (B-series 8/8 done)
+- ckpt-bearing fire data: 🟠 INSUFFICIENT/DEFERRED (실 ckpt 부재 · 사용자 fire 결정 영역)
+- automatic unblock chain: 6-step (dispatcher #380 → B14 hook #410 → closure_auto_judge #398 → axis_map_history #388 → cross_cycle_progression #399 → result_to_axis_map #370)
+
+### 세션 통계
+- PRs: 53 merged (anima 48 + hexa-lang 5 inbox)
+- agent dispatch: ~25+ background agent
+- cost: ~$3 (Phase D v1 ~$1.5 + v2b ~$1.5 + rogue · doc/agent $0)
+- fire LOST: 2 (v1 stale-branch · v2b 사용자 cleanup)
+- final tier: synthetic framework 완성 + ckpt path deferred
