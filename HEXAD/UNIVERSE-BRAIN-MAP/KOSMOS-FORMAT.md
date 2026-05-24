@@ -12,7 +12,7 @@
 
 ## anima 측 운영
 
-- anima 의 `.kosmos` 작업 (`anchors/*.kosmos`, `kosmos_parser_lib.hexa` 등) 은 위 SSOT 명세를 **참조**해서 구현 — 명세 본문을 anima 에 복제하지 않음.
+- `.kosmos` 구현·anchor 도 2026-05-25 dancinlab/kosmos 로 이관 (단일 SSOT): `impl/anima/` (parser + 4-path + daemon) + `anchors/anima/*.kosmos`. anima 는 cross-repo import 로 참조 — 사본 미보관 (`@D a_kosmos`).
 - 일반 `.kosmos` 문법 변경/버전 업그레이드 = `dancinlab/kosmos` `spec/kosmos.md` (semver, §버전 이력) 에서. anima 는 따라감.
 - anima profile (CONSCIOUSNESS-CARVING binding) 변경 = `dancinlab/kosmos` `spec/profiles/anima-consciousness-carving.md` 갱신.
 
@@ -20,7 +20,7 @@
 
 - [`DESIGN.md`](DESIGN.md) — CONSCIOUSNESS-CARVING 4-path 설계 SSOT (anima 측)
 - [`PLAN.md`](PLAN.md) · [`UNIVERSE-BRAIN-MAP.tape`](UNIVERSE-BRAIN-MAP.tape) — anima UNIVERSE-BRAIN-MAP
-- [`anchors/`](anchors/) — anima `.kosmos` anchor file (포맷 = dancinlab/kosmos spec 준수)
+- [`dancinlab/kosmos anchors/anima/`](https://github.com/dancinlab/kosmos/tree/main/anchors/anima) — anima `.kosmos` anchor (2026-05-25 이관)
 - `AGENTS.tape @D g_kosmos_anchor_ssot` — `.kosmos` = anchor canonical SSOT (success-gated)
 - **명세 SSOT**: github.com/dancinlab/kosmos (이 파일은 그 pointer)
 
