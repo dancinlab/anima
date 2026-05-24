@@ -77,6 +77,13 @@
 // Expect:
 //   [alm_bisociation] ALL 5/5 PASS
 
+// 2026-05-25 phase 5 M1 wave 2a: vec_norm body delegated to
+// stdlib/linalg/norm l2_norm (hexa-lang #885). Byte-equal — local
+// `sqrt_safe(vec_dot(a,a,d))` == `l2_norm(a, d)` for real arrays.
+// cosine_sim + vec_dist kept local (1e-6 epsilon / Euclidean distance,
+// not single-vector norm).
+import "stdlib/linalg/norm.hexa"
+
 // ─── Constants ──────────────────────────────────────────────
 
 let D_EMBED     = 32      // default embedding dimension for tests
@@ -123,7 +130,8 @@ fn vec_dot(a: array, b: array, d: int) -> float {
 }
 
 fn vec_norm(a: array, d: int) -> float {
-    return sqrt_safe(vec_dot(a, a, d))
+    // L2 norm via stdlib/linalg/norm — was sqrt_safe(vec_dot(a,a,d)).
+    return l2_norm(a, d)
 }
 
 // Euclidean distance between a and b.
