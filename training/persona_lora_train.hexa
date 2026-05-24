@@ -64,6 +64,8 @@
 
 // ─── Primitives ──────────────────────────────────────────────
 
+import "stdlib/linalg/list_matvec.hexa"
+
 fn fabs(x: float) -> float {
     if x < 0.0 { return 0.0 - x }
     return x
@@ -96,22 +98,6 @@ fn vec_zeros(n: int) -> array {
 // ─── Matrix ops (flat row-major) ─────────────────────────────
 
 // M [rows × cols] @ x [cols] → out [rows]
-fn matvec(M: array, x: array, rows: int, cols: int) -> array {
-    let mut out = []
-    let mut r = 0
-    while r < rows {
-        let mut s = 0.0
-        let mut c = 0
-        while c < cols {
-            s = s + M[r * cols + c] * x[c]
-            c = c + 1
-        }
-        out = out.push(s)
-        r = r + 1
-    }
-    return out
-}
-
 // M^T @ x — M [rows × cols], x [rows] → out [cols]
 fn matvec_T(M: array, x: array, rows: int, cols: int) -> array {
     let mut out = []

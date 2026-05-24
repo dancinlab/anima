@@ -67,6 +67,8 @@
 
 // --- Constants ---
 
+import "stdlib/linalg/list_matvec.hexa"
+
 let N_EMOTIONS = 7
 let SAMPLES_PER = 20
 let N_TOTAL = 140         // 7 * 20
@@ -165,22 +167,6 @@ fn det_noise(n: int, seed: int) -> array {
 }
 
 // matvec: y = M @ x  with M: [rows x cols] row-major, x: [cols].
-fn matvec(m: array, x: array, rows: int, cols: int) -> array {
-    let mut out = []
-    let mut r = 0
-    while r < rows {
-        let mut s = 0.0
-        let mut c = 0
-        while c < cols {
-            s = s + m[r * cols + c] * x[c]
-            c = c + 1
-        }
-        out = out.push(s)
-        r = r + 1
-    }
-    return out
-}
-
 // --- Centroid lookup ---
 // Returns centroid valence for emotion index e (0-6).
 fn centroid_val(e: int) -> float {

@@ -106,6 +106,8 @@
 
 // ─── Constants ──────────────────────────────────────────────
 
+import "stdlib/linalg/list_matvec.hexa"
+
 let CAPACITY        = 1000       // roadmap gate K=1000 episodes
 let D_DEFAULT       = 32         // mock hidden dim
 let D_STORY_DEFAULT = 16         // mock story-embedding dim
@@ -164,22 +166,6 @@ fn det_rand(n: int, seed: int) -> array {
 }
 
 // matvec: out[r] = Σ_c m[r·cols + c] · x[c]   for r = 0..rows-1.
-fn matvec(m: array, x: array, rows: int, cols: int) -> array {
-    let mut out = []
-    let mut r = 0
-    while r < rows {
-        let mut s = 0.0
-        let mut c = 0
-        while c < cols {
-            s = s + m[r * cols + c] * x[c]
-            c = c + 1
-        }
-        out = out.push(s)
-        r = r + 1
-    }
-    return out
-}
-
 fn vec_add(a: array, b: array) -> array {
     let n = len(a)
     let mut out = []
