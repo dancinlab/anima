@@ -31,6 +31,8 @@
 // @no-lock-needed
 // @resolver-bypass(reason="Driver subprocess + xxd; same pattern as pull.hexa.")
 
+use "stdlib/core/hash/sha256"
+
 let HOME              = env("HOME")
 let QMIRROR_ROOT_ENV  = env("QMIRROR_ROOT")
 let TIER_ENV          = env("NEXUS_QMIRROR_TIER")
@@ -239,7 +241,7 @@ fn main() {
         eprintln(m); fail_row("hex-write", m); return
     }
 
-    let hash  = exec("shasum -a 256 " + shq(OUT_BIN) + " | awk '{print $1}'").trim()
+    let hash  = sha256_of_file(OUT_BIN)  // rewired to stdlib FIPS 180-4 builtin (hexa-lang #884); byte-equal, no fork-exec
     let prov  = parse_marker(out, "__PROV__")
     let msg   = parse_marker(out, "__MSG__")
     let req   = parse_marker(out, "__REQ__")
