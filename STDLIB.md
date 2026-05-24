@@ -72,9 +72,12 @@ HEXAD/LIFE/lib/                    stdlib/
 
 ### phase 3 — 후속 candidate
 
-- [ ] EEG / signal-processing primitive 후보 (FFT · autocorrelation · spectral density)
-- [ ] clustering / classification primitive
-- [ ] anima 의 MITOSIS / CHAT / etc. 도메인 의 general 후보 단계 이주
+- [x] phase3 survey — `HEXAD/STDLIB/phase3_survey_2026_05_25.md` (#449) · 3 카테고리 grep
+  - **signal/DSP**: 🔥 60+ fn in `VOICE/anima-voice/dsp_core.hexa` (FFT · STFT · window **26 dup** · biquad · MEL · pitch) → `signal/` 6-module 제안 (~230 LoC sweep) = **다음 promote 1순위**
+  - clustering/classification: NONE (anima 미구현 = 설계 선택, info-theoretic distance 는 phase-1 MI/KL 로 커버) · DEFER (RFC-037)
+  - MITOSIS / CHAT general: 신규 0 (전부 phase-1 dup, M1-M5 pipeline 대기)
+- [ ] **signal/ DSP promote** (phase3 M1) — `signal/{core_fft, core_stft, core_window, core_filter, core_pitch, core_resample}` hexa-lang stdlib land + window 26-dup sweep
+- [ ] clustering primitive — DEFERRED (RFC-037, 현 anima 불요)
 
 ## Honest limits
 

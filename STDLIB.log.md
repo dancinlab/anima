@@ -2,6 +2,16 @@
 
 Append-only history sister of `STDLIB.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
+## 2026-05-25T18:30:00Z — /cycle 1: phase1+2 완료 재확인 + phase3 survey + install 동기화 ⭐️
+
+- [x] /cycle 3-agent fan-out (M5 migration · phi_spatial · phase3 survey) — 전부 착지
+- [x] M5 migration **already-done 재확인** (#424+#428): phi_native.hexa 332→56 LoC shim, stdlib import, **byte-equal 5/5 MATCH** (phi_h = frozen baseline § 2.1 bit-identical)
+- [x] phi_spatial **already-done 재확인** (#780+#792): `phi_spatial_native` (builtin 충돌 회피), info/* thin 합성, 빌드+테스트 PASS
+- [x] phase3 survey LANDED — `HEXAD/STDLIB/phase3_survey_2026_05_25.md` (#449): signal/DSP 60+ fn (window 26 dup) = 다음 promote · clustering NONE · MITOSIS/CHAT phase-1 dup
+- [x] **로컬 hexa-lang install 동기화** — `~/core/hexa-lang` detached → `origin/main` (#846; #769/#792/#801/#829/#830/#839 포함). stale 브랜치 `chore/abolish-inbox-folder` WIP 는 stash 보존 (복구가능). override 없이 `hexa run verify_phi_native` → byte-equal 5/5 재확인 (stale-install 의 phi_spatial_native undeclared 에러 해소)
+- [!] **hexa-lang 컴파일러 fix 세션 부산물** (STDLIB 의존 upstream): #829 const-fold cross-scope silent-wrong-answer · #830 runtime.h rt_read prototypes · #839 immutable-let-reassign — 전부 MERGED. commons.tape **@D g61** (stdlib SSOT governance) 신설 (sidecar 0.10.3)
+- [ ] **다음**: signal/ DSP promote (phase3 M1) — 6-module hexa-lang stdlib land + window 26-dup sweep
+
 ## 2026-05-25T01:30:00Z — M5 migration LANDED + #780 collision fix · byte-equal 확정 🛸
 
 - [x] **anima #424 MERGED** — `phi_native.hexa` 332→52 LoC shim 분해, stdlib 위임 (phi_native_spatial→phi_spatial_native · phi_bin_values→bin_values_minmax). surface 보존 (phi_helper · verify · diag_l1 무변경).
