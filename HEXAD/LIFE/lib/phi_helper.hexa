@@ -30,6 +30,14 @@
 //     nothing (hexa import semantics: top-level calls fire on import; pure
 //     `fn` defs do not). Callers import + invoke phi_default/phi_with.
 //
+//   BACKEND SELECTOR (milestone #3, 2026-05-24 — recovered post-branch-swap)
+//     phi_default / phi_with default to backend="c" (c_measure_phi → RFC 036
+//     phi_spatial builtin — BACKWARD-COMPAT preserved verbatim). Opt-in pure-
+//     hexa replica via phi_default_with_backend / phi_with_backend with
+//     backend ∈ {"c", "native"} — "native" routes to phi_native_spatial
+//     (lib/phi_native.hexa, milestone #2). Unknown backend → panic so callers
+//     do NOT silently fall back to a different code path.
+//
 //   HONEST CARVE-OUT (raw#9/10)
 //     This module DOCUMENTS the heuristic config; it does not RE-VALIDATE it
 //     (that is infra_phi_n_bins_2026_05_23's n_bins sweep + each H's own
@@ -40,6 +48,7 @@
 // ════════════════════════════════════════════════════════════════════════════
 
 import "/Users/ghost/core/anima/HEXAD/C/c_lib.hexa"
+import "/Users/ghost/core/anima/HEXAD/LIFE/lib/phi_native.hexa"
 
 
 // ── config SSOT ─────────────────────────────────────────────────────────────
@@ -88,6 +97,33 @@ fn phi_default(state: int) -> float {
 // H that varies lattice size). Delegates to c_measure_phi → RFC 036 phi_spatial.
 fn phi_with(state: int, n: int, dim: int, n_bins: int) -> float {
     return c_measure_phi(state, n, dim, n_bins)
+}
+
+
+// ── phi_with_backend — opt-in backend selector (milestone #3, 2026-05-24) ─────
+// Same contract as phi_with(state, n, dim, n_bins) but routes to one of two
+// byte-equivalent Φ impls:
+//   backend == "c"      → c_measure_phi      (RFC 036 phi_spatial native-C builtin)
+//   backend == "native" → phi_native_spatial (pure-hexa replica, lib/phi_native.hexa)
+// Unknown backend → panic (no silent fallback — caller bug must surface).
+// Used by H that want to A/B the C-builtin vs pure-hexa replica without touching
+// the 22+ existing phi_default / phi_with call sites.
+fn phi_with_backend(state: int, n: int, dim: int, n_bins: int, backend: string) -> float {
+    if backend == "c" {
+        return c_measure_phi(state, n, dim, n_bins)
+    }
+    if backend == "native" {
+        return phi_native_spatial(state, n, dim, n_bins)
+    }
+    panic("phi_helper: unknown backend (expected 'c' or 'native')")
+}
+
+
+// ── phi_default_with_backend — opt-in backend selector (default-config form) ──
+// Same contract as phi_default(state) but routes via phi_with_backend with the
+// LIFE-lane defaults (life_phi_n / life_phi_dim / life_phi_nbins).
+fn phi_default_with_backend(state: int, backend: string) -> float {
+    return phi_with_backend(state, life_phi_n(), life_phi_dim(), life_phi_nbins(), backend)
 }
 
 

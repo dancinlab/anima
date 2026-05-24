@@ -1,0 +1,210 @@
+// HEXAD/LIFE/state/lib_phi_native_verify_2026_05_24/verify_phi_native.hexa
+// PHI domain milestone #4 — byte-equal selftest harness for phi_native.hexa.
+//
+//   PURPOSE
+//     Verify that the pure-hexa port `phi_native.phi_native_spatial` returns
+//     byte-identical Φ to the C replica `c_measure_phi` (RFC 036 phi_spatial)
+//     on a 5-rule elementary CA fixture. Two pre-registered falsifier groups:
+//
+//       F-NATIVE-RULE5  — rule {110, 30, 250, 184, 60} × n_cells=8, dim=8
+//                         every step's flat (n*dim) state-snapshot fed to BOTH
+//                         backends; pass iff phi_c == phi_h byte-equal.
+//       F-NATIVE-DET    — determinism — c_measure_phi(same farr) twice ==
+//                         byte-identical (sanity baseline; phi_native_spatial
+//                         determinism inherited once STUB is removed).
+//
+//   STUB MODE
+//     `phi_native.hexa` is being authored in parallel. While absent, the
+//     harness short-circuits `phi_h = phi_c` (vacuous PASS — wiring-only
+//     evidence). When `phi_native.hexa` lands, flip the `_USE_STUB()` gate to
+//     false and the harness becomes a real byte-equal test in one line.
+//
+//   CALLER SURFACE (verbatim from HEXAD/LIFE/lib/phi_helper.hexa)
+//     phi_with(state: int, n: int, dim: int, n_bins: int) -> float
+//     phi_default(state: int) -> float                  // n=16, dim=12, nb=4
+//   These are thin wrappers around c_measure_phi → RFC 036 phi_spatial.
+//
+//   COMPLIANCE  raw#11 snake_case · raw#9 honest impl (STUB → real) · English
+//   code (prefs) · README.md sibling = Korean per repo convention.
+// ════════════════════════════════════════════════════════════════════════════
+
+import "/Users/ghost/core/anima/HEXAD/LIFE/lib/phi_helper.hexa"
+import "/Users/ghost/core/anima/HEXAD/LIFE/lib/phi_native.hexa"
+
+// ── STUB gate ────────────────────────────────────────────────────────────────
+// While phi_native is absent the harness compares phi_c to itself (vacuous
+// PASS — the harness wiring is what is being verified). When the real impl
+// lands, return false here and uncomment the phi_h call site in
+// `rule_5_byte_equal_test`.
+fn _USE_STUB() -> bool { return false }
+
+// ── small int helpers ───────────────────────────────────────────────────────
+fn _pow2(k: int) -> int {
+    let mut p = 1
+    let mut i = 0
+    while i < k { p = p * 2; i = i + 1 }
+    return p
+}
+fn _ftoi(x: float) -> int { if x > 0.5 { return 1 }; return 0 }
+fn _itof(b: int) -> float { if b == 1 { return 1.0 }; return 0.0 }
+
+// elementary CA next-state: neighborhood (l, c, r) → bit `idx` of `rule`.
+fn _ca_next(l: int, c: int, r: int, rule: int) -> int {
+    let idx = l * 4 + c * 2 + r           // pattern index 0..7
+    return (rule / _pow2(idx)) % 2         // extract bit idx of rule
+}
+
+// Deterministic seed row: site i set iff (i + seed_off) % 3 != 0.
+fn _init_row(row: int, n: int, seed_off: int) -> int {
+    let mut i = 0
+    while i < n {
+        let on = ((i + seed_off) % 3) != 0
+        if on { let _ = farr_set(row, i, 1.0) }
+        else  { let _ = farr_set(row, i, 0.0) }
+        i = i + 1
+    }
+    return 1
+}
+
+// ── byte-equal float comparison ─────────────────────────────────────────────
+// hexa float == is bit-equal for finite values (IEEE-754 representation).
+// NaN-vs-NaN is intentionally false (treat as non-equal — would indicate
+// degenerate Φ pipeline).
+fn cmp_byte_equal(a: float, b: float) -> bool {
+    return a == b
+}
+
+// ── CA generator (small fixture: n_cells=8, n_steps=8) ──────────────────────
+// Build a flat (n_cells * dim) row-major farr by evolving a length-`n_cells`
+// periodic elementary CA for `dim` steps after a small warmup. Returns the
+// farr handle; caller owns + frees.
+//
+// `n_steps` here = `dim` (per-cell state-vector length), to match
+// phi_helper.phi_with(state, n_cells, dim, n_bins) shape.
+fn gen_rule(rule: int, n_cells: int, n_steps: int) -> int {
+    let warm = 2                                   // small warmup (skeleton scale)
+    let row = farr_zeros(n_cells)
+    let _ = _init_row(row, n_cells, rule % 7)      // rule-derived seed offset
+
+    let states = farr_zeros(n_cells * n_steps)
+    let total = warm + n_steps
+    let mut step = 0
+    while step < total {
+        if step >= warm {
+            let t = step - warm
+            let mut s = 0
+            while s < n_cells {
+                let _ = farr_set(states, s * n_steps + t, farr_get(row, s))
+                s = s + 1
+            }
+        }
+        let nxt = farr_zeros(n_cells)
+        let mut j = 0
+        while j < n_cells {
+            let lj = (j + n_cells - 1) % n_cells
+            let rj = (j + 1) % n_cells
+            let lv = _ftoi(farr_get(row, lj))
+            let cv = _ftoi(farr_get(row, j))
+            let rv = _ftoi(farr_get(row, rj))
+            let _ = farr_set(nxt, j, _itof(_ca_next(lv, cv, rv, rule)))
+            j = j + 1
+        }
+        let mut k = 0
+        while k < n_cells { let _ = farr_set(row, k, farr_get(nxt, k)); k = k + 1 }
+        let _ = farr_free(nxt)
+        step = step + 1
+    }
+    let _ = farr_free(row)
+    return states
+}
+
+// ── F-NATIVE-RULE5 — 5-rule byte-equal test ─────────────────────────────────
+// For each Wolfram rule in {110, 30, 250, 184, 60}: build a small (8 × 8)
+// flat farr and compare c_measure_phi(states, 8, 8, 4) vs the (currently
+// stubbed) phi_native equivalent. Each rule contributes a single byte-equal
+// assertion; total = 5.
+fn rule_5_byte_equal_test() {
+    let n_cells = 8
+    let dim = 8
+    let n_bins = 4
+
+    let mut pass = 0
+    let mut fail = 0
+    let mut detail = ""
+
+    let rules = [110, 30, 250, 184, 60]
+    let mut r = 0
+    while r < 5 {
+        let rule = rules[r]
+        let states = gen_rule(rule, n_cells, dim)
+
+        // C replica — RFC 036 phi_spatial (canonical) via phi_helper.phi_with.
+        let phi_c = phi_with(states, n_cells, dim, n_bins)
+
+        // STUB MODE: until phi_native.hexa lands, alias phi_h := phi_c so the
+        // harness emits a wiring-only vacuous PASS. When the real impl lands,
+        // flip `_USE_STUB` to false and uncomment the real call site below.
+        let mut phi_h = 0.0
+        if _USE_STUB() {
+            phi_h = phi_c
+        } else {
+            // REAL MODE — phi_native landed; call the pure-hexa port.
+            // Spec § 0: phi_native_spatial(state, n_cells, dim, n_bins) -> float
+            phi_h = phi_native_spatial(states, n_cells, dim, n_bins)
+        }
+
+        let ok = cmp_byte_equal(phi_c, phi_h)
+        if ok { pass = pass + 1 }
+        else  { fail = fail + 1 }
+
+        detail = detail + "    rule=" + to_string(rule)
+                        + "  phi_c=" + to_string(phi_c)
+                        + "  phi_h=" + to_string(phi_h)
+                        + "  byte_equal=" + (if ok { "true" } else { "false" })
+                        + "\n"
+
+        let _ = farr_free(states)
+        r = r + 1
+    }
+
+    println("  F-NATIVE-RULE5  (5 Wolfram rules × byte-equal phi_c vs phi_h):")
+    print(detail)
+    println("    pass=" + to_string(pass) + "  fail=" + to_string(fail)
+            + "  stub_mode=" + (if _USE_STUB() { "true (vacuous PASS)" } else { "false (real)" }))
+}
+
+// ── F-NATIVE-DET — determinism baseline ─────────────────────────────────────
+// c_measure_phi(state, ...) called twice with the SAME farr must be byte-
+// identical. This is the phi_determinism_check pattern from phi_helper but
+// inlined here to keep the harness self-contained.
+fn determinism_test() {
+    let n_cells = 8
+    let dim = 8
+    let n_bins = 4
+
+    let states = gen_rule(110, n_cells, dim)       // arbitrary rule
+    let phi_a = phi_with(states, n_cells, dim, n_bins)
+    let phi_b = phi_with(states, n_cells, dim, n_bins)
+    let ok = cmp_byte_equal(phi_a, phi_b)
+    let _ = farr_free(states)
+
+    println("  F-NATIVE-DET    (c_measure_phi byte-identical on 2 calls):")
+    println("    phi_a=" + to_string(phi_a) + "  phi_b=" + to_string(phi_b)
+            + "  byte_equal=" + (if ok { "true" } else { "false" }))
+}
+
+fn main() {
+    println("verify_phi_native — byte-equal harness skeleton (PHI domain milestone #4)")
+    println("  fixture: 5 Wolfram rules × n_cells=8 × dim=8 × n_bins=4")
+    println("  mode   : " + (if _USE_STUB() { "STUB (phi_native absent)" } else { "REAL (phi_native present)" }))
+    println("")
+
+    rule_5_byte_equal_test()
+    println("")
+    determinism_test()
+
+    println("")
+    println("=== verify_phi_native skeleton complete ===")
+    println("  STUB→REAL switch: edit `_USE_STUB()` to return false +")
+    println("  uncomment the phi_native_spatial call in rule_5_byte_equal_test.")
+}
