@@ -2,6 +2,16 @@
 
 Append-only history sister of `STDLIB.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
+## 2026-05-25T01:30:00Z — M5 migration LANDED + #780 collision fix · byte-equal 확정 🛸
+
+- [x] **anima #424 MERGED** — `phi_native.hexa` 332→52 LoC shim 분해, stdlib 위임 (phi_native_spatial→phi_spatial_native · phi_bin_values→bin_values_minmax). surface 보존 (phi_helper · verify · diag_l1 무변경).
+- [x] **byte-equal 검증 (verify_phi_native, full cross-import flatten)**: phi_h = [4.9773e-09, 0.422585, 4.9773e-09, 0.585842, 0.790028] == frozen baseline § 2.1 **5/5 bit-match**. cross-import 체인 (verify→phi_native→phi_spatial_native→mutual_info→binning+entropy+bitops) end-to-end 작동.
+- [!] **M5가 적발한 실버그 1 — PR #780 BROKEN (name collision)**: stdlib `phi_spatial` 이 `phi_spatial` **builtin** (codegen→hexa_phi_spatial, runtime.c:7941) 과 충돌 → import 시 redefinition. CI stdlib 미테스트 + agent sc_ self-contained 검증으로 미탐지, M5 통합서 노출. **fix: hexa-lang #792 MERGED — `phi_spatial`→`phi_spatial_native` rename** (flatten-build 4/4 PASS 검증).
+- [!] **M5가 적발한 실버그 2 — builtin DRIFT 실측 확증 (rfc_036_c_replica_drift)**: phi_spatial **builtin** 이 frozen baseline 에서 이탈 (rule110 4.9773e-09 → 4.90943e-06, 3 orders). 그래서 M5 는 builtin 이 아닌 **stdlib pure-hexa replica** 에 위임 (frozen 보존). verify 의 phi_c≠phi_h byte_equal=false 는 이 drift 이지 M5 회귀 아님.
+- [x] g59 #785 (CI stdlib 미테스트 갭) 가 실제로 문 비용을 냄 — #780 collision 이 그 사례. #792 commit 이 #785 참조.
+- [ ] cycle-full 2nd-wave 잔여 (wolfram/ca #782 · stats/correlation #781 · signal/voss #783 도 LANDED — 위 M3 와 별개 4 module, 총 8 stdlib module)
+- [ ] phase 3 — abs_f(77)/sqrt_newton(17)/lcg_next(28) anima-side sweep (전부 builtin/import 치환, 대규모 별도 cycle)
+
 ## 2026-05-25T00:10:00Z — M3 (impl phase 1) · hexa-lang stdlib 4 module LAND ⭐️
 
 - [x] hexa-lang PR #769 MERGED (2026-05-24T12:01:44Z UTC) — https://github.com/dancinlab/hexa-lang/pull/769 · CI 3-platform bootstrap + grace-consent PASS

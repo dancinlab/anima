@@ -57,18 +57,18 @@ HEXAD/LIFE/lib/                    stdlib/
 - [x] `stdlib/info/entropy.hexa` — `shannon_entropy` (`log(x)/log(2.0)` byte-equal) — MERGED #769
 - [x] `stdlib/info/binning.hexa` — `bin_values_minmax` (min-max histogram) — MERGED #769
 - [x] `stdlib/info/mutual_info.hexa` — `mutual_info_pair` (imports binning+entropy) — MERGED #769
-- [ ] `stdlib/consciousness/phi_spatial.hexa` — info/* 합성 wrapper (RFC §5 2nd-wave 로 분리 · 별도 cycle)
+- [x] `stdlib/consciousness/phi_spatial.hexa` — info/* 합성 wrapper, export `phi_spatial_native` (`phi_spatial`=builtin 충돌 회피) — MERGED #780, rename #792
 
 ### byte-equal verify
 
-- [ ] stdlib 분해 후 `phi_native_spatial` 가 기존 phi_native.hexa 와 byte-equal 유지 (5 rule × 4 step regression)
-- [ ] Rust phi_rs oracle vs stdlib 합성 = byte-equal modulo IEEE reorder (PHI domain 의 dual-tier verdict 보존)
+- [x] stdlib 분해 후 `phi_native_spatial` byte-equal 유지 — verify_phi_native phi_h = [4.9773e-09, 0.422585, 4.9773e-09, 0.585842, 0.790028] = frozen baseline § 2.1 **5/5 bit-match** (#424)
+- [~] Rust phi_rs oracle vs stdlib — DEFERRED (baseline L5: phi_rs wheel 외부환경 필요) · ⚠ phi_spatial **builtin** 은 frozen 에서 DRIFT (phi_c=4.90943e-06, rfc_036_c_replica_drift) — replica 위임으로 우회
 
 ### migration (phase 2 — anima 측 교체)
 
-- [ ] `HEXAD/LIFE/lib/phi_native.hexa` deprecate or symlink → stdlib
-- [ ] `HEXAD/LIFE/lib/phi_helper.hexa` import path 교체 (stdlib 경유)
-- [ ] PHI verify harness 재실행 — byte-equal 보존 확인
+- [x] `HEXAD/LIFE/lib/phi_native.hexa` — 332→52 LoC shim 으로 분해, stdlib 위임 (#424)
+- [x] `HEXAD/LIFE/lib/phi_helper.hexa` — phi_native shim 경유로 stdlib 도달 (surface 보존, 변경 불요)
+- [x] PHI verify harness 재실행 — byte-equal 보존 확인 (5/5, 위 § byte-equal)
 
 ### phase 3 — 후속 candidate
 
