@@ -26,6 +26,8 @@
 //
 // raw#9 hexa-only strict / raw#15 SSOT this file / raw#37 NOT used (no .py / .sh)
 
+use "stdlib/core/hash/sha256"
+
 let SCHEMA            = "anima_physics/cloud_facade_arduino/1"
 let CIR_PATH          = "anima-physics/arduino/ne555_astable.cir"
 let SEED              = 42
@@ -77,16 +79,17 @@ fn ends_with(s: string, suffix: string) -> bool {
     return s.substring(n - m, n) == suffix
 }
 
-// Compute sha256 of a file via shasum.
+// Compute sha256 of a file via stdlib FIPS 180-4 builtin (hexa-lang #884).
+// Body routes through the sha256_of_file alias to avoid the local-vs-builtin
+// name shadow; shell-out removed (byte-equal; cut -c1-64 was the full digest).
 fn sha256_file(path: string) -> string {
-    let cmd = "shasum -a 256 " + shell_escape(path) + " | cut -c1-64"
-    return exec(cmd).trim()
+    return sha256_of_file(path)
 }
 
-// Compute sha256 of an arbitrary string.
+// Compute sha256 of an arbitrary string via stdlib FIPS 180-4 builtin (#884).
 fn sha256_str(s: string) -> string {
-    let cmd = "printf '%s' " + shell_escape(s) + " | shasum -a 256 | cut -c1-64"
-    return exec(cmd).trim()
+    // shell-out removed (byte-equal output). cut -c1-64 was the full 64-char digest.
+    return sha256(s)
 }
 
 // Run ngspice in batch mode on the netlist; capture stdout (which contains POS_TRIAL / NEG_TRIAL lines).
