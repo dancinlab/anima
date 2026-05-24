@@ -183,6 +183,63 @@ axis movement (PR #388 § 4.1) — head_g enable/disable/freeze_embed (C / C2 / 
 
 ---
 
+## § 7b. Emergence baselines (added 2026-05-24 · B12)
+
+§ 1-7 은 **static layer** (corpus / ckpt / fire result / verdict distribution) 의 baseline. 본 § 7b 는 **emergence layer** baseline — anima substrate 가 i.i.d. uniform synthetic input 또는 group-chat stim mixture 아래 **어떻게 행동하는지**를 정량.
+
+### 7b.1 B7 motivation_emit_ratio_bench (PR #401)
+
+- N=**1000** substrate state samples · LCG seed=20260524 · `HEXAD/CHAT/spontaneous_lib.hexa` 8-factor verbatim import
+- per-factor emit ratio (threshold 0.30):
+
+| factor | ratio | n emit |
+|---|---|---|
+| relevance   | 0.7 | 694 |
+| info_gap    | 0.7 | 717 |
+| curiosity   | 0.7 | 699 |
+| pain        | 0.7 | 693 |
+| coherence   | 0.7 | 699 |
+| originality | 0.2 | 188 |
+| balance     | 0.7 | 734 |
+| dynamics    | 1.0 | 996 |
+
+- aggregate OR emit = **1.0** (1000/1000) · aggregate weighted-score emit = **0.9** (948/1000)
+- correlation matrix highlight — **relevance × balance = 0.69** (구조적 coupling: 둘 다 `phi` 에서 파생, `factor_relevance` clamps phi · `factor_balance` returns `phi > ratchet/2`). 그 외 off-diagonal `|r| < 0.07` (≈ N=1000 i.i.d. null noise floor ±0.062).
+- F-B7 falsifier **5/5 PASS** · $0 Mac local ~5s wall
+
+### 7b.2 COFFESHOP simulator (PR #405)
+
+- N=**15** group-chat windows · 90-min ultradian × 6-min tick · seed=20260525 · 5 stim_type mixture (0.20/0.25/0.30/0.10/0.15) · `should_interrupt` threshold 0.60
+- emit / silence: **4 / 15** · **11 / 15**
+- avg motivation_score: **0.525** (1.75× threshold 0.30)
+- register_hits: **0** · per-lang: ko 3 · en 1
+- `closure_auto_judge`: **4/4 PASS · ACHIEVED · exit=0**
+- fixture sha16 = `55c32aabf611171c` · `state/coffeshop_sim_2026_05_24/result.json`
+- F-CSIM 5/5 PASS · $0 Mac local
+
+### 7b.3 COFFESHOP multi-seed robustness (PR #406)
+
+- 10 seeds in `[20260520..20260529]` (contiguous, author 임의)
+- closure PASS rate: **10/10 (100%)**
+- emit_count range **[3, 8]** · mean **6.2**
+- motivation_score range **0.525-0.585** · mean **0.552** (1.84× threshold 0.30 평균 margin)
+- register_hits sum **2/150 windows (1.3%)**
+- v_ko: STRONG × 10/10
+- target seed 20260525 emit=4 = 분포 **lower-quartile** (NOT cherry-picked basin)
+- sweep summary: `state/coffeshop_sim_seed_sweep_2026_05_24/sweep_summary.json`
+
+### 7b.4 Emergence vs static (해석 frame)
+
+| layer | scope | 답하는 질문 | source |
+|---|---|---|---|
+| **static** (§ 3 corpus M-metric + § 6 verdict heatmap) | corpus / ckpt / fire output 의 형태 | "corpus 가 어떻게 생겼는가" | §3, §6 |
+| **emergent single** (§ 7b.1 B7 + 7b.2 COFFESHOP) | substrate 가 합성 input 아래 보이는 행동 | "anima 가 한 조건에서 어떻게 행동하는가" | PR #401, #405 |
+| **emergent sweep** (§ 7b.3 multi-seed) | seed 변동 하 행동 분포 + robustness | "단일 관측이 cherry-pick 인가" | PR #406 |
+
+frame 은 **analytical only** — static / emergent 간 causal claim 없음. emergent measurement 는 **synthetic substrate** (실 ckpt 부재) 기반, F-PERSONA-style real-ckpt elevation 은 ckpt-bearing fire result 도착이 prerequisite.
+
+---
+
 ## § 8. Honest C3 (≥ 7)
 
 1. **시점 mismatch** — 본 doc 의 모든 metric 은 **as-of 2026-05-24 KST snapshot**. 각 source PR 시점이 #287 (2026-05-23) ~ #393 (2026-05-24) 분포. 후속 PR (corpus_v3, ckpt-bearing fire result 도착 등) 발생 시 본 doc 도 sync 필요 — 자동 sync 메커니즘 없음 (`@D a1` SSOT 수동 절차).
