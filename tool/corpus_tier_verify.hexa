@@ -32,6 +32,8 @@
 //   raw#12 empirical · deterministic · LLM=none · read-only
 // ════════════════════════════════════════════════════════════════════════════
 
+use "stdlib/core/hash/sha256"
+
 let MANIFEST     = "state/corpus_tier_manifest.json"
 let TIER_CFG     = "config/corpus_curriculum_tier_config.json"
 let OUT_RESULT   = "state/corpus_tier_verify_result.json"
@@ -66,8 +68,11 @@ fn now_utc() {
 }
 
 fn sha256_file(p) {
+    // body rewired to stdlib FIPS 180-4 builtin via the sha256_of_file alias
+    // (hexa-lang #884 — avoids local-vs-builtin name shadow); shell-out removed
+    // (byte-equal output; "" on missing file preserved).
     if !fexists(p) { return "" }
-    return _str(exec("shasum -a 256 " + p + " 2>/dev/null | awk '{print $1}'")).trim()
+    return sha256_of_file(p)
 }
 
 fn atomic_write(path, body) {

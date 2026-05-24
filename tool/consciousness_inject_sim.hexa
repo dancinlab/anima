@@ -70,8 +70,11 @@ fn fexists(p: string) -> bool {
 }
 
 fn sha256_short(p: string) -> string {
+    // full digest rewired to stdlib FIPS 180-4 builtin (hexa-lang #884 sha256
+    // alias surface); shell-out removed (byte-equal output; "" on missing file
+    // preserved). 16-char prefix slice unchanged.
     if !fexists(p) { return "" }
-    let s = _str(exec("shasum -a 256 " + p + " 2>/dev/null | awk '{print $1}'")).trim()
+    let s = sha256_file(p)
     if s == "" { return "" }
     return s.substring(0, 16)
 }
