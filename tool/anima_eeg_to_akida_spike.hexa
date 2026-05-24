@@ -300,8 +300,8 @@ main()
 
 fn run_selftest() {
     let py = build_helper_python()
-    fs::write(HELPER_PATH, py)
-    let args_json = json::stringify({
+    write_file(HELPER_PATH, py)
+    let args_json = json_stringify(#{
         "mode": "selftest",
         "fs": DEFAULT_FS_HZ,
         "n_channels": DEFAULT_N_CHANNELS,
@@ -319,14 +319,15 @@ fn run_selftest() {
         "s_cap": DEFAULT_S_CAP,
         "tool_version": TOOL_VERSION,
         "schema": SCHEMA,
-        "akida_forward": false,
+        "akida_forward": false
     })
     let cmd = "python3 " + _sh_quote(HELPER_PATH) + " " + _sh_quote(args_json)
-    let result = sh::run(cmd)
-    print(result.stdout)
+    let result = exec(cmd)
+    print(result)
 }
 
-fn main(args: list[string]) {
+fn main() {
+    let args = args()
     if args.contains("--selftest") {
         run_selftest()
         return
