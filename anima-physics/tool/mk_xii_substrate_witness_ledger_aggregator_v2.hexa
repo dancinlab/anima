@@ -89,6 +89,8 @@
 //    = v1 (witness_ledger_v1.json) PRESERVED, NOT modified
 // ════════════════════════════════════════════════════════════════════════════
 
+use "stdlib/core/hash/sha256"
+
 // ─── frozen schema defaults (env-overridable for v3+) ─────────────────────
 let DEFAULT_LEDGER_VERSION     = "v2"
 let DEFAULT_LEDGER_SUPERSEDES  = "v1 (witness_ledger_v1.json, fingerprint=470781997, body_sha=264f5cf7770d8b08e63b0d62d15636eb36262597aae012b3a3ec0e9c65274836)"
@@ -164,8 +166,11 @@ fn now_utc() {
 }
 
 fn sha256_file(p) {
+    // body rewired to stdlib FIPS 180-4 builtin via the sha256_of_file alias
+    // (hexa-lang #884 — avoids local-vs-builtin name shadow); shell-out removed
+    // (byte-equal output; "" on missing file preserved).
     if !fexists(p) { return "" }
-    return _str(exec("shasum -a 256 " + p + " 2>/dev/null | awk '{print $1}'")).trim()
+    return sha256_of_file(p)
 }
 
 fn atomic_write(path, body) {
@@ -641,11 +646,10 @@ fn main() {
     body = body + "}\n"
 
     // ─── Step F: compute ledger sha (timestamp-free), then atomic-write ──
-    let pid = _str(exec("printf %s $$")).trim()
-    let body_tmp = "/tmp/_ledger_v2_body_" + pid + ".json"
-    write_file(body_tmp, body)
-    let body_sha = _str(exec("shasum -a 256 " + body_tmp + " 2>/dev/null | awk '{print $1}'")).trim()
-    let _ = exec("rm -f " + body_tmp)
+    // body sha rewired to stdlib FIPS 180-4 builtin (hexa-lang #884); pid-named
+    // /tmp scratch file + shasum shell-out + rm cleanup removed (body bytes are
+    // already in memory; byte-equal output).
+    let body_sha = sha256_of_string(body)
 
     atomic_write(out_path, body)
 

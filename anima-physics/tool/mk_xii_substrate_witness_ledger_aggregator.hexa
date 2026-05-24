@@ -44,6 +44,8 @@
 //    deterministic · aggregator-only (no probe, no measurement, no network)
 // ════════════════════════════════════════════════════════════════════════════
 
+use "stdlib/core/hash/sha256"
+
 // ─── frozen schema constants ───────────────────────────────────────────────
 let LEDGER_VERSION             = "v1"
 let LEDGER_CYCLE_ID            = "mk_xii_substrate_witness_ledger_v1"
@@ -107,17 +109,19 @@ fn now_utc() {
 }
 
 fn sha256_file(p) {
+    // body rewired to stdlib FIPS 180-4 builtin via the sha256_of_file alias
+    // (hexa-lang #884 — avoids local-vs-builtin name shadow since the local
+    // wrapper is also named sha256_file); shell-out removed (byte-equal output;
+    // "" on missing file preserved).
     if !fexists(p) { return "" }
-    return _str(exec("shasum -a 256 " + p + " 2>/dev/null | awk '{print $1}'")).trim()
+    return sha256_of_file(p)
 }
 
 fn sha256_str(s) {
-    let pid = _str(exec("printf %s $$")).trim()
-    let tmp = "/tmp/_ledger_hash_" + pid + ".txt"
-    write_file(tmp, s)
-    let out = _str(exec("shasum -a 256 " + tmp + " 2>/dev/null | awk '{print $1}'")).trim()
-    let _ = exec("rm -f " + tmp)
-    return out
+    // body rewired to stdlib FIPS 180-4 builtin via the sha256_of_string alias
+    // (hexa-lang #884); shell-out + tmp-file removed (byte-equal output, no
+    // fork-exec, no /tmp race).
+    return sha256_of_string(s)
 }
 
 fn atomic_write(path, body) {
@@ -520,11 +524,10 @@ fn main() {
     body = body + "}\n"
 
     // ─── Step F: compute ledger sha (timestamp-free), then atomic-write ──
-    let pid = _str(exec("printf %s $$")).trim()
-    let body_tmp = "/tmp/_ledger_body_" + pid + ".json"
-    write_file(body_tmp, body)
-    let body_sha = _str(exec("shasum -a 256 " + body_tmp + " 2>/dev/null | awk '{print $1}'")).trim()
-    let _ = exec("rm -f " + body_tmp)
+    // body sha rewired to stdlib FIPS 180-4 builtin (hexa-lang #884); the
+    // pid-named /tmp scratch file + shasum shell-out + rm cleanup are no longer
+    // needed because the body bytes are already in memory (byte-equal output).
+    let body_sha = sha256_of_string(body)
 
     // Final body wraps the timestamp-free body sha + timestamp at end (so
     // re-running with same input → same body_sha; G3 verifiable).
