@@ -33,6 +33,8 @@
 //
 // raw#9 hexa-only strict / raw#37 transient helper / raw#15 SSOT this file
 
+import "/Users/ghost/core/hexa-lang/stdlib/core/hash/sha256.hexa"
+
 let SCHEMA            = "anima_physics/cloud_facade_analog/1_braket_quera_aquila"
 let BACKEND_PREFIX    = "aws_braket_quera_"
 let SCRIPT_PATH       = "anima-physics/scripts/anima_physics_braket_quera_probe.py"
@@ -63,8 +65,8 @@ fn invoke_probe(program_kind: string, seed: int) -> string {
 }
 
 fn sha256_hex(s: string) -> string {
-    let cmd = "printf '%s' " + shell_escape(s) + " | shasum -a 256 | cut -c1-64"
-    return exec(cmd).trim()
+    // stdlib core/hash/sha256 (phase 5 M1 wave 2a · #884 alias surface).
+    return sha256_of_string(s)
 }
 
 fn extract_float(json_line: string, key: string) -> float {
