@@ -1,6 +1,8 @@
 # LORA — current snapshot
 
-@goal: VP21M production swap 5/5 + V3 substrate Qwen-parity + wiring-integrity audit 완료
+@goal: COFFESHOP group chat 시뮬레이션 4-criterion closure 통과 — anima 자율 emit/silence (do/dont 강제 X) · multilingual 5/5 PARTIAL+ · register 0/20 · motivation_8factor ≥ 0.30 · dream_stage Φ-envelope · 모두 substrate emergent (project.tape p1-p8 + a_substrate_native_speak + a_autonomy_over_hardcode 정합)
+
+> 이전 @goal: "VP21M production swap 5/5 + V3 substrate Qwen-parity + wiring-integrity audit 완료" — COFFESHOP 통과 기준으로 통합 (2026-05-24)
 
 > anima LoRA / V3-substrate 학습 도메인의 현재 상태 스냅샷.
 > 작업 로그는 `LORA.log.md` (append-only checkbox). 2026-05-24 기준.
