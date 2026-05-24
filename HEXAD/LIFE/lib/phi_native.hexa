@@ -1,315 +1,41 @@
-// HEXAD/LIFE/lib/phi_native.hexa — pure-hexa port of RFC 036 phi_spatial.
+// HEXAD/LIFE/lib/phi_native.hexa — thin compatibility shim over hexa-lang stdlib.
 //
-//   PURPOSE
-//     Replicate `~/core/hexa-lang/self/runtime.c` lines 7849-8004 (the
-//     RFC 036 byte-equal C replica of `phi_rs` compute_phi_inner spatial
-//     slice, steps 1-4) in pure hexa. Byte-equal target: c_measure_phi
-//     (→ phi_spatial builtin). Inputs: flat row-major n_cells × dim farr,
-//     n_cells ≤ 20 exhaustive bipartition (cell 0 pinned to A).
+//   M5 MIGRATION (STDLIB domain)
+//     The 332-LoC pure-hexa port was promoted to hexa-lang stdlib:
+//       phi_bin_values     → stdlib/info/binning::bin_values_minmax            (PR #769)
+//       phi_entropy        → stdlib/info/entropy::shannon_entropy              (PR #769)
+//       phi_native_mi_pair → stdlib/info/mutual_info::mutual_info_pair         (PR #769)
+//       _phi_pow2/_phi_bit_set → stdlib/math/bitops::{pow2_int,bit_set}        (PR #769)
+//       phi_native_spatial → stdlib/consciousness/phi_spatial::phi_spatial_native
+//                            (PR #780, renamed #792 — `phi_spatial` is a builtin)
+//     This file now DELEGATES, preserving the surface used by callers
+//     (phi_helper.hexa · verify_phi_native.hexa · diag_l1_binning.hexa).
 //
-//   SPEC SSOT
-//     HEXAD/LIFE/lib/phi_native_spec_2026_05_24.md (357 LoC, 4-step
-//     pseudo-spec — every fn below cites the spec § and the runtime.c
-//     line range it ports).
+//   WHY phi_spatial_native (NOT the `phi_spatial` builtin)
+//     The pure-hexa replica is the byte-equal-FROZEN reference
+//     (HEXAD/STDLIB/phi_native_predecomp_baseline_2026_05_24.md § 2.1). The
+//     C-replica builtin has drifted from it (rfc_036_c_replica_drift, e.g.
+//     rule110 4.9773e-09 → 4.90943e-06), so delegating to the builtin would
+//     break byte-equal. We delegate to the stdlib REPLICA, which preserves the
+//     frozen values bit-identically (delegation adds zero float ops).
 //
-//   IMPORT-SAFE
-//     NO `fn main()` and NO top-level call. `import` this file pulls in
-//     pure fn defs only (hexa: top-level calls fire on import; pure `fn`
-//     defs do not). Callers: `phi_native_spatial(state, n, dim, n_bins)`
-//     for byte-equal use, `phi_native(values, n_cells, n_bins)` as a
-//     list-arg convenience wrapper (see § 0 fn list below).
-//
-//   FN SURFACE
-//     phi_bin_values(values: int, n: int, n_bins: int) -> int
-//         step 1 binning. `values` = flat farr handle, length ≥ n.
-//         Returns farr handle of length n with bin indices ∈ [0, n_bins-1].
-//     phi_entropy(counts: int, k: int, total: int) -> float
-//         step 2 helper. H = Σ -p · log2(p + 1e-10) over ALL k bins.
-//     phi_native_mi_pair(a: int, b: int, n: int, n_bins: int) -> float
-//         step 2. MI = max(H(A) + H(B) − H(A,B), 0). Byte-equal to
-//         RFC 036 `phi_mi_pair` builtin.
-//     phi_native_spatial(state: int, n_cells: int, dim: int, n_bins: int)
-//                                                                  -> float
-//         step 3+4. Spec-true signature (matches `c_measure_phi`).
-//         Byte-equal target: phi_spatial builtin (runtime.c 7941-8003).
-//     phi_native(values: array, n_cells: int, n_bins: int) -> float
-//         convenience wrapper from §user-task spec. `values` is a hexa
-//         array literal; len(values) must equal n_cells * dim where
-//         dim = len(values) / n_cells. Copies into a temporary farr +
-//         delegates to phi_native_spatial.
-//
-//   HONEST CARVE-OUTS (spec § 7)
-//     L1  C replica uses (float)-cast on input v in bin_values; hexa farr
-//         is f64-only — no f32 narrowing. LIFE inputs (binary CA / cos θ)
-//         are f32-lossless so byte-equal should hold; boundary-stress
-//         inputs may diverge in bin index at f32-ulp boundaries.
-//     L2  C uses raw pointer S + i*dim slicing in phi_spatial step 3a.
-//         hexa has no farr view → row-copy via temp farr per (i, j) pair
-//         (negligible cost: n_cells² × dim memcpy, ≤ 5K f64 ops at n=16).
-//     L3  n_cells > 20 — out of v1 scope. C replica returns min_part = 0
-//         (greedy path TODO). We mirror that AND emit a panic so callers
-//         do not silently get the placeholder. Greedy path = future cycle.
-//
-//   COMPLIANCE  raw#11 snake_case · raw#9 honest impl · English code.
+//   IMPORT-SAFE  no `fn main()`, no top-level call.
 // ════════════════════════════════════════════════════════════════════════════
 
+import "stdlib/consciousness/phi_spatial.hexa"
+import "stdlib/info/binning.hexa"
 
-// ── step 1 — state binning (spec § 1 / runtime.c:7849-7872) ─────────────────
-// Bin each value into [0, n_bins-1] by min-max normalization.
-// Edge cases (runtime.c verbatim):
-//   - n <= 0 → empty handle (skipped here; we return a length-n zero farr).
-//   - all-identical (range < 1.19209290e-7 = Rust f32::EPSILON) → all bin 0.
-//   - boundary truncation may equal n_bins → clamp to n_bins-1.
-//   - b < 0 (would only occur if v < mn, impossible after min scan) → clamp 0.
-fn phi_bin_values(values: int, n: int, n_bins: int) -> int {
-    let bins = farr_zeros(n)                            // 0-init = all-zero default
-    if n <= 0 { return bins }
-
-    // min/max scan over values (runtime.c:7854-7859).
-    let mut mn = farr_get(values, 0)
-    let mut mx = mn
-    let mut i = 1
-    while i < n {
-        let v = farr_get(values, i)
-        if v < mn { mn = v }
-        if v > mx { mx = v }
-        i = i + 1
-    }
-    let range = mx - mn
-
-    // all-identical guard — Rust f32::EPSILON literal (runtime.c:7863).
-    if range < 1.19209290e-7 { return bins }
-
-    let bw = range / n_bins                             // hexa promotes int→f64
-    let mut j = 0
-    while j < n {
-        // truncation = Rust `as usize` = floor for non-neg (runtime.c:7867).
-        // (values[j] - mn) is always ≥ 0 by min scan, so floor == trunc.
-        let r = (farr_get(values, j) - mn) / bw
-        let mut b = floor(r).to_int()
-        if b > n_bins - 1 { b = n_bins - 1 }            // clamp top (7868)
-        if b < 0 { b = 0 }                              // defensive (7869)
-        let _ = farr_set(bins, j, b)
-        j = j + 1
-    }
-    return bins
-}
-
-
-// ── step 2a — Shannon entropy (spec § 2a / runtime.c:7874-7885) ─────────────
-// H = Σ_i -p_i · log2(p_i + 1e-10) over ALL k bins (zero counts included).
-// total = number of samples; t = total + 1e-8 smoothing avoids /0.
-// log2(x) = log(x) / log(2.0) — hexa has no log2 (spec § 5 row 7).
-fn phi_entropy(counts: int, k: int, total: int) -> float {
-    if total == 0 { return 0.0 }
-    let t = total + 1.0e-8                              // float-promote + smooth
-    let mut s = 0.0
-    let log2_denom = log(2.0)                           // ln(2) once
-    let mut i = 0
-    while i < k {
-        let p = farr_get(counts, i) / t
-        // s += -p * (log(p + 1e-10) / log(2)) — order matches runtime.c:7882.
-        s = s + (0.0 - p) * (log(p + 1.0e-10) / log2_denom)
-        i = i + 1
-    }
-    return s
-}
-
-
-// ── step 2b — pairwise mutual information (spec § 2b / runtime.c:7887-7915) ─
-// MI(A; B) = max(H(A) + H(B) − H(A,B), 0). Counts stored in farr (f64) since
-// hexa farr is the canonical "array of numbers"; runtime.c uses uint32_t.
-// hexa int (i64) is wider, so no overflow concern for nb ≤ 256, n ≤ 1e6.
-// All farr handles are GC-managed in hexa, but we farr_free temps explicitly
-// to mirror the C replica's free() block (7912) and bound peak RSS in tight
-// loops (phi_native_spatial calls this O(n_cells²) times).
-fn phi_native_mi_pair(a: int, b: int, n: int, n_bins: int) -> float {
-    if n <= 0 { return 0.0 }
-    if n_bins <= 0 { return 0.0 }
-
-    let ba = phi_bin_values(a, n, n_bins)               // 7901
-    let bb = phi_bin_values(b, n, n_bins)               // 7902
-    let ca = farr_zeros(n_bins)                         // marginal A counts
-    let cb = farr_zeros(n_bins)                         // marginal B counts
-    let jo = farr_zeros(n_bins * n_bins)                // joint counts
-
-    // Accumulate counts (runtime.c:7903-7907).
-    let mut i = 0
-    while i < n {
-        let ai = farr_get(ba, i).to_int()
-        let bi = farr_get(bb, i).to_int()
-        let _ = farr_set(ca, ai, farr_get(ca, ai) + 1.0)
-        let _ = farr_set(cb, bi, farr_get(cb, bi) + 1.0)
-        let ji = ai * n_bins + bi
-        let _ = farr_set(jo, ji, farr_get(jo, ji) + 1.0)
-        i = i + 1
-    }
-
-    // Entropies (runtime.c:7909-7911).
-    let hA  = phi_entropy(ca, n_bins,           n)
-    let hB  = phi_entropy(cb, n_bins,           n)
-    let hAB = phi_entropy(jo, n_bins * n_bins,  n)
-    let mi = hA + hB - hAB
-
-    // Free temps — mirror runtime.c:7912 free() block, bound peak RSS.
-    let _ = farr_free(ba)
-    let _ = farr_free(bb)
-    let _ = farr_free(ca)
-    let _ = farr_free(cb)
-    let _ = farr_free(jo)
-
-    if mi < 0.0 { return 0.0 }                          // 7914 max(., 0)
-    return mi
-}
-
-
-// ── pow2 helper — integer 2^k via accumulator multiplication ────────────────
-// hexa bit-shift uncertain (spec § 5 row 12) — use multiplication. k ≤ 19 in
-// phi_native_spatial (cells ≤ 20 ⇒ mask width n-1 ≤ 19 ⇒ max_mask = 2^19).
-fn _phi_pow2(k: int) -> int {
-    let mut v = 1
-    let mut i = 0
-    while i < k {
-        v = v * 2
-        i = i + 1
-    }
-    return v
-}
-
-
-// ── bit-test helper — integer arithmetic equivalent of (mask & (1<<b)) ──────
-// Returns 1 if bit b is set in mask, else 0. spec § 5 row 13.
-fn _phi_bit_set(mask: int, b: int) -> int {
-    let pw = _phi_pow2(b)
-    if (mask / pw) % 2 == 1 { return 1 }
-    return 0
-}
-
-
-// ── step 3+4 — spatial Φ pipeline (spec § 3-4 / runtime.c:7941-8003) ────────
-// Inputs:
-//   state : flat farr handle, length ≥ n_cells * dim (row-major, cell i row =
-//           state[i*dim .. i*dim+dim]).
-//   n_cells: number of IIT cells (≤ 20 for exact bipartition; > 20 = panic).
-//   dim   : per-cell state vector length.
-//   n_bins: histogram bin count for MI estimator.
-// Output:
-//   spatial Φ = max(total_MI - min_partition_MI, 0) / max(n_cells - 1, 1).
-//
-// Byte-equal target: hexa_phi_spatial builtin (runtime.c:7941-8003).
+// ── spatial Φ — delegates to the stdlib pure-hexa replica (frozen reference) ─
 fn phi_native_spatial(state: int, n_cells: int, dim: int, n_bins: int) -> float {
-    // Degenerate guards (runtime.c:7949-7951).
-    if n_cells <= 0 { return 0.0 }
-    if dim <= 0 { return 0.0 }
-    if n_bins <= 0 { return 0.0 }
-    if n_cells <= 1 { return 0.0 }
-
-    // L3 carve-out — exact path only for n_cells ≤ 20 (spec § L3 / 7995).
-    // C replica returns min_part = 0 silently; we panic so callers cannot
-    // mistake a placeholder for a real Φ. Greedy path = future cycle.
-    if n_cells > 20 {
-        panic("phi_native: n_cells > 20 not yet supported (greedy path TODO; spec § L3)")
-    }
-
-    // ── step 3a + 3b — pairwise MI matrix + total (upper triangle sum) ─────
-    // runtime.c:7953-7963. C uses S + i*dim pointer slice; hexa has no farr
-    // view (spec § L2) so we row-copy into temp farrs per (i, j) pair.
-    let mi = farr_zeros(n_cells * n_cells)
-    let mut total = 0.0
-    let mut i = 0
-    while i < n_cells {
-        let mut j = i + 1
-        while j < n_cells {
-            let row_i = farr_zeros(dim)
-            let row_j = farr_zeros(dim)
-            let mut d = 0
-            while d < dim {
-                let _ = farr_set(row_i, d, farr_get(state, i * dim + d))
-                let _ = farr_set(row_j, d, farr_get(state, j * dim + d))
-                d = d + 1
-            }
-            let v = phi_native_mi_pair(row_i, row_j, dim, n_bins)
-            let _ = farr_set(mi, i * n_cells + j, v)
-            let _ = farr_set(mi, j * n_cells + i, v)    // symmetric
-            total = total + v
-            let _ = farr_free(row_i)
-            let _ = farr_free(row_j)
-            j = j + 1
-        }
-        i = i + 1
-    }
-
-    // ── step 3c — min-information partition (runtime.c:7965-7996) ──────────
-    // cell 0 pinned to A; bit b of mask ⇒ cell b+1 ∈ A iff set.
-    let mut min_part = 0.0
-    if n_cells == 2 {
-        min_part = farr_get(mi, 1)                      // mi[0*nc+1] = mi[1]
-    } else {
-        // n_cells ∈ [3, 20] — exhaustive over 2^(n-1) - 1 non-trivial masks.
-        min_part = 1.0e308                              // +INF proxy (7969)
-        let max_mask = _phi_pow2(n_cells - 1)
-        let mut mask = 1
-        while mask < max_mask {
-            // Skip trivial (B empty) — i.e. all (n-1) lower bits are set.
-            // any_b = 1 if at least one bit is UNSET (runtime.c:7973-7975).
-            let mut any_b = 0
-            let mut b = 0
-            while b < n_cells - 1 {
-                if _phi_bit_set(mask, b) == 0 { any_b = 1 }
-                b = b + 1
-            }
-            if any_b == 1 {
-                // cross-partition MI sum: A = {0} ∪ {b+1 : bit b set}; B = rest.
-                let mut cross = 0.0
-                let mut ia = 0
-                while ia < n_cells {
-                    let mut inA = 0
-                    if ia == 0 {
-                        inA = 1
-                    } else {
-                        if _phi_bit_set(mask, ia - 1) == 1 { inA = 1 }
-                    }
-                    if inA == 1 {
-                        let mut jb = 0
-                        while jb < n_cells {
-                            let mut jInA = 0
-                            if jb == 0 {
-                                jInA = 1
-                            } else {
-                                if _phi_bit_set(mask, jb - 1) == 1 { jInA = 1 }
-                            }
-                            // jb ∈ B only (jInA == 0) — runtime.c:7986.
-                            if jInA == 0 {
-                                cross = cross + farr_get(mi, ia * n_cells + jb)
-                            }
-                            jb = jb + 1
-                        }
-                    }
-                    ia = ia + 1
-                }
-                if cross < min_part { min_part = cross }
-            }
-            mask = mask + 1
-        }
-    }
-
-    let _ = farr_free(mi)
-
-    // ── step 4 — scalar Φ (runtime.c:7998-8003) ────────────────────────────
-    let n = n_cells                                     // promote to float in /
-    let mut denom = 1.0
-    if (n - 1.0) > 1.0 { denom = n - 1.0 }              // max(n-1, 1)
-    let mut sp = total - min_part
-    if sp < 0.0 { sp = 0.0 }                            // 8002 clamp ≥ 0
-    return sp / denom
+    return phi_spatial_native(state, n_cells, dim, n_bins)
 }
 
+// ── step-1 binning — kept for diag_l1_binning.hexa (external caller) ────────
+fn phi_bin_values(values: int, n: int, n_bins: int) -> int {
+    return bin_values_minmax(values, n, n_bins)
+}
 
-// ── phi_native — list-arg convenience wrapper (user-task signature) ─────────
-// Treats `values` as a flat row-major n_cells × dim array where
-// dim = len(values) / n_cells. Copies into a temp farr + delegates to
-// phi_native_spatial. NOT the byte-equal entry point — callers wanting
-// byte-equal vs phi_spatial use phi_native_spatial(farr, n, dim, n_bins).
+// ── phi_native — array-arg convenience wrapper (flat row-major → farr) ──────
 fn phi_native(values: array, n_cells: int, n_bins: int) -> float {
     let total_len = len(values)
     if n_cells <= 0 { return 0.0 }
@@ -318,15 +44,13 @@ fn phi_native(values: array, n_cells: int, n_bins: int) -> float {
         panic("phi_native: len(values) must be divisible by n_cells")
     }
     let dim = total_len / n_cells
-
-    // Copy array → farr (hexa has no farr-from-array builtin yet, spec § 5).
     let st = farr_zeros(total_len)
     let mut i = 0
     while i < total_len {
         let _ = farr_set(st, i, values[i])
         i = i + 1
     }
-    let phi = phi_native_spatial(st, n_cells, dim, n_bins)
+    let phi = phi_spatial_native(st, n_cells, dim, n_bins)
     let _ = farr_free(st)
     return phi
 }
