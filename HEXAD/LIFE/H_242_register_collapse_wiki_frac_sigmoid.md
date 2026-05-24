@@ -13,7 +13,7 @@ llm: none
 pre_register_frozen: true
 frozen_at: 2026-05-24
 since: 2026-05-24 (new)
-revision: v2 amend 2026-05-24 (M5→M3 per PR #340 corpus_s101 실측)
+revision: v3 amend 2026-05-25 (wiki_frac monocular → M3 TTR re-axis per PURE v3 fire 실측) · v2 amend 2026-05-24 (M5→M3 per PR #340 corpus_s101 실측)
 sister: H_204 + H_227 + H_223
 ---
 
@@ -299,3 +299,116 @@ PR #303 cross-link 로 보존 (raw#82 post-hoc retraction 금지 정합).
 - **M3-축 sigmoid 추가 frozen 아님**: H242.6 은 Pearson |r| coupling 만
   pre-register — M3 위 sigmoid fit (별도 phase-transition) 은 본 amend 의
   대상 아님. 별도 cycle 에서 측정-anchor 도착 시 신규 frozen H 가능.
+
+## §A2 v3 amend (2026-05-25) — H242.1 FALSIFIED, wiki_frac monocular → M3 TTR re-axis
+
+**요지 (TL;DR)**: PURE v3 fire (corpus_v1 = 100% anima-diverse, wiki_frac=**0**,
+M3 TTR=**0.34**) 가 register_hits=**0/20** 을 실측 — H242.1 FULL-COLLAPSE 의
+20/20 예측 (≈100% collapse at wiki_frac=0) 을 **직접 falsify**. wiki_frac axis
+의 monocular 가정 (anima-OWN monopoly → register collapse, dilution-only-cure)
+이 깨졌고, **M3 TOKEN_DIVERSITY (TTR)** 가 register-sink 차단의 dominant axis
+로 확정. wiki_frac 은 derivative correlate — 고-TTR 한 source 일 뿐 axis 자체
+가 아니다. sigmoid family σ 자체는 보존되나 input axis 가 wiki_frac → M3 TTR
+로 re-pin.
+
+### finding (PURE v3 fire 실측)
+
+| corpus | wiki_frac | M3 TTR | register_hits | 출처 |
+|--------|-----------|--------|---------------|------|
+| **corpus_v1** (anima-diverse only) | **0.0** | **0.34** | **0/20** | PURE.log 2026-05-25 v3 closure |
+| corpus_v2 (anima 0.8 + kowiki 0.2) | 0.2 | 0.51 | 0 (확장 evidence) | commit 2c6ae63af |
+| E3v3 (wiki 100%) | 1.0 | (high, wiki-native) | 0/20 | PR #301 lineage / PURE.log 2026-05-24 |
+| E2 (wiki 50%) | 0.5 | (mid) | 4/20 | PR #301 |
+| corpus_s101 baseline | (n/a · 합성) | 0.03 | 4 (proxy E2 정합) | PR #340 |
+
+### prediction status
+
+- **H242.1 FULL-COLLAPSE FALSIFIED** — wiki_frac=0.0 endpoint 가 anti-collapse
+  일 수 있음 (corpus M3 TTR 가 enough high 면). 예측 ≈100% (≥16/20) vs 실측
+  **0/20** — direction inversion 정도가 아니라 endpoint 가 정반대로 측정.
+  H242.1 의 base assumption "wiki_frac=0 → anima-OWN monopoly → necessary
+  collapse" 가 자동으로 따르지 않음 — corpus M3 TTR 가 진짜 anchor.
+- **H242.2 ANTI-COLLAPSE 보존** — wiki_frac=1.0 → ≤2/20 endpoint 는 E3v3 0/20
+  로 카운터-corroborate 됨 (right endpoint 그대로).
+- **H242.3 CRITICAL-FC localized 무의미화** — 양쪽 endpoint 모두 ≈0 인 경우
+  midpoint 정의 자체가 무의미 (sigmoid 가 flat-near-zero). wiki_frac 위
+  phase-transition 가설이 무너짐.
+- **H242.5 MONOTONE 보존** — TTR 축에서는 monotone (0.03 → 4 hits · 0.34/0.51
+  → 0 hits) 의 일관 방향 유지.
+- **H242.6 M3-DOMINANT (v2 amend) PROMOTED** — corpus M3 TTR 가 dominant
+  predictor 라는 v2 §A1 명제가 v3 실측으로 *primary frozen claim* 으로 승격.
+  (Pearson |r| 측정은 5-point sweep 필요 — 현 3-point 만으로도 TTR↑ → hits↓
+  의 monotone direction 강한 evidence)
+
+### corroboration — corpus_v2 (anima 0.8 + kowiki 0.2)
+
+- commit `2c6ae63af` (`feat(PURE): corpus_v2 build — anima v1 (0.8) + kowiki
+  sample (0.2) — M3 TTR 0.34→0.51`) — TTR 가 v1 대비 +50% 상승
+- 같은 register-free 결과 + TTR 상승의 monotone direction 확인
+- wiki dilution 이 0.2 추가됐어도 register collapse 가 추가로 *생기지* 않음
+  — 즉 wiki_frac 의 절대값 자체는 axis 가 아니라 TTR 매개변수의 derivative
+
+### revised axis (v3 frozen)
+
+| axis | role | evidence |
+|------|------|----------|
+| **M3 TTR** | **dominant lever** | v1 TTR 0.34 → 0 hits · v2 TTR 0.51 → 0 hits · corpus_s101 TTR 0.03 → 4 hits (E2 proxy) — TTR↑ → hits↓ monotone over 3 anchored points |
+| wiki_frac | derivative correlate (NOT lever) | TTR-controlled 시 wiki_frac 영향 미관측 (wiki_frac=0 + TTR 0.34 → 0 hits ≡ wiki_frac=1.0 + TTR high → 0 hits). 역사적 lever 가정은 TTR 의 *간접* manifestation 이었음 |
+
+### sigmoid family verdict
+
+- σ functional form 자체는 보존 (monotone-saturating phase-transition template
+  는 H_204 / H_227 sister 와 architectural 연결 유지)
+- **axis 만 re-pin: wiki_frac → M3 TTR**
+- frozen wiki_frac sigmoid (`f_c ∈ [0.5, 0.7]`) 는 **architecturally 무효화**
+  — endpoint 양쪽이 0 인 wiki_frac axis 위에서 midpoint 의 의미가 없음
+- 신규 frozen target: `register_collapse_rate(M3_TTR) = σ(α·(τ_c − M3_TTR))`
+  (decreasing in TTR), 임계 `τ_c ∈ [0.05, 0.30]` (v1 0.34 → 0 hits · s101 0.03
+  → 4 hits 의 사이 interval, fresh sweep 으로 localize 대상)
+
+### next test (cost-bearing GPU, 신규 fire)
+
+5-point M3 TTR sweep `{0.05, 0.15, 0.30, 0.50, 0.70}` fresh fire — corpus 빌더
+가 target TTR 을 직접 dial (anima register slot interleave 비율로 제어). 각
+point 에서 register_hits/20 측정 → sigmoid `σ(α(τ_c − M3_TTR))` 적합 + linear
+baseline AIC compare. raw#10 deterministic 보존 (seed/lr/steps 고정), wiki_frac
+은 free covariate (TTR 제어 후 무영향 expect).
+
+### 보존 (raw#82 정합)
+
+- **frozen wiki_frac sigmoid 그대로 ledger 에 보존** — 본 §A2 는 post-hoc
+  retraction 이 아니라 새 axis 위의 fresh frozen claim. wiki_frac 결과는 raw#82
+  per ledger 에 그대로 채점 결과로 남음 (H242.1 FALSIFIED · H242.2 PASS).
+- v2 §A1 (M3 dominant) 의 M3-축 frozen 은 본 §A2 에서 primary 로 승격된 것이지
+  수정된 것이 아님.
+
+### source / 출처
+
+- `PURE.log.md` "2026-05-25" 섹션 (v3 fire closure verdict 4-criterion 표 + 핵심
+  과학적 결과 corpus 축 한계 실측 확정)
+- commit `a78e367fd` (Phase D v3 실측 closure verdict + 회수/HF/teardown saga)
+- commit `2c6ae63af` (corpus_v2 build — anima v1 0.8 + kowiki 0.2 — M3 TTR
+  0.34→0.51)
+- HF: `dancinlab/anima-pure-phased-v3-2026-05-24` PRIVATE (closure FAIL,
+  a_hf_autonomous tier-gate)
+
+### Honest C3 (v3 amend-specific)
+
+- **endpoint-only evidence**: 3-point sweep (TTR 0.03 / 0.34 / 0.51) 만으로
+  TTR-축 sigmoid 의 α / τ_c 정밀 localize 불가 — 본 §A2 는 axis re-pin (qualitative
+  direction) 까지만 frozen, quantitative fit 은 next 5-point fire 후 채점.
+- **TTR-축 5-point 미발사**: 신규 frozen `τ_c ∈ [0.05, 0.30]` 도 *pre-registration
+  betting* (L1 와 같은 underdetermined-frozen 형태). raw#82 per fresh fire 후
+  pin grade.
+- **wiki_frac vs TTR confound 미분리 (TTR 만 dial 한 controlled sweep 부재)**: v3
+  fire 가 corpus_v1 (anima-diverse, wiki=0) 와 corpus_v2 (anima+kowiki, wiki=0.2)
+  를 비교했으나, TTR 만 변주하고 wiki_frac 고정한 entries 미보유 — next sweep 의
+  설계 prerequisite (corpus builder 가 wiki_frac fixed × TTR variable 둘 다
+  지원해야 함).
+- **sister H_204/H_227 sigmoid 모형 unaffected**: 본 §A2 는 H_242 의 input axis
+  만 갱신 — sister H 의 substrate-축 (closure-strength τ_c · freeze fraction f)
+  은 본 amend 외 별도 cycle.
+- **register-sink mechanism reframe**: "anima-OWN corpus monopoly → register
+  collapse" 의 corpus-mass 가정이 falsified — 진짜 mechanism = "low TTR
+  (repetition) → memorize → register-sink". corpus mass / monopoly 가 아니라
+  *diversity* 가 핵심 invariant.

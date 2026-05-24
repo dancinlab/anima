@@ -72,3 +72,40 @@
 - cost: ~$3 (Phase D v1 ~$1.5 + v2b ~$1.5 + rogue · doc/agent $0)
 - fire LOST: 2 (v1 stale-branch · v2b 사용자 cleanup)
 - final tier: synthetic framework 완성 + ckpt path deferred
+
+---
+
+## 2026-05-25 — Phase D v3 실측 closure (V3 saga 첫 진짜 ckpt)
+
+### 회수 saga + 진짜 학습
+- v1/v2b/v3 1차 모두 LOST 의 진짜 원인 = dispatcher 3-bug (train_launch full argv 미생성 · 모듈 1개 upload 누락 · result path 오류) → 발사는 됐으나 학습 0회
+- warm pod 재활용 + 정확 argv 직접 hexa cloud nohup + 누락모듈 scp → **사상 첫 진짜 학습** (Qwen2.5-1.5B + V3 mitosis 2.99B params)
+- dispatcher durable fix: PR #423 MERGED (다음 fire 무인 정상)
+- 학습: 5000 step · CE 11.18 → **1.62** · pool 2→16 (14 splits) · phi 0.66 · ~4.4h wall
+
+### closure verdict (정식 closure_auto_judge verbatim)
+- criterion 1 multilingual: en/ko/zh/ja=WEAK · ru=PARTIAL → **1/5 ≥ PARTIAL**, threshold 4 → **FAIL**
+- criterion 2 register_collapse: n_anima_register_hits_total = **0** (<4) → **PASS**
+- criterion 3 motivation_8factor: missing (embed 미실행, 수동 재발사 부작용) → FAIL
+- criterion 4 dream_stage Φ-envelope: missing (embed 미실행) → FAIL
+- **AGGREGATE: 1/4 PASS · closure FAIL**
+
+### 핵심 과학적 결과 — corpus 축 한계 실측 확정
+- corpus_v1 (100% anima-diverse, M3 TTR 0.34) → **register collapse 진짜 차단** (0 hits, gen 20/20)
+- multilingual coherence 약함 (4 WEAK + 1 PARTIAL) — E3(wiki=1.0)와 동일 패턴, dilution 매체와 무관
+- → **corpus 축만으론 closure 불가** 재확인 (PURE.md 결론 ckpt 실측 검증)
+- next path: AXIS_MAP fallback A 커리큘럼 (#422 spec, F-CURRICULA-1)
+
+### 회수 + HF + teardown
+- best ckpt (6.0GB, sha `b1662935c64ffdca` local==pod) + result.json + train3.log + kosmos_anchors.tgz → state/pure_phase_d_v3_result_2026_05_24/
+- HF: `dancinlab/anima-pure-phased-v3-2026-05-24` **PRIVATE** (a_hf_autonomous tier-gate: closure FAIL → PRIVATE · 첫 시도 --private 누락 → 즉시 update_repo_settings 로 전환)
+- pod 8exa039yx8gqjr destroy 완료 ($1.49/h burn 중단)
+
+### 세션 후반 directive land
+- `a_kosmos` (kosmos canonical for anima emit/anchor) · siblings 에 kosmos·hexa-codex 추가
+- `a_hf_autonomous` (HF upload 자동 · tier-gated visibility, PUBLIC = closure PASS · PRIVATE = FAIL)
+- kosmos 단일 SSOT 이관 (PR #3 + anima cleanup) — spec + impl + 11 knuth anchor 전부 dancinlab/kosmos
+- sidecar INBOX: worktree/branch 하네스 4-gap handoff (anima 세션 발견)
+
+### LIFE 흡수 (v3 실측 → H_242)
+- [x] H_242 v3 실측 amend — wiki_frac=0 (TTR 0.34) 0 hits = H242.1 FULL-COLLAPSE falsify · sigmoid axis wiki_frac → M3 TTR re-pin (§A2)
