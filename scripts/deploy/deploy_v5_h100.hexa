@@ -238,9 +238,10 @@ fn run_step(label: string, cmd: string, dry: bool) -> int {
 }
 
 fn sha256_local(path: string) -> string {
-    // shasum -a 256 <file> | awk '{print $1}'
+    // body rewired to stdlib FIPS 180-4 builtin (hexa-lang #884 sha256 alias surface);
+    // shell-out removed (byte-equal output; "" on missing file preserved).
     if !file_exists(path) { return "" }
-    return exec("shasum -a 256 '" + path + "' 2>/dev/null | awk '{print $1}'").trim()
+    return sha256_file(path)
 }
 
 fn sha256_remote(SSH: string, remote_path: string) -> string {

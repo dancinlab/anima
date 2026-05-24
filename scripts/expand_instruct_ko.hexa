@@ -201,13 +201,15 @@ fn eik_has_excessive_ngram_repeat(text: string) -> bool {
     return false
 }
 
-// SHA-256 of arbitrary string via temp file (handles quotes/Korean/newlines).
-//   tmp_path = tmp 파일 경로 (호출자가 충돌 회피를 위해 prefix 가능).
+// SHA-256 of arbitrary string. Body rewired to the stdlib FIPS 180-4 builtin
+// (hexa-lang #884 sha256 alias surface): sha256(text) hashes the exact UTF-8
+// bytes of `text` — byte-equal to the prior write-to-tmp-file then shasum-the-
+// file path, and it handles quotes/Korean/newlines natively with no shell.
+//   tmp_path is retained in the signature for call-site compatibility but is no
+//   longer used (no /tmp scratch needed).
 fn eik_sha256(text: string, tmp_path: string) -> string {
-    write_file(tmp_path, text)
-    let cmd = "shasum -a 256 " + tmp_path + " 2>/dev/null | awk '{print $1}'"
-    let out = exec(cmd)
-    return out.trim()
+    let _ = tmp_path
+    return sha256(text)
 }
 
 // JSON 문자열 escape (큰따옴표 + 백슬래시 + 줄바꿈만 처리; ASCII control 무시).
