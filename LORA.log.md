@@ -2,6 +2,20 @@
 
 > `LORA.md` 의 변경/작업 체크리스트. 최신이 위.
 
+## 2026-05-24 (cycle 20 — M4 Stage 1 PROBE axis-2 🔥 첫 진짜 axis evidence)
+
+- [x] M4 Stage 1 PROBE 발사 (cycle 20-1, 3-pod A100-SXM4-80GB, $0.30)
+- [x] **3/3 결과 도착**: register=14.4564 / CE=14.9066 / none=16.2428
+- [x] **3 falsifier 모두 SUPPORTED** (Δ ≥0.1, register vs none 1.79 nats 최강)
+- [x] 🔥 첫 진짜 axis evidence — post-#385 wiring fix 효과 입증
+- [x] cluster Z (14.4564) byte-equal 원인 = anima_register_ce objective 확정
+- [x] 새 cluster (16.24) for none objective 첫 관측
+- [x] M4_STAGE1_AXIS2_HEAD_G_VERDICT_2026_05_24.md doc 흡수
+- [ ] axis-1/3/4/5 Stage 1 PROBE 후속 발사 (사용자 결정, 각 $0.30)
+- [ ] axis-2 Stage 2 FULL (CE × 5000-step H100, $8 + hexa cloud nohup, M3 Qwen-parity)
+- [x] pool-route hook v0.5.8 fix (cycle 19-3, threshold _cpu_cores() * 50)
+- [x] G8_HEXA_CLOUD_MIGRATION spec doc (cycle 21-1, main agent 직접 작성, 미커밋 보류 worktree)
+
 ## 2026-05-24 (cycle 17 cleanup — pod kill + swap decision)
 
 - [x] pod cleanup 8 kill — AXIS 7-pod re-fire (#383 4/7 결과 도착 후 3 hung C/C2/E + 4 done A/B/D/F 모두 cleanup) + 옛 p21h-qwen 잔재 (b23g2abvbphz33). R8a'' (6gqf9nsdquz8ug) 1 pod만 keep
