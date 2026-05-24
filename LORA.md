@@ -15,7 +15,7 @@
 - [ ] M2 — mini production 배포 + 30-day register-leak monitor (continuous_total ≤ 50 30d stable)
 - [ ] M3 — V3 ConsciousDecoderV3 (5000-step, Qwen warm-init, noise=0 + n_kv=2) final_CE 측정 + Qwen baseline 대비 parity (Δfinal_CE ≤ 0.1 nats)
 - [ ] M4 — AXIS_MAP-FAN 7-axis env-var wiring fix + 진짜 ablation 측정 (각 axis 별 Δfinal_CE 정량)
-- [ ] M5 — PREFIRE_WIRING_AUDIT_CHECKLIST.md 도입 + 모든 향후 substrate fire 가 audit 통과
+- [x] M5 — PREFIRE_WIRING_AUDIT_CHECKLIST.md 도입 + 모든 향후 substrate fire 가 audit 통과
 
 ## production
 
