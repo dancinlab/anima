@@ -2,6 +2,14 @@
 
 Append-only history sister of `MODERNIZE.md`. Each entry `## <ISO timestamp> — <header>` (newest on top); body = `- [x]`/`- [ ]` checkbox tasks.
 
+## 2026-05-25T03:00:00Z — serving/ web batch (3 files, explicit-main removal, build-verified)
+
+- [x] `serving/avatar_render.hexa` · `serving/sparse_dispatcher.hexa` · `serving/sparse_dispatcher_live.hexa` — explicit `main()` 제거 → 전부 **build PASS** (avatar_render run exit 0)
+- [!] **`.length` 클래스 = 2종 false-positive 확정**: (1) JS/HTML 문자열 리터럴 (`verts.length` 등 생성 JS), (2) **struct field** `req.length` (메서드 아닌 필드 접근). 진짜 deprecated `.length()` 메서드(→`.len()`)는 드묾(alm_bf16 만 확인). → census 의 `.length` 6 은 대부분 false-positive, 실 break 는 explicit-main
+- [!] `fabs`: sparse_dispatcher 는 **자체 `fn fabs` 정의** 보유 (mangle 일관 = 정상). fabs census 189 중 다수가 self-def (정상) — 실 오용은 def 없는 호출만 (#429 6건 처리)
+- [x] 누적 modernize: avatar_webtoon(#430) + avatar_render + sparse_dispatcher×2 = serving/ web 4 파일 build-pass
+- [ ] M5 explicit-main 잔여 (~715) — per-file build-verify, multi-session
+
 ## 2026-05-25T02:45:00Z — M1 census + 첫 파일 modernize (avatar_webtoon) + .length false-positive 발견
 
 - [x] M1 active-dir census (archive/legacy/state 제외): explicit-main **719** · fabs **188** · .length **6** · nan/inf **1**
