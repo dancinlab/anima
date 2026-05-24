@@ -44,6 +44,11 @@
 // Section 0. Constants
 // ════════════════════════════════════════════════════════════════════
 
+// 2026-05-25 phase 5 M1 sweep: vec_norm delegated to stdlib/linalg/norm
+// (hexa-lang #885). Body now wraps `l2_norm(a, len(a))` — byte-equal for
+// the simple sum-of-squares + libm sqrt path.
+import "stdlib/linalg/norm.hexa"
+
 let EMBED_DIM = 384
 let FF_DIM = 1536
 let RVQ_STAGES = 8
@@ -132,15 +137,8 @@ fn make_ramp(n: int) -> array {
 }
 
 fn vec_norm(a: array) -> float {
-    // L2 norm: sqrt(sum(a_i^2))
-    let mut sum = 0.0
-    let mut i = 0
-    let n = len(a)
-    while i < n {
-        sum = sum + a[i] * a[i]
-        i = i + 1
-    }
-    sqrt(sum)
+    // L2 norm via stdlib/linalg/norm — was inline sqrt(Σ a_i²).
+    return l2_norm(a, len(a))
 }
 
 fn vec_add(a: array, b: array) -> array {
