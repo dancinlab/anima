@@ -330,7 +330,7 @@ fn fa_an_1() -> bool {
     let mut s = 0.0
     let mut i = 0
     while i < len(p) { s = s + p[i]; i = i + 1 }
-    let dev = fabs(s - 1.0)
+    let dev = abs(s - 1.0)
     println("  [F-ANALOG-1] mis_sum=" + to_string(s) + " dev=" + to_string(dev))
     return dev < 0.001
 }

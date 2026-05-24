@@ -100,7 +100,7 @@ fn main() {
 
     let mut never_silent = 0
     for i in 1..output_norms.len() {
-        if fabs(output_norms[i] - output_norms[i - 1]) > 0.001 {
+        if abs(output_norms[i] - output_norms[i - 1]) > 0.001 {
             never_silent = never_silent + 1
         }
     }

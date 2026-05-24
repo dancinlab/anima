@@ -345,7 +345,7 @@ fn fc_cm_3() -> bool {
     let p2 = dynamic_power(c, 2.0 * v, f)
     // doubling V → 4× power
     let ratio = p2 / p1
-    let dev = fabs(ratio - 4.0)
+    let dev = abs(ratio - 4.0)
     println("  [F-CMOS-3] P_2V/P_V=" + to_string(ratio) + " expected=4 dev=" + to_string(dev))
     return dev < 0.01
 }
