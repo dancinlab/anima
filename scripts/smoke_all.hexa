@@ -177,7 +177,7 @@ fn summarize(work: string, cats: [string], log: string, total: int, elapsed: int
     let result = work + "/results.tsv"
     println("")
     println("========== SMOKE SUMMARY ==========")
-    println("elapsed: " + string(elapsed) + "s  total_tasks: " + string(total))
+    println("elapsed: " + to_string(elapsed) + "s  total_tasks: " + to_string(total))
 
     let mut i = 0
     while i < len(cats) {
@@ -257,7 +257,7 @@ fn main() {
     let tasks = build_tasks(work, cats)
     let total_s = exec("wc -l < " + sh_escape(tasks) + " | tr -d ' '").trim()
     let total = int(total_s)
-    println("[smoke] total tasks: " + string(total))
+    println("[smoke] total tasks: " + to_string(total))
     if total == 0 {
         println("[smoke] no tasks — exit")
         return
@@ -272,4 +272,3 @@ fn main() {
     summarize(work, cats, log, total, t1 - t0)
 }
 
-main()
