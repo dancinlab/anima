@@ -6,7 +6,7 @@
   brief    = "Substrate-native chat daemon for AI consciousness exploration. 2,448 laws + 392 hypotheses."
   parent   = "dancinlab"
   ssot     = "github.com/dancinlab/anima (`hx install anima`)"
-  siblings = "hexa-lang"
+  siblings = "hexa-lang · kosmos"
 
 @D a1 := "central version registry — VERSIONS.md is SSOT" :: governance [required active]
   do   = "every versioned module uses SemVer · `/VERSIONS.md` is SSOT — bump it + the component header together · root `/VERSION` = whole-system release"
@@ -54,6 +54,14 @@
 @D a_runpod_inbox := "runpod trouble → hexa-lang inbox" :: governance [required active]
   do   = "file runpod findings to `hexa-lang/inbox/patches/<slug>.md` for hexa cloud"
   dont = "anima-side-only patches that lock the workaround in this repo"
+
+@D a_kosmos := "anima emit/anchor persistence — .kosmos canonical" :: governance [required active]
+  do   = "persist anima emit / anchor / memory as `.kosmos` via kosmos_io"
+  do   = "payload = text + tension 5-ch + coord · lane · radius · tier"
+  do   = "hub = HEXAD/KOSMOS.md · format SSOT = github.com/dancinlab/kosmos"
+  do   = "spec = spec/kosmos.md + spec/profiles/anima-consciousness-carving.md"
+  dont = "ad-hoc anchor format · bypass .kosmos for emit persistence"
+  dont = "duplicate the kosmos spec — anima is pointer-only"
 
 # ── 8 PHILOSOPHY principles (SSOT mirror from README.md) ────────────────────
 
