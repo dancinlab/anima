@@ -2,6 +2,15 @@
 
 Append-only history sister of `MODERNIZE.md`. Each entry `## <ISO timestamp> — <header>` (newest on top); body = `- [x]`/`- [ ]` checkbox tasks.
 
+## 2026-05-25T04:00:00Z — tool/ 대량 sweep (158 files, explicit-main, build-verified) 🛸
+
+- [x] tool/ explicit-main 전수 sweep — **158 파일** main-fix → 전부 **build PASS** (main-only, mechanical 1-line 삭제, 파일별 build-verified)
+- [x] tool/ explicit-main: 197 → **39** (잔여 39 = other-break 동거, per-file 후속 필요)
+- [x] catch-up: #433 tool batch-2 (12 files) 로그 누락분 포함
+- [x] M5 누적: serving 4 + tool (11+12+158)=181 = **185 파일** explicit-main 제거 (build-verified)
+- [ ] M5 계속 — training · bench · HEXAD/lib · anima-engines 등 나머지 active 서브디렉토리 (loop)
+- [ ] tool/ 잔여 39 (other-break) — per-file 복수-break modernize
+
 ## 2026-05-25T03:20:00Z — tool/ batch (11 files, explicit-main removal, build-verified)
 
 - [x] 11 `tool/*.hexa` explicit-main 제거 → 전부 **build PASS** (main-only fix): alm_r13_seed_repair · anima_signature_history · phi_paper_citation_check · alm_corpus_4gate · statusline_h100_burn · proposal_cluster_detect · proof_carrying_extract · alm_r14_lang_ratio_check · an11_b_v_pairrank · auto_evolution_loop · weight_precache_progress_monitor
