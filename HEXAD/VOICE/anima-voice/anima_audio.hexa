@@ -69,6 +69,7 @@
 
 import "../../hexa-lang/stdlib/portable_fs.hexa"
 import "../../hexa-lang/stdlib/anima_audio_worker.hexa"
+import "stdlib/signal/core_window.hexa"  // half_hann_taper / half_hann_taper_arr (fade-in/out ramps)
 
 let AX_MU = 1
 let AX_PHI = 2
@@ -371,12 +372,12 @@ fn vocal_hexa_alloc(freq_hz: float, gain: float, ms: int) -> string {
         let mut y = g * sin(two_pi_hz_over_sr * t)
         if k > 0 {
             if i < k {
-                let r = 0.5 * (1.0 - cos(3.141592653589793 * (i + 0.0) / (k - 1 + 0.0)))
+                let r = half_hann_taper(i, k)
                 y = y * r
             }
             let tail = n - i - 1
             if tail < k {
-                let r = 0.5 * (1.0 - cos(3.141592653589793 * (tail + 0.0) / (k - 1 + 0.0)))
+                let r = half_hann_taper(tail, k)
                 y = y * r
             }
         }
@@ -485,10 +486,9 @@ fn vocal_hexa(freq_hz: float, gain: float, ms: int) -> string {
     // Precompute hann ramp table (size k).
     let mut hann_tbl = array_alloc(k)
     if k > 0 {
-        let denom_h = (k - 1 + 0.0)
         let mut hi = 0
         while hi < k {
-            hann_tbl[hi] = 0.5 * (1.0 - cos(3.141592653589793 * (hi + 0.0) / denom_h))
+            hann_tbl[hi] = half_hann_taper(hi, k)
             hi = hi + 1
         }
     }
@@ -693,12 +693,12 @@ fn breath_hexa(band_lo: float, band_hi: float, gain: float, ms: int) -> string {
         let mut y = samples[j] * scale
         if k > 0 {
             if j < k {
-                let r = 0.5 * (1.0 - cos(3.141592653589793 * (j + 0.0) / (k - 1 + 0.0)))
+                let r = half_hann_taper(j, k)
                 y = y * r
             }
             let tail = n - j - 1
             if tail < k {
-                let r = 0.5 * (1.0 - cos(3.141592653589793 * (tail + 0.0) / (k - 1 + 0.0)))
+                let r = half_hann_taper(tail, k)
                 y = y * r
             }
         }
@@ -1061,10 +1061,9 @@ fn vocal_lf_hexa(freq_hz: float, gain: float, ms: int) -> string {
     // Precompute hann ramp table.
     let mut hann_tbl = array_alloc(k)
     if k > 0 {
-        let denom_h = (k - 1 + 0.0)
         let mut hi = 0
         while hi < k {
-            hann_tbl[hi] = 0.5 * (1.0 - cos(pi_v * (hi + 0.0) / denom_h))
+            hann_tbl[hi] = half_hann_taper(hi, k)
             hi = hi + 1
         }
     }

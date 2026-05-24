@@ -492,6 +492,17 @@ fn stage5_probe() -> bool {
 
     // Hann crossfade over CROSSFADE_SAMP=144 samples at boundary
     // Hann window: w(n) = 0.5 * (1 - cos(2*pi*n / (N-1)))
+    //
+    // INTENTIONAL: NOT rewired to stdlib/signal/core_window::hann_window —
+    // this file's header (see Section header) constrains it to be
+    // "Self-contained — NO cross-file imports (hexa silent-exit bug on
+    // 3+ modules)". Adding the stdlib import would risk regressing the
+    // dry-run probe to a silent exit. The shape here (symmetric Hann,
+    // libm cos) is byte-identical to stdlib's hann_window — see
+    // dancinlab/hexa-lang#864 for the canonical SSOT. If a future hexa-lang
+    // toolchain release lifts the 3+-module import bug, this site
+    // (and the `make_hann_window` site in hxcuda_istft_bridge — though
+    // that's a single import so safe) becomes rewirable.
     let fade_len = CROSSFADE_SAMP
     let mut faded = []
     i = 0
