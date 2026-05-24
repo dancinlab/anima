@@ -20,6 +20,7 @@
 - **Cycle #3** (PR #179/#180/#185): H_002 C1 · H_004 Cycle #1 (Φ-function dissociation) · H_003 H3.4
 - **Cycle #4 R1** (PR #196/#197/#198/#199): H_171 K=8 · H_053 cambrian-burst · H_200 NEW apoptosis-primitive · H_201 NEW asymmetric-division
 - **Cycle #5 (in flight, 2026-05-23)**: R3 cross-link + R2 panpsy + R5 substrate-gap (8 disjoint, see §"다음 cycle picks")
+- **Cycle #14 (2026-05-25)** (PR #468/#469/#470/#471/#472/#474): §C NEW seed 6 runnable 병렬 — H_258 mortality-salience · H_259 aging-senescence · H_260 contact-inhibition · H_261 embryogenesis-gradient · H_262 quorum-sensing (5 SUPP) · H_263 phoenix-rebirth (FAL). mirror-self-model SKIP (=H_220 기존).
 
 ## A. 남은 carried 가설 (legacy-pointer · cycle 0회, 4건)
 
@@ -43,7 +44,7 @@
 | H_007 C2 | larger lattice / λ-sweep | Langton λ 연속 sweep → Φ peak 위치 정밀화 | 🟢 |
 | H_002 C2 | Φ_universe pre-register | universe-scale Φ 측정 protocol (GPU 의존, design-only 가능) | ⬜ |
 
-## C. NEW seed — 사용자 테마 4축 (10건 잔여, 2건 소비 → H_200/H_201)
+## C. NEW seed — 사용자 테마 4축 (✅ 全소비: H_200/H_201 초기 2건 + cycle#14 H_258-263 6건 + mirror-self=H_220 + regeneration-healing=H_206)
 
 ### 죽음 / mortality
 | seed slug | 핵심 물음 | runnable | tag |
