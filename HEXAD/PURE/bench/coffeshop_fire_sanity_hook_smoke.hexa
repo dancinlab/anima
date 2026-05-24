@@ -99,12 +99,37 @@ fn main() {
     pass = pass + _check("verdict == ABORT  (got " + r5["verdict"] + "@" + r5["axis"] + ")",
         r5["verdict"] == "ABORT")
 
-    println("\n=== F-SAN smoke aggregate ===")
+    // --- F-TTR-1: highly-repetitive corpus (TTR < 0.30) → BLOCK.
+    // "aaa aaa aaa aaa aaa" repeated many times: 2 unique tokens / many total.
+    println("\n[F-TTR-1] low-diversity corpus (TTR < 0.30) → BLOCK")
+    let rep_line = "aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa\n"
+    let mut rep_body = ""
+    let mut ri = 0
+    while ri < 60 { rep_body = rep_body + rep_line  ri = ri + 1 }
+    let p_ttr1 = _tmp_dir() + "ttr1_low.txt"
+    write_file(p_ttr1, rep_body)
+    let r_ttr1 = fire_sanity_corpus_ttr_gate(p_ttr1)
+    total = total + 1
+    pass = pass + _check("verdict == BLOCK  (got " + r_ttr1["verdict"] + " ttr=" + to_string(r_ttr1["ttr"]) + ")",
+        r_ttr1["verdict"] == "BLOCK")
+
+    // --- F-TTR-2: diverse corpus (TTR >= 0.30) → PASS.
+    // 50 distinct English words, each appearing once: TTR = 1.0.
+    println("\n[F-TTR-2] diverse corpus (TTR >= 0.30) → PASS")
+    let div_body = "alpha beta gamma delta epsilon zeta eta theta iota kappa lambda mu nu xi omicron pi rho sigma tau upsilon phi chi psi omega one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen sixteen seventeen eighteen nineteen twenty twenty-one twenty-two twenty-three twenty-four twenty-five twenty-six twenty-seven twenty-eight twenty-nine thirty"
+    let p_ttr2 = _tmp_dir() + "ttr2_high.txt"
+    write_file(p_ttr2, div_body)
+    let r_ttr2 = fire_sanity_corpus_ttr_gate(p_ttr2)
+    total = total + 1
+    pass = pass + _check("verdict == PASS  (got " + r_ttr2["verdict"] + " ttr=" + to_string(r_ttr2["ttr"]) + ")",
+        r_ttr2["verdict"] == "PASS")
+
+    println("\n=== F-SAN + F-TTR smoke aggregate ===")
     println(to_string(pass) + "/" + to_string(total) + " PASS")
     if pass == total {
-        println("[OK] B14 Phase 2 IMPL smoke 5/5 PASS")
+        println("[OK] B14/B15 smoke " + to_string(total) + "/" + to_string(total) + " PASS")
         return
     }
-    println("[FAIL] B14 smoke incomplete")
+    println("[FAIL] smoke incomplete")
     exit(1)
 }
