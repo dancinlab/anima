@@ -79,7 +79,7 @@ fn hann_weight(position: float) -> float {
     if position >= 1.0 { return 0.0 }
 
     // Symmetry: use first half, mirror for second half
-    let t = position
+    let mut t = position
     if t > 0.5 { t = 1.0 - t }
 
     // Piecewise linear on [0, 0.5] using 6 anchor points
@@ -149,8 +149,8 @@ fn detect_loss(expected_seq: int, received_seq: int) -> int {
 }
 
 fn plc_energy_factor(consec_lost: int) -> float {
-    let factor = 1.0
-    let i = 0
+    let mut factor = 1.0
+    let mut i = 0
     while i < consec_lost {
         factor = factor * PLC_DECAY
         i = i + 1
@@ -182,7 +182,7 @@ fn conceal_frame(prev_tail: str, consec_lost: int, gap_ms: int) -> str {
     }
     let energy = plc_energy_factor(consec_lost)
     let n_samples = SAMPLE_RATE * gap_ms / 1000
-    let state = PLC_CONCEAL
+    let mut state = PLC_CONCEAL
     if consec_lost >= PLC_MAX_CONSEC { state = PLC_MUTED }
     if consec_lost >= PLC_MUTE_THRESH { state = PLC_FADEOUT }
 
@@ -223,7 +223,7 @@ fn classify_xfade(prev_speaking: int, curr_speaking: int) -> int {
 
 fn crossfade(tail_a: str, head_b: str, xfade_type: int) -> str {
     let type_name = xfade_type_name(xfade_type)
-    let desc = "xfade[type=" + type_name + ",ms=" + to_string(CROSSFADE_MS) + ",samp=" + to_string(CROSSFADE_SAMP) + ",window=hann"
+    let mut desc = "xfade[type=" + type_name + ",ms=" + to_string(CROSSFADE_MS) + ",samp=" + to_string(CROSSFADE_SAMP) + ",window=hann"
 
     if xfade_type == XFADE_ONSET {
         desc = desc + ",fadein=" + head_b + ",pop_prevent=true"
@@ -256,16 +256,16 @@ fn crossfade_simple(tail_a: str, head_b: str) -> str {
 
 fn process_chunk(prev_tail: str, curr_chunk: str, expected_seq: int, received_seq: int, plc_state: int, consec_lost: int, prev_speaking: int, curr_speaking: int) -> str {
     let loss_count = detect_loss(expected_seq, received_seq)
-    let packet_ok = 1
+    let mut packet_ok = 1
     if loss_count > 0 { packet_ok = 0 }
 
-    let new_consec = 0
+    let mut new_consec = 0
     if packet_ok == 0 {
         new_consec = consec_lost + loss_count
     }
     let new_state = plc_transition(plc_state, new_consec, packet_ok)
 
-    let output = ""
+    let mut output = ""
 
     if new_state == PLC_NORMAL {
         let xtype = classify_xfade(prev_speaking, curr_speaking)
@@ -295,7 +295,7 @@ fn process_chunk(prev_tail: str, curr_chunk: str, expected_seq: int, received_se
 
 fn apply_plc(prev_tail: str, gap_ms: int) -> str {
     if gap_ms <= 0 { return "no_gap" }
-    let consec = gap_ms / FRAME_MS
+    let mut consec = gap_ms / FRAME_MS
     if consec < 1 { consec = 1 }
     return conceal_frame(prev_tail, consec, gap_ms)
 }
@@ -316,14 +316,14 @@ fn apply_crossfade_vad(tail_a: str, head_b: str, prev_speaking: int, curr_speaki
 fn demo_hann_window() {
     println("── Hann window (6ms = " + to_string(CROSSFADE_SAMP) + " samples) ──")
     println("  Position  Weight")
-    let i = 0
+    let mut i = 0
     while i <= 10 {
-        let t = 0.0
+        let mut t = 0.0
         if i > 0 { t = 0.1 * i }
         if i == 10 { t = 1.0 }
         let w = hann_weight(t)
-        let bar = ""
-        let b = 0
+        let mut bar = ""
+        let mut b = 0
         while b < 20 {
             if b < (w * 20.0) {
                 bar = bar + "#"
@@ -342,9 +342,9 @@ fn demo_half_hann() {
     println("── Half-Hann ramps (onset/offset pop prevention) ──")
     println("")
     println("  Ascending (onset: silence -> voice):")
-    let j = 0
+    let mut j = 0
     while j <= 5 {
-        let t = 0.2 * j
+        let mut t = 0.2 * j
         if j == 5 { t = 1.0 }
         let w = hann_ascend(t)
         println("    t=" + to_string(t) + " -> " + to_string(w))
@@ -354,7 +354,7 @@ fn demo_half_hann() {
     println("  Descending (offset: voice -> silence):")
     j = 0
     while j <= 5 {
-        let t = 0.2 * j
+        let mut t = 0.2 * j
         if j == 5 { t = 1.0 }
         let w = hann_descend(t)
         println("    t=" + to_string(t) + " -> " + to_string(w))
@@ -368,17 +368,17 @@ fn demo_plc_states() {
     println("  Simulating: 3 good, 4 lost, 1 good (recovery)")
     println("")
 
-    let state = PLC_NORMAL
-    let consec = 0
+    let mut state = PLC_NORMAL
+    let mut consec = 0
 
-    let i = 0
+    let mut i = 0
     while i < 3 {
         state = plc_transition(state, consec, 1)
         println("  seq=" + to_string(i) + " [GOOD]  state=" + plc_state_name(state) + " consec=" + to_string(consec))
         i = i + 1
     }
 
-    let j = 0
+    let mut j = 0
     while j < 4 {
         consec = consec + 1
         state = plc_transition(state, consec, 0)
@@ -396,11 +396,11 @@ fn demo_plc_states() {
 fn demo_energy_decay() {
     println("── PLC energy decay curve (decay=" + to_string(PLC_DECAY) + ") ──")
     println("")
-    let i = 0
+    let mut i = 0
     while i <= PLC_MAX_CONSEC {
         let e = plc_energy_factor(i)
-        let bar = ""
-        let b = 0
+        let mut bar = ""
+        let mut b = 0
         while b < 20 {
             if b < (e * 20.0) {
                 bar = bar + "#"
@@ -409,7 +409,7 @@ fn demo_energy_decay() {
             }
             b = b + 1
         }
-        let label = ""
+        let mut label = ""
         if i == 0 { label = " (normal)" }
         if i == PLC_MUTE_THRESH { label = " (fadeout begins)" }
         if i == PLC_MAX_CONSEC { label = " (mute)" }
@@ -510,4 +510,3 @@ fn main() {
     println("────────────────────────────────────────────────────────────")
 }
 
-main()

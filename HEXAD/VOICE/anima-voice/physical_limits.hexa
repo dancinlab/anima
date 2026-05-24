@@ -168,7 +168,7 @@ fn main() {
     let t_rvq = 6
     let t_vocoder = 36
     let t_ring = 4
-    let total = t_intent + t_token + t_rvq + t_vocoder + t_ring
+    let mut total = t_intent + t_token + t_rvq + t_vocoder + t_ring
     println("  intent:    " + to_string(t_intent) + " ms")
     println("  token:     " + to_string(t_token) + " ms")
     println("  rvq:       " + to_string(t_rvq) + " ms")
@@ -232,7 +232,7 @@ fn main() {
     // ── 7. n6 atlas 검증 ──
     println("")
     println("-- 7. n6 atlas 검증 --")
-    let n6_pass = 0
+    let mut n6_pass = 0
     let n6_total = 14
 
     // Core architecture
@@ -295,7 +295,7 @@ fn main() {
     println("  -> n6 bridge: " + to_string(n6_pass) + "/" + to_string(n6_total) + " EXACT")
 
     // ── 요약 ──
-    let tests_pass = 0
+    let mut tests_pass = 0
     if nyquist_ok { tests_pass = tests_pass + 1 }
     if chunk_ok { tests_pass = tests_pass + 1 }
     if latency_ok { tests_pass = tests_pass + 1 }
@@ -324,4 +324,3 @@ fn main() {
     println("============================================")
 }
 
-main()
