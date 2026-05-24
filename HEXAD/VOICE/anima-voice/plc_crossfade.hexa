@@ -71,6 +71,17 @@ let FRAME_SAMP = 240
 // Pre-computed at 11 anchor points for Mk.II.
 // Mk.III: full sample-level Hann via dsp_core.hexa hann_window().
 // ────────────────────────────────────────────────────────────────────
+//
+// INTENTIONAL: NOT rewired to stdlib/signal/core_window — these three
+// fns (`hann_weight` / `hann_ascend` / `hann_descend`) are an
+// **intentionally cheap piecewise-linear approximation** with a
+// **different API** (`position: float ∈ [0, 1]`, not `(n, N)`). The
+// 6-anchor-points fit avoids the libm `cos` call inside the per-sample
+// crossfade hot path (Mk.II compromise — the streaming PLC budget is
+// per-frame, this is called per-sample within a frame). Replacing with
+// stdlib `hann_window(n, N)` is a behavior change (and a perf change),
+// reserved for the Mk.III rewrite called out in the header above.
+// stdlib SSOT lives at dancinlab/hexa-lang#864 for when Mk.III lands.
 
 fn hann_weight(position: float) -> float {
     // Piecewise linear interpolation of Hann window
