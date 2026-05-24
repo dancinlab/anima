@@ -1,0 +1,101 @@
+// HEXAD/PURE/bench/coffeshop_fire_sanity_hook.hexa
+// Fire-time COFFESHOP sanity hook — Phase 1 stub (B13, 2026-05-24)
+//
+// spec: HEXAD/PURE/docs/fire_time_sanity_hook_spec_2026_05_24.md
+//
+// Phase 1 = signature + TODO[impl] markers only. Phase 2 fills the
+// comparison logic per spec § 4 / § 5. Caller MUST NOT trust the verdict
+// returned by this stub until Phase 2 lands.
+
+// --- public hook signature ---------------------------------------------
+//
+// fire_result_path : string — local path to dispatcher-pulled result.json
+//                    (#380 result_pull_with_wait output)
+// baseline_seed    : either int (single-seed baseline, PR #405) or
+//                    the string "sweep" (multi-seed mean baseline, PR #406)
+//
+// returns map with keys:
+//   "verdict"        : "SANE" | "DRIFT" | "DIVERGE" | "ABORT" | "STUB"
+//   "axis"           : "C1" | "C2" | "C3" | "C4" | "" (empty when SANE/STUB)
+//   "delta_motivation": float | void
+//   "delta_emit"     : int   | void
+//   "delta_register" : int   | void
+//   "delta_lang_rows": int   | void
+//   "delta_dream"    : bool  | void
+//   "baseline_path"  : string
+//   "ckpt_path"      : string
+//   "phase"          : 1   // bump when impl lands
+
+fn run_coffeshop_sanity(fire_result_path, baseline_seed) {
+    let baseline_path = _resolve_baseline_path(baseline_seed);
+    let result = #{};
+    result["verdict"] = "STUB";
+    result["axis"] = "";
+    result["delta_motivation"] = void;
+    result["delta_emit"] = void;
+    result["delta_register"] = void;
+    result["delta_lang_rows"] = void;
+    result["delta_dream"] = void;
+    result["baseline_path"] = baseline_path;
+    result["ckpt_path"] = fire_result_path;
+    result["phase"] = 1;
+
+    // TODO[impl] Phase 2 — load baseline + ckpt result.json (json_parse),
+    //   extract 4-criterion fields per spec § 4, compute deltas, classify
+    //   verdict per spec § 5 thresholds, populate axis on first FAIL.
+
+    // TODO[impl] Phase 2 — call closure_auto_judge.hexa (#398) on both
+    //   baseline_path and fire_result_path; capture exit code; ckpt FAIL
+    //   short-circuits to DIVERGE@<first-failing-axis>.
+
+    // TODO[impl] Phase 2 — when baseline_seed == "sweep", aggregate the
+    //   10 result_seed_*.json files under
+    //   state/coffeshop_sim_seed_sweep_2026_05_24/, compute per-criterion
+    //   mean + ±1σ band, use mean as baseline value.
+
+    // TODO[impl] Phase 2 — baseline-FAIL short-circuit returns verdict="ABORT"
+    //   (simulator regression — hook precondition broken).
+
+    return result;
+}
+
+// --- baseline path resolver --------------------------------------------
+
+fn _resolve_baseline_path(baseline_seed) {
+    if type_of(baseline_seed) == "string" {
+        if baseline_seed == "sweep" {
+            return "state/coffeshop_sim_seed_sweep_2026_05_24/";
+        }
+    }
+    // single-seed (int) path mirrors PR #405 fixture layout.
+    // TODO[impl] Phase 2 — branch on seed value to support per-seed
+    //   re-runs once Phase 2 sim wrapper exposes parametrized output dir.
+    return "state/coffeshop_sim_2026_05_24/result.json";
+}
+
+// --- standalone selftest (Phase 1 = stub signature only) ---------------
+
+fn main() {
+    println("[coffeshop_fire_sanity_hook] Phase 1 stub — signature only.");
+    println("[coffeshop_fire_sanity_hook] spec: HEXAD/PURE/docs/fire_time_sanity_hook_spec_2026_05_24.md");
+
+    let r1 = run_coffeshop_sanity("state/dummy_fire/result.json", "sweep");
+    println("[stub-call:sweep]   verdict=" + r1["verdict"] + " phase=" + to_string(r1["phase"]));
+    println("[stub-call:sweep]   baseline=" + r1["baseline_path"]);
+
+    let r2 = run_coffeshop_sanity("state/dummy_fire/result.json", 20260525);
+    println("[stub-call:single]  verdict=" + r2["verdict"] + " phase=" + to_string(r2["phase"]));
+    println("[stub-call:single]  baseline=" + r2["baseline_path"]);
+
+    // Stub contract: verdict MUST be "STUB" in Phase 1 — guards against
+    // accidental Phase 2 partial-impl land without bump.
+    if r1["verdict"] != "STUB" {
+        println("[FAIL] Phase 1 stub returned non-STUB verdict — partial impl detected.");
+        exit(1);
+    }
+    if r2["verdict"] != "STUB" {
+        println("[FAIL] Phase 1 stub returned non-STUB verdict — partial impl detected.");
+        exit(1);
+    }
+    println("[PASS] Phase 1 stub contract held (verdict=STUB on both modes).");
+}
