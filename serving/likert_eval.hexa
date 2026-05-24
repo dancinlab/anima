@@ -40,6 +40,8 @@
 //   LIKERT_MAX_TOKENS   per-call (default: 256)
 //   LIKERT_TEMPERATURE  per-call (default: 0.8)
 
+import "/Users/ghost/core/hexa-lang/stdlib/string/escape.hexa"
+
 let HARNESS_VERSION = "1.0.0"
 let DEFAULT_ENDPOINT = "https://itfl66q4z768kh-8090.proxy.runpod.net"
 let DEFAULT_OUT_PATH = "training/deploy/likert_eval_alm14b_20260416.json"
@@ -96,25 +98,8 @@ fn build_prompts() -> [string] {
 //  Section 2. JSON helpers (mirror anima-voice/speak_e2e.hexa)
 // ════════════════════════════════════════════════════════════════════
 
-fn json_escape(s: string) -> string {
-    // Collect parts then join — avoids O(n²) string concat over Korean text.
-    // Note: byte-by-byte loop preserves UTF-8 multibyte sequences intact
-    // because non-control bytes (0x80-0xFF) flow through the else-branch.
-    let n = len(s)
-    let mut parts = []
-    let mut i = 0
-    while i < n {
-        let c = s.substring(i, i + 1)
-        if c == "\\" { parts = parts.push("\\\\") }
-        else if c == "\"" { parts = parts.push("\\\"") }
-        else if c == "\n" { parts = parts.push("\\n") }
-        else if c == "\t" { parts = parts.push("\\t") }
-        else if c == "\r" { parts = parts.push("\\r") }
-        else { parts = parts.push(c) }
-        i = i + 1
-    }
-    return parts.join("")
-}
+// json_escape now imported from stdlib/string/escape (STDLIB Phase 1b sweep
+// 2026-05-25 · stdlib v0.2.0 carries the same parts/join impl byte-for-byte).
 
 // Shell-escape for embedding inside single-quoted curl -d '...' body.
 // We already JSON-escape, so the only remaining char that breaks the
