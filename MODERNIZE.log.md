@@ -2,6 +2,13 @@
 
 Append-only history sister of `MODERNIZE.md`. Each entry `## <ISO timestamp> — <header>` (newest on top); body = `- [x]`/`- [ ]` checkbox tasks.
 
+## 2026-05-25T03:20:00Z — tool/ batch (11 files, explicit-main removal, build-verified)
+
+- [x] 11 `tool/*.hexa` explicit-main 제거 → 전부 **build PASS** (main-only fix): alm_r13_seed_repair · anima_signature_history · phi_paper_citation_check · alm_corpus_4gate · statusline_h100_burn · proposal_cluster_detect · proof_carrying_extract · alm_r14_lang_ratio_check · an11_b_v_pairrank · auto_evolution_loop · weight_precache_progress_monitor
+- [!] `tool/anima_ouroboros_cycle.hexa` 제외 (main 외 other-break — per-file 후속)
+- [x] M5 누적: serving 4 + tool 11 = **15 파일** explicit-main 제거 (build-verified). 잔여 explicit-main ~704
+- [ ] M5 계속 — 나머지 active 서브디렉토리 batch (per-file build-verify)
+
 ## 2026-05-25T03:00:00Z — serving/ web batch (3 files, explicit-main removal, build-verified)
 
 - [x] `serving/avatar_render.hexa` · `serving/sparse_dispatcher.hexa` · `serving/sparse_dispatcher_live.hexa` — explicit `main()` 제거 → 전부 **build PASS** (avatar_render run exit 0)
