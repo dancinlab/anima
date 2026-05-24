@@ -87,14 +87,12 @@ fn _ls_glob(pat: string) -> array {
     return acc
 }
 
-// ─── sha256 helper (shasum -a 256) ────────────────────────────────────────
+// ─── sha256 helper (stdlib FIPS 180-4 builtin) ────────────────────────────
 
 fn _sha256_of_string(s: string) -> string {
-    let tmp = "/tmp/cert_dag_sha_" + _str(len(s)) + "_" + _exec_out("date +%s%N 2>/dev/null || date +%s").trim() + ".txt"
-    write_file(tmp, s)
-    let r = _exec_out("shasum -a 256 " + _sh_quote(tmp) + " 2>/dev/null | awk '{print $1}'").trim()
-    let _ = _exec_out("rm -f " + _sh_quote(tmp))
-    return r
+    // body rewired to stdlib FIPS 180-4 builtin (hexa-lang #884 sha256 alias surface);
+    // shell-out + tmp-file removed (byte-equal output, no fork-exec, no /tmp race).
+    return sha256(s)
 }
 
 // ─── argv ─────────────────────────────────────────────────────────────────

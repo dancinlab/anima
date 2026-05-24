@@ -100,9 +100,10 @@ fn _json_escape(s: string) -> string {
 }
 
 fn _sha256_of_file(path: string) -> string {
+    // body rewired to stdlib FIPS 180-4 builtin (hexa-lang #884 sha256 alias surface);
+    // shell-out removed (byte-equal output; "" on missing file preserved).
     if !_is_file(path) { return "" }
-    let r = exec_with_status("shasum -a 256 " + _sh_quote(path) + " 2>/dev/null | awk '{print $1}'")
-    return to_string(r[0]).trim()
+    return sha256_file(path)
 }
 
 fn _git_head_sha() -> string {
