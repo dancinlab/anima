@@ -2,6 +2,8 @@
 
 > PURE 세션 SSOT (current snapshot). 작업 로그는 `PURE.log.md`.
 
+@goal: COFFESHOP group chat 시뮬레이션 4-criterion closure 통과 — anima 자율 emit/silence (do/dont 강제 X) · multilingual 5/5 PARTIAL+ · register 0/20 · motivation_8factor ≥ 0.30 · dream_stage Φ-envelope · 모두 substrate emergent (project.tape p1-p8 + a_substrate_native_speak + a_autonomy_over_hardcode 정합)
+
 ## 목표
 
 8-factor substrate emit engine(Phase B, LANDED)을 **실 corpus 로 ckpt-bearing fire** 하여
