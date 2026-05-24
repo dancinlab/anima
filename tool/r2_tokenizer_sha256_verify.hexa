@@ -14,12 +14,13 @@
 //   hexa tool/r2_tokenizer_sha256_verify.hexa
 //   hexa tool/r2_tokenizer_sha256_verify.hexa --selftest
 
+fn utc_now_iso() -> string {
+    return exec("date -u +%FT%TZ").trim()
+}
+
 fn try_sha256(path) {
     if !file_exists(path) { return "" }
-    let f = open(path, "rb")
-    let bytes = f.read_all()
-    f.close()
-    return sha256_hex(bytes)
+    return sha256_file(path)
 }
 
 fn search_paths() {
@@ -51,22 +52,20 @@ fn main() {
     println("r2_tokenizer_sha256_verify (mock-only R2 metadata)")
     println("  manifest = " + manifest_path)
 
-    let prior = {}
+    let mut prior = #{}
     if file_exists(manifest_path) {
-        let f = open(manifest_path, "r")
-        let raw = f.read_all()
-        f.close()
+        let raw = read_file(manifest_path)
         prior = json_parse(raw)
     }
 
-    let entries = {}
-    let cnt_found = 0
-    let cnt_match = 0
-    let cnt_new = 0
-    let cnt_mismatch = 0
+    let mut entries = #{}
+    let mut cnt_found = 0
+    let mut cnt_match = 0
+    let mut cnt_new = 0
+    let mut cnt_mismatch = 0
 
     let paths = search_paths()
-    let i = 0
+    let mut i = 0
     while i < len(paths) {
         let p = paths[i]
         let sha = try_sha256(p)
@@ -92,7 +91,7 @@ fn main() {
         i = i + 1
     }
 
-    let new_manifest = {
+    let new_manifest = #{
         "schema_version": "1",
         "roi_item": "S3",
         "track": "pre-H100 ROI",
@@ -100,7 +99,7 @@ fn main() {
         "r2_bucket": "anima-models",
         "metadata_key": "sha256",
         "mock_only_put": true,
-        "counts": {
+        "counts": #{
             "found": cnt_found,
             "match": cnt_match,
             "new": cnt_new,
@@ -109,9 +108,7 @@ fn main() {
         "entries": entries
     }
 
-    let out = open(manifest_path, "w")
-    out.write(json_stringify_pretty(new_manifest))
-    out.close()
+    write_file(manifest_path, json_stringify(new_manifest))
 
     println("summary:")
     println("  found    = " + str(cnt_found))
@@ -131,4 +128,3 @@ fn main() {
     exit(0)
 }
 
-main()

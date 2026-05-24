@@ -195,9 +195,9 @@ fn simhash_cosine(sig_a: array, sig_b: array) -> float {
     if d == 0 { return 0.0 }
     let h = simhash_hamming(sig_a, sig_b)
     let frac = (h * 1.0) / (d * 1.0)
-    // cos(pi * frac) — Taylor via simple identity since we only need 3 digits
-    // Replaced by the host-provided cos in the Python reference mirror.
-    return host_cos_pi(frac)
+    // cos(pi * frac) — uses the native cos builtin (was host-provided in the
+    // interp-era Python reference mirror).
+    return cos(3.141592653589793 * frac)
 }
 
 // θ_LSH hybrid
@@ -215,4 +215,3 @@ fn main() {
     exit(0)
 }
 
-main()

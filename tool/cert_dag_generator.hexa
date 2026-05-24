@@ -54,6 +54,11 @@ fn _sh_quote(s: string) -> string {
     return "'" + s.replace("'", "'\\''") + "'"
 }
 
+fn _exec_out(cmd: string) -> string {
+    let r = exec_with_status(cmd)
+    return to_string(r[0])
+}
+
 // INLINE_DEPRECATED[H42]: see shared/util/file_exists.hexa for canonical impl — kept inline (hexa stage0 loader)
 fn _file_exists(p: string) -> bool {
     return _exec_out("test -f " + _sh_quote(p) + " && echo 1 || echo 0").trim() == "1"
@@ -1003,4 +1008,3 @@ fn main() -> int {
     return _run_real_scan()
 }
 
-main()

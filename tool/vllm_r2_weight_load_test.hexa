@@ -14,13 +14,6 @@
 //   - DO NOT spawn pod
 //   - selftest must pass before any H100 launch handoff
 
-fn read_file(path) {
-    let f = open(path, "r")
-    let s = f.read_all()
-    f.close()
-    return s
-}
-
 fn json_has(j, key) {
     return j.contains_key(key)
 }
@@ -48,7 +41,7 @@ fn mock_r2_handshake(bucket, prefix, files) {
     // No actual network IO. We only count and emit a deterministic trace.
     println("  [mock] R2 HEAD bucket=" + bucket + " prefix=" + prefix)
     let n = len(files)
-    let i = 0
+    let mut i = 0
     while i < n {
         println("    [mock] HEAD " + files[i] + " -> 200 OK (simulated)")
         i = i + 1
@@ -57,12 +50,12 @@ fn mock_r2_handshake(bucket, prefix, files) {
 }
 
 fn main() {
-    let template_path = "config/vllm_container_template.json"
-    let args = sys_args()
-    let i = 0
-    while i < len(args) {
-        if args[i] == "--template" && i + 1 < len(args) {
-            template_path = args[i + 1]
+    let mut template_path = "config/vllm_container_template.json"
+    let av = args()
+    let mut i = 0
+    while i < len(av) {
+        if av[i] == "--template" && i + 1 < len(av) {
+            template_path = av[i + 1]
             i = i + 1
         }
         i = i + 1
@@ -78,7 +71,7 @@ fn main() {
 
     let raw = read_file(template_path)
     let j = json_parse(raw)
-    let ok = true
+    let mut ok = true
 
     // Section 1 — container shape
     let container = j["container"]
@@ -121,4 +114,3 @@ fn main() {
     }
 }
 
-main()
