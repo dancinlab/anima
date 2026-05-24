@@ -2,6 +2,17 @@
 
 > `LORA.md` 의 변경/작업 체크리스트. 최신이 위.
 
+## 2026-05-24 (cycle 22 — M4 Stage 1 PROBE axis-5 🔴 FALSIFIED)
+
+- [x] M4 Stage 1 PROBE axis-5 mitosis_max 발사 (cycle 22-1, 3-pod A100, $0.30)
+- [x] **3/3 결과 도착**: m16/m64/m128 모두 init_CE = 14.374279975891113 byte-equal
+- [x] **3/3 falsifier FALSIFIED** (Δ init_CE = 0.0)
+- [x] 🔴 cycle 17-3 cross-tool 가설 (mitosis_max +2.14 nats) 재현 안 됨
+- [x] M4_STAGE1_AXIS5_MITOSIS_MAX_VERDICT_2026_05_24.md doc 흡수
+- [x] axis-2 (SUPPORTED) vs axis-5 (FALSIFIED) 명확한 대조
+- [ ] cross-tool 17-3 진짜 원인 추적 (corpus seed / dispatcher path / GPU class drift)
+- [ ] axis-1 wiki_frac Stage 1 PROBE 후속 (medium-high expected effect)
+
 ## 2026-05-24 (cycle 20 — M4 Stage 1 PROBE axis-2 🔥 첫 진짜 axis evidence)
 
 - [x] M4 Stage 1 PROBE 발사 (cycle 20-1, 3-pod A100-SXM4-80GB, $0.30)
