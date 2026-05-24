@@ -106,3 +106,4 @@
 - `a_hf_autonomous` (HF upload 자동 · tier-gated visibility, PUBLIC = closure PASS · PRIVATE = FAIL)
 - kosmos 단일 SSOT 이관 (PR #3 + anima cleanup) — spec + impl + 11 knuth anchor 전부 dancinlab/kosmos
 - sidecar INBOX: worktree/branch 하네스 4-gap handoff (anima 세션 발견)
+- [x] **corpus_v2 ready** — anima v1 (0.8) + kowiki reservoir-sample (0.2 · cap 200k) · sha `ddcd399c761af0b7…` · 114,586 lines · **M3 TTR 0.51** (v1 0.34 → +50%) · M2 MI 3.91 · M5 hangul 0.52 — A-커리큘럼 fire 재료 준비 완료
