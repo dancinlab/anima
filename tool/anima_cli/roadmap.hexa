@@ -33,7 +33,7 @@ fn _json_field(path: string, key: string) -> string {
 }
 
 fn _arg_present(argv, key: string) -> bool {
-    let i = 0
+    let mut i = 0
     while i < len(argv) {
         if _str(argv[i]) == key { return true }
         i = i + 1
@@ -42,7 +42,7 @@ fn _arg_present(argv, key: string) -> bool {
 }
 
 fn _arg_value(argv, key: string, dflt: string) -> string {
-    let i = 0
+    let mut i = 0
     while i < len(argv) {
         if _str(argv[i]) == key && i + 1 < len(argv) {
             return _str(argv[i + 1])
@@ -53,8 +53,8 @@ fn _arg_value(argv, key: string, dflt: string) -> string {
 }
 
 fn _user_argv(raw) -> array {
-    let out = []
-    let i = 0
+    let mut out = []
+    let mut i = 0
     while i < len(raw) {
         let s = _str(raw[i])
         if !s.contains("/.hexa-cache/") {
@@ -115,11 +115,11 @@ fn sub_entries(track: string, phase: string) {
     let root = _resolve_root()
     let prog = root + "/state/roadmap_progress.json"
     if !_fexists(prog) { println("roadmap entries: no progress file"); return }
-    let filter = ".entries[]"
+    let mut filter = ".entries[]"
     if track != "" { filter = filter + " | select(.track == \"" + track + "\")" }
     if phase != "" { filter = filter + " | select(.phase == \"" + phase + "\")" }
     let expr = filter + " | (.id|tostring) + \"\\t\" + (.status // \"?\") + \"\\t\" + (.title // \"\")"
-    let out = _str(exec("jq -r '" + expr + "' " + prog + " 2>/dev/null"))
+    let mut out = _str(exec("jq -r '" + expr + "' " + prog + " 2>/dev/null"))
     if out.trim() == "" { println("(no entries)"); return }
     println(out)
 }
@@ -129,7 +129,7 @@ fn sub_blockers() {
     let prog = root + "/state/roadmap_progress.json"
     if !_fexists(prog) { println("roadmap blockers: no progress file"); return }
     let expr = ".entries[] | select(.status == \"BLOCKED\") | (.id|tostring) + \"\\t\" + (.title // \"\")"
-    let out = _str(exec("jq -r '" + expr + "' " + prog + " 2>/dev/null"))
+    let mut out = _str(exec("jq -r '" + expr + "' " + prog + " 2>/dev/null"))
     if out.trim() == "" { println("(no blockers)"); return }
     println("anima roadmap blockers")
     println("─────────────────────────────")
@@ -142,7 +142,7 @@ fn sub_roi() {
     let path = root + "/state/roadmap_progress.json"
     if !_fexists(path) { println("roadmap roi: no progress file"); return }
     let expr = ".entries[] | select(.roi_score != null) | (.id|tostring) + \"\\t\" + (.roi_score|tostring) + \"\\t\" + (.title // \"\")"
-    let out = _str(exec("jq -r '" + expr + "' " + path + " 2>/dev/null"))
+    let mut out = _str(exec("jq -r '" + expr + "' " + path + " 2>/dev/null"))
     if out.trim() == "" { println("(no roi scores)"); return }
     println(out)
 }
@@ -179,4 +179,3 @@ fn main() {
     exit(2)
 }
 
-main()
