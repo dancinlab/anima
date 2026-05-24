@@ -2,6 +2,20 @@
 
 Append-only history sister of `STDLIB.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
+## 2026-05-25T23:30:00Z — phase3 M1 closure · signal/ 6/6 module LAND + libm trig policy 🛸
+
+- [x] **hexa-lang signal/ stdlib 6/6 module MERGED** (origin/main 안착) — 2 cycle 에 걸친 fan-out 의 closure:
+  - **cycle 2 (1st wave, 3/6)**: `stdlib/signal/core_filter.hexa` (#847) · `stdlib/signal/core_window.hexa` (#848) · `stdlib/signal/core_fft.hexa` (#849)
+  - **cycle 3 (2nd wave, 3/6)**: `stdlib/signal/core_stft.hexa` (#854) · `stdlib/signal/core_resample.hexa` (#855) · `stdlib/signal/core_pitch.hexa` (#857)
+  - 모든 module = anima `VOICE/anima-voice/dsp_core.hexa` port + libm trig 정합 (`hexa_sin` · `hexa_cos` · `hexa_atan2`)
+- [!] **핵심 발견 (libm reconciliation, 실측)**: anima dsp_core 의 Taylor `sin/cos + fmod_native` 는 **provably broken** — range-reduction collapse 로 constant output 산출 (Hann window 등 sweep 결과 비정상). 6/6 signal module 이 hexa-lang libm trig 을 사용함으로써 root cause 가 stdlib side 에서 자연 해소됨. 따라서 anima 26-dup window sweep 은 단순 import 치환이 아니라 **BEHAVIOR FIX** (Taylor broken → libm correct).
+- [x] **governance lockstep**: 
+  - **project.tape @D stdlib_trig_libm** (#851 anima) — stdlib signal/* 의 trig backend = libm 단일 강제 (Taylor 재발 차단)
+  - **commons.tape @D g61** (sidecar 0.10.4) — general stdlib SSOT governance (cross-project), hexa-lang stdlib 이 canonical home 임을 commons 수준에서 잠금
+- [!] **운영 메모 (Anthropic rate-limit salvage)**: cycle 3 fan-out 중 rate-limit 으로 sibling agent 일부가 중단, parent 가 inline 으로 stft/resample/pitch 잔여 salvage 하여 3/3 land 성공. fan-out 의 partial-failure recovery pattern 으로 카탈로그.
+- [x] **STDLIB.md** flip: phase3 `signal/ DSP promote` (M1) 1st+2nd wave 6/6 LAND 으로 close, anima 측 26-dup window sweep (BEHAVIOR FIX) 만 open milestone 유지 (sibling agent in flight this cycle).
+- [ ] **다음**: anima dsp_core 의 26 window dup → `signal/core_window` import 치환 PR (sibling agent in flight) · 이후 phase3 잔여 (RFC-037 clustering 등) deferred 상태 유지.
+
 ## 2026-05-25T18:30:00Z — /cycle 1: phase1+2 완료 재확인 + phase3 survey + install 동기화 ⭐️
 
 - [x] /cycle 3-agent fan-out (M5 migration · phi_spatial · phase3 survey) — 전부 착지
