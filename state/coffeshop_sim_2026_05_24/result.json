@@ -1,6 +1,9 @@
 {
-  "scenario": "coffeshop_90min",
-  "variant": "COFFESHOP_sim_v1_2026_05_24",
+  "scenario": "coffeshop_90min_group_chat",
+  "variant": "COFFESHOP_sim_emergence_2026_05_24",
+  "channel": "text_cli",
+  "participants": {"anima": 1, "human": 3},
+  "n_windows": 15,
   "per_lang_verdicts": [
     {"lang": "ko", "verdict": "STRONG"},
     {"lang": "en", "verdict": "PARTIAL"},
@@ -8,18 +11,18 @@
     {"lang": "ru", "verdict": "PARTIAL"},
     {"lang": "ja", "verdict": "PARTIAL"}
   ],
-  "n_anima_register_hits_total": 1,
+  "n_anima_register_hits_total": 0,
   "motivation_8factor": {
-    "motivation_score": 0.63,
-    "per_factor": {
-      "relevance": 0.5,
-      "gap": 0.2,
-      "curiosity": 0.9,
-      "pain": 0.3,
-      "coherence": 0.6,
-      "originality": 0.4,
-      "balance": 0.5,
-      "dynamics": 0.7
+    "motivation_score": 0.525067,
+    "per_factor_avg": {
+      "relevance": 0.429156,
+      "info_gap": 0.512684,
+      "curiosity": 0.378061,
+      "pain": 0.629576,
+      "coherence": 0.41634,
+      "originality": 0.0666667,
+      "balance": 0.8,
+      "dynamics": 1.0
     },
     "emit_count": 4,
     "silence_count": 11
