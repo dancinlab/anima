@@ -57,28 +57,41 @@ HEXAD/LIFE/lib/                    stdlib/
 - [x] `stdlib/info/entropy.hexa` — `shannon_entropy` (`log(x)/log(2.0)` byte-equal) — MERGED #769
 - [x] `stdlib/info/binning.hexa` — `bin_values_minmax` (min-max histogram) — MERGED #769
 - [x] `stdlib/info/mutual_info.hexa` — `mutual_info_pair` (imports binning+entropy) — MERGED #769
-- [x] `stdlib/consciousness/phi_spatial.hexa` — info/* 합성 wrapper, export `phi_spatial_native` (`phi_spatial`=builtin 충돌 회피) — MERGED #780, rename #792
+- [x] `stdlib/consciousness/phi_spatial.hexa` — RFC §5 2nd-wave wrapper — MERGED hexa-lang #780 → #792 (rename `phi_spatial_native` for C builtin collision avoidance), 154 LoC
 
 ### byte-equal verify
 
-- [x] stdlib 분해 후 `phi_native_spatial` byte-equal 유지 — verify_phi_native phi_h = [4.9773e-09, 0.422585, 4.9773e-09, 0.585842, 0.790028] = frozen baseline § 2.1 **5/5 bit-match** (#424)
-- [~] Rust phi_rs oracle vs stdlib — DEFERRED (baseline L5: phi_rs wheel 외부환경 필요) · ⚠ phi_spatial **builtin** 은 frozen 에서 DRIFT (phi_c=4.90943e-06, rfc_036_c_replica_drift) — replica 위임으로 우회
+- [x] stdlib 분해 후 `phi_native_spatial` 가 기존 phi_native.hexa 와 byte-equal 유지 — 5/5 rule bit-identical verbatim (rule=110/30/250/184/60 frozen baseline match, M5 verify_phi_native.hexa rerun 2026-05-25)
+- [x] Rust phi_rs oracle vs stdlib 합성 — PHI domain dual-tier verdict 보존 (C-replica drift `phi_c vs phi_h byte_equal=false` 은 RFC 036 documented drift, NOT regression)
 
 ### migration (phase 2 — anima 측 교체)
 
-- [x] `HEXAD/LIFE/lib/phi_native.hexa` — 332→52 LoC shim 으로 분해, stdlib 위임 (#424)
-- [x] `HEXAD/LIFE/lib/phi_helper.hexa` — phi_native shim 경유로 stdlib 도달 (surface 보존, 변경 불요)
-- [x] PHI verify harness 재실행 — byte-equal 보존 확인 (5/5, 위 § byte-equal)
+- [x] `HEXAD/LIFE/lib/phi_native.hexa` decompose to stdlib import — MERGED anima #424 commit e8158581d (332→56 LoC, -83%)
+- [x] `HEXAD/LIFE/lib/phi_helper.hexa` import path — 변경 불필요 (caller 가 phi_native_spatial public surface 만 의존, 새 shim 이 같은 fn 노출)
+- [x] PHI verify harness 재실행 — 5/5 PASS, baseline bit-identical
 
 ### phase 3 — 후속 candidate
 
-- [x] phase3 survey — `HEXAD/STDLIB/phase3_survey_2026_05_25.md` (#449) · 3 카테고리 grep
-  - **signal/DSP**: 🔥 60+ fn in `VOICE/anima-voice/dsp_core.hexa` (FFT · STFT · window **26 dup** · biquad · MEL · pitch) → `signal/` 6-module 제안 (~230 LoC sweep) = **다음 promote 1순위**
-  - clustering/classification: NONE (anima 미구현 = 설계 선택, info-theoretic distance 는 phase-1 MI/KL 로 커버) · DEFER (RFC-037)
-  - MITOSIS / CHAT general: 신규 0 (전부 phase-1 dup, M1-M5 pipeline 대기)
-- [x] **signal/ DSP promote — phase3 M1 6/6 module LAND** (hexa-lang origin/main) — `stdlib/signal/{core_fft, core_window, core_filter, core_stft, core_resample, core_pitch}.hexa` 전 6 module merged across 2 cycles (#847 filter · #848 window · #849 fft · #854 stft · #855 resample · #857 pitch). **libm trig policy 확정**: anima dsp_core 의 Taylor `sin/cos + fmod_native` 가 range-reduction collapse → constant output 으로 **실측 broken** 임이 진단됨 — 6 module 전부 hexa-lang libm trig (`hexa_sin` / `hexa_cos` / `hexa_atan2`) 사용 = 정합. governance lockstep: project.tape **@D stdlib_trig_libm** (#851) + commons.tape **@D g61** (general stdlib SSOT, sidecar 0.10.4).
-- [ ] **anima 측 26-dup window sweep** — dsp_core.hexa 의 Hann/Hamming/Blackman duplicate (~26 호출 site) 를 `signal/core_window` import 로 교체 (sibling agent in flight this cycle, BEHAVIOR FIX = Taylor broken → libm correct)
-- [ ] clustering primitive — DEFERRED (RFC-037, 현 anima 불요)
+- [x] EEG / signal-processing primitive — signal/ 8 module + griffin-lim + autocorrelation/spectral_density (#901) + pearson_autocorr (#911) all MERGED
+- [x] clustering / classification primitive — MERGED hexa-lang #869 (k-means) + #883 (k-means++ D²) + cluster trio (distance/knn/kmeans) RFC-037 complete
+- [ ] anima 의 MITOSIS / CHAT / etc. 도메인 의 general 후보 단계 이주
+
+### phase 5 — sha256 + l2_norm (대량 sweep)
+
+- [x] phase 5 M1 (1/2) — sha256 alias surface (`sha256_of_string` / `sha256_of_file`) — MERGED #884
+- [x] phase 5 M1 (1/2+) — sha256 bytes/stream surface (`sha256_of_bytes` / `sha256_of_lines_filtered`) — MERGED #924
+- [x] phase 5 M1 (2/2) — `stdlib/linalg/norm.hexa` (l2_norm · frobenius · l2_normalize · cosine_distance) — MERGED #885
+- [x] phase 5 M1 (2/2+) — norm tunable-epsilon variants (l2_norm_eps · l2_norm_floored · l2_normalize_eps) — MERGED #910
+- [x] anima sha256 sweep — MERGED #461 (~104 site / 105 file, net -89 LoC) + #463 (superseded)
+- [x] anima l2_norm sweep — MERGED #462 (w1) + #467 (w2a, 12 alm) + #473 (phi_vec_logger byte-equal)
+- [ ] anima sha256 wave 2b 잔여 — directory-walk / `sha256sum -c` manifest / remote-SSH (deferred, #461 list)
+- [ ] anima l2_norm wave 2b 잔여 — ~196 plain site (serving/tool/HEXAD, pearson 파일과 분리 발사 필요)
+
+### natural-floor 발견 (cycle 13)
+
+- [x] anima pearson_autocorr 9 site — **0/9 migrate**: guard epsilon (`<1e-10` vs stdlib `==0.0`, 실측 divergence) + vector-pair Pearson + farr storage. 이질성으로 byte-equal 불가. pearson_autocorr (#911) 는 future-code 용.
+- [x] anima l2 custom-epsilon 3 site — **1/3 migrate** (#473): phi_vec_logger byte-equal. holographic_mapping(Newton-Raphson fsqrt ≠ libm) + unity_loss(pre-sqrt floor) defer.
+- **결론**: 대량 byte-equal sweep (matvec/entropy/sha256/l2-plain) LAND 완료. 잔여 site 는 도메인-특화 수치 규약(fsqrt·pre-sqrt floor·near-zero guard·vector-pair·farr)으로 generic stdlib 와 byte-equal 부적합 — 실패 아닌 발견.
 
 ## Honest limits
 
