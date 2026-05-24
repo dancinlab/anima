@@ -182,14 +182,9 @@ fn extract_reply_text(body: string) -> string {
 // ─── sha256 of a string (hashing via /tmp sidecar to avoid pipe quirks) ─
 
 fn sha256_of_str(s: string) -> string {
-    let tmp = "/tmp/_an11c_hash.txt"
-    write_file(tmp, s)
-    let has_gnu = _str(exec("command -v sha256sum 2>/dev/null")).trim()
-    let mut cmd = "shasum -a 256 " + tmp + " 2>/dev/null | awk '{print $1}'"
-    if has_gnu != "" {
-        cmd = "sha256sum " + tmp + " 2>/dev/null | awk '{print $1}'"
-    }
-    return _str(exec(cmd)).trim()
+    // body rewired to stdlib FIPS 180-4 builtin (hexa-lang #884 sha256 alias surface);
+    // shell-out + tmp-file + GNU/BSD detection removed (byte-equal output, no fork-exec).
+    return sha256(s)
 }
 
 // Prefix-16 of sha256 — the dist key. Collision space 16^16 = 2^64, safe for N=50.

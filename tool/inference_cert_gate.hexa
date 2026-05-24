@@ -148,24 +148,16 @@ fn fmt_float(x: float) -> string {
 // ── sha256 helpers (proof-carrying hash chain — raw#10) ──────────────────
 
 fn sha256_of_str(s: string) -> string {
-    let tmp = "/tmp/_inference_cert_gate_hash.txt"
-    write_file(tmp, s)
-    let has_gnu = _str(exec("command -v sha256sum 2>/dev/null")).trim()
-    let mut cmd = "shasum -a 256 " + tmp + " 2>/dev/null | awk '{print $1}'"
-    if has_gnu != "" {
-        cmd = "sha256sum " + tmp + " 2>/dev/null | awk '{print $1}'"
-    }
-    return _str(exec(cmd)).trim()
+    // body rewired to stdlib FIPS 180-4 builtin (hexa-lang #884 sha256 alias surface);
+    // shell-out + tmp-file + GNU/BSD detection removed (byte-equal output, no fork-exec).
+    return sha256(s)
 }
 
 fn sha256_of_file(path: string) -> string {
+    // body rewired to stdlib FIPS 180-4 builtin (hexa-lang #884 sha256 alias surface);
+    // shell-out + GNU/BSD detection removed (byte-equal output; "" on missing file preserved).
     if !file_exists(path) { return "" }
-    let has_gnu = _str(exec("command -v sha256sum 2>/dev/null")).trim()
-    let mut cmd = "shasum -a 256 " + path + " 2>/dev/null | awk '{print $1}'"
-    if has_gnu != "" {
-        cmd = "sha256sum " + path + " 2>/dev/null | awk '{print $1}'"
-    }
-    return _str(exec(cmd)).trim()
+    return sha256_file(path)
 }
 
 // ── minimal JSON string-key lookup (strings only) ────────────────────────

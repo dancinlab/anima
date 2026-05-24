@@ -100,18 +100,18 @@ fn now_utc() -> string {
 }
 
 fn sha256_of_file(p: string) -> string {
+    // body rewired to stdlib FIPS 180-4 builtin (hexa-lang #884 sha256 alias surface);
+    // shell-out + GNU/BSD detection removed (byte-equal output; "" on missing file preserved).
     if !fexists(p) { return "" }
-    let gnu = _str(exec("command -v sha256sum 2>/dev/null")).trim()
-    let cmd = if gnu != "" {
-        "sha256sum " + p + " 2>/dev/null | awk '{print $1}'"
-    } else {
-        "shasum -a 256 " + p + " 2>/dev/null | awk '{print $1}'"
-    }
-    return _str(exec(cmd)).trim()
+    return sha256_file(p)
 }
 
 // sha256 of all *.json files in dir (concat sorted basenames+sha) → single hash.
 fn sha256_of_dir(p: string) -> string {
+    // FINAL hash step rewired to stdlib FIPS 180-4 builtin (hexa-lang #884);
+    // inner ls/sort/xargs shasum -a 256 retained — composite directory enumeration
+    // is out of scope for stdlib sha256 (would need a hexa-native dir-walk + per-file
+    // sha256_file loop, deferred to a follow-up sweep).
     if !dexists(p) { return "" }
     let gnu = _str(exec("command -v sha256sum 2>/dev/null")).trim()
     let inner = if gnu != "" {
@@ -121,12 +121,7 @@ fn sha256_of_dir(p: string) -> string {
     }
     let blob = _str(exec(inner)).trim()
     if blob == "" { return "" }
-    let final_cmd = if gnu != "" {
-        "printf '%s' " + json_shell_quote(blob) + " | sha256sum | awk '{print $1}'"
-    } else {
-        "printf '%s' " + json_shell_quote(blob) + " | shasum -a 256 | awk '{print $1}'"
-    }
-    return _str(exec(final_cmd)).trim()
+    return sha256(blob)
 }
 
 fn json_shell_quote(s: string) -> string {

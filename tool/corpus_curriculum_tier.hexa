@@ -90,8 +90,10 @@ fn dexists(p) {
 fn now_stamp() { return exec("date -u +%FT%TZ").trim() }
 
 fn sha256_of_file(p) {
+    // body rewired to stdlib FIPS 180-4 builtin (hexa-lang #884 sha256 alias surface);
+    // shell-out removed (byte-equal output; "" on missing file preserved).
     if !fexists(p) { return "" }
-    return exec("shasum -a 256 " + p + " 2>/dev/null | awk '{print $1}'").trim()
+    return sha256_file(p)
 }
 
 fn atomic_write(path, body) {
