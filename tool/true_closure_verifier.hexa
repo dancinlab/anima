@@ -37,6 +37,8 @@
 //    OOM-safe: sequential exec, per-component timeout
 // ════════════════════════════════════════════════════════════════════════════
 
+use "stdlib/core/hash/sha256"
+
 let CONFIG_PATH = "config/true_closure_config.json"
 let DEFAULT_OUT = "state/true_closure_cert.json"
 let DEFAULT_AUDIT_LOG = ".raw-audit/true_closure.log"
@@ -145,9 +147,11 @@ fn args_to_cmd(args_arr) -> string {
 // ─── SHA256 of a file ──────────────────────────────────────────────────────
 
 fn sha256_file(path: string) -> string {
+    // body rewired to stdlib FIPS 180-4 builtin via the sha256_of_file alias
+    // (hexa-lang #884 — avoids local-vs-builtin name shadow); shell-out removed
+    // (byte-equal output; "" on missing file preserved).
     if !fexists(path) { return "" }
-    let r = _str(exec("shasum -a 256 " + path + " | awk '{print $1}'")).trim()
-    return r
+    return sha256_of_file(path)
 }
 
 // ─── nested JSON access (path "a.b.c") ─────────────────────────────────────

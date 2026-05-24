@@ -44,6 +44,8 @@
 // local-only assets).  We therefore land the tracked copy in config/, matching
 // the convention of other cert tool configs (config/true_closure_config.json,
 // etc).  Callers may still pass any path as the last positional arg.
+use "stdlib/core/hash/sha256"
+
 let DEFAULT_CONFIG = "config/unified_eval_config.json"
 let DEFAULT_OUT    = "state/unified_eval_result.json"
 let DEFAULT_AUDIT  = ".raw-audit/unified_eval.log"
@@ -97,15 +99,17 @@ fn resolve_hexa_bin() -> string {
 }
 
 fn sha256_file(path: string) -> string {
+    // body rewired to stdlib FIPS 180-4 builtin via the sha256_of_file alias
+    // (hexa-lang #884 — avoids local-vs-builtin name shadow); shell-out removed
+    // (byte-equal output; "" on missing file preserved).
     if !fexists(path) { return "" }
-    return _str(exec("shasum -a 256 " + path + " | awk '{print $1}'")).trim()
+    return sha256_of_file(path)
 }
 
 fn sha256_str(s: string) -> string {
-    // pipe via printf %s so we avoid trailing newline issues.
-    let esc = s.replace("'", "'\\''")
-    let cmd = "printf %s '" + esc + "' | shasum -a 256 | awk '{print $1}'"
-    return _str(exec(cmd)).trim()
+    // body rewired to stdlib FIPS 180-4 builtin (hexa-lang #884 sha256 alias surface);
+    // shell-out removed (byte-equal output, no fork-exec, no trailing-newline concern).
+    return sha256(s)
 }
 
 fn json_escape(s: string) -> string {

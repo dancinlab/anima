@@ -86,14 +86,16 @@ fn _json_esc(s: string) -> string {
 }
 
 fn _sha256_str(s: string) -> string {
-    let cmd = "printf '%s' " + _shq(s) + " | shasum -a 256 | awk '{print $1}'"
-    return to_string(exec_with_status(cmd)[0]).trim()
+    // body rewired to stdlib FIPS 180-4 builtin (hexa-lang #884 sha256 alias surface);
+    // shell-out + exec_with_status tuple unwrap removed (byte-equal output, no fork-exec).
+    return sha256(s)
 }
 
 fn _sha256_file(p: string) -> string {
+    // body rewired to stdlib FIPS 180-4 builtin (hexa-lang #884 sha256 alias surface);
+    // shell-out removed (byte-equal output; "" on missing file preserved).
     if !_file_exists(p) { return "" }
-    let r = exec_with_status("shasum -a 256 " + _shq(p) + " | awk '{print $1}'")
-    return to_string(r[0]).trim()
+    return sha256_file(p)
 }
 
 fn _to_lower(s: string) -> string {
