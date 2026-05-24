@@ -64,3 +64,49 @@ jobs:
               print('Broken JSON detected — failing CI.')
               sys.exit(1)
           "
+
+  hexa-explicit-main-lint:
+    # Block NEW explicit `main()` calls in changed .hexa files.
+    # hexa-strict auto-invokes `fn main()`, so a bare top-level `main()` call is a
+    # build-fail ("auto-invoke conflict"). Pre-existing files are grandfathered;
+    # this gate only fails on files a PR adds/modifies, so the count is monotone-down.
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Block new explicit main() calls in changed .hexa
+        run: |
+          set -euo pipefail
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            git fetch --no-tags origin "${{ github.base_ref }}"
+            base=$(git merge-base "origin/${{ github.base_ref }}" HEAD)
+          else
+            base="${{ github.event.before }}"
+          fi
+          changed=$(git diff --name-only --diff-filter=ACM "$base" HEAD -- '*.hexa' || true)
+          if [ -z "$changed" ]; then
+            echo "no changed .hexa files — skip"
+            exit 0
+          fi
+          bad=""
+          for f in $changed; do
+            [ -f "$f" ] || continue
+            if grep -nE '^main\(\)[[:space:]]*$' "$f" >/dev/null 2>&1; then
+              bad="$bad $f"
+            fi
+          done
+          if [ -n "$bad" ]; then
+            echo "::error::explicit main() call(s) found — hexa-strict auto-invokes fn main(), so a bare main() call is a build-fail (auto-invoke conflict)."
+            for f in $bad; do
+              echo "  --- $f ---"
+              grep -nE '^main\(\)[[:space:]]*$' "$f"
+            done
+            echo ""
+            echo "Fix: delete the trailing bare 'main()' line. fn main() fires automatically under hexa-strict."
+            exit 1
+          fi
+          n=$(echo $changed | wc -w | tr -d ' ')
+          echo "explicit-main lint: $n changed .hexa file(s) clean"
