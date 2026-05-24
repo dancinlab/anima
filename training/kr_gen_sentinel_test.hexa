@@ -90,7 +90,7 @@ let CASE_F = "[]"
 // Pick hexa binary path from environment if available, else fall back to
 // the project canonical path.  stage0 interpreter typically at $HEXA_LANG/hexa
 // (symlink to build/hexa_stage0.real).
-fn hexa_bin() -> string {
+fn hexa_bin_path() -> string {
     // Use stage0 real binary directly — avoids shared/bin/hexa resolver's
     // remote-dispatch path which may not see freshly-written local files.
     let hl = env("HEXA_LANG")
@@ -116,7 +116,7 @@ fn run_case(name: string, json: string) -> [string] {
     let tmp = "/tmp/kr_gen_sentinel_fixture_" + name + ".json"
     write_file(tmp, json)
 
-    let hexa = hexa_bin()
+    let hexa = hexa_bin_path()
     let sent = sentinel_path()
     let rc_path = "/tmp/kr_gen_sentinel_rc_" + name + ".txt"
     let out_path = "/tmp/kr_gen_sentinel_out_" + name + ".txt"
@@ -207,4 +207,3 @@ fn main() {
     exit(1)
 }
 
-main()
