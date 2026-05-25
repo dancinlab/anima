@@ -2,6 +2,19 @@
 
 > `LORA.md` 의 변경/작업 체크리스트. 최신이 위.
 
+## 2026-05-25 (cycle 24 — M1·M3·M4 3-agent 병렬 fan-out)
+
+- [x] `/cycle all` — open milestone 3 fan-out (M1·M3·M4), M2 dependency-skip (M1 PASS 의존), M5 done
+- [x] **M1 decision memo (PR #504 merged)** — `HEXAD/LORA/M1_SWAP_DECISION_MEMO_2026_05_25.md`. Wave-17 anti-correlation 구조적 → 4-옵션 표 + 추천 **옵션(b) continuous floor≤50 → v11 swap**. 근거: M2 가 register-leak 30d monitor(continuous≤50) 라 floor 가 production 목표와 동일 number; register burst = 사용자 가시 결함, 다국어 강건은 hot-swap router 가 보강. counter-branch: 다국어 우선 prior 면 (c)+v13
+  - [ ] ⚠ swap 전 선결 2 — corpus_v5(SSOT) vs corpus_v4(README 0523) 라벨 확인 · crit5 tag-leak 두 후보 미측정 (`swap_criteria_check.hexa check`)
+- [x] **M3 PENDING (PR #505 merged)** — `HEXAD/V3/R8A2_QWEN_PARITY_VERDICT_2026_05_25.md`. R8a'' LOST/DEAD 3-way 확인 (pod 6gqf9nsdquz8ug 부재 + SSH refused + result 0건). **SECURE preempt 2회째 → R8a/R8a'/R8a'' 5000-step 완주 0/3**. final_CE LOST · Qwen baseline 미측정 → Δ 계산불가 = PENDING. H_255 흡수 재확인 (init_CE 더 이상 metric 아님, M3 유일 metric = final_CE@5000)
+  - [ ] M3 closure path — 사용자 Qwen baseline candidate 결정 → ON-DEMAND 2-pod 병렬 (~$6) + M5 PREFIRE 선결 (SECURE 3연속 preempt 회피). 재발사는 보류 (조건 미충족, 보고만)
+- [x] **M4 wiring DONE (PR #507 merged)** — `HEXAD/LORA/M4_AXIS_WIRING_FIX_2026_05_25.md`. H_257 완전해소. **발견: PR #385 는 half-fix** (dispatch→train `--flag` passthrough만, train script 가 env→cfg→loop 미연결이라 7축 여전히 inert). grep `os.environ` 0→8 line, axis→cfg 0→8, axis→loop 0→2. py_compile/bash -n PASS
+  - [x] honest scope — head_g(aux LM-CE term + `--head-g-weight`)·freeze_embed **2축만 진짜 wired** (기존 code path), curriculum·distill·lang-balanced·contrastive **4축 = ML feature 미구현 TODO[axis-impl]** (env→cfg→log 까지만, behavior 없음). gate-off default 무회귀
+  - [ ] M4 진짜 ablation — 2 wired 축 post-merge 재발사 (M5 PREFIRE + ON-DEMAND), 4 TODO 축은 feature impl 선결
+- [x] consolidation (이 엔트리) — LORA.md milestone 3행 + 진행중 섹션 + 관련 surface 3 doc 갱신. 격리 worktree land (clobber 회피)
+- [ ] 다음 /cycle — M3 closure (baseline 게이트) · M1 swap 실행 (선결 2 후) · M4 ablation/4축 impl · M2 (M1 PASS 후 unblock)
+
 ## 2026-05-25 (cycle 23 — LIFE 도메인 흡수)
 
 - [x] HEXAD/LIFE 가설 lane sweep — LORA 사가가 12 H_XXX 로 정식화돼 있음 확인
