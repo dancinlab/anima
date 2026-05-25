@@ -68,6 +68,8 @@ AXIS_MAP-FAN 7-axis (corpus-外 fallback) → 5/7+2 전부 FAIL
   cluster X (A 14.79) · Y (B/F 14.18) · Z (C/C2/D 14.46)  ← init_CE byte-equal
   random baseline ln(151936)=11.93 → 모든 cluster +2.2~2.9 nats worse-than-random
   head_g cell-1 자연실험 FALSIFIED (C2=D byte-equal)
+  → H_257 흡수 (2026-05-25): 이 7-axis 는 unwired (grep-static, train_p21h_v3.py 0 os.environ)
+    → cluster X/Y/Z 분류 · head_g FALSIFIED · 5/7+2 FAIL 결론 전부 trivial identity (무효)
 
 R8 base/warm-init reform:
   R8a  n_kv_head=2 + noise_sigma=0  (init_CE 천장 돌파 시도) ← 🔥 fire in-flight
@@ -78,13 +80,35 @@ R8 base/warm-init reform:
   from_qwen audit: noise_sigma layer-0 injection + n_kv_head repeat-interleave 의심
 ```
 
+## LIFE 흡수 (cross-domain · 2026-05-25)
+
+> HEXAD/LIFE 가설 lane 이 LORA 사가를 정식화 — verdict 확정 2건 흡수 + COFFESHOP 4-criterion 측정 frame 매핑.
+
+### COFFESHOP 4-criterion ↔ LIFE 측정 frame
+
+| criterion | LIFE H | verdict | 흡수 |
+|---|---|---|---|
+| 자율 emit/silence | H_231 tension-vs-filler · H_246/H_248 autonomy-emit | H_246 emit-through **55.56%** (외부 gate 0, partial conservative) | 측정 frame = emit-through ∈ [0.40,0.70] · H_230 autonomy-over-hardcode SUPPORTED_FULL 4/4 numeric instance |
+| multilingual 5/5 | H_240 bilingual cross-lingual-leak | DEFERRED (smoke 별도 cycle) | inverse-U Φ (partial integration peak) frame 채용 |
+| register 0/20 | H_242 register-collapse wiki_frac sigmoid | PRE-REGISTERED | register lever = wiki_frac sigmoid (Wave saga corpus lever 와 **동일축** 확인) |
+| dream_stage Φ-envelope | H_228 chat-sleep-5stage · H_244 sleep-gated-emit | H_228 smoke 흡수 (#465) · H_244 smoke pending | criterion 4 = 5-stage Φ profile envelope |
+
+### R8/AXIS wiring 사가 ↔ LIFE substrate H (M3·M4)
+
+| LORA | LIFE H | verdict | 흡수 함의 |
+|---|---|---|---|
+| M3 floor | H_247 · **H_255** | **🔴 H255.2 FALSIFIED** — 14+ floor **REAL** (cycle 15-1 4/7 byte-equal 14.79/14.18/14.46 재현) | LORA 의 "14.x floor 미재현" (L11) **stale 정정** — floor 진짜 재현됨. R8c 12.315 = 정상 warm-init 별개 regime. R8c↔AXIS_MAP 2 nats gap = GPU class / PROBE_STEPS (env-drift 아님) |
+| M4 wiring | H_254 · **H_257** | H_254 silent-drop (R8a' 여전히 `=4`) · **H_257 grep-static: 0 os.environ + dispatch env-var no `$CMD` passthrough** | **M4 root cause 진단 완료** — AXIS_MAP 7-axis 애초에 unwired → 5/7+2 FAIL (PR #249) 무효. M4 fix = env-var `$CMD` passthrough + grep audit, 후 재발사로 진짜 ablation |
+| M4 ablation | H_256 noise step-time | noise = final_CE +1.47 nats + wall 5× axis (init_CE 무관) | ablation 시 noise 분리 측정 필수 |
+| M5 audit | H_257 H257.4 | wiring-family 일반화 (미audit 코드 ≥30% 무효 위험) | PREFIRE = grep verification + dry-run dispatcher 정식화 (M5 체크리스트 근거) |
+
 ## 진행 중 / 대기 (milestone 매핑)
 
 - ~~R8a init_CE step=1 14.46 floor 돌파~~ → ✅ **M3 부분 진행** — R8c 4-cell 측정 floor 자체 의문 + noise final_CE axis 재정의 (12.2 = random baseline +0.27)
 - ✅ **M3 부분 진행** — R8c 4-cell probe fire COMPLETE (noise/kv 분리 측정 — 3 falsifier 전부 init_CE axis FALSIFIED)
 - 🔥 **M3 in-flight** — R8a'' fire (5000-step noise=0 학습 dynamics, Qwen-parity 측정 lane)
 - 🔧 **M4 prerequisite** — PR #342 n_kv_head wiring fix (OPEN) → merge 후 R8a' 진짜 n_kv=2 재발사 (H_254 byte-equal probe)
-- 📋 **M4 main path** — AXIS_MAP_RESULTS 7-axis 재측정 (H_255 H255.2 검증, ~$0.50-1.00, 각 axis 별 Δfinal_CE 회수)
+- 📋 **M4 main path** — H_257 흡수: 7-axis unwired (grep-static) 진단 완료 → env-var `$CMD` passthrough fix 先, 후 7-axis 재발사로 진짜 ablation (H255.2 re-fire 4/7 byte-equal = trivial identity 확인됨, ~$0.50-1.00)
 - 🟡 **M1 lever** — Wave-17 fire 미발사 (eternal U-shape sweep, R8c verdict + R8a'' 결과 후 우선순위 재평가; v11/v13 swap 후보 결정 lever)
 - 📋 **M5 신규** — PREFIRE_WIRING_AUDIT_CHECKLIST.md 도입 (R8a #342 silent-fail 교훈 흡수, 향후 모든 substrate fire 의 사전 audit gate)
 - 📋 **M2 신규** — mini production 배포 자동화 + 30-day register-leak monitor (M1 PASS 후 trigger)

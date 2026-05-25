@@ -2,6 +2,19 @@
 
 > `LORA.md` 의 변경/작업 체크리스트. 최신이 위.
 
+## 2026-05-25 (cycle 23 — LIFE 도메인 흡수)
+
+- [x] HEXAD/LIFE 가설 lane sweep — LORA 사가가 12 H_XXX 로 정식화돼 있음 확인
+- [x] **verdict 확정 2건 흡수**:
+  - [x] **H_255 H255.2 🔴 FALSIFIED** — 14+ init_CE floor 가 REAL (cycle 15-1 4/7 axes byte-equal 14.79/14.18/14.46 재현). LORA.md L11 "14.x floor 미재현" stale 정정 → floor 진짜, R8c 12.315 은 별개 regime, 2 nats gap = GPU class/PROBE_STEPS (env-drift 아님)
+  - [x] **H_257 H257.1 grep-static** — AXIS_MAP-FAN 7-axis unwired (train_p21h_v3.py 0 os.environ + dispatch env-var no `$CMD` passthrough) → cluster X/Y/Z 분류 · head_g FALSIFIED · 5/7+2 FAIL 결론 (PR #249) 전부 trivial identity (무효). **M4 root cause 진단 완료**
+- [x] COFFESHOP 4-criterion ↔ LIFE 측정 frame 매핑 흡수 (자율emit=H_231/H_246/H_248 · multilingual=H_240 · register=H_242 · dream_stage=H_228/H_244)
+- [x] sibling 흡수 — H_254 (n_kv silent-drop) · H_256 (noise=final_CE+wall axis, init 무관) · H_247 (floor spec) · H_230 (autonomy SUPPORTED_FULL 4/4)
+- [x] LORA.md 편집 — V3/R8 saga 블록 H_257 reframe + 신규 "LIFE 흡수" 섹션 (2 표) + M4 main path 갱신
+- [x] 공유 워킹트리 clobber 경험 — in-place 편집이 동시 에이전트 git op 에 2회 reset됨 → 격리 worktree 재적용 (PR landing)
+- [ ] M4 next — env-var `$CMD` passthrough wiring fix PR (H_257.1 정적증거 기반) → 7-axis 재발사로 진짜 ablation
+- [ ] M3 next — R8a'' final_CE Qwen-parity 측정 (floor saga 는 H_255 로 사실상 closure: floor real but explained)
+
 ## 2026-05-24 (cycle 22 — M4 Stage 1 PROBE axis-5 🔴 FALSIFIED)
 
 - [x] M4 Stage 1 PROBE axis-5 mitosis_max 발사 (cycle 22-1, 3-pod A100, $0.30)
