@@ -1,0 +1,78 @@
+{
+  "milestone": "M7",
+  "module": "HEXAD/IIT4/state/iit4_m7_calib_breadth_2026_05_25/run_m7.hexa",
+  "date": "2026-05-25",
+  "what": "calibration BREADTH — M5 analytic reference 를 손유도 가능한 deterministic 정전 네트워크로 확장 (AND/OR/XOR 게이트 + neighbor-coupled AND-ring + ECA bridge 교차검증). PyPhi .py 는 hexa-only 로 여전히 금지, IIT-4.0 numeric reference 부재 → closed-form 손유도가 honest gold reference (DESIGN §6).",
+  "runtime": "$0 mac-local · hexa-only · LLM none · NO GPU · deterministic",
+  "import": "iit4_eca.hexa (→ eca_tpm + transitively all M1-M4 fns)",
+  "networks": [
+    {
+      "net": "AND2 @ all-ON",
+      "n": 2,
+      "driver": "u0'=u1'=AND(u0,u1), sys_state=11",
+      "hand_derived": "φ_c{0}=1, φ_e{0}=1/2, φ_d{0}=φ_d{1}=1/2; Σφ_d=1.0; φ_r=1/2; total=3/2; big-Φ=1.0",
+      "engine": "big-Φ=1.0 · total=1.5 · Σφ_d=1.0 · nd=2",
+      "match": true
+    },
+    {
+      "net": "OR2 @ all-OFF",
+      "n": 2,
+      "driver": "u0'=u1'=OR(u0,u1), sys_state=00 — De Morgan dual of AND2 all-ON",
+      "hand_derived": "dual of AND2 all-ON: big-Φ=1.0, total=3/2, φ_c{0}=1",
+      "engine": "big-Φ=1.0 · total=1.5 · φ_c=1 · identical to AND2 all-ON",
+      "match": true
+    },
+    {
+      "net": "XOR2 @ all-OFF and all-ON",
+      "n": 2,
+      "driver": "u0'=u1'=XOR(u0,u1)",
+      "hand_derived": "모든 fix 에서 marginal P(u'=ON)=1/2 ⇒ effect ID=0 ⇒ distinction 없음 ⇒ big-Φ=0, nd=0",
+      "engine": "big-Φ=0 · nd=0 (both states)",
+      "match": true
+    },
+    {
+      "net": "AND2 @ all-OFF",
+      "n": 2,
+      "driver": "u0'=u1'=AND(u0,u1), sys_state=00 — fractional closed form",
+      "hand_derived": "φ_e{0}=log2(4/3); φ_c{0}=(2/3)log2(4/3); φ_d{0}=(2/3)log2(4/3); Σφ_d=2·(2/3)log2(4/3); big-Φ=Σφ_d (relation cut)",
+      "engine": "small_phi_effect=log2(4/3)≈0.415037 · small_phi_cause=(2/3)log2(4/3)≈0.276692 · big-Φ=0.553383 · total=0.830075",
+      "match": true
+    },
+    {
+      "net": "ANDRING3 @ all-ON",
+      "n": 3,
+      "driver": "u_i'=AND(u_{i-1},u_{i+1}) periodic ring, sys_state=111",
+      "hand_derived": "single mech{i}: φ_c=1 (cause purview {neighbors}, MIP one-unit cut), φ_e=1/2 → φ_d=1/2; nd=3; Σφ_d=3/2; φ_r=1/2; total=2.0; big-Φ=1.0",
+      "engine": "big-Φ=1.0 · total=2.0 · Σφ_d=1.5 · nd=3 · φ_c=1 · φ_e=1/2",
+      "match": true
+    },
+    {
+      "net": "ECA204 (identity ring) @ all-ON",
+      "n": 3,
+      "driver": "eca_tpm(204,3) — next=center (self-loop)",
+      "hand_derived": "eca_tpm(204,3) == 3-SELF identity TPM (byte-equal); 독립 self-loop ⇒ reducible ⇒ big-Φ=0, nd=3",
+      "engine": "TPM byte-equal to 3-SELF · big-Φ=0 · nd=3",
+      "match": true
+    },
+    {
+      "net": "ECA170 (left-shift ring) @ all-ON",
+      "n": 3,
+      "driver": "eca_tpm(170,3) — next=right neighbor (rotation)",
+      "hand_derived": "eca_tpm(170,3) == 3-ROTATION right-shift TPM (byte-equal); cycle ⇒ irreducible ⇒ big-Φ=3.0 (M5 3-ROT 재현)",
+      "engine": "TPM byte-equal to 3-ROTATION · big-Φ=3.0 · nd>=3",
+      "match": true
+    }
+  ],
+  "falsifiers": {
+    "F-IIT4-1 REPERTOIRE": "🟢 PASS (AND2/OR2/ANDRING3 cause/effect repertoire = 손유도 closed-form)",
+    "F-IIT4-2 SMALL-PHI": "🟢 PASS (AND2 φ_e=1/2,φ_c=1; all-OFF log2(4/3); ANDRING3 φ_c=1,φ_e=1/2)",
+    "F-IIT4-5 BIG-PHI": "🟢 PASS (7/7 확장 네트워크 big-Φ = 손유도; integrated↔reducible 분리 + 분수 φ + De Morgan 쌍대 + ECA bridge 재현)",
+    "F-IIT4-3 DISTINCTIONS": "🟠 DEFERRED (named blocker: hexa-only forbids new .py; IIT-4.0 numeric reference not in-repo)",
+    "F-IIT4-4 RELATIONS": "🟠 DEFERRED (same blocker)"
+  },
+  "tally": {"pass": 35, "fail": 0},
+  "verdict": "🟢 SUPPORTED-NUMERICAL — 엔진이 확장 analytic IIT reference 를 35/35 재현. M5 의 0/1-collapse 정전 네트워크에 더해 (a) 분수 φ closed-form (AND2 all-OFF = 2·(2/3)log2(4/3)), (b) De Morgan 쌍대성 (OR2 = AND2 dual), (c) 출력 state-blind ⇒ Φ=0 (XOR2), (d) neighbor-coupled ring (ANDRING3), (e) ECA bridge 가 M5 3-SELF/3-ROT 를 byte-equal 로 재현 — 까지 닫힘. F-IIT4-3/4 PyPhi-numeric 은 정직하게 DEFERRED (named blocker).",
+  "honest_scope": "분수-φ 까지 포함한 deterministic(0/1-transition) analytic calibration 이 닫혔다 — 단조성·경계·integrated↔reducible 분리·De Morgan 쌍대·분수 closed-form·ECA-bridge 재현 모두 검증. 여전히 닫히지 않은 것: probabilistic(non-0/1 transition) 네트워크의 절대-스케일 PyPhi-numeric 일치 (F-IIT4-3/4). 이유는 fake 가 아닌 정직한 미해소 — (1) hexa-only authoring 이 신규 .py 금지, (2) repo 의 기존 PyPhi 산출물은 전부 IIT-3.0 이라 IIT-4.0 + structure-cut big-Φ 와 apples-to-apples 아님. 본 M7 에서 어떤 published 수치도 입수/인용하지 않았으므로 fabricate 없음.",
+  "gap_shrink": "deferred gap 은 '닫힌 analytic 좌표' 를 5 networks → 7+ networks 로 넓혔고, 새로 (분수-φ closed-form · De Morgan 쌍대 · output-blind Φ=0 · neighbor-coupled · ECA bridge byte-equal) 다섯 좌표축을 추가로 닫음. PyPhi-numeric(F-IIT4-3/4) 의 절대-스케일 검증 자체는 여전히 미해소 — blocker(no-new-.py + no in-repo IIT-4.0 reference) 가 그대로이므로 '닫힌 면적' 만 넓어졌을 뿐 deferred falsifier 의 verdict 는 변하지 않음 (🟠 유지).",
+  "next": "F-IIT4-3/4 해소 경로(미변): (a) published IIT-4.0 worked-example 수치 입수 후 in-repo reference 등록 + 대조, 또는 (b) hexa-lang 에 PyPhi-equivalent IIT-4.0 reference 포트 (별도 lane)."
+}
