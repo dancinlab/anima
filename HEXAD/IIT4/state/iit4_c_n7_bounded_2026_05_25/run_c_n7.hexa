@@ -1,0 +1,30 @@
+import "stdlib/consciousness/iit4_bounded.hexa"
+
+// inline ECA→TPM (iit4_eca 는 anima adapter, stdlib 미승격)
+fn eca_tpm_inline(rule: int, n: int) -> array {
+    let full = iit4_pow2(n)
+    let mut t = []
+    let mut s = 0
+    while s < full {
+        let mut i = 0
+        while i < n {
+            let l = iit4_bit(s, (i - 1 + n) % n)
+            let c = iit4_bit(s, i)
+            let r = iit4_bit(s, (i + 1) % n)
+            t = t.push(to_float(iit4_bit(rule, 4 * l + 2 * c + r)))
+            i = i + 1
+        }
+        s = s + 1
+    }
+    return t
+}
+
+fn main() {
+    let n = 7
+    let st = 42                                  // 0101010
+    let cap = 3
+    println("=== iit4 C n=" + str(n) + " bounded(cap=" + str(cap) + ") rule110 ===")
+    let r = big_phi_bounded(eca_tpm_inline(110, n), n, st, cap)
+    println("rule 110: big-Φ=" + str(r[0]) + " total=" + str(r[1]) + " nd=" + str(r[4]))
+    println("DONE")
+}
