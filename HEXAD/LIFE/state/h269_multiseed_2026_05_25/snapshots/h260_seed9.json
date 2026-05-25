@@ -1,0 +1,47 @@
+{
+  "hypothesis": "H_260",
+  "slug": "contact-inhibition",
+  "domain": "LIFE",
+  "title": "contact-inhibition — density-gated split predicate → carrying-capacity self-regulation (logistic saturation)",
+  "date": "2026-05-25",
+  "host": "mac-local",
+  "deterministic": true,
+  "hexa_only": true,
+  "llm": "none",
+  "seed": 42,
+  "params": {"d_model": 8, "capacity": 32, "n_steps": 60, "patience": 3, "split_threshold": 0.0, "thr_low": 0.25, "thr_mid": 0.5, "thr_high": 0.75, "init_below": 2, "init_above": 24},
+  "sweep": {
+    "low_below":  { "inhibition_thr": 0.25, "initial_pool": 2, "k_steady": 8, "growth_curve": [2, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8], "increments": [6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
+    "mid_below":  { "inhibition_thr": 0.5, "initial_pool": 2, "k_steady": 16, "growth_curve": [2, 8, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16], "increments": [6, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
+    "high_below": { "inhibition_thr": 0.75, "initial_pool": 2, "k_steady": 24, "growth_curve": [2, 8, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24], "increments": [6, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
+    "low_above":  { "inhibition_thr": 0.25, "initial_pool": 24, "k_steady": 24, "growth_curve": [24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24], "increments": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
+    "mid_above":  { "inhibition_thr": 0.5, "initial_pool": 24, "k_steady": 24, "growth_curve": [24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24], "increments": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
+    "high_above": { "inhibition_thr": 0.75, "initial_pool": 24, "k_steady": 24, "growth_curve": [24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24], "increments": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] }
+  },
+  "derived": {
+    "K_low":  8,
+    "K_mid":  16,
+    "K_high": 24,
+    "K_predicted_low":  8.0,
+    "K_predicted_mid":  16.0,
+    "K_predicted_high": 24.0,
+    "capacity": 32
+  },
+  "criteria": {
+    "C1_saturation":   true,
+    "C2_monotone_K":   true,
+    "C3_logistic":     true,
+    "C4_determinism":  true
+  },
+  "falsifiers": {
+    "F1_SATURATION": { "metric": "K<capacity ALL thr & flat tail (bounded growth)", "verdict": "PASS" },
+    "F2_MONOTONE_K": { "metric": "K_low < K_mid < K_high", "verdict": "PASS" },
+    "F3_LOGISTIC":   { "metric": "accel then decel then flat tail (below seed)", "verdict": "PASS" },
+    "F4_DETERMINISM":{ "metric": "re-run K byte-equal", "verdict": "PASS" },
+    "F5_BOUNDS":     { "metric": "all K in [min_cells=2, capacity]", "verdict": "PASS" }
+  },
+  "n_criteria_pass": 4,
+  "n_falsifier_pass": 5,
+  "verdict": "SUPPORTED",
+  "cross_link": {"H_200": "apoptosis-primitive", "H_201": "asymmetric-division", "H_220": "infant-mirror (division/self axis)"}
+}

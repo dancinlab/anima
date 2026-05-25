@@ -1,0 +1,37 @@
+{
+  "hypothesis": "H_269",
+  "slug": "multiseed-robustness",
+  "domain": "LIFE",
+  "title": "multi-seed robustness — are the cycle#14 SUPPORTED verdicts (H_260/H_261/H_262) seed-robust or seed=42 luck?",
+  "date": "2026-05-25",
+  "host": "mac-local",
+  "deterministic": true,
+  "hexa_only": true,
+  "llm": "none",
+  "method": "one process per seed (gauss-seed env), 10 seeds 0..9, re-run each cycle#14 smoke, snapshot result.json, aggregate verdict criterion C1 and C2 per target",
+  "n_seeds": 10,
+  "robust_threshold": 8,
+  "targets": {
+    "H_260": { "criterion": "C1_saturation AND C2_monotone_K", "pass_count": 10, "pass_ratio": 1.0, "seed_robust": true, "per_seed_pass": [true, true, true, true, true, true, true, true, true, true], "effect_Kspan": [16.0, 16.0, 16.0, 16.0, 16.0, 16.0, 16.0, 16.0, 16.0, 16.0], "effect_mean": 16.0, "effect_std": 0.0 },
+    "H_261": { "criterion": "C1_axis_formation AND C2_gradient_dependence", "pass_count": 4, "pass_ratio": 0.4, "seed_robust": false, "per_seed_pass": [true, true, false, false, false, true, true, false, false, false], "effect_r_steep": [0.771614, 0.771614, 0.764646, 0.765534, 0.759988, 0.758788, 0.763826, 0.760563, 0.748605, 0.765236], "effect_r_steep_mean": 0.763041, "effect_r_steep_std": 0.00634953, "control_r_flat": [0.102069, 0.102069, 0.607336, 0.326387, 0.35825, 0.0571571, 0.0472859, 0.315805, 0.20582, 0.310248], "control_r_flat_mean": 0.243243, "control_r_flat_std": 0.166357, "control_r_flat_max": 0.607336 },
+    "H_262": { "criterion": "C1_quorum_gate AND C2_bistable", "pass_count": 4, "pass_ratio": 0.4, "seed_robust": false, "per_seed_pass": [false, false, true, false, false, true, true, true, false, false], "effect_coop_qfinal": [0.25, 0.25, 1.0, 0.25, 0.25, 1.0, 1.0, 1.0, 0.1875, 0.1875], "effect_mean": 0.5375, "effect_std": 0.378319 }
+  },
+  "criteria": {
+    "C1_seed_robust": false,
+    "C2_above_floor": true,
+    "C3_determinism": true
+  },
+  "falsifiers": {
+    "F1_ROBUST_260":   { "metric": "H_260 verdict >= 8/10 seeds", "value": 10, "verdict": "PASS" },
+    "F2_ROBUST_261":   { "metric": "H_261 verdict >= 8/10 seeds", "value": 4, "verdict": "FAIL" },
+    "F3_ROBUST_262":   { "metric": "H_262 verdict >= 8/10 seeds", "value": 4, "verdict": "FAIL" },
+    "F4_EFFECT_FLOOR": { "metric": "all C1-leg effect-sizes off noise floor", "verdict": "PASS" },
+    "F5_DETERMINISM":  { "metric": "same-seed cross-process byte-equal", "verdict": "PASS" }
+  },
+  "n_criteria_pass": 2,
+  "n_falsifier_pass": 3,
+  "n_robust_targets": 1,
+  "verdict": "PARTIAL",
+  "key_finding": "H_260 seed-robust (10/10, K invariant); H_261 + H_262 seed-fragile (4/10 each) — cycle#14 SUPPORTED for H_261/H_262 has a substantial seed=42 luck component",
+  "cross_link": {"H_260": "contact-inhibition", "H_261": "embryogenesis-gradient", "H_262": "quorum-sensing", "gap": "gap#2 seed-luck audit"}
+}
